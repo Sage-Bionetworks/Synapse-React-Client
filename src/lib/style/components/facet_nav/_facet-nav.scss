@@ -27,3 +27,16 @@
     }
   }
 }
+
+.container-full-width {
+  .FacetNav {
+    &__row {
+      display: flex;
+      flex-wrap: wrap;
+
+      > div {
+        flex: 0 0 380px;
+      }
+    }
+  }
+}

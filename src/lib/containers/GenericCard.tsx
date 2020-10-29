@@ -161,10 +161,11 @@ export const renderLabel = (args: {
     if (strList) {
       return strList.map((el, index) => {
         return (
-          <>
+          <span>
             <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-            {index < strList.length - 1 && ','}
-          </>
+            {/* \u00a0 is a nbsp; */}
+            {index < strList.length - 1 && ",\u00a0\u00a0"}
+          </span>
         )
       })
     } else {
@@ -180,8 +181,9 @@ export const renderLabel = (args: {
     className = 'SRC-primary-text-color'
   }
   return split.map((el, index) => {
-    const { baseURL, URLColumnName } = labelLink
-    const href = `/${baseURL}?${URLColumnName}=${el}`
+    const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
+    const value = wrapValueWithParens ? `(${el})` : el
+    const href = `/${baseURL}?${URLColumnName}=${value}`
     return (
       <React.Fragment key={el}>
         <a href={href} key={el} className={className} style={style}>

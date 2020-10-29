@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { QueryWrapperChildProps } from './QueryWrapper'
+import { LockedFacet, QueryWrapperChildProps } from './QueryWrapper'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCaretDown,
@@ -35,14 +35,13 @@ type SearchState = {
   columnName: string
 }
 
-export type SearchableV2 = {
-  columnName: string
-}[]
+export type SearchableColumnsV2 = string[]
 
 export type SearchV2Props = {
   isQueryWrapperMenuChild?: boolean
   defaultColumn?: string
-  searchable?: SearchableV2
+  searchable?: SearchableColumnsV2
+  lockedFacet?: LockedFacet
 }
 
 type InternalSearchProps = QueryWrapperChildProps & SearchV2Props
@@ -123,13 +122,18 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     event.preventDefault()
     const { searchText } = this.state
     let { columnName } = this.state
-    const { searchable } = this.props
+    const { searchable, lockedFacet } = this.props
     if (columnName === '') {
-      // default to the first one, will always be defined
-      columnName =
-        this.props.data?.columnModels?.filter(el =>
-          searchable ? this.isSupportedColumnAndInProps(el) : this.isSupportedColumn(el),
-        )?.[0].name ?? ''
+      if (searchable) {
+        // If searchable column names are defined in the config, grab the first one (that is not locked)
+        columnName = searchable.filter(colName => colName !== lockedFacet?.facet)[0]        
+      } else {
+        // Otherwise, get the first column model that can be searched.
+        // And for study details page: if lockedFacet is defined, remove it from the search
+        const searchableColumnModels = this.props.data?.columnModels?.filter(el => el.name !== lockedFacet?.facet)
+            .filter(el => this.isSupportedColumn(el))
+        columnName = searchableColumnModels?.[0].name ?? ''
+      }
     }
     this.setState({
       show: false,
@@ -185,13 +189,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (this.isSupportedColumn(columnModel)) {
         // return true if the searchable array contains this column name
         const { searchable } = this.props
-        return searchable?.some(e => e.columnName === columnModel?.name)
+        return searchable?.some(e => e === columnModel?.name)
     }
     return false
   }
 
   render() {
-    const { data, topLevelControlsState, facetAliases, searchable } = this.props
+    const { data, topLevelControlsState, facetAliases, searchable, lockedFacet } = this.props
     const { searchText, show, columnName } = this.state
     let searchColumns: string[] = []
 
@@ -199,7 +203,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (searchable) {
       searchColumns = searchable
         .map(el =>
-          data?.columnModels?.find(model => model.name === el.columnName),
+          data?.columnModels?.find(model => model.name === el),
         )
         .filter(this.isSupportedColumnAndInProps)
         .map(el => el!.name)
@@ -207,6 +211,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       searchColumns = data.columnModels
         ?.filter(this.isSupportedColumn)
         .map(el => el.name)
+    }
+
+    // For study details page: if lockedFacet is defined, remove it from the radio dropdown
+    if (searchColumns.length && lockedFacet?.facet) {
+      searchColumns = searchColumns.filter(el => el !== lockedFacet?.facet)
     }
 
     return (
@@ -287,6 +296,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                           value={name}
                           checked={isSelected}
                           onClick={() => {
+                            this.searchFormRef?.current?.querySelector('input')?.focus()
                             this.setState({
                               columnName: name,
                             })

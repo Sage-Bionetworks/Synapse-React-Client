@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import QueryCount from '../QueryCount'
-import { library, IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import {
-  faSearch,
-  faFilter,
-  faChartBar,
-  faDownload,
-} from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
 import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
@@ -15,11 +9,6 @@ import { cloneDeep } from 'lodash-es'
 import { QueryResultBundle } from '../../utils/synapseTypes/'
 import { DownloadOptions } from '../table/table-top'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
-
-library.add(faSearch)
-library.add(faFilter)
-library.add(faChartBar)
-library.add(faDownload)
 
 export type TopLevelControlsProps = {
   name: string
@@ -33,7 +22,7 @@ export type TopLevelControlsProps = {
 
 type Control = {
   key: keyof TopLevelControlsState
-  icon: IconDefinition
+  icon: string
   tooltipText: string
 }
 
@@ -52,22 +41,22 @@ type CustomControl = {
 
 const controls: Control[] = [
   {
-    icon: faSearch,
+    icon: 'search',
     key: 'showSearchBar',
     tooltipText: 'Show / Hide Search Bar',
   },
   {
-    icon: faChartBar,
+    icon: 'chart',
     key: 'showFacetVisualization',
     tooltipText: 'Show / Hide Visualizations',
   },
   {
-    icon: faFilter,
+    icon: 'filter',
     key: 'showFacetFilter',
     tooltipText: 'Show / Hide Filters',
   },
   {
-    icon: faDownload,
+    icon: 'download',
     key: 'showDownloadConfirmation',
     tooltipText: 'Add files in table to Download List',
   },
@@ -195,9 +184,9 @@ const TopLevelControls = (
               idForToolTip={key}
               tooltipText={tooltipText}
               key={key}
-              image={icon}
               callbackFn={() => setControlState(key)}
               darkTheme={true}
+              icon={icon}
             />
           )
         })}

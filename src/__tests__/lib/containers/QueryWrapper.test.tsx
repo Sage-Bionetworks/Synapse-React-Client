@@ -178,3 +178,42 @@ describe('deep linking', () => {
     expect(lastQuery.query.sql).toBe(lqr.query.sql)
   })
 })
+
+describe('locked facet', () => {
+
+  const newProps = {
+    lockedFacet: {
+      facet: 'abc',
+      value: '123'
+    }
+  }
+  const newProps2 = {
+    lockedFacet: {}
+  }
+  const newState = {
+    data: {
+      facets: [
+        {columnName: 'abc', facetType: "enumeration", concreteType: "blah"},
+        {columnName: 'def', facetType: "enumeration", concreteType: "blah"}
+      ]
+    }
+  }
+
+  it('removeLockedFacetData should remove locked facet data', async() => {
+    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
+    wrapper.setProps(newProps)
+    wrapper.setState(newState)
+    expect(instance.removeLockedFacetData()).toEqual({
+        facets: [{columnName: 'def', facetType: "enumeration", concreteType: "blah"}]
+      }
+    )
+  })
+
+  it('removeLockedFacetData should not remove any data if locked facet value is not set', async() => {
+    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
+    wrapper.setProps(newProps2)
+    wrapper.setState(newState)
+    expect(instance.removeLockedFacetData()?.facets).toHaveLength(2)
+  })
+
+})

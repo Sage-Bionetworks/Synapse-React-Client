@@ -130,6 +130,30 @@ describe('initialization', () => {
     })
   })
 
+  describe('collapsible behavior', () => {
+    it('should hide content when toggled', () => {
+      init({...props, collapsed: false})
+      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'block')
+
+      // toggle collapse via button
+      const button = container.querySelector("button.FacetFilterHeader__collapseToggleBtn");
+      fireEvent.click(button);
+
+      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'none')
+    })
+    
+    it('should start collapsed when specified via prop', () => {
+      init({...props, collapsed: true})
+      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'none')
+
+      // toggle collapse via button
+      const button = container.querySelector("button.FacetFilterHeader__collapseToggleBtn");
+      fireEvent.click(button);
+
+      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'block')
+    })
+  })
+
   describe('label initialization', () => {
     it('should set labels correctly for STRING type', async () => {
       const labels = container.querySelectorAll<HTMLSpanElement>(

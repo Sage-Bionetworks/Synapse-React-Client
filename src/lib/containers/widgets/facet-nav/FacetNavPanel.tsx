@@ -8,12 +8,6 @@ import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import { Dropdown } from 'react-bootstrap'
-import {
-  faChartBar,
-  faExpandAlt,
-  faCompressAlt,
-  faTimes,
-} from '@fortawesome/free-solid-svg-icons'
 
 import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import {
@@ -159,6 +153,11 @@ export function extractPlotDataArray(
     el => el.label,
   )
 
+  const anyFacetsSelected = facetToPlot.facetValues.some(value => value.isSelected)
+
+  const selectionAwareColorPalette = anyFacetsSelected ? facetToPlot.facetValues.map((facetValue, index) =>
+    facetValue.isSelected ? colorPalette[index] : colorPalette[index].replace('rgb(', 'rgba(').replace(')', ', 0.25)'),
+  ) : colorPalette
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
@@ -187,21 +186,16 @@ export function extractPlotDataArray(
         : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
-    marker: {
-      colors: plotType === 'PIE' ? colorPalette : undefined,
-      color: plotType === 'BAR' ? colorPalette : undefined,
-      line: {
-        width: facetToPlot.facetValues.map(facetValue =>
-          facetValue.isSelected ? 1 : 0,
-        ),
-      },
-    },
     pull:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map(facetValue =>
-            facetValue.isSelected ? 0.04 : 0,
+            facetValue.isSelected ? 0.10 : 0,
           )
         : undefined,
+    marker: {
+      colors: plotType === 'PIE' ? selectionAwareColorPalette : undefined,
+      color: plotType === 'BAR' ? selectionAwareColorPalette : undefined,
+    },
   }
 
   const result = {
@@ -210,7 +204,7 @@ export function extractPlotDataArray(
     colors:
       plotType === 'PIE'
         ? (singleChartData.marker?.colors as string[])
-        : (singleChartData.marker?.color as string[]),
+        : (singleChartData.marker?.color as string[]),    
   }
   return result
 }
@@ -377,9 +371,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         idForToolTip="toggleChart"
         tooltipText="Toggle chart type"
         key="toggleChart"
-        image={faChartBar}
         className="SRC-primary-color"
         darkTheme={true}
+        icon={"chart"}
       />
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
@@ -441,10 +435,10 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 idForToolTip="expandGraph"
                 tooltipText="Expand to large graph"
                 key="expandGraph"
-                image={faExpandAlt}
                 callbackFn={() => onExpand!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
+                icon={"expand"}
               />
             )}
             {isExpanded && (
@@ -452,20 +446,20 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 idForToolTip="collapseGraph"
                 tooltipText="Collapse to small graph"
                 key="collapseGraph"
-                image={faCompressAlt}
                 callbackFn={() => onCollapse!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
+                icon={"collapse"}
               />
             )}
             <ElementWithTooltip
               idForToolTip="hideGraph"
               tooltipText="Hide graph under Show More"
               key="hideGraph"
-              image={faTimes}
               callbackFn={() => onHide(index)}
               className="SRC-primary-color"
               darkTheme={true}
+              icon={"close"}
             />
           </div>
         </div>

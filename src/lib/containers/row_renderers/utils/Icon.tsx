@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {
+  DATABASE,
   DATASET,
   FUNDER,
   PUBLICATION,
@@ -14,7 +15,21 @@ import {
   GRANT,
   ORGANIZATION,
   PERSON,
-  MOUSE
+  MOUSE,
+  EXPLORE,
+  SEARCH,
+  CHART,
+  FILTER,
+  DOWNLOAD,
+  EXPAND,
+  COLLAPSE,
+  CLOSE,
+  SORTUP,
+  SORTDOWN,
+  SETTINGS,
+  COLUMNS,
+  COLUMNSDARK,
+  VERTICAL_DOTS,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -32,6 +47,21 @@ import {
   ToolClinical,
   ToolComputational,
   ToolExperimental,
+  Database,
+  Explore,
+  Search,
+  Chart,
+  Filter,
+  Download,
+  Expand,
+  Collapse,
+  Close,
+  SortUp,
+  SortDown,
+  Settings,
+  Columns,
+  ColumnsDark,
+  VerticalDots,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -41,10 +71,12 @@ type IconProps = {
   iconOptions?: KeyValue
   value?: string
   isHeader?: boolean
+  cssClass?: string
 }
 
 const defaultIcons = {
-  [DATASET]: Data2Svg,
+  [DATABASE]: Database,  // this returns svg tag
+  [DATASET]: Data2Svg, // this returns img tag link to svg
   [FUNDER]: Data2Svg,
   [TOOL]: DNA_TwoSvg,
   [STUDY_ACTIVE]: studyActiveSvg,
@@ -59,12 +91,27 @@ const defaultIcons = {
   [GRANT]: Project,
   [ORGANIZATION]: organizationsSvg,
   [PERSON]: personSvg,
-  [MOUSE]: mouseSvg
+  [MOUSE]: mouseSvg,
+  [EXPLORE]: Explore,
+  [SEARCH]: Search,
+  [CHART]: Chart,
+  [FILTER]: Filter,
+  [DOWNLOAD]: Download,
+  [EXPAND]: Expand,
+  [COLLAPSE]: Collapse,
+  [CLOSE]: Close,
+  [SORTUP]: SortUp,
+  [SORTDOWN]: SortDown,
+  [SETTINGS]: Settings,
+  [COLUMNS]: Columns,
+  [COLUMNSDARK]: ColumnsDark,
+  [VERTICAL_DOTS]: VerticalDots,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
   value = '',
   iconOptions,
+  cssClass
 }) => {
   const iconSet = { ...defaultIcons, ...iconOptions }
   // see if the value has a corresponding icon, e.g. 'Active' in a studies table
@@ -74,7 +121,7 @@ const Icon: React.FunctionComponent<IconProps> = ({
   const datasetIconClass =
     value === DATASET || type === DATASET ? 'SRC-datasetIcon' : ''
   if (typeof Icon == 'function') {
-    return <Icon />
+    return <span className={cssClass}><Icon /></span>
   }
   return <img src={Icon} className={`iconImg ${datasetIconClass}`} />
 }

@@ -24,13 +24,14 @@ import DownloadListTable from './containers/download_list/DownloadListTable'
 import Goals from './containers/home_page/goals/Goals'
 import Programs from './containers/home_page/programs/Programs'
 import Resources from './containers/home_page/resources/Resources'
-import NewsFeedMenu from './containers/NewsFeedMenu'
 import RssFeedCards from './containers/RssFeedCards'
+import TableFeedCards from './containers/TableFeedCards'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
+import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -51,7 +52,6 @@ const SynapseComponents = {
   QueryCount,
   Markdown: MarkdownSynapse,
   ModalDownload,
-  NewsFeedMenu,
   SynapseFormWrapper,
   SynapseFormSubmissionsGrid,
   HasAccess,
@@ -66,8 +66,10 @@ const SynapseComponents = {
   UpsetPlot,
   SynapsePlot,
   RssFeedCards,
+  TableFeedCards,
   UserCardListRotate,
   FeaturedDataTabs,
+  UserCardListGroups,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

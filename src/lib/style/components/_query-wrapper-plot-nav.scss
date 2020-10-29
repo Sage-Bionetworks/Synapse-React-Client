@@ -14,7 +14,19 @@
       display: inline-flex;
       align-items: center;
       .ElementWithTooltip {
-        width: 35px;
+        padding: 5px;
+        margin: 0 1px;
+        border: 0;
+
+        &:active:focus, &:focus {
+          outline: none;
+        }
+
+        // icons on the top level control bar should have total area 36x36 (26px dim + 10px padding)
+        svg {
+          width: 26px;
+          height: 26px;
+        }
       }
     }
   }

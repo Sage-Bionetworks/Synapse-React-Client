@@ -20,7 +20,7 @@ export type GoalsProps = {
 }
 
 export type GoalsDataProps = {
-  tableId: string
+  countSql?: string
   title: string
   summary: string
   link: string
@@ -29,7 +29,8 @@ export type GoalsDataProps = {
 }
 
 enum ExpectedColumns {
-  TABLEID = 'TableId',
+  TABLEID = 'TableId',  // Both TableId or CountSql are used to indicate what Table rows to count.
+  COUNT_SQL = 'CountSql', // Code uses CountSql over TableId if defined (if the CountSql column is in the schema and filled in).
   TITLE = 'Title',
   SUMMARY = 'Summary',
   LINK = 'Link',
@@ -59,7 +60,7 @@ export default function (props: GoalsProps) {
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
-      sql: `select TableId, Title, Summary, Link, Asset from ${entityId} order by ItemOrder`,
+      sql: `select * from ${entityId} order by ItemOrder`,
     },
   }
   const { queryResultBundle } = useGetQueryResultBundle({
@@ -116,6 +117,11 @@ export default function (props: GoalsProps) {
     ExpectedColumns.TABLEID,
     queryResultBundle,
   )
+  const countSqlColumnIndex = getFieldIndex(
+    ExpectedColumns.COUNT_SQL,
+    queryResultBundle,
+  )
+  
   const titleColumnIndex = getFieldIndex(
     ExpectedColumns.TITLE,
     queryResultBundle,
@@ -131,7 +137,13 @@ export default function (props: GoalsProps) {
       {error && <Error error={error} token={token} />}
       {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
         const values = el.values
-        const tableId = values[tableIdColumnIndex]
+        const tableId = tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
+        let countSql
+        if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
+          countSql = values[countSqlColumnIndex]
+        } else if (tableId) {
+          countSql = `SELECT * FROM ${tableId}`
+        }
         const title = values[titleColumnIndex]
         const summary = values[summaryColumnIndex]
         const link = values[linkColumnIndex]
@@ -139,7 +151,7 @@ export default function (props: GoalsProps) {
         // can revisit if this isn't the case.
         const asset = assets?.[index] ?? ''
         const goalsDataProps: GoalsDataProps = {
-          tableId,
+          countSql,
           title,
           summary,
           link,

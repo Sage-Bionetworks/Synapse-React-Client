@@ -19,6 +19,7 @@ export type RangeFacetFilterProps = {
   columnModel: ColumnModel
   onChange: Function
   facetAliases: {} | undefined
+  collapsed?: boolean
 }
 
 export type RangeFacetFilterState = {
@@ -31,8 +32,9 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
   columnModel,
   onChange,
   facetAliases,
+  collapsed = false,
 }: RangeFacetFilterProps) => {
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const options = [
     { label: 'Unannotated', value: RadioValuesEnum.NOT_SET },
     { label: 'Any', value: RadioValuesEnum.ANY },

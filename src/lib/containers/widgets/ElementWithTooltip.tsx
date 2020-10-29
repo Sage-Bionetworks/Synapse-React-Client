@@ -7,6 +7,7 @@ import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { Dropdown } from 'react-bootstrap'
+import { Icon } from '../row_renderers/utils'
 
 type CustomImageProps = {
   svgImg: React.ComponentElement<any, any>
@@ -23,7 +24,7 @@ export type TooltipVisualProps = {
 
 /*****************************************
  *  The control needs to either have a child element or needs to have an image supplied
- *  If the child element is supplied the control renders the child applying additional proiperties
+ *  If the child element is supplied the control renders the child applying additional properties
  *  If the image is supplied the control renders a clickable image
  *  If there are no children and callback Fn is not supplied it is assumed to be a a dropdown trigger
  */
@@ -38,6 +39,7 @@ type ElementWithTooltipProps = {
   tooltipVisualProps?: TooltipVisualProps
   darkTheme?: boolean
   size?: FontAwesomeIconProps['size']
+  icon?: string
 }
 
 function getTooltipTriggerContents(
@@ -69,9 +71,11 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   children,
   darkTheme,
   size,
+  icon
 }) => {
   const { place, type, effect, border } = tooltipVisualProps
-  const tooltipTriggerContents = image
+  const iconComponent = icon ? (<Icon type={icon}></Icon>) : undefined
+  const tooltipTriggerContents = iconComponent ? iconComponent : image
     ? getTooltipTriggerContents(image, imageColor, size)
     : children || <></>
 

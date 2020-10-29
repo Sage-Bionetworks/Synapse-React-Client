@@ -501,8 +501,7 @@ export const getQueryTableResults = (
 
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
-  sessionToken: string | undefined = undefined,
-  initMaxPageSize: number = 2500,
+  sessionToken: string | undefined = undefined
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -510,19 +509,16 @@ export const getFullQueryTableResults = async (
   const { query, ...rest } = queryBundleRequest
   const queryRequest: QueryBundleRequest = {
     ...rest,
-    query: { ...query, limit: initMaxPageSize, offset: offset },
+    query: { ...query, offset: offset },
     partMask:
       queryBundleRequest.partMask |
       SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
   }
   let response = await getQueryTableResults(queryRequest, sessionToken)
   data = response
-  // we are done if we return less than a pagesize.
-  // however, if the initMaxPageSize provided by the caller is larger than the maxRowsPerPage that the backend is willing to return for this Table/View,
-  // then the first page length will be less than the initMaxPageSize but we should keep going.
+  // we are done if we return less than a max pagesize that the backend is willing to return.
   let isDone =
-    response.queryResult.queryResults.rows.length < initMaxPageSize &&
-    initMaxPageSize <= data.maxRowsPerPage!
+    response.queryResult.queryResults.rows.length < data.maxRowsPerPage!
   offset += response.queryResult.queryResults.rows.length
   queryRequest.query.limit = data.maxRowsPerPage // set the limit to the actual max rows per page
 

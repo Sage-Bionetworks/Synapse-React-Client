@@ -6,20 +6,20 @@ import QueryCount from '../../../containers/QueryCount'
 export default function ({
   link,
   summary,
-  tableId,
+  countSql,
   title,
   token,
 }: GoalsDataProps) {
   const titleElement = (
     <div className="Goals__Mobile__Header">
-      <span className="Goals__Mobile__Header__Count">
+      {countSql && <span className="Goals__Mobile__Header__Count">
         <QueryCount
           parens={false}
-          sql={`SELECT * FROM ${tableId}`}
+          sql={countSql}
           token={token}
           name=""
         />
-      </span>
+      </span>}
       <span className="Goals__Mobile__Header__Title"> {title} </span>
     </div>
   )

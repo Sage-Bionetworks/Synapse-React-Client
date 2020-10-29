@@ -2,11 +2,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { shallow, mount } from 'enzyme'
 import { EntityLink } from 'lib/containers/EntityLink'
 import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
-import {
-  ColumnSelection,
-  EllipsisDropdown,
-  ExpandTable,
-} from 'lib/containers/table/table-top'
 import { EnumFacetFilter } from 'lib/containers/widgets/query-filter/EnumFacetFilter'
 import UserCard from 'lib/containers/UserCard'
 import { unCamelCase } from 'lib/utils/functions/unCamelCase'
@@ -21,7 +16,6 @@ import {
   EntityColumnType,
 } from 'lib/utils/synapseTypes/'
 import * as React from 'react'
-import { Modal } from 'react-bootstrap'
 import { SynapseConstants } from '../../../lib'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
@@ -35,9 +29,7 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
-import { act } from '@testing-library/react'
 import HasAccess from 'lib/containers/HasAccess'
-import ModalDownload from 'lib/containers/ModalDownload'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -168,88 +160,6 @@ describe('basic functionality', () => {
     })
   })
 
-  describe('Dropdown column menu works when opened from the icon or ellipsis dreopdown', () => {
-    it('renders with the correct props', async () => {
-      const { wrapper } = createShallowComponent(props)
-      expect(wrapper.find(ColumnSelection).props().headers).toEqual(
-        syn16787123Json.queryResult.queryResults.headers,
-      )
-    })
-    it('opens from primary icon', () => {
-      const { wrapper } = createShallowComponent(props)
-      const columnSelection = wrapper.find(ColumnSelection)
-      expect(columnSelection.props().show).toEqual(false)
-      // click the dropdown menu open
-      act(() => {
-        columnSelection.find('button').simulate('click')
-      })
-      // see that the column selection is now open
-      expect(wrapper.update().find(ColumnSelection).props().show).toEqual(true)
-    })
-    it('opens from clicking the ellipsis dropdown menu', () => {
-      const { wrapper } = createShallowComponent(props)
-      const columnSelection = wrapper.find(ColumnSelection)
-      expect(columnSelection.props().show).toEqual(false)
-      const ellipsisDropdown = wrapper.find(EllipsisDropdown)
-      // click the dropdown menu open
-      act(() => {
-        ellipsisDropdown.find('button').simulate('click')
-      })
-      // click the column selection button
-      act(() => {
-        ellipsisDropdown.update().find('a').at(1).simulate('click')
-      })
-      // see that the column selection is now open
-      expect(wrapper.update().find(ColumnSelection).props().show).toEqual(true)
-    })
-  })
-  describe('Expand modal opens from ExpandTable and the EllipsisDropdown', () => {
-    it('opens when clicking the expand icon', () => {
-      const { wrapper } = createShallowComponent(props)
-      // No modal to start
-      expect(wrapper.find(Modal)).toHaveLength(0)
-      const expandTable = wrapper.find(ExpandTable)
-      act(() => {
-        expandTable.find('button').simulate('click')
-      })
-      // Modal is open now
-      expect(wrapper.update().find(Modal)).toHaveLength(1)
-    })
-    it('opens when clicking the ellipsis dropdown menu', () => {
-      const { wrapper } = createShallowComponent(props)
-      // No modal to start
-      expect(wrapper.find(Modal)).toHaveLength(0)
-      const ellipsisDropdown = wrapper.find(EllipsisDropdown)
-      // click the dropdown menu open
-      act(() => {
-        ellipsisDropdown.find('button').simulate('click')
-      })
-      // click the full screen button
-      act(() => {
-        ellipsisDropdown.update().find('a').at(2).simulate('click')
-      })
-      // Modal is open now
-      expect(wrapper.update().find(Modal)).toHaveLength(1)
-    })
-  })
-  describe('Export table works', () => {
-    it('works', () => {
-      const { wrapper } = createShallowComponent(props)
-      // No modal to start
-      expect(wrapper.find(ModalDownload)).toHaveLength(0)
-      const ellipsisDropdown = wrapper.find(EllipsisDropdown)
-      // click the dropdown menu open
-      act(() => {
-        ellipsisDropdown.find('button').simulate('click')
-      })
-      // click the downlaod table only button
-      act(() => {
-        ellipsisDropdown.update().find('a').at(0).simulate('click')
-      })
-      // Modal is open now
-      expect(wrapper.update().find(ModalDownload)).toHaveLength(1)
-    })
-  })
   describe('PORTALS-527: aggregate query support (show underlying data)', () => {
     it('sql parsing test', async () => {
       const { instance } = createShallowComponent(props)
