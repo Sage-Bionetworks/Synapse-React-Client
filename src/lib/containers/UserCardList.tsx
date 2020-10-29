@@ -107,7 +107,7 @@ export default class UserCardList extends React.Component<
     const fauxUserProfilesList = data && this.manuallyExtractData(data)
     let fauxUserProfileIndex = 0
     return (
-      <div className="SRC-card-grid-row SRC-adjust-for-bootstrap-margin">
+      <div className="SRC-card-grid-row">
         {// we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
         list.map(ownerId => {
           const userProfile = userProfileMap[ownerId]
