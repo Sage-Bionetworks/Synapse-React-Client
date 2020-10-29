@@ -1,6 +1,5 @@
-//TODO: not quite sure where these colors are stored yet so I will list them as variables here for now
-$synapse-gray: #ababac;
 $green: #35bf7d;
+
 .evaluation-round-editor {
   font-size: 1rem;
 
@@ -27,16 +26,16 @@ $green: #35bf7d;
         color: $green;
       }
       span {
-        color: $synapse-gray;
+        color: $gray-deemphasized;
       }
     }
     .status-not-yet-started {
-      color: $synapse-gray;
+      color: $gray-deemphasized;
     }
   }
 
   label {
-    color: $synapse-gray;
+    color: $gray-deemphasized;
     font-weight: normal;
     font-size: 1rem;
   }

@@ -41,7 +41,6 @@ export type EvaluationRoundEditorProps = {
 const disallowCalendarDateBefore = (date: Moment) => (currentDate: Moment) =>
   currentDate.isSameOrAfter(date)
 
-//TODO: maybe use flexbox instead of bootstrap grid
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
   sessionToken,
   evaluationRoundInput,

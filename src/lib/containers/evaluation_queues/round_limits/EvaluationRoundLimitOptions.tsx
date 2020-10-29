@@ -27,7 +27,6 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
 }) => {
   return (
     <React.Fragment>
-      {/*TODO: use single caret instead of double caret for custom-select*/}
       <FormGroup className="limit-type">
         <label>Limit Type</label>
         <FormControl

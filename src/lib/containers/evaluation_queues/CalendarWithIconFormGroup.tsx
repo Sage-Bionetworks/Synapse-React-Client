@@ -23,7 +23,6 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
 }) => {
   return (
     <Form.Group className="calendar-with-icon-form-group">
-      {/*TODO: color synapse gray??*/}
       {label && <label>{label}</label>}
       <InputGroup>
         <InputGroup.Prepend>

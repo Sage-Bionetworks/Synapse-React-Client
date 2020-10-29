@@ -59,7 +59,6 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
     <div className="advanced-limits-grid">
       {limitInputs.map((limit, index) => {
         return (
-          //TODO: using type as key has weird change behavior and using using index as key cause page refresh upon removing from the top of the list ( causes index change)
           <React.Fragment key={limit.type}>
             <EvaluationRoundLimitOptions
               limitInput={limit}
@@ -75,7 +74,6 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
             {/*if last element*/}
             {index === limitInputs.length - 1 &&
               limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
-                // todo: use add icon
                 <button onClick={addNewLimit} className="add-button">
                   <IconPlusSquareFilled className="SRC-icon-fill" />
                 </button>
