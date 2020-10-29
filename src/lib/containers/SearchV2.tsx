@@ -296,6 +296,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                           value={name}
                           checked={isSelected}
                           onClick={() => {
+                            this.searchFormRef?.current?.querySelector('input')?.focus()
                             this.setState({
                               columnName: name,
                             })
