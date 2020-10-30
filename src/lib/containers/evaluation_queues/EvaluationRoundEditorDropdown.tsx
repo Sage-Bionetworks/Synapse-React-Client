@@ -14,10 +14,10 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<EvaluationRo
 }) => {
   return (
     <>
-      <Dropdown className="EvaluationRoundEditorDropdown float-right">
+      <Dropdown className="float-right">
         <Dropdown.Toggle
           variant="link"
-          className="dropdown-no-caret SRC-primary-text-color EvaluationRoundEditorDropdown"
+          className="dropdown-no-caret SRC-primary-text-color evaluation-round-editor-dropdown"
         >
           <FontAwesomeIcon icon={faEllipsisV} />
         </Dropdown.Toggle>

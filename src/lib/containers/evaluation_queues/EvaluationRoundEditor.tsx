@@ -6,6 +6,7 @@ import {
   Col,
   Form,
   FormControl,
+  FormGroup,
   InputGroup,
   Row,
 } from 'react-bootstrap'
@@ -180,7 +181,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               </Col>
             </Row>
 
-            <Row>
+            <Row className="mb-3">
               <Col>
                 <div className="round-status">{determineRoundStatus()}</div>
               </Col>
@@ -222,27 +223,32 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
 
             <Row>
               <Col>
-                <label>Total Submissions / Round</label>
-                <InputGroup>
-                  <FormControl
-                    value={totalSubmissionLimit}
-                    type="text"
-                    pattern="[0-9]*"
-                    onChange={event =>
-                      setTotalSubmissionLimit(event.target.value)
-                    }
-                  />
-                </InputGroup>
+                <FormGroup>
+                  <label>Total Submissions / Round</label>
+                  <InputGroup>
+                    <FormControl
+                      value={totalSubmissionLimit}
+                      type="text"
+                      pattern="[0-9]*"
+                      onChange={event =>
+                        setTotalSubmissionLimit(event.target.value)
+                      }
+                    />
+                  </InputGroup>
+                </FormGroup>
               </Col>
             </Row>
-
-            <Button
-              variant="link"
-              className="advanced-limits-link font-weight-bold SRC-primary-text-color"
-              onClick={() => setAdvancedMode(!advancedMode)}
-            >
-              Advanced Limits
-            </Button>
+            <Row className="mb-3">
+              <Col>
+                <Button
+                  variant="link"
+                  className="advanced-limits-link font-weight-bold SRC-primary-text-color"
+                  onClick={() => setAdvancedMode(!advancedMode)}
+                >
+                  Advanced Limits
+                </Button>
+              </Col>
+            </Row>
 
             {advancedMode && (
               <EvaluationRoundLimitOptionsList
@@ -261,10 +267,10 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               </Row>
             )}
 
-            <Row>
+            <Row className="mt-3">
               <Col>
                 <Button
-                  className="save-button float-right SRC-primary-background-color border-0"
+                  className="float-right SRC-primary-background-color border-0"
                   onClick={handleSave}
                 >
                   Save

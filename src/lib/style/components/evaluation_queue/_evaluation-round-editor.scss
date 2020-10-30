@@ -3,18 +3,19 @@ $green: #35bf7d;
 .evaluation-round-editor {
   font-size: 1rem;
 
+  .card-body {
+    // even though all sides have the same padding,
+    // the top looks like it is slightly less padded than the bottom
+    // so we bump the top padding from default of 1.25rem to 1.75rem
+    padding-top: 1.75rem;
+  }
+
   input {
     width: 100%;
   }
 
-  .input-group {
-    margin-bottom: 1rem !important;
-  }
-
   .alert {
-    //since the alert is located at the bottom instead of the top, we want margin-top instead of margin-bottom
     margin-bottom: 0;
-    margin-top: 1rem;
   }
 
   h5 {
@@ -22,8 +23,6 @@ $green: #35bf7d;
   }
 
   .round-status {
-    margin-bottom: 1rem;
-
     .status-in-progress {
       color: $green;
     }
@@ -46,7 +45,8 @@ $green: #35bf7d;
     font-size: 1rem;
   }
 
-  .EvaluationRoundEditorDropdown {
+  button.evaluation-round-editor-dropdown {
+    padding: 0;
     &:hover,
     &:focus {
       background-color: transparent;
@@ -58,7 +58,6 @@ $green: #35bf7d;
   }
 
   .advanced-limits-link {
-    margin-bottom: 1rem;
     padding: 0;
   }
 
@@ -68,7 +67,7 @@ $green: #35bf7d;
     // or else the alignment will slightly change once the add-button disappears upon reaching the max number of rows
     grid-template-columns: [limit-type] 32% [spacer] 3.5% [limit-input] 57% [remove-button] auto [add-button] 26px [end];
     grid-auto-rows: auto;
-    row-gap: 15px;
+    row-gap: 1rem;
 
     .form-group {
       // rely on grid's row gap instead of built-in bottom margin for spacing
@@ -98,9 +97,5 @@ $green: #35bf7d;
     .add-button {
       grid-column-start: add-button;
     }
-  }
-
-  .save-button {
-    margin-top: 0.5rem;
   }
 }
