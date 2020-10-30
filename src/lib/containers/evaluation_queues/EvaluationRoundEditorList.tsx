@@ -34,8 +34,8 @@ const fetchEvaluationList = (
       evaluationId,
       { nextPageToken: nextPageToken },
       sessionToken,
-      // eslint-disable-next-line no-loop-func
     )
+      // eslint-disable-next-line no-loop-func
       .then((response: EvaluationRoundListResponse) => {
         nextPageToken = response.nextPageToken
         const convertedToInput: EvaluationRoundInput[] = response.page.map(
@@ -72,6 +72,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
         appendToEvaluationRoundInputList,
         setError,
       ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
 

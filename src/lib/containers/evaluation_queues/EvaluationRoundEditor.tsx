@@ -236,12 +236,13 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               </Col>
             </Row>
 
-            <a
+            <Button
+              variant="link"
               className="advanced-limits-link font-weight-bold SRC-primary-text-color"
               onClick={() => setAdvancedMode(!advancedMode)}
             >
               Advanced Limits
-            </a>
+            </Button>
 
             {advancedMode && (
               <EvaluationRoundLimitOptionsList
