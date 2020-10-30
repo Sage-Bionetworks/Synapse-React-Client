@@ -1,0 +1,14 @@
+//overrides to bootstrap 4 that are directly applied to Bootstrap 4 class names
+.bootstrap-4-backport {
+  //overrides
+  .custom-select {
+    //TODO: replace double caret
+  }
+
+  .alert {
+    & > p,
+    & > ul {
+      margin-bottom: 0;
+    }
+  }
+}

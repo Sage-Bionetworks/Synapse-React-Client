@@ -1,19 +1,4 @@
 // We currently use Bootstrap 3 CSS but accidentally ended up using react-bootstrap 1.x.x, which was designed for Bootstrap 4
 // In an effort to facilitate eventual migration towards Bootstrap 4, we backport certain styling that are new or changed in Bootstrap 4
 // Any component with the class name "bootstrap-4-backport" will have bootstrap4 styles
-.bootstrap-4-backport {
-  @import 'node_modules/bootstrap/scss/bootstrap';
-  //overrides/ utilities
-
-  .dropdown-no-caret {
-    // https://stackoverflow.com/a/50550069
-    &::after,
-    &::before {
-      display: none;
-    }
-  }
-
-  .custom-select {
-    //TODO: replace double caret
-  }
-}
+@import './base-import', './overrides', './custom-classes';

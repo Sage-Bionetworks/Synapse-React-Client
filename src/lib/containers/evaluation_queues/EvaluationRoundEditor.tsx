@@ -25,8 +25,10 @@ import {
   updateEvaluationRound,
   createEvaluationRound,
   deleteEvaluationRound,
+  SynapseClientError,
 } from '../../utils/SynapseClient'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
+import { Error } from '../Error'
 
 export type EvaluationRoundEditorProps = {
   sessionToken: string
@@ -48,6 +50,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
   onDelete,
   utc,
 }) => {
+  const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [startDate, setStartDate] = useState<string | Moment>(
     moment(evaluationRoundInput.roundStart),
   )
@@ -103,15 +106,16 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
       : createEvaluationRound(evaluationRound, sessionToken)
 
     promise
-      //TODO: error handling
       .then(createdOrUpdatedRound => {
         const newInput = convertEvaluationRoundToInput(
           createdOrUpdatedRound,
           evaluationRoundInput.reactListKey,
         )
+        //clear out previous error if any
+        setError(undefined)
         onSave(newInput)
       })
-      .catch(error => alert(error.reason))
+      .catch(error => setError(error))
   }
 
   const handleDelete = () => {
@@ -122,7 +126,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
         sessionToken,
       )
         .then(onDelete)
-        .catch(error => alert(error.reason))
+        .catch(error => setError(error))
     } else {
       onDelete()
     }
@@ -246,6 +250,14 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
                 handleDeleteLimit={handleAdvancedLimitsRemove}
                 onAddNewLimit={addAdvancedLimit}
               />
+            )}
+
+            {error && (
+              <Row className="my-1">
+                <Col>
+                  <Error error={error} token={sessionToken} />
+                </Col>
+              </Row>
             )}
 
             <Row>

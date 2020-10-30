@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useListState } from '../../utils/hooks/useListState'
 import { EvaluationRoundEditor } from './EvaluationRoundEditor'
 import { Button } from 'react-bootstrap'
@@ -6,9 +6,13 @@ import {
   convertEvaluationRoundToInput,
   EvaluationRoundInput,
 } from './input_models/models'
-import { getEvaluationRoundsList } from '../../utils/SynapseClient'
+import {
+  getEvaluationRoundsList,
+  SynapseClientError,
+} from '../../utils/SynapseClient'
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
+import { Error } from '../Error'
 
 export type EvaluationRoundEditorListProps = {
   //session token to make authenticated calls
@@ -22,6 +26,7 @@ const fetchEvaluationList = (
   evaluationId: string,
   sessionToken: string,
   appendToListCallback: (...items: EvaluationRoundInput[]) => void,
+  errorHandleCallback: (error: string | SynapseClientError | undefined) => void,
 ): void => {
   let nextPageToken: string | undefined = undefined
   do {
@@ -40,7 +45,7 @@ const fetchEvaluationList = (
       })
       //TODO: error handling
       .catch(error => {
-        alert(error.reason)
+        errorHandleCallback(error.reason)
       })
   } while (nextPageToken)
 }
@@ -49,6 +54,8 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   evaluationId,
   utc,
 }) => {
+  const [error, setError] = useState<string | SynapseClientError | undefined>()
+
   const {
     list: evaluationRoundInputList,
     appendToList: appendToEvaluationRoundInputList,
@@ -63,9 +70,14 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
         evaluationId,
         sessionToken,
         appendToEvaluationRoundInputList,
+        setError,
       ),
     [],
   )
+
+  if (error) {
+    return <Error error={error} token={sessionToken} />
+  }
 
   return (
     <div className="evaluation-round-editor-list bootstrap-4-backport">
