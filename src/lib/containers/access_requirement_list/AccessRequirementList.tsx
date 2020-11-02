@@ -303,6 +303,7 @@ export default function AccessRequirementList({
         animation={false}
         centered={true}
         scrollable={true}
+        size="lg"
       >
         {content}
       </ReactBootstrap.Modal>
