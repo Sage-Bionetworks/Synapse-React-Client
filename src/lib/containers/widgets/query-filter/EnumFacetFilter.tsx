@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
-import { faArrowLeft, faFilter } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FacetFilterHeader } from './FacetFilterHeader'
@@ -331,8 +331,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           idForToolTip="facetFilterTooltip"
           tooltipText="Filter by specific facet"
           key="facetFilterTooltip"
-          image={faFilter}
           darkTheme={true}
+          icon={"filter"}
         />
         <Dropdown.Menu>{content}</Dropdown.Menu>
       </Dropdown>

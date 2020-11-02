@@ -1,18 +1,3 @@
-import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCheck,
-  faColumns,
-  faDownload,
-  faCog,
-  faFilter,
-  faGlobeAmericas,
-  faSort,
-  faSortAmountDown,
-  faSortAmountUp,
-  faTimes,
-  faUsers,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
@@ -58,6 +43,7 @@ import {
 import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
+import { Icon } from '../row_renderers/utils'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -71,18 +57,7 @@ export const EMPTY_HEADER: EntityHeader = {
   modifiedBy: '',
   modifiedOn: '',
 }
-// Add all icons to the library so you can use it in your page
-library.add(faColumns)
-library.add(faSort)
-library.add(faSortAmountUp)
-library.add(faSortAmountDown)
-library.add(faCheck)
-library.add(faTimes)
-library.add(faFilter)
-library.add(faCog)
-library.add(faDownload)
-library.add(faUsers)
-library.add(faGlobeAmericas)
+
 // Hold constants for next and previous button actions
 const NEXT = 'NEXT'
 const PREVIOUS = 'PREVIOUS'
@@ -910,8 +885,8 @@ export default class SynapseTable extends React.Component<
             ? 'SRC-primary-background-color SRC-anchor-light'
             : ''
           const isSelectedIconClass = isSelected
-            ? 'SRC-selected-table-icon'
-            : 'SRC-primary-text-color'
+            ? 'SRC-selected-table-icon tool-icon'
+            : 'SRC-primary-text-color tool-icon'
           const sortSpanBackgoundClass = `SRC-tableHead SRC-hand-cursor SRC-sortPadding SRC-primary-background-color-hover  ${isSelectedSpanClass}`
           const displayColumnName: string | undefined = unCamelCase(
             column.name,
@@ -946,10 +921,7 @@ export default class SynapseTable extends React.Component<
                         name: column.name,
                       })}
                     >
-                      <FontAwesomeIcon
-                        className={`SRC-primary-background-color-hover  ${isSelectedIconClass}`}
-                        icon={ICON_STATE[columnIndex] as IconProp}
-                      />
+                      <Icon type={ICON_STATE[columnIndex]} cssClass={isSelectedIconClass}></Icon>
                     </span>
                   )}
                 </div>
