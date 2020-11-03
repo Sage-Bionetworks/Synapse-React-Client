@@ -22,6 +22,11 @@
 }
 
 .SRC-accessTokenCardList {
-  margin: auto;
+  margin: 20px auto;
   max-width: 800px;
+}
+
+.SRC-noAccessTokensMessage {
+  margin: 40px;
+  text-align: center;
 }

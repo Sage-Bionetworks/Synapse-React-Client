@@ -49,6 +49,11 @@ export const AccessTokenCardList: React.FunctionComponent<AccessTokenCardListPro
 
   return (
     <div>
+      {!isLoading && tokenRecords.length === 0 && (
+        <div className="SRC-noAccessTokensMessage SRC-text-title">
+          You currently have no personal access tokens.
+        </div>
+      )}
       <div className="SRC-accessTokenCardList">
         {tokenRecords.map(accessToken => {
           return (
@@ -67,7 +72,7 @@ export const AccessTokenCardList: React.FunctionComponent<AccessTokenCardListPro
         {isLoading && loadingScreen}
         {!isLoading && nextPageToken && !showErrorMessage && (
           <button
-            className="btn btn-primary SRC-whiteText"
+            className="btn btn-primary"
             style={{ float: 'right', margin: '10px' }}
             onClick={() => setLoadNextPage(true)}
           >
