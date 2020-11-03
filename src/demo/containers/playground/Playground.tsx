@@ -179,7 +179,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/NewsFeedDemo`}
-        component={() => <NewsFeedDemo token={token}/>}
+        component={() => <NewsFeedDemo token={token} />}
       />
       <Route
         exact={true}
@@ -310,7 +310,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/PersonalAccessTokensDemo`}
-        component={PersonalAccessTokensDemo}
+        component={() => <PersonalAccessTokensDemo token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

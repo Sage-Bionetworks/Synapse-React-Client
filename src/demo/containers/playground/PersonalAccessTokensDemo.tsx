@@ -47,30 +47,28 @@ export const PersonalAccessTokensDemo: React.FunctionComponent<PersonalAccessTok
   token,
 }: PersonalAccessTokenDemoProps) => {
   return (
-    <React.Fragment>
-      <div style={{ marginLeft: '15px', marginRight: '15px' }}>
-        <hr></hr>
-        <h1>Cards</h1>
-        <div style={{ maxWidth: '800px', margin: 'auto' }}>
-          {[activeAccessToken, expiredAccessToken].map(token => {
-            return (
-              <AccessTokenCard
-                key={token.id}
-                accessToken={token}
-                onDelete={() => {}}
-              ></AccessTokenCard>
-            )
-          })}
-        </div>
-        <hr></hr>
-        <h1>Page</h1>
-        <AccessTokenPage
-          title="Personal Access Tokens"
-          body="Create and manage tokens that can be used to access your Synapse
-          account programmatically."
-          token={token}
-        ></AccessTokenPage>
+    <div style={{ marginLeft: '15px', marginRight: '15px' }}>
+      <hr></hr>
+      <h1>Cards</h1>
+      <div style={{ maxWidth: '800px', margin: 'auto' }}>
+        {[activeAccessToken, expiredAccessToken].map(token => {
+          return (
+            <AccessTokenCard
+              key={token.id}
+              accessToken={token}
+              onDelete={() => {}}
+            ></AccessTokenCard>
+          )
+        })}
       </div>
-    </React.Fragment>
+      <hr></hr>
+      <h1>Page</h1>
+      <AccessTokenPage
+        title="Personal Access Tokens"
+        body="Create and manage tokens that can be used to access your Synapse
+          account programmatically."
+        token={token}
+      ></AccessTokenPage>
+    </div>
   )
 }
