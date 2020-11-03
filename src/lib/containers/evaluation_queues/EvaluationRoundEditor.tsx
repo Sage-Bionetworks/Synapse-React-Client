@@ -1,5 +1,5 @@
 import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   Button,
   Card,
@@ -44,6 +44,33 @@ export type EvaluationRoundEditorProps = {
 const disallowCalendarDateBefore = (date: Moment) => (currentDate: Moment) =>
   currentDate.isSameOrAfter(date)
 
+const determineRoundStatus = (evaluationRoundInput: EvaluationRoundInput) => {
+  const now = moment()
+  // based off of start/end datetime from props so that users making
+  // unsaved changes to the start/end dates do not change the status
+  if (now.isSameOrAfter(evaluationRoundInput.roundStart)) {
+    if (now.isBefore(evaluationRoundInput.roundEnd)) {
+      return (
+        <div className="status-in-progress">
+          <FontAwesomeIcon icon={faSyncAlt} /> <span>IN PROGRESS</span>
+        </div>
+      )
+    } else {
+      return (
+        <div className="status-completed">
+          <FontAwesomeIcon icon={faClipboardCheck} /> <span>COMPLETED</span>
+        </div>
+      )
+    }
+  } else {
+    return (
+      <div className="status-not-yet-started">
+        <span>NOT YET STARTED</span>
+      </div>
+    )
+  }
+}
+
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
   sessionToken,
   evaluationRoundInput,
@@ -67,10 +94,29 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
 
   const {
     list: advancedLimits,
-    handleListRemove: handleAdvancedLimitsRemove,
+    handleListRemove,
     handleListChange: handleAdvancedLimitsChange,
     appendToList: addAdvancedLimit,
   } = useListState<EvaluationRoundLimitInput>(evaluationRoundInput.otherLimits)
+
+  // if we remove the last advanced limit, hide the advanced limits
+  const handleAdvancedLimitsRemove = useCallback(
+    (index: number) => {
+      const generatedDeleteFromListFunc = handleListRemove(index)
+      return () => {
+        //we are deleting the last advanced limit
+
+        generatedDeleteFromListFunc()
+        if (advancedLimits.length === 1) {
+          // NOTE: we dont check for length == 0 because we don't modify the original list,
+          // instead the generated function will setState() with a NEW empty list
+          // so the original list we reference still has 1 element
+          setAdvancedMode(false)
+        }
+      }
+    },
+    [handleListRemove, advancedLimits],
+  )
 
   const convertInputsToEvaluationRound = (): EvaluationRound => {
     const limits: EvaluationRoundLimit[] = []
@@ -133,32 +179,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
     }
   }
 
-  const determineRoundStatus = () => {
-    const now = moment()
-    // based off of start/end datetime from props so that users making
-    // unsaved changes to the start/end dates do not change the status
-    if (now.isSameOrAfter(evaluationRoundInput.roundStart)) {
-      if (now.isBefore(evaluationRoundInput.roundEnd)) {
-        return (
-          <div className="status-in-progress">
-            <FontAwesomeIcon icon={faSyncAlt} /> <span>IN PROGRESS</span>
-          </div>
-        )
-      } else {
-        return (
-          <div className="status-completed">
-            <FontAwesomeIcon icon={faClipboardCheck} /> <span>COMPLETED</span>
-          </div>
-        )
-      }
-    } else {
-      return (
-        <div className="status-not-yet-started">
-          <span>NOT YET STARTED</span>{' '}
-        </div>
-      )
-    }
-  }
   const disallowDatesBeforeNow = disallowCalendarDateBefore(
     moment().startOf('day'),
   )
@@ -183,7 +203,9 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
 
             <Row className="mb-3">
               <Col>
-                <div className="round-status">{determineRoundStatus()}</div>
+                <div className="round-status">
+                  {determineRoundStatus(evaluationRoundInput)}
+                </div>
               </Col>
             </Row>
             <Row>
@@ -260,7 +282,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             )}
 
             {error && (
-              <Row className="my-1">
+              <Row className="my-3">
                 <Col>
                   <Error error={error} token={sessionToken} />
                 </Col>

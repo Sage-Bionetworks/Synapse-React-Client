@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import {
   EvaluationRoundLimitOptions,
   LIMIT_TYPE_DISPLAY_NAME,
@@ -7,6 +7,7 @@ import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation
 import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
 import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
 import { EvaluationRoundLimitInput } from '../input_models/models'
+import { Button } from 'react-bootstrap'
 
 const AVAILABLE_LIMIT_TYPES = Object.keys(LIMIT_TYPE_DISPLAY_NAME)
 
@@ -39,21 +40,20 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
   const selectedTypes: Set<EvaluationRoundLimitType> = new Set(
     limitInputs.map(limit => limit.type),
   )
-  console.log(selectedTypes)
 
-  const addNewLimit = () => {
+  const addNewLimit = useCallback(() => {
     onAddNewLimit({
       type: selectUnusedType(selectedTypes),
       maxSubmissionString: '',
     })
-  }
+  }, [onAddNewLimit, selectedTypes])
 
   //display some input even if no limits currently exist
   useEffect(() => {
     if (limitInputs.length === 0) {
       addNewLimit()
     }
-  })
+  }, [limitInputs, addNewLimit])
 
   return (
     <div className="advanced-limits-grid">
@@ -65,18 +65,25 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
               allSelectedTypes={selectedTypes}
               onChange={handleChange(index)}
             />
-            <button
+            <Button
+              // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
+              variant=""
               className="remove-button"
               onClick={handleDeleteLimit(index)}
             >
               <IconTimes className="SRC-icon-fill" />
-            </button>
+            </Button>
             {/*if last element*/}
             {index === limitInputs.length - 1 &&
               limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
-                <button onClick={addNewLimit} className="add-button">
+                <Button
+                  // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
+                  variant=""
+                  onClick={addNewLimit}
+                  className="add-button"
+                >
                   <IconPlusSquareFilled className="SRC-icon-fill" />
-                </button>
+                </Button>
               )}
           </React.Fragment>
         )

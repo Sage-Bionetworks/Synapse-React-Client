@@ -21,7 +21,10 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<EvaluationRo
         >
           <FontAwesomeIcon icon={faEllipsisV} />
         </Dropdown.Toggle>
-        <Dropdown.Menu alignRight={true}>
+        <Dropdown.Menu
+          alignRight={true}
+          className="SRC-primary-color-hover-dropdown"
+        >
           <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>
           <Dropdown.Item onClick={onDelete}>Delete</Dropdown.Item>
         </Dropdown.Menu>

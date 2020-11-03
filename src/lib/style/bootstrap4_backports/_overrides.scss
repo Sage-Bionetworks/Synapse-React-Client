@@ -11,4 +11,9 @@
       margin-bottom: 0;
     }
   }
+
+  // disabled input boxes should be "flat"
+  input:disabled {
+    box-shadow: none;
+  }
 }

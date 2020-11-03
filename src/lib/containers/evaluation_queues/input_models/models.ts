@@ -6,8 +6,8 @@ import {
 import shortid from 'shortid'
 
 export type EvaluationRoundLimitInput = {
-  type: EvaluationRoundLimitType
-  maxSubmissionString: string
+  readonly type: EvaluationRoundLimitType
+  readonly maxSubmissionString: string
 }
 export type EvaluationRoundInput = {
   // must be present
@@ -17,16 +17,16 @@ export type EvaluationRoundInput = {
   readonly reactListKey: string
 
   //may not exist if newly crated
-  id?: string
-  etag?: string
+  readonly id?: string
+  readonly etag?: string
 
   //may be empty string, but not undefined
-  roundStart: string
-  roundEnd: string
-  totalSubmissionLimit: string
+  readonly roundStart: string
+  readonly roundEnd: string
+  readonly totalSubmissionLimit: string
 
   //may be an empty list, but not undefined
-  otherLimits: EvaluationRoundLimitInput[]
+  readonly otherLimits: EvaluationRoundLimitInput[]
 }
 
 export const convertEvaluationRoundToInput = (
@@ -34,7 +34,7 @@ export const convertEvaluationRoundToInput = (
   reactListKey?: string,
 ): EvaluationRoundInput => {
   return {
-    reactListKey: reactListKey || shortid(),
+    reactListKey: reactListKey || shortid.generate(),
     evaluationId: evaluationRound.evaluationId,
     id: evaluationRound.id,
     etag: evaluationRound.etag,
