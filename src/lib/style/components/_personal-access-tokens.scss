@@ -1,0 +1,27 @@
+.SRC-personalAccessTokenCard {
+  // adapted from SRC-userCardMediumUp
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(221, 221, 223);
+  justify-content: space-between;
+  margin: 7px;
+  height: 110px;
+  width: 100%;
+  width: -webkit-fill-available; // for chrome
+  width: -moz-available; // for firefox
+  padding-left: 25px;
+
+  .SRC-scopeName {
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+  }
+
+  .SRC-scopeName:hover {
+    text-decoration: underline;
+  }
+}
+
+.SRC-accessTokenCardList {
+  margin: auto;
+  max-width: 800px;
+}
