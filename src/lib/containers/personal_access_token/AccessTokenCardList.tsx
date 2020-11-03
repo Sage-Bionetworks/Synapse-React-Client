@@ -6,7 +6,7 @@ import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
 
 export type AccessTokenCardListProps = {
-  token?: string
+  token: string
 }
 
 export const AccessTokenCardList: React.FunctionComponent<AccessTokenCardListProps> = ({
@@ -45,7 +45,7 @@ export const AccessTokenCardList: React.FunctionComponent<AccessTokenCardListPro
           setShowErrorMessage(true)
         })
     }
-  }, [loadNextPage, token])
+  }, [loadNextPage, token, nextPageToken])
 
   return (
     <div>

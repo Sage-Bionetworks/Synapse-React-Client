@@ -17,7 +17,7 @@ const INVALID_INPUT_MSG =
 export type CreateAccessTokenModalProps = {
   onClose: (...args: any[]) => void
   onCreate: (...args: any[]) => void
-  token?: string
+  token: string
 }
 
 export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenModalProps> = ({
