@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import { UserProfile } from '../../../utils/synapseTypes'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
-import { faArrowLeft, faFilter } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FacetFilterHeader } from './FacetFilterHeader'
@@ -27,6 +27,7 @@ export type EnumFacetFilterProps = {
   onClear: Function
   facetAliases: {} | undefined
   containerAs?: 'Collapsible' | 'Dropdown'
+  collapsed?: boolean
 }
 
 function valueToId(value: string): string {
@@ -85,9 +86,10 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   onChange,
   facetAliases,
   containerAs = 'Collapsible',
+  collapsed = false,
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
@@ -329,8 +331,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           idForToolTip="facetFilterTooltip"
           tooltipText="Filter by specific facet"
           key="facetFilterTooltip"
-          image={faFilter}
           darkTheme={true}
+          icon={"filter"}
         />
         <Dropdown.Menu>{content}</Dropdown.Menu>
       </Dropdown>

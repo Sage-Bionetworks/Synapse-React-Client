@@ -38,7 +38,7 @@ export default function AcceptedRequirements({
   wikiPage,
   accessRequirement,
   accessRequirementStatus,
-  showButton,
+  showButton = true,
   entityId,
   onHide,
 }: AcceptedRequirementsProps) {
@@ -142,8 +142,7 @@ export default function AcceptedRequirements({
 
   const isManagedActAr =
     accessRequirement.concreteType ===
-    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
-
+    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement  
   return (
     <>
       <div className="requirement-container">

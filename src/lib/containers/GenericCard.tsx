@@ -161,10 +161,11 @@ export const renderLabel = (args: {
     if (strList) {
       return strList.map((el, index) => {
         return (
-          <>
+          <span>
             <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-            {index < strList.length - 1 && ','}
-          </>
+            {/* \u00a0 is a nbsp; */}
+            {index < strList.length - 1 && ",\u00a0\u00a0"}
+          </span>
         )
       })
     } else {

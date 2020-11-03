@@ -88,6 +88,43 @@ svg.SRC-hoverBox {
   border: 1px solid #dddddd !important;
 }
 
+.table {
+  .SRC-primary-text-color {
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+    svg, path {
+      fill: $primary-action-color;
+    }
+  }
+  .SRC-selected-table-icon {
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+    svg, path {
+      fill: #fff;
+    }
+  }
+  .dropdown button.btn {
+    margin: 0 1px;
+    border: 0;
+  }
+  .SRC-sortPadding {
+    padding: 3px;
+    margin: 0 1px;
+  }
+  .tool-icon {
+    display: flex;
+  }
+  .SRC-primary-background-color-hover:hover {
+    svg, path {
+      fill: #fff;
+    }
+  }
+}
+
 .SRC-facets {
   padding: 4px 12px;
   border-radius: 20px;
@@ -685,11 +722,6 @@ div.SRC-userImg {
   box-sizing: border-box;
 }
 
-.SRC-adjust-for-bootstrap-margin {
-  margin-left: -15px;
-  margin-right: -15px;
-}
-
 .row.no-gutter > [class*='col-'] {
   padding-right: 0;
   padding-left: 0;
@@ -1093,9 +1125,21 @@ hr ~ .SRC-wrapper {
     .ElementWithTooltip {
       flex: 1;
       flex-grow: 1;
-      width: 30px;
-      min-height: 30px;
-      height: fit-content;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      margin: 0;
+      border-radius: 0;
+      &.icon-vertical-dots {
+        width: 24px
+      }
+
+      svg {
+        color: #fff;
+      }
+      svg, path {
+        fill: #fff;
+      }
     }
   }
 }

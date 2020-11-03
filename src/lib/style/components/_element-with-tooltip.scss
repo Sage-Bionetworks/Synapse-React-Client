@@ -9,6 +9,18 @@
     svg {
       fill: $primary-action-color;
       color: $primary-action-color !important;
+      width: 18px;
+      height: 18px;
+
+      path {
+        fill: $primary-action-color;
+      }
+    }
+
+    &:hover {
+      svg, path {
+        fill: #fff;
+      }
     }
   }
 }
@@ -18,7 +30,17 @@
       svg {
         fill: $primary-action-color;
         color: white !important;
+
+        path {
+          fill: white;
+        }
       }
     }
+  }
+}
+
+button.ElementWithTooltip {
+  &:active:focus, &:focus {
+    outline: none;
   }
 }
