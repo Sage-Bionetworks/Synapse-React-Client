@@ -1,10 +1,6 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
 import IconCopy from '../../lib/assets/icons/IconCopy'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-
-library.add(faTimes)
 
 export type CopyToClipboardInputProps = {
   value: string
@@ -23,7 +19,7 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
   inputWidth,
 }: CopyToClipboardInputProps) => {
   const [showModal, setShowModal] = React.useState(false)
-  const htmlDivRef = React.createRef<HTMLDivElement>()
+  const ref = React.createRef<HTMLDivElement>()
 
   const copyToClipboard = (value: string) => (event: React.SyntheticEvent) => {
     event.preventDefault()
@@ -34,10 +30,10 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
     el.setAttribute('readonly', '')
     el.style.position = 'absolute'
     el.style.left = '-9999px'
-    htmlDivRef.current!.appendChild(el)
+    ref.current!.appendChild(el)
     el.select()
     document.execCommand('copy')
-    htmlDivRef.current!.removeChild(el)
+    ref.current!.removeChild(el)
     // show modal and hide after 4 seconds, the timing is per Material Design
     setShowModal(true)
     // hide after 4 seconds
@@ -56,29 +52,28 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
             timeout={{ enter: 500, exit: 300 }}
           >
             <div key={value} className="SRC-modal">
-              Token copied to clipboard
+              Successfully copied to clipboard
             </div>
           </CSSTransition>
         )}
       </TransitionGroup>{' '}
-      <input
-        className="form-control SRC-marginBottomTop"
-        type="text"
-        style={{
-          display: 'inline',
-          width: inputWidth,
-          marginRight: '5px',
-        }}
-        value={value}
-        readOnly={true}
-        onClick={copyToClipboard(value)}
-      ></input>
-      <div
-        ref={htmlDivRef}
-        style={{ display: 'inline' }}
-        onClick={copyToClipboard(value)}
-      >
-        {IconCopy}
+      <div className="SRC-copyToClipboardInputContainer" ref={ref}>
+        <input
+          className="form-control SRC-marginBottomTop SRC-copyToClipboardInput"
+          type="text"
+          style={{
+            width: inputWidth,
+          }}
+          value={value}
+          readOnly={true}
+          onClick={copyToClipboard(value)}
+        ></input>
+        <button
+          className="btn btn-light SRC-copyToClipboardIcon"
+          onClick={copyToClipboard(value)}
+        >
+          {IconCopy}
+        </button>
       </div>
     </React.Fragment>
   )
