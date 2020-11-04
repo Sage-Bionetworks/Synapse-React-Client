@@ -65,6 +65,8 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
               allSelectedTypes={selectedTypes}
               onChange={handleChange(index)}
             />
+
+            {/*remove button for the EvaluationRoundLimitOptions*/}
             <Button
               // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
               variant=""
@@ -73,18 +75,23 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
             >
               <IconTimes className="SRC-icon-fill" />
             </Button>
-            {/*if last element*/}
-            {index === limitInputs.length - 1 &&
-              limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
-                <Button
-                  // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
-                  variant=""
-                  onClick={addNewLimit}
-                  className="add-button"
-                >
-                  <IconPlusSquareFilled className="SRC-icon-fill" />
-                </Button>
-              )}
+
+            {/*conditionally create a "add" button*/}
+            {
+              // if last element
+              index === limitInputs.length - 1 &&
+                // if the are unused limit types
+                limitInputs.length < AVAILABLE_LIMIT_TYPES.length && (
+                  <Button
+                    // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
+                    variant=""
+                    onClick={addNewLimit}
+                    className="add-button"
+                  >
+                    <IconPlusSquareFilled className="SRC-icon-fill" />
+                  </Button>
+                )
+            }
           </React.Fragment>
         )
       })}

@@ -1,9 +1,13 @@
 import { useState } from 'react'
 
 export interface ListStateReturn<T> {
+  // initial state of the list
   list: T[]
+  // generates a function to update a specific index of the list
   handleListChange: (index: number) => (changedValue: T) => void
+  // generates a function to remove a index from the list
   handleListRemove: (index: number) => () => void
+  // generates a function to append to the end of the list
   appendToList: (newItem: T) => void
 }
 /**
@@ -25,7 +29,10 @@ export interface ListStateReturn<T> {
  *  prop1,
  *  prop2,
  * }) => {
- *    const {myList, handleMyListChange, handleMyListPush, handleMyListRemove} = useListState<string>(['asdf','qwerty'])
+ *    const {list: myList,
+ *           handleListChange: handleMyListChange,
+ *           handleListRemove: handleMyListPush,
+ *           appendToList: handleMyListRemove} = useListState<string>(['asdf','qwerty'])
  *
  *    return (
  *      <div>

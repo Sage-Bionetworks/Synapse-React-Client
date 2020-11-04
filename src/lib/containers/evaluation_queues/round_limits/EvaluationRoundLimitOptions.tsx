@@ -41,21 +41,19 @@ export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoun
           }}
         >
           {Object.entries(LIMIT_TYPE_DISPLAY_NAME).map(
-            ([displayLimitType, displayName]) => {
-              return (
-                <option
-                  key={displayLimitType}
-                  value={displayLimitType}
-                  disabled={
-                    allSelectedTypes.has(
-                      displayLimitType as EvaluationRoundLimitType,
-                    ) && displayLimitType !== limitInput.type
-                  }
-                >
-                  {displayName}
-                </option>
-              )
-            },
+            ([displayLimitType, displayName]) => (
+              <option
+                key={displayLimitType}
+                value={displayLimitType}
+                disabled={
+                  allSelectedTypes.has(
+                    displayLimitType as EvaluationRoundLimitType,
+                  ) && displayLimitType !== limitInput.type
+                }
+              >
+                {displayName}
+              </option>
+            ),
           )}
         </FormControl>
       </FormGroup>

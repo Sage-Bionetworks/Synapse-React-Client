@@ -13,7 +13,7 @@ import {
 import 'react-datetime/css/react-datetime.css'
 import moment, { Moment } from 'moment'
 import { CalendarWithIconFormGroup } from './CalendarWithIconFormGroup'
-import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitsList'
+import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
 import { faClipboardCheck, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useListState } from '../../utils/hooks/useListState'
@@ -40,7 +40,6 @@ export type EvaluationRoundEditorProps = {
   onSave: (evaluationRound: EvaluationRoundInput) => void
 }
 
-//unfortnuately the date time picker we use does not have types
 const disallowCalendarDateBefore = (date: Moment) => (currentDate: Moment) =>
   currentDate.isSameOrAfter(date)
 
