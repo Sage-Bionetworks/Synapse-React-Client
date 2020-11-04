@@ -91,19 +91,18 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             return (
               <span
                 className="SRC-primary-text-color SRC-primary-color-hover SRC-hand-cursor SRC-inlineFlex SRC-scopeName"
-                data-tip={scopeDescriptions[scope]}
+                data-tip={scopeDescriptions[scope].description}
                 key={scope}
               >
-                {scope}
+                {scopeDescriptions[scope].displayName}
               </span>
             )
           })}
         </p>
         <p className="SRC-eqHeightRow">
           <span>Last used {moment(accessToken.lastUsed).fromNow()}</span>
-          <span className={'SRC-deemphasized-text'}>
-            {' | '} Created {moment(accessToken.createdOn).fromNow()}
-          </span>
+          <span className={'SRC-deemphasized-text'}>{' | '}</span>
+          <span>Created {moment(accessToken.createdOn).fromNow()}</span>
         </p>
       </div>
       {/* Delete button */}

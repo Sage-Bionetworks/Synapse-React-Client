@@ -123,19 +123,19 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
               <div className="SRC-marginBottomTop">
                 <p className="SRC-boldText">Token Permissions</p>
                 <Checkbox
-                  label={`view (${scopeDescriptions.view})`}
+                  label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description})`}
                   id="view"
                   checked={viewAccess}
                   onChange={() => setViewAccess(!viewAccess)}
                 ></Checkbox>
                 <Checkbox
-                  label={`download (${scopeDescriptions.download})`}
+                  label={`${scopeDescriptions.download.displayName} (${scopeDescriptions.download.description})`}
                   id="download"
                   checked={downloadAccess}
                   onChange={() => setDownloadAccess(!downloadAccess)}
                 ></Checkbox>
                 <Checkbox
-                  label={`modify (${scopeDescriptions.modify})`}
+                  label={`${scopeDescriptions.modify.displayName} (${scopeDescriptions.modify.description})`}
                   id="modify"
                   checked={modifyAccess}
                   onChange={() => setModifyAccess(!modifyAccess)}
