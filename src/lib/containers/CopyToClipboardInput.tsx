@@ -21,7 +21,10 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
   const [showModal, setShowModal] = React.useState(false)
   const ref = React.createRef<HTMLDivElement>()
 
-  const copyToClipboard = (value: string) => (event: React.SyntheticEvent) => {
+  const copyToClipboard = (
+    ref: React.RefObject<HTMLElement>,
+    value: string,
+  ) => (event: React.SyntheticEvent) => {
     event.preventDefault()
     // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
     // this copies the email to the clipoard
@@ -66,11 +69,11 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
           }}
           value={value}
           readOnly={true}
-          onClick={copyToClipboard(value)}
+          onClick={copyToClipboard(ref, value)}
         ></input>
         <button
           className="btn btn-light SRC-copyToClipboardIcon"
-          onClick={copyToClipboard(value)}
+          onClick={copyToClipboard(ref, value)}
         >
           {IconCopy}
         </button>
