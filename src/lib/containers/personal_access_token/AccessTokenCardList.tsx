@@ -76,7 +76,7 @@ export const AccessTokenCardList: React.FunctionComponent<AccessTokenCardListPro
             style={{ float: 'right', margin: '10px' }}
             onClick={() => setLoadNextPage(true)}
           >
-            Load more
+            Load More
           </button>
         )}
       </div>
