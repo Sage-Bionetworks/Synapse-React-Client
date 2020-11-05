@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Button } from 'react-bootstrap'
 import { AccessTokenCardList } from './AccessTokenCardList'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
 
@@ -37,19 +38,18 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           onCreate={() => setRefreshList(true)}
         ></CreateAccessTokenModal>
       )}
-      <div style={{ display: 'flex' }}>
-        <div style={{ alignItems: 'flex-start', flexGrow: 1 }}>
+      <div className="SRC-accessTokenPageHeaderContainer">
+        <div className="SRC-accessTokenPageText">
           <h1>{title}</h1>
           {body}
         </div>
-        <div style={{ alignItems: 'flex-end', alignSelf: 'center' }}>
-          <button
+        <div className="SRC-accessTokenPageCreateButtonContainer">
+          <Button
+            variant="primary"
             onClick={() => setShowCreateTokenModal(true)}
-            className="btn btn-primary"
-            style={{ display: 'right', alignSelf: 'bottom' }}
           >
             Create New Token
-          </button>
+          </Button>
         </div>
       </div>
       {accessTokenCardList}

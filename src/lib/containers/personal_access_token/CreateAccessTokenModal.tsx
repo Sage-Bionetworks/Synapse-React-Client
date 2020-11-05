@@ -98,7 +98,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
               If needed, generate a new personal access token, and delete this
               one.
             </span>
-            <div style={{ textAlign: 'center' }}>
+            <div className="SRC-createdTokenCopyToClipboardContainer">
               <CopyToClipboardInput value={createdToken} inputWidth={'350px'} />
             </div>
             <p>
@@ -112,12 +112,11 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
               <div className="SRC-marginBottomTen">
                 <p className="SRC-boldText">Token Name</p>
                 <input
-                  className="form-control "
+                  className="form-control SRC-personalAccessTokenNameInput"
                   value={tokenName}
                   onChange={handleTokenNameChange}
                   type="text"
                   placeholder="e.g. Synapse command line access on my laptop"
-                  style={{ width: '325px' }}
                 ></input>
               </div>
               <div className="SRC-marginBottomTop">
@@ -150,12 +149,12 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
       </ModalBody>
       <Modal.Footer>
         {showCreatedToken ? (
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="default" onClick={onClose}>
             Close
           </Button>
         ) : (
           <React.Fragment>
-            <Button variant="secondary" onClick={onClose}>
+            <Button variant="default" onClick={onClose}>
               Cancel
             </Button>
             <Button variant={'primary'} onClick={onSubmit}>

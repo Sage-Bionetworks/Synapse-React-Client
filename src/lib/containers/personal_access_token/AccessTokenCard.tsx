@@ -106,10 +106,9 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         </p>
       </div>
       {/* Delete button */}
-      <div style={{ float: 'right', alignSelf: 'flex-start', margin: '10px' }}>
+      <div className="SRC-deleteAccessTokenButton">
         <Button
-          variant="light"
-          className="btn"
+          variant="default"
           aria-label="delete"
           onClick={async () => {
             if (isExpired) {

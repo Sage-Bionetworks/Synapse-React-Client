@@ -1,39 +1,12 @@
-import { mount, ReactWrapper } from 'enzyme'
+import { mount } from 'enzyme' // https://github.com/enzymejs/enzyme/issues/2086
 import * as React from 'react'
 import { act } from 'react-dom/test-utils'
-import {
-  AccessTokenCardList,
-  AccessTokenCardListProps,
-} from 'lib/containers/personal_access_token/AccessTokenCardList'
+import { AccessTokenCardList } from 'lib/containers/personal_access_token/AccessTokenCardList'
 import { AccessTokenCard } from 'lib/containers/personal_access_token/AccessTokenCard'
 import { AccessTokenRecordList } from 'lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
+import { resolveAllPending } from '__tests__/lib/testutils/EnzymeHelpers'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
-
-const createMountedComponent = (props: AccessTokenCardListProps) => {
-  const wrapper = mount<React.FunctionComponent<AccessTokenCardListProps>>(
-    <AccessTokenCardList {...props} />,
-  )
-
-  return { wrapper }
-}
-
-const resolveAllPending = async (
-  wrapper: ReactWrapper<
-    React.FunctionComponent<AccessTokenCardListProps>,
-    any,
-    React.Component<{}, {}, any>
-  >,
-) => {
-  await act(
-    async (): Promise<any> => {
-      await Promise.resolve(wrapper)
-      await new Promise(resolve => setImmediate(resolve))
-      wrapper.update()
-      return wrapper
-    },
-  )
-}
 
 const mockResultsFirstPage: AccessTokenRecordList = {
   results: [
@@ -95,7 +68,7 @@ describe('basic functionality', () => {
       .fn()
       .mockResolvedValueOnce(mockResultsFirstPage)
 
-    const { wrapper } = createMountedComponent(props)
+    const wrapper = mount(<AccessTokenCardList {...props} />)
     await resolveAllPending(wrapper)
 
     expect(wrapper.find(AccessTokenCard).length).toEqual(
@@ -111,14 +84,15 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    let { wrapper } = createMountedComponent(props)
+    let wrapper = mount(<AccessTokenCardList {...props} />)
     await resolveAllPending(wrapper)
 
     expect(wrapper.find('button').length).toEqual(2)
     // Click the 'load more' button
-    wrapper.find('button').at(1).simulate('click')
-    wrapper = wrapper.update()
-    await resolveAllPending(wrapper)
+    await act(async () => {
+      wrapper.find('button').at(1).simulate('click')
+      await resolveAllPending(wrapper)
+    })
 
     expect(wrapper.find(AccessTokenCard).length).toEqual(
       mockResultsFirstPage.results.length +
@@ -134,8 +108,9 @@ describe('basic functionality', () => {
       .fn()
       .mockRejectedValueOnce({ error: 'Unknown error occurred' })
 
-    let { wrapper } = createMountedComponent(props)
+    const wrapper = mount(<AccessTokenCardList {...props} />)
     await resolveAllPending(wrapper)
+
     expect(wrapper.find('Error').length).toEqual(1)
   })
 })

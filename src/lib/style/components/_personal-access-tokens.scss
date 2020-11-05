@@ -19,6 +19,34 @@
   .SRC-scopeName:hover {
     text-decoration: underline;
   }
+
+  .SRC-deleteAccessTokenButton {
+    float: right;
+    align-self: flex-start;
+    margin: 10px;
+  }
+}
+
+.SRC-accessTokenPageHeaderContainer {
+  display: flex;
+
+  .SRC-accessTokenPageText {
+    align-items: flex-start;
+    flex-grow: 1;
+  }
+
+  .SRC-accessTokenPageCreateButtonContainer {
+    align-items: flex-end;
+    align-self: center;
+  }
+}
+
+.SRC-personalAccessTokenNameInput {
+  width: 325px;
+}
+
+.SRC-createdTokenCopyToClipboardContainer {
+  text-align: center;
 }
 
 .SRC-accessTokenCardList {
@@ -29,4 +57,9 @@
 .SRC-noAccessTokensMessage {
   margin: 40px;
   text-align: center;
+}
+
+.SRC-loadMoreAccessTokensButton {
+  float: right;
+  margin: 10px;
 }

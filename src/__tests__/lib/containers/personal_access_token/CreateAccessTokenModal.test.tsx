@@ -1,10 +1,7 @@
-import { mount, ReactWrapper } from 'enzyme'
+import { shallow } from 'enzyme'
 import CopyToClipboardInput from 'lib/containers/CopyToClipboardInput'
 import { Error } from 'lib/containers/Error'
-import {
-  CreateAccessTokenModal,
-  CreateAccessTokenModalProps,
-} from 'lib/containers/personal_access_token/CreateAccessTokenModal'
+import { CreateAccessTokenModal } from 'lib/containers/personal_access_token/CreateAccessTokenModal'
 import { Checkbox } from 'lib/containers/widgets/Checkbox'
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
@@ -12,31 +9,6 @@ import { act } from 'react-dom/test-utils'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
-
-const createMountedComponent = (props: CreateAccessTokenModalProps) => {
-  const wrapper = mount<React.FunctionComponent<CreateAccessTokenModalProps>>(
-    <CreateAccessTokenModal {...props} />,
-  )
-
-  return { wrapper }
-}
-
-const resolveAllPending = async (
-  wrapper: ReactWrapper<
-    React.FunctionComponent<CreateAccessTokenModalProps>,
-    any,
-    React.Component<{}, {}, any>
-  >,
-) => {
-  await act(
-    async (): Promise<any> => {
-      await Promise.resolve(wrapper)
-      await new Promise(resolve => setImmediate(resolve))
-      wrapper.update()
-      return wrapper
-    },
-  )
-}
 
 const mockOnClose = jest.fn(() => null)
 const mockOnCreate = jest.fn(() => null)
@@ -58,8 +30,7 @@ describe('basic functionality', () => {
 
   it('displays the token after successful creation', async () => {
     const tokenName = 'Token Name'
-    const { wrapper } = createMountedComponent(props)
-    await resolveAllPending(wrapper)
+    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
 
     // Fill out the form
     await act(async () => {
@@ -76,7 +47,6 @@ describe('basic functionality', () => {
       await wrapper.find(Checkbox).at(2).prop('onChange')()
       await wrapper.find(Button).at(1).simulate('click')
     })
-    await resolveAllPending(wrapper)
 
     expect(mockOnCreate).toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).toHaveBeenCalled()
@@ -85,25 +55,20 @@ describe('basic functionality', () => {
       EXAMPLE_PAT,
     )
 
-    // Click away from the modal to close
-    await act(async () => {
-      await wrapper.find('div.modal-backdrop').simulate('click')
-    })
-    await resolveAllPending(wrapper)
+    // Close the modal using the 'Close' button
+    wrapper.find('Button').prop('onClick')()
 
     expect(mockOnClose).toHaveBeenCalled()
   })
 
   it('requires a token name and at least one permission before dispatching the request', async () => {
-    const { wrapper } = createMountedComponent(props)
-    await resolveAllPending(wrapper)
+    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
     expect(wrapper.find(Error).length).toBe(0)
 
     // Try to create with no name or permissions
     await act(async () => {
       await wrapper.find(Button).at(1).simulate('click')
     })
-    await resolveAllPending(wrapper)
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
     expect(wrapper.find(Error).length).toBe(1)
@@ -120,7 +85,6 @@ describe('basic functionality', () => {
         })
       await wrapper.find(Button).at(1).simulate('click')
     })
-    await resolveAllPending(wrapper)
 
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
@@ -139,7 +103,6 @@ describe('basic functionality', () => {
       await wrapper.find(Checkbox).at(0).prop('onChange')()
       await wrapper.find(Button).at(1).simulate('click')
     })
-    await resolveAllPending(wrapper)
 
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
@@ -147,8 +110,7 @@ describe('basic functionality', () => {
   })
 
   it('gracefully handles an error from the backend', async () => {
-    const { wrapper } = createMountedComponent(props)
-    await resolveAllPending(wrapper)
+    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
 
     const errorReason = 'Malformed input'
     SynapseClient.createPersonalAccessToken = jest.fn().mockRejectedValue({
@@ -169,21 +131,28 @@ describe('basic functionality', () => {
       await wrapper.find(Checkbox).at(0).prop('onChange')()
       await wrapper.find(Button).at(1).simulate('click')
     })
-    await resolveAllPending(wrapper)
 
     expect(wrapper.find(Error).length).toBe(1)
     expect(wrapper.find(Error).props().error).toEqual(errorReason)
   })
 
-  it('successfully calls onClose and not onCreate when exited without creating a token', async () => {
-    const { wrapper } = createMountedComponent(props)
-    await resolveAllPending(wrapper)
+  it('calls onClose when closing via Modal prop', async () => {
+    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
 
-    // Click away from the modal to close
-    await act(async () => {
-      await wrapper.find('div.modal-backdrop').simulate('click')
-    })
-    await resolveAllPending(wrapper)
+    // Close the modal using the prop
+    wrapper.find('Modal').prop('onHide')()
+
+    expect(mockOnClose).toHaveBeenCalled()
+
+    expect(mockOnCreate).not.toHaveBeenCalled()
+    expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
+  })
+
+  it('calls onClose when closing via cancel button', async () => {
+    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
+
+    // Close the modal using the prop
+    wrapper.find('Button').at(0).prop('onClick')()
 
     expect(mockOnClose).toHaveBeenCalled()
 

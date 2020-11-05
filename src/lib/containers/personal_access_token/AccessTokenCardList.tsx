@@ -1,6 +1,7 @@
 import { SynapseClient } from 'lib/utils'
 import { AccessTokenRecord } from 'lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
 import * as React from 'react'
+import { Button } from 'react-bootstrap'
 import { Error } from '../Error'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
@@ -71,13 +72,13 @@ export const AccessTokenCardList: React.FunctionComponent<AccessTokenCardListPro
         })}
         {isLoading && loadingScreen}
         {!isLoading && nextPageToken && !showErrorMessage && (
-          <button
-            className="btn btn-primary"
-            style={{ float: 'right', margin: '10px' }}
+          <Button
+            className="SRC-loadMoreAccessTokensButton"
+            variant="primary"
             onClick={() => setLoadNextPage(true)}
           >
             Load More
-          </button>
+          </Button>
         )}
       </div>
       {showErrorMessage && <Error error={errorMessage}></Error>}
