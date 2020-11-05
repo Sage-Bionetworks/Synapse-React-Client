@@ -42,6 +42,7 @@ const fetchEvaluationList = (
           evaluationRound => convertEvaluationRoundToInput(evaluationRound),
         )
         appendToListCallback(...convertedToInput)
+        errorHandleCallback(undefined)
       })
       //TODO: error handling
       .catch(error => {
@@ -72,8 +73,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
         appendToEvaluationRoundInputList,
         setError,
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [sessionToken, evaluationId],
   )
 
   if (error) {
