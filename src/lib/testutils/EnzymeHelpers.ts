@@ -1,6 +1,5 @@
 import { act } from '@testing-library/react'
 import { ReactWrapper } from 'enzyme'
-import { ClassAttributes } from 'react'
 
 /**
  * Resolve pending promises in an enzyme mounted component. Particularly useful when you need to test
