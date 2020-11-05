@@ -4,7 +4,7 @@ import { AccessTokenCardList } from 'lib/containers/personal_access_token/Access
 import { AccessTokenPage } from 'lib/containers/personal_access_token/AccessTokenPage'
 import { CreateAccessTokenModal } from 'lib/containers/personal_access_token/CreateAccessTokenModal'
 import * as React from 'react'
-import { resolveAllPending } from '__tests__/lib/testutils/EnzymeHelpers'
+import { resolveAllPending } from 'lib/testutils/EnzymeHelpers'
 
 describe('basic functionality', () => {
   const props = {

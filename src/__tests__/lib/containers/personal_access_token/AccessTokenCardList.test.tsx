@@ -4,7 +4,7 @@ import { act } from 'react-dom/test-utils'
 import { AccessTokenCardList } from 'lib/containers/personal_access_token/AccessTokenCardList'
 import { AccessTokenCard } from 'lib/containers/personal_access_token/AccessTokenCard'
 import { AccessTokenRecordList } from 'lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
-import { resolveAllPending } from '__tests__/lib/testutils/EnzymeHelpers'
+import { resolveAllPending } from 'lib/testutils/EnzymeHelpers'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 

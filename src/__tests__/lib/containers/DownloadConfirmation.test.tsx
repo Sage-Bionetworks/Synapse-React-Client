@@ -10,7 +10,7 @@ import {
   DownloadConfirmation,
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
-import { resolveAllPending } from '../testutils/EnzymeHelpers'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 
 let getQueryTableResultsFn: Function
 let addFilesToDownloadRequestFn: Function
