@@ -12,17 +12,19 @@ describe('test EvaluationRoundLimitOptionsList', () => {
   // any of the mockHandle__ functions will "generate" this function
   let mockGeneratedFunction: jest.Mock<any, any>
 
+  let limitInputs: EvaluationRoundLimitInput[]
+
   beforeEach(() => {
     mockGeneratedFunction = jest.fn()
     mockHandleChange = jest.fn(() => mockGeneratedFunction)
     mockHandleDeleteLimit = jest.fn(() => mockGeneratedFunction)
     mockOnAddNewLimit = jest.fn()
-  })
 
-  const limitInputs: EvaluationRoundLimitInput[] = [
-    { type: 'MONTHLY', maxSubmissionString: '42' },
-    { type: 'DAILY', maxSubmissionString: '86' },
-  ]
+    limitInputs = [
+      { type: 'MONTHLY', maxSubmissionString: '42' },
+      { type: 'DAILY', maxSubmissionString: '86' },
+    ]
+  })
 
   const makeElement = (limitInputs: EvaluationRoundLimitInput[]) => (
     <EvaluationRoundLimitOptionsList

@@ -1,3 +1,4 @@
+import 'react-datetime/css/react-datetime.css'
 import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
 import React, { useState } from 'react'
 import {
@@ -10,7 +11,6 @@ import {
   InputGroup,
   Row,
 } from 'react-bootstrap'
-import 'react-datetime/css/react-datetime.css'
 import moment, { Moment } from 'moment'
 import { CalendarWithIconFormGroup } from './CalendarWithIconFormGroup'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
