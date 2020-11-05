@@ -1,5 +1,5 @@
 import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Button,
   Card,
@@ -40,15 +40,20 @@ export type EvaluationRoundEditorProps = {
   onSave: (evaluationRound: EvaluationRoundInput) => void
 }
 
-const disallowCalendarDateBefore = (date: Moment) => (currentDate: Moment) =>
-  currentDate.isSameOrAfter(date)
+const disallowCalendarDateBefore = (date: Moment) => {
+  const startOfDay = date.startOf('day')
+  return (currentDate: Moment) => currentDate.isSameOrAfter(startOfDay)
+}
 
-const determineRoundStatus = (evaluationRoundInput: EvaluationRoundInput) => {
+const determineRoundStatus = (
+  roundStart: Moment | string,
+  roundEnd: Moment | string,
+) => {
   const now = moment()
   // based off of start/end datetime from props so that users making
   // unsaved changes to the start/end dates do not change the status
-  if (now.isSameOrAfter(evaluationRoundInput.roundStart)) {
-    if (now.isBefore(evaluationRoundInput.roundEnd)) {
+  if (now.isSameOrAfter(roundStart)) {
+    if (now.isBefore(roundEnd)) {
       return (
         <div className="status-in-progress">
           <FontAwesomeIcon icon={faSyncAlt} /> <span>IN PROGRESS</span>
@@ -67,6 +72,47 @@ const determineRoundStatus = (evaluationRoundInput: EvaluationRoundInput) => {
         <span>NOT YET STARTED</span>
       </div>
     )
+  }
+}
+
+const convertInputsToEvaluationRound = (
+  evaluationRoundInputProp: EvaluationRoundInput,
+  startDate: string | Moment,
+  endDate: string | Moment,
+  totalSubmissionLimit: string,
+  advancedLimits: EvaluationRoundLimitInput[],
+): EvaluationRound => {
+  const limits: EvaluationRoundLimit[] = []
+  if (totalSubmissionLimit) {
+    const totalSubmissionLimitInt = Number(totalSubmissionLimit)
+    if (Number.isNaN(totalSubmissionLimitInt)) {
+      throw TypeError('Total Submission is not an integer')
+    }
+    limits.push({
+      limitType: 'TOTAL',
+      maximumSubmissions: totalSubmissionLimitInt,
+    })
+  }
+  advancedLimits.forEach(limitInput => {
+    if (limitInput.maxSubmissionString) {
+      const maxSubmissionInt = Number(limitInput.maxSubmissionString)
+      if (Number.isNaN(maxSubmissionInt)) {
+        throw TypeError(limitInput.type + ' Limit is not an integer')
+      }
+      limits.push({
+        limitType: limitInput.type,
+        maximumSubmissions: maxSubmissionInt,
+      })
+    }
+  })
+
+  return {
+    id: evaluationRoundInputProp.id,
+    etag: evaluationRoundInputProp.etag,
+    evaluationId: evaluationRoundInputProp.evaluationId,
+    roundStart: moment.utc(startDate).toJSON(),
+    roundEnd: moment.utc(endDate).toJSON(),
+    limits: limits,
   }
 }
 
@@ -99,88 +145,69 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
   } = useListState<EvaluationRoundLimitInput>(evaluationRoundInput.otherLimits)
 
   // if we remove the last advanced limit, hide the advanced limits
-  const handleAdvancedLimitsRemove = useCallback(
-    (index: number) => {
-      const generatedDeleteFromListFunc = handleListRemove(index)
-      return () => {
-        //we are deleting the last advanced limit
+  const handleAdvancedLimitsRemove = (index: number) => {
+    const generatedRemoveFunc = handleListRemove(index)
+    return () => {
+      //we are deleting the last advanced limit
 
-        generatedDeleteFromListFunc()
-        if (advancedLimits.length === 1) {
-          // NOTE: we dont check for length == 0 because we don't modify the original list,
-          // instead the generated function will setState() with a NEW empty list
-          // so the original list we reference still has 1 element
-          setAdvancedMode(false)
-        }
+      generatedRemoveFunc()
+      if (advancedLimits.length === 1) {
+        // NOTE: we dont check for length == 0 because we don't modify the original list,
+        // instead the generated function will setState() with a NEW empty list
+        // so the original list we reference still has 1 element
+        setAdvancedMode(false)
       }
-    },
-    [handleListRemove, advancedLimits],
-  )
-
-  const convertInputsToEvaluationRound = (): EvaluationRound => {
-    const limits: EvaluationRoundLimit[] = []
-    if (totalSubmissionLimit) {
-      limits.push({
-        limitType: 'TOTAL',
-        maximumSubmissions: parseInt(totalSubmissionLimit),
-      })
     }
-    advancedLimits.forEach(limitInput => {
-      if (limitInput.maxSubmissionString) {
-        limits.push({
-          limitType: limitInput.type,
-          maximumSubmissions: parseInt(limitInput.maxSubmissionString),
+  }
+
+  const onSaveButtonClick = () => {
+    let evaluationRound
+    try {
+      evaluationRound = convertInputsToEvaluationRound(
+        evaluationRoundInput,
+        startDate,
+        endDate,
+        totalSubmissionLimit,
+        advancedLimits,
+      )
+    } catch (err) {
+      // error thrown if number
+      setError(err)
+    }
+    if (evaluationRound) {
+      const promise = evaluationRound.id
+        ? updateEvaluationRound(evaluationRound, sessionToken)
+        : createEvaluationRound(evaluationRound, sessionToken)
+
+      promise
+        .then(createdOrUpdatedRound => {
+          const newInput = convertEvaluationRoundToInput(
+            createdOrUpdatedRound,
+            evaluationRoundInput.reactListKey,
+          )
+          //clear out previous error if any
+          setError(undefined)
+          onSave(newInput)
         })
-      }
-    })
-
-    return {
-      id: evaluationRoundInput.id,
-      etag: evaluationRoundInput.etag,
-      evaluationId: evaluationRoundInput.evaluationId,
-      roundStart: moment.utc(startDate).toJSON(),
-      roundEnd: moment.utc(endDate).toJSON(),
-      limits: limits,
+        .catch(error => setError(error))
     }
   }
 
-  const handleSave = () => {
-    const evaluationRound = convertInputsToEvaluationRound()
-
-    const promise = evaluationRound.id
-      ? updateEvaluationRound(evaluationRound, sessionToken)
-      : createEvaluationRound(evaluationRound, sessionToken)
-
-    promise
-      .then(createdOrUpdatedRound => {
-        const newInput = convertEvaluationRoundToInput(
-          createdOrUpdatedRound,
-          evaluationRoundInput.reactListKey,
-        )
-        //clear out previous error if any
-        setError(undefined)
-        onSave(newInput)
-      })
-      .catch(error => setError(error))
-  }
-
-  const handleDelete = () => {
+  const onDeleteButtonClick = () => {
     if (evaluationRoundInput.id) {
       deleteEvaluationRound(
         evaluationRoundInput.evaluationId,
         evaluationRoundInput.id,
         sessionToken,
       )
-        .then(onDelete)
+        .then(() => onDelete())
         .catch(error => setError(error))
     } else {
       onDelete()
     }
   }
 
-  const disallowDatesBeforeNow = disallowCalendarDateBefore(
-    moment().startOf('day'),
-  )
+  const disallowDatesBeforeNow = disallowCalendarDateBefore(moment())
 
   // https://react-bootstrap.github.io/components/forms/#forms-validation-native
   return (
@@ -194,8 +221,8 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               </Col>
               <Col>
                 <EvaluationRoundEditorDropdown
-                  onDelete={handleDelete}
-                  onSave={handleSave}
+                  onDelete={onDeleteButtonClick}
+                  onSave={onSaveButtonClick}
                 />
               </Col>
             </Row>
@@ -203,7 +230,10 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             <Row className="mb-3">
               <Col>
                 <div className="round-status">
-                  {determineRoundStatus(evaluationRoundInput)}
+                  {determineRoundStatus(
+                    evaluationRoundInput.roundStart,
+                    evaluationRoundInput.roundEnd,
+                  )}
                 </div>
               </Col>
             </Row>
@@ -291,8 +321,8 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             <Row className="mt-3">
               <Col>
                 <Button
-                  className="float-right SRC-primary-background-color border-0"
-                  onClick={handleSave}
+                  className="save-button float-right SRC-primary-background-color border-0"
+                  onClick={onSaveButtonClick}
                 >
                   Save
                 </Button>
@@ -303,4 +333,10 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
       </Card>
     </div>
   )
+}
+
+export const HelpersToTest = {
+  disallowCalendarDateBefore,
+  determineRoundStatus,
+  convertInputsToEvaluationRound,
 }

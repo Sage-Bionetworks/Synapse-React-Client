@@ -11,22 +11,22 @@ export type EvaluationRoundLimitInput = {
 }
 export type EvaluationRoundInput = {
   // must be present
-  readonly evaluationId: string
+  evaluationId: string
 
   //used for React's "key" identifier when used inside a list.
-  readonly reactListKey: string
+  reactListKey: string
 
   //may not exist if newly crated
-  readonly id?: string
-  readonly etag?: string
+  id?: string
+  etag?: string
 
   //may be empty string, but not undefined
-  readonly roundStart: string
-  readonly roundEnd: string
-  readonly totalSubmissionLimit: string
+  roundStart: string
+  roundEnd: string
+  totalSubmissionLimit: string
 
   //may be an empty list, but not undefined
-  readonly otherLimits: EvaluationRoundLimitInput[]
+  otherLimits: EvaluationRoundLimitInput[]
 }
 
 export const convertEvaluationRoundToInput = (

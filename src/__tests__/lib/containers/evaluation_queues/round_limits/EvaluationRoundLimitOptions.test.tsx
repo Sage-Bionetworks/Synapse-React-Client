@@ -4,10 +4,10 @@
 // import { EvaluationRoundLimitOptions } from '../../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
 // import React from 'react'
 
-import { EvaluationRoundLimitInput } from '../../../../../../lib/containers/evaluation_queues/input_models/models'
-import { EvaluationRoundLimitType } from '../../../../../../lib/utils/synapseTypes/Evaluation'
+import { EvaluationRoundLimitInput } from '../../../../../lib/containers/evaluation_queues/input_models/models'
+import { EvaluationRoundLimitType } from '../../../../../lib/utils/synapseTypes/Evaluation'
 import { shallow } from 'enzyme'
-import { EvaluationRoundLimitOptions } from '../../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
+import { EvaluationRoundLimitOptions } from '../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
 import React from 'react'
 
 describe('test evaluation round limit option', () => {

@@ -9,6 +9,8 @@ export interface ListStateReturn<T> {
   handleListRemove: (index: number) => () => void
   // generates a function to append to the end of the list
   appendToList: (newItem: T) => void
+  //changes the entire list state
+  setList: (list: T[]) => void
 }
 /**
  * This is used when a component's state uses a List<T> and has child components
@@ -73,5 +75,5 @@ export const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
     modifiedList.push(...newItem)
     setList(modifiedList)
   }
-  return { list, handleListChange, handleListRemove, appendToList }
+  return { list, handleListChange, handleListRemove, appendToList, setList }
 }

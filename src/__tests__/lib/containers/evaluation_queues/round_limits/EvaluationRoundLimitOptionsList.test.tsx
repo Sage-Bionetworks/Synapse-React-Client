@@ -1,8 +1,8 @@
-import { EvaluationRoundLimitInput } from '../../../../../../lib/containers/evaluation_queues/input_models/models'
-import { EvaluationRoundLimitOptionsList } from '../../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptionsList'
+import { EvaluationRoundLimitInput } from '../../../../../lib/containers/evaluation_queues/input_models/models'
+import { EvaluationRoundLimitOptionsList } from '../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptionsList'
 import { shallow } from 'enzyme'
 import React from 'react'
-import { EvaluationRoundLimitOptions } from '../../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
+import { EvaluationRoundLimitOptions } from '../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
 
 describe('test EvaluationRoundLimitOptionsList', () => {
   let mockHandleChange: jest.Mock<any, any>
