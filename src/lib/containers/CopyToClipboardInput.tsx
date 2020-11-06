@@ -1,6 +1,7 @@
 import * as React from 'react'
 import IconCopy from '../../lib/assets/icons/IconCopy'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import { Button, FormControl } from 'react-bootstrap'
 
 export type CopyToClipboardInputProps = {
   value: string
@@ -46,7 +47,7 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
   }
 
   return (
-    <React.Fragment>
+    <>
       <TransitionGroup>
         {showModal && (
           <CSSTransition
@@ -61,8 +62,8 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
         )}
       </TransitionGroup>{' '}
       <div className="SRC-copyToClipboardInputContainer" ref={ref}>
-        <input
-          className="form-control SRC-marginBottomTop SRC-copyToClipboardInput"
+        <FormControl
+          className="SRC-marginBottomTop SRC-copyToClipboardInput"
           type="text"
           style={{
             width: inputWidth,
@@ -70,15 +71,16 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
           value={value}
           readOnly={true}
           onClick={copyToClipboard(ref, value)}
-        ></input>
-        <button
-          className="btn btn-light SRC-copyToClipboardIcon"
+        ></FormControl>
+        <Button
+          variant="default"
+          className="SRC-copyToClipboardIcon"
           onClick={copyToClipboard(ref, value)}
         >
           {IconCopy}
-        </button>
+        </Button>
       </div>
-    </React.Fragment>
+    </>
   )
 }
 
