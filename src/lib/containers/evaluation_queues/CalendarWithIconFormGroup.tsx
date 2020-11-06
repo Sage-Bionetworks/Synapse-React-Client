@@ -3,6 +3,7 @@ import { Moment } from 'moment'
 import { Form, InputGroup } from 'react-bootstrap'
 import calendarDateIcon from '../../assets/icons/calendar-date.svg'
 import Datetime from 'react-datetime'
+import 'react-datetime/css/react-datetime.css'
 
 export type CalendarWithIconFormGroupProps = {
   value: string | Moment

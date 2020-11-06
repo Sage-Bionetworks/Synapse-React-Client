@@ -1,4 +1,3 @@
-import 'react-datetime/css/react-datetime.css'
 import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
 import React, { useState } from 'react'
 import {
