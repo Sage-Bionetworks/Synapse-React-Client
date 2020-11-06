@@ -43,7 +43,8 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
     const { url, lockedFacet } = this.props
     const lockedFacetValue = lockedFacet?.value
     const tagPath = lockedFacetValue ? `/tag/${lockedFacetValue.replace(' ', '-')}` : ''
-    const allItems = `${url}${tagPath}`
+    const fullUrl = new URL(url)
+    const allItems = `${fullUrl.protocol}://${fullUrl.hostname}/${tagPath}`
     const feedUrl = `${allItems}/feed/`
     fetch(feedUrl)
       .then(response => response.text())

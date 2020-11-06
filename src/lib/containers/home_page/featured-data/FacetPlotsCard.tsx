@@ -25,7 +25,7 @@ export type FacetPlotsCardOwnProps = {
   title?:string
   rgbIndex?: number
   facetsToPlot?: string[]
-  detailsPagePath: string
+  detailsPagePath?: string
 }
 
 type FacetPlotsCardProps = FacetPlotsCardOwnProps & QueryWrapperChildProps
