@@ -23,7 +23,8 @@ export function getQueryRequest(sql: string):QueryBundleRequest {
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS,
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {      
       sql,
       offset: 0,
@@ -41,17 +42,15 @@ const QueryWrapperFacetPlotsCards: React.FunctionComponent<QueryWrapperFacetPlot
   } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
   return (
-    <div className="QueryWrapperFacetPlotsCards">
-      <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
-        <Error />
-        {facetsToPlot?.map(facetName => {
-          return <FacetPlotsCard
-            facetsToPlot={[facetName]}
-            rgbIndex={rgbIndex}          
-          />
-        })}
-      </QueryWrapper>
-    </div>
+    <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
+      <Error />
+      {facetsToPlot?.map(facetName => {
+        return <FacetPlotsCard
+          facetsToPlot={[facetName]}
+          rgbIndex={rgbIndex}          
+        />
+      })}
+    </QueryWrapper>    
   )
 }
 
