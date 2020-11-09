@@ -39,7 +39,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
           return <div className={`FeaturedDataTabs__tabs__tab ${isSelectedTabIndex ? 'FeaturedDataTabs__tabs__tab__selected' : ''}`}
             style={{borderBottomColor:isSelectedTabIndex ? colorPalette[0]:''}}>
             <button onClick={() => setSelectedTabIndex(index)}>
-              {config.icon && <Icon type={config.icon}></Icon>}&nbsp;
+              {config.icon && <Icon type={config.icon}></Icon>}
               {config.title}
             </button>
           </div>

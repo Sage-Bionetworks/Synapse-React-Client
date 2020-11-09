@@ -1,3 +1,4 @@
+import { SynapseConstants } from '../../../lib'
 import * as React from 'react'
 import FeaturedDataTabs from '../../../lib/containers/home_page/featured-data/FeaturedDataTabs'
 
@@ -75,7 +76,7 @@ export const FeaturedDataTabsDemo = () => {
           [
             {
               title: 'Studies',
-              icon: 'STUDIES',
+              icon: SynapseConstants.CHART2,
               explorePagePath:'/Explore/Studies',
               exploreObjectType:'Studies',
               plotsConfig: {

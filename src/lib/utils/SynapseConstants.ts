@@ -59,6 +59,8 @@ export const SETTINGS: string = 'settings'
 export const COLUMNS: string = 'columns'
 export const COLUMNSDARK: string = 'columnsdark'
 export const VERTICAL_DOTS: string = 'verticaldots'
+export const FILE: string = 'file'
+export const CHART2: string = 'chart2'
 
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
