@@ -80,7 +80,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       })
       setFacetPlotDataArray(newPlotData)
       setFacetDataArray(facetsDataToPlot)
-      // ASSUMPTION: exactly one facet column value is selected (locked down).  For example, facet column "study" with value "ROSMAP"
+      // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
       const selectedFacet:FacetColumnResultValueCount|undefined = data?.facets?.map(item => {
         const facetValues:FacetColumnResultValueCount[] = (item as FacetColumnResultValues).facetValues
         if (facetValues) {
@@ -106,7 +106,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     )
   } else {
     let detailsPageLink = <></>
-    if (detailsPagePath) {
+    if (detailsPagePath && selectedFacetValue) {
       detailsPageLink = <div className="FacetPlotsCard__body__footer">
         <div className="FacetPlotsCard__body__footer__link">
           <a href={detailsPagePath}>
