@@ -6,13 +6,13 @@ export const FeaturedDataTabsDemo = () => {
     <>
       <FeaturedDataTabs rgbIndex={0}
         sql='select * from syn11346063'
-        explorePagePath='/Explore/Studies'
-        exploreObjectType='Studies'
         configs={
           [
             {
               title: 'Human Studies',
               icon: 'PERSON',
+              explorePagePath:'/Explore/HumanStudies',
+              exploreObjectType:'Studies',
               plotsConfig: {
                 configs: [{
                   title:'The Religious Orders and Memory and Aging Project Study',
@@ -35,11 +35,13 @@ export const FeaturedDataTabsDemo = () => {
                   selectFacetColumnValue:'rnaSeqReprocessing',
                   detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn5550404'
                 },]
-              }
+              },
             },
             {
               title: 'Animal Model Studies',
               icon: 'MOUSE',
+              // explorePagePath:'/Explore/AnimalStudies',
+              // exploreObjectType:'Studies',
               plotsConfig: {
                 configs: [{
                   title:'The UCI MODEL-AD 5XFAD Study',
@@ -62,26 +64,26 @@ export const FeaturedDataTabsDemo = () => {
                   selectFacetColumnValue:'Jax.IU.Pitt_5XFAD',
                   detailsPagePath:'/Explore/Studies/DetailsPage?Study=syn17095980'
                 }]
-              }
+              },
             }
           ]
       }
       />
       <FeaturedDataTabs rgbIndex={0}
         sql='SELECT * FROM syn21994974'
-        explorePagePath='/Explore/Studies'
-        exploreObjectType='Studies'
         configs={
           [
             {
               title: 'Studies',
               icon: 'STUDIES',
+              explorePagePath:'/Explore/Studies',
+              exploreObjectType:'Studies',
               plotsConfig: {
                 sql: 'SELECT * FROM syn21994974 WHERE ( ( "collectionType" = \'Validation Study\' OR "collectionType" = \'Interventional Study\' OR "collectionType" = \'Observational Study\' ) )',
                 configs: [{
                   facetsToPlot:['dataCollectionMethod', 'deviceType','devicePlatform','diagnosis','reportedOutcome', 'digitalAssessmentCategory'],
                 },]
-              }
+              },
             },            
           ]
       }
