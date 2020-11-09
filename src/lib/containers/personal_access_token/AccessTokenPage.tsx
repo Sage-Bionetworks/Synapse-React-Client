@@ -1,6 +1,10 @@
+import { SynapseClient } from '../../utils'
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
-import { AccessTokenCardList } from './AccessTokenCardList'
+import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
+import { Error } from '../Error'
+import loadingScreen from '../LoadingScreen'
+import { AccessTokenCard } from './AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
 
 export type AccessTokenPageProps = {
@@ -14,28 +18,59 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
   body,
   token,
 }: AccessTokenPageProps) => {
+  const [isLoading, setIsLoading] = React.useState(false)
+
   const [showCreateTokenModal, setShowCreateTokenModal] = React.useState(false)
-  const [refreshList, setRefreshList] = React.useState(false)
-  const [accessTokenCardList, setAccessTokenCardList] = React.useState(
-    <AccessTokenCardList token={token} />,
+
+  // TODO: replace this with the `useListState` custom hook when it gets merged.
+  const [tokenRecords, setTokenRecords] = React.useState<AccessTokenRecord[]>(
+    [],
   )
 
+  const [loadNextPage, setLoadNextPage] = React.useState(true)
+  const [nextPageToken, setNextPageToken] = React.useState<string | undefined>(
+    undefined,
+  )
+
+  const [showErrorMessage, setShowErrorMessage] = React.useState(false)
+  const [errorMessage, setErrorMessage] = React.useState('')
+
+  // We rerender the list whenever a token is created or deleted to ensure we are up-to-date
+  const rerenderList = () => {
+    setTokenRecords([])
+    setNextPageToken(undefined)
+    setLoadNextPage(true)
+  }
+
   React.useEffect(() => {
-    if (refreshList) {
-      setAccessTokenCardList(
-        <AccessTokenCardList token={token} key={Math.random()} />,
-      )
+    if (loadNextPage) {
+      setLoadNextPage(false)
+      setIsLoading(true)
+      SynapseClient.getPersonalAccessTokenRecords(token, nextPageToken)
+        .then(response => {
+          setIsLoading(false)
+          setTokenRecords(records => records.concat(response.results))
+          if (response.nextPageToken) {
+            setNextPageToken(response.nextPageToken)
+          } else {
+            setNextPageToken(undefined)
+          }
+        })
+        .catch(err => {
+          setIsLoading(false)
+          setErrorMessage(err)
+          setShowErrorMessage(true)
+        })
     }
-    return () => setRefreshList(false)
-  }, [refreshList, token])
+  }, [loadNextPage, token, nextPageToken])
 
   return (
-    <React.Fragment>
+    <>
       {showCreateTokenModal && (
         <CreateAccessTokenModal
           token={token}
           onClose={() => setShowCreateTokenModal(false)}
-          onCreate={() => setRefreshList(true)}
+          onCreate={rerenderList}
         ></CreateAccessTokenModal>
       )}
       <div className="SRC-accessTokenPageHeaderContainer">
@@ -52,7 +87,38 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           </Button>
         </div>
       </div>
-      {accessTokenCardList}
-    </React.Fragment>
+      <div>
+        {!isLoading && tokenRecords.length === 0 && (
+          <div className="SRC-noAccessTokensMessage SRC-text-title">
+            You currently have no personal access tokens.
+          </div>
+        )}
+        <div className="SRC-accessTokenCardList">
+          {tokenRecords.map(accessToken => {
+            return (
+              <AccessTokenCard
+                key={accessToken.id}
+                accessToken={accessToken}
+                token={token}
+                onDelete={rerenderList}
+              />
+            )
+          })}
+          {isLoading && loadingScreen}
+          {!isLoading && nextPageToken && !showErrorMessage && (
+            <div className="SRC-loadMoreButtonContainer">
+              <Button
+                className="SRC-loadMoreAccessTokensButton"
+                variant="primary"
+                onClick={() => setLoadNextPage(true)}
+              >
+                Load More
+              </Button>
+            </div>
+          )}
+        </div>
+        {showErrorMessage && <Error error={errorMessage}></Error>}
+      </div>
+    </>
   )
 }

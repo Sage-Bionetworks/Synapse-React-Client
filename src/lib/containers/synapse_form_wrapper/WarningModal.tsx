@@ -9,8 +9,8 @@ export type WarningModalProps = {
   confirmCopy?: string
   className?: string
   show: boolean
-  onOK: Function
-  okButtonVariant?: ButtonVariant
+  onConfirm: Function
+  confirmButtonVariant?: ButtonVariant
   onCancel: Function
   callbackArgs: any
 }
@@ -21,8 +21,8 @@ export const WarningModal: React.FunctionComponent<WarningModalProps> = ({
   confirmCopy,
   className,
   show,
-  onOK,
-  okButtonVariant = 'success',
+  onConfirm,
+  confirmButtonVariant = 'success',
   onCancel,
   callbackArgs,
 }: WarningModalProps) => {
@@ -41,7 +41,10 @@ export const WarningModal: React.FunctionComponent<WarningModalProps> = ({
         <Button variant="secondary" onClick={() => onCancel()}>
           Cancel
         </Button>
-        <Button variant={okButtonVariant} onClick={() => onOK(...callbackArgs)}>
+        <Button
+          variant={confirmButtonVariant}
+          onClick={() => onConfirm(...callbackArgs)}
+        >
           <span>{confirmCopy || 'OK'}</span>
         </Button>
       </Modal.Footer>

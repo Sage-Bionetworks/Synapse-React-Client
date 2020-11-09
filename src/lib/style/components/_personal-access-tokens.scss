@@ -11,6 +11,10 @@
   width: -moz-available; // for firefox
   padding-left: 25px;
 
+  .SRC-cardContent {
+    flex-grow: 1;
+  }
+
   .SRC-scopeName {
     margin-inline-start: 3px;
     margin-inline-end: 3px;
@@ -21,7 +25,6 @@
   }
 
   .SRC-deleteAccessTokenButton {
-    float: right;
     align-self: flex-start;
     margin: 10px;
   }
@@ -52,14 +55,18 @@
 .SRC-accessTokenCardList {
   margin: 20px auto;
   max-width: 800px;
+
+  .SRC-loadMoreButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+
+    .SRC-loadMoreAccessTokensButton {
+      margin: 10px;
+    }
+  }
 }
 
 .SRC-noAccessTokensMessage {
   margin: 40px;
   text-align: center;
-}
-
-.SRC-loadMoreAccessTokensButton {
-  float: right;
-  margin: 10px;
 }

@@ -1,15 +1,12 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import * as React from 'react'
-import { Button, Modal, ModalBody } from 'react-bootstrap'
-import { Checkbox } from '../widgets/Checkbox'
-import { SynapseClient } from 'lib/utils'
-import { AccessTokenGenerationRequest } from 'lib/utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
-import { scopeDescriptions } from 'lib/utils/synapseTypes/AccessToken/ScopeDescriptions'
-import { Error } from 'lib/containers/Error'
+import { Button, FormControl, Modal, ModalBody } from 'react-bootstrap'
+import { SynapseClient } from '../../utils'
+import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
+import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import { CopyToClipboardInput } from '../CopyToClipboardInput'
-
-library.add(faTimes)
+import { Error } from '../Error'
+import loadingScreen from '../LoadingScreen'
+import { Checkbox } from '../widgets/Checkbox'
 
 const INVALID_INPUT_MSG =
   'You must provide a token name and at least one permission.'
@@ -38,9 +35,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
   const [errorMessage, setErrorMessage] = React.useState('')
   const [showErrorMessage, setShowErrorMessage] = React.useState(false)
 
-  const handleTokenNameChange = (
-    event: React.SyntheticEvent<HTMLInputElement>,
-  ) => {
+  const handleTokenNameChange = (event: React.ChangeEvent) => {
     setTokenName((event.target as HTMLInputElement).value)
   }
 
@@ -88,9 +83,9 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
       </Modal.Header>
       <ModalBody>
         {isLoading ? (
-          <p>Loading</p>
+          loadingScreen
         ) : showCreatedToken ? (
-          <React.Fragment>
+          <>
             <span className="SRC-boldText">
               This token will not be able to be retrieved again.
             </span>{' '}
@@ -105,19 +100,19 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
               This token grants access to your account functions and should be
               treated like a password.
             </p>
-          </React.Fragment>
+          </>
         ) : (
           <div className="SRC-marginFive">
             <form>
               <div className="SRC-marginBottomTen">
-                <p className="SRC-boldText">Token Name</p>
-                <input
-                  className="form-control SRC-personalAccessTokenNameInput"
+                <label className="SRC-boldText">Token Name</label>
+                <FormControl
+                  className="SRC-personalAccessTokenNameInput"
                   value={tokenName}
                   onChange={handleTokenNameChange}
                   type="text"
                   placeholder="e.g. Synapse command line access on my laptop"
-                ></input>
+                ></FormControl>
               </div>
               <div className="SRC-marginBottomTop">
                 <p className="SRC-boldText">Token Permissions</p>
@@ -153,14 +148,14 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
             Close
           </Button>
         ) : (
-          <React.Fragment>
+          <>
             <Button variant="default" onClick={onClose}>
               Cancel
             </Button>
-            <Button variant={'primary'} onClick={onSubmit}>
-              <span>{'Create Token'}</span>
+            <Button variant="primary" onClick={onSubmit}>
+              Create Token
             </Button>
-          </React.Fragment>
+          </>
         )}
       </Modal.Footer>
     </Modal>

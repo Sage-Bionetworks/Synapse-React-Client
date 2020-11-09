@@ -1,25 +1,17 @@
+import {
+  faExclamationTriangle,
+  faTrash,
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import * as React from 'react'
 import { useState } from 'react'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCircle,
-  faEllipsisV,
-  faCopy,
-  faTrash,
-  faExclamationTriangle,
-} from '@fortawesome/free-solid-svg-icons'
-import { AccessTokenRecord } from 'lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
-import ReactTooltip from 'react-tooltip'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SynapseClient } from 'lib/utils'
-import { scopeDescriptions } from 'lib/utils/synapseTypes/AccessToken/ScopeDescriptions'
-import WarningModal from '../synapse_form_wrapper/WarningModal'
 import { Button } from 'react-bootstrap'
-
-library.add(faCircle)
-library.add(faEllipsisV)
-library.add(faCopy)
+import ReactTooltip from 'react-tooltip'
+import { SynapseClient } from '../../utils'
+import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
+import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type AccessTokenCardProps = {
   accessToken: AccessTokenRecord
@@ -58,12 +50,12 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         }
         confirmCopy={'Delete Token'}
         onCancel={() => setShowModal(false)}
-        onOK={async (id: string, token: string) => {
+        onConfirm={async (id: string, token: string) => {
           await SynapseClient.deletePersonalAccessToken(id, token)
           setShowModal(false)
           onDelete()
         }}
-        okButtonVariant="danger"
+        confirmButtonVariant="danger"
         show={showModal}
         callbackArgs={[accessToken.id, token]}
       ></WarningModal>

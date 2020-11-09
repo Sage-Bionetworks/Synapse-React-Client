@@ -50,10 +50,18 @@ describe('basic functionality', () => {
 
   it('correctly styles when expired', async () => {
     const wrapperActive = shallow(<AccessTokenCard {...activeTokenProps} />)
-    expect(wrapperActive.find('div').at(0).hasClass('bg-warning')).toBe(false)
+    expect(
+      wrapperActive
+        .find('div.SRC-personalAccessTokenCard')
+        .hasClass('bg-warning'),
+    ).toBe(false)
 
     const wrapperExpired = shallow(<AccessTokenCard {...expiredTokenProps} />)
-    expect(wrapperExpired.find('div').at(0).hasClass('bg-warning')).toBe(true)
+    expect(
+      wrapperExpired
+        .find('div.SRC-personalAccessTokenCard')
+        .hasClass('bg-warning'),
+    ).toBe(true)
   })
 
   it('modal pops up and sends request on delete', async () => {
@@ -70,7 +78,7 @@ describe('basic functionality', () => {
 
     // Click 'Delete'
     await act(async () => {
-      await wrapper.find(WarningModal).props().onOK()
+      await wrapper.find(WarningModal).props().onConfirm()
     })
 
     expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled()

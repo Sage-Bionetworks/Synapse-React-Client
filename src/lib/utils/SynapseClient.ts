@@ -2191,8 +2191,9 @@ export const getPersonalAccessTokenRecords = (
   nextPageToken: string | undefined,
 ) => {
   return doGet<AccessTokenRecordList>(
-    '/auth/v1/personalAccessToken' +
-      (nextPageToken ? `?nextPageToken=${nextPageToken}` : ''),
+    `/auth/v1/personalAccessToken${
+      nextPageToken ? '?nextPageToken=' + nextPageToken : ''
+    }`,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

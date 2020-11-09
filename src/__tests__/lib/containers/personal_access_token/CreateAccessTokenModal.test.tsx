@@ -4,7 +4,7 @@ import { Error } from 'lib/containers/Error'
 import { CreateAccessTokenModal } from 'lib/containers/personal_access_token/CreateAccessTokenModal'
 import { Checkbox } from 'lib/containers/widgets/Checkbox'
 import * as React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, FormControl } from 'react-bootstrap'
 import { act } from 'react-dom/test-utils'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
@@ -34,14 +34,11 @@ describe('basic functionality', () => {
 
     // Fill out the form
     await act(async () => {
-      await wrapper
-        .find('input')
-        .at(0)
-        .simulate('change', {
-          target: {
-            value: tokenName,
-          },
-        })
+      await wrapper.find(FormControl).simulate('change', {
+        target: {
+          value: tokenName,
+        },
+      })
       await wrapper.find(Checkbox).at(0).prop('onChange')()
       await wrapper.find(Checkbox).at(1).prop('onChange')()
       await wrapper.find(Checkbox).at(2).prop('onChange')()
@@ -56,7 +53,8 @@ describe('basic functionality', () => {
     )
 
     // Close the modal using the 'Close' button
-    wrapper.find('Button').prop('onClick')()
+    expect(wrapper.find(Button).text().includes('Close')).toBe(true)
+    wrapper.find(Button).prop('onClick')()
 
     expect(mockOnClose).toHaveBeenCalled()
   })
@@ -67,6 +65,9 @@ describe('basic functionality', () => {
 
     // Try to create with no name or permissions
     await act(async () => {
+      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
+        true,
+      )
       await wrapper.find(Button).at(1).simulate('click')
     })
     expect(mockOnCreate).not.toHaveBeenCalled()
@@ -75,14 +76,14 @@ describe('basic functionality', () => {
 
     // Add a name
     await act(async () => {
-      await wrapper
-        .find('input')
-        .at(0)
-        .simulate('change', {
-          target: {
-            value: 'some name',
-          },
-        })
+      await wrapper.find(FormControl).simulate('change', {
+        target: {
+          value: 'some name',
+        },
+      })
+      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
+        true,
+      )
       await wrapper.find(Button).at(1).simulate('click')
     })
 
@@ -92,15 +93,15 @@ describe('basic functionality', () => {
 
     // Remove name, add a permission
     await act(async () => {
-      await wrapper
-        .find('input')
-        .at(0)
-        .simulate('change', {
-          target: {
-            value: '',
-          },
-        })
+      await wrapper.find(FormControl).simulate('change', {
+        target: {
+          value: '',
+        },
+      })
       await wrapper.find(Checkbox).at(0).prop('onChange')()
+      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
+        true,
+      )
       await wrapper.find(Button).at(1).simulate('click')
     })
 
@@ -120,15 +121,15 @@ describe('basic functionality', () => {
 
     // Fill out the form and send the request
     await act(async () => {
-      await wrapper
-        .find('input')
-        .at(0)
-        .simulate('change', {
-          target: {
-            value: 'token name',
-          },
-        })
+      await wrapper.find(FormControl).simulate('change', {
+        target: {
+          value: 'token name',
+        },
+      })
       await wrapper.find(Checkbox).at(0).prop('onChange')()
+      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
+        true,
+      )
       await wrapper.find(Button).at(1).simulate('click')
     })
 
@@ -152,7 +153,8 @@ describe('basic functionality', () => {
     const wrapper = shallow(<CreateAccessTokenModal {...props} />)
 
     // Close the modal using the prop
-    wrapper.find('Button').at(0).prop('onClick')()
+    expect(wrapper.find(Button).at(0).text().includes('Cancel')).toBe(true)
+    await wrapper.find(Button).at(0).prop('onClick')()
 
     expect(mockOnClose).toHaveBeenCalled()
 
