@@ -34,7 +34,7 @@ export const convertEvaluationRoundToInput = (
   reactListKey?: string,
 ): EvaluationRoundInput => {
   return {
-    reactListKey: reactListKey || shortid.generate(),
+    reactListKey: reactListKey ?? shortid.generate(),
     evaluationId: evaluationRound.evaluationId,
     id: evaluationRound.id,
     etag: evaluationRound.etag,

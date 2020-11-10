@@ -1,9 +1,3 @@
-// import { EvaluationRoundLimitInput } from '../../../../../../lib/containers/evaluation_queues/input_models/models'
-// import { EvaluationRoundLimitType } from '../../../../../../lib/utils/synapseTypes/Evaluation'
-// import { shallow } from 'enzyme'
-// import { EvaluationRoundLimitOptions } from '../../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
-// import React from 'react'
-
 import { EvaluationRoundLimitInput } from '../../../../../lib/containers/evaluation_queues/input_models/models'
 import { EvaluationRoundLimitType } from '../../../../../lib/utils/synapseTypes/Evaluation'
 import { shallow } from 'enzyme'
@@ -36,7 +30,7 @@ describe('test evaluation round limit option', () => {
   })
 
   it('some options disabled', () => {
-    const emptySelectedTypes = new Set<EvaluationRoundLimitType>([
+    const selectedTypes = new Set<EvaluationRoundLimitType>([
       'MONTHLY',
       'WEEKLY',
     ])
@@ -44,7 +38,7 @@ describe('test evaluation round limit option', () => {
       <EvaluationRoundLimitOptions
         limitInput={limitInput}
         onChange={mockOnChange}
-        allSelectedTypes={emptySelectedTypes}
+        allSelectedTypes={selectedTypes}
       />,
     )
 

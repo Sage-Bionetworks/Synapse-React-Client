@@ -8,7 +8,7 @@ export interface ListStateReturn<T> {
   // generates a function to remove a index from the list
   handleListRemove: (index: number) => () => void
   // generates a function to append to the end of the list
-  appendToList: (newItem: T) => void
+  appendToList: (...newItem: T[]) => void
   //changes the entire list state
   setList: (list: T[]) => void
 }

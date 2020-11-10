@@ -10,7 +10,7 @@ import {
   getEvaluationRoundsList,
   SynapseClientError,
 } from '../../utils/SynapseClient'
-import shortid from 'shortid'
+import { shortid } from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
 import { Error } from '../Error'
 
@@ -44,12 +44,12 @@ const fetchEvaluationList = (
         appendToListCallback(...convertedToInput)
         errorHandleCallback(undefined)
       })
-      //TODO: error handling
       .catch(error => {
-        errorHandleCallback(error.reason)
+        errorHandleCallback(error)
       })
   } while (nextPageToken)
 }
+
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
   sessionToken,
   evaluationId,
@@ -79,10 +79,10 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   if (error) {
     return <Error error={error} token={sessionToken} />
   }
-
+  console.log('render ' + Date.now())
   return (
     <div className="evaluation-round-editor-list bootstrap-4-backport">
-      <div>
+      <div className="evaluation-rounds">
         {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (
             <EvaluationRoundEditor

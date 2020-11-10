@@ -501,7 +501,7 @@ export const getQueryTableResults = (
 
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
-  sessionToken: string | undefined = undefined
+  sessionToken: string | undefined = undefined,
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -1629,7 +1629,7 @@ export const getEvaluationRoundsList = (
 ): Promise<EvaluationRoundListResponse> => {
   return doPost(
     `/repo/v1/evaluation/${evalId}/round/list`,
-    evaluationRoundListRequest || {},
+    evaluationRoundListRequest ?? {},
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
