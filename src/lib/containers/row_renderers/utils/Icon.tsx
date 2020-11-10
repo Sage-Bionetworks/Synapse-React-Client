@@ -30,6 +30,8 @@ import {
   COLUMNS,
   COLUMNSDARK,
   VERTICAL_DOTS,
+  CHART2,
+  FILE,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -39,6 +41,8 @@ import DNA_TwoSvg from '../../../assets/icons/DNA_Two.svg'
 import organizationsSvg from '../../../assets/icons/organizations.svg'
 import personSvg from '../../../assets/icons/person.svg'
 import mouseSvg from '../../../assets/icons/mouse.svg'
+import chart2Svg from '../../../assets/icons/chart2.svg'
+import fileSvg from '../../../assets/icons/file.svg'
 
 import {
   Project,
@@ -106,6 +110,8 @@ const defaultIcons = {
   [COLUMNS]: Columns,
   [COLUMNSDARK]: ColumnsDark,
   [VERTICAL_DOTS]: VerticalDots,
+  [CHART2]: chart2Svg,
+  [FILE]: fileSvg,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
