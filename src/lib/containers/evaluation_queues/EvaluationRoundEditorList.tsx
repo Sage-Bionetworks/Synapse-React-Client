@@ -10,7 +10,7 @@ import {
   getEvaluationRoundsList,
   SynapseClientError,
 } from '../../utils/SynapseClient'
-import { shortid } from 'shortid'
+import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
 import { Error } from '../Error'
 
