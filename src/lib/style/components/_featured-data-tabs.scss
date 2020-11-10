@@ -27,7 +27,10 @@
       &__selected {
         font-weight: bold;
         border-bottom: 5px solid;
-        // button {color: #1A1C29;}
+        button {color: #515359;}
+        .iconImg {
+          filter: invert(1)
+        }
       }
     }    
   }
