@@ -14,8 +14,6 @@
     padding: 33px 44px;
     &__row {
       display: flex;
-      padding-bottom: 20px;
-      min-height: 155px;
     }
     &__facetname {
       text-align: center;
@@ -30,6 +28,7 @@
       text-align: center;
       white-space: nowrap;
       &__link {
+        padding-top: 15px;
         width: 35%;
       }
     }
