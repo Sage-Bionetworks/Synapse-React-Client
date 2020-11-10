@@ -6,7 +6,7 @@
 | |  FeaturedDataPlots                                                     | |  FeaturedDataPlots                                                     |    |
 | |                                                                        | |                                                                        |    |
 | |  +-------------------------------+ +-------------------------------+   | |  +-------------------------------+ +-------------------------------+   |    |
-| |  | QueryWrapperFacetPlotsCard    | | QueryWrapperFacetPlotsCard    |   | |  | QueryWrapperFacetPlotsCard    | | QueryWrapperFacetPlotsCard    |   |    |
+| |  | QueryPerFacetPlotsCard        | | QueryPerFacetPlotsCard        |   | |  | QueryPerFacetPlotsCard        | | QueryPerFacetPlotsCard        |   |    |
 | |  | +-------------------------+   | | +-------------------------+   |   | |  | +-------------------------+   | | +-------------------------+   |   |    |
 | |  | |QueryWrapper             |   | | |QueryWrapper             |   |   | |  | |QueryWrapper             |   | | |QueryWrapper             |   |   |    |
 | |  | | +--------------------+  |   | | | +--------------------+  |   |   | |  | | +--------------------+  |   | | | +--------------------+  |   |   |    |
@@ -51,7 +51,7 @@
 | |  FeaturedDataPlots                                                     | |  FeaturedDataPlots                                                     |    |
 | |                                                                        | |                                                                        |    |
 | |  +------------------------------------------------------------------+  | |  +------------------------------------------------------------------+  |    |
-| |  | QueryWrapperFacetPlotsCards                                      |  | |  | QueryWrapperFacetPlotsCards                                      |  |    |
+| |  | SingleQueryFacetPlotsCards                                       |  | |  | SingleQueryFacetPlotsCards                                      |  |    |
 | |  | +--------------------------------------------------------------+ |  | |  | +--------------------------------------------------------------+ |  |    |
 | |  | |QueryWrapper                                                  | |  | |  | |QueryWrapper                                                  | |  |    |
 | |  | | +---------------+   +---------------+   +---------------+    | |  | |  | | +---------------+   +---------------+   +---------------+    | |  |    |

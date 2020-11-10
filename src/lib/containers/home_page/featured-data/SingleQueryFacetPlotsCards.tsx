@@ -8,7 +8,7 @@ import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { Error } from '../../Error'
 import FacetPlotsCard from './FacetPlotsCard'
 
-export type QueryWrapperFacetPlotsCardsProps = {
+export type SingleQueryFacetPlotsCardsProps = {
   token?: string
   rgbIndex?: number
   facetsToPlot?: string[]
@@ -32,7 +32,7 @@ export function getQueryRequest(sql: string):QueryBundleRequest {
     }, 
   }
 }
-const QueryWrapperFacetPlotsCards: React.FunctionComponent<QueryWrapperFacetPlotsCardsProps> = props => {
+const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsCardsProps> = props => {
   const {
     sql,
     facetsToPlot,
@@ -42,16 +42,18 @@ const QueryWrapperFacetPlotsCards: React.FunctionComponent<QueryWrapperFacetPlot
   } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
   return (
-    <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
-      <Error />
-      {facetsToPlot?.map(facetName => {
-        return <FacetPlotsCard
-          facetsToPlot={[facetName]}
-          rgbIndex={rgbIndex}          
-        />
-      })}
-    </QueryWrapper>    
+    <div className="SingleQueryFacetPlotsCards">
+      <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
+        <Error />
+        {facetsToPlot?.map(facetName => {
+          return <FacetPlotsCard
+            facetsToPlot={[facetName]}
+            rgbIndex={rgbIndex}          
+          />
+        })}
+      </QueryWrapper>
+    </div>
   )
 }
 
-export default QueryWrapperFacetPlotsCards
+export default SingleQueryFacetPlotsCards

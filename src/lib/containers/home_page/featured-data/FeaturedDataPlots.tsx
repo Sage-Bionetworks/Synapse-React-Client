@@ -1,8 +1,8 @@
 import * as React from 'react'
-import QueryWrapperFacetPlotsCard, { QueryWrapperFacetPlotsCardProps } from './QueryWrapperFacetPlotsCard'
-import QueryWrapperFacetPlotsCards, { QueryWrapperFacetPlotsCardsProps } from './QueryWrapperFacetPlotsCards'
+import QueryPerFacetPlotsCard, { QueryPerFacetPlotsCardProps } from './QueryPerFacetPlotsCard'
+import SingleQueryFacetPlotsCards, { SingleQueryFacetPlotsCardsProps } from './SingleQueryFacetPlotsCards'
 
-export type QueryWrapperFacetPlotsCardConfigProps = QueryWrapperFacetPlotsCardProps | QueryWrapperFacetPlotsCardsProps
+export type QueryWrapperFacetPlotsCardConfigProps = QueryPerFacetPlotsCardProps | SingleQueryFacetPlotsCardsProps
 
 export type FeaturedDataPlotsProps = {
   token?: string
@@ -27,14 +27,14 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
       {configs.map((config:any) => {
         return <>
           {isQueryPerCard && 
-            <QueryWrapperFacetPlotsCard
+            <QueryPerFacetPlotsCard
               {...config}
               rgbIndex={rgbIndex}
               sql={sql}
               token={token} />
           }
           {!isQueryPerCard && 
-            <QueryWrapperFacetPlotsCards
+            <SingleQueryFacetPlotsCards
               {...config}
               rgbIndex={rgbIndex}
               sql={sql}

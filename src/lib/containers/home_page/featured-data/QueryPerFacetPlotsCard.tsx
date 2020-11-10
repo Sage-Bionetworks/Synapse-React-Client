@@ -3,12 +3,12 @@ import QueryWrapper from '../../QueryWrapper'
 import {
   parseEntityIdFromSqlStatement,
 } from '../../../utils/functions/sqlFunctions'
-import { SynapseConstants } from '../../../utils/'
+import { SynapseConstants } from '../../../utils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { Error } from '../../Error'
 import FacetPlotsCard from './FacetPlotsCard'
 
-export type QueryWrapperFacetPlotsCardProps = {
+export type QueryPerFacetPlotsCardProps = {
   token?: string
   title?:string
   rgbIndex?: number
@@ -41,7 +41,7 @@ export function getQueryRequest(sql: string, selectFacetColumnName: string, sele
     }, 
   }
 }
-const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlotsCardProps> = props => {
+const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProps> = props => {
   const {
     title,
     sql,
@@ -55,7 +55,7 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
   } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!, selectFacetColumnName, selectFacetColumnValue)
   return (
-    <div className="QueryWrapperFacetPlotsCard">
+    <div className="QueryPerFacetPlotsCard">
       <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
         <Error />
         <FacetPlotsCard
@@ -69,4 +69,4 @@ const QueryWrapperFacetPlotsCard: React.FunctionComponent<QueryWrapperFacetPlots
   )
 }
 
-export default QueryWrapperFacetPlotsCard
+export default QueryPerFacetPlotsCard
