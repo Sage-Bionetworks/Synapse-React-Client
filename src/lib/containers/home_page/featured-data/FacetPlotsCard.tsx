@@ -25,7 +25,7 @@ export type FacetPlotsCardOwnProps = {
   title?:string
   rgbIndex?: number
   facetsToPlot?: string[]
-  detailsPagePath: string
+  detailsPagePath?: string
 }
 
 type FacetPlotsCardProps = FacetPlotsCardOwnProps & QueryWrapperChildProps
@@ -80,17 +80,23 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       })
       setFacetPlotDataArray(newPlotData)
       setFacetDataArray(facetsDataToPlot)
-      // ASSUMPTION: exactly one facet column value is selected (locked down).  For example, facet column "study" with value "ROSMAP"
+      // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
       const selectedFacet:FacetColumnResultValueCount|undefined = data?.facets?.map(item => {
-        return (item as FacetColumnResultValues).facetValues.filter(facetValue => {
-          return facetValue.isSelected
-        })[0]
+        const facetValues:FacetColumnResultValueCount[] = (item as FacetColumnResultValues).facetValues
+        if (facetValues) {
+          const filteredFacetValues:FacetColumnResultValueCount[] = facetValues.filter(facetValue => {
+            return facetValue.isSelected
+          })
+          return filteredFacetValues.length > 0 ? filteredFacetValues[0] : undefined
+        } else {
+          return undefined
+        }
       })[0]
       if (selectedFacet && selectedFacet.value) {
         setSelectedFacetValue(selectedFacet?.value)
       }
     }
-  }, [facetsToPlot, data])
+  }, [facetsToPlot, data,])
 
   if (isLoadingNewData || !facetPlotDataArray || !facetDataArray) {
     return (
@@ -100,7 +106,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     )
   } else {
     let detailsPageLink = <></>
-    if (detailsPagePath) {
+    if (detailsPagePath && selectedFacetValue) {
       detailsPageLink = <div className="FacetPlotsCard__body__footer">
         <div className="FacetPlotsCard__body__footer__link">
           <a href={detailsPagePath}>
@@ -109,11 +115,13 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         </div>
       </div>
     }
+    const isShowingMultiplePlots = facetPlotDataArray.length > 1
+    const cardTitle = title ?? isShowingMultiplePlots ? selectedFacetValue : unCamelCase(facetDataArray[0].columnName, facetAliases)
     return (
       <div className="FacetPlotsCard cardContainer">
         <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
           <span className="FacetPlotsCard__title">
-            {title ?? selectedFacetValue}
+            {cardTitle}
           </span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
@@ -124,11 +132,13 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           {facetPlotDataArray.map((plotData, index) => {
             return <div>
               {index !== 0 && <hr></hr>}
-              <div className="FacetPlotsCard__body__facetname">
-                <span>
-                  {unCamelCase(facetDataArray[index].columnName, facetAliases)}
-                </span>
-              </div>
+              {isShowingMultiplePlots && 
+                <div className="FacetPlotsCard__body__facetname">
+                  <span>
+                      {unCamelCase(facetDataArray[index].columnName, facetAliases)}
+                  </span>
+                </div>
+              }
               <div className="FacetPlotsCard__body__row">
                 <SizeMe monitorHeight>
                   {({ size }) => (
