@@ -100,7 +100,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
 
   if (isLoadingNewData || !facetPlotDataArray || !facetDataArray) {
     return (
-      <div className="FacetPlotsCard__loading SRC-loadingContainer SRC-centerContentColumn">
+      <div className="FacetPlotsCard FacetPlotsCard__loading SRC-centerContentColumn">
         {loadingScreen}
       </div>
     )
