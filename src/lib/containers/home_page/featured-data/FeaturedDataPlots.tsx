@@ -2,11 +2,11 @@ import * as React from 'react'
 import QueryPerFacetPlotsCard, { QueryPerFacetPlotsCardProps } from './QueryPerFacetPlotsCard'
 import SingleQueryFacetPlotsCards, { SingleQueryFacetPlotsCardsProps } from './SingleQueryFacetPlotsCards'
 
-export type QueryWrapperFacetPlotsCardConfigProps = QueryPerFacetPlotsCardProps | SingleQueryFacetPlotsCardsProps
+export type QueryFacetPlotsCardsProps = QueryPerFacetPlotsCardProps | SingleQueryFacetPlotsCardsProps
 
 export type FeaturedDataPlotsProps = {
   token?: string
-  configs: QueryWrapperFacetPlotsCardConfigProps[]
+  configs: QueryFacetPlotsCardsProps[]
   rgbIndex?: number
   sql?: string,
   explorePagePath?: string,
