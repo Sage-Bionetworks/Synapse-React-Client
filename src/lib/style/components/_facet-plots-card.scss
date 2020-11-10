@@ -13,11 +13,10 @@
     background-color: white;
     padding: 33px 44px;
     &__row {
-      display: flex;
+      display: flex;      
     }
     &__facetname {
       text-align: center;
-      padding-bottom: 20px;
       font-weight: bold;
     }
     &__plot {
@@ -28,9 +27,12 @@
       text-align: center;
       white-space: nowrap;
       &__link {
-        padding-top: 15px;
+        padding-top: 33px;
         width: 35%;
       }
+    }
+    hr {
+      margin: 33px 0px;
     }
   }
   &__loading {
