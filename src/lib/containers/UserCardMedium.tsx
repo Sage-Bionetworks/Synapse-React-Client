@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCircle,
@@ -14,6 +13,7 @@ import { UserCardLarge } from './UserCardLarge'
 import IconCopy from '../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
 import ReactTooltip from 'react-tooltip'
+import { ToastMessage } from './ToastMessage'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -112,7 +112,7 @@ export default class UserCardMedium extends React.Component<
       disableLink = false,
       link,
       isValidated,
-      isCertified
+      isCertified,
     } = this.props
     const { isContextMenuOpen, showModal } = this.state
     const {
@@ -159,19 +159,11 @@ export default class UserCardMedium extends React.Component<
     const mediumCard = (
       <React.Fragment>
         {!hideEmail && (
-          <TransitionGroup>
-            {showModal && (
-              <CSSTransition
-                key={email}
-                classNames="SRC-card"
-                timeout={{ enter: 500, exit: 300 }}
-              >
-                <div key={email} className="SRC-modal">
-                  Email address copied to clipboard
-                </div>
-              </CSSTransition>
-            )}
-          </TransitionGroup>
+          <ToastMessage
+            show={showModal}
+            text="Email address copied to clipboard"
+            autohide={true}
+          ></ToastMessage>
         )}
         {disableLink && img}
         {!disableLink && (
@@ -219,8 +211,6 @@ export default class UserCardMedium extends React.Component<
                 />
                 {ValidatedProfileIcon}
               </span>
-            
-              
             )}
           </p>
           {(position || company) && (
@@ -300,7 +290,9 @@ export default class UserCardMedium extends React.Component<
     // when the component is large we have to set the click handler to wrap both the top and bottom portion
     return (
       <div
-        className={isContextMenuOpen ? 'SRC-hand-cursor cardContainer' : 'cardContainer'}
+        className={
+          isContextMenuOpen ? 'SRC-hand-cursor cardContainer' : 'cardContainer'
+        }
         onClick={isContextMenuOpen ? this.toggleContextMenu : undefined}
       >
         <div
@@ -310,7 +302,11 @@ export default class UserCardMedium extends React.Component<
         >
           {mediumCard}
         </div>
-        {isLarge ? <UserCardLarge userProfile={userProfile} isCertified={isCertified} /> : false}
+        {isLarge ? (
+          <UserCardLarge userProfile={userProfile} isCertified={isCertified} />
+        ) : (
+          false
+        )}
       </div>
     )
   }

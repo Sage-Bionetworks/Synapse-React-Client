@@ -1,7 +1,7 @@
 import * as React from 'react'
 import IconCopy from '../../lib/assets/icons/IconCopy'
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { Button, FormControl } from 'react-bootstrap'
+import { ToastMessage } from './ToastMessage'
 
 export type CopyToClipboardInputProps = {
   value: string
@@ -48,19 +48,11 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
 
   return (
     <>
-      <TransitionGroup>
-        {showModal && (
-          <CSSTransition
-            key={value}
-            classNames="SRC-card"
-            timeout={{ enter: 500, exit: 300 }}
-          >
-            <div key={value} className="SRC-modal">
-              Successfully copied to clipboard
-            </div>
-          </CSSTransition>
-        )}
-      </TransitionGroup>{' '}
+      <ToastMessage
+        text="Successfully copied to clipboard"
+        show={showModal}
+        autohide={true}
+      ></ToastMessage>
       <div className="SRC-copyToClipboardInputContainer" ref={ref}>
         <FormControl
           className="SRC-marginBottomTop SRC-copyToClipboardInput"
