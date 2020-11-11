@@ -6,6 +6,20 @@ import { Error } from '../Error'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
+
+const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => {
+  return (
+    <div role="alert" className="SRC-marginBottomTop">
+      <p>The following error occurred:</p>
+      <Error error={error}></Error>
+      <Button onClick={resetErrorBoundary}>Reload Access Tokens</Button>
+    </div>
+  )
+}
 
 export type AccessTokenPageProps = {
   title: string
@@ -66,13 +80,6 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
 
   return (
     <>
-      {showCreateTokenModal && (
-        <CreateAccessTokenModal
-          token={token}
-          onClose={() => setShowCreateTokenModal(false)}
-          onCreate={rerenderList}
-        ></CreateAccessTokenModal>
-      )}
       <div className="SRC-accessTokenPageHeaderContainer">
         <div className="SRC-accessTokenPageText">
           <h1>{title}</h1>
@@ -87,38 +94,53 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           </Button>
         </div>
       </div>
-      <div>
-        {!isLoading && tokenRecords.length === 0 && (
-          <div className="SRC-noAccessTokensMessage SRC-text-title">
-            You currently have no personal access tokens.
-          </div>
+      <ErrorBoundary
+        FallbackComponent={ErrorFallback}
+        onReset={() => {
+          // reset the state of your app so the error doesn't happen again
+        }}
+      >
+        {showCreateTokenModal && (
+          <CreateAccessTokenModal
+            token={token}
+            onClose={() => setShowCreateTokenModal(false)}
+            onCreate={rerenderList}
+          ></CreateAccessTokenModal>
         )}
-        <div className="SRC-accessTokenCardList">
-          {tokenRecords.map(accessToken => {
-            return (
-              <AccessTokenCard
-                key={accessToken.id}
-                accessToken={accessToken}
-                token={token}
-                onDelete={rerenderList}
-              />
-            )
-          })}
-          {isLoading && loadingScreen}
-          {!isLoading && nextPageToken && !showErrorMessage && (
-            <div className="SRC-loadMoreButtonContainer">
-              <Button
-                className="SRC-loadMoreAccessTokensButton"
-                variant="primary"
-                onClick={() => setLoadNextPage(true)}
-              >
-                Load More
-              </Button>
+
+        <div>
+          {!isLoading && tokenRecords.length === 0 && (
+            <div className="SRC-noAccessTokensMessage SRC-text-title">
+              You currently have no personal access tokens.
             </div>
           )}
+          <div className="SRC-accessTokenCardList">
+            {tokenRecords.map(accessToken => {
+              return (
+                <AccessTokenCard
+                  key={accessToken.id}
+                  accessToken={accessToken}
+                  token={token}
+                  onDelete={rerenderList}
+                />
+              )
+            })}
+            {isLoading && loadingScreen}
+            {!isLoading && nextPageToken && !showErrorMessage && (
+              <div className="SRC-loadMoreButtonContainer">
+                <Button
+                  className="SRC-loadMoreAccessTokensButton"
+                  variant="primary"
+                  onClick={() => setLoadNextPage(true)}
+                >
+                  Load More
+                </Button>
+              </div>
+            )}
+          </div>
+          {showErrorMessage && <Error error={errorMessage}></Error>}
         </div>
-        {showErrorMessage && <Error error={errorMessage}></Error>}
-      </div>
+      </ErrorBoundary>
     </>
   )
 }

@@ -7,8 +7,9 @@ import moment from 'moment'
 import * as React from 'react'
 import { useState } from 'react'
 import { Button } from 'react-bootstrap'
+import { useErrorHandler } from 'react-error-boundary'
 import ReactTooltip from 'react-tooltip'
-import { SynapseClient } from '../../utils'
+import { SynapseClient } from '../../utils/'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
@@ -24,7 +25,8 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
   token,
   onDelete,
 }: AccessTokenCardProps) => {
-  const [showModal, setShowModal] = useState<boolean>(false)
+  const [showModal, setShowModal] = useState(false)
+  const handleError = useErrorHandler()
 
   const isExpired = accessToken.state === 'EXPIRED'
 
@@ -38,7 +40,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
       <WarningModal
         title={'Confirm Deletion'}
         copy={
-          <React.Fragment>
+          <>
             <p>
               If you delete this token, any applications using it will stop
               working. This action cannot be undone.
@@ -46,14 +48,19 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             <p className="SRC-boldText">
               Are you sure you want to delete this token?
             </p>
-          </React.Fragment>
+          </>
         }
         confirmCopy={'Delete Token'}
         onCancel={() => setShowModal(false)}
-        onConfirm={async (id: string, token: string) => {
-          await SynapseClient.deletePersonalAccessToken(id, token)
-          setShowModal(false)
-          onDelete()
+        onConfirm={(id: string, token: string) => {
+          SynapseClient.deletePersonalAccessToken(id, token)
+            .then(() => {
+              onDelete()
+              setShowModal(false)
+            })
+            .catch(error => {
+              handleError(error)
+            })
         }}
         confirmButtonVariant="danger"
         show={showModal}
@@ -62,9 +69,10 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
 
       <div className="SRC-cardContent">
         <p className="SRC-eqHeightRow SRC-userCardName">
-          <span className={'SRC-blackText'}>{accessToken.name + ' '}</span>
+          <span className={'SRC-blackText'}>{accessToken.name}</span>
           {isExpired && (
             <span>
+              <ReactTooltip delayShow={100} />{' '}
               <FontAwesomeIcon
                 data-tip={
                   'This token has expired. It no longer works and can only be deleted.'
@@ -75,7 +83,6 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             </span>
           )}
         </p>
-        <ReactTooltip delayShow={100} />
 
         <p className="SRC-eqHeightRow">
           <span>Permissions: </span>
@@ -102,16 +109,18 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         <Button
           variant="default"
           aria-label="delete"
-          onClick={async () => {
+          onClick={() => {
             if (isExpired) {
               // token no longer works, no need for warning/confirmation
-              await SynapseClient.deletePersonalAccessToken(
-                accessToken.id,
-                token,
-              )
-              onDelete()
+              SynapseClient.deletePersonalAccessToken(accessToken.id, token)
+                .then(() => {
+                  onDelete()
+                })
+                .catch(error => {
+                  handleError(error)
+                })
             } else {
-              return setShowModal(true)
+              setShowModal(true)
             }
           }}
         >
