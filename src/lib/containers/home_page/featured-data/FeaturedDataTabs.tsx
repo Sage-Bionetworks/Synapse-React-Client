@@ -7,6 +7,8 @@ import getColorPallette from '../../../containers/ColorGradient'
 export type FeatureDataTabProps = {
   title: string, // type of data being shown, used for the tab title and explore all button
   icon?: string,
+  exploreObjectType?: string,
+  explorePagePath?: string,
   plotsConfig: FeaturedDataPlotsProps,
 }
 
@@ -15,8 +17,6 @@ export type FeaturedDataTabsProps = {
   configs: FeatureDataTabProps[],
   rgbIndex:number,
   sql: string,
-  exploreObjectType: string,
-  explorePagePath: string,
 }
 
 const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props => {
@@ -25,8 +25,6 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
     configs,
     rgbIndex,
     sql,
-    exploreObjectType,
-    explorePagePath,
     token
   } = props
   const { colorPalette } = getColorPallette(rgbIndex ?? 0, 1)
@@ -41,7 +39,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
           return <div className={`FeaturedDataTabs__tabs__tab ${isSelectedTabIndex ? 'FeaturedDataTabs__tabs__tab__selected' : ''}`}
             style={{borderBottomColor:isSelectedTabIndex ? colorPalette[0]:''}}>
             <button onClick={() => setSelectedTabIndex(index)}>
-              {config.icon && <Icon type={config.icon}></Icon>}&nbsp;
+              {config.icon && <Icon type={config.icon}></Icon>}
               {config.title}
             </button>
           </div>
@@ -54,13 +52,15 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
             {...selectedTabProps.plotsConfig}
               rgbIndex={rgbIndex}
               sql={sql}
-              explorePagePath={explorePagePath}
+              explorePagePath={selectedTabProps.explorePagePath}
               token={token} /> 
-          <div className="FeaturedDataTabs__explore-all">
-            <a className="homepage-button-link" href={explorePagePath}>
-                EXPLORE ALL {exploreObjectType.toUpperCase()}
-            </a>
-          </div>
+          {selectedTabProps.explorePagePath && 
+            <div className="FeaturedDataTabs__explore-all">
+              <a className="homepage-button-link" href={selectedTabProps.explorePagePath}>
+                  EXPLORE ALL {selectedTabProps.exploreObjectType?.toUpperCase()}
+              </a>
+            </div>
+          }          
         </>
       }
     </div>)
