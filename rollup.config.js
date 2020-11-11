@@ -6,8 +6,8 @@ import svg from 'rollup-plugin-svg'
 import json from '@rollup/plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
 import commonjs from '@rollup/plugin-commonjs'
-import minify from 'rollup-plugin-babel-minify'
-import nodePolyfills from 'rollup-plugin-node-polyfills';
+import { terser } from 'rollup-plugin-terser'
+import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
@@ -96,7 +96,7 @@ export default {
       ],
     ]),
     // minify the bundle
-    minify(),
+    terser(),
   ],
   output: {
     globals: {
