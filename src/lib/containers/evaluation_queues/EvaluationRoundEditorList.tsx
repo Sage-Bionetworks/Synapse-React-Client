@@ -25,29 +25,37 @@ export type EvaluationRoundEditorListProps = {
 const fetchEvaluationList = (
   evaluationId: string,
   sessionToken: string,
-  appendToListCallback: (...items: EvaluationRoundInput[]) => void,
+  setListCallback: (items: EvaluationRoundInput[]) => void,
   errorHandleCallback: (error: string | SynapseClientError | undefined) => void,
 ): void => {
-  let nextPageToken: string | undefined = undefined
-  do {
+  const allEvaluationRoundInputList: EvaluationRoundInput[] = []
+
+  const getEvaluationRounds = (nextPageToken?: string) => {
     getEvaluationRoundsList(
       evaluationId,
       { nextPageToken: nextPageToken },
       sessionToken,
     )
-      // eslint-disable-next-line no-loop-func
       .then((response: EvaluationRoundListResponse) => {
-        nextPageToken = response.nextPageToken
         const convertedToInput: EvaluationRoundInput[] = response.page.map(
           evaluationRound => convertEvaluationRoundToInput(evaluationRound),
         )
-        appendToListCallback(...convertedToInput)
+        allEvaluationRoundInputList.push(...convertedToInput)
         errorHandleCallback(undefined)
+        if (response.nextPageToken) {
+          getEvaluationRounds(response.nextPageToken)
+        } else {
+          // no more pages left. we can set the list
+          setListCallback(allEvaluationRoundInputList)
+        }
       })
       .catch(error => {
         errorHandleCallback(error)
       })
-  } while (nextPageToken)
+  }
+
+  //initially no next page token
+  getEvaluationRounds(undefined)
 }
 
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
@@ -62,6 +70,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
     appendToList: appendToEvaluationRoundInputList,
     handleListChange: handleEvaluationRoundInputListChange,
     handleListRemove: handleEvaluationRoundInputListRemove,
+    setList: setEvaluationRoundInputList,
   } = useListState<EvaluationRoundInput>([])
 
   //run only once
@@ -70,16 +79,18 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
       fetchEvaluationList(
         evaluationId,
         sessionToken,
-        appendToEvaluationRoundInputList,
+        setEvaluationRoundInputList,
         setError,
       ),
+    // we explicitly dont want to list setEvaluationRoundInputList as a dependency
+    // if we do, the fetchEvaluationList will re-fetch from the backend on every new render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [sessionToken, evaluationId],
   )
 
   if (error) {
     return <Error error={error} token={sessionToken} />
   }
-  console.log('render ' + Date.now())
   return (
     <div className="evaluation-round-editor-list bootstrap-4-backport">
       <div className="evaluation-rounds">

@@ -75,7 +75,7 @@ describe('test EvaluationRoundEditorList', () => {
     jest.clearAllMocks()
   })
 
-  it.skip('error fetching page', async () => {
+  it('error fetching page', () => {
     mockGetEvaulationsList.mockReset()
     const error = new TypeError('you got a new error!')
     mockGetEvaulationsList.mockReturnValue(
@@ -84,8 +84,7 @@ describe('test EvaluationRoundEditorList', () => {
       }),
     )
 
-    // eslint-disable-next-line require-await
-    let wrapper = await mount(
+    const wrapper = mount(
       <EvaluationRoundEditorList
         sessionToken={fakeSessionToken}
         evaluationId={evaluationId}
@@ -93,12 +92,12 @@ describe('test EvaluationRoundEditorList', () => {
       />,
     )
 
+    expect(wrapper.find('.evaluation-round-editor').exists()).toBe(false)
     expect(wrapper.find('Error').exists()).toBe(true)
   })
 
-  it('fetched pages', async () => {
-    // eslint-disable-next-line require-await
-    let wrapper = await mount(
+  it('fetched pages', () => {
+    const wrapper = mount(
       <EvaluationRoundEditorList
         sessionToken={fakeSessionToken}
         evaluationId={evaluationId}
@@ -117,7 +116,25 @@ describe('test EvaluationRoundEditorList', () => {
       fakeSessionToken,
     )
 
-    wrapper.update()
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
+    expect(wrapper.find('Error').exists()).toBe(false)
+  })
+
+  it('add round button', () => {
+    const wrapper = mount(
+      <EvaluationRoundEditorList
+        sessionToken={fakeSessionToken}
+        evaluationId={evaluationId}
+        utc={true}
+      />,
+    )
+
+    expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
+    expect(wrapper.find('Error').exists()).toBe(false)
+
+    wrapper.find('button.add-round-button').simulate('click')
+
+    expect(wrapper.find('.evaluation-round-editor')).toHaveLength(4)
+    expect(wrapper.find('Error').exists()).toBe(false)
   })
 })
