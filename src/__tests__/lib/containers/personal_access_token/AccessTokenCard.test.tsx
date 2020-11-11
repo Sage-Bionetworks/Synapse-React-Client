@@ -70,8 +70,8 @@ describe('basic functionality', () => {
     expect(wrapper.find(WarningModal).props().show).toBe(false)
 
     // Click delete button to open modal
-    act(() => {
-      wrapper.find(Button).simulate('click')
+    await act(async () => {
+      await wrapper.find(Button).simulate('click')
     })
 
     expect(wrapper.find(WarningModal).props().show).toBe(true)

@@ -72,8 +72,8 @@ describe('basic functionality', () => {
     expect(wrapper.find(CreateAccessTokenModal).length).toEqual(0)
 
     // Click 'Create new token' button
-    act(() => {
-      wrapper
+    await act(async () => {
+      await wrapper
         .find('.SRC-accessTokenPageCreateButtonContainer button')
         .simulate('click')
     })
@@ -82,8 +82,8 @@ describe('basic functionality', () => {
     expect(wrapper.find(CreateAccessTokenModal).length).toEqual(1)
 
     // close the modal using the prop
-    act(() => {
-      wrapper.find(CreateAccessTokenModal).prop('onClose')()
+    await act(async () => {
+      await wrapper.find(CreateAccessTokenModal).prop('onClose')()
     })
     await resolveAllPending(wrapper)
 
