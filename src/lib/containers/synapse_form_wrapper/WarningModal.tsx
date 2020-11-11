@@ -1,7 +1,6 @@
 import React from 'react'
-import Button from 'react-bootstrap/Button'
+import { Button, Modal } from 'react-bootstrap'
 import { ButtonVariant } from 'react-bootstrap/esm/types'
-import Modal from 'react-bootstrap/Modal'
 
 export type WarningModalProps = {
   title: string

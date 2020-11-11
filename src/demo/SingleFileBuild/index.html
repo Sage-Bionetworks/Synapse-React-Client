@@ -48,6 +48,9 @@
     <!-- react-measure -->
     <script src="https://unpkg.com/react-measure@2.2.2/dist/index.umd.js"></script>
 
+    <!-- react-spinners -->
+    <script src="https://unpkg.com/browse/react-spinners@0.9.0/index.js"></script>
+
     <!-- react-tooltip -->
     <script
       crossorigin
@@ -136,6 +139,7 @@
     <div id="panel6"></div>
     <div id="panel7"></div>
     <div id="panel8"></div>
+    <div id="panel9"></div>
     <div style="height: 300px;"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -284,5 +288,18 @@
       hasAccessContainer,
       'HasAccess',
     )
+
+    const accessTokenPageContainer = document.querySelector('#panel9')
+    const accessTokenPageProps = {
+      title: 'Personal Access Token Management',
+      body: 'Manage your tokens right here!!!!!',
+      token: ''
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.AccessTokenPage, accessTokenPageProps, null),
+      accessTokenPageContainer,
+      'Personal Access Token Page',
+    )
+
   </script>
 </html>
