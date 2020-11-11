@@ -32,7 +32,6 @@ import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
-import { AccessTokenPage } from './containers/personal_access_token/AccessTokenPage'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -71,7 +70,6 @@ const SynapseComponents = {
   UserCardListRotate,
   FeaturedDataTabs,
   UserCardListGroups,
-  AccessTokenPage,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
