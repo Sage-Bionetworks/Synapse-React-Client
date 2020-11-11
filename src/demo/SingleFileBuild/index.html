@@ -281,6 +281,7 @@
       const loginProps = {
         sessionCallback: () => {
           console.log('session was just changed!')
+          location.reload()
         },
       }
       renderInTryCatch(

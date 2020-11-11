@@ -591,6 +591,8 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 It produces a build for npm distribution and umd. <br>
 
+To test umd build, start a web server in the /src directory and visit the SingleFileBuild demo page index.html.  For example, http://localhost:8000/demo/SingleFileBuild/
+
 ### `yarn run build:rollup`
 
 This project can be built as a umd bundle. It produces two files `synapse-react-client.production.min.js` and `synapse-react-client.production.min.styles.css`. Note - this script is run automatically as part of the build command.
