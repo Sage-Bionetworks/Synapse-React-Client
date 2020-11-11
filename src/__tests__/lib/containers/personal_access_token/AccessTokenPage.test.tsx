@@ -179,15 +179,4 @@ describe('basic functionality', () => {
     ).toEqual(0)
     expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(2)
   })
-
-  it('displays an error if one occurs', async () => {
-    SynapseClient.getPersonalAccessTokenRecords = jest
-      .fn()
-      .mockRejectedValueOnce({ error: 'Unknown error occurred' })
-
-    const wrapper = mount(<AccessTokenPage {...props} />)
-    await resolveAllPending(wrapper)
-
-    expect(wrapper.find('Error').length).toEqual(1)
-  })
 })
