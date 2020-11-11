@@ -7,6 +7,7 @@ import json from '@rollup/plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
 import commonjs from '@rollup/plugin-commonjs'
 import minify from 'rollup-plugin-babel-minify'
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
@@ -18,6 +19,7 @@ export default {
     'react-router-dom',
     'react-measure',
     'react-bootstrap',
+    'react-spinners',
     'react-plotly.js/factory',
     'plotly.js-basic-dist',
     'react-jsonschema-form',
@@ -68,6 +70,8 @@ export default {
     }),
     // Common js is used to handle the import of older javascript modules not using es6
     commonjs(),
+    // Some dependencies try to use Node APIs, which we'll polyfill in so the package doesn't crash in-browser
+    nodePolyfills(),
     image(),
     // until css modules package is updated we can't opt into css modules
     // see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
@@ -101,6 +105,7 @@ export default {
       'react-router-dom': 'ReactRouterDom',
       'react-transition-group': 'ReactTransitionGroup',
       'react-bootstrap': 'ReactBootstrap',
+      'react-spinners': 'ReactSpinners',
       'react-plotly.js/factory': 'createPlotlyComponent',
       'rss-parser': 'Parser',
       'react-mailchimp-subscribe': 'ReactMailchimpSubscribe',
