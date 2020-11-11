@@ -93,11 +93,6 @@ Note there are a number of CDNs required to finish this functionality-
 ></script>
 ```
 
-**react-spinners**
-```html
-<script src="https://unpkg.com/browse/react-spinners@0.9.0/index.js"></script>
-```
-
 **react-measure**
 
 ```html
