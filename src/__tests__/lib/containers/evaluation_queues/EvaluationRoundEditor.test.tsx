@@ -66,8 +66,8 @@ describe('test EvaluationRoundEditor', () => {
       evaluationRoundInput: {
         reactListKey: 'SOME FAKE KEY',
         evaluationId: '123',
-        roundStart: '1970-01-01T00:00:00',
-        roundEnd: '1970-12-01T00:00:00',
+        roundStart: '1970-01-01T00:00:00Z',
+        roundEnd: '1970-12-01T00:00:00Z',
         totalSubmissionLimit: '',
         otherLimits: [],
       },
@@ -169,8 +169,8 @@ describe('test EvaluationRoundEditor', () => {
       evaluationId: '123',
       id: undefined,
       limits: [],
-      roundEnd: '1970-12-01T08:00:00.000Z',
-      roundStart: '1970-01-01T08:00:00.000Z',
+      roundEnd: '1970-12-01T00:00:00.000Z',
+      roundStart: '1970-01-01T00:00:00.000Z',
     }
 
     expect(mockCreateEvaluationRound).toBeCalledWith(
@@ -200,8 +200,8 @@ describe('test EvaluationRoundEditor', () => {
       evaluationId: '123',
       id: id,
       limits: [],
-      roundEnd: '1970-12-01T08:00:00.000Z',
-      roundStart: '1970-01-01T08:00:00.000Z',
+      roundEnd: '1970-12-01T00:00:00.000Z',
+      roundStart: '1970-01-01T00:00:00.000Z',
     }
 
     expect(mockUpdateEvaluationRound).toBeCalledWith(
@@ -239,8 +239,8 @@ describe('test EvaluationRoundEditor', () => {
       evaluationId: '123',
       id: id,
       limits: [],
-      roundEnd: '1970-12-01T08:00:00.000Z',
-      roundStart: '1970-01-01T08:00:00.000Z',
+      roundEnd: '1970-12-01T00:00:00.000Z',
+      roundStart: '1970-01-01T00:00:00.000Z',
     }
 
     expect(mockUpdateEvaluationRound).toBeCalledWith(

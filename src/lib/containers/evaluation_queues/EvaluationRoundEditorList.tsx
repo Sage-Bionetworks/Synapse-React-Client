@@ -40,8 +40,10 @@ const fetchEvaluationList = (
         const convertedToInput: EvaluationRoundInput[] = response.page.map(
           evaluationRound => convertEvaluationRoundToInput(evaluationRound),
         )
+
         allEvaluationRoundInputList.push(...convertedToInput)
         errorHandleCallback(undefined)
+
         if (response.nextPageToken) {
           getEvaluationRounds(response.nextPageToken)
         } else {
@@ -82,7 +84,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
         setEvaluationRoundInputList,
         setError,
       ),
-    // we explicitly dont want to list setEvaluationRoundInputList as a dependency
+    // we explicitly dont want to list setEvaluationRoundInputList nor setError as a dependency
     // if we do, the fetchEvaluationList will re-fetch from the backend on every new render
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [sessionToken, evaluationId],
@@ -91,6 +93,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   if (error) {
     return <Error error={error} token={sessionToken} />
   }
+
   return (
     <div className="evaluation-round-editor-list bootstrap-4-backport">
       <div className="evaluation-rounds">
