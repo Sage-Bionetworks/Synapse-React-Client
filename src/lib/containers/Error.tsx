@@ -26,7 +26,7 @@ export const ClientError = (props: {
   token?: string
 }) => {
   const { error, token } = props
-  const loginError = error.status === 403 && !token
+  const loginError = (error.status === 403 || error.status === 401) && !token
   const accessDenied = error.status === 403 && token
 
   return (

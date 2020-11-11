@@ -1,0 +1,21 @@
+.SRC-copyToClipboardInputContainer {
+  display: flex;
+  justify-content: center;
+  .SRC-copyToClipboardInput {
+    height: 35px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-right: none;
+    align-self: center;
+  }
+  .SRC-copyToClipboardIcon {
+    padding: 5px 10px;
+    height: 35px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    align-self: center;
+  }
+  .SRC-copyToClipboardIcon:hover {
+    background-color: #00000010;
+  }
+}

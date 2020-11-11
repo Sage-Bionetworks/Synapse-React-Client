@@ -6,7 +6,8 @@ import svg from 'rollup-plugin-svg'
 import json from '@rollup/plugin-json'
 import postprocess from 'rollup-plugin-postprocess'
 import commonjs from '@rollup/plugin-commonjs'
-import minify from 'rollup-plugin-babel-minify'
+import { terser } from 'rollup-plugin-terser'
+import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
@@ -68,6 +69,8 @@ export default {
     }),
     // Common js is used to handle the import of older javascript modules not using es6
     commonjs(),
+    // Some dependencies try to use Node APIs, which we'll polyfill in so the package doesn't crash in-browser
+    nodePolyfills(),
     image(),
     // until css modules package is updated we can't opt into css modules
     // see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
@@ -93,7 +96,7 @@ export default {
       ],
     ]),
     // minify the bundle
-    minify(),
+    terser(),
   ],
   output: {
     globals: {
