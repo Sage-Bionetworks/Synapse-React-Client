@@ -138,6 +138,7 @@
     <div id="panel7"></div>
     <div id="panel8"></div>
     <div id="panel9"></div>
+    <div id="panel10"></div>
     <div style="height: 300px;"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -304,7 +305,19 @@
       'HasAccess',
     )
 
-    const evaluationQueueEditorListContainer = document.querySelector('#panel9')
+    const accessTokenPageContainer = document.querySelector('#panel9')
+    const accessTokenPageProps = {
+      title: 'Personal Access Token Management',
+      body: 'Manage your tokens right here!!!!!',
+      token
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.AccessTokenPage, accessTokenPageProps, null),
+      accessTokenPageContainer,
+      'Personal Access Token Page',
+    )
+    
+    const evaluationQueueEditorListContainer = document.querySelector('#panel10')
     const evaluationRoundEditorListProps = {
       sessionToken: token,
       evaluationId: '9614644',

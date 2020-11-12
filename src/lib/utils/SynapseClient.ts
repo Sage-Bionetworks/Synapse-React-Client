@@ -73,6 +73,9 @@ import {
 import { SynapseConstants } from '.'
 import { EvaluationRoundListRequest } from './synapseTypes/Evaluation/EvaluationRoundListRequest'
 import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/EvaluationRoundListResponse'
+import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
+import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
+import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 
 const cookies = new UniversalCookies()
 
@@ -2256,6 +2259,46 @@ export const getTransformSqlWithFacetsRequest = (
     '/repo/v1/table/sql/transform',
     transformSqlWithFacetsRequest,
     undefined, // no auth needed
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const createPersonalAccessToken = (
+  accessTokenGenerationRequest: AccessTokenGenerationRequest,
+  sessionToken: string | undefined,
+) => {
+  return doPost<AccessTokenGenerationResponse>(
+    '/auth/v1/personalAccessToken',
+    accessTokenGenerationRequest,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const getPersonalAccessTokenRecords = (
+  sessionToken: string | undefined,
+  nextPageToken: string | undefined,
+) => {
+  return doGet<AccessTokenRecordList>(
+    `/auth/v1/personalAccessToken${
+      nextPageToken ? '?nextPageToken=' + nextPageToken : ''
+    }`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const deletePersonalAccessToken = (
+  accessTokenId: string,
+  sessionToken: string | undefined,
+) => {
+  return doDelete(
+    `/auth/v1/personalAccessToken/${accessTokenId}`,
+    null,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

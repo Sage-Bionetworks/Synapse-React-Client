@@ -25,6 +25,7 @@ import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 import { PeopleProfileDemo } from './PeopleProfileDemo'
 import { FeaturedDataTabsDemo } from './FeaturedDataTabsDemo'
 import { EvaluationQueueDemo } from './EvaluationQueueDemo'
+import { PersonalAccessTokensDemo } from './PersonalAccessTokensDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -134,6 +135,11 @@ const App = ({
           </Link>
         </li>
         <li>
+          <Link to={`${match.url}/PersonalAccessTokensDemo`}>
+            Personal Access Token Management Demo
+          </Link>
+        </li>
+        <li>
           <Link to={`${match.url}/EvaluationQueueDemo`}>
             EvaluationQueueDemo
           </Link>
@@ -179,7 +185,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/NewsFeedDemo`}
-        component={() => <NewsFeedDemo token={token}/>}
+        component={() => <NewsFeedDemo token={token} />}
       />
       <Route
         exact={true}
@@ -305,6 +311,12 @@ const App = ({
         exact={true}
         path={`${match.url}/FeaturedDataTabsDemo`}
         component={FeaturedDataTabsDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/PersonalAccessTokensDemo`}
+        component={() => <PersonalAccessTokensDemo token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

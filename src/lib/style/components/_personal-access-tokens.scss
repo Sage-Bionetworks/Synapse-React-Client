@@ -1,0 +1,72 @@
+.SRC-personalAccessTokenCard {
+  // adapted from SRC-userCardMediumUp
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgb(221, 221, 223);
+  justify-content: space-between;
+  margin: 7px;
+  height: 110px;
+  width: 100%;
+  width: -webkit-fill-available; // for chrome
+  width: -moz-available; // for firefox
+  padding-left: 25px;
+
+  .SRC-cardContent {
+    flex-grow: 1;
+  }
+
+  .SRC-scopeName {
+    margin-inline-start: 3px;
+    margin-inline-end: 3px;
+  }
+
+  .SRC-scopeName:hover {
+    text-decoration: underline;
+  }
+
+  .SRC-deleteAccessTokenButton {
+    align-self: flex-start;
+    margin: 10px;
+  }
+}
+
+.SRC-accessTokenPageHeaderContainer {
+  display: flex;
+
+  .SRC-accessTokenPageText {
+    align-items: flex-start;
+    flex-grow: 1;
+  }
+
+  .SRC-accessTokenPageCreateButtonContainer {
+    align-items: flex-end;
+    align-self: center;
+  }
+}
+
+.SRC-personalAccessTokenNameInput {
+  width: 325px;
+}
+
+.SRC-createdTokenCopyToClipboardContainer {
+  text-align: center;
+}
+
+.SRC-accessTokenCardList {
+  margin: 20px auto;
+  max-width: 800px;
+
+  .SRC-loadMoreButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+
+    .SRC-loadMoreAccessTokensButton {
+      margin: 10px;
+    }
+  }
+}
+
+.SRC-noAccessTokensMessage {
+  margin: 40px;
+  text-align: center;
+}
