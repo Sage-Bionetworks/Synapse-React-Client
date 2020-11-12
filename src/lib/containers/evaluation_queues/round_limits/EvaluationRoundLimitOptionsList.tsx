@@ -4,8 +4,8 @@ import {
   LIMIT_TYPE_DISPLAY_NAME,
 } from './EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
-import IconPlusSquareFilled from '../../../assets/icons/icon_plus_square_filled.svg'
-import IconTimes from '../../../assets/icons/icon_times.svg'
+// import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
+// import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 import { Button } from 'react-bootstrap'
 
@@ -73,7 +73,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
               className="remove-button"
               onClick={handleDeleteLimit(index)}
             >
-              <IconTimes />
+              {/*<IconTimes className="SRC-icon-fill" />*/}
             </Button>
 
             {/*conditionally create a "add" button*/}
@@ -88,7 +88,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
                     onClick={addNewLimit}
                     className="add-button"
                   >
-                    <IconPlusSquareFilled />
+                    {/*<IconPlusSquareFilled className="SRC-icon-fill" />*/}
                   </Button>
                 )
             }
