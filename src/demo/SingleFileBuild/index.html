@@ -217,92 +217,92 @@
       ownerId: '3374422',
       size: SRC.SynapseConstants.MEDIUM_USER_CARD,
     }
-    //
-    // renderInTryCatch(
-    //   e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null),
-    //   queryWrapperMenuContainer,
-    //   'QueryWrapperMenu',
-    // )
-    //
-    // renderInTryCatch(
-    //   e(SRC.SynapseComponents.Markdown, markdownProps, null),
-    //   markdownContainer,
-    //   'MarkdownSynapse',
-    // )
-    //
-    // renderInTryCatch(
-    //   e(SRC.SynapseComponents.UserCard, userCardPropsSmall, null),
-    //   userCardSmallContainer,
-    //   'UserCardSmall',
-    // )
-    //
-    // renderInTryCatch(
-    //   e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null),
-    //   UserCardMediumAndLargeContainer,
-    //   'UserCardMediumAndLargeContainer',
-    // )
-    //
-    // const formContainer = document.querySelector('#panel5')
-    // const entityFormProps = {
-    //   parentContainerId: 'syn20355732',
-    //   token,
-    //   formSchemaEntityId: 'syn20184776',
-    //   formUiSchemaEntityId: 'syn20184771',
-    //   initFormData: false,
-    // }
-    //
-    // renderInTryCatch(
-    //   e(SRC.SynapseComponents.EntityForm, entityFormProps, null),
-    //   formContainer,
-    //   'EntityForm',
-    // )
-    //
-    // const statsPlotProps = {
-    //   token,
-    //   request: {
-    //     concreteType:
-    //       'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
-    //     objectId: 'syn5585645',
-    //     fileDownloads: true,
-    //     fileUploads: true,
-    //   },
-    //   endpoint: 'https://repo-staging.prod.sagebase.org/',
-    // }
-    //
-    // const statsPlotContainer = document.querySelector('#panel6')
-    // renderInTryCatch(
-    //   e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null),
-    //   statsPlotContainer,
-    //   'EntityForm',
-    // )
-    //
-    // // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
-    // if (!token) {
-    //   const loginContainer = document.querySelector('#panel7')
-    //   const loginProps = {
-    //     sessionCallback: () => {
-    //       console.log('session was just changed!')
-    //       location.reload()
-    //     },
-    //   }
-    //   renderInTryCatch(
-    //     e(SRC.SynapseComponents.Login, loginProps, null),
-    //     loginContainer,
-    //     'Login',
-    //   )
-    //   const signoutButtonEl = document.getElementById("signoutButton")
-    //   signoutButtonEl.style.display = "none"
-    // }
-    // const hasAccessContainer = document.querySelector('#panel8')
-    // const hasAccessProps = {
-    //   token,
-    //   synapseId: 'syn12664802',
-    // }
-    // renderInTryCatch(
-    //   e(SRC.SynapseComponents.HasAccess, hasAccessProps, null),
-    //   hasAccessContainer,
-    //   'HasAccess',
-    // )
+
+    renderInTryCatch(
+      e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null),
+      queryWrapperMenuContainer,
+      'QueryWrapperMenu',
+    )
+
+    renderInTryCatch(
+      e(SRC.SynapseComponents.Markdown, markdownProps, null),
+      markdownContainer,
+      'MarkdownSynapse',
+    )
+
+    renderInTryCatch(
+      e(SRC.SynapseComponents.UserCard, userCardPropsSmall, null),
+      userCardSmallContainer,
+      'UserCardSmall',
+    )
+
+    renderInTryCatch(
+      e(SRC.SynapseComponents.UserCard, userCardPropsMedium, null),
+      UserCardMediumAndLargeContainer,
+      'UserCardMediumAndLargeContainer',
+    )
+
+    const formContainer = document.querySelector('#panel5')
+    const entityFormProps = {
+      parentContainerId: 'syn20355732',
+      token,
+      formSchemaEntityId: 'syn20184776',
+      formUiSchemaEntityId: 'syn20184771',
+      initFormData: false,
+    }
+
+    renderInTryCatch(
+      e(SRC.SynapseComponents.EntityForm, entityFormProps, null),
+      formContainer,
+      'EntityForm',
+    )
+
+    const statsPlotProps = {
+      token,
+      request: {
+        concreteType:
+          'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+        objectId: 'syn5585645',
+        fileDownloads: true,
+        fileUploads: true,
+      },
+      endpoint: 'https://repo-staging.prod.sagebase.org/',
+    }
+
+    const statsPlotContainer = document.querySelector('#panel6')
+    renderInTryCatch(
+      e(SRC.SynapseComponents.StatisticsPlot, statsPlotProps, null),
+      statsPlotContainer,
+      'EntityForm',
+    )
+
+    // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
+    if (!token) {
+      const loginContainer = document.querySelector('#panel7')
+      const loginProps = {
+        sessionCallback: () => {
+          console.log('session was just changed!')
+          location.reload()
+        },
+      }
+      renderInTryCatch(
+        e(SRC.SynapseComponents.Login, loginProps, null),
+        loginContainer,
+        'Login',
+      )
+      const signoutButtonEl = document.getElementById("signoutButton")
+      signoutButtonEl.style.display = "none"
+    }
+    const hasAccessContainer = document.querySelector('#panel8')
+    const hasAccessProps = {
+      token,
+      synapseId: 'syn12664802',
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.HasAccess, hasAccessProps, null),
+      hasAccessContainer,
+      'HasAccess',
+    )
 
     const evaluationQueueEditorListContainer = document.querySelector('#panel9')
     const evaluationRoundEditorListProps = {
@@ -316,6 +316,5 @@
       'EvaluationRoundEditorList',
     )
 
-    // TODO: add the EvaluationEditorList here
   </script>
 </html>
