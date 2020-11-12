@@ -1,4 +1,4 @@
-import { EvaluationRound, EvaluationRoundLimit } from 'lib/utils/synapseTypes'
+import { EvaluationRound, EvaluationRoundLimit } from '../../utils/synapseTypes'
 import React, { useState } from 'react'
 import {
   Button,

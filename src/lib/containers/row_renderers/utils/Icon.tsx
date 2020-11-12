@@ -32,6 +32,8 @@ import {
   VERTICAL_DOTS,
   CHART2,
   FILE,
+  PLUS_SQUARE_FILLED,
+  TIMES,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -43,6 +45,8 @@ import personSvg from '../../../assets/icons/person.svg'
 import mouseSvg from '../../../assets/icons/mouse.svg'
 import chart2Svg from '../../../assets/icons/chart2.svg'
 import fileSvg from '../../../assets/icons/file.svg'
+import timesSvg from '../../../assets/icons/icon_times.svg'
+import plusSquareFilledSvg from '../../../assets/icons/icon_plus_square_filled.svg'
 
 import {
   Project,
@@ -79,7 +83,7 @@ type IconProps = {
 }
 
 const defaultIcons = {
-  [DATABASE]: Database,  // this returns svg tag
+  [DATABASE]: Database, // this returns svg tag
   [DATASET]: Data2Svg, // this returns img tag link to svg
   [FUNDER]: Data2Svg,
   [TOOL]: DNA_TwoSvg,
@@ -112,12 +116,14 @@ const defaultIcons = {
   [VERTICAL_DOTS]: VerticalDots,
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
+  [TIMES]: timesSvg,
+  [PLUS_SQUARE_FILLED]: plusSquareFilledSvg,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
   value = '',
   iconOptions,
-  cssClass
+  cssClass,
 }) => {
   const iconSet = { ...defaultIcons, ...iconOptions }
   // see if the value has a corresponding icon, e.g. 'Active' in a studies table
@@ -127,7 +133,11 @@ const Icon: React.FunctionComponent<IconProps> = ({
   const datasetIconClass =
     value === DATASET || type === DATASET ? 'SRC-datasetIcon' : ''
   if (typeof Icon == 'function') {
-    return <span className={cssClass}><Icon /></span>
+    return (
+      <span className={cssClass}>
+        <Icon />
+      </span>
+    )
   }
   return <img src={Icon} className={`iconImg ${datasetIconClass}`} />
 }
