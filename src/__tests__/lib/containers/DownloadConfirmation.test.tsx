@@ -1,16 +1,16 @@
-import { mount, ReactWrapper } from 'enzyme'
+import { mount } from 'enzyme'
 import {
+  AddFilesToDownloadListRequest,
   AddFilesToDownloadListResponse,
   FileHandleAssociateType,
-  AddFilesToDownloadListRequest,
   QueryBundleRequest,
 } from 'lib/utils/synapseTypes/'
 import * as React from 'react'
-import { act } from 'react-dom/test-utils'
 import {
   DownloadConfirmation,
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 
 let getQueryTableResultsFn: Function
 let addFilesToDownloadRequestFn: Function
@@ -78,23 +78,6 @@ const createMountedComponent = (props: DownloadConfirmationProps) => {
   )
 
   return { wrapper }
-}
-
-const resolveAllPending = async (
-  wrapper: ReactWrapper<
-    React.FunctionComponent<DownloadConfirmationProps>,
-    any,
-    React.Component<{}, {}, any>
-  >,
-) => {
-  await act(
-    async (): Promise<any> => {
-      await Promise.resolve(wrapper)
-      await new Promise(resolve => setImmediate(resolve))
-      wrapper.update()
-      return wrapper
-    },
-  )
 }
 
 describe('it performs the expected functionality', () => {

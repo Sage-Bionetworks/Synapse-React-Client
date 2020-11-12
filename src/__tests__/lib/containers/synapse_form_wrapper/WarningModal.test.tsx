@@ -15,7 +15,7 @@ const createMountedComponent = (props: WarningModalProps) => {
 
 describe('basic tests', () => {
   const mock = {
-    okFn: jest.fn(() => Promise.resolve({ value: 'ok' })),
+    confirmFn: jest.fn(() => Promise.resolve({ value: 'ok' })),
   }
 
   const props: WarningModalProps = {
@@ -23,7 +23,7 @@ describe('basic tests', () => {
     copy: 'Some Copy',
     confirmCopy: 'Do it!',
     show: true,
-    onOK: mock.okFn,
+    onConfirm: mock.confirmFn,
     onCancel: _.noop,
     callbackArgs: ['one', 'two'],
   }
@@ -37,7 +37,7 @@ describe('basic tests', () => {
   })
 
   it('should call callback fn with correct arguments', async () => {
-    const spy = jest.spyOn(mock, 'okFn')
+    const spy = jest.spyOn(mock, 'confirmFn')
     const { wrapper } = createMountedComponent(props)
     const btn = wrapper.find('.btn-success')
     btn.simulate('click')

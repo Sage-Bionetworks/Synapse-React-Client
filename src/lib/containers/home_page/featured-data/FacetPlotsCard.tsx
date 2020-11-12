@@ -116,7 +116,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       </div>
     }
     const isShowingMultiplePlots = facetPlotDataArray.length > 1
-    const cardTitle = title ?? isShowingMultiplePlots ? selectedFacetValue : unCamelCase(facetDataArray[0].columnName, facetAliases)
+    const cardTitle = title ?? (isShowingMultiplePlots ? selectedFacetValue : unCamelCase(facetDataArray[0].columnName, facetAliases))
     return (
       <div className="FacetPlotsCard cardContainer">
         <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
