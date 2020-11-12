@@ -1,5 +1,10 @@
+const path = require('path')
 module.exports = {
-    components: 'src/lib/containers/**/[A-Z]*.{js,jsx,ts,tsx}',
+    components: 'src/lib/containers/**/[A-Z]*.tsx',
+    ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx'],
+    require: [
+        path.join(__dirname, 'src/lib/style/main.css')
+    ],
     template: {
         head: {
           scripts: [
@@ -50,7 +55,7 @@ module.exports = {
             {
               rel: 'stylesheet',
               href:
-                'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'
+                'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
             }
           ]
         }
