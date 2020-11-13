@@ -24,6 +24,7 @@ import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
 import { PeopleProfileDemo } from './PeopleProfileDemo'
 import { FeaturedDataTabsDemo } from './FeaturedDataTabsDemo'
+import { PersonalAccessTokensDemo } from './PersonalAccessTokensDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -123,13 +124,20 @@ const App = ({
         </li>
         <li>
           <Link to={`${match.url}/ProgramsDemo`}>ProgramsDemo</Link>
-        </li>        
+        </li>
         <li>
           <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/FeaturedDataTabsDemo`}>Featured Data Tabs Demo</Link>
-        </li>        
+          <Link to={`${match.url}/FeaturedDataTabsDemo`}>
+            Featured Data Tabs Demo
+          </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/PersonalAccessTokensDemo`}>
+            Personal Access Token Management Demo
+          </Link>
+        </li>
       </ul>
 
       <Route
@@ -171,7 +179,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/NewsFeedDemo`}
-        component={() => <NewsFeedDemo token={token}/>}
+        component={() => <NewsFeedDemo token={token} />}
       />
       <Route
         exact={true}
@@ -250,21 +258,24 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/ProgramsDemo`}
-        component={() => <ProgramsDemo
-          entityId={'syn17024173'}
-          rgbIndex={1}
-          titleColumnName={'Program'}
-          summaryColumnName={'Short Description'}
-          linkColumnName={'Website'}
-          iconColumnName={'Program'}
-          iconOptions={iconOptions}
-          linkConfig={{
-            isMarkdown: false,
-            baseURL: 'Explore/Programs/DetailsPage',
-            URLColumnName: 'Program',
-            matchColumnName: 'Program',
-          }}
-          token={token} />}
+        component={() => (
+          <ProgramsDemo
+            entityId={'syn17024173'}
+            rgbIndex={1}
+            titleColumnName={'Program'}
+            summaryColumnName={'Short Description'}
+            linkColumnName={'Website'}
+            iconColumnName={'Program'}
+            iconOptions={iconOptions}
+            linkConfig={{
+              isMarkdown: false,
+              baseURL: 'Explore/Programs/DetailsPage',
+              URLColumnName: 'Program',
+              matchColumnName: 'Program',
+            }}
+            token={token}
+          />
+        )}
       />
       <Route
         exact={true}
@@ -294,6 +305,12 @@ const App = ({
         exact={true}
         path={`${match.url}/FeaturedDataTabsDemo`}
         component={FeaturedDataTabsDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/PersonalAccessTokensDemo`}
+        component={() => <PersonalAccessTokensDemo token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

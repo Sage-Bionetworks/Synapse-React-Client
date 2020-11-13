@@ -466,7 +466,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               copy={this.modalCopy}
               callbackArgs={this.state.modalContext.arguments}
               onCancel={() => this.setState({ modalContext: undefined })}
-              onOK={(token: string, formDataId: string) =>
+              onConfirm={(token: string, formDataId: string) =>
                 this.deleteFile(token, formDataId)
               }
             />

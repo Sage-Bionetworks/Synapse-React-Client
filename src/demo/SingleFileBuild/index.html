@@ -127,6 +127,7 @@
     }
   </style>
   <body>
+    <button id="signoutButton" class="btn btn-primary" onclick="signout()">Sign Out</button>
     <div id="panel1"></div>
     <!-- spacer div below -->
     <div id="panel2"></div>
@@ -136,6 +137,7 @@
     <div id="panel6"></div>
     <div id="panel7"></div>
     <div id="panel8"></div>
+    <div id="panel9"></div>
     <div style="height: 300px;"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -154,6 +156,18 @@
     //   REPO: 'https://repo-staging.prod.sagebase.org/',
     //   PORTAL: 'https://staging.synapse.org/',
     // }
+    
+    //attempt to read session token from cookies
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    function signout() {
+      document.cookie = "org.sagebionetworks.security.user.login.token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+      location.reload()
+    }
+    const token = getCookie("org.sagebionetworks.security.user.login.token")
     const e = React.createElement // utility for creating elements
     const renderInTryCatch = (reactNode, container, name) => {
       try {
@@ -165,7 +179,7 @@
     }
     const queryWrapperMenuContainer = document.querySelector('#panel1')
     const queryWrapperProps = {
-      token: '',
+      token,
       menuConfig: [
         {
           facet: 'Organism',
@@ -187,7 +201,7 @@
     }
     const markdownContainer = document.querySelector('#panel2')
     const markdownProps = {
-      token: '',
+      token,
       wikiId: '582150',
       ownerId: 'syn14306197',
     }
@@ -231,7 +245,7 @@
     const formContainer = document.querySelector('#panel5')
     const entityFormProps = {
       parentContainerId: 'syn20355732',
-      token: '',
+      token,
       formSchemaEntityId: 'syn20184776',
       formUiSchemaEntityId: 'syn20184771',
       initFormData: false,
@@ -244,7 +258,7 @@
     )
 
     const statsPlotProps = {
-      token: '',
+      token,
       request: {
         concreteType:
           'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
@@ -263,20 +277,25 @@
     )
 
     // verified window.SRC.OVERRIDE_ENDPOINT_CONFIG is used in Login component (including Forgot Password and Register links)
-    const loginContainer = document.querySelector('#panel7')
-    const loginProps = {
-      sessionCallback: () => {
-        console.log('session was just changed!')
-      },
+    if (!token) {
+      const loginContainer = document.querySelector('#panel7')
+      const loginProps = {
+        sessionCallback: () => {
+          console.log('session was just changed!')
+          location.reload()
+        },
+      }
+      renderInTryCatch(
+        e(SRC.SynapseComponents.Login, loginProps, null),
+        loginContainer,
+        'Login',
+      )
+      const signoutButtonEl = document.getElementById("signoutButton")
+      signoutButtonEl.style.display = "none"
     }
-    renderInTryCatch(
-      e(SRC.SynapseComponents.Login, loginProps, null),
-      loginContainer,
-      'Login',
-    )
     const hasAccessContainer = document.querySelector('#panel8')
     const hasAccessProps = {
-      token: '',
+      token,
       synapseId: 'syn12664802',
     }
     renderInTryCatch(
@@ -284,5 +303,18 @@
       hasAccessContainer,
       'HasAccess',
     )
+
+    const accessTokenPageContainer = document.querySelector('#panel9')
+    const accessTokenPageProps = {
+      title: 'Personal Access Token Management',
+      body: 'Manage your tokens right here!!!!!',
+      token
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.AccessTokenPage, accessTokenPageProps, null),
+      accessTokenPageContainer,
+      'Personal Access Token Page',
+    )
+
   </script>
 </html>

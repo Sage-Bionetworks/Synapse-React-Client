@@ -69,6 +69,9 @@ import {
   SqlTransformResponse,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { SynapseConstants } from '.'
+import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
+import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
+import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 
 const cookies = new UniversalCookies()
 
@@ -497,7 +500,7 @@ export const getQueryTableResults = (
 
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
-  sessionToken: string | undefined = undefined
+  sessionToken: string | undefined = undefined,
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -2165,6 +2168,46 @@ export const getTransformSqlWithFacetsRequest = (
     '/repo/v1/table/sql/transform',
     transformSqlWithFacetsRequest,
     undefined, // no auth needed
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const createPersonalAccessToken = (
+  accessTokenGenerationRequest: AccessTokenGenerationRequest,
+  sessionToken: string | undefined,
+) => {
+  return doPost<AccessTokenGenerationResponse>(
+    '/auth/v1/personalAccessToken',
+    accessTokenGenerationRequest,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const getPersonalAccessTokenRecords = (
+  sessionToken: string | undefined,
+  nextPageToken: string | undefined,
+) => {
+  return doGet<AccessTokenRecordList>(
+    `/auth/v1/personalAccessToken${
+      nextPageToken ? '?nextPageToken=' + nextPageToken : ''
+    }`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const deletePersonalAccessToken = (
+  accessTokenId: string,
+  sessionToken: string | undefined,
+) => {
+  return doDelete(
+    `/auth/v1/personalAccessToken/${accessTokenId}`,
+    null,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
