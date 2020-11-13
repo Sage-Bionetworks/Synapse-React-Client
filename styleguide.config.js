@@ -1,7 +1,31 @@
 const path = require('path')
 module.exports = {
-    components: 'src/lib/containers/**/[A-Z]*.tsx',
-    ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx'],
+    pagePerSection: true,
+    sections: [
+        {
+            name: 'Introduction',
+            content: 'introduction.md'
+        },
+        {
+            name: 'Login/Logout',
+            description: 'Content depends on if you are logged in',
+            components: ['src/lib/containers/**/Login.tsx','src/lib/containers/**/Logout.tsx'],            
+        },
+        {
+            name: 'Home Page',
+            //   content: 'docs/homepage.md'
+            description: 'Collection of components used in portal home pages',
+            ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx', '**/FeaturedDataPlots.tsx', '**/QueryPerFacetPlotsCard.tsx', '**/SingleQueryFacetPlotsCards.tsx', '**/FacetPlotsCard.tsx', '**/ExpandableContent.tsx'],
+            components: ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx'],
+        },
+        {
+            name: 'All Components',
+            //   content: 'docs/all.md'
+            components: 'src/lib/containers/**/[A-Z]*.tsx',
+            ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx'],
+        },            
+      ],
+
     require: [
         path.join(__dirname, 'styleguide.setup.js'),
         path.join(__dirname, 'styleguide.setup.css'),
