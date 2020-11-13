@@ -1,34 +1,37 @@
 {
   "files": {
-    "main.css": "/Synapse-React-Client/static/css/main.530bfb9d.chunk.css",
-    "main.js": "/Synapse-React-Client/build/main.4f452660.js",
+    "main.css": "/Synapse-React-Client/static/css/main.647e2beb.chunk.css",
+    "main.js": "/Synapse-React-Client/build/main.05ba7929.js",
     "runtime-main.js": "/Synapse-React-Client/build/bundle.d9c9ee50.js",
-    "build/2.486c0dec.js": "/Synapse-React-Client/build/2.486c0dec.js",
-    "build/2.486c0dec.js.LICENSE.txt": "/Synapse-React-Client/build/2.486c0dec.js.LICENSE.txt",
+    "build/2.afe017a4.js": "/Synapse-React-Client/build/2.afe017a4.js",
+    "build/2.afe017a4.js.LICENSE.txt": "/Synapse-React-Client/build/2.afe017a4.js.LICENSE.txt",
     "index.html": "/Synapse-React-Client/index.html",
-    "precache-manifest.f8783f68b9008a0813c1448f3f8ecce0.js": "/Synapse-React-Client/precache-manifest.f8783f68b9008a0813c1448f3f8ecce0.js",
+    "precache-manifest.1482ce115733dd3149034c1c2df080be.js": "/Synapse-React-Client/precache-manifest.1482ce115733dd3149034c1c2df080be.js",
     "service-worker.js": "/Synapse-React-Client/service-worker.js",
-    "static/css/main.530bfb9d.chunk.css.map": "/Synapse-React-Client/static/css/main.530bfb9d.chunk.css.map",
+    "static/css/main.647e2beb.chunk.css.map": "/Synapse-React-Client/static/css/main.647e2beb.chunk.css.map",
     "static/media/DNA_Two.svg": "/Synapse-React-Client/static/media/DNA_Two.d8f80972.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.1104e430.svg",
+    "static/media/brain.svg": "/Synapse-React-Client/static/media/brain.c6301611.svg",
     "static/media/chart2.svg": "/Synapse-React-Client/static/media/chart2.570e6894.svg",
+    "static/media/circle.svg": "/Synapse-React-Client/static/media/circle.ed6d433a.svg",
     "static/media/file-dotted.svg": "/Synapse-React-Client/static/media/file-dotted.2dcc2eac.svg",
     "static/media/file.svg": "/Synapse-React-Client/static/media/file.ff06cc8d.svg",
     "static/media/icon_minus.svg": "/Synapse-React-Client/static/media/icon_minus.e81d9a4f.svg",
     "static/media/icon_plus.svg": "/Synapse-React-Client/static/media/icon_plus.0e50c501.svg",
     "static/media/json-form-tool-no-submissions.svg": "/Synapse-React-Client/static/media/json-form-tool-no-submissions.e64940c0.svg",
     "static/media/_spinner.scss": "/Synapse-React-Client/static/media/logo.c5907af2.svg",
-    "static/media/mouse.svg": "/Synapse-React-Client/static/media/mouse.4a97f235.svg",
+    "static/media/mouse.svg": "/Synapse-React-Client/static/media/mouse.7e294e96.svg",
     "static/media/organizations.svg": "/Synapse-React-Client/static/media/organizations.67d2a8a1.svg",
     "static/media/person.svg": "/Synapse-React-Client/static/media/person.0d77b8e6.svg",
+    "static/media/resiliencead.svg": "/Synapse-React-Client/static/media/resiliencead.7500217a.svg",
     "static/media/study-active.svg": "/Synapse-React-Client/static/media/study-active.bc52e72b.svg",
     "static/media/study-complete.svg": "/Synapse-React-Client/static/media/study-complete.b012f80b.svg",
     "static/media/subscribe_plus.svg": "/Synapse-React-Client/static/media/subscribe_plus.f7a0ebbd.svg"
   },
   "entrypoints": [
     "build/bundle.d9c9ee50.js",
-    "build/2.486c0dec.js",
-    "static/css/main.530bfb9d.chunk.css",
-    "build/main.4f452660.js"
+    "build/2.afe017a4.js",
+    "static/css/main.647e2beb.chunk.css",
+    "build/main.05ba7929.js"
   ]
 }
