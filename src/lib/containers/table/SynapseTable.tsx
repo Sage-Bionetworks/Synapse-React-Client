@@ -858,7 +858,7 @@ export default class SynapseTable extends React.Component<
     lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
-    const { facetAliases = {}, isColumnSelected, token } = this.props
+    const { facetAliases = {}, isColumnSelected, token, lockedFacet } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
       (column: SelectColumn, index: number) => {
         const isHeaderSelected = isColumnSelected!.includes(column.name)
@@ -908,7 +908,7 @@ export default class SynapseTable extends React.Component<
                       token,
                       facetAliases,
                     )}
-                  {this.isSortableColumn(column.columnType) && (
+                  {this.isSortableColumn(column.columnType) && (column.name !== lockedFacet?.facet) && (
                     <span
                       tabIndex={0}
                       className={sortSpanBackgoundClass}
