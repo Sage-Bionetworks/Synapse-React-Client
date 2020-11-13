@@ -893,6 +893,7 @@ export default class SynapseTable extends React.Component<
             facetAliases,
           )
           const columnModel = columnModels.find(el => el.name === column.name)!
+          const isLockedFacetColumn = column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase()  // used in details page to disable sort and filter the column
           return (
             <th key={column.name}>
               <div className="SRC-split">
@@ -900,7 +901,7 @@ export default class SynapseTable extends React.Component<
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
-                  {isFacetSelection &&
+                  {isFacetSelection && !isLockedFacetColumn &&
                     this.configureFacetDropdown(
                       facet,
                       columnModel,
@@ -908,7 +909,7 @@ export default class SynapseTable extends React.Component<
                       token,
                       facetAliases,
                     )}
-                  {this.isSortableColumn(column.columnType) && (column.name !== lockedFacet?.facet) && (
+                  {this.isSortableColumn(column.columnType) && (
                     <span
                       tabIndex={0}
                       className={sortSpanBackgoundClass}
