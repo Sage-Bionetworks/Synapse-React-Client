@@ -33,7 +33,7 @@ module.exports = {
     ],
     
     template: {
-        favicon: './favicon.png',
+        favicon: 'https://sage-bionetworks.github.io/Synapse-React-Client/favicon.png',
         head: {
           scripts: [
             {
