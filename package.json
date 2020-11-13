@@ -133,9 +133,9 @@
   "scripts": {
     "postinstall": "npm rebuild node-sass",
     "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
-    "predeploy": "yarn run build-gh && cp build/index.html build/404.html",
-    "build-gh": "react-scripts build",
-    "deploy": "gh-pages -d build && gh-pages -d build -o upstream",
+    "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html",
+    "build-gh": "yarn run build:docs",
+    "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o upstream",
     "build-css": "node-sass src/lib/style -o src/lib/style",
     "watch-css": "yarn run build-css && node-sass src/ -o src/ --watch --recursive",
     "start-js": "react-scripts start",
