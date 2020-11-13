@@ -544,9 +544,9 @@ Links to Resources on Testing:
 Build and deploy our style guide documentation to "upstream"<br>
 Available at https://sage-bionetworks.github.io/Synapse-React-Client/
 
-### `yarn run start-docs`
+### `yarn start-docs`
 
-Run to start a style guide dev server, available at http://localhost:6060/
+Starts a style guide dev server, available at http://localhost:6060/
 
 ### Common issues with failed tests -
 
