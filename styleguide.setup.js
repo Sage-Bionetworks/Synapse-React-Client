@@ -1,0 +1,34 @@
+import {detectSSOCode, getSessionTokenFromCookie, signOut} from './src/lib/utils/SynapseClient'
+import {MEDIUM_USER_CARD} from './src/lib/utils/SynapseConstants'
+import brainSvg from './src/demo/containers/playground/icons/brain.svg'
+import circleSvg from './src/demo/containers/playground/icons/circle.svg'
+import mouseSvg from './src/demo/containers/playground/icons/mouse.svg'
+import resilienceadSvg from './src/demo/containers/playground/icons/resiliencead.svg'
+
+
+global.sessionChangeHandler = async () => {
+    detectSSOCode()
+    getSessionTokenFromCookie()
+      .then(sessionToken => {
+          global.sessionToken = sessionToken
+          console.log('Session has successfully been changed' + sessionToken)
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+
+global.signOut = signOut
+global.sessionChangeHandler()
+
+// example iconOptions (for custom icon mapping)
+global.iconOptions = {
+  'AMP-AD': circleSvg,
+  'M2OVE-AD': brainSvg,
+  'MODEL-AD': mouseSvg,
+  'Resilience-AD': resilienceadSvg,
+}
+
+
+global.MEDIUM_USER_CARD = MEDIUM_USER_CARD
+

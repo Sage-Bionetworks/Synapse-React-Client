@@ -3,8 +3,11 @@ module.exports = {
     components: 'src/lib/containers/**/[A-Z]*.tsx',
     ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx'],
     require: [
-        path.join(__dirname, 'src/lib/style/main.css')
+        path.join(__dirname, 'styleguide.setup.js'),
+        path.join(__dirname, 'styleguide.setup.css'),
+        path.join(__dirname, 'src/lib/style/main.css'),
     ],
+    
     template: {
         head: {
           scripts: [

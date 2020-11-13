@@ -1,4 +1,4 @@
-```js
+```jsx
     <FeaturedDataTabs rgbIndex={0}
         sql='select * from syn11346063'
         configs={
