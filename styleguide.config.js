@@ -33,6 +33,7 @@ module.exports = {
     ],
     
     template: {
+        favicon: './favicon.png',
         head: {
           scripts: [
             {
