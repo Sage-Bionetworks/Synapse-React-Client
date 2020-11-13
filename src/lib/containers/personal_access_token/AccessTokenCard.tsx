@@ -30,6 +30,12 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
 
   const isExpired = accessToken.state === 'EXPIRED'
 
+  React.useEffect(() => {
+    // For reasons unknown, the tooltips in this component would not load in Synapse.org without this
+    // see https://github.com/wwayne/react-tooltip/issues/344
+    ReactTooltip.rebuild()
+  }, [])
+
   return (
     <div
       className={
@@ -69,10 +75,10 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
 
       <div className="SRC-cardContent">
         <p className="SRC-eqHeightRow SRC-userCardName">
+          <ReactTooltip delayShow={100} />
           <span className={'SRC-blackText'}>{accessToken.name}</span>
           {isExpired && (
             <span>
-              <ReactTooltip delayShow={100} />{' '}
               <FontAwesomeIcon
                 data-tip={
                   'This token has expired. It no longer works and can only be deleted.'
