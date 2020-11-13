@@ -62,7 +62,7 @@ export default {
   },
   // NOTE - the order matters for the extensions below
   plugins: [
-    resolve({ extensions }),
+    resolve({ extensions, browser: true }),
     babel({
       extensions,
       exclude: 'node_modules/*.*',
