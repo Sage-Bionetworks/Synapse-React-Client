@@ -893,7 +893,7 @@ export default class SynapseTable extends React.Component<
             facetAliases,
           )
           const columnModel = columnModels.find(el => el.name === column.name)!
-          const isLockedFacetColumn = column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase()  // used in details page to disable sort and filter the column
+          const isLockedFacetColumn = column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase()  // used in details page to disable filter the column
           return (
             <th key={column.name}>
               <div className="SRC-split">
