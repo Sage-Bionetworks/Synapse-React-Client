@@ -48,17 +48,6 @@ const App = ({
           </Link>
         </li>
         <li>
-          <Link to={`${match.url}/UserBadgeDemo`}>UserBadgeDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/MarkdownSynapseDemo`}>
-            MarkdownSynapseDemo
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
-        </li>
-        <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
             FormServicesIntegrationDemo
           </Link>
@@ -88,39 +77,11 @@ const App = ({
           <Link to={`${match.url}/ShowDownloadDemo`}>ShowDownloadDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
-        </li>
-        <li>
           <Link to={`${match.url}/SynapsePlotDemo`}>SynapsePlotDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/UpsetPlotDemo`}>UpsetPlotDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/People`}>PeopleDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/ProgramsDemo`}>ProgramsDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/FeaturedDataTabsDemo`}>
-            Featured Data Tabs Demo
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/PersonalAccessTokensDemo`}>
-            Personal Access Token Management Demo
           </Link>
         </li>
       </ul>
