@@ -1,12 +1,11 @@
 const path = require('path')
-const ignoreComponents = ['**/*.Mobile.tsx','**/*.Desktop.tsx', '**/*Demo.tsx',
-    '**/FeaturedDataPlots.tsx', '**/QueryPerFacetPlotsCard.tsx', '**/SingleQueryFacetPlotsCards.tsx',
-    '**/FacetPlotsCard.tsx', '**/ExpandableContent.tsx'
-]
+const ignoreComponents = ['**/*.Mobile.tsx','**/*.Desktop.tsx']
+
 module.exports = {
     title: 'Synapse React Client Component Library',
-    tocMode: 'expand',
+    tocMode: 'collapse',
     pagePerSection: true,
+    skipComponentsWithoutExample: true,
     sections: [
         {
             name: 'Introduction',
@@ -21,20 +20,15 @@ module.exports = {
             name: 'Home Page',
             //   content: 'docs/homepage.md'
             description: 'Collection of components used in portal home pages',
-            ignore: ignoreComponents,
             components: ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx', 'src/lib/containers/**/UserCardListRotate.tsx', 'src/lib/containers/**/RssFeedCards.tsx', 'src/lib/containers/**/TableFeedCards.tsx', 'src/lib/containers/**/UpsetPlot.tsx', 'src/lib/containers/**/MarkdownSynapse.tsx'],
-        },
+            ignore: ignoreComponents
+        },        
         {
-            name: 'Highlights',
-            ignore: ignoreComponents,
-            components: ['**/AccessTokenPage.tsx', '**/EvaluationRoundEditorList.tsx', '**/UserCard.tsx'],
+            name: 'All Components',
+            //   content: 'docs/all.md'
+            components: 'src/lib/containers/**/[A-Z]*.tsx',
+            ignore: ignoreComponents
         },
-        // {
-        //     name: 'All Components',
-        //     //   content: 'docs/all.md'
-        //     components: 'src/lib/containers/**/[A-Z]*.tsx',
-        //     ignore: ignoreComponents,
-        // },
       ],
 
     require: [
