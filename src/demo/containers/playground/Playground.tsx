@@ -6,7 +6,6 @@ import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
-import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
 import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
@@ -38,11 +37,6 @@ const App = ({
         <li>
           <Link to={`${match.url}/QueryWrapperMenuDemo`}>
             QueryWrapperMenuDemo
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/QueryWrapperPlotNavDemo`}>
-            QueryWrapperPlotNavDemo
           </Link>
         </li>
         <li>
@@ -137,11 +131,6 @@ const App = ({
         render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
       />
 
-      <Route
-        exact={true}
-        path={`${match.url}/QueryWrapperPlotNavDemo`}
-        render={() => <QueryWrapperPlotNavDemo token={token} />}
-      />
 
       <Route
         exact={true}
@@ -207,6 +196,7 @@ const App = ({
         component={() => <ShowDownloadDemo token={token} />}
       />
 
+      <Route
         exact={true}
         path={`${match.url}/SynapsePlotDemo`}
         component={() => <SynapsePlotDemo token={token} />}
