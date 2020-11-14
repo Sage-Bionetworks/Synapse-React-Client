@@ -76,7 +76,9 @@ export default {
     // until css modules package is updated we can't opt into css modules
     // see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
     scss({ output: './src/umd/synapse-react-client.production.styles.css' }),
+    // allows importing SVGs via syntax: import svgUrl from '/svgfile.svg' , which provides the svg as URL to plug into an <img src={svgUrl}>
     svg(),
+    // allows importing SVGs via syntax: import { ReactComponent as MySvgComponent } from '/svgfile.svg' , which provides a ready-to-use <svg> ReactComponent
     svgr(),
     json(),
     // The plugin below is used to mitigate a limitation of rollup, which is that an import statement
