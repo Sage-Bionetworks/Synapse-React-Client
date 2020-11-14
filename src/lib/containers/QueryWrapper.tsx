@@ -397,7 +397,7 @@ export default class QueryWrapper extends React.Component<
     const lockedFacet = this.props.lockedFacet?.facet
     if (lockedFacet && this.state.data) {  // for details page, return data without the "locked" facet
       const data = cloneDeep(this.state.data)
-      const facets = data.facets?.filter( item => item.columnName !== lockedFacet)
+      const facets = data.facets?.filter( item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase())
       data.facets = facets
       return data
     } else {  // for other pages, just return the data
