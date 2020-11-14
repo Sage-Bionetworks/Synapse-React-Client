@@ -5,6 +5,8 @@ const ignoreComponents = ['**/*.Mobile.tsx','**/*.Desktop.tsx', '**/*Demo.tsx',
     '**/EvaluationRoundLimitOptions.tsx', '**/EvaluationRoundLimitOptionsList.tsx'
 ]
 module.exports = {
+    title: 'Synapse React Client Component Library',
+    tocMode: 'expand',
     pagePerSection: true,
     sections: [
         {
@@ -23,12 +25,12 @@ module.exports = {
             ignore: ignoreComponents,
             components: ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx', 'src/lib/containers/**/UserCardListRotate.tsx', 'src/lib/containers/**/RssFeedCards.tsx', 'src/lib/containers/**/TableFeedCards.tsx', 'src/lib/containers/**/UpsetPlot.tsx', 'src/lib/containers/**/MarkdownSynapse.tsx'],
         },
-        {
-            name: 'All Components',
-            //   content: 'docs/all.md'
-            components: 'src/lib/containers/**/[A-Z]*.tsx',
-            ignore: ignoreComponents,
-        },            
+        // {
+        //     name: 'All Components',
+        //     //   content: 'docs/all.md'
+        //     components: 'src/lib/containers/**/[A-Z]*.tsx',
+        //     ignore: ignoreComponents,
+        // },
       ],
 
     require: [
