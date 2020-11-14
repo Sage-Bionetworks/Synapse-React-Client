@@ -1,4 +1,9 @@
 const path = require('path')
+const ignoreComponents = ['**/*.Mobile.tsx','**/*.Desktop.tsx', '**/*Demo.tsx',
+    '**/FeaturedDataPlots.tsx', '**/QueryPerFacetPlotsCard.tsx', '**/SingleQueryFacetPlotsCards.tsx',
+    '**/FacetPlotsCard.tsx', '**/ExpandableContent.tsx', '**/EvaluationRoundEditor.tsx', '**/EvaluationRoundEditorDropdown.tsx',
+    '**/EvaluationRoundLimitOptions.tsx', '**/EvaluationRoundLimitOptionsList.tsx'
+]
 module.exports = {
     pagePerSection: true,
     sections: [
@@ -15,14 +20,14 @@ module.exports = {
             name: 'Home Page',
             //   content: 'docs/homepage.md'
             description: 'Collection of components used in portal home pages',
-            ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx', '**/FeaturedDataPlots.tsx', '**/QueryPerFacetPlotsCard.tsx', '**/SingleQueryFacetPlotsCards.tsx', '**/FacetPlotsCard.tsx', '**/ExpandableContent.tsx'],
+            ignore: ignoreComponents,
             components: ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx', 'src/lib/containers/**/UserCardListRotate.tsx', 'src/lib/containers/**/RssFeedCards.tsx', 'src/lib/containers/**/TableFeedCards.tsx', 'src/lib/containers/**/UpsetPlot.tsx', 'src/lib/containers/**/MarkdownSynapse.tsx'],
         },
         {
             name: 'All Components',
             //   content: 'docs/all.md'
             components: 'src/lib/containers/**/[A-Z]*.tsx',
-            ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx'],
+            ignore: ignoreComponents,
         },            
       ],
 
@@ -31,13 +36,14 @@ module.exports = {
         path.join(__dirname, 'styleguide.setup.css'),
         path.join(__dirname, 'src/lib/style/main.css'),
     ],
-    styles: {
-        StyleGuide: {
-            content: {
-            maxWidth: 1300
-            }
-        }
-    },
+    // This works when running the local server, but not when built.
+    // styles: {
+    //     StyleGuide: {
+    //         content: {
+    //             maxWidth: 1300
+    //         }
+    //     }
+    // },
     template: {
         favicon: 'https://sage-bionetworks.github.io/Synapse-React-Client/favicon.png',
         head: {

@@ -1,0 +1,107 @@
+$green: #35bf7d;
+
+.evaluation-round-editor {
+  font-size: 1rem;
+
+  .card-body {
+    // even though all sides have the same padding,
+    // the top looks like it is slightly less padded than the bottom
+    // so we bump the top padding from default of 1.25rem to 1.75rem
+    padding-top: 1.75rem;
+  }
+
+  input {
+    width: 100%;
+  }
+
+  .alert {
+    margin-bottom: 0;
+  }
+
+  h5 {
+    font-weight: bold;
+  }
+
+  .round-status {
+    .status-in-progress {
+      color: $green;
+    }
+    .status-completed {
+      svg {
+        color: $green;
+      }
+      span {
+        color: $gray-deemphasized;
+      }
+    }
+    .status-not-yet-started {
+      color: $gray-deemphasized;
+    }
+  }
+
+  label {
+    color: $gray-deemphasized;
+    font-weight: normal;
+    font-size: 1rem;
+  }
+
+  button.evaluation-round-editor-dropdown {
+    padding: 0;
+    &:hover,
+    &:focus {
+      background-color: transparent;
+    }
+  }
+
+  .max-submission-input-col {
+    padding-right: 0;
+  }
+
+  .advanced-limits-link {
+    padding: 0;
+  }
+
+  .advanced-limits-grid {
+    display: grid;
+    // We need a fixed size for the add-button
+    // or else the alignment will slightly change once the add-button disappears upon reaching the max number of rows
+    grid-template-columns: [limit-type] 1fr [spacer] 30px [limit-input] 1.8fr [remove-button] 30px [add-button] 30px [end];
+    grid-auto-rows: auto;
+    row-gap: 1rem;
+
+    .form-group {
+      // rely on grid's row gap instead of built-in bottom margin for spacing
+      margin-bottom: 0;
+    }
+    .remove-button,
+    .add-button {
+      padding: 0;
+      align-self: end;
+    }
+
+    .limit-type {
+      grid-column-start: limit-type;
+      select {
+        background-color: #f9f9f9;
+        option {
+          background-color: white;
+        }
+      }
+    }
+    .limit-input {
+      grid-column-start: limit-input;
+    }
+    .remove-button {
+      grid-column-start: remove-button;
+      svg {
+        fill: $primary-action-color;
+      }
+    }
+    .add-button {
+      grid-column-start: add-button;
+      svg {
+        fill: $primary-action-color;
+      }
+    }
+  }
+}

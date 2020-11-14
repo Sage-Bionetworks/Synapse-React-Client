@@ -25,6 +25,10 @@ body * {
   font-family: 'Lato';
 }
 
+body {
+  color: $gray-regular;
+}
+
 strong {
   font-weight: 600;
 }

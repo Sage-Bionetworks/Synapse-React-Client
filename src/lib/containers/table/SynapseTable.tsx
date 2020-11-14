@@ -858,7 +858,7 @@ export default class SynapseTable extends React.Component<
     lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
-    const { facetAliases = {}, isColumnSelected, token } = this.props
+    const { facetAliases = {}, isColumnSelected, token, lockedFacet } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
       (column: SelectColumn, index: number) => {
         const isHeaderSelected = isColumnSelected!.includes(column.name)
@@ -893,6 +893,7 @@ export default class SynapseTable extends React.Component<
             facetAliases,
           )
           const columnModel = columnModels.find(el => el.name === column.name)!
+          const isLockedFacetColumn = column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase()  // used in details page to disable filter the column
           return (
             <th key={column.name}>
               <div className="SRC-split">
@@ -900,7 +901,7 @@ export default class SynapseTable extends React.Component<
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
-                  {isFacetSelection &&
+                  {isFacetSelection && !isLockedFacetColumn &&
                     this.configureFacetDropdown(
                       facet,
                       columnModel,

@@ -4,7 +4,10 @@ import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
+import UserCardDemo from './UserCardDemo'
+import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
+import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
@@ -12,9 +15,17 @@ import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
+import { ThemesPlotDemo } from './ThemesPlotDemo'
+import GoalsDemo from './GoalsDemo'
+import ProgramsDemo from './ProgramsDemo'
 import Resources from 'lib/containers/home_page/resources/Resources'
+import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
+import { PeopleProfileDemo } from './PeopleProfileDemo'
+import { FeaturedDataTabsDemo } from './FeaturedDataTabsDemo'
+import { EvaluationQueueDemo } from './EvaluationQueueDemo'
+import { PersonalAccessTokensDemo } from './PersonalAccessTokensDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -59,6 +70,9 @@ const App = ({
           <Link to={`${match.url}/MarkdownSynapseDemo`}>
             MarkdownSynapseDemo
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
@@ -203,7 +217,6 @@ const App = ({
         component={() => <ShowDownloadDemo token={token} />}
       />
 
-      <Route
         exact={true}
         path={`${match.url}/SynapsePlotDemo`}
         component={() => <SynapsePlotDemo token={token} />}
@@ -229,6 +242,12 @@ const App = ({
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />
+
+      <Route
+        exact={true}
+        path={`${match.url}/EvaluationQueueDemo`}
+        component={() => <EvaluationQueueDemo token={token} />}
+      />
     </div>
   )
 }
