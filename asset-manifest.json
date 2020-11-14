@@ -1,12 +1,12 @@
 {
   "files": {
     "main.css": "/Synapse-React-Client/static/css/main.da265a7f.chunk.css",
-    "main.js": "/Synapse-React-Client/build/main.ef9c98b1.js",
+    "main.js": "/Synapse-React-Client/build/main.f10874d0.js",
     "runtime-main.js": "/Synapse-React-Client/build/bundle.d9c9ee50.js",
     "build/2.9439428c.js": "/Synapse-React-Client/build/2.9439428c.js",
     "build/2.9439428c.js.LICENSE.txt": "/Synapse-React-Client/build/2.9439428c.js.LICENSE.txt",
     "index.html": "/Synapse-React-Client/index.html",
-    "precache-manifest.e18edda24dd27bc9d177a38637b2f89d.js": "/Synapse-React-Client/precache-manifest.e18edda24dd27bc9d177a38637b2f89d.js",
+    "precache-manifest.755ae385d6037e8e39adabf309049320.js": "/Synapse-React-Client/precache-manifest.755ae385d6037e8e39adabf309049320.js",
     "service-worker.js": "/Synapse-React-Client/service-worker.js",
     "static/css/main.da265a7f.chunk.css.map": "/Synapse-React-Client/static/css/main.da265a7f.chunk.css.map",
     "static/media/DNA_Two.svg": "/Synapse-React-Client/static/media/DNA_Two.d8f80972.svg",
@@ -32,6 +32,6 @@
     "build/bundle.d9c9ee50.js",
     "build/2.9439428c.js",
     "static/css/main.da265a7f.chunk.css",
-    "build/main.ef9c98b1.js"
+    "build/main.f10874d0.js"
   ]
 }
