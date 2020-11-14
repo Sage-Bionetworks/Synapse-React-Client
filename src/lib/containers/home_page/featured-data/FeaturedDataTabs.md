@@ -1,3 +1,26 @@
+Either from a single query:
+```jsx
+      <FeaturedDataTabs rgbIndex={0}
+        sql='SELECT * FROM syn21994974'
+        configs={
+          [
+            {
+              title: 'Studies',
+              icon: 'chart2',
+              explorePagePath:'/Explore/Studies',
+              exploreObjectType:'Studies',
+              plotsConfig: {
+                sql: 'SELECT * FROM syn21994974 WHERE ( ( "collectionType" = \'Validation Study\' OR "collectionType" = \'Interventional Study\' OR "collectionType" = \'Observational Study\' ) )',
+                configs: [{
+                  facetsToPlot:['dataCollectionMethod', 'deviceType','devicePlatform','diagnosis','reportedOutcome', 'digitalAssessmentCategory'],
+                },]
+              },
+            },            
+          ]
+      }
+      />
+```
+Or a query per card (selecting a different facet value):
 ```jsx
     <FeaturedDataTabs rgbIndex={0}
         sql='select * from syn11346063'
@@ -64,23 +87,4 @@
           ]
       }
       />
-      <FeaturedDataTabs rgbIndex={0}
-        sql='SELECT * FROM syn21994974'
-        configs={
-          [
-            {
-              title: 'Studies',
-              icon: 'chart2',
-              explorePagePath:'/Explore/Studies',
-              exploreObjectType:'Studies',
-              plotsConfig: {
-                sql: 'SELECT * FROM syn21994974 WHERE ( ( "collectionType" = \'Validation Study\' OR "collectionType" = \'Interventional Study\' OR "collectionType" = \'Observational Study\' ) )',
-                configs: [{
-                  facetsToPlot:['dataCollectionMethod', 'deviceType','devicePlatform','diagnosis','reportedOutcome', 'digitalAssessmentCategory'],
-                },]
-              },
-            },            
-          ]
-      }
-      />    
 ```

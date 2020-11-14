@@ -9,14 +9,14 @@ module.exports = {
         {
             name: 'Login/Logout',
             description: 'Content depends on if you are logged in',
-            components: ['src/lib/containers/**/Login.tsx','src/lib/containers/**/Logout.tsx'],            
+            components: ['src/lib/containers/**/Login.tsx','src/lib/containers/**/Logout.tsx'],
         },
         {
             name: 'Home Page',
             //   content: 'docs/homepage.md'
             description: 'Collection of components used in portal home pages',
             ignore: ['**/*.Mobile.tsx', '**/*.Desktop.tsx', '**/*Demo.tsx', '**/FeaturedDataPlots.tsx', '**/QueryPerFacetPlotsCard.tsx', '**/SingleQueryFacetPlotsCards.tsx', '**/FacetPlotsCard.tsx', '**/ExpandableContent.tsx'],
-            components: ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx'],
+            components: ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx', 'src/lib/containers/**/UserCardListRotate.tsx', 'src/lib/containers/**/RssFeedCards.tsx', 'src/lib/containers/**/TableFeedCards.tsx', 'src/lib/containers/**/UpsetPlot.tsx', 'src/lib/containers/**/MarkdownSynapse.tsx'],
         },
         {
             name: 'All Components',
@@ -31,7 +31,13 @@ module.exports = {
         path.join(__dirname, 'styleguide.setup.css'),
         path.join(__dirname, 'src/lib/style/main.css'),
     ],
-    
+    styles: {
+        StyleGuide: {
+            content: {
+            maxWidth: 1300
+            }
+        }
+    },
     template: {
         favicon: 'https://sage-bionetworks.github.io/Synapse-React-Client/favicon.png',
         head: {
