@@ -79,7 +79,7 @@ type IconProps = {
 }
 
 const defaultIcons = {
-  [DATABASE]: Database,  // this returns svg tag
+  [DATABASE]: Database, // this returns svg tag
   [DATASET]: Data2Svg, // this returns img tag link to svg
   [FUNDER]: Data2Svg,
   [TOOL]: DNA_TwoSvg,
@@ -117,7 +117,7 @@ const Icon: React.FunctionComponent<IconProps> = ({
   type,
   value = '',
   iconOptions,
-  cssClass
+  cssClass,
 }) => {
   const iconSet = { ...defaultIcons, ...iconOptions }
   // see if the value has a corresponding icon, e.g. 'Active' in a studies table
@@ -127,7 +127,11 @@ const Icon: React.FunctionComponent<IconProps> = ({
   const datasetIconClass =
     value === DATASET || type === DATASET ? 'SRC-datasetIcon' : ''
   if (typeof Icon == 'function') {
-    return <span className={cssClass}><Icon /></span>
+    return (
+      <span className={cssClass}>
+        <Icon />
+      </span>
+    )
   }
   return <img src={Icon} className={`iconImg ${datasetIconClass}`} />
 }

@@ -37,6 +37,7 @@ import UserCardListGroups from './containers/home_page/people/UserCardListGroups
 // with a relative import.
 import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
+import { EvaluationRoundEditorList } from './containers/evaluation_queues/EvaluationRoundEditorList'
 
 const SynapseComponents = {
   Facets,
@@ -70,6 +71,7 @@ const SynapseComponents = {
   UserCardListRotate,
   FeaturedDataTabs,
   UserCardListGroups,
+  EvaluationRoundEditorList,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
