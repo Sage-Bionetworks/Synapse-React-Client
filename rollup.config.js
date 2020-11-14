@@ -8,6 +8,7 @@ import postprocess from 'rollup-plugin-postprocess'
 import commonjs from '@rollup/plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
 import nodePolyfills from 'rollup-plugin-node-polyfills'
+import svgr from '@svgr/rollup'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
@@ -76,6 +77,7 @@ export default {
     // see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
     scss({ output: './src/umd/synapse-react-client.production.styles.css' }),
     svg(),
+    svgr(),
     json(),
     // The plugin below is used to mitigate a limitation of rollup, which is that an import statement
     // can only be exposed as the import name used. This limitation is seen here-

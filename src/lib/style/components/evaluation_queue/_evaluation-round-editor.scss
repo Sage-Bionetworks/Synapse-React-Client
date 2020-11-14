@@ -65,7 +65,7 @@ $green: #35bf7d;
     display: grid;
     // We need a fixed size for the add-button
     // or else the alignment will slightly change once the add-button disappears upon reaching the max number of rows
-    grid-template-columns: [limit-type] 32% [spacer] 3.5% [limit-input] 57% [remove-button] auto [add-button] 26px [end];
+    grid-template-columns: [limit-type] 1fr [spacer] 30px [limit-input] 1.8fr [remove-button] 30px [add-button] 30px [end];
     grid-auto-rows: auto;
     row-gap: 1rem;
 
@@ -93,9 +93,15 @@ $green: #35bf7d;
     }
     .remove-button {
       grid-column-start: remove-button;
+      svg {
+        fill: $primary-action-color;
+      }
     }
     .add-button {
       grid-column-start: add-button;
+      svg {
+        fill: $primary-action-color;
+      }
     }
   }
 }

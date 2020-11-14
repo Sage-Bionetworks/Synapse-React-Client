@@ -1,3 +1,7 @@
 .bootstrap-4-backport {
+  //initial bootstrap config based on Synapse design
+  $primary: $primary-action-color;
+  $secondary: $secondary-action-color;
+
   @import 'node_modules/bootstrap/scss/bootstrap';
 }

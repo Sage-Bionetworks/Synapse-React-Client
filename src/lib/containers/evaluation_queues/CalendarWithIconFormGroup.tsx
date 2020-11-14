@@ -1,7 +1,7 @@
 import React from 'react'
 import { Moment } from 'moment'
 import { Form, InputGroup } from 'react-bootstrap'
-import calendarDateIcon from '../../assets/icons/calendar-date.svg'
+import { ReactComponent as CalendarClockIcon } from '../../assets/icons/calendar-clock.svg'
 import Datetime from 'react-datetime'
 import 'react-datetime/css/react-datetime.css'
 
@@ -28,11 +28,7 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
       <InputGroup>
         <InputGroup.Prepend>
           <InputGroup.Text>
-            <img
-              height="14px"
-              src={calendarDateIcon}
-              alt="calendar-date-icon"
-            />
+            <CalendarClockIcon />
           </InputGroup.Text>
         </InputGroup.Prepend>
         <Datetime
@@ -43,8 +39,7 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
           onChange={setterCallback}
           inputProps={{
             disabled: disabled,
-            className: 'form-control',
-            style: { borderBottomLeftRadius: 0, borderTopLeftRadius: 0 },
+            className: 'form-control calendar-date-time-input rounded-right',
           }}
           isValidDate={isValidDate}
         />

@@ -7,7 +7,6 @@ import {
   Form,
   FormControl,
   FormGroup,
-  InputGroup,
   Row,
 } from 'react-bootstrap'
 import moment, { Moment } from 'moment'
@@ -275,16 +274,14 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               <Col>
                 <FormGroup>
                   <label>Total Submissions / Round</label>
-                  <InputGroup>
-                    <FormControl
-                      value={totalSubmissionLimit}
-                      type="text"
-                      pattern="[0-9]*"
-                      onChange={event =>
-                        setTotalSubmissionLimit(event.target.value)
-                      }
-                    />
-                  </InputGroup>
+                  <FormControl
+                    value={totalSubmissionLimit}
+                    type="text"
+                    pattern="[0-9]*"
+                    onChange={event =>
+                      setTotalSubmissionLimit(event.target.value)
+                    }
+                  />
                 </FormGroup>
               </Col>
             </Row>
