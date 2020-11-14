@@ -32,8 +32,6 @@ import {
   VERTICAL_DOTS,
   CHART2,
   FILE,
-  PLUS_SQUARE_FILLED,
-  TIMES,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -45,8 +43,6 @@ import personSvg from '../../../assets/icons/person.svg'
 import mouseSvg from '../../../assets/icons/mouse.svg'
 import chart2Svg from '../../../assets/icons/chart2.svg'
 import fileSvg from '../../../assets/icons/file.svg'
-import timesSvg from '../../../assets/icons/icon_times.svg'
-import plusSquareFilledSvg from '../../../assets/icons/icon_plus_square_filled.svg'
 
 import {
   Project,
@@ -116,8 +112,6 @@ const defaultIcons = {
   [VERTICAL_DOTS]: VerticalDots,
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
-  [TIMES]: timesSvg,
-  [PLUS_SQUARE_FILLED]: plusSquareFilledSvg,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
