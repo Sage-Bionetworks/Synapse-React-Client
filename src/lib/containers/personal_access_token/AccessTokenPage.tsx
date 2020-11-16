@@ -6,11 +6,7 @@ import { Error } from '../Error'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
-import {
-  ErrorBoundary,
-  FallbackProps,
-  useErrorHandler,
-} from 'react-error-boundary'
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 
 const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
   error,
@@ -18,7 +14,6 @@ const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
 }) => {
   return (
     <div role="alert" className="SRC-marginBottomTop">
-      <p>The following error occurred:</p>
       <Error error={error}></Error>
       <Button onClick={resetErrorBoundary}>Reload Access Tokens</Button>
     </div>
@@ -50,7 +45,8 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
     undefined,
   )
 
-  const handleError = useErrorHandler()
+  const [showErrorMessage, setShowErrorMessage] = React.useState(false)
+  const [errorMessage, setErrorMessage] = React.useState('')
 
   // We rerender the list whenever a token is created or deleted to ensure we are up-to-date
   const rerenderList = () => {
@@ -74,10 +70,11 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           }
         })
         .catch(err => {
-          handleError(err)
+          setIsLoading(false)
+          setErrorMessage(err)
+          setShowErrorMessage(true)
         })
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadNextPage, token, nextPageToken])
 
   return (
@@ -123,7 +120,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
               )
             })}
             {isLoading && loadingScreen}
-            {!isLoading && nextPageToken && (
+            {!isLoading && nextPageToken && !showErrorMessage && (
               <div className="SRC-loadMoreButtonContainer">
                 <Button
                   className="SRC-loadMoreAccessTokensButton"
@@ -135,6 +132,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
               </div>
             )}
           </div>
+          {showErrorMessage && <Error error={errorMessage}></Error>}
         </div>
       </ErrorBoundary>
     </>
