@@ -1,31 +1,20 @@
 import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
-import CardContainerLogicDemo, { iconOptions } from './CardContainerLogicDemo'
+import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
-import UserCardDemo from './UserCardDemo'
-import MarkdownSynapseDemo from './MarkdownSynapseDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
-import { NewsFeedDemo } from './NewsFeedDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
-import QueryWrapperPlotNavDemo from './QueryWrapperPlotNavDemo'
 import DownloadListTable from 'lib/containers/download_list/DownloadListTable'
 import { WidgetDemo } from './WidgetDemo'
 import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
-import { ThemesPlotDemo } from './ThemesPlotDemo'
-import GoalsDemo from './GoalsDemo'
-import ProgramsDemo from './ProgramsDemo'
 import Resources from 'lib/containers/home_page/resources/Resources'
-import { UpsetPlotDemo } from './UpsetPlotDemo'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
-import { PeopleProfileDemo } from './PeopleProfileDemo'
-import { FeaturedDataTabsDemo } from './FeaturedDataTabsDemo'
 import { EvaluationQueueDemo } from './EvaluationQueueDemo'
-import { PersonalAccessTokensDemo } from './PersonalAccessTokensDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -51,28 +40,12 @@ const App = ({
           </Link>
         </li>
         <li>
-          <Link to={`${match.url}/QueryWrapperPlotNavDemo`}>
-            QueryWrapperPlotNavDemo
-          </Link>
-        </li>
-        <li>
           <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/CardContainerLogicDemo`}>
             CardContainerLogicDemo
           </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/UserBadgeDemo`}>UserBadgeDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/MarkdownSynapseDemo`}>
-            MarkdownSynapseDemo
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/NewsFeedDemo`}>NewsFeedDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
@@ -104,44 +77,11 @@ const App = ({
           <Link to={`${match.url}/ShowDownloadDemo`}>ShowDownloadDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/ThemesPlotDemo`}>ThemesPlotDemo</Link>
-        </li>
-        <li>
           <Link to={`${match.url}/SynapsePlotDemo`}>SynapsePlotDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/UpsetPlotDemo`}>UpsetPlotDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/People`}>PeopleDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/GoalsDemo`}>GoalsDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/ProgramsDemo`}>ProgramsDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/ResourcesDemo`}>ResourcesDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/FeaturedDataTabsDemo`}>
-            Featured Data Tabs Demo
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/PersonalAccessTokensDemo`}>
-            Personal Access Token Management Demo
-          </Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/EvaluationQueueDemo`}>
-            EvaluationQueueDemo
           </Link>
         </li>
       </ul>
@@ -152,11 +92,6 @@ const App = ({
         render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
       />
 
-      <Route
-        exact={true}
-        path={`${match.url}/QueryWrapperPlotNavDemo`}
-        render={() => <QueryWrapperPlotNavDemo token={token} />}
-      />
 
       <Route
         exact={true}
@@ -170,23 +105,6 @@ const App = ({
         component={CardContainerLogicDemo}
       />
 
-      <Route
-        exact={true}
-        path={`${match.url}/UserBadgeDemo`}
-        component={() => <UserCardDemo />}
-      />
-
-      <Route
-        exact={true}
-        path={`${match.url}/MarkdownSynapseDemo`}
-        component={() => <MarkdownSynapseDemo token={token} />}
-      />
-
-      <Route
-        exact={true}
-        path={`${match.url}/NewsFeedDemo`}
-        component={() => <NewsFeedDemo token={token} />}
-      />
       <Route
         exact={true}
         path={`${match.url}/FormServicesIntegrationDemo`}
@@ -241,48 +159,10 @@ const App = ({
 
       <Route
         exact={true}
-        path={`${match.url}/ThemesPlotDemo`}
-        component={ThemesPlotDemo}
-      />
-      <Route
-        exact={true}
         path={`${match.url}/SynapsePlotDemo`}
         component={() => <SynapsePlotDemo token={token} />}
       />
-      <Route
-        exact={true}
-        path={`${match.url}/UpsetPlotDemo`}
-        component={() => <UpsetPlotDemo token={token} />}
-      />
 
-      <Route
-        exact={true}
-        path={`${match.url}/GoalsDemo`}
-        component={() => <GoalsDemo entityId={'syn22315959'} token={token} />}
-      />
-
-      <Route
-        exact={true}
-        path={`${match.url}/ProgramsDemo`}
-        component={() => (
-          <ProgramsDemo
-            entityId={'syn17024173'}
-            rgbIndex={1}
-            titleColumnName={'Program'}
-            summaryColumnName={'Short Description'}
-            linkColumnName={'Website'}
-            iconColumnName={'Program'}
-            iconOptions={iconOptions}
-            linkConfig={{
-              isMarkdown: false,
-              baseURL: 'Explore/Programs/DetailsPage',
-              URLColumnName: 'Program',
-              matchColumnName: 'Program',
-            }}
-            token={token}
-          />
-        )}
-      />
       <Route
         exact={true}
         path={`${match.url}/ResourcesDemo`}
@@ -300,23 +180,6 @@ const App = ({
         component={() => (
           <ExternalFileHandleLink synId={'syn22276050'} token={token} />
         )}
-      />
-
-      <Route
-        exact={true}
-        path={`${match.url}/People`}
-        component={PeopleProfileDemo}
-      />
-      <Route
-        exact={true}
-        path={`${match.url}/FeaturedDataTabsDemo`}
-        component={FeaturedDataTabsDemo}
-      />
-
-      <Route
-        exact={true}
-        path={`${match.url}/PersonalAccessTokensDemo`}
-        component={() => <PersonalAccessTokensDemo token={token} />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />

@@ -1,14 +1,7 @@
-import * as React from 'react'
-import ThemesPlot from 'lib/containers/widgets/themes-plot/ThemesPlot'
-
-export const ThemesPlotDemo = () => {
-  return (
+```jsx
     <ThemesPlot
       onPointClick={e => {
-        console.log(e.event.shiftKey) // shift
-        console.log(e.event.ctrlKey) // ctrl
-        console.log(e.event.altKey) // alt
-        console.log(e.event.metaKey) // command/windows (meta) key
+        console.log(e.event)
       }}
       topBarPlot={{
         entityId: 'syn21641485',
@@ -59,5 +52,4 @@ export const ThemesPlotDemo = () => {
         },
       }}
     />
-  )
-}
+```

@@ -203,7 +203,7 @@ export function extractPlotDataArray(
     labels,
     colors:
       plotType === 'PIE'
-        ? (singleChartData.marker?.colors as string[])
+        ? ((singleChartData.marker as any)?.colors as string[])
         : (singleChartData.marker?.color as string[]),    
   }
   return result
