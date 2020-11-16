@@ -1,8 +1,9 @@
 const path = require('path')
+const pkg = require('./package.json');
 const ignoreComponents = ['**/*.Mobile.tsx','**/*.Desktop.tsx']
 
 module.exports = {
-    title: 'Synapse React Client Component Library',
+    title: `Synapse React Components v${pkg.version}`,
     tocMode: 'collapse',
     pagePerSection: true,
     skipComponentsWithoutExample: true,
@@ -36,14 +37,16 @@ module.exports = {
         path.join(__dirname, 'styleguide.setup.css'),
         path.join(__dirname, 'src/lib/style/main.css'),
     ],
-    // This works when running the local server, but not when built.
-    // styles: {
-    //     StyleGuide: {
-    //         content: {
-    //             maxWidth: 1300
-    //         }
-    //     }
-    // },
+    theme: {
+        maxWidth: 1300,
+        color: {
+            link: 'rgb(64, 123, 160)',
+            linkHover: 'rgb(64, 123, 160)'
+        },
+        fontFamily: {
+            base: '"Lato", Helvetica, sans-serif'
+        },
+    },
     template: {
         favicon: 'https://sage-bionetworks.github.io/Synapse-React-Client/favicon.png',
         head: {
@@ -91,7 +94,7 @@ module.exports = {
                 src:"https://cdn.jsdelivr.net/npm/sanitize-html@1.20.0/dist/sanitize-html.min.js",
             },
         ],
-          links: [
+        links: [
             {
               rel: 'stylesheet',
               href:
@@ -100,4 +103,5 @@ module.exports = {
           ]
         }
       }
+      
 }
