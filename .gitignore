@@ -2,6 +2,7 @@
 
 # css
 *.css
+!styleguide.setup.css
 
 # dependencies
 /node_modules
@@ -11,6 +12,9 @@
 
 # production
 /build
+
+# docs build
+/styleguide
 
 # misc
 .DS_Store
