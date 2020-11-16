@@ -1,6 +1,6 @@
 Either from a single query:
 ```jsx
-<FeaturedDataTabs rgbIndex={0}
+<FeaturedDataTabs rgbIndex={1}
   sql='SELECT * FROM syn21994974'
   configs={
     [
@@ -22,7 +22,7 @@ Either from a single query:
 ```
 Or a query per card (selecting a different facet value):
 ```jsx
-<FeaturedDataTabs rgbIndex={0}
+<FeaturedDataTabs rgbIndex={1}
   sql='select * from syn11346063'
   configs={
     [

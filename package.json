@@ -161,8 +161,8 @@
     "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
-    "build:docs": "npx styleguidist build",
-    "start-docs": "npx styleguidist server"
+    "build:docs": "yarn run build-css && npx styleguidist build",
+    "start-docs": "yarn run build-css && npx styleguidist server"
   },
   "resolutions": {
     "fstream": "1.0.12",
