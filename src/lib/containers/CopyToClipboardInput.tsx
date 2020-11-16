@@ -65,8 +65,7 @@ export const CopyToClipboardInput: React.FunctionComponent<CopyToClipboardInputP
           onClick={copyToClipboard(ref, value)}
         ></FormControl>
         <Button
-          variant="default"
-          id="SRC-copyToClipboardButton"
+          className="SRC-copyToClipboardButton"
           onClick={copyToClipboard(ref, value)}
         >
           {IconCopy}
