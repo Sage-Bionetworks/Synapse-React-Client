@@ -5,6 +5,8 @@
 
 This project helps you integrate your app with the Synapse API backend.
 
+[See the available Components](https://sage-bionetworks.github.io/Synapse-React-Client/)
+
 [Getting started](http://docs.synapse.org/articles/getting_started.html) with Synapse.
 
 [Synapse.org](https://www.synapse.org/) is a client written for the Synapse platform.
@@ -538,6 +540,15 @@ Links to Resources on Testing:
 - Testing Framework: https://jestjs.io/
 - React Class Testing: https://enzymejs.github.io/enzyme/
 - React Hooks Testing: https://testing-library.com/docs/react-testing-library/intro
+
+### `yarn deploy`
+
+Build and deploy our style guide documentation to "upstream"<br>
+Available at https://sage-bionetworks.github.io/Synapse-React-Client/
+
+### `yarn start-docs`
+
+Starts a style guide dev server, available at http://localhost:6060/
 
 ### Common issues with failed tests -
 
