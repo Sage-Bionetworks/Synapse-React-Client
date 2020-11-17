@@ -1596,8 +1596,52 @@ export const getEvaluation = (
   evalId: string,
   sessionToken: string | undefined,
 ): Promise<Evaluation> => {
+  if (!evalId) {
+    // we must explicitly handle this because /repo/v1/evaluation
+    // without an evalId is a valid API that returns a different API response
+    return Promise.reject(new Error('evalId is empty'))
+  }
   return doGet(
     `/repo/v1/evaluation/${evalId}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update an existing evaluation queue
+ * https://docs.synapse.org/rest/PUT/evaluation/evalId.html
+ */
+export const updateEvaluation = (
+  evaluation: Evaluation,
+  sessionToken: string | undefined,
+): Promise<Evaluation> => {
+  if (!evaluation.id) {
+    // we must explicitly handle this because /repo/v1/evaluation
+    // without an evalId is a valid API that returns a different API response
+    return Promise.reject(new Error('evaluation does not have an ID'))
+  }
+  return doPut(
+    `/repo/v1/evaluation/${evaluation.id}`,
+    evaluation,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Create an evaluation queue
+ * https://docs.synapse.org/rest/POST/evaluation.html
+ */
+export const createEvaluation = (
+  evaluation: Evaluation,
+  sessionToken: string | undefined,
+): Promise<Evaluation> => {
+  return doPost(
+    '/repo/v1/evaluation/',
+    evaluation,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

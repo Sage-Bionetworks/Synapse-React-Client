@@ -12,8 +12,16 @@
     }
   }
 
+  label {
+    color: $gray-deemphasized;
+    font-weight: normal;
+    font-size: 1rem;
+  }
+
   // disabled input boxes should be "flat"
-  input:disabled {
+  input:disabled,
+  input:read-only {
     box-shadow: none;
+    cursor: text;
   }
 }

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { EvaluationRoundEditorList } from '../../../lib/containers/evaluation_queues/EvaluationRoundEditorList'
 import { useState } from 'react'
+import { EvaluationEditor } from '../../../lib/containers/evaluation_queues/EvaluationEditor'
 
 export type EvaluationQueueDemoProps = {
   token: string
@@ -17,6 +18,9 @@ export const EvaluationQueueDemo: React.FunctionComponent<EvaluationQueueDemoPro
         value={evaluationId}
         onChange={event => setEvaluationId(event.target.value)}
       />
+      <br />
+      <br />
+      <EvaluationEditor evaluationId={evaluationId} sessionToken={token} />
       <br />
       <br />
       <EvaluationRoundEditorList
