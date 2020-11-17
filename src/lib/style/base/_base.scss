@@ -21,12 +21,9 @@ html {
   box-sizing: inherit;
 }
 
-body * {
-  font-family: 'Lato';
-}
-
 body {
   color: $gray-regular;
+  font-family: 'Lato';
 }
 
 strong {
