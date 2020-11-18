@@ -3,6 +3,7 @@
 # css
 *.css
 !styleguide.setup.css
+*.css.map
 
 # dependencies
 /node_modules

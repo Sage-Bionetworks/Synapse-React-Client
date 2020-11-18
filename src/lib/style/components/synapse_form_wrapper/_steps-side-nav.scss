@@ -8,7 +8,7 @@
     list-style-type: none;
     padding: 0px;
     margin: 0px;
-    background-color: $gray-light;
+    background-color: $SRC-gray-light;
 
     li {
       min-height: $item-height;
@@ -32,8 +32,8 @@
         color: themed('action-color');
       }
 
-      background-color: $gray-dark;
-      border-left-color: $gray-dark;
+      background-color: $SRC-gray-dark;
+      border-left-color: $SRC-gray-dark;
 
       .btn-link {
         color: white;
@@ -84,8 +84,8 @@
 
     .fa-circle {
       border-radius: 50%;
-      border: 1px solid $gray-dark;
-      color: $gray-light;
+      border: 1px solid $SRC-gray-dark;
+      color: $SRC-gray-light;
     }
 
     .static .fa-circle {
@@ -97,7 +97,7 @@
 
     .fa-exclamation-circle {
       color: $red-error;
-      background-color: $gray-light;
+      background-color: $SRC-gray-light;
       border-radius: 50%;
     }
 

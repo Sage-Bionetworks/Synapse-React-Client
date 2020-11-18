@@ -1,0 +1,14 @@
+// Bootstrap 3 overrides
+// When possible, change variables in Bootstrap rather than applying custom styles (e.g. for background color) to Bootstrap components
+// You can find a full list of variable names here: https://getbootstrap.com/docs/3.4/customize/
+// Note that we use the `bootstrap-sass` Sass port (Bootstrap 3 uses Less).
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/'; // https://github.com/webpack-contrib/sass-loader/issues/40#issuecomment-70269553
+
+// Override variables for theming
+$brand-primary: $primary-action-color;
+
+// Import bootstrap
+@import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap';
+
+// Bootstrap will override some desired styling (e.g. radio buttons, default text color) if we don't import this:
+@import 'src/lib/template_style/Index.scss';

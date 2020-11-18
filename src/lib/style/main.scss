@@ -10,6 +10,7 @@
 
 // 2. Vendors
 @import 'vendors/normalize';
+@import 'vendors-extensions/bootstrap3-overrides';
 
 // 3. Base stuff
 @import 'base/base', 'base/fonts', 'base/helpers', 'base/core';

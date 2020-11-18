@@ -9,6 +9,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
 import nodePolyfills from 'rollup-plugin-node-polyfills'
 import svgr from '@svgr/rollup'
+import sass from 'sass'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
 
@@ -75,7 +76,10 @@ export default {
     image(),
     // until css modules package is updated we can't opt into css modules
     // see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
-    scss({ output: './src/umd/synapse-react-client.production.styles.css' }),
+    scss({ 
+      output: './src/umd/synapse-react-client.production.styles.css',
+      sass: sass
+    }),
     // allows importing SVGs via syntax: import svgUrl from '/svgfile.svg' , which provides the svg as URL to plug into an <img src={svgUrl}>
     svg(),
     // allows importing SVGs via syntax: import { ReactComponent as MySvgComponent } from '/svgfile.svg' , which provides a ready-to-use <svg> ReactComponent
