@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Button } from 'react-bootstrap'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
@@ -199,14 +200,14 @@ class Login extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
           {this.getLoginFailureView()}
-          <button
+          <Button
+            variant="primary"
             onSubmit={this.handleLogin}
             type="submit"
-            className="btn SRC-primary-background-color SRC-hoverWhiteText
-              SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
+            className="SRC-google-button SRC-marginBottomTen"
           >
             <ButtonContent icon={icon}>Sign in</ButtonContent>
-          </button>
+          </Button>
         </form>
         <div>
           <a

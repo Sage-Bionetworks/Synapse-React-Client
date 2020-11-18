@@ -2,7 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-import { Modal } from 'react-bootstrap'
+import { Button, Modal } from 'react-bootstrap'
 import Form, { IChangeEvent } from 'react-jsonschema-form'
 import { SynapseClient } from '../utils'
 import {
@@ -33,7 +33,7 @@ export type ModalDownloadProps = {
   onClose: (...args: any[]) => void
   token?: string
   includeEntityEtag?: boolean
-  queryBundleRequest?: QueryBundleRequest  // either the query bundle request needs to be provided, or getLastQueryRequest
+  queryBundleRequest?: QueryBundleRequest // either the query bundle request needs to be provided, or getLastQueryRequest
   getLastQueryRequest?: () => QueryBundleRequest
   offset?: number
   limit?: number
@@ -128,10 +128,7 @@ export default class ModalDownload extends React.Component<
       right: 10,
       zIndex: 10,
     }
-    const submitBtn: React.CSSProperties = {
-      padding: '6px 10px',
-      borderRadius: 6,
-    }
+
     const spinnerStyle: React.CSSProperties = {
       height: 50,
       width: 50,
@@ -161,22 +158,12 @@ export default class ModalDownload extends React.Component<
             )}
             <hr />
             <div style={{ textAlign: 'right' }}>
-              <button
-                id="cancelBtn"
-                onClick={this.props.onClose}
-                className="SRC-primary-text-color SRC-roundBorder SRC-underline-on-hover "
-                type="button"
-              >
+              <Button variant="link" onClick={this.props.onClose}>
                 Cancel
-              </button>
-              <button
-                id="submitBtn"
-                style={submitBtn}
-                className="SRC-primary-background-color SRC-roundBorder SRC-whiteText"
-                type="submit"
-              >
+              </Button>
+              <Button variant="primary" type="submit">
                 {this.state.step === 0 ? 'Next' : 'Download'}
-              </button>
+              </Button>
             </div>
           </Form>
         </Modal.Header>
