@@ -35,7 +35,7 @@ instead of:
 
 e.g `import ModalHeader from 'react-bootstrap/ModalHeader`
 
-## Caveat
+##### Caveat
 This may not be true/useful in all situations.
 
 Anecdotally, I was able to cut the package size in half by doing `import { Modal } from 'react-bootstrap'` vs `import { Modal } from 'react-bootstrap/Modal`. Further research is needed to figure out what's happening here.
