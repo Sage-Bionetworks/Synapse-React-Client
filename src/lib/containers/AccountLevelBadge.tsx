@@ -11,6 +11,10 @@ export type AccountLevelBadgeProps = {
   userId: string
 }
 
+export const accountLevelRegisteredLabel:string = 'Registered'
+export const accountLevelCertifiedLabel:string = 'Certified'
+export const accountLevelVerifiedLabel:string = 'Validated'
+
 export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> = ({
   userId,
 }: AccountLevelBadgeProps) => {
@@ -29,7 +33,7 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
           SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
           SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
 
-        const bundle = await SynapseClient.getUserBundle(
+        const bundle:UserBundle = await SynapseClient.getUserBundle(
           userId,
           certificationOrVerification,
           undefined,
@@ -52,14 +56,14 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
     return <Error error={error}/>
   }
 
-  let accountLevelString:string = 'Registered'
+  let accountLevelString:string = accountLevelRegisteredLabel
   let icon = <Registered />
   if (userBundle?.isCertified) {
-    accountLevelString = 'Certified'
+    accountLevelString = accountLevelCertifiedLabel
     icon = <Certified />
   }
   if (userBundle?.isVerified) {
-    accountLevelString = 'Validated'
+    accountLevelString = accountLevelVerifiedLabel
     icon = <Validated />
   }
   return (
