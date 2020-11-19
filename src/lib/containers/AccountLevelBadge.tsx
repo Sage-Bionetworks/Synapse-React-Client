@@ -1,4 +1,4 @@
-import { UserBundle } from 'lib/utils/synapseTypes'
+import { UserBundle } from '../utils/synapseTypes'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { SynapseClient, SynapseConstants } from '../utils'
