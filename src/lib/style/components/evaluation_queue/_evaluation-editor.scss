@@ -1,5 +1,9 @@
-.evaluation-editor {
+.bootstrap-4-backport .evaluation-editor {
   h4 {
     font-weight: bold;
+  }
+
+  textarea {
+    resize: none;
   }
 }

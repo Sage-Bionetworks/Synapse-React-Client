@@ -1,9 +1,10 @@
 import { Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import UserCard from '../UserCard'
 import { SynapseConstants } from '../../index'
 import {
   createEvaluation,
+  deleteEvaluation,
   getEvaluation,
   SynapseClientError,
   updateEvaluation,
@@ -15,7 +16,7 @@ import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
 export type EvaluationEditorProps = {
   // id of the evaluation to edit
-  readonly evaluationId: string
+  readonly evaluationId?: string
   // session token to make authenticated calls
   readonly sessionToken: string
 }
@@ -45,13 +46,15 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   }, [evaluation])
 
   useEffect(() => {
-    //clear error
-    setError(undefined)
-    getEvaluation(evaluationId, sessionToken)
-      .then(retrievedEvaluation => {
-        setEvaluation(retrievedEvaluation)
-      })
-      .catch(error => setError(error))
+    if (evaluationId) {
+      //clear error
+      setError(undefined)
+      getEvaluation(evaluationId, sessionToken)
+        .then(retrievedEvaluation => {
+          setEvaluation(retrievedEvaluation)
+        })
+        .catch(error => setError(error))
+    }
   }, [evaluationId, sessionToken])
 
   const onSave = () => {
@@ -73,8 +76,13 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
       .catch(error => setError(error))
   }
 
-  //TODO: implement
-  const onDelete = () => {}
+  // create delete callback if an id exists
+  const onDelete = evaluation?.id
+    ? () => {
+        setError(undefined)
+        deleteEvaluation(evaluation!.id!, sessionToken).catch(setError)
+      }
+    : undefined
 
   return (
     <div className="bootstrap-4-backport">
@@ -93,7 +101,12 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
               </Dropdown.Toggle>
               <Dropdown.Menu alignRight={true}>
                 <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>
-                <Dropdown.Item onClick={onDelete}>Delete</Dropdown.Item>
+                <Dropdown.Item
+                  onClick={onDelete}
+                  disabled={onDelete === undefined}
+                >
+                  Delete
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Col>
@@ -110,16 +123,18 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
           <Form.Group>
             <Form.Label>Description</Form.Label>
             <Form.Control
-              type="text"
+              as="textarea"
               value={description}
+              rows={2}
               onChange={event => setDescription(event.target.value)}
             />
           </Form.Group>
           <Form.Group>
             <Form.Label>Submission Instructions</Form.Label>
             <Form.Control
-              type="text"
+              as="textarea"
               value={submissionInstructionsMessage}
+              rows={2}
               onChange={event =>
                 setSubmissionInstructionsMessage(event.target.value)
               }

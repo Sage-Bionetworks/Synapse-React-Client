@@ -230,13 +230,11 @@ export const doGet = <T>(
 
 export const doDelete = (
   url: string,
-  requestJsonObject: any | undefined = undefined,
   sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
   const options: RequestInit = {
-    body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'sessiontoken',
@@ -250,7 +248,7 @@ export const doDelete = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
 }
 
 export const doPut = (
@@ -852,18 +850,17 @@ export const updateEntity = <T extends Entity>(
   )
 }
 
-export const deleteEntity: GetEntity = <T>(
+export const deleteEntity = (
   sessionToken: string | undefined = undefined,
   entityId: string | number,
 ) => {
   const url = `/repo/v1/entity/${entityId}`
   return doDelete(
     url,
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<T>
+  )
 }
 
 /**
@@ -1649,6 +1646,22 @@ export const createEvaluation = (
 }
 
 /**
+ * Delete an existing evaluation queue
+ * https://docs.synapse.org/rest/PUT/evaluation/evalId.html
+ */
+export const deleteEvaluation = (
+  evalId: string,
+  sessionToken: string | undefined,
+): Promise<void> => {
+  return doDelete(
+    `/repo/v1/evaluation/${evalId}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get an evaluation round
  * https://docs.synapse.org/rest/GET/evaluation/evalId/round/evalRoundId.html
  */
@@ -1728,7 +1741,6 @@ export const deleteEvaluationRound = (
 ) => {
   return doDelete(
     `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1935,7 +1947,6 @@ export const deleteFormData = (
 ) => {
   return doDelete(
     `/repo/v1/form/data/${formDataId}`,
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2256,7 +2267,6 @@ export const deleteDownloadListFiles = (
 export const deleteDownloadList = (sessionToken: string | undefined) => {
   return doDelete(
     '/file/v1/download/list',
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2341,7 +2351,6 @@ export const deletePersonalAccessToken = (
 ) => {
   return doDelete(
     `/auth/v1/personalAccessToken/${accessTokenId}`,
-    null,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
