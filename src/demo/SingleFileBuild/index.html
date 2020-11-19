@@ -139,6 +139,7 @@
     <div id="panel8"></div>
     <div id="panel9"></div>
     <div id="panel10"></div>
+    <div id="panel11"></div>
     <div style="height: 300px;"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -327,6 +328,16 @@
       e(SRC.SynapseComponents.EvaluationRoundEditorList, evaluationRoundEditorListProps, null),
       evaluationQueueEditorListContainer,
       'EvaluationRoundEditorList',
+    )
+
+    const accountLevelBadgeContainer = document.querySelector('#panel11')
+    const accountLevelBadgeProps = {
+      userId: '273980'
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.AccountLevelBadge, accountLevelBadgeProps, null),
+      accountLevelBadgeContainer,
+      'AccountLevelBadge',
     )
 
   </script>
