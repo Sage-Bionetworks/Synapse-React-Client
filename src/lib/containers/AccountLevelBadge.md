@@ -10,3 +10,8 @@ Validated:
 ```jsx
 <AccountLevelBadge userId='273980' /> 
 ```
+
+<!-- Invalid
+```jsx
+<AccountLevelBadge userId='39483829473243' /> 
+``` -->

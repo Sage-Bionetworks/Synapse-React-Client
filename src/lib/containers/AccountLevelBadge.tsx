@@ -1,11 +1,11 @@
 import { UserBundle } from 'lib/utils/synapseTypes'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
 import { SynapseClient, SynapseConstants } from '../utils'
 import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
 import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
 import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
+import { Error } from './Error'
 
 export type AccountLevelBadgeProps = {
   userId: string
@@ -14,7 +14,7 @@ export type AccountLevelBadgeProps = {
 export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> = ({
   userId,
 }: AccountLevelBadgeProps) => {
-  const handleError = useErrorHandler()
+  const [error, setError] = useState()
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>(
     undefined,
   )
@@ -37,7 +37,7 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
         setUserBundle(bundle)
       
       } catch (err) {
-        handleError(err)
+        setError(err)
       } finally {
         setIsLoading(false)
       }
@@ -47,6 +47,9 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
   }, [userId])
   if (isLoading) {
     return <></>
+  }
+  if (error) {
+    return <Error error={error}/>
   }
 
   let accountLevelString:string = 'Registered'
@@ -60,7 +63,7 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
     icon = <Validated />
   }
   return (
-    <div
+  <div
       className={
         'AccountLevelBadge cardContainer'
       }
