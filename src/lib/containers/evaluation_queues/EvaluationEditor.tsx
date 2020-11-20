@@ -1,5 +1,6 @@
 import { Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { capitalize } from 'lodash-es'
 import UserCard from '../UserCard'
 import { SynapseConstants } from '../../index'
 import {
@@ -10,52 +11,80 @@ import {
   updateEvaluation,
 } from '../../utils/SynapseClient'
 import { Error } from '../Error'
-import { Evaluation } from '../../utils/synapseTypes/Evaluation'
+import {
+  Evaluation,
+  EvaluationStatus,
+} from '../../utils/synapseTypes/Evaluation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 
-export type EvaluationEditorProps = {
-  // id of the evaluation to edit
-  readonly evaluationId?: string
+const dateFormatOptionLocal = { timeZoneName: 'short' }
+const dateFormatOptionUTC = { timeZone: 'UTC', timeZoneName: 'short' }
+const defaultEvaluationStatus = EvaluationStatus.PLANNED
+
+export interface EvaluationEditorBaseProps {
   // session token to make authenticated calls
   readonly sessionToken: string
+  // date should be displayed in utc
+  readonly utc?: boolean
 }
 
-export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = ({
-  evaluationId,
-  sessionToken,
-}) => {
+export interface EvaluationEditorUpdateProps extends EvaluationEditorBaseProps {
+  // id of the evaluation to edit
+  readonly evaluationId: string
+  entityId?: never
+}
+
+export interface EvaluationEditorCreateProps extends EvaluationEditorBaseProps {
+  // use only if creating a new Evaluation
+  readonly entityId: string
+  evaluationId?: never
+}
+
+export const EvaluationEditor: React.FunctionComponent<
+  EvaluationEditorCreateProps | EvaluationEditorUpdateProps
+> = props => {
   const [error, setError] = useState<SynapseClientError>()
 
-  const [name, setName] = useState<string>()
-  const [description, setDescription] = useState<string>()
+  const [name, setName] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
   const [
     submissionInstructionsMessage,
     setSubmissionInstructionsMessage,
-  ] = useState<string>()
+  ] = useState<string>('')
   const [submissionReceiptMessage, setSubmissionReceiptMessage] = useState<
     string
-  >()
+  >('')
+  const [status, setStatus] = useState<EvaluationStatus>(
+    defaultEvaluationStatus,
+  )
 
-  const [evaluation, setEvaluation] = useState<Evaluation>()
+  const [evaluation, setEvaluation] = useState<Evaluation>({
+    contentSource: props.entityId,
+  })
+
   useEffect(() => {
-    setName(evaluation?.name)
-    setDescription(evaluation?.description)
-    setSubmissionInstructionsMessage(evaluation?.submissionInstructionsMessage)
-    setSubmissionReceiptMessage(evaluation?.submissionReceiptMessage)
+    setName(evaluation.name ?? '')
+    setDescription(evaluation.description ?? '')
+    setSubmissionInstructionsMessage(
+      evaluation.submissionInstructionsMessage ?? '',
+    )
+    setSubmissionReceiptMessage(evaluation.submissionReceiptMessage ?? '')
+    setStatus(evaluation.status ?? defaultEvaluationStatus)
   }, [evaluation])
 
   useEffect(() => {
-    if (evaluationId) {
+    // if we initially passed in a update the we retrieve a new Evaluation
+    if ('evaluationId' in props) {
       //clear error
       setError(undefined)
-      getEvaluation(evaluationId, sessionToken)
+      getEvaluation(props.evaluationId!, props.sessionToken)
         .then(retrievedEvaluation => {
           setEvaluation(retrievedEvaluation)
         })
         .catch(error => setError(error))
     }
-  }, [evaluationId, sessionToken])
+  }, [props])
 
   const onSave = () => {
     // clear out error
@@ -66,21 +95,29 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
       description,
       submissionInstructionsMessage,
       submissionReceiptMessage,
+      status,
     }
+
     const promise = newOrUpdatedEvaluation.id
-      ? updateEvaluation(newOrUpdatedEvaluation, sessionToken)
-      : createEvaluation(newOrUpdatedEvaluation, sessionToken)
+      ? updateEvaluation(newOrUpdatedEvaluation, props.sessionToken)
+      : createEvaluation(newOrUpdatedEvaluation, props.sessionToken)
 
     promise
       .then(evaluation => setEvaluation(evaluation))
       .catch(error => setError(error))
   }
 
-  // create delete callback if an id exists
+  // create delete callback if the evaluation has id
   const onDelete = evaluation?.id
     ? () => {
         setError(undefined)
-        deleteEvaluation(evaluation!.id!, sessionToken).catch(setError)
+        deleteEvaluation(evaluation!.id!, props.sessionToken)
+          .then(() =>
+            setEvaluation({
+              contentSource: evaluation.contentSource,
+            }),
+          )
+          .catch(setError)
       }
     : undefined
 
@@ -89,7 +126,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
       <div className="evaluation-editor">
         <Row>
           <Col>
-            <h4>Edit Evaluation Queue</h4>
+            <h4>{evaluation.id ? 'Edit' : 'Create'} Evaluation Queue</h4>
           </Col>
           <Col>
             <Dropdown className="float-right">
@@ -121,6 +158,26 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
             />
           </Form.Group>
           <Form.Group>
+            <Form.Label>Status</Form.Label>
+            <Form.Control
+              as="select"
+              custom
+              value={status}
+              onChange={event =>
+                setStatus(event.target.value as EvaluationStatus)
+              }
+            >
+              {Object.keys(EvaluationStatus).map(key => {
+                return (
+                  <option key={key} value={key}>
+                    {capitalize(key)}
+                  </option>
+                )
+              })}
+            </Form.Control>
+          </Form.Group>
+
+          <Form.Group>
             <Form.Label>Description</Form.Label>
             <Form.Control
               as="textarea"
@@ -150,9 +207,18 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
               }
             />
           </Form.Group>
-          {evaluation && (
-            <div>
-              <span>Created on 4/4/20 By </span>
+          {evaluation?.createdOn && (
+            <div className="created-on">
+              <span>
+                Created on{' '}
+                {new Date(evaluation.createdOn)
+                  .toLocaleDateString(
+                    undefined,
+                    props.utc ? dateFormatOptionUTC : dateFormatOptionLocal,
+                  )
+                  .replace(',', '')}{' '}
+                by{' '}
+              </span>
               <UserCard
                 size={SynapseConstants.SMALL_USER_CARD}
                 ownerId={evaluation.ownerId}
@@ -160,7 +226,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
               />
             </div>
           )}
-          {error && <Error error={error} token={sessionToken} />}
+          {error && <Error error={error} token={props.sessionToken} />}
           <div>
             <Button className="float-right" onClick={onSave}>
               Save
