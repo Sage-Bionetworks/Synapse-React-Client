@@ -25,7 +25,11 @@ yarn-error.log*
 
 # visual studio specific 
 jsconfig.json
-.vscode
+.vscode/*
+!.vscode/*.code-snippets
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
 
 # webstorm specific
 .idea

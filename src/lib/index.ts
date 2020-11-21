@@ -33,6 +33,7 @@ import UserCardListRotate from './containers/UserCardListRotate'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
+import DataDictionary from './containers/data-dictionary'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -44,6 +45,7 @@ const SynapseComponents = {
   Facets,
   Login,
   CardContainer,
+  DataDictionary,
   QueryWrapper,
   StackedBarChart,
   SynapseTable,
