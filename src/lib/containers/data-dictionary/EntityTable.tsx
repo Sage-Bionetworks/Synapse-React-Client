@@ -22,7 +22,7 @@ function EntityTable({ list }: EntityTableProps): ReactElement {
   const { data }: DataDictionaryState = stateData()
   const entityData = buildEntityData(list, data)
 
-  return (
+  return entityData.length > 0 ? (
     <Grid container>
       <Grid item xs={12}>
         <MaterialTable
@@ -112,6 +112,8 @@ function EntityTable({ list }: EntityTableProps): ReactElement {
         />
       </Grid>
     </Grid>
+  ) : (
+    <></>
   )
 }
 
@@ -119,7 +121,7 @@ function buildEntityData(
   list: string[],
   data: DataDictionaryData[],
 ): DataDictionaryData[] {
-  const entityData = data.reduce(
+  return data.reduce(
     (
       acc: DataDictionaryData[],
       entity: DataDictionaryData,
@@ -131,7 +133,6 @@ function buildEntityData(
     },
     [] as DataDictionaryData[],
   )
-  return entityData
 }
 
 export default EntityTable

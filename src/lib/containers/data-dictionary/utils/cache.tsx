@@ -2,13 +2,7 @@
 import omniFetch from 'isomorphic-fetch'
 import { globalAgent } from 'https'
 import { RequestOptions } from 'http'
-import {
-  get,
-  set,
-  del,
-  clear,
-  keys,
-} from './../../../utils/functions/KeyValCache'
+import { get, set, del, clear, keys } from 'lib/utils/functions/KeyValCache'
 import { SchemaData as GraphData } from './../types/IDataDictionaryTypes'
 
 interface SchemaData {
