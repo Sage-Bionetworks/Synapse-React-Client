@@ -1,0 +1,150 @@
+.terms-conditions {
+  font-size: 14px;
+
+  .page-header {
+    font-size: 24px;
+    border-bottom: 0;
+  }
+
+  label {
+    font-weight: normal;
+    margin-bottom: 20px;
+  }
+
+  svg {
+    vertical-align: middle;
+  }
+
+  .term-list {
+    list-style: none;
+    padding: 0;
+
+    > li {
+      display: flex;
+      padding: 20px 0;
+      border: 1px solid #dcdcdc;
+      margin-bottom: 20px;
+      opacity: 0.3;
+
+      &.terms-enabled {
+        opacity: 1;
+      }
+
+      > span {
+        flex: 1
+      }
+
+      .terms-checkbox {
+        align-self: center;
+        text-align: right;
+        padding-right: 30px;
+        flex: 0 0 150px;
+      }
+
+      .terms-icon {
+        flex: 0 0 150px;
+        text-align: center;
+
+        svg {
+          height: 60px;
+        }
+      }
+
+      .terms-circle {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #dcdcdc;
+        display: inline-block;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin-right: 14px;
+        display: inline-block;
+        line-height: 40px;
+      }
+
+      .terms-checked {
+        background-color: #28A745;
+        border: none;
+
+      }
+
+    }
+
+    label {
+      font-size: 18px;
+    }
+  }
+
+  .view-terms button,
+  .view-terms button:active:focus,
+  .terms-signature button,
+  .terms-signature button:active:focus {
+    border: 0;
+    outline: none;
+    box-shadow: none;
+  }
+
+  .view-terms button,
+  .view-terms button:active:focus {
+    background-color: #dcdcdc;
+    padding: 10px 30px;
+    color: #1a1c29;
+    font-weight: bold;
+    margin-bottom: 35px;
+  }
+
+  .terms-signature button.btn-tap-sign,
+  .terms-signature button.btn-tap-sign:active:focus {
+    background-color: transparent;
+    color: #ababac;
+    border-bottom: 1px solid #ababac;
+    border-radius: 0;
+    width: 420px;
+    text-align: left;
+    padding: 12px 0;
+    margin: 20px 0
+  }
+}
+
+.signature-pad-modal {
+  .btn,
+  .btn-primary
+  .btn:active,
+  .btn:focus,
+  .btn:active:focus {
+    outline: none;
+    box-shadow: none;
+    border: 0;
+  }
+  .modal-content {
+    padding: 0 40px;
+  }
+  .modal-header {
+    padding: 15px 0;
+  }
+  .modal-footer{
+    padding: 15px 0;
+    button:first-child {
+      float: left;
+      padding: 0;
+      margin-left: -10px; // remove extra padding from svg icon
+    }
+    svg {
+      vertical-align: middle;
+    }
+    .btn {
+      font-weight: bold;
+    }
+    .btn-primary {
+      background-color: #BBBBBC;
+      padding: 10px 36px;
+      margin-left: 15px;
+    }
+  }
+  .signature-pad-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ababac;
+  }
+}

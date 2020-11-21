@@ -1,0 +1,5 @@
+```jsx
+      <TermsAndConditions
+        token={sessionToken}
+      />
+```
