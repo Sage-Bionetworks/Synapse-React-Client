@@ -1,8 +1,6 @@
 import { Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
 import React, { useEffect, useState } from 'react'
 import { capitalize } from 'lodash-es'
-import UserCard from '../UserCard'
-import { SynapseConstants } from '../../index'
 import {
   createEvaluation,
   deleteEvaluation,
@@ -17,9 +15,8 @@ import {
 } from '../../utils/synapseTypes/Evaluation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
+import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 
-const dateFormatOptionLocal = { timeZoneName: 'short' }
-const dateFormatOptionUTC = { timeZone: 'UTC', timeZoneName: 'short' }
 const defaultEvaluationStatus = EvaluationStatus.PLANNED
 
 export interface EvaluationEditorBaseProps {
@@ -132,7 +129,7 @@ export const EvaluationEditor: React.FunctionComponent<
             <Dropdown className="float-right">
               <Dropdown.Toggle
                 variant="link"
-                className="dropdown-no-caret SRC-primary-text-color evaluation-round-editor-dropdown"
+                className="dropdown-no-caret evaluation-round-editor-dropdown"
               >
                 <FontAwesomeIcon icon={faEllipsisV} />
               </Dropdown.Toggle>
@@ -208,23 +205,12 @@ export const EvaluationEditor: React.FunctionComponent<
             />
           </Form.Group>
           {evaluation?.createdOn && (
-            <div className="created-on">
-              <span>
-                Created on{' '}
-                {new Date(evaluation.createdOn)
-                  .toLocaleDateString(
-                    undefined,
-                    props.utc ? dateFormatOptionUTC : dateFormatOptionLocal,
-                  )
-                  .replace(',', '')}{' '}
-                by{' '}
-              </span>
-              <UserCard
-                size={SynapseConstants.SMALL_USER_CARD}
-                ownerId={evaluation.ownerId}
-                extraSmall={true}
-              />
-            </div>
+            <CreatedOnByUserDiv
+              userId={evaluation.ownerId!}
+              date={new Date(evaluation.createdOn)}
+              sessionToken={props.sessionToken}
+              utc={props.utc ?? false}
+            />
           )}
           {error && <Error error={error} token={props.sessionToken} />}
           <div>

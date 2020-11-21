@@ -1,8 +1,6 @@
 $green: #35bf7d;
 
 .evaluation-round-editor {
-  font-size: 1rem;
-
   .card-body {
     // even though all sides have the same padding,
     // the top looks like it is slightly less padded than the bottom
@@ -36,14 +34,6 @@ $green: #35bf7d;
     }
     .status-not-yet-started {
       color: $gray-deemphasized;
-    }
-  }
-
-  button.evaluation-round-editor-dropdown {
-    padding: 0;
-    &:hover,
-    &:focus {
-      background-color: transparent;
     }
   }
 

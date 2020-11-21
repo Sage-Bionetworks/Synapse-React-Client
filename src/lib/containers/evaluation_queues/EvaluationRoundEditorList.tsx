@@ -114,7 +114,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
 
       <div>
         <Button
-          className="add-round-button SRC-primary-background-color border-0"
+          className="add-round-button"
           variant="primary"
           onClick={() => {
             appendToEvaluationRoundInputList({

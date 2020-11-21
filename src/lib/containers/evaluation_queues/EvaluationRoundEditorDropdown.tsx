@@ -17,14 +17,11 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<EvaluationRo
       <Dropdown className="float-right">
         <Dropdown.Toggle
           variant="link"
-          className="dropdown-no-caret SRC-primary-text-color evaluation-round-editor-dropdown"
+          className="dropdown-no-caret evaluation-round-editor-dropdown"
         >
           <FontAwesomeIcon icon={faEllipsisV} />
         </Dropdown.Toggle>
-        <Dropdown.Menu
-          alignRight={true}
-          className="SRC-primary-color-hover-dropdown"
-        >
+        <Dropdown.Menu alignRight={true}>
           <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>
           <Dropdown.Item onClick={onDelete}>Delete</Dropdown.Item>
         </Dropdown.Menu>

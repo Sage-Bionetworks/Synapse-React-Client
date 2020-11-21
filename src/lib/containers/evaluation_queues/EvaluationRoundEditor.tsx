@@ -289,7 +289,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               <Col>
                 <Button
                   variant="link"
-                  className="advanced-limits-link font-weight-bold SRC-primary-text-color"
+                  className="advanced-limits-link font-weight-bold"
                   onClick={() => setAdvancedMode(!advancedMode)}
                 >
                   Advanced Limits
@@ -317,7 +317,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             <Row className="mt-3">
               <Col>
                 <Button
-                  className="save-button float-right SRC-primary-background-color border-0"
+                  className="save-button float-right border-0"
                   onClick={onSaveButtonClick}
                 >
                   Save
