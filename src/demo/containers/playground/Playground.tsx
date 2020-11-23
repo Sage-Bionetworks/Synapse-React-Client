@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
-import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
@@ -34,11 +33,6 @@ const App = ({
     <div>
       <h2>Links to components under development </h2>
       <ul>
-        <li>
-          <Link to={`${match.url}/QueryWrapperMenuDemo`}>
-            QueryWrapperMenuDemo
-          </Link>
-        </li>
         <li>
           <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
         </li>
@@ -85,14 +79,6 @@ const App = ({
           </Link>
         </li>
       </ul>
-
-      <Route
-        exact={true}
-        path={`${match.url}/QueryWrapperMenuDemo`}
-        render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
-      />
-
-
       <Route
         exact={true}
         path={`${match.url}/SearchDemo`}
