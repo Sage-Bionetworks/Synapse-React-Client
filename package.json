@@ -158,7 +158,7 @@
     "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
     "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html && cp favicon.png styleguide/favicon.png",
     "build-gh": "yarn run build:docs",
-    "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o upstream",
+    "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o origin",
     "build-css": "node-sass src/lib/style -o src/lib/style",
     "watch-css": "yarn run build-css && node-sass src/ -o src/ --watch --recursive",
     "start-js": "react-scripts start",
