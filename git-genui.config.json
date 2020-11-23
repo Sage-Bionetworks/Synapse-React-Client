@@ -1,0 +1,9 @@
+{
+  "commit": {
+    "format": "standard"
+  },
+  "tracker": {
+    "name": "PivotalTracker",
+    "projectId": 2474998
+  }
+}

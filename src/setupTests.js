@@ -3,6 +3,8 @@ import 'react-app-polyfill/stable'
 import 'raf/polyfill' // polyfill for requestAnimationFrame
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
+import 'jest-canvas-mock'
+import 'fake-indexeddb/auto'
 
 // MarkdownSynapse dependencies below --
 // When using the component in production it relies on these imports being globals,

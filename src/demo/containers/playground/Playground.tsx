@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
+import DataDictionaryDemo from './DataDictionaryDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
@@ -48,6 +49,9 @@ const App = ({
           </Link>
         </li>
         <li>
+          <Link to={`${match.url}/DataDictionaryDemo`}>DataDictionaryDemo</Link>
+        </li>
+        <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
             FormServicesIntegrationDemo
           </Link>
@@ -92,7 +96,6 @@ const App = ({
         render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
       />
 
-
       <Route
         exact={true}
         path={`${match.url}/SearchDemo`}
@@ -103,6 +106,12 @@ const App = ({
         exact={true}
         path={`${match.url}/CardContainerLogicDemo`}
         component={CardContainerLogicDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/DataDictionary`}
+        component={() => <DataDictionaryDemo />}
       />
 
       <Route
