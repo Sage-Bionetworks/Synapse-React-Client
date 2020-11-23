@@ -1,5 +1,6 @@
-/** from YamUI */
-/*! Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license. */
+/** Originally from YamUI.  May need to alter to update to later versions of react-intersection-observer (which does the heavy lifting).
+ * This component has the option to provide an outOfView renderer, which might be useful in the future.
+ */
 import * as React from 'react';
 import Observer from 'react-intersection-observer';
 
