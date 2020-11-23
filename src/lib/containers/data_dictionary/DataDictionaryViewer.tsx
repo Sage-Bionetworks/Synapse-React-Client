@@ -23,14 +23,14 @@ export interface DataDictionaryViewerProps {
 function DataDictionaryViewer({
   title,
 }: DataDictionaryViewerProps): ReactElement {
-  const { data }: DataDictionaryState = stateData()
+  const data = stateData()
   const [graphNetworkData, setGraphNetworkData] = useState<GraphNetworkData>()
   const [clickedNode, setClickedNode] = useState<DataDictionaryData>()
 
   const onNodeClick = useCallback(
     (id: string) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
       const itemData: DataDictionaryData | undefined = data.find(
-        (item) => item.id === id,
+        item => item.id === id,
       )
       setClickedNode(itemData)
     },
@@ -44,13 +44,13 @@ function DataDictionaryViewer({
       const dictionaryData = getDataDictionaryDetails(startId, data)
       const tempNodeArr: Array<GraphNodeData> = []
       const tempNodeLinkArr: Array<GraphNodeLinkData> = []
-      const tempRootNode = data.find((item) => item.id === startId) || {}
+      const tempRootNode = data.find(item => item.id === startId) || {}
       tempNodeArr.push({
         ...(tempRootNode as GraphNodeData),
         onNodeClick,
         viewType,
       })
-      dictionaryData.forEach((dd) => {
+      dictionaryData.forEach(dd => {
         tempNodeArr.push({ ...dd, onNodeClick, viewType })
         tempNodeLinkArr.push({
           source: startId,
