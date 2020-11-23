@@ -73,16 +73,21 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   token
 }) => {
   const checkboxCount = tcList.length
-  // initialize all checkboxes to be unchecked
-  const [checkboxChecked, setCheckboxChecked] = useState<boolean[]>(Array(checkboxCount).fill(false))
-  // disabled all checkbox except the first one
-  const [checkboxEnabled, setCheckboxEnabled] = useState<boolean[]>(Array(checkboxCount).fill(false).fill(true, 0, 1))
-  const [showDialog, setShowDialog] = useState(false)
-  // const [showSignaturePad, setShowSignaturePad] = useState(false)
-  const [isSigned, setIsSigned] = useState(false)
   const canvasDimension = {width: 500, height: 200}
+  const tcAgreement = "https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf"
+  const getInitialCheckboxState = () => Array.from(Array(checkboxCount).fill(false))
   let mounted = true
-  let sigPadRef:ReactSignatureCanvas | null
+  let sigPadRef:ReactSignatureCanvas | null = null
+
+  // State variables
+  // initialize all checkboxes to be unchecked
+  const [checkboxChecked, setCheckboxChecked] = useState<boolean[]>(getInitialCheckboxState())
+  // disabled all checkbox except the first one
+  const [checkboxEnabled, setCheckboxEnabled] = useState<boolean[]>(getInitialCheckboxState().fill(true, 0, 1))
+  const [showDialog, setShowDialog] = useState(false)
+  const [showSignaturePad, setShowSignaturePad] = useState(false)
+  const [trimmedDataUrl, setTrimmedDataUrl] = useState<string|undefined>()
+  const [submitBtnActive, setSubmitBtnActive] = useState(false)
 
   useEffect(() => {
     if (mounted) {
@@ -96,47 +101,51 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   // Placeholder function to check if all checkboxes are checked and agreement is signed
   const handleSubmit = () => {
     const allCheckboxChecked = !checkboxChecked.includes(false)
+    const isSigned = trimmedDataUrl || false
     console.log("allCheckboxChecked", allCheckboxChecked)
-    console.log("isSigned", isSigned)
+    console.log("is signed?", isSigned)
   }
 
   const updateCheckboxState = (id:number) => {
     const newState = !checkboxChecked[id]
     if (newState) {
-      setCheckboxChecked(Array(checkboxCount).fill(true, 0, id+1))
+      setCheckboxChecked(getInitialCheckboxState().fill(true, 0, id+1))
       if ( id+2 <= tcList.length ) {
-        setCheckboxEnabled(Array(checkboxCount).fill(true, 0, id+2))
+        setCheckboxEnabled(getInitialCheckboxState().fill(true, 0, id+2))
       }
     } else {
-      setCheckboxChecked(Array(checkboxCount).fill(true, 0, id))
-      setCheckboxEnabled(Array(checkboxCount).fill(true, 0, id+1))
+      setCheckboxChecked(getInitialCheckboxState().fill(true, 0, id))
+      setCheckboxEnabled(getInitialCheckboxState().fill(true, 0, id+1))
     }
   }
 
-  const handleShowSignaturePadDialog = () => setShowDialog(true)
-  // const handleShowSignaturePad = () => setShowSignaturePad(true)
-  const handleClearSignature = () => {
+  const displaySignatureDialog = () => setShowDialog(true)
+  const displaySignaturePad = () => setShowSignaturePad(true)
+  const clearSignature = () => {
     sigPadRef?.clear()
-    setIsSigned(false)
-    // setShowSignaturePad(false)
+    setTrimmedDataUrl(undefined)
+    resetSignatureDialog(true)
   }
-  const handleCancelSignaturePadDialog = () => {
-    setShowDialog(false)
-    setIsSigned(false)
-    // setShowSignaturePad(false)
+  const closeSignatureDialog = () => {
+    setTrimmedDataUrl(undefined)
+    resetSignatureDialog()
   }
-  const handleSubmitSignature = () => {
-    if (!sigPadRef?.isEmpty()) {
-      setShowDialog(false)
-      setIsSigned(true)
+  const submitSignature = () => {
+    if (showSignaturePad && !sigPadRef?.isEmpty()) {
+      setTrimmedDataUrl(sigPadRef?.getTrimmedCanvas().toDataURL('image/png'))
+      resetSignatureDialog()
     }
-    // setShowSignaturePad(false)
+  }
+  const resetSignatureDialog = (showDialog: boolean = false) => {
+    setShowDialog(showDialog)
+    setShowSignaturePad(false)
+    setSubmitBtnActive(false)
   }
 
   return(
     <section className="terms-conditions">
       <h3 className="page-header">Synapse Terms and Conditions Agreement</h3>
-      <form onSubmit={handleSubmit}>
+      <form>
         <label>
           I affirm my commitment to all Synapse Governance policies for responsible research and data handling, including:
         </label>
@@ -156,34 +165,44 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
               )
         })}
         </ul>
-        <div className="view-terms"><Button>View Complete Terms and Conditions for Use</Button></div>
+        <div className="view-terms"><Button href={tcAgreement} target="_blank">View Complete Terms and Conditions for Use</Button></div>
         <div className="terms-signature">
           <div><label>Your Signature</label></div>
-          { showDialog &&
-            <Modal animation={false} show={true} className="signature-pad-modal">
-              <Modal.Header closeButton>
-                <Modal.Title>Sign Agreement</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                {/*{ !showSignaturePad &&*/}
-                {/*  <label style={canvasDimension} onClick={handleShowSignaturePad} className="signature-pad-label">Draw to sign</label>*/}
-                {/*}*/}
-                {/*{ showSignaturePad &&*/}
-                  <SignatureCanvas
-                    ref={(ref) => sigPadRef = ref}
-                    canvasProps={canvasDimension}
-                  />
-                {/*}*/}
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClearSignature}><RefreshSvg />CLEAR SIGNATURE</Button>
-                <Button variant="secondary" onClick={handleCancelSignaturePadDialog}>CANCEL</Button>
-                <Button variant="primary" onClick={handleSubmitSignature}>Submit Signature</Button>
-              </Modal.Footer>
-            </Modal>
-          }
-          <Button onClick={handleShowSignaturePadDialog} className="btn-tap-sign">Tap to Sign</Button>
+          <Modal animation={false} show={showDialog} className="signature-pad-modal" onHide={closeSignatureDialog}>
+            <Modal.Header closeButton>
+              <Modal.Title>Sign Agreement</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              { !showSignaturePad &&
+                <label style={canvasDimension} onClick={displaySignaturePad} className="signature-pad-label">Tap to sign</label>
+              }
+              { showSignaturePad &&
+                <SignatureCanvas
+                  ref={(ref) => sigPadRef = ref}
+                  canvasProps={canvasDimension}
+                  onEnd={() => setSubmitBtnActive(true)}
+                />
+              }
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={clearSignature}><RefreshSvg />CLEAR SIGNATURE</Button>
+              <Button variant="secondary" onClick={closeSignatureDialog}>CANCEL</Button>
+              <Button
+                variant="primary"
+                className={submitBtnActive ? "" : "btn-disabled"}
+                active={submitBtnActive}
+                onClick={submitSignature}>Submit Signature
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <div className="terms-signature-action">
+            { trimmedDataUrl
+              ? <img onClick={displaySignatureDialog} src={trimmedDataUrl} />
+              : <Button onClick={displaySignatureDialog} className="btn-tap-sign">Tap to Sign</Button>
+            }
+          </div>
         </div>
+        <br /><br /><br /><br /><Button onClick={handleSubmit}>TO BE DELETED: Submit form to debug</Button>
       </form>
     </section>
   )

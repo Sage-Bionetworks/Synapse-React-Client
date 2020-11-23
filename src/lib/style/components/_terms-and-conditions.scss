@@ -1,3 +1,13 @@
+%button-reset {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+$terms-text-color: #ABABAC;
+$terms-accent-gray: #DCDCDC;
+$signatureLine-width: 420px;
+
 .terms-conditions {
   font-size: 14px;
 
@@ -22,7 +32,7 @@
     > li {
       display: flex;
       padding: 20px 0;
-      border: 1px solid #dcdcdc;
+      border: 1px solid $terms-accent-gray;
       margin-bottom: 20px;
       opacity: 0.3;
 
@@ -53,7 +63,7 @@
       .terms-circle {
         width: 40px;
         height: 40px;
-        border: 2px solid #dcdcdc;
+        border: 2px solid $terms-accent-gray;
         display: inline-block;
         border-radius: 50%;
         vertical-align: middle;
@@ -75,46 +85,52 @@
     }
   }
 
-  .view-terms button,
-  .view-terms button:active:focus,
+  .view-terms a,
+  .view-terms a:active:focus,
   .terms-signature button,
   .terms-signature button:active:focus {
-    border: 0;
-    outline: none;
-    box-shadow: none;
+    @extend %button-reset;
   }
 
-  .view-terms button,
-  .view-terms button:active:focus {
-    background-color: #dcdcdc;
+  .view-terms a,
+  .view-terms a:active:focus {
+    background-color: $terms-accent-gray;
     padding: 10px 30px;
     color: #1a1c29;
     font-weight: bold;
     margin-bottom: 35px;
   }
 
-  .terms-signature button.btn-tap-sign,
-  .terms-signature button.btn-tap-sign:active:focus {
-    background-color: transparent;
-    color: #ababac;
-    border-bottom: 1px solid #ababac;
-    border-radius: 0;
-    width: 420px;
-    text-align: left;
-    padding: 12px 0;
-    margin: 20px 0
+  .terms-signature {
+
+    button.btn-tap-sign,
+    button.btn-tap-sign:active:focus {
+      background-color: transparent;
+      color: $terms-text-color;
+      border-radius: 0;
+      width: $signatureLine-width;
+      text-align: left;
+      padding: 32px 0;
+    }
+    .terms-signature-action {
+      border-bottom: 1px solid $terms-text-color;
+      width: $signatureLine-width;
+      padding-bottom: 10px;
+      
+      img {
+        cursor: pointer;
+      }
+    }
   }
 }
 
 .signature-pad-modal {
   .btn,
-  .btn-primary
+  .btn-primary,
   .btn:active,
   .btn:focus,
   .btn:active:focus {
-    outline: none;
-    box-shadow: none;
-    border: 0;
+    @extend %button-reset;
   }
   .modal-content {
     padding: 0 40px;
@@ -122,7 +138,7 @@
   .modal-header {
     padding: 15px 0;
   }
-  .modal-footer{
+  .modal-footer {
     padding: 15px 0;
     button:first-child {
       float: left;
@@ -135,16 +151,21 @@
     .btn {
       font-weight: bold;
     }
+    .btn-disabled.btn-primary {
+      background-color: #bbbbbC;
+      cursor: not-allowed;
+    }
     .btn-primary {
-      background-color: #BBBBBC;
       padding: 10px 36px;
       margin-left: 15px;
+      border: 0;
+      border-radius: 2px;
     }
   }
   .signature-pad-label {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #ababac;
+    color: $terms-text-color;
   }
 }
