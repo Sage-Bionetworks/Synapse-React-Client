@@ -150,7 +150,8 @@
     "build-css": "node-sass src/lib/style -o src/lib/style",
     "watch-css": "yarn run build-css && node-sass src/ -o src/ --watch --recursive",
     "start-js": "react-scripts start",
-    "start": "npm-run-all -p watch-css start-js",
+    "start": "yarn run build-css && npx styleguidist server",
+    "start-deprecated-demo": "npm-run-all -p watch-css start-js",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom --setupFiles ./src/setupTests.js",
     "test:coverage": "yarn test --coverage",
     "test:noPrompt": "CI=true yarn test",
@@ -161,8 +162,7 @@
     "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
-    "build:docs": "yarn run build-css && npx styleguidist build",
-    "start-docs": "yarn run build-css && npx styleguidist server"
+    "build:docs": "yarn run build-css && npx styleguidist build"
   },
   "resolutions": {
     "fstream": "1.0.12",
