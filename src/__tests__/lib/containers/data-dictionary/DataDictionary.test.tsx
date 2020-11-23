@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import DataDictionary from 'lib/containers/data-dictionary'
+import DataDictionary from 'lib/containers/data_dictionary'
 
 describe('DataDictionary ', () => {
   let title: string = `test viewer`

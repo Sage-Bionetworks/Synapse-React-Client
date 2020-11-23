@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import { Provider } from 'hooks-for-redux'
-import DataDictionaryViewer from 'lib/containers/data-dictionary/DataDictionaryViewer'
-import DataProvider from 'lib/containers/data-dictionary/DataProvider'
+import DataDictionaryViewer from 'lib/containers/data_dictionary/DataDictionaryViewer'
+import DataProvider from 'lib/containers/data_dictionary/DataProvider'
 
 describe('DataDictionaryViewer ', () => {
   let title: string = `test viewer`

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import GraphNetworkLine from 'lib/containers/data-dictionary/GraphNetworkLine'
-import { VIEW_TYPES } from 'lib/containers/data-dictionary/constants'
+import GraphNetworkLine from 'lib/containers/data_dictionary/GraphNetworkLine'
+import { VIEW_TYPES } from 'lib/containers/data_dictionary/constants'
 
 describe('GraphNetworkLine ', () => {
   let link = {

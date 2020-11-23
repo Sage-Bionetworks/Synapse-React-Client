@@ -2,7 +2,7 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 import { Provider } from 'hooks-for-redux'
 import { IconButton } from '@material-ui/core'
-import EntityDetailViewer from 'lib/containers/data-dictionary/EntityDetailViewer'
+import EntityDetailViewer from 'lib/containers/data_dictionary/EntityDetailViewer'
 
 describe('EntityDetailViewer ', () => {
   let entity = {

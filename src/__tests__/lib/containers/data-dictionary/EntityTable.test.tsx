@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import { Provider } from 'hooks-for-redux'
-import DataProvider from 'lib/containers/data-dictionary/DataProvider'
-import EntityTable from 'lib/containers/data-dictionary/EntityTable'
+import DataProvider from 'lib/containers/data_dictionary/DataProvider'
+import EntityTable from 'lib/containers/data_dictionary/EntityTable'
 
 describe('EntityTable ', () => {
   let idList = ['schema:Text']

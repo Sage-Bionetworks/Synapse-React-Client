@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import GraphNetworkNode from 'lib/containers/data-dictionary/GraphNetworkNode'
-import { VIEW_TYPES } from 'lib/containers/data-dictionary/constants'
+import GraphNetworkNode from 'lib/containers/data_dictionary/GraphNetworkNode'
+import { VIEW_TYPES } from 'lib/containers/data_dictionary/constants'
 
 describe('GraphNetworkNode ', () => {
   const onNodeClick = jest.fn()
