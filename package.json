@@ -163,7 +163,7 @@
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
     "build:docs": "yarn run build-css && npx styleguidist build",
-    "start-docs": "yarn run build-css && npx styleguidist server  FAST_REFRESH=false "
+    "start-docs": "yarn run build-css && npx styleguidist server"
   },
   "resolutions": {
     "fstream": "1.0.12",
