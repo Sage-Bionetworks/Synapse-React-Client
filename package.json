@@ -67,6 +67,7 @@
     "react-datetime": "^3.0.4",
     "react-dom": "16.13.1",
     "react-error-boundary": "^3.0.2",
+    "react-intersection-observer": "3.0.2",
     "react-jsonschema-form": "^1.7.0",
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
@@ -162,7 +163,7 @@
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
     "build:docs": "yarn run build-css && npx styleguidist build",
-    "start-docs": "yarn run build-css && npx styleguidist server"
+    "start-docs": "yarn run build-css && npx styleguidist server  FAST_REFRESH=false "
   },
   "resolutions": {
     "fstream": "1.0.12",
