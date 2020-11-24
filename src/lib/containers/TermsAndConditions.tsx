@@ -15,7 +15,7 @@ import SignatureCanvas from 'react-signature-canvas'
 import ReactSignatureCanvas from 'react-signature-canvas'
 
 export type TermsAndConditionsProps = {
-  token?: string
+  onFormChange: Function
 }
 
 const tcList: tcItem[] = [
@@ -70,7 +70,7 @@ Please refer to our full Synapse Community Standards.
 ]
 
 const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
-  token
+  onFormChange
 }) => {
   const checkboxCount = tcList.length
   const canvasDimension = {width: 500, height: 200}
@@ -91,24 +91,26 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
 
   useEffect(() => {
     if (mounted) {
-      //
+      checkFormCompleted()
     }
     return () => {
       mounted = false
     }
-  }, [token, checkboxEnabled, checkboxChecked])
+  }, [checkboxEnabled, checkboxChecked, trimmedDataUrl])
 
   // Placeholder function to check if all checkboxes are checked and agreement is signed
-  const handleSubmit = () => {
+  const checkFormCompleted = () => {
     const allCheckboxChecked = !checkboxChecked.includes(false)
-    const isSigned = trimmedDataUrl || false
-    console.log("allCheckboxChecked", allCheckboxChecked)
-    console.log("is signed?", isSigned)
+    const isSigned = trimmedDataUrl ? true : false
+    const isFormCompleted = allCheckboxChecked && isSigned
+    onFormChange(isFormCompleted)
+    // console.log("allCheckboxChecked", [allCheckboxChecked, checkboxChecked])
+    // console.log("is signed?", isSigned)
   }
 
   const updateCheckboxState = (id:number) => {
     const newState = !checkboxChecked[id]
-    if (newState) {
+    if (newState) { // if the checkbox is checked (i.e. newState is true)
       setCheckboxChecked(getInitialCheckboxState().fill(true, 0, id+1))
       if ( id+2 <= tcList.length ) {
         setCheckboxEnabled(getInitialCheckboxState().fill(true, 0, id+2))
@@ -202,7 +204,6 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
             }
           </div>
         </div>
-        <br /><br /><br /><br /><Button onClick={handleSubmit}>TO BE DELETED: Submit form to debug</Button>
       </form>
     </section>
   )

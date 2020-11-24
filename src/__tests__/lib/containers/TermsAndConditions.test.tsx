@@ -5,7 +5,7 @@ import TermsAndConditions from '../../../lib/containers/TermsAndConditions'
 describe('Terms And Conditions: basic functionality', () => {
 
   const props = {
-    token: '1234',
+    onFormChange: jest.fn(),
   }
   const checkboxCount = 8
 

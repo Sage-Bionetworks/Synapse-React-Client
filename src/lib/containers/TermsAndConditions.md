@@ -1,5 +1,5 @@
 ```jsx
       <TermsAndConditions
-        token={sessionToken}
+        onFormChange={(completed) => { console.log("is the form completed?", completed) }}
       />
 ```
