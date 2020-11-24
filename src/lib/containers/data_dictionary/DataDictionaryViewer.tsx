@@ -12,6 +12,7 @@ import {
 } from './types/IDataDictionaryTypes'
 import { getDataDictionaryDetails } from './utils/getDataDictionaryDetails'
 import UploadButton from './UploadButton'
+import ViewTypeChooser from './ViewTypeChooser'
 import GraphNetworkNode from './GraphNetworkNode'
 import EntityDetailViewer from './EntityDetailViewer'
 import GraphNetworkLine from './GraphNetworkLine'
@@ -71,6 +72,9 @@ function DataDictionaryViewer({
     <div className={`DataDictionaryViewerWrapper`}>
       <h2 className={`h2`}>{title}</h2>
       <UploadButton />
+      <ViewTypeChooser />
+      <br />
+      <br />
       <div className={`graphCanvasContainer`}>
         <Graph
           data={graphNetworkData}

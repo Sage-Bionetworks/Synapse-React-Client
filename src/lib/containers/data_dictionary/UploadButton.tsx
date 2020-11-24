@@ -69,7 +69,7 @@ export default function UploadButton(): ReactElement {
             filesLimit={1}
             fileObjects={fileObjects}
             maxFileSize={5242880}
-            onAdd={(files) => setFileObjects(files)}
+            onAdd={files => setFileObjects(files)}
             onDelete={() => setFileObjects([])}
             previewChipProps={{
               icon: <AttachmentIcon />,
@@ -121,7 +121,7 @@ export default function UploadButton(): ReactElement {
       }
       fileReader.readAsText(file.file)
     } else if (url) {
-      getSchemaData(url).then((data) => {
+      getSchemaData(url).then(data => {
         console.log(`data: `, data)
         replaceData(data)
       })

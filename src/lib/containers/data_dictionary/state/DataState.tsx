@@ -23,38 +23,7 @@ export const [stateData, { replaceData }] = createReduxModule(
         ? schemaJson['@context'] || {}
         : {}
       if (schema.length > 0) {
-        const data = schema.map(
-          mapSchemaDataToDataDictionaryData(context, schema),
-        )
-
-        let component = data.find(comp => comp.id === 'bts:Component')
-        const viewType = component
-          ? VIEW_TYPES.REQUIRES_COMPONENT
-          : VIEW_TYPES.SUBCLASS_OF
-        component = component || data.find(comp => comp.id === 'schema:Thing')
-
-        let filteredIds: string[] = []
-        if (viewType === VIEW_TYPES.SUBCLASS_OF) {
-          filteredIds = data.filter(c => {
-            if (c[viewType].length > 0) {
-              return c[viewType].some(id => id === component?.id)
-            }
-            return false
-          }).map(fid => fid.id)
-        } else {
-          const entity = data.find(d => d.id === component?.id)
-          if (entity) {
-            filteredIds = entity[viewType] || []
-          }
-        }
-
-        filteredIds.reduce(acc, fid => {
-          acc[fid] = buildDepsData(fid, viewType, {} as DepState, data)
-        }, {})
-
-
-        resetDepsData({ viewType, {filteredIds} })
-        return data
+        return schema.map(mapSchemaDataToDataDictionaryData(context, schema))
       }
       return [] as DataDictionaryData[]
     },
@@ -67,15 +36,23 @@ export const [depsData, { setDepsData, resetDepsData }] = createReduxModule(
   {
     setDepsData: (
       state: DepState,
-      { id, viewType }: { id: string; viewType: VIEW_TYPES },
+      { id, viewType: type }: { id: string; viewType: VIEW_TYPES },
     ) => {
-      if (state[viewType] && state[viewType][id]) {
+      if (state[type] && state[type][id]) {
         return state
       } else {
-          return {
-            ...state,
-            [viewType]: buildDepsData(id, viewType, state, stateData())
-          }
+        const depsData: DepStateData = {}
+        const data = stateData()
+        const { startEntity, viewType } = getStart(data, type)
+        const initialChildIds = getChildIds(startEntity.id, data, viewType)
+
+        return {
+          ...state,
+          [viewType]: {
+            ...depsData,
+            ...buildDepStateData(id, viewType, stateData()),
+          },
+        }
       }
     },
     resetDepsData: (
@@ -88,31 +65,59 @@ export const [depsData, { setDepsData, resetDepsData }] = createReduxModule(
 function buildDepsData(
   id: string,
   viewType: VIEW_TYPES,
-  state: DepState,
   data: DataDictionaryData[],
 ): DepStateData {
-  const stateViewType = state[viewType] || {}
+  return { [id]: getChildIds(id, data, viewType) }
+}
 
-  let childList: string[] = []
-  switch (viewType) {
-    case VIEW_TYPES.SUBCLASS_OF:
-    case VIEW_TYPES.REQUIRES_DEPENDENCY:
-    case VIEW_TYPES.DOMAIN_INCLUDES:
-      childList = data.filter(d => d[viewType].includes(id)).map(cl => cl.id)
-      break
-    case VIEW_TYPES.REQUIRES_COMPONENT:
-    case VIEW_TYPES.RANGE_INCLUDES:
-      const entity = data.find(d => d.id === id)
-      if (entity) {
-        childList = entity[viewType]
-      }
-      break
-    default:
-      break
-  }
+function getStart(data: DataDictionaryData[], viewType: VIEW_TYPES) {
+  let startEntity: DataDictionaryData = data.find(
+    entity => entity.id === 'bts:Component',
+  ) as DataDictionaryData
+  viewType =
+    viewType ||
+    (startEntity ? VIEW_TYPES.REQUIRES_COMPONENT : VIEW_TYPES.SUBCLASS_OF)
+  startEntity = startEntity || data.find(entity => entity.id === 'schema:Thing')
+  return { startEntity, viewType }
+}
 
-  return {
-    ...stateViewType,
-    [id]: childList,
+function getChildIds(
+  parentId: string,
+  data: DataDictionaryData[],
+  viewType: VIEW_TYPES,
+) {
+  let childIds: string[] = []
+  if (parentId) {
+    switch (viewType) {
+      case VIEW_TYPES.SUBCLASS_OF:
+      case VIEW_TYPES.REQUIRES_DEPENDENCY:
+      case VIEW_TYPES.DOMAIN_INCLUDES:
+        childIds = data
+          .filter(
+            entity =>
+              entity[viewType].length > 0 &&
+              entity[viewType].includes(parentId),
+          )
+          .map(child => child.id)
+        break
+      case VIEW_TYPES.REQUIRES_COMPONENT:
+      case VIEW_TYPES.RANGE_INCLUDES:
+        const entity = data.find(entity => entity.id === parentId)
+        childIds = entity ? entity[viewType] : []
+        break
+      default:
+        break
+    }
   }
+  return childIds
+}
+
+function buildDepStateData(
+  filteredIds: string[],
+  viewType: VIEW_TYPES,
+  data: DataDictionaryData[],
+): DepStateData {
+  return filteredIds.reduce((acc: DepStateData, id: string): DepStateData => {
+    return { ...acc, ...buildDepsData(id, viewType, data) }
+  }, {} as DepStateData)
 }
