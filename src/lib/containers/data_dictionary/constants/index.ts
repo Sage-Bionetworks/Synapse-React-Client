@@ -23,3 +23,6 @@ export const VIEW_TYPE_NAMES = {
   [VIEW_TYPES.REQUIRES_DEPENDENCY]: 'Requires Dependencies',
   [VIEW_TYPES.SUBCLASS_OF]: 'SubClass Of',
 }
+
+export const PRIMARY_ENTITY = `bts:Component`
+export const SECONDARY_ENTITY = `schema:Thing`

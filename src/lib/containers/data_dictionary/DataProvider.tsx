@@ -1,14 +1,11 @@
 import { getSchemaData } from './services/getSchemaData'
-import { replaceData, resetDepsData, stateData } from './state/DataState'
+import { replaceData } from './state/DataState'
 
 interface DataProviderProps {
   url: string
 }
 
 export default function DataProvider({ url }: DataProviderProps): null {
-  getSchemaData(url).then(data => {
-    replaceData(data)
-    resetDepsData({ data: stateData() })
-  })
+  getSchemaData(url).then(data => replaceData(data))
   return null
 }

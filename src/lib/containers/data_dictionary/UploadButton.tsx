@@ -14,7 +14,7 @@ import { isUri } from 'valid-url'
 import { SchemaJson } from './types/IDataDictionaryTypes'
 import { DEFAULT_SCHEMA } from './constants'
 import { getSchemaData } from './services/getSchemaData'
-import { replaceData, resetDepsData, stateData } from './state/DataState'
+import { replaceData } from './state/DataState'
 
 export default function UploadButton(): ReactElement {
   const [open, setOpen] = useState(false)
@@ -118,14 +118,10 @@ export default function UploadButton(): ReactElement {
           console.log(`error:`, error)
         }
         replaceData(content)
-        resetDepsData({ data: stateData() })
       }
       fileReader.readAsText(file.file)
     } else if (url) {
-      getSchemaData(url).then(data => {
-        replaceData(data)
-        resetDepsData({ data: stateData() })
-      })
+      getSchemaData(url).then(data => replaceData(data))
     }
     setOpen(false)
     setUrl(``)
