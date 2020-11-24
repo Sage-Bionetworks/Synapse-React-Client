@@ -2027,6 +2027,11 @@
           "@id": "schema:Thing"
         }
       ],
+      "schema:rangeIncludes": [
+        {
+          "@id": "bts:Biospecimen"
+        }
+      ],
       "schema:isPartOf": {
         "@id": "http://schema.biothings.io"
       },

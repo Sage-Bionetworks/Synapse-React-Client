@@ -6,6 +6,6 @@ interface DataProviderProps {
 }
 
 export default function DataProvider({ url }: DataProviderProps): null {
-  getSchemaData(url).then((data) => replaceData(data))
+  getSchemaData(url).then(data => replaceData(data))
   return null
 }

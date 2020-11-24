@@ -66,14 +66,19 @@ export interface DataDictionaryData {
 
   //schema:domainIncludes [note: source can be object or array]
   domainIncludes: string[]
-
-  //[Calculated] number of children using this field
-  numOfDependents: number
 }
 
 export interface DataDictionaryState {
   data: DataDictionaryData[]
   schemaJson: SchemaJson
+}
+
+export interface DepStateData {
+  [parentId: string]: string[]
+}
+
+export type DepState = {
+  [key in VIEW_TYPES]: DepStateData
 }
 
 export interface RefState {

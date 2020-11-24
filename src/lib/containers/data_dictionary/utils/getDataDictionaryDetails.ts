@@ -9,9 +9,9 @@ export const getDataDictionaryDetails = (
   parentNodeId: string,
   data: DataDictionaryData[],
 ): DataDictionaryData[] => {
-  return data.filter((c) => {
+  return data.filter(c => {
     if (c.parentIds.length > 0) {
-      return c.parentIds.some((id) => id === parentNodeId)
+      return c.parentIds.some(id => id === parentNodeId)
     }
     return false
   })
@@ -56,7 +56,6 @@ export function mapSchemaDataToDataDictionaryData(
       label: nd['rdfs:label'],
       parentIds,
       attribute: nd['sms:displayName'] || ``,
-      numOfDependents: getNumberOfDependents(data, nd['@id']),
       required: nd?.['sms:required'] === 'sms:true' || false,
       requiredDependencies,
       validationRules: nd['sms:validationRules'] || [],
@@ -66,15 +65,6 @@ export function mapSchemaDataToDataDictionaryData(
       source,
     } as DataDictionaryData
   }
-}
-
-function getNumberOfDependents(data: SchemaData[], id: string): number {
-  return data.filter((entity) => {
-    const entityDeps: baseEntity[] = normalizeEntity(
-      entity['rdfs:subClassOf'],
-    ) as baseEntity[]
-    return entityDeps.some((dep: baseEntity): boolean => dep['@id'] === id)
-  }).length
 }
 
 function normalizeEntity(

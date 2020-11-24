@@ -1,23 +1,18 @@
 import { createReduxModule } from 'hooks-for-redux'
 import {
   DataDictionaryData,
-  DataDictionaryState,
   SchemaContext,
   SchemaData,
   SchemaJson,
 } from './../types/IDataDictionaryTypes'
-import { DEFAULT_SCHEMA } from './../constants'
 import { mapSchemaDataToDataDictionaryData } from './../utils/getDataDictionaryDetails'
 
 export const [stateData, { replaceData }] = createReduxModule(
-  'dictionaryData',
-  {
-    data: [] as DataDictionaryData[],
-    schemaJson: DEFAULT_SCHEMA,
-  } as DataDictionaryState,
+  'data',
+  [] as DataDictionaryData[],
   {
     replaceData: (
-      _state: DataDictionaryState,
+      _state: DataDictionaryData[],
       schemaJson: SchemaJson | undefined,
     ) => {
       const schema: SchemaData[] = schemaJson ? schemaJson['@graph'] || [] : []
@@ -25,15 +20,9 @@ export const [stateData, { replaceData }] = createReduxModule(
         ? schemaJson['@context'] || {}
         : {}
       if (schema.length > 0) {
-        return {
-          data: schema.map(mapSchemaDataToDataDictionaryData(context, schema)),
-          schemaJson: schemaJson || DEFAULT_SCHEMA,
-        }
+        return schema.map(mapSchemaDataToDataDictionaryData(context, schema))
       }
-      return {
-        data: [] as DataDictionaryData[],
-        schemaJson: DEFAULT_SCHEMA,
-      }
+      return [] as DataDictionaryData[]
     },
   },
 )

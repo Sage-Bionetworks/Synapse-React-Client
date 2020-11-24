@@ -1,10 +1,7 @@
 import React, { ReactElement } from 'react'
 import { Grid } from '@material-ui/core'
 import MaterialTable from 'material-table'
-import {
-  DataDictionaryData,
-  DataDictionaryState,
-} from './types/IDataDictionaryTypes'
+import { DataDictionaryData } from './types/IDataDictionaryTypes'
 import IdLink from './IdLink'
 import ItemList from './ItemList'
 import { stateData } from './state/DataState'
@@ -19,7 +16,7 @@ interface RowData extends DataDictionaryData {
 }
 
 function EntityTable({ list }: EntityTableProps): ReactElement {
-  const { data }: DataDictionaryState = stateData()
+  const data: DataDictionaryData[] = stateData()
   const entityData = buildEntityData(list, data)
 
   return entityData.length > 0 ? (
