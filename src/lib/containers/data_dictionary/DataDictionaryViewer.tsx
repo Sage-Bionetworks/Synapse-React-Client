@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactElement, useCallback } from 'react'
 //@ts-ignore
 import Graph from 'react-graph-network'
 import { stateData } from './state/DataState'
+import { stateViewType } from './state/ViewTypeState'
 import { PRIMARY_ENTITY, SECONDARY_ENTITY, VIEW_TYPES } from './constants'
 import {
   DataDictionaryData,
@@ -12,6 +13,7 @@ import {
   GraphNodeLinkData,
 } from './types/IDataDictionaryTypes'
 import UploadButton from './UploadButton'
+import ViewTypeChooser from './ViewTypeChooser'
 import GraphNetworkNode from './GraphNetworkNode'
 import EntityDetailViewer from './EntityDetailViewer'
 import GraphNetworkLine from './GraphNetworkLine'
@@ -24,6 +26,7 @@ function DataDictionaryViewer({
   title,
 }: DataDictionaryViewerProps): ReactElement {
   const data = stateData()
+  const viewType = stateViewType()
   const [graphNetworkData, setGraphNetworkData] = useState<GraphNetworkData>()
   const [clickedNode, setClickedNode] = useState<DataDictionaryData>()
   const [deps, setDeps] = useState<DepState>({} as DepState)
@@ -40,16 +43,14 @@ function DataDictionaryViewer({
 
   useEffect(() => {
     if (data.length > 0) {
-      const viewType: VIEW_TYPES = VIEW_TYPES.SUBCLASS_OF
       const newDeps = getDepsData(deps, { data, viewType, reset: true })
       if (JSON.stringify(newDeps) !== JSON.stringify(deps)) {
         setDeps(newDeps)
       }
     }
-  }, [data, deps, setDeps])
+  }, [data, deps, viewType, setDeps])
 
   useEffect(() => {
-    const viewType: VIEW_TYPES = VIEW_TYPES.SUBCLASS_OF
     const nodes: Array<GraphNodeData> = []
     const links: Array<GraphNodeLinkData> = []
 
@@ -71,7 +72,7 @@ function DataDictionaryViewer({
       }
     }
     setGraphNetworkData({ nodes, links })
-  }, [data, deps, onNodeClick])
+  }, [data, deps, viewType, onNodeClick])
 
   if (!graphNetworkData) {
     return <></>
@@ -80,9 +81,10 @@ function DataDictionaryViewer({
   return (
     <div className={`DataDictionaryViewerWrapper`}>
       <h2 className={`h2`}>{title}</h2>
-      <UploadButton />
-      <br />
-      <br />
+      <div className={`tools-dd`}>
+        <UploadButton />
+        <ViewTypeChooser />
+      </div>
       <div className={`graphCanvasContainer`}>
         <Graph
           data={graphNetworkData}
@@ -188,7 +190,7 @@ function getStart(data: DataDictionaryData[], viewType?: VIEW_TYPES) {
   viewType =
     viewType ||
     (startEntity ? VIEW_TYPES.REQUIRES_COMPONENT : VIEW_TYPES.SUBCLASS_OF)
-  if (!startEntity || ids.length < 1) {
+  if (!startEntity || ids.length < 1 || viewType === VIEW_TYPES.SUBCLASS_OF) {
     startEntity = data.find(entity => entity.id === SECONDARY_ENTITY)
     ids = startEntity
       ? getChildIds(startEntity.id, data, VIEW_TYPES.SUBCLASS_OF)
