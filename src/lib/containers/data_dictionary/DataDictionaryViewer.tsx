@@ -5,7 +5,6 @@ import { stateData } from './state/DataState'
 import { VIEW_TYPES } from './constants'
 import {
   DataDictionaryData,
-  DataDictionaryState,
   GraphNetworkData,
   GraphNodeData,
   GraphNodeLinkData,

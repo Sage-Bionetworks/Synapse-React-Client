@@ -34,31 +34,15 @@ export const [depsData, { setDepsData, resetDepsData }] = createReduxModule(
   'deps',
   {} as DepState,
   {
-    setDepsData: (
-      state: DepState,
-      { id, viewType: type }: { id: string; viewType: VIEW_TYPES },
-    ) => {
-      if (state[type] && state[type][id]) {
-        return state
-      } else {
-        const depsData: DepStateData = {}
-        const data = stateData()
-        const { startEntity, viewType } = getStart(data, type)
-        const initialChildIds = getChildIds(startEntity.id, data, viewType)
-
-        return {
-          ...state,
-          [viewType]: {
-            ...depsData,
-            ...buildDepStateData(id, viewType, stateData()),
-          },
-        }
-      }
-    },
+    setDepsData: doSetDepsData,
     resetDepsData: (
       state: DepState,
-      { viewType, data }: { viewType: VIEW_TYPES; data: DepStateData },
-    ) => ({ ...state, [viewType]: data }),
+      args: {
+        data: DataDictionaryData[]
+        viewType?: VIEW_TYPES
+        reset?: boolean
+      },
+    ) => doSetDepsData(state, { ...args, reset: true }),
   },
 )
 
@@ -70,7 +54,7 @@ function buildDepsData(
   return { [id]: getChildIds(id, data, viewType) }
 }
 
-function getStart(data: DataDictionaryData[], viewType: VIEW_TYPES) {
+function getStart(data: DataDictionaryData[], viewType?: VIEW_TYPES) {
   let startEntity: DataDictionaryData = data.find(
     entity => entity.id === 'bts:Component',
   ) as DataDictionaryData
@@ -116,8 +100,37 @@ function buildDepStateData(
   filteredIds: string[],
   viewType: VIEW_TYPES,
   data: DataDictionaryData[],
+  currentDepsData: DepStateData,
 ): DepStateData {
   return filteredIds.reduce((acc: DepStateData, id: string): DepStateData => {
-    return { ...acc, ...buildDepsData(id, viewType, data) }
-  }, {} as DepStateData)
+    const deps: DepStateData = buildDepsData(id, viewType, data)
+    const childIds: string[] = getChildIds(id, data, viewType)
+    const depsWithChildren = buildDepStateData(childIds, viewType, data, deps)
+    return { ...currentDepsData, ...depsWithChildren }
+  }, currentDepsData)
+}
+
+function doSetDepsData(
+  state: DepState,
+  {
+    data,
+    viewType: type,
+    reset,
+  }: { data: DataDictionaryData[]; viewType?: VIEW_TYPES; reset?: boolean },
+): DepState {
+  const { startEntity, viewType } = getStart(data, type)
+  if (state[viewType] && !reset) {
+    return state
+  } else {
+    const depsData: DepStateData = {}
+    return {
+      ...state,
+      [viewType]: buildDepStateData(
+        getChildIds(startEntity.id, data, viewType),
+        viewType,
+        data,
+        depsData,
+      ),
+    }
+  }
 }

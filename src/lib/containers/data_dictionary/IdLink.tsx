@@ -1,9 +1,6 @@
 import React, { ReactElement, useState } from 'react'
 import { Link } from '@material-ui/core'
-import {
-  DataDictionaryData,
-  DataDictionaryState,
-} from './types/IDataDictionaryTypes'
+import { DataDictionaryData } from './types/IDataDictionaryTypes'
 import EntityDetailViewer from './EntityDetailViewer'
 import { stateData } from './state/DataState'
 
@@ -12,9 +9,9 @@ interface IdLinkProps {
 }
 
 function IdLink({ id }: IdLinkProps): ReactElement {
-  const { data }: DataDictionaryState = stateData()
+  const data: DataDictionaryData[] = stateData()
   const itemData: DataDictionaryData | undefined = data.find(
-    (item) => item.id === id,
+    item => item.id === id,
   )
   const [entityDetailViewerOpen, setEntityDetailViewerOpen] = useState<boolean>(
     false,
