@@ -33,6 +33,7 @@ import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataT
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import RenderIfInView from './containers/RenderIfInView'
+import TermsAndConditions from './containers/TermsAndConditions'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -73,7 +74,8 @@ const SynapseComponents = {
   UserCardListGroups,
   EvaluationRoundEditorList,
   AccountLevelBadge,
-  RenderIfInView
+  RenderIfInView,
+  TermsAndConditions,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
