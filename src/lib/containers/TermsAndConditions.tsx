@@ -104,8 +104,6 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
     const isSigned = trimmedDataUrl ? true : false
     const isFormCompleted = allCheckboxChecked && isSigned
     onFormChange(isFormCompleted)
-    // console.log("allCheckboxChecked", [allCheckboxChecked, checkboxChecked])
-    // console.log("is signed?", isSigned)
   }
 
   const updateCheckboxState = (id:number) => {
