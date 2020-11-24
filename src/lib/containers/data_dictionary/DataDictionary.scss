@@ -47,15 +47,23 @@ $white: #fff;
     margin: 42px 0 40px;
   }
 
+  .tools-dd {
+    display: inline-flex;
+  }
+
   .button-upload {
     color: $primary-text-color;
-    display: inline-block;
-    margin-left: 20px;
     font-size: 3.6rem;
+    margin-left: 20px;
     cursor: pointer;
     &:hover {
       color: $grey;
     }
+  }
+
+  .form-control {
+    max-width: 240px;
+    margin-left: 20px;
   }
 
   .graphCanvasContainer {
