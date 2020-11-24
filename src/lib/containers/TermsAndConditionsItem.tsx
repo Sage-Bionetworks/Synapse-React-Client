@@ -49,7 +49,7 @@ const TermsAndConditionsItem: React.FunctionComponent<TermsAndConditionsItemProp
         { showDesc && item.description && <div dangerouslySetInnerHTML={{ __html: item.description }} /> }
         { item.description &&
           <div>
-            <a href="" onClick={handleShowDescLink}>{ showDesc ?  "Show Less" : "Show More" }</a>
+            <a className="terms-show-desc" href="" onClick={handleShowDescLink}>{ showDesc ?  "Show Less" : "Show More" }</a>
           </div>
         }
       </span>
