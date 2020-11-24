@@ -3,7 +3,6 @@ import 'react-app-polyfill/ie11'
 import 'react-app-polyfill/stable'
 import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
-import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
 import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import StackedBarChart from './containers/StackedBarChart'
@@ -32,6 +31,9 @@ import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
+import { AccountLevelBadge } from './containers/AccountLevelBadge'
+import RenderIfInView from './containers/RenderIfInView'
+import TermsAndConditions from './containers/TermsAndConditions'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -46,7 +48,6 @@ const SynapseComponents = {
   QueryWrapper,
   StackedBarChart,
   SynapseTable,
-  QueryWrapperMenu,
   CardContainerLogic,
   EntityForm,
   UserCard,
@@ -72,6 +73,9 @@ const SynapseComponents = {
   FeaturedDataTabs,
   UserCardListGroups,
   EvaluationRoundEditorList,
+  AccountLevelBadge,
+  RenderIfInView,
+  TermsAndConditions,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

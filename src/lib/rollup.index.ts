@@ -9,6 +9,8 @@ import './style/main.scss'
 import { SynapseConstants, SynapseClient } from './utils/'
 import { EvaluationRoundEditorList } from './containers/evaluation_queues/EvaluationRoundEditorList'
 import { AccessTokenPage } from './containers/personal_access_token/AccessTokenPage'
+import { AccountLevelBadge } from './containers/AccountLevelBadge'
+import TermsAndConditions from './containers/TermsAndConditions'
 
 const SynapseComponents = {
   Login,
@@ -19,6 +21,8 @@ const SynapseComponents = {
   DownloadListTable,
   EvaluationRoundEditorList,
   AccessTokenPage,
+  AccountLevelBadge,
+  TermsAndConditions,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient }

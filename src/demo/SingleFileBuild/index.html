@@ -139,6 +139,7 @@
     <div id="panel8"></div>
     <div id="panel9"></div>
     <div id="panel10"></div>
+    <div id="panel11"></div>
     <div style="height: 300px;"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -178,28 +179,6 @@
         // error  message isn't informative
       }
     }
-    const queryWrapperMenuContainer = document.querySelector('#panel1')
-    const queryWrapperProps = {
-      token,
-      menuConfig: [
-        {
-          facet: 'Organism',
-          sql: 'SELECT * FROM syn9886254',
-          entityId: 'syn9886254',
-          unitDescription: 'data files',
-          visibleColumnCount: 3,
-          title: 'my title',
-        },
-        {
-          facet: 'Study',
-          sql: 'SELECT * FROM syn9886254',
-          entityId: 'syn9886254',
-          unitDescription: 'data files',
-          visibleColumnCount: 5,
-        },
-      ],
-      rgbIndex: 2,
-    }
     const markdownContainer = document.querySelector('#panel2')
     const markdownProps = {
       token,
@@ -218,12 +197,6 @@
       ownerId: '3374422',
       size: SRC.SynapseConstants.MEDIUM_USER_CARD,
     }
-
-    renderInTryCatch(
-      e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null),
-      queryWrapperMenuContainer,
-      'QueryWrapperMenu',
-    )
 
     renderInTryCatch(
       e(SRC.SynapseComponents.Markdown, markdownProps, null),
@@ -327,6 +300,16 @@
       e(SRC.SynapseComponents.EvaluationRoundEditorList, evaluationRoundEditorListProps, null),
       evaluationQueueEditorListContainer,
       'EvaluationRoundEditorList',
+    )
+
+    const accountLevelBadgeContainer = document.querySelector('#panel11')
+    const accountLevelBadgeProps = {
+      userId: '273980'
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.AccountLevelBadge, accountLevelBadgeProps, null),
+      accountLevelBadgeContainer,
+      'AccountLevelBadge',
     )
 
   </script>
