@@ -38,17 +38,25 @@ $white: #fff;
 }
 
 .DataDictionaryViewerWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-top: 42px;
   .h2 {
     display: inline-block;
     font-size: 2.1rem;
     text-transform: uppercase;
     font-weight: 700;
     color: $grey;
-    margin: 42px 0 40px;
+    margin: 0;
   }
 
   .tools-dd {
-    display: inline-flex;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    page-break-after: always;
+    break-after: always;
   }
 
   .button-upload {
@@ -64,13 +72,28 @@ $white: #fff;
   .form-control {
     max-width: 240px;
     margin-left: 20px;
+    height: auto;
+  }
+
+  .search-entity {
+    margin-left: auto;
+  }
+
+  #values-entity-search-label {
+    position: relative;
   }
 
   .graphCanvasContainer {
     background-color: $white;
     height: 60vh;
+    width: 100%;
+    margin-top: 42px;
     border-radius: 10px;
     border: 2px solid $primary-text-color;
+
+    .graph-dd {
+      font-size: 1rem;
+    }
 
     @keyframes mouseOnNodeTransition {
       from {
@@ -90,18 +113,32 @@ $white: #fff;
       }
     }
 
-    .mouseOnNode {
-      animation-duration: 0.5s;
-      animation-name: mouseOnNodeTransition;
-      animation-fill-mode: forwards;
+    .shape {
       cursor: pointer;
+      animation-duration: 0.5s;
+      animation-fill-mode: forwards;
+    }
+    .text-entity {
+      cursor: pointer;
+      transition: font-size 0.5s ease;
+    }
+
+    .mouseOnNode {
+      .shape {
+        animation-name: mouseOnNodeTransition;
+      }
+      .text-entity {
+        font-size: 3.4em;
+      }
     }
 
     .mouseOffNode {
-      animation-duration: 0.5s;
-      animation-name: mouseOffNodeTransition;
-      animation-fill-mode: forwards;
-      cursor: pointer;
+      .shape {
+        animation-name: mouseOffNodeTransition;
+      }
+      .text-entity {
+        font-size: 1.46em;
+      }
     }
   }
 }

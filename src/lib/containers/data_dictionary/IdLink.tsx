@@ -6,9 +6,10 @@ import { stateData } from './state/DataState'
 
 interface IdLinkProps {
   id: string
+  parent?: string
 }
 
-function IdLink({ id }: IdLinkProps): ReactElement {
+function IdLink({ id, parent }: IdLinkProps): ReactElement {
   const data: DataDictionaryData[] = stateData()
   const itemData: DataDictionaryData | undefined = data.find(
     item => item.id === id,
@@ -16,8 +17,9 @@ function IdLink({ id }: IdLinkProps): ReactElement {
   const [entityDetailViewerOpen, setEntityDetailViewerOpen] = useState<boolean>(
     false,
   )
+  const isParent: boolean = parent === id
 
-  return itemData ? (
+  return itemData && !isParent ? (
     <>
       <Link
         href={`#`}
