@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.15.46",
+  "version": "1.15.47",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -29,7 +29,6 @@
     "@types/react-measure": "^2.0.4",
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-dom": "4.3.5",
-    "@types/react-signature-canvas": "^1.0.1",
     "@types/react-tooltip": "^3.11.0",
     "@types/shortid": "^0.0.29",
     "@types/sinon": "^7.0.2",
@@ -76,7 +75,6 @@
     "react-plotlyjs-ts": "^2.2.1",
     "react-router-dom": "5.1.2",
     "react-scripts": "^3.4.3",
-    "react-signature-canvas": "^1.0.3",
     "react-sizeme": "^2.6.12",
     "react-spinners": "^0.9.0",
     "react-switch": "^5.0.1",
