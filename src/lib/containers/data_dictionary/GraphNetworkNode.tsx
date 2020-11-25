@@ -1,5 +1,5 @@
+import { unCamelCase } from 'lib/utils/functions/unCamelCase'
 import React, { useState } from 'react'
-import { VIEW_TYPES } from './constants'
 import { GraphNodeData } from './types/IDataDictionaryTypes'
 
 interface GraphNetworkNodeProps {
@@ -7,26 +7,27 @@ interface GraphNetworkNodeProps {
 }
 
 export default function GraphNetworkNode({
-  node: { id, label, onNodeClick, viewType },
+  node: { id, label, type, onNodeClick, nodeColor },
 }: GraphNetworkNodeProps) {
   const [hoverClass, setHoverClass] = useState('mouseOffNode')
   const radius = 10
-  const color: string =
-    viewType === VIEW_TYPES.REQUIRES_COMPONENT ? `darkorange` : `green`
+  const isPropertyType = type.includes('rdf:Property')
 
   return (
     <g className={`entity ${hoverClass}`}>
       <circle
+        fill={isPropertyType ? 'white' : nodeColor}
+        stroke={isPropertyType ? nodeColor : undefined}
+        strokeWidth={isPropertyType ? 2 : undefined}
+        r={isPropertyType ? radius - 2 : radius}
         className={`shape`}
-        fill={color}
-        r={radius}
         onClick={onNodeClick(id)}
         onMouseEnter={() => setHoverClass('mouseOnNode')}
         onMouseLeave={() => setHoverClass('mouseOffNode')}
       />
       <g className={`text-entity`}>
         <text x={radius + 7} y={radius / 2}>
-          {label}
+          {unCamelCase(label)}
         </text>
       </g>
     </g>
