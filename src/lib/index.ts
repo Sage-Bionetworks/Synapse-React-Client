@@ -34,6 +34,7 @@ import UserCardListGroups from './containers/home_page/people/UserCardListGroups
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import RenderIfInView from './containers/RenderIfInView'
 import TermsAndConditions from './containers/TermsAndConditions'
+import PageProgress from './containers/PageProgress'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -76,6 +77,7 @@ const SynapseComponents = {
   AccountLevelBadge,
   RenderIfInView,
   TermsAndConditions,
+  PageProgress,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }
