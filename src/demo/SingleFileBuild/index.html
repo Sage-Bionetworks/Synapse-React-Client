@@ -179,28 +179,6 @@
         // error  message isn't informative
       }
     }
-    const queryWrapperMenuContainer = document.querySelector('#panel1')
-    const queryWrapperProps = {
-      token,
-      menuConfig: [
-        {
-          facet: 'Organism',
-          sql: 'SELECT * FROM syn9886254',
-          entityId: 'syn9886254',
-          unitDescription: 'data files',
-          visibleColumnCount: 3,
-          title: 'my title',
-        },
-        {
-          facet: 'Study',
-          sql: 'SELECT * FROM syn9886254',
-          entityId: 'syn9886254',
-          unitDescription: 'data files',
-          visibleColumnCount: 5,
-        },
-      ],
-      rgbIndex: 2,
-    }
     const markdownContainer = document.querySelector('#panel2')
     const markdownProps = {
       token,
@@ -219,12 +197,6 @@
       ownerId: '3374422',
       size: SRC.SynapseConstants.MEDIUM_USER_CARD,
     }
-
-    renderInTryCatch(
-      e(SRC.SynapseComponents.QueryWrapperMenu, queryWrapperProps, null),
-      queryWrapperMenuContainer,
-      'QueryWrapperMenu',
-    )
 
     renderInTryCatch(
       e(SRC.SynapseComponents.Markdown, markdownProps, null),

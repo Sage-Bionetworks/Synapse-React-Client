@@ -11,9 +11,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertConditionsFromSearchParams } from '../utils/functions/sqlFunctions'
 import TotalQueryResults from './TotalQueryResults'
 import getColorPallette from './ColorGradient'
-import { SEARCH_CLASS_CSS } from './QueryWrapperMenu'
 import { Dropdown } from 'react-bootstrap'
 import { unCamelCase } from '../utils/functions/unCamelCase'
+
+export const SEARCH_CLASS_CSS = 'SRC-search-component'
 
 library.add(faCaretDown)
 library.add(faCaretUp)

@@ -10,6 +10,8 @@ import { SynapseConstants, SynapseClient } from './utils/'
 import { EvaluationRoundEditorList } from './containers/evaluation_queues/EvaluationRoundEditorList'
 import { AccessTokenPage } from './containers/personal_access_token/AccessTokenPage'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
+import TermsAndConditions from './containers/TermsAndConditions'
+import PageProgress from './containers/PageProgress'
 
 const SynapseComponents = {
   Login,
@@ -21,6 +23,8 @@ const SynapseComponents = {
   EvaluationRoundEditorList,
   AccessTokenPage,
   AccountLevelBadge,
+  TermsAndConditions,
+  PageProgress,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient }
