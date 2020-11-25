@@ -94,8 +94,9 @@ function DataDictionaryViewer({
           hoverOpacity={0.7}
           enableDrag={true}
           zoomDepth={3}
-          nodeDistance={2}
-          pullIn={false}
+          enableZoomOut={true}
+          nodeDistance={200}
+          pullIn={true}
         />
       </div>
       <EntityDetailViewer

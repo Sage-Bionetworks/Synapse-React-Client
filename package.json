@@ -75,7 +75,7 @@
     "react-datetime": "^3.0.4",
     "react-dom": "16.13.1",
     "react-error-boundary": "^3.0.2",
-    "react-graph-network": "1.0.6",
+    "react-graph-network": "github:generalui/react-graph-network#zoom-extend-revision",
     "react-jsonschema-form": "^1.7.0",
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
