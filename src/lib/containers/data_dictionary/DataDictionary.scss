@@ -72,6 +72,7 @@ $white: #fff;
     border-radius: 10px;
     border: 2px solid $primary-text-color;
     cursor: grab;
+    position: relative;
 
     &:active {
       cursor: grabbing;
@@ -90,8 +91,7 @@ $white: #fff;
 
     .fullscreenToggleButton {
       position: absolute;
-      left: calc(100% - 240px);
-      right: unset;
+      right: 0;
       z-index: 2;
 
       &.fullscreen {
