@@ -99,6 +99,7 @@ export interface GraphNodeData extends DataDictionaryData {
     id: string,
   ) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => void
   viewType: VIEW_TYPES
+  nodeColor: string
 }
 
 export interface GraphNodeLinkData {

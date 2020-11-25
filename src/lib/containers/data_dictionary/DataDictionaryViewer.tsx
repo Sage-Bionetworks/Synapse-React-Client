@@ -1,4 +1,10 @@
-import React, { useEffect, useState, ReactElement, useCallback } from 'react'
+import React, {
+  useEffect,
+  useState,
+  ReactElement,
+  useCallback,
+  useRef,
+} from 'react'
 //@ts-ignore
 import Graph from 'react-graph-network'
 import { stateData } from './state/DataState'
@@ -17,6 +23,13 @@ import ViewTypeChooser from './ViewTypeChooser'
 import GraphNetworkNode from './GraphNetworkNode'
 import EntityDetailViewer from './EntityDetailViewer'
 import GraphNetworkLine from './GraphNetworkLine'
+import {
+  COLOR_PALETTE_EVEN,
+  COLOR_PALETTE_ODD,
+} from 'lib/utils/functions/colorPalette'
+import IconButton from '@material-ui/core/IconButton'
+import FullscreenIcon from '@material-ui/icons/Fullscreen'
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
 
 export interface DataDictionaryViewerProps {
   title: string
@@ -30,6 +43,8 @@ function DataDictionaryViewer({
   const [graphNetworkData, setGraphNetworkData] = useState<GraphNetworkData>()
   const [clickedNode, setClickedNode] = useState<DataDictionaryData>()
   const [deps, setDeps] = useState<DepState>({} as DepState)
+  const nodeColorRefs = useRef<{ [key: string]: string }>({})
+  const [isFullScreen, toggleFullScreen] = useState<boolean>(false)
 
   const onNodeClick = useCallback(
     (id: string) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -54,6 +69,30 @@ function DataDictionaryViewer({
     const nodes: Array<GraphNodeData> = []
     const links: Array<GraphNodeLinkData> = []
 
+    if (deps[viewType]) {
+      // need to convert object into array so we can sort them with the most children first.
+      const res = Object.keys(deps[viewType])
+        .map(k => {
+          return { key: k, value: deps[viewType][k] }
+        })
+        .sort((a, b) => {
+          return b.value.length - a.value.length
+        })
+
+      // assign color pair for parent and children using the ODD/EVEN scheme in the palette
+      res.forEach((item, idx) => {
+        if (!(item.key in nodeColorRefs.current)) {
+          //TODO: check if there is enough color for the number of nodes
+          nodeColorRefs.current[item.key] = COLOR_PALETTE_EVEN[idx]
+          item.value.forEach(v => {
+            if (!(v in nodeColorRefs.current)) {
+              nodeColorRefs.current[v] = COLOR_PALETTE_ODD[idx]
+            }
+          })
+        }
+      })
+    }
+
     for (const id in deps[viewType]) {
       const node = nodes.find(entity => entity.id === id)
       const currentEntity:
@@ -61,7 +100,12 @@ function DataDictionaryViewer({
         | DataDictionaryData
         | undefined = !node ? data.find(entity => entity.id === id) : node
       if (currentEntity) {
-        nodes.push({ ...currentEntity, onNodeClick, viewType })
+        nodes.push({
+          ...currentEntity,
+          onNodeClick,
+          viewType,
+          nodeColor: nodeColorRefs.current[id],
+        })
         deps[viewType][id].forEach((childId: string) => {
           links.push({
             source: id,
@@ -72,7 +116,7 @@ function DataDictionaryViewer({
       }
     }
     setGraphNetworkData({ nodes, links })
-  }, [data, deps, viewType, onNodeClick])
+  }, [data, deps, viewType, onNodeClick, nodeColorRefs])
 
   if (!graphNetworkData) {
     return <></>
@@ -85,18 +129,33 @@ function DataDictionaryViewer({
         <UploadButton />
         <ViewTypeChooser />
       </div>
-      <div className={`graphCanvasContainer`}>
+      <div
+        className={`graphCanvasContainer ${isFullScreen ? 'fullscreen' : ''}`}
+      >
+        <IconButton
+          aria-label={`fullscreen`}
+          className={`fullscreenToggleButton ${
+            isFullScreen ? 'fullscreen' : ''
+          }`}
+          onClick={() => toggleFullScreen(!isFullScreen)}
+        >
+          {isFullScreen ? (
+            <FullscreenExitIcon fontSize={`large`} />
+          ) : (
+            <FullscreenIcon fontSize={`large`} />
+          )}
+        </IconButton>
         <Graph
           data={graphNetworkData}
           NodeComponent={GraphNetworkNode}
           LineComponent={GraphNetworkLine}
           id={`dd-graph`}
-          hoverOpacity={0.7}
+          hoverOpacity={0.3}
           enableDrag={true}
           zoomDepth={3}
           enableZoomOut={true}
-          nodeDistance={200}
-          pullIn={true}
+          nodeDistance={50}
+          pullIn={false}
         />
       </div>
       <EntityDetailViewer
