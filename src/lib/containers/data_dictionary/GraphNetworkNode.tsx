@@ -9,8 +9,9 @@ interface GraphNetworkNodeProps {
 export default function GraphNetworkNode({
   node: { id, label, onNodeClick, viewType },
 }: GraphNetworkNodeProps) {
-  const [radius, setRadius] = useState(10)
+  const [hoverClass, setHoverClass] = useState('mouseOffNode')
   const textSize = 14
+  const radius = 10
   const color: string =
     viewType === VIEW_TYPES.REQUIRES_COMPONENT ? `darkorange` : `green`
 
@@ -19,9 +20,10 @@ export default function GraphNetworkNode({
       <circle
         fill={color}
         r={radius}
+        className={hoverClass}
         onClick={onNodeClick(id)}
-        onMouseEnter={() => setRadius(20)}
-        onMouseLeave={() => setRadius(10)}
+        onMouseEnter={() => setHoverClass('mouseOnNode')}
+        onMouseLeave={() => setHoverClass('mouseOffNode')}
       />
       <g style={{ fontSize: `${textSize}px` }}>
         <text x={radius + 7} y={radius / 2}>

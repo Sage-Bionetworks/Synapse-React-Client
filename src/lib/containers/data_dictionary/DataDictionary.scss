@@ -71,6 +71,38 @@ $white: #fff;
     height: 60vh;
     border-radius: 10px;
     border: 2px solid $primary-text-color;
+
+    @keyframes mouseOnNodeTransition {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.5);
+      }
+    }
+
+    @keyframes mouseOffNodeTransition {
+      from {
+        transform: scale(1.5);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+
+    .mouseOnNode {
+      animation-duration: 0.5s;
+      animation-name: mouseOnNodeTransition;
+      animation-fill-mode: forwards;
+      cursor: pointer;
+    }
+
+    .mouseOffNode {
+      animation-duration: 0.5s;
+      animation-name: mouseOffNodeTransition;
+      animation-fill-mode: forwards;
+      cursor: pointer;
+    }
   }
 }
 
