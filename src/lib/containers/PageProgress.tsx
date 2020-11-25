@@ -5,9 +5,9 @@ export type PageProgressProps = {
   barColor: string
   barPercent: number
   backBtnLabel: string
-  backBtnCallback: Function
+  backBtnCallback?: Function
   forwardBtnLabel: string
-  forwardBtnCallback: Function
+  forwardBtnCallback?: Function
   forwardBtnActive: boolean
 }
 
@@ -27,11 +27,13 @@ const PageProgress: React.FunctionComponent<PageProgressProps> = (props) => {
   }, [barPercent])
 
   const handleBackButtonClick = (e:React.MouseEvent) => {
-    backBtnCallback()
+    if(backBtnCallback) {
+      backBtnCallback()
+    }
   }
 
   const handleNextButtonClick = (e:React.MouseEvent) => {
-    if (forwardBtnActive) {
+    if (forwardBtnCallback && forwardBtnActive) {
       forwardBtnCallback()
     }
   }
