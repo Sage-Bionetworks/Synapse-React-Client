@@ -20,10 +20,4 @@ describe('Terms And Conditions: basic functionality', () => {
     expect(li.length).toEqual(checkboxCount)
   })
 
-  it('should display signature pad modal', async () => {
-    const wrapper = mount(<TermsAndConditions {...props} />)
-    wrapper.find(".terms-signature-action").simulate('click')
-    expect(wrapper.find(".signature-pad-modal")).toBeDefined()
-  })
-
 })
