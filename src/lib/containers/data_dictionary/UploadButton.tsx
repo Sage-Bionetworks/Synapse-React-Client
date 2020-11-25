@@ -11,8 +11,9 @@ import {
 import AttachmentIcon from '@material-ui/icons/Attachment'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import { isUri } from 'valid-url'
+import { dbSet, encode, SUFFIX } from './utils/cache'
 import { SchemaJson } from './types/IDataDictionaryTypes'
-import { DEFAULT_SCHEMA } from './constants'
+import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
 import { getSchemaData } from './services/getSchemaData'
 import { replaceData } from './state/DataState'
 
@@ -118,10 +119,11 @@ export default function UploadButton(): ReactElement {
           console.log(`error:`, error)
         }
         replaceData(content)
+        dbSet(SUFFIX.scma, encode(content), MINUTES_TO_CACHE, true)
       }
       fileReader.readAsText(file.file)
     } else if (url) {
-      getSchemaData(url).then(data => replaceData(data))
+      getSchemaData(url, true).then(data => replaceData(data))
     }
     setOpen(false)
     setUrl(``)

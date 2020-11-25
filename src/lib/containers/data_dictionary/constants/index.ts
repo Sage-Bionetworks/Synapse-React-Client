@@ -6,6 +6,8 @@ export const DEFAULT_SCHEMA: SchemaJson = {
   '@id': '',
 }
 
+export const MINUTES_TO_CACHE = 15
+
 export const TABLE_PAGE_SIZE = 25
 
 export enum VIEW_TYPES {

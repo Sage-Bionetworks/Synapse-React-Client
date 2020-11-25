@@ -3,12 +3,8 @@ import omniFetch from 'isomorphic-fetch'
 import { globalAgent } from 'https'
 import { RequestOptions } from 'http'
 import { get, set, del, clear, keys } from 'lib/utils/functions/KeyValCache'
-import { SchemaData as GraphData } from './../types/IDataDictionaryTypes'
-
-interface SchemaData {
-  '@context': { [key: string]: string }
-  '@graph': GraphData[]
-}
+import { MINUTES_TO_CACHE } from './../constants'
+import { SchemaJson } from './../types/IDataDictionaryTypes'
 
 const MINUTES: number = 1000 * 60
 
@@ -16,14 +12,18 @@ interface FetchOptions extends RequestInit {
   timeout?: number
 }
 
-export const SUFFIX: { dd: '[dd]'; ttl: '[ttl]' } = { dd: '[dd]', ttl: '[ttl]' }
+export const SUFFIX: { scma: '[schema]'; tm: '[time]' } = {
+  scma: '[schema]',
+  tm: '[time]',
+}
 
 // If it has expired, return null; if it doesn't exist, it should be undefined
 export const dbGet = (key: string) => {
-  return get(`${key}${SUFFIX.ttl}`).then(val => {
+  return get(`${key}${SUFFIX.tm}`).then(val => {
     const current = new Date().getTime()
     if (val) {
       if (current < ((val as unknown) as number)) {
+        console.log(`Retrieving cached Data Dictionary Schema.`)
         // Has NOT expired
         return get(key)
       }
@@ -32,34 +32,39 @@ export const dbGet = (key: string) => {
   })
 }
 
-// If there is previous ttl and it is passed, overwrite, otherwise return false
-export const dbSet = (key: string, val: unknown, ttl: number) => {
+// If there is previous tm and it is passed, overwrite, otherwise return false
+export const dbSet = (
+  key: string,
+  val: unknown,
+  tm: number,
+  force?: boolean,
+) => {
   const current = new Date().getTime()
   return get(key).then((check: any) => {
-    if (check) {
+    if (check && !force) {
       // Data exists, check if expired
-      return get(`${key}${SUFFIX.ttl}`).then((response: any) => {
+      return get(`${key}${SUFFIX.tm}`).then((response: any) => {
         if (response) {
           if (current > response) {
             // it's passed the expiration time, can overwrite
             set(key, val)
-            set(`${key}${SUFFIX.ttl}`, current + MINUTES * ttl)
+            set(`${key}${SUFFIX.tm}`, current + MINUTES * tm)
             return true
           } else {
             // Data exists, but hasn't expired yet; don't overwrite
             return false
           }
         } else {
-          // No timeout associated to it, overwrite with current ttl
+          // No timeout associated to it, overwrite with current tm
           set(key, val)
-          set(`${key}${SUFFIX.ttl}`, current + MINUTES * ttl)
+          set(`${key}${SUFFIX.tm}`, current + MINUTES * tm)
           return true
         }
       })
     } else {
-      // Data doesn't exist, can insert with data and ttl
+      // Data doesn't exist, can insert with data and tm
       set(key, val)
-      set(`${key}${SUFFIX.ttl}`, current + MINUTES * ttl)
+      set(`${key}${SUFFIX.tm}`, current + MINUTES * tm)
       return true
     }
   })
@@ -78,13 +83,13 @@ export const clearExpired = () => {
     .then((val: any) => {
       if (val) {
         val.forEach(async (elem: any) => {
-          if (elem.includes(SUFFIX.ttl)) {
+          if (elem.includes(SUFFIX.tm)) {
             // At expiration time for evergreen
             const expiration: any = await dbGet(elem)
             if (expiration) {
               if (current > expiration) {
                 // Passed expiration, clear the associated cached data
-                dbDel(elem.replace(SUFFIX.ttl, ''))
+                dbDel(elem.replace(SUFFIX.tm, ''))
                 dbDel(elem)
               }
             }
@@ -104,17 +109,21 @@ export const cachedFetch = async (
   dataKey: string,
   schemaUrl: string,
   options: FetchOptions,
-): Promise<SchemaData> => {
-  const cachedData: SchemaData = (await dbGet(dataKey)) as SchemaData
-  if (cachedData) {
+  force?: boolean,
+): Promise<SchemaJson> => {
+  const key = `${dataKey}[${encode(schemaUrl)}]`
+  const cachedData: SchemaJson = (await dbGet(key)) as SchemaJson
+  if (!force && cachedData) {
     console.log(`Returning cached Data Dictionary Schema.`)
+    dbSet(dataKey, cachedData, MINUTES_TO_CACHE, force)
     return decode(cachedData)
   }
   // If there is no cached response, do the call to the schema (cache this result).
   options.timeout = options.timeout || 5000
   return timeoutFetch(schemaUrl, ``, options)
     .then((response: any) => {
-      dbSet(SUFFIX.dd, encode(response), 15)
+      dbSet(dataKey, encode(response), MINUTES_TO_CACHE, force)
+      dbSet(key, encode(response), MINUTES_TO_CACHE, force)
       return response
     })
     .catch((error: Error) => {
