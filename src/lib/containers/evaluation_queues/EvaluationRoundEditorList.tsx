@@ -15,11 +15,11 @@ import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation
 import { Error } from '../Error'
 
 export type EvaluationRoundEditorListProps = {
-  // session token to make authenticated calls
+  /** session token to make authenticated API calls */
   sessionToken: string
-  // id of the evaluation to edit
+  /** id of the Evaluation containing EvaluationRounds to edit*/
   evaluationId: string
-  // If true, dates for start/end are displayed in UTC instead of local time
+  /** If true, dates for start/end are displayed in UTC instead of local time*/
   utc: boolean
 }
 
@@ -61,11 +61,14 @@ const fetchEvaluationList = (
   getEvaluationRounds(undefined)
 }
 
+/**
+ * Edits EvaluationsRounds for an Evaluation.
+ */
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
   sessionToken,
   evaluationId,
   utc,
-}) => {
+}: EvaluationRoundEditorListProps) => {
   const [error, setError] = useState<string | SynapseClientError | undefined>()
 
   const {

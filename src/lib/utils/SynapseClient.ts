@@ -76,6 +76,7 @@ import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/Evaluatio
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
+import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
 
 const cookies = new UniversalCookies()
 
@@ -251,7 +252,7 @@ export const doDelete = (
   return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
 }
 
-export const doPut = (
+export const doPut = <T>(
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
@@ -274,7 +275,7 @@ export const doPut = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 
 export const putRefreshSessionToken = (sessionToken: string) => {
@@ -1585,6 +1586,18 @@ export const submitToEvaluation = (
   )
 }
 
+export const getEvaluationPermissions = (
+  evalId: string,
+  sessionToken: string | undefined,
+) => {
+  return doGet<UserEvaluationPermissions>(
+    `/repo/v1/evaluation/${evalId}/permissions`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Get an evaluation queue
  * https://docs.synapse.org/rest/GET/evaluation/evalId.html
@@ -1598,7 +1611,7 @@ export const getEvaluation = (
     // without an evalId is a valid API that returns a different API response
     return Promise.reject(new Error('evalId is empty'))
   }
-  return doGet(
+  return doGet<Evaluation>(
     `/repo/v1/evaluation/${evalId}`,
     sessionToken,
     undefined,
@@ -1619,7 +1632,7 @@ export const updateEvaluation = (
     // without an evalId is a valid API that returns a different API response
     return Promise.reject(new Error('evaluation does not have an ID'))
   }
-  return doPut(
+  return doPut<Evaluation>(
     `/repo/v1/evaluation/${evaluation.id}`,
     evaluation,
     sessionToken,
@@ -1636,7 +1649,7 @@ export const createEvaluation = (
   evaluation: Evaluation,
   sessionToken: string | undefined,
 ): Promise<Evaluation> => {
-  return doPost(
+  return doPost<Evaluation>(
     '/repo/v1/evaluation/',
     evaluation,
     sessionToken,

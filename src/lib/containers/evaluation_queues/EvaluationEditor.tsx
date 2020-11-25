@@ -19,28 +19,26 @@ import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 
 const defaultEvaluationStatus = EvaluationStatus.PLANNED
 
-export interface EvaluationEditorBaseProps {
-  // session token to make authenticated calls
+export type EvaluationEditorProps = {
+  /** session token to make authenticated API calls */
   readonly sessionToken: string
-  // date should be displayed in utc
-  readonly utc?: boolean
+  /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
+  readonly evaluationId?: string
+  /** Use if CREATING a new Evaluation. Id of the Entity that will be associated with the Evaluation */
+  readonly entityId?: string
+  /** If true, the "Created on" date will be displayed in UTC time */
+  readonly utc: boolean
 }
 
-export interface EvaluationEditorUpdateProps extends EvaluationEditorBaseProps {
-  // id of the evaluation to edit
-  readonly evaluationId: string
-  entityId?: never
-}
-
-export interface EvaluationEditorCreateProps extends EvaluationEditorBaseProps {
-  // use only if creating a new Evaluation
-  readonly entityId: string
-  evaluationId?: never
-}
-
-export const EvaluationEditor: React.FunctionComponent<
-  EvaluationEditorCreateProps | EvaluationEditorUpdateProps
-> = props => {
+/**
+ * Edits basic properties of an Evaluation
+ */
+export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = ({
+  sessionToken,
+  evaluationId,
+  entityId,
+  utc,
+}: EvaluationEditorProps) => {
   const [error, setError] = useState<SynapseClientError>()
 
   const [name, setName] = useState<string>('')
@@ -57,7 +55,7 @@ export const EvaluationEditor: React.FunctionComponent<
   )
 
   const [evaluation, setEvaluation] = useState<Evaluation>({
-    contentSource: props.entityId,
+    contentSource: entityId,
   })
 
   useEffect(() => {
@@ -72,16 +70,16 @@ export const EvaluationEditor: React.FunctionComponent<
 
   useEffect(() => {
     // if we initially passed in a update the we retrieve a new Evaluation
-    if ('evaluationId' in props) {
+    if (evaluationId) {
       //clear error
       setError(undefined)
-      getEvaluation(props.evaluationId!, props.sessionToken)
+      getEvaluation(evaluationId, sessionToken)
         .then(retrievedEvaluation => {
           setEvaluation(retrievedEvaluation)
         })
         .catch(error => setError(error))
     }
-  }, [props])
+  }, [evaluationId])
 
   const onSave = () => {
     // clear out error
@@ -96,8 +94,8 @@ export const EvaluationEditor: React.FunctionComponent<
     }
 
     const promise = newOrUpdatedEvaluation.id
-      ? updateEvaluation(newOrUpdatedEvaluation, props.sessionToken)
-      : createEvaluation(newOrUpdatedEvaluation, props.sessionToken)
+      ? updateEvaluation(newOrUpdatedEvaluation, sessionToken)
+      : createEvaluation(newOrUpdatedEvaluation, sessionToken)
 
     promise
       .then(evaluation => setEvaluation(evaluation))
@@ -108,7 +106,7 @@ export const EvaluationEditor: React.FunctionComponent<
   const onDelete = evaluation?.id
     ? () => {
         setError(undefined)
-        deleteEvaluation(evaluation!.id!, props.sessionToken)
+        deleteEvaluation(evaluation.id!, sessionToken)
           .then(() =>
             setEvaluation({
               contentSource: evaluation.contentSource,
@@ -208,11 +206,11 @@ export const EvaluationEditor: React.FunctionComponent<
             <CreatedOnByUserDiv
               userId={evaluation.ownerId!}
               date={new Date(evaluation.createdOn)}
-              sessionToken={props.sessionToken}
-              utc={props.utc ?? false}
+              sessionToken={sessionToken}
+              utc={utc}
             />
           )}
-          {error && <Error error={error} token={props.sessionToken} />}
+          {error && <Error error={error} token={sessionToken} />}
           <div>
             <Button className="float-right" onClick={onSave}>
               Save
