@@ -71,6 +71,11 @@ $white: #fff;
     height: 60vh;
     border-radius: 10px;
     border: 2px solid $primary-text-color;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
 
     @keyframes mouseOnNodeTransition {
       from {
