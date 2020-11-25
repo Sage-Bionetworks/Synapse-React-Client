@@ -79,7 +79,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
         })
         .catch(error => setError(error))
     }
-  }, [evaluationId])
+  }, [evaluationId, sessionToken])
 
   const onSave = () => {
     // clear out error
