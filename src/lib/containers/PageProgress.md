@@ -3,9 +3,9 @@
         barColor={ "green" }
         barPercent={ 75 }
         backBtnLabel={ "Back"}
-        backBtnCallback={ ()=>{} }
+        backBtnCallback={ ()=>{ console.log("you just clicked back button") } }
         forwardBtnLabel={ "Next" }
-        forwardBtnCallback={ ()=>{} }
+        forwardBtnCallback={ ()=>{ console.log("When forwardBtnActive is set to true, you will see this message") } }
         forwardBtnActive={ false }
       />
 ```

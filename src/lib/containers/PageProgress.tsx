@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 
-type PageProgressProps = {
+export type PageProgressProps = {
   barColor: string
   barPercent: number
   backBtnLabel: string
@@ -13,7 +13,7 @@ type PageProgressProps = {
 
 const PageProgress: React.FunctionComponent<PageProgressProps> = (props) => {
 
-  const {barColor, barPercent, backBtnLabel, forwardBtnLabel, forwardBtnActive} = props
+  const {barColor, barPercent, backBtnLabel, forwardBtnLabel, forwardBtnActive, backBtnCallback, forwardBtnCallback} = props
   const [progressPercent, setProgressPercent] = useState<number>(0)
   let mounted = true
 
@@ -26,6 +26,16 @@ const PageProgress: React.FunctionComponent<PageProgressProps> = (props) => {
     }
   }, [barPercent])
 
+  const handleBackButtonClick = (e:React.MouseEvent) => {
+    backBtnCallback()
+  }
+
+  const handleNextButtonClick = (e:React.MouseEvent) => {
+    if (forwardBtnActive) {
+      forwardBtnCallback()
+    }
+  }
+
   return (
     <section className="page-progress">
       <div
@@ -37,8 +47,14 @@ const PageProgress: React.FunctionComponent<PageProgressProps> = (props) => {
       >
       </div>
       <div className="page-progress-action">
-        <Button className="btn-progress-back">{backBtnLabel}</Button>
-        <Button className={forwardBtnActive ? "btn-progress-next-active" : "btn-progress-next" }>{forwardBtnLabel}</Button>
+        <Button
+          className="btn-progress-back"
+          onClick={handleBackButtonClick}>{backBtnLabel}
+        </Button>
+        <Button
+          className={forwardBtnActive ? "btn-progress-next-active" : "btn-progress-next" }
+          onClick={handleNextButtonClick}>{forwardBtnLabel}
+        </Button>
       </div>
     </section>
   )
