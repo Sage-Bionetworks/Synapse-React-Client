@@ -3,14 +3,15 @@ import IdLink from './IdLink'
 
 interface ItemListProps {
   list?: string[]
+  parent?: string
 }
 
-function ItemList({ list }: ItemListProps): ReactElement {
+function ItemList({ list, parent }: ItemListProps): ReactElement {
   return list && list.length > 0 ? (
     <ul className={'itemList-dd'}>
       {list.map((item: string, index: number) => (
         <li key={`itemList-dd${index}`}>
-          <IdLink id={item} />
+          <IdLink id={item} parent={parent} />
         </li>
       ))}
     </ul>

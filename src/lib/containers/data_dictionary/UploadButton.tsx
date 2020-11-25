@@ -30,7 +30,6 @@ export default function UploadButton(): ReactElement {
         color={`primary`}
         onClick={() => setOpen(true)}
         titleAccess={`Upload Schema File`}
-        viewBox={`0 0 24 16`}
       />
       <Dialog
         aria-labelledby={`title-dialog-upload`}

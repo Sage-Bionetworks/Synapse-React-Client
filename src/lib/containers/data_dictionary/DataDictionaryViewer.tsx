@@ -8,6 +8,7 @@ import React, {
 //@ts-ignore
 import Graph from 'react-graph-network'
 import { stateData } from './state/DataState'
+import { searchEntity } from './state/SearchEntityState'
 import { stateViewType } from './state/ViewTypeState'
 import { PRIMARY_ENTITY, SECONDARY_ENTITY, VIEW_TYPES } from './constants'
 import {
@@ -22,6 +23,7 @@ import UploadButton from './UploadButton'
 import ViewTypeChooser from './ViewTypeChooser'
 import GraphNetworkNode from './GraphNetworkNode'
 import EntityDetailViewer from './EntityDetailViewer'
+import EntitySearch from './EntitySearch'
 import GraphNetworkLine from './GraphNetworkLine'
 import {
   COLOR_PALETTE_EVEN,
@@ -39,6 +41,7 @@ function DataDictionaryViewer({
   title,
 }: DataDictionaryViewerProps): ReactElement {
   const data = stateData()
+  const startId = searchEntity()
   const viewType = stateViewType()
   const [graphNetworkData, setGraphNetworkData] = useState<GraphNetworkData>()
   const [clickedNode, setClickedNode] = useState<DataDictionaryData>()
@@ -58,12 +61,17 @@ function DataDictionaryViewer({
 
   useEffect(() => {
     if (data.length > 0) {
-      const newDeps = getDepsData(deps, { data, viewType, reset: true })
+      const newDeps = getDepsData(deps, {
+        data,
+        startId,
+        viewType,
+        reset: true,
+      })
       if (JSON.stringify(newDeps) !== JSON.stringify(deps)) {
         setDeps(newDeps)
       }
     }
-  }, [data, deps, viewType, setDeps])
+  }, [startId, data, deps, viewType, setDeps])
 
   useEffect(() => {
     const nodes: Array<GraphNodeData> = []
@@ -128,6 +136,7 @@ function DataDictionaryViewer({
       <div className={`tools-dd`}>
         <UploadButton />
         <ViewTypeChooser />
+        <EntitySearch />
       </div>
       <div
         className={`graphCanvasContainer ${isFullScreen ? 'fullscreen' : ''}`}
@@ -146,6 +155,7 @@ function DataDictionaryViewer({
           )}
         </IconButton>
         <Graph
+          className={`graph-dd`}
           data={graphNetworkData}
           NodeComponent={GraphNetworkNode}
           LineComponent={GraphNetworkLine}
@@ -194,11 +204,21 @@ function getDepsData(
   state: DepState,
   {
     data,
+    startId,
     viewType: type,
     reset,
-  }: { data: DataDictionaryData[]; viewType?: VIEW_TYPES; reset?: boolean },
+  }: {
+    data: DataDictionaryData[]
+    startId?: string
+    viewType?: VIEW_TYPES
+    reset?: boolean
+  },
 ): DepState {
-  const { ids, viewType } = getStart(data, type)
+  let { ids, viewType } = getStart(data, type)
+  if (startId) {
+    ids = [startId]
+    viewType = type || VIEW_TYPES.REQUIRES_COMPONENT
+  }
   if (state[viewType] && !reset) {
     return state
   } else {

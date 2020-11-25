@@ -9,13 +9,14 @@ import { tableConfig } from './utils/tableConfig'
 
 interface EntityTableProps {
   list: string[]
+  parent?: string
 }
 
 interface RowData extends DataDictionaryData {
   [key: string]: unknown
 }
 
-function EntityTable({ list }: EntityTableProps): ReactElement {
+function EntityTable({ list, parent }: EntityTableProps): ReactElement {
   const data: DataDictionaryData[] = stateData()
   const entityData = buildEntityData(list, data)
 
@@ -49,14 +50,16 @@ function EntityTable({ list }: EntityTableProps): ReactElement {
               title: 'Type',
               field: 'type',
               headerStyle: { width: 135 },
-              render: ({ type }: RowData) => <ItemList list={type} />,
+              render: ({ type }: RowData) => (
+                <ItemList list={type} parent={parent} />
+              ),
             },
             {
               title: 'Valid Values',
               field: 'validValues',
               headerStyle: { width: 135 },
               render: ({ validValues }: RowData) => (
-                <ItemList list={validValues} />
+                <ItemList list={validValues} parent={parent} />
               ),
             },
             {
@@ -64,7 +67,7 @@ function EntityTable({ list }: EntityTableProps): ReactElement {
               field: 'requiredDependencies',
               headerStyle: { width: 150 },
               render: ({ requiredDependencies }: RowData) => (
-                <ItemList list={requiredDependencies} />
+                <ItemList list={requiredDependencies} parent={parent} />
               ),
             },
             {
@@ -88,20 +91,22 @@ function EntityTable({ list }: EntityTableProps): ReactElement {
               title: 'Parent',
               field: 'parentIds',
               headerStyle: { width: 135 },
-              render: ({ parentIds }: RowData) => <ItemList list={parentIds} />,
+              render: ({ parentIds }: RowData) => (
+                <ItemList list={parentIds} parent={parent} />
+              ),
             },
             {
               title: 'Requires Component',
               field: 'requiresComponent',
               render: ({ requiresComponent }: RowData) => (
-                <ItemList list={requiresComponent} />
+                <ItemList list={requiresComponent} parent={parent} />
               ),
             },
             {
               title: 'Validation Rules',
               field: 'validationRules',
               render: ({ validationRules }: RowData) => (
-                <ItemList list={validationRules} />
+                <ItemList list={validationRules} parent={parent} />
               ),
             },
           ]}
