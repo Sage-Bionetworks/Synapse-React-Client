@@ -27,6 +27,9 @@ import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
 } from 'lib/utils/functions/colorPalette'
+import IconButton from '@material-ui/core/IconButton'
+import FullscreenIcon from '@material-ui/icons/Fullscreen'
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
 
 export interface DataDictionaryViewerProps {
   title: string
@@ -41,6 +44,7 @@ function DataDictionaryViewer({
   const [clickedNode, setClickedNode] = useState<DataDictionaryData>()
   const [deps, setDeps] = useState<DepState>({} as DepState)
   const nodeColorRefs = useRef<{ [key: string]: string }>({})
+  const [isFullScreen, toggleFullScreen] = useState<boolean>(false)
 
   const onNodeClick = useCallback(
     (id: string) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -125,7 +129,22 @@ function DataDictionaryViewer({
         <UploadButton />
         <ViewTypeChooser />
       </div>
-      <div className={`graphCanvasContainer`}>
+      <div
+        className={`graphCanvasContainer ${isFullScreen ? 'fullscreen' : ''}`}
+      >
+        <IconButton
+          aria-label={`fullscreen`}
+          className={`fullscreenToggleButton ${
+            isFullScreen ? 'fullscreen' : ''
+          }`}
+          onClick={() => toggleFullScreen(!isFullScreen)}
+        >
+          {isFullScreen ? (
+            <FullscreenExitIcon fontSize={`large`} />
+          ) : (
+            <FullscreenIcon fontSize={`large`} />
+          )}
+        </IconButton>
         <Graph
           data={graphNetworkData}
           NodeComponent={GraphNetworkNode}

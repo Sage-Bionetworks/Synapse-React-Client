@@ -77,6 +77,29 @@ $white: #fff;
       cursor: grabbing;
     }
 
+    &.fullscreen {
+      position: absolute;
+      border: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .fullscreenToggleButton {
+      position: absolute;
+      left: calc(100% - 240px);
+      right: unset;
+      z-index: 2;
+
+      &.fullscreen {
+        right: 0;
+        left: unset;
+      }
+    }
+
     @keyframes mouseOnNodeTransition {
       from {
         transform: scale(1);
