@@ -91,8 +91,6 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
   // Placeholder function to check if all checkboxes are checked and agreement is signed
   const checkFormCompleted = () => {
     const allCheckboxChecked = !checkboxChecked.includes(false)
-    // const isSigned = trimmedDataUrl ? true : false
-    // const isFormCompleted = allCheckboxChecked && isSigned
     onFormChange(allCheckboxChecked)
   }
 
