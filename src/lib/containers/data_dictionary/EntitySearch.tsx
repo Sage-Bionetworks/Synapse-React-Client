@@ -1,18 +1,25 @@
 import React, { ReactElement, useState } from 'react'
-import { Grid, TextField } from '@material-ui/core'
-import { Autocomplete } from '@material-ui/lab'
-import SearchIcon from '@material-ui/icons/Search'
+import { Button, InputGroup } from 'react-bootstrap'
+import { Typeahead } from 'react-bootstrap-typeahead'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { stateData } from './state/DataState'
 import { setSearchEntity } from './state/SearchEntityState'
 
+import 'react-bootstrap-typeahead/css/Typeahead.css'
+
+interface dropDownData {
+  id: string
+  label: string
+}
+
 export default function EntitySearch(): ReactElement {
   const data = stateData()
-  const [id, setId] = useState<string>(``)
-  const options: string[] = data
-    .map(entity => entity.id)
+  const [item, setItem] = useState<dropDownData[]>([])
+  const options: dropDownData[] = data
+    .map(entity => ({ id: entity.id, label: entity.id }))
     .sort((a, b) => {
-      const entityA = a.toUpperCase()
-      const entityB = b.toUpperCase()
+      const entityA = a.label.toUpperCase()
+      const entityB = b.label.toUpperCase()
 
       if (entityA > entityB) {
         return 1
@@ -21,31 +28,27 @@ export default function EntitySearch(): ReactElement {
       }
       return 0
     })
+  // Add the reset option to the top of the dropdown.
+  options.unshift({ id: ``, label: `Reset Search` })
 
   return (
-    <div className={`search-entity`}>
-      <Grid container spacing={1} alignItems={`flex-end`}>
-        <Grid item>
-          <Autocomplete
-            id={`values-entity-search`}
-            options={options}
-            getOptionLabel={id => id}
-            style={{ width: 300 }}
-            onInputChange={(_event, newInputValue) => setId(newInputValue)}
-            renderInput={(params: object) => (
-              <TextField
-                id={`entitySearch`}
-                label={`Search for id`}
-                {...params}
-                type={`search`}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item>
-          <SearchIcon onClick={() => setSearchEntity(id)} />
-        </Grid>
-      </Grid>
-    </div>
+    <InputGroup className={`search-entity`}>
+      <Typeahead
+        id={`values-entity-search`}
+        onChange={setItem}
+        options={options}
+        placeholder={`Search for id`}
+        selected={item}
+      />
+      <Button
+        disabled={item.length < 1 ? true : undefined}
+        onClick={() => {
+          setSearchEntity(item[0].id)
+          setItem([])
+        }}
+      >
+        <FontAwesomeIcon icon={`search`} />
+      </Button>
+    </InputGroup>
   )
 }
