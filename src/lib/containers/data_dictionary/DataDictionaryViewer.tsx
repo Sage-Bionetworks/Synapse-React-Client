@@ -88,15 +88,24 @@ function DataDictionaryViewer({
         })
 
       // assign color pair for parent and children using the ODD/EVEN scheme in the palette
+      let colorIdx = 0
       res.forEach((item, idx) => {
         if (!(item.key in nodeColorRefs.current)) {
-          //TODO: check if there is enough color for the number of nodes
-          nodeColorRefs.current[item.key] = COLOR_PALETTE_EVEN[idx]
+          nodeColorRefs.current[item.key] = COLOR_PALETTE_EVEN[colorIdx]
           item.value.forEach(v => {
             if (!(v in nodeColorRefs.current)) {
-              nodeColorRefs.current[v] = COLOR_PALETTE_ODD[idx]
+              nodeColorRefs.current[v] = COLOR_PALETTE_ODD[colorIdx]
             }
           })
+        }
+
+        if (
+          colorIdx > COLOR_PALETTE_EVEN.length ||
+          colorIdx > COLOR_PALETTE_ODD.length
+        ) {
+          colorIdx = 0
+        } else {
+          colorIdx++
         }
       })
     }
