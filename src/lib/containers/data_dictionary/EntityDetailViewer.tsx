@@ -36,7 +36,7 @@ export default function EntityDetailViewer({
           <IconButton
             className={`button-close`}
             onClick={
-              onClose ? (event) => onClose(event, `escapeKeyDown`) : undefined
+              onClose ? event => onClose(event, `escapeKeyDown`) : undefined
             }
           >
             <CloseIcon />
@@ -57,43 +57,46 @@ export default function EntityDetailViewer({
           {entity.type.length > 0 && (
             <>
               <h3 className={`h3`}>{`Type`}</h3>
-              <ItemList list={entity.type} />
+              <ItemList list={entity.type} parent={entity.id} />
             </>
           )}
           {entity.validValues.length > 0 && (
             <>
               <h3 className={`h3`}>{`Valid Values`}</h3>
-              <ItemList list={entity.validValues} />
+              <ItemList list={entity.validValues} parent={entity.id} />
             </>
           )}
           {entity.requiredDependencies.length > 0 && (
             <>
               <h3 className={`h3`}>{`Required Dependencies`}</h3>
-              <EntityTable list={entity.requiredDependencies} />
+              <EntityTable
+                list={entity.requiredDependencies}
+                parent={entity.id}
+              />
             </>
           )}
           {entity.domainIncludes.length > 0 && (
             <>
               <h3 className={`h3`}>{`Domain Includes`}</h3>
-              <ItemList list={entity.domainIncludes} />
+              <ItemList list={entity.domainIncludes} parent={entity.id} />
             </>
           )}
           {entity.parentIds.length > 0 && (
             <>
               <h3 className={`h3`}>{`Parent Entities`}</h3>
-              <EntityTable list={entity.parentIds} />
+              <EntityTable list={entity.parentIds} parent={entity.id} />
             </>
           )}
           {entity.requiresComponent.length > 0 && (
             <>
               <h3 className={`h3`}>{`Requires Component`}</h3>
-              <EntityTable list={entity.requiresComponent} />
+              <EntityTable list={entity.requiresComponent} parent={entity.id} />
             </>
           )}
           {entity.validationRules.length > 0 && (
             <>
               <h3 className={`h3`}>{`Validation Rules`}</h3>
-              <ItemList list={entity.validationRules} />
+              <ItemList list={entity.validationRules} parent={entity.id} />
             </>
           )}
         </div>
