@@ -7,6 +7,8 @@ import React, {
 } from 'react'
 //@ts-ignore
 import Graph from 'react-graph-network'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { stateData } from './state/DataState'
 import { searchEntity } from './state/SearchEntityState'
 import { stateViewType } from './state/ViewTypeState'
@@ -30,8 +32,6 @@ import {
   COLOR_PALETTE_ODD,
 } from 'lib/utils/functions/colorPalette'
 import IconButton from '@material-ui/core/IconButton'
-import FullscreenIcon from '@material-ui/icons/Fullscreen'
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
 
 export interface DataDictionaryViewerProps {
   title: string
@@ -158,9 +158,9 @@ function DataDictionaryViewer({
           onClick={() => toggleFullScreen(!isFullScreen)}
         >
           {isFullScreen ? (
-            <FullscreenExitIcon fontSize={`large`} />
+            <FontAwesomeIcon icon={faCompress} />
           ) : (
-            <FullscreenIcon fontSize={`large`} />
+            <FontAwesomeIcon icon={faExpand} />
           )}
         </IconButton>
         <Graph

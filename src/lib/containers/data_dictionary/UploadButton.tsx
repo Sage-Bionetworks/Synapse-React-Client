@@ -1,15 +1,9 @@
 import React, { ReactElement, useState } from 'react'
 import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone'
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-} from '@material-ui/core'
+import { Button, Form, Modal } from 'react-bootstrap'
+import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import AttachmentIcon from '@material-ui/icons/Attachment'
-import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import { isUri } from 'valid-url'
 import { dbSet, encode, SUFFIX } from './utils/cache'
 import { SchemaJson } from './types/IDataDictionaryTypes'
@@ -25,33 +19,39 @@ export default function UploadButton(): ReactElement {
 
   return (
     <>
-      <CloudUploadIcon
+      <FontAwesomeIcon
         className={`button-upload`}
-        color={`primary`}
+        icon={faFileUpload}
         onClick={() => setOpen(true)}
-        titleAccess={`Upload Schema File`}
+        aria-label={`Upload Schema File`}
+        role={`button`}
       />
-      <Dialog
+      <Modal
+        animation={false}
+        show={open}
+        onHide={() => setOpen(false)}
         aria-labelledby={`title-dialog-upload`}
         className={`dialog-upload`}
-        onClose={() => setOpen(false)}
-        open={open}
       >
-        <DialogTitle
-          className={`h1`}
-          id={`title-dialog-upload`}
-        >{`Upload a schema file`}</DialogTitle>
-        <DialogContent>
+        <Modal.Header closeButton>
+          <Modal.Title
+            className={`h1`}
+            id={`title-dialog-upload`}
+          >{`Upload a schema file`}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
           <p>{`Enter a URL to the JSON-LD schema file:`}</p>
-          <TextField
-            error={!validUrl}
-            margin="dense"
-            id={`schemaUrl`}
-            label={`Schema URL${!validUrl ? ` - (invalid URL)` : ``}`}
+          <Form.Label id={`schemaUrlLabel`}>{`Schema URL`}</Form.Label>
+          <Form.Control
+            isInvalid={!validUrl}
             type={`url`}
-            fullWidth
+            id={`schemaUrl`}
+            aria-describedby={`schemaUrlLabel`}
             onChange={validateUrl}
           />
+          <Form.Control.Feedback type={`invalid`}>
+            {`Invalid URL`}
+          </Form.Control.Feedback>
           <p>{`or`}</p>
           <DropzoneAreaBase
             acceptedFiles={[
@@ -78,8 +78,8 @@ export default function UploadButton(): ReactElement {
             previewGridClasses={{ container: `uploadPreview` }}
             useChipsForPreview={true}
           />
-        </DialogContent>
-        <DialogActions>
+        </Modal.Body>
+        <Modal.Footer>
           <Button
             className={`button-cancelUpload`}
             onClick={() => {
@@ -87,7 +87,7 @@ export default function UploadButton(): ReactElement {
               setOpen(false)
               setFileObjects([])
             }}
-            color={`primary`}
+            variant={`secondary`}
           >
             Cancel
           </Button>
@@ -95,12 +95,12 @@ export default function UploadButton(): ReactElement {
             className={`button-submitUpload`}
             disabled={fileObjects.length > 0 || url ? false : true}
             onClick={submitFile}
-            color={`primary`}
+            variant={`primary`}
           >
             Submit
           </Button>
-        </DialogActions>
-      </Dialog>
+        </Modal.Footer>
+      </Modal>
     </>
   )
 
