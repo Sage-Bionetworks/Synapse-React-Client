@@ -1,9 +1,3 @@
-%button-reset {
-  border: 0;
-  outline: none;
-  box-shadow: none;
-}
-
 $terms-text-color: #ABABAC;
 $terms-accent-gray: #DCDCDC;
 $terms-margin: 20px;
@@ -92,86 +86,12 @@ $signatureLine-width: 420px;
   }
 
   .view-terms a,
-  .view-terms a:active:focus,
-  .terms-signature button,
-  .terms-signature button:active:focus {
-    @extend %button-reset;
-  }
-
-  .view-terms a,
   .view-terms a:active:focus {
+    @extend %button-reset;
     background-color: $terms-accent-gray;
     padding: 10px 30px;
     color: #1a1c29;
     font-weight: bold;
     margin-bottom: 35px;
-  }
-
-  .terms-signature {
-
-    button.btn-tap-sign,
-    button.btn-tap-sign:active:focus {
-      background-color: transparent;
-      color: $terms-text-color;
-      border-radius: 0;
-      width: $signatureLine-width;
-      text-align: left;
-      padding: 32px 0;
-    }
-    .terms-signature-action {
-      border-bottom: 1px solid $terms-text-color;
-      width: $signatureLine-width;
-      padding-bottom: 10px;
-      
-      img {
-        cursor: pointer;
-      }
-    }
-  }
-}
-
-.signature-pad-modal {
-  .btn,
-  .btn-primary,
-  .btn:active,
-  .btn:focus,
-  .btn:active:focus {
-    @extend %button-reset;
-  }
-  .modal-content {
-    padding: 0 40px;
-  }
-  .modal-header {
-    padding: 15px 0;
-  }
-  .modal-footer {
-    padding: 15px 0;
-    button:first-child {
-      float: left;
-      padding: 0;
-      margin-left: -10px; // remove extra padding from svg icon
-    }
-    svg {
-      vertical-align: middle;
-    }
-    .btn {
-      font-weight: bold;
-    }
-    .btn-disabled.btn-primary {
-      background-color: #bbbbbC;
-      cursor: not-allowed;
-    }
-    .btn-primary {
-      padding: 10px 36px;
-      margin-left: 15px;
-      border: 0;
-      border-radius: 2px;
-    }
-  }
-  .signature-pad-label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: $terms-text-color;
   }
 }

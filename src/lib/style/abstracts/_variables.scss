@@ -40,3 +40,11 @@ $breakpoints: (
   'medium': 768px,
   'large': 1024px,
 ) !default;
+
+// To reset bootstrap button style
+%button-reset {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  border-radius: 2px;
+}
