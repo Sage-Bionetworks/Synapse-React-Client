@@ -71,12 +71,16 @@ $white: #fff;
 
   .form-control {
     max-width: 240px;
-    margin-left: 20px;
     height: auto;
   }
 
   .search-entity {
     margin-left: auto;
+    display: flex;
+    align-items: stretch;
+    .btn {
+      border-radius: 0 4px 4px 0;
+    }
   }
 
   #values-entity-search-label {
