@@ -1,6 +1,5 @@
-$disbaled: rgba(0, 0, 0, 0.26);
-$grey: #515359;
-$primary-text-color: #009249;
+@import './../../style/abstracts/variables';
+$disabled: rgba(0, 0, 0, 0.26);
 $white: #fff;
 
 .modal {
@@ -19,11 +18,11 @@ $white: #fff;
   [class*='button-'] {
     border-radius: 30px;
     border: none;
-    background-color: $primary-text-color;
+    background-color: $primary-action-color;
     font-weight: 500;
     color: $white;
     &.Mui-disabled {
-      background-color: $disbaled;
+      background-color: $disabled;
     }
     &:hover {
       box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.5);
@@ -32,7 +31,7 @@ $white: #fff;
   }
   .button-cancelUpload {
     background-color: transparent;
-    color: $primary-text-color;
+    color: $primary-action-color;
     &:hover {
       box-shadow: inherit;
       transition: none;
@@ -51,7 +50,7 @@ $white: #fff;
     font-size: 2.1rem;
     text-transform: uppercase;
     font-weight: 700;
-    color: $grey;
+    color: $gray-regular;
     margin: 0;
   }
 
@@ -64,12 +63,12 @@ $white: #fff;
   }
 
   .button-upload {
-    color: $primary-text-color;
+    color: $primary-action-color;
     font-size: 3.6rem;
     margin-left: 20px;
     cursor: pointer;
     &:hover {
-      color: $grey;
+      color: $gray-regular;
     }
   }
 
@@ -96,7 +95,7 @@ $white: #fff;
     width: 100%;
     margin-top: 42px;
     border-radius: 10px;
-    border: 2px solid $primary-text-color;
+    border: 2px solid $primary-action-color;
     cursor: grab;
     position: relative;
 
@@ -194,14 +193,14 @@ $white: #fff;
   .h2 {
     font-size: 3rem;
     border-radius: 6px;
-    border: 2px solid $primary-text-color;
+    border: 2px solid $primary-action-color;
     display: inline-block;
     padding: 10px 20px;
     span {
       display: block;
       padding-top: 10px;
       font-style: italic;
-      color: $primary-text-color;
+      color: $primary-action-color;
     }
   }
   .required {
