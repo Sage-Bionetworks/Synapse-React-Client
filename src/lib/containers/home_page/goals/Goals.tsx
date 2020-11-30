@@ -48,7 +48,7 @@ export const getFieldIndex = (
   )
 }
 
-export default function (props: GoalsProps) {
+export default function Goals(props: GoalsProps) {
   const { entityId, token } = props
   const [assets, setAssets] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()

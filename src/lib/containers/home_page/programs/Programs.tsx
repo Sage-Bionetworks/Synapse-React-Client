@@ -46,7 +46,7 @@ export const getFieldIndex = (
   )
 }
 
-export default function (props: ProgramsProps) {
+export default function Programs(props: ProgramsProps) {
   const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkConfig, token, rgbIndex, iconOptions } = props
   const showDesktop = useShowDesktop()
   const color:string = getColorPallette(rgbIndex ?? 0, 2).colorPalette[0]
