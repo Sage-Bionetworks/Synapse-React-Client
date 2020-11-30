@@ -50,23 +50,19 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
   const [permissions, setPermissions] = useState<UserEvaluationPermissions>()
 
   useEffect(() => {
-    getEvaluation(evaluationId!, sessionToken)
-      .then(retrievedEvaluation => {
-        //clear error
-        setError(undefined)
-        setEvaluation(retrievedEvaluation)
-      })
-      .catch(error => setError(error))
-  }, [evaluationId, sessionToken])
-
-  useEffect(() => {
     //clear error
     setError(undefined)
+
     getEvaluationPermissions(evaluationId!, sessionToken)
       .then(retrievedPermissions => {
         //clear error
-        setError(undefined)
         setPermissions(retrievedPermissions)
+      })
+      .catch(error => setError(error))
+
+    getEvaluation(evaluationId!, sessionToken)
+      .then(retrievedEvaluation => {
+        setEvaluation(retrievedEvaluation)
       })
       .catch(error => setError(error))
   }, [evaluationId, sessionToken])

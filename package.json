@@ -141,7 +141,10 @@
   "jest": {
     "moduleNameMapper": {
       "\\.(css|less)$": "identity-obj-proxy"
-    }
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!(lodash-es|jest*)/)"
+    ]
   },
   "scripts": {
     "postinstall": "npm rebuild node-sass",
