@@ -19,19 +19,20 @@ export default function UploadButton(): ReactElement {
 
   return (
     <>
-      <FontAwesomeIcon
-        className={`button-upload`}
-        icon={faFileUpload}
-        onClick={() => setOpen(true)}
+      <Button
         aria-label={`Upload Schema File`}
-        role={`button`}
-      />
+        className={`button-upload`}
+        onClick={() => setOpen(true)}
+      >
+        <FontAwesomeIcon icon={faFileUpload} />
+      </Button>
       <Modal
         animation={false}
         show={open}
         onHide={() => setOpen(false)}
         aria-labelledby={`title-dialog-upload`}
         className={`dialog-upload`}
+        centered
       >
         <Modal.Header closeButton>
           <Modal.Title

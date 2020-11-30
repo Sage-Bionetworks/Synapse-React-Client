@@ -1,6 +1,8 @@
 import React, { ReactElement } from 'react'
-import { Drawer, IconButton, Link } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
+import { Drawer } from '@material-ui/core'
+import { Button } from 'react-bootstrap'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { isUri } from 'valid-url'
 import { DataDictionaryData } from './types/IDataDictionaryTypes'
 import EntityTable from './EntityTable'
@@ -33,14 +35,15 @@ export default function EntityDetailViewer({
     >
       {entity ? (
         <div className={`content-entityDetail`}>
-          <IconButton
+          <Button
+            aria-label={`Close Entity Details`}
             className={`button-close`}
             onClick={
               onClose ? event => onClose(event, `escapeKeyDown`) : undefined
             }
           >
-            <CloseIcon />
-          </IconButton>
+            <FontAwesomeIcon icon={faTimes} />
+          </Button>
           <EntityHeader entity={entity} />
           {entity.required && (
             <>
@@ -121,12 +124,13 @@ function EntityHeader({
   return (
     <h2 className={`h2`} id={`title-entityDetail-${entity.id}`}>
       {isUri(entity.source) ? (
-        <Link
+        <a
           href={entity.source}
           target={`_blank`}
           title={`View the source of ${entity.id}`}
-          children={children}
-        />
+        >
+          {children}
+        </a>
       ) : (
         children
       )}

@@ -1,6 +1,7 @@
 import React, { ReactElement, useState } from 'react'
 import { Button, InputGroup } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { stateData } from './state/DataState'
 import { setSearchEntity } from './state/SearchEntityState'
@@ -41,13 +42,14 @@ export default function EntitySearch(): ReactElement {
         selected={item}
       />
       <Button
+        aria-label={`Search for entity ID`}
         disabled={item.length < 1 ? true : undefined}
         onClick={() => {
           setSearchEntity(item[0].id)
           setItem([])
         }}
       >
-        <FontAwesomeIcon icon={`search`} />
+        <FontAwesomeIcon icon={faSearch} />
       </Button>
     </InputGroup>
   )
