@@ -31,7 +31,6 @@ import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
 } from 'lib/utils/functions/colorPalette'
-import IconButton from '@material-ui/core/IconButton'
 
 export interface DataDictionaryViewerProps {
   title: string
@@ -47,7 +46,7 @@ function DataDictionaryViewer({
   const [clickedNode, setClickedNode] = useState<DataDictionaryData>()
   const [deps, setDeps] = useState<DepState>({} as DepState)
   const nodeColorRefs = useRef<{ [key: string]: string }>({})
-  const [isFullScreen, toggleFullScreen] = useState<boolean>(false)
+  const [isFullScreen, setFullScreen] = useState<boolean>(false)
 
   const onNodeClick = useCallback(
     (id: string) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -58,6 +57,18 @@ function DataDictionaryViewer({
     },
     [data],
   )
+
+  const toggleFullScreen = useCallback(() => {
+    setFullScreen(!isFullScreen)
+  }, [isFullScreen])
+
+  useEffect(() => {
+    if (isFullScreen) {
+      window.addEventListener('keyup', () => setFullScreen(false), false)
+    } else {
+      window.removeEventListener('keyup', () => setFullScreen(false), false)
+    }
+  }, [isFullScreen])
 
   useEffect(() => {
     if (data.length > 0) {
@@ -150,19 +161,15 @@ function DataDictionaryViewer({
       <div
         className={`graphCanvasContainer ${isFullScreen ? 'fullscreen' : ''}`}
       >
-        <IconButton
-          aria-label={`fullscreen`}
+        <button
+          aria-label={`toggle graph fullscreen`}
           className={`fullscreenToggleButton ${
             isFullScreen ? 'fullscreen' : ''
           }`}
-          onClick={() => toggleFullScreen(!isFullScreen)}
+          onClick={() => toggleFullScreen()}
         >
-          {isFullScreen ? (
-            <FontAwesomeIcon icon={faCompress} />
-          ) : (
-            <FontAwesomeIcon icon={faExpand} />
-          )}
-        </IconButton>
+          <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} />
+        </button>
         <Graph
           className={`graph-dd`}
           data={graphNetworkData}
