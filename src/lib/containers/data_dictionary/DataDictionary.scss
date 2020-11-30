@@ -63,13 +63,10 @@ $white: #fff;
   }
 
   .button-upload {
-    color: $primary-action-color;
-    font-size: 3.6rem;
+    font-size: 2.6rem;
     margin-left: 20px;
+    padding: 2px 6px;
     cursor: pointer;
-    &:hover {
-      color: $gray-regular;
-    }
   }
 
   .select-viewType {
@@ -178,17 +175,20 @@ $white: #fff;
   }
 }
 
+.button-close {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  padding: 4px 12px;
+  font-size: 20px;
+}
+
 .content-entityDetail {
+  max-width: 100vw;
   background: $white;
   padding: 20px 20px 10px;
   font-size: 1.4rem;
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
-
-  .button-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
 
   .h2 {
     font-size: 3rem;
