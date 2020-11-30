@@ -5,15 +5,15 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
 import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
 import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
-import { Error } from './Error'
+import { ErrorBanner } from './ErrorBanner'
 
 export type AccountLevelBadgeProps = {
   userId: string
 }
 
-export const accountLevelRegisteredLabel:string = 'Registered'
-export const accountLevelCertifiedLabel:string = 'Certified'
-export const accountLevelVerifiedLabel:string = 'Validated'
+export const accountLevelRegisteredLabel: string = 'Registered'
+export const accountLevelCertifiedLabel: string = 'Certified'
+export const accountLevelVerifiedLabel: string = 'Validated'
 
 export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> = ({
   userId,
@@ -33,13 +33,12 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
           SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
           SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
 
-        const bundle:UserBundle = await SynapseClient.getUserBundle(
+        const bundle: UserBundle = await SynapseClient.getUserBundle(
           userId,
           certificationOrVerification,
           undefined,
         )
         setUserBundle(bundle)
-      
       } catch (err) {
         setError(err)
       } finally {
@@ -53,10 +52,10 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
     return <></>
   }
   if (error) {
-    return <Error error={error}/>
+    return <ErrorBanner error={error} />
   }
 
-  let accountLevelString:string = accountLevelRegisteredLabel
+  let accountLevelString: string = accountLevelRegisteredLabel
   let icon = <Registered />
   if (userBundle?.isCertified) {
     accountLevelString = accountLevelCertifiedLabel
@@ -67,14 +66,8 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
     icon = <Validated />
   }
   return (
-  <div
-      className={
-        'AccountLevelBadge cardContainer'
-      }
-    >
-      <div className="AccountLevelBadge__iconContainer">
-        {icon}
-      </div>
+    <div className={'AccountLevelBadge cardContainer'}>
+      <div className="AccountLevelBadge__iconContainer">{icon}</div>
       <div className="AccountLevelBadge__body">
         <p className="AccountLevelBadge__body__userAccountLevel">
           {accountLevelString}
@@ -83,10 +76,10 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
           Synapse Account Level
         </p>
         <a
-          className='AccountLevelBadge__body__moreInfoLink'
+          className="AccountLevelBadge__body__moreInfoLink"
           target="_blank"
           rel="noopener noreferrer"
-          href='https://docs.synapse.org/articles/accounts_certified_users_and_profile_validation.html'
+          href="https://docs.synapse.org/articles/accounts_certified_users_and_profile_validation.html"
         >
           Learn more
         </a>

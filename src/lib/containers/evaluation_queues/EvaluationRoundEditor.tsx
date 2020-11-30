@@ -27,7 +27,7 @@ import {
   SynapseClientError,
 } from '../../utils/SynapseClient'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 
 export type EvaluationRoundEditorProps = {
   sessionToken: string
@@ -309,7 +309,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             {error && (
               <Row className="my-3">
                 <Col>
-                  <Error error={error} token={sessionToken} />
+                  <ErrorBanner error={error} token={sessionToken} />
                 </Col>
               </Row>
             )}

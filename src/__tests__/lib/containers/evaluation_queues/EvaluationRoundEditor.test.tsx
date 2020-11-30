@@ -251,7 +251,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockOnSave).not.toBeCalled()
 
-    expect(wrapper.find('Error').exists()).toBe(true)
+    expect(wrapper.find('ErrorBanner').exists()).toBe(true)
   })
 
   it('test delete: no id', () => {
@@ -314,7 +314,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockOnDelete).not.toBeCalled()
 
     //error should be shown
-    expect(wrapper.find('Error').exists()).toBe(true)
+    expect(wrapper.find('ErrorBanner').exists()).toBe(true)
   })
 })
 

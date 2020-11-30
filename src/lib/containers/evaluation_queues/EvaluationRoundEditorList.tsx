@@ -12,7 +12,7 @@ import {
 } from '../../utils/SynapseClient'
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 
 export type EvaluationRoundEditorListProps = {
   /** session token to make authenticated API calls */
@@ -95,7 +95,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   )
 
   if (error) {
-    return <Error error={error} token={sessionToken} />
+    return <ErrorBanner error={error} token={sessionToken} />
   }
 
   return (

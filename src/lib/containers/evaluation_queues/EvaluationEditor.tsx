@@ -8,7 +8,7 @@ import {
   SynapseClientError,
   updateEvaluation,
 } from '../../utils/SynapseClient'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 import {
   Evaluation,
   EvaluationStatus,
@@ -39,6 +39,10 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   entityId,
   utc,
 }: EvaluationEditorProps) => {
+  if (evaluationId && entityId) {
+    throw new Error('please use either evaluationId or entityId but not both')
+  }
+
   const [error, setError] = useState<SynapseClientError>()
 
   const [name, setName] = useState<string>('')
@@ -210,9 +214,9 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
               utc={utc}
             />
           )}
-          {error && <Error error={error} token={sessionToken} />}
+          {error && <ErrorBanner error={error} token={sessionToken} />}
           <div>
-            <Button className="float-right" onClick={onSave}>
+            <Button className="float-right save-button" onClick={onSave}>
               Save
             </Button>
           </div>

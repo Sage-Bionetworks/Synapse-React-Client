@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   getEvaluation,
   getEvaluationPermissions,
   SynapseClientError,
 } from '../../utils/SynapseClient'
+import { capitalize } from 'lodash-es'
 import { Evaluation } from '../../utils/synapseTypes/Evaluation'
 import { Button, Card, Col, Dropdown, Row } from 'react-bootstrap'
-import React from 'react'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
@@ -20,7 +20,6 @@ export type EvaluationCardProps = {
   sessionToken: string
   /** If true, dates for start/end are displayed in UTC instead of local time*/
   utc: boolean
-
   /** Callback when the Edit option in the dropdown is clicked*/
   onEdit: () => void
   /** Callback when the Modify Access option in the dropdown is clicked*/
@@ -51,10 +50,10 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
   const [permissions, setPermissions] = useState<UserEvaluationPermissions>()
 
   useEffect(() => {
-    //clear error
-    setError(undefined)
     getEvaluation(evaluationId!, sessionToken)
       .then(retrievedEvaluation => {
+        //clear error
+        setError(undefined)
         setEvaluation(retrievedEvaluation)
       })
       .catch(error => setError(error))
@@ -65,17 +64,18 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
     setError(undefined)
     getEvaluationPermissions(evaluationId!, sessionToken)
       .then(retrievedPermissions => {
+        //clear error
+        setError(undefined)
         setPermissions(retrievedPermissions)
       })
       .catch(error => setError(error))
   }, [evaluationId, sessionToken])
 
-  console.log(evaluation?.ownerId)
   return (
     <div className="bootstrap-4-backport evaluation-card">
       <Card>
         <Card.Body>
-          {error && <Error error={error} />}
+          {error && <ErrorBanner error={error} />}
 
           {evaluation && (
             <>
@@ -116,14 +116,17 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
                 </Col>
               </Row>
 
-              <h4>{evaluation?.name}</h4>
+              <h4>{evaluation.name}</h4>
+
+              <label>Status</label>
+              <p>{capitalize(evaluation.status)}</p>
               <label>Description</label>
-              <p>{evaluation?.description}</p>
+              <p>{evaluation.description}</p>
               <label>Instructions</label>
-              <p>{evaluation?.submissionInstructionsMessage}</p>
+              <p>{evaluation.submissionInstructionsMessage}</p>
               <CreatedOnByUserDiv
-                userId={evaluation?.ownerId!}
-                date={new Date(evaluation?.createdOn!)}
+                userId={evaluation.ownerId!}
+                date={new Date(evaluation.createdOn!)}
                 sessionToken={sessionToken}
                 utc={utc}
               />

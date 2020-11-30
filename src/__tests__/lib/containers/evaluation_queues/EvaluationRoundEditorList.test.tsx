@@ -93,7 +93,7 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     expect(wrapper.find('.evaluation-round-editor').exists()).toBe(false)
-    expect(wrapper.find('Error').exists()).toBe(true)
+    expect(wrapper.find('ErrorBanner').exists()).toBe(true)
   })
 
   it('fetched pages', () => {
@@ -117,7 +117,7 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
-    expect(wrapper.find('Error').exists()).toBe(false)
+    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
   })
 
   it('add round button', () => {
@@ -130,11 +130,11 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
-    expect(wrapper.find('Error').exists()).toBe(false)
+    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
 
     wrapper.find('button.add-round-button').simulate('click')
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(4)
-    expect(wrapper.find('Error').exists()).toBe(false)
+    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
   })
 })
