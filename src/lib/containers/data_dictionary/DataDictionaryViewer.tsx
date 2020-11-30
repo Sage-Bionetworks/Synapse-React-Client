@@ -46,7 +46,7 @@ function DataDictionaryViewer({
   const [clickedNode, setClickedNode] = useState<DataDictionaryData>()
   const [deps, setDeps] = useState<DepState>({} as DepState)
   const nodeColorRefs = useRef<{ [key: string]: string }>({})
-  const [isFullScreen, toggleFullScreen] = useState<boolean>(false)
+  const [isFullScreen, setFullScreen] = useState<boolean>(false)
 
   const onNodeClick = useCallback(
     (id: string) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -57,6 +57,18 @@ function DataDictionaryViewer({
     },
     [data],
   )
+
+  const toggleFullScreen = useCallback(() => {
+    setFullScreen(!isFullScreen)
+  }, [isFullScreen])
+
+  useEffect(() => {
+    if (isFullScreen) {
+      window.addEventListener('keyup', () => setFullScreen(false), false)
+    } else {
+      window.removeEventListener('keyup', () => setFullScreen(false), false)
+    }
+  }, [isFullScreen])
 
   useEffect(() => {
     if (data.length > 0) {
@@ -154,7 +166,7 @@ function DataDictionaryViewer({
           className={`fullscreenToggleButton ${
             isFullScreen ? 'fullscreen' : ''
           }`}
-          onClick={() => toggleFullScreen(!isFullScreen)}
+          onClick={() => toggleFullScreen()}
         >
           <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} />
         </button>
