@@ -2,6 +2,7 @@
 
 # css
 *.css
+*.css.map
 !styleguide.setup.css
 
 # dependencies
