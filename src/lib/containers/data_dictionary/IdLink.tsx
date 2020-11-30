@@ -1,5 +1,4 @@
 import React, { ReactElement, useState } from 'react'
-import { Link } from '@material-ui/core'
 import { DataDictionaryData } from './types/IDataDictionaryTypes'
 import EntityDetailViewer from './EntityDetailViewer'
 import { stateData } from './state/DataState'
@@ -21,7 +20,7 @@ function IdLink({ id, parent }: IdLinkProps): ReactElement {
 
   return itemData && !isParent ? (
     <>
-      <Link
+      <a
         href={`#`}
         title={`View details of ${id}`}
         onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -30,7 +29,7 @@ function IdLink({ id, parent }: IdLinkProps): ReactElement {
         }}
       >
         {id}
-      </Link>
+      </a>
       <EntityDetailViewer
         open={entityDetailViewerOpen}
         onClose={() => setEntityDetailViewerOpen(false)}

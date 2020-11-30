@@ -1,9 +1,8 @@
 import React, { ReactElement, useState } from 'react'
 import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone'
 import { Button, Form, Modal } from 'react-bootstrap'
-import { faFileUpload } from '@fortawesome/free-solid-svg-icons'
+import { faFileUpload, faPaperclip } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import AttachmentIcon from '@material-ui/icons/Attachment'
 import { isUri } from 'valid-url'
 import { dbSet, encode, SUFFIX } from './utils/cache'
 import { SchemaJson } from './types/IDataDictionaryTypes'
@@ -73,7 +72,7 @@ export default function UploadButton(): ReactElement {
             onAdd={files => setFileObjects(files)}
             onDelete={() => setFileObjects([])}
             previewChipProps={{
-              icon: <AttachmentIcon />,
+              icon: <FontAwesomeIcon icon={faPaperclip} />,
               classes: { root: `fileChip-upload` },
             }}
             previewGridClasses={{ container: `uploadPreview` }}
