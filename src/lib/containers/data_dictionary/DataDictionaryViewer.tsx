@@ -31,7 +31,6 @@ import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
 } from 'lib/utils/functions/colorPalette'
-import IconButton from '@material-ui/core/IconButton'
 
 export interface DataDictionaryViewerProps {
   title: string
@@ -150,19 +149,15 @@ function DataDictionaryViewer({
       <div
         className={`graphCanvasContainer ${isFullScreen ? 'fullscreen' : ''}`}
       >
-        <IconButton
-          aria-label={`fullscreen`}
+        <button
+          aria-label={`toggle graph fullscreen`}
           className={`fullscreenToggleButton ${
             isFullScreen ? 'fullscreen' : ''
           }`}
           onClick={() => toggleFullScreen(!isFullScreen)}
         >
-          {isFullScreen ? (
-            <FontAwesomeIcon icon={faCompress} />
-          ) : (
-            <FontAwesomeIcon icon={faExpand} />
-          )}
-        </IconButton>
+          <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} />
+        </button>
         <Graph
           className={`graph-dd`}
           data={graphNetworkData}
