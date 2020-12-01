@@ -1,9 +1,9 @@
 import React, { ReactElement, useState } from 'react'
 import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone'
-import { Button, Form, Modal } from 'react-bootstrap'
+import { Button, Form, InputGroup, Modal } from 'react-bootstrap'
 import { faFileUpload, faPaperclip } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { isUri } from 'valid-url'
+import isURL from 'validator/lib/isURL'
 import { dbSet, encode, SUFFIX } from './utils/cache'
 import { SchemaJson } from './types/IDataDictionaryTypes'
 import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
@@ -31,7 +31,6 @@ export default function UploadButton(): ReactElement {
         onHide={() => setOpen(false)}
         aria-labelledby={`title-dialog-upload`}
         className={`dialog-upload`}
-        centered
       >
         <Modal.Header closeButton>
           <Modal.Title
@@ -42,16 +41,20 @@ export default function UploadButton(): ReactElement {
         <Modal.Body>
           <p>{`Enter a URL to the JSON-LD schema file:`}</p>
           <Form.Label id={`schemaUrlLabel`}>{`Schema URL`}</Form.Label>
-          <Form.Control
-            isInvalid={!validUrl}
-            type={`url`}
-            id={`schemaUrl`}
-            aria-describedby={`schemaUrlLabel`}
-            onChange={validateUrl}
-          />
-          <Form.Control.Feedback type={`invalid`}>
-            {`Invalid URL`}
-          </Form.Control.Feedback>
+          <InputGroup>
+            <Form.Control
+              isInvalid={!validUrl}
+              type={`url`}
+              id={`schemaUrl`}
+              aria-describedby={`schemaUrlLabel`}
+              onChange={validateUrl}
+            />
+            {!validUrl && (
+              <Form.Control.Feedback type={`invalid`}>
+                <p className={`text-error`}>{`* Invalid URL`}</p>
+              </Form.Control.Feedback>
+            )}
+          </InputGroup>
           <p>{`or`}</p>
           <DropzoneAreaBase
             acceptedFiles={[
@@ -133,7 +136,7 @@ export default function UploadButton(): ReactElement {
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ): void {
     const value: string = event.target.value
-    if (isUri(value)) {
+    if (value === `` || isURL(value, { require_protocol: true })) {
       setValidUrl(true)
       setUrl(value)
     } else {

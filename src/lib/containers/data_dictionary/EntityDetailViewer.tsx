@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
-import { Button, Modal } from 'react-bootstrap'
-import { isUri } from 'valid-url'
+import { Modal } from 'react-bootstrap'
+import isURL from 'validator/lib/isURL'
 import { DataDictionaryData } from './types/IDataDictionaryTypes'
 import EntityTable from './EntityTable'
 import ItemList from './ItemList'
@@ -25,11 +25,11 @@ export default function EntityDetailViewer({
   return entity ? (
     <Modal
       animation={false}
+      className={`modal-entityDetail`}
       dialogClassName={`entityDetail`}
       show={open ? true : false}
       onHide={onClose}
       aria-labelledby={`title-entityDetail-${entity.id}`}
-      centered
     >
       <Modal.Header closeButton>
         <Modal.Title className={`h1`} id={`title-dialog-${entity.id}`}>
@@ -37,12 +37,6 @@ export default function EntityDetailViewer({
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className={`content-entityDetail`}>
-        {entity.required && (
-          <>
-            <span className={`required`}>*</span>
-            <p className={`required`}>{`* Required`}</p>
-          </>
-        )}
         {entity.description && (
           <>
             <h3 className={`h3`}>{`Description`}</h3>
@@ -95,15 +89,6 @@ export default function EntityDetailViewer({
           </>
         )}
       </Modal.Body>
-      <Modal.Footer>
-        <Button
-          className={`button-cancel`}
-          onClick={onClose}
-          variant={`primary`}
-        >
-          Close
-        </Button>
-      </Modal.Footer>
     </Modal>
   ) : (
     <></>
@@ -122,18 +107,26 @@ function EntityHeader({
     </>
   )
   return (
-    <h2 className={`h2`} id={`title-entityDetail-${entity.id}`}>
-      {isUri(entity.source) ? (
-        <a
-          href={entity.source}
-          target={`_blank`}
-          title={`View the source of ${entity.id}`}
-        >
-          {children}
-        </a>
-      ) : (
-        children
+    <>
+      <h2 className={`h2`} id={`title-entityDetail-${entity.id}`}>
+        {isURL(entity.source, { require_protocol: true }) ? (
+          <a
+            href={entity.source}
+            target={`_blank`}
+            title={`View the source of ${entity.id}`}
+          >
+            {children}
+          </a>
+        ) : (
+          children
+        )}
+      </h2>
+      {entity.required && (
+        <>
+          <span className={`required`}>*</span>
+          <p className={`required`}>{`* Required`}</p>
+        </>
       )}
-    </h2>
+    </>
   )
 }

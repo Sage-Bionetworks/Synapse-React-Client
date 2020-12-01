@@ -63,10 +63,9 @@ function DataDictionaryViewer({
   }, [isFullScreen])
 
   useEffect(() => {
+    window.removeEventListener('keyup', handleEscapeKey, false)
     if (isFullScreen) {
-      window.addEventListener('keyup', () => setFullScreen(false), false)
-    } else {
-      window.removeEventListener('keyup', () => setFullScreen(false), false)
+      window.addEventListener('keyup', handleEscapeKey, false)
     }
   }, [isFullScreen])
 
@@ -147,6 +146,12 @@ function DataDictionaryViewer({
     }
     setGraphNetworkData({ nodes, links })
   }, [data, deps, viewType, onNodeClick, nodeColorRefs])
+
+  function handleEscapeKey(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      setFullScreen(false)
+    }
+  }
 
   if (!graphNetworkData) {
     return <></>
