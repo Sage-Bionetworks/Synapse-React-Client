@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 import { Modal } from 'react-bootstrap'
-import { isUri } from 'valid-url'
+import isURL from 'validator/lib/isURL'
 import { DataDictionaryData } from './types/IDataDictionaryTypes'
 import EntityTable from './EntityTable'
 import ItemList from './ItemList'
@@ -109,7 +109,7 @@ function EntityHeader({
   return (
     <>
       <h2 className={`h2`} id={`title-entityDetail-${entity.id}`}>
-        {isUri(entity.source) ? (
+        {isURL(entity.source, { require_protocol: true }) ? (
           <a
             href={entity.source}
             target={`_blank`}
