@@ -141,7 +141,7 @@ function DataDictionaryViewer({
           event: React.MouseEvent<SVGCircleElement, MouseEvent>,
         ) => {},
         viewType,
-        nodeColor: '#000',
+        nodeColor: 'rgb(0,0,0,0)',
       }
       nodes.push(hiddenRoot)
     }
@@ -179,7 +179,7 @@ function DataDictionaryViewer({
             source: 'hiddenRoot',
             target: n.id,
             viewType,
-            linkColor: '#000',
+            linkColor: 'rgb(0,0,0,0)',
           })
         }
       }
