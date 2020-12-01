@@ -1,0 +1,48 @@
+// @import 'node_modules/@brainhubeu/react-carousel/lib/style';
+
+.CardCarousel {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: none;
+
+  .BrainhubCarouselItem--active {
+    flex: 0;
+  }
+
+  &__SelectedCard {
+    opacity: 1;
+    zoom: 1;
+    -moz-transform: scale(1); // zoom is not supported in FF
+    transition-duration: 0.75s;
+  }
+
+  &__UnselectedCard {
+    opacity: 0.5;
+    zoom: 0.65;
+    -moz-transform: scale(0.65); // zoom is not supported in FF
+    transition-duration: 0.75s;
+  }
+
+  &__LeftArrow {
+    margin: 10px;
+    transform: rotate(180deg);
+  }
+
+  &__RightArrow {
+    margin: 10px;
+  }
+
+  .BrainhubCarousel__dot::before {
+    width: 16px;
+    height: 16px;
+    background: none;
+    border: 1px solid $primary-action-color-500;
+  }
+
+  .BrainhubCarousel__dot--selected::before {
+    width: 16px;
+    height: 16px;
+    background-color: $primary-action-color-500;
+    border: 1px solid $primary-action-color-500;
+  }
+}
