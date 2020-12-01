@@ -1,15 +1,18 @@
 import React from 'react'
-import { VIEW_TYPES } from './constants'
-
+import { GraphNodeLinkData } from './types/IDataDictionaryTypes'
 interface GraphNetworkLineProps {
-  link: { viewType: string }
+  link: GraphNodeLinkData
 }
 
 export default function GraphNetworkLine({
-  link: { viewType },
+  link: { source, linkColor },
   ...props
 }: GraphNetworkLineProps) {
-  const color: string =
-    viewType === VIEW_TYPES.REQUIRES_COMPONENT ? 'green' : 'darkorange'
-  return <line {...props} stroke={color} />
+  return (
+    <line
+      {...props}
+      stroke={linkColor}
+      stroke-opacity={source === 'hiddenRoot' ? 0 : 1}
+    />
+  )
 }
