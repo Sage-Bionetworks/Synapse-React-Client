@@ -3,7 +3,7 @@ import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone'
 import { Button, Form, InputGroup, Modal } from 'react-bootstrap'
 import { faFileUpload, faPaperclip } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { isUri } from 'valid-url'
+import isURL from 'validator/lib/isURL'
 import { dbSet, encode, SUFFIX } from './utils/cache'
 import { SchemaJson } from './types/IDataDictionaryTypes'
 import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
@@ -136,7 +136,7 @@ export default function UploadButton(): ReactElement {
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
   ): void {
     const value: string = event.target.value
-    if (value === `` || isUri(value)) {
+    if (value === `` || isURL(value, { require_protocol: true })) {
       setValidUrl(true)
       setUrl(value)
     } else {
