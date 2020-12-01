@@ -115,7 +115,9 @@ function DataDictionaryViewer({
         ) {
           colorIdx = 0
         } else {
-          colorIdx++
+          if (item.value.length > 0) {
+            colorIdx++
+          }
         }
       })
     }
