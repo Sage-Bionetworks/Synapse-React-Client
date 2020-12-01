@@ -106,6 +106,7 @@ export interface GraphNodeLinkData {
   source: string
   target: string
   viewType: VIEW_TYPES
+  linkColor: string
 }
 export interface GraphNetworkData {
   nodes: Array<GraphNodeData>

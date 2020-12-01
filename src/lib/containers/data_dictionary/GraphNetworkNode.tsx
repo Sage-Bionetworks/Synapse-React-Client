@@ -17,6 +17,7 @@ export default function GraphNetworkNode({
     <g className={`entity ${hoverClass}`}>
       <circle
         fill={isPropertyType ? 'white' : nodeColor}
+        opacity={id === 'hiddenRoot' ? 0 : 1}
         stroke={isPropertyType ? nodeColor : undefined}
         strokeWidth={isPropertyType ? 2 : undefined}
         r={isPropertyType ? radius - 2 : radius}

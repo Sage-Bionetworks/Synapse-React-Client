@@ -122,6 +122,30 @@ function DataDictionaryViewer({
       })
     }
 
+    if (deps[viewType]) {
+      const hiddenRoot: GraphNodeData = {
+        id: 'hiddenRoot',
+        attribute: 'hiddenRoot',
+        description: '',
+        domainIncludes: [],
+        label: '',
+        parentIds: [],
+        required: false,
+        requiredDependencies: [],
+        requiresComponent: [],
+        source: '',
+        type: [],
+        validValues: [],
+        validationRules: [],
+        onNodeClick: (id: string) => (
+          event: React.MouseEvent<SVGCircleElement, MouseEvent>,
+        ) => {},
+        viewType,
+        nodeColor: '#000',
+      }
+      nodes.push(hiddenRoot)
+    }
+
     for (const id in deps[viewType]) {
       const node = nodes.find(entity => entity.id === id)
       const currentEntity:
@@ -140,10 +164,27 @@ function DataDictionaryViewer({
             source: id,
             target: childId,
             viewType,
+            linkColor: nodeColorRefs.current[id],
           })
         })
       }
     }
+
+    nodes.forEach(n => {
+      if (n.id !== 'hiddenRoot') {
+        const noParentNodes = links.findIndex(l => l.target === n.id)
+        if (noParentNodes === -1) {
+          //must check for undefined nodes.
+          links.push({
+            source: 'hiddenRoot',
+            target: n.id,
+            viewType,
+            linkColor: '#000',
+          })
+        }
+      }
+    })
+
     setGraphNetworkData({ nodes, links })
   }, [data, deps, viewType, onNodeClick, nodeColorRefs])
 
@@ -187,7 +228,7 @@ function DataDictionaryViewer({
           enableDrag={true}
           zoomDepth={3}
           enableZoomOut={true}
-          nodeDistance={50}
+          nodeDistance={graphNetworkData.links.length}
           pullIn={false}
         />
       </div>
