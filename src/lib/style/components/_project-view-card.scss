@@ -1,0 +1,34 @@
+.ProjectViewCard {
+  word-wrap: break-word;
+  width: 410px;
+  height: 325px;
+  margin: 10px;
+  background: #fff;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+
+  &__Image {
+    height: 25%;
+    background: $primary-action-color-300;
+  }
+
+  &__ProjectName {
+    margin: 20px;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  &__ProjectDescription {
+    margin: 20px;
+  }
+
+  .bootstrap-4-backport > &__ViewProjectButton {
+    width: 165px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    margin-top: auto;
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
