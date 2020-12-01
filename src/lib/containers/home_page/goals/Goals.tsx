@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {
-  QueryResultBundle,
   QueryBundleRequest,
   FileHandleAssociation,
   FileHandleAssociateType,
@@ -13,6 +12,7 @@ import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundl
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import GoalsMobile from './Goals.Mobile'
 import GoalsDesktop from './Goals.Desktop'
+import { getFieldIndex } from '../../../utils/functions/queryUtils'
 
 export type GoalsProps = {
   entityId: string
@@ -37,18 +37,7 @@ enum ExpectedColumns {
   ASSET = 'Asset',
 }
 
-export const getFieldIndex = (
-  name: string,
-  result: QueryResultBundle | undefined,
-) => {
-  return (
-    result?.selectColumns?.findIndex(el => {
-      return el.name === name
-    }) ?? -1
-  )
-}
-
-export default function (props: GoalsProps) {
+export default function Goals(props: GoalsProps) {
   const { entityId, token } = props
   const [assets, setAssets] = useState<string[] | undefined>()
   const [error, setError] = useState<string | SynapseClientError | undefined>()

@@ -1,8 +1,5 @@
 import React from 'react'
-import {
-  QueryResultBundle,
-  QueryBundleRequest,
-} from '../../../utils/synapseTypes'
+import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
 
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
@@ -12,6 +9,7 @@ import ProgramsDesktop from './Programs.Desktop'
 import { getColorPallette } from '../../../containers/ColorGradient'
 import { CardLink } from '../../../containers/CardContainerLogic'
 import { IconOptions } from '../../../containers/GenericCard'
+import { getFieldIndex } from '../../../utils/functions/queryUtils'
 
 export type ProgramsProps = {
   entityId: string
@@ -35,18 +33,7 @@ export type ProgramsDataProps = {
   iconOptions: IconOptions
 }
 
-export const getFieldIndex = (
-  name: string,
-  result: QueryResultBundle | undefined,
-) => {
-  return (
-    result?.selectColumns?.findIndex(el => {
-      return el.name === name
-    }) ?? -1
-  )
-}
-
-export default function (props: ProgramsProps) {
+export default function Programs(props: ProgramsProps) {
   const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkConfig, token, rgbIndex, iconOptions } = props
   const showDesktop = useShowDesktop()
   const color:string = getColorPallette(rgbIndex ?? 0, 2).colorPalette[0]
