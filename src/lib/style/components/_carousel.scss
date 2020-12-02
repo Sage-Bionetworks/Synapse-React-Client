@@ -24,11 +24,13 @@
   }
 
   &__LeftArrow {
+    cursor: pointer;
     margin: 10px;
     transform: rotate(180deg);
   }
 
   &__RightArrow {
+    cursor: pointer;
     margin: 10px;
   }
 
