@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react'
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import IdLink from './IdLink'
 
 interface ItemListProps {
@@ -26,34 +26,22 @@ function ItemList({ list, parent }: ItemListProps): ReactElement {
       <ul className={'itemList-dd'}>{items.slice(0, listLimit)}</ul>
       {listLimit < listLength && (
         <>
-          <a
-            className={`link-more`}
-            href={`#show ${Math.min(
-              listLength - listLimit,
-              initialLimit,
-            )} more`}
-            onClick={(
-              event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-            ) => {
-              event.preventDefault()
-              setListLimit(listLimit + initialLimit)
-            }}
+          <Button
+            className={`btn-more`}
+            onClick={() => setListLimit(listLimit + initialLimit)}
             title={`Show ${Math.min(
               listLength - listLimit,
               initialLimit,
             )} more (${listLength} total)`}
-          >{`Show more...`}</a>
-          <a
-            className={`link-all`}
-            href={`#show all ${listLength}`}
-            onClick={(
-              event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
-            ) => {
-              event.preventDefault()
-              setListLimit(listLength)
-            }}
+          >{`Show ${Math.min(
+            listLength - listLimit,
+            initialLimit,
+          )} more`}</Button>
+          <Button
+            className={`btn-all`}
+            onClick={() => setListLimit(listLength)}
             title={`Show all ${listLength}`}
-          >{`Show all...`}</a>
+          >{`Show all ${listLength}`}</Button>
         </>
       )}
     </>
