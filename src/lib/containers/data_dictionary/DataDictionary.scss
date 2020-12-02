@@ -149,6 +149,15 @@ $white: #fff;
     .text-entity {
       cursor: pointer;
       transition: font-size 0.5s ease;
+      text-align: center;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      word-wrap: break-word;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
     }
 
     .mouseOnNode {
@@ -156,7 +165,7 @@ $white: #fff;
         animation-name: mouseOnNodeTransition;
       }
       .text-entity {
-        font-size: 3.4em;
+        font-size: 0.28em;
       }
     }
 
@@ -165,7 +174,7 @@ $white: #fff;
         animation-name: mouseOffNodeTransition;
       }
       .text-entity {
-        font-size: 1.46em;
+        font-size: 0.2em;
       }
     }
   }

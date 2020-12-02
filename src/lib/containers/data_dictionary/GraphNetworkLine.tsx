@@ -12,7 +12,7 @@ export default function GraphNetworkLine({
     <line
       {...props}
       stroke={linkColor}
-      stroke-opacity={source === 'hiddenRoot' ? 0 : 1}
+      strokeOpacity={source === 'hiddenRoot' ? 0 : 1}
     />
   )
 }
