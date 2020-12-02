@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
 import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
-import DataDictionaryDemo from './DataDictionaryDemo'
+import DataSchemaDemo from './DataSchemaDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
@@ -49,7 +49,7 @@ const App = ({
           </Link>
         </li>
         <li>
-          <Link to={`${match.url}/DataDictionaryDemo`}>DataDictionaryDemo</Link>
+          <Link to={`${match.url}/DataSchemaDemo`}>DataSchemaDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
@@ -110,8 +110,8 @@ const App = ({
 
       <Route
         exact={true}
-        path={`${match.url}/DataDictionary`}
-        component={() => <DataDictionaryDemo />}
+        path={`${match.url}/DataSchema`}
+        component={() => <DataSchemaDemo />}
       />
 
       <Route
