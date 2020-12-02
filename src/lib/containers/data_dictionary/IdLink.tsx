@@ -1,14 +1,34 @@
 import React, { ReactElement, useState } from 'react'
+import ReactTooltip from 'react-tooltip'
 import { DataDictionaryData } from './types/IDataDictionaryTypes'
 import EntityDetailViewer from './EntityDetailViewer'
 import { stateData } from './state/DataState'
 
 interface IdLinkProps {
   id: string
-  parent?: string
+  isParent?: boolean
 }
 
-function IdLink({ id, parent }: IdLinkProps): ReactElement {
+const toolTipIdPrefix: string = `tooltip-`
+
+function IdLink(props: IdLinkProps): ReactElement {
+  const { id } = props
+  console.log()
+  return (
+    <>
+      <ReactTooltip
+        id={`${toolTipIdPrefix}${id}`}
+        place={`top`}
+        effect={`solid`}
+      >
+        {id}
+      </ReactTooltip>
+      <ToolTipTarget {...props} />
+    </>
+  )
+}
+
+function ToolTipTarget({ id, isParent }: IdLinkProps) {
   const data: DataDictionaryData[] = stateData()
   const itemData: DataDictionaryData | undefined = data.find(
     item => item.id === id,
@@ -16,19 +36,19 @@ function IdLink({ id, parent }: IdLinkProps): ReactElement {
   const [entityDetailViewerOpen, setEntityDetailViewerOpen] = useState<boolean>(
     false,
   )
-  const isParent: boolean = parent === id
-
   return itemData && !isParent ? (
     <>
       <a
         href={`#`}
         title={`View details of ${id}`}
+        data-tip
+        data-for={`${toolTipIdPrefix}${id}`}
         onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
           event.preventDefault()
           setEntityDetailViewerOpen(true)
         }}
       >
-        {id}
+        {itemData.attribute || itemData.label}
       </a>
       <EntityDetailViewer
         open={entityDetailViewerOpen}
@@ -37,7 +57,9 @@ function IdLink({ id, parent }: IdLinkProps): ReactElement {
       />
     </>
   ) : (
-    <>{id}</>
+    <span data-tip data-for={`${toolTipIdPrefix}${id}`}>
+      {itemData ? itemData.attribute || itemData.label : id}
+    </span>
   )
 }
 

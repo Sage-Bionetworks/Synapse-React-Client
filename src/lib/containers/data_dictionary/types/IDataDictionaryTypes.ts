@@ -9,9 +9,9 @@ export interface SchemaContext {
 }
 
 export interface SchemaData extends baseEntity {
-  '@type'?: string[] | string
+  '@type': string[] | string
   'rdfs:comment'?: string
-  'rdfs:label'?: string
+  'rdfs:label': string
   'rdfs:subClassOf'?: baseEntity | baseEntity[]
   'sms:displayName'?: string
   'sms:required'?: string
@@ -25,6 +25,10 @@ export interface SchemaData extends baseEntity {
 export interface SchemaJson extends baseEntity {
   '@context': SchemaContext
   '@graph': SchemaData[]
+}
+
+export interface IdMap {
+  [id: string]: string
 }
 
 export interface DataDictionaryData {

@@ -26,7 +26,9 @@ function EntityTable({ list, parent }: EntityTableProps): ReactElement {
         {
           title: 'ID',
           field: 'id',
-          render: ({ id }: RowData) => <IdLink id={id} />,
+          render: ({ id }: RowData) => (
+            <IdLink id={id} isParent={parent === id} />
+          ),
         },
         {
           title: 'Attribute',
@@ -72,7 +74,7 @@ function EntityTable({ list, parent }: EntityTableProps): ReactElement {
           field: 'domainIncludes',
           headerStyle: { width: 120 },
           render: ({ domainIncludes }: RowData) => (
-            <ItemList list={domainIncludes} />
+            <ItemList list={domainIncludes} parent={parent} />
           ),
         },
         {

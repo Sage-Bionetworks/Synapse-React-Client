@@ -5,18 +5,6 @@ import {
   SchemaData,
 } from '../types/IDataDictionaryTypes'
 
-export const getDataDictionaryDetails = (
-  parentNodeId: string,
-  data: DataDictionaryData[],
-): DataDictionaryData[] => {
-  return data.filter(c => {
-    if (c.parentIds.length > 0) {
-      return c.parentIds.some(id => id === parentNodeId)
-    }
-    return false
-  })
-}
-
 export function mapSchemaDataToDataDictionaryData(
   context: SchemaContext,
   data: SchemaData[],
