@@ -1,7 +1,7 @@
 import {
   Evaluation,
   EvaluationStatus,
-} from '../../../../lib/utils/synapseTypes/Evaluation'
+} from '../../../../lib/utils/synapseTypes'
 import {
   EvaluationEditor,
   EvaluationEditorProps,
@@ -11,6 +11,7 @@ import { SynapseClient } from '../../../../lib/utils'
 import { mount } from 'enzyme'
 import React from 'react'
 import { Form } from 'react-bootstrap'
+import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 
 describe('test EvaluationEditor', () => {
   const sessionToken = 'sssssssssssssssssssssss'
@@ -18,6 +19,8 @@ describe('test EvaluationEditor', () => {
   const entityId = 'syn1111111'
   let evaluation: Evaluation
   let props: EvaluationEditorProps
+
+  let mockOnDeleteSuccess: jest.Mock
 
   let mockGetEvaluation: jest.Mock
   let mockCreateEvaluation: jest.Mock
@@ -37,10 +40,14 @@ describe('test EvaluationEditor', () => {
       submissionInstructionsMessage: "no you can't just make a submission",
       submissionReceiptMessage: 'haha submission go brrrrrrrr',
     }
+
+    mockOnDeleteSuccess = jest.fn()
+
     props = {
       sessionToken: sessionToken,
       evaluationId: evaluationId,
       utc: true,
+      onDeleteSuccess: mockOnDeleteSuccess,
     }
 
     mockGetEvaluation = jest.fn(
@@ -81,15 +88,16 @@ describe('test EvaluationEditor', () => {
 
     expect(wrapper.find('h4').text()).toBe('Edit Evaluation Queue')
     expect(mockGetEvaluation).toBeCalledWith(evaluationId, sessionToken)
-    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
   })
+
   test('do not retrieve evaluation from API if id is not provided', () => {
     props = { ...props, entityId, evaluationId: undefined }
     const wrapper = mount(<EvaluationEditor {...props} />)
 
     expect(wrapper.find('h4').text()).toBe('Create Evaluation Queue')
     expect(mockGetEvaluation).not.toBeCalled()
-    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
   })
 
   test('retrieve evaluation from API failed', () => {
@@ -103,7 +111,7 @@ describe('test EvaluationEditor', () => {
     const wrapper = mount(<EvaluationEditor {...props} />)
 
     expect(mockGetEvaluation).toBeCalledWith(evaluationId, sessionToken)
-    expect(wrapper.find('ErrorBanner').exists()).toBe(true)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
   })
 
   test('error thrown when using both evaluationId and entityId', () => {
@@ -151,11 +159,77 @@ describe('test EvaluationEditor', () => {
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
+    expect(mockCreateEvaluation).not.toBeCalled()
   })
 
-  // Can't test dropdown menu interaction w/ an undefined onDelete
-  // because the DropdownMenu does not generate child components in enzyme's tree
-  // the options will show up in the wrapper.html()
-  // once a click on the dropdown is simulated,
-  // but doing a string search on that seems hacky
+  test('dropdown menu evaluation has no id - hide delete option', () => {
+    props = { ...props, entityId, evaluationId: undefined }
+
+    const wrapper = mount(<EvaluationEditor {...props} />)
+
+    wrapper.find('DropdownToggle').simulate('click')
+
+    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
+    expect(dropdownItems.length).toBe(1)
+
+    const saveOption = dropdownItems.at(0)
+    expect(saveOption.text()).toBe('Save')
+    saveOption.simulate('click')
+    expect(mockCreateEvaluation).toBeCalled()
+    expect(mockUpdateEvaluation).not.toBeCalled()
+  })
+
+  test('dropdown menu evaluation has id - delete successful', () => {
+    const wrapper = mount(<EvaluationEditor {...props} />)
+
+    wrapper.find('DropdownToggle').simulate('click')
+
+    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
+    expect(dropdownItems.length).toBe(2)
+
+    const saveOption = dropdownItems.at(0)
+    expect(saveOption.text()).toBe('Save')
+    saveOption.simulate('click')
+    expect(mockCreateEvaluation).not.toBeCalled()
+    expect(mockUpdateEvaluation).toBeCalled()
+
+    const deleteOption = dropdownItems.at(1)
+    expect(deleteOption.text()).toBe('Delete')
+    deleteOption.simulate('click')
+    expect(mockDeleteEvaluation).toBeCalled()
+    expect(mockOnDeleteSuccess).toBeCalled()
+
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+  })
+
+  test('dropdown menu evaluation has id - delete failed', () => {
+    mockDeleteEvaluation.mockImplementation(
+      () =>
+        new JestMockPromise((resolve, reject) =>
+          reject(new Error('GetEvaluation error')),
+        ),
+    )
+
+    const wrapper = mount(<EvaluationEditor {...props} />)
+
+    wrapper.find('DropdownToggle').simulate('click')
+
+    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
+    expect(dropdownItems.length).toBe(2)
+
+    const saveOption = dropdownItems.at(0)
+    expect(saveOption.text()).toBe('Save')
+    saveOption.simulate('click')
+    expect(mockCreateEvaluation).not.toBeCalled()
+    expect(mockUpdateEvaluation).toBeCalled()
+
+    //delete should exist, but clicking it is predestined to fail
+    const deleteOption = dropdownItems.at(1)
+    expect(deleteOption.text()).toBe('Delete')
+    deleteOption.simulate('click')
+    expect(mockDeleteEvaluation).toBeCalled()
+    expect(mockOnDeleteSuccess).not.toBeCalled()
+
+    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
+  })
 })

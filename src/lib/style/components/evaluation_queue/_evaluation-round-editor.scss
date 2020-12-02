@@ -1,5 +1,3 @@
-$green: #35bf7d;
-
 .evaluation-round-editor {
   .card-body {
     // even though all sides have the same padding,
@@ -22,11 +20,11 @@ $green: #35bf7d;
 
   .round-status {
     .status-in-progress {
-      color: $green;
+      color: $green-affrimative;
     }
     .status-completed {
       svg {
-        color: $green;
+        color: $green-affrimative;
       }
       span {
         color: $gray-deemphasized;

@@ -9,10 +9,7 @@ import {
   updateEvaluation,
 } from '../../utils/SynapseClient'
 import { ErrorBanner } from '../ErrorBanner'
-import {
-  Evaluation,
-  EvaluationStatus,
-} from '../../utils/synapseTypes/Evaluation'
+import { Evaluation, EvaluationStatus } from '../../utils/synapseTypes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
@@ -28,6 +25,8 @@ export type EvaluationEditorProps = {
   readonly entityId?: string
   /** If true, the "Created on" date will be displayed in UTC time */
   readonly utc: boolean
+  /** Callback after successful deletion of the Evaluation */
+  readonly onDeleteSuccess: () => void
 }
 
 /**
@@ -38,6 +37,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   evaluationId,
   entityId,
   utc,
+  onDeleteSuccess,
 }: EvaluationEditorProps) => {
   if (evaluationId && entityId) {
     throw new Error('please use either evaluationId or entityId but not both')
@@ -111,12 +111,8 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
     ? () => {
         setError(undefined)
         deleteEvaluation(evaluation.id!, sessionToken)
-          .then(() =>
-            setEvaluation({
-              contentSource: evaluation.contentSource,
-            }),
-          )
-          .catch(setError)
+          .then(onDeleteSuccess)
+          .catch(error => setError(error))
       }
     : undefined
 
@@ -128,23 +124,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
             <h4>{evaluation.id ? 'Edit' : 'Create'} Evaluation Queue</h4>
           </Col>
           <Col>
-            <Dropdown className="float-right">
-              <Dropdown.Toggle
-                variant="link"
-                className="dropdown-no-caret evaluation-round-editor-dropdown"
-              >
-                <FontAwesomeIcon icon={faEllipsisV} />
-              </Dropdown.Toggle>
-              <Dropdown.Menu alignRight={true}>
-                <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>
-                <Dropdown.Item
-                  onClick={onDelete}
-                  disabled={onDelete === undefined}
-                >
-                  Delete
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <EvaluationEditorDropdown onClick={onSave} onDelete={onDelete} />
           </Col>
         </Row>
         <Form>
@@ -223,5 +203,32 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
         </Form>
       </div>
     </div>
+  )
+}
+
+type EvaluationEditorDropdownProps = {
+  onClick: () => void
+  onDelete?: () => void
+}
+
+const EvaluationEditorDropdown: React.FunctionComponent<EvaluationEditorDropdownProps> = ({
+  onClick,
+  onDelete,
+}) => {
+  return (
+    <Dropdown className="float-right">
+      <Dropdown.Toggle variant="link" className="dropdown-no-caret">
+        <FontAwesomeIcon icon={faEllipsisV} />
+      </Dropdown.Toggle>
+      <Dropdown.Menu alignRight={true}>
+        <Dropdown.Item onClick={onClick}>Save</Dropdown.Item>
+        {onDelete && (
+          <>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={onDelete}>Delete</Dropdown.Item>
+          </>
+        )}
+      </Dropdown.Menu>
+    </Dropdown>
   )
 }

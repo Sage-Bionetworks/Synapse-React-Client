@@ -1,9 +1,10 @@
-import { EvaluationRound } from '../../../../lib/utils/synapseTypes/Evaluation'
+import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
 import { SynapseClient } from '../../../../lib/utils'
 import JestMockPromise from 'jest-mock-promise'
 import { mount } from 'enzyme'
 import { EvaluationRoundEditorList } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorList'
 import React from 'react'
+import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 
 describe('test EvaluationRoundEditorList', () => {
   const fakeSessionToken = 'asdfasdfasdf'
@@ -93,7 +94,7 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     expect(wrapper.find('.evaluation-round-editor').exists()).toBe(false)
-    expect(wrapper.find('ErrorBanner').exists()).toBe(true)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
   })
 
   it('fetched pages', () => {
@@ -117,7 +118,7 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
-    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
   })
 
   it('add round button', () => {
@@ -130,11 +131,11 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
-    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
 
     wrapper.find('button.add-round-button').simulate('click')
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(4)
-    expect(wrapper.find('ErrorBanner').exists()).toBe(false)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
   })
 })
