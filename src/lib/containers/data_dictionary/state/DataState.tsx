@@ -5,7 +5,7 @@ import {
   SchemaData,
   SchemaJson,
 } from './../types/IDataDictionaryTypes'
-import { mapSchemaDataToDataDictionaryData } from './../utils/getDataDictionaryDetails'
+import { mapSchemaDataToDataDictionaryData } from './../utils/mapSchemaDataToDataDictionaryData'
 
 export const [stateData, { replaceData }] = createReduxModule(
   'data',

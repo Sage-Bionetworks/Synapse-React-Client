@@ -10,7 +10,7 @@ import Graph from 'react-graph-network'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { stateData } from './state/DataState'
-import { searchEntity } from './state/SearchEntityState'
+import { searchEntity, setIdMap } from './state/SearchEntityState'
 import { stateViewType } from './state/ViewTypeState'
 import { PRIMARY_ENTITY, SECONDARY_ENTITY, VIEW_TYPES } from './constants'
 import {
@@ -71,6 +71,7 @@ function DataDictionaryViewer({
 
   useEffect(() => {
     if (data.length > 0) {
+      setIdMap(data)
       const newDeps = getDepsData(deps, {
         data,
         startId,
