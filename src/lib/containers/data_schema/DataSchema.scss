@@ -240,6 +240,12 @@ $white: #fff;
     margin: 0;
     padding: 0;
   }
+  .link-more,
+  .link-all {
+    display: block;
+    border-top: 1px solid $border-color-gray;
+    font-style: italic;
+  }
 }
 
 @media only screen and (max-width: 840px) {
