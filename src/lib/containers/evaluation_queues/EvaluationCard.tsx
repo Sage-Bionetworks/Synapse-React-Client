@@ -71,7 +71,6 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
   const onDelete = () => {
     setError(undefined)
     deleteEvaluation(evaluation.id, sessionToken)
-      .then(() => {})
       .catch(setError)
   }
 
