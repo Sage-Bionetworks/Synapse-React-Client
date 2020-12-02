@@ -1,3 +1,3 @@
 ```jsx
-<DataDictionary title={'Data Dictionary'} url={''} />
+<DataDictionary title={'Data Schema'} url={''} />
 ```
