@@ -12,24 +12,29 @@ export default function GraphNetworkNode({
   const [hoverClass, setHoverClass] = useState('mouseOffNode')
   const radius = 10
   const isPropertyType = type.includes('rdf:Property')
+  const nodeLabel = unCamelCase(label)
 
   return (
-    <g className={`entity ${hoverClass}`}>
+    <g
+      className={`entity ${hoverClass}`}
+      onClick={onNodeClick(id)}
+      onMouseEnter={() => setHoverClass('mouseOnNode')}
+      onMouseLeave={() => setHoverClass('mouseOffNode')}
+    >
       <circle
         fill={isPropertyType ? 'white' : nodeColor}
+        opacity={id === 'hiddenRoot' ? 0 : 1}
         stroke={isPropertyType ? nodeColor : undefined}
         strokeWidth={isPropertyType ? 2 : undefined}
         r={isPropertyType ? radius - 2 : radius}
         className={`shape`}
-        onClick={onNodeClick(id)}
-        onMouseEnter={() => setHoverClass('mouseOnNode')}
-        onMouseLeave={() => setHoverClass('mouseOffNode')}
+        pointerEvents={id === 'hiddenRoot' ? 'none' : undefined}
       />
-      <g className={`text-entity`}>
-        <text x={radius + 7} y={radius / 2}>
-          {unCamelCase(label)}
-        </text>
-      </g>
+      <foreignObject x={-8} y={-8} width={16} height={16} className={`shape`}>
+        <div title={nodeLabel} className={`text-entity`}>
+          {nodeLabel}
+        </div>
+      </foreignObject>
     </g>
   )
 }
