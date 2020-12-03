@@ -59,7 +59,6 @@ export const CardCarousel: React.FunctionComponent<CardCarouselProps> = ({
     } else {
       carouselClass += ' CardCarousel__UnselectedCard'
     }
-    console.log(carouselClass)
     return React.cloneElement(child, { className: carouselClass })
   })
 
