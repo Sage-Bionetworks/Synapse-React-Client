@@ -5,7 +5,7 @@ import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import React, { useState, useEffect } from 'react'
 import CardCarousel from '../../carousel/CardCarousel'
 import { ProjectViewCard } from './ProjectViewCard'
-import { Error } from '../../Error'
+import { ErrorBanner } from '../../ErrorBanner'
 
 export type ProjectViewCarouselProps = {
   token?: string
@@ -130,7 +130,7 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
   }, [entityId, token, queryResultBundle, queryError])
 
   return error ? (
-    <Error error={error}></Error>
+    <ErrorBanner error={error}></ErrorBanner>
   ) : (
     <CardCarousel>
       {projects.map(project => {
