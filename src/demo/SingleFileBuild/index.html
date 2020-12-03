@@ -140,6 +140,8 @@
     <div id="panel9"></div>
     <div id="panel10"></div>
     <div id="panel11"></div>
+    <div id="panel12"></div>
+    <div id="panel13"></div>
     <div style="height: 300px;"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
@@ -301,8 +303,30 @@
       evaluationQueueEditorListContainer,
       'EvaluationRoundEditorList',
     )
+    const evaluationQueueCardContainer = document.querySelector('#panel11')
+    const evaluationQueueCardProps = {
+      sessionToken: token,
+      evaluationId: '9614644',
+      utc: true
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.EvaluationCard, evaluationQueueCardProps, null),
+      evaluationQueueCardContainer,
+      'EvaluationCard',
+    )
+    const evaluationQueueEditorContainer = document.querySelector('#panel12')
+    const evaluationQueueEditorProps = {
+      sessionToken: token,
+      evaluationId: '9614644',
+      utc: true
+    }
+    renderInTryCatch(
+      e(SRC.SynapseComponents.EvaluationEditor, evaluationQueueEditorProps, null),
+      evaluationQueueEditorContainer,
+      'EvaluationEditor',
+    )
 
-    const accountLevelBadgeContainer = document.querySelector('#panel11')
+    const accountLevelBadgeContainer = document.querySelector('#panel13')
     const accountLevelBadgeProps = {
       userId: '273980'
     }

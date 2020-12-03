@@ -41,6 +41,8 @@ import PageProgress from './containers/PageProgress'
 import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationRoundEditorList } from './containers/evaluation_queues/EvaluationRoundEditorList'
+import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
+import { EvaluationEditor } from './containers/evaluation_queues/EvaluationEditor'
 
 const SynapseComponents = {
   Facets,
@@ -74,6 +76,8 @@ const SynapseComponents = {
   FeaturedDataTabs,
   UserCardListGroups,
   EvaluationRoundEditorList,
+  EvaluationCard,
+  EvaluationEditor,
   AccountLevelBadge,
   RenderIfInView,
   TermsAndConditions,

@@ -16,6 +16,9 @@
     .calendar-date-time-input {
       border-bottom-left-radius: 0;
       border-top-left-radius: 0;
+      &:not([disabled]) {
+        cursor: pointer;
+      }
     }
   }
 }
