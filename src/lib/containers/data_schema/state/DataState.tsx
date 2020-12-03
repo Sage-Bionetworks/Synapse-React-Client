@@ -20,9 +20,20 @@ export const [stateData, { replaceData }] = createReduxModule(
         ? schemaJson['@context'] || {}
         : {}
       if (schema.length > 0) {
-        return schema.map(mapSchemaDataToDataSchemaData(context, schema))
+        return schema.map(mapSchemaDataToDataSchemaData(context))
       }
       return [] as DataSchemaData[]
     },
+  },
+)
+
+export const [stateContext, { replaceContext }] = createReduxModule(
+  'context',
+  {},
+  {
+    replaceContext: (
+      _state: SchemaContext,
+      schemaJson: SchemaJson | undefined,
+    ) => (schemaJson ? schemaJson['@context'] || {} : {}),
   },
 )

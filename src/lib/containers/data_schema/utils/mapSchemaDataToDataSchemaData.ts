@@ -5,10 +5,7 @@ import {
   SchemaData,
 } from '../types/IDataSchemaTypes'
 
-export function mapSchemaDataToDataSchemaData(
-  context: SchemaContext,
-  data: SchemaData[],
-) {
+export function mapSchemaDataToDataSchemaData(context: SchemaContext) {
   return function (nd: SchemaData): DataSchemaData {
     const parentIds: string[] = (normalizeEntity(
       nd['rdfs:subClassOf'],

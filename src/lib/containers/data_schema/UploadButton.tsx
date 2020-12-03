@@ -8,7 +8,7 @@ import { dbSet, encode, SUFFIX } from './utils/cache'
 import { SchemaJson } from './types/IDataSchemaTypes'
 import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
 import { getSchemaData } from './services/getSchemaData'
-import { replaceData } from './state/DataState'
+import { replaceContext, replaceData } from './state/DataState'
 
 export default function UploadButton(): ReactElement {
   const [open, setOpen] = useState(false)
@@ -121,11 +121,15 @@ export default function UploadButton(): ReactElement {
           console.log(`error:`, error)
         }
         replaceData(content)
+        replaceContext(content)
         dbSet(SUFFIX.scma, encode(content), MINUTES_TO_CACHE, true)
       }
       fileReader.readAsText(file.file)
     } else if (url) {
-      getSchemaData(url, true).then(data => replaceData(data))
+      getSchemaData(url, true).then(data => {
+        replaceData(data)
+        replaceContext(data)
+      })
     }
     setOpen(false)
     setUrl(``)
