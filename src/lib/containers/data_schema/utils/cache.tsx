@@ -18,12 +18,12 @@ export const SUFFIX: { scma: '[schema]'; tm: '[time]' } = {
 }
 
 // If it has expired, return null; if it doesn't exist, it should be undefined
-export const dbGet = (key: string) => {
-  return get(`${key}${SUFFIX.tm}`).then(val => {
+export const dbGet = (key: string): Promise<unknown | null> => {
+  return get(`${key}${SUFFIX.tm}`).then((val: unknown) => {
     const current = new Date().getTime()
     if (val) {
-      if (current < ((val as unknown) as number)) {
-        console.log(`Retrieving cached Data Schema.`)
+      if (current < (val as number)) {
+        console.info(`Retrieving cached Data Schema.`)
         // Has NOT expired
         return get(key)
       }
@@ -40,6 +40,7 @@ export const dbSet = (
   force?: boolean,
 ) => {
   const current = new Date().getTime()
+  const expirationTime = current + MINUTES * tm
   return get(key).then((check: any) => {
     if (check && !force) {
       // Data exists, check if expired
@@ -48,7 +49,7 @@ export const dbSet = (
           if (current > response) {
             // it's passed the expiration time, can overwrite
             set(key, val)
-            set(`${key}${SUFFIX.tm}`, current + MINUTES * tm)
+            set(`${key}${SUFFIX.tm}`, expirationTime)
             return true
           } else {
             // Data exists, but hasn't expired yet; don't overwrite
@@ -57,45 +58,43 @@ export const dbSet = (
         } else {
           // No timeout associated to it, overwrite with current tm
           set(key, val)
-          set(`${key}${SUFFIX.tm}`, current + MINUTES * tm)
+          set(`${key}${SUFFIX.tm}`, expirationTime)
           return true
         }
       })
     } else {
       // Data doesn't exist, can insert with data and tm
       set(key, val)
-      set(`${key}${SUFFIX.tm}`, current + MINUTES * tm)
+      set(`${key}${SUFFIX.tm}`, expirationTime)
       return true
     }
   })
 }
 
-export const dbDel = (key: string) => del(key)
+export const dbDel = (key: string): Promise<void> => del(key)
 
-export const dbClear = () => clear()
+export const dbClear = (): Promise<void> => clear()
 
-export const dbKeys = () => keys()
+export const dbKeys = (): Promise<IDBValidKey[]> => keys()
 
 // Clear out old cached data
 export const clearExpired = () => {
   const current = new Date().getTime()
   return dbKeys()
-    .then((val: any) => {
-      if (val) {
-        val.forEach(async (elem: any) => {
-          if (elem.includes(SUFFIX.tm)) {
-            // At expiration time for evergreen
-            const expiration: any = await dbGet(elem)
-            if (expiration) {
-              if (current > expiration) {
-                // Passed expiration, clear the associated cached data
-                dbDel(elem.replace(SUFFIX.tm, ''))
-                dbDel(elem)
-              }
+    .then((val: IDBValidKey[]) => {
+      val.forEach(async (elem: IDBValidKey) => {
+        if ((elem as string).includes(SUFFIX.tm)) {
+          // At expiration time for evergreen
+          const expiration: number = (await dbGet(elem as string)) as number
+          if (expiration || expiration === 0) {
+            if (current > expiration) {
+              // Passed expiration, clear the associated cached data
+              await dbDel((elem as string).replace(SUFFIX.tm, ''))
+              await dbDel(elem as string)
             }
           }
-        })
-      }
+        }
+      })
       return true
     })
     .catch(err => {
@@ -114,16 +113,16 @@ export const cachedFetch = async (
   const key = `${dataKey}[${encode(schemaUrl)}]`
   const cachedData: SchemaJson = (await dbGet(key)) as SchemaJson
   if (!force && cachedData) {
-    console.log(`Returning cached Data Schema.`)
-    dbSet(dataKey, cachedData, MINUTES_TO_CACHE, force)
+    console.info(`Returning cached Data Schema.`)
+    await dbSet(dataKey, cachedData, MINUTES_TO_CACHE, force)
     return decode(cachedData)
   }
   // If there is no cached response, do the call to the schema (cache this result).
   options.timeout = options.timeout || 5000
   return timeoutFetch(schemaUrl, ``, options)
-    .then((response: any) => {
-      dbSet(dataKey, encode(response), MINUTES_TO_CACHE, force)
-      dbSet(key, encode(response), MINUTES_TO_CACHE, force)
+    .then(async (response: any) => {
+      await dbSet(dataKey, encode(response), MINUTES_TO_CACHE, force)
+      await dbSet(key, encode(response), MINUTES_TO_CACHE, force)
       return response
     })
     .catch((error: Error) => {
@@ -145,23 +144,7 @@ export const decode = (val: any) => {
     : null
 }
 
-// Calls fetch with proxy on server side, uses globalAgent client side
-export const fetch = async (
-  url: string,
-  options: RequestOptions | RequestInit,
-): Promise<Response> => {
-  let request: Response
-  let mergedOptions: RequestOptions | RequestInit = options
-  if (typeof window === 'undefined') {
-    request = await omniFetch(url, options as RequestInit)
-  } else {
-    mergedOptions = { agent: globalAgent, ...mergedOptions }
-    request = await omniFetch(url, mergedOptions as RequestInit)
-  }
-  return request
-}
-
-export const timeoutFetch = (
+const timeoutFetch = (
   url: string,
   cacheKey: string,
   options: RequestOptions | FetchOptions,

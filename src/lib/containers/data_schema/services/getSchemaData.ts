@@ -18,7 +18,7 @@ export const getSchemaData = async (
 ): Promise<SchemaJson> => {
   const cachedData: SchemaData = (await dbGet(key)) as SchemaData
   if (!force && cachedData) {
-    console.log(`Returning cached Data Dictionary Schema.`)
+    console.log(`Returning cached Data Schema.`)
     return decode(cachedData)
   }
   if (!dataUri) {
