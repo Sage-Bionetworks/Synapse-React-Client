@@ -31,6 +31,7 @@ import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
 } from 'lib/utils/functions/colorPalette'
+import GraphLoader from './GraphLoader'
 
 export interface DataSchemaViewerProps {
   title: string
@@ -221,6 +222,7 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
           data={graphNetworkData}
           NodeComponent={GraphNetworkNode}
           LineComponent={GraphNetworkLine}
+          LoaderComponent={GraphLoader}
           id={`dd-graph`}
           hoverOpacity={0.3}
           enableDrag={true}
