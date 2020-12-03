@@ -1,8 +1,8 @@
 import React, { ReactElement, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
-import { DataSchemaData } from './types/IDataSchemaTypes'
+import { DataSchemaData, SchemaContext } from './types/IDataSchemaTypes'
 import EntityDetailViewer from './EntityDetailViewer'
-import { stateData } from './state/DataState'
+import { stateContext, stateData } from './state/DataState'
 
 interface IdLinkProps {
   id: string
@@ -30,6 +30,7 @@ function IdLink(props: IdLinkProps): ReactElement {
 
 function ToolTipTarget({ id, isParent }: IdLinkProps) {
   const data: DataSchemaData[] = stateData()
+  const context: SchemaContext = stateContext()
   const itemData: DataSchemaData | undefined = data.find(item => item.id === id)
   const [entityDetailViewerOpen, setEntityDetailViewerOpen] = useState<boolean>(
     false,
@@ -56,9 +57,26 @@ function ToolTipTarget({ id, isParent }: IdLinkProps) {
     </>
   ) : (
     <span data-tip data-for={`${toolTipIdPrefix}${id}`}>
-      {itemData ? itemData.attribute || itemData.label : id}
+      {itemData ? itemData.attribute || itemData.label : buildLink(id, context)}
     </span>
   )
+}
+
+function buildLink(id: string, context: SchemaContext) {
+  const pieces: string[] = id.split(`:`)
+  const contexts = Object.keys(context)
+  if (pieces.length > 1 && contexts.indexOf(pieces[0])) {
+    return (
+      <a
+        href={`${context[pieces[0]]}${pieces[1]}`}
+        target={`_blank`}
+        title={`View details of ${id}`}
+      >
+        {id}
+      </a>
+    )
+  }
+  return id
 }
 
 export default IdLink
