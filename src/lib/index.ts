@@ -42,6 +42,8 @@ import ProjectViewCarousel from './containers/home_page/project_view_carousel/Pr
 import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationRoundEditorList } from './containers/evaluation_queues/EvaluationRoundEditorList'
+import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
+import { EvaluationEditor } from './containers/evaluation_queues/EvaluationEditor'
 
 const SynapseComponents = {
   Facets,
@@ -75,6 +77,8 @@ const SynapseComponents = {
   FeaturedDataTabs,
   UserCardListGroups,
   EvaluationRoundEditorList,
+  EvaluationCard,
+  EvaluationEditor,
   AccountLevelBadge,
   RenderIfInView,
   TermsAndConditions,

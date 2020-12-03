@@ -45,7 +45,7 @@ export const ClientError = (props: {
   )
 }
 
-export const Error = (props: ErrorProps) => {
+export const ErrorBanner = (props: ErrorProps) => {
   const { error, token } = props
 
   if (!error) {

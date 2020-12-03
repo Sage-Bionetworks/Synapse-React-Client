@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme'
 import CopyToClipboardInput from 'lib/containers/CopyToClipboardInput'
-import { Error } from 'lib/containers/Error'
+import { ErrorBanner } from 'lib/containers/ErrorBanner'
 import { CreateAccessTokenModal } from 'lib/containers/personal_access_token/CreateAccessTokenModal'
 import { Checkbox } from 'lib/containers/widgets/Checkbox'
 import * as React from 'react'
@@ -61,7 +61,7 @@ describe('basic functionality', () => {
 
   it('requires a token name and at least one permission before dispatching the request', async () => {
     const wrapper = shallow(<CreateAccessTokenModal {...props} />)
-    expect(wrapper.find(Error).length).toBe(0)
+    expect(wrapper.find(ErrorBanner).length).toBe(0)
 
     // Try to create with no name or permissions
     await act(async () => {
@@ -72,7 +72,7 @@ describe('basic functionality', () => {
     })
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
-    expect(wrapper.find(Error).length).toBe(1)
+    expect(wrapper.find(ErrorBanner).length).toBe(1)
 
     // Add a name
     await act(async () => {
@@ -89,7 +89,7 @@ describe('basic functionality', () => {
 
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
-    expect(wrapper.find(Error).length).toBe(1)
+    expect(wrapper.find(ErrorBanner).length).toBe(1)
 
     // Remove name, add a permission
     await act(async () => {
@@ -107,7 +107,7 @@ describe('basic functionality', () => {
 
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
-    expect(wrapper.find(Error).length).toBe(1)
+    expect(wrapper.find(ErrorBanner).length).toBe(1)
   })
 
   it('gracefully handles an error from the backend', async () => {
@@ -133,8 +133,8 @@ describe('basic functionality', () => {
       await wrapper.find(Button).at(1).simulate('click')
     })
 
-    expect(wrapper.find(Error).length).toBe(1)
-    expect(wrapper.find(Error).props().error).toEqual(errorReason)
+    expect(wrapper.find(ErrorBanner).length).toBe(1)
+    expect(wrapper.find(ErrorBanner).props().error).toEqual(errorReason)
   })
 
   it('calls onClose when closing via Modal prop', async () => {

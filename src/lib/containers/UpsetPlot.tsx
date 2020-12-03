@@ -12,7 +12,7 @@ import { SynapseConstants, SynapseClient } from '../utils'
 import { SizeMe } from 'react-sizeme'
 import getColorPallette from './ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
-import { Error } from './Error'
+import { ErrorBanner } from './ErrorBanner'
 import loadingScreen from './LoadingScreen'
 
 export type UpsetPlotProps = {
@@ -22,9 +22,9 @@ export type UpsetPlotProps = {
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
   height?: number
-  summaryLinkText?: string  // text for home page link below chart
-  summaryLink?: string // url for home page link below chart  
-  token?: string  
+  summaryLinkText?: string // text for home page link below chart
+  summaryLink?: string // url for home page link below chart
+  token?: string
 }
 
 export type UpsetPlotData = {
@@ -162,7 +162,6 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
                 fontSizes={updateFontSizes}
                 exportButtons={false}
                 notMemberColor="transparent"
-
               />
               {summaryLink && summaryLinkText && (
                 <div className="UpsetPlot__summary">
@@ -171,14 +170,13 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
                       {summaryLinkText}
                     </a>
                   </p>
-                </div>      
+                </div>
               )}
-
             </div>
           )}
         </SizeMe>
       )}
-      <Error error={error} token={token} />
+      <ErrorBanner error={error} token={token} />
     </>
   )
 }
