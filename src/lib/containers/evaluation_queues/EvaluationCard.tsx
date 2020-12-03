@@ -35,6 +35,8 @@ export type EvaluationCardProps = {
   onModifyAccess: () => void
   /** Callback when the Submit button is clicked*/
   onSubmit: () => void
+  /** Callback when the Delete option is successful */
+  onDeleteSuccess: () => void
 }
 
 /**
@@ -53,6 +55,7 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
   onEdit,
   onModifyAccess,
   onSubmit,
+  onDeleteSuccess,
 }: EvaluationCardProps) => {
   const [error, setError] = useState<SynapseClientError>()
   const [permissions, setPermissions] = useState<UserEvaluationPermissions>()
@@ -71,7 +74,7 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
   const onDelete = () => {
     setError(undefined)
     deleteEvaluation(evaluation.id, sessionToken)
-      .then(() => {})
+      .then(onDeleteSuccess)
       .catch(setError)
   }
 
@@ -100,9 +103,8 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
               <h4>{evaluation.name}</h4>
 
               <label>Status</label>
-              <p>
-                <EvaluationDisplayStatus status={evaluation.status} />
-              </p>
+              <EvaluationDisplayStatus status={evaluation.status} />
+
               <label>Description</label>
               <p>{evaluation.description}</p>
               <label>Instructions</label>

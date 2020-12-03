@@ -23,6 +23,7 @@ describe('test Evaluation Card', () => {
   let mockOnEdit: jest.Mock
   let mockOnModifyAccess: jest.Mock
   let mockOnSubmit: jest.Mock
+  let mockOnDeleteSuccess: jest.Mock
 
   beforeEach(() => {
     evaluation = {
@@ -55,12 +56,14 @@ describe('test Evaluation Card', () => {
     mockOnEdit = jest.fn()
     mockOnModifyAccess = jest.fn()
     mockOnSubmit = jest.fn()
+    mockOnDeleteSuccess = jest.fn()
 
     props = {
       evaluation: evaluation,
       onEdit: mockOnEdit,
       onModifyAccess: mockOnModifyAccess,
       onSubmit: mockOnSubmit,
+      onDeleteSuccess: mockOnDeleteSuccess,
       sessionToken: 'session token',
       utc: false,
     }
@@ -153,6 +156,7 @@ describe('test Evaluation Card', () => {
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
     expect(mockDeleteEvaluation).toBeCalled()
+    expect(mockOnDeleteSuccess).toBeCalled()
   })
 
   test('no permissions for modify access dropdown option - hide option', () => {
@@ -180,6 +184,7 @@ describe('test Evaluation Card', () => {
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
     expect(mockDeleteEvaluation).toBeCalled()
+    expect(mockOnDeleteSuccess).toBeCalled()
   })
 
   test('no permissions for delete dropdown option - hide option', () => {
@@ -237,5 +242,30 @@ describe('test Evaluation Card', () => {
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
     expect(mockDeleteEvaluation).toBeCalled()
+    expect(mockOnDeleteSuccess).toBeCalled()
+  })
+
+  test('Delete options API call failure - onDeleteSuccess callback not called', () => {
+    mockDeleteEvaluation.mockImplementation(() => {
+      return new JestMockPromise((resolve, reject) => {
+        reject(new Error("OOPS! It's a error Deleting"))
+      })
+    })
+
+    const wrapper = mount(<EvaluationCard {...props} />)
+
+    expect(wrapper.find('Dropdown').exists()).toBe(true)
+    // simulate a click
+    wrapper.find('DropdownToggle').simulate('click')
+
+    //simulate a dropdown menu click
+    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
+    expect(dropdownItems.length).toBe(3)
+
+    const deleteOption = dropdownItems.at(2)
+    expect(deleteOption.text()).toBe('Delete')
+    deleteOption.simulate('click')
+    expect(mockDeleteEvaluation).toBeCalled()
+    expect(mockOnDeleteSuccess).not.toBeCalled()
   })
 })
