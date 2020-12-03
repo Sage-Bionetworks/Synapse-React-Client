@@ -140,7 +140,7 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
           event: React.MouseEvent<SVGCircleElement, MouseEvent>,
         ) => {},
         viewType,
-        nodeColor: 'rgb(0,0,0,0)',
+        nodeColor: 'rgba(0,0,0,0)',
       }
       nodes.push(hiddenRoot)
     }
@@ -177,7 +177,7 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
             source: 'hiddenRoot',
             target: n.id,
             viewType,
-            linkColor: 'rgb(0,0,0,0)',
+            linkColor: 'rgba(0,0,0,0)',
           })
         }
       }
@@ -224,9 +224,9 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
           id={`dd-graph`}
           hoverOpacity={0.3}
           enableDrag={true}
-          zoomDepth={3}
+          zoomDepth={10}
           enableZoomOut={true}
-          nodeDistance={graphNetworkData.links.length}
+          nodeDistance={1000}
           pullIn={false}
         />
       </div>

@@ -12,6 +12,7 @@ export default function GraphNetworkLine({
     <line
       {...props}
       stroke={linkColor}
+      strokeWidth={3}
       strokeOpacity={source === 'hiddenRoot' ? 0 : 1}
     />
   )
