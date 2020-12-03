@@ -1,12 +1,7 @@
 import { SynapseClient, SynapseConstants } from '../../../utils'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
-import {
-  BatchFileRequest,
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  QueryBundleRequest,
-} from '../../../utils/synapseTypes'
+import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import React, { useState, useEffect } from 'react'
 import CardCarousel from '../../carousel/CardCarousel'
 import { ProjectViewCard } from './ProjectViewCard'
@@ -21,7 +16,7 @@ type ProjectData = {
   projectName: string
   projectDescription: string
   entityId: string
-  imageFileHandle?: string
+  imageFileName?: string
   imageUrl?: string
 }
 
@@ -30,9 +25,14 @@ enum ExpectedColumns {
   PROJECT_DISPLAY_NAME = 'projectDisplayName',
   NAME = 'name', // fallback
   PROJECT_DESCRIPTION = 'projectDescription',
-  PROJECT_IMAGE = 'projectImage',
+  PROJECT_IMAGE = 'projectImageFileName',
 }
 
+/**
+ * Display a carousel of projects using a Project View. Driven by the following annotations/column names:
+ * projectDisplayName, projectDescription, projectImageFileName. The projectImageFileName must
+ * be an attachment on the project's root wiki page.
+ */
 export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselProps> = ({
   token,
   entityId,
@@ -86,7 +86,7 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
                 row.values[displayNameColumnIndex] ??
                 row.values[nameColumnIndex],
               projectDescription: row.values[descriptionColumnIndex],
-              imageFileHandle: row.values[imageColumnIndex],
+              imageFileName: row.values[imageColumnIndex],
               entityId: row.values[entityIdIndex],
             }
           }) ?? []
@@ -98,34 +98,26 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
           return
         }
 
-        // Retrieve the associated images
-        const fileHandleAssociationList: FileHandleAssociation[] = projects
-          .filter(project => project.imageFileHandle)
-          .map(project => {
-            return {
-              associateObjectId: entityId!,
-              associateObjectType: FileHandleAssociateType.TableEntity,
-              fileHandleId: project.imageFileHandle!,
-            }
-          })
+        for (const project of projects) {
+          try {
+            if (project.imageFileName) {
+              const wikiPageKey = await SynapseClient.getWikiPageKeyForEntity(
+                token,
+                project.entityId,
+              )
 
-        if (fileHandleAssociationList.length > 0) {
-          const batchFileRequest: BatchFileRequest = {
-            includeFileHandles: true,
-            includePreSignedURLs: true,
-            includePreviewPreSignedURLs: false,
-            requestedFiles: fileHandleAssociationList,
+              project.imageUrl = await SynapseClient.getPresignedUrlForWikiAttachment(
+                token,
+                project.entityId,
+                wikiPageKey.wikiPageId,
+                project.imageFileName!,
+              )
+            }
+          } catch (err) {
+            // Don't break the whole component just because we can't find an image.
+            // The user will just see the placeholder.
+            console.error(err)
           }
-
-          const files = await SynapseClient.getFiles(batchFileRequest, token)
-
-          projects.forEach(p => {
-            if (p.imageFileHandle) {
-              p.imageUrl = files.requestedFiles.filter(
-                rf => rf.fileHandleId === p.imageFileHandle,
-              )[0].preSignedURL
-            }
-          })
         }
 
         setProjects(projects)
@@ -153,7 +145,7 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
                 <img
                   src={project.imageUrl}
                   alt={`Logo for ${project.projectName}`}
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ maxWidth: '100%' }}
                 />
               ) : undefined
             }

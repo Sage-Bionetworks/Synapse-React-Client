@@ -1,8 +1,4 @@
-import {
-  BatchFileResult,
-  EntityColumnType,
-  QueryResultBundle,
-} from 'lib/utils/synapseTypes'
+import { EntityColumnType, QueryResultBundle } from 'lib/utils/synapseTypes'
 
 export const mockQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -59,8 +55,8 @@ export const mockQueryResult: QueryResultBundle = {
           id: '127154',
         },
         {
-          name: 'projectImage',
-          columnType: EntityColumnType.FILEHANDLEID,
+          name: 'projectImageFileName',
+          columnType: EntityColumnType.STRING,
           id: '127219',
         },
       ],
@@ -78,7 +74,7 @@ export const mockQueryResult: QueryResultBundle = {
             '2166046',
             'Synodos NF2 Project Data',
             'A blurb about Synodos NF2 efforts.',
-            '1',
+            'nf2-banner.jpg',
           ],
         },
         {
@@ -94,7 +90,7 @@ export const mockQueryResult: QueryResultBundle = {
             '372127',
             'CommonMind Consortium Knowledge Portal Data',
             'A blurb about CommonMind Consortium efforts.',
-            '2',
+            'commonmind-landing-image.png',
           ],
         },
         {
@@ -142,7 +138,7 @@ export const mockQueryResult: QueryResultBundle = {
             '3329874',
             'COVID-19 DREAM Challenge Synapse Project',
             'A blurb about the COVID-19 DREAM Challenge.',
-            '4',
+            'covid-dream-challenge.png',
           ],
         },
       ],
@@ -195,78 +191,9 @@ export const mockQueryResult: QueryResultBundle = {
       id: '127154',
     },
     {
-      name: 'projectImage',
+      name: 'projectImageFileName',
       columnType: EntityColumnType.FILEHANDLEID,
       id: '127279',
-    },
-  ],
-}
-
-export const mockFileHandleResult: BatchFileResult = {
-  requestedFiles: [
-    {
-      fileHandleId: '1',
-      fileHandle: {
-        id: '1',
-        etag: '29b2cb9c-a0ef-478b-90c8-d848ec9a5610',
-        createdBy: '3350396',
-        createdOn: '2020-11-23T20:39:08.000Z',
-        concreteType: 'org.sagebionetworks.repo.model.file.S3FileHandle',
-        contentType: 'image/png',
-        contentMd5: 'ce467a60d090c434a19ad90bf97142c7',
-        fileName: 'file1.png',
-        contentSize: 168388,
-        storageLocationId: 0,
-      },
-      preSignedURL: 'https://mypresigned.urlishere/1',
-    },
-    {
-      fileHandleId: '2',
-      fileHandle: {
-        id: '2',
-        etag: '29b2cb9c-a0ef-478b-90c8-d848ec9a5610',
-        createdBy: '3350396',
-        createdOn: '2020-11-23T20:39:08.000Z',
-        concreteType: 'org.sagebionetworks.repo.model.file.S3FileHandle',
-        contentType: 'image/png',
-        contentMd5: 'ce467a60d090c434a19ad90bf97142c7',
-        fileName: 'file2.png',
-        contentSize: 168388,
-        storageLocationId: 0,
-      },
-      preSignedURL: 'https://mypresigned.urlishere/2',
-    },
-    {
-      fileHandleId: '3',
-      fileHandle: {
-        id: '3',
-        etag: '29b2cb9c-a0ef-478b-90c8-d848ec9a5610',
-        createdBy: '3350396',
-        createdOn: '2020-11-23T20:39:08.000Z',
-        concreteType: 'org.sagebionetworks.repo.model.file.S3FileHandle',
-        contentType: 'image/png',
-        contentMd5: 'ce467a60d090c434a19ad90bf97142c7',
-        fileName: 'file3.png',
-        contentSize: 168388,
-        storageLocationId: 0,
-      },
-      preSignedURL: 'https://mypresigned.urlishere/3',
-    },
-    {
-      fileHandleId: '4',
-      fileHandle: {
-        id: '4',
-        etag: '29b2cb9c-a0ef-478b-90c8-d848ec9a5610',
-        createdBy: '3350396',
-        createdOn: '2020-11-23T20:39:08.000Z',
-        concreteType: 'org.sagebionetworks.repo.model.file.S3FileHandle',
-        contentType: 'image/png',
-        contentMd5: 'ce467a60d090c434a19ad90bf97142c7',
-        fileName: 'file4.png',
-        contentSize: 168388,
-        storageLocationId: 0,
-      },
-      preSignedURL: 'https://mypresigned.urlishere/4',
     },
   ],
 }
