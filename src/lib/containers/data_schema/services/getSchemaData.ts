@@ -12,7 +12,7 @@ import * as exampleSchema from 'lib/assets/data_schema/example.json'
 
 const key = SUFFIX.scma
 
-export const getSchemaData = async (
+const getSchemaData = async (
   dataUri: string,
   force?: boolean,
 ): Promise<SchemaJson> => {
@@ -42,3 +42,5 @@ export const getSchemaData = async (
     return Promise.resolve(DEFAULT_SCHEMA)
   }
 }
+
+export default getSchemaData

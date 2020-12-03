@@ -7,7 +7,7 @@ import isURL from 'validator/lib/isURL'
 import { dbSet, encode, SUFFIX } from './utils/cache'
 import { SchemaJson } from './types/IDataSchemaTypes'
 import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
-import { getSchemaData } from './services/getSchemaData'
+import getSchemaData from './services/getSchemaData'
 import { replaceContext, replaceData } from './state/DataState'
 
 export default function UploadButton(): ReactElement {
