@@ -1,6 +1,6 @@
 import { VIEW_TYPES } from './../constants'
 
-export interface baseEntity {
+export interface BaseEntity {
   '@id': string
 }
 
@@ -8,21 +8,21 @@ export interface SchemaContext {
   [key: string]: string
 }
 
-export interface SchemaData extends baseEntity {
+export interface SchemaData extends BaseEntity {
   '@type': string[] | string
-  'rdfs:comment'?: string
+  'rdfs:comment'?: string | null
   'rdfs:label': string
-  'rdfs:subClassOf'?: baseEntity | baseEntity[]
+  'rdfs:subClassOf'?: BaseEntity | BaseEntity[]
   'sms:displayName'?: string
   'sms:required'?: string
   'sms:validationRules'?: string[]
-  'sms:requiresDependency'?: baseEntity[]
-  'schema:rangeIncludes'?: baseEntity | baseEntity[]
-  'schema:domainIncludes'?: baseEntity | baseEntity[]
-  'sms:requiresComponent'?: baseEntity | baseEntity[]
+  'sms:requiresDependency'?: BaseEntity[]
+  'schema:rangeIncludes'?: BaseEntity | BaseEntity[]
+  'schema:domainIncludes'?: BaseEntity | BaseEntity[]
+  'sms:requiresComponent'?: BaseEntity | BaseEntity[]
 }
 
-export interface SchemaJson extends baseEntity {
+export interface SchemaJson extends BaseEntity {
   '@context': SchemaContext
   '@graph': SchemaData[]
 }
