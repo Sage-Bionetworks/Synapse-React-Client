@@ -121,6 +121,25 @@ $white: #fff;
 
     .graph-dd {
       font-size: 1rem;
+
+      .graphLoader {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        background: white;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+
+        img {
+          height: 30px;
+          margin-right: 10px;
+        }
+
+        .graphLoaderText {
+          font-size: 1.2rem;
+        }
+      }
     }
 
     @keyframes mouseOnNodeTransition {
