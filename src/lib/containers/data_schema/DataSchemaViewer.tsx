@@ -228,6 +228,7 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
           enableZoomOut={true}
           nodeDistance={1000}
           pullIn={false}
+          animateNodes={false}
         />
       </div>
       <EntityDetailViewer
