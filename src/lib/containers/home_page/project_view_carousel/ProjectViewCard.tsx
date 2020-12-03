@@ -18,7 +18,7 @@ export const ProjectViewCard: React.FunctionComponent<
         domProps.className ?? ''
       }`}
     >
-      <div className={'ProjectViewCard__Image'}>{image}</div>
+      {image ? image : <div className={'ProjectViewCard__ImagePlaceholder'}/>}
       <div>
         <div className="ProjectViewCard__ProjectName">{projectName}</div>
         <div className="ProjectViewCard__ProjectDescription">

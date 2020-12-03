@@ -8,19 +8,21 @@
   display: flex;
   flex-direction: column;
 
-  &__Image {
+  &__ImagePlaceholder {
+    width: 100%;
     height: 25%;
     background: $primary-action-color-300;
   }
 
   &__ProjectName {
-    margin: 20px;
+    margin: 15px 20px 10px;
     font-weight: bold;
     font-size: 16px;
   }
 
   &__ProjectDescription {
-    margin: 20px;
+    margin: 10px 20px;
+    max-height: 20%;
   }
 
   .bootstrap-4-backport > &__ViewProjectButton {
@@ -28,7 +30,9 @@
     margin-left: 20px;
     margin-bottom: 20px;
     margin-top: auto;
-    padding: 10px 25px;
+    padding: 0px 25px;
     font-size: 14px;
+    min-height: 38px;
+    height: 46px;
   }
 }
