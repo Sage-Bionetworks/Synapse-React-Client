@@ -1,5 +1,6 @@
-import React, { ReactElement } from 'react'
+import React, { forwardRef, ReactElement } from 'react'
 import MaterialTable from 'material-table'
+import ArrowDownward from '@material-ui/icons/ArrowDownward'
 import { DataSchemaData } from './types/IDataSchemaTypes'
 import IdLink from './IdLink'
 import ItemList from './ItemList'
@@ -22,6 +23,11 @@ function EntityTable({ list, parent }: EntityTableProps): ReactElement {
   return entityData.length > 0 ? (
     <MaterialTable
       options={tableConfig<RowData>({}, { length: entityData.length })}
+      icons={{
+        SortArrow: forwardRef((props, ref) => (
+          <ArrowDownward {...props} ref={ref} />
+        )),
+      }}
       columns={[
         {
           title: 'ID',
