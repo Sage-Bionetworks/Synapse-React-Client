@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
-import QueryWrapperMenuDemo from './QueryWrapperMenuDemo'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import DataSchemaDemo from './DataSchemaDemo'
 import SearchDemo from './SearchDemo'
@@ -15,7 +14,6 @@ import TemplateComponentDemo from './TemplateComponentDemo'
 import Resources from 'lib/containers/home_page/resources/Resources'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
-import { EvaluationQueueDemo } from './EvaluationQueueDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -35,11 +33,6 @@ const App = ({
     <div>
       <h2>Links to components under development </h2>
       <ul>
-        <li>
-          <Link to={`${match.url}/QueryWrapperMenuDemo`}>
-            QueryWrapperMenuDemo
-          </Link>
-        </li>
         <li>
           <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
         </li>
@@ -89,13 +82,6 @@ const App = ({
           </Link>
         </li>
       </ul>
-
-      <Route
-        exact={true}
-        path={`${match.url}/QueryWrapperMenuDemo`}
-        render={() => <QueryWrapperMenuDemo token={token} rgbIndex={0} />}
-      />
-
       <Route
         exact={true}
         path={`${match.url}/SearchDemo`}
@@ -192,12 +178,6 @@ const App = ({
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />
-
-      <Route
-        exact={true}
-        path={`${match.url}/EvaluationQueueDemo`}
-        component={() => <EvaluationQueueDemo token={token} />}
-      />
     </div>
   )
 }

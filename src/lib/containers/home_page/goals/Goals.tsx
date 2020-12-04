@@ -8,7 +8,7 @@ import {
 } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
 import { SynapseClientError, getFiles } from '../../../utils/SynapseClient'
-import { Error } from '../../Error'
+import { ErrorBanner } from '../../ErrorBanner'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import GoalsMobile from './Goals.Mobile'
@@ -29,7 +29,7 @@ export type GoalsDataProps = {
 }
 
 enum ExpectedColumns {
-  TABLEID = 'TableId',  // Both TableId or CountSql are used to indicate what Table rows to count.
+  TABLEID = 'TableId', // Both TableId or CountSql are used to indicate what Table rows to count.
   COUNT_SQL = 'CountSql', // Code uses CountSql over TableId if defined (if the CountSql column is in the schema and filled in).
   TITLE = 'Title',
   SUMMARY = 'Summary',
@@ -121,7 +121,7 @@ export default function (props: GoalsProps) {
     ExpectedColumns.COUNT_SQL,
     queryResultBundle,
   )
-  
+
   const titleColumnIndex = getFieldIndex(
     ExpectedColumns.TITLE,
     queryResultBundle,
@@ -134,10 +134,11 @@ export default function (props: GoalsProps) {
 
   return (
     <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-      {error && <Error error={error} token={token} />}
+      {error && <ErrorBanner error={error} token={token} />}
       {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
         const values = el.values
-        const tableId = tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
+        const tableId =
+          tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
         let countSql
         if (countSqlColumnIndex > -1 && values[countSqlColumnIndex]) {
           countSql = values[countSqlColumnIndex]

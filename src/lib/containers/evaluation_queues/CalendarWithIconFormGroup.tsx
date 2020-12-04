@@ -1,5 +1,6 @@
 import React from 'react'
-import { Moment } from 'moment'
+import { Moment } from 'moment-timezone'
+import moment from 'moment-timezone'
 import { Form, InputGroup } from 'react-bootstrap'
 import { ReactComponent as CalendarClockIcon } from '../../assets/icons/calendar-clock.svg'
 import Datetime from 'react-datetime'
@@ -35,7 +36,8 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
           value={value}
           utc={utc}
           // using 24-hour time format
-          timeFormat={'HH:mm [UTC]Z'}
+          timeFormat={'HH:mm z'}
+          displayTimeZone={moment.tz.guess()}
           onChange={setterCallback}
           inputProps={{
             disabled: disabled,

@@ -3,7 +3,6 @@ import 'react-app-polyfill/ie11'
 import 'react-app-polyfill/stable'
 import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
-import QueryWrapperMenu from './containers/QueryWrapperMenu'
 import QueryWrapper from './containers/QueryWrapper'
 import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import StackedBarChart from './containers/StackedBarChart'
@@ -34,12 +33,17 @@ import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataT
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import DataSchema from './containers/data_schema'
+import RenderIfInView from './containers/RenderIfInView'
+import TermsAndConditions from './containers/TermsAndConditions'
+import PageProgress from './containers/PageProgress'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
 import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationRoundEditorList } from './containers/evaluation_queues/EvaluationRoundEditorList'
+import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
+import { EvaluationEditor } from './containers/evaluation_queues/EvaluationEditor'
 
 const SynapseComponents = {
   Facets,
@@ -49,7 +53,6 @@ const SynapseComponents = {
   QueryWrapper,
   StackedBarChart,
   SynapseTable,
-  QueryWrapperMenu,
   CardContainerLogic,
   EntityForm,
   UserCard,
@@ -75,7 +78,12 @@ const SynapseComponents = {
   FeaturedDataTabs,
   UserCardListGroups,
   EvaluationRoundEditorList,
+  EvaluationCard,
+  EvaluationEditor,
   AccountLevelBadge,
+  RenderIfInView,
+  TermsAndConditions,
+  PageProgress,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

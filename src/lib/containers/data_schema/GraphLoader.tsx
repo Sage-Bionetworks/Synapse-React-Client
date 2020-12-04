@@ -7,7 +7,7 @@ interface GraphLoaderProps {
 }
 
 export default function GraphLoader({ nodes: nodes }: GraphLoaderProps) {
-  const numNodes = nodes.length - 1 // deduct hiddenRoot node from count.
+  const numNodes = nodes ? nodes.length - 1 : 0 // deduct hiddenRoot node from count.
   const loadingData = numNodes <= 0 || !numNodes ? 'chart' : `${numNodes} nodes`
 
   return (

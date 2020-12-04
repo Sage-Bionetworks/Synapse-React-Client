@@ -76,6 +76,7 @@ import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/Evaluatio
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
+import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
 
 const cookies = new UniversalCookies()
 
@@ -230,13 +231,11 @@ export const doGet = <T>(
 
 export const doDelete = (
   url: string,
-  requestJsonObject: any | undefined = undefined,
   sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
   const options: RequestInit = {
-    body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'sessiontoken',
@@ -250,10 +249,10 @@ export const doDelete = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
 }
 
-export const doPut = (
+export const doPut = <T>(
   url: string,
   requestJsonObject: any,
   sessionToken: string | undefined,
@@ -276,7 +275,7 @@ export const doPut = (
     options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout(usedEndpoint + url, options)
+  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 
 export const putRefreshSessionToken = (sessionToken: string) => {
@@ -852,18 +851,17 @@ export const updateEntity = <T extends Entity>(
   )
 }
 
-export const deleteEntity: GetEntity = <T>(
+export const deleteEntity = (
   sessionToken: string | undefined = undefined,
   entityId: string | number,
 ) => {
   const url = `/repo/v1/entity/${entityId}`
   return doDelete(
     url,
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<T>
+  )
 }
 
 /**
@@ -1588,6 +1586,18 @@ export const submitToEvaluation = (
   )
 }
 
+export const getEvaluationPermissions = (
+  evalId: string,
+  sessionToken: string | undefined,
+) => {
+  return doGet<UserEvaluationPermissions>(
+    `/repo/v1/evaluation/${evalId}/permissions`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Get an evaluation queue
  * https://docs.synapse.org/rest/GET/evaluation/evalId.html
@@ -1596,7 +1606,67 @@ export const getEvaluation = (
   evalId: string,
   sessionToken: string | undefined,
 ): Promise<Evaluation> => {
-  return doGet(
+  if (!evalId) {
+    // we must explicitly handle this because /repo/v1/evaluation
+    // without an evalId is a valid API that returns a different API response
+    return Promise.reject(new Error('evalId is empty'))
+  }
+  return doGet<Evaluation>(
+    `/repo/v1/evaluation/${evalId}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update an existing evaluation queue
+ * https://docs.synapse.org/rest/PUT/evaluation/evalId.html
+ */
+export const updateEvaluation = (
+  evaluation: Evaluation,
+  sessionToken: string | undefined,
+): Promise<Evaluation> => {
+  if (!evaluation.id) {
+    // we must explicitly handle this because /repo/v1/evaluation
+    // without an evalId is a valid API that returns a different API response
+    return Promise.reject(new Error('evaluation does not have an ID'))
+  }
+  return doPut<Evaluation>(
+    `/repo/v1/evaluation/${evaluation.id}`,
+    evaluation,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Create an evaluation queue
+ * https://docs.synapse.org/rest/POST/evaluation.html
+ */
+export const createEvaluation = (
+  evaluation: Evaluation,
+  sessionToken: string | undefined,
+): Promise<Evaluation> => {
+  return doPost<Evaluation>(
+    '/repo/v1/evaluation/',
+    evaluation,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Delete an existing evaluation queue
+ * https://docs.synapse.org/rest/PUT/evaluation/evalId.html
+ */
+export const deleteEvaluation = (
+  evalId: string,
+  sessionToken: string | undefined,
+): Promise<void> => {
+  return doDelete(
     `/repo/v1/evaluation/${evalId}`,
     sessionToken,
     undefined,
@@ -1684,7 +1754,6 @@ export const deleteEvaluationRound = (
 ) => {
   return doDelete(
     `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1891,7 +1960,6 @@ export const deleteFormData = (
 ) => {
   return doDelete(
     `/repo/v1/form/data/${formDataId}`,
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2212,7 +2280,6 @@ export const deleteDownloadListFiles = (
 export const deleteDownloadList = (sessionToken: string | undefined) => {
   return doDelete(
     '/file/v1/download/list',
-    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2297,7 +2364,6 @@ export const deletePersonalAccessToken = (
 ) => {
   return doDelete(
     `/auth/v1/personalAccessToken/${accessTokenId}`,
-    null,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

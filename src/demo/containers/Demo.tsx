@@ -1,10 +1,6 @@
 import * as React from 'react'
 import { SynapseVersion } from '../../lib/utils/synapseTypes/'
 import { SynapseClient } from '../../lib/utils/'
-import QueryWrapperMenu, {
-  MenuConfig,
-  QueryWrapperMenuProps,
-} from '../../lib/containers/QueryWrapperMenu'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from 'lib/containers/StatisticsPlot'
@@ -17,9 +13,6 @@ type DemoState = {
   isLoading: boolean
   showMarkdown: boolean
   version: number
-  tabOne: QueryWrapperMenuProps
-  tabTwo: QueryWrapperMenuProps
-  showTabOne: boolean
   userFormDataSynId?: string
   estimatedDownloadBytesPerSecond?: number
 }
@@ -47,76 +40,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
       showMarkdown: true,
       token: '',
       version: 0,
-      showTabOne: true,
-      tabOne: {
-        unitDescription: 'datum',
-        tableConfiguration: {
-          title: 'title',
-          enableLeftFacetFilter: true,
-        },
-        menuConfig: [
-          {
-            facet: 'dataStatus',
-            sql: 'SELECT studyStatus, dataStatus FROM syn16787123',
-          },
-          {
-            facet: 'projectStatus',
-            sql: 'SELECT * FROM syn16787123',
-          },
-          {
-            facet: 'name',
-            sql: 'SELECT name, grant FROM syn11346063',
-          },
-          {
-            facet: 'grant',
-            sql: 'SELECT name, grant FROM syn11346063 Group by grant',
-          },
-          {
-            facet: 'name',
-            sql:
-              'SELECT name, grant, sex, dataType, consortium FROM syn11346063 WHERE ( ( "consortium" = \'AMP-AD\') )',
-          },
-
-          {
-            facet: 'model',
-            sql: 'SELECT * FROM syn21498718',
-          },
-          {
-            facet: 'metadataType',
-            sql:
-              "SELECT `id`, `metadataType`, `dataType`, `assay`↵  FROM syn11346063↵  WHERE ((`study` LIKE '%BroadAstrom109%') AND (`dataSubtype` = 'metadata'))",
-          },
-        ],
-        rgbIndex: 2,
-      },
-      tabTwo: {
-        tableConfiguration: {
-          title: 'title',
-          showAccessColumn: true,
-        },
-        menuConfig: [
-          {
-            facet: 'assay',
-            sql: 'SELECT * FROM syn21156352',
-          },
-          {
-            facet: 'study',
-            sql:
-              'SELECT study, dataType, assay, id AS file_id, specimenID, individualID, diagnosis, sex, consortium as "Program", grant, species, organ, tissue, cellType, fileFormat FROM syn11346063',
-          },
-          {
-            facet: 'diagnosis',
-            sql:
-              'SELECT id, fundingAgency, assay, diagnosis, dataType FROM syn16858331',
-          },
-          {
-            facet: 'individuals',
-            sql:
-              'SELECT diagnosis, sex, dataType, assay, count(distinct(id)) as "Files", count(distinct(specimenID)) as "Specimens", count(distinct(individualID)) as "Individuals" FROM syn11346063 GROUP BY 1,2,3,4 ORDER BY 1 DESC',
-          },
-        ] as MenuConfig[],
-        rgbIndex: 5,
-      },
     }
     this.getVersion = this.getVersion.bind(this)
     this.onRunDownloadSpeedTest = this.onRunDownloadSpeedTest.bind(this)
@@ -292,48 +215,7 @@ class Demo extends React.Component<DemoProps, DemoState> {
             <hr />
           </div>
         )}
-        <div className="container">
-          <button
-            className="btn btn-default"
-            onClick={() => {
-              this.setState({ showTabOne: !this.state.showTabOne })
-            }}
-          >
-            toggle config for query wrapper menu
-          </button>
-          <QueryWrapperMenu
-            name={'Demo'}
-            token={
-              SynapseClient.IS_OUTSIDE_SYNAPSE_ORG ? token! : this.state.token!
-            }
-            unitDescription={
-              this.state.showTabOne
-                ? this.state.tabOne.unitDescription
-                : this.state.tabTwo.unitDescription
-            }
-            tableConfiguration={
-              this.state.showTabOne
-                ? this.state.tabOne.tableConfiguration
-                : this.state.tabTwo.tableConfiguration
-            }
-            menuConfig={
-              this.state.showTabOne
-                ? this.state.tabOne.menuConfig
-                : this.state.tabTwo.menuConfig
-            }
-            rgbIndex={
-              this.state.showTabOne
-                ? this.state.tabOne.rgbIndex
-                : this.state.tabTwo.rgbIndex
-            }
-            stackedBarChartConfiguration={{
-            }}
-            searchParams={{
-              facet: this.searchParamsProps['facet'],
-              facetValue: this.searchParamsProps['facetValue'],
-            }}
-          />
-        </div>
+
       </div>
     )
   }
