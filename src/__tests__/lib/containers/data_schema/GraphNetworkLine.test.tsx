@@ -1,10 +1,13 @@
-import * as React from 'react'
+import React from 'react'
 import { shallow } from 'enzyme'
 import GraphNetworkLine from 'lib/containers/data_schema/GraphNetworkLine'
 import { VIEW_TYPES } from 'lib/containers/data_schema/constants'
 
 describe('GraphNetworkLine ', () => {
-  let link = {
+  const link = {
+    source: `hiddenRoot`,
+    linkColor: `blue`,
+    target: `childId`,
     viewType: VIEW_TYPES.REQUIRES_COMPONENT,
   }
 

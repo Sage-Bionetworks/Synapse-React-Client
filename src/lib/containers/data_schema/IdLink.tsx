@@ -13,7 +13,6 @@ const toolTipIdPrefix: string = `tooltip-`
 
 function IdLink(props: IdLinkProps): ReactElement {
   const { id } = props
-  console.log()
   return (
     <>
       <ReactTooltip
