@@ -136,8 +136,19 @@ $white: #fff;
           margin-right: 10px;
         }
 
-        .graphLoaderText {
-          font-size: 1.2rem;
+        .graphTextAndBar {
+          .graphLoaderText {
+            font-size: 1.2rem;
+            margin: 0;
+          }
+
+          .barLoader {
+            margin-top: 4px;
+
+            div:first-child {
+              width: 100%;
+            }
+          }
         }
       }
     }
