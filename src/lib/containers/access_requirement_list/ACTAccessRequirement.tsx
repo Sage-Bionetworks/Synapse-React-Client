@@ -17,7 +17,7 @@ export default function ACTAccessRequirementComponent({
   useEffect(() => {
     const getACTAccessData = async () => {
       try {
-        const wikipageRequirement = await SynapseClient.getWikiPageKey(
+        const wikipageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
           token,
           accessRequirement.id,
         )

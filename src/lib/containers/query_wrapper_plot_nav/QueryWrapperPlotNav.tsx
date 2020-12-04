@@ -10,7 +10,7 @@ import {
 import { SynapseConstants } from '../../utils/'
 import { QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 import FilterAndView from './FilterAndView'
 import { TopLevelControlsProps } from './TopLevelControls'
 import TopLevelControls from './TopLevelControls'
@@ -97,21 +97,18 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           hideDownload={hideDownload}
         />
         <SearchV2 {...searchConfiguration} />
-        <Error />
-        <DownloadConfirmation onExportTable={() => setShowExportMetadata(true)}/>
-        <FacetNav
-          facetsToPlot={facetsToPlot}
-          showNotch={true}
+        <ErrorBanner />
+        <DownloadConfirmation
+          onExportTable={() => setShowExportMetadata(true)}
         />
+        <FacetNav facetsToPlot={facetsToPlot} showNotch={true} />
         <FilterAndView
           tableConfiguration={tableConfiguration}
           hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
         />
         {showExportMetadata && (
-          <ModalDownload
-            onClose={() => setShowExportMetadata(false)}
-          />
+          <ModalDownload onClose={() => setShowExportMetadata(false)} />
         )}
       </QueryWrapper>
     </div>

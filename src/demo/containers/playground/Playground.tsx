@@ -13,7 +13,6 @@ import TemplateComponentDemo from './TemplateComponentDemo'
 import Resources from 'lib/containers/home_page/resources/Resources'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
-import { EvaluationQueueDemo } from './EvaluationQueueDemo'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -169,12 +168,6 @@ const App = ({
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />
-
-      <Route
-        exact={true}
-        path={`${match.url}/EvaluationQueueDemo`}
-        component={() => <EvaluationQueueDemo token={token} />}
-      />
     </div>
   )
 }

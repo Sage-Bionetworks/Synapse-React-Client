@@ -4,7 +4,7 @@ import { SynapseClient } from '../../utils'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import { CopyToClipboardInput } from '../CopyToClipboardInput'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { Checkbox } from '../widgets/Checkbox'
 
@@ -137,7 +137,9 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
               </div>
             </form>
             <div className="SRC-center-text">
-              {showErrorMessage && <Error error={errorMessage}></Error>}
+              {showErrorMessage && (
+                <ErrorBanner error={errorMessage}></ErrorBanner>
+              )}
             </div>
           </div>
         )}

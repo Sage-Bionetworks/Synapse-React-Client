@@ -7,7 +7,7 @@ import SynapseImage from './widgets/SynapseImage'
 import SynapsePlot from './widgets/SynapsePlot'
 import SynapseVideo from './widgets/SynapseVideo'
 import { ObjectType } from '../utils/synapseTypes/WikiPageKey'
-import { Error } from '../containers/Error'
+import { ErrorBanner } from './ErrorBanner'
 import { SynapseClientError } from '../utils/SynapseClient'
 
 const TOC_CLASS = {
@@ -719,7 +719,7 @@ export default class MarkdownSynapse extends React.Component<
     const { isLoading, error } = this.state
 
     if (error) {
-      return <Error token={token} error={error} />
+      return <ErrorBanner token={token} error={error} />
     }
     const bookmarks = this.addBookmarks()
     const content = (
