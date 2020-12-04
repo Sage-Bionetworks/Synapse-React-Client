@@ -3,7 +3,7 @@ import { getFieldIndex } from '../../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import React, { useState, useEffect } from 'react'
-import CardCarousel from '../../carousel/CardCarousel'
+import Carousel from '../../Carousel'
 import { ProjectViewCard } from './ProjectViewCard'
 import { ErrorBanner } from '../../ErrorBanner'
 
@@ -50,7 +50,11 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
 
   const [projects, setProjects] = useState<ProjectData[]>([])
   const [error, setError] = useState<Error>()
-  const { queryResultBundle, error: queryError } = useGetQueryResultBundle({
+  const {
+    queryResultBundle,
+    error: queryError,
+    isLoading,
+  } = useGetQueryResultBundle({
     token,
     queryBundleRequest,
   })
@@ -132,7 +136,7 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
   return error ? (
     <ErrorBanner error={error}></ErrorBanner>
   ) : (
-    <CardCarousel>
+    <Carousel isLoading={isLoading}>
       {projects.map(project => {
         return (
           <ProjectViewCard
@@ -145,14 +149,13 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
                 <img
                   src={project.imageUrl}
                   alt={`Logo for ${project.projectName}`}
-                  style={{ maxWidth: '100%' }}
                 />
               ) : undefined
             }
           />
         )
       })}
-    </CardCarousel>
+    </Carousel>
   )
 }
 

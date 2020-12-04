@@ -18,7 +18,7 @@ export const ProjectViewCard: React.FunctionComponent<
         domProps.className ?? ''
       }`}
     >
-      {image ? image : <div className={'ProjectViewCard__ImagePlaceholder'}/>}
+      {image ? image : <div className={'ProjectViewCard__ImagePlaceholder'} />}
       <div>
         <div className="ProjectViewCard__ProjectName">{projectName}</div>
         <div className="ProjectViewCard__ProjectDescription">
@@ -29,7 +29,11 @@ export const ProjectViewCard: React.FunctionComponent<
         variant="primary"
         className="ProjectViewCard__ViewProjectButton"
         onClick={() =>
-          window.open(`https://www.synapse.org/#!Synapse:${synId}`, '_blank')
+          window.open(
+            `https://www.synapse.org/#!Synapse:${synId}`,
+            '_blank',
+            'noopener',
+          )
         }
       >
         View Project

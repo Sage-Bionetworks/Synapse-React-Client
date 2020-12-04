@@ -1,5 +1,5 @@
 import { mount } from 'enzyme'
-import CardCarousel from 'lib/containers/carousel/CardCarousel'
+import Carousel from 'lib/containers/Carousel'
 import { ProjectViewCard } from 'lib/containers/home_page/project_view_carousel/ProjectViewCard'
 import ProjectViewCarousel from 'lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
 import { resolveAllPending } from 'lib/testutils/EnzymeHelpers'
@@ -46,12 +46,12 @@ describe('basic functionality', () => {
 
     await resolveAllPending(wrapper)
 
-    expect(wrapper.find(CardCarousel).length).toEqual(1)
+    expect(wrapper.find(Carousel).length).toEqual(1)
     expect(wrapper.find(ProjectViewCard).length).toBeGreaterThan(0)
 
     // Check that the currently selected card (card 0) contains an image element with the correct src
     expect(
-      wrapper.find('.CardCarousel__SelectedCard img').at(0).prop('src'),
+      wrapper.find('.SRC-Carousel__SelectedCard img').at(0).prop('src'),
     ).toEqual(PRESIGNED_URL)
   })
 })
