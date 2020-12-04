@@ -136,8 +136,19 @@ $white: #fff;
           margin-right: 10px;
         }
 
-        .graphLoaderText {
-          font-size: 1.2rem;
+        .graphTextAndBar {
+          .graphLoaderText {
+            font-size: 1.2rem;
+            margin: 0;
+          }
+
+          .barLoader {
+            margin-top: 4px;
+
+            div:first-child {
+              width: 100%;
+            }
+          }
         }
       }
     }
@@ -182,18 +193,38 @@ $white: #fff;
     .mouseOnNode {
       .shape {
         animation-name: mouseOnNodeTransition;
+        overflow: visible;
       }
       .text-entity {
-        font-size: 0.8em;
+        font-size: 1.2em;
+        overflow: visible;
+
+        span {
+          background: $white;
+          font-weight: 400;
+          padding: 2px 4px;
+          border-radius: 5px;
+          border: 2px solid;
+        }
       }
     }
 
     .mouseOffNode {
       .shape {
         animation-name: mouseOffNodeTransition;
+        overflow: hidden;
       }
       .text-entity {
         font-size: 0.8em;
+        overflow: hidden;
+
+        span {
+          background: unset;
+          font-weight: unset;
+          padding: unset;
+          border-radius: unset;
+          border: none;
+        }
       }
     }
   }

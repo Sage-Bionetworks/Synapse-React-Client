@@ -78,7 +78,7 @@
     "react-datetime": "^3.0.4",
     "react-dom": "16.13.1",
     "react-error-boundary": "^3.0.2",
-    "react-graph-network": "github:generalui/react-graph-network#a8d3577850f9ae180e7c80c1d99a5ebf7862b7ab",
+    "react-graph-network": "github:generalui/react-graph-network#da222712e35f1f2bcff6485e3eb0627e3ad2f81e",
     "react-jsonschema-form": "^1.7.0",
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
