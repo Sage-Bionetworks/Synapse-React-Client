@@ -1,4 +1,4 @@
-import { getSchemaData } from './services/getSchemaData'
+import getSchemaData from './services/getSchemaData'
 import { replaceContext, replaceData } from './state/DataState'
 
 interface DataProviderProps {
