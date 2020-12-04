@@ -1,8 +1,4 @@
-$green: #35bf7d;
-
 .evaluation-round-editor {
-  font-size: 1rem;
-
   .card-body {
     // even though all sides have the same padding,
     // the top looks like it is slightly less padded than the bottom
@@ -24,11 +20,11 @@ $green: #35bf7d;
 
   .round-status {
     .status-in-progress {
-      color: $green;
+      color: $green-affrimative;
     }
     .status-completed {
       svg {
-        color: $green;
+        color: $green-affrimative;
       }
       span {
         color: $gray-deemphasized;
@@ -36,20 +32,6 @@ $green: #35bf7d;
     }
     .status-not-yet-started {
       color: $gray-deemphasized;
-    }
-  }
-
-  label {
-    color: $gray-deemphasized;
-    font-weight: normal;
-    font-size: 1rem;
-  }
-
-  button.evaluation-round-editor-dropdown {
-    padding: 0;
-    &:hover,
-    &:focus {
-      background-color: transparent;
     }
   }
 

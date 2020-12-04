@@ -1,7 +1,7 @@
 import React from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
-import { Error } from '../../Error'
+import { ErrorBanner } from '../../ErrorBanner'
 import { getFieldIndex } from '../goals/Goals'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
 import ResourcesDesktop from './Resources.Desktop'
@@ -61,7 +61,7 @@ export default function Resources(props: ResourcesProps) {
     }) ?? []
   return (
     <div className="Resources">
-      <Error error={error} token={token} />
+      <ErrorBanner error={error} token={token} />
       {showDesktop ? (
         <ResourcesDesktop data={data} token={token} />
       ) : (

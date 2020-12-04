@@ -2,6 +2,7 @@
   //initial bootstrap config based on Synapse design
   $primary: $primary-action-color;
   $secondary: $secondary-action-color;
+  $border-radius: 0.2rem;
 
   @import 'node_modules/bootstrap/scss/bootstrap';
 }

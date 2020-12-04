@@ -1,0 +1,20 @@
+.evaluation-card {
+  .submit-button {
+    margin-top: 1rem;
+  }
+  .status-open {
+    color: $green-affrimative;
+  }
+  .status-closed-or-completed {
+    svg {
+      color: $green-affrimative;
+    }
+    span {
+      color: $gray-deemphasized;
+    }
+  }
+
+  .status-planned {
+    color: $gray-deemphasized;
+  }
+}

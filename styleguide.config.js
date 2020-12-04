@@ -7,6 +7,9 @@ module.exports = {
     tocMode: 'collapse',
     pagePerSection: true,
     skipComponentsWithoutExample: true,
+    styleguideComponents: {
+        Wrapper: path.resolve(__dirname, 'src/lib/containers/RenderIfInView'),
+    },
     sections: [
         {
             name: 'Introduction',
