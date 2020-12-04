@@ -1,26 +1,28 @@
-import * as React from 'react'
-import { shallow } from 'enzyme'
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect'
 import { Provider } from 'hooks-for-redux'
 import DataSchemaViewer from 'lib/containers/data_schema/DataSchemaViewer'
 import DataProvider from 'lib/containers/data_schema/DataProvider'
 
-describe('DataSchemaViewer ', () => {
-  let title: string = `test viewer`
+const title: string = `test viewer`
 
-  it('renders correctly', () => {
-    // DataSchemaViewer needs the redux store.
-    const component = shallow(
-      <Provider>
-        <DataProvider url={``} />
-        <DataSchemaViewer title={title} />
-      </Provider>,
-    )
-    expect(component).toBeDefined()
+test('DataSchemaViewer renders correctly', () => {
+  // DataSchemaViewer needs the redux store.
+  const { rerender } = render(
+    <Provider>
+      <DataProvider url={``} />
+      <DataSchemaViewer title={title} />
+    </Provider>,
+  )
+  expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(title)
 
-    // Needs a passed title.
-    component.setProps({
-      title: undefined,
-    })
-    expect(component).toBeUndefined
-  })
+  // Needs a passed title.
+  rerender(
+    <Provider>
+      <DataProvider url={``} />
+      <DataSchemaViewer title={``} />
+    </Provider>,
+  )
+  expect(screen.queryByText(title)).not.toBeInTheDocument()
 })
