@@ -14,6 +14,7 @@ import { AccessTokenPage } from './containers/personal_access_token/AccessTokenP
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import TermsAndConditions from './containers/TermsAndConditions'
 import PageProgress from './containers/PageProgress'
+import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 
 const SynapseComponents = {
   Login,
@@ -29,6 +30,7 @@ const SynapseComponents = {
   AccountLevelBadge,
   TermsAndConditions,
   PageProgress,
+  ProjectViewCarousel
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient }

@@ -15,6 +15,7 @@
     "url": "https://github.com/Sage-Bionetworks/Synapse-React-Client"
   },
   "dependencies": {
+    "@brainhubeu/react-carousel": "1.19.26",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.4",
     "@fortawesome/free-solid-svg-icons": "^5.3.1",
@@ -110,6 +111,7 @@
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@svgr/rollup": "^5.4.0",
     "@testing-library/react": "^10.4.8",
+    "@types/brainhubeu__react-carousel": "1.15.0",
     "@types/jest": "^24.9.0",
     "@types/node": "^10.12.2",
     "@types/react": "16.9.34",
