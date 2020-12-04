@@ -38,7 +38,7 @@ export default function GraphNetworkNode({
         className={`shape`}
       >
         <div title={nodeLabel} className={`text-entity`}>
-          {nodeLabel}
+          <span style={{ borderColor: `${nodeColor}` }}>{nodeLabel}</span>
         </div>
       </foreignObject>
     </g>
