@@ -45,9 +45,18 @@ const nodes = [
   },
 ]
 
-test('GraphLoader loads and displays text', async () => {
+const singleNode = nodes[0]
+
+test('GraphLoader loads and displays numer of nodes', async () => {
   render(<GraphLoader nodes={nodes} />)
 
   expect(screen.getByAltText('Sage Bionetworks logo')).toBeDefined()
   expect(screen.getByText(`Generating 1 nodes, please wait...`)).toBeDefined()
+})
+
+test('GraphLoader loads and displays text', async () => {
+  render(<GraphLoader nodes={[singleNode]} />)
+
+  expect(screen.getByAltText('Sage Bionetworks logo')).toBeDefined()
+  expect(screen.getByText(`Generating chart, please wait...`)).toBeDefined()
 })
