@@ -44,6 +44,7 @@ import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
 import { Icon } from '../row_renderers/utils'
+import DirectDownload from '../DirectDownload'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -96,6 +97,7 @@ export type SynapseTableProps = {
   visibleColumnCount?: number
   title?: string
   showAccessColumn?: boolean
+  showDownloadColumn?: boolean
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
   enableLeftFacetFilter?: boolean
@@ -443,6 +445,7 @@ export default class SynapseTable extends React.Component<
     const {
       hasMoreData,
       showAccessColumn,
+      showDownloadColumn,
       token,
       isRowSelectionVisible,
     } = this.props
@@ -473,6 +476,8 @@ export default class SynapseTable extends React.Component<
 
     let isShowingAccessColumn: boolean | undefined =
       showAccessColumn && this.state.isFileView
+    let isShowDownloadColumn: boolean | undefined =
+      showDownloadColumn && this.state.isFileView
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div style={{ minHeight: '400px' }} className="SRC-overflowAuto">
@@ -493,6 +498,7 @@ export default class SynapseTable extends React.Component<
                 columnModels,
                 facets,
                 isShowingAccessColumn,
+                isShowDownloadColumn,
                 isRowSelectionVisible,
                 lastQueryRequest,
               )}
@@ -503,6 +509,7 @@ export default class SynapseTable extends React.Component<
               rows,
               headers,
               isShowingAccessColumn,
+              isShowDownloadColumn,
               isRowSelectionVisible,
             )}
           </tbody>
@@ -694,6 +701,7 @@ export default class SynapseTable extends React.Component<
     rows: Row[],
     headers: SelectColumn[],
     isShowingAccessColumn: boolean | undefined,
+    isShowingDownloadColumn: boolean | undefined,
     isRowSelectionVisible: boolean | undefined,
   ) {
     const rowsFormatted: JSX.Element[] = []
@@ -791,20 +799,38 @@ export default class SynapseTable extends React.Component<
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />
         },
       )
+
+      const entityVersionNumber = row.versionNumber?.toString()
+      const rowSynapseId = `syn${row.rowId}`
+      console.log(rowSynapseId)  // Emma TODO to be deleted
+
       // also push the access column value if we are showing user access for individual items (still shown if not logged in)
       if (isShowingAccessColumn) {
-        const rowSynapseId = `syn${row.rowId}`
         rowContent.unshift(
           <td key={rowSynapseId} className="SRC_noBorderTop">
             <HasAccess
               key={rowSynapseId}
               entityId={rowSynapseId}
-              entityVersionNumber={row.versionNumber?.toString()}
+              entityVersionNumber={entityVersionNumber}
               token={token}
             ></HasAccess>
           </td>,
         )
       }
+
+      if (isShowingDownloadColumn) {
+        rowContent.unshift(
+          <td className="SRC_noBorderTop direct-download">
+            <DirectDownload
+              key={"direct-download-"+rowSynapseId}
+              token={token}
+              associatedObjectId={rowSynapseId}
+              entityVersionNumber={entityVersionNumber}
+            ></DirectDownload>
+          </td>
+        )
+      }
+
       if (isRowSelectionVisible && selectedRowIndices) {
         rowContent.unshift(
           <td key={`(${rowIndex},rowSelectColumn)`} className="SRC_noBorderTop">
@@ -854,6 +880,7 @@ export default class SynapseTable extends React.Component<
     columnModels: ColumnModel[],
     facets: FacetColumnResult[],
     isShowingAccessColumn: boolean | undefined,
+    isShowingDownloadColumn: boolean | undefined,
     isRowSelectionVisible: boolean | undefined,
     lastQueryRequest: QueryBundleRequest,
   ) {
@@ -942,6 +969,14 @@ export default class SynapseTable extends React.Component<
             <span style={{ whiteSpace: 'nowrap' }}>Access</span>
           </div>
         </th>,
+      )
+    }
+    // add direct download column if logged in
+    if (isShowingDownloadColumn) {
+      tableColumnHeaderElements.unshift(
+        <th key="downloadColumn">
+          <div className="SRC-centerContent">&nbsp;</div>
+        </th>
       )
     }
     if (isRowSelectionVisible) {

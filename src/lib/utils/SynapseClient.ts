@@ -62,6 +62,7 @@ import {
   FileHandleAssociateType,
   Evaluation,
   EvaluationRound,
+  FileResult,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -1549,6 +1550,42 @@ export const getFileHandleContent = (
     } else {
       reject('File size exceeds max (5MB)')
     }
+  })
+}
+
+export const getFileResult = (
+  fileEntity: FileEntity,
+  sessionToken?: string,
+  includeFileHandles?: boolean,
+  includePreSignedURLs?: boolean,
+  includePreviewPreSignedURLs?: boolean,
+): Promise<FileResult> => {
+
+  return new Promise((resolve, reject) => {
+    const fileHandleAssociationList: FileHandleAssociation[] = [
+      {
+        associateObjectId: fileEntity.id!,
+        associateObjectType: FileHandleAssociateType.FileEntity,
+        fileHandleId: fileEntity.dataFileHandleId,
+      },
+    ]
+    const request: BatchFileRequest = {
+      includeFileHandles: includeFileHandles || false,
+      includePreSignedURLs: includePreSignedURLs || false,
+      includePreviewPreSignedURLs: includePreviewPreSignedURLs || false,
+      requestedFiles: fileHandleAssociationList,
+    }
+    getFiles(request, sessionToken)
+      .then((data: BatchFileResult) => {
+        if (data.requestedFiles.length) {
+          resolve(data.requestedFiles[0])
+        } else {
+          reject(data.requestedFiles[0].failureCode)
+        }
+      })
+      .catch(err => {
+        reject(err)
+      })
   })
 }
 
