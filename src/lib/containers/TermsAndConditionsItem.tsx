@@ -32,7 +32,9 @@ const TermsAndConditionsItem: React.FunctionComponent<TermsAndConditionsItemProp
 
   const handleShowDescLink = (e:React.MouseEvent) => {
     e.preventDefault()
-    setShowDes(!showDesc)
+    if (enabled) {
+      setShowDes(!showDesc)
+    }
   }
 
   const handleCheckboxClick = (e:React.MouseEvent) => {
