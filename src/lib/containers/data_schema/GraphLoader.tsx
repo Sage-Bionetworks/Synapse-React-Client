@@ -4,10 +4,10 @@ export default function GraphLoader() {
   return (
     <div className={`graphLoader`}>
       <img
-        alt={'sage bionetworks logo'}
+        alt={'Sage Bionetworks logo'}
         src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg"
       />
-      <div className={`graphLoaderText`}>Generating chart, please wait...</div>
+      <p className={`graphLoaderText`}>{`Generating chart, please wait...`}</p>
     </div>
   )
 }
