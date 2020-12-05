@@ -1,0 +1,327 @@
+@import './../../style/abstracts/mixins';
+@import './../../style/abstracts/variables';
+
+$disabled: rgba(0, 0, 0, 0.26);
+$white: #fff;
+
+.dialog-upload {
+  .input-group {
+    width: 100%;
+  }
+  .is-invalid {
+    border-color: $red-error;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+      0 0 8px rgba(233, 102, 102, 0.6);
+  }
+
+  .text-error {
+    font-size: 1.4rem;
+    font-style: italic;
+    color: $red-error;
+  }
+
+  .modal-dialog {
+    text-align: left;
+  }
+
+  .text-upload {
+    margin: 24px 40px;
+  }
+
+  .uploadPreview {
+    display: block;
+    padding-top: 40px;
+  }
+
+  .button-cancel {
+    font-size: 1.4rem;
+  }
+}
+
+.DataSchemaViewerWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-top: 42px;
+  .h2 {
+    display: inline-block;
+    font-size: 3rem;
+    margin: 0;
+  }
+
+  .tools-dd {
+    display: flex;
+    flex: 1;
+    align-items: center;
+  }
+
+  .button-upload {
+    font-size: 26px;
+    margin-left: 20px;
+    padding: 2px 6px;
+    height: 36px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .select-viewType {
+    margin-left: 20px;
+  }
+
+  .search-entity {
+    margin-left: auto;
+    height: 34px;
+    display: flex;
+    align-items: stretch;
+    .btn {
+      border-radius: 0 4px 4px 0;
+    }
+  }
+
+  #values-entity-search-label {
+    position: relative;
+  }
+
+  .graphCanvasContainer {
+    background-color: $white;
+    height: 60vh;
+    width: 100%;
+    margin-top: 42px;
+    border-radius: 10px;
+    border: 2px solid $primary-action-color;
+    cursor: grab;
+    position: relative;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &.fullscreen {
+      position: absolute;
+      margin-top: 0;
+      border: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .fullscreenToggleButton {
+      position: absolute;
+      right: 0;
+      z-index: 2;
+
+      &.fullscreen {
+        right: 0;
+        left: unset;
+      }
+    }
+
+    .graph-dd {
+      font-size: 1rem;
+
+      .graphLoader {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        background: white;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+
+        img {
+          height: 30px;
+          margin-right: 10px;
+        }
+
+        .graphTextAndBar {
+          .graphLoaderText {
+            font-size: 1.2rem;
+            margin: 0;
+          }
+
+          .barLoader {
+            margin-top: 4px;
+
+            div:first-child {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+
+    @keyframes mouseOnNodeTransition {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.5);
+      }
+    }
+
+    @keyframes mouseOffNodeTransition {
+      from {
+        transform: scale(1.5);
+      }
+      to {
+        transform: scale(1);
+      }
+    }
+
+    .shape {
+      cursor: pointer;
+      animation-duration: 0.5s;
+      animation-fill-mode: forwards;
+    }
+    .text-entity {
+      cursor: pointer;
+      transition: font-size 0.5s ease;
+      text-align: center;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      word-wrap: break-word;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+    }
+
+    .mouseOnNode {
+      .shape {
+        animation-name: mouseOnNodeTransition;
+        overflow: visible;
+      }
+      .text-entity {
+        font-size: 1.2em;
+        overflow: visible;
+
+        span {
+          background: $white;
+          font-weight: 400;
+          padding: 2px 4px;
+          border-radius: 5px;
+          border: 2px solid;
+        }
+      }
+    }
+
+    .mouseOffNode {
+      .shape {
+        animation-name: mouseOffNodeTransition;
+        overflow: hidden;
+      }
+      .text-entity {
+        font-size: 0.8em;
+        overflow: hidden;
+
+        span {
+          background: unset;
+          font-weight: unset;
+          padding: unset;
+          border-radius: unset;
+          border: none;
+        }
+      }
+    }
+  }
+}
+
+.modal-entityDetail {
+  text-align: center;
+}
+
+.entityDetail {
+  display: inline-block;
+  max-width: 100vw;
+  width: auto;
+  text-align: left;
+  .modal-content {
+    @include calc(max-height, '98vh - 30px');
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-header {
+    height: auto;
+  }
+  .entityToolTip {
+    max-width: 90vw;
+  }
+  .h2 {
+    font-size: 3rem;
+    border-radius: 6px;
+    border: 2px solid $border-color-gray;
+    display: inline-block;
+    padding: 10px 20px;
+    .id-entity {
+      display: block;
+      padding-top: 10px;
+      font-style: italic;
+      span {
+        padding-right: 6px;
+      }
+    }
+  }
+  .h3 {
+    font-size: 2.4rem;
+    display: inline-block;
+  }
+  .required {
+    color: $red-error;
+  }
+  span.required {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 4.2rem;
+    padding: 20px 0 0 10px;
+  }
+  .content-entityDetail {
+    flex: 1;
+    height: auto;
+    overflow-y: auto;
+    max-width: 100vw;
+    font-size: 1.4rem;
+  }
+  [class|='entity'] {
+    font-size: 1.6rem;
+  }
+  .entity-description {
+    font-size: 1.8rem;
+  }
+
+  th.MuiTableCell-head {
+    font-size: 1.4rem;
+    font-weight: 900;
+  }
+
+  .itemList-dd {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .btn-more,
+  .btn-all {
+    display: block;
+    margin-top: 8px;
+  }
+}
+
+@media only screen and (max-width: 840px) {
+  .DataSchemaViewerWrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    .tools-dd {
+      flex-direction: column;
+      align-items: flex-start;
+      .button-upload {
+        margin: 10px 0;
+      }
+      .select-viewType {
+        margin: 0;
+      }
+    }
+  }
+}

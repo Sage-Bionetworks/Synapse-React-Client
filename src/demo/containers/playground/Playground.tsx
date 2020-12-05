@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
+import DataSchemaDemo from './DataSchemaDemo'
 import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
@@ -39,6 +40,9 @@ const App = ({
           <Link to={`${match.url}/CardContainerLogicDemo`}>
             CardContainerLogicDemo
           </Link>
+        </li>
+        <li>
+          <Link to={`${match.url}/DataSchemaDemo`}>DataSchemaDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/FormServicesIntegrationDemo`}>
@@ -88,6 +92,12 @@ const App = ({
         exact={true}
         path={`${match.url}/CardContainerLogicDemo`}
         component={CardContainerLogicDemo}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/DataSchema`}
+        component={() => <DataSchemaDemo />}
       />
 
       <Route

@@ -32,6 +32,7 @@ import UserCardListRotate from './containers/UserCardListRotate'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
+import DataSchema from './containers/data_schema'
 import RenderIfInView from './containers/RenderIfInView'
 import TermsAndConditions from './containers/TermsAndConditions'
 import PageProgress from './containers/PageProgress'
@@ -48,6 +49,7 @@ const SynapseComponents = {
   Facets,
   Login,
   CardContainer,
+  DataSchema,
   QueryWrapper,
   StackedBarChart,
   SynapseTable,
