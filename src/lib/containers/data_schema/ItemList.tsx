@@ -26,17 +26,19 @@ function ItemList({ list, parent }: ItemListProps): ReactElement {
       <ul className={'itemList-dd'}>{items.slice(0, listLimit)}</ul>
       {listLimit < listLength && (
         <>
-          <Button
-            className={`btn-more`}
-            onClick={() => setListLimit(listLimit + initialLimit)}
-            title={`Show ${Math.min(
+          {listLength - listLimit > initialLimit && (
+            <Button
+              className={`btn-more`}
+              onClick={() => setListLimit(listLimit + initialLimit)}
+              title={`Show ${Math.min(
+                listLength - listLimit,
+                initialLimit,
+              )} more (${listLength} total)`}
+            >{`Show ${Math.min(
               listLength - listLimit,
               initialLimit,
-            )} more (${listLength} total)`}
-          >{`Show ${Math.min(
-            listLength - listLimit,
-            initialLimit,
-          )} more`}</Button>
+            )} more`}</Button>
+          )}
           <Button
             className={`btn-all`}
             onClick={() => setListLimit(listLength)}
