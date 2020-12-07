@@ -1,12 +1,14 @@
 import React from 'react'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { Provider } from 'hooks-for-redux'
+import DataProvider from 'lib/containers/data_schema/DataProvider'
 import EntitySearch from 'lib/containers/data_schema/EntitySearch'
 
 test(`EntitySearch renders`, () => {
   render(
     <Provider>
+      <DataProvider url={``} />
       <EntitySearch />
     </Provider>,
   )
@@ -17,6 +19,7 @@ test(`EntitySearch renders`, () => {
 test(`EntitySearch has a text input`, () => {
   render(
     <Provider>
+      <DataProvider url={``} />
       <EntitySearch />
     </Provider>,
   )
