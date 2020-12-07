@@ -1,6 +1,9 @@
 import React, { ReactElement, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import IdLink from './IdLink'
+import getTestIDs from './utils/getTestIds'
+
+export const TEST_IDS = getTestIDs()
 
 interface ItemListProps {
   list?: string[]
@@ -23,12 +26,15 @@ function ItemList({ list, parent }: ItemListProps): ReactElement {
 
   return items.length > 0 ? (
     <>
-      <ul className={'itemList-dd'}>{items.slice(0, listLimit)}</ul>
+      <ul className={'itemList-dd'} data-testid={TEST_IDS.list}>
+        {items.slice(0, listLimit)}
+      </ul>
       {listLimit < listLength && (
         <>
           {listLength - listLimit > initialLimit && (
             <Button
               className={`btn-more`}
+              data-testid={TEST_IDS.viewMore}
               onClick={() => setListLimit(listLimit + initialLimit)}
               title={`Show ${Math.min(
                 listLength - listLimit,
@@ -41,6 +47,7 @@ function ItemList({ list, parent }: ItemListProps): ReactElement {
           )}
           <Button
             className={`btn-all`}
+            data-testid={TEST_IDS.viewAll}
             onClick={() => setListLimit(listLength)}
             title={`Show all ${listLength}`}
           >{`Show all ${listLength}`}</Button>
