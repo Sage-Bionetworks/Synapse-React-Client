@@ -9,6 +9,9 @@ import { SchemaJson } from './types/IDataSchemaTypes'
 import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
 import getSchemaData from './services/getSchemaData'
 import { replaceContext, replaceData } from './state/DataState'
+import getTestIDs from './utils/getTestIds'
+
+export const TEST_IDS = getTestIDs()
 
 export default function UploadButton(): ReactElement {
   const [open, setOpen] = useState(false)
@@ -21,12 +24,14 @@ export default function UploadButton(): ReactElement {
       <Button
         aria-label={`Upload Schema File`}
         className={`button-upload`}
+        data-testid={TEST_IDS.button}
         onClick={() => setOpen(true)}
       >
         <FontAwesomeIcon icon={faFileUpload} />
       </Button>
       <Modal
         animation={false}
+        data-testid={TEST_IDS.modal}
         show={open}
         onHide={() => setOpen(false)}
         aria-labelledby={`title-dialog-upload`}
@@ -35,6 +40,7 @@ export default function UploadButton(): ReactElement {
         <Modal.Header closeButton>
           <Modal.Title
             className={`h1`}
+            data-testid={TEST_IDS.title}
             id={`title-dialog-upload`}
           >{`Upload a schema file`}</Modal.Title>
         </Modal.Header>
@@ -85,6 +91,7 @@ export default function UploadButton(): ReactElement {
         <Modal.Footer>
           <Button
             className={`button-cancelUpload`}
+            data-testid={TEST_IDS.cancelButton}
             onClick={() => {
               console.log(`upload cancelled`)
               setOpen(false)
@@ -96,6 +103,7 @@ export default function UploadButton(): ReactElement {
           </Button>
           <Button
             className={`button-submitUpload`}
+            data-testid={TEST_IDS.submitButton}
             disabled={fileObjects.length > 0 || url ? false : true}
             onClick={submitFile}
             variant={`primary`}
