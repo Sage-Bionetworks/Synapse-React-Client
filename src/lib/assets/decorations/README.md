@@ -1,1 +1,0 @@
-TODO: Assets in this file should be moved to the static.synapse.org S3 bucket. Once added, references to these images should be replaced with the S3 URLs, and the images should be removed from this repository.

@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
-import { ReactComponent as HomepageGraphic } from '../assets/decorations/homepage-composite.svg'
-import { ReactComponent as OrganizeResearchGraphic } from '../assets/decorations/explore-research.svg'
-import { ReactComponent as GetCreditGraphic } from '../assets/decorations/certified-microscope.svg'
-import { ReactComponent as CollaborateGraphic } from '../assets/decorations/collaborate.svg'
-import { ReactComponent as DataSharingGraphic } from '../assets/decorations/data-justice.svg'
 import RLogo from '../assets/icons/RLogo'
 import Python from '../assets/icons/Python'
 import Terminal from '../assets/icons/Terminal'
@@ -73,7 +68,11 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               </span>
             </div>
           </div>
-          <HomepageGraphic className="HeroImage" />
+          <img
+            src="https://s3.amazonaws.com/static.synapse.org/images/homepage-composite.svg"
+            className="HeroImage"
+            alt=""
+          />
           <div className="SignUpButtonContainer">
             {token ? (
               <>
@@ -108,7 +107,11 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="FlexContainerReverse">
-          <OrganizeResearchGraphic className="SectionGraphic" />
+          <img
+            src="https://s3.amazonaws.com/static.synapse.org/images/explore-research.svg"
+            className="SectionGraphic"
+            alt=""
+          />
           <div className="SectionTextFlexContainer">
             <h2>Organize Your Digital Research Assets</h2>
             <div>
@@ -161,7 +164,11 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       </div>
       <div className="SynapseHomepage__Section OffWhiteBackground">
         <div className="FlexContainer">
-          <GetCreditGraphic className="SectionGraphic" />
+          <img
+            src="https://s3.amazonaws.com/static.synapse.org/images/certified-microscope.svg"
+            className="SectionGraphic"
+            alt=""
+          />
           <div className="SectionTextFlexContainer">
             <h2>Get Credit For Your Research</h2>
             <div>
@@ -190,7 +197,11 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="FlexContainerReverse">
-          <CollaborateGraphic className="SectionGraphic" />
+          <img
+            src="https://s3.amazonaws.com/static.synapse.org/images/collaborate.svg"
+            className="SectionGraphic"
+            alt=""
+          />
           <div className="SectionTextFlexContainer">
             <h2>Collaborate</h2>
             <div>
@@ -220,7 +231,11 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       </div>
       <div className="SynapseHomepage__Section OffWhiteBackground">
         <div className="FlexContainer">
-          <DataSharingGraphic className="SectionGraphic" />
+          <img
+            src="https://s3.amazonaws.com/static.synapse.org/images/data-justice.svg"
+            className="SectionGraphic"
+            alt=""
+          />
           <div className="SectionTextFlexContainer">
             <h2>Our Data Sharing Principles</h2>
             <div>
