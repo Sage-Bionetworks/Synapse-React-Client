@@ -12,13 +12,14 @@ import {
 } from '../../utils/SynapseClient'
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 
 export type EvaluationRoundEditorListProps = {
-  //session token to make authenticated calls
+  /** session token to make authenticated API calls */
   sessionToken: string
+  /** id of the Evaluation containing EvaluationRounds to edit*/
   evaluationId: string
-  //If true, dates for start/end are displayed in UTC instead of local time
+  /** If true, dates for start/end are displayed in UTC instead of local time*/
   utc: boolean
 }
 
@@ -60,11 +61,14 @@ const fetchEvaluationList = (
   getEvaluationRounds(undefined)
 }
 
+/**
+ * Edits EvaluationsRounds for an Evaluation.
+ */
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
   sessionToken,
   evaluationId,
   utc,
-}) => {
+}: EvaluationRoundEditorListProps) => {
   const [error, setError] = useState<string | SynapseClientError | undefined>()
 
   const {
@@ -91,7 +95,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   )
 
   if (error) {
-    return <Error error={error} token={sessionToken} />
+    return <ErrorBanner error={error} token={sessionToken} />
   }
 
   return (
@@ -113,7 +117,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
 
       <div>
         <Button
-          className="add-round-button SRC-primary-background-color border-0"
+          className="add-round-button"
           variant="primary"
           onClick={() => {
             appendToEvaluationRoundInputList({

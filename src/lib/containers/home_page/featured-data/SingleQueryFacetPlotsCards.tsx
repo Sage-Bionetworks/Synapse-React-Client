@@ -1,11 +1,9 @@
 import * as React from 'react'
 import QueryWrapper from '../../QueryWrapper'
-import {
-  parseEntityIdFromSqlStatement,
-} from '../../../utils/functions/sqlFunctions'
+import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../../utils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
-import { Error } from '../../Error'
+import { ErrorBanner } from '../../ErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
 
 export type SingleQueryFacetPlotsCardsProps = {
@@ -13,9 +11,9 @@ export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
   facetAliases?: {}
-  sql?: string  
+  sql?: string
 }
-export function getQueryRequest(sql: string):QueryBundleRequest {
+export function getQueryRequest(sql: string): QueryBundleRequest {
   const entityId = parseEntityIdFromSqlStatement(sql)
   return {
     entityId,
@@ -25,31 +23,24 @@ export function getQueryRequest(sql: string):QueryBundleRequest {
       SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    query: {      
+    query: {
       sql,
       offset: 0,
       limit: 1,
-    }, 
+    },
   }
 }
 const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsCardsProps> = props => {
-  const {
-    sql,
-    facetsToPlot,
-    rgbIndex,  
-    token,
-    ...rest
-  } = props
+  const { sql, facetsToPlot, rgbIndex, token, ...rest } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
   return (
     <div className="SingleQueryFacetPlotsCards">
       <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
-        <Error />
+        <ErrorBanner />
         {facetsToPlot?.map(facetName => {
-          return <FacetPlotsCard
-            facetsToPlot={[facetName]}
-            rgbIndex={rgbIndex}          
-          />
+          return (
+            <FacetPlotsCard facetsToPlot={[facetName]} rgbIndex={rgbIndex} />
+          )
         })}
       </QueryWrapper>
     </div>

@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { shallow } from 'enzyme'
 import GraphNetworkNode from 'lib/containers/data_schema/GraphNetworkNode'
 import { VIEW_TYPES } from 'lib/containers/data_schema/constants'

@@ -12,8 +12,45 @@
     }
   }
 
+  label {
+    color: $gray-deemphasized;
+    font-weight: normal;
+  }
+
   // disabled input boxes should be "flat"
-  input:disabled {
+  input:disabled,
+  input:read-only {
     box-shadow: none;
+    cursor: text;
+  }
+
+  // change styling of dropdowns
+  %dropdown-active-state {
+    background: $primary-action-color;
+    color: white;
+  }
+  .show button.dropdown-toggle {
+    @extend %dropdown-active-state;
+  }
+  button.dropdown-toggle:hover {
+    @extend %dropdown-active-state;
+  }
+  .dropdown-menu {
+    a.dropdown-item:hover:not(.disabled) {
+      background: $primary-action-color;
+      color: white !important;
+      text-decoration: none;
+    }
+    a.dropdown-item:hover:not(.disabled) * {
+      background: $primary-action-color;
+      color: white !important;
+      text-decoration: none;
+    }
+  }
+
+  //removes shadow surrounding buttons and anchors when they are clicked
+  .btn:focus,
+  a:focus {
+    box-shadow: none !important;
   }
 }
