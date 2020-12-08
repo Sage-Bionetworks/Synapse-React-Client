@@ -1,0 +1,238 @@
+.SynapseHomepage {
+  color: #515359;
+  &__Section {
+    &__Centered {
+      text-align: center;
+      margin: auto;
+      max-width: 1400px;
+
+      p {
+        text-align: center;
+      }
+    }
+  }
+  .PrimaryBackground {
+    background: #2b688f;
+  }
+
+  .WhiteBackground {
+    background: #ffffff;
+  }
+
+  .OffWhiteBackground {
+    background: rgba(22, 75, 110, 0.05);
+  }
+
+  .SignUpButtonContainer {
+    display: flex;
+    flex-direction: column;
+
+    .btn {
+      width: 333px;
+      font-weight: bold;
+      margin-top: 13px;
+      min-width: fit-content;
+    }
+  }
+
+  .HeroContainer {
+    margin: auto;
+    max-width: 1400px;
+  }
+
+  .SectionGraphic {
+    max-height: 270px;
+    max-width: 450px;
+    flex-shrink: 1;
+  }
+
+  @media (max-width: 750px) {
+    &__Section {
+      padding: 30px 40px;
+    }
+
+    &__Section > .FlexContainer,
+    .FlexContainerReverse {
+      flex-direction: column;
+      .btn {
+        margin-top: 15px;
+        display: block;
+      }
+    }
+    h2 {
+      margin-top: 25px;
+    }
+    .SectionGraphic {
+      display: block;
+      margin: auto;
+    }
+  }
+
+  @media (min-width: 751px) {
+    &__Section {
+      padding: 50px 60px;
+    }
+
+    &__Section > .FlexContainer,
+    .FlexContainerReverse {
+      .btn {
+        min-width: fit-content;
+        width: fit-content;
+        padding-left: 20px;
+        padding-right: 20px;
+        margin-top: 35px;
+      }
+    }
+
+    &__Section > .FlexContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin: auto;
+      max-width: 1400px;
+
+      .SectionGraphic {
+        margin-right: 30px;
+        align-self: center;
+      }
+    }
+
+    &__Section > .FlexContainerReverse {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      margin: auto;
+      max-width: 1400px;
+      .SectionGraphic {
+        margin-left: 30px;
+        align-self: center;
+      }
+    }
+  }
+  @media (min-width: 1101px) {
+    .HeroContainer {
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto;
+
+      .HeroImage {
+        width: 700px;
+        margin-left: 30px;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 1;
+        grid-row-end: 3;
+      }
+
+      .Headline {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 1;
+        grid-row-end: 2;
+
+        display: flex;
+        flex-direction: column;
+      }
+
+      .ButtonContainer {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 2;
+        grid-row-end: 3;
+      }
+    }
+  }
+  @media (max-width: 1100px) {
+    .HeroImage {
+      max-height: 250px;
+      max-width: 100%;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+  }
+
+  .Headline-Strong {
+    font-family: Lato;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 34px;
+    color: #ffffff;
+  }
+
+  .Headline-Light {
+    font-family: Lato;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 34px;
+    color: #ffffff;
+  }
+
+  .SectionTextFlexContainer {
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+  }
+
+  h2 {
+    line-height: 28.8px;
+    font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+
+  h3 {
+    line-height: 21px;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 3px;
+    margin-top: 10px;
+  }
+
+  .SectionBody {
+    line-height: 21px;
+    font-weight: 400;
+    font-size: 14px;
+    margin-bottom: 3px;
+    margin-top: 10px;
+  }
+
+  .ClientFlexContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-grow: 1;
+    flex-shrink: 0;
+    max-width: 550px;
+    height: unset;
+
+    .ClientFlexItem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px;
+      color: unset;
+
+      img,
+      svg {
+        height: 54px;
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  .PartnerFlexContainer {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-content: center;
+    .PartnerFlexItem {
+      margin: 0 auto;
+      justify-content: space-around;
+      align-self: center;
+      img {
+        max-height: 100px;
+        max-width: 200px;
+        margin: 15px;
+      }
+    }
+  }
+}
