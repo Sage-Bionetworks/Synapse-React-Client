@@ -4,13 +4,15 @@ import { GraphNodeData } from './types/IDataSchemaTypes'
 
 interface GraphNetworkNodeProps {
   node: GraphNodeData
+  nodeRadius: number
 }
 
 export default function GraphNetworkNode({
   node: { id, label, type, onNodeClick, nodeColor },
+  nodeRadius,
 }: GraphNetworkNodeProps) {
   const [hoverClass, setHoverClass] = useState('mouseOffNode')
-  const radius = 30
+  const radius = nodeRadius
   const isPropertyType = type.includes('rdf:Property')
   const nodeLabel = unCamelCase(label)
 

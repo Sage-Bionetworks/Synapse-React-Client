@@ -228,7 +228,9 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
           enableDrag={true}
           zoomDepth={10}
           enableZoomOut={true}
-          nodeDistance={1000}
+          nodeDistance={500}
+          collisionRadius={50}
+          nodeRadius={30}
           pullIn={false}
           animateNodes={false}
         />
