@@ -29,29 +29,35 @@ function ItemList({ list, parent }: ItemListProps): ReactElement {
       <ul className={'itemList-dd'} data-testid={TEST_IDS.list}>
         {items.slice(0, listLimit)}
       </ul>
+      {listLength - listLimit > initialLimit && (
+        <Button
+          className={`btn-more`}
+          data-testid={TEST_IDS.viewMore}
+          onClick={() => setListLimit(listLimit + initialLimit)}
+          title={`Show ${Math.min(
+            listLength - listLimit,
+            initialLimit,
+          )} more (${listLength} total)`}
+        >{`Show ${Math.min(
+          listLength - listLimit,
+          initialLimit,
+        )} more`}</Button>
+      )}
+      {listLimit > initialLimit && (
+        <Button
+          className={`btn-less`}
+          data-testid={TEST_IDS.viewLess}
+          onClick={() => setListLimit(initialLimit)}
+          title={`Show less`}
+        >{`Show less`}</Button>
+      )}
       {listLimit < listLength && (
-        <>
-          {listLength - listLimit > initialLimit && (
-            <Button
-              className={`btn-more`}
-              data-testid={TEST_IDS.viewMore}
-              onClick={() => setListLimit(listLimit + initialLimit)}
-              title={`Show ${Math.min(
-                listLength - listLimit,
-                initialLimit,
-              )} more (${listLength} total)`}
-            >{`Show ${Math.min(
-              listLength - listLimit,
-              initialLimit,
-            )} more`}</Button>
-          )}
-          <Button
-            className={`btn-all`}
-            data-testid={TEST_IDS.viewAll}
-            onClick={() => setListLimit(listLength)}
-            title={`Show all ${listLength}`}
-          >{`Show all ${listLength}`}</Button>
-        </>
+        <Button
+          className={`btn-all`}
+          data-testid={TEST_IDS.viewAll}
+          onClick={() => setListLimit(listLength)}
+          title={`Show all ${listLength}`}
+        >{`Show all ${listLength}`}</Button>
       )}
     </>
   ) : (
