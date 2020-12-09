@@ -11,6 +11,11 @@
       }
     }
   }
+
+  .WhiteText {
+    color: #ffffff;
+  }
+
   .PrimaryBackground {
     background: #2b688f;
   }
@@ -52,11 +57,13 @@
     }
 
     &__Section > .FlexContainer,
-    .FlexContainerReverse {
+    .FlexContainerReverse,
+    .SignUpButtonContainer {
       flex-direction: column;
       .btn {
         margin-top: 15px;
         display: block;
+        width: unset;
       }
     }
     h2 {
@@ -65,6 +72,10 @@
     .SectionGraphic {
       display: block;
       margin: auto;
+    }
+
+    &__MarginAutoDesktop {
+      margin: unset;
     }
   }
 
@@ -108,6 +119,10 @@
         align-self: center;
       }
     }
+
+    &__MarginAutoDesktop {
+      margin: auto;
+    }
   }
   @media (min-width: 1101px) {
     .HeroContainer {
@@ -142,7 +157,9 @@
       }
     }
   }
+
   @media (max-width: 1100px) {
+    // No grid for the HeroContainer at <= 1100px
     .HeroImage {
       max-height: 250px;
       max-width: 100%;
@@ -156,7 +173,6 @@
     font-weight: 700;
     font-size: 24px;
     line-height: 34px;
-    color: #ffffff;
   }
 
   .Headline-Light {
@@ -164,7 +180,6 @@
     font-weight: 300;
     font-size: 24px;
     line-height: 34px;
-    color: #ffffff;
   }
 
   .SectionTextFlexContainer {
@@ -218,6 +233,11 @@
         margin-bottom: 8px;
       }
     }
+  }
+
+  &__FlexColumn {
+    display: flex;
+    flex-direction: column;
   }
 
   .PartnerFlexContainer {

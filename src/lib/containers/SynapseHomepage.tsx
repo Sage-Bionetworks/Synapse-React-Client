@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Button } from 'react-bootstrap'
 import RLogo from '../assets/icons/RLogo'
 import Python from '../assets/icons/Python'
@@ -9,14 +9,15 @@ import {
   getEndpoint,
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
-import { SynapseClient } from '../utils'
 
 export type SynapseHomepageProps = {
   token?: string
+  projectViewId: string
 }
 
 export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
   token,
+  projectViewId,
 }) => {
   const LOGIN_LINK = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
@@ -25,30 +26,16 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}#!RegisterAccount:0`
 
-  // To update the carousel component, create a new version in the view. Then update it here.
-  const PROJECT_VIEW_ENTITY_ID = 'syn23593547.1'
-
-  const [dashboardLink, setDashboardLink] = useState('')
-
-  useEffect(() => {
-    const getDashboardLink = async () => {
-      if (token) {
-        const userProfile = await SynapseClient.getUserProfile(token)
-        setDashboardLink(
-          `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!Profile:${
-            userProfile.ownerId
-          }/projects`,
-        )
-      }
-    }
-    getDashboardLink()
-  }, [token])
+  // 'v' will resolve to the user's profile ID
+  const DASHBOARD_LINK = `${getEndpoint(
+    BackendDestinationEnum.PORTAL_ENDPOINT,
+  )}#!Profile:v/projects`
 
   return (
     <div className="bootstrap-4-backport SynapseHomepage">
       <div className="SynapseHomepage__Section PrimaryBackground">
         <div className="HeroContainer">
-          <div className="Headline">
+          <div className="Headline WhiteText">
             <div>
               <span className="Headline-Strong">Organize</span>
               <span className="Headline-Light">
@@ -76,7 +63,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
           <div className="SignUpButtonContainer">
             {token ? (
               <>
-                <Button href={dashboardLink} variant="light">
+                <Button href={DASHBOARD_LINK} variant="light">
                   View Your Dashboard
                 </Button>
                 <Button
@@ -155,7 +142,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </div>
             <Button
               variant="primary"
-              href={token ? dashboardLink : REGISTRATION_LINK}
+              href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
               Get Started Now
             </Button>
@@ -188,7 +175,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </div>
             <Button
               variant="primary"
-              href={token ? dashboardLink : REGISTRATION_LINK}
+              href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
               Get Started Now
             </Button>
@@ -222,7 +209,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </div>
             <Button
               variant="primary"
-              href={token ? dashboardLink : REGISTRATION_LINK}
+              href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
               Get Started Now
             </Button>
@@ -243,7 +230,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 Synapse operates under a complete governance process that
                 includes well-documented Terms and Conditions of Use, guidelines
                 and operating procedures, privacy enhancing technologies, as
-                well as the right of audit and external reviews.{' '}
+                well as the right of audit and external reviews.
               </p>
             </div>
             <Button
@@ -260,7 +247,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </Button>
           </div>
         </div>
-      </div>{' '}
+      </div>
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="FlexContainerReverse">
           <div className="ClientFlexContainer SectionGraphic">
@@ -323,14 +310,14 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               Learn More About Synapse APIs
             </Button>
           </div>
-        </div>{' '}
-      </div>{' '}
+        </div>
+      </div>
       <div className="SynapseHomepage__Section OffWhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
           <h2>Synapse In Action</h2>
-          <ProjectViewCarousel entityId={PROJECT_VIEW_ENTITY_ID} />
+          <ProjectViewCarousel entityId={projectViewId} />
         </div>
-      </div>{' '}
+      </div>
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
           <h2>Our Partners</h2>
@@ -430,46 +417,37 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
         </div>
       </div>
       <div className="SynapseHomepage__Section PrimaryBackground">
-        <div className="SynapseHomepage__Section__Centered">
-          <div
-            style={{
-              margin: 'auto',
-              maxWidth: '1400px',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <h2 style={{ color: '#fff' }}>Sign up for Synapse today</h2>
-            <div className="SignUpButtonContainer" style={{ margin: 'auto' }}>
-              {token ? (
-                <>
-                  <Button href={dashboardLink} variant="light">
-                    View Your Dashboard
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      window.open(
-                        'https://docs.synapse.org/articles/getting_started.html',
-                        '_blank',
-                        'noopener',
-                      )
-                    }
-                    variant="primary-900"
-                  >
-                    Get Help With Synapse
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button href={LOGIN_LINK} variant="light">
-                    Log in to Synapse
-                  </Button>
-                  <Button href={REGISTRATION_LINK} variant="primary-900">
-                    Register Now
-                  </Button>
-                </>
-              )}
-            </div>
+        <div className="SynapseHomepage__Section__Centered SynapseHomepage__FlexColumn">
+          <h2 className="WhiteText">Sign up for Synapse today</h2>
+          <div className="SignUpButtonContainer SynapseHomepage__MarginAutoDesktop">
+            {token ? (
+              <>
+                <Button href={DASHBOARD_LINK} variant="light">
+                  View Your Dashboard
+                </Button>
+                <Button
+                  onClick={() =>
+                    window.open(
+                      'https://docs.synapse.org/articles/getting_started.html',
+                      '_blank',
+                      'noopener',
+                    )
+                  }
+                  variant="primary-900"
+                >
+                  Get Help With Synapse
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button href={LOGIN_LINK} variant="light">
+                  Log in to Synapse
+                </Button>
+                <Button href={REGISTRATION_LINK} variant="primary-900">
+                  Register Now
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
