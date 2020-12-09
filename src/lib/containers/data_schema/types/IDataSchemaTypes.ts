@@ -1,4 +1,4 @@
-import { VIEW_TYPES } from './../constants'
+import { DATA_TYPES, VIEW_TYPES } from './../constants'
 
 export interface BaseEntity {
   '@id': string
@@ -32,44 +32,44 @@ export interface IdMap {
 }
 
 export interface DataSchemaData {
-  //@id
-  id: string
+  // @id
+  [DATA_TYPES.ID]: string
 
-  //@type
-  type: string[]
+  // @type
+  [DATA_TYPES.TYPE]: string[]
 
-  //rdfs:label
-  label: string
+  // rdfs:label
+  [DATA_TYPES.LABEL]: string
 
-  //rdfs:comment
-  description: string
+  // rdfs:comment
+  [DATA_TYPES.COMMENT]: string
 
-  //sms:displayName [note: substitute label if not present]
-  attribute: string
+  // sms:displayName [note: substitute label if not present]
+  [DATA_TYPES.DISPLAY_NAME]: string
 
-  //rdfs:subClassOf [note: source can be object or array]
-  parentIds: string[]
+  // rdfs:subClassOf [note: source can be object or array]
+  [VIEW_TYPES.SUBCLASS_OF]: string[]
 
-  //sms:required
-  required: boolean
+  // sms:required
+  [DATA_TYPES.REQUIRED]: boolean
 
-  //sms:requiresDependency
-  requiredDependencies: string[]
+  // sms:requiresDependency
+  [VIEW_TYPES.REQUIRES_DEPENDENCY]: string[]
 
   // Built from the context and the id.
-  source: string
+  [DATA_TYPES.SOURCE]: string
 
-  //sms:validationRules
-  validationRules: string[]
+  // sms:validationRules
+  [DATA_TYPES.VALIDATION_RULES]: string[]
 
-  //schema:rangeIncludes [note: source can be object or array]
-  validValues: string[]
+  // schema:rangeIncludes [note: source can be object or array]
+  [VIEW_TYPES.RANGE_INCLUDES]: string[]
 
-  //schema:requiresComponent [note: source can be object or array]
-  requiresComponent: string[]
+  // schema:requiresComponent [note: source can be object or array]
+  [VIEW_TYPES.REQUIRES_COMPONENT]: string[]
 
-  //schema:domainIncludes [note: source can be object or array]
-  domainIncludes: string[]
+  // schema:domainIncludes [note: source can be object or array]
+  [VIEW_TYPES.DOMAIN_INCLUDES]: string[]
 }
 
 export interface DataSchemaState {
