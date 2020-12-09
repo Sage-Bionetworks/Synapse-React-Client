@@ -3,3 +3,15 @@
     fill: $primary-action-color;
   }
 }
+
+.SRC-java-icon,
+.SRC-r-icon,
+.SRC-python-icon {
+  path {
+    fill: $primary-action-color-500;
+  }
+}
+
+.SRC-terminal-icon > rect.outer {
+  fill: $primary-action-color-500;
+}
