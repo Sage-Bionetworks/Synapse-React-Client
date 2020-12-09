@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react'
 import { Modal } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
 import isURL from 'validator/lib/isURL'
-import { DESC_MAP } from './constants'
+import { DATA_TYPES, DATA_TYPE_NAMES, DESC_MAP, VIEW_TYPES } from './constants'
 import { DataSchemaData } from './types/IDataSchemaTypes'
 import EntityTable from './EntityTable'
 import ItemList from './ItemList'
@@ -25,10 +25,24 @@ export default function EntityDetailViewer({
   onClose,
   open,
 }: EntityDetailViewerProps): ReactElement {
-  return entity ? (
+  if (!entity) {
+    return <></>
+  }
+
+  const attribute = entity[DATA_TYPES.DISPLAY_NAME]
+  const description = entity[DATA_TYPES.COMMENT]
+  const domainIncludes = entity[VIEW_TYPES.DOMAIN_INCLUDES]
+  const id = entity[DATA_TYPES.ID]
+  const parentIds = entity[VIEW_TYPES.SUBCLASS_OF]
+  const requiredDependencies = entity[VIEW_TYPES.REQUIRES_DEPENDENCY]
+  const requiresComponent = entity[VIEW_TYPES.REQUIRES_COMPONENT]
+  const type = entity[DATA_TYPES.TYPE]
+  const validationRules = entity[DATA_TYPES.VALIDATION_RULES]
+  const validValues = entity[VIEW_TYPES.RANGE_INCLUDES]
+  return (
     <Modal
       animation={false}
-      aria-labelledby={`title-entityDetail-${entity.id}`}
+      aria-labelledby={`title-entityDetail-${id}`}
       className={`modal-entityDetail`}
       dialogClassName={`entityDetail`}
       onHide={onClose}
@@ -39,7 +53,7 @@ export default function EntityDetailViewer({
         <Modal.Title
           className={`h1`}
           data-testid={TEST_IDS.title}
-          id={`title-dialog-${entity.id}`}
+          id={`title-dialog-${id}`}
         >
           <EntityHeader entity={entity} />
         </Modal.Title>
@@ -50,169 +64,184 @@ export default function EntityDetailViewer({
       >
         <ReactTooltip
           className={`entityToolTip`}
-          id={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+          id={`${toolTipIdPrefix}modalEntity-${id}`}
           place={`top`}
           effect={`solid`}
         />
-        {entity.description && (
+        {description && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.description}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[DATA_TYPES.COMMENT]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingDescription}
-            >{`Description`}</h3>
+            >
+              {DATA_TYPE_NAMES[DATA_TYPES.COMMENT]}
+            </h3>
             <p
               className={`entity-description`}
               data-testid={TEST_IDS.description}
             >
-              {entity.description}
+              {description}
             </p>
           </>
         )}
-        {entity.type.length > 0 && (
+        {type.length > 0 && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.type}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[DATA_TYPES.TYPE]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingType}
-            >{`Type`}</h3>
-            <ItemList list={entity.type} parent={entity.id} />
+            >
+              {DATA_TYPE_NAMES[DATA_TYPES.TYPE]}
+            </h3>
+            <ItemList list={type} parent={id} />
           </>
         )}
         <h3
           className={`h3`}
-          data-tip={DESC_MAP.label}
-          data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+          data-tip={DESC_MAP[DATA_TYPES.LABEL]}
+          data-for={`${toolTipIdPrefix}modalEntity-${id}`}
           data-testid={TEST_IDS.headingLabel}
-        >{`Label`}</h3>
+        >
+          {DATA_TYPE_NAMES[DATA_TYPES.LABEL]}
+        </h3>
         <p className={`entity-label`} data-testid={TEST_IDS.label}>
-          {entity.label}
+          {entity[DATA_TYPES.LABEL]}
         </p>
-        {entity.attribute && (
+        {attribute && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.attribute}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[DATA_TYPES.DISPLAY_NAME]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingAttribute}
-            >{`Attribute`}</h3>
+            >
+              {DATA_TYPE_NAMES[DATA_TYPES.DISPLAY_NAME]}
+            </h3>
             <p className={`entity-attribute`} data-testid={TEST_IDS.attribute}>
-              {entity.attribute}
+              {attribute}
             </p>
           </>
         )}
-        {entity.validValues.length > 0 && (
+        {validValues.length > 0 && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.validValues}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[VIEW_TYPES.RANGE_INCLUDES]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingValidValues}
-            >{`Valid Values`}</h3>
-            <ItemList list={entity.validValues} parent={entity.id} />
+            >
+              {DATA_TYPE_NAMES[VIEW_TYPES.RANGE_INCLUDES]}
+            </h3>
+            <ItemList list={validValues} parent={id} />
           </>
         )}
-        {entity.requiredDependencies.length > 0 && (
+        {requiredDependencies.length > 0 && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.requiredDependencies}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[VIEW_TYPES.REQUIRES_DEPENDENCY]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingRequiredDependencies}
-            >{`Requires Attributes`}</h3>
-            <EntityTable
-              list={entity.requiredDependencies}
-              parent={entity.id}
-            />
+            >
+              {DATA_TYPE_NAMES[VIEW_TYPES.REQUIRES_DEPENDENCY]}
+            </h3>
+            <EntityTable list={requiredDependencies} parent={id} />
           </>
         )}
-        {entity.domainIncludes.length > 0 && (
+        {domainIncludes.length > 0 && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.domainIncludes}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[VIEW_TYPES.DOMAIN_INCLUDES]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingDomainIncludes}
-            >{`Properties`}</h3>
-            <ItemList list={entity.domainIncludes} parent={entity.id} />
+            >
+              {DATA_TYPES[VIEW_TYPES.DOMAIN_INCLUDES]}
+            </h3>
+            <ItemList list={domainIncludes} parent={id} />
           </>
         )}
-        {entity.parentIds.length > 0 && (
+        {parentIds.length > 0 && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.parentIds}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[VIEW_TYPES.SUBCLASS_OF]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingParentIds}
-            >{`Parent Attributes`}</h3>
-            <EntityTable list={entity.parentIds} parent={entity.id} />
+            >
+              {DATA_TYPE_NAMES[VIEW_TYPES.SUBCLASS_OF]}
+            </h3>
+            <EntityTable list={parentIds} parent={id} />
           </>
         )}
-        {entity.requiresComponent.length > 0 && (
+        {requiresComponent.length > 0 && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.requiresComponent}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[VIEW_TYPES.REQUIRES_COMPONENT]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingRequiresComponent}
-            >{`Depends on Component`}</h3>
-            <EntityTable list={entity.requiresComponent} parent={entity.id} />
+            >
+              {DATA_TYPE_NAMES[VIEW_TYPES.REQUIRES_COMPONENT]}
+            </h3>
+            <EntityTable list={requiresComponent} parent={id} />
           </>
         )}
-        {entity.validationRules.length > 0 && (
+        {validationRules.length > 0 && (
           <>
             <h3
               className={`h3`}
-              data-tip={DESC_MAP.validationRules}
-              data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+              data-tip={DESC_MAP[DATA_TYPES.VALIDATION_RULES]}
+              data-for={`${toolTipIdPrefix}modalEntity-${id}`}
               data-testid={TEST_IDS.headingValidationRules}
-            >{`Format`}</h3>
-            <ItemList list={entity.validationRules} parent={entity.id} />
+            >
+              {DATA_TYPE_NAMES[DATA_TYPES.VALIDATION_RULES]}
+            </h3>
+            <ItemList list={validationRules} parent={id} />
           </>
         )}
       </Modal.Body>
     </Modal>
-  ) : (
-    <></>
   )
 }
 
 function EntityHeader({ entity }: { entity: DataSchemaData }): ReactElement {
+  const id = entity[DATA_TYPES.ID]
+  const source = entity[DATA_TYPES.SOURCE]
   const children: ReactElement = (
     <>
-      {entity.attribute || entity.label}
+      {entity[DATA_TYPES.DISPLAY_NAME] || entity[DATA_TYPES.LABEL]}
       <span className={`id-entity`}>
         <span
-          data-tip={DESC_MAP.id}
-          data-for={`${toolTipIdPrefix}modalEntity-${entity.id}`}
+          data-tip={DESC_MAP[DATA_TYPES.ID]}
+          data-for={`${toolTipIdPrefix}modalEntity-${id}`}
         >
-          {'ID:'}
+          {`${DATA_TYPE_NAMES[DATA_TYPES.ID]}:`}
         </span>
-        {entity.id}
+        {id}
       </span>
     </>
   )
   return (
     <>
-      <h2 className={`h2`} id={`title-entityDetail-${entity.id}`}>
-        {isURL(entity.source, { require_protocol: true }) ? (
-          <a
-            href={entity.source}
-            target={`_blank`}
-            title={`View the source of ${entity.id}`}
-          >
+      <h2 className={`h2`} id={`title-entityDetail-${id}`}>
+        {isURL(source, { require_protocol: true }) ? (
+          <a href={source} target={`_blank`} title={`View the source of ${id}`}>
             {children}
           </a>
         ) : (
           children
         )}
       </h2>
-      {entity.required && (
+      {entity[DATA_TYPES.REQUIRED] && (
         <>
           <span className={`required`}>*</span>
-          <p className={`required`}>{`* Required`}</p>
+          <p className={`required`}>{`* ${
+            DATA_TYPE_NAMES[DATA_TYPES.REQUIRED]
+          }`}</p>
         </>
       )}
     </>
