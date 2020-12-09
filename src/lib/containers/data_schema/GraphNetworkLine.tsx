@@ -8,11 +8,13 @@ export default function GraphNetworkLine({
   link: { source, linkColor },
   ...props
 }: GraphNetworkLineProps) {
+  const sourceId = typeof source === 'string' ? source : source.id
+
   return (
     <g>
       <defs>
         <marker
-          id={`${source}_arrowhead`}
+          id={`${sourceId}_arrowhead`}
           markerWidth="5"
           markerHeight="3.5"
           refX="16.25"
@@ -28,9 +30,9 @@ export default function GraphNetworkLine({
         {...props}
         stroke={linkColor}
         strokeWidth={3}
-        strokeOpacity={source === 'hiddenRoot' ? 0 : 1}
+        strokeOpacity={sourceId === 'hiddenRoot' ? 0 : 1}
         markerEnd={
-          source != 'hiddenRoot' ? `url(#${source}_arrowhead)` : undefined
+          sourceId != 'hiddenRoot' ? `url(#${sourceId}_arrowhead)` : undefined
         }
       />
     </g>

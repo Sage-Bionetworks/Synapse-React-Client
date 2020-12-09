@@ -10,6 +10,7 @@ import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
 import getSchemaData from './services/getSchemaData'
 import { replaceContext, replaceData } from './state/DataState'
 import getTestIDs from './utils/getTestIds'
+import { setLoading } from './state/LoadingState'
 
 export const TEST_IDS = getTestIDs()
 
@@ -128,6 +129,7 @@ export default function UploadButton(): ReactElement {
           // TODO: Add error handling for bad schema files.
           console.log(`error:`, error)
         }
+        setLoading(true)
         replaceData(content)
         replaceContext(content)
         dbSet(SUFFIX.scma, encode(content), MINUTES_TO_CACHE, true)
@@ -135,6 +137,7 @@ export default function UploadButton(): ReactElement {
       fileReader.readAsText(file.file)
     } else if (url) {
       getSchemaData(url, true).then(data => {
+        setLoading(true)
         replaceData(data)
         replaceContext(data)
       })

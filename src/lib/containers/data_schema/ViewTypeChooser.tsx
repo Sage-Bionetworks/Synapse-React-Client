@@ -3,6 +3,7 @@ import { Form } from 'react-bootstrap'
 import { VIEW_TYPES, VIEW_TYPE_NAMES } from './constants'
 import { stateViewType, setStateViewType } from './state/ViewTypeState'
 import getTestIDs from './utils/getTestIds'
+import { setLoading } from './state/LoadingState'
 
 export const TEST_IDS = getTestIDs()
 
@@ -28,7 +29,10 @@ export default function ViewTypeChooser(): ReactElement {
               name?: string | undefined
               value: unknown
             }>,
-          ) => setStateViewType(event.target.value as VIEW_TYPES)}
+          ) => {
+            setStateViewType(event.target.value as VIEW_TYPES)
+            setLoading(true)
+          }}
           value={viewType}
         >
           {viewTypes.map((type: string, index: number) => (

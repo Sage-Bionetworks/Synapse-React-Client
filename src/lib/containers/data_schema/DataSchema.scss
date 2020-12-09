@@ -43,6 +43,14 @@ $white: #fff;
   flex-wrap: wrap;
   align-items: center;
   padding-top: 42px;
+
+  &.loading {
+    .graph-dd {
+      visibility: hidden;
+      z-index: -1;
+      position: absolute;
+    }
+  }
   .h2 {
     display: inline-block;
     font-size: 3rem;
@@ -119,38 +127,38 @@ $white: #fff;
       }
     }
 
-    .graph-dd {
-      font-size: 1rem;
+    .graphLoader {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      background: white;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
 
-      .graphLoader {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        background: white;
-        justify-content: center;
-        align-items: center;
-        border-radius: 10px;
+      img {
+        height: 30px;
+        margin-right: 10px;
+      }
 
-        img {
-          height: 30px;
-          margin-right: 10px;
+      .graphTextAndBar {
+        .graphLoaderText {
+          font-size: 1.2rem;
+          margin: 0;
         }
 
-        .graphTextAndBar {
-          .graphLoaderText {
-            font-size: 1.2rem;
-            margin: 0;
-          }
+        .barLoader {
+          margin-top: 4px;
 
-          .barLoader {
-            margin-top: 4px;
-
-            div:first-child {
-              width: 100%;
-            }
+          div:first-child {
+            width: 100%;
           }
         }
       }
+    }
+
+    .graph-dd {
+      font-size: 1rem;
     }
 
     @keyframes mouseOnNodeTransition {
