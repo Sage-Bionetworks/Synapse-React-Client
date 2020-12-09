@@ -95,6 +95,9 @@ $white: #fff;
     &.fullscreen-enabled {
       .graphCanvasContainer {
         height: 100vh;
+        margin: 0;
+        border-radius: 0;
+        border: 0;
       }
     }
   }

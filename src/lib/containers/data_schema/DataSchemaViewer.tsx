@@ -66,13 +66,6 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
   )
 
   useEffect(() => {
-    window.removeEventListener('keyup', handleEscapeKey, false)
-    if (isFullScreen) {
-      window.addEventListener('keyup', handleEscapeKey, false)
-    }
-  }, [isFullScreen])
-
-  useEffect(() => {
     if (data.length > 0) {
       setIdMap(data)
       const newDeps = getDepsData(deps, {
@@ -190,12 +183,6 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
 
     setGraphNetworkData({ nodes, links })
   }, [data, deps, viewType, onNodeClick, nodeColorRefs])
-
-  function handleEscapeKey(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-      setFullScreen(false)
-    }
-  }
 
   if (!graphNetworkData) {
     return <></>
