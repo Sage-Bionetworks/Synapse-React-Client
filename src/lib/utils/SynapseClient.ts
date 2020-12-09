@@ -822,6 +822,26 @@ export const getEntity: GetEntity = <T>(
 }
 
 /**
+ * Same as getEntity above, but will return the file entity result
+ * from doGet call rather than a promise
+ */
+export const getEntityResult: GetEntity = (
+  sessionToken: string | undefined = undefined,
+  entityId: string | number,
+  versionNumber?: string,
+) => {
+  const url = versionNumber
+    ? `/repo/v1/entity/${entityId}/version/${versionNumber}`
+    : `/repo/v1/entity/${entityId}`
+  return doGet(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get the EntityHeader for a list of references with a POST.
  * If any item in the batch fails (e.g., with a 404) it will be EXCLUDED in the result set.
  * https://docs.synapse.org/rest/POST/entity/header.html

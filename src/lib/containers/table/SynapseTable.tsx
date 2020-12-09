@@ -22,6 +22,7 @@ import {
   FacetColumnRequest,
   EntityColumnType,
   ColumnModel,
+  FileEntity,
 } from '../../utils/synapseTypes/'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import HasAccess from '../HasAccess'
@@ -104,6 +105,18 @@ export type SynapseTableProps = {
   isRowSelectionVisible?: boolean
 }
 
+// export type AuthorizedFileResp = {
+//   fileEntity: FileEntity,
+//   fileHandle: FileHandle
+// }
+//
+// export type UnauthorizedFileResp = {
+//   fileHandleId: string,
+//   failureCode: string
+// }
+//
+// export type FileFetchResponse = AuthorizedFileResp & UnauthorizedFileResp
+
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
   SynapseTableState
@@ -123,6 +136,7 @@ export default class SynapseTable extends React.Component<
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.enableResize = this.enableResize.bind(this)
     this.disableResize = this.disableResize.bind(this)
+    this.getFileDataPromises = this.getFileDataPromises.bind(this)
 
     // store the offset and sorted selection that is currently held
     this.state = {
@@ -310,6 +324,44 @@ export default class SynapseTable extends React.Component<
       mapEntityIdToHeader,
       mapUserIdToHeader,
       isFetchingEntityHeaders: false,
+    })
+  }
+
+  public async getFileDataPromises() {
+    const {
+      token,
+      data
+    } = this.props
+
+    if (!data) return
+
+    return new Promise((resolve, reject) => {
+      const rows = data?.queryResult.queryResults.rows
+      const fileHandlePromises = rows?.map(async (row, rowIndex) => {
+        const entityVersionNumber = row.versionNumber?.toString()
+        const rowSynapseId = `syn${row.rowId}`
+        const entity = await SynapseClient.getEntityResult(token, rowSynapseId, entityVersionNumber)
+
+        if (entity.hasOwnProperty('dataFileHandleId')) {
+          // looks like a FileEntity, get the FileHandle
+          const fileHandleData = await SynapseClient.getFileResult(
+            entity as FileEntity,
+            token,
+            true,
+          )
+          // Either returns a failure code or file handle with entity info
+          if (fileHandleData.failureCode) {
+            return fileHandleData
+          }
+          return {
+            fileEntity: entity,
+            fileHandle: fileHandleData.fileHandle,
+          }
+        } else {
+          return reject("getFileHandles: not a file entity")
+        }
+      })
+      resolve (fileHandlePromises)
     })
   }
 
@@ -744,6 +796,17 @@ export default class SynapseTable extends React.Component<
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
       this.props.getLastQueryRequest!().query.sql,
     )
+
+    const fileDataPromises = this.getFileDataPromises()
+
+    // Convert promise array to data array
+    const fileEntityHandleArray:any = []
+    this.getFileDataPromises().then((filePromises:any) => {
+      filePromises.forEach((fp:any) => {
+        fp.then((resp:any) => fileEntityHandleArray.push(resp))
+      })
+    })
+
     rows.forEach((row, rowIndex) => {
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
@@ -826,6 +889,9 @@ export default class SynapseTable extends React.Component<
               token={token}
               associatedObjectId={rowSynapseId}
               entityVersionNumber={entityVersionNumber}
+              fileDataPromises={fileDataPromises}  // this works
+              rowIndex={rowIndex}
+              fileEntityHandleArray={fileEntityHandleArray}   // doesn't work
             ></DirectDownload>
           </td>
         )
