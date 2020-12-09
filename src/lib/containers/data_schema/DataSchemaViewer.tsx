@@ -12,6 +12,7 @@ import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { stateData } from './state/DataState'
 import { searchEntity, setIdMap } from './state/SearchEntityState'
 import { stateViewType } from './state/ViewTypeState'
+import { loading, setLoading } from './state/LoadingState'
 import { PRIMARY_ENTITY, SECONDARY_ENTITY, VIEW_TYPES } from './constants'
 import {
   DataSchemaData,
@@ -39,6 +40,7 @@ export interface DataSchemaViewerProps {
 
 function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
   const data = stateData()
+  const isLoading = loading()
   const startId = searchEntity()
   const viewType = stateViewType()
   const [graphNetworkData, setGraphNetworkData] = useState<GraphNetworkData>()
@@ -198,7 +200,7 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
   }
 
   return (
-    <div className={`DataSchemaViewerWrapper`}>
+    <div className={`DataSchemaViewerWrapper${isLoading ? ' loading' : ''}`}>
       <h2 className={`h2`}>{title}</h2>
       <div className={`tools-dd`}>
         <UploadButton />
@@ -206,23 +208,23 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
         <EntitySearch />
       </div>
       <div
-        className={`graphCanvasContainer ${isFullScreen ? 'fullscreen' : ''}`}
+        className={`graphCanvasContainer${isFullScreen ? ' fullscreen' : ''}`}
       >
         <button
           aria-label={`toggle graph fullscreen`}
-          className={`fullscreenToggleButton ${
-            isFullScreen ? 'fullscreen' : ''
+          className={`fullscreenToggleButton${
+            isFullScreen ? ' fullscreen' : ''
           }`}
           onClick={() => toggleFullScreen()}
         >
           <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} />
         </button>
+        {isLoading && <GraphLoader nodes={graphNetworkData.nodes} />}
         <Graph
           className={`graph-dd`}
           data={graphNetworkData}
           NodeComponent={GraphNetworkNode}
           LineComponent={GraphNetworkLine}
-          LoaderComponent={GraphLoader}
           id={`dd-graph`}
           hoverOpacity={0.3}
           enableDrag={true}
@@ -233,6 +235,7 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
           nodeRadius={30}
           pullIn={false}
           animateNodes={false}
+          onEnd={() => setLoading(false)}
         />
       </div>
       <EntityDetailViewer

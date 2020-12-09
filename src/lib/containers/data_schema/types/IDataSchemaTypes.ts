@@ -107,8 +107,8 @@ export interface GraphNodeData extends DataSchemaData {
 }
 
 export interface GraphNodeLinkData {
-  source: string
-  target: string
+  source: string | GraphNodeData
+  target: string | GraphNodeData
   viewType: VIEW_TYPES
   linkColor: string
 }

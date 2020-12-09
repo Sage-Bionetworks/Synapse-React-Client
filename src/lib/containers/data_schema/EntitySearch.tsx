@@ -4,6 +4,7 @@ import { Typeahead } from 'react-bootstrap-typeahead'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { idMap, setSearchEntity } from './state/SearchEntityState'
+import { setLoading } from './state/LoadingState'
 
 import 'react-bootstrap-typeahead/css/Typeahead.css'
 
@@ -35,6 +36,7 @@ export default function EntitySearch(): ReactElement {
         aria-label={`Search for entity`}
         disabled={item.length < 1 ? true : undefined}
         onClick={() => {
+          setLoading(true)
           setSearchEntity(item[0].id)
           setItem([])
         }}
