@@ -6967,6 +6967,11 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
 
+fscreen@^1.0.2:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/fscreen/-/fscreen-1.1.0.tgz#80f432f24dc915ba0be0f5f6a7d60ca12ecbab5c"
+  integrity sha512-nSRkgHknnCRy7ZBWIu9S4IWe1m/VBROczUEU4RzXK3QvDtc89m79m4e5mbyFSugewgB8ajQKsDzeqaQ8sZ+7hA==
+
 fsevents@2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.1.2.tgz#4c0a1fb34bc68e543b4b82a9ec392bfbda840805"
@@ -13019,6 +13024,13 @@ react-error-overlay@^6.0.7, react-error-overlay@^6.0.8:
   version "6.0.8"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.8.tgz#474ed11d04fc6bda3af643447d85e9127ed6b5de"
   integrity sha512-HvPuUQnLp5H7TouGq3kzBeioJmXms1wHy9EGjz2OURWBp4qZO6AfGEcnxts1D/CbwPLRAgTMPCEgYhA3sEM4vw==
+
+react-full-screen@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/react-full-screen/-/react-full-screen-0.3.1.tgz#60bf7b1ab140348bcfee4f5c98e927b6a0766809"
+  integrity sha512-lguQkP+vqwyZGHsLXvM90d8Aktp4gTlPUzszYKuQ9YvxNXIXtu+BILdwr/T+j6P2jREvEppgV20UEauv/0WLDg==
+  dependencies:
+    fscreen "^1.0.2"
 
 "react-graph-network@github:generalui/react-graph-network#86bb6c3fc6ab1c82376c43fe29955b2fc9ef1eb4":
   version "1.0.8"
