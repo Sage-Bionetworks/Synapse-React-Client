@@ -15,6 +15,7 @@ import Graph from 'react-graph-network'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { stateData } from './state/DataState'
+import { stateFullscreen, setStateFullscreen } from './state/FullscreenState'
 import { searchEntity, setIdMap } from './state/SearchEntityState'
 import { stateViewType } from './state/ViewTypeState'
 import { loading, setLoading } from './state/LoadingState'
@@ -47,13 +48,13 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
   const data = stateData()
   const isLoading = loading()
   const startId = searchEntity()
+  const { isFullscreen } = stateFullscreen()
   const viewType = stateViewType()
   const fullscreenHandle: FullScreenHandle = useFullScreenHandle()
   const [graphNetworkData, setGraphNetworkData] = useState<GraphNetworkData>()
   const [clickedNode, setClickedNode] = useState<DataSchemaData>()
   const [deps, setDeps] = useState<DepState>({} as DepState)
   const nodeColorRefs = useRef<{ [key: string]: string }>({})
-  const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
 
   const onNodeClick = useCallback(
     (id: string) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -198,8 +199,8 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
       </div>
       <FullScreen
         handle={fullscreenHandle}
-        onChange={(state: boolean, _handle: FullScreenHandle) =>
-          setIsFullScreen(state)
+        onChange={(state: boolean, handle: FullScreenHandle) =>
+          setStateFullscreen({ isFullscreen: state, handle })
         }
       >
         <div className={`graphCanvasContainer`}>
@@ -207,10 +208,10 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
             aria-label={`Toggle Graph Fullscreen`}
             className={`fullscreenToggleButton`}
             onClick={
-              isFullScreen ? fullscreenHandle.exit : fullscreenHandle.enter
+              isFullscreen ? fullscreenHandle.exit : fullscreenHandle.enter
             }
           >
-            <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} />
+            <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} />
           </button>
           {isLoading && <GraphLoader nodes={graphNetworkData.nodes} />}
           <Graph

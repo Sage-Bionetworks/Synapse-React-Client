@@ -77,7 +77,6 @@ function ToolTipTarget({ id, isParent }: IdLinkProps) {
 function buildLink(id: string, context: SchemaContext) {
   const pieces: string[] = id.split(`:`)
   const contexts = Object.keys(context)
-  console.log(`contexts.indexOf(pieces[0]): `, contexts.indexOf(pieces[0]))
   if (pieces.length > 1 && contexts.indexOf(pieces[0]) + 1) {
     return (
       <a
