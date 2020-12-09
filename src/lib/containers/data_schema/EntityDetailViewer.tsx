@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react'
 import { Modal } from 'react-bootstrap'
+import { stateFullscreen } from './state/FullscreenState'
 import ReactTooltip from 'react-tooltip'
 import isURL from 'validator/lib/isURL'
 import { DATA_TYPES, DATA_TYPE_NAMES, DESC_MAP, VIEW_TYPES } from './constants'
@@ -29,6 +30,7 @@ export default function EntityDetailViewer({
     return <></>
   }
 
+  const { isFullscreen, handle } = stateFullscreen()
   const attribute = entity[DATA_TYPES.DISPLAY_NAME]
   const description = entity[DATA_TYPES.COMMENT]
   const domainIncludes = entity[VIEW_TYPES.DOMAIN_INCLUDES]
@@ -44,6 +46,7 @@ export default function EntityDetailViewer({
       animation={false}
       aria-labelledby={`title-entityDetail-${id}`}
       className={`modal-entityDetail`}
+      container={isFullscreen ? handle.node : undefined}
       dialogClassName={`entityDetail`}
       onHide={onClose}
       show={open ? true : false}

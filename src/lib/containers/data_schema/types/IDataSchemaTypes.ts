@@ -1,3 +1,4 @@
+import { FullScreenHandle } from 'react-full-screen'
 import { DATA_TYPES, VIEW_TYPES } from './../constants'
 
 export interface BaseEntity {
@@ -75,6 +76,11 @@ export interface DataSchemaData {
 export interface DataSchemaState {
   data: DataSchemaData[]
   schemaJson: SchemaJson
+}
+
+export interface FullscreenState {
+  isFullscreen: boolean
+  handle: FullScreenHandle
 }
 
 export interface DepStateData {
