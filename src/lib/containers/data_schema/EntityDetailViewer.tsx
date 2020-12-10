@@ -232,7 +232,12 @@ function EntityHeader({ entity }: { entity: DataSchemaData }): ReactElement {
     <>
       <h2 className={`h2`} id={`title-entityDetail-${id}`}>
         {isURL(source, { require_protocol: true }) ? (
-          <a href={source} target={`_blank`} title={`View the source of ${id}`}>
+          <a
+            href={source}
+            rel={`noopener`}
+            target={`_blank`}
+            title={`View the source of ${id}`}
+          >
             {children}
           </a>
         ) : (
