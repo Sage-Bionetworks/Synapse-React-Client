@@ -15,8 +15,6 @@ test('DataSchema renders correctly', () => {
   expect(component).toBeDefined()
 
   // Needs a passed title.
-  component.setProps({
-    title: undefined,
-  })
-  expect(component).toBeUndefined()
+  component.setProps({ title: undefined })
+  expect(component).toBeDefined()
 })

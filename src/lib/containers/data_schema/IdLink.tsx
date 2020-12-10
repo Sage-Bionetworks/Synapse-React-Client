@@ -80,10 +80,11 @@ function buildLink(id: string, context: SchemaContext) {
   if (pieces.length > 1 && contexts.indexOf(pieces[0]) + 1) {
     return (
       <a
+        data-testid={TEST_IDS.externalLink}
         href={`${context[pieces[0]]}${pieces[1]}`}
+        rel={`noopener`}
         target={`_blank`}
         title={`View details of ${id}`}
-        data-testid={TEST_IDS.externalLink}
       >
         {id}
       </a>

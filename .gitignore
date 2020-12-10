@@ -23,13 +23,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# visual studio specific 
+# visual studio specific
 jsconfig.json
 .vscode/*
 !.vscode/*.code-snippets
 !.vscode/extensions.json
 !.vscode/launch.json
 !.vscode/settings.json
+!.vscode/cspell.json
 
 # webstorm specific
 .idea
