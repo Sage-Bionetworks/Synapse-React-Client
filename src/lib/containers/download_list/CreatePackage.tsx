@@ -152,14 +152,15 @@ export const CreatePackage = (props: CreatePackageProps) => {
                   ></input>
                   <span className="zip-extension SRC-boldText">.zip</span>
                 </form>
-                <button
+                <ReactBoostrap.Button
+                  variant="primary"
                   className="SRC-standard-button-shape SRC-primary-button action-button"
                   onClick={createPackageHandler}
                   type="button"
                 >
                   <FontAwesomeIcon icon="folder" />
                   Create Package
-                </button>
+                </ReactBoostrap.Button>
               </>
             )}
             {bulkFileDownloadResponse && (
@@ -170,13 +171,14 @@ export const CreatePackage = (props: CreatePackageProps) => {
                     Package created! Ready for download.
                   </span>
                 </div>
-                <button
+                <ReactBoostrap.Button
+                  variant="primary"
                   className="SRC-standard-button-shape SRC-primary-button action-button"
                   onClick={downloadPackageHandler}
                 >
                   <FontAwesomeIcon icon="download" color="white" />
                   Download Package
-                </button>
+                </ReactBoostrap.Button>
               </>
             )}
           </div>

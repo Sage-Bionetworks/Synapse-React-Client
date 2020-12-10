@@ -20,7 +20,8 @@ $space-unit: 2.1rem;
 
 $green-affrimative: #35bf7d;
 
-$box-shadow-soft: 0 3px 10px rgba(93, 105, 171, 0.1);
+$box-shadow-med: 0 1px 3px rgba(0, 0, 0, 0.5) !default;
+$box-shadow-soft: 0 3px 10px rgba(93, 105, 171, 0.1) !default;
 
 $themes: (
   drug-upload-tool: (

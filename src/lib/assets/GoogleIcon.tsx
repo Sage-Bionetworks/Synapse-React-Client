@@ -1,14 +1,13 @@
 import * as React from 'react'
 // @ts-nocheck
-export default ({ active }: { active: boolean }) => (
+const GoogleIcon = ({ active }: { active: boolean }) => (
   <div
     style={{
-      background: active ? '#fff' : '#eee',
-      paddingTop: 7,
+      float: 'left',
       paddingRight: 10,
       paddingBottom: 4,
       paddingLeft: 10,
-      borderRadius: 2,
+      width: '0%',
     }}
   >
     <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -38,3 +37,5 @@ export default ({ active }: { active: boolean }) => (
     </svg>
   </div>
 )
+
+export default GoogleIcon

@@ -5,6 +5,7 @@ import subscribePlus from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import { LockedFacet } from './QueryWrapper'
 import NoData from '../assets/icons/file-dotted.svg'
+import { Button } from 'react-bootstrap'
 
 let rssParser = new Parser()
 type RssState = {
@@ -24,10 +25,13 @@ export type RssFeedCardsProps = {
   mailChimpUrl?: string
   viewAllNewsButtonText?: string
 }
-export default class RssFeedCards extends React.Component<RssFeedCardsProps, RssState> {
+export default class RssFeedCards extends React.Component<
+  RssFeedCardsProps,
+  RssState
+> {
   // only update the state if this component is mounted
   _isMounted = false
-  
+
   constructor(props: RssFeedCardsProps) {
     super(props)
     this.state = {
@@ -37,12 +41,14 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
       isShowingSubscribeUI: false,
     }
   }
-  
+
   componentDidMount() {
     this._isMounted = true
     const { url, lockedFacet } = this.props
     const lockedFacetValue = lockedFacet?.value
-    const tagPath = lockedFacetValue ? `/tag/${lockedFacetValue.replace(' ', '-')}` : ''
+    const tagPath = lockedFacetValue
+      ? `/tag/${lockedFacetValue.replace(' ', '-')}`
+      : ''
     const allItems = `${url}${tagPath}`
     const feedUrl = `${allItems}/feed/`
     fetch(feedUrl)
@@ -50,8 +56,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
       .then(responseData => rssParser.parseString(responseData))
       .then(rss => {
         if (this._isMounted) {
-          this.setState({ rssFeed: rss,
-          allItemsUrl: allItems })
+          this.setState({ rssFeed: rss, allItemsUrl: allItems })
         }
       })
       .catch(err => {
@@ -71,7 +76,7 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
 
   render() {
     const { viewAllNewsButtonText } = this.props
-    
+
     if (this.state.rssFeed.items?.length === 0) {
       return (
         <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
@@ -83,80 +88,115 @@ export default class RssFeedCards extends React.Component<RssFeedCardsProps, Rss
       )
     }
     return (
-      <>        
+      <>
         {this.props.mailChimpUrl && (
           <div className="FeedSubscribe text-center">
             {!this.state.isShowingSubscribeUI && (
-              <a className="FeedSubscribeToNewsLink" onClick={this.onClickSubscribe}>
+              <a
+                className="FeedSubscribeToNewsLink"
+                onClick={this.onClickSubscribe}
+              >
                 <img src={subscribePlus} alt="Subscribe to News" />
                 Subscribe to News
               </a>
             )}
             {this.state.isShowingSubscribeUI && (
-                <div className="MailchimpSubscribeContainer">
-                  <img src={subscribePlus} alt="Subscribe to News" />
-                  <p>
-                    Subscribe to receive the {this.props.mailChimpListName} by e-mail,
-                    which provides information and updates related to the
-                    Portal. You can opt out at any time by using the unsubscribe
-                    link within the e-mail. We will not share your information
-                    with any third parties or use it for any other purposes.
-                  </p>
-                  <div className="SRC-marginBottomTop">
-                    <MailchimpSubscribe url={this.props.mailChimpUrl} />
-                  </div>
+              <div className="MailchimpSubscribeContainer">
+                <img src={subscribePlus} alt="Subscribe to News" />
+                <p>
+                  Subscribe to receive the {this.props.mailChimpListName} by
+                  e-mail, which provides information and updates related to the
+                  Portal. You can opt out at any time by using the unsubscribe
+                  link within the e-mail. We will not share your information
+                  with any third parties or use it for any other purposes.
+                </p>
+                <div className="SRC-marginBottomTop">
+                  <MailchimpSubscribe url={this.props.mailChimpUrl} />
                 </div>
+              </div>
             )}
           </div>
         )}
-        <div className="Feed">
+        <div className="Feed bootstrap-4-backport">
           <div className="FeedItems">
-          {this.state.rssFeed.items &&
-            this.state.rssFeed.items.map((item: any, index: any) => {
-              // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
-              let isItemVisible: boolean =
-                index < this.props.itemsToShow
+            {this.state.rssFeed.items &&
+              this.state.rssFeed.items.map((item: any, index: any) => {
+                // The other is to hide the large number of items in a particular feed (usually a max of 10 are returned).  See state.isShowingMoreItems
+                let isItemVisible: boolean = index < this.props.itemsToShow
 
-              return (
-                <div
-                  key={item.guid}
-                  className={`FeedItem ${isItemVisible ? '' : 'hidden'}`}
-                >
-                  <div>
-                    <div className="FeedItemCategories">
-                      {item['categories'].map((categoryName: string,) => {
-                        // are we allowed to show this category/tag?
-                        const categoryNameLowerCase = categoryName.toLowerCase()
-                        const allowCategories = this.props.allowCategories
-                        if (allowCategories?.findIndex(item => categoryNameLowerCase === item.toLowerCase()) === -1)
-                          return <></>
-                        // else
-                        return <a 
-                          href={`${this.state.rssFeed.link}/?tag=${categoryName.replace(' ', '-')}`}
-                          className="SRC-no-underline-on-hover"
-                          target="_blank" rel="noopener noreferrer">
-                            <div key={`${item.guid}_${categoryName}`} className="FeedItemCategory">{categoryName}</div>
-                        </a>
-                      })}
+                return (
+                  <div
+                    key={item.guid}
+                    className={`FeedItem ${isItemVisible ? '' : 'hidden'}`}
+                  >
+                    <div>
+                      <div className="FeedItemCategories">
+                        {item['categories'].map((categoryName: string) => {
+                          // are we allowed to show this category/tag?
+                          const categoryNameLowerCase = categoryName.toLowerCase()
+                          const allowCategories = this.props.allowCategories
+                          if (
+                            allowCategories?.findIndex(
+                              item =>
+                                categoryNameLowerCase === item.toLowerCase(),
+                            ) === -1
+                          )
+                            return <></>
+                          // else
+                          return (
+                            <a
+                              href={`${
+                                this.state.rssFeed.link
+                              }/?tag=${categoryName.replace(' ', '-')}`}
+                              className="SRC-no-underline-on-hover"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <div
+                                key={`${item.guid}_${categoryName}`}
+                                className="FeedItemCategory"
+                              >
+                                {categoryName}
+                              </div>
+                            </a>
+                          )
+                        })}
+                      </div>
+                      <p className="FeedItemDate">
+                        {moment(item['isoDate']).format('MMMM YYYY')}
+                      </p>
+                      <p className="FeedItemTitle">{item['title']}</p>
+                      <div className="FeedItemDescription">
+                        {item['contentSnippet'].replace(/\[...\]|\[…\]/gm, '…')}
+                      </div>
+                      <a
+                        className="FeedItemLink"
+                        href={item['link']}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Continue reading
+                      </a>
                     </div>
-                    <p className="FeedItemDate">
-                      {moment(item['isoDate']).format('MMMM YYYY')}
-                    </p>
-                    <p className="FeedItemTitle">{item['title']}</p>
-                    <div className="FeedItemDescription"
-                    >{item['contentSnippet'].replace(/\[...\]|\[…\]/gm, '…')}</div>
-                    <a className="FeedItemLink" href={item['link']} target="_blank" rel="noopener noreferrer">Continue reading</a>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
           </div>
           {this.state.rssFeed.items &&
-            this.state.rssFeed.items.length > this.props.itemsToShow && this.state.allItemsUrl && (
+            this.state.rssFeed.items.length > this.props.itemsToShow &&
+            this.state.allItemsUrl && (
               <div className="FeedViewAllNewsButtonContainer">
-                <a className="homepage-button-link" href={this.state.allItemsUrl} target="_blank" rel="noopener noreferrer">
-                    { viewAllNewsButtonText ?? 'VIEW ALL NEWS' }
-                </a>
+                <Button
+                  variant="primary-pill"
+                  size="lg"
+                  className="homepage-button-link"
+                  onClick={() =>
+                    window.open(this.state.allItemsUrl, '_blank', 'noopener')
+                  }
+                  target="_blank"
+                >
+                  {viewAllNewsButtonText ?? 'VIEW ALL NEWS'}
+                </Button>
               </div>
             )}
           {this.state.isLoadingError && (

@@ -20,7 +20,7 @@ export type ProgramsProps = {
   iconColumnName: string
   linkConfig: CardLink
   iconOptions: IconOptions
-  token?: string  
+  token?: string
 }
 
 export type ProgramsDataProps = {
@@ -34,9 +34,19 @@ export type ProgramsDataProps = {
 }
 
 export default function Programs(props: ProgramsProps) {
-  const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkConfig, token, rgbIndex, iconOptions } = props
+  const {
+    entityId,
+    titleColumnName,
+    linkColumnName,
+    summaryColumnName,
+    iconColumnName,
+    linkConfig,
+    token,
+    rgbIndex,
+    iconOptions,
+  } = props
   const showDesktop = useShowDesktop()
-  const color:string = getColorPallette(rgbIndex ?? 0, 2).colorPalette[0]
+  const color: string = getColorPallette(rgbIndex ?? 0, 2).colorPalette[0]
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -52,20 +62,21 @@ export default function Programs(props: ProgramsProps) {
     queryBundleRequest,
   })
 
-  const titleColumnIndex = getFieldIndex(
-    titleColumnName,
-    queryResultBundle,
-  )
-  const summaryColumnIndex = getFieldIndex(
-    summaryColumnName,
-    queryResultBundle,
-  )
+  const titleColumnIndex = getFieldIndex(titleColumnName, queryResultBundle)
+  const summaryColumnIndex = getFieldIndex(summaryColumnName, queryResultBundle)
   const linkColumnIndex = getFieldIndex(linkColumnName, queryResultBundle)
   const iconColumnIndex = getFieldIndex(iconColumnName, queryResultBundle)
-  const matchColIndex = getFieldIndex(linkConfig.matchColumnName, queryResultBundle)
+  const matchColIndex = getFieldIndex(
+    linkConfig.matchColumnName,
+    queryResultBundle,
+  )
   const baseExploreUrl = `/${linkConfig.baseURL}?${linkConfig.URLColumnName}=`
   return (
-    <div className={`Programs${showDesktop ? '__Desktop' : ''}`}>
+    <div
+      className={`bootstrap-4-backport Programs${
+        showDesktop ? '__Desktop' : ''
+      }`}
+    >
       {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
         const values = el.values
         const title = values[titleColumnIndex]
@@ -73,7 +84,7 @@ export default function Programs(props: ProgramsProps) {
         const link = values[linkColumnIndex]
         const iconValue = values[iconColumnIndex]
         const matchValue = values[matchColIndex]
-        
+
         const ProgramsDataProps: ProgramsDataProps = {
           title,
           summary,

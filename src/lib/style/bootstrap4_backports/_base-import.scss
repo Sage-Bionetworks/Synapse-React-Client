@@ -3,9 +3,34 @@
   $primary: $primary-action-color;
   $secondary: $secondary-action-color;
   $border-radius: 0.2rem;
+  $enable-shadows: true;
+  $btn-box-shadow: $box-shadow-soft;
 
   @import 'node_modules/bootstrap/scss/bootstrap';
 
+  //@mixin button-variant($background, $border, $hover-background: darken($background, 7.5%), $hover-border: darken($border, 10%), $active-background: darken($background, 10%), $active-border: darken($border, 12.5%)) {
+
+  .btn {
+    @include hover() {
+      box-shadow: $box-shadow-med;
+    }
+  }
+
+  .btn-default {
+    @include button-variant(#fff, #ccc, #e6e6e6, #adadad);
+  }
+
+  // This should override a built-in btn-white
+  .btn-white {
+    @include button-variant(#fff, #fff);
+    @include hover() {
+      color: rgba(0, 0, 0, 0.73);
+    }
+    color: rgba(0, 0, 0, 0.54);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
+  }
+
+  // TODO: Ideally, all of our primary colors should be in a map. We can then iterate over all of them to create a button class for each variant
   .btn-primary-900 {
     @include button-variant(
       $primary-action-color-900,
@@ -18,5 +43,35 @@
       $primary-action-color-500,
       $primary-action-color-500
     );
+  }
+
+  // TODO: Make 'pill' a mixin and iterate over sass map to make a pill for every variety
+  .btn-primary-pill {
+    @include button-variant($primary-action-color, $primary-action-color);
+    border-radius: 24px;
+  }
+
+  .btn-primary-pill.btn-lg {
+    font-size: 16px;
+    padding: 10px 24px;
+  }
+
+  .btn-light-primary {
+    @include button-variant(
+      #dfdfdf,
+      #dfdfdf,
+      $primary-action-color,
+      $primary-action-color
+    );
+  }
+
+  .btn-light-primary-pill {
+    @include button-variant(
+      #dfdfdf,
+      #dfdfdf,
+      $primary-action-color,
+      $primary-action-color
+    );
+    border-radius: 24px;
   }
 }
