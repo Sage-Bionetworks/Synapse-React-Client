@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.15.48",
+  "version": "1.15.51",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,6 +15,7 @@
     "url": "https://github.com/Sage-Bionetworks/Synapse-React-Client"
   },
   "dependencies": {
+    "@brainhubeu/react-carousel": "1.19.26",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.4",
     "@fortawesome/free-solid-svg-icons": "^5.3.1",
@@ -110,6 +111,7 @@
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@svgr/rollup": "^5.4.0",
     "@testing-library/react": "^10.4.8",
+    "@types/brainhubeu__react-carousel": "1.15.0",
     "@types/jest": "^24.9.0",
     "@types/node": "^10.12.2",
     "@types/react": "16.9.34",
@@ -152,6 +154,7 @@
     "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html && cp favicon.png styleguide/favicon.png",
     "build-gh": "yarn run build:docs",
     "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o upstream",
+    "deploy:origin": "yarn install && yarn run predeploy && gh-pages -d styleguide && gh-pages -d styleguide -o origin",
     "build-css": "node-sass src/lib/style -o src/lib/style",
     "watch-css": "yarn run build-css && node-sass src/ -o src/ --watch --recursive",
     "start-js": "react-scripts start",

@@ -15,6 +15,9 @@ export type TermsAndConditionsProps = {
   onFormChange: Function
 }
 
+const dataUseLink = "https://s3.amazonaws.com/static.synapse.org/governance/SynapseCommonsDataUseProcedure.pdf?v=4"
+const termsLink = "https://s3.amazonaws.com/static.synapse.org/governance/SageBionetworksSynapseTermsandConditionsofUse.pdf?v=5"
+
 const tcList: tcItem[] = [
   {
     icon: chatBubblesSvg,
@@ -26,43 +29,61 @@ const tcList: tcItem[] = [
     <li>Respects other viewpoints and ideas</li>
     <li>Shows empathy and kindness when interacting with others</li>
     </ul>
-Please refer to our full Synapse Community Standards.
-`,
+Please refer to our full <a target="_blank" href="https://docs.synapse.org/articles/governance.html#synapse-community-standards">Synapse Community Standards</a>.`,
   },
   {
     icon: lockSvg,
     label: 'I will adhere to all conditions and use limitations, including privacy laws and regulations.',
-    description: ''
+    description: `For more information about how Sage Bionetworks regulates data access and privacy, please refer to the 
+    <a target="_blank" href=${dataUseLink}>Synapse Commons Data Use Procedure</a>.`
   },
   {
     icon: scaleSvg,
     label: 'I will act ethically and responsibly.',
-    description: ''
+    description: `You agree to the following Synapse Operating Ethics Principles, outlined in our 
+    <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.
+    <br><br>Consequences of misconduct can include loss of both data use privileges and future use of Synapse.`
   },
   {
     icon: shieldSvg,
-    label: 'I will use appropriate physical, technical and administrative measures to keep data secure and protect participants’ privacy.',
-    description: ''
+    label: 'I will use appropriate physical, technical and administrative measures to keep data secure and protect participants\' privacy.',
+    description: `In your use of Synapse, you agree to:<ul>
+    <li>Keep your login information secure and not share with others.</li>
+    <li>Keep data safe from breach or misuse through appropriate security measures.</li>
+    <li>Not attempt to re-identify or contact participants.</li>
+    <li>Refrain from unauthorized data redistribution. Please refer to the 
+    <a target="_blank" href=${dataUseLink}>Synapse Commons Data Use Procedure</a>.</li>
+    </ul>
+    For more information, please refer to the full <a target="_blank" href=${termsLink}>Synapse Terms and Conditions of Use</a>.`
   },
   {
     icon: peopleSvg,
     label: 'I will support open access best practices for public facing data.',
-    description: ''
+    description: `The Synapse open access platform promotes data accessibility and collaboration. We encourage you to 
+    contribute your research findings to open access journals when applicable.<br><br>
+    You agree to support open access best practices when possible (e.g., sharing code, metadata, annotating files for discovery).`
   },
   {
     icon: penSvg,
     label: 'I will credit research participants and all data sources.',
-    description: ''
+    description: `You agree to acknowledge data participants and to cite contributors and data sources using the language provided with the dataset.<br><br>
+    It is our policy to terminate the access privileges of those who infringe the intellectual property rights of others. For more information, please refer to our full 
+    <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.`
   },
   {
     icon: speakerSvg,
     label: 'I will not use data for marketing and/or advertising.',
-    description: ''
+    description: `Data may not be used for marketing or advertising purposes. You agree not to upload or otherwise transmit 
+    any unsolicited or unauthorized advertising, promotional materials, junk mail, spam, or any other form of solicitation (commercial or otherwise). <br><br>
+    Please review the <a target="_blank" href="https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf?v=5">Synapse Privacy Policy</a> for Sage's commitment to privacy protections.`
   },
   {
     icon: flagSvg,
-    label: `I will report any suspected data breach or misuse to <a href="mailto:privacyofficer@sagebase.org">privacyofficer@sagebase.org</a> within 2 business days of initial incident knowledge.`,
-    description: ''
+    label: `I will report any suspected data breach or misuse to privacyofficer@sagebase.org within 2 business days of initial incident knowledge.`,
+    description: `Data misuse includes violating dataset access requirements, unauthorized use or 
+    redistribution, lack of data accreditation, and unethical data handling.<br><br>
+    For more information about what classifies as a violation of our data governance policies, please refer to our 
+    <a target="_blank" href=${dataUseLink}>Data Use Procedure</a> and <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.`
   },
 ]
 

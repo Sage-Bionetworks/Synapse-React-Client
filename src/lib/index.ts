@@ -35,6 +35,7 @@ import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import RenderIfInView from './containers/RenderIfInView'
 import TermsAndConditions from './containers/TermsAndConditions'
 import PageProgress from './containers/PageProgress'
+import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -82,6 +83,7 @@ const SynapseComponents = {
   RenderIfInView,
   TermsAndConditions,
   PageProgress,
+  ProjectViewCarousel,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

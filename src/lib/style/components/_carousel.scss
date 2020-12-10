@@ -1,0 +1,48 @@
+.SRC-Carousel {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background: none;
+
+  .BrainhubCarouselItem--active {
+    flex: 0;
+  }
+
+  &__SelectedCard {
+    opacity: 1;
+    transform: scale(1);
+    transition-duration: 0.75s;
+  }
+
+  &__UnselectedCard {
+    opacity: 0.5;
+    transform: scale(0.65);
+    transition-duration: 0.75s;
+  }
+
+  &__LeftArrow {
+    cursor: pointer;
+    margin: 10px;
+    transform: rotate(180deg);
+  }
+
+  &__RightArrow {
+    cursor: pointer;
+    margin: 10px;
+  }
+
+  .BrainhubCarousel__dots {
+    .BrainhubCarousel__dot::before {
+      width: 16px;
+      height: 16px;
+      background: none;
+      border: 1px solid $primary-action-color-500;
+    }
+
+    .BrainhubCarousel__dot--selected::before {
+      width: 16px;
+      height: 16px;
+      background-color: $primary-action-color-500;
+      border: 1px solid $primary-action-color-500;
+    }
+  }
+}
