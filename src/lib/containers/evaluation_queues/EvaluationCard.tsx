@@ -16,6 +16,7 @@ import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { RequiredProperties } from '../../utils'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,
@@ -141,28 +142,35 @@ type EvaluationDisplayStatusProps = {
 const EvaluationDisplayStatus: React.FunctionComponent<EvaluationDisplayStatusProps> = ({
   status,
 }) => {
-  if (
-    status === EvaluationStatus.CLOSED ||
-    status === EvaluationStatus.COMPLETED
-  ) {
-    return (
-      <div className="status-closed-or-completed">
-        <FontAwesomeIcon icon={faClipboardCheck} /> <span>{status}</span>
-      </div>
-    )
-  } else if (status === EvaluationStatus.OPEN) {
-    return (
-      <div className="status-open">
-        <FontAwesomeIcon icon={faSyncAlt} /> <span>{status}</span>
-      </div>
-    )
-  } else {
-    return (
-      <div className="status-planned">
+  let icon: IconDefinition | undefined
+  let className: string
+
+  switch (status) {
+    case EvaluationStatus.PLANNED:
+      className = 'status-planned'
+      icon = undefined
+      break
+    case EvaluationStatus.OPEN:
+      className = 'status-open'
+      icon = faSyncAlt
+      break
+    case EvaluationStatus.COMPLETED:
+      className = 'status-completed'
+      icon = faClipboardCheck
+      break
+    case EvaluationStatus.CLOSED:
+      className = 'status-closed'
+      icon = undefined
+      break
+  }
+  return (
+    <div className={className}>
+      <div className="status">
+        {icon && <FontAwesomeIcon icon={icon} />}
         <span>{status}</span>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 type EvaluationCardDropdownProps = {
