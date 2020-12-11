@@ -26,7 +26,7 @@ test(`IdLink renders with data from the store`, async () => {
     </Provider>,
   )
 
-  // Let the data populate in the store and rerender the component.
+  // Let the data populate in the store and re-render the component.
   await sleep(500)
 
   expect(screen.getByTestId(TEST_IDS.link)).toHaveAttribute(
@@ -35,6 +35,6 @@ test(`IdLink renders with data from the store`, async () => {
   )
 })
 
-function sleep(ms: number) {
+function sleep(ms: number): Promise<NodeJS.Timeout> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
