@@ -844,6 +844,7 @@ export default class SynapseTable extends React.Component<
               entityId={rowSynapseId}
               entityVersionNumber={entityVersionNumber}
               token={token}
+              fileEntityHandle={fileEntityHandle}
             ></HasAccess>
           </td>,
         )

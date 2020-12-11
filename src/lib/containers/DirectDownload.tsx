@@ -22,10 +22,9 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
   let mounted:boolean = true
 
   useEffect( () => {
-
+    setHasFileAccess(false)
+    setIsExternalFile(false)
     if (mounted) {
-      setHasFileAccess(false)
-      setIsExternalFile(false)
       if (fileEntityHandle) {
         if (fileEntityHandle.failureCode) {
           console.log("Error fetching file data: ", fileEntityHandle.failureCode)
