@@ -23,6 +23,7 @@ import {
   EntityColumnType,
   ColumnModel,
   FileEntity,
+  FileHandle
 } from '../../utils/synapseTypes/'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import HasAccess from '../HasAccess'
@@ -45,6 +46,7 @@ import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
 import { Icon } from '../row_renderers/utils'
+import FileEntityHandleQueryWrapper from '../FileEntityHandleQueryWrapper'
 import DirectDownload from '../DirectDownload'
 
 export const EMPTY_HEADER: EntityHeader = {
@@ -93,6 +95,7 @@ export type SynapseTableState = {
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
+  fileEntityHandleArray: FileFetchResponse[]
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -105,17 +108,17 @@ export type SynapseTableProps = {
   isRowSelectionVisible?: boolean
 }
 
-// export type AuthorizedFileResp = {
-//   fileEntity: FileEntity,
-//   fileHandle: FileHandle
-// }
-//
-// export type UnauthorizedFileResp = {
-//   fileHandleId: string,
-//   failureCode: string
-// }
-//
-// export type FileFetchResponse = AuthorizedFileResp & UnauthorizedFileResp
+export type AuthorizedFileResp = {
+  fileEntity: FileEntity,
+  fileHandle: FileHandle
+}
+
+export type UnauthorizedFileResp = {
+  fileHandleId: string,
+  failureCode: string
+}
+
+export type FileFetchResponse = AuthorizedFileResp & UnauthorizedFileResp
 
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
@@ -136,7 +139,7 @@ export default class SynapseTable extends React.Component<
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.enableResize = this.enableResize.bind(this)
     this.disableResize = this.disableResize.bind(this)
-    this.getFileDataPromises = this.getFileDataPromises.bind(this)
+    this.getFileEntityHandleCallback = this.getFileEntityHandleCallback.bind(this)
 
     // store the offset and sorted selection that is currently held
     this.state = {
@@ -160,6 +163,7 @@ export default class SynapseTable extends React.Component<
       mapUserIdToHeader: {},
       isFetchingEntityHeaders: false,
       isFetchingEntityVersion: false,
+      fileEntityHandleArray: []
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
@@ -327,41 +331,9 @@ export default class SynapseTable extends React.Component<
     })
   }
 
-  public async getFileDataPromises() {
-    const {
-      token,
-      data
-    } = this.props
-
-    if (!data) return
-
-    return new Promise((resolve, reject) => {
-      const rows = data?.queryResult.queryResults.rows
-      const fileHandlePromises = rows?.map(async (row, rowIndex) => {
-        const entityVersionNumber = row.versionNumber?.toString()
-        const rowSynapseId = `syn${row.rowId}`
-        const entity = await SynapseClient.getEntityResult(token, rowSynapseId, entityVersionNumber)
-
-        if (entity.hasOwnProperty('dataFileHandleId')) {
-          // looks like a FileEntity, get the FileHandle
-          const fileHandleData = await SynapseClient.getFileResult(
-            entity as FileEntity,
-            token,
-            true,
-          )
-          // Either returns a failure code or file handle with entity info
-          if (fileHandleData.failureCode) {
-            return fileHandleData
-          }
-          return {
-            fileEntity: entity,
-            fileHandle: fileHandleData.fileHandle,
-          }
-        } else {
-          return reject("getFileHandles: not a file entity")
-        }
-      })
-      resolve (fileHandlePromises)
+  public getFileEntityHandleCallback(result:FileFetchResponse[]) {
+    this.setState({
+      fileEntityHandleArray: result
     })
   }
 
@@ -408,6 +380,11 @@ export default class SynapseTable extends React.Component<
     }
     const table = (
       <div className="col-xs-12">
+        <FileEntityHandleQueryWrapper
+          rows={rows}
+          token={token}
+          getFileEntityHandleCallback={this.getFileEntityHandleCallback}
+        ></FileEntityHandleQueryWrapper>
         {this.renderTable(headers, columnModels, facets, rows)}
       </div>
     )
@@ -797,16 +774,6 @@ export default class SynapseTable extends React.Component<
       this.props.getLastQueryRequest!().query.sql,
     )
 
-    const fileDataPromises = this.getFileDataPromises()
-
-    // Convert promise array to data array
-    const fileEntityHandleArray:any = []
-    this.getFileDataPromises().then((filePromises:any) => {
-      filePromises.forEach((fp:any) => {
-        fp.then((resp:any) => fileEntityHandleArray.push(resp))
-      })
-    })
-
     rows.forEach((row, rowIndex) => {
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
@@ -866,6 +833,7 @@ export default class SynapseTable extends React.Component<
       const entityVersionNumber = row.versionNumber?.toString()
       const rowSynapseId = `syn${row.rowId}`
       console.log(rowSynapseId)  // Emma TODO to be deleted
+      const fileEntityHandle = this.state.fileEntityHandleArray ? this.state.fileEntityHandleArray[rowIndex] : undefined
 
       // also push the access column value if we are showing user access for individual items (still shown if not logged in)
       if (isShowingAccessColumn) {
@@ -887,11 +855,7 @@ export default class SynapseTable extends React.Component<
             <DirectDownload
               key={"direct-download-"+rowSynapseId}
               token={token}
-              associatedObjectId={rowSynapseId}
-              entityVersionNumber={entityVersionNumber}
-              fileDataPromises={fileDataPromises}  // this works
-              rowIndex={rowIndex}
-              fileEntityHandleArray={fileEntityHandleArray}   // doesn't work
+              fileEntityHandle={fileEntityHandle}
             ></DirectDownload>
           </td>
         )
