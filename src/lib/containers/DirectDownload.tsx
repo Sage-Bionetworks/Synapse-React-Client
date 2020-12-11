@@ -27,7 +27,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
     if (mounted) {
       if (fileEntityHandle) {
         if (fileEntityHandle.failureCode) {
-          console.log("Error fetching file data: ", fileEntityHandle.failureCode)
+          console.log("DirectDownload - Error fetching file data: ", fileEntityHandle.failureCode)
           setHasFileAccess(false)
         } else {
           const { fileEntity, fileHandle } = fileEntityHandle

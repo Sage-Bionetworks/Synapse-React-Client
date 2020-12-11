@@ -20,6 +20,7 @@ import {
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   RestrictionLevel,
+  FileEntity,
   AccessRequirement,
   implementsExternalFileHandleInterface,
 } from '../utils/synapseTypes/'
@@ -29,7 +30,6 @@ import AccessRequirementList, {
   AccessRequirementListProps,
 } from './access_requirement_list/AccessRequirementList'
 import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
-import { FileFetchResponse } from './table/SynapseTable'
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
@@ -44,7 +44,6 @@ export type HasAccessProps = {
   token?: string
   forceSamePage?: boolean
   set_arPropsFromHasAccess?: (props: AccessRequirementListProps) => void
-  fileEntityHandle?: FileFetchResponse
 }
 
 type HasAccessState = {
@@ -180,29 +179,69 @@ export default class HasAccess extends React.Component<
 
   getFileEntityFileHandle = (forceRefresh?: boolean) => {
     const {
+      entityId,
+      entityVersionNumber,
+      token,
       isInDownloadList,
       fileHandle,
-      fileEntityHandle,
     } = this.props
 
     if (this.state.fileHandleDownloadType && !forceRefresh) {
       // already know the downloadType
       return
     }
-    const fh = fileHandle || fileEntityHandle?.fileHandle
-    if (fh) {
+    if (fileHandle) {
       const fileHandleDownloadType = getDownloadTypeForFileHandle(
-        fh,
+        fileHandle,
         isInDownloadList,
       )
       this.setState({
         fileHandleDownloadType,
       })
-    } else {
-      this.setState({
-        fileHandleDownloadType: FileHandleDownloadTypeEnum.NoFileHandle
-      })
+      return
     }
+    this.setState({
+      isGettingEntityInformation: true,
+    })
+    // fileHandle was not passed to us, ask for it.
+    // is this a FileEntity?
+    return SynapseClient.getEntity(token, entityId, entityVersionNumber)
+      .then(entity => {
+        if (entity.hasOwnProperty('dataFileHandleId')) {
+          // looks like a FileEntity, get the FileHandle
+          return SynapseClient.getFileEntityFileHandle(
+            entity as FileEntity,
+            token,
+          ).then((fileHandle: FileHandle) => {
+            const fileHandleDownloadType = getDownloadTypeForFileHandle(
+              fileHandle,
+              isInDownloadList,
+            )
+            this.setState({
+              fileHandleDownloadType,
+              isGettingEntityInformation: false,
+            })
+          })
+        } else {
+          // entity looks like something else.
+          this.setState({
+            fileHandleDownloadType: FileHandleDownloadTypeEnum.NoFileHandle,
+            isGettingEntityInformation: false,
+          })
+          return Promise.resolve()
+        }
+      })
+      .catch(err => {
+        // this could be a self-imposed error or one from the backend, only log the latter
+        if (err.reason) {
+          console.error('Error on get Entity = ', err)
+        }
+        // could not get entity
+        this.updateStateFileHandleAccessBlocked()
+        this.setState({
+          isGettingEntityInformation: false,
+        })
+      })
   }
 
   getRestrictionInformation = (forceRefresh?: boolean) => {
