@@ -15,7 +15,6 @@ const FileEntityHandleQueryWrapper: React.FunctionComponent<FileHandleEntityQuer
 
   useEffect( () => {
     if (mounted) {
-      console.log("emma what are the rows", rows)
       getFileEntityHandle().then((filePromises:any) => {
         Promise.all(filePromises).then((result) =>{
           getFileEntityHandleCallback(result)

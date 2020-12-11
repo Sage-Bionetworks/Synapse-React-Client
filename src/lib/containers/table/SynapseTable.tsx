@@ -832,7 +832,6 @@ export default class SynapseTable extends React.Component<
 
       const entityVersionNumber = row.versionNumber?.toString()
       const rowSynapseId = `syn${row.rowId}`
-      console.log(rowSynapseId)  // Emma TODO to be deleted
       const fileEntityHandle = this.state.fileEntityHandleArray ? this.state.fileEntityHandleArray[rowIndex] : undefined
 
       // also push the access column value if we are showing user access for individual items (still shown if not logged in)
