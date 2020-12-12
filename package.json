@@ -190,6 +190,7 @@
   },
   "resolutions": {
     "fstream": "1.0.12",
+    "jest-environment-jsdom": "^26.0.1",
     "js-yaml": "3.13.1",
     "minimatch": "3.0.4",
     "mem": "^4.0.0",
