@@ -62,12 +62,14 @@ test('GraphNetworkNode renders a circle with 0 radius', () => {
   expect(circle?.getAttribute('r')).toEqual('0')
 })
 
-test('GraphNetworkNode onNodeClick is undefined on hiddenRoot', () => {
+test('GraphNetworkNode mouse events is undefined on hiddenRoot', () => {
   const { container } = setup(hiddenNode, 30)
   const g = container.querySelector('g')
 
   // Click the node label.
   expect(g?.getAttribute('onclick')).toBeNull()
+  expect(g?.getAttribute('onmouseenter')).toBeNull()
+  expect(g?.getAttribute('onmouseleave')).toBeNull()
 })
 
 test('GraphNetworkNode renders a circle with assigned radius', () => {
