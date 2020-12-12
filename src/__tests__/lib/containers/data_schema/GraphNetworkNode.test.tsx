@@ -52,6 +52,13 @@ test('GraphNetworkNode fires onNodeClick correctly', () => {
   // Click the node label.
   fireEvent.click(rect as Element)
   expect(onNodeClick).toHaveBeenCalled()
+
+  const g = container.querySelector('g')
+  fireEvent.mouseEnter(g as Element)
+  expect(g).toHaveClass('mouseOnNode')
+
+  fireEvent.mouseLeave(g as Element)
+  expect(g).toHaveClass('mouseOffNode')
 })
 
 test('GraphNetworkNode renders a circle with 0 radius', () => {

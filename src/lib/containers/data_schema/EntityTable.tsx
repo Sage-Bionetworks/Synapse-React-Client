@@ -17,7 +17,7 @@ interface RowData extends DataSchemaData {
   [key: string]: unknown
 }
 
-function EntityTable({ list, parent }: EntityTableProps): ReactElement {
+function EntityTable({ list, parent }: EntityTableProps): ReactElement | null {
   const data: DataSchemaData[] = stateData()
   const entityData = buildEntityData(list, data)
 
@@ -118,24 +118,14 @@ function EntityTable({ list, parent }: EntityTableProps): ReactElement {
       ]}
       data={entityData as RowData[]}
     />
-  ) : (
-    <></>
-  )
+  ) : null
 }
 
 function buildEntityData(
   list: string[],
   data: DataSchemaData[],
 ): DataSchemaData[] {
-  return data.reduce(
-    (acc: DataSchemaData[], entity: DataSchemaData): DataSchemaData[] => {
-      if (list.includes(entity.id)) {
-        acc.push(entity)
-      }
-      return acc
-    },
-    [] as DataSchemaData[],
-  )
+  return data.filter(entity => list.includes(entity.id))
 }
 
 export default EntityTable
