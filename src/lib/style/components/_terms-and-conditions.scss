@@ -40,6 +40,9 @@ $signatureLine-width: 420px;
           list-style: disc;
           margin-bottom: $terms-margin;
         }
+        a {
+          text-decoration: underline;
+        }
       }
       .terms-checkbox {
         align-self: center;

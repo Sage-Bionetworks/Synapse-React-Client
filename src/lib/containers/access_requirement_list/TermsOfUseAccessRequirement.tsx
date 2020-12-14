@@ -24,7 +24,7 @@ export default function TermsOfUseAccessRequirementComponent({
       setIsLoading(true)
 
       try {
-        const wikiPageRequirement = await SynapseClient.getWikiPageKey(
+        const wikiPageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
           token,
           accessRequirement.id,
         )

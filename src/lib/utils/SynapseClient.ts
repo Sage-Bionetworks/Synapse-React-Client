@@ -977,13 +977,31 @@ export const getTeamList = (
 }
 
 /**
+ * https://rest-docs.synapse.org/rest/GET/entity/ownerId/wikikey.html
+ * Get the root WikiPageKey for an Entity.
+ * Note: The caller must be granted the ACCESS_TYPE.READ permission on the owner.
+ * @return WikiPageKey
+ **/
+export const getWikiPageKeyForEntity = (
+  sessionToken: string | undefined,
+  ownerId: string | number,
+): Promise<WikiPageKey> => {
+  const url = `repo/v1/entity/${ownerId}/wikikey`
+  return doGet<WikiPageKey>(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * https://rest-docs.synapse.org/rest/GET/access_requirement/ownerId/wikikey.html
  * Get the root WikiPageKey for an Access Requirement.
  * Note: The caller must be granted the ACCESS_TYPE.READ permission on the owner.
  * @return WikiPageKey
  **/
-
-export const getWikiPageKey = (
+export const getWikiPageKeyForAccessRequirement = (
   sessionToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
@@ -1017,6 +1035,23 @@ export const getWikiAttachmentsFromEvaluation = (
   wikiId: string | number,
 ) => {
   const url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
+  return doGet(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const getPresignedUrlForWikiAttachment = (
+  sessionToken: string | undefined,
+  id: string | number,
+  wikiId: string | number,
+  fileName: string,
+  objectType: ObjectType = ObjectType.ENTITY,
+): Promise<string> => {
+  const objectTypeString = getObjectTypeToString(objectType!)
+  const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
   return doGet(
     url,
     sessionToken,

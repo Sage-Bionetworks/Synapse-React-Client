@@ -2,19 +2,42 @@
   .submit-button {
     margin-top: 1rem;
   }
-  .status-open {
-    color: $green-affrimative;
-  }
-  .status-closed-or-completed {
+
+  .status {
+    display: inline-flex;
     svg {
-      color: $green-affrimative;
-    }
-    span {
-      color: $gray-deemphasized;
+      height: 1rem;
+      width: 1rem;
     }
   }
 
+  .status-open {
+    //we want to make the sync icon be centered with the text
+    color: $green-affrimative;
+    .status {
+      align-items: center;
+    }
+    span {
+      line-height: 1rem;
+    }
+  }
+  .status-completed {
+    //we want the clipboard icon to be bottom-aligned with the text
+    svg {
+      color: $green-affrimative;
+    }
+    .status {
+      align-items: baseline;
+    }
+  }
+
+  // currently no styling for these
+  .status-closed {
+  }
   .status-planned {
-    color: $gray-deemphasized;
+  }
+
+  label:not(:first-child) {
+    margin-top: 1rem;
   }
 }
