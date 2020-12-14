@@ -1,3 +1,20 @@
+/**
+ * To be reworked so that HasAccess component doesn't need to request file handle information
+ * because that information can be obtained in the parent component
+ *
+ * For example in SynapseTable.tsx, the variable "fileEntityHandle" is available
+ * for each row Synapse id to store file handle information.
+ * If the row Synapse id doesn't return a file handle, "fileEntityHandle" will contain
+ * an object { fileHandleId, failureCode }
+ * If the row Synapse id returns a file handle, "fileEntityHandle" will contain
+ * an object { fileEntity, fileHandle }
+ *
+ * To set up "fileEntityHandle", the parent component should import "FileEntityHandleQueryWrapper"
+ * and pass a callback function to "FileEntityHandleQueryWrapper" so that once the file handle information
+ * is returned, the success for failure result can be saved in the parent state.
+ * See SynapseTable.tsx as an example.
+ */
+
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCircle,

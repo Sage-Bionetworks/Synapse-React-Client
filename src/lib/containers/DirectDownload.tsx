@@ -5,7 +5,7 @@ import {
   implementsExternalFileHandleInterface,
 } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils'
-import { FileFetchResponse } from './table/SynapseTable'
+import { FileFetchResponse } from './FileEntityHandleQueryWrapper'
 
 export type DirectFileDownloadProps = {
   token?: string

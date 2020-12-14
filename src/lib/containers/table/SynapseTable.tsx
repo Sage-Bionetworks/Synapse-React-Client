@@ -22,8 +22,6 @@ import {
   FacetColumnRequest,
   EntityColumnType,
   ColumnModel,
-  FileEntity,
-  FileHandle
 } from '../../utils/synapseTypes/'
 import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import HasAccess from '../HasAccess'
@@ -46,7 +44,7 @@ import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
 import { Icon } from '../row_renderers/utils'
-import FileEntityHandleQueryWrapper from '../FileEntityHandleQueryWrapper'
+import FileEntityHandleQueryWrapper, { FileFetchResponse } from '../FileEntityHandleQueryWrapper'
 import DirectDownload from '../DirectDownload'
 
 export const EMPTY_HEADER: EntityHeader = {
@@ -95,7 +93,7 @@ export type SynapseTableState = {
   isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
-  fileEntityHandleArray: FileFetchResponse[]
+  fileEntityHandleArray: FileFetchResponse[] // an array to contain either an object of authorized file or unauthorized file response.
 }
 export type SynapseTableProps = {
   visibleColumnCount?: number
@@ -107,18 +105,6 @@ export type SynapseTableProps = {
   enableLeftFacetFilter?: boolean
   isRowSelectionVisible?: boolean
 }
-
-export type AuthorizedFileResp = {
-  fileEntity: FileEntity,
-  fileHandle: FileHandle
-}
-
-export type UnauthorizedFileResp = {
-  fileHandleId: string,
-  failureCode: string
-}
-
-export type FileFetchResponse = AuthorizedFileResp & UnauthorizedFileResp
 
 export default class SynapseTable extends React.Component<
   QueryWrapperChildProps & SynapseTableProps,
@@ -331,6 +317,7 @@ export default class SynapseTable extends React.Component<
     })
   }
 
+  // Callback function to pass to FileEntityHandleQueryWrapper to save file entity/handle information
   public getFileEntityHandleCallback(result:FileFetchResponse[]) {
     this.setState({
       fileEntityHandleArray: result

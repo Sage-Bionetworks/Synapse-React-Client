@@ -1,11 +1,23 @@
 import React, { useEffect } from 'react'
-import { FileEntity, Row } from '../utils/synapseTypes'
+import { FileEntity, FileHandle, Row } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils'
+
+export type AuthorizedFileResp = {
+  fileEntity: FileEntity,
+  fileHandle: FileHandle
+}
+
+export type UnauthorizedFileResp = {
+  fileHandleId: string,
+  failureCode: string
+}
+
+export type FileFetchResponse = AuthorizedFileResp & UnauthorizedFileResp
 
 export type FileHandleEntityQueryWrapperProps = {
   token?: string
   rows: Row[]
-  getFileEntityHandleCallback: Function
+  getFileEntityHandleCallback: Function // this is the callback function to save the file handle result in the parent component
 }
 
 const FileEntityHandleQueryWrapper: React.FunctionComponent<FileHandleEntityQueryWrapperProps> = (props) => {
@@ -40,10 +52,11 @@ const FileEntityHandleQueryWrapper: React.FunctionComponent<FileHandleEntityQuer
             token,
             true,
           )
-          // Either returns a failure code or file handle with entity info
+          // If not file handle, return the failure object
           if (fileHandleData.failureCode) {
             return fileHandleData
           }
+          // else, return file entity and file handle information
           return {
             fileEntity: entity,
             fileHandle: fileHandleData.fileHandle,
