@@ -50,6 +50,7 @@ export default function UploadButton(): ReactElement {
           <Form.Label id={`schemaUrlLabel`}>{`Schema URL`}</Form.Label>
           <InputGroup>
             <Form.Control
+              data-testid={TEST_IDS.urlInput}
               isInvalid={!validUrl}
               type={`url`}
               id={`schemaUrl`}
