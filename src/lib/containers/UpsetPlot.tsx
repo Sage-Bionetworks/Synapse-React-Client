@@ -14,6 +14,7 @@ import getColorPalette from './ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { ErrorBanner } from './ErrorBanner'
 import loadingScreen from './LoadingScreen'
+import { Button } from 'react-bootstrap'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
@@ -143,7 +144,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <div className="UpsetPlot">
+            <div className="UpsetPlot bootstrap-4-backport">
               <UpSetJS
                 sets={data.sets}
                 combinations={data.combinations}
@@ -165,11 +166,14 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
               />
               {summaryLink && summaryLinkText && (
                 <div className="UpsetPlot__summary">
-                  <p>
-                    <a className="homepage-button-link" href={summaryLink}>
-                      {summaryLinkText}
-                    </a>
-                  </p>
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="pill"
+                    href={summaryLink}
+                  >
+                    {summaryLinkText}
+                  </Button>
                 </div>
               )}
             </div>

@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Button } from 'react-bootstrap'
 import ButtonContent from '../assets/ButtonContent'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
@@ -17,8 +18,6 @@ type State = {
 }
 
 type Props = {
-  theme: string
-  icon: boolean
   googleRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: Function // Callback is invoked after login
@@ -143,26 +142,20 @@ class Login extends React.Component<Props, State> {
       })
   }
   public render() {
-    const { theme, icon } = this.props
-    const googleTheme =
-      theme === 'dark'
-        ? 'SRC-google-button-dark-color'
-        : 'SRC-google-button-light-color'
     return (
       <div
         id="loginPage"
-        className="container loginContainer SRC-syn-border-spacing"
+        className="container LoginComponent SRC-syn-border-spacing bootstrap-4-backport"
       >
         <form>
-          <button
+          <Button
+            variant="white"
             onClick={this.onGoogleSignIn}
-            className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}
+            className={`SRC-google-button`}
           >
             <GoogleIcon key={1} active={true} />
-            <ButtonContent icon={icon} key={2}>
-              Sign in with Google
-            </ButtonContent>
-          </button>
+            <ButtonContent>Sign in with Google</ButtonContent>
+          </Button>
         </form>
         <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">
           or
@@ -172,7 +165,7 @@ class Login extends React.Component<Props, State> {
           <img
             height="20px"
             style={{ marginRight: '10px' }}
-            alt={'sage bionetworks logo'}
+            alt={'Sage Bionetworks logo'}
             src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg"
           />
           Sign in with your Sage Bionetworks Synapse account
@@ -181,7 +174,7 @@ class Login extends React.Component<Props, State> {
           <input
             autoComplete="username"
             placeholder="username or email"
-            className="form-control SRC-marginBottomTop"
+            className="form-control LoginComponent__Input"
             id="exampleEmail"
             name="username"
             type="text"
@@ -191,7 +184,7 @@ class Login extends React.Component<Props, State> {
           <input
             autoComplete="password"
             placeholder="password"
-            className="form-control SRC-marginBottomTop"
+            className="form-control LoginComponent__Input"
             id="examplePassword"
             name="password"
             type="password"
@@ -199,14 +192,14 @@ class Login extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
           {this.getLoginFailureView()}
-          <button
+          <Button
+            variant="primary"
             onSubmit={this.handleLogin}
             type="submit"
-            className="btn SRC-primary-background-color SRC-hoverWhiteText
-              SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
+            className="SRC-login-button SRC-marginBottomTen"
           >
-            <ButtonContent icon={icon}>Sign in</ButtonContent>
-          </button>
+            <ButtonContent>Sign in</ButtonContent>
+          </Button>
         </form>
         <div>
           <a
@@ -218,7 +211,7 @@ class Login extends React.Component<Props, State> {
             Forgot password?
           </a>
           <span className="SRC-deemphasized-text SRC-floatRight">
-            &nbsp;It's free!
+            &nbsp;It&apos;s free!
           </span>
           <a
             href={`${getEndpoint(
