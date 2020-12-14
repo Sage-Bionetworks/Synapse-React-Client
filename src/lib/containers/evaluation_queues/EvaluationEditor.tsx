@@ -195,8 +195,8 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
             />
           )}
           {error && <ErrorBanner error={error} token={sessionToken} />}
-          <div>
-            <Button className="float-right save-button" onClick={onSave}>
+          <div className="d-flex justify-content-end">
+            <Button className="save-button" onClick={onSave}>
               Save
             </Button>
           </div>

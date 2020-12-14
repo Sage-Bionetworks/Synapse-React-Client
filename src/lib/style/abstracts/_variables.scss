@@ -31,6 +31,30 @@ $themes: (
   ),
 );
 
+$primary-action-color-900: adjust-color(
+  $primary-action-color,
+  $saturation: 24%,
+  $lightness: -18%
+) !default;
+
+$primary-action-color-700: adjust-color(
+  $primary-action-color,
+  $saturation: 11%,
+  $lightness: -8%
+) !default;
+
+$primary-action-color-500: adjust-color(
+  $primary-action-color,
+  $saturation: 29%,
+  $lightness: -4%
+) !default;
+
+$primary-action-color-300: adjust-color(
+  $primary-action-color,
+  $saturation: -3%,
+  $lightness: 10%
+) !default;
+
 /// Breakpoints map
 /// @prop {String} keys - Keys are identifiers mapped to a given length
 /// @prop {Map} values - Values are actual breakpoints expressed in pixels
