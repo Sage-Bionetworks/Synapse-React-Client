@@ -1,26 +1,11 @@
+
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
     "declaration": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "module": "commonjs",
-    "target": "es5",
-    "lib": ["es6", "dom"],
-    "sourceMap": true,
     "jsx": "react",
-    "moduleResolution": "node",
     "rootDir": "src/lib",
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitAny": true,
-    "importHelpers": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
   },
   "include": [
     "src/lib/**.ts",
