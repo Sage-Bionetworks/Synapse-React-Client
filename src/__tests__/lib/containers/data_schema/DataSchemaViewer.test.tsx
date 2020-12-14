@@ -8,38 +8,46 @@ import { TEST_IDS as ViewTypeTestIds } from 'lib/containers/data_schema/ViewType
 
 const title: string = `test viewer`
 
-test('DataSchemaViewer renders correctly', async () => {
+function setup(url: string, title: string) {
   // DataSchemaViewer needs the redux store.
-  const { rerender } = render(
+  render(
     <Provider>
-      <DataProvider url={``} />
+      <DataProvider url={url} />
       <DataSchemaViewer title={title} />
     </Provider>,
   )
+}
 
-  // Let the data populate in the store and re-render the component.
-  await sleep(500)
+test('DataSchemaViewer renders correctly with a passed title', async () => {
+  setup(``, title)
 
-  expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(title)
+  const heading = await waitFor(() => screen.getByRole('heading', { level: 2 }))
+  expect(heading).toHaveTextContent(title)
+})
 
+test('DataSchemaViewer renders with no passed title', async () => {
   // Needs a passed title.
-  rerender(
-    <Provider>
-      <DataProvider url={``} />
-      <DataSchemaViewer title={``} />
-    </Provider>,
+  setup(``, ``)
+
+  const heading = await waitFor(() => screen.queryByText(title))
+  expect(heading).not.toBeInTheDocument()
+})
+
+test('DataSchemaViewer renders after view type is changed', async () => {
+  setup(``, title)
+
+  const viewType = await waitFor(() =>
+    screen.getByTestId(ViewTypeTestIds.select),
   )
 
-  expect(screen.queryByText(title)).not.toBeInTheDocument()
-
-  const viewType = screen.getByTestId(ViewTypeTestIds.select)
   expect(viewType).toBeInTheDocument()
 
   fireEvent.change(viewType, { target: { value: 'parentIds' } })
 
-  await waitFor(() => screen.getByText('Ontology Class'))
+  await sleep(500)
 
-  const nodes = screen.getByText('Ontology Class')
+  const nodes = await waitFor(() => screen.getByText('Ontology Class'))
+
   expect(nodes).toBeInTheDocument()
 })
 

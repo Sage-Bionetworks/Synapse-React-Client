@@ -3,6 +3,7 @@ import 'react-app-polyfill/stable'
 import 'raf/polyfill' // polyfill for requestAnimationFrame
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
+import MutationObserver from 'mutation-observer'
 import 'jest-canvas-mock'
 import 'fake-indexeddb/auto'
 
@@ -24,7 +25,7 @@ global.markdownitInlineComments = require('markdown-it-inline-comments')
 global.markdownitBr = require('markdown-it-br')
 global.sanitizeHtml = require('sanitize-html')
 global.markdownitMath = require('markdown-it-synapse-math')
-global.globalThis = global;
+global.MutationObserver = MutationObserver
 
 configure({ adapter: new Adapter() })
 // Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)
