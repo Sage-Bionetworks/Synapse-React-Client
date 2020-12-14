@@ -1,6 +1,7 @@
 import React, { ReactElement, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import IdLink from './IdLink'
+import { LIST_LENGTH } from './constants'
 import getTestIDs from './utils/getTestIds'
 
 export const TEST_IDS = getTestIDs()
@@ -11,14 +12,13 @@ interface ItemListProps {
 }
 
 function ItemList({ list, parent }: ItemListProps): ReactElement {
-  const initialLimit = 7
   const listLength = list ? list.length : 0
   const [listLimit, setListLimit] = useState(
-    listLength < initialLimit ? listLength : initialLimit,
+    listLength < LIST_LENGTH ? listLength : LIST_LENGTH,
   )
   const items = list
     ? list.map((id: string, index: number) => (
-        <li key={`itemList-dd${index}`}>
+        <li key={`itemList-dd${index}`} data-id={id}>
           <IdLink id={id} isParent={parent === id} />
         </li>
       ))
@@ -29,25 +29,22 @@ function ItemList({ list, parent }: ItemListProps): ReactElement {
       <ul className={'itemList-dd'} data-testid={TEST_IDS.list}>
         {items.slice(0, listLimit)}
       </ul>
-      {listLength - listLimit > initialLimit && (
+      {listLength - listLimit > LIST_LENGTH && (
         <Button
           className={`btn-more`}
           data-testid={TEST_IDS.viewMore}
-          onClick={() => setListLimit(listLimit + initialLimit)}
+          onClick={() => setListLimit(listLimit + LIST_LENGTH)}
           title={`Show ${Math.min(
             listLength - listLimit,
-            initialLimit,
+            LIST_LENGTH,
           )} more (${listLength} total)`}
-        >{`Show ${Math.min(
-          listLength - listLimit,
-          initialLimit,
-        )} more`}</Button>
+        >{`Show ${Math.min(listLength - listLimit, LIST_LENGTH)} more`}</Button>
       )}
-      {listLimit > initialLimit && (
+      {listLimit > LIST_LENGTH && (
         <Button
           className={`btn-less`}
           data-testid={TEST_IDS.viewLess}
-          onClick={() => setListLimit(initialLimit)}
+          onClick={() => setListLimit(LIST_LENGTH)}
           title={`Show less`}
         >{`Show less`}</Button>
       )}

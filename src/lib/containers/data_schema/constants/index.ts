@@ -10,6 +10,8 @@ export const MINUTES_TO_CACHE = 15
 
 export const TABLE_PAGE_SIZE = 25
 
+export const LIST_LENGTH = 7
+
 export enum DATA_TYPES {
   COMMENT = 'description',
   DISPLAY_NAME = 'attribute',

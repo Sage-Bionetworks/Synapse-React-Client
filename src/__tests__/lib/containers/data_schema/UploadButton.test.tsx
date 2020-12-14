@@ -62,6 +62,7 @@ test(`UploadButton refuses an invalid URL`, async () => {
   const modal = screen.getByTestId(TEST_IDS.modal)
   expect(modal).toBeInTheDocument()
 
+  const cancelButton = await waitFor(() => screen.findByText(`Cancel`))
   const submitButton = await waitFor(() => screen.findByText(`Submit`))
   expect(submitButton).toBeInTheDocument()
   expect(submitButton).toBeDisabled()
@@ -71,8 +72,14 @@ test(`UploadButton refuses an invalid URL`, async () => {
 
   fireEvent.change(urlInput, { target: { value: invalidUrl } })
 
+  const errorText = await waitFor(() => screen.findByText(`* Invalid URL`))
+  expect(errorText).toBeInTheDocument()
+
   expect(submitButton).toBeDisabled()
 
   fireEvent.click(submitButton)
   expect(modal).toBeInTheDocument()
+
+  fireEvent.click(cancelButton)
+  expect(modal).not.toBeInTheDocument()
 })
