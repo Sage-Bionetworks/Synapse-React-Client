@@ -153,7 +153,7 @@ class Login extends React.Component<Props, State> {
             onClick={this.onGoogleSignIn}
             className={`SRC-google-button`}
           >
-            <GoogleIcon key={1} active={true} />
+            <GoogleIcon />
             <ButtonContent>Sign in with Google</ButtonContent>
           </Button>
         </form>

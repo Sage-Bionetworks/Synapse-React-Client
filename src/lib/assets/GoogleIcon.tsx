@@ -1,6 +1,6 @@
 import * as React from 'react'
 // @ts-nocheck
-const GoogleIcon = ({ active }: { active: boolean }) => (
+const GoogleIcon = () => (
   <div
     style={{
       float: 'left',
