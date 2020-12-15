@@ -144,7 +144,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               variant="primary"
               href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              Get Started Now
+              {token ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -177,7 +177,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               variant="primary"
               href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              Get Started Now
+              {token ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -211,7 +211,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               variant="primary"
               href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              Get Started Now
+              {token ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
