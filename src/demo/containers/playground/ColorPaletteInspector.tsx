@@ -1,13 +1,8 @@
 import React, { useState } from 'react'
-import '../style/App.scss'
-import '../style/DemoStyle.scss'
-import '@fortawesome/fontawesome-free/css/all.css'
 import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
 } from 'lib/utils/functions/colorPalette'
-
-export const TokenContext = React.createContext('')
 
 type DivColorInputProps = {
   initialColor: string
