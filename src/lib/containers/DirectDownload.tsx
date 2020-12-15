@@ -26,17 +26,19 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
     setIsExternalFile(false)
     if (mounted) {
       if (fileEntityHandle) {
-        if (fileEntityHandle.failureCode) {
+        if ('failureCode' in fileEntityHandle && fileEntityHandle.failureCode) {
           console.log("DirectDownload - Error fetching file data: ", fileEntityHandle.failureCode)
           setHasFileAccess(false)
         } else {
-          const { fileEntity, fileHandle } = fileEntityHandle
-          setFileEntity(fileEntity)
-          if (fileHandle && !fileHandle.isPreview) { // have file access and not file preview
-            setHasFileAccess(true)
-            if (implementsExternalFileHandleInterface(fileHandle)) {
-              setIsExternalFile(true)
-              setExternalURL(fileHandle.externalURL)
+          if ('fileEntity' in fileEntityHandle && 'fileHandle' in fileEntityHandle) {
+            const { fileEntity, fileHandle } = fileEntityHandle
+            setFileEntity(fileEntity)
+            if (fileHandle && !fileHandle.isPreview) { // have file access and not file preview
+              setHasFileAccess(true)
+              if (implementsExternalFileHandleInterface(fileHandle)) {
+                setIsExternalFile(true)
+                setExternalURL(fileHandle.externalURL)
+              }
             }
           }
         }

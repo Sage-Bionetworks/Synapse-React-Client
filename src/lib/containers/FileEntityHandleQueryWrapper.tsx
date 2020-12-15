@@ -2,17 +2,17 @@ import React, { useEffect } from 'react'
 import { FileEntity, FileHandle, Row } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils'
 
-export type AuthorizedFileResp = {
+interface BaseFileFetchResponse {}
+interface AuthorizedFileResp extends BaseFileFetchResponse {
   fileEntity: FileEntity,
   fileHandle: FileHandle
 }
-
-export type UnauthorizedFileResp = {
+interface UnauthorizedFileResp extends BaseFileFetchResponse {
   fileHandleId: string,
   failureCode: string
 }
 
-export type FileFetchResponse = AuthorizedFileResp & UnauthorizedFileResp
+export type FileFetchResponse = AuthorizedFileResp | UnauthorizedFileResp
 
 export type FileHandleEntityQueryWrapperProps = {
   token?: string
