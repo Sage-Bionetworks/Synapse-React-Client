@@ -13,6 +13,7 @@ import TemplateComponentDemo from './TemplateComponentDemo'
 import Resources from 'lib/containers/home_page/resources/Resources'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from 'lib/containers/ExternalFileHandleLink'
+import ColorPaletteInspector from './ColorPaletteInspector'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -32,6 +33,9 @@ const App = ({
     <div>
       <h2>Links to components under development </h2>
       <ul>
+        <li>
+          <Link to={`${match.url}/ColorPalette`}>Inspect Color Palette</Link>
+        </li>
         <li>
           <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
         </li>
@@ -165,6 +169,12 @@ const App = ({
         component={() => (
           <ExternalFileHandleLink synId={'syn22276050'} token={token} />
         )}
+      />
+
+      <Route
+        exact={true}
+        path={`${match.url}/ColorPalette`}
+        component={() => <ColorPaletteInspector />}
       />
 
       <Route exact={true} path={match.path} component={() => <div />} />
