@@ -35,12 +35,15 @@ import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import RenderIfInView from './containers/RenderIfInView'
 import TermsAndConditions from './containers/TermsAndConditions'
 import PageProgress from './containers/PageProgress'
+import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
 import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationRoundEditorList } from './containers/evaluation_queues/EvaluationRoundEditorList'
+import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
+import { EvaluationEditor } from './containers/evaluation_queues/EvaluationEditor'
 
 const SynapseComponents = {
   Facets,
@@ -74,10 +77,13 @@ const SynapseComponents = {
   FeaturedDataTabs,
   UserCardListGroups,
   EvaluationRoundEditorList,
+  EvaluationCard,
+  EvaluationEditor,
   AccountLevelBadge,
   RenderIfInView,
   TermsAndConditions,
   PageProgress,
+  ProjectViewCarousel,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

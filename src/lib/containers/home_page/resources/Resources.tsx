@@ -1,12 +1,12 @@
 import React from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
-import { Error } from '../../Error'
-import { getFieldIndex } from '../goals/Goals'
+import { ErrorBanner } from '../../ErrorBanner'
 import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
 import ResourcesDesktop from './Resources.Desktop'
 import ResourcesMobile from './Resources.Mobile'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
+import { getFieldIndex } from '../../../utils/functions/queryUtils'
 
 export type ResourcesProps = {
   entityId: string
@@ -61,7 +61,7 @@ export default function Resources(props: ResourcesProps) {
     }) ?? []
   return (
     <div className="Resources">
-      <Error error={error} token={token} />
+      <ErrorBanner error={error} token={token} />
       {showDesktop ? (
         <ResourcesDesktop data={data} token={token} />
       ) : (

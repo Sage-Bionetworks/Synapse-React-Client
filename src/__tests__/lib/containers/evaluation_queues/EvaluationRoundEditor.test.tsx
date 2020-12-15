@@ -8,13 +8,14 @@ import {
   EvaluationRoundInput,
   EvaluationRoundLimitInput,
 } from '../../../../lib/containers/evaluation_queues/input_models/models'
-import { EvaluationRound } from '../../../../lib/utils/synapseTypes/Evaluation'
+import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
 import { mount, shallow } from 'enzyme'
 import React from 'react'
 import { EvaluationRoundLimitOptionsList } from '../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptionsList'
 import { SynapseClient } from '../../../../lib/utils/'
 import JestMockPromise from 'jest-mock-promise'
 import { EvaluationRoundEditorDropdown } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorDropdown'
+import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 
 describe('test EvaluationRoundEditor', () => {
   let props: EvaluationRoundEditorProps
@@ -251,7 +252,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockOnSave).not.toBeCalled()
 
-    expect(wrapper.find('Error').exists()).toBe(true)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
   })
 
   it('test delete: no id', () => {
@@ -314,7 +315,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockOnDelete).not.toBeCalled()
 
     //error should be shown
-    expect(wrapper.find('Error').exists()).toBe(true)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
   })
 })
 

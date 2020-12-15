@@ -2,7 +2,7 @@ import { SynapseClient } from '../../utils'
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
-import { Error } from '../Error'
+import { ErrorBanner } from '../ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
@@ -14,7 +14,7 @@ const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
 }) => {
   return (
     <div role="alert" className="SRC-marginBottomTop">
-      <Error error={error}></Error>
+      <ErrorBanner error={error}></ErrorBanner>
       <Button onClick={resetErrorBoundary}>Reload Access Tokens</Button>
     </div>
   )
@@ -132,7 +132,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
               </div>
             )}
           </div>
-          {showErrorMessage && <Error error={errorMessage}></Error>}
+          {showErrorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
         </div>
       </ErrorBoundary>
     </>

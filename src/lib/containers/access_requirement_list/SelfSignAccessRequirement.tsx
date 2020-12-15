@@ -28,7 +28,7 @@ export default function SelfSignAccessRequirementComponent({
     const getSelfSignAccessData = async () => {
       try {
         setIsLoading(true)
-        const wikiPageRequirment = await SynapseClient.getWikiPageKey(
+        const wikiPageRequirment = await SynapseClient.getWikiPageKeyForAccessRequirement(
           token,
           accessRequirement.id,
         )
