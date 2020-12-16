@@ -69,14 +69,15 @@
     }
     .HeroContainer {
       .HeroImage {
-        max-height: 25vw;
+        max-height: 250px;
+        max-width: 100%;
       }
     }
     .SectionGraphic {
       display: block;
       margin: auto;
-      max-height: 200px;
-      max-width: 400px;
+      max-height: 175px;
+      max-width: 100%;
     }
 
     &__MarginAutoDesktop {
@@ -171,7 +172,7 @@
   @media (max-width: 1100px) {
     // No grid for the HeroContainer at <= 1100px
     .HeroImage {
-      max-height: 22vw;
+      max-height: 250px;
       max-width: 100%;
       margin-top: 15px;
       margin-bottom: 15px;
