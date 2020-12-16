@@ -1,4 +1,5 @@
 export * from './Evaluation'
+export * from './EvaluationStatus'
 export * from './EvaluationRound'
 export * from './EvaluationRoundLimit'
 export * from './SubmissionQuota'
