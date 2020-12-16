@@ -9,7 +9,8 @@ import {
   updateEvaluation,
 } from '../../utils/SynapseClient'
 import { ErrorBanner } from '../ErrorBanner'
-import { Evaluation, EvaluationStatus } from '../../utils/synapseTypes'
+import { Evaluation } from '../../utils/synapseTypes'
+import { EvaluationStatus } from '../../utils/synapseTypes/Evaluation/EvaluationStatus'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
