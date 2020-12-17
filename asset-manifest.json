@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/Synapse-React-Client/static/css/main.bef3770c.chunk.css",
-    "main.js": "/Synapse-React-Client/build/main.1cd85f7f.js",
+    "main.css": "/Synapse-React-Client/static/css/main.bab0d64d.chunk.css",
+    "main.js": "/Synapse-React-Client/build/main.b946370c.js",
     "runtime-main.js": "/Synapse-React-Client/build/bundle.7fc64edc.js",
     "static/css/2.88437327.chunk.css": "/Synapse-React-Client/static/css/2.88437327.chunk.css",
-    "build/2.71c9ac0d.js": "/Synapse-React-Client/build/2.71c9ac0d.js",
-    "build/2.71c9ac0d.js.LICENSE.txt": "/Synapse-React-Client/build/2.71c9ac0d.js.LICENSE.txt",
+    "build/2.09495f11.js": "/Synapse-React-Client/build/2.09495f11.js",
+    "build/2.09495f11.js.LICENSE.txt": "/Synapse-React-Client/build/2.09495f11.js.LICENSE.txt",
     "index.html": "/Synapse-React-Client/index.html",
-    "precache-manifest.fac59bc32595c94bb9a46fec95cd8407.js": "/Synapse-React-Client/precache-manifest.fac59bc32595c94bb9a46fec95cd8407.js",
+    "precache-manifest.4f4be7aaa928056dbf2b94b45ba658b1.js": "/Synapse-React-Client/precache-manifest.4f4be7aaa928056dbf2b94b45ba658b1.js",
     "service-worker.js": "/Synapse-React-Client/service-worker.js",
     "static/css/2.88437327.chunk.css.map": "/Synapse-React-Client/static/css/2.88437327.chunk.css.map",
-    "static/css/main.bef3770c.chunk.css.map": "/Synapse-React-Client/static/css/main.bef3770c.chunk.css.map",
+    "static/css/main.bab0d64d.chunk.css.map": "/Synapse-React-Client/static/css/main.bab0d64d.chunk.css.map",
     "static/media/DNA_Two.svg": "/Synapse-React-Client/static/media/DNA_Two.d8f80972.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.1104e430.svg",
     "static/media/account-certified.77d5a352.svg": "/Synapse-React-Client/static/media/account-certified.77d5a352.svg",
@@ -48,8 +48,8 @@
   "entrypoints": [
     "build/bundle.7fc64edc.js",
     "static/css/2.88437327.chunk.css",
-    "build/2.71c9ac0d.js",
-    "static/css/main.bef3770c.chunk.css",
-    "build/main.1cd85f7f.js"
+    "build/2.09495f11.js",
+    "static/css/main.bab0d64d.chunk.css",
+    "build/main.b946370c.js"
   ]
 }
