@@ -46,8 +46,6 @@
   }
 
   .SectionGraphic {
-    max-height: 270px;
-    max-width: 450px;
     flex-shrink: 1;
   }
 
@@ -69,9 +67,18 @@
     h2 {
       margin-top: 25px;
     }
+    .HeroContainer {
+      .HeroImage {
+        max-height: 250px;
+        max-width: 100%;
+      }
+    }
     .SectionGraphic {
       display: block;
       margin: auto;
+      max-height: 150px;
+      max-width: 100%;
+      margin-bottom: 11px;
     }
 
     &__MarginAutoDesktop {
@@ -92,6 +99,11 @@
         padding-left: 20px;
         padding-right: 20px;
         margin-top: 35px;
+      }
+
+      .SectionGraphic {
+        max-height: 270px;
+        max-width: 450px;
       }
     }
 
