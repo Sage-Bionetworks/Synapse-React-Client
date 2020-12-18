@@ -110,6 +110,7 @@ svg.SRC-hoverBox {
   .dropdown button.btn {
     margin: 0 1px;
     border: 0;
+    border-radius: 0;
   }
   .SRC-sortPadding {
     padding: 3px;
@@ -167,7 +168,7 @@ span.SRC-facets svg.SRC-facets-icon {
   border: 1px solid transparent;
   font-size: 14px;
   font-weight: 500;
-  font-family: Lato sans-serif;
+  font-family: Lato, sans-serif;
   width: 100%;
 }
 

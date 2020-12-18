@@ -40,6 +40,9 @@ $signatureLine-width: 420px;
           list-style: disc;
           margin-bottom: $terms-margin;
         }
+        a {
+          text-decoration: underline;
+        }
       }
       .terms-checkbox {
         align-self: center;
@@ -77,6 +80,7 @@ $signatureLine-width: 420px;
       .terms-checked {
         background-color: #28A745;
         border: none;
+        text-align: center;
       }
     }
 

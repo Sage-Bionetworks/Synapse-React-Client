@@ -9,6 +9,23 @@ type PartialStateObject = {
 }
 
 /**
+ * Retrieve the index of a column using the column name
+ * @param name the column name
+ * @param result the QueryResultBundle containing the columns
+ * @returns The index of the column, or -1 if the column doesn't exist in the result
+ */
+export const getFieldIndex = (
+  name: string,
+  result: QueryResultBundle | undefined,
+) => {
+  return (
+    result?.selectColumns?.findIndex(el => {
+      return el.name === name
+    }) ?? -1
+  )
+}
+
+/**
  * Grab the next page of data, pulling in 25 more rows.
  *
  * @param {*} queryRequest Query request as specified by
