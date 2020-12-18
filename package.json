@@ -155,7 +155,7 @@
     "build-gh": "yarn run build:docs",
     "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o upstream",
     "deploy:origin": "yarn install && yarn run predeploy && gh-pages -d styleguide && gh-pages -d styleguide -o origin",
-    "build-css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=.",
+    "build-css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=. && sass src/demo/style:src/demo/style --load-path=.",
     "watch-css": "yarn run build-css && sass src --watch -I .",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css serve:docs",
