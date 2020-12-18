@@ -49,7 +49,7 @@
     flex-shrink: 1;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: map-get($breakpoints, 'medium')) {
     &__Section {
       padding: 30px 40px;
     }
@@ -98,7 +98,7 @@
     }
   }
 
-  @media (min-width: 751px) {
+  @media (min-width: map-get($breakpoints, 'medium') + 1) {
     &__Section {
       padding: 50px 60px;
     }
