@@ -73,31 +73,6 @@
   }
 }
 
-.SRC-primary-button,
-.SRC-primary-button.btn.btn-primary {
-  background: SRC.$primary-action-color;
-  border: none;
-  color: white !important;
-  &:hover {
-    @extend %hoverFade;
-    @extend %defaultBoxShadow;
-    text-decoration: none;
-    color: white;
-  }
-}
-
-.SRC-light-button {
-  background: #dfdfdf;
-  color: #1a1c29;
-  &:hover {
-    @extend %hoverFade;
-    @extend %defaultBoxShadow;
-    text-decoration: none;
-    background: SRC.$primary-action-color;
-    color: white;
-  }
-}
-
 .SRC-chart-link {
   position: relative;
   a {
