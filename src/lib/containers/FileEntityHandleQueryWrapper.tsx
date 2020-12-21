@@ -2,14 +2,17 @@ import React, { useEffect } from 'react'
 import { FileEntity, FileHandle, Row } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils'
 
-interface BaseFileFetchResponse {}
+interface BaseFileFetchResponse {
+  success: boolean
+}
 interface AuthorizedFileResp extends BaseFileFetchResponse {
-  fileEntity: FileEntity,
-  fileHandle: FileHandle
+  data: {
+    fileEntity: FileEntity,
+    fileHandle: FileHandle
+  }
 }
 interface UnauthorizedFileResp extends BaseFileFetchResponse {
-  fileHandleId: string,
-  failureCode: string
+  message: string
 }
 
 export type FileFetchResponse = AuthorizedFileResp | UnauthorizedFileResp
@@ -54,15 +57,24 @@ const FileEntityHandleQueryWrapper: React.FunctionComponent<FileHandleEntityQuer
           )
           // If not file handle, return the failure object
           if (fileHandleData.failureCode) {
-            return fileHandleData
+            return {
+              success: false,
+              message: fileHandleData.failureCode
+            }
           }
           // else, return file entity and file handle information
           return {
-            fileEntity: entity,
-            fileHandle: fileHandleData.fileHandle,
+            success: true,
+            data: {
+              fileEntity: entity,
+              fileHandle: fileHandleData.fileHandle,
+            }
           }
         } else {
-          return reject("getFileHandles: not a file entity")
+          return reject({
+            success: false,
+            message: "getFileHandles: not a file entity"
+          })
         }
       })
       resolve (fileHandlePromises)
