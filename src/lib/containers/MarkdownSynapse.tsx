@@ -9,6 +9,7 @@ import SynapseVideo from './widgets/SynapseVideo'
 import { ObjectType } from '../utils/synapseTypes/WikiPageKey'
 import { ErrorBanner } from './ErrorBanner'
 import { SynapseClientError } from '../utils/SynapseClient'
+import { Button } from 'react-bootstrap'
 
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -258,9 +259,9 @@ export default class MarkdownSynapse extends React.Component<
       return
     }
     // use regex to grab all elements
-    const mathExpressions = this.markupRef.current.querySelectorAll<
-      HTMLElement
-    >('[id^="mathjax-"]')
+    const mathExpressions = this.markupRef.current.querySelectorAll<HTMLElement>(
+      '[id^="mathjax-"]',
+    )
     // go through all obtained elements and transform them with katex
     mathExpressions.forEach(element => {
       element.textContent &&
@@ -566,7 +567,7 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public renderSynapseButton(widgetparamsMapped: any) {
-    let buttonClasses = ''
+    let buttonClasses = 'pill-xl '
     const { align = '', highlight = '' } = widgetparamsMapped
     const alignLowerCase = align.toLowerCase()
     if (alignLowerCase === 'left') {
@@ -575,33 +576,35 @@ export default class MarkdownSynapse extends React.Component<
     if (alignLowerCase === 'right') {
       buttonClasses += 'floatright '
     }
-    if (highlight === 'true') {
-      buttonClasses += ' SRC-primary-button '
-    } else {
-      buttonClasses += 'SRC-light-button '
-    }
+    const buttonVariant =
+      highlight === 'true' ? 'primary' : 'light-primary-base'
     if (alignLowerCase === 'center') {
       return (
-        <div key={widgetparamsMapped.reactKey} style={{ textAlign: 'center' }}>
-          <a
+        <div
+          className="bootstrap-4-backport"
+          key={widgetparamsMapped.reactKey}
+          style={{ textAlign: 'center' }}
+        >
+          <Button
             href={widgetparamsMapped.url}
-            className={'SRC-standard-button-shape ' + buttonClasses}
-            role="button"
+            className={buttonClasses}
+            variant={buttonVariant}
           >
             {widgetparamsMapped.text}
-          </a>
+          </Button>
         </div>
       )
     }
     return (
-      <a
-        key={widgetparamsMapped.reactKey}
-        href={widgetparamsMapped.url}
-        className={'SRC-standard-button-shape ' + buttonClasses}
-        role="button"
-      >
-        {widgetparamsMapped.text}
-      </a>
+      <div className="bootstrap-4-backport">
+        <Button
+          href={widgetparamsMapped.url}
+          className={buttonClasses}
+          variant={buttonVariant}
+        >
+          {widgetparamsMapped.text}
+        </Button>
+      </div>
     )
   }
   public renderSynapsePlot(widgetparamsMapped: any) {
