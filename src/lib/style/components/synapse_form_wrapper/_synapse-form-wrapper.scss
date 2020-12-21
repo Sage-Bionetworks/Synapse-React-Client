@@ -1,3 +1,6 @@
+@use '../../abstracts/variables' as SrcVariables;
+@use '../../abstracts/mixins' as SrcMixins;
+
 /* MODAL OVERWRITE! */
 .modal-backdrop {
   opacity: 0.7;
@@ -11,11 +14,11 @@
     h2 {
       font-size: 2.1rem;
       font-weight: 700;
-      color: $gray-formtext;
+      color: SrcVariables.$gray-formtext;
     }
     &.submitted {
       div {
-        @include themify($themes) {
+        @include SrcMixins.themify(SrcVariables.$themes) {
           color: themed('action-color');
         }
         font-weight: bold;
@@ -27,7 +30,7 @@
     }
   }
   hr {
-    margin: $space-unit 0 $space-unit 0;
+    margin: SrcVariables.$space-unit 0 SrcVariables.$space-unit 0;
   }
   .fade {
     opacity: inherit;
@@ -36,7 +39,7 @@
   .nav-link,
   a.nav-link,
   .nav-link > a {
-    @include themify($themes) {
+    @include SrcMixins.themify(SrcVariables.$themes) {
       color: themed('action-color');
     }
     font-weight: bold;
@@ -47,17 +50,17 @@
   }
 
   .btn-action {
-    @include themify($themes) {
+    @include SrcMixins.themify(SrcVariables.$themes) {
       background-color: themed('action-color');
     }
     color: #fff;
   }
   .btn-action:hover,
   .btn-action:focus {
-    @include themify($themes) {
+    @include SrcMixins.themify(SrcVariables.$themes) {
       background-color: themed('action-color');
     }
-    @include box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
+    @include SrcMixins.box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
     color: #fff;
   }
 
@@ -87,12 +90,15 @@
       padding-left: 0.8rem;
     }
     .panel {
-      background-color: $gray-light;
+      background-color: SrcVariables.$gray-light;
     }
     .file-table {
-      @include calc(margin-bottom, '#{$space-unit} * #{3}');
+      @include SrcMixins.calc(
+        margin-bottom,
+        '#{SrcVariables.$space-unit} * #{3}'
+      );
       button.btn {
-        @include themify($themes) {
+        @include SrcMixins.themify(SrcVariables.$themes) {
           color: themed('action-color');
         }
       }
@@ -124,7 +130,7 @@
           vertical-align: middle;
         }
         a {
-          @include themify($themes) {
+          @include SrcMixins.themify(SrcVariables.$themes) {
             color: themed('action-color');
           }
         }
@@ -133,7 +139,7 @@
 
     .btn-large {
       color: #fff;
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVariables.$themes) {
         background-color: themed('action-color');
       }
 
@@ -154,13 +160,13 @@
   $b: 35rem;
 
   .wrap {
-    @include calc(height, '#{$a} - #{$b}');
+    @include SrcMixins.calc(height, '#{$a} - #{$b}');
     overflow: hidden;
     width: 100%;
     clear: both;
-    padding: $space-unit 0 1rem $space-unit;
+    padding: SrcVariables.$space-unit 0 1rem SrcVariables.$space-unit;
 
-    background-color: $gray-light;
+    background-color: SrcVariables.$gray-light;
 
     h4 {
       margin-top: 0;
@@ -174,11 +180,11 @@
   }
 
   .notification-area {
-    @include themify($themes) {
+    @include SrcMixins.themify(SrcVariables.$themes) {
       color: themed('action-color');
     }
     font-style: italic;
-    margin-bottom: $space-unit;
+    margin-bottom: SrcVariables.$space-unit;
   }
 
   .inner-wrap {
@@ -221,17 +227,17 @@
   ul.error-detail li {
     list-style: none;
     font-style: italic;
-    color: $red-error2;
+    color: SrcVariables.$red-error2;
   }
 
   .step-exclude-directions {
     font-style: italic;
 
     vertical-align: middle;
-    @include calc(line-height, '#{$space-unit} * 2');
-    @include calc(height, '#{$space-unit} * 2');
+    @include SrcMixins.calc(line-height, '#{SrcVariables.$space-unit} * 2');
+    @include SrcMixins.calc(height, '#{SrcVariables.$space-unit} * 2');
     button.btn-link {
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVariables.$themes) {
         color: themed('action-color');
       }
       font-weight: 700;
@@ -255,18 +261,18 @@
   .has-error.checkbox-inline label,
   .has-error.radio label,
   .has-error.radio-inline label {
-    color: $red-error2;
+    color: SrcVariables.$red-error2;
   }
 
   input[type='checkbox']:checked + label::before,
   input[type='checkbox']:checked + span::before {
-    @include themify($themes) {
+    @include SrcMixins.themify(SrcVariables.$themes) {
       color: themed('action-color');
     }
   }
 
   .has-error .form-control {
-    border-color: $red-error2;
+    border-color: SrcVariables.$red-error2;
   }
 
   /*--- form ---*/
@@ -292,7 +298,7 @@
       legend {
         font-size: 1.4rem;
         font-weight: normal;
-        color: $gray-formtext;
+        color: SrcVariables.$gray-formtext;
         display: block;
         margin-bottom: 0;
       }
@@ -315,7 +321,7 @@
   .data-range legend {
     font-size: 1.4rem;
     font-weight: normal;
-    color: $gray-formtext;
+    color: SrcVariables.$gray-formtext;
   }
 
   .form-group {
@@ -333,11 +339,13 @@
     height: 1.5rem;
   }
 
-  .radio input[type='radio'] + label, .radio input[type='radio'] + span {
+  .radio input[type='radio'] + label,
+  .radio input[type='radio'] + span {
     padding-left: 24px;
   }
 
-  .radio input[type='radio']:checked + label, .radio input[type='radio']:checked + span {
+  .radio input[type='radio']:checked + label,
+  .radio input[type='radio']:checked + span {
     padding-left: 23px;
   }
 
@@ -345,7 +353,7 @@
   .radio input[type='radio']:checked + span::before,
   .radio-inline input[type='radio']:checked + label::before,
   .radio-inline input[type='radio']:checked + span::before {
-    @include themify($themes) {
+    @include SrcMixins.themify(SrcVariables.$themes) {
       background: themed('action-color');
     }
     vertical-align: middle;
@@ -357,7 +365,7 @@
     margin-right: 1rem;
   }
   .array-item {
-    border: 1px solid $gray-dark;
+    border: 1px solid SrcVariables.$gray-dark;
     padding: 2rem 1rem;
     overflow: auto;
     margin: 0 1.6rem 2rem 1.6rem;
@@ -395,7 +403,7 @@
     button,
     button:hover {
       background-color: transparent;
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVariables.$themes) {
         color: themed('action-color');
       }
       border: none;
@@ -406,7 +414,7 @@
     }
 
     i.glyphicon {
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVariables.$themes) {
         background: themed('action-color');
       }
       color: white;
@@ -428,10 +436,10 @@
     width: 100%;
     button.btn-info.btn-add {
       background-color: transparent;
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVariables.$themes) {
         color: themed('action-color');
       }
-      border: 1px solid $gray-dark;
+      border: 1px solid SrcVariables.$gray-dark;
       padding: 2rem 3.3rem;
       text-align: right;
       /*box-shadow: none;*/
@@ -442,7 +450,7 @@
     }
 
     i.glyphicon {
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVariables.$themes) {
         background-color: themed('action-color');
       }
       color: white;
@@ -457,7 +465,7 @@
   }
   .toggle-help-label {
     line-height: 3em;
-    border: 1px solid $gray-light;
+    border: 1px solid SrcVariables.$gray-light;
 
     padding: 0 1em;
     margin: 0 1em;
@@ -468,7 +476,7 @@
     vertical-align: middle;
     margin: 0 5px;
     .react-switch-bg {
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVariables.$themes) {
         background-color: themed('action-color') !important;
       }
     }
@@ -481,7 +489,7 @@
     .scroll-area {
       height: 100%;
       &.table-body {
-        @include calc(height, '#{$c} - #{$d}');
+        @include SrcMixins.calc(height, '#{$c} - #{$d}');
       }
     }
     .summary-table-header {
@@ -517,7 +525,7 @@
 .btn-success,
 .btn-success:active,
 .btn-success:focus {
-  @include themify($themes) {
+  @include SrcMixins.themify(SrcVariables.$themes) {
     background-color: themed('action-color');
     border-color: themed('action-color');
   }
@@ -548,4 +556,3 @@
     }
   }
 }
-

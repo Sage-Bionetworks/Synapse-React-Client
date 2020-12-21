@@ -1,3 +1,4 @@
+@use '../abstracts/variables' as SRC;
 
 //Variables
 $baseline-grid: 21px;
@@ -185,7 +186,7 @@ $text-color-lighter: #898989;
       margin: $baseline-grid 0 $baseline-grid $baseline-grid * 2;
       a {
         display: inline-flex;
-        background: $primary-action-color;
+        background: SRC.$primary-action-color;
         padding: 5px 20px;
         justify-content: center;
         align-items: center;

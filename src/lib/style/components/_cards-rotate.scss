@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 $card-rotate-margin: 21px;
 
 .UserCardListRotate {
@@ -33,7 +35,7 @@ $card-rotate-margin: 21px;
     }
 
     .cardContainer {
-      box-shadow: $box-shadow-soft;
+      box-shadow: SRC.$box-shadow-soft;
     }
 
   }
@@ -44,7 +46,7 @@ $card-rotate-margin: 21px;
     .UserCardListRotate__summary__link {
       border-radius: 24px;
       padding: 10px 24px;
-      background-color: $primary-action-color;
+      background-color: SRC.$primary-action-color;
       color: #fff;
       font-size: 16px;
       display: inline-block;

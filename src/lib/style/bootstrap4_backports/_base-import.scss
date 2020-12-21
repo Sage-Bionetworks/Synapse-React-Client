@@ -1,22 +1,24 @@
+@use '../abstracts/variables' as SRC;
+
 .bootstrap-4-backport {
   //initial bootstrap config based on Synapse design
-  $primary: $primary-action-color;
-  $secondary: $secondary-action-color;
+  $primary: SRC.$primary-action-color;
+  $secondary: SRC.$secondary-action-color;
   $border-radius: 0.2rem;
 
   @import 'node_modules/bootstrap/scss/bootstrap';
 
   .btn-primary-900 {
     @include button-variant(
-      $primary-action-color-900,
-      $primary-action-color-900
+      SRC.$primary-action-color-900,
+      SRC.$primary-action-color-900
     );
   }
 
   .btn-primary-500 {
     @include button-variant(
-      $primary-action-color-500,
-      $primary-action-color-500
+      SRC.$primary-action-color-500,
+      SRC.$primary-action-color-500
     );
   }
 }

@@ -1,4 +1,6 @@
-$primary-action-color: rgb(64, 123, 160);
-$primary-bgcolor-rgba: rgba(64, 123, 160, 0.03);
-@import '../../lib/template_style/Index.scss';
-@import '../../lib/style/main.scss';
+@use '../../lib/style/main.scss' with (
+    $primary-action-color: rgb(64, 123, 160),
+    $primary-bgcolor-rgba: rgba(64, 123, 160, 0.03),
+);
+
+@use '../../lib/template_style/Index.scss';
