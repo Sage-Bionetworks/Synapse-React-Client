@@ -5,9 +5,9 @@
  * For example in SynapseTable.tsx, the variable "fileEntityHandle" is available
  * for each row Synapse id to store file handle information.
  * If the row Synapse id doesn't return a file handle, "fileEntityHandle" will contain
- * an object { fileHandleId, failureCode }
+ * an object { success:boolean = false , message:string }
  * If the row Synapse id returns a file handle, "fileEntityHandle" will contain
- * an object { fileEntity, fileHandle }
+ * an object { success:boolean = true, data: {fileEntity, fileHandle} }
  *
  * To set up "fileEntityHandle", the parent component should import "FileEntityHandleQueryWrapper"
  * and pass a callback function to "FileEntityHandleQueryWrapper" so that once the file handle information
