@@ -42,6 +42,7 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<EvaluationRo
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>
+          <Dropdown.Divider />
           <Dropdown.Item onClick={() => setDeleteWarningShow(true)}>
             Delete
           </Dropdown.Item>
