@@ -12,19 +12,19 @@ export function rgba2rgb(background: number[], color: number[]) {
   ]
 }
 
-export function getColorPallette(
+export function getColorPalette(
   start: number,
   end: number,
 ): { colorPalette: string[]; textColors: string[] } {
-  let colorPalleteSelection = []
+  let colorPaletteSelection = []
   const textColors = []
   let offset = -1
 
   if (start % 2 === 0) {
-    colorPalleteSelection = COLOR_PALETTE_EVEN
+    colorPaletteSelection = COLOR_PALETTE_EVEN
     offset = start * 5
   } else {
-    colorPalleteSelection = COLOR_PALETTE_ODD
+    colorPaletteSelection = COLOR_PALETTE_ODD
     offset = (start - 1) * 5
   }
 
@@ -33,7 +33,7 @@ export function getColorPallette(
   for (let i = 0; i < end; i += 1) {
     const textColor: string = i % 10 < 2 || i % 10 > 7 ? 'white' : 'black'
     const color: string = `${
-      colorPalleteSelection[(offset + i) % colorPalleteSelection.length]
+      colorPaletteSelection[(offset + i) % colorPaletteSelection.length]
     }`
     colorPalette.push(color)
     textColors.push(textColor)
@@ -41,4 +41,4 @@ export function getColorPallette(
   return { colorPalette, textColors }
 }
 
-export default getColorPallette
+export default getColorPalette

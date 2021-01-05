@@ -16,7 +16,7 @@ import {
   ColumnType,
   QueryBundleRequest,
 } from '../../../utils/synapseTypes'
-import getColorPallette from '../../../containers/ColorGradient'
+import getColorPalette from '../../../containers/ColorGradient'
 
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import {
@@ -101,7 +101,7 @@ export function extractPlotDataArray(
   index: number,
   plotType: PlotType,
 ) {
-  const { colorPalette } = getColorPallette(
+  const { colorPalette } = getColorPalette(
     index,
     facetToPlot.facetValues.length,
   )
