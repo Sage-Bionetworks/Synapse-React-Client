@@ -16,7 +16,7 @@ export type UserCardListGroupsProps = {
   token?: string
 }
 
-export default function (props: UserCardListGroupsProps) {
+export default function UserCardListGroups(props: UserCardListGroupsProps) {
   const { summaryLink, summaryLinkText, ...rest } = props
   const showDesktop = useShowDesktop()
   return (
