@@ -161,8 +161,8 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <div>
               <h3>Record Provenance</h3>
               <p className="SectionBody">
-                Synapse provides tools to record and display provenance of your
-                analysis - giving you credit for each step of the work you do!
+                Synapse provides tools to record and display provenance for each
+                step of your analysis.
               </p>
             </div>
             <div>
@@ -194,9 +194,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <div>
               <h3>Communicate Your Findings</h3>
               <p className="SectionBody">
-                Use the Synapse Wiki services to communicate your Project&apos;s
-                research findings by embedding rich content such as images,
-                Tables, Provenance, and even LaTeX equations.
+                Use the Synapse Wiki services to communicate your findings by
+                embedding rich content such as images, Tables, provenance, and
+                LaTeX equations.
               </p>
             </div>
             <div>
@@ -292,9 +292,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <h2>Synapse Easily Integrates Into Your Workflow</h2>
             <div>
               <p className="SectionBody">
-                Create projects, upload &amp; download files, generate
-                provenance, query, create wikis and more all from the comfort of
-                your own code.
+                Create Projects, upload &amp; download files, generate
+                provenance, query Tables, create Wikis and more all from the
+                comfort of your own code using Synapse analytical clients.
               </p>
             </div>
             <Button
