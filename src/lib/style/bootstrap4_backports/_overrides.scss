@@ -53,4 +53,12 @@
   a:focus {
     box-shadow: none !important;
   }
+
+  // Buttons need more vertical padding when in mobile view.
+  @media (max-width: map-get($breakpoints, 'medium')) {
+    .btn {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+  }
 }
