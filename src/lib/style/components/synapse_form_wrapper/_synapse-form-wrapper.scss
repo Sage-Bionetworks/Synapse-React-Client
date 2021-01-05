@@ -90,7 +90,7 @@
       background-color: $gray-light;
     }
     .file-table {
-      @include calc(margin-bottom, #{$space-unit} * #{3});
+      @include calc(margin-bottom, '#{$space-unit} * #{3}');
       button.btn {
         @include themify($themes) {
           color: themed('action-color');
@@ -228,9 +228,8 @@
     font-style: italic;
 
     vertical-align: middle;
-    @include calc(line-height, #{$space-unit} * 2);
-    @include calc(height, #{$space-unit} * 2);
-
+    @include calc(line-height, '#{$space-unit} * 2');
+    @include calc(height, '#{$space-unit} * 2');
     button.btn-link {
       @include themify($themes) {
         color: themed('action-color');

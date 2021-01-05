@@ -6,7 +6,7 @@ import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundl
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import ProgramsMobile from './Programs.Mobile'
 import ProgramsDesktop from './Programs.Desktop'
-import { getColorPallette } from '../../../containers/ColorGradient'
+import { getColorPalette } from '../../../containers/ColorGradient'
 import { CardLink } from '../../../containers/CardContainerLogic'
 import { IconOptions } from '../../../containers/GenericCard'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
@@ -36,7 +36,7 @@ export type ProgramsDataProps = {
 export default function Programs(props: ProgramsProps) {
   const { entityId, titleColumnName, linkColumnName, summaryColumnName, iconColumnName, linkConfig, token, rgbIndex, iconOptions } = props
   const showDesktop = useShowDesktop()
-  const color:string = getColorPallette(rgbIndex ?? 0, 2).colorPalette[0]
+  const color:string = getColorPalette(rgbIndex ?? 0, 2).colorPalette[0]
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,

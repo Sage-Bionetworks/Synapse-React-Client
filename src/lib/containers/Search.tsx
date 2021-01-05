@@ -10,7 +10,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { insertConditionsFromSearchParams } from '../utils/functions/sqlFunctions'
 import TotalQueryResults from './TotalQueryResults'
-import getColorPallette from './ColorGradient'
+import getColorPalette from './ColorGradient'
 import { Dropdown } from 'react-bootstrap'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 
@@ -85,7 +85,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       facetAliases = {},
       isQueryWrapperMenuChild = true,
     } = this.props
-    const { colorPalette } = getColorPallette(rgbIndex!, 1)
+    const { colorPalette } = getColorPalette(rgbIndex!, 1)
     const originalColor = colorPalette[0]
     const searchItem = searchable[dropdownIndex]
 

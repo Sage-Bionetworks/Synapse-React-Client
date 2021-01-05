@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useState } from 'react'
 import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
 import { Icon } from '../../../containers/row_renderers/utils'
-import getColorPallette from '../../../containers/ColorGradient'
+import getColorPalette from '../../../containers/ColorGradient'
 
 export type FeatureDataTabProps = {
   title: string, // type of data being shown, used for the tab title and explore all button
@@ -27,7 +27,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
     sql,
     token
   } = props
-  const { colorPalette } = getColorPallette(rgbIndex ?? 0, 1)
+  const { colorPalette } = getColorPalette(rgbIndex ?? 0, 1)
   // explore all data button
   const selectedTabProps:FeatureDataTabProps = configs[selectedTabIndex]
   return (

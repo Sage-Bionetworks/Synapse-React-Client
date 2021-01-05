@@ -12,7 +12,7 @@ import {
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 
-import { getColorPallette } from '../../../containers/ColorGradient'
+import { getColorPalette } from '../../../containers/ColorGradient'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useEffect, useState } from 'react'
 import loadingScreen from '../../LoadingScreen'
@@ -57,7 +57,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
-  const { colorPalette } = getColorPallette(rgbIndex ?? 0, 2)
+  const { colorPalette } = getColorPalette(rgbIndex ?? 0, 2)
   
   useEffect(() => {
     if (!facetsToPlot || !data) {

@@ -9,7 +9,7 @@ import {
   FacetColumnResultValues,
   QueryBundleRequest,
 } from '../utils/synapseTypes/'
-import { getColorPallette } from './ColorGradient'
+import { getColorPalette } from './ColorGradient'
 import { FacetSelection, QueryWrapperChildProps } from './QueryWrapper'
 import { SELECT_ALL } from './table/SynapseTableConstants'
 import TotalQueryResults from './TotalQueryResults'
@@ -60,7 +60,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (
   facetColumnResult.facetValues.sort((a: any, b: any) => {
     return b.count - a.count
   })
-  const { colorPalette, textColors } = getColorPallette(
+  const { colorPalette, textColors } = getColorPalette(
     rgbIndex,
     facetColumnResult.facetValues.length,
   )
