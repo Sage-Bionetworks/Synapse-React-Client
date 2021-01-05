@@ -1,15 +1,15 @@
 ```jsx
 {evaluation = {
-  "id": "9614660",
-  "etag": "b2fa1a4f-6d80-4a0f-b807-d2d927a6266f",
-  "name": "Test only",
-  "description": "",
-  "ownerId": "1131050",
-  "createdOn": "2020-11-14T05:33:52.996Z",
-  "contentSource": "syn5585645",
+  "id": "9614690",
+  "etag": "6f8aa977-527e-4b2f-9d87-beab2db99503",
+  "name": "Sample Evaluation Queue",
+  "description": "This is a sample Evaluation Queue",
+  "ownerId": "3345868",
+  "createdOn": "2021-01-05T00:41:11.670Z",
+  "contentSource": "syn23679309",
   "status": "OPEN",
-  "submissionInstructionsMessage": "Submit, or not",
-  "submissionReceiptMessage": "Thanks"
+  "submissionInstructionsMessage": "Do a barrel roll",
+  "submissionReceiptMessage": "We received your submission"
 }}
 
 <EvaluationCard 
