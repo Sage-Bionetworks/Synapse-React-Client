@@ -168,7 +168,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <div>
               <h3>Mint a DOI</h3>
               <p className="SectionBody">
-                A digital object identifier (DOI) provides provides a persistent
+                A digital object identifier (DOI) provides a persistent
                 and easy way to reference your digital assets in publications -
                 including data, code, or analysis results.
               </p>
