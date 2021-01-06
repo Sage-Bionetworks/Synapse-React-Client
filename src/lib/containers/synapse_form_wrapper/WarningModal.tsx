@@ -4,26 +4,26 @@ import { ButtonVariant } from 'react-bootstrap/esm/types'
 
 export type WarningModalProps = {
   title: string
-  copy: string | JSX.Element
-  confirmCopy?: string
+  modalBody: string | JSX.Element
+  confirmButtonText?: string
   className?: string
   show: boolean
   onConfirm: Function
+  onConfirmCallbackArgs: any
   confirmButtonVariant?: ButtonVariant
-  onCancel: Function
-  callbackArgs: any
+  onCancel: () => void
 }
 
 export const WarningModal: React.FunctionComponent<WarningModalProps> = ({
   title,
-  copy,
-  confirmCopy,
+  modalBody,
+  confirmButtonText,
   className,
   show,
   onConfirm,
   confirmButtonVariant = 'success',
   onCancel,
-  callbackArgs,
+  onConfirmCallbackArgs,
 }: WarningModalProps) => {
   return (
     <Modal
@@ -35,16 +35,16 @@ export const WarningModal: React.FunctionComponent<WarningModalProps> = ({
       <Modal.Header closeButton={false} onHide={() => onCancel()}>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>{copy}</Modal.Body>
+      <Modal.Body>{modalBody}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={() => onCancel()}>
           Cancel
         </Button>
         <Button
           variant={confirmButtonVariant}
-          onClick={() => onConfirm(...callbackArgs)}
+          onClick={() => onConfirm(...onConfirmCallbackArgs)}
         >
-          <span>{confirmCopy || 'OK'}</span>
+          <span>{confirmButtonText || 'OK'}</span>
         </Button>
       </Modal.Footer>
     </Modal>

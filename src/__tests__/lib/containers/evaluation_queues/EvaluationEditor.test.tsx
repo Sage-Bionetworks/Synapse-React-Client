@@ -12,6 +12,7 @@ import { mount } from 'enzyme'
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
+import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 
 describe('test EvaluationEditor', () => {
   const sessionToken = 'sssssssssssssssssssssss'
@@ -169,6 +170,9 @@ describe('test EvaluationEditor', () => {
 
     wrapper.find('DropdownToggle').simulate('click')
 
+    // the warning modal for delete should not be instantiated at all
+    expect(wrapper.find(WarningModal).exists()).toBe(false)
+
     const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
     expect(dropdownItems.length).toBe(1)
 
@@ -196,6 +200,13 @@ describe('test EvaluationEditor', () => {
     const deleteOption = dropdownItems.at(1)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
 
@@ -227,6 +238,13 @@ describe('test EvaluationEditor', () => {
     const deleteOption = dropdownItems.at(1)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).not.toBeCalled()
 

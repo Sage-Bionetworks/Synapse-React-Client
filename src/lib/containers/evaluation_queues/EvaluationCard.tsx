@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { RequiredProperties } from '../../utils'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,
@@ -89,7 +90,7 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
             <>
               <Row>
                 <Col>
-                  <label>CHALLENGE QUEUE</label>
+                  <label>EVALUATION QUEUE</label>
                 </Col>
                 <Col>
                   <EvaluationCardDropdown
@@ -186,6 +187,8 @@ const EvaluationCardDropdown: React.FunctionComponent<EvaluationCardDropdownProp
   onModifyAccess,
   onDelete,
 }) => {
+  const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
+
   if (
     !(
       permissions.canEdit ||
@@ -196,24 +199,47 @@ const EvaluationCardDropdown: React.FunctionComponent<EvaluationCardDropdownProp
     return null
   }
   return (
-    <Dropdown className="float-right">
-      <Dropdown.Toggle variant="link" className="dropdown-no-caret">
-        <FontAwesomeIcon icon={faEllipsisV} />
-      </Dropdown.Toggle>
-      <Dropdown.Menu alignRight={true}>
-        {permissions.canEdit && (
-          <Dropdown.Item onClick={onEdit}>Edit</Dropdown.Item>
-        )}
-        {permissions.canChangePermissions && (
-          <Dropdown.Item onClick={onModifyAccess}>Modify Access</Dropdown.Item>
-        )}
-        {permissions.canDelete && (
-          <>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={onDelete}>Delete</Dropdown.Item>{' '}
-          </>
-        )}
-      </Dropdown.Menu>
-    </Dropdown>
+    <>
+      {permissions?.canDelete && (
+        <WarningModal
+          title="Delete Evaluation Queue"
+          modalBody="Are you sure you want to delete the Evaluation Queue?"
+          show={deleteWarningShow}
+          confirmButtonText="Delete"
+          onConfirm={() => {
+            onDelete()
+            setDeleteWarningShow(false)
+          }}
+          onConfirmCallbackArgs={[]}
+          onCancel={() => {
+            setDeleteWarningShow(false)
+          }}
+          confirmButtonVariant="danger"
+        />
+      )}
+      <Dropdown className="float-right">
+        <Dropdown.Toggle variant="link" className="dropdown-no-caret">
+          <FontAwesomeIcon icon={faEllipsisV} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu alignRight={true}>
+          {permissions.canEdit && (
+            <Dropdown.Item onClick={onEdit}>Edit</Dropdown.Item>
+          )}
+          {permissions.canChangePermissions && (
+            <Dropdown.Item onClick={onModifyAccess}>
+              Modify Access
+            </Dropdown.Item>
+          )}
+          {permissions.canDelete && (
+            <>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={() => setDeleteWarningShow(true)}>
+                Delete
+              </Dropdown.Item>{' '}
+            </>
+          )}
+        </Dropdown.Menu>
+      </Dropdown>
+    </>
   )
 }

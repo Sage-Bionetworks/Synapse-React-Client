@@ -11,6 +11,7 @@ import {
 } from '../../../../lib/containers/evaluation_queues/EvaluationCard'
 import { CreatedOnByUserDiv } from '../../../../lib/containers/evaluation_queues/CreatedOnByUserDiv'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
+import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 
 describe('test Evaluation Card', () => {
   let permissions: UserEvaluationPermissions
@@ -155,6 +156,13 @@ describe('test Evaluation Card', () => {
     const deleteOption = dropdownItems.at(1)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
   })
@@ -183,6 +191,13 @@ describe('test Evaluation Card', () => {
     const deleteOption = dropdownItems.at(1)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
   })
@@ -241,6 +256,13 @@ describe('test Evaluation Card', () => {
     const deleteOption = dropdownItems.at(2)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
   })
@@ -265,6 +287,13 @@ describe('test Evaluation Card', () => {
     const deleteOption = dropdownItems.at(2)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).not.toBeCalled()
   })
