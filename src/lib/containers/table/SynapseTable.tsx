@@ -319,9 +319,11 @@ export default class SynapseTable extends React.Component<
 
   // Callback function to pass to FileEntityHandleQueryWrapper to save file entity/handle information
   public getFileEntityHandleCallback(result:FileFetchResponse[]) {
-    this.setState({
-      fileEntityHandleArray: result
-    })
+    if (result.length) {
+      this.setState({
+        fileEntityHandleArray: result
+      })
+    }
   }
 
   /**
