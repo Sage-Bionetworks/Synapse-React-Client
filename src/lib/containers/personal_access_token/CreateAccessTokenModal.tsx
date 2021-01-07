@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, FormControl, Modal, ModalBody } from 'react-bootstrap'
+import { Button, Form, FormControl, Modal, ModalBody } from 'react-bootstrap'
 import { SynapseClient } from '../../utils'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
@@ -103,7 +103,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
           </>
         ) : (
           <div className="SRC-marginFive">
-            <form>
+            <Form>
               <div className="SRC-marginBottomTen">
                 <label className="SRC-boldText">Token Name</label>
                 <FormControl
@@ -135,7 +135,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                   onChange={() => setModifyAccess(!modifyAccess)}
                 ></Checkbox>
               </div>
-            </form>
+            </Form>
             <div className="SRC-center-text">
               {showErrorMessage && (
                 <ErrorBanner error={errorMessage}></ErrorBanner>
