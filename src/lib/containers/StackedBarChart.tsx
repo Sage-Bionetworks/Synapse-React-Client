@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import ReactMeasure from 'react-measure'
 import ReactTooltip from 'react-tooltip'
-import { getColorPallette } from './ColorGradient'
+import { getColorPalette } from './ColorGradient'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import {
   FacetColumnResultValueCount,
@@ -190,7 +190,7 @@ export default class StackedBarChart extends React.Component<
         total += xData[key].count
       }
     }
-    const { colorPalette, textColors } = getColorPallette(
+    const { colorPalette, textColors } = getColorPalette(
       rgbIndex!,
       xData.length,
     )

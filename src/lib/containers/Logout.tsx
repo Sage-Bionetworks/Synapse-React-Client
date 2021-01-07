@@ -5,7 +5,7 @@ export type LogoutProps = {
   callback: Function
 }
 
-export default function (props: LogoutProps) {
+export default function Logout(props: LogoutProps) {
   const { callback } = props
   return (
     <button

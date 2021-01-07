@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 export type UseShowDesktopProps = number
 
-export const MOBILE_VIEWPORT_WIDTH = 600
+// This should match $breakpoints.medium in _variables.scss
+const MOBILE_VIEWPORT_MAX_WIDTH_PX = 768
 
 export default function useShowDesktop(breakpoint?: UseShowDesktopProps) {
-  let usedBreakpoint = breakpoint ?? MOBILE_VIEWPORT_WIDTH
+  let usedBreakpoint = breakpoint ?? MOBILE_VIEWPORT_MAX_WIDTH_PX
   const [showDesktop, setShowDesktop] = useState(
     window.innerWidth > usedBreakpoint,
   )

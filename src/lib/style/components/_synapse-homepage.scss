@@ -46,12 +46,10 @@
   }
 
   .SectionGraphic {
-    max-height: 270px;
-    max-width: 450px;
     flex-shrink: 1;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: map-get($breakpoints, 'medium')) {
     &__Section {
       padding: 30px 40px;
     }
@@ -69,9 +67,30 @@
     h2 {
       margin-top: 25px;
     }
+    .HeroContainer {
+      .HeroImage {
+        max-height: 250px;
+        max-width: 100%;
+      }
+      .HeadlineSentence {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .Headline-Strong {
+        font-size: 21px;
+        line-height: 34px;
+      }
+      .Headline-Light {
+        font-size: 21px;
+        line-height: 21px;
+      }
+    }
     .SectionGraphic {
       display: block;
       margin: auto;
+      max-height: 150px;
+      max-width: 100%;
+      margin-bottom: 11px;
     }
 
     &__MarginAutoDesktop {
@@ -79,7 +98,7 @@
     }
   }
 
-  @media (min-width: 751px) {
+  @media (min-width: map-get($breakpoints, 'medium') + 1) {
     &__Section {
       padding: 50px 60px;
     }
@@ -92,6 +111,11 @@
         padding-left: 20px;
         padding-right: 20px;
         margin-top: 35px;
+      }
+
+      .SectionGraphic {
+        max-height: 270px;
+        max-width: 450px;
       }
     }
 
@@ -226,6 +250,7 @@
       align-items: center;
       margin: 10px;
       color: unset;
+      text-align: center;
 
       img,
       svg {

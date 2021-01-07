@@ -966,9 +966,9 @@ export default class SynapseForm extends React.Component<
           <WarningModal
             show={true}
             title={this.excludeWarningHeader}
-            copy={this.excludeWarningText}
+            modalBody={this.excludeWarningText}
             className={`theme-${this.props.formClass}`}
-            callbackArgs={this.state.modalContext.arguments}
+            onConfirmCallbackArgs={this.state.modalContext.arguments}
             onCancel={() => this.setState({ modalContext: undefined })}
             onConfirm={(stepId: string, isExclude: boolean) =>
               this.toggleExcludeStep(stepId, isExclude)

@@ -2,7 +2,7 @@ import { CardFooter, Icon } from './row_renderers/utils'
 import { MarkdownValue } from './CardContainerLogic'
 import MarkdownSynapse from './MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
-import getColorPallette from './ColorGradient'
+import getColorPalette from './ColorGradient'
 
 export type IconOptions = {
   [index: string]: string
@@ -69,7 +69,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
 
   const backgroundColorUsed =
     rgbIndex !== undefined
-      ? getColorPallette(rgbIndex, 1).colorPalette[0]
+      ? getColorPalette(rgbIndex, 1).colorPalette[0]
       : backgroundColor
   const style: React.CSSProperties = {
     background: backgroundColorUsed,

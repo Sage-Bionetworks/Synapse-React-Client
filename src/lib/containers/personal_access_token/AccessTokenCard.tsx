@@ -45,7 +45,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
     >
       <WarningModal
         title={'Confirm Deletion'}
-        copy={
+        modalBody={
           <>
             <p>
               If you delete this token, any applications using it will stop
@@ -56,7 +56,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             </p>
           </>
         }
-        confirmCopy={'Delete Token'}
+        confirmButtonText={'Delete Token'}
         onCancel={() => setShowModal(false)}
         onConfirm={(id: string, token: string) => {
           SynapseClient.deletePersonalAccessToken(id, token)
@@ -70,7 +70,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         }}
         confirmButtonVariant="danger"
         show={showModal}
-        callbackArgs={[accessToken.id, token]}
+        onConfirmCallbackArgs={[accessToken.id, token]}
       ></WarningModal>
 
       <div className="SRC-cardContent">

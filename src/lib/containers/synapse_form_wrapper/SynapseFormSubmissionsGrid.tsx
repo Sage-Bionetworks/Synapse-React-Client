@@ -17,7 +17,6 @@ import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
 
-
 export type SynapseFormSubmissionGridProps = {
   token?: string
   formGroupId: string
@@ -254,7 +253,9 @@ export default class SynapseFormSubmissionGrid extends React.Component<
         <div className="file-grid">
           <h3>Your Submissions</h3>
           <div className="panel padding-full unauthenticated text-center">
-          <p className="padding-full">Please sign in or register to initiate or continue your submission</p>
+            <p className="padding-full">
+              Please sign in or register to initiate or continue your submission
+            </p>
             <button className={`btn btn-large ${SRC_SIGN_IN_CLASS}`}>
               sign in
             </button>
@@ -418,7 +419,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
           inProgress.nextPageToken,
         ),
 
-       this.renderSubmissionsTable(
+        this.renderSubmissionsTable(
           submitted.fileList,
           pathpart,
           formGroupId,
@@ -463,8 +464,8 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               className={`theme-${this.props.formClass}`}
               show={typeof this.state.modalContext !== 'undefined'}
               title={this.modalTitle}
-              copy={this.modalCopy}
-              callbackArgs={this.state.modalContext.arguments}
+              modalBody={this.modalCopy}
+              onConfirmCallbackArgs={this.state.modalContext.arguments}
               onCancel={() => this.setState({ modalContext: undefined })}
               onConfirm={(token: string, formDataId: string) =>
                 this.deleteFile(token, formDataId)

@@ -130,10 +130,10 @@ const TermsAndConditions: React.FunctionComponent<TermsAndConditionsProps> = ({
 
   return(
     <section className="terms-conditions">
-      <h3 className="page-header">Synapse Terms and Conditions Agreement</h3>
+      <h3 className="page-header">Synapse Pledge</h3>
       <form>
         <label>
-          I affirm my commitment to all Synapse Governance policies for responsible research and data handling, including:
+          I affirm my commitment to all Synapse Governance policies for responsible research and data handling (linked below), including:
         </label>
         <ul className="term-list">
         { tcList.length &&

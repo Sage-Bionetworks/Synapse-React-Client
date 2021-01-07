@@ -10,7 +10,7 @@ import UpSetJS, {
 import { QueryBundleRequest } from '../utils/synapseTypes'
 import { SynapseConstants, SynapseClient } from '../utils'
 import { SizeMe } from 'react-sizeme'
-import getColorPallette from './ColorGradient'
+import getColorPalette from './ColorGradient'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { ErrorBanner } from './ErrorBanner'
 import loadingScreen from './LoadingScreen'
@@ -51,7 +51,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   const [error, setError] = useState<string>()
   const [selection, setSelection] = useState(null as ISetLike<any> | null)
 
-  const { colorPalette } = getColorPallette(rgbIndex, 2)
+  const { colorPalette } = getColorPalette(rgbIndex, 2)
   const updateFontSizes: UpSetFontSizes = {
     setLabel: '14px',
   }

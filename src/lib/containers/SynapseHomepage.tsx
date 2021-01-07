@@ -36,18 +36,18 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       <div className="SynapseHomepage__Section PrimaryBackground">
         <div className="HeroContainer">
           <div className="Headline WhiteText">
-            <div>
+            <div className="HeadlineSentence">
               <span className="Headline-Strong">Organize</span>
               <span className="Headline-Light">
                 {' '}
                 your digital research assets.
               </span>
             </div>
-            <div>
+            <div className="HeadlineSentence">
               <span className="Headline-Strong">Get credit</span>
               <span className="Headline-Light"> for your research.</span>
             </div>
-            <div>
+            <div className="HeadlineSentence">
               <span className="Headline-Strong">Collaborate</span>
               <span className="Headline-Light">
                 {' '}
@@ -137,14 +137,14 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               <h3>Query Structured Data</h3>
               <p className="SectionBody">
                 Use Synapse Tables to query structured data right from your web
-                browser, or from any analytical client.
+                browser or from any analytical client.
               </p>
             </div>
             <Button
               variant="primary"
               href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              Get Started Now
+              {token ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -161,15 +161,15 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <div>
               <h3>Record Provenance</h3>
               <p className="SectionBody">
-                Synapse provides tools to record and display provenance of your
-                analysis - giving you credit for each step of the work you do!
+                Synapse provides tools to record and display Provenance for each
+                step of your analysis.
               </p>
             </div>
             <div>
               <h3>Mint a DOI</h3>
               <p className="SectionBody">
-                A digital object identifier (DOI) provides provides a persistent
-                and easy way to reference your digital assets in publications -
+                A digital object identifier (DOI) provides a persistent and easy
+                way to reference your digital assets in publications &mdash;
                 including data, code, or analysis results.
               </p>
             </div>
@@ -177,7 +177,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               variant="primary"
               href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              Get Started Now
+              {token ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -194,24 +194,24 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <div>
               <h3>Communicate Your Findings</h3>
               <p className="SectionBody">
-                Use the Synapse Wiki services to communicate your Project&apos;s
-                research findings by embedding rich content such as images,
-                Tables, Provenance, and even LaTeX equations.
+                Use the Synapse Wiki services to communicate your findings by
+                embedding rich content such as images, Tables, Provenance, and
+                LaTeX equations.
               </p>
             </div>
             <div>
               <h3>Share Your Research</h3>
               <p className="SectionBody">
-                New Synapse Projects are private by default - share with your
-                colleagues, collaborators, and even make your work public!
-                Create Synapse Teams to manage your collaborations.
+                New Synapse Projects are private by default &mdash; share with
+                your colleagues, collaborators, or make your work public! Create
+                Synapse Teams to manage your collaborations.
               </p>
             </div>
             <Button
               variant="primary"
               href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              Get Started Now
+              {token ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -292,9 +292,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <h2>Synapse Easily Integrates Into Your Workflow</h2>
             <div>
               <p className="SectionBody">
-                Create projects, upload &amp; download files, generate
-                provenance, query, create wikis and more all from the comfort of
-                your own code.
+                Create Projects, upload &amp; download Files, generate
+                Provenance, query Tables, create Wikis and more all from the
+                comfort of your own code using Synapse analytical clients.
               </p>
             </div>
             <Button
