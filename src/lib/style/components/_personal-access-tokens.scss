@@ -18,10 +18,7 @@
   .SRC-scopeName {
     margin-inline-start: 3px;
     margin-inline-end: 3px;
-  }
-
-  .SRC-scopeName:hover {
-    text-decoration: underline;
+    cursor: help;
   }
 
   .SRC-deleteAccessTokenButton {
