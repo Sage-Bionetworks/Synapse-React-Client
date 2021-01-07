@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Form, FormControl, Modal, ModalBody } from 'react-bootstrap'
+import { Button, Modal, ModalBody } from 'react-bootstrap'
 import { SynapseClient } from '../../utils'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
@@ -103,39 +103,37 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
           </>
         ) : (
           <div className="SRC-marginFive">
-            <Form>
-              <div className="SRC-marginBottomTen">
-                <label className="SRC-boldText">Token Name</label>
-                <FormControl
-                  className="SRC-personalAccessTokenNameInput"
-                  value={tokenName}
-                  onChange={handleTokenNameChange}
-                  type="text"
-                  placeholder="e.g. Synapse command line access on my laptop"
-                ></FormControl>
-              </div>
-              <div className="SRC-marginBottomTop">
-                <p className="SRC-boldText">Token Permissions</p>
-                <Checkbox
-                  label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description})`}
-                  id="view"
-                  checked={viewAccess}
-                  onChange={() => setViewAccess(!viewAccess)}
-                ></Checkbox>
-                <Checkbox
-                  label={`${scopeDescriptions.download.displayName} (${scopeDescriptions.download.description})`}
-                  id="download"
-                  checked={downloadAccess}
-                  onChange={() => setDownloadAccess(!downloadAccess)}
-                ></Checkbox>
-                <Checkbox
-                  label={`${scopeDescriptions.modify.displayName} (${scopeDescriptions.modify.description})`}
-                  id="modify"
-                  checked={modifyAccess}
-                  onChange={() => setModifyAccess(!modifyAccess)}
-                ></Checkbox>
-              </div>
-            </Form>
+            <div className="SRC-marginBottomTen">
+              <label className="SRC-boldText">Token Name</label>
+              <input
+                className="SRC-personalAccessTokenNameInput"
+                value={tokenName}
+                onChange={handleTokenNameChange}
+                type="text"
+                placeholder="e.g. Synapse command line access on my laptop"
+              ></input>
+            </div>
+            <div className="SRC-marginBottomTop">
+              <p className="SRC-boldText">Token Permissions</p>
+              <Checkbox
+                label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description})`}
+                id="view"
+                checked={viewAccess}
+                onChange={() => setViewAccess(!viewAccess)}
+              ></Checkbox>
+              <Checkbox
+                label={`${scopeDescriptions.download.displayName} (${scopeDescriptions.download.description})`}
+                id="download"
+                checked={downloadAccess}
+                onChange={() => setDownloadAccess(!downloadAccess)}
+              ></Checkbox>
+              <Checkbox
+                label={`${scopeDescriptions.modify.displayName} (${scopeDescriptions.modify.description})`}
+                id="modify"
+                checked={modifyAccess}
+                onChange={() => setModifyAccess(!modifyAccess)}
+              ></Checkbox>
+            </div>
             <div className="SRC-center-text">
               {showErrorMessage && (
                 <ErrorBanner error={errorMessage}></ErrorBanner>
