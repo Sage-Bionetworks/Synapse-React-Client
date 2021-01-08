@@ -57,7 +57,7 @@
   }
 
   // Buttons need more vertical padding when in mobile view.
-  @media (max-width: map-get($breakpoints, 'medium')) {
+  @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
     .btn {
       padding-top: 0.75rem;
       padding-bottom: 0.75rem;
