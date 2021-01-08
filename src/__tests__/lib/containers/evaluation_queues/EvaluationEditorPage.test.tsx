@@ -1,8 +1,10 @@
 import { shallow } from 'enzyme'
-import { EvaluationEditorPage } from '../../../../lib/containers/evaluation_queues/EvaluationEditorPage'
+import {
+  EvaluationEditorPage,
+  HelpersToTest,
+} from '../../../../lib/containers/evaluation_queues/EvaluationEditorPage'
 import React from 'react'
 import { EvaluationRoundEditorList } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorList'
-import { Alert } from 'react-bootstrap'
 import { EvaluationEditor } from '../../../../lib/containers/evaluation_queues/EvaluationEditor'
 
 describe('test EvaluationEditorPage', () => {
@@ -24,7 +26,9 @@ describe('test EvaluationEditorPage', () => {
     )
 
     expect(wrapper.find(EvaluationRoundEditorList).exists()).toBe(false)
-    expect(wrapper.find(Alert).exists()).toBe(true)
+    expect(
+      wrapper.find(HelpersToTest.FakeEvaluationRoundEditorList).exists(),
+    ).toBe(true)
 
     //simulate a successful "save" (i.e. creation of Evaluation)
     const fakeEvaluationId = '123456'
@@ -36,7 +40,9 @@ describe('test EvaluationEditorPage', () => {
 
     // now that the Evaluation has been "saved", we should be able to edit its Evaluation Rounds
     expect(wrapper.find(EvaluationRoundEditorList).exists()).toBe(true)
-    expect(wrapper.find(Alert).exists()).toBe(false)
+    expect(
+      wrapper.find(HelpersToTest.FakeEvaluationRoundEditorList).exists(),
+    ).toBe(false)
   })
 
   it('Test editing existing Evaluation page -- EvaluationRoundEditorList is shown', () => {
@@ -50,6 +56,8 @@ describe('test EvaluationEditorPage', () => {
     )
 
     expect(wrapper.find(EvaluationRoundEditorList).exists()).toBe(true)
-    expect(wrapper.find(Alert).exists()).toBe(false)
+    expect(
+      wrapper.find(HelpersToTest.FakeEvaluationRoundEditorList).exists(),
+    ).toBe(false)
   })
 })

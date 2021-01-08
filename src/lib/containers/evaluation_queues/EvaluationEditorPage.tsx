@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { EvaluationEditor } from './EvaluationEditor'
-import { Alert } from 'react-bootstrap'
 import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
+import { Alert, Button } from 'react-bootstrap'
 
 export type EvaluationEditorPageProps = {
   /** session token to make authenticated API calls */
@@ -49,17 +49,60 @@ export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageP
             utc={utc}
           />
         ) : (
-          <Alert
-            dismissible={false}
-            show={true}
-            variant={'info'}
-            transition={false}
-          >
-            Evaluation Rounds can be edited once the Evaluation has been
-            created.
-          </Alert>
+          // shows an alert informing user to first create an Evaluation if they
+          // click the "Add Round" button
+          <FakeEvaluationRoundEditorList />
         )}
       </div>
     </div>
   )
+}
+
+/**
+ * special case handling when the evaluation has not been created yet (i.e. does not exist)
+ * in this case, we show a fake "add round" button that when clicked, will
+ * display an alert telling the user to first create an Evaluation
+ *
+ * Note: an alternative would be to modify the existing EvaluationRoundEditorList
+ * to accept a nullable evaluationId (i.e. `string?` instead of `string`)
+ * so that we can move this fake Alert functionality into it.
+ *
+ * Since the "uncreated Evaluation" edge case is currently only specific to the EvaluationEditorPage,
+ * I believe adopting this alternative would add unnecessary complexity,
+ * forcing EvaluationRoundEditorList to handle undefined `evaluationId`.
+ */
+const FakeEvaluationRoundEditorList: React.FunctionComponent = () => {
+  const [
+    showEvaluationNotExistAlert,
+    setShowEvaluationNotExistAlert,
+  ] = useState<boolean>(false)
+
+  return (
+    <div>
+      {showEvaluationNotExistAlert ? (
+        <Alert
+          dismissible={false}
+          show={true}
+          variant={'info'}
+          transition={false}
+        >
+          Evaluation Rounds can be edited once the Evaluation has been created.
+        </Alert>
+      ) : (
+        <Button
+          className="add-round-button"
+          variant="primary"
+          onClick={() => {
+            setShowEvaluationNotExistAlert(true)
+          }}
+        >
+          Add Round
+        </Button>
+      )}
+    </div>
+  )
+}
+
+export const HelpersToTest = {
+  FakeEvaluationRoundEditorList,
 }
