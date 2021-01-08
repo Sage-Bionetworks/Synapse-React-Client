@@ -1,7 +1,8 @@
-.FacetPlotsCard {
+.FacetPlotsCard {  
   background-color: white;
+  overflow: hidden;
   &__titlebar {
-    height: 64px;
+    min-height: 64px;
     padding: 12px 25px;
     display:flex;
     align-items: center;
@@ -13,7 +14,8 @@
   &__body {
     padding: 33px 44px;
     &__row {
-      display: flex;      
+      display: flex;
+      min-height: 130px;
     }
     &__facetname {
       text-align: center;
@@ -37,5 +39,8 @@
   }
   &__loading {
     min-height: 400px;
+  }
+  @media (max-width: map-get($breakpoints, 'medium')) {
+    margin: 15px 0px;
   }
 }
