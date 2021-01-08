@@ -1630,7 +1630,10 @@ export const getFileResult = (
     }
     getFiles(request, sessionToken)
       .then((data: BatchFileResult) => {
-        if (data.requestedFiles.length) {
+        if (
+          data.requestedFiles.length &&
+          (data.requestedFiles[0].fileHandleId !== undefined)
+        ) {
           resolve(data.requestedFiles[0])
         } else {
           reject(data.requestedFiles[0].failureCode)
