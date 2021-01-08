@@ -20,6 +20,10 @@
     margin-inline-end: 3px;
   }
 
+  .SRC-scopeName:hover {
+    cursor: default;
+  }
+
   .SRC-deleteAccessTokenButton {
     align-self: flex-start;
     margin: 10px;
