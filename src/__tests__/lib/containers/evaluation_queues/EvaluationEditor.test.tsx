@@ -27,6 +27,7 @@ describe('test EvaluationEditor', () => {
   let mockCreateEvaluation: jest.Mock
   let mockUpdateEvaluation: jest.Mock
   let mockDeleteEvaluation: jest.Mock
+  let mockOnSaveSuccess: jest.Mock
 
   beforeEach(() => {
     evaluation = {
@@ -43,12 +44,14 @@ describe('test EvaluationEditor', () => {
     }
 
     mockOnDeleteSuccess = jest.fn()
+    mockOnSaveSuccess = jest.fn()
 
     props = {
       sessionToken: sessionToken,
       evaluationId: evaluationId,
       utc: true,
       onDeleteSuccess: mockOnDeleteSuccess,
+      onSaveSuccess: mockOnSaveSuccess,
     }
 
     mockGetEvaluation = jest.fn(
@@ -148,10 +151,12 @@ describe('test EvaluationEditor', () => {
       sessionToken,
     )
     expect(mockUpdateEvaluation).not.toBeCalled()
+    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
+    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
   })
 
   test('save button clicked when using evaluationId updates evaluation', () => {
@@ -161,6 +166,7 @@ describe('test EvaluationEditor', () => {
     wrapper.find('Button.save-button').simulate('click')
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
     expect(mockCreateEvaluation).not.toBeCalled()
+    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
   })
 
   test('dropdown menu evaluation has no id - hide delete option', () => {
