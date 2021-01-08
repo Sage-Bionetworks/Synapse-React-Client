@@ -38,7 +38,7 @@ module.exports = {
     require: [
         path.join(__dirname, 'styleguide.setup.js'),
         path.join(__dirname, 'styleguide.setup.css'),
-        path.join(__dirname, 'src/lib/style/main.css'),
+        path.join(__dirname, 'src/demo/style/DemoStyle.css'),
     ],
     theme: {
         maxWidth: 1300,
