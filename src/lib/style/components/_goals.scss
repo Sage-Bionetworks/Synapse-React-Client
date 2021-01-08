@@ -72,11 +72,10 @@
       padding-bottom: 20px;
       @extend %space-between;
       flex-direction: column;
-      &__link {
+      & > &__link {
         @extend %hv-center;
         width: 120px;
-        height: 33px;
-        padding: 20px;
+        padding: 10px;
         margin-top: 20px;
         margin-left: 0px;
       }
