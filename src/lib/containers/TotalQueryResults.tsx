@@ -285,7 +285,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         ))}
       </div>
       {facetsWithSelection.length > 0 && (
-        <Button onClick={clearAll} className="TotalQueryResults__clearall">
+        <Button onClick={clearAll} variant="light" className="TotalQueryResults__clearall">
           Clear All
         </Button>
       )}
