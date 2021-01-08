@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { Button } from 'react-bootstrap'
-import ButtonContent from '../assets/ButtonContent'
+import { Button, Form, FormControl } from 'react-bootstrap'
+import ButtonWithIcon from '../assets/ButtonWithIcon'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
 import {
@@ -62,7 +62,7 @@ class Login extends React.Component<Props, State> {
    *
    * @param {*} event Form update
    */
-  public handleChange(event: React.FormEvent<HTMLInputElement>): void {
+  public handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const target = event.currentTarget
     const name = target.name
     const value = target.value
@@ -148,14 +148,14 @@ class Login extends React.Component<Props, State> {
         className="container LoginComponent SRC-syn-border-spacing bootstrap-4-backport"
       >
         <form>
-          <Button
+          <ButtonWithIcon
             variant="white"
             onClick={this.onGoogleSignIn}
             className={`SRC-google-button`}
+            icon={<GoogleIcon />}
           >
-            <GoogleIcon />
-            <ButtonContent>Sign in with Google</ButtonContent>
-          </Button>
+            Sign in with Google
+          </ButtonWithIcon>
         </form>
         <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">
           or
@@ -170,21 +170,21 @@ class Login extends React.Component<Props, State> {
           />
           Sign in with your Sage Bionetworks Synapse account
         </div>
-        <form onSubmit={this.handleLogin} className="form-group">
-          <input
+        <Form onSubmit={this.handleLogin}>
+          <FormControl
             autoComplete="username"
             placeholder="username or email"
-            className="form-control LoginComponent__Input"
+            className="LoginComponent__Input"
             id="exampleEmail"
             name="username"
             type="text"
             value={this.state.username}
             onChange={this.handleChange}
           />
-          <input
+          <FormControl
             autoComplete="password"
             placeholder="password"
-            className="form-control LoginComponent__Input"
+            className="LoginComponent__Input"
             id="examplePassword"
             name="password"
             type="password"
@@ -198,9 +198,9 @@ class Login extends React.Component<Props, State> {
             type="submit"
             className="SRC-login-button SRC-marginBottomTen"
           >
-            <ButtonContent>Sign in</ButtonContent>
+            Sign in
           </Button>
-        </form>
+        </Form>
         <div>
           <a
             href={`${getEndpoint(

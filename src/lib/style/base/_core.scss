@@ -392,7 +392,6 @@ button.SRC-roundBorder {
   color: #1a1c29;
 }
 
-
 .SRC-light-background {
   background: #f5f5f5;
 }
@@ -1160,4 +1159,17 @@ hr ~ .SRC-wrapper {
 .modal-dialog-centered {
   margin-top: 0px;
   min-height: 90%;
+}
+
+.ButtonWithIcon {
+  display: inline-flex;
+  align-items: center;
+
+  &__Icon {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    width: 0%;
+  }
 }
