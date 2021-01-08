@@ -32,6 +32,7 @@ import {
   VERTICAL_DOTS,
   CHART2,
   FILE,
+  EXTERNALLINK,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -66,6 +67,7 @@ import {
   Columns,
   ColumnsDark,
   VerticalDots,
+  ExternalLink,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -112,6 +114,7 @@ const defaultIcons = {
   [VERTICAL_DOTS]: VerticalDots,
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
+  [EXTERNALLINK]: ExternalLink,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,

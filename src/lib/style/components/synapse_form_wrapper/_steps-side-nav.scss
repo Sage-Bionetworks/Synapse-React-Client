@@ -136,7 +136,7 @@
 
         div.item {
           $b: 1.7rem;
-          @include calc(padding-left, #{$left-offset} + #{$b});
+          @include calc(padding-left, '#{$left-offset} + #{$b}');
         }
       }
     }

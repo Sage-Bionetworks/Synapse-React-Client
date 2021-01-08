@@ -41,6 +41,7 @@ Configured to show a table:
 <QueryWrapperPlotNav token={sessionToken}
   tableConfiguration={{
       showAccessColumn: true,
+      showDownloadColumn: true,
       columnLinks: [
         {
           matchColumnName: 'study',
