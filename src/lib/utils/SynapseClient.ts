@@ -1506,48 +1506,6 @@ export const getFileEntityContent = (
   })
 }
 
-/**
- * Return the FileHandle of the file associated to the given FileEntity.
- * * @param fileEntity: FileEntity
- * @param sessionToken
- * @param endpoint
- */
-export const getFileEntityFileHandle = (
-  fileEntity: FileEntity,
-  sessionToken?: string,
-): Promise<FileHandle> => {
-  return new Promise((resolve, reject) => {
-    const fileHandleAssociationList: FileHandleAssociation[] = [
-      {
-        associateObjectId: fileEntity.id!,
-        associateObjectType: FileHandleAssociateType.FileEntity,
-        fileHandleId: fileEntity.dataFileHandleId,
-      },
-    ]
-    const request: BatchFileRequest = {
-      includeFileHandles: true,
-      includePreSignedURLs: false,
-      includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList,
-    }
-    getFiles(request, sessionToken)
-      .then((data: BatchFileResult) => {
-        if (
-          data.requestedFiles.length > 0 &&
-          data.requestedFiles[0].fileHandle
-        ) {
-          return resolve(data.requestedFiles[0].fileHandle)
-        } else {
-          // not found, or not allowed to access
-          reject(data.requestedFiles[0].failureCode)
-        }
-      })
-      .catch(err => {
-        reject(err)
-      })
-  })
-}
-
 export const getFileHandleContentFromID = (
   fileHandleId: string,
   sessionToken: string,
@@ -1606,6 +1564,12 @@ export const getFileHandleContent = (
   })
 }
 
+/**
+ * Return the FileHandle of the file associated to the given FileEntity.
+ * * @param fileEntity: FileEntity
+ * @param sessionToken
+ * @param endpoint
+ */
 export const getFileResult = (
   fileEntity: FileEntity,
   sessionToken?: string,

@@ -40,6 +40,7 @@ import {
   FileEntity,
   AccessRequirement,
   implementsExternalFileHandleInterface,
+  FileResult,
 } from '../utils/synapseTypes/'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import AccessRequirementList, {
@@ -226,12 +227,13 @@ export default class HasAccess extends React.Component<
       .then(entity => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
-          return SynapseClient.getFileEntityFileHandle(
+          return SynapseClient.getFileResult(
             entity as FileEntity,
             token,
-          ).then((fileHandle: FileHandle) => {
+            true
+          ).then((fileHandle: FileResult) => {
             const fileHandleDownloadType = getDownloadTypeForFileHandle(
-              fileHandle,
+              fileHandle.fileHandle!,
               isInDownloadList,
             )
             this.setState({

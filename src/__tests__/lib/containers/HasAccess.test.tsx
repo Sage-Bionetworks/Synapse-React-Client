@@ -80,7 +80,7 @@ describe('basic tests', () => {
 
   it('works with open data no restrictions', async () => {
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
+    SynapseClient.getFileResult = jest.fn(() =>
       Promise.resolve(mockFileHandle),
     )
 
@@ -102,7 +102,7 @@ describe('basic tests', () => {
       mockOpenRestrictionInformation,
     )
     expect(SynapseClient.getEntity).toHaveBeenCalledTimes(1)
-    expect(SynapseClient.getFileEntityFileHandle).toHaveBeenCalledTimes(1)
+    expect(SynapseClient.getFileResult).toHaveBeenCalledTimes(1)
     // verify UI
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
@@ -113,7 +113,7 @@ describe('basic tests', () => {
 
   it('works with a public folder', async () => {
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFolderEntity))
-    expect(SynapseClient.getFileEntityFileHandle).not.toHaveBeenCalled()
+    expect(SynapseClient.getFileResult).not.toHaveBeenCalled()
 
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
@@ -171,7 +171,7 @@ describe('basic tests', () => {
       contentSize: 0,
     }
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
+    SynapseClient.getFileResult = jest.fn(() =>
       Promise.resolve(cloudFileHandle),
     )
 
