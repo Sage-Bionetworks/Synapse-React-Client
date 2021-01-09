@@ -14,7 +14,6 @@ import QueryCount from './containers/QueryCount'
 import EntityForm from './containers/EntityForm'
 import CardContainer from './containers/CardContainer'
 import { ExternalFileHandleLink } from './containers/ExternalFileHandleLink'
-import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWrapper'
 import SynapseFormSubmissionsGrid from './containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
@@ -58,7 +57,6 @@ const SynapseComponents = {
   QueryCount,
   Markdown: MarkdownSynapse,
   ModalDownload,
-  SynapseFormWrapper,
   SynapseFormSubmissionsGrid,
   HasAccess,
   DownloadListTable,
