@@ -13,6 +13,7 @@ import { Evaluation, EvaluationStatus } from '../../utils/synapseTypes'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 const defaultEvaluationStatus = EvaluationStatus.PLANNED
 
@@ -27,6 +28,8 @@ export type EvaluationEditorProps = {
   readonly utc: boolean
   /** Callback after successful deletion of the Evaluation */
   readonly onDeleteSuccess: () => void
+  /** Callback after successful save of the Evaluation */
+  readonly onSaveSuccess?: (evaluationId: string) => void
 }
 
 /**
@@ -38,6 +41,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   entityId,
   utc,
   onDeleteSuccess,
+  onSaveSuccess,
 }: EvaluationEditorProps) => {
   if (evaluationId && entityId) {
     throw new Error('please use either evaluationId or entityId but not both')
@@ -51,9 +55,10 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
     submissionInstructionsMessage,
     setSubmissionInstructionsMessage,
   ] = useState<string>('')
-  const [submissionReceiptMessage, setSubmissionReceiptMessage] = useState<
-    string
-  >('')
+  const [
+    submissionReceiptMessage,
+    setSubmissionReceiptMessage,
+  ] = useState<string>('')
   const [status, setStatus] = useState<EvaluationStatus>(
     defaultEvaluationStatus,
   )
@@ -102,7 +107,12 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
       : createEvaluation(newOrUpdatedEvaluation, sessionToken)
 
     promise
-      .then(evaluation => setEvaluation(evaluation))
+      .then(evaluation => {
+        setEvaluation(evaluation)
+        if (onSaveSuccess) {
+          onSaveSuccess(evaluation.id!)
+        }
+      })
       .catch(error => setError(error))
   }
 
@@ -215,20 +225,43 @@ const EvaluationEditorDropdown: React.FunctionComponent<EvaluationEditorDropdown
   onClick,
   onDelete,
 }) => {
+  const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
+
   return (
-    <Dropdown className="float-right">
-      <Dropdown.Toggle variant="link" className="dropdown-no-caret">
-        <FontAwesomeIcon icon={faEllipsisV} />
-      </Dropdown.Toggle>
-      <Dropdown.Menu alignRight={true}>
-        <Dropdown.Item onClick={onClick}>Save</Dropdown.Item>
-        {onDelete && (
-          <>
-            <Dropdown.Divider />
-            <Dropdown.Item onClick={onDelete}>Delete</Dropdown.Item>
-          </>
-        )}
-      </Dropdown.Menu>
-    </Dropdown>
+    <>
+      {onDelete && (
+        <WarningModal
+          title="Delete Evaluation Queue"
+          modalBody="Are you sure you want to delete this Evaluation Queue?"
+          show={deleteWarningShow}
+          confirmButtonText="Delete"
+          onConfirm={() => {
+            onDelete()
+            setDeleteWarningShow(false)
+          }}
+          onConfirmCallbackArgs={[]}
+          onCancel={() => {
+            setDeleteWarningShow(false)
+          }}
+          confirmButtonVariant="danger"
+        />
+      )}
+      <Dropdown className="float-right">
+        <Dropdown.Toggle variant="link" className="dropdown-no-caret">
+          <FontAwesomeIcon icon={faEllipsisV} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu alignRight={true}>
+          <Dropdown.Item onClick={onClick}>Save</Dropdown.Item>
+          {onDelete && (
+            <>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={() => setDeleteWarningShow(true)}>
+                Delete
+              </Dropdown.Item>
+            </>
+          )}
+        </Dropdown.Menu>
+      </Dropdown>
+    </>
   )
 }

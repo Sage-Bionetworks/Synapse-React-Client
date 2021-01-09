@@ -34,8 +34,13 @@
   .SRC-portalCard:first-child {
     margin-top: 0px;
   }
-  table.grip-flex{
-    width: 100% !important; // Override !important from js library
-    table-layout: auto;
+  table {
+    &.grip-flex{
+      width: 100% !important; // Override !important from js library
+      table-layout: auto;
+    }
+    .direct-download {
+      text-align: center;
+    }
   }
 }

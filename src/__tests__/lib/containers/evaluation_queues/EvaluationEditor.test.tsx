@@ -12,6 +12,7 @@ import { mount } from 'enzyme'
 import React from 'react'
 import { Form } from 'react-bootstrap'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
+import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 
 describe('test EvaluationEditor', () => {
   const sessionToken = 'sssssssssssssssssssssss'
@@ -26,6 +27,7 @@ describe('test EvaluationEditor', () => {
   let mockCreateEvaluation: jest.Mock
   let mockUpdateEvaluation: jest.Mock
   let mockDeleteEvaluation: jest.Mock
+  let mockOnSaveSuccess: jest.Mock
 
   beforeEach(() => {
     evaluation = {
@@ -42,12 +44,14 @@ describe('test EvaluationEditor', () => {
     }
 
     mockOnDeleteSuccess = jest.fn()
+    mockOnSaveSuccess = jest.fn()
 
     props = {
       sessionToken: sessionToken,
       evaluationId: evaluationId,
       utc: true,
       onDeleteSuccess: mockOnDeleteSuccess,
+      onSaveSuccess: mockOnSaveSuccess,
     }
 
     mockGetEvaluation = jest.fn(
@@ -147,10 +151,12 @@ describe('test EvaluationEditor', () => {
       sessionToken,
     )
     expect(mockUpdateEvaluation).not.toBeCalled()
+    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
+    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
   })
 
   test('save button clicked when using evaluationId updates evaluation', () => {
@@ -160,6 +166,7 @@ describe('test EvaluationEditor', () => {
     wrapper.find('Button.save-button').simulate('click')
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
     expect(mockCreateEvaluation).not.toBeCalled()
+    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
   })
 
   test('dropdown menu evaluation has no id - hide delete option', () => {
@@ -168,6 +175,9 @@ describe('test EvaluationEditor', () => {
     const wrapper = mount(<EvaluationEditor {...props} />)
 
     wrapper.find('DropdownToggle').simulate('click')
+
+    // the warning modal for delete should not be instantiated at all
+    expect(wrapper.find(WarningModal).exists()).toBe(false)
 
     const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
     expect(dropdownItems.length).toBe(1)
@@ -196,6 +206,13 @@ describe('test EvaluationEditor', () => {
     const deleteOption = dropdownItems.at(1)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
 
@@ -227,6 +244,13 @@ describe('test EvaluationEditor', () => {
     const deleteOption = dropdownItems.at(1)
     expect(deleteOption.text()).toBe('Delete')
     deleteOption.simulate('click')
+
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+
+    //simulate the warning button click
+    deleteWarningModal.find('.btn-danger').simulate('click')
+
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).not.toBeCalled()
 

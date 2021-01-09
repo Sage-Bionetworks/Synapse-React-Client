@@ -9,13 +9,13 @@ import {
   EvaluationRoundLimitInput,
 } from '../../../../lib/containers/evaluation_queues/input_models/models'
 import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
-import { mount, shallow } from 'enzyme'
+import { mount, ReactWrapper, shallow } from 'enzyme'
 import React from 'react'
 import { EvaluationRoundLimitOptionsList } from '../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptionsList'
 import { SynapseClient } from '../../../../lib/utils/'
 import JestMockPromise from 'jest-mock-promise'
-import { EvaluationRoundEditorDropdown } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
+import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 
 describe('test EvaluationRoundEditor', () => {
   let props: EvaluationRoundEditorProps
@@ -255,14 +255,33 @@ describe('test EvaluationRoundEditor', () => {
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
   })
 
+  function simulateDeleteClick(
+    wrapper: ReactWrapper<any, React.Component['state'], React.Component>,
+  ) {
+    //Simulate a deletion
+    expect(wrapper.find('Dropdown').exists()).toBe(true)
+    // simulate a click on the dropdown button to display the menu
+    wrapper.find('DropdownToggle').simulate('click')
+    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
+    expect(dropdownItems.length).toBe(2)
+
+    //simulate a click on the "delete" option in the dropdown menu
+    const deleteOption = dropdownItems.at(1)
+    expect(deleteOption.text()).toBe('Delete')
+    deleteOption.simulate('click')
+
+    //simulate click delete on the button inside the warning modal
+    const deleteWarningModal = wrapper.find(WarningModal)
+    expect(deleteWarningModal.prop('show')).toBe(true)
+    deleteWarningModal.find('.btn-danger').simulate('click')
+  }
+
   it('test delete: no id', () => {
     delete props.evaluationRoundInput.id
     delete props.evaluationRoundInput.etag
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
-
-    //Simulate a deletion
-    wrapper.find(EvaluationRoundEditorDropdown).invoke('onDelete')()
+    const wrapper = mount(<EvaluationRoundEditor {...props} />)
+    simulateDeleteClick(wrapper)
 
     expect(mockOnDelete).toBeCalledWith()
     expect(mockDeleteEvaluationRound).not.toBeCalled()
@@ -274,10 +293,10 @@ describe('test EvaluationRoundEditor', () => {
     props.evaluationRoundInput.id = id
     props.evaluationRoundInput.etag = etag
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    const wrapper = mount(<EvaluationRoundEditor {...props} />)
 
     //Simulate a deletion
-    wrapper.find(EvaluationRoundEditorDropdown).invoke('onDelete')()
+    simulateDeleteClick(wrapper)
 
     expect(mockOnDelete).toBeCalledWith()
     expect(mockDeleteEvaluationRound).toBeCalledWith(
@@ -300,10 +319,10 @@ describe('test EvaluationRoundEditor', () => {
         ),
     )
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    const wrapper = mount(<EvaluationRoundEditor {...props} />)
 
     //Simulate a deletion
-    wrapper.find(EvaluationRoundEditorDropdown).invoke('onDelete')()
+    simulateDeleteClick(wrapper)
 
     expect(mockDeleteEvaluationRound).toBeCalledWith(
       props.evaluationRoundInput.evaluationId,

@@ -62,6 +62,7 @@ import {
   FileHandleAssociateType,
   Evaluation,
   EvaluationRound,
+  FileResult,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -817,6 +818,26 @@ export const getEntity: GetEntity = <T>(
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<T>
+}
+
+/**
+ * Same as getEntity above, but will return the file entity result
+ * from doGet call rather than a promise
+ */
+export const getEntityResult: GetEntity = (
+  sessionToken: string | undefined = undefined,
+  entityId: string | number,
+  versionNumber?: string,
+) => {
+  const url = versionNumber
+    ? `/repo/v1/entity/${entityId}/version/${versionNumber}`
+    : `/repo/v1/entity/${entityId}`
+  return doGet(
+    url,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
@@ -1582,6 +1603,45 @@ export const getFileHandleContent = (
     } else {
       reject('File size exceeds max (5MB)')
     }
+  })
+}
+
+export const getFileResult = (
+  fileEntity: FileEntity,
+  sessionToken?: string,
+  includeFileHandles?: boolean,
+  includePreSignedURLs?: boolean,
+  includePreviewPreSignedURLs?: boolean,
+): Promise<FileResult> => {
+
+  return new Promise((resolve, reject) => {
+    const fileHandleAssociationList: FileHandleAssociation[] = [
+      {
+        associateObjectId: fileEntity.id!,
+        associateObjectType: FileHandleAssociateType.FileEntity,
+        fileHandleId: fileEntity.dataFileHandleId,
+      },
+    ]
+    const request: BatchFileRequest = {
+      includeFileHandles: includeFileHandles || false,
+      includePreSignedURLs: includePreSignedURLs || false,
+      includePreviewPreSignedURLs: includePreviewPreSignedURLs || false,
+      requestedFiles: fileHandleAssociationList,
+    }
+    getFiles(request, sessionToken)
+      .then((data: BatchFileResult) => {
+        if (
+          data.requestedFiles.length &&
+          (data.requestedFiles[0].fileHandleId !== undefined)
+        ) {
+          resolve(data.requestedFiles[0])
+        } else {
+          reject(data.requestedFiles[0].failureCode)
+        }
+      })
+      .catch(err => {
+        reject(err)
+      })
   })
 }
 

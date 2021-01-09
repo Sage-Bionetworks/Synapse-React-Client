@@ -19,6 +19,7 @@ import { Settings } from './Settings'
 import { Columns } from './Columns'
 import { ColumnsDark } from './ColumnsDark'
 import { VerticalDots } from './VerticalDots'
+import { ExternalLink } from './ExternalLink'
 
 export {
   Project,
@@ -42,4 +43,5 @@ export {
   Columns,
   ColumnsDark,
   VerticalDots,
+  ExternalLink,
 }

@@ -20,20 +20,20 @@ describe('basic tests', () => {
 
   const props: WarningModalProps = {
     title: 'Some Warning',
-    copy: 'Some Copy',
-    confirmCopy: 'Do it!',
+    modalBody: 'Some Copy',
+    confirmButtonText: 'Do it!',
     show: true,
     onConfirm: mock.confirmFn,
     onCancel: _.noop,
-    callbackArgs: ['one', 'two'],
+    onConfirmCallbackArgs: ['one', 'two'],
   }
 
   it('should display the modal with correct text', async () => {
     const { wrapper } = createMountedComponent(props)
     expect(wrapper).toBeDefined()
     expect(wrapper.find('.modal-title.h4').text()).toBe(props.title)
-    expect(wrapper.find('div.modal-body').text()).toBe(props.copy)
-    expect(wrapper.find('.btn-success').text()).toBe(props.confirmCopy)
+    expect(wrapper.find('div.modal-body').text()).toBe(props.modalBody)
+    expect(wrapper.find('.btn-success').text()).toBe(props.confirmButtonText)
   })
 
   it('should call callback fn with correct arguments', async () => {

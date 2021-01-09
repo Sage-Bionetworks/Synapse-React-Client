@@ -154,7 +154,7 @@
   $b: 35rem;
 
   .wrap {
-    @include calc(height, #{$a} - #{$b});
+    @include calc(height, '#{$a} - #{$b}');
     overflow: hidden;
     width: 100%;
     clear: both;
@@ -481,7 +481,7 @@
     .scroll-area {
       height: 100%;
       &.table-body {
-        @include calc(height, #{$c} - #{$d});
+        @include calc(height, '#{$c} - #{$d}');
       }
     }
     .summary-table-header {

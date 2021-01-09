@@ -81,13 +81,14 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
 
   //run only once
   useEffect(
-    () =>
+    () => {
       fetchEvaluationList(
         evaluationId,
         sessionToken,
         setEvaluationRoundInputList,
         setError,
-      ),
+      )
+    },
     // we explicitly dont want to list setEvaluationRoundInputList nor setError as a dependency
     // if we do, the fetchEvaluationList will re-fetch from the backend on every new render
     // eslint-disable-next-line react-hooks/exhaustive-deps
