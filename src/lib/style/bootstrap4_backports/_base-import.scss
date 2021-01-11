@@ -33,6 +33,17 @@
     padding: 10px;
   }
 
+  .btn.pill-xl.btn-sm {
+    min-width: 150px;
+    min-height: 20px;
+    padding: 5px;
+  }
+
+  .btn.pill-xl.btn-lg {
+    min-width: 220px;
+    padding: 10px;
+  }
+
   // default variant is in BS3 but not BS4, so we recreate it here
   .btn-default {
     @include button-variant(#fff, #ccc, #e6e6e6, #adadad);
