@@ -1464,48 +1464,6 @@ export const startMultipartUpload = (
     })
 }
 
-/**
- * Return the content of the file (latest version) associated to the given FileEntity.
- * Be aware that if the target file size > 5MB, this method will throw an error.
- * @param sessionToken
- * @param fileEntity
- * @param endpoint
- */
-export const getFileEntityContent = (
-  sessionToken: string,
-  fileEntity: FileEntity,
-): Promise<string> => {
-  // get the presigned URL, download the data, and send that back (via resolve())
-  return new Promise((resolve, reject) => {
-    const fileHandleAssociationList = [
-      {
-        associateObjectId: fileEntity.id,
-        associateObjectType: 'FileEntity',
-        fileHandleId: fileEntity.dataFileHandleId,
-      },
-    ]
-    const request: any = {
-      includeFileHandles: true,
-      includePreSignedURLs: true,
-      includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList,
-    }
-    getFiles(request, sessionToken)
-      .then((data: BatchFileResult) => {
-        const presignedUrl: string = data.requestedFiles[0].preSignedURL!
-        const fileHandle: FileHandle = data.requestedFiles[0].fileHandle!
-        return getFileHandleContent(fileHandle, presignedUrl).then(
-          (content: string) => {
-            resolve(content)
-          },
-        )
-      })
-      .catch(err => {
-        reject(err)
-      })
-  })
-}
-
 export const getFileHandleContentFromID = (
   fileHandleId: string,
   sessionToken: string,
