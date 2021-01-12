@@ -9,7 +9,5 @@ export const mockFileHandle:FileHandle = {
   contentMd5: "123456789",
   fileName: "ACT_Proteomics_PFC_RAW_ad_act27.raw",
   storageLocationId: 1,
-  contentSize: 20,
-  isPreview: false,
-  externalURL: 'www.google.com'
+  contentSize: 20
 }

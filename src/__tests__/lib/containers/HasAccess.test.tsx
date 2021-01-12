@@ -104,6 +104,10 @@ describe('basic tests', () => {
     expect(SynapseClient.getEntity).toHaveBeenCalledTimes(1)
     expect(SynapseClient.getFileResult).toHaveBeenCalledTimes(1)
     // verify UI
+    instance.setState({
+      fileHandleDownloadType: FileHandleDownloadTypeEnum.Accessible
+    })
+
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
@@ -171,7 +175,7 @@ describe('basic tests', () => {
       contentSize: 0,
     }
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.getFileResult = jest.fn(() =>
+    SynapseClient.getFileEntityFileHandle = jest.fn(() =>
       Promise.resolve(cloudFileHandle),
     )
 
