@@ -277,7 +277,7 @@ export default class UserCardMedium extends React.Component<
       return (
         <div
           style={{ border: '1px solid #DDDDDF', backgroundColor: 'white' }}
-          className={`SRC-userCard SRC-userCardMediumUp ${
+          className={`cardContainer SRC-userCard SRC-userCardMediumUp ${
             isContextMenuOpen ? 'SRC-hand-cursor' : ''
           }`}
           onClick={isContextMenuOpen ? this.toggleContextMenu : undefined}
