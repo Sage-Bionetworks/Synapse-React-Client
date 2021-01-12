@@ -2,15 +2,18 @@ import React, { useEffect } from 'react'
 import {
   BatchFileRequest,
   FileEntity,
-  FileHandle,
+  ExternalFileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
   Row,
 } from '../utils/synapseTypes'
+import { S3FileHandle } from '../utils/synapseTypes/CloudProviderFileHandle'
 import {
   getEntityResult,
   getFiles,
 } from '../utils/SynapseClient'
+
+export type ExternalS3FileHandle = ExternalFileHandle | S3FileHandle
 
 interface BaseFileFetchResponse {
   success: boolean
@@ -18,7 +21,7 @@ interface BaseFileFetchResponse {
 interface AuthorizedFileResp extends BaseFileFetchResponse {
   data: {
     fileEntity: FileEntity,
-    fileHandle: FileHandle
+    fileHandle: ExternalS3FileHandle
   }
 }
 interface UnauthorizedFileResp extends BaseFileFetchResponse {

@@ -11,6 +11,4 @@ export interface FileHandle {
   fileName: string // The short, user visible name for this file.
   storageLocationId: number // The optional storage location descriptor
   contentSize: number // The size of the file in bytes.
-  isPreview: boolean // is the file a preview?
-  externalURL: string // link to the external file
 }
