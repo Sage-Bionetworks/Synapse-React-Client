@@ -10,6 +10,7 @@ import {
 } from '../../../../lib/utils/synapseTypes'
 import { render, fireEvent } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
+import { SynapseConstants } from '../../../../lib'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
@@ -34,7 +35,7 @@ const stringFacetValues: FacetColumnResultValueCount[] = [
   { value: 'Honda', count: 2, isSelected: false },
   { value: 'Chevy', count: 1, isSelected: true },
   {
-    value: 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+    value: SynapseConstants.VALUE_NOT_SET,
     count: 1,
     isSelected: false,
   },
@@ -42,7 +43,7 @@ const stringFacetValues: FacetColumnResultValueCount[] = [
 
 const userEntityFacetValues: FacetColumnResultValueCount[] = [
   {
-    value: 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+    value: SynapseConstants.VALUE_NOT_SET,
     count: 2,
     isSelected: false,
   },

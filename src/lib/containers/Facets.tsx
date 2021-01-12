@@ -1,5 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { SynapseConstants } from '../../lib'
 import * as React from 'react'
 import {
   getIsValueSelected,
@@ -99,8 +100,8 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (
       style.color = textColor
       const { value, count } = facetColumnResultValues
       const displayValue =
-        value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
-          ? 'Unannotated'
+        value === SynapseConstants.VALUE_NOT_SET
+          ? `No ${facetColumnResult.columnName} Assigned`
           : value
 
       children.push(

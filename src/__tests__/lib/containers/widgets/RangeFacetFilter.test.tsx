@@ -23,8 +23,8 @@ const notSetFacetResult: FacetColumnResultRange = {
   columnMax: '1999',
   columnMin: '1996',
   columnName: 'Year',
-  selectedMax: 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
-  selectedMin: 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+  selectedMax: VALUE_NOT_SET,
+  selectedMin: VALUE_NOT_SET,
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
   facetType: 'range',
 }

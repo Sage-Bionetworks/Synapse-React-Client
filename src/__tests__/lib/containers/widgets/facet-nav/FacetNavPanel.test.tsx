@@ -7,6 +7,7 @@ import { render } from '@testing-library/react'
 import { FacetColumnResultValues } from 'lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
 import { FacetNavProps } from 'lib/containers/widgets/facet-nav/FacetNav'
+import { SynapseConstants } from 'lib'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -20,7 +21,7 @@ const stringFacetValues: FacetColumnResultValues = {
     { value: 'Honda', count: 2, isSelected: false },
     { value: 'Chevy', count: 1, isSelected: true },
     {
-      value: 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+      value: SynapseConstants.VALUE_NOT_SET,
       count: 1,
       isSelected: false,
     },

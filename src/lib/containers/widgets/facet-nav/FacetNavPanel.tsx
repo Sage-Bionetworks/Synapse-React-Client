@@ -31,6 +31,7 @@ import {
   applyChangesToValuesColumn,
 } from '../query-filter/QueryFilter'
 import loadingScreen from '../../LoadingScreen'
+import { SynapseConstants } from '../../../../lib'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -100,6 +101,7 @@ export function extractPlotDataArray(
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
+  facetAliases?: {},
 ) {
   const { colorPalette } = getColorPalette(
     index,
@@ -107,23 +109,27 @@ export function extractPlotDataArray(
   )
 
   const getLabels = (
+    columnName: string,
     facetValues: FacetColumnResultValueCount[],
     truncateFlag: boolean,
     columnType?: ColumnType,
+    facetAliases?: {},
   ) => {
     return facetValues.map(facetValue => ({
-      label: getLabel(facetValue, truncateFlag, columnType),
+      label: getLabel(columnName, facetValue, truncateFlag, columnType, facetAliases),
       count: facetValue.count,
     }))
   }
 
   const getLabel = (
+    columnName: string,
     facetValue: FacetColumnResultValueCount,
     truncateFlag: boolean,
     columnType?: ColumnType,
+    facetAliases?: {},
   ): string => {
-    if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
-      return 'Unannotated'
+    if (facetValue.value === SynapseConstants.VALUE_NOT_SET) {
+      return `No ${unCamelCase(columnName, facetAliases)} Assigned`
     }
 
     if (columnType === 'ENTITYID') {
@@ -147,9 +153,9 @@ export function extractPlotDataArray(
     const value = facetValue.value
     return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
-
-  const labels = getLabels(facetToPlot.facetValues, false, columnType)
-  const text = getLabels(facetToPlot.facetValues, true, columnType).map(
+  
+  const labels = getLabels(facetToPlot.columnName, facetToPlot.facetValues, false, columnType)
+  const text = getLabels(facetToPlot.columnName, facetToPlot.facetValues, true, columnType).map(
     el => el.label,
   )
 
@@ -168,7 +174,7 @@ export function extractPlotDataArray(
     x:
       plotType === 'BAR'
         ? facetToPlot.facetValues.map(facet =>
-            getLabel(facet, false, columnType),
+            getLabel(facetToPlot.columnName, facet, false, columnType, facetAliases),
           )
         : undefined,
     y:
