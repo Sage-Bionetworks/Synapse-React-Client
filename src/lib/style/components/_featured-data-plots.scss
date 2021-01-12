@@ -1,4 +1,6 @@
-@media (max-width: map-get($breakpoints, 'medium')) {
+@use '../abstracts/variables' as SRC;
+
+@media (max-width: map-get(SRC.$breakpoints, 'medium')) {
   .FeaturedDataPlots {
     &__queryPerCard, &__singleQuery {
       display: block;
@@ -8,7 +10,7 @@
     }    
   }
 }
-@media (min-width: map-get($breakpoints, 'medium')) {
+@media (min-width: map-get(SRC.$breakpoints, 'medium')) {
   .FeaturedDataPlots {
     &__queryPerCard, &__singleQuery .SRC-wrapper {
       display: flex;
