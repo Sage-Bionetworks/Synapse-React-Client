@@ -35,7 +35,7 @@ describe('basic functionality', () => {
     // Fill out the form
     await act(async () => {
       await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
+        .find('FormControl')
         .simulate('change', {
           target: {
             value: tokenName,
@@ -79,7 +79,7 @@ describe('basic functionality', () => {
     // Add a name
     await act(async () => {
       await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
+        .find('FormControl')
         .simulate('change', {
           target: {
             value: 'some name',
@@ -98,7 +98,7 @@ describe('basic functionality', () => {
     // Remove name, add a permission
     await act(async () => {
       await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
+        .find('FormControl')
         .simulate('change', {
           target: {
             value: '',
@@ -128,7 +128,7 @@ describe('basic functionality', () => {
     // Fill out the form and send the request
     await act(async () => {
       await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
+        .find('FormControl')
         .simulate('change', {
           target: {
             value: 'token name',
