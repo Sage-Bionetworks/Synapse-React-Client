@@ -1,6 +1,7 @@
 import React from 'react'
 import { GoalsDataProps } from './Goals'
 import QueryCount from '../../../containers/QueryCount'
+import { Button } from 'react-bootstrap'
 
 export default function GoalsDesktop({
   asset,
@@ -11,30 +12,29 @@ export default function GoalsDesktop({
   token,
 }: GoalsDataProps) {
   return (
-    <div className="Goals__Card">
+    <div className="Goals__Card bootstrap-4-backport">
       <div
         className="Goals__Card__header"
         style={{ background: `url('${asset}')` }}
       >
         <p>
           <span className="Goals__Card__header__title"> {title} </span>
-          {countSql && <span className="Goals__Card__header__count">
-            <QueryCount
-              parens={false}
-              sql={countSql}
-              token={token}
-              name=""
-            />
-          </span>}
+          {countSql && (
+            <span className="Goals__Card__header__count">
+              <QueryCount parens={false} sql={countSql} token={token} name="" />
+            </span>
+          )}
         </p>
       </div>
       <div className="Goals__Card__summary">
         <p> {summary} </p>
-        <p>
-          <a className="Goals__Card__summary__link" href={link}>
-            EXPLORE
-          </a>
-        </p>
+        <Button
+          className="pill Goals__Card__summary__link"
+          variant="primary"
+          href={link}
+        >
+          EXPLORE
+        </Button>
       </div>
     </div>
   )

@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 .ProjectViewCard {
   word-wrap: break-word;
   width: 410px;
@@ -22,7 +24,7 @@
   &__ImagePlaceholder {
     width: 100%;
     height: 25%;
-    background: $primary-action-color-300;
+    background: SRC.$primary-action-color-300;
   }
 
   &__ProjectName {

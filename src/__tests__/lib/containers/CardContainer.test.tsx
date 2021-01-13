@@ -63,9 +63,9 @@ describe('it performs all functionality', () => {
       ...props,
       facet: 'projectStatus',
     })
-    expect(wrapper.find('button.SRC-light-button').text()).toEqual('View More')
+    expect(wrapper.find('Button').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
-    expect(wrapper.find('button.SRC-light-button').text()).toEqual('View More')
+    expect(wrapper.find('Button').text()).toEqual('View More')
   })
 
   it('Renders with a title', () => {
@@ -77,7 +77,7 @@ describe('it performs all functionality', () => {
   it('handleViewMore works', () => {
     const { wrapper } = createShallowComponent(props)
     // go through calling handle view more
-    wrapper.find('button').simulate('click')
+    wrapper.find('Button').simulate('click')
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
   })
@@ -90,7 +90,7 @@ describe('it performs all functionality', () => {
       data: dataCopy,
     }
     const { wrapper } = createShallowComponent(propsWithDataCopy)
-    expect(wrapper.find('button.SRC-light-button')).toHaveLength(0)
+    expect(wrapper.find('Button')).toHaveLength(0)
   })
 
   it('show ViewMore does not render when hasMoreData is false', () => {
@@ -99,6 +99,6 @@ describe('it performs all functionality', () => {
       hasMoreData: false,
     }
     const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
-    expect(wrapper.find('button.SRC-light-button')).toHaveLength(0)
+    expect(wrapper.find('Button')).toHaveLength(0)
   })
 })

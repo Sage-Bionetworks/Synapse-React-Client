@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 .ElementWithTooltip {
   display: inline-flex;
   align-items: center;
@@ -7,18 +9,19 @@
 
   &.dark-theme {
     svg {
-      fill: $primary-action-color;
-      color: $primary-action-color !important;
+      fill: SRC.$primary-action-color;
+      color: SRC.$primary-action-color !important;
       width: 18px;
       height: 18px;
 
       path {
-        fill: $primary-action-color;
+        fill: SRC.$primary-action-color;
       }
     }
 
     &:hover {
-      svg, path {
+      svg,
+      path {
         fill: #fff;
       }
     }
@@ -28,7 +31,7 @@
   .ElementWithTooltip {
     &.dark-theme {
       svg {
-        fill: $primary-action-color;
+        fill: SRC.$primary-action-color;
         color: white !important;
 
         path {
@@ -40,7 +43,8 @@
 }
 
 button.ElementWithTooltip {
-  &:active:focus, &:focus {
+  &:active:focus,
+  &:focus {
     outline: none;
   }
 }

@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 .FacetPlotsCard {  
   background-color: white;
   overflow: hidden;
@@ -40,7 +42,7 @@
   &__loading {
     min-height: 400px;
   }
-  @media (max-width: map-get($breakpoints, 'medium')) {
+  @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
     margin: 15px 0px;
   }
 }

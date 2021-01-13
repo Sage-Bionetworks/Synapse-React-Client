@@ -1,8 +1,11 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:color';
+
 // TODO: These colors to be configurable for the other portals.
 .Resources {
   background-color: rgba(64, 123, 160, 0.05);
   a {
-    color: $primary-action-color;
+    color: SRC.$primary-action-color;
   }
   .control-container {
     background: white;
@@ -23,10 +26,12 @@
         padding: 10px;
         &.isSelected,
         &:not(.gap-fill):hover {
-          color: $primary-action-color;
-          // Hex value can also set opacity, using two extra values at the end
-          background-color: #{$primary-action-color}0a;
-          border-right: 2px solid $primary-action-color;
+          color: SRC.$primary-action-color;
+          background-color: color.adjust(
+            SRC.$primary-action-color,
+            $alpha: 0.04
+          );
+          border-right: 2px solid SRC.$primary-action-color;
         }
         border-right: 2px solid #dcdcdc;
         font-weight: bold;

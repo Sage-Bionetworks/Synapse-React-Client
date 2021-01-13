@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 // horizontally and vertically center
 %hv-center {
   display: flex;
@@ -21,13 +23,13 @@
     display: flex;
     min-height: 300px;
     flex-direction: column;
-    box-shadow: $box-shadow-soft;
+    box-shadow: SRC.$box-shadow-soft;
     background: #ffffff;
     margin: 5px;
     &__header {
       min-height: 75px;
       @extend %side-padding;
-      background: $primary-action-color;
+      background: SRC.$primary-action-color;
       display: flex;
       align-items: center;
       .iconImg {
@@ -41,16 +43,17 @@
       }
       &__info {
         margin-left: 10px;
-        a:hover, a:focus {
+        a:hover,
+        a:focus {
           text-decoration: none;
         }
 
         &__title {
           font-size: 18px;
-          font-weight: bold;  
+          font-weight: bold;
         }
-        &__link a{
-          color: #1A1C29;
+        &__link a {
+          color: #1a1c29;
         }
       }
     }
@@ -61,6 +64,11 @@
       padding-bottom: 20px;
       @extend %space-between;
       flex-direction: column;
+
+      .btn {
+        width: 120px;
+        margin-left: 0px;
+      }
     }
   }
   &__Mobile {
@@ -74,6 +82,11 @@
         font-weight: bold;
         font-size: 18px;
         margin-left: 10px;
+      }
+    }
+    &__Content {
+      .btn {
+        margin-left: 0px;
       }
     }
   }
