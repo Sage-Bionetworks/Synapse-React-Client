@@ -5,20 +5,71 @@
   $primary: SRC.$primary-action-color;
   $secondary: SRC.$secondary-action-color;
   $border-radius: 0.2rem;
+  $btn-box-shadow: SRC.$box-shadow-soft;
 
   @import 'node_modules/bootstrap/scss/bootstrap';
 
-  .btn-primary-900 {
-    @include button-variant(
-      SRC.$primary-action-color-900,
-      SRC.$primary-action-color-900
-    );
+  // For all buttons, make the box shadow more intense on hover
+  .btn {
+    @include hover() {
+      box-shadow: SRC.$box-shadow-med;
+    }
   }
 
-  .btn-primary-500 {
-    @include button-variant(
-      SRC.$primary-action-color-500,
-      SRC.$primary-action-color-500
-    );
+  // Add the 'pill' class for a pill shape
+  .btn.pill {
+    border-radius: 24px;
+  }
+
+  .btn.pill.btn-lg {
+    font-size: 16px;
+    padding: 10px 24px;
+  }
+
+  // Extra-long pill shape
+  .btn.pill-xl {
+    border-radius: 24px;
+    min-width: 168px;
+    padding: 10px;
+  }
+
+  .btn.pill-xl.btn-sm {
+    min-width: 150px;
+    min-height: 20px;
+    padding: 5px;
+  }
+
+  .btn.pill-xl.btn-lg {
+    min-width: 220px;
+    padding: 10px;
+  }
+
+  // default variant is in BS3 but not BS4, so we recreate it here
+  .btn-default {
+    @include button-variant(#fff, #ccc, #e6e6e6, #adadad);
+  }
+
+  // Override built-in btn-white with this
+  .btn-white {
+    @include button-variant(#fff, #fff);
+    @include hover() {
+      color: rgba(0, 0, 0, 0.73);
+    }
+    color: rgba(0, 0, 0, 0.54);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
+  }
+
+  /**
+   * For our expanded primary color palette, create regular and light
+   * button variants for each color.
+   */
+  @each $color-variant, $color in SRC.$primary-color-palette {
+    .btn-primary-#{$color-variant} {
+      @include button-variant($color, $color);
+    }
+
+    .btn-light-primary-#{$color-variant} {
+      @include button-variant(#dfdfdf, #dfdfdf, $color, $color);
+    }
   }
 }

@@ -72,15 +72,12 @@
       padding-bottom: 20px;
       @extend %space-between;
       flex-direction: column;
-      &__link {
+      & > &__link {
         @extend %hv-center;
         width: 120px;
-        height: 33px;
-        padding: 20px;
+        padding: 10px;
         margin-top: 20px;
-        background: SRC.$primary-action-color;
-        border-radius: 24px;
-        color: white !important;
+        margin-left: 0px;
       }
     }
   }
@@ -106,15 +103,12 @@
     }
 
     &__Content {
-      &__Link {
+      & > &__Link {
         @extend %hv-center;
         width: 120px;
-        height: 33px;
-        padding: 20px;
+        padding: 10px;
         margin-top: 20px;
-        background: SRC.$primary-action-color;
-        border-radius: 24px;
-        color: white !important;
+        margin-left: 0px;
       }
     }
   }

@@ -163,29 +163,6 @@ span.SRC-facets svg.SRC-facets-icon {
   color: #b7b7b7;
 }
 
-.SRC-google-button {
-  display: inline-flex;
-  align-items: center;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.24), 0 0 1px 0 rgba(0, 0, 0, 0.24);
-  padding: 0px;
-  border-radius: 2px;
-  border: 1px solid transparent;
-  font-size: 14px;
-  font-weight: 500;
-  font-family: Lato, sans-serif;
-  width: 100%;
-}
-
-.SRC-google-button-dark-color {
-  color: #fff;
-  background-color: rgb(66, 133, 244);
-}
-
-.SRC-google-button-light-color {
-  color: rgba(0, 0, 0, 0.54);
-  background-color: #fff;
-}
-
 .SRC-margin-bottom-50px {
   margin-bottom: 50px;
 }
@@ -415,13 +392,6 @@ button.SRC-roundBorder {
   color: #1a1c29;
 }
 
-.SRC-hoverWhiteText:hover {
-  color: white;
-  svg {
-    color: white;
-  }
-}
-
 .SRC-light-background {
   background: #f5f5f5;
 }
@@ -472,11 +442,6 @@ button.SRC-roundBorder {
   cursor: pointer;
   height: 0;
   width: 0;
-}
-
-.loginContainer {
-  max-width: 350px;
-  background: white;
 }
 
 .SRC-tableHead {
@@ -988,11 +953,6 @@ button {
   margin-left: 0px;
 }
 
-.SRC-sign-in-button {
-  min-width: 80px;
-  margin: 10px;
-}
-
 a.dropdown-item {
   $color: #212529;
   display: block;
@@ -1172,22 +1132,6 @@ hr ~ .SRC-wrapper {
   padding: 0px;
 }
 
-.homepage-button-link {
-  border-radius: 24px;
-  padding: 10px 24px;
-  background-color: SRC.$primary-action-color;
-  color: #fff;
-  font-size: 16px;
-  display: inline-block;
-
-  &:link,
-  &:visited,
-  &:hover,
-  &:active {
-    color: #fff;
-  }
-}
-
 #addAndRemoveColumns ~ div.dropdown-menu {
   max-height: 300px;
   overflow: auto;
@@ -1215,4 +1159,17 @@ hr ~ .SRC-wrapper {
 .modal-dialog-centered {
   margin-top: 0px;
   min-height: 90%;
+}
+
+.ButtonWithIcon {
+  display: inline-flex;
+  align-items: center;
+
+  &__Icon {
+    float: left;
+    padding-right: 10px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    width: 0%;
+  }
 }

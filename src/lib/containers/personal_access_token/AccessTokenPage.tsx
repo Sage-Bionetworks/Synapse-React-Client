@@ -79,7 +79,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
 
   return (
     <>
-      <div className="SRC-accessTokenPageHeaderContainer">
+      <div className="SRC-accessTokenPageHeaderContainer bootstrap-4-backport">
         <div className="SRC-accessTokenPageText">
           <h1>{title}</h1>
           {body}

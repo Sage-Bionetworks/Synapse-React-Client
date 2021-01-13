@@ -33,6 +33,11 @@ module.exports = {
             components: 'src/lib/containers/**/[A-Z]*.tsx',
             ignore: ignoreComponents
         },
+        {
+            name: 'Demos and non-components',
+            description: 'Demos or examples that are useful to display here that are not components.',
+            components: 'src/demo/containers/**/[A-Z]*.tsx',
+        },
       ],
 
     require: [

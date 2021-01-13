@@ -130,7 +130,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
           {alert.message}
         </ReactBoostrap.Alert>
       )}
-      <div className="create-package-container">
+      <div className="create-package-container bootstrap-4-backport">
         {children}
         <div>
           {isLoading && (
@@ -152,14 +152,15 @@ export const CreatePackage = (props: CreatePackageProps) => {
                   ></input>
                   <span className="zip-extension SRC-boldText">.zip</span>
                 </form>
-                <button
-                  className="SRC-standard-button-shape SRC-primary-button action-button"
+                <ReactBoostrap.Button
+                  variant="primary"
+                  className="pill-xl"
                   onClick={createPackageHandler}
                   type="button"
                 >
                   <FontAwesomeIcon icon="folder" />
                   Create Package
-                </button>
+                </ReactBoostrap.Button>
               </>
             )}
             {bulkFileDownloadResponse && (
@@ -170,13 +171,14 @@ export const CreatePackage = (props: CreatePackageProps) => {
                     Package created! Ready for download.
                   </span>
                 </div>
-                <button
-                  className="SRC-standard-button-shape SRC-primary-button action-button"
+                <ReactBoostrap.Button
+                  variant="primary"
+                  className="pill-xl"
                   onClick={downloadPackageHandler}
                 >
                   <FontAwesomeIcon icon="download" color="white" />
                   Download Package
-                </button>
+                </ReactBoostrap.Button>
               </>
             )}
           </div>

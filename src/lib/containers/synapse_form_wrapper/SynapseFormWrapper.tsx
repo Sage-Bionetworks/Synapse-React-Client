@@ -1,6 +1,7 @@
 import $RefParser from 'json-schema-ref-parser'
 import { get, includes } from 'lodash-es'
 import * as React from 'react'
+import { Button } from 'react-bootstrap'
 import Alert from 'react-bootstrap/Alert'
 import { UiSchema } from 'react-jsonschema-form'
 import { SynapseClient } from '../../utils'
@@ -383,13 +384,15 @@ class SynapseFormWrapper extends React.Component<
       return <></>
     } else {
       return (
-        <div className="panel padding-full unauthenticated text-center">
+        <div className="panel padding-full unauthenticated text-center bootstrap-4-backport">
           Please
-          <button
-            className={`SRC-standard-button-shape SRC-light-button SRC-sign-in-button ${SRC_SIGN_IN_CLASS}`}
+          <Button
+            variant="light-primary-base"
+            style={{ margin: '10px' }}
+            className={`pill ${SRC_SIGN_IN_CLASS}`}
           >
             sign in
-          </button>
+          </Button>
           to initiate or continue your submission
         </div>
       )

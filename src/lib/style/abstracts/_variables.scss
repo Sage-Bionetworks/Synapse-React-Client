@@ -20,6 +20,7 @@ $space-unit: 2.1rem;
 
 $green-affrimative: #35bf7d;
 
+$box-shadow-med: 0 1px 3px rgba(0, 0, 0, 0.5);
 $box-shadow-soft: 0 3px 10px rgba(93, 105, 171, 0.1);
 
 $themes: (
@@ -54,6 +55,14 @@ $primary-action-color-300: adjust-color(
   $saturation: -3%,
   $lightness: 10%
 ) !default;
+
+$primary-color-palette: (
+  base: $primary-action-color,
+  300: $primary-action-color-300,
+  500: $primary-action-color-500,
+  700: $primary-action-color-700,
+  900: $primary-action-color-900,
+);
 
 /// Breakpoints map
 /// @prop {String} keys - Keys are identifiers mapped to a given length
