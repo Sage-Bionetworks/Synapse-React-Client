@@ -33,9 +33,14 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
           if ('data' in fileEntityHandle) {
             const { fileEntity, fileHandle } = fileEntityHandle.data
             setFileEntity(fileEntity)
-            if (fileHandle && !fileHandle.isPreview) { // have file access and not file preview
-              setHasFileAccess(true)
-              if (implementsExternalFileHandleInterface(fileHandle)) {
+            if (fileHandle) {
+              // have S3 file access and not file preview
+              if ('isPreview' in fileHandle && !fileHandle.isPreview) {
+                setHasFileAccess(true)
+              }
+              // is external file url
+              if (implementsExternalFileHandleInterface(fileHandle) && 'externalURL' in fileHandle) {
+                setHasFileAccess(true)
                 setIsExternalFile(true)
                 setExternalURL(fileHandle.externalURL)
               }
