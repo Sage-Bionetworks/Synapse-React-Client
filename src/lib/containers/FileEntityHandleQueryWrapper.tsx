@@ -13,7 +13,7 @@ import {
   getFiles,
 } from '../utils/SynapseClient'
 
-export type ExternalS3FileHandle = ExternalFileHandle | S3FileHandle
+export type ExternalOrS3FileHandle = ExternalFileHandle | S3FileHandle
 
 interface BaseFileFetchResponse {
   success: boolean
@@ -21,7 +21,7 @@ interface BaseFileFetchResponse {
 interface AuthorizedFileResp extends BaseFileFetchResponse {
   data: {
     fileEntity: FileEntity,
-    fileHandle: ExternalS3FileHandle
+    fileHandle: ExternalOrS3FileHandle
   }
 }
 interface UnauthorizedFileResp extends BaseFileFetchResponse {
