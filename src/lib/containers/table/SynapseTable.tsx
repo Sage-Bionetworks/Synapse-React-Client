@@ -475,6 +475,7 @@ export default class SynapseTable extends React.Component<
         onClick={this.handlePaginationClick(NEXT)}
         style={{
           marginRight: 0,
+          marginBottom: '20px',
           display: 'inline-flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -492,6 +493,7 @@ export default class SynapseTable extends React.Component<
         type="button"
         style={{
           marginRight: !hasMoreData && pastZero ? 0 : '10px',
+          marginBottom: '20px',
           display: 'inline-flex',
           justifyContent: 'center',
           alignItems: 'center',
