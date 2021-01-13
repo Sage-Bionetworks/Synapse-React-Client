@@ -51,11 +51,12 @@ class CardFooter extends React.Component<CardFooterProps, State> {
   }
 
   renderRowValue = (columnName: string, value: string) => {
-    if (!value.match) {
+    if (!value.match || !value.trim) {
       // value can sometimes be a react element, so it doesn't have a .match function, interestingly I didn't
       // see typeof return 'object' for that case which would be a better check.
       return value
     }
+    value = value.trim()
     if (value.match(DOI_REGEX)) {
       return (
         <a
