@@ -224,6 +224,19 @@ describe('it makes the correct URL for the title', () => {
     expect(target).toEqual(BLANK)
   })
 
+  it('creates a DOI link PORTALS-1801', () => {
+    const doi = '10.1007/s00401-020-02230-x '
+    const doiLink = `https://dx.doi.org/${doi.trim()}`
+    const { href, target } = getTitleParams(
+      doi,
+      undefined,
+      undefined,
+      undefined,
+    )
+    expect(href).toEqual(doiLink)
+    expect(target).toEqual(BLANK)
+  })
+
   it('creates an internal parameterized link', () => {
     const value = '1234'
     const data = [value]
