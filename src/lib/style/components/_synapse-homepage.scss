@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 .SynapseHomepage {
   color: #515359;
   &__Section {
@@ -49,7 +51,7 @@
     flex-shrink: 1;
   }
 
-  @media (max-width: map-get($breakpoints, 'medium')) {
+  @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
     &__Section {
       padding: 30px 40px;
     }
@@ -98,7 +100,7 @@
     }
   }
 
-  @media (min-width: map-get($breakpoints, 'medium') + 1) {
+  @media (min-width: map-get(SRC.$breakpoints, 'medium') + 1) {
     &__Section {
       padding: 50px 60px;
     }

@@ -1,6 +1,8 @@
+@use '../abstracts/variables' as SRC;
+
 .QueryFilter {
   margin: 0rem 1rem 1rem 0;
-  border: 1px solid $border-color-gray;
+  border: 1px solid SRC.$border-color-gray;
   padding: 1rem;
 
   &__facet {
@@ -10,6 +12,3 @@
     }
   }
 }
-
-
-

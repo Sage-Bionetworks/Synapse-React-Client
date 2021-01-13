@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 //overrides to bootstrap 4 that are directly applied to Bootstrap 4 class names
 .bootstrap-4-backport {
   //overrides
@@ -13,7 +15,7 @@
   }
 
   label {
-    color: $gray-deemphasized;
+    color: SRC.$gray-deemphasized;
     font-weight: normal;
   }
 
@@ -26,7 +28,7 @@
 
   // change styling of dropdowns
   %dropdown-active-state {
-    background: $primary-action-color;
+    background: SRC.$primary-action-color;
     color: white;
   }
   .show button.dropdown-toggle {
@@ -37,12 +39,12 @@
   }
   .dropdown-menu {
     a.dropdown-item:hover:not(.disabled) {
-      background: $primary-action-color;
+      background: SRC.$primary-action-color;
       color: white !important;
       text-decoration: none;
     }
     a.dropdown-item:hover:not(.disabled) * {
-      background: $primary-action-color;
+      background: SRC.$primary-action-color;
       color: white !important;
       text-decoration: none;
     }
@@ -55,7 +57,7 @@
   }
 
   // Buttons need more vertical padding when in mobile view.
-  @media (max-width: map-get($breakpoints, 'medium')) {
+  @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
     .btn {
       padding-top: 0.75rem;
       padding-bottom: 0.75rem;

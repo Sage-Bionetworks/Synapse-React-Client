@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Modal, ModalBody } from 'react-bootstrap'
+import { Button, FormControl, Modal, ModalBody } from 'react-bootstrap'
 import { SynapseClient } from '../../utils'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
@@ -105,13 +105,13 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
           <div className="SRC-marginFive">
             <div className="SRC-marginBottomTen">
               <label className="SRC-boldText">Token Name</label>
-              <input
+              <FormControl
                 className="SRC-personalAccessTokenNameInput"
                 value={tokenName}
                 onChange={handleTokenNameChange}
                 type="text"
                 placeholder="e.g. Synapse command line access on my laptop"
-              ></input>
+              ></FormControl>
             </div>
             <div className="SRC-marginBottomTop">
               <p className="SRC-boldText">Token Permissions</p>

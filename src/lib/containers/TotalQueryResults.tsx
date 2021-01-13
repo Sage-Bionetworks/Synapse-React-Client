@@ -27,6 +27,7 @@ import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
 import { QueryWrapperChildProps } from './QueryWrapper'
 import { ColumnSingleValueFilterOperator } from '../utils/synapseTypes/Table/QueryFilter'
+import { Button } from 'react-bootstrap'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
@@ -284,9 +285,9 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         ))}
       </div>
       {facetsWithSelection.length > 0 && (
-        <button onClick={clearAll} className="TotalQueryResults__clearall">
+        <Button onClick={clearAll} variant="light" className="TotalQueryResults__clearall">
           Clear All
-        </button>
+        </Button>
       )}
     </div>
   )

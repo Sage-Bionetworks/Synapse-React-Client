@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 // have space between items
 %space-between {
   display: flex;
@@ -26,7 +28,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    box-shadow: $box-shadow-soft;
+    box-shadow: SRC.$box-shadow-soft;
     background: #ffffff;
     margin: 10px;
     &:first-child {
@@ -39,7 +41,7 @@
     &__header {
       min-height: 75px;
       @extend %side-padding;
-      background: $primary-action-color;
+      background: SRC.$primary-action-color;
       background-size: cover !important;
       background-repeat: no-repeat !important;
       display: flex;
@@ -70,15 +72,12 @@
       padding-bottom: 20px;
       @extend %space-between;
       flex-direction: column;
-      &__link {
+      & > &__link {
         @extend %hv-center;
         width: 120px;
-        height: 33px;
-        padding: 20px;
+        padding: 10px;
         margin-top: 20px;
-        background: $primary-action-color;
-        border-radius: 24px;
-        color: white !important;
+        margin-left: 0px;
       }
     }
   }
@@ -88,8 +87,8 @@
       @extend %hv-center;
       &__Count {
         @extend %hv-center;
-        border: 1px solid $primary-action-color;
-        color: $primary-action-color;
+        border: 1px solid SRC.$primary-action-color;
+        color: SRC.$primary-action-color;
         border-radius: 50%;
         min-height: 50px;
         min-width: 50px;
@@ -104,15 +103,12 @@
     }
 
     &__Content {
-      &__Link {
+      & > &__Link {
         @extend %hv-center;
         width: 120px;
-        height: 33px;
-        padding: 20px;
+        padding: 10px;
         margin-top: 20px;
-        background: $primary-action-color;
-        border-radius: 24px;
-        color: white !important;
+        margin-left: 0px;
       }
     }
   }

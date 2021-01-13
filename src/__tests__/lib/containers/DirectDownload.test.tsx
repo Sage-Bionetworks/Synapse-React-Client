@@ -3,6 +3,8 @@ import * as React from 'react'
 import DirectDownload, { DirectFileDownloadProps } from '../../../lib/containers/DirectDownload'
 import { FileFetchResponse } from '../../../lib/containers/FileEntityHandleQueryWrapper'
 import { Icon } from '../../../lib/containers/row_renderers/utils'
+import { CloudProviderFileHandleConcreteTypeEnum } from '../../../lib/utils/synapseTypes/CloudProviderFileHandle'
+import { ExternalFileHandleConcreteTypeEnum } from '../../../lib/utils/synapseTypes'
 
 describe('DirectDownload: basic functionality', () => {
 
@@ -24,14 +26,16 @@ describe('DirectDownload: basic functionality', () => {
         etag: '',
         createdBy: '',
         createdOn: '',
-        concreteType: '',
+        concreteType: CloudProviderFileHandleConcreteTypeEnum.S3FileHandle,
         contentType: '',
         contentMd5: '',
         fileName: '',
         storageLocationId: 123,
         contentSize: 100,
         isPreview: false,
-        externalURL: ''
+        bucketName: '',
+        key: '',
+        previewId: ''
       }
     }
   }
@@ -49,13 +53,12 @@ describe('DirectDownload: basic functionality', () => {
         etag: '',
         createdBy: '',
         createdOn: '',
-        concreteType: 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+        concreteType: ExternalFileHandleConcreteTypeEnum.ExternalFileHandle,
         contentType: '',
         contentMd5: '',
         fileName: '',
         storageLocationId: 123,
         contentSize: 100,
-        isPreview: false,
         externalURL: 'www.google.com'
       }
     }

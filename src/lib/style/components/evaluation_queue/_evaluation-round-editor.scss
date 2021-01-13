@@ -1,3 +1,5 @@
+@use '../../abstracts/variables' as SRC;
+
 .evaluation-round-editor {
   .card-body {
     // even though all sides have the same padding,
@@ -20,18 +22,18 @@
 
   .round-status {
     .status-in-progress {
-      color: $green-affrimative;
+      color: SRC.$green-affrimative;
     }
     .status-completed {
       svg {
-        color: $green-affrimative;
+        color: SRC.$green-affrimative;
       }
       span {
-        color: $gray-deemphasized;
+        color: SRC.$gray-deemphasized;
       }
     }
     .status-not-yet-started {
-      color: $gray-deemphasized;
+      color: SRC.$gray-deemphasized;
     }
   }
 
@@ -76,13 +78,13 @@
     .remove-button {
       grid-column-start: remove-button;
       svg {
-        fill: $primary-action-color;
+        fill: SRC.$primary-action-color;
       }
     }
     .add-button {
       grid-column-start: add-button;
       svg {
-        fill: $primary-action-color;
+        fill: SRC.$primary-action-color;
       }
     }
   }

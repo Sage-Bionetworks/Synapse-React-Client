@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
-import { Modal } from 'react-bootstrap'
+import { Button, Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
 import { SynapseClient } from '../../utils'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
@@ -468,28 +468,39 @@ export default class SynapseTable extends React.Component<
       isRowSelectionVisible,
     } = this.props
 
-    const zeroMarginRight: React.CSSProperties = {
-      marginRight: 0,
-    }
     const nextBtn = (
-      <button
+      <Button
+        variant="light-primary-base"
+        className="pill-xl"
         onClick={this.handlePaginationClick(NEXT)}
-        className="SRC-light-button SRC-standard-button-shape"
-        style={zeroMarginRight}
+        style={{
+          marginRight: 0,
+          marginBottom: '20px',
+          display: 'inline-flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
         type="button"
       >
         Next
-      </button>
+      </Button>
     )
     const previousBtn = (
-      <button
+      <Button
+        variant="light-primary-base"
+        className="pill-xl"
         onClick={this.handlePaginationClick(PREVIOUS)}
-        className="SRC-light-button SRC-standard-button-shape"
         type="button"
-        style={!hasMoreData && pastZero ? zeroMarginRight : undefined}
+        style={{
+          marginRight: !hasMoreData && pastZero ? 0 : '10px',
+          marginBottom: '20px',
+          display: 'inline-flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
         Previous
-      </button>
+      </Button>
     )
 
     let isShowingAccessColumn: boolean | undefined =
@@ -532,7 +543,7 @@ export default class SynapseTable extends React.Component<
             )}
           </tbody>
         </table>
-        <div style={{ textAlign: 'right' }}>
+        <div className="bootstrap-4-backport" style={{ textAlign: 'right' }}>
           {pastZero && previousBtn}
           {hasMoreData && nextBtn}
         </div>
@@ -903,7 +914,12 @@ export default class SynapseTable extends React.Component<
     lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
-    const { facetAliases = {}, isColumnSelected, token, lockedFacet } = this.props
+    const {
+      facetAliases = {},
+      isColumnSelected,
+      token,
+      lockedFacet,
+    } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
       (column: SelectColumn, index: number) => {
         const isHeaderSelected = isColumnSelected!.includes(column.name)
@@ -938,7 +954,8 @@ export default class SynapseTable extends React.Component<
             facetAliases,
           )
           const columnModel = columnModels.find(el => el.name === column.name)!
-          const isLockedFacetColumn = column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase()  // used in details page to disable filter the column
+          const isLockedFacetColumn =
+            column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase() // used in details page to disable filter the column
           return (
             <th key={column.name}>
               <div className="SRC-split">
@@ -946,7 +963,8 @@ export default class SynapseTable extends React.Component<
                   {displayColumnName}
                 </span>
                 <div className="SRC-centerContent">
-                  {isFacetSelection && !isLockedFacetColumn &&
+                  {isFacetSelection &&
+                    !isLockedFacetColumn &&
                     this.configureFacetDropdown(
                       facet,
                       columnModel,
@@ -967,7 +985,10 @@ export default class SynapseTable extends React.Component<
                         name: column.name,
                       })}
                     >
-                      <Icon type={ICON_STATE[columnIndex]} cssClass={isSelectedIconClass}></Icon>
+                      <Icon
+                        type={ICON_STATE[columnIndex]}
+                        cssClass={isSelectedIconClass}
+                      ></Icon>
                     </span>
                   )}
                 </div>

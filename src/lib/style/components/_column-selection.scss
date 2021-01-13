@@ -1,9 +1,11 @@
+@use '../abstracts/variables' as SRC;
+
 %column-theme-dark {
   .SRC-primary-fill-color {
     fill: white;
   }
   .SRC-primary-stroke-color {
-    fill: $primary-action-color !important;
+    fill: SRC.$primary-action-color !important;
     stroke: white !important;
   }
 }
@@ -13,7 +15,7 @@ button {
     @extend %column-theme-dark;
     .SRC-column-light-theme {
       .SRC-light-column {
-        fill: $primary-action-color !important;
+        fill: SRC.$primary-action-color !important;
         stroke: white !important;
       }
     }

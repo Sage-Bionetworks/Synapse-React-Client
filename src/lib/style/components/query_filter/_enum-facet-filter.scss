@@ -1,3 +1,5 @@
+@use '../../abstracts/variables' as SRC;
+
 .EnumFacetFilter {
   $input-icon-margin: 5px;
 
@@ -17,7 +19,7 @@
     }
 
     &--forAll {
-      border-bottom: dotted 1px $border-color-gray;
+      border-bottom: dotted 1px SRC.$border-color-gray;
       padding: 0;
     }
   }
@@ -42,10 +44,10 @@
       border: 1px solid #dcdcdc;
       padding: 6px 30px;
       &::placeholder {
-        color: $gray-deemphasized;
+        color: SRC.$gray-deemphasized;
       }
       &:focus {
-        outline-color: $primary-action-color;
+        outline-color: SRC.$primary-action-color;
       }
     }
     button {
@@ -74,7 +76,7 @@
 
       > span {
         margin-left: 2px;
-        color: $gray-regular;
+        color: SRC.$gray-regular;
       }
     }
     input ~ span {
@@ -94,10 +96,10 @@
     width: 100%;
     margin: 10px 0 0 0;
     padding: 0;
-    color: $primary-action-color !important;
+    color: SRC.$primary-action-color !important;
 
     &:hover {
-      color: $primary-action-color !important;
+      color: SRC.$primary-action-color !important;
       text-decoration: underline;
     }
   }
@@ -109,7 +111,7 @@
   &__count {
     margin-left: 10px;
     align-self: center;
-    color: $gray-deemphasized;
+    color: SRC.$gray-deemphasized;
   }
 
   &__noMatch {
@@ -117,6 +119,6 @@
   }
 
   button {
-    color: $primary-action-color;
+    color: SRC.$primary-action-color;
   }
 }

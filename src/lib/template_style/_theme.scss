@@ -2,27 +2,28 @@
 // Synapse React Client (SRC) Custom scss                   //
 // params: $primary-action-color                            //
 //////////////////////////////////////////////////////////////
+@use '../style/abstracts/variables' as SRC;
 
 .SRC-primary-text-color {
-  color: $primary-action-color !important;
+  color: SRC.$primary-action-color !important;
 }
 .SRC-primary-fill-color {
-  fill: $primary-action-color;
+  fill: SRC.$primary-action-color;
 }
 .SRC-primary-stroke-color {
-  stroke: $primary-action-color;
+  stroke: SRC.$primary-action-color;
 }
 .SRC-primary-color-hover:hover * {
-  color: $primary-action-color !important;
-  fill: $primary-action-color !important;
+  color: SRC.$primary-action-color !important;
+  fill: SRC.$primary-action-color !important;
 }
 
 .SRC-primary-background-color {
-  background-color: $primary-action-color !important;
+  background-color: SRC.$primary-action-color !important;
 }
 
 .SRC-primary-background-color-border-left {
-  border-left-color: $primary-action-color !important;
+  border-left-color: SRC.$primary-action-color !important;
 }
 
 %hoverFade {
@@ -34,17 +35,17 @@
 }
 
 .SRC-primary-background-color-hover:hover {
-  background-color: $primary-action-color !important;
+  background-color: SRC.$primary-action-color !important;
   color: white !important;
   fill: white !important;
   * {
-    background-color: $primary-action-color !important;
+    background-color: SRC.$primary-action-color !important;
     color: white !important;
   }
 }
 
 .grip-handle:hover {
-  background-color: $primary-action-color !important;
+  background-color: SRC.$primary-action-color !important;
   width: 3px;
 }
 
@@ -60,40 +61,15 @@
   border: none;
   background: white;
   &:focus {
-    outline: $primary-action-color;
+    outline: SRC.$primary-action-color;
   }
 }
 
 .SRC-button-focus-primary-color {
   &:focus {
-    outline-color: $primary-action-color;
+    outline-color: SRC.$primary-action-color;
     outline-style: auto;
     outline-width: 5px;
-  }
-}
-
-.SRC-primary-button,
-.SRC-primary-button.btn.btn-primary {
-  background: $primary-action-color;
-  border: none;
-  color: white !important;
-  &:hover {
-    @extend %hoverFade;
-    @extend %defaultBoxShadow;
-    text-decoration: none;
-    color: white;
-  }
-}
-
-.SRC-light-button {
-  background: #dfdfdf;
-  color: #1a1c29;
-  &:hover {
-    @extend %hoverFade;
-    @extend %defaultBoxShadow;
-    text-decoration: none;
-    background: $primary-action-color;
-    color: white;
   }
 }
 
@@ -104,7 +80,7 @@
     bottom: 7px;
     right: 7px;
     border-radius: 24px;
-    background-color: $primary-action-color;
+    background-color: SRC.$primary-action-color;
     color: white !important;
     height: 44px;
     width: 257px;
@@ -124,7 +100,7 @@
 .SRC-basicButton {
   border: none;
   background: none;
-  color: $primary-action-color;
+  color: SRC.$primary-action-color;
 }
 
 .SRC-mailchimpSubscribeContainer {
@@ -144,26 +120,26 @@
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: 24px;
-    background-color: $primary-action-color;
+    background-color: SRC.$primary-action-color;
     color: white;
   }
 }
 
 :focus {
-  outline-color: $primary-action-color;
+  outline-color: SRC.$primary-action-color;
 }
 
 .SRC-portalCard {
   .SRC-cardAction {
     button {
-      background-color: $primary-action-color;
+      background-color: SRC.$primary-action-color;
     }
   }
   a {
-    color: $primary-action-color;
+    color: SRC.$primary-action-color;
   }
   .SRC-downloadData {
-    background-color: $primary-action-color;
+    background-color: SRC.$primary-action-color;
   }
 }
 
@@ -175,14 +151,14 @@
     border: none;
     button.close {
       font-size: 25px;
-      color: $primary-action-color;
+      color: SRC.$primary-action-color;
       opacity: 1;
     }
   }
 }
 
 %dropdown-active-state {
-  background: $primary-action-color;
+  background: SRC.$primary-action-color;
   border-radius: 0;
   color: white;
 }
@@ -196,19 +172,19 @@ button.dropdown-toggle:hover {
 
 .dropdown-menu.SRC-primary-color-hover-dropdown {
   a.dropdown-item:hover:not(.disabled) {
-    background: $primary-action-color;
+    background: SRC.$primary-action-color;
     color: white !important;
     text-decoration: none;
   }
   a.dropdown-item:hover:not(.disabled) * {
-    background: $primary-action-color;
+    background: SRC.$primary-action-color;
     color: white !important;
     text-decoration: none;
   }
 }
 
 .SRC-icon-fill {
-  fill: $primary-action-color;
+  fill: SRC.$primary-action-color;
 }
 
 .SRC-portalCardHeader {
@@ -224,10 +200,10 @@ a:link,
 a:visited,
 a:hover,
 a:active {
-  color: $primary-action-color;
+  color: SRC.$primary-action-color;
 }
 
 .homepage-color-background {
-  background-color: $primary-bgcolor-rgba;
+  background-color: SRC.$primary-bgcolor-rgba;
   padding: 40px 0;
 }
