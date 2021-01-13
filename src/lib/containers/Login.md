@@ -1,3 +1,3 @@
 ```jsx
-<Login sessionCallback={()=>{location.reload()}} theme={'light'} icon={true} />
+<Login sessionCallback={()=>{location.reload()}} />
 ```

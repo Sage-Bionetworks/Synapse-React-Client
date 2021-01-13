@@ -28,6 +28,8 @@ export type EvaluationEditorProps = {
   readonly utc: boolean
   /** Callback after successful deletion of the Evaluation */
   readonly onDeleteSuccess: () => void
+  /** Callback after successful save of the Evaluation */
+  readonly onSaveSuccess?: (evaluationId: string) => void
 }
 
 /**
@@ -39,6 +41,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   entityId,
   utc,
   onDeleteSuccess,
+  onSaveSuccess,
 }: EvaluationEditorProps) => {
   if (evaluationId && entityId) {
     throw new Error('please use either evaluationId or entityId but not both')
@@ -104,7 +107,12 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
       : createEvaluation(newOrUpdatedEvaluation, sessionToken)
 
     promise
-      .then(evaluation => setEvaluation(evaluation))
+      .then(evaluation => {
+        setEvaluation(evaluation)
+        if (onSaveSuccess) {
+          onSaveSuccess(evaluation.id!)
+        }
+      })
       .catch(error => setError(error))
   }
 

@@ -16,13 +16,18 @@ import { getColorPalette } from '../../../containers/ColorGradient'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useEffect, useState } from 'react'
 import loadingScreen from '../../LoadingScreen'
-import { GraphData, extractPlotDataArray, getPlotStyle, renderLegend } from '../../widgets/facet-nav/FacetNavPanel'
+import {
+  GraphData,
+  extractPlotDataArray,
+  getPlotStyle,
+  renderLegend,
+} from '../../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../../widgets/facet-nav/FacetNav'
 
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetPlotsCardOwnProps = {
-  title?:string
+  title?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   detailsPagePath?: string
@@ -63,17 +68,19 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     if (!facetsToPlot || !data) {
       return
     } else {
-      const getColumnType = (facetToPlot:FacetColumnResult): ColumnType | undefined =>
+      const getColumnType = (
+        facetToPlot: FacetColumnResult,
+      ): ColumnType | undefined =>
         data?.columnModels?.find(
           columnModel => columnModel.name === facetToPlot.columnName,
         )?.columnType as ColumnType
-  
+
       const facetsDataToPlot = getFacets(data, facetsToPlot)
       const newPlotData = facetsDataToPlot.map((item, index) => {
         const plotData = extractPlotDataArray(
           item as FacetColumnResultValues,
           getColumnType(item),
-          index+1, //individual plot rgbIndex
+          index + 1, //individual plot rgbIndex
           'PIE',
         )
         return plotData
@@ -81,13 +88,20 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       setFacetPlotDataArray(newPlotData)
       setFacetDataArray(facetsDataToPlot)
       // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
-      const selectedFacet:FacetColumnResultValueCount|undefined = data?.facets?.map(item => {
-        const facetValues:FacetColumnResultValueCount[] = (item as FacetColumnResultValues).facetValues
+      const selectedFacet:
+        | FacetColumnResultValueCount
+        | undefined = data?.facets?.map(item => {
+        const facetValues: FacetColumnResultValueCount[] = (item as FacetColumnResultValues)
+          .facetValues
         if (facetValues) {
-          const filteredFacetValues:FacetColumnResultValueCount[] = facetValues.filter(facetValue => {
-            return facetValue.isSelected
-          })
-          return filteredFacetValues.length > 0 ? filteredFacetValues[0] : undefined
+          const filteredFacetValues: FacetColumnResultValueCount[] = facetValues.filter(
+            facetValue => {
+              return facetValue.isSelected
+            },
+          )
+          return filteredFacetValues.length > 0
+            ? filteredFacetValues[0]
+            : undefined
         } else {
           return undefined
         }
@@ -96,7 +110,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         setSelectedFacetValue(selectedFacet?.value)
       }
     }
-  }, [facetsToPlot, data,])
+  }, [facetsToPlot, data])
 
   if (isLoadingNewData || !facetPlotDataArray || !facetDataArray) {
     return (
@@ -107,22 +121,27 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   } else {
     let detailsPageLink = <></>
     if (detailsPagePath && selectedFacetValue) {
-      detailsPageLink = <div className="FacetPlotsCard__body__footer">
-        <div className="FacetPlotsCard__body__footer__link">
-          <a href={detailsPagePath}>
-            View {selectedFacetValue}
-          </a>
+      detailsPageLink = (
+        <div className="FacetPlotsCard__body__footer">
+          <div className="FacetPlotsCard__body__footer__link">
+            <a href={detailsPagePath}>View {selectedFacetValue}</a>
+          </div>
         </div>
-      </div>
+      )
     }
     const isShowingMultiplePlots = facetPlotDataArray.length > 1
-    const cardTitle = title ?? (isShowingMultiplePlots ? selectedFacetValue : unCamelCase(facetDataArray[0].columnName, facetAliases))
+    const cardTitle =
+      title ??
+      (isShowingMultiplePlots
+        ? selectedFacetValue
+        : unCamelCase(facetDataArray[0].columnName, facetAliases))
     return (
       <div className="FacetPlotsCard cardContainer">
-        <div className="FacetPlotsCard__titlebar" style={{backgroundColor: colorPalette[0].replace(')', ',.05)')}}>
-          <span className="FacetPlotsCard__title">
-            {cardTitle}
-          </span>
+        <div
+          className="FacetPlotsCard__titlebar"
+          style={{ backgroundColor: colorPalette[0].replace(')', ',.05)') }}
+        >
+          <span className="FacetPlotsCard__title">{cardTitle}</span>
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
@@ -130,36 +149,37 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         <div className="FacetPlotsCard__body">
           {/* create a plot for every facet to be plotted */}
           {facetPlotDataArray.map((plotData, index) => {
-            return <div>
-              {index !== 0 && <hr></hr>}
-              {isShowingMultiplePlots && 
-                <div className="FacetPlotsCard__body__facetname">
-                  <span>
-                      {unCamelCase(facetDataArray[index].columnName, facetAliases)}
-                  </span>
+            return (
+              <div key={index}>
+                {index !== 0 && <hr></hr>}
+                {isShowingMultiplePlots && (
+                  <div className="FacetPlotsCard__body__facetname">
+                    <span>
+                      {unCamelCase(
+                        facetDataArray[index].columnName,
+                        facetAliases,
+                      )}
+                    </span>
+                  </div>
+                )}
+                <div className="FacetPlotsCard__body__row">
+                  <SizeMe monitorHeight>
+                    {({ size }) => (
+                      <div className="FacetPlotsCard__body__plot">
+                        <Plot
+                          key={`${facetsToPlot![index]}-${size.width}`}
+                          layout={layout}
+                          data={plotData?.data ?? []}
+                          style={getPlotStyle(size.width, 'PIE', 150)}
+                          config={{ displayModeBar: false }}
+                        />
+                      </div>
+                    )}
+                  </SizeMe>
+                  {renderLegend(plotData?.labels, plotData?.colors, false)}
                 </div>
-              }
-              <div className="FacetPlotsCard__body__row">
-                <SizeMe monitorHeight>
-                  {({ size }) => (
-                    <div className="FacetPlotsCard__body__plot">
-                      <Plot
-                        key={`${facetsToPlot![index]}-${size.width}`}
-                        layout={layout}                      
-                        data={plotData?.data ?? []}
-                        style={getPlotStyle(
-                          size.width,
-                          'PIE',
-                          150,
-                        )}
-                        config={{ displayModeBar: false }}                  
-                      />
-                    </div>
-                  )}
-                </SizeMe>
-                {renderLegend(plotData?.labels, plotData?.colors, false)}
-                </div>
-            </div>
+              </div>
+            )
           })}
           {detailsPageLink}
         </div>

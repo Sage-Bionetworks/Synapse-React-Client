@@ -48,7 +48,7 @@ export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps
           CANCEL
         </Button>
         <Button
-          className="SRC-primary-button SRC-SIGN-IN-CLASS"
+          className="SRC-SIGN-IN-CLASS"
           variant="primary"
           onClick={() => props.onHide()}
         >

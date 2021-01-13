@@ -12,11 +12,11 @@ import {
   RestrictionInformationRequest,
   ExternalFileHandleConcreteTypeEnum,
 } from 'lib/utils/synapseTypes/'
+import { CloudProviderFileHandleConcreteTypeEnum } from '../../../lib/utils/synapseTypes/CloudProviderFileHandle'
 import * as React from 'react'
 import HasAccess, {
   FileHandleDownloadTypeEnum,
   GIGABYTE_SIZE,
-  GoogleCloudFileHandleEnum,
   HasAccessProps,
 } from '../../../lib/containers/HasAccess'
 import {
@@ -167,7 +167,7 @@ describe('basic tests', () => {
       etag: '',
       createdBy: '',
       createdOn: '',
-      concreteType: GoogleCloudFileHandleEnum.GoogleCloudFileHandle,
+      concreteType: CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle,
       contentType: '',
       contentMd5: '',
       fileName: '',

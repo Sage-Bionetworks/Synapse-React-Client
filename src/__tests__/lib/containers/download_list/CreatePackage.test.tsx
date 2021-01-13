@@ -75,7 +75,7 @@ describe('it performs all functionality ', () => {
         },
       })
       // Step 3: Call create package
-      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
+      wrapper.find('Button').simulate('click', actionButtonEventOptions)
     })
     // Verify UI
     expect(wrapper.find('.package-created')).toHaveLength(1)
@@ -90,7 +90,7 @@ describe('it performs all functionality ', () => {
       /*
         Step 5: button press
       */
-      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
+      wrapper.find('Button').simulate('click', actionButtonEventOptions)
     })
     expect(wrapper.find(Alert).text()).toEqual(
       `${1} ${TEMPLATE_DOWNLOAD_MESSAGE}`,
@@ -109,7 +109,7 @@ describe('it performs all functionality ', () => {
       /*
         Step 5: button press
       */
-      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
+      wrapper.find('Button').simulate('click', actionButtonEventOptions)
     })
     // verify alert is showing
     expect(wrapper.find(Alert)).toHaveLength(1)
@@ -131,7 +131,7 @@ describe('it performs all functionality ', () => {
         },
       })
       // creact package
-      wrapper.find('.action-button').simulate('click', actionButtonEventOptions)
+      wrapper.find('Button').simulate('click', actionButtonEventOptions)
     })
     expect(wrapper.find(Alert).text()).toEqual(error.reason)
   })

@@ -17,6 +17,7 @@ import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import loadingScreen from './LoadingScreen'
+import { Button } from 'react-bootstrap'
 
 const PAGE_SIZE: number = 25
 
@@ -114,13 +115,10 @@ export const CardContainer = (props: CardContainerProps) => {
   showViewMore = showViewMore && props.hasMoreData!
 
   const showViewMoreButton = showViewMore && (
-    <div className="SRC-viewMore">
-      <button
-        onClick={handleViewMore}
-        className="SRC-standard-button-shape SRC-light-button"
-      >
+    <div className="SRC-viewMore bootstrap-4-backport">
+      <Button variant="light-primary-base" className="pill-xl" onClick={handleViewMore}>
         View More
-      </button>
+      </Button>
     </div>
   )
   let cards

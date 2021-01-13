@@ -1,7 +1,9 @@
+@use '../../abstracts/variables' as SRC;
+
 .FacetNav {
   padding-top: 5px;
   padding-bottom: 5px;
-  border: 1px solid $gray-dark;
+  border: 1px solid SRC.$gray-dark;
 
   &__row {
     background-color: #fff;
@@ -23,7 +25,7 @@
 
     .FacetNav__showMore:focus {
       // somehow &__showMore:focus doesn't work
-      outline-color: $primary-action-color;
+      outline-color: SRC.$primary-action-color;
     }
   }
 }

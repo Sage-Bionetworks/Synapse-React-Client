@@ -1,5 +1,6 @@
 import * as React from 'react'
-import ButtonContent from '../assets/ButtonContent'
+import { Button, Form, FormControl } from 'react-bootstrap'
+import ButtonWithIcon from '../assets/ButtonWithIcon'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
 import {
@@ -17,8 +18,6 @@ type State = {
 }
 
 type Props = {
-  theme: string
-  icon: boolean
   googleRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: Function // Callback is invoked after login
@@ -63,7 +62,7 @@ class Login extends React.Component<Props, State> {
    *
    * @param {*} event Form update
    */
-  public handleChange(event: React.FormEvent<HTMLInputElement>): void {
+  public handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const target = event.currentTarget
     const name = target.name
     const value = target.value
@@ -143,26 +142,20 @@ class Login extends React.Component<Props, State> {
       })
   }
   public render() {
-    const { theme, icon } = this.props
-    const googleTheme =
-      theme === 'dark'
-        ? 'SRC-google-button-dark-color'
-        : 'SRC-google-button-light-color'
     return (
       <div
         id="loginPage"
-        className="container loginContainer SRC-syn-border-spacing"
+        className="container LoginComponent SRC-syn-border-spacing bootstrap-4-backport"
       >
         <form>
-          <button
+          <ButtonWithIcon
+            variant="white"
             onClick={this.onGoogleSignIn}
-            className={`SRC-google-button ${googleTheme} SRC-marginBottomTen`}
+            className={`SRC-google-button`}
+            icon={<GoogleIcon />}
           >
-            <GoogleIcon key={1} active={true} />
-            <ButtonContent icon={icon} key={2}>
-              Sign in with Google
-            </ButtonContent>
-          </button>
+            Sign in with Google
+          </ButtonWithIcon>
         </form>
         <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">
           or
@@ -172,26 +165,26 @@ class Login extends React.Component<Props, State> {
           <img
             height="20px"
             style={{ marginRight: '10px' }}
-            alt={'sage bionetworks logo'}
+            alt={'Sage Bionetworks logo'}
             src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg"
           />
           Sign in with your Sage Bionetworks Synapse account
         </div>
-        <form onSubmit={this.handleLogin} className="form-group">
-          <input
+        <Form onSubmit={this.handleLogin}>
+          <FormControl
             autoComplete="username"
             placeholder="username or email"
-            className="form-control SRC-marginBottomTop"
+            className="LoginComponent__Input"
             id="exampleEmail"
             name="username"
             type="text"
             value={this.state.username}
             onChange={this.handleChange}
           />
-          <input
+          <FormControl
             autoComplete="password"
             placeholder="password"
-            className="form-control SRC-marginBottomTop"
+            className="LoginComponent__Input"
             id="examplePassword"
             name="password"
             type="password"
@@ -199,15 +192,15 @@ class Login extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
           {this.getLoginFailureView()}
-          <button
+          <Button
+            variant="primary"
             onSubmit={this.handleLogin}
             type="submit"
-            className="btn SRC-primary-background-color SRC-hoverWhiteText
-              SRC-whiteText m-1 SRC-google-button SRC-marginBottomTen"
+            className="SRC-login-button SRC-marginBottomTen"
           >
-            <ButtonContent icon={icon}>Sign in</ButtonContent>
-          </button>
-        </form>
+            Sign in
+          </Button>
+        </Form>
         <div>
           <a
             href={`${getEndpoint(
@@ -218,7 +211,7 @@ class Login extends React.Component<Props, State> {
             Forgot password?
           </a>
           <span className="SRC-deemphasized-text SRC-floatRight">
-            &nbsp;It's free!
+            &nbsp;It&apos;s free!
           </span>
           <a
             href={`${getEndpoint(

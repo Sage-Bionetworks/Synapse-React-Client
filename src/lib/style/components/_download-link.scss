@@ -1,8 +1,10 @@
+@use '../abstracts/variables' as SRC;
+
 .Download-Link {
   position: relative;
   display: inline-block;
   .icon-container {
-    background-color: $primary-action-color;
+    background-color: SRC.$primary-action-color;
     border-radius: 50%;
     width: 30px;
     height: 30px;

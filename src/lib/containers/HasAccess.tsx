@@ -42,6 +42,7 @@ import {
   implementsExternalFileHandleInterface,
   FileResult,
 } from '../utils/synapseTypes/'
+import { CloudProviderFileHandleConcreteTypeEnum } from '../utils/synapseTypes/CloudProviderFileHandle'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import AccessRequirementList, {
   checkHasUnsportedRequirement,
@@ -74,10 +75,6 @@ type HasAccessState = {
   errorOnGetRestrictionInformation: boolean
 }
 
-export enum GoogleCloudFileHandleEnum {
-  GoogleCloudFileHandle = 'org.sagebionetworks.repo.model.file.GoogleCloudFileHandle',
-}
-
 export const GIGABYTE_SIZE = 2 ** 30
 
 export enum FileHandleDownloadTypeEnum {
@@ -104,7 +101,7 @@ export const getDownloadTypeForFileHandle = (
     return FileHandleDownloadTypeEnum.TooLarge
   }
   // check if it's a google cloud file handle
-  if (concreteType === GoogleCloudFileHandleEnum.GoogleCloudFileHandle) {
+  if (concreteType === CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle) {
     return FileHandleDownloadTypeEnum.ExternalCloudFile
   }
   // check if it's an external file handle
