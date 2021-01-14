@@ -2,8 +2,8 @@
 
 .bootstrap-4-backport {
   //initial bootstrap config based on Synapse design
-  $primary: SRC.$primary-action-color !default;
-  $secondary: SRC.$secondary-action-color !default;
+  $primary: SRC.$primary-action-color;
+  $secondary: SRC.$secondary-action-color;
   $border-radius: 0.2rem;
   $btn-box-shadow: SRC.$box-shadow-soft;
 
