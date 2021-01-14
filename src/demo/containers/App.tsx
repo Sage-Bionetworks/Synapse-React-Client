@@ -7,6 +7,7 @@ import '../style/DemoStyle.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import Demo from './Demo'
 import Playground from './playground/Playground'
+import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
 import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import { SynapseClient } from '../../lib/utils/'
 import { RouteChildrenProps } from 'react-router'
@@ -188,7 +189,17 @@ export default class App extends React.Component<{}, AppState> {
                     itemNoun="Compound"
                   />
                 ) : (
-                  <></>
+                  <SynapseFormWrapper
+                    {...props}
+                    formSchemaEntityId="syn20680102"
+                    fileNamePath="naming.compound_name"
+                    formUiSchemaEntityId="syn20693568"
+                    formNavSchemaEntityId="syn20680027"
+                    token={token}
+                    formTitle="Your Submission"
+                    formClass="drug-upload-tool"
+                    searchParams={searchParamsProps}
+                  />
                 )
               }}
             />
@@ -213,7 +224,18 @@ export default class App extends React.Component<{}, AppState> {
                     itemNoun={'Contribution Request'}
                   />
                 ) : (
-                  <></>
+                  <SynapseFormWrapper
+                    {...props}
+                    formSchemaEntityId="syn20692910"
+                    fileNamePath="study.submission_name"
+                    formUiSchemaEntityId="syn20692911"
+                    formNavSchemaEntityId="syn20968007"
+                    isWizardMode={true}
+                    token={token}
+                    formTitle="Your Contribution Request"
+                    formClass="contribution-request"
+                    searchParams={searchParamsProps}
+                  />
                 )
               }}
             />
