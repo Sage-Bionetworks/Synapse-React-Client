@@ -68,7 +68,7 @@ describe('basic tests', () => {
     )
   })
 
-  it('gets configuration data', async () => {
+  it('gets configuration data calls should be called with correct params', async () => {
     const { instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(1, token, 'syn9988882982', undefined)
@@ -80,8 +80,13 @@ describe('basic tests', () => {
       true,
       true
     )
-    // const result = await instance.getFileEntityData(token, '123444')
-    // expect(result).toEqual({ content: formschemaJson, version: undefined })
+  })
+
+  it('gets configuration data', async() => {
+    const { instance } = await createShallowComponent(props)
+    await instance.componentDidMount()
+    const result = await instance.getFileEntityData(token, '123444')
+    expect(result).toEqual({ content: formschemaJson, version: undefined })
   })
 
   describe('if there is no datafile (no formDataId)', () => {
