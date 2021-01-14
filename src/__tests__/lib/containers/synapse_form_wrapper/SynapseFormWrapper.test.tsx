@@ -202,7 +202,6 @@ describe('basic tests', () => {
       const formProps: SynapseFormProps = (wrapper
         .find('SynapseForm')
         .props() as any) as SynapseFormProps
-      console.log(wrapper.debug())
       expect(formProps.formTitle).toBe(props.formTitle)
       expect(formProps.isWizardMode).toBeTruthy()
     })
