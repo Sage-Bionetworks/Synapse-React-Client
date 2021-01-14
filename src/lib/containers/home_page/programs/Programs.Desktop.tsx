@@ -35,7 +35,7 @@ export default function ProgramsDesktop({
       <div className="Programs__Card__summary">
         <p> {summary} </p>
         <Button
-          variant="primary"
+          variant="secondary"
           size="lg"
           href={exploreLink}
           className="pill"

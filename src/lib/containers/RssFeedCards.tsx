@@ -185,7 +185,7 @@ export default class RssFeedCards extends React.Component<
             this.state.allItemsUrl && (
               <div className="FeedViewAllNewsButtonContainer">
                 <Button
-                  variant="primary"
+                  variant="secondary"
                   size="lg"
                   className="pill"
                   onClick={() =>

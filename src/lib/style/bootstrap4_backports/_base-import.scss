@@ -2,8 +2,8 @@
 
 .bootstrap-4-backport {
   //initial bootstrap config based on Synapse design
-  $primary: SRC.$primary-action-color;
-  $secondary: SRC.$secondary-action-color;
+  $primary: SRC.$primary-action-color !default;
+  $secondary: SRC.$secondary-action-color !default;
   $border-radius: 0.2rem;
   $btn-box-shadow: SRC.$box-shadow-soft;
 
@@ -62,6 +62,7 @@
   /**
    * For our expanded primary color palette, create regular and light
    * button variants for each color.
+   * For button mixins, see node_modules/bootstrap/scss/mixins/_buttons.scss
    */
   @each $color-variant, $color in SRC.$primary-color-palette {
     .btn-primary-#{$color-variant} {
@@ -71,5 +72,23 @@
     .btn-light-primary-#{$color-variant} {
       @include button-variant(#dfdfdf, #dfdfdf, $color, $color);
     }
+  }
+
+  .btn-secondary,
+  .btn-secondary-base {
+    @include button-variant(
+      SRC.$secondary-action-color,
+      SRC.$secondary-action-color
+    );
+  }
+
+  .btn-light-secondary,
+  .btn-light-secondary-base {
+    @include button-variant(
+      #dfdfdf,
+      #dfdfdf,
+      SRC.$secondary-action-color,
+      SRC.$secondary-action-color
+    );
   }
 }

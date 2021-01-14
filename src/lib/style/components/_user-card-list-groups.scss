@@ -27,12 +27,10 @@
           &.isSelected,
           &:not(.gap-fill):hover {
             color: SRC.$primary-action-color;
-            // Hex value can also set opacity, using two extra values at the
-            background-color: color.adjust(
+            background-color: color.change(
               SRC.$primary-action-color,
               $alpha: 0.04
             );
-            // background-color: #{SRC.$primary-action-color}0a;
             border-right: 2px solid SRC.$primary-action-color;
           }
           border-right: 2px solid #dcdcdc;
