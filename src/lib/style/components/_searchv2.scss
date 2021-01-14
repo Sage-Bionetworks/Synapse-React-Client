@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 .SearchV2 {
   &__searchbar {
     height: 50px;
@@ -6,7 +8,7 @@
     display: flex;
     align-items: center;
     &:focus-within {
-      outline-color: $primary-action-color;
+      outline-color: SRC.$primary-action-color;
       outline-style: auto;
       outline-width: 5px;
     }
@@ -54,7 +56,7 @@
 
   // Search bar height animation
   &__animate_height {
-    max-height: 0;            
+    max-height: 0;
     overflow-y: hidden;
     -webkit-transition: max-height 0.3s ease-in-out;
     -moz-transition: max-height 0.3s ease-in-out;
@@ -63,7 +65,7 @@
   }
 
   &__animate_bar-enter-done {
-    max-height: 50px;  // fixed height required for css height animation
+    max-height: 50px; // fixed height required for css height animation
   }
 
   &__animate_bar-exit-done {
@@ -71,7 +73,7 @@
   }
 
   &__animate_dropdown-enter-done {
-    max-height: 300px;  // fixed height required for css height animation
+    max-height: 300px; // fixed height required for css height animation
   }
 
   &__animate_dropdown-exit-done {
@@ -82,25 +84,23 @@
     position: relative;
     width: 100%;
   }
-  
+
   &__column-select.SearchV2__animate_height {
     overflow: scroll;
   }
-  
+
   &__animate_dropdown-exit-active,
   &__animate_dropdown-enter-done {
     padding-left: 30px;
     padding-top: 15px;
     padding-bottom: 5px;
   }
-  
+
   &__animate_dropdown-exit-done {
-    padding: 0
+    padding: 0;
   }
 
   .radio {
-    padding: 4px 0;  
+    padding: 4px 0;
   }
-
 }
-

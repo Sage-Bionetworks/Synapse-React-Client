@@ -4,7 +4,7 @@ import { ErrorBanner } from 'lib/containers/ErrorBanner'
 import { CreateAccessTokenModal } from 'lib/containers/personal_access_token/CreateAccessTokenModal'
 import { Checkbox } from 'lib/containers/widgets/Checkbox'
 import * as React from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, Modal } from 'react-bootstrap'
 import { act } from 'react-dom/test-utils'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
@@ -12,6 +12,10 @@ const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
 const mockOnClose = jest.fn(() => null)
 const mockOnCreate = jest.fn(() => null)
+
+const clickEvent: any = {
+  preventDefault: () => {},
+}
 
 SynapseClient.createPersonalAccessToken = jest.fn().mockResolvedValue({
   token: EXAMPLE_PAT,
@@ -34,17 +38,15 @@ describe('basic functionality', () => {
 
     // Fill out the form
     await act(async () => {
-      await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
-        .simulate('change', {
-          target: {
-            value: tokenName,
-          },
-        })
+      wrapper.find('FormControl').simulate('change', {
+        target: {
+          value: tokenName,
+        },
+      })
       await wrapper.find(Checkbox).at(0).prop('onChange')()
       await wrapper.find(Checkbox).at(1).prop('onChange')()
       await wrapper.find(Checkbox).at(2).prop('onChange')()
-      await wrapper.find(Button).at(1).simulate('click')
+      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
     })
 
     expect(mockOnCreate).toHaveBeenCalled()
@@ -56,7 +58,7 @@ describe('basic functionality', () => {
 
     // Close the modal using the 'Close' button
     expect(wrapper.find(Button).text().includes('Close')).toBe(true)
-    wrapper.find(Button).prop('onClick')()
+    wrapper.find(Button).prop('onClick')!(clickEvent)
 
     expect(mockOnClose).toHaveBeenCalled()
   })
@@ -70,7 +72,7 @@ describe('basic functionality', () => {
       expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
         true,
       )
-      await wrapper.find(Button).at(1).simulate('click')
+      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
     })
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
@@ -78,17 +80,15 @@ describe('basic functionality', () => {
 
     // Add a name
     await act(async () => {
-      await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
-        .simulate('change', {
-          target: {
-            value: 'some name',
-          },
-        })
+      wrapper.find('FormControl').simulate('change', {
+        target: {
+          value: 'some name',
+        },
+      })
       expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
         true,
       )
-      await wrapper.find(Button).at(1).simulate('click')
+      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
     })
 
     expect(mockOnCreate).not.toHaveBeenCalled()
@@ -97,18 +97,16 @@ describe('basic functionality', () => {
 
     // Remove name, add a permission
     await act(async () => {
-      await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
-        .simulate('change', {
-          target: {
-            value: '',
-          },
-        })
+      wrapper.find('FormControl').simulate('change', {
+        target: {
+          value: '',
+        },
+      })
       await wrapper.find(Checkbox).at(0).prop('onChange')()
       expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
         true,
       )
-      await wrapper.find(Button).at(1).simulate('click')
+      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
     })
 
     expect(mockOnCreate).not.toHaveBeenCalled()
@@ -127,18 +125,16 @@ describe('basic functionality', () => {
 
     // Fill out the form and send the request
     await act(async () => {
-      await wrapper
-        .find('input.SRC-personalAccessTokenNameInput')
-        .simulate('change', {
-          target: {
-            value: 'token name',
-          },
-        })
+      wrapper.find('FormControl').simulate('change', {
+        target: {
+          value: 'token name',
+        },
+      })
       await wrapper.find(Checkbox).at(0).prop('onChange')()
       expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
         true,
       )
-      await wrapper.find(Button).at(1).simulate('click')
+      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
     })
 
     expect(wrapper.find(ErrorBanner).length).toBe(1)
@@ -149,7 +145,7 @@ describe('basic functionality', () => {
     const wrapper = shallow(<CreateAccessTokenModal {...props} />)
 
     // Close the modal using the prop
-    wrapper.find('Modal').prop('onHide')()
+    wrapper.find(Modal).prop('onHide')!()
 
     expect(mockOnClose).toHaveBeenCalled()
 
@@ -162,7 +158,7 @@ describe('basic functionality', () => {
 
     // Close the modal using the prop
     expect(wrapper.find(Button).at(0).text().includes('Cancel')).toBe(true)
-    await wrapper.find(Button).at(0).prop('onClick')()
+    wrapper.find(Button).at(0).prop('onClick')!(clickEvent)
 
     expect(mockOnClose).toHaveBeenCalled()
 

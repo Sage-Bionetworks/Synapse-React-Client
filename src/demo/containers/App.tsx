@@ -81,15 +81,13 @@ export default class App extends React.Component<{}, AppState> {
     const notSignedInState = (
       <div className="text-center">
         <h4>Synapse Production (Google SSO redirects here)</h4>
-        <Login sessionCallback={this.getSession} theme={'light'} icon={true} />
+        <Login sessionCallback={this.getSession} />
         <details>
           <summary>
             Synapse Staging (Google SSO redirects to staging site)
           </summary>
           <Login
             sessionCallback={this.getSession}
-            theme={'dark'}
-            icon={true}
             googleRedirectUrl={
               'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'
             }
@@ -106,19 +104,24 @@ export default class App extends React.Component<{}, AppState> {
     }
   }
 
-  
   public render(): JSX.Element {
     const { token, getSessionCalled } = this.state
 
-    const alert = <Alert
+    const alert = (
+      <Alert
         dismissible={false}
         show={true}
         variant={'warning'}
         transition={false}
       >
         <h4>@Deprecated</h4>
-        <p>Demo a new component by creating a .md file of the same name (Button.md for Button.tsx), and run the styleguidist server: <code>yarn start-docs</code></p>
+        <p>
+          Demo a new component by creating a .md file of the same name
+          (Button.md for Button.tsx), and run the styleguidist server:{' '}
+          <code>yarn start-docs</code>
+        </p>
       </Alert>
+    )
 
     if (!getSessionCalled) {
       // This lets us keep better track of API calls made, it avoids having the token cause an unecessary
@@ -127,7 +130,7 @@ export default class App extends React.Component<{}, AppState> {
         <div>
           <div className="App-header text-center">
             <img src={logoSvg} className="App-logo" alt="logo" />
-            <h4 className="white-text">Synapse React Client Demo</h4>            
+            <h4 className="white-text">Synapse React Client Demo</h4>
           </div>
           {alert}
           <p> Getting session token... </p>
@@ -140,7 +143,7 @@ export default class App extends React.Component<{}, AppState> {
           <div>
             <div className="App-header text-center">
               <img src={logoSvg} className="App-logo" alt="logo" />
-              <h4 className="white-text">Synapse React Client Demo</h4>              
+              <h4 className="white-text">Synapse React Client Demo</h4>
             </div>
             {alert}
             {this.renderLoginAndSignout(token)}

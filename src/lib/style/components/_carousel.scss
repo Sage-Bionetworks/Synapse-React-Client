@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 .SRC-Carousel {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -35,14 +37,14 @@
       width: 16px;
       height: 16px;
       background: none;
-      border: 1px solid $primary-action-color-500;
+      border: 1px solid SRC.$primary-action-color-500;
     }
 
     .BrainhubCarousel__dot--selected::before {
       width: 16px;
       height: 16px;
-      background-color: $primary-action-color-500;
-      border: 1px solid $primary-action-color-500;
+      background-color: SRC.$primary-action-color-500;
+      border: 1px solid SRC.$primary-action-color-500;
     }
   }
 }

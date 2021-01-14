@@ -1,3 +1,6 @@
+@use '../../abstracts/variables' as SrcVars;
+@use '../../abstracts/mixins' as SrcMixins;
+
 /* --- Steps Left Nav ---*/
 .json-forms-menu {
   // top level menu
@@ -8,7 +11,7 @@
     list-style-type: none;
     padding: 0px;
     margin: 0px;
-    background-color: $gray-light;
+    background-color: SrcVars.$gray-light;
 
     li {
       min-height: $item-height;
@@ -28,12 +31,12 @@
       height: $item-height;
       line-height: $item-height;
       text-align: left;
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVars.$themes) {
         color: themed('action-color');
       }
 
-      background-color: $gray-dark;
-      border-left-color: $gray-dark;
+      background-color: SrcVars.$gray-dark;
+      border-left-color: SrcVars.$gray-dark;
 
       .btn-link {
         color: white;
@@ -61,7 +64,7 @@
     }
 
     .btn-link {
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVars.$themes) {
         color: themed('action-color');
       }
       font-weight: bold;
@@ -77,27 +80,27 @@
     }
 
     .fa-check-circle {
-      @include themify($themes) {
+      @include SrcMixins.themify(SrcVars.$themes) {
         color: themed('action-color');
       }
     }
 
     .fa-circle {
       border-radius: 50%;
-      border: 1px solid $gray-dark;
-      color: $gray-light;
+      border: 1px solid SrcVars.$gray-dark;
+      color: SrcVars.$gray-light;
     }
 
     .static .fa-circle {
-      border: 1px solid $secondary-action-color;
-      @include themify($themes) {
+      border: 1px solid SrcVars.$secondary-action-color;
+      @include SrcMixins.themify(SrcVars.$themes) {
         color: themed('action-color');
       }
     }
 
     .fa-exclamation-circle {
-      color: $red-error;
-      background-color: $gray-light;
+      color: SrcVars.$red-error;
+      background-color: SrcVars.$gray-light;
       border-radius: 50%;
     }
 
@@ -136,7 +139,7 @@
 
         div.item {
           $b: 1.7rem;
-          @include calc(padding-left, '#{$left-offset} + #{$b}');
+          @include SrcMixins.calc(padding-left, '#{$left-offset} + #{$b}');
         }
       }
     }

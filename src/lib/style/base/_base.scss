@@ -1,6 +1,7 @@
 // -----------------------------------------------------------------------------
 // This file contains very basic styles.
 // -----------------------------------------------------------------------------
+@use '../abstracts/variables' as SRC;
 
 /**
  * Set up a decent box model on the root element
@@ -29,7 +30,7 @@ html {
 }
 
 body {
-  color: $gray-regular;
+  color: SRC.$gray-regular;
   font-family: 'Lato';
 }
 

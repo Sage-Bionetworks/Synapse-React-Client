@@ -1,14 +1,17 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:color';
+
 .UserCardListGroups {
   a {
-    color: $primary-action-color;
+    color: SRC.$primary-action-color;
   }
   &__Desktop {
     .control-container {
       background: white;
       border: 1px solid #dcdcdc;
-      display: flex;    
+      display: flex;
       padding: 15px;
-      height: 500px;  
+      height: 500px;
       .button-container {
         flex: 1;
         display: flex;
@@ -23,10 +26,14 @@
           padding: 10px;
           &.isSelected,
           &:not(.gap-fill):hover {
-            color: $primary-action-color;
-            // Hex value can also set opacity, using two extra values at the end
-            background-color: #{$primary-action-color}0a;
-            border-right: 2px solid $primary-action-color;
+            color: SRC.$primary-action-color;
+            // Hex value can also set opacity, using two extra values at the
+            background-color: color.change(
+              SRC.$primary-action-color,
+              $alpha: 0.04
+            );
+            // background-color: #{SRC.$primary-action-color}0a;
+            border-right: 2px solid SRC.$primary-action-color;
           }
           border-right: 2px solid #dcdcdc;
           font-weight: bold;
