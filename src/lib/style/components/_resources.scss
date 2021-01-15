@@ -27,7 +27,7 @@
         &.isSelected,
         &:not(.gap-fill):hover {
           color: SRC.$primary-action-color;
-          background-color: color.adjust(
+          background-color: color.change(
             SRC.$primary-action-color,
             $alpha: 0.04
           );

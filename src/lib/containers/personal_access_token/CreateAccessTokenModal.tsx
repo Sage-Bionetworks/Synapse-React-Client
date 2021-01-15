@@ -1,5 +1,12 @@
 import * as React from 'react'
-import { Button, FormControl, Modal, ModalBody } from 'react-bootstrap'
+import {
+  Button,
+  Form,
+  FormControl,
+  FormLabel,
+  Modal,
+  ModalBody,
+} from 'react-bootstrap'
 import { SynapseClient } from '../../utils'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
@@ -43,7 +50,10 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
     return !!tokenName && access.some(x => x)
   }
 
-  const onSubmit = async (): Promise<void> => {
+  const onSubmit = async (
+    clickEvent: React.MouseEvent<HTMLElement, MouseEvent>,
+  ): Promise<void> => {
+    clickEvent.preventDefault()
     if (validateInput(tokenName, [viewAccess, downloadAccess, modifyAccess])) {
       try {
         const request: AccessTokenGenerationRequest = {
@@ -78,86 +88,94 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
 
   return (
     <Modal animation={false} show={true} onHide={onClose}>
-      <Modal.Header>
-        <Modal.Title>Create New Personal Access Token</Modal.Title>
-      </Modal.Header>
-      <ModalBody>
-        {isLoading ? (
-          loadingScreen
-        ) : showCreatedToken ? (
-          <>
-            <span className="SRC-boldText">
-              This token will not be able to be retrieved again.
-            </span>{' '}
-            <span>
-              If needed, generate a new personal access token, and delete this
-              one.
-            </span>
-            <div className="SRC-createdTokenCopyToClipboardContainer">
-              <CopyToClipboardInput value={createdToken} inputWidth={'350px'} />
+      <Form>
+        <Modal.Header>
+          <Modal.Title>Create New Personal Access Token</Modal.Title>
+        </Modal.Header>
+        <ModalBody>
+          {isLoading ? (
+            loadingScreen
+          ) : showCreatedToken ? (
+            <>
+              <span className="SRC-boldText">
+                This token will not be able to be retrieved again.
+              </span>{' '}
+              <span>
+                If needed, generate a new personal access token, and delete this
+                one.
+              </span>
+              <div className="SRC-createdTokenCopyToClipboardContainer">
+                <CopyToClipboardInput
+                  value={createdToken}
+                  inputWidth={'350px'}
+                />
+              </div>
+              <p>
+                This token grants access to your account functions and should be
+                treated like a password.
+              </p>
+            </>
+          ) : (
+            <div className="SRC-marginFive">
+              <div className="SRC-marginBottomTen">
+                <FormLabel className="SRC-boldText">Token Name</FormLabel>
+                <FormControl
+                  autoFocus
+                  className="SRC-personalAccessTokenNameInput"
+                  value={tokenName}
+                  onChange={handleTokenNameChange}
+                  type="text"
+                  placeholder="e.g. Synapse command line access on my laptop"
+                ></FormControl>
+              </div>
+              <div className="SRC-marginBottomTop">
+                <FormLabel className="SRC-boldText">
+                  Token Permissions
+                </FormLabel>
+                <Checkbox
+                  label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description})`}
+                  id="view"
+                  checked={viewAccess}
+                  onChange={() => setViewAccess(!viewAccess)}
+                ></Checkbox>
+                <Checkbox
+                  label={`${scopeDescriptions.download.displayName} (${scopeDescriptions.download.description})`}
+                  id="download"
+                  checked={downloadAccess}
+                  onChange={() => setDownloadAccess(!downloadAccess)}
+                ></Checkbox>
+                <Checkbox
+                  label={`${scopeDescriptions.modify.displayName} (${scopeDescriptions.modify.description})`}
+                  id="modify"
+                  checked={modifyAccess}
+                  onChange={() => setModifyAccess(!modifyAccess)}
+                ></Checkbox>
+              </div>
+              <div className="SRC-center-text">
+                {showErrorMessage && (
+                  <ErrorBanner error={errorMessage}></ErrorBanner>
+                )}
+              </div>
             </div>
-            <p>
-              This token grants access to your account functions and should be
-              treated like a password.
-            </p>
-          </>
-        ) : (
-          <div className="SRC-marginFive">
-            <div className="SRC-marginBottomTen">
-              <label className="SRC-boldText">Token Name</label>
-              <FormControl
-                className="SRC-personalAccessTokenNameInput"
-                value={tokenName}
-                onChange={handleTokenNameChange}
-                type="text"
-                placeholder="e.g. Synapse command line access on my laptop"
-              ></FormControl>
-            </div>
-            <div className="SRC-marginBottomTop">
-              <p className="SRC-boldText">Token Permissions</p>
-              <Checkbox
-                label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description})`}
-                id="view"
-                checked={viewAccess}
-                onChange={() => setViewAccess(!viewAccess)}
-              ></Checkbox>
-              <Checkbox
-                label={`${scopeDescriptions.download.displayName} (${scopeDescriptions.download.description})`}
-                id="download"
-                checked={downloadAccess}
-                onChange={() => setDownloadAccess(!downloadAccess)}
-              ></Checkbox>
-              <Checkbox
-                label={`${scopeDescriptions.modify.displayName} (${scopeDescriptions.modify.description})`}
-                id="modify"
-                checked={modifyAccess}
-                onChange={() => setModifyAccess(!modifyAccess)}
-              ></Checkbox>
-            </div>
-            <div className="SRC-center-text">
-              {showErrorMessage && (
-                <ErrorBanner error={errorMessage}></ErrorBanner>
-              )}
-            </div>
-          </div>
-        )}
-      </ModalBody>
-      <Modal.Footer>
-        {showCreatedToken ? (
-          <Button variant="default" onClick={onClose}>
-            Close
-          </Button>
-        ) : (
-          <>
+          )}
+        </ModalBody>
+        <Modal.Footer>
+          {showCreatedToken ? (
             <Button variant="default" onClick={onClose}>
-              Cancel
+              Close
             </Button>
-            <Button variant="primary" onClick={onSubmit}>
-              Create Token
-            </Button>
-          </>
-        )}
-      </Modal.Footer>
+          ) : (
+            <>
+              <Button variant="default" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary" onClick={onSubmit}>
+                Create Token
+              </Button>
+            </>
+          )}
+        </Modal.Footer>
+      </Form>
     </Modal>
   )
 }

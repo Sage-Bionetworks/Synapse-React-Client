@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import formschemaJson from '../../../mocks/formschema.json'
 import EntityForm, { EntityFormProps } from '../../../lib/containers/EntityForm'
 import { mockUserProfileData } from '../../../mocks/mock_user_profile'
 import { mockFileEntity } from '../../../mocks/mock_file_entity'
@@ -15,9 +14,6 @@ const createShallowComponent = (props: EntityFormProps) => {
 describe('it basic tests', () => {
   // Test setup
   const SynapseClient = require('../../../lib/utils/SynapseClient')
-  SynapseClient.getFileEntityContent = jest.fn(() =>
-    Promise.resolve(formschemaJson),
-  )
   SynapseClient.getUserProfile = jest.fn(() =>
     Promise.resolve(mockUserProfileData),
   )
