@@ -28,6 +28,7 @@ import {
 } from '../../utils/SynapseClient'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 export type EvaluationRoundEditorProps = {
   sessionToken: string
@@ -47,30 +48,36 @@ const determineRoundStatus = (
   roundStart: Moment | string,
   roundEnd: Moment | string,
 ) => {
+  let className: string
+  let icon: IconDefinition | undefined
+  let status: string
   const now = moment()
   // based off of start/end datetime from props so that users making
   // unsaved changes to the start/end dates do not change the status
   if (now.isSameOrAfter(roundStart)) {
     if (now.isBefore(roundEnd)) {
-      return (
-        <div className="status-in-progress">
-          <FontAwesomeIcon icon={faSyncAlt} /> <span>IN PROGRESS</span>
-        </div>
-      )
+      className = 'status-in-progress'
+      icon = faSyncAlt
+      status = 'IN PROGRESS'
     } else {
-      return (
-        <div className="status-completed">
-          <FontAwesomeIcon icon={faClipboardCheck} /> <span>COMPLETED</span>
-        </div>
-      )
+      className = 'status-completed'
+      icon = faClipboardCheck
+      status = 'COMPLETED'
     }
   } else {
-    return (
-      <div className="status-not-yet-started">
-        <span>NOT YET STARTED</span>
-      </div>
-    )
+    className = 'status-not-yet-started'
+    icon = undefined
+    status = 'NOT YET STARTED'
   }
+
+  return (
+    <div className={className}>
+      <div className="status">
+        {icon && <FontAwesomeIcon icon={icon} />}
+        <span>{status}</span>
+      </div>
+    </div>
+  )
 }
 
 const convertInputsToEvaluationRound = (

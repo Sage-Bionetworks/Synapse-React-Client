@@ -11,6 +11,7 @@ import {
   FileEntity,
   UserProfile,
 } from '../utils/synapseTypes/'
+import { getFileHandleContent } from '../utils/SynapseClient'
 
 export type EntityFormProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
@@ -104,24 +105,42 @@ export default class EntityForm extends React.Component<
     formUiSchemaFileEntity: FileEntity,
   ) => {
     const promises = [
-      SynapseClient.getFileEntityContent(
-        this.props.token!,
+      SynapseClient.getFileResult(
         formSchemaFileEntity,
-      ),
-      SynapseClient.getFileEntityContent(
         this.props.token!,
+        true,
+        true
+      ),
+      SynapseClient.getFileResult(
         formUiSchemaFileEntity,
+        this.props.token!,
+        true,
+        true
       ),
     ]
+
     Promise.all(promises)
       .then(values => {
-        const formSchemaContent = JSON.parse(values[0])
-        const formUiSchemaContent = JSON.parse(values[1])
-        this.getExistingFileData(
-          targetFolderId,
-          formSchemaContent,
-          formUiSchemaContent,
-        )
+
+        try {
+          const fileContent = values.map(el => {
+            return getFileHandleContent(el.fileHandle!, el.preSignedURL!)
+          })
+          Promise.all(fileContent).then(el => {
+            const formSchemaContent = JSON.parse(el[0])
+            const formUiSchemaContent = JSON.parse(el[1])
+            this.getExistingFileData(
+              targetFolderId,
+              formSchemaContent,
+              formUiSchemaContent,
+            )
+          }).catch(e => {
+            console.log("getSchemaFileContent: Error getting form content", e)
+          })
+        } catch (e) {
+          console.log("getSchemaFileContent: Error getting schema content", e)
+        }
+
       })
       .catch(error => {
         this.onError(error)
@@ -150,11 +169,18 @@ export default class EntityForm extends React.Component<
         ).then(entity => {
           currentFileEntity = entity
           if (this.props.initFormData) {
-            return SynapseClient.getFileEntityContent(
-              this.props.token!,
+            return SynapseClient.getFileResult(
               currentFileEntity,
-            ).then(existingFileData => {
-              formData = JSON.parse(existingFileData)
+              this.props.token!,
+              true,
+              true,
+            ).then(async (existingFileData) => {
+              try {
+                const fileContent = await getFileHandleContent(existingFileData.fileHandle!, existingFileData.preSignedURL!)
+                formData = JSON.parse(fileContent)
+              } catch (e) {
+                console.log("getExistingFileData: Error setting form data", e)
+              }
             })
           }
           // else we're done
