@@ -64,7 +64,7 @@ export default {
   },
   // NOTE - the order matters for the extensions below
   plugins: [
-    resolve({ extensions, browser: true }),
+    resolve({ extensions, browser: true, preferBuiltins: true }),
     babel({
       extensions,
       exclude: 'node_modules/*.*',
@@ -76,9 +76,9 @@ export default {
     image(),
     // until css modules package is updated we can't opt into css modules
     // see issue here - https://github.com/egoist/rollup-plugin-postcss/issues/174
-    scss({ 
+    scss({
       output: './src/umd/synapse-react-client.production.styles.css',
-      sass: sass
+      sass: sass,
     }),
     // allows importing SVGs via syntax: import svgUrl from '/svgfile.svg' , which provides the svg as URL to plug into an <img src={svgUrl}>
     svg(),

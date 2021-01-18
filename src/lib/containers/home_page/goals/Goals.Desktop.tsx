@@ -30,7 +30,7 @@ export default function GoalsDesktop({
         <p> {summary} </p>
         <Button
           className="pill Goals__Card__summary__link"
-          variant="primary"
+          variant="secondary"
           href={link}
         >
           EXPLORE
