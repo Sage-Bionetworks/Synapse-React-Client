@@ -60,6 +60,6 @@ Configured to show a table:
     rgbIndex={1}
     name='Table Demo'
     sqlOperator='='
-    sql='SELECT id AS "File ID", assay, dataType, diagnosis, tumorType,  species, individualID,  fileFormat, dataSubtype, nf1Genotype as "NF1 Genotype", nf2Genotype as "NF2 Genotype", studyName, fundingAgency, consortium, name AS "File Name", accessType, accessTeam  FROM syn16858331'
+    sql='SELECT assay, id FROM syn11346063 limit 1000'
   />
 ```
