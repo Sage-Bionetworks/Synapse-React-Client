@@ -50,6 +50,7 @@ export type GenericCardProps = {
   token?: string
   tableEntityConcreteType: string | undefined
   tableId: string | undefined
+  columnIconOptions?: {}
 } & CommonCardProps
 
 export type GenericCardState = {
@@ -316,6 +317,7 @@ export default class GenericCard extends React.Component<
       rgbIndex,
       tableId,
       tableEntityConcreteType,
+      columnIconOptions,
       token,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
@@ -368,7 +370,7 @@ export default class GenericCard extends React.Component<
           columnModels,
         })
         const columnDisplayName = unCamelCase(columnName, facetAliases)
-        const keyValue = [columnDisplayName, value]
+        const keyValue = [columnDisplayName, value, columnName]
         values.push(keyValue)
       }
     }
@@ -484,6 +486,7 @@ export default class GenericCard extends React.Component<
             isHeader={false}
             secondaryLabelLimit={secondaryLabelLimit}
             values={values}
+            columnIconOptions={columnIconOptions}
           />
         )}
       </div>
