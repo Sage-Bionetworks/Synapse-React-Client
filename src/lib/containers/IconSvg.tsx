@@ -6,6 +6,7 @@ export type IconSvgOptions = {
   icon: string
   color: string
   size: string
+  position?: 'left' | 'right'
   hoverEffect?: boolean  // not implement currently
 }
 
@@ -25,20 +26,25 @@ const IconSize = {
   'sm': '14px'
 }
 
+// Help standardize the left or right padding of icons
+const IconPadding = {
+  'sm': '7px'
+}
+
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { icon, color, size } = props.options
+  const { icon, color, size, position = 'left' } = props.options
 
   const StyledSVGIcon = styled(ReactSVG)`
     svg {
       fill: ${color};
       height: ${IconSize[size]};
+      padding: 0;
+      padding-left: ${position === 'right' ? IconPadding[size] : 0};
+      padding-right: ${position === 'left' ? IconPadding[size] : 0};
       width: auto;
       path {
         fill: ${color};
       }
-    }
-    span {
-      height: ${IconSize[size]};
     }
   `
 
@@ -50,10 +56,12 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   }
 
   return (
-    <StyledSVGIcon
-      afterInjection={errorHandler}
-      wrapper="span"
-      src={`${IconPath[icon]}`} />
+    <span className="styled-svg-wrapper">
+      <StyledSVGIcon
+        afterInjection={errorHandler}
+        wrapper="span"
+        src={`${IconPath[icon]}`} />
+    </span>
   )
 }
 

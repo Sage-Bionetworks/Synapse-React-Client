@@ -76,7 +76,10 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     if (columnIconOptions && Object.keys(columnIconOptions).includes(tableColumnName)) {
       const options = columnIconOptions[tableColumnName][value]
       return (
-        <><IconSVG options={options}></IconSVG> {value}</>
+        <>
+          <IconSVG options={options}></IconSVG>
+          <span style={{"verticalAlign": "middle"}}>{value}</span>
+        </>
       )
     }
 
