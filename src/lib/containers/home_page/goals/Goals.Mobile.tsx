@@ -25,7 +25,7 @@ export default function GoalsMobile({
     <div className="Goals__Mobile__Content bootstrap-4-backport">
       <p>{summary}</p>
       <Button
-        variant="primary"
+        variant="secondary"
         className="pill Goals__Mobile__Content__Link"
         href={link}
       >

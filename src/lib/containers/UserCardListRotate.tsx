@@ -136,7 +136,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         <div className="UserCardListRotate__summary">
           <Button
             className="pill"
-            variant="primary"
+            variant="secondary"
             size="lg"
             href={summaryLink}
           >

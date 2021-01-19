@@ -250,15 +250,19 @@ export default class SynapseFormSubmissionGrid extends React.Component<
       return <></>
     } else {
       return (
-        <div className="file-grid">
+        <div className="bootstrap-4-backport file-grid">
           <h3>Your Submissions</h3>
           <div className="panel padding-full unauthenticated text-center">
             <p className="padding-full">
               Please sign in or register to initiate or continue your submission
             </p>
-            <button className={`btn btn-large ${SRC_SIGN_IN_CLASS}`}>
-              sign in
-            </button>
+            <Button
+              className={`${SRC_SIGN_IN_CLASS} pill`}
+              variant="primary"
+              size="lg"
+            >
+              Sign In
+            </Button>
           </div>
         </div>
       )

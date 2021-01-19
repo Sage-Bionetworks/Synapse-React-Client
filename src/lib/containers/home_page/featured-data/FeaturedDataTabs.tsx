@@ -72,7 +72,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
             <div className="bootstrap-4-backport FeaturedDataTabs__explore-all">
               <Button
                 className="pill"
-                variant="primary"
+                variant="secondary"
                 size="lg"
                 href={selectedTabProps.explorePagePath}
               >
