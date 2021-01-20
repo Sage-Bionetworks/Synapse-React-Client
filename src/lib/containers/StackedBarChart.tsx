@@ -13,6 +13,7 @@ import {
 import { getIsValueSelected } from '../utils/functions/facetUtils'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import loadingScreen from './LoadingScreen'
+import { SynapseConstants } from '../../lib'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -146,8 +147,8 @@ export default class StackedBarChart extends React.Component<
         </span>
         :
         <span className="SRC-facet-view SRC-text-title">
-          {facetValueDisplay === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
-            ? 'Unannotated'
+          {facetValueDisplay === SynapseConstants.VALUE_NOT_SET
+            ? SynapseConstants.FRIENDLY_VALUE_NOT_SET
             : facetValueDisplay}
         </span>
       </span>

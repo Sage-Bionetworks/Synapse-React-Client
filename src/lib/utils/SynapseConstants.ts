@@ -27,6 +27,7 @@ export const ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION: number = 262144
 export const STUDY: string = 'study'
 /** Unannotated value for query */
 export const VALUE_NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET'
+export const FRIENDLY_VALUE_NOT_SET = 'Not Assigned'
 // for study icons
 export const STUDY_ACTIVE: string = 'study active'
 export const STUDY_COMPLETE: string = 'study complete'
