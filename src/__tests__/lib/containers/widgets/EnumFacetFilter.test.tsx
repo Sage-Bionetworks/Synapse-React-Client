@@ -169,7 +169,7 @@ describe('initialization', () => {
           expect(label.textContent).toBe(`${stringFacetValues[i].value}`)
           expect(counts[i].textContent).toBe(`${stringFacetValues[i].count}`)
         } else {
-          expect(label.textContent).toBe(`Unannotated`)
+          expect(label.textContent).toBe(`Not Assigned`)
           expect(counts[i].textContent).toBe(`${stringFacetValues[i].count}`)
         }
       })
@@ -225,7 +225,7 @@ describe('initialization', () => {
       const counts = container.querySelectorAll<HTMLDivElement>(
         '.EnumFacetFilter__count',
       )
-      expect(labels.item(0).textContent).toBe(`Unannotated`)
+      expect(labels.item(0).textContent).toBe(`Not Assigned`)
       expect(counts.item(0).textContent).toBe(
         `${userEntityFacetValues[0].count}`,
       )
@@ -261,7 +261,7 @@ describe('initialization', () => {
       '.EnumFacetFilter__count',
     )
     expect(labels).toHaveLength(3)
-    expect(labels.item(0).textContent).toBe(`Unannotated`)
+    expect(labels.item(0).textContent).toBe(`Not Assigned`)
     expect(counts.item(0).textContent).toBe(`${userEntityFacetValues[0].count}`)
     expect(labels.item(1).textContent).toBe(`somename`)
     expect(counts.item(1).textContent).toBe(`${userEntityFacetValues[1].count}`)
