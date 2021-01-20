@@ -143,6 +143,7 @@ export default function AcceptedRequirements({
   const isManagedActAr =
     accessRequirement.concreteType ===
     SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement  
+  const approvedText = isManagedActAr ? "Your data access request has been approved." : "You have accepted the terms of use."
   return (
     <>
       <div className="requirement-container">
@@ -151,7 +152,7 @@ export default function AcceptedRequirements({
           {isApproved ? (
             <div>
               <p>
-                You have accepted the terms of use.
+                {approvedText}
                 {isManagedActAr && (
                   <button
                     className="update-request-button bold-text"
