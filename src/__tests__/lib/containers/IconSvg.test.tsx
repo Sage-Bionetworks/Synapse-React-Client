@@ -1,7 +1,6 @@
 import { mount } from 'enzyme'
 import * as React from 'react'
 import IconSvg, { IconSvgOptions } from '../../../lib/containers/IconSvg'
-import 'jest-styled-components'
 
 describe('IconSvg: basic functionality', () => {
 
