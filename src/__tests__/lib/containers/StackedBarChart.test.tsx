@@ -73,7 +73,7 @@ describe('it performs basic functionality', () => {
           concreteType:
             'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
           facetValues: [
-            'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+            SynapseConstants.VALUE_NOT_SET,
             'Cutaneous Neurofibroma',
             'JMML',
             'Low Grade Glioma',

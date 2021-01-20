@@ -38,11 +38,11 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
 }) => {
   let innerText,
     tooltipText: string | null = ''
-  if (facetWithSelection) {
+  if (facetWithSelection) {    
     if (facetWithSelection.facet.facetType === 'enumeration') {
       innerText =
         facetWithSelection.displayValue === SynapseConstants.VALUE_NOT_SET
-          ? 'Unannotated'
+          ? SynapseConstants.FRIENDLY_VALUE_NOT_SET
           : facetWithSelection.displayValue
     } else {
       innerText =
