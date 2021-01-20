@@ -1,6 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { SynapseConstants } from '../../lib'
+import { SynapseConstants } from '../utils'
 import * as React from 'react'
 import {
   getIsValueSelected,
