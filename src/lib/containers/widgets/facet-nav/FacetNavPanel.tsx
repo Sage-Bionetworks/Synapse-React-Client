@@ -109,27 +109,23 @@ export function extractPlotDataArray(
   )
 
   const getLabels = (
-    columnName: string,
     facetValues: FacetColumnResultValueCount[],
     truncateFlag: boolean,
     columnType?: ColumnType,
-    facetAliases?: {},
   ) => {
     return facetValues.map(facetValue => ({
-      label: getLabel(columnName, facetValue, truncateFlag, columnType, facetAliases),
+      label: getLabel(facetValue, truncateFlag, columnType),
       count: facetValue.count,
     }))
   }
 
   const getLabel = (
-    columnName: string,
     facetValue: FacetColumnResultValueCount,
     truncateFlag: boolean,
-    columnType?: ColumnType,
-    facetAliases?: {},
+    columnType?: ColumnType,    
   ): string => {
     if (facetValue.value === SynapseConstants.VALUE_NOT_SET) {
-      return `No ${unCamelCase(columnName, facetAliases)} Assigned`
+      return SynapseConstants.FRIENDLY_VALUE_NOT_SET
     }
 
     if (columnType === 'ENTITYID') {
@@ -154,8 +150,8 @@ export function extractPlotDataArray(
     return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
   
-  const labels = getLabels(facetToPlot.columnName, facetToPlot.facetValues, false, columnType)
-  const text = getLabels(facetToPlot.columnName, facetToPlot.facetValues, true, columnType).map(
+  const labels = getLabels(facetToPlot.facetValues, false, columnType)
+  const text = getLabels(facetToPlot.facetValues, true, columnType).map(
     el => el.label,
   )
 
@@ -174,7 +170,7 @@ export function extractPlotDataArray(
     x:
       plotType === 'BAR'
         ? facetToPlot.facetValues.map(facet =>
-            getLabel(facetToPlot.columnName, facet, false, columnType, facetAliases),
+            getLabel(facet, false, columnType),
           )
         : undefined,
     y:

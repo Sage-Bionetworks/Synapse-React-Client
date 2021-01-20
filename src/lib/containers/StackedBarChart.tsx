@@ -148,7 +148,7 @@ export default class StackedBarChart extends React.Component<
         :
         <span className="SRC-facet-view SRC-text-title">
           {facetValueDisplay === SynapseConstants.VALUE_NOT_SET
-            ? `No ${filterDisplay} Assigned`
+            ? SynapseConstants.FRIENDLY_VALUE_NOT_SET
             : facetValueDisplay}
         </span>
       </span>

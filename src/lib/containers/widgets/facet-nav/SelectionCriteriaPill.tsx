@@ -42,7 +42,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     if (facetWithSelection.facet.facetType === 'enumeration') {
       innerText =
         facetWithSelection.displayValue === SynapseConstants.VALUE_NOT_SET
-          ? `No ${unCamelCase(facetWithSelection.facet.columnName)} Assigned`
+          ? SynapseConstants.FRIENDLY_VALUE_NOT_SET
           : facetWithSelection.displayValue
     } else {
       innerText =

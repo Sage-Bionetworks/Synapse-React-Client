@@ -3,7 +3,7 @@ import { Range, RangeValues } from '../Range'
 import { RangeSlider } from '../RangeSlider'
 import { FacetColumnResultRange } from '../../../utils/synapseTypes/Table/FacetColumnResult'
 import { ColumnModel } from '../../../utils/synapseTypes/Table/ColumnModel'
-import { VALUE_NOT_SET } from '../../../utils/SynapseConstants'
+import { VALUE_NOT_SET, FRIENDLY_VALUE_NOT_SET } from '../../../utils/SynapseConstants'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioGroup } from '../RadioGroup'
 import { useState } from 'react'
@@ -36,7 +36,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
 }: RangeFacetFilterProps) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed)
   const options = [
-    { label: 'Not assigned', value: RadioValuesEnum.NOT_SET },
+    { label: FRIENDLY_VALUE_NOT_SET, value: RadioValuesEnum.NOT_SET },
     { label: 'Any', value: RadioValuesEnum.ANY },
     { label: 'Range', value: RadioValuesEnum.RANGE },
   ]

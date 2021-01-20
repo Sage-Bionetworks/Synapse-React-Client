@@ -16,7 +16,6 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { unCamelCase } from '../../../utils/functions/unCamelCase'
 
 library.add(faArrowLeft)
 
@@ -36,7 +35,6 @@ function valueToId(value: string): string {
 }
 
 function valueToLabel(
-  columnName: string,
   facet: FacetColumnResultValueCount,
   profiles: UserProfile[] = [],
   entityHeaders: EntityHeader[] = [],
@@ -44,7 +42,7 @@ function valueToLabel(
   const { value } = facet
   let displayValue = value
   if (value === SynapseConstants.VALUE_NOT_SET) {
-    displayValue = `No ${unCamelCase(columnName)} Assigned`
+    displayValue = SynapseConstants.FRIENDLY_VALUE_NOT_SET
   }
   const profile = profiles.find(profile => profile.ownerId === value)
   if (profile) {
@@ -145,7 +143,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     } else {
       // display only facet values that contain text from the text input field
       const filtered = facetValues.filter(obj => {
-        const label = valueToLabel(columnModel.name, obj, userProfiles, entityHeaders)
+        const label = valueToLabel(obj, userProfiles, entityHeaders)
         return label.toLowerCase().indexOf(inputValue.trim().toLowerCase()) > -1
           ? obj
           : null
@@ -258,7 +256,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                   }}
                   key={id + index}
                   checked={facet.isSelected}
-                  label={valueToLabel(columnModel.name, facet, userProfiles, entityHeaders)}
+                  label={valueToLabel(facet, userProfiles, entityHeaders)}
                   id={id}
                 ></Checkbox>
                 {isDropdown && (

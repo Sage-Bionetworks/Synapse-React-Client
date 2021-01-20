@@ -101,7 +101,7 @@ const CheckboxGroup: React.FunctionComponent<CheckboxGroupProps> = (
       const { value, count } = facetColumnResultValues
       const displayValue =
         value === SynapseConstants.VALUE_NOT_SET
-          ? `No ${facetColumnResult.columnName} Assigned`
+          ? SynapseConstants.FRIENDLY_VALUE_NOT_SET
           : value
 
       children.push(
