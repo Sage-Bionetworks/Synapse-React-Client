@@ -76,7 +76,7 @@ describe('basic function', () => {
       init({ ...props, facetResult: notSetFacetResult })
       const radios = wrapper.find('input[type="radio"]')
       expect(radios.at(0).props().checked).toBe(true)
-      expect(radios.at(0).parents('span').text()).toBe('Unannotated')
+      expect(radios.at(0).parents('span').text()).toBe('Not Assigned')
     })
 
     it('interval', () => {
