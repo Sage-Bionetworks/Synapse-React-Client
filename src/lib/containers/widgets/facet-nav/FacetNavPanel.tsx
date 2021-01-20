@@ -31,7 +31,7 @@ import {
   applyChangesToValuesColumn,
 } from '../query-filter/QueryFilter'
 import loadingScreen from '../../LoadingScreen'
-import { SynapseConstants } from '../../../../lib'
+import { SynapseConstants } from '../../../utils'
 
 const Plot = createPlotlyComponent(Plotly)
 
