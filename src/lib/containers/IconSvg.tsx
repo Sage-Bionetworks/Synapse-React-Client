@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ReactSVG } from 'react-svg'
 import styled from 'styled-components'
 
@@ -6,7 +6,7 @@ export type IconSvgOptions = {
   icon: string
   color: string
   size: string
-  position?: 'left' | 'right'
+  padding?: 'left' | 'right'
   hoverEffect?: boolean  // not implement currently
 }
 
@@ -32,15 +32,25 @@ const IconPadding = {
 }
 
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { icon, color, size, position = 'left' } = props.options
+  const { icon, color, size, padding } = props.options
+  let mounted = true
+
+  useEffect(() => {
+    if (mounted) {
+      //
+    }
+    return () => {
+      mounted = false
+    }
+  }, [icon, color, size])
 
   const StyledSVGIcon = styled(ReactSVG)`
     svg {
       fill: ${color};
       height: ${IconSize[size]};
       padding: 0;
-      padding-left: ${position === 'right' ? IconPadding[size] : 0};
-      padding-right: ${position === 'left' ? IconPadding[size] : 0};
+      padding-left: ${padding === 'left' ? IconPadding[size] : 0};
+      padding-right: ${padding === 'right' ? IconPadding[size] : 0};
       width: auto;
       path {
         fill: ${color};
@@ -56,11 +66,13 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   }
 
   return (
-    <span className="styled-svg-wrapper">
-      <StyledSVGIcon
+    <span data-svg={icon} className="styled-svg-wrapper">
+      {
+        IconPath[icon] !== undefined && <StyledSVGIcon
         afterInjection={errorHandler}
         wrapper="span"
-        src={`${IconPath[icon]}`} />
+        src={`${IconPath[icon]}`}/>
+      }
     </span>
   )
 }

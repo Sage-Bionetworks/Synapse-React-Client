@@ -75,6 +75,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     // Only display icon when columnIconOptions is set in config file
     if (columnIconOptions && Object.keys(columnIconOptions).includes(tableColumnName)) {
       const options = columnIconOptions[tableColumnName][value]
+      options.padding = "right"
       return (
         <>
           <IconSVG options={options}></IconSVG>
