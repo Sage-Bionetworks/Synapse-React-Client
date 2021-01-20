@@ -13,7 +13,7 @@ import {
 import { getIsValueSelected } from '../utils/functions/facetUtils'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import loadingScreen from './LoadingScreen'
-import { SynapseConstants } from '../../lib'
+import { SynapseConstants } from '../utils'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
