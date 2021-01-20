@@ -86,11 +86,14 @@ class SynapseFormWrapper extends React.Component<
         entityId,
         versionNumber,
       )
-      const entityContent = await SynapseClient.getFileEntityContent(
-        token,
+      const fileHandleContent = await SynapseClient.getFileResult(
         entity,
+        token,
+        true,
+        true,
       )
-      const content = JSON.parse(entityContent)
+      const fileContent = await SynapseClient.getFileHandleContent(fileHandleContent.fileHandle!, fileHandleContent.preSignedURL!)
+      const content = JSON.parse(fileContent)
       return {
         version: entity.versionNumber,
         content: content,

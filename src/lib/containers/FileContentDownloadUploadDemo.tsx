@@ -1,7 +1,6 @@
 import * as React from 'react'
 import {
   getEntity,
-  getFileEntityContent,
   updateEntity,
   uploadFile,
 } from '../utils/SynapseClient'
@@ -44,12 +43,9 @@ export default class FileContentDownloadUploadDemo extends React.Component<
             entity.concreteType === 'org.sagebionetworks.repo.model.FileEntity'
           ) {
             const fileEntity: FileEntity = entity as FileEntity
-            getFileEntityContent(token, fileEntity).then(content => {
-              this.setState({
-                fileContent: content,
-                targetEntity: fileEntity,
-                isLoading: false,
-              })
+            this.setState({
+              targetEntity: fileEntity,
+              isLoading: false,
             })
           } else {
             this.setState({ error: 'invalid type', isLoading: false })
@@ -97,7 +93,7 @@ export default class FileContentDownloadUploadDemo extends React.Component<
   render() {
     return (
       <div>
-        {this.state.fileContent && (
+        {
           <React.Fragment>
             <div>
               <textarea
@@ -110,7 +106,7 @@ export default class FileContentDownloadUploadDemo extends React.Component<
               Update File Content...
             </button>
           </React.Fragment>
-        )}
+        }
         {this.state.isLoading && (
           <span style={{ marginLeft: '2px' }} className={'spinner'} />
         )}

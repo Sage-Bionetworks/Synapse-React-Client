@@ -7,6 +7,7 @@ import SynapseFormWrapper, {
 
 import { SynapseFormProps } from '../../../../lib/containers/synapse_form_wrapper/SynapseForm'
 import { mockFileEntity } from '../../../../mocks/mock_file_entity'
+import { mockFileHandle } from '../../../../mocks/mock_file_handle'
 import {
   mockFileEntityWithVersion,
   mockFormData,
@@ -53,7 +54,10 @@ const props: SynapseFormWrapperProps = {
 
 describe('basic tests', () => {
   beforeEach(() => {
-    SynapseClient.getFileEntityContent = jest.fn(() =>
+    SynapseClient.getFileResult = jest.fn(() =>
+      Promise.resolve(mockFileHandle),
+    )
+    SynapseClient.getFileHandleContent = jest.fn(() =>
       Promise.resolve(JSON.stringify(formschemaJson)),
     )
     SynapseClient.uploadFile = jest.fn(() => Promise.resolve(mockFileEntity))
@@ -64,19 +68,24 @@ describe('basic tests', () => {
     )
   })
 
-  it('gets configuration data', async () => {
+  it('gets configuration data calls should be called with correct params', async () => {
+    const { instance } = await createShallowComponent(props)
+    await instance.componentDidMount()
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(1, token, 'syn9988882982', undefined)
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(2, token, 'syn9988882983', undefined)
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(3, token, 'syn9988882984', undefined)
+    expect(SynapseClient.getFileResult).toHaveBeenCalledWith(
+      mockFileEntity,
+      token,
+      true,
+      true
+    )
+  })
+
+  it('gets configuration data', async() => {
     const { instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     const result = await instance.getFileEntityData(token, '123444')
-    expect(SynapseClient.getEntity).toHaveBeenCalledWith(
-      token,
-      '123444',
-      undefined,
-    )
-    expect(SynapseClient.getFileEntityContent).toHaveBeenCalledWith(
-      token,
-      mockFileEntity,
-    )
     expect(result).toEqual({ content: formschemaJson, version: undefined })
   })
 
