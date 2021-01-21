@@ -581,8 +581,8 @@ export default class MarkdownSynapse extends React.Component<
     if (alignLowerCase === 'center') {
       return (
         <div
-          className="bootstrap-4-backport"
           key={widgetparamsMapped.reactKey}
+          className="bootstrap-4-backport"
           style={{ textAlign: 'center' }}
         >
           <Button
@@ -596,7 +596,7 @@ export default class MarkdownSynapse extends React.Component<
       )
     }
     return (
-      <div className="bootstrap-4-backport">
+      <span className="bootstrap-4-backport">
         <Button
           href={widgetparamsMapped.url}
           className={buttonClasses}
@@ -604,7 +604,7 @@ export default class MarkdownSynapse extends React.Component<
         >
           {widgetparamsMapped.text}
         </Button>
-      </div>
+      </span>
     )
   }
   public renderSynapsePlot(widgetparamsMapped: any) {
