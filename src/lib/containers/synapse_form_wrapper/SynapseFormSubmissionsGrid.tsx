@@ -452,13 +452,14 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                   this.props.formGroupId,
                 )}
 
-                <div className="text-center">
-                  <a
-                    className="btn btn-large"
+                <div className="text-center bootstrap-4-backport">
+                  <Button
+                    className="pill-xl btn-large" // .btn-large is a custom class, don't use size="lg"
+                    variant="primary"
                     href={`${this.props.pathpart}?formGroupId=${this.props.formGroupId}`}
                   >
                     Add new {this.props.itemNoun}
-                  </a>
+                  </Button>
                 </div>
               </div>
             </div>
