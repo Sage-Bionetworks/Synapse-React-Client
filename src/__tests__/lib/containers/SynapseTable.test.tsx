@@ -30,6 +30,7 @@ import SynapseTable, {
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
 import HasAccess from 'lib/containers/HasAccess'
+import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -69,7 +70,7 @@ describe('basic functionality', () => {
           concreteType:
             'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
           facetValues: [
-            'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
+            SynapseConstants.VALUE_NOT_SET,
             'Cutaneous Neurofibroma',
             'JMML',
             'Low Grade Glioma',
@@ -872,7 +873,7 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(tableCell.find('p')).toHaveLength(0)
+        expect(tableCell.find('p').first().text().trim()).toEqual(NOT_SET_DISPLAY_VALUE)
       })
     })
   })

@@ -30,7 +30,7 @@ export default function ProgramsMobile({
       )}
       <p>{summary}</p>
       <Button
-        variant="primary-base"
+        variant="secondary"
         size="lg"
         href={exploreLink}
         className="pill"

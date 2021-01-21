@@ -250,15 +250,19 @@ export default class SynapseFormSubmissionGrid extends React.Component<
       return <></>
     } else {
       return (
-        <div className="file-grid">
+        <div className="bootstrap-4-backport file-grid">
           <h3>Your Submissions</h3>
           <div className="panel padding-full unauthenticated text-center">
             <p className="padding-full">
               Please sign in or register to initiate or continue your submission
             </p>
-            <button className={`btn btn-large ${SRC_SIGN_IN_CLASS}`}>
-              sign in
-            </button>
+            <Button
+              className={`${SRC_SIGN_IN_CLASS} pill`}
+              variant="primary"
+              size="lg"
+            >
+              Sign In
+            </Button>
           </div>
         </div>
       )
@@ -448,13 +452,14 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                   this.props.formGroupId,
                 )}
 
-                <div className="text-center">
-                  <a
-                    className="btn btn-large"
+                <div className="text-center bootstrap-4-backport">
+                  <Button
+                    className="pill-xl btn-large" // .btn-large is a custom class, don't use size="lg"
+                    variant="primary"
                     href={`${this.props.pathpart}?formGroupId=${this.props.formGroupId}`}
                   >
                     Add new {this.props.itemNoun}
-                  </a>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DOI_REGEX } from '../../../containers/GenericCard'
+import IconSVG from '../../IconSvg'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 
@@ -18,6 +19,7 @@ type CardFooterProps = {
   values: any[]
   isHeader: boolean
   secondaryLabelLimit?: number
+  columnIconOptions?: {}
 }
 
 class CardFooter extends React.Component<CardFooterProps, State> {
@@ -50,7 +52,8 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     this.setState({ isDesktop: window.innerWidth > 600 })
   }
 
-  renderRowValue = (columnName: string, value: string) => {
+  renderRowValue = (columnName: string, value: string, tableColumnName: string) => {
+    const columnIconOptions = this.props.columnIconOptions
     if (!value.match || !value.trim) {
       // value can sometimes be a react element, so it doesn't have a .match function, interestingly I didn't
       // see typeof return 'object' for that case which would be a better check.
@@ -69,6 +72,18 @@ class CardFooter extends React.Component<CardFooterProps, State> {
         </a>
       )
     }
+    // Only display icon when columnIconOptions is set in config file
+    if (columnIconOptions && Object.keys(columnIconOptions).includes(tableColumnName)) {
+      const options = columnIconOptions[tableColumnName][value]
+      options.padding = "right"
+      return (
+        <>
+          <IconSVG options={options}></IconSVG>
+          <span style={{"verticalAlign": "middle"}}>{value}</span>
+        </>
+      )
+    }
+
     return value
   }
 
@@ -76,7 +91,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     return values.map((kv, index) => {
       const hideClass = index >= limit ? 'SRC-hidden' : ''
       const columnName = kv[0]
-      const value = this.renderRowValue(columnName, kv[1])
+      const value = this.renderRowValue(columnName, kv[1], kv[2])
       if (isDesktop) {
         return (
           <tr className={'SRC-cardRowDesktop ' + hideClass} key={index}>

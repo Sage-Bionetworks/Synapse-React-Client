@@ -10,6 +10,7 @@ import { noop } from 'lodash-es'
 import { MarkdownLink, CardLink } from '../CardContainerLogic'
 import { renderLabel } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
+import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 
 // Render table cell, supports Entity's and User Icons
 export const renderTableCell = ({
@@ -54,7 +55,7 @@ export const renderTableCell = ({
     return (!s || s.length <= maxCharCount)
   }
   if (!columnValue) {
-    return <></>
+    return <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
   }
   if (columnLinkConfig) {
     return renderLabel({

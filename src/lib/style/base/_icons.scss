@@ -17,3 +17,10 @@
 .SRC-terminal-icon > rect.outer {
   fill: SRC.$primary-action-color-500;
 }
+
+.styled-svg-wrapper {
+  span {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+}

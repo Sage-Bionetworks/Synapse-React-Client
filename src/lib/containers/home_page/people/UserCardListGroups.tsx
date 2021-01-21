@@ -35,7 +35,7 @@ export default function UserCardListGroups(props: UserCardListGroupsProps) {
         {summaryLink && summaryLinkText && (
           <div className="UserCardListGroups__summary">
             <Button
-              variant="primary"
+              variant="secondary"
               size="lg"
               className="pill"
               href={summaryLink}

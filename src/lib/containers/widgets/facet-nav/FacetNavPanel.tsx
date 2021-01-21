@@ -31,6 +31,7 @@ import {
   applyChangesToValuesColumn,
 } from '../query-filter/QueryFilter'
 import loadingScreen from '../../LoadingScreen'
+import { SynapseConstants } from '../../../utils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -100,6 +101,7 @@ export function extractPlotDataArray(
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
+  facetAliases?: {},
 ) {
   const { colorPalette } = getColorPalette(
     index,
@@ -120,10 +122,10 @@ export function extractPlotDataArray(
   const getLabel = (
     facetValue: FacetColumnResultValueCount,
     truncateFlag: boolean,
-    columnType?: ColumnType,
+    columnType?: ColumnType,    
   ): string => {
-    if (facetValue.value === 'org.sagebionetworks.UNDEFINED_NULL_NOTSET') {
-      return 'Unannotated'
+    if (facetValue.value === SynapseConstants.VALUE_NOT_SET) {
+      return SynapseConstants.FRIENDLY_VALUE_NOT_SET
     }
 
     if (columnType === 'ENTITYID') {
@@ -147,7 +149,7 @@ export function extractPlotDataArray(
     const value = facetValue.value
     return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
-
+  
   const labels = getLabels(facetToPlot.facetValues, false, columnType)
   const text = getLabels(facetToPlot.facetValues, true, columnType).map(
     el => el.label,

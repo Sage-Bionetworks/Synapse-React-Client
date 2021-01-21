@@ -281,7 +281,7 @@ describe('it performs all functionality', () => {
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })
-      const expectedValue = `<div class="markdown"><span><p><div class="bootstrap-4-backport"><a href="#/Help/How It Works" class="pill-xl  btn btn-primary">sometext</a></div><div class="bootstrap-4-backport"><a href="#/Apply" class="pill-xl  btn btn-primary">APPLY</a></div></p> \n </span></div>`
+      const expectedValue = `<div class="markdown"><span><p><span class="bootstrap-4-backport"><a href="#/Help/How It Works" class="pill-xl  btn btn-primary">sometext</a></span><span class="bootstrap-4-backport"><a href="#/Apply" class="pill-xl  btn btn-primary">APPLY</a></span></p> \n </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })
   })
