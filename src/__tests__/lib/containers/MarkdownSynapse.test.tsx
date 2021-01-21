@@ -265,7 +265,7 @@ describe('it performs all functionality', () => {
       const { wrapper } = await createShallowComponent({
         markdown: '# header [text](https://synapse.org)',
       })
-      const expectedValue = `<div class="markdown bootstrap-4-backport"><span><h1 id="SRC-header-1" toc="true"> header  <a href="https://synapse.org" target="_blank"> text </a></h1> 
+      const expectedValue = `<div class="markdown"><span><h1 id="SRC-header-1" toc="true"> header  <a href="https://synapse.org" target="_blank"> text </a></h1> 
  </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })
@@ -273,7 +273,7 @@ describe('it performs all functionality', () => {
       const { wrapper } = await createShallowComponent({
         markdown: 'some more free \n# header\nloose text',
       })
-      const expectedValue = `<div class="markdown bootstrap-4-backport"><span><p> some more free </p> \n <h1 id="SRC-header-1" toc="true"> header </h1> \n <p> loose text </p> \n </span></div>`
+      const expectedValue = `<div class="markdown"><span><p> some more free </p> \n <h1 id="SRC-header-1" toc="true"> header </h1> \n <p> loose text </p> \n </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })
     it('works with two inline widgets', async () => {
@@ -281,7 +281,7 @@ describe('it performs all functionality', () => {
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })
-      const expectedValue = `<div class="markdown bootstrap-4-backport"><span><p><a href="#/Help/How It Works" class="pill-xl  btn btn-primary">sometext</a><a href="#/Apply" class="pill-xl  btn btn-primary">APPLY</a></p> \n </span></div>`
+      const expectedValue = `<div class="markdown"><span><p><span class="bootstrap-4-backport"><a href="#/Help/How It Works" class="pill-xl  btn btn-primary">sometext</a></span><span class="bootstrap-4-backport"><a href="#/Apply" class="pill-xl  btn btn-primary">APPLY</a></p></span> \n </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })
   })
