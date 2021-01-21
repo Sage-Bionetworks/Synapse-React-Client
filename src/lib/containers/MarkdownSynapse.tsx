@@ -580,11 +580,7 @@ export default class MarkdownSynapse extends React.Component<
       highlight === 'true' ? 'primary' : 'light-primary-base'
     if (alignLowerCase === 'center') {
       return (
-        <div
-          className="bootstrap-4-backport"
-          key={widgetparamsMapped.reactKey}
-          style={{ textAlign: 'center' }}
-        >
+        <div key={widgetparamsMapped.reactKey} style={{ textAlign: 'center' }}>
           <Button
             href={widgetparamsMapped.url}
             className={buttonClasses}
@@ -596,15 +592,13 @@ export default class MarkdownSynapse extends React.Component<
       )
     }
     return (
-      <div className="bootstrap-4-backport">
-        <Button
-          href={widgetparamsMapped.url}
-          className={buttonClasses}
-          variant={buttonVariant}
-        >
-          {widgetparamsMapped.text}
-        </Button>
-      </div>
+      <Button
+        href={widgetparamsMapped.url}
+        className={buttonClasses}
+        variant={buttonVariant}
+      >
+        {widgetparamsMapped.text}
+      </Button>
     )
   }
   public renderSynapsePlot(widgetparamsMapped: any) {
@@ -734,13 +728,16 @@ export default class MarkdownSynapse extends React.Component<
     )
     if (renderInline) {
       return (
-        <span className="markdown markdown-inline" ref={this.markupRef}>
+        <span
+          className="markdown markdown-inline bootstrap-4-backport"
+          ref={this.markupRef}
+        >
           {content}
         </span>
       )
     }
     return (
-      <div className="markdown" ref={this.markupRef}>
+      <div className="markdown bootstrap-4-backport" ref={this.markupRef}>
         {content}
       </div>
     )
