@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { ReactSVG } from 'react-svg'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export type IconSvgOptions = {
   icon: string
@@ -31,6 +31,26 @@ const IconPadding = {
   'sm': '7px'
 }
 
+// styled component needs to be outside of the function component and render function
+// to remove multiple render warning
+const StyledSVGIcon = styled(ReactSVG)<IconSvgOptions>`
+  svg {
+    padding: 0;
+    width: auto;
+    ${({size, color, padding}) => {
+      return css`
+        fill: ${color};
+        height: ${IconSize[size]};
+        padding-left: ${padding === 'left' ? IconPadding[size] : 0};
+        padding-right: ${padding === 'right' ? IconPadding[size] : 0};
+        path {
+          fill: ${color};
+        }
+      `
+    }
+  }
+`
+
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   const { icon, color, size, padding } = props.options
   let mounted = true
@@ -44,20 +64,6 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
     }
   }, [icon, color, size])
 
-  const StyledSVGIcon = styled(ReactSVG)`
-    svg {
-      fill: ${color};
-      height: ${IconSize[size]};
-      padding: 0;
-      padding-left: ${padding === 'left' ? IconPadding[size] : 0};
-      padding-right: ${padding === 'right' ? IconPadding[size] : 0};
-      width: auto;
-      path {
-        fill: ${color};
-      }
-    }
-  `
-
   const errorHandler = (error: Error|null) => {
     if (error) {
       console.error(error)
@@ -69,9 +75,13 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
     <span data-svg={icon} className="styled-svg-wrapper">
       {
         IconPath[icon] !== undefined && <StyledSVGIcon
-        afterInjection={errorHandler}
-        wrapper="span"
-        src={`${IconPath[icon]}`}/>
+          afterInjection={errorHandler}
+          wrapper="span"
+          src={`${IconPath[icon]}`}
+          size={size}
+          color={color}
+          padding={padding}
+          />
       }
     </span>
   )
