@@ -6,8 +6,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    // "baseUrl": "src", // We omit baseUrl on purpose so VSCode doesn't suggest absolute imports that break in the transpiled code.
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "target": "es5",
     "lib": [
@@ -16,7 +15,7 @@
     ],
     "sourceMap": true,
     "jsx": "react",
-    "rootDir": "src/lib",
+    "rootDir": ".",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -28,7 +27,8 @@
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true
   },
   "exclude": [
     "rollup.config.js",
