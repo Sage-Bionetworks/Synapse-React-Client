@@ -39,3 +39,5 @@ jsconfig.json
 /dist
 
 src/umd
+
+.eslintcache

@@ -1,5 +1,13 @@
 {
-  "extends": ["react-app", "eslint:recommended", "plugin:react/recommended"],
+  "parser": "@typescript-eslint/parser", // Specifies the ESLint parser
+  "extends": [
+    "react-app",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended", // recommended rules from @typescript-eslint/eslint-plugin
+    "prettier/@typescript-eslint", // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+  ],
   "plugins": ["react", "react-hooks"],
   "parserOptions": {
     "ecmaFeatures": {
@@ -11,6 +19,21 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "no-extra-semi": "off",
-    "prefer-const": "warn"
+    "prefer-const": "warn",
+    "prettier/prettier": "warn",
+    "@typescript-eslint/ban-types": "warn",
+    "@typescript-eslint/no-inferrable-types": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
+    "no-var": "warn",
+    "react/no-direct-mutation-state": "warn",
+    "react/no-unescaped-entities": "warn",
+    "react/jsx-key": "warn",
+    "no-prototype-builtins": "warn",
+    "no-useless-escape": "warn",
+    "@typescript-eslint/no-empty-interface": "warn",
+    "no-fallthrough": "warn",
+    "react/jsx-no-target-blank": "warn",
+    "@typescript-eslint/no-empty-function": "warn"
   }
 }

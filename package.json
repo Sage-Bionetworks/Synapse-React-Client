@@ -76,7 +76,7 @@
     "react-plotly.js": "^2.3.0",
     "react-plotlyjs-ts": "^2.2.1",
     "react-router-dom": "5.1.2",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.1",
     "react-sizeme": "^2.6.12",
     "react-spinners": "^0.9.0",
     "react-svg": "^11.2.2",
@@ -121,12 +121,20 @@
     "@types/react-addons-css-transition-group": "^15.0.5",
     "@types/react-dom": "^16.9.6",
     "@types/react-transition-group": "^2.0.16",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
     "core-js": "^3.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint": "6.6.0",
-    "eslint-plugin-react": "latest",
-    "eslint-plugin-react-hooks": "^2.5.0",
+    "eslint": "7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "identity-obj-proxy": "^3.0.0",
     "jest-mock-promise": "^1.1.10",
     "npm": "^6.9.0",
@@ -152,7 +160,6 @@
     ]
   },
   "scripts": {
-    "postinstall": "npm rebuild node-sass",
     "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
     "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html && cp favicon.png styleguide/favicon.png",
     "build-gh": "yarn run build:docs",
@@ -184,8 +191,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "@types/react": "16.9.34",
-    "@types/react-tooltip": "^3.11.0",
-    "eslint": "6.6.0"
+    "@types/react-tooltip": "^3.11.0"
   },
   "browserslist": {
     "production": [
