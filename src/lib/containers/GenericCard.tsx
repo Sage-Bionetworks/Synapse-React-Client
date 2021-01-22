@@ -12,6 +12,7 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { SelectColumn, ColumnModel, ColumnType } from '../utils/synapseTypes'
 import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
+import { DOI_REGEX, SYNAPSE_REGX } from '../utils/functions/regularExpressions'
 
 export type KeyToAlias = {
   key: string
@@ -61,11 +62,6 @@ const CHAR_COUNT_CUTOFF = 400
 export const CARD_SHORT_DESCRIPTION_CSS = 'SRC-short-description'
 export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
 
-// doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-// note - had to add an escape character for the second and third forward slash in the regex above
-export const DOI_REGEX = /^10.\d{4,9}\/[-._;()\/:a-z0-9]+$/i
-// check for 'syn' followed and ended by a digit of unlimited length, must also begin the line
-export const SYNAPSE_REGX = /^syn\d+\.?\d+$/
 
 // This function isn't in the class only for ease of testing with renderShortDescription
 export const getCutoff = (summary: string) => {

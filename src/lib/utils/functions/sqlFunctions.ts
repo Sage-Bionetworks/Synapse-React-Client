@@ -1,5 +1,5 @@
 import { lexer, parser } from 'sql-parser'
-import { SYNAPSE_REGX } from '../../containers/GenericCard'
+import { SYNAPSE_REGX } from './regularExpressions'
 import { SelectColumn, Row } from '../synapseTypes'
 
 export type KeyValue = {

@@ -71,7 +71,7 @@ import {
   TransformSqlWithFacetsRequest,
   SqlTransformResponse,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
-import { SynapseConstants } from '.'
+import * as SynapseConstants from './SynapseConstants'
 import { EvaluationRoundListRequest } from './synapseTypes/Evaluation/EvaluationRoundListRequest'
 import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/EvaluationRoundListResponse'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
@@ -1535,7 +1535,6 @@ export const getFileResult = (
   includePreSignedURLs?: boolean,
   includePreviewPreSignedURLs?: boolean,
 ): Promise<FileResult> => {
-
   return new Promise((resolve, reject) => {
     const fileHandleAssociationList: FileHandleAssociation[] = [
       {
@@ -1554,7 +1553,7 @@ export const getFileResult = (
       .then((data: BatchFileResult) => {
         if (
           data.requestedFiles.length &&
-          (data.requestedFiles[0].fileHandleId !== undefined)
+          data.requestedFiles[0].fileHandleId !== undefined
         ) {
           resolve(data.requestedFiles[0])
         } else {

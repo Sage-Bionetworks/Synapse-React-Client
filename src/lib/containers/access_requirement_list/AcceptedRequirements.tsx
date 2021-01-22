@@ -15,7 +15,7 @@ import {
 } from '../../utils/synapseTypes/'
 import { SynapseClient } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
-import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
+import { SUPPORTED_ACCESS_REQUIREMENTS } from './SupportedAccessRequirements'
 
 export type AcceptedRequirementsProps = {
   user: UserProfile | undefined

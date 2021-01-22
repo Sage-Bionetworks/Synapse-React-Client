@@ -25,6 +25,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile } from '@fortawesome/free-solid-svg-icons'
 import { sortBy } from 'lodash-es'
+import { SUPPORTED_ACCESS_REQUIREMENTS } from './SupportedAccessRequirements'
 
 library.add(faFile)
 
@@ -41,12 +42,6 @@ export type AccessRequirementListProps = {
   renderAsModal?: boolean
 }
 
-export enum SUPPORTED_ACCESS_REQUIREMENTS {
-  SelfSignAccessRequirement = 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
-  TermsOfUseAccessRequirement = 'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
-  ManagedACTAccessRequirement = 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
-  ACTAccessRequirement = 'org.sagebionetworks.repo.model.ACTAccessRequirement',
-}
 
 export const checkHasUnsportedRequirement = (
   accessRequirements: Array<AccessRequirement>,
