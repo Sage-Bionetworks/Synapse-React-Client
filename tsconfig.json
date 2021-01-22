@@ -1,20 +1,22 @@
 {
   "compilerOptions": {
     "allowJs": false,
+    "outDir": "dist",
+    "declaration": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "src",
-    "module": "esnext",
+    // "baseUrl": "src", // We omit baseUrl on purpose so VSCode doesn't suggest absolute imports that break in the transpiled code.
+    "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es5",
     "lib": [
       "es6",
       "dom"
     ],
     "sourceMap": true,
-    "jsx": "preserve",
-    "moduleResolution": "node",
-    "rootDir": "src",
+    "jsx": "react",
+    "rootDir": "src/lib",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
