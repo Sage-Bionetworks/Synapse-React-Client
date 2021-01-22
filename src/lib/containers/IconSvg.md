@@ -31,38 +31,39 @@
 
 <p>Available sizes: only sm (14px in height) for now.  </p>
 <p>
-  Available icons (only 4 for now): 
-  <table>
-    <tr>
-      <th>Name</th>
-      <td>Icon</td>
-    </tr>
-    <tr>
-      <td>data</td>
-      <td>
-        <IconSvg options={{ icon: 'data', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
-      </td>
-    </tr>
-    <tr>
-      <td>dataLocked</td>
-      <td>
-        <IconSvg options={{ icon: 'dataLocked', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
-      </td>
-    </tr>
-    <tr>
-      <td>reload</td>
-      <td>
-        <IconSvg options={{ icon: 'reload', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
-      </td>
-    </tr>
-    <tr>
-      <td>checkMark</td>
-      <td>
-        <IconSvg options={{ icon: 'checkMark', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
-      </td>
-    </tr>
-  </table>
+  Available icons (only 4 for now):
 </p>
+<table>
+<tr>
+  <th>Name</th>
+  <td>Icon</td>
+</tr>
+<tr>
+  <td>data</td>
+  <td>
+    <IconSvg options={{ icon: 'data', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+  </td>
+</tr>
+<tr>
+  <td>dataLocked</td>
+  <td>
+    <IconSvg options={{ icon: 'dataLocked', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+  </td>
+</tr>
+<tr>
+  <td>reload</td>
+  <td>
+    <IconSvg options={{ icon: 'reload', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+  </td>
+</tr>
+<tr>
+  <td>checkMark</td>
+  <td>
+    <IconSvg options={{ icon: 'checkMark', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+  </td>
+</tr>
+</table>
+
 
 
 ```

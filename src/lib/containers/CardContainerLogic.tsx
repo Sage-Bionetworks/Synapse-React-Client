@@ -13,6 +13,7 @@ import { GenericCardSchema, IconOptions } from './GenericCard'
 // TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
 // will have to find a way to use individual lodash packages instead of the entire thing
 import { cloneDeep, isEqual } from 'lodash-es'
+import { IconSvgOptions } from './IconSvg'
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -38,6 +39,12 @@ export type MarkdownValue = {
 // Specify the indices in the values [] that should be rendered specially
 export type LabelLinkConfig = (MarkdownLink | CardLink)[]
 
+export type ColumnIconConfigs = {
+  [index:string]: {
+    [index:string]: IconSvgOptions
+  }
+}
+
 export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
@@ -45,6 +52,7 @@ export type CommonCardProps = {
   labelLinkConfig?: LabelLinkConfig
   descriptionLinkConfig?: MarkdownValue
   rgbIndex?: number
+  columnIconOptions?: ColumnIconConfigs
 }
 
 export type CardConfiguration = {
