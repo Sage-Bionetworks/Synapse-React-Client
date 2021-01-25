@@ -288,6 +288,10 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
                     onChange={event =>
                       setTotalSubmissionLimit(event.target.value)
                     }
+                    // Chrome for some reason decides to autofill this input box with email address, so we must disable autofill
+                    // this is a hacky, but consistent way to disable autofill because Chrome does not respect the spec :(
+                    // https://bugs.chromium.org/p/chromium/issues/detail?id=914451
+                    autoComplete="new-password"
                   />
                 </FormGroup>
               </Col>

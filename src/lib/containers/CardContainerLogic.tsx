@@ -40,8 +40,11 @@ export type MarkdownValue = {
 export type LabelLinkConfig = (MarkdownLink | CardLink)[]
 
 export type ColumnIconConfigs = {
-  [index:string]: {
-    [index:string]: IconSvgOptions
+  iconBasePath?: string
+  columns: {
+    [index:string]: {
+      [index:string]: IconSvgOptions
+    }
   }
 }
 
