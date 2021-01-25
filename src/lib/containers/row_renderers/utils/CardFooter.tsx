@@ -7,6 +7,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { DOI_REGEX } from '../../../containers/GenericCard'
 import IconSVG from '../../IconSvg'
+import { ColumnIconConfigs } from '../../CardContainerLogic'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 
@@ -19,7 +20,7 @@ type CardFooterProps = {
   values: any[]
   isHeader: boolean
   secondaryLabelLimit?: number
-  columnIconOptions?: {}
+  columnIconOptions?: ColumnIconConfigs
 }
 
 class CardFooter extends React.Component<CardFooterProps, State> {
@@ -73,12 +74,12 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       )
     }
     // Only display icon when columnIconOptions is set in config file
-    if (columnIconOptions && Object.keys(columnIconOptions).includes(tableColumnName)) {
-      const options = columnIconOptions[tableColumnName][value]
+    if (columnIconOptions && columnIconOptions.columns && Object.keys(columnIconOptions.columns).includes(tableColumnName)) {
+      const options = columnIconOptions.columns[tableColumnName][value]
       options.padding = "right"
       return (
         <>
-          <IconSVG options={options}></IconSVG>
+          <IconSVG iconBasePath={columnIconOptions.iconBasePath} options={options}></IconSVG>
           <span style={{"verticalAlign": "middle"}}>{value}</span>
         </>
       )
