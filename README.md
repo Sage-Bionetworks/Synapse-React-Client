@@ -147,286 +147,32 @@ Note - this will apply to all calls being made.
 
 ## Style
 
-The core css lives in `src/lib/style` and `src/lib/template_style`.
+Synapse React Client uses [Dart Sass](https://sass-lang.com/dart-sass).
+The core css lives in [`src/lib/style`](src/lib/style) and `src/lib/template_style`.
 
 - `src/lib/style` contains all scss that doesn't use any external variables.
 - `src/lib/template_style` contains any scss files that require external variables.
 
 ## Overrides
 
-Import the main `src/lib/template_style/Index.scss` file into your application and override the main theme color `$primary-action-color`
+For a list of variables you can override, see [`src/lib/style/abstracts/_variables.scss`](src/lib/style/abstracts/_variables.scss).
+
+Override the variables by importing the SCSS in your project like so:
 
 ```scss
-$primary-action-color: blue;
-@import 'node_modules/synapse-react-client/dist/template_style/Index.scss';
+@use 'node_modules/synapse-react-client/dist/style/main.scss' with (
+  $primary-action-color: $-my-primary-color, 
+  $secondary-action-color: $-my-secondary-color,
+  // ...any other overrides continue
+);
+@use 'node_modules/synapse-react-client/dist/template_style/Index.scss';
 ```
+
+In this example, make sure that the `node_modules` folder is in your load path.
 
 ## Examples
 
-#### Login
-
-```js
-import { SynapseClient } from 'synapse-react-client'
-
-SynapseClient.login('username', 'password').then(response => {
-  // session token available in response.sessionToken
-})
-```
-
-#### Query a Synapse Table/View
-
-```js
-import { SynapseClient, SynapseConstants } from 'synapse-react-client'
-
-let request = {
-  entityId: 'syn123',
-  query: {
-    sql: 'SELECT * FROM syn123',
-    includeEntityEtag: true,
-    isConsistent: true,
-    offset: 0,
-    limit: 100,
-  },
-
-  partMask:
-    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-    SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-    SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
-}
-SynapseClient.getQueryTableResults(request, sessionToken)
-  .then(response => {
-    // query results are available
-  })
-  .catch(function (error) {
-    // handle Error (possibly an HTTPError)
-  })
-```
-
-#### Markdown Rendering Example
-
-View the demo app incorporation of markdown [here](./src/demo/containers/App.tsx).
-
-To use the synapse markdown-it component you must pass it a wiki page id and an owner id. Additionally, you can configure an error view to display.
-
-| Props                                      | Explanation                                             |
-| ------------------------------------------ | ------------------------------------------------------- |
-| ownerId: String                            | ownerId for the synapse page                            |
-| wikiId: String                             | wikiId for the synapse page                             |
-| markdown: String                           | markdown that is to be rendered                         |
-| errorMessageView?: React.FunctionComponent | Should accept and render an error message to the string |
-| token?: string                             | auth token from synapse                                 |
-
-Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
-
-```jsx
-import { SynapseComponents } from 'synapse-react-client'
-;<CustomMarkdownView>
-  <SynapseComponents.Markdown
-    token={this.state.token}
-    ownerId={'syn14568473'}
-    wikiId={'582406'}
-  ></SynapseComponents.Markdown>
-</CustomMarkdownView>
-```
-
-Example 2: Rendering a Synapse Wiki page with the markdown already loaded
-
-```jsx
-import { SynapseComponents } from 'synapse-react-client'
-;<CustomMarkdownView>
-  <SynapseComponents.Markdown
-    token={this.state.token}
-    markdown={'# an h1 header in markdown'}
-  ></SynapseComponents.Markdown>
-</CustomMarkdownView>
-```
-
-To use the markdown component with only markdown, simply pass down a prop with the markdown to be processed and rendered.
-
-```jsx
-import { SynapseComponents } from 'synapse-react-client'
-;<CustomMarkdownView>
-  <SynapseComponents.Markdown
-    token={this.state.token}
-    markdown={'# my own markdown! '}
-    errorMessageView={<CustomMarkdownErrorView />}
-  ></SynapseComponents.Markdown>
-</CustomMarkdownView>
-```
-
-### QueryWrapper Example
-
-An example of a view with facets/stacked bar chart/table
-
-```jsx
-import { SynapseComponents } from 'synapse-react-client'
-;<SynapseComponents.QueryWrapper
-  initQueryRequest={{
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    query: {
-      isConsistent: false,
-      sql: `SELECT * FROM syn16858331`,
-      limit: 25,
-      offset: 0,
-    },
-  }}
-  rgbIndex={0}
-  token={this.state.token}
-  facet={'assay'}
-  showMenu
->
-  <SynapseComponents.Facets />
-  <SynapseComponents.StackedBarChart}
-  />
-  <SynapseComponents.SynapseTable
-    synapseId={'syn15661198'}
-    visibleColumnCount={8}
-  />
-</SynapseComponents.QueryWrapper>
-```
-
-#### QueryWrapper Props
-
-| Props            | Explanation                                                                                                                                               |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| initQueryRequest | This is the default query to be run on the first render of the component                                                                                  |
-| rgbIndex         | Specifies the starting index of the following color wheel: turquoise, blueberry, rose, royal, butterscotch, powder, slate, apricot, fern, lavender, apple |
-| facet            | This is the facet that will be default filtered on if using any of StackedBarChart/Facets/Menu.                                                           |
-| token            | Session token to make authenticated calls                                                                                                                 |
-| facetAliases: {} | Object with key = columnName and value as alias from query                                                                                                |
-
-#### QueryWrapperMenu
-
-```jsx
-<QueryWrapperMenu
-  token={inDevEnv ? token! : this.state.token!}
-  tableConfiguration={
-    {
-      title: "my title here",
-      synapseId: "syn16858331",
-    }
-  }
-  unitDescription={"files"}
-  menuConfig={
-    [
-      { sql: "SELECT * FROM syn16858331",
-        facet: "assay",
-      },
-      { sql: "SELECT * FROM syn16858331",
-        facet: "Data Type",
-        visibleColumnCount: 3
-      }
-    ]
-  }
-  rgbIndex={4}
-/>
-
-```
-
-#### QueryWrapperMenu Props
-
-| Props                                                                                                                    | Explanation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| token                                                                                                                    | Session token to make authenticated calls to Synapse                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| rgbIndex                                                                                                                 | The index into the color pallette starting the color gradient for the view                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| unitDescription                                                                                                          | The units of data for the query                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| tableConfiguration, has keys: synapseId, title, visibleColumnCount                                                       | **title**: The title of the table being used, (NOTE: title must be a non-empty string for the table to show). <br/> **synapseId**: Used to power advanced search and barchart link to table, this id should be the same as the one in the sql <br/> **visibleColumnCount**: The number of columns to be shown for the table                                                                                                                                                                                            |
-| cardConfiguration, has keys: type, genericCardSchema, secondaryLabelLimit, iconOptions, titleLinkConfig, labelLinkConfig | The configuration for cards to be show given the query                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| stackedBarChartConfiguration, has keys: link, linkText                                                    | The configuration for the bar chart                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| searchConfiguration, has key: searchable                                                                                 | The configuration for the search component. Only views that have cards                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| accordionConfig: AccordionConfig []                                                                                      | For using an accordion dropdown. An individual accordion config contains: menuConfig: MenuConfig [], name: string, cardConfiguration, tableConfiguration, stackedBarChartConfiguration.                                                                                                                                                                                                                                                                                                                                |
-| MenuConfig []                                                                                                            | Specifications for each view under the facet                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| MenuConfig has keys: sql, facetAliases, facet                                                                            | **sql**: The query driving the specific's facets view <br/> **facet**: the facet being selected <br/> **facetAliases**: This is used for when the sql statement specified has an alias clause- e.g. 'SELECT **id AS "File ID"** ....', it will make the view render the aliased value. NOTE: If the sql statement has an alias and this prop is NOT specified then the table dropdown will function incorrectly, it will fail to recognize the column header was aliased in the sql and filter menus will not display. |
-
-#### Facets
-
-| Props | Explanation |
-| ----- | ----------- |
-| N/A   | N/A         |
-
-#### SynapseTable
-
-| Props              | Explanation                                                                                                                                                                                                               |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| synapseId          | When a user click's advanced search this synapseId will tell the browser where to redirect to.                                                                                                                            |
-| visibleColumnCount | This is the number of columns that will be displayed by default. These columns are chosen according to the order of which the columns are specified by the SELECT clause from the query producing the data for this view. |
-| title              | The name of the table                                                                                                                                                                                                     |
-
-#### StackedBarChart
-
-| Props         | Explanation                                                                                               |
-| ------------- | --------------------------------------------------------------------------------------------------------- |
-| link          | If specified this will show a button link at the bottom right of the bar chart that will direct to `link` |
-| linkText      | If the `link` prop is specified then the text displayed slink will be `linkText`                          |
-
-#### Search
-
-| Props                     | Explanation                                                               |
-| ------------------------- | ------------------------------------------------------------------------- |
-| searchable: Searchable [] | Array of objects, where each object has keys `columnName` and `hintText`. |
-
-#### QueryCount
-
-| Props | Explanation                             |
-| ----- | --------------------------------------- |
-| sql   | sql statement                           |
-| name  | Text to display next to the query count |
-| token | auth token from synapse                 |
-
-#### CardContainer
-
-CardContainer is used as either a child of QueryWrapperMenu/QueryWrapper OR CardContainerLogic. The two situations are sufficiently different that factoring out the logic into it's own component is not possible.
-
-| Props           | Explanation                                                                                                                             |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| type            | This is the type of card that will be rendered. Use SynapseConstants to choose the card type: STUDY, DATASET, TOOL, PUBLICATION, FUNDER |
-| unitDescription | Specifies the unit description for the rows being displayed, NOTE: If not specified then no label will render                           |
-
-#### CardContainerLogic
-
-This component is used to wrap CardContainer as a standalone renderer for cards, so the cards will appear without any other query based views, e.g. [the view under **Funded Studies**](https://nf.synapse.org/#/Organizations-CTF)
-
-This card can be used in two ways - as a standard row renderer or as a 'Header' where the card content is meant to stretch across the screen and give an overview of whatever content comes below.
-
-| Props                                 | Explanation                                                                                                                                                                                                                                                                                            |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| sql: string                           | The sql to be run against Synapse                                                                                                                                                                                                                                                                      |
-| unitDescription: string               | Fills in 'Displaying 50 <unitDescription>', NOTE: If not specified then no label will render                                                                                                                                                                                                           |
-| token?: string                        | Authentication token                                                                                                                                                                                                                                                                                   |
-| limit?: number                        | Used to constrain the number of cards shown, defaults to Infinity                                                                                                                                                                                                                                      |
-| secondaryLabelLimit?: number          | Used to constraint the number of secondary labels shown, defaults to three                                                                                                                                                                                                                             |
-| type: string                          | Type of card to be rendered.                                                                                                                                                                                                                                                                           |
-| facet?: string                        | If rendering a faceted view this defines the facet that will be used                                                                                                                                                                                                                                   |
-| genericCardSchema?: GenericCardSchema | Defines schema to be used by cards                                                                                                                                                                                                                                                                     |
-| isHeader?: boolean                    | Styles the card to be used as a header -- e.g. doesnt have a 'Show More' for description, no secondaryLabels are shown                                                                                                                                                                                 |
-| backgroundColor?: string              | Used as background color for the card in header mode                                                                                                                                                                                                                                                   |
-| searchParams?: {}                     | Feeds in additional sql WHERE clause conditions to the SQL provided given a set of key value pairs                                                                                                                                                                                                     |
-| sqlOperator?:string                   | Default: `LIKE`, otherwise the current set of operators allowed is - `['=']`                                                                                                                                                                                                                           |
-| iconOptions?: IconOptions             | In order to not bloat SRC with custom icons per portal, only a subset of icons will be used across portals. For special icons like when the card is used in 'header mode' it requires a dictionary of key-value pairs with the key being the column value and the value being a corresponding SVG icon |
-
-#### UserCard
-
-UserCard represents a synapse user, it is responsible for three different sized cards, small, medium, and large.
-
-| Props                                                                                                     | Explanation                                                                                                                                                                                                                                                                                                                                        |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| userProfile: [UserProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) | A [userProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) object can get passed in for the component to use as its data                                                                                                                                                                                       |
-| preSignedURL: string                                                                                      | If set will show the corresponding img for the user                                                                                                                                                                                                                                                                                                |
-| hideEmail: boolean                                                                                        | If set will hide the user's email                                                                                                                                                                                                                                                                                                                  |
-| alias: string                                                                                             | An alias that resolves the ownerId for the UserProfile                                                                                                                                                                                                                                                                                             |
-| ownerId: string                                                                                           | The ownerId of the UserProfile                                                                                                                                                                                                                                                                                                                     |
-| link: string                                                                                              | The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId}                                                                                                                                                                                                                                        |
-| size: string                                                                                              | Either SynapseConstants.SMALL_USER_CARD, SynapseConstants.MEDIUM_USER_CARD, SynapseConstants.LARGE_USER_CARD, specifying the card size.                                                                                                                                                                                                            |
-| token: string                                                                                             | Auth token                                                                                                                                                                                                                                                                                                                                         |
-| hideText: boolean                                                                                         | ONLY applies to small user card, hides the text next the user profile image.                                                                                                                                                                                                                                                                       |
-| menuActions                                                                                               | Array of MenuActions[], where MenuAction is an object of the form - {field:string, callback?: (userProfile: UserProfile) => void}, specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. NOTE: If left undefined the menu will not render to the screen. |
-
-#### Other calls available. See functions found in [SynapseClient](./src/lib/utils/SynapseClient.ts)
+See [Examples](Examples.md)
 
 ## Project Contents
 
@@ -456,11 +202,13 @@ UserCard represents a synapse user, it is responsible for three different sized 
 
 ### Configuration Files
 
-```
-./types.d.ts       In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project.
-./tsconfig.json      Typescript configuration
-./rollup.config.js rollup config
-```
+|File|Description|
+|---|---|
+| ./types.d.ts | In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project.|
+|./tsconfig.json | Typescript configuration for IDEs, especially VSCode. |
+|./tsconfig.build.json | Typescript configuration for the emitted build |
+|./rollup.config.js | Rollup configuration to create the minified package |
+
 
 ## Project Development
 
@@ -478,14 +226,18 @@ specify this in the `external` and `output.globals` fields.
 
 ## Release Cycle
 
-The develop branch was created from master
-Feature branches are created from develop
-When a feature is complete it is merged into the develop branch
+The `develop` branch points to the development version of Synapse React Client. Feature branches should be created from and pulled into `develop`.
+
+The `main` branch contains the current release version of Synapse React Client.
+
+To release a new version on NPM, bump the version number in `package.json` in develop, and merge the changes from `develop` to `master`. We have GitHub actions configured to automatically build and publish the new version.
+
+All proposed changes (to be merged into `develop` or `master`) must be via a Pull Request with a code review
+
+### Hotfixes
+
 If an issue in master is detected a hotfix branch is created from master
 Once the hotfix is complete it is merged to both develop and master
-Notes:
-On a regular basis develop will be merged into master and a new release will be published from master
-All proposed changes (to be merged into develop or master) must be via a Pull Request with a code review
 
 ## Adding a new component and Publishing a new version of SRC
 
@@ -516,8 +268,7 @@ In the project directory, you can run:
 
 ### `yarn start`
 
-Runs the Synapse React Client demo app in the development mode.<br>
-Open [http://127.0.0.1:3000](http://127.0.0.1:3000) to view it in the browser.
+Runs the Synapse React Client Styleguidist browser. In your browser, navigate to [http://127.0.0.1:6060](http://127.0.0.1:6060) to view it.
 
 It will automatically open localhost, but you need to use 127.0.0.1 for CORS preflight OPTIONS request to work properly.
 
@@ -526,7 +277,7 @@ You will also see any lint errors in the console.
 
 ### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br>
+Launches the test runner in the interactive watch mode.
 
 ### `yarn test:coverage`
 
