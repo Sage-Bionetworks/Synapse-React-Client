@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as SRC;
+@use 'sass:color';
 
 //Variables
 $baseline-grid: 21px;
@@ -100,8 +101,7 @@ $text-color-lighter: #898989;
     .SRC-cardAnnotations {
       margin: ($baseline-grid / 2) 0;
       span {
-        background: $color-chicklet-base;
-        color: white;
+        background: color.change(SRC.$secondary-action-color, $alpha: 0.05);
         display: inline-block;
         padding: 2px 15px 4px 15px;
         margin: 0 10px 5px 0;
