@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Button } from 'react-bootstrap'
 
 type FunderProps = {
   data?: any
@@ -37,8 +38,14 @@ export default class Funder extends React.Component<FunderProps, {}> {
     let showOrgLink
     if (!isOnOrgPath) {
       showOrgLink = (
-        <div className="SRC-marginAuto SRC-cardAction">
-          <a href={organizationPath}>View Funded Research</a>
+        <div className="SRC-marginAuto SRC-cardAction bootstrap-4-backport">
+          <Button
+            className="pill-xl"
+            href={organizationPath}
+            variant="secondary"
+          >
+            View Funded Research
+          </Button>
         </div>
       )
     } else {

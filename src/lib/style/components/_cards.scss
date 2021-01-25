@@ -186,13 +186,10 @@ $text-color-lighter: #898989;
       margin: $baseline-grid 0 $baseline-grid $baseline-grid * 2;
       a {
         display: inline-flex;
-        background: SRC.$primary-action-color;
         padding: 5px 20px;
         justify-content: center;
         align-items: center;
-        border-radius: 20px;
         height: 40px;
-        color: white;
       }
     }
   }
@@ -229,6 +226,7 @@ img.iconImg.SRC-datasetIcon {
 .SRC-description-dataset {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   p.SRC-description-text {
     flex-basis: 65%;
     display: inline-block;
@@ -313,5 +311,5 @@ img.iconImg.SRC-datasetIcon {
 }
 
 .cardContainer {
-  box-shadow: 0px 3px 10px rgba(0,0,0,.05)
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
 }
