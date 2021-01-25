@@ -4,7 +4,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "src",
     "module": "esnext",
     "target": "es5",
     "lib": [
