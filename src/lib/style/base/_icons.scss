@@ -1,6 +1,7 @@
 @use '../abstracts/variables' as SRC;
 
-.SRC-arrow-icon {
+.SRC-arrow-icon,
+.Icon-Minus {
   path {
     fill: SRC.$primary-action-color;
   }
