@@ -42,6 +42,10 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
           inputProps={{
             disabled: disabled,
             className: 'form-control calendar-date-time-input rounded-right',
+            // Chrome for some reason decides to autofill this input box with email address, so we must disable autofill
+            // this is a hacky, but consistent way to disable autofill because Chrome does not respect the spec :(
+            // https://bugs.chromium.org/p/chromium/issues/detail?id=914451
+            autoComplete: 'new-password',
           }}
           isValidDate={isValidDate}
         />
