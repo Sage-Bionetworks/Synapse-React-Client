@@ -11,14 +11,16 @@ export type IconSvgOptions = {
 }
 
 export type IconSvgProps = {
+  iconBasePath?: string
   options: IconSvgOptions
 }
 
+const defaultIconPath = '../src/lib/assets/icons/'
 const IconPath = {
-  'data': '../src/lib/assets/icons/data.svg',
-  'reload': '../src/lib/assets/icons/reload.svg',
-  'checkMark': '../src/lib/assets/icons/check-mark.svg',
-  'dataLocked': '../src/lib/assets/icons/data-locked.svg',
+  'data': 'data.svg',
+  'reload': 'reload.svg',
+  'checkMark': 'check-mark.svg',
+  'dataLocked': 'data-locked.svg',
 }
 
 // Help standardize the sizing of icons
@@ -52,7 +54,9 @@ const StyledSVGIcon = styled(ReactSVG)<IconSvgOptions>`
 `
 
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { icon, color, size, padding } = props.options
+  const { iconBasePath, options} = props
+  const { icon, color, size, padding } = options
+  const iconPath = iconBasePath ? iconBasePath + IconPath[icon] : defaultIconPath + IconPath[icon]
   let mounted = true
 
   useEffect(() => {
@@ -77,7 +81,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         IconPath[icon] !== undefined && <StyledSVGIcon
           afterInjection={errorHandler}
           wrapper="span"
-          src={`${IconPath[icon]}`}
+          src={`${iconPath}`}
           size={size}
           color={color}
           padding={padding}
