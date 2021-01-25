@@ -44,6 +44,16 @@
   }
 }
 
+.SRC-secondary-background-color-hover:hover {
+  background-color: SRC.$secondary-action-color !important;
+  color: white !important;
+  fill: white !important;
+  * {
+    background-color: SRC.$secondary-action-color !important;
+    color: white !important;
+  }
+}
+
 .grip-handle:hover {
   background-color: SRC.$primary-action-color !important;
   width: 3px;
