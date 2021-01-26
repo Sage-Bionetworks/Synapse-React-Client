@@ -97,7 +97,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           name={name}
           entityId={entityId}
           sql={sqlUsed}
-          hideDownload={hideDownload}          
+          hideDownload={hideDownload}
         />
         <SearchV2 {...searchConfiguration} />
         <ErrorBanner />
