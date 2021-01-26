@@ -9,7 +9,7 @@ import {
   QueryBundleRequest,
   ColumnType,
 } from '../../../lib/utils/synapseTypes/'
-import { SynapseConstants } from 'lib'
+import { SynapseConstants } from '../../../lib'
 import { act } from 'react-dom/test-utils'
 
 const createMountedComponent = async (props: TotalQueryResultsProps) => {

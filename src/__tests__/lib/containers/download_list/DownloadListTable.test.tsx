@@ -2,14 +2,14 @@ import DownloadListTable, {
   DownloadListTableProps,
   TESTING_CLEAR_BTN_CLASS,
   TESTING_TRASH_BTN_CLASS,
-} from 'lib/containers/download_list/DownloadListTable'
+} from '../../../../lib/containers/download_list/DownloadListTable'
 import {
   BatchFileResult,
   DownloadList,
   EntityHeader,
   FileHandleAssociateType,
   PaginatedResults,
-} from 'lib/utils/synapseTypes/'
+} from '../../../../lib/utils/synapseTypes/'
 import * as React from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'

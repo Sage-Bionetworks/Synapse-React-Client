@@ -1,12 +1,12 @@
 import { fail } from 'assert'
-import { BackendDestinationEnum } from 'lib/utils/functions/getEndpoint'
+import { BackendDestinationEnum } from '../../../lib/utils/functions/getEndpoint'
 import {
   BatchFileRequest,
   FileHandleAssociateType,
   PaginatedResults,
-} from 'lib/utils/synapseTypes/'
+} from '../../../lib/utils/synapseTypes/'
 import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
-import { FunctionReturningPaginatedResults } from 'lib/utils/SynapseClient'
+import { FunctionReturningPaginatedResults } from '../../../lib/utils/SynapseClient'
 
 describe('it works at integration level testing', () => {
   it('invalid call', () => {

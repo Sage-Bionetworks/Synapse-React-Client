@@ -3,13 +3,13 @@ import {
   CreatePackage,
   CreatePackageProps,
   TEMPLATE_DOWNLOAD_MESSAGE,
-} from 'lib/containers/download_list/CreatePackage'
+} from '../../../../lib/containers/download_list/CreatePackage'
 import {
   BulkFileDownloadResponse,
   DownloadOrder,
   FileDownloadStatus,
   FileHandleAssociateType,
-} from 'lib/utils/synapseTypes/'
+} from '../../../../lib/utils/synapseTypes/'
 import * as React from 'react'
 import { Alert } from 'react-bootstrap'
 import { act } from 'react-dom/test-utils'

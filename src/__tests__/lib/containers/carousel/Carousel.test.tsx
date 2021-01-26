@@ -1,6 +1,6 @@
 import { mount, shallow } from 'enzyme'
-import Carousel from 'lib/containers/Carousel'
-import { resolveAllPending } from 'lib/testutils/EnzymeHelpers'
+import Carousel from '../../../../lib/containers/Carousel'
+import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
 import React from 'react'
 import { act } from 'react-dom/test-utils'
 import SizeMe from 'react-sizeme'

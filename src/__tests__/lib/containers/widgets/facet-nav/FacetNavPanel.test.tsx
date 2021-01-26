@@ -4,10 +4,10 @@ import FacetNavPanel, {
   truncate,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
 import { render } from '@testing-library/react'
-import { FacetColumnResultValues } from 'lib/utils/synapseTypes'
+import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
-import { FacetNavProps } from 'lib/containers/widgets/facet-nav/FacetNav'
-import { SynapseConstants } from 'lib'
+import { FacetNavProps } from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
+import { SynapseConstants } from '../../../../../lib'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
