@@ -200,7 +200,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else {
     return (
       <>
-        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'}`}>
+        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'}${showMoreState === 'LESS' ? 'less' : ''}`}>
           <div className="FacetNav__expanded">
             {expandedFacets.map((facet, index) => (
               <div key={facet.columnName}>
@@ -283,6 +283,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               <button
                 className="btn btn-default FacetNav__showMore"
                 onClick={() => onShowMoreClick(showMoreState === 'MORE')}
+                style={{ zIndex: 500 }}
               >
                 {showMoreState === 'LESS'
                   ? 'Hide Optional Graphs'
