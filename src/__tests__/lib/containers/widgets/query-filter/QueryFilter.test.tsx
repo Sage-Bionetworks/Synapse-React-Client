@@ -88,7 +88,15 @@ describe('initialization', () => {
       }
     })
   })
+
+  it('should respect facetsToFilter', async () => {
+    // set facetsToFilter to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
+    init({facetsToFilter: ['Year']})
+    expect(wrapper.find('EnumFacetFilter').exists()).toBeFalsy()
+    expect(wrapper.find('RangeFacetFilter').exists()).toBeTruthy()
+  })
 })
+
 
 describe('handling child component callbacks', () => {
   it('should propagate enum update correctly', async () => {
