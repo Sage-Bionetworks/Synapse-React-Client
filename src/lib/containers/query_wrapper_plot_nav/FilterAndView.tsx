@@ -9,6 +9,7 @@ export type OwnProps = {
   tableConfiguration: SynapseTableProps | undefined
   cardConfiguration: CardConfiguration | undefined
   hideDownload?: boolean
+  facetsToFilter?: string[]
 }
 
 const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {

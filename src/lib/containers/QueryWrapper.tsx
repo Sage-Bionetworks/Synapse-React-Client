@@ -25,6 +25,7 @@ export type QueryWrapperProps = {
   shouldDeepLink?: boolean
   hiddenColumns?: string[]
   lockedFacet?: LockedFacet
+  defaultShowFacetVisualization?: boolean
 }
 
 export type TopLevelControlsState = {
@@ -134,6 +135,7 @@ export default class QueryWrapper extends React.Component<
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
     this.getInitQueryRequest = this.getInitQueryRequest.bind(this)
+    const showFacetVisualization = props.defaultShowFacetVisualization ?? true
     this.state = {
       data: undefined,
       isLoading: true,
@@ -148,10 +150,10 @@ export default class QueryWrapper extends React.Component<
       isAllFilterSelectedForFacet: {},
       loadNowStarted: false,
       lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
-      topLevelControlsState: {
+      topLevelControlsState : {
         showColumnFilter: true,
         showFacetFilter: true,
-        showFacetVisualization: true,
+        showFacetVisualization,
         showSearchBar: false,
         showDownloadConfirmation: false,
         showColumnSelectDropdown: false,
