@@ -185,7 +185,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       colorIndex: index,
     }
   })
-  const showMoreState = getShowMoreState()
+  const showMoreButtonState = getShowMoreState()
 
   if (error) {
     return <></>
@@ -200,7 +200,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else {
     return (
       <>
-        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'}${showMoreState === 'LESS' ? 'less' : ''}`}>
+        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${showMoreButtonState === 'LESS' ? 'less' : ''}`}>
           <div className="FacetNav__expanded">
             {expandedFacets.map((facet, index) => (
               <div key={facet.columnName}>
@@ -279,13 +279,13 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
             ))}
           </div>
           <div className="FacetNav__showMoreContainer">
-            {showMoreState !== 'NONE' && (
+            {showMoreButtonState !== 'NONE' && (
               <button
                 className="btn btn-default FacetNav__showMore"
-                onClick={() => onShowMoreClick(showMoreState === 'MORE')}
+                onClick={() => onShowMoreClick(showMoreButtonState === 'MORE')}
                 style={{ zIndex: 500 }}
               >
-                {showMoreState === 'LESS'
+                {showMoreButtonState === 'LESS'
                   ? 'Hide Optional Graphs'
                   : 'Show All Graphs'}
               </button>
