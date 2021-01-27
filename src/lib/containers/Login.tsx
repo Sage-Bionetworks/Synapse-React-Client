@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Form, FormControl } from 'react-bootstrap'
+import { Button, Form } from 'react-bootstrap'
 import ButtonWithIcon from '../assets/ButtonWithIcon'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
