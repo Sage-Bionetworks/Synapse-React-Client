@@ -577,7 +577,7 @@ export default class MarkdownSynapse extends React.Component<
       buttonClasses += 'floatright '
     }
     const buttonVariant =
-      highlight === 'true' ? 'primary' : 'light-primary-base'
+      highlight === 'true' ? 'secondary' : 'light-secondary'
     if (alignLowerCase === 'center') {
       return (
         <div
