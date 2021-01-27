@@ -40,58 +40,6 @@ SynapseClient.getQueryTableResults(request, sessionToken)
   })
 ```
 
-## Markdown Rendering Example
-
-View the demo app incorporation of markdown [here](./src/demo/containers/App.tsx).
-
-To use the synapse markdown-it component you must pass it a wiki page id and an owner id. Additionally, you can configure an error view to display.
-
-| Props                                      | Explanation                                             |
-| ------------------------------------------ | ------------------------------------------------------- |
-| ownerId: String                            | ownerId for the synapse page                            |
-| wikiId: String                             | wikiId for the synapse page                             |
-| markdown: String                           | markdown that is to be rendered                         |
-| errorMessageView?: React.FunctionComponent | Should accept and render an error message to the string |
-| token?: string                             | auth token from synapse                                 |
-
-Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
-
-```jsx
-import { SynapseComponents } from 'synapse-react-client'
-;<CustomMarkdownView>
-  <SynapseComponents.Markdown
-    token={this.state.token}
-    ownerId={'syn14568473'}
-    wikiId={'582406'}
-  ></SynapseComponents.Markdown>
-</CustomMarkdownView>
-```
-
-Example 2: Rendering a Synapse Wiki page with the markdown already loaded
-
-```jsx
-import { SynapseComponents } from 'synapse-react-client'
-;<CustomMarkdownView>
-  <SynapseComponents.Markdown
-    token={this.state.token}
-    markdown={'# an h1 header in markdown'}
-  ></SynapseComponents.Markdown>
-</CustomMarkdownView>
-```
-
-To use the markdown component with only markdown, simply pass down a prop with the markdown to be processed and rendered.
-
-```jsx
-import { SynapseComponents } from 'synapse-react-client'
-;<CustomMarkdownView>
-  <SynapseComponents.Markdown
-    token={this.state.token}
-    markdown={'# my own markdown! '}
-    errorMessageView={<CustomMarkdownErrorView />}
-  ></SynapseComponents.Markdown>
-</CustomMarkdownView>
-```
-
 ## QueryWrapper Example
 
 An example of a view with facets/stacked bar chart/table
@@ -246,22 +194,6 @@ This card can be used in two ways - as a standard row renderer or as a 'Header' 
 | sqlOperator?:string                   | Default: `LIKE`, otherwise the current set of operators allowed is - `['=']`                                                                                                                                                                                                                           |
 | iconOptions?: IconOptions             | In order to not bloat SRC with custom icons per portal, only a subset of icons will be used across portals. For special icons like when the card is used in 'header mode' it requires a dictionary of key-value pairs with the key being the column value and the value being a corresponding SVG icon |
 
-## UserCard
-
-UserCard represents a synapse user, it is responsible for three different sized cards, small, medium, and large.
-
-| Props                                                                                                     | Explanation                                                                                                                                                                                                                                                                                                                                        |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| userProfile: [UserProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) | A [userProfile](https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html) object can get passed in for the component to use as its data                                                                                                                                                                                       |
-| preSignedURL: string                                                                                      | If set will show the corresponding img for the user                                                                                                                                                                                                                                                                                                |
-| hideEmail: boolean                                                                                        | If set will hide the user's email                                                                                                                                                                                                                                                                                                                  |
-| alias: string                                                                                             | An alias that resolves the ownerId for the UserProfile                                                                                                                                                                                                                                                                                             |
-| ownerId: string                                                                                           | The ownerId of the UserProfile                                                                                                                                                                                                                                                                                                                     |
-| link: string                                                                                              | The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId}                                                                                                                                                                                                                                        |
-| size: string                                                                                              | Either SynapseConstants.SMALL_USER_CARD, SynapseConstants.MEDIUM_USER_CARD, SynapseConstants.LARGE_USER_CARD, specifying the card size.                                                                                                                                                                                                            |
-| token: string                                                                                             | Auth token                                                                                                                                                                                                                                                                                                                                         |
-| hideText: boolean                                                                                         | ONLY applies to small user card, hides the text next the user profile image.                                                                                                                                                                                                                                                                       |
-| menuActions                                                                                               | Array of MenuActions[], where MenuAction is an object of the form - {field:string, callback?: (userProfile: UserProfile) => void}, specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. NOTE: If left undefined the menu will not render to the screen. |
 
 # Other calls available
 

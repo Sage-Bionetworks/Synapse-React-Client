@@ -58,8 +58,6 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       <div
         className={imgClassName}
         style={{ backgroundImage: `url(${preSignedURL})` }}
-        data-for={label}
-        data-tip={label}
       />
     )
   } else {
@@ -78,6 +76,8 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       className={
         'SRC-userCard UserCardSmall SRC-primary-text-color SRC-no-underline-on-hover '
       }
+      data-for={label}
+      data-tip={label}
     >
       {img}
       <ReactTooltip delayShow={1000} id={label} multiline={true} />
