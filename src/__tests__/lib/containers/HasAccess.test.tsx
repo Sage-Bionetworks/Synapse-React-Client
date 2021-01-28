@@ -11,7 +11,7 @@ import {
   RestrictableObjectType,
   RestrictionInformationRequest,
   ExternalFileHandleConcreteTypeEnum,
-} from 'lib/utils/synapseTypes/'
+} from '../../../lib/utils/synapseTypes/'
 import { CloudProviderFileHandleConcreteTypeEnum } from '../../../lib/utils/synapseTypes/CloudProviderFileHandle'
 import * as React from 'react'
 import HasAccess, {

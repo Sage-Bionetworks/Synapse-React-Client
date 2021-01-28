@@ -1,9 +1,9 @@
-import { SELECT_SINGLE_FACET } from 'lib/containers/Facets'
+import { SELECT_SINGLE_FACET } from '../../../lib/containers/Facets'
 import {
   FacetColumnResultValueCount,
   FacetColumnValuesRequest,
   QueryBundleRequest,
-} from 'lib/utils/synapseTypes/'
+} from '../../../lib/utils/synapseTypes/'
 import { FacetSelection } from '../../../lib/containers/QueryWrapper'
 import {
   getIsValueSelected,

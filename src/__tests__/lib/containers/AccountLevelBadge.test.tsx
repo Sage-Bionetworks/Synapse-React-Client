@@ -1,8 +1,8 @@
 import { mount } from 'enzyme'
 import * as React from 'react'
-import { resolveAllPending } from 'lib/testutils/EnzymeHelpers'
-import { AccountLevelBadge, accountLevelRegisteredLabel, accountLevelCertifiedLabel, accountLevelVerifiedLabel } from 'lib/containers/AccountLevelBadge'
-import { UserBundle } from 'lib/utils/synapseTypes'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
+import { AccountLevelBadge, accountLevelRegisteredLabel, accountLevelCertifiedLabel, accountLevelVerifiedLabel } from '../../../lib/containers/AccountLevelBadge'
+import { UserBundle } from '../../../lib/utils/synapseTypes'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 

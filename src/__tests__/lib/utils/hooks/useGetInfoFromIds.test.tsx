@@ -1,10 +1,10 @@
 import React from 'react'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
-} from 'lib/utils/hooks/useGetInfoFromIds'
+} from '../../../../lib/utils/hooks/useGetInfoFromIds'
 import { act } from 'react-dom/test-utils'
 import ReactDOM from 'react-dom'
-import { UserProfile } from 'lib/utils/synapseTypes'
+import { UserProfile } from '../../../../lib/utils/synapseTypes'
 
 const HookWrapper = (props: UseGetInfoFromIdsProps) => {
   const useHookGetProfilesHook = useGetInfoFromIds(props) as UserProfile[]
@@ -30,7 +30,7 @@ describe('useGetInfoFromIds hook works', () => {
     container = null
   })
 
-  const pkg = require('lib/utils/functions/getUserData')
+  const pkg = require('../../../../lib/utils/functions/getUserData')
   const mockFn = jest.fn().mockResolvedValueOnce({ list: [{ ownerId: 'aaa' }] })
   pkg.getUserProfileWithProfilePicAttached = mockFn
 

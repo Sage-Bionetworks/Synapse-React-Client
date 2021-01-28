@@ -20,10 +20,10 @@ import {
   AccessRequirementStatus,
 } from '../../../lib/utils/synapseTypes/'
 import { mount, ReactWrapper } from 'enzyme'
-import SelfSignAccessRequirementComponent from 'lib/containers/access_requirement_list/SelfSignAccessRequirement'
-import TermsOfUseAccessRequirementComponent from 'lib/containers/access_requirement_list/TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponent from 'lib/containers/access_requirement_list/ManagedACTAccessRequirement'
-import ACTAccessRequirementComponent from 'lib/containers/access_requirement_list/ACTAccessRequirement'
+import SelfSignAccessRequirementComponent from '../../../lib/containers/access_requirement_list/SelfSignAccessRequirement'
+import TermsOfUseAccessRequirementComponent from '../../../lib/containers/access_requirement_list/TermsOfUseAccessRequirement'
+import ManagedACTAccessRequirementComponent from '../../../lib/containers/access_requirement_list/ManagedACTAccessRequirement'
+import ACTAccessRequirementComponent from '../../../lib/containers/access_requirement_list/ACTAccessRequirement'
 
 describe('Access Requirement List works as expect', () => {
   let container: HTMLElement

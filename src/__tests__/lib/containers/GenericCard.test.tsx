@@ -12,13 +12,13 @@ import {
   LabelLinkConfig,
   MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
-import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
+import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 import {
   SelectColumn,
   EntityColumnType,
   ColumnType,
-} from 'lib/utils/synapseTypes'
-import { FileHandleLink } from 'lib/containers/widgets/FileHandleLink'
+} from '../../../lib/utils/synapseTypes'
+import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)

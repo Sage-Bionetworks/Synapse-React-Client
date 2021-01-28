@@ -4,7 +4,7 @@ import {
   AddFilesToDownloadListResponse,
   FileHandleAssociateType,
   QueryBundleRequest,
-} from 'lib/utils/synapseTypes/'
+} from '../../../lib/utils/synapseTypes/'
 import * as React from 'react'
 import {
   DownloadConfirmation,

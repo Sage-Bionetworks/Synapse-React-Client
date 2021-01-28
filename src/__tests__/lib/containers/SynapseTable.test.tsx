@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { shallow, mount } from 'enzyme'
-import { EntityLink } from 'lib/containers/EntityLink'
-import MarkdownSynapse from 'lib/containers/MarkdownSynapse'
-import { EnumFacetFilter } from 'lib/containers/widgets/query-filter/EnumFacetFilter'
-import UserCard from 'lib/containers/UserCard'
-import { unCamelCase } from 'lib/utils/functions/unCamelCase'
-import { AUTHENTICATED_USERS } from 'lib/utils/SynapseConstants'
+import { EntityLink } from '../../../lib/containers/EntityLink'
+import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
+import { EnumFacetFilter } from '../../../lib/containers/widgets/query-filter/EnumFacetFilter'
+import UserCard from '../../../lib/containers/UserCard'
+import { unCamelCase } from '../../../lib/utils/functions/unCamelCase'
+import { AUTHENTICATED_USERS } from '../../../lib/utils/SynapseConstants'
 import {
   EntityHeader,
   UserGroupHeader,
@@ -14,7 +14,7 @@ import {
   Row,
   QueryBundleRequest,
   EntityColumnType,
-} from 'lib/utils/synapseTypes/'
+} from '../../../lib/utils/synapseTypes/'
 import * as React from 'react'
 import { SynapseConstants } from '../../../lib'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
@@ -29,7 +29,7 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
-import HasAccess from 'lib/containers/HasAccess'
+import HasAccess from '../../../lib/containers/HasAccess'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
 
 const createShallowComponent = (

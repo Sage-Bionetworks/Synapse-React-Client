@@ -1,7 +1,7 @@
 import * as React from 'react'
 import DownloadDetails, {
   DownloadDetailsProps,
-} from 'lib/containers/download_list/DownloadDetails'
+} from '../../../../lib/containers/download_list/DownloadDetails'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 

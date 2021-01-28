@@ -1,11 +1,11 @@
 import { act } from '@testing-library/react'
 import { mount } from 'enzyme'
-import { AccessTokenPage } from 'lib/containers/personal_access_token/AccessTokenPage'
-import { CreateAccessTokenModal } from 'lib/containers/personal_access_token/CreateAccessTokenModal'
+import { AccessTokenPage } from '../../../../lib/containers/personal_access_token/AccessTokenPage'
+import { CreateAccessTokenModal } from '../../../../lib/containers/personal_access_token/CreateAccessTokenModal'
 import * as React from 'react'
-import { resolveAllPending } from 'lib/testutils/EnzymeHelpers'
-import { AccessTokenRecordList } from 'lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
-import { AccessTokenCard } from 'lib/containers/personal_access_token/AccessTokenCard'
+import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
+import { AccessTokenRecordList } from '../../../../lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
+import { AccessTokenCard } from '../../../../lib/containers/personal_access_token/AccessTokenCard'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 

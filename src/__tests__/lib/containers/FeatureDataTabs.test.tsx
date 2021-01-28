@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import { QueryResultBundle } from 'lib/utils/synapseTypes/'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import FeaturedDataTabs, { FeaturedDataTabsProps } from '../../../lib/containers/home_page/featured-data/FeaturedDataTabs'
 
