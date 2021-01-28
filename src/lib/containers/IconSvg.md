@@ -4,7 +4,6 @@
       options={{
         icon: 'data',
         color: '#e61899',
-        size: 'sm',
       }}
   />
 </p>
@@ -13,7 +12,6 @@
       options={{
         icon: 'data',
         color: '#28A745',
-        size: 'sm',
         padding: 'left'
       }}
   />
@@ -23,7 +21,6 @@
       options={{
         icon: 'data',
         color: '#28A745',
-        size: 'sm',
         padding: 'right'
       }}
     />Small green data icon with right padding
@@ -41,25 +38,25 @@
 <tr>
   <td>data</td>
   <td>
-    <IconSvg options={{ icon: 'data', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+    <IconSvg options={{ icon: 'data', color: '#BBBBBC', padding: 'left' }}/>
   </td>
 </tr>
 <tr>
   <td>dataLocked</td>
   <td>
-    <IconSvg options={{ icon: 'dataLocked', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+    <IconSvg options={{ icon: 'dataLocked', color: '#BBBBBC', padding: 'left' }}/>
   </td>
 </tr>
 <tr>
   <td>reload</td>
   <td>
-    <IconSvg options={{ icon: 'reload', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+    <IconSvg options={{ icon: 'reload', color: '#BBBBBC', padding: 'left' }}/>
   </td>
 </tr>
 <tr>
   <td>checkMark</td>
   <td>
-    <IconSvg options={{ icon: 'checkMark', color: '#BBBBBC', size: 'sm', padding: 'left' }}/>
+    <IconSvg options={{ icon: 'check', color: '#BBBBBC', padding: 'left' }}/>
   </td>
 </tr>
 </table>
