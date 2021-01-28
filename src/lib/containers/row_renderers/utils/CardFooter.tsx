@@ -79,7 +79,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       options.padding = "right"
       return (
         <>
-          <IconSVG iconBasePath={columnIconOptions.iconBasePath} options={options}></IconSVG>
+          <IconSVG options={options}></IconSVG>
           <span style={{"verticalAlign": "middle"}}>{value}</span>
         </>
       )
