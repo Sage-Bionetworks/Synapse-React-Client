@@ -2,8 +2,8 @@ import { shallow } from 'enzyme'
 import {
   AccessTokenCard,
   AccessTokenCardProps,
-} from 'lib/containers/personal_access_token/AccessTokenCard'
-import WarningModal from 'lib/containers/synapse_form_wrapper/WarningModal'
+} from '../../../../lib/containers/personal_access_token/AccessTokenCard'
+import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
 import { act } from 'react-dom/test-utils'

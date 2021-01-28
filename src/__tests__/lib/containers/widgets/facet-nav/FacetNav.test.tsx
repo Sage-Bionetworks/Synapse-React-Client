@@ -4,9 +4,12 @@ import FacetNav, {
 import * as React from 'react'
 import * as _ from 'lodash'
 import { render, fireEvent } from '@testing-library/react'
-import { QueryResultBundle, QueryBundleRequest } from 'lib/utils/synapseTypes'
+import {
+  QueryResultBundle,
+  QueryBundleRequest,
+} from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
-import { SynapseConstants } from 'lib'
+import { SynapseConstants } from '../../../../../lib'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

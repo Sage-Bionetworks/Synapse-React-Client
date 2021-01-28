@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-import iconPlus from '../../../assets/icons/icon_plus.svg'
-import iconMinus from '../../../assets/icons/icon_minus.svg'
+import IconPlus from '../../../assets/icons/IconPlus'
+import IconMinus from '../../../assets/icons/IconMinus'
 import '../../../style/components/query_filter/_facet-filter-header.scss'
 
 export type FacetFilterHeaderProps = {
@@ -25,7 +25,11 @@ export const FacetFilterHeader: React.FunctionComponent<FacetFilterHeaderProps> 
         className="FacetFilterHeader__collapseToggleBtn"
         onClick={() => onClick(!isCollapsed)}
       >
-        {isCollapsed ? <img src={iconPlus} alt="Expand Menu" className="icon-plus" /> : <img src={iconMinus} alt="Collapse Menu"  className="icon-minus" />}
+        {isCollapsed ? (
+          <IconPlus className="icon-plus" title="Expand Menu" />
+        ) : (
+          <IconMinus className="icon-minus" title="Collapse Menu" />
+        )}
       </button>
     </div>
   )

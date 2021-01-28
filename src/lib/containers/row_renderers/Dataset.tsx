@@ -4,6 +4,7 @@ import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriend
 import * as Utils from './utils'
 import { renderValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
+import { Button } from 'react-bootstrap'
 
 type DatasetProps = {
   data?: any
@@ -79,14 +80,14 @@ class Dataset extends React.Component<DatasetProps, {}> {
           </div>
           <div className="SRC-description-dataset">
             <p className="SRC-description-text">{summary}</p>
-            <div className="SRC-cardAction">
-              <button
-                className="SRC-datasetButton"
+            <div className="SRC-cardAction bootstrap-4-backport">
+              <Button
+                className="pill SRC-datasetButton"
                 onClick={this.handleLinkClick(id)}
-                type="button"
+                variant="secondary"
               >
                 Download Dataset
-              </button>
+              </Button>
             </div>
           </div>
           <div className="SRC-cardAnnotations">

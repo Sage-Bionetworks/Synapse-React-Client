@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
 import Login from '../../../lib/containers/Login'
-import { resolveAllPending } from 'lib/testutils/EnzymeHelpers'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 SynapseClient.login = jest.fn().mockResolvedValue({

@@ -5,7 +5,7 @@ import QueryWrapper, {
 } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
-import { QueryBundleRequest } from 'lib/utils/synapseTypes/'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 
 // utility function
