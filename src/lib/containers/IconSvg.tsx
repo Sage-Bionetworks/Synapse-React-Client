@@ -1,63 +1,67 @@
 import React, { useEffect } from 'react'
-import { ReactSVG } from 'react-svg'
-import styled, { css } from 'styled-components'
+import {
+  Check,
+  Cached,
+} from '@material-ui/icons'
+import {
+  Data,
+  DataLocked,
+} from '../assets/themed_icons'
 
 export type IconSvgOptions = {
   icon: string
   color: string
-  size: string
+  size?: string
   padding?: 'left' | 'right'
   hoverEffect?: boolean  // not implement currently
 }
 
 export type IconSvgProps = {
-  iconBasePath?: string
   options: IconSvgOptions
 }
 
-const defaultIconPath = '../src/lib/assets/icons/'
-const IconPath = {
-  'data': 'data.svg',
-  'reload': 'reload.svg',
-  'checkMark': 'check-mark.svg',
-  'dataLocked': 'data-locked.svg',
+export type SVGStyleProps = {
+  color?: string
+  fontSize?: string
+  verticalAlign?: string
 }
 
-// Help standardize the sizing of icons
-const IconSize = {
-  'sm': '14px'
-}
+const getIcon = (options:IconSvgOptions) => {
+  const { icon, color } = options
 
-// Help standardize the left or right padding of icons
-const IconPadding = {
-  'sm': '7px'
-}
-
-// styled component needs to be outside of the function component and render function
-// to remove multiple render warning
-const StyledSVGIcon = styled(ReactSVG)<IconSvgOptions>`
-  svg {
-    padding: 0;
-    width: auto;
-    ${({size, color, padding}) => {
-      return css`
-        fill: ${color};
-        height: ${IconSize[size]};
-        padding-left: ${padding === 'left' ? IconPadding[size] : 0};
-        padding-right: ${padding === 'right' ? IconPadding[size] : 0};
-        path {
-          fill: ${color};
-        }
-      `
-    }
+  // Styles for svg imported from mui
+  const muiSvgStyle:SVGStyleProps = {
+    color: color,
+    verticalAlign: 'middle',
   }
-`
+  // Styles for custom svg missing from mui
+  const customSvgStyle:SVGStyleProps = {
+    verticalAlign: 'middle',
+  }
+
+  switch (icon) {
+    case 'check':
+      return <Check style={muiSvgStyle}></Check>
+    case 'data':
+      return <Data fill={color} style={customSvgStyle}></Data>
+    case 'dataLocked':
+      return <DataLocked fill={color} style={customSvgStyle}></DataLocked>
+    case 'reload':
+      return <Cached style={muiSvgStyle}></Cached>
+    default:
+      return <></>
+  }
+}
 
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { iconBasePath, options} = props
-  const { icon, color, size, padding } = options
-  const iconPath = iconBasePath ? iconBasePath + IconPath[icon] : defaultIconPath + IconPath[icon]
+  const { options } = props
+  const { icon, color, padding } = options
   let mounted = true
+  const wrapperCss = {
+    padding: 0,
+    paddingLeft: padding === 'left' ? "0.2rem" : "0",
+    paddingRight: padding === 'right' ? "0.2rem" : "0",
+  }
 
   useEffect(() => {
     if (mounted) {
@@ -66,27 +70,11 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
     return () => {
       mounted = false
     }
-  }, [icon, color, size])
-
-  const errorHandler = (error: Error|null) => {
-    if (error) {
-      console.error(error)
-      return
-    }
-  }
+  }, [icon, color])
 
   return (
-    <span data-svg={icon} className="styled-svg-wrapper">
-      {
-        IconPath[icon] !== undefined && <StyledSVGIcon
-          afterInjection={errorHandler}
-          wrapper="span"
-          src={`${iconPath}`}
-          size={size}
-          color={color}
-          padding={padding}
-          />
-      }
+    <span data-svg={icon} className="styled-svg-wrapper" style={wrapperCss}>
+      { getIcon(options) }
     </span>
   )
 }
