@@ -470,7 +470,7 @@ export default class SynapseTable extends React.Component<
 
     const nextBtn = (
       <Button
-        variant="light-secondary"
+        variant="secondary"
         className="pill-xl"
         onClick={this.handlePaginationClick(NEXT)}
         style={{
@@ -487,7 +487,7 @@ export default class SynapseTable extends React.Component<
     )
     const previousBtn = (
       <Button
-        variant="light-secondary"
+        variant="secondary"
         className="pill-xl"
         onClick={this.handlePaginationClick(PREVIOUS)}
         type="button"

@@ -7,7 +7,7 @@ import {
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
   MonthlyFilesStatistics,
-} from 'lib/utils/synapseTypes/'
+} from '../../../lib/utils/synapseTypes/'
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 
 const token: string = '123444'

@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as SRC;
+@use 'sass:color';
 
 //Variables
 $baseline-grid: 21px;
@@ -100,8 +101,7 @@ $text-color-lighter: #898989;
     .SRC-cardAnnotations {
       margin: ($baseline-grid / 2) 0;
       span {
-        background: $color-chicklet-base;
-        color: white;
+        background: color.change(SRC.$secondary-action-color, $alpha: 0.05);
         display: inline-block;
         padding: 2px 15px 4px 15px;
         margin: 0 10px 5px 0;
@@ -186,13 +186,10 @@ $text-color-lighter: #898989;
       margin: $baseline-grid 0 $baseline-grid $baseline-grid * 2;
       a {
         display: inline-flex;
-        background: SRC.$primary-action-color;
         padding: 5px 20px;
         justify-content: center;
         align-items: center;
-        border-radius: 20px;
         height: 40px;
-        color: white;
       }
     }
   }
@@ -229,6 +226,7 @@ img.iconImg.SRC-datasetIcon {
 .SRC-description-dataset {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   p.SRC-description-text {
     flex-basis: 65%;
     display: inline-block;
@@ -313,5 +311,5 @@ img.iconImg.SRC-datasetIcon {
 }
 
 .cardContainer {
-  box-shadow: 0px 3px 10px rgba(0,0,0,.05)
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
 }

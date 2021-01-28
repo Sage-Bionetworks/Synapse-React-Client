@@ -2,7 +2,6 @@ import * as React from 'react'
 import { useState } from 'react'
 import FeaturedDataPlots, { FeaturedDataPlotsProps } from './FeaturedDataPlots'
 import { Icon } from '../../../containers/row_renderers/utils'
-import getColorPalette from '../../../containers/ColorGradient'
 import { Button } from 'react-bootstrap'
 
 export type FeatureDataTabProps = {
@@ -22,13 +21,7 @@ export type FeaturedDataTabsProps = {
 
 const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
-  const {
-    configs,
-    rgbIndex,
-    sql,
-    token
-  } = props
-  const { colorPalette } = getColorPalette(rgbIndex ?? 0, 1)
+  const { configs, rgbIndex, sql, token } = props
   // explore all data button
   const selectedTabProps: FeatureDataTabProps = configs[selectedTabIndex]
   return (
@@ -44,9 +37,6 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
                   ? 'FeaturedDataTabs__tabs__tab__selected'
                   : ''
               }`}
-              style={{
-                borderBottomColor: isSelectedTabIndex ? colorPalette[0] : '',
-              }}
               key={config.title}
             >
               <button onClick={() => setSelectedTabIndex(index)}>

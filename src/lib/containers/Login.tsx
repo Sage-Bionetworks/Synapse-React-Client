@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Form, FormControl } from 'react-bootstrap'
+import { Button, Form } from 'react-bootstrap'
 import ButtonWithIcon from '../assets/ButtonWithIcon'
 import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
@@ -171,9 +171,10 @@ class Login extends React.Component<Props, State> {
           Sign in with your Sage Bionetworks Synapse account
         </div>
         <Form onSubmit={this.handleLogin}>
-          <FormControl
+          <Form.Control
+            required
             autoComplete="username"
-            placeholder="username or email"
+            placeholder="Username or Email Address"
             className="LoginComponent__Input"
             id="exampleEmail"
             name="username"
@@ -181,9 +182,10 @@ class Login extends React.Component<Props, State> {
             value={this.state.username}
             onChange={this.handleChange}
           />
-          <FormControl
+          <Form.Control
+            required
             autoComplete="password"
-            placeholder="password"
+            placeholder="Password"
             className="LoginComponent__Input"
             id="examplePassword"
             name="password"

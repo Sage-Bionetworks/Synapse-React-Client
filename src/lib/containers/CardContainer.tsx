@@ -116,11 +116,7 @@ export const CardContainer = (props: CardContainerProps) => {
 
   const showViewMoreButton = showViewMore && (
     <div className="SRC-viewMore bootstrap-4-backport">
-      <Button
-        variant="light-secondary"
-        className="pill-xl"
-        onClick={handleViewMore}
-      >
+      <Button variant="secondary" className="pill-xl" onClick={handleViewMore}>
         View More
       </Button>
     </div>
