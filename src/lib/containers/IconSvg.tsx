@@ -17,7 +17,6 @@ export type IconSvgOptions = {
 }
 
 export type IconSvgProps = {
-  iconBasePath?: string
   options: IconSvgOptions
 }
 

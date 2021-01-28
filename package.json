@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.15.63",
+  "version": "1.15.64",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -36,7 +36,6 @@
     "@types/shortid": "^0.0.29",
     "@types/sinon": "^7.0.2",
     "@types/spark-md5": "^3.0.1",
-    "@types/styled-components": "^5.1.7",
     "@types/xml2js": "^0.4.4",
     "@upsetjs/react": "^1.6.2",
     "bootstrap": "^4.5.2",
@@ -81,7 +80,6 @@
     "react-scripts": "^3.4.3",
     "react-sizeme": "^2.6.12",
     "react-spinners": "^0.9.0",
-    "react-svg": "^11.2.2",
     "react-switch": "^5.0.1",
     "react-test-renderer": "^16.4.2",
     "react-tooltip": "4.2.1",
@@ -93,7 +91,6 @@
     "shortid": "^2.2.14",
     "spark-md5": "^3.0.0",
     "sql-parser": "^0.5.0",
-    "styled-components": "^5.2.1",
     "universal-cookie": "^4.0.3",
     "use-deep-compare-effect": "^1.3.1"
   },
