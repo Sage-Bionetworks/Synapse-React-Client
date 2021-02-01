@@ -62,7 +62,8 @@ $login-wrapper-width-tiny: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent url("/src/lib/assets/background/SynapseLoginPageBackground.svg");
+  background: transparent url("/src/lib/assets/background/SynapseLoginPageBackground.svg") no-repeat;
+  background-size: cover;
 }
 
 .login-panel-wrapper {
@@ -113,7 +114,8 @@ $login-wrapper-width-tiny: 320px;
 
 @media (max-width: $login-wrapper-width) {
   .login-panel-wrapper-bg {
-    background: #fff url("/src/lib/assets/background/SynapseMobileLogInFull.svg");
+    background: #fff url("/src/lib/assets/background/SynapseMobileLogInFull.svg") 50% 50%;
+    background-size: contain;
   }
   .login-panel-wrapper {
     background: transparent none;
