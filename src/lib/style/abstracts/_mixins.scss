@@ -42,6 +42,31 @@
   }
 }
 
+/*
+  @param $color string e.g. #eee or red
+  @param $width unit e.g. 15%
+ */
+@mixin bg-strike($color: false, $width: 25%) {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  &:before, &:after {
+    content: '';
+    flex: 1;
+    @if $color {
+      border-bottom: 1px solid $color;
+    } @else {
+      border-bottom: 1px solid currentColor;
+    }
+  }
+  &:before {
+    margin: 0 .25em 0 $width;
+  }
+  &:after {
+    margin: 0 $width 0 .25em;
+  }
+}
+
 
 
 
