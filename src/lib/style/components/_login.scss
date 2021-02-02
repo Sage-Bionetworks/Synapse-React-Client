@@ -64,6 +64,9 @@ $login-wrapper-width-tiny: 320px;
   justify-content: center;
   background: transparent url("/src/lib/assets/background/SynapseLoginPageBackground.svg") no-repeat;
   background-size: cover;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
 .login-panel-wrapper {
