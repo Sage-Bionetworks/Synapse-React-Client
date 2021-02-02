@@ -1,10 +1,10 @@
 import * as React from 'react'
-import QueryWrapper from 'lib/containers/QueryWrapper'
-import Search, { Searchable } from 'lib/containers/Search'
-import { SynapseConstants } from 'lib'
-import { GenericCardSchema } from 'lib/containers/GenericCard'
-import { CardConfiguration } from 'lib/containers/CardContainerLogic'
-import CardContainer from 'lib/containers/CardContainer'
+import QueryWrapper from '../../../lib/containers/QueryWrapper'
+import Search, { Searchable } from '../../../lib/containers/Search'
+import { SynapseConstants } from '../../../lib'
+import { GenericCardSchema } from '../../../lib/containers/GenericCard'
+import { CardConfiguration } from '../../../lib/containers/CardContainerLogic'
+import CardContainer from '../../../lib/containers/CardContainer'
 
 export const SearchDemo: React.SFC = () => {
   const sql = 'SELECT * FROM syn20337467'
