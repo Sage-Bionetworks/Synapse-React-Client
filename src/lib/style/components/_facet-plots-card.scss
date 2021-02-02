@@ -7,11 +7,23 @@
     min-height: 64px;
     padding: 12px 25px;
     display:flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
   }
   &__title {
     font-size: 16px;
-    font-weight: bold;    
+    font-weight: bold;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  &__description {
+    padding: 10px 0px;
+    min-height: 125px;
+  }
+  &__link {
+    padding-top: 10px;
+    font-weight: bold;
   }
   &__body {
     padding: 33px 44px;
@@ -30,10 +42,6 @@
       display: flex;
       text-align: center;
       white-space: nowrap;
-      &__link {
-        padding-top: 33px;
-        width: 35%;
-      }
     }
     hr {
       margin: 33px 0px;
