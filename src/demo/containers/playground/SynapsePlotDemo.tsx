@@ -1,5 +1,5 @@
 import * as React from 'react'
-import SynapsePlot from 'lib/containers/widgets/SynapsePlot'
+import SynapsePlot from '../../../lib/containers/widgets/SynapsePlot'
 
 type SynapsePlotDemoProps = {
   token: string

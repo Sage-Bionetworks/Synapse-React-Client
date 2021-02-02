@@ -3,9 +3,9 @@ import { SynapseVersion } from '../../lib/utils/synapseTypes/'
 import { SynapseClient } from '../../lib/utils/'
 import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
-import StatisticsPlot from 'lib/containers/StatisticsPlot'
+import StatisticsPlot from '../../lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
-import HasAccess from 'lib/containers/HasAccess'
+import HasAccess from '../../lib/containers/HasAccess'
 
 type DemoState = {
   token: string | null

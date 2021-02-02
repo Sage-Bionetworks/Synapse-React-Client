@@ -34,6 +34,7 @@ Or a query per card (selecting a different facet value):
         plotsConfig: {
           configs: [{
             title:'The Religious Orders and Memory and Aging Project Study',
+            description:'This study generated genomic variants, gene expression, epigenetic, proteomics, and metabolomics data on two human cohorts: the Religious Orders Study (ROS) and the Memory and Aging Project (MAP).',
             facetsToPlot:['dataType', 'assay'],
             selectFacetColumnName:'study',
             selectFacetColumnValue:'ROSMAP',
@@ -41,6 +42,7 @@ Or a query per card (selecting a different facet value):
           },
           {
             title:'The Mount Sinai Brain Bank Study',
+            description:'This study generated gene expression, genomic variant and proteomic data from brain specimens obtained from the Mount Sinai/JJ Peters VA Medical Center Brain Bank (MSBB).',
             facetsToPlot:['dataType', 'assay'],
             selectFacetColumnName:'study',
             selectFacetColumnValue:'MSBB',
@@ -48,6 +50,7 @@ Or a query per card (selecting a different facet value):
           },
           {
             title:'The RNAseq Harmonization Study',
+            description: 'The goal of this project was to create a uniformly processed RNAseq dataset across the three largest AMP-AD contributed studies (ROSMAP/MSBB/MayoRNAseq).',
             facetsToPlot:['dataType', 'assay'],
             selectFacetColumnName:'study',
             selectFacetColumnValue:'rnaSeqReprocessing',
