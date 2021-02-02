@@ -9,6 +9,7 @@ import FacetPlotsCard from './FacetPlotsCard'
 export type QueryPerFacetPlotsCardProps = {
   token?: string
   title?: string
+  description?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   facetAliases?: {}
@@ -49,6 +50,7 @@ export function getQueryRequest(
 const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProps> = props => {
   const {
     title,
+    description,
     sql,
     facetsToPlot,
     rgbIndex,
@@ -69,6 +71,7 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProp
         <ErrorBanner />
         <FacetPlotsCard
           title={title}
+          description={description}
           facetsToPlot={facetsToPlot}
           rgbIndex={rgbIndex}
           detailsPagePath={detailsPagePath}
