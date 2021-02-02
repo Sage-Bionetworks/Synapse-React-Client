@@ -39,7 +39,7 @@ const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsC
         <ErrorBanner />
         {facetsToPlot?.map(facetName => {
           return (
-            <FacetPlotsCard facetsToPlot={[facetName]} rgbIndex={rgbIndex} />
+            <FacetPlotsCard key={`FacetPlotCard-${facetName}`} facetsToPlot={[facetName]} rgbIndex={rgbIndex} />
           )
         })}
       </QueryWrapper>
