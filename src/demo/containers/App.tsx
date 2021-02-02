@@ -1,12 +1,17 @@
 import * as React from 'react'
+import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
 import Login from '../../lib/containers/Login'
 import logoSvg from '../../images/logo.svg'
 import '../style/App.css'
 import '../style/DemoStyle.css'
 import '@fortawesome/fontawesome-free/css/all.css'
+import Demo from './Demo'
+import Playground from './playground/Playground'
+import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
+import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import { SynapseClient } from '../../lib/utils/'
+import { RouteChildrenProps } from 'react-router'
 import { Alert } from 'react-bootstrap'
-import LoginPage from '../../lib/containers/LoginPage'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -134,9 +139,108 @@ export default class App extends React.Component<{}, AppState> {
     }
     return (
       <TokenContext.Provider value={token}>
-        <div id={"container"}>
-          <LoginPage backgroundElementId={"container"}></LoginPage>
-        </div>
+        <Router basename={process.env.PUBLIC_URL}>
+          <div>
+            <div className="App-header text-center">
+              <img src={logoSvg} className="App-logo" alt="logo" />
+              <h4 className="white-text">Synapse React Client Demo</h4>
+            </div>
+            {alert}
+            {this.renderLoginAndSignout(token)}
+            <ul>
+              <li>
+                <Link to="/">Demo</Link>
+              </li>
+              <li>
+                <Link to="/Playground">Playground</Link>
+              </li>
+              <li>
+                <Link to="/drugUploadTool">Drug Upload Tool</Link>
+              </li>
+              <li>
+                <Link to="/contribReqForm">
+                  AMP-AD external data contribution{' '}
+                </Link>
+              </li>
+            </ul>
+            <Route exact={true} path="/" component={Demo} />
+            <Route
+              path="/Playground"
+              component={(props: RouteChildrenProps) => (
+                <Playground {...props} token={token} />
+              )}
+            />
+            <Route
+              exact={true}
+              path="/drugUploadTool"
+              render={props => {
+                const searchParamsProps: any = {}
+                // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+                const searchParams = new URLSearchParams(props.location.search)
+                searchParams.forEach((value, key) => {
+                  searchParamsProps[key] = value
+                })
+                return !props.location.search ? (
+                  <SynapseFormSubmissionsGrid
+                    pathpart="drugUploadTool"
+                    token={token}
+                    formClass="drug-upload-tool"
+                    formGroupId="9"
+                    itemNoun="Compound"
+                  />
+                ) : (
+                  <SynapseFormWrapper
+                    {...props}
+                    formSchemaEntityId="syn20680102"
+                    fileNamePath="naming.compound_name"
+                    formUiSchemaEntityId="syn20693568"
+                    formNavSchemaEntityId="syn20680027"
+                    token={token}
+                    formTitle="Your Submission"
+                    formClass="drug-upload-tool"
+                    searchParams={searchParamsProps}
+                  />
+                )
+              }}
+            />
+
+            {/*------------------- contributions request form ---------------------------------*/}
+            <Route
+              exact={true}
+              path="/contribReqForm"
+              render={props => {
+                let searchParamsProps: any = {}
+                // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+                const searchParams = new URLSearchParams(props.location.search)
+                searchParams.forEach((value, key) => {
+                  searchParamsProps[key] = value
+                })
+                return !props.location.search ? (
+                  <SynapseFormSubmissionsGrid
+                    pathpart="contribReqForm"
+                    formGroupId="11"
+                    token={token}
+                    formClass="contribution-request"
+                    itemNoun={'Contribution Request'}
+                  />
+                ) : (
+                  <SynapseFormWrapper
+                    {...props}
+                    formSchemaEntityId="syn20692910"
+                    fileNamePath="study.submission_name"
+                    formUiSchemaEntityId="syn20692911"
+                    formNavSchemaEntityId="syn20968007"
+                    isWizardMode={true}
+                    token={token}
+                    formTitle="Your Contribution Request"
+                    formClass="contribution-request"
+                    searchParams={searchParamsProps}
+                  />
+                )
+              }}
+            />
+          </div>
+        </Router>
       </TokenContext.Provider>
     )
   }
