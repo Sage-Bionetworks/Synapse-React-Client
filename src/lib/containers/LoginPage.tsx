@@ -1,20 +1,9 @@
 import * as React from 'react'
 import Login from './Login'
 import SynapseLogoSvg from '../../lib/assets/logos/synapse-logo-blue.svg'
-import { useEffect } from 'react'
 
 const LoginPage: React.FunctionComponent = (props) => {
-  let mounted = true
   const thisClass = "login-panel-wrapper"
-
-  useEffect(() => {
-    if (mounted) {
-      //
-    }
-    return () => {
-      mounted = false
-    }
-  }, [])
 
   return (
     <div className={"login-panel-wrapper-bg"}>
