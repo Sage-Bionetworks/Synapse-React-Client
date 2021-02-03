@@ -52,6 +52,9 @@
     float: none;
     display: inline;
   }
+  .form-control::placeholder {
+    color: SrcVars.$gray-deemphasized;
+  }
 
 }
 
@@ -62,7 +65,7 @@ $login-wrapper-width-tiny: 320px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent url("/src/lib/assets/background/SynapseLoginPageBackground.svg") no-repeat;
+  background: transparent url("https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg") no-repeat;
   background-size: cover;
   margin: 0;
   padding: 0;
@@ -72,7 +75,7 @@ $login-wrapper-width-tiny: 320px;
 .login-panel-wrapper {
   display: flex;
   max-width: $login-wrapper-width;
-  background: #fff url('/src/lib/assets/background/login-panel-bg.svg') no-repeat right bottom 20px;
+  background: #fff url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px;
 
   > div {
     flex: 1
@@ -117,7 +120,7 @@ $login-wrapper-width-tiny: 320px;
 
 @media (max-width: $login-wrapper-width) {
   .login-panel-wrapper-bg {
-    background: #fff url("/src/lib/assets/background/SynapseMobileLogInFull.svg") 50% 50%;
+    background: #fff url("https://s3.amazonaws.com/static.synapse.org/images/SynapseMobileLogInFull.svg") 50% 50%;
     background-size: contain;
   }
   .login-panel-wrapper {
@@ -128,6 +131,9 @@ $login-wrapper-width-tiny: 320px;
     }
     .panel-logo {
       text-align: center;
+      img {
+        width: 200px
+      }
       .panel-tagline {
         display: block;
         margin: 6px 0 0;
