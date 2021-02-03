@@ -6,7 +6,9 @@ import {
 import {
   Data,
   DataLocked,
-} from '../assets/themed_icons'
+  Gene1,
+  Gene2,
+} from '../assets/mui_components'
 
 export type IconSvgOptions = {
   icon: string
@@ -42,12 +44,16 @@ const getIcon = (options:IconSvgOptions) => {
   switch (icon) {
     case 'check':
       return <Check style={muiSvgStyle}></Check>
+    case 'reload':
+      return <Cached style={muiSvgStyle}></Cached>
     case 'data':
       return <Data fill={color} style={customSvgStyle}></Data>
     case 'dataLocked':
       return <DataLocked fill={color} style={customSvgStyle}></DataLocked>
-    case 'reload':
-      return <Cached style={muiSvgStyle}></Cached>
+    case 'gene1':
+      return <Gene1 fill={color} style={customSvgStyle}></Gene1>
+    case 'gene2':
+      return <Gene2 fill={color} style={customSvgStyle}></Gene2>
     default:
       return <></>
   }

@@ -1,4 +1,7 @@
 ```jsx
+<h4>
+  Some Examples:
+</h4>
 <p>
   Small pink data icon with no padding<IconSvg
       options={{
@@ -26,39 +29,26 @@
     />Small green data icon with right padding
 </p>
 
-<p>Available sizes: only sm (14px in height) for now.  </p>
-<p>
-  Available icons (only 4 for now):
-</p>
+<h4>
+  Available MUI or Custom Icons with MUI Support:
+</h4>
 <table>
-<tr>
-  <th>Name</th>
-  <td>Icon</td>
-</tr>
-<tr>
-  <td>data</td>
-  <td>
-    <IconSvg options={{ icon: 'data', color: '#BBBBBC', padding: 'left' }}/>
-  </td>
-</tr>
-<tr>
-  <td>dataLocked</td>
-  <td>
-    <IconSvg options={{ icon: 'dataLocked', color: '#BBBBBC', padding: 'left' }}/>
-  </td>
-</tr>
-<tr>
-  <td>reload</td>
-  <td>
-    <IconSvg options={{ icon: 'reload', color: '#BBBBBC', padding: 'left' }}/>
-  </td>
-</tr>
-<tr>
-  <td>checkMark</td>
-  <td>
-    <IconSvg options={{ icon: 'check', color: '#BBBBBC', padding: 'left' }}/>
-  </td>
-</tr>
+  <tr>
+    <th>Name</th>
+    <th>Icon</th>
+  </tr>
+  {
+    [
+      'check',
+      'data',
+      'dataLocked',
+      'gene1',
+      'gene2',
+      'reload',
+    ].map(el => {
+      return <tr><td>{el}</td> <td> <IconSvg options={{ icon: el, color: '#ff7700', padding: 'left' }}/></td></tr>
+    })
+  }
 </table>
 
 
