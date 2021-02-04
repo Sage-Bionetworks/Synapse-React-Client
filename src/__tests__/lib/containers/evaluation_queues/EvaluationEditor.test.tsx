@@ -157,6 +157,8 @@ describe('test EvaluationEditor', () => {
     wrapper.find('Button.save-button').simulate('click')
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
+    console.log(wrapper.debug())
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
   })
 
   test('save button clicked when using evaluationId updates evaluation', () => {
@@ -167,6 +169,26 @@ describe('test EvaluationEditor', () => {
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
     expect(mockCreateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
+  })
+
+  test('save button clicked - save failure', () => {
+    mockUpdateEvaluation.mockImplementation(
+      () =>
+        new JestMockPromise((resolve, reject) =>
+          reject(new Error('UpdateEvaluation error')),
+        ),
+    )
+
+    const wrapper = mount(<EvaluationEditor {...props} />)
+
+    //clicking save button again after the first time should call update instead
+    wrapper.find('Button.save-button').simulate('click')
+    expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
+    expect(mockCreateEvaluation).not.toBeCalled()
+    expect(mockOnSaveSuccess).not.toBeCalled()
+    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
   })
 
   test('dropdown menu evaluation has no id - hide delete option', () => {
@@ -208,7 +230,7 @@ describe('test EvaluationEditor', () => {
     deleteOption.simulate('click')
 
     const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
+    expect(deleteWarningModal.exists()).toBe(true)
 
     //simulate the warning button click
     deleteWarningModal.find('.btn-danger').simulate('click')
@@ -246,7 +268,7 @@ describe('test EvaluationEditor', () => {
     deleteOption.simulate('click')
 
     const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
+    expect(deleteWarningModal.exists()).toBe(true)
 
     //simulate the warning button click
     deleteWarningModal.find('.btn-danger').simulate('click')
@@ -255,5 +277,6 @@ describe('test EvaluationEditor', () => {
     expect(mockOnDeleteSuccess).not.toBeCalled()
 
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
   })
 })
