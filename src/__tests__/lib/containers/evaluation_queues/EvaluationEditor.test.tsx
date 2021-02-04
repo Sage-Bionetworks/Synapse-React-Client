@@ -157,7 +157,7 @@ describe('test EvaluationEditor', () => {
     wrapper.find('Button.save-button').simulate('click')
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
-    console.log(wrapper.debug())
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
   })
 
@@ -169,6 +169,7 @@ describe('test EvaluationEditor', () => {
     expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
     expect(mockCreateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
   })
 
@@ -230,7 +231,7 @@ describe('test EvaluationEditor', () => {
     deleteOption.simulate('click')
 
     const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.exists()).toBe(true)
+    expect(deleteWarningModal.prop('show')).toBe(true)
 
     //simulate the warning button click
     deleteWarningModal.find('.btn-danger').simulate('click')
@@ -268,7 +269,7 @@ describe('test EvaluationEditor', () => {
     deleteOption.simulate('click')
 
     const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.exists()).toBe(true)
+    expect(deleteWarningModal.prop('show')).toBe(true)
 
     //simulate the warning button click
     deleteWarningModal.find('.btn-danger').simulate('click')
