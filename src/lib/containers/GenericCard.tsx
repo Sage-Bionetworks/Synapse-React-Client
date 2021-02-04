@@ -153,9 +153,33 @@ export const renderLabel = (args: {
     columnModels,
   })
 
-  if (!labelLink || !str) {
-    // they either don't need a link or the array came back empty
+  if (!str) {
+    // the array came back empty
     return str
+  }
+
+  let className = ''
+  const style: React.CSSProperties = {}
+  if (isHeader) {
+    className = 'SRC-lightLink'
+  } else {
+    className = 'SRC-primary-text-color'
+  }
+
+  if (!labelLink) {
+    // if this looks like a Synapse ID, then autolink.
+    if (str.match(SYNAPSE_REGX)) {
+      // its a synId
+      return <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://www.synapse.org/#!Synapse:${str}`} className={className}>
+          {str}
+        </a>
+    } else {
+      // they don't need a link
+      return str
+    }
   }
 
   if (labelLink.isMarkdown) {
@@ -174,13 +198,6 @@ export const renderLabel = (args: {
     }
   }
   const split = strList ? strList : str.split(',')
-  let className = ''
-  const style: React.CSSProperties = {}
-  if (isHeader) {
-    className = 'SRC-lightLink'
-  } else {
-    className = 'SRC-primary-text-color'
-  }
   return split.map((el, index) => {
     const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
     const value = wrapValueWithParens ? `(${el})` : el
