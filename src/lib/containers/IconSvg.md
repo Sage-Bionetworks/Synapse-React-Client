@@ -40,11 +40,19 @@
   {
     [
       'check',
+      'chromatin',
+      'clinical',
       'data',
       'dataLocked',
       'gene1',
       'gene2',
+      'rat',
       'reload',
+      'lineGraph',
+      'photoCamera',
+      'kinomics',
+      'proteomics',
+      'horizontalDots'
     ].map(el => {
       return <tr><td>{el}</td> <td> <IconSvg options={{ icon: el, color: '#ff7700', padding: 'left' }}/></td></tr>
     })

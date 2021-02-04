@@ -1,7 +1,7 @@
 import * as React from 'react'
 import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 
-export const Gene1 = (props:SvgIconProps) => {
+const Gene1 = (props:SvgIconProps) => {
   const { fill, style } = props
   return (
     <SvgIcon style={style}>
@@ -22,3 +22,5 @@ export const Gene1 = (props:SvgIconProps) => {
     </SvgIcon>
   );
 }
+
+export default Gene1

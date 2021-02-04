@@ -2,13 +2,20 @@ import React, { useEffect } from 'react'
 import {
   Check,
   Cached,
+  PhotoCameraOutlined,
 } from '@material-ui/icons'
-import {
-  Data,
-  DataLocked,
-  Gene1,
-  Gene2,
-} from '../assets/mui_components'
+
+import Chromatin from '../assets/mui_components/Chromatin'
+import Data from '../assets/mui_components/Data'
+import DataLocked from '../assets/mui_components/DataLocked'
+import Gene1 from '../assets/mui_components/Gene1'
+import Gene2 from '../assets/mui_components/Gene2'
+import Clinical from '../assets/mui_components/Clinical'
+import LineGraph from '../assets/mui_components/LineGraph'
+import Rat from '../assets/mui_components/Rat'
+import Kinomics from '../assets/mui_components/Kinomics'
+import Proteomics from '../assets/mui_components/Proteomics'
+import HorizontalDots from '../assets/mui_components/HorizontalDots'
 
 export type IconSvgOptions = {
   icon: string
@@ -26,6 +33,7 @@ export type SVGStyleProps = {
   color?: string
   fontSize?: string
   verticalAlign?: string
+  fill?: string
 }
 
 const getIcon = (options:IconSvgOptions) => {
@@ -46,6 +54,14 @@ const getIcon = (options:IconSvgOptions) => {
       return <Check style={muiSvgStyle}></Check>
     case 'reload':
       return <Cached style={muiSvgStyle}></Cached>
+    case 'photoCamera':
+      return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
+    case 'rat':
+      return <Rat fill={color} style={customSvgStyle}></Rat>
+    case 'chromatin':
+      return <Chromatin fill={color} style={customSvgStyle}></Chromatin>
+    case 'clinical':
+      return <Clinical fill={color} style={customSvgStyle}></Clinical>
     case 'data':
       return <Data fill={color} style={customSvgStyle}></Data>
     case 'dataLocked':
@@ -54,6 +70,16 @@ const getIcon = (options:IconSvgOptions) => {
       return <Gene1 fill={color} style={customSvgStyle}></Gene1>
     case 'gene2':
       return <Gene2 fill={color} style={customSvgStyle}></Gene2>
+    case 'lineGraph':
+      return <LineGraph fill={color} style={customSvgStyle}></LineGraph>
+    case 'kinomics':
+      customSvgStyle.fill = "none"
+      return <Kinomics fill={color} style={customSvgStyle}></Kinomics>
+    case 'proteomics':
+      customSvgStyle.fill = "none"
+      return <Proteomics fill={color} style={customSvgStyle}></Proteomics>
+    case 'horizontalDots':
+      return <HorizontalDots fill={color} style={customSvgStyle}></HorizontalDots>
     default:
       return <></>
   }
