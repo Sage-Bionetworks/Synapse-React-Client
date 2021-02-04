@@ -173,7 +173,7 @@ export const renderLabel = (args: {
       return <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://www.synapse.org/#!Synapse:${str}`} className={className} style={style}>
+          href={`https://www.synapse.org/#!Synapse:${str}`} className={className}>
           {str}
         </a>
     } else {
