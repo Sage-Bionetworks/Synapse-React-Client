@@ -222,7 +222,11 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
           <Form>
             <Row>
               <Col>
-                <h5>ROUND STATUS</h5>
+                <h5>
+                  ROUND STATUS
+                  {evaluationRoundInput.id &&
+                    ' (' + evaluationRoundInput.id + ')'}
+                </h5>
               </Col>
               <Col>
                 <EvaluationRoundEditorDropdown

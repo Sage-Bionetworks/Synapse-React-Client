@@ -102,7 +102,9 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
                 </Col>
               </Row>
 
-              <h4>{evaluation.name}</h4>
+              <h4>
+                {evaluation.name} ({evaluation.id})
+              </h4>
 
               <label>Status</label>
               <EvaluationDisplayStatus status={evaluation.status} />
