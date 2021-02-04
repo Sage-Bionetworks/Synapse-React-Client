@@ -1,4 +1,4 @@
-import { Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
+import { Alert, Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
 import React, { useEffect, useState } from 'react'
 import { capitalize } from 'lodash-es'
 import {
@@ -51,6 +51,13 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   }
 
   const [error, setError] = useState<SynapseClientError>()
+  const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (error) {
+      setShowSaveSuccess(false)
+    }
+  }, [error])
 
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
@@ -96,6 +103,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   const onSave = () => {
     // clear out error
     setError(undefined)
+    setShowSaveSuccess(false)
     const newOrUpdatedEvaluation: Evaluation = {
       ...evaluation,
       name,
@@ -112,6 +120,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
     promise
       .then(evaluation => {
         setEvaluation(evaluation)
+        setShowSaveSuccess(true)
         if (onSaveSuccess) {
           onSaveSuccess(evaluation.id!)
         }
@@ -208,6 +217,17 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
             />
           )}
           {error && <ErrorBanner error={error} token={sessionToken} />}
+          {showSaveSuccess && (
+            <Alert
+              className="save-success-alert"
+              dismissible={true}
+              variant="success"
+              transition={false}
+              onClose={() => setShowSaveSuccess(false)}
+            >
+              Successfully saved.
+            </Alert>
+          )}
           <div className="d-flex justify-content-end">
             <Button className="save-button" onClick={onSave}>
               Save
