@@ -1033,8 +1033,13 @@ a.dropdown-item {
   }
 }
 
-.plotly .slice {
-  cursor: pointer;
+.js-plotly-plot .plotly {
+  .slice {
+    cursor: pointer;
+  }
+  .main-svg {
+    overflow: visible;
+  }
 }
 
 hr ~ .SRC-wrapper {
