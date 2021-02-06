@@ -28,6 +28,7 @@ const Plot = createPlotlyComponent(Plotly)
 
 export type FacetPlotsCardOwnProps = {
   title?: string
+  description?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   detailsPagePath?: string
@@ -51,6 +52,7 @@ const layout: Partial<PlotlyTyped.Layout> = {
 
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   title,
+  description,
   isLoadingNewData,
   rgbIndex,
   facetsToPlot,
@@ -122,11 +124,9 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     let detailsPageLink = <></>
     if (detailsPagePath && selectedFacetValue) {
       detailsPageLink = (
-        <div className="FacetPlotsCard__body__footer">
-          <div className="FacetPlotsCard__body__footer__link">
-            <a href={detailsPagePath}>View {selectedFacetValue}</a>
-          </div>
-        </div>
+        <div className="FacetPlotsCard__link">
+          <a href={detailsPagePath}>View {selectedFacetValue}</a>
+        </div>      
       )
     }
     const isShowingMultiplePlots = facetPlotDataArray.length > 1
@@ -142,6 +142,8 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           style={{ backgroundColor: colorPalette[0].replace(')', ',.05)') }}
         >
           <span className="FacetPlotsCard__title">{cardTitle}</span>
+          {description && <span className="FacetPlotsCard__description">{description}</span>}
+          {detailsPageLink}
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
@@ -180,8 +182,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 </div>
               </div>
             )
-          })}
-          {detailsPageLink}
+          })}          
         </div>
       </div>
     )

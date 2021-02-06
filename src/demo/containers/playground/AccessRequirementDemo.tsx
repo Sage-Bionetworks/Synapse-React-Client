@@ -1,5 +1,5 @@
 import * as React from 'react'
-import AccessRequirementList from 'lib/containers/access_requirement_list/AccessRequirementList'
+import AccessRequirementList from '../../../lib/containers/access_requirement_list/AccessRequirementList'
 
 type AccessRequirementDemoProps = {
   token: string

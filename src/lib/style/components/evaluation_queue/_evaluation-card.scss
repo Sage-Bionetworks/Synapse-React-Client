@@ -2,7 +2,11 @@
 
 .evaluation-card {
   .submit-button {
-    margin-top: 1rem;
+    display: block;
+  }
+  .created-on {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .status {

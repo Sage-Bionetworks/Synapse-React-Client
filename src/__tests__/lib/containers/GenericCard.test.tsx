@@ -436,6 +436,25 @@ describe('it makes the correct URL for the secondary labels', () => {
     const markdown = wrapper.find(MarkdownSynapse)
     expect(markdown).toHaveLength(2)
   })
+
+  it('auto-links a single Synapse ID value', () => {
+    const value = 'syn1234567'
+    const wrapper = mount(
+      <>
+        {renderLabel({
+          value,
+          labelLink: undefined,
+          isHeader: false,
+          selectColumns: selectColumns,
+          columnModels: undefined,
+          columnName: DATASETS,
+        })}
+      </>,
+    )
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.props().href).toEqual(`https://www.synapse.org/#!Synapse:${value}`)    
+  })
 })
 
 describe('It renders markdown for the description', () => {

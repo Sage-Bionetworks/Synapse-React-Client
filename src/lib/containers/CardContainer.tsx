@@ -95,10 +95,16 @@ export const CardContainer = (props: CardContainerProps) => {
   if (!data) {
     return <div>{isLoading && loadingScreen}</div>
   } else if (data && data.queryResult.queryResults.rows.length === 0) {
-    // data was retrieved from the backend but there is none to show, we return a empty fragment
-    // there could be a more informed UX decision here but the current use case right now
-    // should display nothing
-    return <React.Fragment />
+    // data was retrieved from the backend but there is none to show.
+    // show "no results" UI (see PORTALS-1497)
+    return <>
+      <p className="SRC-no-results-title">
+        There are currently no results.
+      </p>
+      <p className="SRC-no-results-description">
+        Information is always being updated, so check back later to see if results have been added.
+      </p>
+    </>
   }
   const schema = {}
   data.queryResult.queryResults.headers.forEach((element, index) => {

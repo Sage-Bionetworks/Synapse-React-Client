@@ -118,15 +118,13 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
                 utc={utc}
               />
               {permissions?.canSubmit && (
-                <div>
-                  <Button
-                    className="submit-button"
-                    type="primary"
-                    onClick={onSubmit}
-                  >
-                    Submit
-                  </Button>
-                </div>
+                <Button
+                  className="submit-button"
+                  type="primary"
+                  onClick={onSubmit}
+                >
+                  Submit
+                </Button>
               )}
             </>
           )}

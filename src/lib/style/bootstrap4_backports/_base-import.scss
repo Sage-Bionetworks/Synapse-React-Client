@@ -10,6 +10,13 @@
 
   @import 'node_modules/bootstrap/scss/bootstrap';
 
+  .alert-danger {
+    @include alert-variant(
+      SRC.$bootstrap-4-danger-bg,
+      color.adjust(SRC.$bootstrap-4-danger-bg, $lightness: -5%),
+      SRC.$bootstrap-4-danger-text-color
+    );
+  }
   // For all buttons, make the box shadow more intense on hover
   .btn {
     @include hover() {
