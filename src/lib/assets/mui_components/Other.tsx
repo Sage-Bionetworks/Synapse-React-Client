@@ -1,7 +1,7 @@
 import * as React from 'react'
 import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 
-const HorizontalDots = (props:SvgIconProps) => {
+const Other = (props:SvgIconProps) => {
   const { fill, style } = props
   return (
     <SvgIcon style={style}>
@@ -12,4 +12,4 @@ const HorizontalDots = (props:SvgIconProps) => {
   )
 }
 
-export default HorizontalDots
+export default Other

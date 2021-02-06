@@ -52,7 +52,7 @@
       'photoCamera',
       'kinomics',
       'proteomics',
-      'horizontalDots'
+      'other'
     ].map(el => {
       return <tr><td>{el}</td> <td> <IconSvg options={{ icon: el, color: '#ff7700', padding: 'left' }}/></td></tr>
     })

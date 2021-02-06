@@ -15,7 +15,7 @@ import LineGraph from '../assets/mui_components/LineGraph'
 import Rat from '../assets/mui_components/Rat'
 import Kinomics from '../assets/mui_components/Kinomics'
 import Proteomics from '../assets/mui_components/Proteomics'
-import HorizontalDots from '../assets/mui_components/HorizontalDots'
+import Other from '../assets/mui_components/Other'
 
 export type IconSvgOptions = {
   icon: string
@@ -78,8 +78,8 @@ const getIcon = (options:IconSvgOptions) => {
     case 'proteomics':
       customSvgStyle.fill = "none"
       return <Proteomics fill={color} style={customSvgStyle}></Proteomics>
-    case 'horizontalDots':
-      return <HorizontalDots fill={color} style={customSvgStyle}></HorizontalDots>
+    case 'other':
+      return <Other fill={color} style={customSvgStyle}></Other>
     default:
       return <></>
   }
