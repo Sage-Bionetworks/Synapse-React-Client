@@ -1,6 +1,7 @@
 import 'regenerator-runtime/runtime'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
+import LoginPage from './containers/LoginPage'
 import StatisticsPlot from './containers/StatisticsPlot'
 import EntityForm from './containers/EntityForm'
 import HasAccess from './containers/HasAccess'
@@ -18,6 +19,7 @@ import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationE
 
 const SynapseComponents = {
   Login,
+  LoginPage,
   EntityForm,
   UserCard,
   StatisticsPlot,
