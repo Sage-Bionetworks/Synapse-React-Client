@@ -53,6 +53,7 @@
   }
   .form-control::placeholder {
     color: SrcVars.$gray-deemphasized;
+    font-style: normal;
   }
 
 }
@@ -69,6 +70,7 @@ $login-wrapper-width-tiny: 320px;
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  min-width: 100vw;
 }
 
 .login-panel-wrapper {
