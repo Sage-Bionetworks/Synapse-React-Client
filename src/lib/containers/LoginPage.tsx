@@ -1,6 +1,5 @@
 import * as React from 'react'
 import Login from './Login'
-import SynapseLogoSvg from '../../lib/assets/logos/synapse-logo-blue.svg'
 
 export type LoginPageProps = {
   googleRedirectUrl?: string
@@ -22,7 +21,7 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = (props) => {
           <div className={"panel-logo"}>
             <img
               alt={'Synapse logo'}
-              src={SynapseLogoSvg}
+              src={"https://s3.amazonaws.com/static.synapse.org/images/synapse-logo-blue.svg"}
             />
             <p className={"panel-tagline"}>Organize. Get credit. Collaborate.</p>
           </div>
