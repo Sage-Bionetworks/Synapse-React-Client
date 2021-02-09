@@ -388,7 +388,7 @@ export const getActualFileHandleByIdURL = (
   fileAssociateId: string,
   redirect: boolean = true,
 ): Promise<string> => {
-  // get the presigned URL for this file handle and open it in a new tab
+  // get the presigned URL for this file handle association.
   return doGet<string>(
     `/file/v1/file/${handleId}?fileAssociateType=${fileAssociateType}&fileAssociateId=${fileAssociateId}&redirect=${redirect}`,
     sessionToken,
