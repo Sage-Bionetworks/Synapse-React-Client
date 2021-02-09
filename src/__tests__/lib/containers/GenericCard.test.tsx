@@ -20,12 +20,15 @@ import {
 } from '../../../lib/utils/synapseTypes'
 import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
 import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
+
+mockAllIsIntersecting(true)
 
 describe('it renders the UI correctly', () => {
   const iconOptions = {
