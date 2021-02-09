@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.15.67",
+  "version": "1.15.68",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -70,7 +70,7 @@
     "react-datetime": "^3.0.4",
     "react-dom": "16.13.1",
     "react-error-boundary": "^3.0.2",
-    "react-intersection-observer": "3.0.2",
+    "react-intersection-observer": "^8.31.0",
     "react-jsonschema-form": "^1.7.0",
     "react-mailchimp-subscribe": "^2.1.0",
     "react-measure": "^2.1.2",
