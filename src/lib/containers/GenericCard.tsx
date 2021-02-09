@@ -403,7 +403,7 @@ export default class GenericCard extends React.Component<
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
-      paddingBottom: showFooter ? undefined : '15px',
+      paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
     }
 
     if (isHeader) {
@@ -518,6 +518,7 @@ export default class GenericCard extends React.Component<
             secondaryLabelLimit={secondaryLabelLimit}
             values={values}
             columnIconOptions={columnIconOptions}
+            className={`${imageFileHandleIdValue ? 'hasImage' : 'hasIcon'}`}
           />
         )}
       </div>

@@ -145,7 +145,10 @@ $text-color-lighter: #898989;
   .SRC-cardMetadata {
     display: block;
     background-color: $color-gray-background;    
-    padding: $baseline-grid $baseline-grid $baseline-grid 15%;
+    padding: $baseline-grid;
+    &.hasIcon {
+      padding-left: 15%;
+    }
     .row {
       margin: 5px !important;
       > * {
