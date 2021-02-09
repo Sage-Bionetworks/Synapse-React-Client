@@ -1,6 +1,7 @@
 import { FileHandleAssociateType } from '../../utils/synapseTypes'
 import React, { useEffect, useState } from 'react'
 import { SynapseClient } from '../../utils'
+import { useInView } from 'react-intersection-observer'
 
 type ImageFileHandleProps = {
   token: string | undefined
@@ -19,7 +20,11 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
   } = props
 
   const [url, setUrl] = useState<string>()
-
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    rootMargin: '500px 0px',
+  })
+  
   useEffect(() => {
     const getData = async () => {
       const isFileView = tableEntityConcreteType?.includes('EntityView')
@@ -27,7 +32,7 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
         ? FileHandleAssociateType.FileEntity
         : FileHandleAssociateType.TableEntity
       const fileAssociateId = isFileView ? rowId : tableId
-      if (fileAssociateId) {
+      if (fileAssociateId && inView) {
         SynapseClient.getActualFileHandleByIdURL(
           fileHandleId,
           token,
@@ -41,24 +46,20 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
           console.error('Error on retrieving file handle url ', err)
         })
       }
-      
-      
     }
 
     getData()
-  }, [fileHandleId, rowId, tableId, tableEntityConcreteType, token])
+  }, [inView, fileHandleId, rowId, tableId, tableEntityConcreteType, token])
 
-
-  if (!url) {
-    // still loading
-    return <></>
-  }
   return (
-    <img
-      src={url}
-      alt=''
-      className='ImageFileHandle'
-    >      
-    </img>
+    <span ref={ref}>
+      {url && <img
+        src={url}
+        alt=''
+        className='ImageFileHandle'
+        loading="lazy"
+      >
+      </img>}
+    </span>
   )
 }
