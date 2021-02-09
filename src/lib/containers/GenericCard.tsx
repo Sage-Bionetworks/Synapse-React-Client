@@ -30,7 +30,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description?: string
   icon?: string
-  image?:string
+  imageFileHandleColumnName?:string
   secondaryLabels?: any[]
   link?: string
 }
@@ -359,7 +359,7 @@ export default class GenericCard extends React.Component<
       }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
-    const imageFileHandleIdValue = data[schema[genericCardSchemaDefined.image || '']]
+    const imageFileHandleIdValue = data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
 
     const titleColumnModel = columnModels?.find(
       el => genericCardSchemaDefined.link === el.name,

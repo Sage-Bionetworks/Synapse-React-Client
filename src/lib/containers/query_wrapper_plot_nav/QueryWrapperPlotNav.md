@@ -18,7 +18,7 @@ Configured to show cards:
       title: 'initiative',    
       description: 'summary',    
       link: 'website',
-      image: 'image',
+      imageFileHandleColumnName: 'image',
       secondaryLabels: [
         'fundingAgency',
         'abbreviation',
