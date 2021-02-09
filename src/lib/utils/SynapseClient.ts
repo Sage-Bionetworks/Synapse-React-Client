@@ -387,20 +387,14 @@ export const getActualFileHandleByIdURL = (
   fileAssociateType: FileHandleAssociateType,
   fileAssociateId: string,
   redirect: boolean = true,
-) => {
+): Promise<string> => {
   // get the presigned URL for this file handle and open it in a new tab
-  doGet<string>(
+  return doGet<string>(
     `/file/v1/file/${handleId}?fileAssociateType=${fileAssociateType}&fileAssociateId=${fileAssociateId}&redirect=${redirect}`,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then(url => {
-      window.open(url, '_blank')
-    })
-    .catch(err => {
-      console.error('Error on retrieving file handle url ', err)
-    })
 }
 
 /**

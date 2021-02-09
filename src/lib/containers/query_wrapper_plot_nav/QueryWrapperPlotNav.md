@@ -2,36 +2,28 @@ Configured to show cards:
 ```jsx
 <QueryWrapperPlotNav token={sessionToken}  
   rgbIndex={1}
-  name='Computational Tools'
-  sql='SELECT * from syn20337467 limit 3'
+  name='Initiatives'
+  sql='SELECT * from syn24610539'
+  defaultShowFacetVisualization={false}
   shouldDeepLink={true}
-  facetsToPlot={['grant', 'program', 'softwareType']}
+  facetsToPlot={['fundingAgency']}
   searchConfiguration={{
-    searchable: [
-      'contributor',
-      'name',
-      'grant',
-      'program',
-      'softwareType',
-      'summary',          
-    ],
+    searchable: ['initiative'],
   }}
+
   cardConfiguration={{
     type: GENERIC_CARD,
     genericCardSchema: {
-      type: COMPUTATIONAL,
-      title: 'name',
-      description: 'summary',
-      subTitle: 'softwareType',
-      secondaryLabels: ['contributor', 'program', 'grant', 'documentation'],
-      link: 'url',  
-    },
-    labelLinkConfig: [{
-      isMarkdown: false,
-      matchColumnName: 'grant',
-      URLColumnName: 'Grant Number',
-      baseURL: 'Explore/Projects/DetailsPage',
-    }]
+      type: 'Initiative',
+      title: 'initiative',    
+      description: 'summary',    
+      link: 'website',
+      image: 'image',
+      secondaryLabels: [
+        'fundingAgency',
+        'abbreviation',
+      ],
+    }
   }}
 />
 ```
