@@ -21,6 +21,7 @@ type CardFooterProps = {
   isHeader: boolean
   secondaryLabelLimit?: number
   columnIconOptions?: ColumnIconConfigs
+  className?: string
 }
 
 class CardFooter extends React.Component<CardFooterProps, State> {
@@ -91,7 +92,6 @@ class CardFooter extends React.Component<CardFooterProps, State> {
 
     return value
   }
-
   renderRows = (values: string[][], limit: number, isDesktop: boolean) => {
     return values.map((kv, index) => {
       const hideClass = index >= limit ? 'SRC-hidden' : ''
@@ -143,7 +143,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       <div
         className={`SRC-cardMetadata ${
           this.props.isHeader ? 'SRC-card-footer-header' : ''
-        }`}
+        } ${this.props.className ?? ''}`}
       >
         <table>
           <tbody>
