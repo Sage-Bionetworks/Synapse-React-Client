@@ -1,0 +1,110 @@
+@use '../../abstracts/variables' as SRC;
+@use 'sass:color';
+@import 'node_modules/react-reflex/styles';
+
+$-header-height: 40px;
+$-border-color: #dcdcdc;
+
+.EntityFinderTreeView {
+  border: 1px solid $-border-color;
+  width: fill-container;
+  &__Row {
+    width: 100%;
+    display: inline-grid;
+    grid-template-columns: 15px 25px auto 55px;
+    padding: 16px 10px;
+    align-items: center;
+    &__ExpandButton {
+      grid-column-start: 1;
+      grid-column-end: 2;
+      font-size: large;
+      color: SRC.$primary-action-color-700;
+      cursor: pointer;
+    }
+
+    &__EntityIcon {
+      grid-column-start: 2;
+      grid-column-end: 3;
+    }
+  }
+  &__Row:hover {
+    background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
+  }
+  &__Row__Selected,
+  &__Row__Selected:hover {
+    color: SRC.$primary-action-color-500;
+    // font-weight: bold;
+    background: color.change(SRC.$primary-action-color-500, $alpha: 0.2);
+
+    .EntityFinderTreeView__Row__ExpandButton {
+      color: SRC.$primary-action-color-500;
+    }
+  }
+  &__SelectionHeader {
+    height: $-header-height;
+    border-bottom: 1px solid $-border-color;
+  }
+}
+
+.EntityFinderDetailsView {
+  border: 1px solid $-border-color;
+  width: fill-container;
+  &__HeaderRow {
+    height: $-header-height;
+    font-weight: bold;
+    padding: 16px 10px;
+    border-bottom: 1px solid $-border-color;
+    // boxShadow: '0 3px 10px rgba(93, 105, 171, 0.1)',
+  }
+  &__Row {
+    border-bottom: 1px solid #f9f9f9;
+    height: 40px;
+  }
+
+  &__Row:nth-child(even) {
+    background: #f9f9f9;
+  }
+
+  &__Row:hover,
+  &__Row:hover:nth-child(even) {
+    background: color.change(SRC.$primary-action-color-500, $alpha: 0.2);
+  }
+
+  &__Row__Selected,
+  &__Row__Selected:hover,
+  &__Row__Selected:nth-child(even),
+  &__Row__Selected:hover:nth-child(even) {
+    background-color: SRC.$primary-action-color-500;
+    color: white;
+  }
+  // TODO: probably a better way to do this, maybe with grid?
+  .EntityIconColumn,
+  .NameColumn,
+  .AccessColumn,
+  .IdColumn,
+  .CreatedOnColumn,
+  .ModifiedOnColumn {
+    padding: 5px;
+    padding-left: 10px;
+  }
+
+  .EntityIconColumn {
+    width: 10px;
+  }
+
+  .NameColumn {
+    width: 40%;
+  }
+  .AccessColumn {
+    width: 10%;
+  }
+  .IdColumn {
+    width: 10%;
+  }
+  .CreatedOnColumn {
+    width: 20%;
+  }
+  .ModifiedOnColumn {
+    width: 20%;
+  }
+}

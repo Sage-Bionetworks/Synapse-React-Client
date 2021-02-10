@@ -36,6 +36,7 @@ import RenderIfInView from './containers/RenderIfInView'
 import TermsAndConditions from './containers/TermsAndConditions'
 import PageProgress from './containers/PageProgress'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
+import EntityFinder from './containers/entity_finder/EntityFinder'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -82,6 +83,7 @@ const SynapseComponents = {
   TermsAndConditions,
   PageProgress,
   ProjectViewCarousel,
+  EntityFinder,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents }

@@ -32,10 +32,13 @@
   svg {
     font-size: 19px;
   }
-  path, circle {
+  path,
+  circle {
     fill: currentColor;
   }
-  .icon-kinomics, .icon-proteomics {  // special fixes for these 2 icons
+  .icon-kinomics,
+  .icon-proteomics {
+    // special fixes for these 2 icons
     path {
       fill: none;
       stroke: currentColor;
@@ -47,10 +50,12 @@
 
   // for portal theme
   &.themed {
-    path, circle {
+    path,
+    circle {
       fill: SRC.$primary-action-color-500;
     }
-    .icon-kinomics, .icon-proteomics {
+    .icon-kinomics,
+    .icon-proteomics {
       path {
         stroke: SRC.$primary-action-color-500;
       }
@@ -65,5 +70,20 @@
       }
     }
   }
+}
 
+.SRC-Sort-Icon-Active {
+  padding: 2px;
+  background-color: SRC.$primary-action-color-500;
+  path {
+    fill: white;
+  }
+}
+
+.SRC-Sort-Icon-Inactive {
+  padding: 2px;
+
+  path {
+    fill: SRC.$primary-action-color-500;
+  }
 }
