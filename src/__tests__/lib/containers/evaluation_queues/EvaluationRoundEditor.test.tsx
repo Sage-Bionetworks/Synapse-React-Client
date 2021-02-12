@@ -182,6 +182,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockOnSave).toBeCalled()
 
+    expect(wrapper.find(<h5>ROUND STATUS</h5>).exists())
     //no error is shown
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
@@ -214,6 +215,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockOnSave).toBeCalled()
 
+    expect(wrapper.find(<h5>ROUND STATUS (1234)</h5>).exists())
     //no error is shown
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
