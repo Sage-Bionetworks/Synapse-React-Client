@@ -106,7 +106,7 @@ describe('test Evaluation Card', () => {
     const wrapper = mount(<EvaluationCard {...props} />)
 
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
-    expect(wrapper.contains(<h4>E V A L U A T I O N</h4>)).toBe(true)
+    expect(wrapper.contains(<h4>E V A L U A T I O N (1234)</h4>)).toBe(true)
     expect(wrapper.find('.status-open').exists()).toBe(true)
 
     expect(
