@@ -81,11 +81,12 @@ export default class VisibilityObserver extends React.Component<VisibilityObserv
 
     return (
       <Observer
-        tag={tag || 'div'}
+        as={tag as any || 'div'}
         rootMargin={rootMargin}
         onChange={this.onVisibilityChange}
-        render={this.getObserverChildren}
-      />
+      >
+        {this.getObserverChildren}
+      </Observer>
     );
   }
 

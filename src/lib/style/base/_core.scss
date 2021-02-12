@@ -910,6 +910,9 @@ div.SRC-userImg {
   font-size: 21px;
   margin: 20px 0px;
 }
+.SRC-no-results-title {
+  font-weight: bold;
+}
 
 button {
   background: none;
@@ -1030,8 +1033,13 @@ a.dropdown-item {
   }
 }
 
-.plotly .slice {
-  cursor: pointer;
+.js-plotly-plot .plotly {
+  .slice {
+    cursor: pointer;
+  }
+  .main-svg {
+    overflow: visible;
+  }
 }
 
 hr ~ .SRC-wrapper {

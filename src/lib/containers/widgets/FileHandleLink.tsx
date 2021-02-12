@@ -45,7 +45,12 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
             fileAssociateType,
             fileAssociateId,
             redirect,
-          )
+          ).then(url => {
+            window.open(url, '_blank')
+          })
+          .catch(err => {
+            console.error('Error on retrieving file handle url ', err)
+          })
         }
       }}
       className={`SRC-primary-text-color ${SynapseConstants.SRC_SIGN_IN_CLASS}`}

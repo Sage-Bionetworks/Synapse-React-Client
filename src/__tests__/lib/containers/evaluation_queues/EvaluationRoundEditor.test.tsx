@@ -183,7 +183,8 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockOnSave).toBeCalled()
 
     //no error is shown
-    expect(wrapper.find(Error).exists()).toBe(false)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
   })
 
   it('test save: existing id in props => update EvaluationRound', () => {
@@ -214,7 +215,8 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockOnSave).toBeCalled()
 
     //no error is shown
-    expect(wrapper.find(Error).exists()).toBe(false)
+    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
   })
 
   it('test save: Error occur', () => {
@@ -253,6 +255,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockOnSave).not.toBeCalled()
 
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
   })
 
   function simulateDeleteClick(
@@ -335,6 +338,7 @@ describe('test EvaluationRoundEditor', () => {
 
     //error should be shown
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
+    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
   })
 })
 

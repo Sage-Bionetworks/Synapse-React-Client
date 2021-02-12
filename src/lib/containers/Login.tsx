@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { Button, Form } from 'react-bootstrap'
 import ButtonWithIcon from '../assets/ButtonWithIcon'
-import GoogleIcon from '../assets/GoogleIcon'
 import { SynapseClient } from '../utils'
 import {
   getEndpoint,
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
+import { GoogleIcon24 } from '../assets/GoogleIcon24'
 
 type State = {
   username: string
@@ -152,25 +152,16 @@ class Login extends React.Component<Props, State> {
             variant="white"
             onClick={this.onGoogleSignIn}
             className={`SRC-google-button`}
-            icon={<GoogleIcon />}
+            icon={<GoogleIcon24 />}
           >
             Sign in with Google
           </ButtonWithIcon>
         </form>
-        <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen">
+        <div className="SRC-center-text SRC-deemphasized-text SRC-marginBottomTen bg-strike">
           or
         </div>
-
-        <div className="SRC-centerAndJustifyContent SRC-marginBottomTen">
-          <img
-            height="20px"
-            style={{ marginRight: '10px' }}
-            alt={'Sage Bionetworks logo'}
-            src="https://s3.amazonaws.com/static.synapse.org/sage-bionetworks-logo.svg"
-          />
-          Sign in with your Sage Bionetworks Synapse account
-        </div>
         <Form onSubmit={this.handleLogin}>
+          <label htmlFor={"exampleEmail"}>Username or Email Address</label>
           <Form.Control
             required
             autoComplete="username"
@@ -182,6 +173,7 @@ class Login extends React.Component<Props, State> {
             value={this.state.username}
             onChange={this.handleChange}
           />
+          <label htmlFor={"examplePassword"}>Password</label>
           <Form.Control
             required
             autoComplete="password"
@@ -194,34 +186,31 @@ class Login extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
           {this.getLoginFailureView()}
-          <Button
-            variant="primary"
-            onSubmit={this.handleLogin}
-            type="submit"
-            className="SRC-login-button SRC-marginBottomTen"
-          >
-            Sign in
-          </Button>
-        </Form>
-        <div>
           <a
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
             )}#!PasswordReset:0`}
-            className="SRC-floatLeft SRC-primary-text-color"
+            className="SRC-block SRC-primary-text-color"
           >
             Forgot password?
           </a>
-          <span className="SRC-deemphasized-text SRC-floatRight">
-            &nbsp;It&apos;s free!
-          </span>
+          <Button
+            variant="primary-500"
+            onSubmit={this.handleLogin}
+            type="submit"
+            className="SRC-login-button SRC-marginBottomTen"
+          >
+            Log in
+          </Button>
+        </Form>
+        <div className={"SRC-center-text"}>
           <a
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
             )}#!RegisterAccount:0`}
-            className="SRC-floatRight SRC-primary-text-color"
+            className="SRC-primary-text-color"
           >
-            Register
+            Don&apos;t have an account? Register now
           </a>
         </div>
       </div>

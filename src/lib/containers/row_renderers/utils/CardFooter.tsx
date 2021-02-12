@@ -21,6 +21,7 @@ type CardFooterProps = {
   isHeader: boolean
   secondaryLabelLimit?: number
   columnIconOptions?: ColumnIconConfigs
+  className?: string
 }
 
 class CardFooter extends React.Component<CardFooterProps, State> {
@@ -76,18 +77,21 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     // Only display icon when columnIconOptions is set in config file
     if (columnIconOptions && columnIconOptions.columns && Object.keys(columnIconOptions.columns).includes(tableColumnName)) {
       const options = columnIconOptions.columns[tableColumnName][value]
-      options.padding = "right"
-      return (
-        <>
-          <IconSVG options={options}></IconSVG>
-          <span style={{"verticalAlign": "middle"}}>{value}</span>
-        </>
-      )
+      if (!options) {  // if we can't find an icon to match, just return the value
+        return <span>{value}</span>
+      } else {
+        options.padding = "right"
+        return (
+          <>
+            <IconSVG options={options}></IconSVG>
+            <span style={{"verticalAlign": "middle"}}>{value}</span>
+          </>
+        )
+      }
     }
 
     return value
   }
-
   renderRows = (values: string[][], limit: number, isDesktop: boolean) => {
     return values.map((kv, index) => {
       const hideClass = index >= limit ? 'SRC-hidden' : ''
@@ -139,7 +143,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       <div
         className={`SRC-cardMetadata ${
           this.props.isHeader ? 'SRC-card-footer-header' : ''
-        }`}
+        } ${this.props.className ?? ''}`}
       >
         <table>
           <tbody>

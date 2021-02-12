@@ -1,6 +1,7 @@
 import { EvaluationRound, EvaluationRoundLimit } from '../../utils/synapseTypes'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+  Alert,
   Button,
   Card,
   Col,
@@ -129,6 +130,14 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
   utc,
 }) => {
   const [error, setError] = useState<string | SynapseClientError | undefined>()
+  const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (error) {
+      setShowSaveSuccess(false)
+    }
+  }, [error])
+
   const [startDate, setStartDate] = useState<string | Moment>(
     moment(evaluationRoundInput.roundStart),
   )
@@ -166,6 +175,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
   }
 
   const onSaveButtonClick = () => {
+    setShowSaveSuccess(false)
     let evaluationRound
     try {
       evaluationRound = convertInputsToEvaluationRound(
@@ -192,6 +202,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
           )
           //clear out previous error if any
           setError(undefined)
+          setShowSaveSuccess(true)
           onSave(newInput)
         })
         .catch(error => setError(error))
@@ -325,6 +336,22 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
               <Row className="my-3">
                 <Col>
                   <ErrorBanner error={error} token={sessionToken} />
+                </Col>
+              </Row>
+            )}
+
+            {showSaveSuccess && (
+              <Row className="my-3">
+                <Col>
+                  <Alert
+                    className="save-success-alert"
+                    dismissible={true}
+                    variant="success"
+                    transition={false}
+                    onClose={() => setShowSaveSuccess(false)}
+                  >
+                    Successfully saved.
+                  </Alert>
                 </Col>
               </Row>
             )}

@@ -19,12 +19,16 @@ import {
   ColumnType,
 } from '../../../lib/utils/synapseTypes'
 import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
+import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
+
+mockAllIsIntersecting(true)
 
 describe('it renders the UI correctly', () => {
   const iconOptions = {
@@ -58,6 +62,7 @@ describe('it renders the UI correctly', () => {
     labelTwo: 5,
     link: 6,
     id: 7,
+    image: 8,
   }
 
   const MOCKED_TITLE = 'MOCKED TITLE'
@@ -68,6 +73,7 @@ describe('it renders the UI correctly', () => {
   const MOCKED_LABELTWO = 'MOCKED_LABELONE'
   const MOCKED_LINK = 'MOCKED_LINK'
   const MOCKED_ID = 'MOCKED_ID'
+  const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
 
   const data = [
     MOCKED_TITLE,
@@ -78,6 +84,7 @@ describe('it renders the UI correctly', () => {
     MOCKED_LABELTWO,
     MOCKED_LINK,
     MOCKED_ID,
+    MOCKED_IMAGE_FILE_HANDLE_ID,
   ]
 
   const propsForNonHeaderMode: GenericCardProps = {
@@ -138,7 +145,7 @@ describe('it renders the UI correctly', () => {
     )
   })
 
-  describe('Renders a FileHandleLin when the title is a file handle ', () => {
+  describe('Renders a FileHandleLink when the title is a file handle ', () => {
     const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
     const tableId = 'TABLE_ID_MOCK'
     const columnModelWithFileHandleTitle = [
@@ -188,6 +195,62 @@ describe('it renders the UI correctly', () => {
         rowId: MOCKED_ID,
         tableId,
         displayValue: MOCKED_TITLE,
+      })
+    })
+  })
+
+  describe('Renders a ImageFileHandle when imageFileHandleColumnName is set ', () => {
+    const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
+    const tableId = 'TABLE_ID_MOCK'
+    const columnModelWithFileHandle = [
+      {
+        columnType: FILE_HANDLE_COLUMN_TYPE,
+        id: 'MOCKID',
+        name: 'image',
+      },
+    ]
+    it('Renders a ImageFileHandle with an EntityView associate type', () => {
+      const tableEntityConcreteType = 'EntityView'
+      const { wrapper } = createShallowComponent({
+        ...propsForNonHeaderMode,
+        genericCardSchema: {
+          ...genericCardSchema,
+          imageFileHandleColumnName: 'image',
+        },
+        tableEntityConcreteType,
+        columnModels: columnModelWithFileHandle,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(ImageFileHandle)).toHaveLength(1)
+      expect(wrapper.find(ImageFileHandle).props()).toEqual({
+        token: undefined,
+        fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+        tableEntityConcreteType,
+        rowId: MOCKED_ID,
+        tableId,
+      })
+    })
+    it('Renders a ImageFileHandle with a table associate type', () => {
+      const tableEntityConcreteType = 'Table'
+      const { wrapper } = createShallowComponent({
+        ...propsForNonHeaderMode,
+        genericCardSchema: {
+          ...genericCardSchema,
+          imageFileHandleColumnName: 'image',
+        },
+        tableEntityConcreteType,
+        columnModels: columnModelWithFileHandle,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(ImageFileHandle)).toHaveLength(1)
+      expect(wrapper.find(ImageFileHandle).props()).toEqual({
+        token: undefined,
+        fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+        tableEntityConcreteType,
+        rowId: MOCKED_ID,
+        tableId,
       })
     })
   })
@@ -435,6 +498,25 @@ describe('it makes the correct URL for the secondary labels', () => {
     )
     const markdown = wrapper.find(MarkdownSynapse)
     expect(markdown).toHaveLength(2)
+  })
+
+  it('auto-links a single Synapse ID value', () => {
+    const value = 'syn1234567'
+    const wrapper = mount(
+      <>
+        {renderLabel({
+          value,
+          labelLink: undefined,
+          isHeader: false,
+          selectColumns: selectColumns,
+          columnModels: undefined,
+          columnName: DATASETS,
+        })}
+      </>,
+    )
+    const link = wrapper.find('a')
+    expect(link).toHaveLength(1)
+    expect(link.props().href).toEqual(`https://www.synapse.org/#!Synapse:${value}`)    
   })
 })
 
