@@ -63,6 +63,10 @@ import {
   Evaluation,
   EvaluationRound,
   FileResult,
+  ProjectHeaderList,
+  EntityPath,
+  EntityBundleRequest,
+  EntityBundle,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -78,6 +82,10 @@ import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessT
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
+import {
+  EntityChildrenRequest,
+  EntityChildrenResponse,
+} from './synapseTypes/EntityChildren'
 
 const cookies = new UniversalCookies()
 
@@ -713,10 +721,10 @@ export const getUserProfiles = (
  * http://docs.synapse.org/rest/POST/entity/children.html
  */
 export const getEntityChildren = (
-  request: any,
+  request: EntityChildrenRequest,
   sessionToken: string | undefined = undefined,
 ) => {
-  return doPost(
+  return doPost<EntityChildrenResponse>(
     '/repo/v1/entity/children',
     request,
     sessionToken,
@@ -815,26 +823,6 @@ export const getEntity: GetEntity = <T>(
 }
 
 /**
- * Same as getEntity above, but will return the file entity result
- * from doGet call rather than a promise
- */
-export const getEntityResult: GetEntity = (
-  sessionToken: string | undefined = undefined,
-  entityId: string | number,
-  versionNumber?: string,
-) => {
-  const url = versionNumber
-    ? `/repo/v1/entity/${entityId}/version/${versionNumber}`
-    : `/repo/v1/entity/${entityId}`
-  return doGet(
-    url,
-    sessionToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-}
-
-/**
  * Get the EntityHeader for a list of references with a POST.
  * If any item in the batch fails (e.g., with a 404) it will be EXCLUDED in the result set.
  * https://docs.synapse.org/rest/POST/entity/header.html
@@ -903,6 +891,21 @@ export const getEntityBundleForVersion = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<any>
+}
+
+export const getEntityBundleV2 = (
+  entityId: string | number,
+  requestObject: EntityBundleRequest,
+  version?: number,
+  sessionToken?: string,
+): Promise<EntityBundle> => {
+  return doPost<EntityBundle>(
+    `repo/v1/entity/${entityId}/${version ? `${version}/` : ''}/bundle2`,
+    requestObject,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
@@ -2375,6 +2378,43 @@ export const deletePersonalAccessToken = (
 ) => {
   return doDelete(
     `/auth/v1/personalAccessToken/${accessTokenId}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/projects.html
+export const getMyProjects = (
+  sessionToken: string,
+  nextPageToken?: string,
+  teamId?: string,
+  filter?: 'ALL' | 'CREATED' | 'PARTICIPATED' | 'TEAM',
+  sort?: 'LAST_ACTIVITY' | 'PROJECT_NAME',
+  sortDirection?: 'ASC' | 'DESC',
+) => {
+  return doGet<ProjectHeaderList>(
+    `/repo/v1/projects
+    ${
+      [nextPageToken, teamId, filter, sort, sortDirection].some(x => !!x)
+        ? '?'
+        : ''
+    }
+    ${nextPageToken ? 'nextPageToken=' + nextPageToken + '&' : ''}
+    ${teamId ? 'teamId=' + teamId + '&' : ''}
+    ${filter ? 'filter=' + filter + '&' : ''}
+    ${sort ? 'sort=' + sort + '&' : ''}
+    ${sortDirection ? 'sortDirection=' + sortDirection + '&' : ''}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/GET/entity/id/path.html
+export const getEntityPath = (sessionToken: string, entityId: string) => {
+  return doGet<EntityPath>(
+    `/repo/v1/entity/${entityId}/path`,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

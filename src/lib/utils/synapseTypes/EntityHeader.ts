@@ -11,3 +11,8 @@ export type EntityHeader = {
   createdBy: string //	The ID of the user that created this entity.
   modifiedBy: string //	The ID of the user that last modified this entity.
 }
+
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityPath.html
+export type EntityPath = {
+  path: EntityHeader[] // The list of all entities in this entity's path. The first element is the root parent and the last element (n) is the entity.
+}
