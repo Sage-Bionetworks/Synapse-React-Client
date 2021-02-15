@@ -99,10 +99,10 @@ export const CardContainer = (props: CardContainerProps) => {
     // show "no results" UI (see PORTALS-1497)
     return <>
       <p className="SRC-no-results-title">
-        There are currently no results.
+        There is currently no content here.
       </p>
       <p className="SRC-no-results-description">
-        Information is always being updated, so check back later to see if results have been added.
+        Information is always being updated, so check back later to see if content has been added.
       </p>
     </>
   }
