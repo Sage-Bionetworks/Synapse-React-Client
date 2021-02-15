@@ -128,9 +128,9 @@ const TopLevelControls = (
     }
     updateParentState!({ isColumnSelected: isColumnSelectedCopy })
   }
-
+  const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
-    <h3 className="QueryWrapperPlotNav__title">
+    <h3 className={`TopLevelControls ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}>
       <div className="QueryWrapperPlotNav__querycount">
         <QueryCount token={token} name={name} sql={sql} parens={true} />
       </div>

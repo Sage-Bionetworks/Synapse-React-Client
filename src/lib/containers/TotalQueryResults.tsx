@@ -53,6 +53,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   executeQueryRequest,
   getInitQueryRequest,
   showNotch = false,
+  topLevelControlsState,
   error,
 }) => {
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
@@ -256,13 +257,13 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       })
     },
   )
-
+  const showFacetFilter = topLevelControlsState?.showFacetFilter
   if (error) {
     return <></>
   }
   return (
     <div
-      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''}`}
+      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''} ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}
       style={style}
     >
       <span className="SRC-boldText SRC-text-title SRC-centerContent">

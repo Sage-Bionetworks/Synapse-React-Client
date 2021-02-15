@@ -17,6 +17,7 @@ import TopLevelControls from './TopLevelControls'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import ModalDownload from '../ModalDownload'
 import { DownloadConfirmation } from '../download_list'
+import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 
 type OwnProps = {
   sql: string
@@ -63,7 +64,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     hideDownload,
     searchConfiguration,
     ...rest
-  } = props
+  } = props  
   let sqlUsed = sql
 
   if (searchParams) {
@@ -92,6 +93,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   return (
     <div className="QueryWrapperPlotNav">
       <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+        <SearchV2 {...searchConfiguration} />
+        <ErrorBanner />
+        <DownloadConfirmation
+          onExportTable={() => setShowExportMetadata(true)}
+        />
+        <QueryFilter {...rest} />
         <TopLevelControls
           showColumnSelection={tableConfiguration !== undefined}
           name={name}
@@ -99,18 +106,13 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           sql={sqlUsed}
           hideDownload={hideDownload}
         />
-        <SearchV2 {...searchConfiguration} />
-        <ErrorBanner />
-        <DownloadConfirmation
-          onExportTable={() => setShowExportMetadata(true)}
-        />
         <FacetNav facetsToPlot={facetsToPlot} showNotch={true} />
         <FilterAndView
           facetsToFilter={facetsToFilter}
           tableConfiguration={tableConfiguration}
           hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
-        />
+        />        
         {showExportMetadata && (
           <ModalDownload onClose={() => setShowExportMetadata(false)} />
         )}

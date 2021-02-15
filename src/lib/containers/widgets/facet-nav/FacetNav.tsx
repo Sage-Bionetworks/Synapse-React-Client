@@ -66,7 +66,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
-  const { showFacetVisualization } = topLevelControlsState!
+  const { showFacetVisualization, showFacetFilter } = topLevelControlsState!
 
   const lastQueryRequest = getLastQueryRequest?.()
 
@@ -85,7 +85,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       )
       setIsFirstTime(false)
     }
-  }, [data, isFirstTime])
+  }, [data, isFirstTime, facetsToPlot])
 
   // when 'show more/less' is clicked
   const onShowMoreClick = (shouldShowMore: boolean) => {
@@ -200,7 +200,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else {
     return (
       <>
-        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${showMoreButtonState === 'LESS' ? 'less' : ''}`}>
+        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'} ${showMoreButtonState === 'LESS' ? 'less' : ''}`}>
           <div className="FacetNav__expanded">
             {expandedFacets.map((facet, index) => (
               <div key={facet.columnName}>
@@ -301,6 +301,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           unitDescription={hasSelectedFacets ? 'results via:' : 'results'}
           frontText={'Showing'}
           showNotch={showNotch}
+          topLevelControlsState={topLevelControlsState}
         />
       </>
     )

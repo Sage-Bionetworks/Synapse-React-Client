@@ -16,6 +16,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../utils/synapseTypes'
+import { QueryWrapperChildProps } from '../../QueryWrapper'
 
 export type QueryFilterProps = {
   isLoading?: boolean
@@ -138,7 +139,7 @@ export const applyChangesToRangeColumn = (
   onChangeFn(result)
 }
 
-export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
+export const QueryFilter: React.FunctionComponent<QueryWrapperChildProps & QueryFilterProps> = ({
   data,
   isLoading = false,
   getLastQueryRequest,
@@ -146,10 +147,12 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   token,
   facetAliases,
   facetsToFilter,
-}: QueryFilterProps): JSX.Element => {
+  topLevelControlsState,
+}: QueryWrapperChildProps & QueryFilterProps): JSX.Element => {
   if (!data) {
     return <></>
   }
+  const { showFacetFilter } = topLevelControlsState!
   const columnModels = data.columnModels
   let facets = data.facets as FacetColumnResult[]
   if (facetsToFilter) {
@@ -167,7 +170,8 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   }
 
   return (
-    <div className="QueryFilter">
+    <div className={`QueryFilter ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}>
+      <h4 className="QueryFilter__title">Filter Data By</h4>
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
         facets.map((facet, index) => {

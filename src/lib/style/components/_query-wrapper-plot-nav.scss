@@ -1,5 +1,32 @@
-.QueryWrapperPlotNav {
-  .QueryWrapperPlotNav__title {
+.QueryWrapperPlotNav {  
+  .SRC-wrapper {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    // by default, children take up the full row
+    > * {
+      grid-column: 1 / span 2;
+    }
+
+    .isShowingFacetFilters {
+      &.QueryFilter {
+        grid-column: 1 / span 1;
+        grid-row: span 100;
+      }
+      &.FacetNav, &.TotalQueryResults, &.FilterAndView, &.TopLevelControls {
+        grid-column: 2 / span 1;
+        grid-row: span 1;
+      }
+    }
+    .isHidingFacetFilters {
+      &.QueryFilter {
+        display:none;
+      }
+      &.FacetNav, &.TotalQueryResults, &.FilterAndView, &.TopLevelControls {
+        grid-row: span 1;
+      }
+    }
+  }
+  .TopLevelControls {    
     display: flex;
     justify-content: space-between;
     font-weight: bold;
