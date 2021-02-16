@@ -1,7 +1,7 @@
 import React from 'react'
 import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
-
 import { Button } from 'react-bootstrap'
+import IconSvg, { IconSvgOptions } from '../IconSvg'
 
 
 const QueryFilterToggleButton = (
@@ -21,7 +21,10 @@ const QueryFilterToggleButton = (
       topLevelControlsState: updatedTopLevelControlsState,
     })
   }
-
+  const iconOptions:IconSvgOptions = {
+    icon: showFacetFilter ? 'arrowBack' : 'arrowForward',
+    color: 'inherit'
+  }
   return (
     <div className={`QueryFilterToggleButton bootstrap-4-backport ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}>
       <Button
@@ -30,7 +33,7 @@ const QueryFilterToggleButton = (
         type="button"
         size="lg"
       >
-        S
+        <IconSvg options={iconOptions}></IconSvg>
       </Button>
     </div>
 
