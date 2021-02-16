@@ -98,6 +98,14 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
+    topLevelControlsState : {
+      showColumnFilter: true,
+      showFacetFilter: true,
+      showFacetVisualization: true,
+      showSearchBar: false,
+      showDownloadConfirmation: false,
+      showColumnSelectDropdown: false,
+    },
     isColumnSelected: [
       'projectStatus',
       'dataStatus',

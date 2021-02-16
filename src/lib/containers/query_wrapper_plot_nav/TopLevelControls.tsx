@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import QueryCount from '../QueryCount'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS, TopLevelControlsState } from '../QueryWrapper'
 import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
@@ -130,7 +130,7 @@ const TopLevelControls = (
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
-    <div className={`TopLevelControls ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}>
+    <div className={`TopLevelControls ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
       <h3>        
         <div className="QueryWrapperPlotNav__querycount">
           <QueryCount token={token} name={name} sql={sql} parens={true} />

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import FacetNavPanel from './FacetNavPanel'
-import { QueryWrapperChildProps } from '../../QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../../QueryWrapper'
 import {
   FacetColumnResultValues,
   FacetColumnRequest,
@@ -200,7 +200,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else {
     return (
       <>
-        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'} ${showMoreButtonState === 'LESS' ? 'less' : ''}`}>
+        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS} ${showMoreButtonState === 'LESS' ? 'less' : ''}`}>
           <div className="FacetNav__expanded">
             {expandedFacets.map((facet, index) => (
               <div key={facet.columnName}>

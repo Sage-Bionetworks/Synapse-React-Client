@@ -16,7 +16,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../utils/synapseTypes'
-import { QueryWrapperChildProps } from '../../QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../../QueryWrapper'
 
 export type QueryFilterProps = {
   isLoading?: boolean
@@ -170,7 +170,7 @@ export const QueryFilter: React.FunctionComponent<QueryWrapperChildProps & Query
   }
 
   return (
-    <div className={`QueryFilter ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}>
+    <div className={`QueryFilter ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
       <h4 className="QueryFilter__title">Filter Data By</h4>
       {isLoading && <div>Loading...</div>}
       {!isLoading &&

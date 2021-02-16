@@ -25,7 +25,7 @@ import {
 } from './widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
-import { QueryWrapperChildProps } from './QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
 import { ColumnSingleValueFilterOperator } from '../utils/synapseTypes/Table/QueryFilter'
 import { Button } from 'react-bootstrap'
 
@@ -263,7 +263,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   }
   return (
     <div
-      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''} ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}
+      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''} ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}
       style={style}
     >
       <span className="SRC-boldText SRC-text-title SRC-centerContent">

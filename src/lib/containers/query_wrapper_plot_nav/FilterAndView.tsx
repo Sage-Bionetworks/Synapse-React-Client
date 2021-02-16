@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { QueryWrapperChildProps } from '../QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../QueryWrapper'
 import CardContainer from '../CardContainer'
 import SynapseTable, { SynapseTableProps } from '../table/SynapseTable'
 import { CardConfiguration } from '../CardContainerLogic'
@@ -21,7 +21,7 @@ const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {
   } = props  
   const { showFacetFilter } = topLevelControlsState!
   return (
-    <div className={`FilterAndView ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`} >
+    <div className={`FilterAndView ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`} >
       {tableConfiguration ? (
         <SynapseTable
           {...rest}

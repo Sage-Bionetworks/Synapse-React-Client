@@ -1,5 +1,5 @@
 import React from 'react'
-import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS, TopLevelControlsState } from '../QueryWrapper'
 import { Button } from 'react-bootstrap'
 import IconSvg, { IconSvgOptions } from '../IconSvg'
 
@@ -26,7 +26,7 @@ const QueryFilterToggleButton = (
     color: 'inherit'
   }
   return (
-    <div className={`QueryFilterToggleButton bootstrap-4-backport ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}>
+    <div className={`QueryFilterToggleButton bootstrap-4-backport ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
       <Button
         variant="outline-primary"
         onClick={toggleFilterShowingState}
