@@ -356,7 +356,7 @@ export default class SynapseTable extends React.Component<
     }
     const table = (
 
-      <div className="col-xs-12">
+      <div>
         {this.renderTable(headers, columnModels, facets, rows)}
       </div>
     )

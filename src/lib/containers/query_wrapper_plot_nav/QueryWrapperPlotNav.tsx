@@ -98,8 +98,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         <DownloadConfirmation
           onExportTable={() => setShowExportMetadata(true)}
         />
-        <QueryFilter {...rest} />
-        <QueryFilterToggleButton />
         <TopLevelControls
           showColumnSelection={tableConfiguration !== undefined}
           name={name}
@@ -107,6 +105,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           sql={sqlUsed}
           hideDownload={hideDownload}
         />
+        <QueryFilter {...rest} />
+        <QueryFilterToggleButton />
         <FacetNav facetsToPlot={facetsToPlot} showNotch={true} />
         <FilterAndView
           facetsToFilter={facetsToFilter}
