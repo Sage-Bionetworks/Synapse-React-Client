@@ -34,6 +34,9 @@
       }
       .QueryFilterToggleButton {
         grid-row: 1 / span 1;
+        svg {
+          margin-bottom: 2px;
+        }
       }
       .TopLevelControls {
         grid-row: 1 / span 1;
