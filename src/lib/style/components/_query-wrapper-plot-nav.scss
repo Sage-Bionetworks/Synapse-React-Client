@@ -3,17 +3,18 @@
 .QueryWrapperPlotNav {  
   .SRC-wrapper {
     display: grid;
-    grid-template-columns: 60px 30% 70%;
-    padding-right: 60px;
+    grid-template-columns: 60px 10px 30% 10px 70%;
+    padding-right: 120px;
 
     // by default, children take up the full row
     > * {
-      grid-column: 2 / span 2;
+      grid-column: 3 / span 3;
     }
 
-    .TopLevelControls__showhidefacetfilters{
-      display:block;
+    .QueryFilterToggleButton {
       position: relative;
+      left: -20px;
+      top: 20px;
       button.btn.btn-outline-primary {
         background-color: white;
         &:hover{
@@ -21,20 +22,18 @@
         }
       }
     }
-
     .isShowingFacetFilters {
       &.QueryFilter {
-        grid-column: 1 / span 2;
+        grid-column: 1 / span 3;
         grid-row: span 100;
       }
+      &.QueryFilterToggleButton {
+        grid-column: 4 / span 1;        
+      }
       &.FacetNav, &.TotalQueryResults, &.FilterAndView, &.TopLevelControls {
-        grid-column: 3 / span 1;
+        grid-column: 5 / span 1;
         grid-row: span 1;
-      }
-      .TopLevelControls__showhidefacetfilters{
-        left: -61px;
-        top: 30px;
-      }
+      }      
     }
     .isHidingFacetFilters {
       &.QueryFilter {
@@ -44,12 +43,11 @@
         }
         grid-row: span 100;
       }
+      &.QueryFilterToggleButton {
+        grid-column: 2 / span 1;        
+      }
       &.FacetNav, &.TotalQueryResults, &.FilterAndView, &.TopLevelControls {
         grid-row: span 1;
-      }
-      .TopLevelControls__showhidefacetfilters{
-        left: -51px;
-        top: 30px;
       }
     }
   }
@@ -63,7 +61,8 @@
       justify-content: space-between;
       font-weight: bold;
       margin-top: 0px;
-    }    
+    }
+    padding-top: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;

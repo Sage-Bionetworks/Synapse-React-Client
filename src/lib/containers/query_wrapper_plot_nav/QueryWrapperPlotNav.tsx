@@ -18,6 +18,7 @@ import SearchV2, { SearchV2Props } from '../SearchV2'
 import ModalDownload from '../ModalDownload'
 import { DownloadConfirmation } from '../download_list'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
+import QueryFilterToggleButton from './QueryFilterToggleButton'
 
 type OwnProps = {
   sql: string
@@ -65,8 +66,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     searchConfiguration,
     ...rest
   } = props  
-  let sqlUsed = sql
-
+  let sqlUsed = sql  
   if (searchParams) {
     sqlUsed = insertConditionsFromSearchParams(
       searchParams,
@@ -99,6 +99,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           onExportTable={() => setShowExportMetadata(true)}
         />
         <QueryFilter {...rest} />
+        <QueryFilterToggleButton />
         <TopLevelControls
           showColumnSelection={tableConfiguration !== undefined}
           name={name}

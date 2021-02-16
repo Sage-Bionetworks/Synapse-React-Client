@@ -9,7 +9,6 @@ import { cloneDeep } from 'lodash-es'
 import { QueryResultBundle } from '../../utils/synapseTypes/'
 import { DownloadOptions } from '../table/table-top'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
-import { Button } from 'react-bootstrap'
 
 export type TopLevelControlsProps = {
   name: string
@@ -132,17 +131,6 @@ const TopLevelControls = (
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
     <div className={`TopLevelControls ${showFacetFilter ? 'isShowingFacetFilters' : 'isHidingFacetFilters'}`}>
-      <div className="TopLevelControls__showhidefacetfilters bootstrap-4-backport">
-        <Button
-          variant="outline-primary"
-          onClick={() => {setControlState("showFacetFilter")}}
-          type="button"
-          size="lg"
-        >
-          S
-        </Button>
-      </div>
-      
       <h3>        
         <div className="QueryWrapperPlotNav__querycount">
           <QueryCount token={token} name={name} sql={sql} parens={true} />
