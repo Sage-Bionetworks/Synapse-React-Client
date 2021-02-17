@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import {
+  ArrowBackIos,
+  ArrowForwardIos,
   Check,
   Cached,
   PhotoCameraOutlined,
+  Cached,
 } from '@material-ui/icons'
 
 import Chromatin from '../assets/mui_components/Chromatin'
@@ -53,6 +56,10 @@ const getIcon = (options:IconSvgOptions) => {
   }
 
   switch (icon) {
+    case 'arrowBack':
+      return <ArrowBackIos style={muiSvgStyle} />
+    case 'arrowForward':
+      return <ArrowForwardIos style={muiSvgStyle} />  
     case 'check':
       return <Check style={muiSvgStyle}></Check>
     case 'reload':

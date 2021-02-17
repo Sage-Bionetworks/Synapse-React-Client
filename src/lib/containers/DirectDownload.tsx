@@ -5,16 +5,16 @@ import {
   implementsExternalFileHandleInterface,
 } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils'
-import { FileFetchResponse } from './FileEntityHandleQueryWrapper'
 
 export type DirectFileDownloadProps = {
   token?: string
-  fileEntityHandle?: FileFetchResponse
+  associatedObjectId: string
+  entityVersionNumber?: string
 }
 
 const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props) => {
 
-  const {token, fileEntityHandle} = props
+  const {token, associatedObjectId, entityVersionNumber} = props
   const [isExternalFile, setIsExternalFile] = useState<boolean>(false)
   const [hasFileAccess, setHasFileAccess] = useState<boolean>(false)
   const [fileEntity, setFileEntity] = useState<FileEntity>()
@@ -22,37 +22,13 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
   let mounted:boolean = true
 
   useEffect( () => {
-    setHasFileAccess(false)
-    setIsExternalFile(false)
     if (mounted) {
-      if (fileEntityHandle) {
-        if (!fileEntityHandle.success && 'message' in fileEntityHandle) {
-          console.log("DirectDownload - Error fetching file data: ", fileEntityHandle.message)
-          setHasFileAccess(false)
-        } else {
-          if ('data' in fileEntityHandle) {
-            const { fileEntity, fileHandle } = fileEntityHandle.data
-            setFileEntity(fileEntity)
-            if (fileHandle) {
-              // have S3 file access and not file preview
-              if ('isPreview' in fileHandle && !fileHandle.isPreview) {
-                setHasFileAccess(true)
-              }
-              // is external file url
-              if (implementsExternalFileHandleInterface(fileHandle) && 'externalURL' in fileHandle) {
-                setHasFileAccess(true)
-                setIsExternalFile(true)
-                setExternalURL(fileHandle.externalURL)
-              }
-            }
-          }
-        }
-      }
+      getFileEntityFileHandle()
     }
     return () => {
       mounted = false
     }
-  }, [token, fileEntityHandle])
+  }, [token])
 
   const getDownloadLink = () => {
     SynapseClient.getFileResult(
@@ -67,6 +43,35 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
     }).catch(error => {
       console.log("Fail to get file download link")
     })
+  }
+
+  const getFileEntityFileHandle = () => {
+    return SynapseClient.getEntity(token, associatedObjectId, entityVersionNumber)
+      .then(entity => {
+        if (entity.hasOwnProperty('dataFileHandleId')) {
+          // looks like a FileEntity, get the FileHandle
+          setFileEntity(entity as FileEntity)
+          return SynapseClient.getFileResult(
+            entity as FileEntity,
+            token,
+            true,
+          ).then((data) => {
+            const fh = data.fileHandle
+            if (fh && !fh['isPreview']) { // have file access and not file preview
+              setHasFileAccess(true)
+              if (implementsExternalFileHandleInterface(fh)) {
+                setIsExternalFile(true)
+                setExternalURL(fh['externalURL'])
+              }
+            }
+          }).catch(err => {
+            console.log('Error on getFileEntityFileHandle = ', err)
+          })
+        }
+        return Promise.resolve()
+      }).catch(err => {
+        console.log('Error on getEntity = ', err)
+      })
   }
 
   const getIcon = () => {

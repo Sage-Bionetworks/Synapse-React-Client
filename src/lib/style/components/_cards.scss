@@ -28,6 +28,9 @@ $text-color-lighter: #898989;
   margin-top: 30px; // just for test page
   margin-bottom: 30px; // just for test page
 
+  .SRC-portalCardMain {
+    display: flex;
+  }
   .SRC-downloadData {
     border-radius: 20px;
     text-align: center;
@@ -83,12 +86,28 @@ $text-color-lighter: #898989;
       text-align: center;
     }
   }
+  .SRC-imageThumbnail {
+    display: inline-block;
+    width: 25%;
+    vertical-align: top;
+    padding-right: 15px;
+    img {
+      display: block;
+      width: 100%;
+    }
+    svg {
+      width: auto;
+      margin: auto;
+      display: block;
+    }    
+  }
 
   .SRC-cardContent {
     padding-left: 0px;
-    max-width: 80%;
-    display: inline-block;
+    padding-right: 4%;
+    flex: 1;
     padding-top: $baseline-grid;
+    margin-bottom: $baseline-grid;
     &.SRC-dataset {
       width: 80%;
     }
@@ -125,9 +144,11 @@ $text-color-lighter: #898989;
 
   .SRC-cardMetadata {
     display: block;
-    background-color: $color-gray-background;
-    margin-top: $baseline-grid;
-    padding: $baseline-grid $baseline-grid $baseline-grid 15%;
+    background-color: $color-gray-background;    
+    padding: $baseline-grid;
+    &.hasIcon {
+      padding-left: 15%;
+    }
     .row {
       margin: 5px !important;
       > * {

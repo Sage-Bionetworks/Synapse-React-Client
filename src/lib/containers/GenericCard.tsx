@@ -13,6 +13,7 @@ import { SelectColumn, ColumnModel, ColumnType } from '../utils/synapseTypes'
 import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
 import IconList from './IconList'
+import { ImageFileHandle } from './widgets/ImageFileHandle'
 
 export type KeyToAlias = {
   key: string
@@ -30,6 +31,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description?: string
   icon?: string
+  imageFileHandleColumnName?:string
   secondaryLabels?: any[]
   link?: string
   dataType?: string
@@ -360,6 +362,8 @@ export default class GenericCard extends React.Component<
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
     const dataTypeIconNames = data[schema[genericCardSchemaDefined.dataType || '']]
+    const imageFileHandleIdValue = data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
+
     const titleColumnModel = columnModels?.find(
       el => genericCardSchemaDefined.link === el.name,
     )
@@ -402,7 +406,7 @@ export default class GenericCard extends React.Component<
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
-      paddingBottom: showFooter ? undefined : '15px',
+      paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
     }
 
     if (isHeader) {
@@ -441,15 +445,24 @@ export default class GenericCard extends React.Component<
 
     return (
       <div style={style} className={'SRC-portalCard'}>
-        <div className="SRC-cardThumbnail">
-          <Icon iconOptions={iconOptions} value={iconValue} type={type} />
-        </div>
-        <div className="SRC-cardContent">
-          <div className="SRC-type">{type}</div>
-          {
-            // If the portal configs has columnIconOptions.columns.dataType option
-            // and the column value is not null, display the card data type icons
-            columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
+        <div className={'SRC-portalCardMain'}>
+          {imageFileHandleIdValue && <div className="SRC-imageThumbnail">
+            <ImageFileHandle 
+              token={token}
+              fileHandleId={imageFileHandleIdValue}
+              tableEntityConcreteType={tableEntityConcreteType}
+              rowId={data![schema.id]}
+              tableId={tableId}
+            /></div>}
+          {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
+            <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
+          </div>}
+          <div className="SRC-cardContent">
+            <div className="SRC-type">{type}</div>
+            {
+              // If the portal configs has columnIconOptions.columns.dataType option
+              // and the column value is not null, display the card data type icons
+              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
               <div style={{textAlign: "right"}}>
                 <IconList
                   iconConfigs={columnIconOptions.columns.dataType}
@@ -457,61 +470,62 @@ export default class GenericCard extends React.Component<
                   showTooltip={true}
                 />
               </div>
-          }
-          <div>
-            <h3
-              className="SRC-boldText SRC-blackText"
-              style={{ margin: 'none' }}
-            >
-              {!titleLinkConfig &&
-              titleColumnType === ColumnType.FILEHANDLEID ? (
-                <FileHandleLink
-                  token={token}
-                  fileHandleId={linkValue}
-                  tableEntityConcreteType={tableEntityConcreteType}
-                  showDownloadIcon={type !== SynapseConstants.EXPERIMENTAL}
-                  rowId={data![schema.id]}
-                  tableId={tableId}
-                  displayValue={title}
-                />
-              ) : (
-                this.renderTitle({
-                  href,
-                  target,
-                  titleSearchHandle,
-                  title,
-                })
-              )}
-            </h3>
-          </div>
-          {subTitle && (
-            <div
-              data-search-handle={stubTitleSearchHandle}
-              className="SRC-author"
-            >
-              {subTitle}
+            }
+            <div>
+              <h3
+                className="SRC-boldText SRC-blackText"
+                style={{ margin: 'none' }}
+              >
+                {!titleLinkConfig &&
+                titleColumnType === ColumnType.FILEHANDLEID ? (
+                  <FileHandleLink
+                    token={token}
+                    fileHandleId={linkValue}
+                    tableEntityConcreteType={tableEntityConcreteType}
+                    showDownloadIcon={type !== SynapseConstants.EXPERIMENTAL}
+                    rowId={data![schema.id]}
+                    tableId={tableId}
+                    displayValue={title}
+                  />
+                ) : (
+                  this.renderTitle({
+                    href,
+                    target,
+                    titleSearchHandle,
+                    title,
+                  })
+                )}
+              </h3>
             </div>
-          )}
-          {/* 
-            Below is a hack that allows word highlighting to work, the Search component insert's
-            html elements outside of the React DOM which if detected would break the app,
-            but as written below this avoids that reconcilliation process.
-          */}
-          {description &&
-            this.renderShortDescription(
-              description,
-              hasClickedShowMore,
-              descriptionSubTitle,
-              descriptionLinkConfig,
+            {subTitle && (
+              <div
+                data-search-handle={stubTitleSearchHandle}
+                className="SRC-author"
+              >
+                {subTitle}
+              </div>
             )}
-          {description &&
-            this.renderLongDescription(
-              description,
-              hasClickedShowMore,
-              descriptionSubTitle,
-              descriptionLinkConfig,
-              this.props.token,
-            )}
+            {/* 
+              Below is a hack that allows word highlighting to work, the Search component insert's
+              html elements outside of the React DOM which if detected would break the app,
+              but as written below this avoids that reconcilliation process.
+            */}
+            {description &&
+              this.renderShortDescription(
+                description,
+                hasClickedShowMore,
+                descriptionSubTitle,
+                descriptionLinkConfig,
+              )}
+            {description &&
+              this.renderLongDescription(
+                description,
+                hasClickedShowMore,
+                descriptionSubTitle,
+                descriptionLinkConfig,
+                this.props.token,
+              )}
+          </div>
         </div>
         {showFooter && (
           <CardFooter
@@ -519,6 +533,7 @@ export default class GenericCard extends React.Component<
             secondaryLabelLimit={secondaryLabelLimit}
             values={values}
             columnIconOptions={columnIconOptions}
+            className={`${imageFileHandleIdValue ? 'hasImage' : 'hasIcon'}`}
           />
         )}
       </div>

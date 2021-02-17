@@ -1,11 +1,110 @@
-.QueryWrapperPlotNav {
-  .QueryWrapperPlotNav__title {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
+@use '../abstracts/variables' as SRC;
+
+.QueryWrapperPlotNav {  
+  @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+    .SRC-wrapper {
+      display: grid;
+      grid-template-columns: 60px 10px 25% 10px 75%;
+      padding-right: 120px;
+
+      // by default, children take up the full row
+      > * {
+        grid-column: 3 / span 3;
+      }
+
+      .QueryFilterToggleButton {
+        position: relative;
+        left: -23px;
+        top: 20px;
+        button.btn.btn-outline-primary {
+          border-radius: 50% !important;
+          background-color: white;
+          box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25) !important; // bootstrap-4-backport specifies "none !important" :(
+          border: none;
+          width: 45px;
+          height: 45px;
+          &:hover{
+            background-color: SRC.$primary-action-color;
+          }        
+        }
+      }
+      // row
+      .QueryFilter {
+        grid-row: 1 / span 100;
+      }
+      .QueryFilterToggleButton {
+        grid-row: 1 / span 1;
+        svg {
+          margin-bottom: 2px;
+        }
+      }
+      .TopLevelControls {
+        grid-row: 1 / span 1;
+      }
+      .FacetNav {
+        grid-row: 2 / span 1;
+      }
+      .TotalQueryResults {
+        grid-row: 3 / span 1;
+      }
+      .FilterAndView {
+        grid-row: 4 / span 1;
+      }
+      
+      // column (depends on if we are showing facet filters)
+      .isShowingFacetFilters {
+        &.QueryFilter {
+          grid-column: 1 / span 3;          
+        }
+        &.QueryFilterToggleButton {
+          grid-column: 4 / span 1;
+          svg {
+            margin-left: 2px;
+          }
+        }
+        &.FacetNav, &.TotalQueryResults, &.FilterAndView, &.TopLevelControls {
+          grid-column: 5 / span 1;
+        }
+      }
+      .isHidingFacetFilters {
+        &.QueryFilter {
+          grid-column: 1 / span 1;
+          > * {
+            display:none;
+          }          
+        }
+        &.QueryFilterToggleButton {
+          grid-column: 2 / span 1;        
+        }
+      }
+    }
+    .TotalQueryResults, .FacetNav, .FilterAndView, .TopLevelControls {
+      margin-left: 30px;
+    }  
+  }
+
+  @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
+    .SRC-wrapper {
+        .QueryFilterToggleButton {
+          display:none;        
+        }
+    }
+  }
+
+  .TopLevelControls {
+    h3 {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-top: 0px;
+    }
+    padding-top: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;
+    &__showhidefacetfilters{
+      display: none;    
+    }
     .QueryWrapperPlotNav__querycount {
       display: inline-flex;
       align-items: center;
