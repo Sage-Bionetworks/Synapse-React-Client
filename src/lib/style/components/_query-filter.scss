@@ -5,11 +5,7 @@
     font-weight: bold;
   }
   padding: 2rem;
-  background-color: adjust-color(
-    SRC.$primary-action-color,
-    $saturation: 20%,
-    $lightness: 54%
-  );
+  background-color: rgba(47, 142, 148, 0.05);
   &__facet {
     margin: 2rem 0;
     &:first-child {
