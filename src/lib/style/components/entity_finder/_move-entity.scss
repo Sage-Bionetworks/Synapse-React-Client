@@ -4,10 +4,38 @@
 
 $-header-height: 40px;
 $-border-color: #dcdcdc;
+$-finder-height: 500px;
+
+.EntityFinder {
+  &__SearchContainer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: right;
+    border: 1px solid $-border-color;
+    margin: 5px;
+    padding: 0px 10px;
+    & &__SearchBox {
+      float: right;
+      max-width: 200px;
+      margin: 10px 0px 10px 10px;
+      border: none;
+      box-shadow: none;
+    }
+    & &__SearchBox:focus {
+      max-width: 500px;
+      transition: all 0.5s;
+    }
+  }
+}
+
+.EntityViewReflexContainer {
+  height: $-finder-height;
+}
 
 .EntityFinderTreeView {
+  height: $-finder-height;
   border: 1px solid $-border-color;
-  width: fill-container;
+  overflow: auto;
   &__Row {
     width: 100%;
     display: inline-grid;
@@ -26,6 +54,12 @@ $-border-color: #dcdcdc;
       grid-column-start: 2;
       grid-column-end: 3;
     }
+
+    &__EntityName {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
   &__Row:hover {
     background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
@@ -40,13 +74,17 @@ $-border-color: #dcdcdc;
       color: SRC.$primary-action-color-500;
     }
   }
+
   &__SelectionHeader {
     height: $-header-height;
     border-bottom: 1px solid $-border-color;
+    display: flex;
+    align-items: center;
   }
 }
 
 .EntityFinderDetailsView {
+  height: $-finder-height;
   border: 1px solid $-border-color;
   width: fill-container;
   &__HeaderRow {
@@ -83,9 +121,13 @@ $-border-color: #dcdcdc;
   .AccessColumn,
   .IdColumn,
   .CreatedOnColumn,
-  .ModifiedOnColumn {
+  .ModifiedOnColumn,
+  .VersionColumn {
     padding: 5px;
     padding-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .EntityIconColumn {
@@ -96,15 +138,19 @@ $-border-color: #dcdcdc;
     width: 40%;
   }
   .AccessColumn {
-    width: 10%;
+    width: 40px;
   }
   .IdColumn {
     width: 10%;
   }
   .CreatedOnColumn {
-    width: 20%;
+    width: 15%;
   }
   .ModifiedOnColumn {
+    width: 15%;
+  }
+  .VersionColumn {
+    min-width: 150px;
     width: 20%;
   }
 }

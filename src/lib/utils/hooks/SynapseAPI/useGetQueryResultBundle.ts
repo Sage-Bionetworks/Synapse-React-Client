@@ -1,8 +1,8 @@
-import { QueryBundleRequest, QueryResultBundle } from '../synapseTypes'
+import { QueryBundleRequest, QueryResultBundle } from '../../synapseTypes'
 import { useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseClientError } from '../SynapseClient'
-import { SynapseClient } from '..'
+import { SynapseClientError } from '../../SynapseClient'
+import { SynapseClient } from '../..'
 
 export type GetQueryResultBundleProps = {
   queryBundleRequest: QueryBundleRequest

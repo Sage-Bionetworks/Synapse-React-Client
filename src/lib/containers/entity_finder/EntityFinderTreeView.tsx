@@ -10,13 +10,21 @@ import {
   ProjectHeader,
 } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
-// import DropdownMenu from 'react-bootstrap/esm/DropdownMenu'
 import { Dropdown } from 'react-bootstrap'
 import { EntityBadge } from '../EntityBadge'
+import { useInView } from 'react-intersection-observer'
+import {
+  DetailsView,
+  EntityFinderDetailsViewConfiguration,
+  EntityFinderViewConfigurationType,
+} from './EntityFinderDetailsView'
+import { EntityIdAndVersion } from './EntityFinder'
+import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 
 enum FinderScope {
   CURRENT_PROJECT = 'Current Project',
   ALL_PROJECTS = 'All of my Projects',
+  FAVORITES = 'My Favorites',
 }
 
 type TreeViewRowProps = {
@@ -28,11 +36,13 @@ type TreeViewRowProps = {
   autoExpand?: (entityId: string) => boolean
 }
 
-const getIconForEntityHeader = (header: EntityHeader | ProjectHeader) => {
-  if (header.type === undefined) {
-    return getIconForEntityType(EntityType.PROJECT)
+export const getIconForEntityHeader = (
+  header: EntityHeader | ProjectHeader,
+) => {
+  if ((header as EntityHeader).type) {
+    return getIconForEntityType((header as EntityHeader).type)
   } else {
-    return getIconForEntityType(header.type)
+    return getIconForEntityType(EntityType.PROJECT)
   }
 }
 
@@ -90,43 +100,45 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
       sessionToken,
     )
     setChildEntities(result.page)
+    setAllChildrenLoaded(true)
     // TODO: pagination
   }
 
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+  })
   useEffect(() => {
-    SynapseClient.getEntityBundleV2(
-      entityHeader.id,
-      {
-        includeAnnotations: true,
-        includeBenefactorACL: true,
-        includePermissions: true,
-        includeRootWikiId: true,
-        includeThreadCount: true,
-      },
-      undefined,
-      sessionToken,
-    ).then(response => {
-      setBundle(response)
-    })
-  }, [childEntities, entityHeader.id])
+    if (inView) {
+      SynapseClient.getEntityBundleV2(
+        entityHeader.id,
+        {
+          includeAnnotations: true,
+          includeBenefactorACL: true,
+          includePermissions: true,
+          includeRootWikiId: true,
+          includeThreadCount: true,
+        },
+        undefined,
+        sessionToken,
+      ).then(response => {
+        setBundle(response)
+      })
+
+      loadChildren()
+    }
+  }, [inView])
 
   useEffect(() => {
     if (autoExpand(entityHeader.id)) {
       setIsExpanded(true)
     }
-  }, [childEntities, autoExpand])
-
-  useEffect(() => {
-    if (!allChildrenLoaded) {
-      loadChildren()
-      setAllChildrenLoaded(true)
-    }
-  }, [allChildrenLoaded, isExpanded])
+  }, [autoExpand, entityHeader.id])
 
   return (
     <>
       <div
-        style={{ paddingLeft: `${level * 15 + 5}px` }}
+        ref={ref}
+        style={{ paddingLeft: `${level * 15 + 15}px` }}
         className={`EntityFinderTreeView__Row${
           selectedId === entityHeader.id
             ? ' EntityFinderTreeView__Row__Selected'
@@ -151,7 +163,9 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
         <div className="EntityFinderTreeView__Row__EntityIcon">
           {getIconForEntityHeader(entityHeader)}
         </div>
-        <div>{entityHeader.name}</div>
+        <div className="EntityFinderTreeView__Row__EntityName">
+          {entityHeader.name}
+        </div>
         <div>
           {bundle && (
             <EntityBadge
@@ -181,34 +195,63 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   )
 }
 
+// if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
 export type TreeViewProps = {
   sessionToken: string
-  // topLevelEntities: EntityHeader[]
-  selected: string // synId(s)
+  initialContainer: string // synId
+  selected: EntityIdAndVersion[]
+  showDetailsView: boolean
+  showTypesInDetailsView?: EntityType[]
+  showDropdown: boolean
+  showFakeRootNode?: boolean // necessary to select root nodes in a details view
   selectMultiple?: boolean
-  setSelected: Function
+  setSelected: (selected: EntityIdAndVersion[]) => void
 }
 
 export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   sessionToken,
-  // topLevelEntities,
+  initialContainer,
   selected,
   setSelected,
+  showDetailsView,
+  showTypesInDetailsView = [],
+  selectMultiple,
+  showFakeRootNode = showDetailsView,
 }) => {
+  const DEFAULT_CONFIGURATION: EntityFinderDetailsViewConfiguration = {
+    type: EntityFinderViewConfigurationType.PARENT_CONTAINER,
+    parentContainerParams: {
+      parentContainerId: initialContainer,
+      includeTypes: showTypesInDetailsView,
+    },
+  }
+
+  const [expandFakeRoot, setExpandFakeRoot] = useState(true)
+
   const [isLoading, setIsLoading] = useState(false)
   const [topLevelEntities, setTopLevelEntities] = useState<
-    EntityHeader[] | ProjectHeader[]
-  >()
+    (EntityHeader | ProjectHeader)[]
+  >([])
   const [scope, setScope] = useState(FinderScope.CURRENT_PROJECT)
-  const [currentSelectedPath, setCurrentSelectedPath] = useState<EntityPath>()
+  const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
+
+  const [currentContainer, setCurrentContainer] = useState<string>(
+    initialContainer,
+  ) // synId or 'root'
+
+  const [
+    detailsViewConfiguration,
+    setDetailsViewConfiguration,
+  ] = useState<EntityFinderDetailsViewConfiguration>(DEFAULT_CONFIGURATION)
 
   const isInPath = (id: string) => {
-    if (!currentSelectedPath) {
-      return false
-    }
-    for (const eh of currentSelectedPath.path) {
-      if (id === eh.id) {
-        return true
+    console.log('checking if', id, 'in path', initialContainerPath)
+    if (scope === FinderScope.CURRENT_PROJECT && initialContainerPath) {
+      console.log('checking autoexpand', initialContainerPath)
+      for (const eh of initialContainerPath.path) {
+        if (id === eh.id) {
+          return true
+        }
       }
     }
     return false
@@ -225,66 +268,186 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         })
 
         break
-      case FinderScope.CURRENT_PROJECT:
-      default:
-        SynapseClient.getEntityPath(sessionToken, selected).then(path => {
-          setTopLevelEntities([path.path[1]])
+      case FinderScope.FAVORITES: {
+        SynapseClient.getUserFavorites(sessionToken).then(({ results }) => {
+          setTopLevelEntities(results)
           setIsLoading(false)
         })
+        break
+      }
+      case FinderScope.CURRENT_PROJECT:
+      default:
+        SynapseClient.getEntityPath(sessionToken, initialContainer).then(
+          path => {
+            setInitialContainerPath(path)
+            setTopLevelEntities([path.path[1]])
+            setIsLoading(false)
+          },
+        )
+
         break
     }
   }, [sessionToken, scope])
 
   useEffect(() => {
-    SynapseClient.getEntityPath(sessionToken, selected).then(path => {
-      setCurrentSelectedPath(path)
-    })
-  }, [sessionToken, selected])
+    console.log(currentContainer)
+    if (currentContainer === 'root') {
+      switch (scope) {
+        case FinderScope.ALL_PROJECTS:
+          setDetailsViewConfiguration({
+            type: EntityFinderViewConfigurationType.USER_PROJECTS,
+          })
+          break
+        case FinderScope.CURRENT_PROJECT:
+          setDetailsViewConfiguration({
+            type: EntityFinderViewConfigurationType.HEADER_LIST,
+            headerList: topLevelEntities,
+          })
+          break
+        case FinderScope.FAVORITES:
+          setDetailsViewConfiguration({
+            type: EntityFinderViewConfigurationType.USER_FAVORITES,
+            headerList: topLevelEntities,
+          })
 
-  return (
+          break
+      }
+    } else {
+      setDetailsViewConfiguration({
+        type: EntityFinderViewConfigurationType.PARENT_CONTAINER,
+        parentContainerParams: {
+          parentContainerId: currentContainer,
+          includeTypes: showTypesInDetailsView,
+        },
+      })
+    }
+  }, [scope, currentContainer])
+
+  const treeView = (
     <div className="EntityFinderTreeView" style={{ height: '500px' }}>
-      <div className={`EntityFinderTreeView__SelectionHeader`}>
-        <Dropdown>
-          <Dropdown.Toggle variant="light" id="dropdown-basic">
-            {scope}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            {Object.values(FinderScope).map(s => {
-              // TODO: This dropdown currently does nothing.
-              return (
-                <Dropdown.Item
-                  key={s}
-                  onClick={() => {
-                    setScope(s)
-                  }}
-                >
-                  {s}
-                </Dropdown.Item>
-              )
-            })}
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
+      {/* <div className={`EntityFinderTreeView__SelectionHeader`}></div> */}
       <div style={{ overflow: 'auto' }}>
         {isLoading ? (
           <div className="spinner" />
         ) : (
-          topLevelEntities?.map(entity => {
-            return (
-              <TreeViewRow
-                key={entity.id}
-                sessionToken={sessionToken}
-                entityHeader={entity}
-                selectedId={selected}
-                setSelectedId={(entityId: string) => {
-                  setSelected(entityId)
+          <>
+            {showFakeRootNode && (
+              <div
+                style={{ paddingLeft: `5px` }}
+                className={`EntityFinderTreeView__Row${
+                  currentContainer === 'root'
+                    ? ' EntityFinderTreeView__Row__Selected'
+                    : ''
+                }`}
+                onClick={() => {
+                  setCurrentContainer('root')
                 }}
-                autoExpand={isInPath}
-              ></TreeViewRow>
-            )
-          })
+              >
+                <div
+                  className={'EntityFinderTreeView__Row__ExpandButton'}
+                  onClick={e => {
+                    e.stopPropagation()
+                    setExpandFakeRoot(!expandFakeRoot)
+                  }}
+                >
+                  {expandFakeRoot ? '▾' : '▸'}
+                </div>
+                <span></span>
+                <Dropdown
+                  style={{
+                    marginLeft: '20px',
+                    position: 'absolute',
+                    left: '10px',
+                    top: '16px',
+                    zIndex: 1,
+                  }}
+                >
+                  <Dropdown.Toggle
+                    variant="light-primary-500"
+                    id="dropdown-basic"
+                  >
+                    {scope}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {Object.values(FinderScope).map(s => {
+                      return (
+                        <Dropdown.Item
+                          key={s}
+                          onClick={() => {
+                            setScope(s)
+                          }}
+                        >
+                          {s}
+                        </Dropdown.Item>
+                      )
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            )}
+            <div style={!expandFakeRoot ? { display: 'none' } : {}}>
+              {topLevelEntities?.map((entity: EntityHeader | ProjectHeader) => {
+                return (
+                  <TreeViewRow
+                    key={entity.id}
+                    sessionToken={sessionToken}
+                    entityHeader={entity}
+                    selectedId={currentContainer}
+                    setSelectedId={(entityId: string) => {
+                      setCurrentContainer(entityId)
+                    }}
+                    autoExpand={isInPath}
+                  ></TreeViewRow>
+                )
+              })}
+            </div>
+          </>
         )}
       </div>
     </div>
+  )
+
+  const detailsView = (
+    <DetailsView
+      sessionToken={sessionToken}
+      configuration={detailsViewConfiguration}
+      showVersionSelection={true}
+      selected={selected}
+      onSelect={selectedEntity => {
+        if (!selectMultiple) {
+          setSelected([selectedEntity])
+        } else {
+          setSelected([
+            ...selected.filter(s => s.entityId !== selectedEntity.entityId),
+            selectedEntity,
+          ])
+        }
+      }}
+      onDeselect={deselectedEntity => {
+        if (selected.map(s => s.entityId).includes(deselectedEntity.entityId)) {
+          setSelected(
+            selected.filter(e => e.entityId !== deselectedEntity.entityId),
+          )
+        }
+      }}
+    ></DetailsView>
+  )
+
+  return (
+    <>
+      {showDetailsView ? (
+        <div className="EntityViewReflexContainer">
+          <ReflexContainer orientation="vertical">
+            <ReflexElement minSize={200} size={350}>
+              {treeView}
+            </ReflexElement>
+            <ReflexSplitter></ReflexSplitter>
+            <ReflexElement>{detailsView}</ReflexElement>
+          </ReflexContainer>
+        </div>
+      ) : (
+        treeView
+      )}
+    </>
   )
 }

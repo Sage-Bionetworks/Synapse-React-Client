@@ -15,6 +15,10 @@ import { FileHandleLink } from './widgets/FileHandleLink'
 import IconList from './IconList'
 import { ImageFileHandle } from './widgets/ImageFileHandle'
 import { Button } from 'react-bootstrap'
+import {
+  DOI_REGEX,
+  SYNAPSE_ENTITY_ID_REGEX,
+} from '../utils/functions/RegularExpressions'
 
 export type KeyToAlias = {
   key: string
@@ -32,7 +36,7 @@ export type GenericCardSchema = {
   subTitle?: string
   description?: string
   icon?: string
-  imageFileHandleColumnName?:string
+  imageFileHandleColumnName?: string
   secondaryLabels?: any[]
   link?: string
   dataTypeIconNames?: string
@@ -65,12 +69,6 @@ export type GenericCardState = {
 const CHAR_COUNT_CUTOFF = 400
 export const CARD_SHORT_DESCRIPTION_CSS = 'SRC-short-description'
 export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
-
-// doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
-// note - had to add an escape character for the second and third forward slash in the regex above
-export const DOI_REGEX = /^10.\d{4,9}\/[-._;()\/:a-z0-9]+$/i
-// check for 'syn' followed and ended by a digit of unlimited length, must also begin the line
-export const SYNAPSE_REGX = /^syn\d+\.?\d+$/
 
 // This function isn't in the class only for ease of testing with renderShortDescription
 export const getCutoff = (summary: string) => {
@@ -173,14 +171,18 @@ export const renderLabel = (args: {
 
   if (!labelLink) {
     // if this looks like a Synapse ID, then autolink.
-    if (str.match(SYNAPSE_REGX)) {
+    if (str.match(SYNAPSE_ENTITY_ID_REGEX)) {
       // its a synId
-      return <a
+      return (
+        <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://www.synapse.org/#!Synapse:${str}`} className={className}>
+          href={`https://www.synapse.org/#!Synapse:${str}`}
+          className={className}
+        >
           {str}
         </a>
+      )
     } else {
       // they don't need a link
       return str
@@ -194,7 +196,7 @@ export const renderLabel = (args: {
           <span>
             <MarkdownSynapse key={el} renderInline={true} markdown={el} />
             {/* \u00a0 is a nbsp; */}
-            {index < strList.length - 1 && ",\u00a0\u00a0"}
+            {index < strList.length - 1 && ',\u00a0\u00a0'}
           </span>
         )
       })
@@ -250,7 +252,7 @@ export default class GenericCard extends React.Component<
     link = link.trim()
     let href = link
     let target = '_self'
-    if (link.match(SYNAPSE_REGX)) {
+    if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
       // its a synId
       href = `https://www.synapse.org/#!Synapse:${link}`
     } else if (link.match(DOI_REGEX)) {
@@ -375,8 +377,10 @@ export default class GenericCard extends React.Component<
       }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
-    const dataTypeIconNames = data[schema[genericCardSchemaDefined.dataTypeIconNames || '']]
-    const imageFileHandleIdValue = data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
+    const dataTypeIconNames =
+      data[schema[genericCardSchemaDefined.dataTypeIconNames || '']]
+    const imageFileHandleIdValue =
+      data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
 
     const titleColumnModel = columnModels?.find(
       el => genericCardSchemaDefined.link === el.name,
@@ -422,19 +426,26 @@ export default class GenericCard extends React.Component<
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
     }
-    const icon:JSX.Element = <>
-        {imageFileHandleIdValue && <div className="SRC-imageThumbnail">
-          <ImageFileHandle 
-            token={token}
-            fileHandleId={imageFileHandleIdValue}
-            tableEntityConcreteType={tableEntityConcreteType}
-            rowId={data![schema.id]}
-            tableId={tableId}
-          /></div>}
-        {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
-          <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
-        </div>}
+    const icon: JSX.Element = (
+      <>
+        {imageFileHandleIdValue && (
+          <div className="SRC-imageThumbnail">
+            <ImageFileHandle
+              token={token}
+              fileHandleId={imageFileHandleIdValue}
+              tableEntityConcreteType={tableEntityConcreteType}
+              rowId={data![schema.id]}
+              tableId={tableId}
+            />
+          </div>
+        )}
+        {!imageFileHandleIdValue && (
+          <div className="SRC-cardThumbnail">
+            <Icon iconOptions={iconOptions} value={iconValue} type={type} />
+          </div>
+        )}
       </>
+    )
     if (isHeader) {
       return (
         <HeaderCard
@@ -477,15 +488,16 @@ export default class GenericCard extends React.Component<
             {
               // If the portal configs has columnIconOptions.columns.dataType option
               // and the column value is not null, display the card data type icons
-              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
-              <div style={{textAlign: "right"}}>
-                <IconList
-                  iconConfigs={columnIconOptions.columns.dataType}
-                  iconNames={JSON.parse(dataTypeIconNames)}
-                  useBackground={true}
-                  useTheme={true}
-                />
-              </div>
+              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length && (
+                <div style={{ textAlign: 'right' }}>
+                  <IconList
+                    iconConfigs={columnIconOptions.columns.dataType}
+                    iconNames={JSON.parse(dataTypeIconNames)}
+                    useBackground={true}
+                    useTheme={true}
+                  />
+                </div>
+              )
             }
             <div>
               <h3
@@ -541,11 +553,15 @@ export default class GenericCard extends React.Component<
                 descriptionLinkConfig,
                 this.props.token,
               )}
-            {ctaButtonLinkConfig &&
+            {ctaButtonLinkConfig && (
               <div className="SRC-portalCardCTAButton bootstrap-4-backport">
                 <Button
                   variant="primary"
-                  href={this.getCardLinkHref(ctaButtonLinkConfig?.linkConfig, data, schema)}
+                  href={this.getCardLinkHref(
+                    ctaButtonLinkConfig?.linkConfig,
+                    data,
+                    schema,
+                  )}
                   type="button"
                   className="pill-xl"
                   size="sm"
@@ -553,7 +569,7 @@ export default class GenericCard extends React.Component<
                   {ctaButtonLinkConfig.buttonText}
                 </Button>
               </div>
-            }
+            )}
           </div>
         </div>
         {showFooter && (

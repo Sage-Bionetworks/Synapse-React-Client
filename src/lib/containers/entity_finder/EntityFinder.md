@@ -9,19 +9,23 @@
 
 ### TODO:
 
+* Pagination
 * Search
   * Text search
   * Entering a synId
-* Space for radio/checkbox (if desired?)
-* Version column/select
-* "autoexpand" to current location given an input selection
-* "Current Project" dropdown options
-  * All
-  * Shared With Me
-  * Shared By Me
-  * Favorites (?)
-* Sorting columns in the detailed view
-* Filtering columns in the detailed view (?)
+* Space for radio/checkbox
+* Version column/select ✅
+  * Hide version column/select for unversionable entities
+    * e.g. folders still show versions because the backend returns them
+* "autoexpand" to current location given an input selection ✅
+* Dropdown options
+  * Current Project ✅
+  * All Projects ✅
+  * Favorites ✅
+  * Clear/reset details view when switching between options
+* Sorting columns in the detailed view ✅
+* Iconography for tables, views
+  * Change colors of icons when selected
 * Lots of styling
 * Optimization/tests/code cleanup
 * Much more

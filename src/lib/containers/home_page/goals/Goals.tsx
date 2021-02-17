@@ -8,7 +8,7 @@ import {
 import { SynapseConstants } from '../../../utils'
 import { SynapseClientError, getFiles } from '../../../utils/SynapseClient'
 import { ErrorBanner } from '../../ErrorBanner'
-import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import GoalsMobile from './Goals.Mobile'
 import GoalsDesktop from './Goals.Desktop'

@@ -1,6 +1,6 @@
 import { lexer, parser } from 'sql-parser'
-import { SYNAPSE_REGX } from '../../containers/GenericCard'
 import { SelectColumn, Row } from '../synapseTypes'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../functions/RegularExpressions'
 
 export type KeyValue = {
   [index: string]: string
@@ -21,7 +21,7 @@ const generateTokenUsingOperator = (
   match: string,
 ) => {
   let usedMatchForLike = match
-  if (match.match(SYNAPSE_REGX)) {
+  if (match.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // If we use a LIKE statement with a synId the backend will look for a string with the first three
     // characters being 'syn', however, it stores synIds without 'syn', so the query will fail
     // The backend usually parses 'syn' out, but not with the LIKE clause since its expecting a regex, so we
@@ -62,9 +62,7 @@ const generateTokenUsingOperator = (
   }
 }
 
-export const getWhereInsertIndex = (
-  tokens: string[][]
-):number => {
+export const getWhereInsertIndex = (tokens: string[][]): number => {
   const existingWhereIndex = tokens.findIndex(el => el[0] === 'WHERE')
   if (existingWhereIndex !== -1) {
     return existingWhereIndex
@@ -95,7 +93,10 @@ export const insertConditionsFromSearchParams = (
   // if there are no search params, or if all search params are QueryWrapper queries
   const isQueryWrapperKey = (key: string) => key.startsWith('QueryWrapper')
   let searchParamKeys = Object.keys(searchParams)
-  if (searchParamKeys.length === 0 || searchParamKeys.every(isQueryWrapperKey)) {
+  if (
+    searchParamKeys.length === 0 ||
+    searchParamKeys.every(isQueryWrapperKey)
+  ) {
     return sql
   }
   const tokens: string[][] = lexer.tokenize(sql)

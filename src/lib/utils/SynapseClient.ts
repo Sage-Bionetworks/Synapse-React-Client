@@ -86,6 +86,9 @@ import {
   EntityChildrenRequest,
   EntityChildrenResponse,
 } from './synapseTypes/EntityChildren'
+import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
+import { VersionInfo } from './synapseTypes/VersionInfo'
+import { SearchQuery, SearchResults } from './synapseTypes/Search'
 
 const cookies = new UniversalCookies()
 
@@ -833,7 +836,7 @@ export const getEntityHeader = (
 ) => {
   return doPost(
     'repo/v1/entity/header',
-    { references },
+    { references: references },
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -942,12 +945,12 @@ export const getEntityWiki = (
  */
 export const getUserFavorites = (sessionToken: string | undefined) => {
   const url = 'repo/v1/favorite?offset=0&limit=200'
-  return doGet(
+  return doGet<PaginatedResults<EntityHeader>>(
     url,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<any>
+  )
 }
 
 /**
@@ -1532,7 +1535,6 @@ export const getFileResult = (
   includePreSignedURLs?: boolean,
   includePreviewPreSignedURLs?: boolean,
 ): Promise<FileResult> => {
-
   return new Promise((resolve, reject) => {
     const fileHandleAssociationList: FileHandleAssociation[] = [
       {
@@ -1551,7 +1553,7 @@ export const getFileResult = (
       .then((data: BatchFileResult) => {
         if (
           data.requestedFiles.length &&
-          (data.requestedFiles[0].fileHandleId !== undefined)
+          data.requestedFiles[0].fileHandleId !== undefined
         ) {
           resolve(data.requestedFiles[0])
         } else {
@@ -2387,24 +2389,20 @@ export const deletePersonalAccessToken = (
 // https://rest-docs.synapse.org/rest/GET/projects.html
 export const getMyProjects = (
   sessionToken: string,
-  nextPageToken?: string,
-  teamId?: string,
-  filter?: 'ALL' | 'CREATED' | 'PARTICIPATED' | 'TEAM',
-  sort?: 'LAST_ACTIVITY' | 'PROJECT_NAME',
-  sortDirection?: 'ASC' | 'DESC',
+  params?: GetProjectsParameters,
 ) => {
+  const { nextPageToken, teamId, filter, sort, sortDirection } = params || {}
   return doGet<ProjectHeaderList>(
-    `/repo/v1/projects
-    ${
+    `/repo/v1/projects${
       [nextPageToken, teamId, filter, sort, sortDirection].some(x => !!x)
         ? '?'
         : ''
-    }
-    ${nextPageToken ? 'nextPageToken=' + nextPageToken + '&' : ''}
-    ${teamId ? 'teamId=' + teamId + '&' : ''}
-    ${filter ? 'filter=' + filter + '&' : ''}
-    ${sort ? 'sort=' + sort + '&' : ''}
-    ${sortDirection ? 'sortDirection=' + sortDirection + '&' : ''}`,
+    }${nextPageToken ? 'nextPageToken=' + nextPageToken + '&' : ''}${
+      teamId ? 'teamId=' + teamId + '&' : ''
+    }${filter ? 'filter=' + filter + '&' : ''}
+    ${sort ? 'sort=' + sort + '&' : ''}${
+      sortDirection ? 'sortDirection=' + sortDirection + '&' : ''
+    }`,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2415,6 +2413,28 @@ export const getMyProjects = (
 export const getEntityPath = (sessionToken: string, entityId: string) => {
   return doGet<EntityPath>(
     `/repo/v1/entity/${entityId}/path`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://docs.synapse.org/rest/GET/entity/id/version.html
+// TODO: Pagination
+export const getEntityVersions = (sessionToken: string, entityId: string) => {
+  return doGet<PaginatedResults<VersionInfo>>(
+    `/repo/v1/entity/${entityId}/version?offset=0&limit=200`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://docs.synapse.org/rest/POST/search.html
+export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
+  return doPost<SearchResults>(
+    '/repo/v1/search',
+    query,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
