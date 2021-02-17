@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import ReactTooltip from 'react-tooltip'
 import {
   Check,
   Cached,
@@ -17,14 +18,14 @@ import Rat from '../assets/mui_components/Rat'
 import Kinomics from '../assets/mui_components/Kinomics'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
+import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 
 export type IconSvgOptions = {
   icon: string
   color: string
   size?: string
   padding?: 'left' | 'right'
-  label?: string
-  hoverEffect?: boolean  // not implement currently
+  label?: string  // If provided, will activate tooltip
 }
 
 export type IconSvgProps = {
@@ -91,7 +92,7 @@ const getIcon = (options:IconSvgOptions) => {
 
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   const { options } = props
-  const { icon, color, padding } = options
+  const { icon, color, padding, label } = options
   let mounted = true
 
   // Do not set inline style unless it is specified because it's hard to override
@@ -116,13 +117,23 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   }, [icon, color])
 
   return (
-    <span
-      data-svg={icon}
-      className="styled-svg-wrapper"
-      style={wrapperCss}
-    >
+    <>
+      <span
+        data-svg={icon}
+        className="styled-svg-wrapper"
+        style={wrapperCss}
+        id={`icon-${icon}`}
+        data-for={`icon-${icon}`}
+        data-tip={label}
+      >
       { getIcon(options) }
-    </span>
+      </span>
+      { label && <ReactTooltip
+        delayShow={TOOLTIP_DELAY_SHOW}
+        id={`icon-${icon}`}
+      />
+      }
+    </>
   )
 }
 
