@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import QueryCount from '../QueryCount'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { QueryWrapperChildProps, TopLevelControlsState } from '../QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS, TopLevelControlsState } from '../QueryWrapper'
 import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
@@ -128,79 +128,81 @@ const TopLevelControls = (
     }
     updateParentState!({ isColumnSelected: isColumnSelectedCopy })
   }
-
+  const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
-    <h3 className="QueryWrapperPlotNav__title">
-      <div className="QueryWrapperPlotNav__querycount">
-        <QueryCount token={token} name={name} sql={sql} parens={true} />
-      </div>
-      <div className="QueryWrapperPlotNav__actions">
-        {customControls &&
-          customControls.map(customControl => {
+    <div className={`TopLevelControls ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
+      <h3>        
+        <div className="QueryWrapperPlotNav__querycount">
+          <QueryCount token={token} name={name} sql={sql} parens={true} />
+        </div>
+        <div className="QueryWrapperPlotNav__actions">
+          {customControls &&
+            customControls.map(customControl => {
+              return (
+                <button
+                  key={customControl.buttonText}
+                  className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${customControl.classNames}`}
+                  style={{ marginRight: '5px' }}
+                  type="button"
+                  onClick={() =>
+                    customControl.onClick({ data, selectedRowIndices, refresh })
+                  }
+                >
+                  {customControl.icon}&nbsp;
+                  {customControl.buttonText}
+                </button>
+              )
+            })}
+          {controls.map(control => {
+            const { key, icon, tooltipText } = control
+            if (
+              key === 'showDownloadConfirmation' &&
+              (!isFileView || hideDownload)
+            ) {
+              // needs to be a file view in order for download to make sense
+              return <></>
+            } else if (key === 'showDownloadConfirmation') {
+              return (
+                <DownloadOptions
+                  darkTheme={true}
+                  onDownloadFiles={() =>
+                    updateParentState!({
+                      topLevelControlsState: {
+                        ...topLevelControlsState!,
+                        showDownloadConfirmation: true,
+                      },
+                    })
+                  }
+                  token={token}
+                  queryResultBundle={data}
+                  queryBundleRequest={getLastQueryRequest!()}
+                  isFileView={isFileView && !hideDownload}
+                />
+              )
+            }
             return (
-              <button
-                key={customControl.buttonText}
-                className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${customControl.classNames}`}
-                style={{ marginRight: '5px' }}
-                type="button"
-                onClick={() =>
-                  customControl.onClick({ data, selectedRowIndices, refresh })
-                }
-              >
-                {customControl.icon}&nbsp;
-                {customControl.buttonText}
-              </button>
-            )
-          })}
-        {controls.map(control => {
-          const { key, icon, tooltipText } = control
-          if (
-            key === 'showDownloadConfirmation' &&
-            (!isFileView || hideDownload)
-          ) {
-            // needs to be a file view in order for download to make sense
-            return <></>
-          } else if (key === 'showDownloadConfirmation') {
-            return (
-              <DownloadOptions
+              <ElementWithTooltip
+                idForToolTip={key}
+                tooltipText={tooltipText}
+                key={key}
+                callbackFn={() => setControlState(key)}
                 darkTheme={true}
-                onDownloadFiles={() =>
-                  updateParentState!({
-                    topLevelControlsState: {
-                      ...topLevelControlsState!,
-                      showDownloadConfirmation: true,
-                    },
-                  })
-                }
-                token={token}
-                queryResultBundle={data}
-                queryBundleRequest={getLastQueryRequest!()}
-                isFileView={isFileView && !hideDownload}
+                icon={icon}
               />
             )
-          }
-          return (
-            <ElementWithTooltip
-              idForToolTip={key}
-              tooltipText={tooltipText}
-              key={key}
-              callbackFn={() => setControlState(key)}
+          })}
+          {showColumnSelection && (
+            <ColumnSelection
+              headers={data?.selectColumns}
+              isColumnSelected={isColumnSelected!}
+              toggleColumnSelection={toggleColumnSelection}
               darkTheme={true}
-              icon={icon}
+              facetAliases={facetAliases}
             />
-          )
-        })}
-        {showColumnSelection && (
-          <ColumnSelection
-            headers={data?.selectColumns}
-            isColumnSelected={isColumnSelected!}
-            toggleColumnSelection={toggleColumnSelection}
-            darkTheme={true}
-            facetAliases={facetAliases}
-          />
-        )}
-      </div>
-    </h3>
+          )}
+        </div>
+      </h3>
+    </div>
   )
 }
 

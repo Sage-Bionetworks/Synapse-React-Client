@@ -9,6 +9,7 @@ import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
 import _ from 'lodash-es'
 
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
+import { QueryWrapperChildProps } from '../../../../../lib/containers/QueryWrapper'
 
 const lastQueryRequestResult = {
   partMask: 53,
@@ -39,14 +40,21 @@ const lastQueryRequestResult = {
 const mockExecuteQueryRequest = jest.fn(_selectedFacets => null)
 const mockGetQueryRequest = jest.fn(() => _.cloneDeep(lastQueryRequestResult))
 
-function createTestProps(overrides?: QueryFilterProps): QueryFilterProps {
+function createTestProps(overrides?: QueryFilterProps & QueryWrapperChildProps): QueryFilterProps & QueryWrapperChildProps {
   return {
     isLoading: false,
     data: mockQueryResponseData as QueryResultBundle,
     getLastQueryRequest: mockGetQueryRequest,
     executeQueryRequest: mockExecuteQueryRequest,
     token: '123',
-
+    topLevelControlsState : {
+      showColumnFilter: true,
+      showFacetFilter: true,
+      showFacetVisualization: true,
+      showSearchBar: false,
+      showDownloadConfirmation: false,
+      showColumnSelectDropdown: false,
+    },
     ...overrides,
   }
 }
@@ -56,9 +64,9 @@ let wrapper: ShallowWrapper<
   any,
   Readonly<{}>
 >
-let props: QueryFilterProps
+let props: QueryFilterProps & QueryWrapperChildProps
 
-function init(overrides?: QueryFilterProps) {
+function init(overrides?: QueryFilterProps & QueryWrapperChildProps) {
   jest.clearAllMocks()
   props = createTestProps(overrides)
   wrapper = shallow(<QueryFilter {...props} />)
@@ -81,7 +89,8 @@ describe('initialization', () => {
   it('should only expand the first three collapsible facets', async () => {
     const facets = wrapper.children()
     facets.forEach((facet, index) => {
-      if (index < 3) {
+      if (index === 0) return // title
+      if (index > 0 && index < 4) {
         expect(facet.childAt(0).props().collapsed).toEqual(false)
       } else {
         expect(facet.childAt(0).props().collapsed).toEqual(true)
