@@ -4,7 +4,7 @@ import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 const Kinomics = (props:SvgIconProps) => {
   const { fill, style } = props
   return (
-    <SvgIcon style={style}>
+    <SvgIcon style={style} className={"icon-kinomics"}>
       <path d="M17.2604 5.74075C17.0511 5.81088 16.9361 5.99345 16.6968 6.05053C16.1772 6.15587 15.9853 6.68058 15.7507 7.0974C14.9952 8.40577 14.4245 9.80329 14.0259 11.2576C13.8857 11.7868 13.6594 12.2877 13.3729 12.7624C13.2145 13.0245 13.0776 13.2781 13.1969 13.5802" stroke={fill} strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M18.037 7.86598C17.9482 7.98836 17.8144 8.02868 17.6807 8.069C17.1049 8.22148 16.7971 8.64227 16.4504 9.09089C15.5663 10.263 15.0666 11.6824 14.0408 12.7483C13.7941 13.0078 13.5408 13.2823 13.2941 13.5419C13.2486 13.5847 13.1731 13.6145 13.1535 13.6597C12.9386 14.5052 12.3367 15.1918 12.1626 16.0462" stroke={fill} strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M11.3149 10.5819C12.3063 9.49218 13.2634 8.37858 13.6686 6.90923C13.833 6.28316 14.0749 5.6639 14.4284 5.13777C14.7211 4.71045 15.1793 4.35496 15.6845 4.11815" stroke={fill} strokeWidth="0.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>

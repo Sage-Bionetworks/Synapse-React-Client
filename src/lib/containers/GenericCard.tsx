@@ -12,6 +12,7 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { SelectColumn, ColumnModel, ColumnType } from '../utils/synapseTypes'
 import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
+import IconList from './IconList'
 
 export type KeyToAlias = {
   key: string
@@ -31,6 +32,7 @@ export type GenericCardSchema = {
   icon?: string
   secondaryLabels?: any[]
   link?: string
+  dataType?: string
 }
 
 export type IconOptions = {
@@ -357,6 +359,7 @@ export default class GenericCard extends React.Component<
       }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
+    const dataTypeIconNames = data[schema[genericCardSchemaDefined.dataType || '']]
     const titleColumnModel = columnModels?.find(
       el => genericCardSchemaDefined.link === el.name,
     )
@@ -443,6 +446,18 @@ export default class GenericCard extends React.Component<
         </div>
         <div className="SRC-cardContent">
           <div className="SRC-type">{type}</div>
+          {
+            // If the portal configs has columnIconOptions.columns.dataType option
+            // and the column value is not null, display the card data type icons
+            columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
+              <div style={{textAlign: "right"}}>
+                <IconList
+                  iconConfigs={columnIconOptions.columns.dataType}
+                  iconNames={dataTypeIconNames}
+                  showTooltip={true}
+                />
+              </div>
+          }
           <div>
             <h3
               className="SRC-boldText SRC-blackText"

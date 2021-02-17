@@ -11,6 +11,7 @@ import DataLocked from '../assets/mui_components/DataLocked'
 import Gene1 from '../assets/mui_components/Gene1'
 import Gene2 from '../assets/mui_components/Gene2'
 import Clinical from '../assets/mui_components/Clinical'
+import Imaging from '../assets/mui_components/Imaging'
 import LineGraph from '../assets/mui_components/LineGraph'
 import Rat from '../assets/mui_components/Rat'
 import Kinomics from '../assets/mui_components/Kinomics'
@@ -22,6 +23,7 @@ export type IconSvgOptions = {
   color: string
   size?: string
   padding?: 'left' | 'right'
+  label?: string
   hoverEffect?: boolean  // not implement currently
 }
 
@@ -70,14 +72,16 @@ const getIcon = (options:IconSvgOptions) => {
       return <Gene1 fill={color} style={customSvgStyle}></Gene1>
     case 'gene2':
       return <Gene2 fill={color} style={customSvgStyle}></Gene2>
+    case 'imaging':
+      return <Imaging fill={color} style={customSvgStyle}></Imaging>
     case 'lineGraph':
       return <LineGraph fill={color} style={customSvgStyle}></LineGraph>
     case 'kinomics':
       customSvgStyle.fill = "none"
-      return <Kinomics fill={color} style={customSvgStyle}></Kinomics>
+      return <Kinomics fill={color ? color : "currentColor"} style={customSvgStyle}></Kinomics>
     case 'proteomics':
       customSvgStyle.fill = "none"
-      return <Proteomics fill={color} style={customSvgStyle}></Proteomics>
+      return <Proteomics fill={color ? color : "currentColor"} style={customSvgStyle}></Proteomics>
     case 'other':
       return <Other fill={color} style={customSvgStyle}></Other>
     default:
@@ -89,11 +93,18 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   const { options } = props
   const { icon, color, padding } = options
   let mounted = true
-  const wrapperCss = {
-    padding: 0,
-    paddingLeft: padding === 'left' ? "0.2rem" : "0",
-    paddingRight: padding === 'right' ? "0.2rem" : "0",
+
+  // Do not set inline style unless it is specified because it's hard to override
+  const getPadding = (padding:any) => {
+    if (padding === 'left') {
+      return { paddingLeft: "0.2rem"}
+    }
+    if (padding === 'right') {
+      return { paddingRight: "0.2rem"}
+    }
+    return {}
   }
+  const wrapperCss = getPadding(padding)
 
   useEffect(() => {
     if (mounted) {
@@ -105,7 +116,11 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   }, [icon, color])
 
   return (
-    <span data-svg={icon} className="styled-svg-wrapper" style={wrapperCss}>
+    <span
+      data-svg={icon}
+      className="styled-svg-wrapper"
+      style={wrapperCss}
+    >
       { getIcon(options) }
     </span>
   )

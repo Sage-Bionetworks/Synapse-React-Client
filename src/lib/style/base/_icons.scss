@@ -26,3 +26,27 @@
     vertical-align: middle;
   }
 }
+
+.icon-list {
+  display: inline-block;
+  svg {
+    font-size: 19px;
+  }
+  path, circle {
+    fill: SRC.$primary-action-color-500;
+  }
+  .icon-kinomics {
+    path {
+      stroke: SRC.$primary-action-color-500;
+    }
+  }
+  &.bg-circle {
+    .styled-svg-wrapper {
+      display: inline-flex;
+      padding: 2px;
+      background-color: rgba(SRC.$primary-action-color-500, 0.1);
+      border-radius: 50%;
+      margin: 0 2px;
+    }
+  }
+}
