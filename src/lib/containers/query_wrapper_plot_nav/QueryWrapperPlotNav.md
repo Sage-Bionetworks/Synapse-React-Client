@@ -23,6 +23,15 @@ Configured to show cards:
       //   'fundingAgency',
       //   'abbreviation',
       // ],
+    },
+    ctaButtonLinkConfig: {
+      buttonText: 'Related Studies',
+      linkConfig: {
+        matchColumnName: 'initiative',
+        isMarkdown: false,
+        baseURL: 'Explore/Initiatives/DetailsPage',
+        URLColumnName: 'Initiative',
+      }
     }
   }}
 />
