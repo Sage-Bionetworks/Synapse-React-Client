@@ -387,7 +387,6 @@ export default class GenericCard extends React.Component<
       data,
       schema,
     )
-    const ctaButtonHref = this.getCardLinkHref(ctaButtonLinkConfig?.linkConfig, data, schema)
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
     for (let i = 0; i < secondaryLabels.length; i += 1) {
@@ -529,9 +528,10 @@ export default class GenericCard extends React.Component<
               <div className="SRC-portalCardCTAButton bootstrap-4-backport">
                 <Button
                   variant="primary"
-                  href={ctaButtonHref}
+                  href={this.getCardLinkHref(ctaButtonLinkConfig?.linkConfig, data, schema)}
                   type="button"
                   className="pill-xl"
+                  size="sm"
                 >
                   {ctaButtonLinkConfig.buttonText}
                 </Button>

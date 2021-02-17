@@ -25,7 +25,7 @@ Configured to show cards:
       // ],
     },
     ctaButtonLinkConfig: {
-      buttonText: 'Related Studies',
+      buttonText: 'Explore Studies',
       linkConfig: {
         matchColumnName: 'initiative',
         isMarkdown: false,
