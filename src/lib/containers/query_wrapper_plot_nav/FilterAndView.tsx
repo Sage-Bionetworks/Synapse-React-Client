@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { QueryWrapperChildProps } from '../QueryWrapper'
+import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../QueryWrapper'
 import CardContainer from '../CardContainer'
 import SynapseTable, { SynapseTableProps } from '../table/SynapseTable'
-import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import { CardConfiguration } from '../CardContainerLogic'
 
 export type OwnProps = {
@@ -19,37 +18,25 @@ const FilterAndView = (props: QueryWrapperChildProps & OwnProps) => {
     cardConfiguration,
     hideDownload,
     ...rest
-  } = props
+  } = props  
   const { showFacetFilter } = topLevelControlsState!
   return (
-    <div className="row">
-      <div
-        className={showFacetFilter ? 'col-xs-12 col-sm-3 col-lg-3' : 'hidden'}
-        style={{ paddingRight: '0px' }}
-      >
-        <QueryFilter {...rest} />
-      </div>
-      <div
-        className={
-          showFacetFilter ? 'col-xs-12 col-sm-9 col-lg-9' : 'col-xs-12'
-        }
-      >
-        {tableConfiguration ? (
-          <SynapseTable
-            enableLeftFacetFilter={topLevelControlsState?.showFacetFilter}
-            {...rest}
-            {...tableConfiguration}
-            hideDownload={hideDownload}
-          />
-        ) : (
-          <></>
-        )}
-        {cardConfiguration ? (
-          <CardContainer {...rest} {...cardConfiguration} />
-        ) : (
-          <></>
-        )}
-      </div>
+    <div className={`FilterAndView ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`} >
+      {tableConfiguration ? (
+        <SynapseTable
+          {...rest}
+          {...tableConfiguration}
+          topLevelControlsState={topLevelControlsState}
+          hideDownload={hideDownload}
+        />
+      ) : (
+        <></>
+      )}
+      {cardConfiguration ? (
+        <CardContainer {...rest} {...cardConfiguration} />
+      ) : (
+        <></>
+      )}
     </div>
   )
 }

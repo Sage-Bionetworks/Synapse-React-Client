@@ -114,6 +114,8 @@ export type QueryWrapperChildProps = {
   error?: SynapseClientError | undefined,
   lockedFacet?: LockedFacet
 }
+export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
+export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 
 /**
  * Class wraps around any Synapse views that are dependent on a query bundle

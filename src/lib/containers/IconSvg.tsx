@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import {
+  ArrowBackIos,
+  ArrowForwardIos,
   Check,
-  Cached,
+  Cached,  
 } from '@material-ui/icons'
 import {
   Data,
@@ -40,6 +42,10 @@ const getIcon = (options:IconSvgOptions) => {
   }
 
   switch (icon) {
+    case 'arrowBack':
+      return <ArrowBackIos style={muiSvgStyle} />
+    case 'arrowForward':
+      return <ArrowForwardIos style={muiSvgStyle} />  
     case 'check':
       return <Check style={muiSvgStyle}></Check>
     case 'data':

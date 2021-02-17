@@ -99,8 +99,7 @@ export type SynapseTableProps = {
   showAccessColumn?: boolean
   showDownloadColumn?: boolean
   columnLinks?: LabelLinkConfig
-  hideDownload?: boolean
-  enableLeftFacetFilter?: boolean
+  hideDownload?: boolean  
   isRowSelectionVisible?: boolean
 }
 
@@ -329,7 +328,7 @@ export default class SynapseTable extends React.Component<
       unitDescription,
       token,
       showBarChart,
-      enableLeftFacetFilter,
+      topLevelControlsState,
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { queryResults } = queryResult
@@ -338,6 +337,7 @@ export default class SynapseTable extends React.Component<
     const { facets = [] } = data
     const { isExpanded, isExportTableDownloadOpen } = this.state
     const queryRequest = this.props.getLastQueryRequest!()
+    const { showFacetFilter } = topLevelControlsState!
 
     let className = ''
     if (showBarChart) {
@@ -355,7 +355,8 @@ export default class SynapseTable extends React.Component<
       )
     }
     const table = (
-      <div className="col-xs-12">
+
+      <div>
         {this.renderTable(headers, columnModels, facets, rows)}
       </div>
     )
@@ -373,7 +374,7 @@ export default class SynapseTable extends React.Component<
               token={token}
             />
           )}
-          {!enableLeftFacetFilter &&
+          {!showFacetFilter &&
             unitDescription &&
             !isGroupByInSql(queryRequest.query.sql) && (
               <div
@@ -394,7 +395,7 @@ export default class SynapseTable extends React.Component<
               </div>
             )}
           {/* FRAGILE, CHANGE WITH CAUTION, see - https://sagebionetworks.jira.com/browse/PORTALS-1539 */}
-          <div className={enableLeftFacetFilter ? '' : 'row'}>{table}</div>
+          <div>{table}</div>
         </div>
       </>
     )

@@ -3,7 +3,7 @@ Configured to show cards:
 <QueryWrapperPlotNav token={sessionToken}  
   rgbIndex={1}
   name='Initiatives'
-  sql='SELECT * from syn24610539'
+  sql='SELECT * from syn24189696'
   defaultShowFacetVisualization={false}
   shouldDeepLink={true}
   facetsToPlot={['fundingAgency']}
@@ -19,10 +19,10 @@ Configured to show cards:
       description: 'summary',    
       link: 'website',
       imageFileHandleColumnName: 'image',
-      secondaryLabels: [
-        'fundingAgency',
-        'abbreviation',
-      ],
+      // secondaryLabels: [
+      //   'fundingAgency',
+      //   'abbreviation',
+      // ],
     }
   }}
 />
