@@ -1,4 +1,4 @@
-import { CardFooter, Icon } from './row_renderers/utils'
+import { CardFooter } from './row_renderers/utils'
 import { MarkdownValue } from './CardContainerLogic'
 import MarkdownSynapse from './MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
@@ -8,20 +8,19 @@ export type IconOptions = {
   [index: string]: string
 }
 export type HeaderCardProps = {
-  iconOptions?: IconOptions
   backgroundColor?: string
   rgbIndex?: number
   type: string
   title: string
   subTitle: string
   description: string
-  iconValue: string
   secondaryLabelLimit?: number
   values?: string[][]
   isAlignToLeftNav?: boolean
   descriptionLinkConfig?: MarkdownValue
   href?: string
   target?: string
+  icon: JSX.Element
 }
 
 const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
@@ -29,8 +28,6 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   title,
   subTitle,
   description,
-  iconOptions,
-  iconValue,
   backgroundColor,
   values,
   secondaryLabelLimit,
@@ -39,6 +36,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   href,
   target,
   rgbIndex,
+  icon,
 }) => {
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -88,7 +86,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
               isAlignToLeftNav ? ' col-md-offset-1 col-md-2' : ' col-md-1'
             }`}
           >
-            <Icon value={iconValue} iconOptions={iconOptions} type={type} />
+            {icon}
           </div>
           <div
             className={`SRC-cardContent${

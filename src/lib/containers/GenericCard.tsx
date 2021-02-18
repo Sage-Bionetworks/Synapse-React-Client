@@ -419,18 +419,29 @@ export default class GenericCard extends React.Component<
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
     }
-
+    const icon:JSX.Element = <>
+        {imageFileHandleIdValue && <div className="SRC-imageThumbnail">
+          <ImageFileHandle 
+            token={token}
+            fileHandleId={imageFileHandleIdValue}
+            tableEntityConcreteType={tableEntityConcreteType}
+            rowId={data![schema.id]}
+            tableId={tableId}
+          /></div>}
+        {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
+          <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
+        </div>}
+      </>
     if (isHeader) {
       return (
         <HeaderCard
           descriptionLinkConfig={descriptionLinkConfig}
-          type={type}
           title={title}
           subTitle={subTitle}
           backgroundColor={backgroundColor}
           description={description}
-          iconValue={iconValue}
-          iconOptions={iconOptions}
+          type={type}
+          icon={icon}
           values={values}
           href={href}
           target={target}
@@ -457,17 +468,7 @@ export default class GenericCard extends React.Component<
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className={'SRC-portalCardMain'}>
-          {imageFileHandleIdValue && <div className="SRC-imageThumbnail">
-            <ImageFileHandle 
-              token={token}
-              fileHandleId={imageFileHandleIdValue}
-              tableEntityConcreteType={tableEntityConcreteType}
-              rowId={data![schema.id]}
-              tableId={tableId}
-            /></div>}
-          {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
-            <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
-          </div>}
+          {icon}
           <div className="SRC-cardContent">
             <div className="SRC-type">{type}</div>
             <div>
