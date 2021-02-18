@@ -22,6 +22,11 @@ import { formatDate } from '../../utils/functions/DateFormatter'
 import { Hit, SearchQuery } from '../../utils/synapseTypes/Search'
 import { queries } from '@testing-library/react'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
+import { useQueryClient } from 'react-query'
+import RenderIfInView from '../RenderIfInView'
+import { Checkbox } from '../widgets/Checkbox'
+import { RadioGroup } from '../widgets/RadioGroup'
 
 function convertHitToEntityHeader(hit: Hit): EntityHeader {
   return {
@@ -40,6 +45,7 @@ type DetailsViewRowProps = {
   entityHeader: EntityHeader | ProjectHeader
   isSelected: boolean
   showVersionColumn: boolean
+  showSelectButton: 'checkbox' | 'radio' | 'none'
   onSelect: (entity: EntityIdAndVersion) => void
   onDeselect: (entity: EntityIdAndVersion) => void
 }
@@ -49,34 +55,35 @@ const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   entityHeader,
   isSelected,
   showVersionColumn,
+  showSelectButton: selectButtonType,
   onSelect,
   onDeselect,
 }) => {
-  const [bundle, setBundle] = useState<EntityBundle>()
   const [versions, setVersions] = useState<VersionInfo[]>()
   const [currentSelectedVersion, setCurrentSelectedVersion] = useState<number>()
   const { ref, inView } = useInView({
-    triggerOnce: true,
+    triggerOnce: false,
   })
-  useEffect(() => {
-    if (inView) {
-      SynapseClient.getEntityBundleV2(
-        entityHeader.id,
-        {
-          includeEntity: true,
-          includeAnnotations: true,
-          includeBenefactorACL: true,
-          includePermissions: true,
-          includeRootWikiId: true,
-          includeThreadCount: true,
-        },
-        undefined,
-        sessionToken,
-      ).then(response => {
-        setBundle(response)
-      })
-    }
-  }, [inView])
+
+  const queryClient = useQueryClient()
+
+  const { status, data: bundle, error } = useGetEntityBundle(
+    sessionToken,
+    entityHeader.id,
+    {
+      includeEntity: true,
+      includeAnnotations: true,
+      includeBenefactorACL: true,
+      includePermissions: true,
+      includeRootWikiId: true,
+      includeThreadCount: true,
+    },
+    undefined,
+    {
+      enabled: inView,
+      staleTime: 10000,
+    },
+  )
 
   useEffect(() => {
     if (inView && isSelected && versions === undefined) {
@@ -108,6 +115,29 @@ const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         }
       }}
     >
+      {selectButtonType !== 'none' && (
+        <td className="IsSelectedColumn">
+          {selectButtonType === 'checkbox' && (
+            <Checkbox
+              label=""
+              id=""
+              className="SRC-pointer-events-none"
+              checked={isSelected}
+              onChange={() => {}}
+            />
+          )}{' '}
+          {selectButtonType === 'radio' && (
+            <RadioGroup
+              className="SRC-pointer-events-none"
+              options={[{ label: '', value: 'true' }]}
+              value={isSelected.toString()}
+              id=""
+              onChange={() => {}}
+            />
+          )}
+        </td>
+      )}
+
       <td className="EntityIconColumn">
         {getIconForEntityHeader(entityHeader)}
       </td>
@@ -197,6 +227,7 @@ export type DetailsViewProps = {
   sessionToken: string
   configuration: EntityFinderDetailsViewConfiguration
   showVersionSelection: boolean
+  selectMultiple: boolean
   selected: EntityIdAndVersion[] // synId(s)
   onSelect: (entity: EntityIdAndVersion) => void
   onDeselect: (entity: EntityIdAndVersion) => void
@@ -206,6 +237,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   sessionToken,
   configuration,
   showVersionSelection,
+  selectMultiple,
   selected,
   onSelect,
   onDeselect,
@@ -279,7 +311,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         return { entities: response.results, nextPageToken: null }
       }
       case EntityFinderViewConfigurationType.ENTITY_SEARCH: {
-        const synIdMatch = configuration.query.queryTerm[0].match(
+        const synIdMatch = configuration.query!.queryTerm[0].match(
           SYNAPSE_ENTITY_ID_REGEX,
         )
 
@@ -344,6 +376,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         <thead>
           <tr className="EntityFinderDetailsView__HeaderRow">
             <th className="EntityIconColumn"></th>
+            <th className="IsSelectedColumn"></th>
             <th className="NameColumn">
               <span>Name</span>
               <span>
@@ -439,10 +472,10 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             entities?.map(entity => {
               return (
                 <DetailsViewRow
-                  key={entity.id}
                   sessionToken={sessionToken}
                   entityHeader={entity}
                   showVersionColumn={showVersionSelection}
+                  showSelectButton={selectMultiple ? 'checkbox' : 'radio'}
                   isSelected={selected.map(e => e.entityId).includes(entity.id)}
                   onSelect={e => {
                     onSelect(e)

@@ -373,7 +373,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                       return (
                         <Dropdown.Item
                           key={s}
-                          onClick={() => {
+                          onClick={e => {
+                            e.stopPropagation()
                             setScope(s)
                           }}
                         >
@@ -413,6 +414,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       configuration={detailsViewConfiguration}
       showVersionSelection={true}
       selected={selected}
+      selectMultiple={selectMultiple}
       onSelect={selectedEntity => {
         if (!selectMultiple) {
           setSelected([selectedEntity])

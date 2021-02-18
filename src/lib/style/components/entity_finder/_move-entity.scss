@@ -3,7 +3,7 @@
 @import 'node_modules/react-reflex/styles';
 
 $-header-height: 40px;
-$-border-color: #dcdcdc;
+$-border: 1px solid #dcdcdc;
 $-finder-height: 500px;
 
 .EntityFinder {
@@ -11,7 +11,7 @@ $-finder-height: 500px;
     display: inline-flex;
     align-items: center;
     justify-content: right;
-    border: 1px solid $-border-color;
+    border: $-border;
     margin: 5px;
     padding: 0px 10px;
     & &__SearchBox {
@@ -34,7 +34,7 @@ $-finder-height: 500px;
 
 .EntityFinderTreeView {
   height: $-finder-height;
-  border: 1px solid $-border-color;
+  border: $-border;
   overflow: auto;
   &__Row {
     width: 100%;
@@ -77,7 +77,7 @@ $-finder-height: 500px;
 
   &__SelectionHeader {
     height: $-header-height;
-    border-bottom: 1px solid $-border-color;
+    border-bottom: $-border;
     display: flex;
     align-items: center;
   }
@@ -85,13 +85,13 @@ $-finder-height: 500px;
 
 .EntityFinderDetailsView {
   height: $-finder-height;
-  border: 1px solid $-border-color;
+  border: $-border;
   width: fill-container;
   &__HeaderRow {
     height: $-header-height;
     font-weight: bold;
     padding: 16px 10px;
-    border-bottom: 1px solid $-border-color;
+    border-bottom: $-border;
     // boxShadow: '0 3px 10px rgba(93, 105, 171, 0.1)',
   }
   &__Row {
@@ -116,6 +116,7 @@ $-finder-height: 500px;
     color: white;
   }
   // TODO: probably a better way to do this, maybe with grid?
+  .IsSelectedColumn,
   .EntityIconColumn,
   .NameColumn,
   .AccessColumn,
@@ -123,31 +124,46 @@ $-finder-height: 500px;
   .CreatedOnColumn,
   .ModifiedOnColumn,
   .VersionColumn {
-    padding: 5px;
+    padding: 5px 12px;
     padding-left: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
+  .IsSelectedColumn {
+    width: 15px;
+    .radio,
+    .checkbox {
+      margin: 7px 0px 2px 5px;
+      min-width: 20px;
+    }
+  }
+
   .EntityIconColumn {
+    text-align: center;
     width: 10px;
   }
 
   .NameColumn {
     width: 40%;
+    border-right: $-border;
   }
   .AccessColumn {
     width: 40px;
+    border-right: $-border;
   }
   .IdColumn {
     width: 10%;
+    border-right: $-border;
   }
   .CreatedOnColumn {
     width: 15%;
+    border-right: $-border;
   }
   .ModifiedOnColumn {
     width: 15%;
+    border-right: $-border;
   }
   .VersionColumn {
     min-width: 150px;

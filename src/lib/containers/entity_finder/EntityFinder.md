@@ -11,9 +11,11 @@
 
 * Pagination
 * Search
-  * Text search
-  * Entering a synId
+  * Text search ✅
+  * Entering a synId ✅
+  * Placeholder before search begins
 * Space for radio/checkbox
+* Placeholders for no results
 * Version column/select ✅
   * Hide version column/select for unversionable entities
     * e.g. folders still show versions because the backend returns them
