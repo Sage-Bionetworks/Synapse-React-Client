@@ -75,24 +75,14 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   return (
     <div
       style={style}
-      className={`SRC-portalCardHeader ${
+      className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
       <div className="container-fluid">
-        <div className="row">
-          <div
-            className={`iconContainer${
-              isAlignToLeftNav ? ' col-md-offset-1 col-md-2' : ' col-md-1'
-            }`}
-          >
-            {icon}
-          </div>
-          <div
-            className={`SRC-cardContent${
-              isAlignToLeftNav ? ' col-md-8' : ' col-md-10'
-            }`}
-          >
+        <div className="SRC-portalCardMain">
+          {icon}
+          <div className="SRC-cardContent">
             <div className="SRC-type">{type}</div>
             <div>
               <h3

@@ -15,19 +15,87 @@ $text-color-lighter: #898989;
   font-size: $text-size-base;
 }
 
-// TODO: Simplify and remove this scss, when we move to a single
-// card type there should be no special casing as is below
 .SRC-portalCard {
-  display: block;
-  color: $text-color-base;
+  display: block;  
   font-family: 'Lato', sans-serif;
   font-size: $text-size-base;
   line-height: $baseline-grid;
 
   border: 1px solid $color-divider;
-  margin-top: 30px; // just for test page
-  margin-bottom: 30px; // just for test page
+  margin-top: 30px;
+  margin-bottom: 30px;
+  
+  // default (non-header styles)
+  color: $text-color-base;
+  .SRC-type,
+  .SRC-cardThumbnail {
+    color: $text-color-lighter;
+  }
+  .SRC-cardThumbnail {
+    width: 15%;
+    img {
+      width: 50%;
+      &.iconImg {
+        max-width: 75px;
+      }
+    }  
+  }
+  .SRC-cardMetadata {
+    background-color: $color-gray-background;    
+  }
 
+  &.SRC-portalCardHeader {
+    color: white;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    
+    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+      padding-top: 25px;
+    }
+    @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
+      padding-top: 89px;
+    }
+    .SRC-type,
+    .SRC-cardThumbnail {
+      color: inherit;
+    }  
+    h3 {
+      a {
+        text-decoration: underline;
+        color: white;
+      }
+    }
+    .SRC-cardMetadata .SRC-row-label {
+      text-transform: uppercase;
+      color: white;
+    }
+    .SRC-cardThumbnail {
+      width: 20%;
+      img {
+        width: 50%;
+        &.iconImg {
+          max-width: 100px;
+        }
+      }
+    }
+    .SRC-cardMetadata {
+      background-color: inherit;
+    }
+    &.isAlignToLeftNav {
+      .iconContainer {
+        @media (min-width: 992px) {
+          text-align: right;
+          padding-right: 40px;
+        }
+      }
+  
+      .SRC-cardContent {
+        @media (min-width: 992px) {
+          padding-left: 32px;
+        }
+      }
+    }  
+  }
   .SRC-portalCardMain {
     display: flex;
   }
@@ -62,22 +130,16 @@ $text-color-lighter: #898989;
 
   .SRC-type,
   .SRC-cardThumbnail {
-    text-transform: uppercase;
-    color: $text-color-lighter;
+    text-transform: uppercase;    
   }
 
   .SRC-cardThumbnail {
-    display: inline-block;
-    width: 15%;
+    display: inline-block;    
     vertical-align: top;
     padding-top: $baseline-grid;
     img {
-      width: 50%;
       margin: auto;
       display: block;
-      &.iconImg {
-        max-width: 75px;
-      }
     }
     svg {
       width: auto;
@@ -147,8 +209,7 @@ $text-color-lighter: #898989;
   }
 
   .SRC-cardMetadata {
-    display: block;
-    background-color: $color-gray-background;    
+    display: block;    
     padding: $baseline-grid;
     &.hasIcon {
       padding-left: 15%;
@@ -259,74 +320,6 @@ img.iconImg.SRC-datasetIcon {
   }
   div button {
     white-space: nowrap;
-  }
-}
-
-// TODO: keep this scss as the source of truth
-.SRC-portalCardHeader {
-  color: white;
-  font-family: 'Lato', sans-serif;
-  font-size: $text-size-base;
-  line-height: $baseline-grid;
-  border: 1px solid $color-divider;
-  padding-bottom: 30px;
-  padding-top: 25px;
-  h3 {
-    margin: $baseline-grid, 0, $baseline-grid/2, 0 !important;
-    color: white;
-    line-height: 125%;
-    padding: 0;
-    font-size: $text-size-title !important;
-    a {
-      margin: 0;
-      font-weight: 700;
-      color: white;
-      text-decoration: underline;
-    }
-  }
-
-  .SRC-row-label {
-    text-transform: uppercase;
-  }
-
-  .SRC-type,
-  .SRC-cardThumbnail {
-    text-transform: uppercase;
-  }
-
-  .iconContainer {
-    @media (min-width: 992px) {
-      text-align: center;
-    }
-    img.iconImg,
-    svg {
-      padding-top: $baseline-grid;
-      overflow: visible;
-      max-width: 100%;
-      height: auto;
-    }
-  }
-
-  .SRC-cardContent {
-    padding-top: $baseline-grid;
-    .SRC-author {
-      font-style: italic;
-      padding-bottom: $baseline-grid / 2;
-    }
-  }
-  &.isAlignToLeftNav {
-    .iconContainer {
-      @media (min-width: 992px) {
-        text-align: right;
-        padding-right: 40px;
-      }
-    }
-
-    .SRC-cardContent {
-      @media (min-width: 992px) {
-        padding-left: 32px;
-      }
-    }
   }
 }
 
