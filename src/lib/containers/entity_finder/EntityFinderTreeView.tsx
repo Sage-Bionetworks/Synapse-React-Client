@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from 'react'
+import { Dropdown } from 'react-bootstrap'
+import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../..'
-import FolderIcon from '../../assets/icons/entity/Folder.svg'
 import FileIcon from '../../assets/icons/entity/File.svg'
+import FolderIcon from '../../assets/icons/entity/Folder.svg'
 import ProjectIcon from '../../assets/icons/entity/Project.svg'
+import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
+import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import {
-  EntityBundle,
   EntityHeader,
   EntityPath,
   ProjectHeader,
 } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
-import { Dropdown } from 'react-bootstrap'
 import { EntityBadge } from '../EntityBadge'
-import { useInView } from 'react-intersection-observer'
 import {
-  DetailsView,
   EntityFinderDetailsViewConfiguration,
   EntityFinderViewConfigurationType,
 } from './EntityFinderDetailsView'
-import { EntityIdAndVersion } from './EntityFinder'
-import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 
 enum FinderScope {
   CURRENT_PROJECT = 'Current Project',
@@ -36,28 +34,15 @@ type TreeViewRowProps = {
   autoExpand?: (entityId: string) => boolean
 }
 
-export const getIconForEntityHeader = (
-  header: EntityHeader | ProjectHeader,
-) => {
-  if ((header as EntityHeader).type) {
-    return getIconForEntityType((header as EntityHeader).type)
-  } else {
-    return getIconForEntityType(EntityType.PROJECT)
-  }
-}
-
-export const getIconForEntityType = (type: string | EntityType) => {
+export const getIconForEntityType = (type: EntityType) => {
   let src = undefined
   switch (type) {
-    case 'org.sagebionetworks.repo.model.Project':
     case EntityType.PROJECT:
       src = ProjectIcon
       break
-    case 'org.sagebionetworks.repo.model.FileEntity':
     case EntityType.FILE:
       src = FileIcon
       break
-    case 'org.sagebionetworks.repo.model.Folder':
     case EntityType.FOLDER:
       src = FolderIcon
       break
@@ -89,7 +74,6 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   const [isExpanded, setIsExpanded] = useState(false)
   const [allChildrenLoaded, setAllChildrenLoaded] = useState(false)
   const [childEntities, setChildEntities] = useState<EntityHeader[]>([])
-  const [bundle, setBundle] = useState<EntityBundle>()
 
   const loadChildren = async () => {
     const result = await SynapseClient.getEntityChildren(
@@ -109,24 +93,27 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   })
   useEffect(() => {
     if (inView) {
-      SynapseClient.getEntityBundleV2(
-        entityHeader.id,
-        {
-          includeAnnotations: true,
-          includeBenefactorACL: true,
-          includePermissions: true,
-          includeRootWikiId: true,
-          includeThreadCount: true,
-        },
-        undefined,
-        sessionToken,
-      ).then(response => {
-        setBundle(response)
-      })
-
       loadChildren()
     }
   }, [inView])
+
+  const { data: bundle } = useGetEntityBundle(
+    sessionToken,
+    entityHeader.id,
+    {
+      includeEntity: true,
+      includeAnnotations: true,
+      includeBenefactorACL: true,
+      includePermissions: true,
+      includeRootWikiId: true,
+      includeThreadCount: true,
+    },
+    undefined,
+    {
+      enabled: inView,
+      staleTime: 10000,
+    },
+  )
 
   useEffect(() => {
     if (autoExpand(entityHeader.id)) {
@@ -161,7 +148,7 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
           <span style={{ padding: '10px' }}></span>
         )}
         <div className="EntityFinderTreeView__Row__EntityIcon">
-          {getIconForEntityHeader(entityHeader)}
+          {getIconForEntityType(getEntityTypeFromHeader(entityHeader))}
         </div>
         <div className="EntityFinderTreeView__Row__EntityName">
           {entityHeader.name}
@@ -199,30 +186,31 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
 export type TreeViewProps = {
   sessionToken: string
   initialContainer: string // synId
-  selected: EntityIdAndVersion[]
   showDetailsView: boolean
-  showTypesInDetailsView?: EntityType[]
   showDropdown: boolean
   showFakeRootNode?: boolean // necessary to select root nodes in a details view
-  selectMultiple?: boolean
-  setSelected: (selected: EntityIdAndVersion[]) => void
+  setDetailsViewConfiguration?: (
+    configuration: EntityFinderDetailsViewConfiguration,
+  ) => void
 }
 
+/**
+ * The TreeView displays a user's entities hierarchically, allowing a user to quickly dive into an entity tree.
+ *
+ * The tree view can be used as a standalone entity picker, or can be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
+ * @param param0
+ */
 export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   sessionToken,
   initialContainer,
-  selected,
-  setSelected,
+  setDetailsViewConfiguration = () => {},
   showDetailsView,
-  showTypesInDetailsView = [],
-  selectMultiple,
   showFakeRootNode = showDetailsView,
 }) => {
   const DEFAULT_CONFIGURATION: EntityFinderDetailsViewConfiguration = {
     type: EntityFinderViewConfigurationType.PARENT_CONTAINER,
     parentContainerParams: {
       parentContainerId: initialContainer,
-      includeTypes: showTypesInDetailsView,
     },
   }
 
@@ -239,11 +227,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     initialContainer,
   ) // synId or 'root'
 
-  const [
-    detailsViewConfiguration,
-    setDetailsViewConfiguration,
-  ] = useState<EntityFinderDetailsViewConfiguration>(DEFAULT_CONFIGURATION)
-
   const isInPath = (id: string) => {
     console.log('checking if', id, 'in path', initialContainerPath)
     if (scope === FinderScope.CURRENT_PROJECT && initialContainerPath) {
@@ -256,6 +239,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     }
     return false
   }
+
+  useEffect(() => {
+    setDetailsViewConfiguration(DEFAULT_CONFIGURATION)
+  }, [])
 
   useEffect(() => {
     setIsLoading(true)
@@ -317,13 +304,12 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         type: EntityFinderViewConfigurationType.PARENT_CONTAINER,
         parentContainerParams: {
           parentContainerId: currentContainer,
-          includeTypes: showTypesInDetailsView,
         },
       })
     }
   }, [scope, currentContainer])
 
-  const treeView = (
+  return (
     <div className="EntityFinderTreeView" style={{ height: '500px' }}>
       {/* <div className={`EntityFinderTreeView__SelectionHeader`}></div> */}
       <div style={{ overflow: 'auto' }}>
@@ -406,50 +392,5 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         )}
       </div>
     </div>
-  )
-
-  const detailsView = (
-    <DetailsView
-      sessionToken={sessionToken}
-      configuration={detailsViewConfiguration}
-      showVersionSelection={true}
-      selected={selected}
-      selectMultiple={selectMultiple}
-      onSelect={selectedEntity => {
-        if (!selectMultiple) {
-          setSelected([selectedEntity])
-        } else {
-          setSelected([
-            ...selected.filter(s => s.entityId !== selectedEntity.entityId),
-            selectedEntity,
-          ])
-        }
-      }}
-      onDeselect={deselectedEntity => {
-        if (selected.map(s => s.entityId).includes(deselectedEntity.entityId)) {
-          setSelected(
-            selected.filter(e => e.entityId !== deselectedEntity.entityId),
-          )
-        }
-      }}
-    ></DetailsView>
-  )
-
-  return (
-    <>
-      {showDetailsView ? (
-        <div className="EntityViewReflexContainer">
-          <ReflexContainer orientation="vertical">
-            <ReflexElement minSize={200} size={350}>
-              {treeView}
-            </ReflexElement>
-            <ReflexSplitter></ReflexSplitter>
-            <ReflexElement>{detailsView}</ReflexElement>
-          </ReflexContainer>
-        </div>
-      ) : (
-        treeView
-      )}
-    </>
   )
 }

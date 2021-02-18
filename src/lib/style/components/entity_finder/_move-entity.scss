@@ -115,6 +115,12 @@ $-finder-height: 500px;
     background-color: SRC.$primary-action-color-500;
     color: white;
   }
+
+  &__Row__Disabled,
+  &__Row__Disabled:hover {
+    opacity: 0.5;
+  }
+  
   // TODO: probably a better way to do this, maybe with grid?
   .IsSelectedColumn,
   .EntityIconColumn,
@@ -147,26 +153,29 @@ $-finder-height: 500px;
 
   .NameColumn {
     width: 40%;
-    border-right: $-border;
   }
   .AccessColumn {
     width: 40px;
-    border-right: $-border;
   }
   .IdColumn {
     width: 10%;
-    border-right: $-border;
   }
   .CreatedOnColumn {
     width: 15%;
-    border-right: $-border;
   }
   .ModifiedOnColumn {
     width: 15%;
-    border-right: $-border;
   }
   .VersionColumn {
     min-width: 150px;
     width: 20%;
+  }
+
+  .NameColumn:not(th),
+  .AccessColumn:not(th),
+  .IdColumn:not(th),
+  .CreatedOnColumn:not(th),
+  .ModifiedOnColumn:not(th) {
+    border-right: $-border;
   }
 }

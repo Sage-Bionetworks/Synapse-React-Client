@@ -1,16 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
-import { FormControl } from 'react-bootstrap'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { useListState } from '../../utils/hooks/useListState'
 import { EntityBundle, EntityHeader } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import {
   DetailsView,
-  EntityFinderViewConfigurationType,
+  EntityFinderDetailsViewConfiguration,
+  EntityFinderViewConfigurationType as EntityFinderDetailsViewConfigurationType,
 } from './EntityFinderDetailsView'
 import { TreeView } from './EntityFinderTreeView'
+import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 
 // Create a client
 const queryClient = new QueryClient()
@@ -42,6 +42,29 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   } = useListState<EntityIdAndVersion>([]) // synId(s)
 
   const [searchTerms, setSearchTerms] = useState<string[]>()
+  const [
+    configFromTreeView,
+    setConfigFromTreeView,
+  ] = useState<EntityFinderDetailsViewConfiguration>()
+
+  const onSelect = (entity: EntityIdAndVersion): void => {
+    if (!selectMultiple) {
+      appendToSelectedEntities(entity)
+    } else {
+      setSelectedEntities([
+        ...selectedEntities.filter(s => s.entityId !== entity.entityId),
+        entity,
+      ])
+    }
+  }
+
+  const onDeselect = (entity: EntityIdAndVersion): void => {
+    if (selectedEntities.map(s => s.entityId).includes(entity.entityId)) {
+      setSelectedEntities(
+        selectedEntities.filter(e => e.entityId !== entity.entityId),
+      )
+    }
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -52,10 +75,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             className="EntityFinder__SearchContainer__SearchBox"
             type="search"
             placeholder="Search all of Synapse"
-            onKeyDown={event => {
+            onKeyDown={(event: any) => {
               if (event.key === 'Enter') {
                 if (event.target.value === '') {
-                  setSearchTerms(null)
+                  setSearchTerms(undefined)
                 } else {
                   setSearchTerms(event.target.value.split(' '))
                 }
@@ -68,42 +91,79 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           <DetailsView
             sessionToken={sessionToken}
             configuration={{
-              type: EntityFinderViewConfigurationType.ENTITY_SEARCH,
+              type: EntityFinderDetailsViewConfigurationType.ENTITY_SEARCH,
               query: {
                 queryTerm: searchTerms,
                 size: 30,
               },
             }}
             showVersionSelection={true}
+            selectMultiple={selectMultiple}
             selected={selectedEntities}
-            onSelect={() => {}}
-            onDeselect={() => {}}
+            showTypes={[
+              EntityType.PROJECT,
+              EntityType.TABLE,
+              EntityType.FOLDER,
+              EntityType.FILE,
+              EntityType.LINK,
+              EntityType.ENTITY_VIEW,
+            ]}
+            disableTypes={[
+              EntityType.TABLE,
+              EntityType.FILE,
+              EntityType.LINK,
+              EntityType.ENTITY_VIEW,
+            ]}
+            onSelect={onSelect}
+            onDeselect={onDeselect}
           />
         )}
         {
           <div style={searchTerms ? { display: 'none' } : {}}>
-            <TreeView
-              sessionToken={sessionToken}
-              selectMultiple={selectMultiple}
-              selected={selectedEntities}
-              setSelected={(selected: EntityIdAndVersion[]) => {
-                setSelectedEntities(selected)
-              }}
-              showDetailsView={true}
-              showFakeRootNode={true}
-              showDropdown={true}
-              initialContainer={initialContainerId}
-              showTypesInDetailsView={[
-                EntityType.TABLE,
-                EntityType.FOLDER,
-                EntityType.FILE,
-                EntityType.LINK,
-                EntityType.ENTITY_VIEW,
-              ]}
-            ></TreeView>
+            <div className="EntityViewReflexContainer">
+              <ReflexContainer orientation="vertical">
+                <ReflexElement minSize={200} size={350}>
+                  <TreeView
+                    sessionToken={sessionToken}
+                    setDetailsViewConfiguration={setConfigFromTreeView}
+                    showDetailsView={true}
+                    showFakeRootNode={true}
+                    showDropdown={true}
+                    initialContainer={initialContainerId}
+                  ></TreeView>
+                </ReflexElement>
+                <ReflexSplitter></ReflexSplitter>
+                <ReflexElement>
+                  {configFromTreeView && (
+                    <DetailsView
+                      sessionToken={sessionToken}
+                      configuration={configFromTreeView}
+                      showVersionSelection={true}
+                      selected={selectedEntities}
+                      showTypes={[
+                        EntityType.PROJECT,
+                        EntityType.TABLE,
+                        EntityType.FOLDER,
+                        EntityType.FILE,
+                        EntityType.LINK,
+                        EntityType.ENTITY_VIEW,
+                      ]}
+                      disableTypes={[
+                        EntityType.TABLE,
+                        EntityType.FILE,
+                        EntityType.LINK,
+                        EntityType.ENTITY_VIEW,
+                      ]}
+                      selectMultiple={selectMultiple}
+                      onSelect={onSelect}
+                      onDeselect={onDeselect}
+                    ></DetailsView>
+                  )}
+                </ReflexElement>
+              </ReflexContainer>
+            </div>
           </div>
         }
-
         {selectMultiple ? (
           <p>
             Selected entities:{' '}

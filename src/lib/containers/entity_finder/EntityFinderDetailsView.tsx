@@ -1,49 +1,39 @@
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { Form } from 'react-bootstrap'
+import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../..'
+import SortIcon from '../../assets/icons/Sort'
+import { formatDate } from '../../utils/functions/DateFormatter'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import {
+  getEntityTypeFromHeader,
+  isVersionableEntityType,
+} from '../../utils/functions/EntityTypeUtils'
+import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
+import { useListState } from '../../utils/hooks/useListState'
 import {
   Direction,
-  EntityBundle,
   EntityHeader,
   ProjectHeader,
   SortBy,
 } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
-import { EntityBadge } from '../EntityBadge'
-import { getIconForEntityHeader } from './EntityFinderTreeView'
-import moment from 'moment'
-import { useInView } from 'react-intersection-observer'
-import SortIcon from '../../assets/icons/Sort'
 import { GetProjectsParameters } from '../../utils/synapseTypes/GetProjectsParams'
-import { useListState } from '../../utils/hooks/useListState'
-import { EntityIdAndVersion } from './EntityFinder'
-import { Form } from 'react-bootstrap'
-import { VersionInfo } from '../../utils/synapseTypes/VersionInfo'
-import { formatDate } from '../../utils/functions/DateFormatter'
 import { Hit, SearchQuery } from '../../utils/synapseTypes/Search'
-import { queries } from '@testing-library/react'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
-import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
-import { useQueryClient } from 'react-query'
-import RenderIfInView from '../RenderIfInView'
+import { VersionInfo } from '../../utils/synapseTypes/VersionInfo'
+import { EntityBadge } from '../EntityBadge'
 import { Checkbox } from '../widgets/Checkbox'
 import { RadioGroup } from '../widgets/RadioGroup'
-
-function convertHitToEntityHeader(hit: Hit): EntityHeader {
-  return {
-    id: hit.id,
-    name: hit.name,
-    type: hit.node_type,
-    createdOn: hit.created_on.toString(),
-    createdBy: hit.created_by,
-    modifiedOn: hit.modified_on.toString(),
-    modifiedBy: hit.modified_by,
-  }
-}
+import { EntityIdAndVersion } from './EntityFinder'
+import { getIconForEntityType } from './EntityFinderTreeView'
 
 type DetailsViewRowProps = {
   sessionToken: string
-  entityHeader: EntityHeader | ProjectHeader
+  entityHeader: EntityHeader | ProjectHeader | Hit
   isSelected: boolean
+  disabled: boolean
+  hidden: boolean
   showVersionColumn: boolean
   showSelectButton: 'checkbox' | 'radio' | 'none'
   onSelect: (entity: EntityIdAndVersion) => void
@@ -53,7 +43,9 @@ type DetailsViewRowProps = {
 const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   sessionToken,
   entityHeader,
-  isSelected,
+  isSelected, //consider collapsing selected, hidden, and disabled because they are mutually exclusive
+  disabled,
+  hidden,
   showVersionColumn,
   showSelectButton: selectButtonType,
   onSelect,
@@ -65,9 +57,11 @@ const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
     triggerOnce: false,
   })
 
-  const queryClient = useQueryClient()
+  const isVersionableEntity = isVersionableEntityType(
+    getEntityTypeFromHeader(entityHeader),
+  )
 
-  const { status, data: bundle, error } = useGetEntityBundle(
+  const { data: bundle } = useGetEntityBundle(
     sessionToken,
     entityHeader.id,
     {
@@ -100,24 +94,27 @@ const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       ref={ref}
       className={`EntityFinderDetailsView__Row${
         isSelected ? ' EntityFinderDetailsView__Row__Selected' : ''
-      }`}
+      }${disabled ? ' EntityFinderDetailsView__Row__Disabled' : ''}`}
+      style={hidden ? { display: 'none' } : {}}
       onClick={() => {
-        if (isSelected) {
-          onDeselect({
-            entityId: entityHeader.id,
-            entityVersion: currentSelectedVersion,
-          })
-        } else {
-          onSelect({
-            entityId: entityHeader.id,
-            entityVersion: currentSelectedVersion,
-          })
+        if (!disabled) {
+          if (isSelected) {
+            onDeselect({
+              entityId: entityHeader.id,
+              entityVersion: currentSelectedVersion,
+            })
+          } else {
+            onSelect({
+              entityId: entityHeader.id,
+              entityVersion: currentSelectedVersion,
+            })
+          }
         }
       }}
     >
       {selectButtonType !== 'none' && (
         <td className="IsSelectedColumn">
-          {selectButtonType === 'checkbox' && (
+          {!disabled && selectButtonType === 'checkbox' && (
             <Checkbox
               label=""
               id=""
@@ -126,7 +123,7 @@ const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
               onChange={() => {}}
             />
           )}{' '}
-          {selectButtonType === 'radio' && (
+          {!disabled && selectButtonType === 'radio' && (
             <RadioGroup
               className="SRC-pointer-events-none"
               options={[{ label: '', value: 'true' }]}
@@ -139,7 +136,7 @@ const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       )}
 
       <td className="EntityIconColumn">
-        {getIconForEntityHeader(entityHeader)}
+        {getIconForEntityType(getEntityTypeFromHeader(entityHeader))}
       </td>
 
       <td className="NameColumn">{entityHeader.name}</td>
@@ -158,42 +155,45 @@ const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       </td>
       {showVersionColumn && (
         <td className="VersionColumn">
-          {isSelected && versions && versions.length > 0 && (
-            <Form.Control
-              size="sm"
-              as="select"
-              value={currentSelectedVersion}
-              onClick={(event: any) => {
-                event.stopPropagation()
-                const version = parseInt(event.target.value)
-                setCurrentSelectedVersion(version)
-                onSelect({
-                  entityId: entityHeader.id,
-                  entityVersion: version,
-                })
-              }}
-              onChange={event => {
-                const version = parseInt(event.target.value)
-                setCurrentSelectedVersion(version)
-                onSelect({
-                  entityId: entityHeader.id,
-                  entityVersion: version,
-                })
-              }}
-            >
-              {versions?.map((version, index) => {
-                return (
-                  <option
-                    key={version.versionNumber}
-                    value={version.versionNumber}
-                  >
-                    Version {version.versionNumber}
-                    {index === 0 ? ' (Current)' : ''}
-                  </option>
-                )
-              })}
-            </Form.Control>
-          )}
+          {isSelected &&
+            isVersionableEntity &&
+            versions &&
+            versions.length > 0 && (
+              <Form.Control
+                size="sm"
+                as="select"
+                value={currentSelectedVersion}
+                onClick={(event: any) => {
+                  event.stopPropagation()
+                  const version = parseInt(event.target.value)
+                  setCurrentSelectedVersion(version)
+                  onSelect({
+                    entityId: entityHeader.id,
+                    entityVersion: version,
+                  })
+                }}
+                onChange={event => {
+                  const version = parseInt(event.target.value)
+                  setCurrentSelectedVersion(version)
+                  onSelect({
+                    entityId: entityHeader.id,
+                    entityVersion: version,
+                  })
+                }}
+              >
+                {versions?.map((version, index) => {
+                  return (
+                    <option
+                      key={version.versionNumber}
+                      value={version.versionNumber}
+                    >
+                      Version {version.versionNumber}
+                      {index === 0 ? ' (Current)' : ''}
+                    </option>
+                  )
+                })}
+              </Form.Control>
+            )}
         </td>
       )}
     </tr>
@@ -214,7 +214,6 @@ export type EntityFinderDetailsViewConfiguration = {
   headerList?: (EntityHeader | ProjectHeader)[]
   parentContainerParams?: {
     parentContainerId: string
-    includeTypes: EntityType[]
   }
   getProjectParams?: GetProjectsParameters
   query?: SearchQuery
@@ -229,6 +228,8 @@ export type DetailsViewProps = {
   showVersionSelection: boolean
   selectMultiple: boolean
   selected: EntityIdAndVersion[] // synId(s)
+  showTypes: EntityType[]
+  disableTypes: EntityType[] // these types should be in 'showTypes', but the user cannot select them
   onSelect: (entity: EntityIdAndVersion) => void
   onDeselect: (entity: EntityIdAndVersion) => void
 }
@@ -239,6 +240,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   showVersionSelection,
   selectMultiple,
   selected,
+  showTypes,
+  disableTypes,
   onSelect,
   onDeselect,
 }) => {
@@ -247,7 +250,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     list: entities,
     appendToList: appendEntities,
     setList: setEntities,
-  } = useListState<EntityHeader | ProjectHeader>([])
+  } = useListState<EntityHeader | ProjectHeader | Hit>([])
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
   const [nextPageToken, setNextPageToken] = useState<string | null>(null)
@@ -259,7 +262,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   // Each of these contexts/configurations would get its own component that uses the view component.
   // OR maybe each of these configurations should be a hook?
   const getEntities = async (): Promise<{
-    entities: (EntityHeader | ProjectHeader)[]
+    entities: (EntityHeader | ProjectHeader | Hit)[]
     nextPageToken: string | null
   }> => {
     switch (configuration.type) {
@@ -273,7 +276,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       case EntityFinderViewConfigurationType.PARENT_CONTAINER: {
         console.log('making request', {
           parentId: configuration.parentContainerParams!.parentContainerId,
-          includeTypes: configuration.parentContainerParams!.includeTypes,
+          includeTypes: showTypes,
           sortBy: sortBy,
           sortDirection: sortDirection,
           nextPageToken: nextPageToken,
@@ -281,7 +284,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         const response = await SynapseClient.getEntityChildren(
           {
             parentId: configuration.parentContainerParams!.parentContainerId,
-            includeTypes: configuration.parentContainerParams!.includeTypes,
+            includeTypes: showTypes,
             sortBy: sortBy,
             sortDirection: sortDirection,
             nextPageToken: nextPageToken,
@@ -317,7 +320,14 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
         if (configuration.query?.queryTerm[0] && synIdMatch) {
           const response = await SynapseClient.getEntityHeader(
-            [{ targetId: synIdMatch[1], targetVersionNumber: synIdMatch[2] }],
+            [
+              {
+                targetId: synIdMatch[1],
+                targetVersionNumber: synIdMatch[2]
+                  ? parseInt(synIdMatch[2])
+                  : undefined,
+              },
+            ],
             sessionToken,
           )
           return { entities: response.results, nextPageToken: null }
@@ -327,7 +337,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             sessionToken,
           )
           return {
-            entities: response.hits.map(convertHitToEntityHeader),
+            entities: response.hits,
             nextPageToken: null,
           }
         }
@@ -472,8 +482,13 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             entities?.map(entity => {
               return (
                 <DetailsViewRow
+                  key={entity.id}
                   sessionToken={sessionToken}
                   entityHeader={entity}
+                  hidden={!showTypes.includes(getEntityTypeFromHeader(entity))}
+                  disabled={disableTypes.includes(
+                    getEntityTypeFromHeader(entity),
+                  )}
                   showVersionColumn={showVersionSelection}
                   showSelectButton={selectMultiple ? 'checkbox' : 'radio'}
                   isSelected={selected.map(e => e.entityId).includes(entity.id)}

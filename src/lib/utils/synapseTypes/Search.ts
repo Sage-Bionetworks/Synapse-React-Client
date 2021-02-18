@@ -1,14 +1,15 @@
 import { EntityPath } from './EntityHeader'
+import { EntityType } from './EntityType'
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchQuery.html
 export type SearchQuery = {
   queryTerm: string[]
-  booleanQuery: KeyValue[]
-  rangeQuery: KeyRange[]
-  facetOptions: SearchFacetOption[]
-  returnFields: string[]
-  start: number
-  size: number
+  booleanQuery?: KeyValue[]
+  rangeQuery?: KeyRange[]
+  facetOptions?: SearchFacetOption[]
+  returnFields?: string[]
+  start?: number
+  size?: number
 }
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/SearchResults.html
@@ -70,7 +71,7 @@ export type Hit = {
   alias: string
   path: EntityPath
   description: string
-  node_type: string
+  node_type: EntityType
   created_on: number
   modified_on: number
   created_by: string
