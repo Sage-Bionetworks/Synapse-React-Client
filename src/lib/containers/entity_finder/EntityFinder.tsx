@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useListState } from '../../utils/hooks/useListState'
 import { EntityBundle, EntityHeader } from '../../utils/synapseTypes'
@@ -11,6 +11,8 @@ import {
 } from './EntityFinderDetailsView'
 import { TreeView } from './EntityFinderTreeView'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
+import { Button } from 'react-bootstrap'
+import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 
 // Create a client
 const queryClient = new QueryClient()
@@ -20,12 +22,57 @@ export type EntityIdAndVersion = {
   entityVersion?: number
 }
 
-// type CheckCriteriaEvent = 'finder' | 'select' // optimization idea (premature)
+const EntityPathDisplay: React.FunctionComponent<{
+  sessionToken: string
+  entityId: string
+  entityVersion?: number
+}> = ({ sessionToken, entityId, entityVersion }) => {
+  const { data: bundle } = useGetEntityBundle(
+    sessionToken,
+    entityId,
+    { includeEntity: true, includeEntityPath: true },
+    entityVersion,
+  )
+
+  const [text, setText] = useState('')
+
+  useEffect(() => {
+    if (bundle?.path?.path) {
+      if (bundle.path.path.length < 5) {
+        // Show the full path from project to entity
+        setText(
+          bundle.path?.path
+            .slice(1)
+            .map(header => header.name)
+            .join('/'),
+        )
+      } else {
+        // Truncate the path, showing only project, parent, and self
+        setText(
+          bundle.path.path[1].name +
+            '/.../' +
+            bundle.path.path
+              .slice(bundle.path.path.length - 2)
+              .map(header => header.name)
+              .join('/'),
+        )
+      }
+    }
+  }, [bundle])
+
+  return <span>{text}</span>
+}
+
 type EntityFinderProps = {
   sessionToken: string
   initialContainerId: string // the initial entity container that should be open
+  showTypes: EntityType[]
+  selectableTypes?: EntityType[]
   confirmCopy: string // The text to display in the button
   onConfirm: (selectedEntityIds: EntityIdAndVersion[]) => void // returns the list of selected entity IDs
+  confirmPrecheck?: (
+    selectedEntityIds: EntityIdAndVersion[],
+  ) => Promise<{ canPerformAction: boolean; failureCopy: string }>
   selectMultiple?: boolean
   allowSelectionFor?: (header: EntityHeader, bundle?: EntityBundle) => boolean // TODO: Define additional criteria that prevents an entity from being selected.
   // other names: `enableSelectionFilter`
@@ -33,6 +80,13 @@ type EntityFinderProps = {
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   sessionToken,
   initialContainerId,
+  showTypes,
+  selectableTypes = Object.values(EntityType),
+  confirmCopy,
+  onConfirm,
+  confirmPrecheck = () => {
+    return Promise.resolve({ canPerformAction: true, failureCopy: '' })
+  },
   selectMultiple = false,
 }) => {
   const {
@@ -42,6 +96,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   } = useListState<EntityIdAndVersion>([]) // synId(s)
 
   const [searchTerms, setSearchTerms] = useState<string[]>()
+  const [canPerformAction, setCanPerformAction] = useState<boolean>(false)
   const [
     configFromTreeView,
     setConfigFromTreeView,
@@ -65,6 +120,22 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       )
     }
   }
+
+  const formatSelection = () => {}
+
+  useEffect(() => {
+    if (selectedEntities.length > 0) {
+      confirmPrecheck(selectedEntities).then(result => {
+        setCanPerformAction(result.canPerformAction)
+      })
+    } else {
+      setCanPerformAction(false)
+    }
+  }, [selectedEntities, confirmPrecheck])
+
+  useEffect(() => {
+    formatSelection()
+  }, [selectedEntities])
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -100,20 +171,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             showVersionSelection={true}
             selectMultiple={selectMultiple}
             selected={selectedEntities}
-            showTypes={[
-              EntityType.PROJECT,
-              EntityType.TABLE,
-              EntityType.FOLDER,
-              EntityType.FILE,
-              EntityType.LINK,
-              EntityType.ENTITY_VIEW,
-            ]}
-            disableTypes={[
-              EntityType.TABLE,
-              EntityType.FILE,
-              EntityType.LINK,
-              EntityType.ENTITY_VIEW,
-            ]}
+            showTypes={showTypes}
+            selectableTypes={selectableTypes}
             onSelect={onSelect}
             onDeselect={onDeselect}
           />
@@ -126,7 +185,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   <TreeView
                     sessionToken={sessionToken}
                     setDetailsViewConfiguration={setConfigFromTreeView}
-                    showDetailsView={true}
                     showFakeRootNode={true}
                     showDropdown={true}
                     initialContainer={initialContainerId}
@@ -140,20 +198,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       configuration={configFromTreeView}
                       showVersionSelection={true}
                       selected={selectedEntities}
-                      showTypes={[
-                        EntityType.PROJECT,
-                        EntityType.TABLE,
-                        EntityType.FOLDER,
-                        EntityType.FILE,
-                        EntityType.LINK,
-                        EntityType.ENTITY_VIEW,
-                      ]}
-                      disableTypes={[
-                        EntityType.TABLE,
-                        EntityType.FILE,
-                        EntityType.LINK,
-                        EntityType.ENTITY_VIEW,
-                      ]}
+                      showTypes={showTypes}
+                      selectableTypes={selectableTypes}
                       selectMultiple={selectMultiple}
                       onSelect={onSelect}
                       onDeselect={onDeselect}
@@ -164,21 +210,46 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             </div>
           </div>
         }
-        {selectMultiple ? (
-          <p>
-            Selected entities:{' '}
-            {selectedEntities
-              .map(
-                e =>
-                  `${e.entityId}${
+        <div style={{ margin: '15px 0px' }}>
+          Selected:
+          {selectedEntities.length > 0 ? (
+            <div>
+              {selectedEntities.map(e => (
+                <div
+                  key={`${e.entityId}${
                     e.entityVersion ? `.${e.entityVersion}` : ''
-                  }`,
-              )
-              .join(', ')}
-          </p>
-        ) : (
-          <p>Selected:</p>
-        )}
+                  }`}
+                >
+                  <EntityPathDisplay
+                    sessionToken={sessionToken}
+                    entityId={e.entityId}
+                    entityVersion={e.entityVersion}
+                  ></EntityPathDisplay>
+                </div>
+              ))}
+            </div>
+          ) : (
+            ' None'
+          )}
+        </div>
+        <hr></hr>
+        <div style={{ textAlign: 'right' }}>
+          <Button
+            style={{ margin: '10px', borderRadius: '0px' }}
+            variant="light"
+            onClick={() => onConfirm(selectedEntities)}
+          >
+            {'CANCEL'}
+          </Button>
+          <Button
+            style={{ margin: '10px', borderRadius: '0px' }}
+            variant="primary-500"
+            disabled={!canPerformAction}
+            onClick={() => onConfirm(selectedEntities)}
+          >
+            {confirmCopy.toUpperCase()}
+          </Button>
+        </div>
       </div>
     </QueryClientProvider>
   )

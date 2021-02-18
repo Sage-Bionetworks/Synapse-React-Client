@@ -3,6 +3,21 @@
   sessionToken={sessionToken}
   initialContainerId={"syn24610451"}
   selectMultiple={true}
+  showTypes={[
+    'project',
+    'table',
+    'folder',
+    'file',
+    'link',
+    'entityview',
+  ]}
+  disableSelectionForTypes={[
+    'table',
+    'link',
+    'entityview',
+  ]}
+
+  confirmCopy={"Do Something"}
   onConfirm={(selectedEntityIds) => {console.log(selectedEntityIds)}}
 />
 ```

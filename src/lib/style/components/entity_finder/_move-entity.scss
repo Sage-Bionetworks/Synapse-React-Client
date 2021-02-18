@@ -120,7 +120,7 @@ $-finder-height: 500px;
   &__Row__Disabled:hover {
     opacity: 0.5;
   }
-  
+
   // TODO: probably a better way to do this, maybe with grid?
   .IsSelectedColumn,
   .EntityIconColumn,
@@ -149,6 +149,9 @@ $-finder-height: 500px;
   .EntityIconColumn {
     text-align: center;
     width: 10px;
+    svg {
+      fill: currentColor;
+    }
   }
 
   .NameColumn {

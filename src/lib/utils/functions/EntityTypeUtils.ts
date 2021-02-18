@@ -14,6 +14,23 @@ export function getEntityTypeFromHeader(
     : stringToEntityType((header as EntityHeader).type)
 }
 
+export function isContainerType(type: EntityType): boolean {
+  switch (type) {
+    case EntityType.PROJECT:
+    case EntityType.FOLDER:
+      return true
+    case EntityType.LINK:
+    case EntityType.DOCKER_REPO:
+    case EntityType.FILE:
+    case EntityType.TABLE:
+    case EntityType.SUBMISSION_VIEW:
+    case EntityType.ENTITY_VIEW:
+      return false
+    default:
+      throw new Error(`Unknown entity type: ${type}`)
+  }
+}
+
 export function stringToEntityType(typeString: string): EntityType {
   switch (typeString) {
     case 'org.sagebionetworks.repo.model.Project':

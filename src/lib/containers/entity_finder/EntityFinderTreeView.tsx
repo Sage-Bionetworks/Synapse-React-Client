@@ -5,8 +5,13 @@ import { SynapseClient } from '../..'
 import FileIcon from '../../assets/icons/entity/File.svg'
 import FolderIcon from '../../assets/icons/entity/Folder.svg'
 import ProjectIcon from '../../assets/icons/entity/Project.svg'
-import { getEntityTypeFromHeader } from '../../utils/functions/EntityTypeUtils'
+import {
+  getEntityTypeFromHeader,
+  isContainerType,
+} from '../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityChildren from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
+import useTraceUpdate from '../../utils/hooks/useTraceUpdate'
 import {
   EntityHeader,
   EntityPath,
@@ -18,6 +23,15 @@ import {
   EntityFinderDetailsViewConfiguration,
   EntityFinderViewConfigurationType,
 } from './EntityFinderDetailsView'
+
+const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
+  for (const eh of path.path) {
+    if (entityId === eh.id) {
+      return true
+    }
+  }
+  return false
+}
 
 enum FinderScope {
   CURRENT_PROJECT = 'Current Project',
@@ -72,30 +86,33 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   autoExpand = () => false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [allChildrenLoaded, setAllChildrenLoaded] = useState(false)
-  const [childEntities, setChildEntities] = useState<EntityHeader[]>([])
 
-  const loadChildren = async () => {
-    const result = await SynapseClient.getEntityChildren(
-      {
-        parentId: entityHeader.id,
-        includeTypes: [EntityType.PROJECT, EntityType.FOLDER],
-      },
-      sessionToken,
-    )
-    setChildEntities(result.page)
-    setAllChildrenLoaded(true)
-    // TODO: pagination
-  }
-
-  const { ref, inView } = useInView({
+  const { ref: nodeRef, inView: nodeInView } = useInView({
     triggerOnce: true,
   })
-  useEffect(() => {
-    if (inView) {
-      loadChildren()
-    }
-  }, [inView])
+
+  const { ref: endRef, inView: endInView } = useInView({
+    triggerOnce: false,
+    rootMargin: '200px',
+  })
+
+  const {
+    data: children,
+    fetchNextPage,
+    hasNextPage,
+    isSuccess,
+  } = useGetEntityChildren(
+    sessionToken,
+    {
+      parentId: entityHeader.id,
+      includeTypes: [EntityType.PROJECT, EntityType.FOLDER, EntityType.FILE],
+    },
+    {
+      enabled:
+        nodeInView && isContainerType(getEntityTypeFromHeader(entityHeader)),
+      staleTime: Infinity,
+    },
+  )
 
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
@@ -110,7 +127,7 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     },
     undefined,
     {
-      enabled: inView,
+      enabled: nodeInView,
       staleTime: 10000,
     },
   )
@@ -121,10 +138,16 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     }
   }, [autoExpand, entityHeader.id])
 
+  useEffect(() => {
+    if (isSuccess && endInView && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [isSuccess, endInView, hasNextPage])
+
   return (
     <>
       <div
-        ref={ref}
+        ref={nodeRef}
         style={{ paddingLeft: `${level * 15 + 15}px` }}
         className={`EntityFinderTreeView__Row${
           selectedId === entityHeader.id
@@ -134,7 +157,7 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
         key={entityHeader.id}
         onClick={() => setSelectedId(entityHeader.id)}
       >
-        {allChildrenLoaded && childEntities && childEntities.length > 0 ? (
+        {children && children.pages && children.pages[0].page.length > 0 ? (
           <div
             className={'EntityFinderTreeView__Row__ExpandButton'}
             onClick={e => {
@@ -164,20 +187,27 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
         </div>
       </div>
       <div style={!isExpanded ? { display: 'none' } : {}}>
-        {childEntities?.map(child => {
+        {children?.pages.map(page => {
           return (
-            <TreeViewRow
-              key={child.id}
-              sessionToken={sessionToken}
-              entityHeader={child}
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
-              level={level + 1}
-              autoExpand={autoExpand}
-            ></TreeViewRow>
+            <div key={'' + page.nextPageToken}>
+              {page.page.map(child => {
+                return (
+                  <TreeViewRow
+                    key={child.id}
+                    sessionToken={sessionToken}
+                    entityHeader={child}
+                    selectedId={selectedId}
+                    setSelectedId={setSelectedId}
+                    level={level + 1}
+                    autoExpand={autoExpand}
+                  ></TreeViewRow>
+                )
+              })}
+            </div>
           )
         })}
       </div>
+      <div ref={endRef}></div>
     </>
   )
 }
@@ -186,7 +216,6 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
 export type TreeViewProps = {
   sessionToken: string
   initialContainer: string // synId
-  showDetailsView: boolean
   showDropdown: boolean
   showFakeRootNode?: boolean // necessary to select root nodes in a details view
   setDetailsViewConfiguration?: (
@@ -204,9 +233,15 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   sessionToken,
   initialContainer,
   setDetailsViewConfiguration = () => {},
-  showDetailsView,
-  showFakeRootNode = showDetailsView,
+  showFakeRootNode = true,
 }) => {
+  useTraceUpdate({
+    sessionToken,
+    initialContainer,
+    setDetailsViewConfiguration,
+    showFakeRootNode,
+  })
+
   const DEFAULT_CONFIGURATION: EntityFinderDetailsViewConfiguration = {
     type: EntityFinderViewConfigurationType.PARENT_CONTAINER,
     parentContainerParams: {
@@ -226,19 +261,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   const [currentContainer, setCurrentContainer] = useState<string>(
     initialContainer,
   ) // synId or 'root'
-
-  const isInPath = (id: string) => {
-    console.log('checking if', id, 'in path', initialContainerPath)
-    if (scope === FinderScope.CURRENT_PROJECT && initialContainerPath) {
-      console.log('checking autoexpand', initialContainerPath)
-      for (const eh of initialContainerPath.path) {
-        if (id === eh.id) {
-          return true
-        }
-      }
-    }
-    return false
-  }
 
   useEffect(() => {
     setDetailsViewConfiguration(DEFAULT_CONFIGURATION)
@@ -277,7 +299,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   }, [sessionToken, scope])
 
   useEffect(() => {
-    console.log(currentContainer)
     if (currentContainer === 'root') {
       switch (scope) {
         case FinderScope.ALL_PROJECTS:
@@ -383,7 +404,13 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                     setSelectedId={(entityId: string) => {
                       setCurrentContainer(entityId)
                     }}
-                    autoExpand={isInPath}
+                    autoExpand={entityId => {
+                      return !!(
+                        scope === FinderScope.CURRENT_PROJECT &&
+                        initialContainerPath &&
+                        isEntityIdInPath(entityId, initialContainerPath)
+                      )
+                    }}
                   ></TreeViewRow>
                 )
               })}

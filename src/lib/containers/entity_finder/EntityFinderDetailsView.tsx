@@ -27,6 +27,8 @@ import { Checkbox } from '../widgets/Checkbox'
 import { RadioGroup } from '../widgets/RadioGroup'
 import { EntityIdAndVersion } from './EntityFinder'
 import { getIconForEntityType } from './EntityFinderTreeView'
+import useTraceUpdate from '../../utils/hooks/useTraceUpdate'
+import useGetEntityChildren from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
 
 type DetailsViewRowProps = {
   sessionToken: string
@@ -229,7 +231,7 @@ export type DetailsViewProps = {
   selectMultiple: boolean
   selected: EntityIdAndVersion[] // synId(s)
   showTypes: EntityType[]
-  disableTypes: EntityType[] // these types should be in 'showTypes', but the user cannot select them
+  selectableTypes: EntityType[]
   onSelect: (entity: EntityIdAndVersion) => void
   onDeselect: (entity: EntityIdAndVersion) => void
 }
@@ -241,7 +243,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   selectMultiple,
   selected,
   showTypes,
-  disableTypes,
+  selectableTypes,
   onSelect,
   onDeselect,
 }) => {
@@ -267,20 +269,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   }> => {
     switch (configuration.type) {
       case EntityFinderViewConfigurationType.HEADER_LIST: {
-        console.log(
-          'Retrieved headers from configuration',
-          configuration.headerList,
-        )
         return { entities: configuration.headerList!, nextPageToken: null }
       }
       case EntityFinderViewConfigurationType.PARENT_CONTAINER: {
-        console.log('making request', {
-          parentId: configuration.parentContainerParams!.parentContainerId,
-          includeTypes: showTypes,
-          sortBy: sortBy,
-          sortDirection: sortDirection,
-          nextPageToken: nextPageToken,
-        })
         const response = await SynapseClient.getEntityChildren(
           {
             parentId: configuration.parentContainerParams!.parentContainerId,
@@ -291,7 +282,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           },
           sessionToken,
         )
-        console.log('response to request: ', response)
 
         return {
           entities: response.page,
@@ -303,7 +293,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           sessionToken,
           configuration.getProjectParams,
         )
-        console.log('response to request: ', response)
         return {
           entities: response.results,
           nextPageToken: response.nextPageToken,
@@ -349,6 +338,18 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       }
     }
   }
+
+  useTraceUpdate({
+    sessionToken,
+    configuration,
+    showVersionSelection,
+    selectMultiple,
+    selected,
+    showTypes,
+    selectableTypes,
+    onSelect,
+    onDeselect,
+  })
 
   // Deep compare because the entity filter may change but its contents may not
   useEffect(() => {
@@ -486,9 +487,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   sessionToken={sessionToken}
                   entityHeader={entity}
                   hidden={!showTypes.includes(getEntityTypeFromHeader(entity))}
-                  disabled={disableTypes.includes(
-                    getEntityTypeFromHeader(entity),
-                  )}
+                  disabled={
+                    !selectableTypes.includes(getEntityTypeFromHeader(entity))
+                  }
                   showVersionColumn={showVersionSelection}
                   showSelectButton={selectMultiple ? 'checkbox' : 'radio'}
                   isSelected={selected.map(e => e.entityId).includes(entity.id)}
