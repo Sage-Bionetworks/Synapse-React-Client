@@ -16,8 +16,10 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
   let noMatch: boolean = false
 
   const buildIconList = () => {
-    return icons.map((el:any) => {
-      const iconConfig = iconConfigs[el] //  iconConfigs['other']
+    const unique = Array.from(new Set(icons))
+    return unique.map((el:any) => {
+      const iconConfig = iconConfigs[el]
+      // if this data type value doesn't have a matching icon, we use the "other" icon
       if (!iconConfig) {
         noMatch = true
         return

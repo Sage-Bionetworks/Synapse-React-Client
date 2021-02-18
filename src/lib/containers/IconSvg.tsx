@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
+import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import {
   ArrowBackIos,
   ArrowForwardIos,
   Check,
-  Cached,
   PhotoCameraOutlined,
   Cached,
 } from '@material-ui/icons'
@@ -21,11 +21,10 @@ import Rat from '../assets/mui_components/Rat'
 import Kinomics from '../assets/mui_components/Kinomics'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
-import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 
 export type IconSvgOptions = {
   icon: string
-  color: string
+  color?: string  // If no color is provided, it should inherit current color
   size?: string
   padding?: 'left' | 'right'
   label?: string  // If provided, will activate tooltip
@@ -135,7 +134,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
       >
       { getIcon(options) }
       </span>
-      { label && <ReactTooltip
+      { label && <ReactTooltip className={"icon-svg-tooltip"}
         delayShow={TOOLTIP_DELAY_SHOW}
         id={`icon-${icon}`}
       />
