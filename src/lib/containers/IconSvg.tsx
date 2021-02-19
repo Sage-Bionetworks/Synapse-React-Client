@@ -51,6 +51,8 @@ const getIcon = (options:IconSvgOptions) => {
   }
   // Styles for custom svg missing from mui
   const customSvgStyle:SVGStyleProps = {
+    fill: color,
+    color: color,
     verticalAlign: 'middle',
   }
 

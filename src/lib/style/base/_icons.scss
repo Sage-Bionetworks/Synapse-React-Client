@@ -33,24 +33,37 @@
     font-size: 19px;
   }
   path, circle {
-    fill: SRC.$primary-action-color-500;
+    fill: currentColor;
   }
   .icon-kinomics, .icon-proteomics {  // special fixes for these 2 icons
     path {
       fill: none;
-      stroke: SRC.$primary-action-color-500;
-    }
-  }
-  &.bg-circle {
-    .styled-svg-wrapper {
-      display: inline-flex;
-      padding: 2px;
-      background-color: rgba(SRC.$primary-action-color-500, 0.1);
-      border-radius: 50%;
-      margin: 0 2px;
+      stroke: currentColor;
     }
   }
   .icon-svg-tooltip {
     text-align: center;
   }
+
+  // for portal theme
+  &.themed {
+    path, circle {
+      fill: SRC.$primary-action-color-500;
+    }
+    .icon-kinomics, .icon-proteomics {
+      path {
+        stroke: SRC.$primary-action-color-500;
+      }
+    }
+    &.bg-circle {
+      .styled-svg-wrapper {
+        display: inline-flex;
+        padding: 2px;
+        background-color: rgba(SRC.$primary-action-color-500, 0.1);
+        border-radius: 50%;
+        margin: 0 2px;
+      }
+    }
+  }
+
 }

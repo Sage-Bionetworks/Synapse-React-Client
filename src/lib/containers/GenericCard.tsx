@@ -34,7 +34,7 @@ export type GenericCardSchema = {
   imageFileHandleColumnName?:string
   secondaryLabels?: any[]
   link?: string
-  dataType?: string
+  dataTypeIconNames?: string
 }
 
 export type IconOptions = {
@@ -361,7 +361,7 @@ export default class GenericCard extends React.Component<
       }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
-    const dataTypeIconNames = data[schema[genericCardSchemaDefined.dataType || '']]
+    const dataTypeIconNames = data[schema[genericCardSchemaDefined.dataTypeIconNames || '']]
     const imageFileHandleIdValue = data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
 
     const titleColumnModel = columnModels?.find(
@@ -466,8 +466,9 @@ export default class GenericCard extends React.Component<
               <div style={{textAlign: "right"}}>
                 <IconList
                   iconConfigs={columnIconOptions.columns.dataType}
-                  iconNames={dataTypeIconNames}
-                  showTooltip={true}
+                  iconNames={JSON.parse(dataTypeIconNames)}
+                  useBackground={true}
+                  useTheme={true}
                 />
               </div>
             }
