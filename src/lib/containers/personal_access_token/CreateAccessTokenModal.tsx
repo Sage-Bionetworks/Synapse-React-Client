@@ -30,7 +30,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
   token,
 }: CreateAccessTokenModalProps) => {
   const [tokenName, setTokenName] = React.useState('')
-  const [viewAccess, setViewAccess] = React.useState(false)
+  const [viewAccess, setViewAccess] = React.useState(true)
   const [downloadAccess, setDownloadAccess] = React.useState(false)
   const [modifyAccess, setModifyAccess] = React.useState(false)
 
@@ -133,7 +133,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                   Token Permissions
                 </FormLabel>
                 <Checkbox
-                  label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description})`}
+                  label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description}. Required to use Synapse programmatic clients)`}
                   id="view"
                   checked={viewAccess}
                   onChange={() => setViewAccess(!viewAccess)}
