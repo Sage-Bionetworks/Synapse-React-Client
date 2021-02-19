@@ -5,7 +5,7 @@ export type IconListProps = {
   iconConfigs: {
     [index:string]: IconSvgOptions  // if the icon option has the "label" set, it will show tooltip in IconSvg
   }
-  iconNames: string
+  iconNames: string[]
   useTheme?: boolean
   useBackground?: boolean
 }
