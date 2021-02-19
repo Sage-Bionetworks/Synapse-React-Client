@@ -1,4 +1,9 @@
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
+import {
+  QueryOptions,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
+  useQuery,
+} from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import {
@@ -6,9 +11,25 @@ import {
   EntityChildrenResponse,
 } from '../../synapseTypes'
 
-export default function useGetEntityChildren(
+export function useGetEntityChildren(
   sessionToken: string,
-  request: Omit<EntityChildrenRequest, 'nextPageToken'>,
+  request: EntityChildrenRequest,
+  options?: QueryOptions<
+    EntityChildrenResponse,
+    SynapseClientError,
+    EntityChildrenResponse
+  >,
+) {
+  return useQuery<EntityChildrenResponse, SynapseClientError>(
+    ['entitychildren', sessionToken, request],
+    () => SynapseClient.getEntityChildren(request, sessionToken),
+    options,
+  )
+}
+
+export function useGetEntityChildrenInfinite(
+  sessionToken: string,
+  request: EntityChildrenRequest,
   options?: UseInfiniteQueryOptions<
     EntityChildrenResponse,
     SynapseClientError,
@@ -18,7 +39,6 @@ export default function useGetEntityChildren(
   return useInfiniteQuery<EntityChildrenResponse, SynapseClientError>(
     ['entitychildren', request],
     async context => {
-      console.log(context.pageParam)
       return await SynapseClient.getEntityChildren(
         { ...request, nextPageToken: context.pageParam },
         sessionToken,

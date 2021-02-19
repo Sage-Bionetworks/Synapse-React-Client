@@ -830,9 +830,9 @@ export const getEntity: GetEntity = <T>(
  * If any item in the batch fails (e.g., with a 404) it will be EXCLUDED in the result set.
  * https://docs.synapse.org/rest/POST/entity/header.html
  */
-export const getEntityHeader = (
+export const getEntityHeaders = (
   references: ReferenceList,
-  sessionToken: string | undefined = undefined,
+  sessionToken?: string,
 ) => {
   return doPost(
     'repo/v1/entity/header',
@@ -903,7 +903,9 @@ export const getEntityBundleV2 = (
   sessionToken?: string,
 ): Promise<EntityBundle> => {
   return doPost<EntityBundle>(
-    `repo/v1/entity/${entityId}/${version ? `${version}/` : ''}/bundle2`,
+    `repo/v1/entity/${entityId}/${
+      version ? `version/${version}/` : ''
+    }/bundle2`,
     requestObject,
     sessionToken,
     undefined,
@@ -944,6 +946,7 @@ export const getEntityWiki = (
  * http://docs.synapse.org/rest/GET/favorite.html
  */
 export const getUserFavorites = (sessionToken: string | undefined) => {
+  // https://sagebionetworks.jira.com/browse/PLFM-6616
   const url = 'repo/v1/favorite?offset=0&limit=200'
   return doGet<PaginatedResults<EntityHeader>>(
     url,

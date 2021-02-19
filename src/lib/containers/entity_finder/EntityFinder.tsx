@@ -4,15 +4,18 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { useListState } from '../../utils/hooks/useListState'
 import { EntityBundle, EntityHeader } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
-import {
-  DetailsView,
-  EntityFinderDetailsViewConfiguration,
-  EntityFinderViewConfigurationType as EntityFinderDetailsViewConfigurationType,
-} from './EntityFinderDetailsView'
-import { TreeView } from './EntityFinderTreeView'
+
+import { TreeView } from './tree/TreeView'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import { Button } from 'react-bootstrap'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
+import { SynapseClient } from '../..'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import {
+  EntityFinderDetails,
+  EntityFinderDetailsConfiguration,
+  EntityFinderDetailsConfigurationType,
+} from './details/EntityFinderDetails'
 
 // Create a client
 const queryClient = new QueryClient()
@@ -60,7 +63,12 @@ const EntityPathDisplay: React.FunctionComponent<{
     }
   }, [bundle])
 
-  return <span>{text}</span>
+  return (
+    <>
+      <span>{text}</span>
+      {entityVersion && <span> (Version {entityVersion})</span>}
+    </>
+  )
 }
 
 type EntityFinderProps = {
@@ -89,39 +97,58 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   },
   selectMultiple = false,
 }) => {
-  const {
-    list: selectedEntities,
-    appendToList: appendToSelectedEntities,
-    setList: setSelectedEntities,
-  } = useListState<EntityIdAndVersion>([]) // synId(s)
+  const [selectedEntities, setSelectedEntities] = useState<
+    EntityIdAndVersion[]
+  >([])
 
   const [searchTerms, setSearchTerms] = useState<string[]>()
+  const [searchByIdResults, setSearchByIdResults] = useState<EntityHeader[]>([])
   const [canPerformAction, setCanPerformAction] = useState<boolean>(false)
   const [
     configFromTreeView,
     setConfigFromTreeView,
-  ] = useState<EntityFinderDetailsViewConfiguration>()
+  ] = useState<EntityFinderDetailsConfiguration>()
 
-  const onSelect = (entity: EntityIdAndVersion): void => {
-    if (!selectMultiple) {
-      appendToSelectedEntities(entity)
-    } else {
-      setSelectedEntities([
-        ...selectedEntities.filter(s => s.entityId !== entity.entityId),
-        entity,
-      ])
-    }
+  const isSelected = (entity: EntityIdAndVersion) => {
+    return selectedEntities.some(
+      s =>
+        s.entityId === entity.entityId &&
+        s.entityVersion === entity.entityVersion,
+    )
   }
 
-  const onDeselect = (entity: EntityIdAndVersion): void => {
-    if (selectedEntities.map(s => s.entityId).includes(entity.entityId)) {
+  const otherVersionSelected = (entity: EntityIdAndVersion) => {
+    return selectedEntities.some(
+      s =>
+        s.entityId === entity.entityId &&
+        s.entityVersion !== entity.entityVersion,
+    )
+  }
+
+  const toggleSelection = (entity: EntityIdAndVersion) => {
+    if (isSelected(entity)) {
+      // remove from selection
       setSelectedEntities(
         selectedEntities.filter(e => e.entityId !== entity.entityId),
       )
+    } else if (otherVersionSelected(entity)) {
+      // replace with selected version
+      setSelectedEntities([
+        ...selectedEntities.filter(e => e.entityId !== entity.entityId),
+        entity,
+      ])
+    } else {
+      // add to selection
+      if (!selectMultiple) {
+        setSelectedEntities([entity])
+      } else {
+        setSelectedEntities([
+          ...selectedEntities.filter(s => s.entityId !== entity.entityId),
+          entity,
+        ])
+      }
     }
   }
-
-  const formatSelection = () => {}
 
   useEffect(() => {
     if (selectedEntities.length > 0) {
@@ -134,8 +161,27 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   }, [selectedEntities, confirmPrecheck])
 
   useEffect(() => {
-    formatSelection()
-  }, [selectedEntities])
+    if (searchTerms?.length === 1) {
+      const synIdMatch = searchTerms[0].match(SYNAPSE_ENTITY_ID_REGEX)
+      if (synIdMatch) {
+        SynapseClient.getEntityHeaders(
+          [
+            {
+              targetId: synIdMatch[1],
+              targetVersionNumber: synIdMatch[2]
+                ? parseInt(synIdMatch[2])
+                : undefined,
+            },
+          ],
+          sessionToken,
+        ).then(response => {
+          setSearchByIdResults(response.results)
+        })
+      }
+    } else {
+      setSearchByIdResults([])
+    }
+  }, [searchTerms])
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -159,22 +205,28 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         </span>
 
         {searchTerms && (
-          <DetailsView
+          <EntityFinderDetails
             sessionToken={sessionToken}
-            configuration={{
-              type: EntityFinderDetailsViewConfigurationType.ENTITY_SEARCH,
-              query: {
-                queryTerm: searchTerms,
-                size: 30,
-              },
-            }}
+            configuration={
+              searchByIdResults && searchByIdResults.length > 0
+                ? {
+                    type: EntityFinderDetailsConfigurationType.HEADER_LIST,
+                    headerList: searchByIdResults,
+                  }
+                : {
+                    type: EntityFinderDetailsConfigurationType.ENTITY_SEARCH,
+                    query: {
+                      queryTerm: searchTerms,
+                    },
+                  }
+            }
             showVersionSelection={true}
             selectMultiple={selectMultiple}
             selected={selectedEntities}
-            showTypes={showTypes}
+            includeTypes={showTypes}
             selectableTypes={selectableTypes}
-            onSelect={onSelect}
-            onDeselect={onDeselect}
+            toggleSelection={toggleSelection}
+            onDeselect={toggleSelection}
           />
         )}
         {
@@ -193,17 +245,17 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 <ReflexSplitter></ReflexSplitter>
                 <ReflexElement>
                   {configFromTreeView && (
-                    <DetailsView
+                    <EntityFinderDetails
                       sessionToken={sessionToken}
                       configuration={configFromTreeView}
                       showVersionSelection={true}
                       selected={selectedEntities}
-                      showTypes={showTypes}
+                      includeTypes={showTypes}
                       selectableTypes={selectableTypes}
                       selectMultiple={selectMultiple}
-                      onSelect={onSelect}
-                      onDeselect={onDeselect}
-                    ></DetailsView>
+                      toggleSelection={toggleSelection}
+                      onDeselect={toggleSelection}
+                    />
                   )}
                 </ReflexElement>
               </ReflexContainer>

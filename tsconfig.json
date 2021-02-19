@@ -6,10 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "target": "es5",
-    "lib": [
-      "es6",
-      "dom"
-    ],
+    "lib": ["es2019", "es6", "dom"],
     "sourceMap": true,
     "jsx": "preserve",
     "moduleResolution": "node",
@@ -39,7 +36,5 @@
     "jest",
     "setupTests.js"
   ],
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

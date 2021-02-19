@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useInView } from 'react-intersection-observer'
-import { SynapseClient } from '../..'
-import FileIcon from '../../assets/icons/entity/File.svg'
-import FolderIcon from '../../assets/icons/entity/Folder.svg'
-import ProjectIcon from '../../assets/icons/entity/Project.svg'
+import { SynapseClient } from '../../..'
+import FileIcon from '../../../assets/icons/entity/File.svg'
+import FolderIcon from '../../../assets/icons/entity/Folder.svg'
+import ProjectIcon from '../../../assets/icons/entity/Project.svg'
 import {
   getEntityTypeFromHeader,
   isContainerType,
-} from '../../utils/functions/EntityTypeUtils'
-import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
-import useGetEntityChildren from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import useTraceUpdate from '../../utils/hooks/useTraceUpdate'
+} from '../../../utils/functions/EntityTypeUtils'
+import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
+import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
+import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
 import {
   EntityHeader,
   EntityPath,
   ProjectHeader,
-} from '../../utils/synapseTypes'
-import { EntityType } from '../../utils/synapseTypes/EntityType'
-import { EntityBadge } from '../EntityBadge'
+} from '../../../utils/synapseTypes'
+import { EntityType } from '../../../utils/synapseTypes/EntityType'
+import { EntityBadge } from '../../EntityBadge'
 import {
-  EntityFinderDetailsViewConfiguration,
-  EntityFinderViewConfigurationType,
-} from './EntityFinderDetailsView'
+  EntityFinderDetailsConfiguration,
+  EntityFinderDetailsConfigurationType,
+} from '../details/EntityFinderDetails'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -35,7 +35,8 @@ const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
 
 enum FinderScope {
   CURRENT_PROJECT = 'Current Project',
-  ALL_PROJECTS = 'All of my Projects',
+  ALL_PROJECTS = 'All Projects',
+  CREATED_BY_ME = 'Projects Created By Me',
   FAVORITES = 'My Favorites',
 }
 
@@ -101,11 +102,11 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     fetchNextPage,
     hasNextPage,
     isSuccess,
-  } = useGetEntityChildren(
+  } = useGetEntityChildrenInfinite(
     sessionToken,
     {
       parentId: entityHeader.id,
-      includeTypes: [EntityType.PROJECT, EntityType.FOLDER, EntityType.FILE],
+      includeTypes: [EntityType.PROJECT, EntityType.FOLDER],
     },
     {
       enabled:
@@ -219,7 +220,7 @@ export type TreeViewProps = {
   showDropdown: boolean
   showFakeRootNode?: boolean // necessary to select root nodes in a details view
   setDetailsViewConfiguration?: (
-    configuration: EntityFinderDetailsViewConfiguration,
+    configuration: EntityFinderDetailsConfiguration,
   ) => void
 }
 
@@ -242,8 +243,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     showFakeRootNode,
   })
 
-  const DEFAULT_CONFIGURATION: EntityFinderDetailsViewConfiguration = {
-    type: EntityFinderViewConfigurationType.PARENT_CONTAINER,
+  const DEFAULT_CONFIGURATION: EntityFinderDetailsConfiguration = {
+    type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
     parentContainerParams: {
       parentContainerId: initialContainer,
     },
@@ -277,6 +278,16 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         })
 
         break
+      case FinderScope.CREATED_BY_ME:
+        SynapseClient.getMyProjects(sessionToken, { filter: 'CREATED' }).then(
+          projects => {
+            setTopLevelEntities(projects.results)
+            // TODO: Pagination
+            setIsLoading(false)
+          },
+        )
+
+        break
       case FinderScope.FAVORITES: {
         SynapseClient.getUserFavorites(sessionToken).then(({ results }) => {
           setTopLevelEntities(results)
@@ -303,18 +314,26 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       switch (scope) {
         case FinderScope.ALL_PROJECTS:
           setDetailsViewConfiguration({
-            type: EntityFinderViewConfigurationType.USER_PROJECTS,
+            type: EntityFinderDetailsConfigurationType.USER_PROJECTS,
+          })
+          break
+        case FinderScope.CREATED_BY_ME:
+          setDetailsViewConfiguration({
+            type: EntityFinderDetailsConfigurationType.USER_PROJECTS,
+            getProjectParams: {
+              filter: 'CREATED',
+            },
           })
           break
         case FinderScope.CURRENT_PROJECT:
           setDetailsViewConfiguration({
-            type: EntityFinderViewConfigurationType.HEADER_LIST,
+            type: EntityFinderDetailsConfigurationType.HEADER_LIST,
             headerList: topLevelEntities,
           })
           break
         case FinderScope.FAVORITES:
           setDetailsViewConfiguration({
-            type: EntityFinderViewConfigurationType.USER_FAVORITES,
+            type: EntityFinderDetailsConfigurationType.USER_FAVORITES,
             headerList: topLevelEntities,
           })
 
@@ -322,7 +341,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       }
     } else {
       setDetailsViewConfiguration({
-        type: EntityFinderViewConfigurationType.PARENT_CONTAINER,
+        type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
         parentContainerParams: {
           parentContainerId: currentContainer,
         },
@@ -359,38 +378,40 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 >
                   {expandFakeRoot ? '▾' : '▸'}
                 </div>
-                <span></span>
-                <Dropdown
-                  style={{
-                    marginLeft: '20px',
-                    position: 'absolute',
-                    left: '10px',
-                    top: '16px',
-                    zIndex: 1,
-                  }}
+                <span></span>{' '}
+                <div
+                  style={{ width: 'min-content' }}
+                  onClick={e => e.stopPropagation()}
                 >
-                  <Dropdown.Toggle
-                    variant="light-primary-500"
-                    id="dropdown-basic"
+                  <Dropdown
+                    style={{
+                      position: 'static',
+                    }}
                   >
-                    {scope}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {Object.values(FinderScope).map(s => {
-                      return (
-                        <Dropdown.Item
-                          key={s}
-                          onClick={e => {
-                            e.stopPropagation()
-                            setScope(s)
-                          }}
-                        >
-                          {s}
-                        </Dropdown.Item>
-                      )
-                    })}
-                  </Dropdown.Menu>
-                </Dropdown>
+                    <Dropdown.Toggle
+                      variant="light-primary-500"
+                      id="dropdown-basic"
+                    >
+                      {scope}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {Object.values(FinderScope).map(s => {
+                        return (
+                          <Dropdown.Item
+                            key={s}
+                            onClick={e => {
+                              console.log('setting scope', s)
+                              e.stopPropagation()
+                              setScope(s)
+                            }}
+                          >
+                            {s}
+                          </Dropdown.Item>
+                        )
+                      })}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
               </div>
             )}
             <div style={!expandFakeRoot ? { display: 'none' } : {}}>

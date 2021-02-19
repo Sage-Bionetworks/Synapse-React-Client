@@ -265,7 +265,7 @@ export default class SynapseTable extends React.Component<
         referenceList.forEach(el => {
           mapEntityIdToHeader[el.targetId] = EMPTY_HEADER
         })
-        const data = await SynapseClient.getEntityHeader(referenceList, token)
+        const data = await SynapseClient.getEntityHeaders(referenceList, token)
         const { results } = data
         results.forEach(el => {
           mapEntityIdToHeader[el.id] = el
