@@ -4,8 +4,6 @@ import { Study } from './Study'
 import { ToolClinical } from './ToolClinical'
 import { ToolComputational } from './ToolComputational'
 import { ToolExperimental } from './ToolExperimental'
-import { Data } from './Data'
-import { DataLocked } from './DataLocked'
 import { Database } from './Database'
 import { Explore } from './Explore'
 import { Search } from './Search'
@@ -30,8 +28,6 @@ export {
   ToolClinical,
   ToolComputational,
   ToolExperimental,
-  Data,
-  DataLocked,
   Database,
   Explore,
   Search,
