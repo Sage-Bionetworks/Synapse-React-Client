@@ -16,6 +16,7 @@ import {
   EntityFinderDetailsConfiguration,
   EntityFinderDetailsConfigurationType,
 } from './details/EntityFinderDetails'
+import { CSSTransition } from 'react-transition-group'
 
 // Create a client
 const queryClient = new QueryClient()
@@ -27,14 +28,14 @@ export type EntityIdAndVersion = {
 
 const EntityPathDisplay: React.FunctionComponent<{
   sessionToken: string
-  entityId: string
-  entityVersion?: number
-}> = ({ sessionToken, entityId, entityVersion }) => {
+  entity: EntityIdAndVersion
+  toggleSelection: (entity: EntityIdAndVersion) => void
+}> = ({ sessionToken, entity, toggleSelection }) => {
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
-    entityId,
+    entity.entityId,
     { includeEntity: true, includeEntityPath: true },
-    entityVersion,
+    entity.entityVersion,
   )
 
   const [text, setText] = useState('')
@@ -65,8 +66,16 @@ const EntityPathDisplay: React.FunctionComponent<{
 
   return (
     <>
+      <span
+        style={{ margin: '5px' }}
+        onClick={() => {
+          toggleSelection(entity)
+        }}
+      >
+        <FontAwesomeIcon size={'sm'} icon={'times'} />
+      </span>
       <span>{text}</span>
-      {entityVersion && <span> (Version {entityVersion})</span>}
+      {entity.entityVersion && <span> (Version {entity.entityVersion})</span>}
     </>
   )
 }
@@ -101,6 +110,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     EntityIdAndVersion[]
   >([])
 
+  const [searchActive, setSearchActive] = useState(false)
   const [searchTerms, setSearchTerms] = useState<string[]>()
   const [searchByIdResults, setSearchByIdResults] = useState<EntityHeader[]>([])
   const [canPerformAction, setCanPerformAction] = useState<boolean>(false)
@@ -186,25 +196,51 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   return (
     <QueryClientProvider client={queryClient}>
       <div className="bootstrap-4-backport EntityFinder">
-        <span className="EntityFinder__SearchContainer">
-          <FontAwesomeIcon size={'sm'} icon={'search'} />
-          <input
-            className="EntityFinder__SearchContainer__SearchBox"
-            type="search"
-            placeholder="Search all of Synapse"
-            onKeyDown={(event: any) => {
-              if (event.key === 'Enter') {
-                if (event.target.value === '') {
-                  setSearchTerms(undefined)
-                } else {
-                  setSearchTerms(event.target.value.split(' '))
-                }
-              }
-            }}
-          ></input>
-        </span>
-
-        {searchTerms && (
+        <div style={{ display: 'flex', justifyContent: 'right' }}>
+          <div className="EntityFinder__SearchContainer">
+            <div className="EntityFinder__SearchContainer__SearchButton">
+              <FontAwesomeIcon
+                size={'sm'}
+                icon={'search'}
+                onClick={() => setSearchActive(true)}
+              />
+            </div>
+            <CSSTransition
+              in={searchActive}
+              timeout={200}
+              mountOnEnter={true}
+              unmountOnExit={true}
+              classNames="search-active-container"
+            >
+              <div className="EntityFinder__SearchContainer__SearchBoxContainer">
+                <input
+                  className="EntityFinder__SearchContainer__SearchBoxContainer__SearchBox"
+                  type="search"
+                  placeholder="Search all of Synapse"
+                  onKeyDown={(event: any) => {
+                    if (event.key === 'Enter') {
+                      if (event.target.value === '') {
+                        setSearchTerms(undefined)
+                      } else {
+                        setSearchTerms(event.target.value.split(' '))
+                      }
+                    }
+                  }}
+                ></input>
+              </div>
+            </CSSTransition>
+            <FontAwesomeIcon
+              style={searchActive ? {} : { width: '0px' }}
+              size={'sm'}
+              icon={'times'}
+              onClick={() => {
+                setSearchActive(false)
+                setSearchTerms(undefined)
+              }}
+            />
+          </div>
+        </div>
+        {searchActive && (
           <EntityFinderDetails
             sessionToken={sessionToken}
             configuration={
@@ -226,11 +262,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             includeTypes={showTypes}
             selectableTypes={selectableTypes}
             toggleSelection={toggleSelection}
-            onDeselect={toggleSelection}
           />
         )}
         {
-          <div style={searchTerms ? { display: 'none' } : {}}>
+          <div style={searchActive ? { display: 'none' } : {}}>
             <div className="EntityViewReflexContainer">
               <ReflexContainer orientation="vertical">
                 <ReflexElement minSize={200} size={350}>
@@ -254,7 +289,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       selectableTypes={selectableTypes}
                       selectMultiple={selectMultiple}
                       toggleSelection={toggleSelection}
-                      onDeselect={toggleSelection}
                     />
                   )}
                 </ReflexElement>
@@ -274,8 +308,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 >
                   <EntityPathDisplay
                     sessionToken={sessionToken}
-                    entityId={e.entityId}
-                    entityVersion={e.entityVersion}
+                    entity={e}
+                    toggleSelection={toggleSelection}
                   ></EntityPathDisplay>
                 </div>
               ))}

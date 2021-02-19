@@ -307,7 +307,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
         break
     }
-  }, [sessionToken, scope])
+  }, [sessionToken, scope, initialContainer])
 
   useEffect(() => {
     if (currentContainer === 'root') {
@@ -347,7 +347,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         },
       })
     }
-  }, [scope, currentContainer])
+  }, [scope, currentContainer, topLevelEntities, setDetailsViewConfiguration])
 
   return (
     <div className="EntityFinderTreeView" style={{ height: '500px' }}>

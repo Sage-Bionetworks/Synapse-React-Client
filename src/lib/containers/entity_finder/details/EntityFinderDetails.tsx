@@ -1,5 +1,4 @@
-import { config } from '@fortawesome/fontawesome-svg-core'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { useGetFavorites } from '../../../utils/hooks/SynapseAPI/useFavorites'
 import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
@@ -218,7 +217,6 @@ const EntityHeaderListView: React.FunctionComponent<HeaderListViewProps> = ({
   selected,
   includeTypes,
   selectableTypes,
-  onSelect,
   toggleSelection,
 }) => {
   return (
@@ -292,28 +290,51 @@ const SearchView: React.FunctionComponent<SearchViewProps> = ({
   selected,
   includeTypes,
   selectableTypes,
-  onSelect,
   toggleSelection,
 }) => {
-  const { data, status, hasNextPage, fetchNextPage } = useSearchInfinite(
-    searchQuery,
-    sessionToken,
-  )
-  return (
-    <DetailsView
-      sessionToken={sessionToken}
-      entities={data ? data.pages.map(page => page.hits).flat() : []}
-      queryStatus={status}
-      hasNextPage={hasNextPage}
-      fetchNextPage={fetchNextPage}
-      showVersionSelection={showVersionSelection}
-      selectMultiple={selectMultiple}
-      selected={selected}
-      showTypes={includeTypes}
-      selectableTypes={selectableTypes}
-      toggleSelection={toggleSelection}
-    ></DetailsView>
-  )
+  const {
+    data,
+    status,
+    hasNextPage,
+    fetchNextPage,
+  } = useSearchInfinite(searchQuery, sessionToken, {
+    enabled: !!searchQuery.queryTerm,
+  })
+  if (searchQuery.queryTerm) {
+    return (
+      <DetailsView
+        sessionToken={sessionToken}
+        entities={data ? data.pages.map(page => page.hits).flat() : []}
+        queryStatus={status}
+        hasNextPage={hasNextPage}
+        fetchNextPage={fetchNextPage}
+        showVersionSelection={showVersionSelection}
+        selectMultiple={selectMultiple}
+        selected={selected}
+        showTypes={includeTypes}
+        selectableTypes={selectableTypes}
+        toggleSelection={toggleSelection}
+      ></DetailsView>
+    )
+  } else {
+    return (
+      <DetailsView
+        sessionToken={sessionToken}
+        entities={[]}
+        queryStatus={'success'}
+        hasNextPage={false}
+        showVersionSelection={showVersionSelection}
+        selectMultiple={selectMultiple}
+        selected={selected}
+        showTypes={includeTypes}
+        selectableTypes={selectableTypes}
+        toggleSelection={toggleSelection}
+        noResultsPlaceholder={
+          <div>Enter a term or Synapse ID to start searching</div>
+        }
+      ></DetailsView>
+    )
+  }
 }
 
 type ProjectsViewProps = {
@@ -324,7 +345,6 @@ type ProjectsViewProps = {
   selectMultiple: boolean
   selected: EntityIdAndVersion[]
   selectableTypes: EntityType[]
-  onSelect: (entity: EntityIdAndVersion) => void
   toggleSelection: (entity: EntityIdAndVersion) => void
 }
 const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({

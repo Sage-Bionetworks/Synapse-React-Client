@@ -1,3 +1,4 @@
+import { JSXElement } from '@babel/types'
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { QueryStatus } from 'react-query'
@@ -30,6 +31,7 @@ export type DetailsViewProps = {
   showTypes: EntityType[]
   selectableTypes: EntityType[]
   toggleSelection: (entity: EntityIdAndVersion) => void
+  noResultsPlaceholder?: JSXElement
 }
 
 export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
@@ -46,6 +48,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   toggleSelection,
   sort,
   setSort,
+  noResultsPlaceholder,
 }) => {
   // used to load next page
   const { ref, inView } = useInView()
@@ -54,7 +57,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   useEffect(() => {
     if (queryStatus === 'success' && hasNextPage && fetchNextPage && inView) {
-      console.log('calling fetchNextPage')
       fetchNextPage()
     }
   }, [queryStatus, hasNextPage, fetchNextPage, inView])
@@ -160,33 +162,36 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           </tr>
         </thead>
         <tbody className="EntityFinderDetailsView__TableBody">
-          {queryStatus === 'loading' && entities.length === 0 ? (
-            <tr className="spinner" />
-          ) : (
-            entities?.map(entity => {
-              return (
-                <DetailsViewRow
-                  key={entity.id}
-                  sessionToken={sessionToken}
-                  entityHeader={entity}
-                  hidden={!showTypes.includes(getEntityTypeFromHeader(entity))}
-                  disabled={
-                    !selectableTypes.includes(getEntityTypeFromHeader(entity))
-                  }
-                  showVersionColumn={showVersionSelection}
-                  showSelectButton={selectMultiple ? 'checkbox' : 'radio'}
-                  isSelected={selected.map(e => e.entityId).includes(entity.id)}
-                  toggleSelection={toggleSelection}
-                ></DetailsViewRow>
-              )
-            })
-          )}
-          {
-            /* Just for pagination: */
-            <tr ref={ref} />
-          }
+          {entities?.map(entity => {
+            return (
+              <DetailsViewRow
+                key={entity.id}
+                sessionToken={sessionToken}
+                entityHeader={entity}
+                hidden={!showTypes.includes(getEntityTypeFromHeader(entity))}
+                disabled={
+                  !selectableTypes.includes(getEntityTypeFromHeader(entity))
+                }
+                showVersionColumn={showVersionSelection}
+                showSelectButton={selectMultiple ? 'checkbox' : 'radio'}
+                isSelected={selected.map(e => e.entityId).includes(entity.id)}
+                toggleSelection={toggleSelection}
+              ></DetailsViewRow>
+            )
+          })}
+          {/* Just for pagination */}
+          <tr ref={ref} />
         </tbody>
       </table>
+      {entities.length === 0 && (
+        <div className="EntityFinderDetailsView__Placeholder">
+          <div className="EntityFinderDetailsView__Placeholder__Content">
+            {queryStatus !== 'loading' &&
+              (noResultsPlaceholder || <div>No results</div>)}
+            {queryStatus === 'loading' && <div className="spinner" />}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -8,22 +8,32 @@ $-finder-height: 500px;
 
 .EntityFinder {
   &__SearchContainer {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: right;
     border: $-border;
-    margin: 5px;
+    margin: 10px 0px;
     padding: 0px 10px;
-    & &__SearchBox {
-      float: right;
-      max-width: 200px;
-      margin: 10px 0px 10px 10px;
-      border: none;
-      box-shadow: none;
+    height: 38px;
+    transition: all 0.5s;
+    &__SearchButton {
+      cursor: pointer;
+
+      padding: 5px;
+      margin: 10px 0px;
     }
-    & &__SearchBox:focus {
-      max-width: 500px;
-      transition: all 0.5s;
+    &__SearchBoxContainer {
+      padding: 0px 10px;
+      border: none;
+      &__SearchBox {
+        background-color: transparent;
+        height: 100%;
+        width: 100%;
+        margin: 10px;
+        padding: 10px;
+        border: none;
+        box-shadow: none;
+      }
     }
   }
 }
@@ -121,6 +131,16 @@ $-finder-height: 500px;
     opacity: 0.5;
   }
 
+  &__Placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+    &__Content {
+      font-size: large;
+    }
+  }
+
   // TODO: probably a better way to do this, maybe with grid?
   .IsSelectedColumn,
   .EntityIconColumn,
@@ -156,6 +176,7 @@ $-finder-height: 500px;
 
   .NameColumn {
     width: 40%;
+    max-width: 300px;
   }
   .AccessColumn {
     width: 40px;
@@ -181,4 +202,25 @@ $-finder-height: 500px;
   .ModifiedOnColumn:not(th) {
     border-right: $-border;
   }
+}
+
+.search-active-container-enter {
+  width: 0%;
+}
+.search-active-container-enter-active {
+  width: 100%;
+  transition: all 0.5s;
+}
+.search-active-container-enter-done {
+  width: 100%;
+}
+.search-active-container-exit {
+  width: 100%;
+}
+.search-active-container-exit-active {
+  width: 0%;
+  transition: all 0.5s;
+}
+.search-active-container-exit-done {
+  width: 0%;
 }
