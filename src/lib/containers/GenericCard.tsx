@@ -12,7 +12,9 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { SelectColumn, ColumnModel, ColumnType } from '../utils/synapseTypes'
 import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
+import IconList from './IconList'
 import { ImageFileHandle } from './widgets/ImageFileHandle'
+import { Button } from 'react-bootstrap'
 
 export type KeyToAlias = {
   key: string
@@ -33,6 +35,7 @@ export type GenericCardSchema = {
   imageFileHandleColumnName?:string
   secondaryLabels?: any[]
   link?: string
+  dataTypeIconNames?: string
 }
 
 export type IconOptions = {
@@ -230,6 +233,7 @@ export default class GenericCard extends React.Component<
       hasClickedShowMore: false,
     }
     this.getTitleParams = this.getTitleParams.bind(this)
+    this.getCardLinkHref = this.getCardLinkHref.bind(this)
     this.renderLongDescription = this.renderLongDescription.bind(this)
     this.renderShortDescription = this.renderShortDescription.bind(this)
   }
@@ -255,10 +259,21 @@ export default class GenericCard extends React.Component<
     } else if (!titleLink) {
       target = '_blank'
     } else if (titleLink) {
+      href = this.getCardLinkHref(titleLink, data, schema) ?? ''
+    }
+    return { href, target }
+  }
+
+  public getCardLinkHref(
+    cardLink: CardLink | undefined,
+    data: string[] | undefined,
+    schema: any | undefined,
+  ): string | undefined {
+    if (cardLink) {
       if (!data || !schema) {
         throw Error('Must specify CardLink and data for linking to work')
       }
-      const { matchColumnName, URLColumnName } = titleLink
+      const { matchColumnName, URLColumnName } = cardLink
       const indexInData = schema[matchColumnName]
       if (indexInData === undefined) {
         console.error(
@@ -266,10 +281,10 @@ export default class GenericCard extends React.Component<
         )
       } else {
         const value = data[indexInData]
-        href = `/${titleLink.baseURL}?${URLColumnName}=${value}`
+        return `/${cardLink.baseURL}?${URLColumnName}=${value}`
       }
     }
-    return { href, target }
+    return undefined
   }
 
   getCutoff = (summary: string) => {
@@ -330,6 +345,7 @@ export default class GenericCard extends React.Component<
       iconOptions,
       isHeader = false,
       titleLinkConfig,
+      ctaButtonLinkConfig,
       labelLinkConfig,
       facetAliases = {},
       descriptionLinkConfig,
@@ -359,6 +375,7 @@ export default class GenericCard extends React.Component<
       }).str
     const description = data[schema[genericCardSchemaDefined.description || '']]
     const iconValue = data[schema[genericCardSchemaDefined.icon || '']]
+    const dataTypeIconNames = data[schema[genericCardSchemaDefined.dataTypeIconNames || '']]
     const imageFileHandleIdValue = data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
 
     const titleColumnModel = columnModels?.find(
@@ -405,18 +422,29 @@ export default class GenericCard extends React.Component<
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
     }
-
+    const icon:JSX.Element = <>
+        {imageFileHandleIdValue && <div className="SRC-imageThumbnail">
+          <ImageFileHandle 
+            token={token}
+            fileHandleId={imageFileHandleIdValue}
+            tableEntityConcreteType={tableEntityConcreteType}
+            rowId={data![schema.id]}
+            tableId={tableId}
+          /></div>}
+        {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
+          <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
+        </div>}
+      </>
     if (isHeader) {
       return (
         <HeaderCard
           descriptionLinkConfig={descriptionLinkConfig}
-          type={type}
           title={title}
           subTitle={subTitle}
           backgroundColor={backgroundColor}
           description={description}
-          iconValue={iconValue}
-          iconOptions={iconOptions}
+          type={type}
+          icon={icon}
           values={values}
           href={href}
           target={target}
@@ -443,19 +471,22 @@ export default class GenericCard extends React.Component<
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className={'SRC-portalCardMain'}>
-          {imageFileHandleIdValue && <div className="SRC-imageThumbnail">
-            <ImageFileHandle 
-              token={token}
-              fileHandleId={imageFileHandleIdValue}
-              tableEntityConcreteType={tableEntityConcreteType}
-              rowId={data![schema.id]}
-              tableId={tableId}
-            /></div>}
-          {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
-            <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
-          </div>}
+          {icon}
           <div className="SRC-cardContent">
             <div className="SRC-type">{type}</div>
+            {
+              // If the portal configs has columnIconOptions.columns.dataType option
+              // and the column value is not null, display the card data type icons
+              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
+              <div style={{textAlign: "right"}}>
+                <IconList
+                  iconConfigs={columnIconOptions.columns.dataType}
+                  iconNames={JSON.parse(dataTypeIconNames)}
+                  useBackground={true}
+                  useTheme={true}
+                />
+              </div>
+            }
             <div>
               <h3
                 className="SRC-boldText SRC-blackText"
@@ -510,6 +541,19 @@ export default class GenericCard extends React.Component<
                 descriptionLinkConfig,
                 this.props.token,
               )}
+            {ctaButtonLinkConfig &&
+              <div className="SRC-portalCardCTAButton bootstrap-4-backport">
+                <Button
+                  variant="primary"
+                  href={this.getCardLinkHref(ctaButtonLinkConfig?.linkConfig, data, schema)}
+                  type="button"
+                  className="pill-xl"
+                  size="sm"
+                >
+                  {ctaButtonLinkConfig.buttonText}
+                </Button>
+              </div>
+            }
           </div>
         </div>
         {showFooter && (

@@ -24,7 +24,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
-  const instance = wrapper.instance()
+  const instance = wrapper.instance() as GenericCard
   return { wrapper, instance }
 }
 
@@ -254,17 +254,17 @@ describe('it renders the UI correctly', () => {
       })
     })
   })
-})
+
 
 describe('it makes the correct URL for the title', () => {
-  const getTitleParams = GenericCard.prototype.getTitleParams
+  const { instance } = createShallowComponent(propsForHeaderMode)
   const SELF = '_self'
   const BLANK = '_blank'
 
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { href, target } = getTitleParams(
+    const { href, target } = instance.getTitleParams(
       synId,
       undefined,
       undefined,
@@ -277,7 +277,7 @@ describe('it makes the correct URL for the title', () => {
   it('creates a DOI link ', () => {
     const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
-    const { href, target } = getTitleParams(
+    const { href, target } = instance.getTitleParams(
       doi,
       undefined,
       undefined,
@@ -290,7 +290,7 @@ describe('it makes the correct URL for the title', () => {
   it('creates a DOI link PORTALS-1801', () => {
     const doi = '10.1007/s00401-020-02230-x '
     const doiLink = `https://dx.doi.org/${doi.trim()}`
-    const { href, target } = getTitleParams(
+    const { href, target } = instance.getTitleParams(
       doi,
       undefined,
       undefined,
@@ -315,11 +315,13 @@ describe('it makes the correct URL for the title', () => {
       URLColumnName,
     }
     const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-    const { href, target } = getTitleParams('', titleLinkConfig, data, schema)
+    const { href, target } = instance.getTitleParams('', titleLinkConfig, data, schema)
     expect(href).toEqual(expectedLink)
     expect(target).toEqual(SELF)
   })
 })
+})
+
 
 describe('it makes the correct URL for the secondary labels', () => {
   const renderLabel = GenericCardPackage.renderLabel
@@ -359,6 +361,7 @@ describe('it makes the correct URL for the secondary labels', () => {
         })}
       </>,
     )
+    
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(`/${datasetBaseURL}?${DATASETS}=${value}`)
