@@ -292,14 +292,13 @@ const SearchView: React.FunctionComponent<SearchViewProps> = ({
   selectableTypes,
   toggleSelection,
 }) => {
-  const {
-    data,
-    status,
-    hasNextPage,
-    fetchNextPage,
-  } = useSearchInfinite(searchQuery, sessionToken, {
-    enabled: !!searchQuery.queryTerm,
-  })
+  const { data, status, hasNextPage, fetchNextPage } = useSearchInfinite(
+    searchQuery,
+    sessionToken,
+    {
+      enabled: !!searchQuery.queryTerm,
+    },
+  )
   if (searchQuery.queryTerm) {
     return (
       <DetailsView

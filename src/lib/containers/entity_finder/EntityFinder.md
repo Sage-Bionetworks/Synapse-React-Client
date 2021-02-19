@@ -24,17 +24,18 @@
 
 ### TODO:
 
-* Bugs
-  * Selecting a search result causes a re-render
-  * Selecting anything in the details view re-renders the tree (based on logs)
-  * Undoubtedly more
-* Pagination
-* Search
+* Tooltip when hovering over project name
+* Iconography for tables, views
+  * Change colors of icons when selected  
+* Error Handling
+* Disable caching/don't use `react-query`
+* Optimization/tests/code cleanup
+* Pagination ✅
+* Search ✅
   * Text search ✅
   * Entering a synId ✅
-  * Placeholder before search begins
-* Space for radio/checkbox
-* Tooltip when hovering over project name
+  * Placeholder before search begins 🟡 (need to use fancy asset)
+* Space for radio/checkbox ✅
 * Placeholders for no results
 * Version column/select ✅
   * Hide version column/select for unversionable entities
@@ -44,12 +45,6 @@
   * Current Project ✅
   * All Projects ✅
   * Favorites ✅
-  * Clear/reset details view when switching between options
+  * Clear/reset details view when switching between options ✅
 * Sorting columns in the detailed view ✅
-* Make version selection more intuitive/predictable
-* Iconography for tables, views
-  * Change colors of icons when selected
-* Error Handling
-* Lots of styling
-* Optimization/tests/code cleanup
-* Much more
+* Make version selection more intuitive/predictable 🟡 (needs feedback)

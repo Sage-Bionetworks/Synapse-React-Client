@@ -1,8 +1,6 @@
-import { JSXElement } from '@babel/types'
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { QueryStatus } from 'react-query'
-import useDeepCompareEffect from 'use-deep-compare-effect'
 import SortIcon from '../../../assets/icons/Sort'
 import { getEntityTypeFromHeader } from '../../../utils/functions/EntityTypeUtils'
 import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
@@ -31,7 +29,7 @@ export type DetailsViewProps = {
   showTypes: EntityType[]
   selectableTypes: EntityType[]
   toggleSelection: (entity: EntityIdAndVersion) => void
-  noResultsPlaceholder?: JSXElement
+  noResultsPlaceholder?: React.ReactElement
 }
 
 export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({

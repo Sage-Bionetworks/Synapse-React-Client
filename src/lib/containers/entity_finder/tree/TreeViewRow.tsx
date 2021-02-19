@@ -21,8 +21,8 @@ import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
 import {
   EntityFinderDetailsConfiguration,
-  DetailsViewConfigurationType,
-} from '../details/DetailsView'
+  EntityFinderDetailsConfigurationType,
+} from '../details/EntityFinderDetails'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -243,7 +243,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   })
 
   const DEFAULT_CONFIGURATION: EntityFinderDetailsConfiguration = {
-    type: DetailsViewConfigurationType.PARENT_CONTAINER,
+    type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
     parentContainerParams: {
       parentContainerId: initialContainer,
     },
@@ -303,18 +303,18 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       switch (scope) {
         case FinderScope.ALL_PROJECTS:
           setDetailsViewConfiguration({
-            type: DetailsViewConfigurationType.USER_PROJECTS,
+            type: EntityFinderDetailsConfigurationType.USER_PROJECTS,
           })
           break
         case FinderScope.CURRENT_PROJECT:
           setDetailsViewConfiguration({
-            type: DetailsViewConfigurationType.HEADER_LIST,
+            type: EntityFinderDetailsConfigurationType.HEADER_LIST,
             headerList: topLevelEntities,
           })
           break
         case FinderScope.FAVORITES:
           setDetailsViewConfiguration({
-            type: DetailsViewConfigurationType.USER_FAVORITES,
+            type: EntityFinderDetailsConfigurationType.USER_FAVORITES,
             headerList: topLevelEntities,
           })
 
@@ -322,7 +322,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       }
     } else {
       setDetailsViewConfiguration({
-        type: DetailsViewConfigurationType.PARENT_CONTAINER,
+        type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
         parentContainerParams: {
           parentContainerId: currentContainer,
         },

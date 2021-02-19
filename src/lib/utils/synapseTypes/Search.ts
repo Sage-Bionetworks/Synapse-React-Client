@@ -3,7 +3,7 @@ import { EntityType } from './EntityType'
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchQuery.html
 export type SearchQuery = {
-  queryTerm: string[]
+  queryTerm?: string[]
   booleanQuery?: KeyValue[]
   rangeQuery?: KeyRange[]
   facetOptions?: SearchFacetOption[]
