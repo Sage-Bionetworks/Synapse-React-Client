@@ -2,7 +2,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { useInView } from 'react-intersection-observer'
-import { SynapseClient } from '../../..'
+import { SynapseClient } from '../../../utils'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
   getEntityTypeFromHeader,

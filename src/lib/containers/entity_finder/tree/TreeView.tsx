@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useInView } from 'react-intersection-observer'
-import { SynapseClient } from '../../..'
+import { SynapseClient } from '../../../utils'
 import FileIcon from '../../../assets/icons/entity/File.svg'
 import FolderIcon from '../../../assets/icons/entity/Folder.svg'
 import ProjectIcon from '../../../assets/icons/entity/Project.svg'

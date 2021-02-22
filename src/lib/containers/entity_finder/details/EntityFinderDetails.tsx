@@ -12,7 +12,7 @@ import {
   SortBy,
 } from '../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
-import { SearchQuery } from '../../../utils/synapseTypes/Search'
+import { Hit, SearchQuery } from '../../../utils/synapseTypes/Search'
 import { EntityIdAndVersion } from '../EntityFinder'
 import { DetailsView } from './DetailsView'
 
@@ -179,7 +179,14 @@ const ChildrenView: React.FunctionComponent<ChildrenViewProps> = ({
   return (
     <DetailsView
       sessionToken={sessionToken}
-      entities={data ? data.pages.map(page => page.page).flat() : []}
+      entities={
+        data
+          ? ([] as EntityHeader[]).concat.apply(
+              [],
+              data.pages.map(page => page.page),
+            )
+          : []
+      }
       queryStatus={status}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
@@ -303,7 +310,14 @@ const SearchView: React.FunctionComponent<SearchViewProps> = ({
     return (
       <DetailsView
         sessionToken={sessionToken}
-        entities={data ? data.pages.map(page => page.hits).flat() : []}
+        entities={
+          data
+            ? ([] as Hit[]).concat.apply(
+                [],
+                data.pages.map(page => page.hits),
+              )
+            : []
+        }
         queryStatus={status}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
@@ -363,7 +377,14 @@ const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
   return (
     <DetailsView
       sessionToken={sessionToken}
-      entities={data ? data.pages.map(page => page.results).flat() : []}
+      entities={
+        data
+          ? ([] as ProjectHeader[]).concat.apply(
+              [],
+              data.pages.map(page => page.results),
+            )
+          : []
+      }
       queryStatus={status}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}

@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useInView } from 'react-intersection-observer'
-import { SynapseClient } from '../../..'
-import FileIcon from '../../assets/icons/entity/File.svg'
-import FolderIcon from '../../assets/icons/entity/Folder.svg'
-import ProjectIcon from '../../assets/icons/entity/Project.svg'
+import { SynapseClient } from '../../../utils'
 import {
   getEntityTypeFromHeader,
   isContainerType,
@@ -23,6 +20,7 @@ import {
   EntityFinderDetailsConfiguration,
   EntityFinderDetailsConfigurationType,
 } from '../details/EntityFinderDetails'
+import { getIconForEntityType } from './TreeView'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -46,35 +44,6 @@ type TreeViewRowProps = {
   setSelectedId: (entityId: string) => void
   level?: number
   autoExpand?: (entityId: string) => boolean
-}
-
-export const getIconForEntityType = (type: EntityType) => {
-  let src = undefined
-  switch (type) {
-    case EntityType.PROJECT:
-      src = ProjectIcon
-      break
-    case EntityType.FILE:
-      src = FileIcon
-      break
-    case EntityType.FOLDER:
-      src = FolderIcon
-      break
-    default:
-      src = undefined // todo
-  }
-  return (
-    <img
-      // alt={type} // TODO: the string types will look bad here
-      style={{
-        maxWidth: '15px',
-        maxHeight: '15px',
-
-        margin: '3px',
-      }}
-      src={src}
-    ></img>
-  )
 }
 
 const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({

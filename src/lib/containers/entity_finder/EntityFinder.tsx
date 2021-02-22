@@ -8,7 +8,7 @@ import { TreeView } from './tree/TreeView'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import { Button } from 'react-bootstrap'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
-import { SynapseClient } from '../..'
+import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import {
   EntityFinderDetails,
