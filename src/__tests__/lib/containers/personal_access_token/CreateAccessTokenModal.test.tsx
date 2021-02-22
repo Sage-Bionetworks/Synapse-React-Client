@@ -69,6 +69,7 @@ describe('basic functionality', () => {
 
     // Try to create with no name or permissions
     await act(async () => {
+      await wrapper.find(Checkbox).at(0).prop('onChange')()
       expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
         true,
       )
@@ -130,7 +131,6 @@ describe('basic functionality', () => {
           value: 'token name',
         },
       })
-      await wrapper.find(Checkbox).at(0).prop('onChange')()
       expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
         true,
       )
