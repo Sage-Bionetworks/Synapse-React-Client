@@ -16,6 +16,7 @@ import {
   EntityFinderDetailsConfigurationType,
 } from './details/EntityFinderDetails'
 import { CSSTransition } from 'react-transition-group'
+import 'react-reflex/styles.css'
 
 // Create a client
 const queryClient = new QueryClient()
@@ -41,21 +42,18 @@ const EntityPathDisplay: React.FunctionComponent<{
 
   useEffect(() => {
     if (bundle?.path?.path) {
-      if (bundle.path.path.length < 5) {
+      const path = bundle.path.path.slice(1) // drop the first element, which is always syn4489 "root"
+
+      if (path.length < 4) {
         // Show the full path from project to entity
-        setText(
-          bundle.path?.path
-            .slice(1)
-            .map(header => header.name)
-            .join('/'),
-        )
+        setText(path.map(header => header.name).join('/'))
       } else {
         // Truncate the path, showing only project, parent, and self
         setText(
-          bundle.path.path[1].name +
+          path[0].name + // Project
             '/.../' +
-            bundle.path.path
-              .slice(bundle.path.path.length - 2)
+            path
+              .slice(path.length - 2) // drop everything except parent and self
               .map(header => header.name)
               .join('/'),
         )
