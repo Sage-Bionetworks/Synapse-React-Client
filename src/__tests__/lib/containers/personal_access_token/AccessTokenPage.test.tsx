@@ -74,7 +74,7 @@ describe('basic functionality', () => {
     // Click 'Create new token' button
     await act(async () => {
       await wrapper
-        .find('.SRC-accessTokenPageCreateButtonContainer button')
+        .find('.PersonalAccessTokenPage__Header__CreateButton button')
         .simulate('click')
     })
     await resolveAllPending(wrapper)
@@ -118,7 +118,7 @@ describe('basic functionality', () => {
     // Click the button to render the modal
     await act(async () => {
       await wrapper
-        .find('.SRC-accessTokenPageCreateButtonContainer button')
+        .find('.PersonalAccessTokenPage__Header__CreateButton button')
         .simulate('click')
     })
     await resolveAllPending(wrapper)
@@ -159,12 +159,15 @@ describe('basic functionality', () => {
 
     // Verify that we have a 'Load More' button
     expect(
-      wrapper.find('button.SRC-loadMoreAccessTokensButton').length,
+      wrapper.find('button.PersonalAccessTokenPage__CardList__LoadMore__Button')
+        .length,
     ).toEqual(1)
 
     // Click the button
     await act(async () => {
-      wrapper.find('button.SRC-loadMoreAccessTokensButton').simulate('click')
+      wrapper
+        .find('button.PersonalAccessTokenPage__CardList__LoadMore__Button')
+        .simulate('click')
       await resolveAllPending(wrapper)
     })
 
@@ -175,7 +178,8 @@ describe('basic functionality', () => {
 
     // No NPT on page two, so there should no longer be a load button
     expect(
-      wrapper.find('button.SRC-loadMoreAccessTokensButton').length,
+      wrapper.find('button.PersonalAccessTokenPage__CardList__LoadMore__Button')
+        .length,
     ).toEqual(0)
     expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(2)
   })

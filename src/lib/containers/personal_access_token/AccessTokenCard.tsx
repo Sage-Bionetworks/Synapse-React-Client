@@ -73,7 +73,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
       ></WarningModal>
 
       <div className="SRC-cardContent">
-        <p className="SRC-eqHeightRow SRC-userCardName">
+        <div className="SRC-eqHeightRow SRC-userCardName">
           <ReactTooltip delayShow={100} />
           <span className={'SRC-blackText'}>{accessToken.name}</span>
           {isExpired && (
@@ -87,9 +87,9 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
               />
             </span>
           )}
-        </p>
+        </div>
 
-        <p className="SRC-eqHeightRow">
+        <div className="SRC-eqHeightRow">
           <span>Permissions: </span>
           {accessToken.scopes.map(scope => {
             return (
@@ -102,12 +102,12 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
               </span>
             )
           })}
-        </p>
-        <p className="SRC-eqHeightRow">
+        </div>
+        <div className="SRC-eqHeightRow">
           <span>Last used {moment(accessToken.lastUsed).fromNow()}</span>
           <span className={'SRC-deemphasized-text'}>{' | '}</span>
           <span>Created {moment(accessToken.createdOn).fromNow()}</span>
-        </p>
+        </div>
       </div>
       {/* Delete button */}
       <div className="PersonalAccessTokenCard__DeleteButton">

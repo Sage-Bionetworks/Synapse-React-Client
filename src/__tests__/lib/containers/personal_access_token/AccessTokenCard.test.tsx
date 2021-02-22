@@ -52,14 +52,14 @@ describe('basic functionality', () => {
     const wrapperActive = shallow(<AccessTokenCard {...activeTokenProps} />)
     expect(
       wrapperActive
-        .find('div.SRC-personalAccessTokenCard')
+        .find('div.PersonalAccessTokenCard')
         .hasClass('bg-warning'),
     ).toBe(false)
 
     const wrapperExpired = shallow(<AccessTokenCard {...expiredTokenProps} />)
     expect(
       wrapperExpired
-        .find('div.SRC-personalAccessTokenCard')
+        .find('div.PersonalAccessTokenCard')
         .hasClass('bg-warning'),
     ).toBe(true)
   })
