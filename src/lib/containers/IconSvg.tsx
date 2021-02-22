@@ -12,8 +12,8 @@ import {
 import Chromatin from '../assets/mui_components/Chromatin'
 import Data from '../assets/mui_components/Data'
 import DataLocked from '../assets/mui_components/DataLocked'
-import Gene1 from '../assets/mui_components/Gene1'
-import Gene2 from '../assets/mui_components/Gene2'
+import GeneExpression from '../assets/mui_components/GeneExpression'
+import GeneVariants from '../assets/mui_components/GeneVariants'
 import Clinical from '../assets/mui_components/Clinical'
 import Imaging from '../assets/mui_components/Imaging'
 import LineGraph from '../assets/mui_components/LineGraph'
@@ -77,10 +77,10 @@ const getIcon = (options:IconSvgOptions) => {
       return <Data fill={color} style={customSvgStyle}></Data>
     case 'dataLocked':
       return <DataLocked fill={color} style={customSvgStyle}></DataLocked>
-    case 'gene1':
-      return <Gene1 fill={color} style={customSvgStyle}></Gene1>
-    case 'gene2':
-      return <Gene2 fill={color} style={customSvgStyle}></Gene2>
+    case 'geneExpression':
+      return <GeneExpression fill={color} style={customSvgStyle}></GeneExpression>
+    case 'geneVariants':
+      return <GeneVariants fill={color} style={customSvgStyle}></GeneVariants>
     case 'imaging':
       return <Imaging fill={color} style={customSvgStyle}></Imaging>
     case 'lineGraph':
@@ -136,9 +136,12 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
       >
       { getIcon(options) }
       </span>
-      { label && <ReactTooltip className={"icon-svg-tooltip"}
-        delayShow={TOOLTIP_DELAY_SHOW}
-        id={`icon-${icon}`}
+      { label &&
+          <ReactTooltip
+            className={"icon-svg-tooltip"}
+            delayShow={TOOLTIP_DELAY_SHOW}
+            id={`icon-${icon}`}
+            place={'top'}
       />
       }
     </>

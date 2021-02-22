@@ -1,10 +1,10 @@
 import * as React from 'react'
 import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 
-const Gene1 = (props:SvgIconProps) => {
+const GeneExpression = (props:SvgIconProps) => {
   const { fill, style } = props
   return (
-    <SvgIcon style={style}>
+    <SvgIcon style={style} className={"icon-gene-expression"}>
       <line x1="3.10171" y1="16.5117" x2="4.88551" y2="17.9982" stroke={fill} strokeWidth="0.35" strokeLinecap="round"/>
       <line x1="2.89646" y1="14.5958" x2="4.68026" y2="16.0823" stroke={fill} strokeWidth="0.35" strokeLinecap="round"/>
       <line x1="2.96488" y1="12.8168" x2="4.74867" y2="14.3033" stroke={fill} strokeWidth="0.35" strokeLinecap="round"/>
@@ -23,4 +23,4 @@ const Gene1 = (props:SvgIconProps) => {
   );
 }
 
-export default Gene1
+export default GeneExpression

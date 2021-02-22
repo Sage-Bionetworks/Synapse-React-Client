@@ -42,7 +42,7 @@
   <IconList iconConfigs={
     {
       'drugCombinationScreen': { icon: 'rat' },
-      'geneExpression': { icon: 'gene2' },
+      'geneExpression': { icon: 'geneExpression' },
     }
   }
   useTheme={true}
@@ -56,12 +56,12 @@
   <IconList iconConfigs={
     {
       'drugCombinationScreen': { icon: 'rat' },
-      'geneExpression': { icon: 'gene2' },
+      'geneVariants': { icon: 'geneVariants' },
     }
   }
   useTheme={true}
   useBackground={true}
-  iconNames={["drugCombinationScreen", "geneExpression"]}
+  iconNames={["drugCombinationScreen", "geneVariants"]}
   />
 }
 <br></br>
@@ -71,7 +71,7 @@
   <IconList iconConfigs={
     {
       'drugCombinationScreen': { icon: 'rat', label: 'I am a mouse!' },
-      'geneExpression': { icon: 'gene2', label: ':-D'},
+      'geneExpression': { icon: 'geneExpression', label: ':-D'},
     }
   } 
   iconNames={["drugCombinationScreen", "geneExpression"]}
