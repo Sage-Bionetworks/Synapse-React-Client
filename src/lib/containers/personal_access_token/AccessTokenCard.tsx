@@ -4,8 +4,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
-import * as React from 'react'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import ReactTooltip from 'react-tooltip'
@@ -30,7 +29,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
 
   const isExpired = accessToken.state === 'EXPIRED'
 
-  React.useEffect(() => {
+  useEffect(() => {
     // For reasons unknown, the tooltips in this component would not load in Synapse.org without this
     // see https://github.com/wwayne/react-tooltip/issues/344
     ReactTooltip.rebuild()
@@ -39,7 +38,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
   return (
     <div
       className={
-        'cardContainer SRC-personalAccessTokenCard' +
+        'cardContainer PersonalAccessTokenCard' +
         (isExpired ? ' bg-warning' : '')
       }
     >
@@ -58,7 +57,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         }
         confirmButtonText={'Delete Token'}
         onCancel={() => setShowModal(false)}
-        onConfirm={(id: string, token: string) => {
+        onConfirm={(id: string) => {
           SynapseClient.deletePersonalAccessToken(id, token)
             .then(() => {
               onDelete()
@@ -95,7 +94,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
           {accessToken.scopes.map(scope => {
             return (
               <span
-                className="SRC-primary-text-color SRC-primary-color-hover SRC-hand-cursor SRC-inlineFlex SRC-scopeName"
+                className="PersonalAccessTokenCard__ScopeName SRC-primary-text-color SRC-primary-color-hover SRC-hand-cursor SRC-inlineFlex"
                 data-tip={scopeDescriptions[scope].description}
                 key={scope}
               >
@@ -111,7 +110,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         </p>
       </div>
       {/* Delete button */}
-      <div className="SRC-deleteAccessTokenButton">
+      <div className="PersonalAccessTokenCard__DeleteButton">
         <Button
           variant="default"
           aria-label="delete"
