@@ -7,6 +7,7 @@ export type CheckboxProps = {
   className?: string
   onChange: Function
   isSelectAll?: boolean
+  children?: React.ReactChild
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
@@ -45,6 +46,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
             onChange={handleCheckboxChange}
           />
           <span>{props.label}</span>
+          {props.children ?? <></>}
         </span>
       </label>
     </div>

@@ -1,12 +1,13 @@
-import { SynapseClient } from '../../utils'
-import * as React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
+import { SynapseClient } from '../../utils'
+import { useListState } from '../../utils/hooks/useListState'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { ErrorBanner } from '../ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 
 const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
   error,
@@ -31,22 +32,23 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
   body,
   token,
 }: AccessTokenPageProps) => {
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const [showCreateTokenModal, setShowCreateTokenModal] = React.useState(false)
+  const [showCreateTokenModal, setShowCreateTokenModal] = useState(false)
 
-  // TODO: replace this with the `useListState` custom hook when it gets merged.
-  const [tokenRecords, setTokenRecords] = React.useState<AccessTokenRecord[]>(
-    [],
-  )
+  const {
+    list: tokenRecords,
+    appendToList: appendTokenRecords,
+    setList: setTokenRecords,
+  } = useListState<AccessTokenRecord>([])
 
-  const [loadNextPage, setLoadNextPage] = React.useState(true)
-  const [nextPageToken, setNextPageToken] = React.useState<string | undefined>(
+  const [loadNextPage, setLoadNextPage] = useState(true)
+  const [nextPageToken, setNextPageToken] = useState<string | undefined>(
     undefined,
   )
 
-  const [showErrorMessage, setShowErrorMessage] = React.useState(false)
-  const [errorMessage, setErrorMessage] = React.useState('')
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   // We rerender the list whenever a token is created or deleted to ensure we are up-to-date
   const rerenderList = () => {
@@ -55,14 +57,14 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
     setLoadNextPage(true)
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loadNextPage) {
       setLoadNextPage(false)
       setIsLoading(true)
       SynapseClient.getPersonalAccessTokenRecords(token, nextPageToken)
         .then(response => {
           setIsLoading(false)
-          setTokenRecords(records => records.concat(response.results))
+          appendTokenRecords(...response.results)
           if (response.nextPageToken) {
             setNextPageToken(response.nextPageToken)
           } else {
@@ -78,13 +80,13 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
   }, [loadNextPage, token, nextPageToken])
 
   return (
-    <>
-      <div className="SRC-accessTokenPageHeaderContainer bootstrap-4-backport">
-        <div className="SRC-accessTokenPageText">
+    <div className="PersonalAccessTokenPage bootstrap-4-backport">
+      <div className="PersonalAccessTokenPage__Header">
+        <div className="PersonalAccessTokenPage__Header__CopyText">
           <h1>{title}</h1>
           {body}
         </div>
-        <div className="SRC-accessTokenPageCreateButtonContainer">
+        <div className="PersonalAccessTokenPage__Header__CreateButton">
           <Button
             variant="primary"
             onClick={() => setShowCreateTokenModal(true)}
@@ -104,11 +106,11 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
 
         <div>
           {!isLoading && tokenRecords.length === 0 && (
-            <div className="SRC-noAccessTokensMessage SRC-text-title">
+            <div className="PersonalAccessTokenPage__NoTokensMessage SRC-text-title">
               You currently have no personal access tokens.
             </div>
           )}
-          <div className="SRC-accessTokenCardList">
+          <div className="PersonalAccessTokenPage__CardList">
             {tokenRecords.map(accessToken => {
               return (
                 <AccessTokenCard
@@ -121,9 +123,9 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
             })}
             {isLoading && loadingScreen}
             {!isLoading && nextPageToken && !showErrorMessage && (
-              <div className="SRC-loadMoreButtonContainer">
+              <div className="PersonalAccessTokenPage__CardList__LoadMore">
                 <Button
-                  className="SRC-loadMoreAccessTokensButton"
+                  className="PersonalAccessTokenPage__CardList__LoadMore__Button"
                   variant="primary"
                   onClick={() => setLoadNextPage(true)}
                 >
@@ -135,6 +137,6 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           {showErrorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
         </div>
       </ErrorBoundary>
-    </>
+    </div>
   )
 }
