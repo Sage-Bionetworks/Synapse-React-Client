@@ -50,6 +50,9 @@
 
   .SRC-cardContent {
     flex-grow: 1;
+    .SRC-eqHeightRow {
+      margin-bottom: 5px;
+    }
   }
 
   &__ScopeName {
