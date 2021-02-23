@@ -478,7 +478,7 @@ export default class GenericCard extends React.Component<
               // If the portal configs has columnIconOptions.columns.dataType option
               // and the column value is not null, display the card data type icons
               columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
-              <div style={{textAlign: "right"}}>
+              <div style={{marginTop: "20px"}}>
                 <IconList
                   iconConfigs={columnIconOptions.columns.dataType}
                   iconNames={JSON.parse(dataTypeIconNames)}

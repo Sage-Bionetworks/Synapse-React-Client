@@ -30,7 +30,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
   token,
 }: CreateAccessTokenModalProps) => {
   const [tokenName, setTokenName] = React.useState('')
-  const [viewAccess, setViewAccess] = React.useState(false)
+  const [viewAccess, setViewAccess] = React.useState(true)
   const [downloadAccess, setDownloadAccess] = React.useState(false)
   const [modifyAccess, setModifyAccess] = React.useState(false)
 
@@ -87,7 +87,12 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
   }
 
   return (
-    <Modal animation={false} show={true} onHide={onClose}>
+    <Modal
+      className={'AccessTokenModal'}
+      animation={false}
+      show={true}
+      onHide={onClose}
+    >
       <Form>
         <Modal.Header>
           <Modal.Title>Create New Personal Access Token</Modal.Title>
@@ -104,7 +109,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                 If needed, generate a new personal access token, and delete this
                 one.
               </span>
-              <div className="SRC-createdTokenCopyToClipboardContainer">
+              <div className="AccessTokenModal__CopyToClipboardContainer">
                 <CopyToClipboardInput
                   value={createdToken}
                   inputWidth={'350px'}
@@ -121,7 +126,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                 <FormLabel className="SRC-boldText">Token Name</FormLabel>
                 <FormControl
                   autoFocus
-                  className="SRC-personalAccessTokenNameInput"
+                  className="AccessTokenModal__TokenNameInput"
                   value={tokenName}
                   onChange={handleTokenNameChange}
                   type="text"
@@ -133,23 +138,36 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                   Token Permissions
                 </FormLabel>
                 <Checkbox
-                  label={`${scopeDescriptions.view.displayName} (${scopeDescriptions.view.description})`}
+                  label={scopeDescriptions.view.displayName}
                   id="view"
                   checked={viewAccess}
                   onChange={() => setViewAccess(!viewAccess)}
-                ></Checkbox>
+                >
+                  <div className="AccessTokenModal__ScopeDescription">
+                    {scopeDescriptions.view.description}. Required to use
+                    Synapse programmatic clients.
+                  </div>
+                </Checkbox>
                 <Checkbox
-                  label={`${scopeDescriptions.download.displayName} (${scopeDescriptions.download.description})`}
+                  label={scopeDescriptions.download.displayName}
                   id="download"
                   checked={downloadAccess}
                   onChange={() => setDownloadAccess(!downloadAccess)}
-                ></Checkbox>
+                >
+                  <div className="AccessTokenModal__ScopeDescription">
+                    {scopeDescriptions.download.description}
+                  </div>
+                </Checkbox>
                 <Checkbox
-                  label={`${scopeDescriptions.modify.displayName} (${scopeDescriptions.modify.description})`}
+                  label={scopeDescriptions.modify.displayName}
                   id="modify"
                   checked={modifyAccess}
                   onChange={() => setModifyAccess(!modifyAccess)}
-                ></Checkbox>
+                >
+                  <div className="AccessTokenModal__ScopeDescription">
+                    {scopeDescriptions.modify.description}
+                  </div>
+                </Checkbox>
               </div>
               <div className="SRC-center-text">
                 {showErrorMessage && (
