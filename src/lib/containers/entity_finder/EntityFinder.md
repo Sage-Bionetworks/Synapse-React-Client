@@ -12,6 +12,7 @@
     'entityview',
     'dockerrepo',
   ]}
+  selectableVersions={true}
   disableSelectionForTypes={[
   
   ]}

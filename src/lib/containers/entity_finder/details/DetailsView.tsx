@@ -156,7 +156,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 )}
               </span>
             </th>
-            <th className="VersionColumn">Version</th>
+            {showVersionSelection && <th className="VersionColumn">Version</th>}
           </tr>
         </thead>
         <tbody className="EntityFinderDetailsView__TableBody">

@@ -10,7 +10,7 @@ import { CSSTransition } from 'react-transition-group'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
-import { EntityBundle, EntityHeader } from '../../utils/synapseTypes'
+import { EntityHeader } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import {
   EntityFinderDetails,
@@ -41,22 +41,24 @@ const EntityPathDisplay: React.FunctionComponent<{
     entity.entityVersion,
   )
 
-  const [text, setText] = useState('')
+  const [entityName, setEntityName] = useState('')
+  const [pathString, setPathString] = useState('')
 
   useEffect(() => {
     if (bundle?.path?.path) {
-      const path = bundle.path.path.slice(1) // drop the first element, which is always syn4489 "root"
+      setEntityName(bundle.path.path[bundle.path.path.length - 1].name)
+      const path = bundle.path.path.slice(1, bundle.path.path.length - 1) // drop the first element, which is always syn4489 "root"
 
       if (path.length < 4) {
         // Show the full path from project to entity
-        setText(path.map(header => header.name).join('/'))
+        setPathString(path.map(header => header.name).join('/'))
       } else {
         // Truncate the path, showing only project, parent, and self
-        setText(
+        setPathString(
           path[0].name + // Project
             '/.../' +
             path
-              .slice(path.length - 2) // drop everything except parent and self
+              .slice(path.length - 1) // drop everything except parent and self
               .map(header => header.name)
               .join('/'),
         )
@@ -67,14 +69,19 @@ const EntityPathDisplay: React.FunctionComponent<{
   return (
     <>
       <span
-        style={{ margin: '5px' }}
+        style={{ margin: '5px', cursor: 'pointer' }}
         onClick={() => {
           toggleSelection(entity)
         }}
       >
-        <FontAwesomeIcon size={'sm'} icon={faTimes} />
+        <FontAwesomeIcon
+          style={{ marginBottom: '3px' }}
+          size={'sm'}
+          icon={faTimes}
+        />
       </span>
-      <span>{text}</span>
+      <span>{pathString ? pathString + '/' : ''}</span>
+      <span style={{ fontWeight: 'bold' }}>{entityName}</span>
       {entity.entityVersion && <span> (Version {entity.entityVersion})</span>}
     </>
   )
@@ -84,6 +91,7 @@ type EntityFinderProps = {
   sessionToken: string
   initialContainerId: string // the initial entity container that should be open
   showTypes: EntityType[]
+  selectableVersions?: boolean
   selectableTypes?: EntityType[]
   selectMultiple?: boolean
 }
@@ -91,6 +99,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   sessionToken,
   initialContainerId,
   showTypes,
+  selectableVersions = true,
   selectableTypes = Object.values(EntityType),
   selectMultiple = false,
 }) => {
@@ -217,6 +226,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             />
           </div>
         </div>
+        {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
         {searchActive && (
           <EntityFinderDetails
             sessionToken={sessionToken}
@@ -233,7 +243,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     },
                   }
             }
-            showVersionSelection={true}
+            showVersionSelection={selectableVersions}
             selectMultiple={selectMultiple}
             selected={selectedEntities}
             includeTypes={showTypes}
@@ -268,7 +278,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         <EntityFinderDetails
                           sessionToken={sessionToken}
                           configuration={configFromTreeView}
-                          showVersionSelection={true}
+                          showVersionSelection={selectableVersions}
                           selected={selectedEntities}
                           includeTypes={showTypes}
                           selectableTypes={selectableTypes}
