@@ -8,20 +8,12 @@ import {
   faListAlt,
   faTable,
   faThList,
-  faArchive,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
 import { faDocker } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-library.add(faLink)
-library.add(faFolder)
-library.add(faFile)
-library.add(faListAlt)
-library.add(faTable)
-library.add(faThList)
-library.add(faArchive)
-library.add(faDocker)
+library.add(faLink, faFolder, faFile, faListAlt, faTable, faThList, faDocker)
 
 const _ENTITY_TYPE_ICON_MAP = new Map<EntityType, IconDefinition>([
   [EntityType.PROJECT, faListAlt],

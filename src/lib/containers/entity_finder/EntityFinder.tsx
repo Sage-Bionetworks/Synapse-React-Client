@@ -1,25 +1,23 @@
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { EntityBundle, EntityHeader } from '../../utils/synapseTypes'
-import { EntityType } from '../../utils/synapseTypes/EntityType'
-
-import { TreeView } from './tree/TreeView'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
-import { Button } from 'react-bootstrap'
-import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
+import 'react-reflex/styles.css'
+import { SizeMe } from 'react-sizeme'
+import { CSSTransition } from 'react-transition-group'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
+import { EntityBundle, EntityHeader } from '../../utils/synapseTypes'
+import { EntityType } from '../../utils/synapseTypes/EntityType'
 import {
   EntityFinderDetails,
   EntityFinderDetailsConfiguration,
   EntityFinderDetailsConfigurationType,
 } from './details/EntityFinderDetails'
-import { CSSTransition } from 'react-transition-group'
-import 'react-reflex/styles.css'
-import { SizeMe } from 'react-sizeme'
-import { faTimes, faSearch } from '@fortawesome/free-solid-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { TreeView } from './tree/TreeView'
 
 library.add(faTimes, faSearch)
 
@@ -87,25 +85,13 @@ type EntityFinderProps = {
   initialContainerId: string // the initial entity container that should be open
   showTypes: EntityType[]
   selectableTypes?: EntityType[]
-  confirmCopy: string // The text to display in the button
-  onConfirm: (selectedEntityIds: EntityIdAndVersion[]) => void // returns the list of selected entity IDs
-  confirmPrecheck?: (
-    selectedEntityIds: EntityIdAndVersion[],
-  ) => Promise<{ canPerformAction: boolean; failureCopy: string }>
   selectMultiple?: boolean
-  allowSelectionFor?: (header: EntityHeader, bundle?: EntityBundle) => boolean // TODO: Define additional criteria that prevents an entity from being selected.
-  // other names: `enableSelectionFilter`
 }
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   sessionToken,
   initialContainerId,
   showTypes,
   selectableTypes = Object.values(EntityType),
-  confirmCopy,
-  onConfirm,
-  confirmPrecheck = () => {
-    return Promise.resolve({ canPerformAction: true, failureCopy: '' })
-  },
   selectMultiple = false,
 }) => {
   const [selectedEntities, setSelectedEntities] = useState<
@@ -115,7 +101,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   const [searchActive, setSearchActive] = useState(false)
   const [searchTerms, setSearchTerms] = useState<string[]>()
   const [searchByIdResults, setSearchByIdResults] = useState<EntityHeader[]>([])
-  const [canPerformAction, setCanPerformAction] = useState<boolean>(false)
   const [
     configFromTreeView,
     setConfigFromTreeView,
@@ -161,16 +146,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       }
     }
   }
-
-  useEffect(() => {
-    if (selectedEntities.length > 0) {
-      confirmPrecheck(selectedEntities).then(result => {
-        setCanPerformAction(result.canPerformAction)
-      })
-    } else {
-      setCanPerformAction(false)
-    }
-  }, [selectedEntities, confirmPrecheck])
 
   useEffect(() => {
     if (searchTerms?.length === 1) {
@@ -329,24 +304,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           ) : (
             ' None'
           )}
-        </div>
-        <hr></hr>
-        <div style={{ textAlign: 'right' }}>
-          <Button
-            style={{ margin: '10px', borderRadius: '0px' }}
-            variant="light"
-            onClick={() => onConfirm(selectedEntities)}
-          >
-            {'CANCEL'}
-          </Button>
-          <Button
-            style={{ margin: '10px', borderRadius: '0px' }}
-            variant="primary-500"
-            disabled={!canPerformAction}
-            onClick={() => onConfirm(selectedEntities)}
-          >
-            {confirmCopy.toUpperCase()}
-          </Button>
         </div>
       </div>
     </QueryClientProvider>

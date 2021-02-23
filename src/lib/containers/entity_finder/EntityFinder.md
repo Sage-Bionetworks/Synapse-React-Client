@@ -15,9 +15,6 @@
   disableSelectionForTypes={[
   
   ]}
-
-  confirmCopy={"Do Something"}
-  onConfirm={(selectedEntityIds) => {console.log(selectedEntityIds)}}
 />
 ```
 
