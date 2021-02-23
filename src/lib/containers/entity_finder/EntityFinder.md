@@ -10,11 +10,10 @@
     'file',
     'link',
     'entityview',
+    'dockerrepo',
   ]}
   disableSelectionForTypes={[
-    'table',
-    'link',
-    'entityview',
+  
   ]}
 
   confirmCopy={"Do Something"}

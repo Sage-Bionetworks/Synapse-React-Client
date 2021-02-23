@@ -17,6 +17,11 @@ import {
 } from './details/EntityFinderDetails'
 import { CSSTransition } from 'react-transition-group'
 import 'react-reflex/styles.css'
+import { SizeMe } from 'react-sizeme'
+import { faTimes, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+library.add(faTimes, faSearch)
 
 // Create a client
 const queryClient = new QueryClient()
@@ -69,7 +74,7 @@ const EntityPathDisplay: React.FunctionComponent<{
           toggleSelection(entity)
         }}
       >
-        <FontAwesomeIcon size={'sm'} icon={'times'} />
+        <FontAwesomeIcon size={'sm'} icon={faTimes} />
       </span>
       <span>{text}</span>
       {entity.entityVersion && <span> (Version {entity.entityVersion})</span>}
@@ -198,7 +203,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             <div className="EntityFinder__SearchContainer__SearchButton">
               <FontAwesomeIcon
                 size={'sm'}
-                icon={'search'}
+                icon={faSearch}
                 onClick={() => setSearchActive(true)}
               />
             </div>
@@ -229,7 +234,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             <FontAwesomeIcon
               style={searchActive ? {} : { width: '0px' }}
               size={'sm'}
-              icon={'times'}
+              icon={faTimes}
               onClick={() => {
                 setSearchActive(false)
                 setSearchTerms(undefined)
@@ -264,32 +269,42 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         {
           <div style={searchActive ? { display: 'none' } : {}}>
             <div className="EntityViewReflexContainer">
-              <ReflexContainer orientation="vertical">
-                <ReflexElement minSize={200} size={350}>
-                  <TreeView
-                    sessionToken={sessionToken}
-                    setDetailsViewConfiguration={setConfigFromTreeView}
-                    showFakeRootNode={true}
-                    showDropdown={true}
-                    initialContainer={initialContainerId}
-                  ></TreeView>
-                </ReflexElement>
-                <ReflexSplitter></ReflexSplitter>
-                <ReflexElement>
-                  {configFromTreeView && (
-                    <EntityFinderDetails
-                      sessionToken={sessionToken}
-                      configuration={configFromTreeView}
-                      showVersionSelection={true}
-                      selected={selectedEntities}
-                      includeTypes={showTypes}
-                      selectableTypes={selectableTypes}
-                      selectMultiple={selectMultiple}
-                      toggleSelection={toggleSelection}
-                    />
-                  )}
-                </ReflexElement>
-              </ReflexContainer>
+              <SizeMe>
+                {({ size }) => (
+                  // In Synapse.org, this component may not render properly
+                  // We can avoid this by using SizeMe
+                  // https://github.com/leefsmp/Re-Flex/issues/27
+                  <ReflexContainer
+                    orientation="vertical"
+                    key={(!!size).toString()}
+                  >
+                    <ReflexElement minSize={200} size={350}>
+                      <TreeView
+                        sessionToken={sessionToken}
+                        setDetailsViewConfiguration={setConfigFromTreeView}
+                        showFakeRootNode={true}
+                        showDropdown={true}
+                        initialContainer={initialContainerId}
+                      ></TreeView>
+                    </ReflexElement>
+                    <ReflexSplitter></ReflexSplitter>
+                    <ReflexElement minSize={400}>
+                      {configFromTreeView && (
+                        <EntityFinderDetails
+                          sessionToken={sessionToken}
+                          configuration={configFromTreeView}
+                          showVersionSelection={true}
+                          selected={selectedEntities}
+                          includeTypes={showTypes}
+                          selectableTypes={selectableTypes}
+                          selectMultiple={selectMultiple}
+                          toggleSelection={toggleSelection}
+                        />
+                      )}
+                    </ReflexElement>
+                  </ReflexContainer>
+                )}
+              </SizeMe>
             </div>
           </div>
         }

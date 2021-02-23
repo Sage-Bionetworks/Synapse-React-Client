@@ -10,7 +10,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import _ from 'lodash-es'
+import sanitizeHtml from 'sanitize-html'
 import ReactTooltip from 'react-tooltip'
+
+const ENTITY_BADGE_TOOLTIP_ID = 'EntityBadgeTooltipID'
 
 const AUTHENTICATED_PRINCIPAL_ID = 273948
 const PUBLIC_PRINCIPAL_ID = 273949
@@ -60,7 +63,12 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
   // TODO: Download list?
   return (
     <div className="EntityBadge" style={{ flexWrap: wrap }}>
-      <ReactTooltip delayShow={100} place={'right'} html={true} />
+      <ReactTooltip
+        id={ENTITY_BADGE_TOOLTIP_ID}
+        delayShow={100}
+        place={'right'}
+        html={true}
+      />
 
       {bundle.benefactorAcl && (
         <>
@@ -69,6 +77,7 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
               className="EntityBadge__Badge"
               icon={faGlobe}
               aria-hidden="true"
+              data-for={ENTITY_BADGE_TOOLTIP_ID}
               data-tip={'Public'}
             />
           ) : (
@@ -76,6 +85,7 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
               className="EntityBadge__Badge"
               icon={faLock}
               aria-hidden="true"
+              data-for={ENTITY_BADGE_TOOLTIP_ID}
               data-tip={'Private'}
             />
           )}
@@ -84,6 +94,7 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
             className="EntityBadge__Badge"
             icon={faCheck}
             aria-hidden="true"
+            data-for={ENTITY_BADGE_TOOLTIP_ID}
             data-tip="Sharing Settings have been set"
           />
         </>
@@ -93,11 +104,14 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
           className="EntityBadge__Badge"
           icon={faTag}
           aria-hidden="true"
-          data-tip={Object.entries(bundle.annotations.annotations).reduce(
-            (previous, current) => {
-              return `${previous}<b>${current[0]}</b> ${current[1].value}<br/>`
-            },
-            '',
+          data-for={ENTITY_BADGE_TOOLTIP_ID}
+          data-tip={sanitizeHtml(
+            Object.entries(bundle.annotations.annotations).reduce(
+              (previous, current) => {
+                return `${previous}<b>${current[0]}</b> ${current[1].value}<br/>`
+              },
+              '',
+            ),
           )}
         />
       )}
@@ -107,6 +121,7 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
           className="EntityBadge__Badge"
           icon={faAlignLeft} // faNewspaper is ugly
           aria-hidden="true"
+          data-for={ENTITY_BADGE_TOOLTIP_ID}
           data-tip="Has a wiki"
         />
       )}
@@ -115,6 +130,7 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
           className="EntityBadge__Badge"
           icon={faComment}
           aria-hidden="true"
+          data-for={ENTITY_BADGE_TOOLTIP_ID}
           data-tip="Has been mentioned in discussion"
         />
       )}

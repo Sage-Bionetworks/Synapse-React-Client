@@ -48,10 +48,11 @@ $-finder-height: 500px;
   &__Row {
     width: 100%;
     display: inline-grid;
-    grid-template-columns: 15px 25px auto 55px;
+    grid-template-columns: 15px 27px auto auto;
     padding: 16px 10px;
     align-items: center;
     &__ExpandButton {
+      text-align: center;
       grid-column-start: 1;
       grid-column-end: 2;
       font-size: large;
@@ -60,8 +61,10 @@ $-finder-height: 500px;
     }
 
     &__EntityIcon {
+      text-align: center;
       grid-column-start: 2;
       grid-column-end: 3;
+      margin-bottom: 3px;
     }
 
     &__EntityName {
@@ -166,6 +169,8 @@ $-finder-height: 500px;
   }
 
   .EntityIconColumn {
+    padding-left: 2px;
+    padding-right: 2px;
     text-align: center;
     width: 10px;
     svg {

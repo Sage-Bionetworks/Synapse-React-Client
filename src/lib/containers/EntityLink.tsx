@@ -1,82 +1,19 @@
-import * as React from 'react'
+import React from 'react'
+import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
 import { EntityHeader } from '../utils/synapseTypes/'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faLink,
-  faFolder,
-  faFile,
-  faListAlt,
-  faTable,
-  faThList,
-  faArchive,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
-library.add(faLink)
-library.add(faFolder)
-library.add(faFile)
-library.add(faListAlt)
-library.add(faTable)
-library.add(faThList)
-library.add(faArchive)
-
-type IconType =
-  | 'FileEntity'
-  | 'Folder'
-  | 'Link'
-  | 'Project'
-  | 'TableEntity'
-  | 'EntityView'
-
-const getIconTypeForEntity = (name: IconType) => {
-  switch (name) {
-    case 'Link':
-      return 'link'
-    case 'Folder':
-      return 'folder'
-    case 'FileEntity':
-      return 'file'
-    case 'TableEntity':
-      return 'table'
-    case 'Project':
-      return 'list-alt'
-    case 'EntityView':
-      return 'th-list'
-    default:
-      return ''
-  }
-}
-
-type EntityTypeIconProps = {
-  type: string
-}
-const EntityTypeIcon: React.SFC<EntityTypeIconProps> = ({ type }) => {
-  if (!type) {
-    return <></>
-  }
-  const splitType = type.split('.')
-  const name = splitType[splitType.length - 1] as IconType
-  const iconType = getIconTypeForEntity(name)
-  const iconStyle: React.CSSProperties = {
-    marginRight: 5,
-  }
-  if (iconType === '') {
-    console.log('Entity Type not mapped = ', type)
-    return <React.Fragment />
-  }
-  return <FontAwesomeIcon style={iconStyle} icon={iconType} />
-}
+import { EntityTypeIcon } from './EntityIcon'
 
 type EntityLinkProps = {
   entityHeader: EntityHeader
   className?: string
 }
 
-export const EntityLink: React.SFC<EntityLinkProps> = ({
+export const EntityLink: React.FC<EntityLinkProps> = ({
   entityHeader,
   className,
 }) => {
-  const { id, name, type } = entityHeader
+  const { id, name } = entityHeader
+  const type = getEntityTypeFromHeader(entityHeader)
   return (
     <p className={className}>
       <a
@@ -85,8 +22,8 @@ export const EntityLink: React.SFC<EntityLinkProps> = ({
         rel="noopener noreferrer"
         href={`https://www.synapse.org/#!Synapse:${id}`}
       >
-          <EntityTypeIcon type={type} />
-          {name}
+        <EntityTypeIcon type={type} style={{ marginRight: '5px' }} />
+        {name}
       </a>
     </p>
   )

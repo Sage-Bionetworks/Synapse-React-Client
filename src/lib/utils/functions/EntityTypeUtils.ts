@@ -31,6 +31,30 @@ export function isContainerType(type: EntityType): boolean {
   }
 }
 
+export function entityTypeToFriendlyName(entityType: EntityType): string {
+  switch (entityType) {
+    case EntityType.PROJECT:
+      return 'Project'
+    case EntityType.FOLDER:
+      return 'Folder'
+    case EntityType.FILE:
+      return 'File'
+    case EntityType.TABLE:
+      return 'Table'
+    case EntityType.LINK:
+      return 'Link'
+    case EntityType.ENTITY_VIEW:
+      return 'Entity View'
+    case EntityType.DOCKER_REPO:
+      return 'Docker Repository'
+    case EntityType.SUBMISSION_VIEW:
+      return 'Submission View'
+    default:
+      console.warn('Entity type could not be mapped to name:', entityType)
+      return ''
+  }
+}
+
 export function stringToEntityType(typeString: string): EntityType {
   switch (typeString) {
     case 'org.sagebionetworks.repo.model.Project':

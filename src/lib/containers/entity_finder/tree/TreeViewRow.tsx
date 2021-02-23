@@ -3,6 +3,7 @@ import { Dropdown } from 'react-bootstrap'
 import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../utils'
 import {
+  entityTypeToFriendlyName,
   getEntityTypeFromHeader,
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
@@ -16,11 +17,12 @@ import {
 } from '../../../utils/synapseTypes'
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
+import { EntityTypeIcon } from '../../EntityIcon'
 import {
   EntityFinderDetailsConfiguration,
   EntityFinderDetailsConfigurationType,
 } from '../details/EntityFinderDetails'
-import { getIconForEntityType } from './TreeView'
+import ReactTooltip from 'react-tooltip'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -46,7 +48,7 @@ type TreeViewRowProps = {
   autoExpand?: (entityId: string) => boolean
 }
 
-const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
+export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   sessionToken,
   entityHeader,
   selectedId,
@@ -54,6 +56,10 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   level = 0,
   autoExpand = () => false,
 }) => {
+  const TOOLTIP_ID = 'TreeViewRowTooltipId'
+
+  const entityType = getEntityTypeFromHeader(entityHeader)
+
   const [isExpanded, setIsExpanded] = useState(false)
 
   const { ref: nodeRef, inView: nodeInView } = useInView({
@@ -74,7 +80,7 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     sessionToken,
     {
       parentId: entityHeader.id,
-      includeTypes: [EntityType.PROJECT, EntityType.FOLDER, EntityType.FILE],
+      includeTypes: [EntityType.PROJECT, EntityType.FOLDER],
     },
     {
       enabled:
@@ -115,6 +121,7 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
 
   return (
     <>
+      <ReactTooltip id={TOOLTIP_ID} delayShow={500} place={'top'} />
       <div
         ref={nodeRef}
         style={{ paddingLeft: `${level * 15 + 15}px` }}
@@ -139,20 +146,22 @@ const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
         ) : (
           <span style={{ padding: '10px' }}></span>
         )}
-        <div className="EntityFinderTreeView__Row__EntityIcon">
-          {getIconForEntityType(getEntityTypeFromHeader(entityHeader))}
+        <div
+          className="EntityFinderTreeView__Row__EntityIcon"
+          data-for={TOOLTIP_ID}
+          data-tip={entityTypeToFriendlyName(entityType)}
+        >
+          {<EntityTypeIcon type={entityType} />}
         </div>
-        <div className="EntityFinderTreeView__Row__EntityName">
+        <div
+          className="EntityFinderTreeView__Row__EntityName"
+          data-for={TOOLTIP_ID}
+          data-tip={entityHeader.name}
+        >
           {entityHeader.name}
         </div>
         <div>
-          {bundle && (
-            <EntityBadge
-              entityId={entityHeader.id}
-              bundle={bundle}
-              wrap={'wrap'}
-            />
-          )}
+          {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
         </div>
       </div>
       <div style={!isExpanded ? { display: 'none' } : {}}>

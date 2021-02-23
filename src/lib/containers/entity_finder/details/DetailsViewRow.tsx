@@ -13,10 +13,10 @@ import { EntityHeader, ProjectHeader } from '../../../utils/synapseTypes'
 import { Hit } from '../../../utils/synapseTypes/Search'
 import { VersionInfo } from '../../../utils/synapseTypes/VersionInfo'
 import { EntityBadge } from '../../EntityBadge'
+import { EntityTypeIcon } from '../../EntityIcon'
 import { Checkbox } from '../../widgets/Checkbox'
 import { RadioGroup } from '../../widgets/RadioGroup'
 import { EntityIdAndVersion } from '../EntityFinder'
-import { getIconForEntityType } from '../tree/TreeView'
 
 type DetailsViewRowProps = {
   sessionToken: string
@@ -122,7 +122,12 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       )}
 
       <td className="EntityIconColumn">
-        {getIconForEntityType(getEntityTypeFromHeader(entityHeader))}
+        {
+          <EntityTypeIcon
+            type={getEntityTypeFromHeader(entityHeader)}
+            style={{ marginBottom: '3px' }}
+          />
+        }
       </td>
 
       <td className="NameColumn">{entityHeader.name}</td>
