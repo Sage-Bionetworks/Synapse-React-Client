@@ -91,6 +91,7 @@ $text-color-lighter: #898989;
   }
   .SRC-portalCardMain {
     display: flex;
+    margin-left: 15px;
   }
   .SRC-portalCardCTAButton {
     margin-top: 20px;
@@ -130,6 +131,7 @@ $text-color-lighter: #898989;
     display: inline-block;    
     vertical-align: top;
     padding-top: $baseline-grid;
+    max-width: 215px;
     img {
       margin: auto;
       display: block;
@@ -150,6 +152,7 @@ $text-color-lighter: #898989;
     width: 25%;
     vertical-align: top;
     padding-right: 15px;
+    max-width: 215px;
     img {
       display: block;
       width: 100%;
@@ -167,6 +170,7 @@ $text-color-lighter: #898989;
     flex: 1;
     padding-top: $baseline-grid;
     margin-bottom: $baseline-grid;
+    max-width: 850px;
     &.SRC-dataset {
       width: 80%;
     }
