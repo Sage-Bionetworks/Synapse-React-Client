@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { LockedFacet, QueryWrapperChildProps } from './QueryWrapper'
+import { LockedFacet, QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCaretDown,
@@ -217,9 +217,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (searchColumns.length && lockedFacet?.facet) {
       searchColumns = searchColumns.filter(el => el !== lockedFacet?.facet)
     }
-
+    const showFacetFilter = topLevelControlsState?.showFacetFilter
     return (
-      <div className="SearchV2">
+      <div className={`SearchV2 ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
         <CSSTransition
           in={topLevelControlsState?.showSearchBar}
           classNames="SearchV2__animate_bar"
