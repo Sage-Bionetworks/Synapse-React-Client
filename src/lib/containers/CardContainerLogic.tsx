@@ -37,8 +37,9 @@ export type CTAButtonCardLink = {
   linkConfig: CardLink
 }
 
-export type MarkdownValue = {
-  isMarkdown: true
+export type DescriptionConfig = {
+  isMarkdown?: boolean
+  showFullDescriptionByDefault?: boolean
 }
 
 // Specify the indices in the values [] that should be rendered specially
@@ -58,7 +59,7 @@ export type CommonCardProps = {
   titleLinkConfig?: CardLink
   ctaButtonLinkConfig?: CTAButtonCardLink
   labelLinkConfig?: LabelLinkConfig
-  descriptionLinkConfig?: MarkdownValue
+  descriptionConfig?: DescriptionConfig
   rgbIndex?: number
   columnIconOptions?: ColumnIconConfigs
 }
