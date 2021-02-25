@@ -52,6 +52,17 @@ describe('it performs all functionality', () => {
     hasMoreData: true,
   }
 
+  const propsWithLimit = {
+    getNextPageOfData,
+    getLastQueryRequest,
+    sql,
+    unitDescription,
+    type,
+    data,
+    limit: 3,
+    hasMoreData: true,
+  }
+
   it('renders without crashing', () => {
     const tree = createShallowComponent(props)
     expect(tree).toBeDefined()
@@ -60,9 +71,10 @@ describe('it performs all functionality', () => {
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
     const { wrapper } = createShallowComponent({
-      ...props,
+      ...propsWithLimit,
       facet: 'projectStatus',
     })
+    console.log(wrapper.debug())
     expect(wrapper.find('Button').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('Button').text()).toEqual('View More')
@@ -75,7 +87,7 @@ describe('it performs all functionality', () => {
   })
 
   it('handleViewMore works', () => {
-    const { wrapper } = createShallowComponent(props)
+    const { wrapper } = createShallowComponent(propsWithLimit)
     // go through calling handle view more
     wrapper.find('Button').simulate('click')
     expect(getLastQueryRequest).toHaveBeenCalled()

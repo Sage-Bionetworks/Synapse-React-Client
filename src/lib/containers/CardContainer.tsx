@@ -185,8 +185,6 @@ export const CardContainer = (props: CardContainerProps) => {
       }
       return renderCard(propsForCard, type)
     }) : <></>
-
-    console.log("pageCount, cardData, allData", [pageCount, cardsData, data.queryResult.queryResults.rows])
   }
 
   return (
