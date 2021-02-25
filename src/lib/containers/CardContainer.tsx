@@ -56,6 +56,7 @@ export const CardContainer = (props: CardContainerProps) => {
     token,
     getLastQueryRequest,
     executeQueryRequest,
+    hasMoreData,
     ...rest
   } = props
 
@@ -139,6 +140,7 @@ export const CardContainer = (props: CardContainerProps) => {
   // Calculate how many cards to display per "view more" button click
   const visibleCardCount = pageCount === 1 ? limit : limit * pageCount
   let showViewMore: boolean = data.queryResult.queryResults.rows.length > visibleCardCount
+    || hasMoreData === true
 
   const showViewMoreButton = showViewMore && (
     <div className="SRC-viewMore bootstrap-4-backport">
