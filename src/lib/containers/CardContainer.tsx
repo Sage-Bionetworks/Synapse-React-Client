@@ -83,7 +83,7 @@ export const CardContainer = (props: CardContainerProps) => {
     const queryRequest = getLastQueryRequest!()
     let offset = queryRequest.query.offset!
     // paginate forward
-    offset += SynapseConstants.PAGE_SIZE  // TODO: Query limit 25 is hardcoded in QueryWrapperPlotNav
+    offset += SynapseConstants.PAGE_SIZE
     queryRequest.query.offset = offset
     props.getNextPageOfData!(queryRequest)
     setPageCount(pageCount + 1)
@@ -131,13 +131,8 @@ export const CardContainer = (props: CardContainerProps) => {
     schema[element.name] = index
   })
 
-  // We want to hide the view more button if:
-  //   1. The data fed in has !== PAGE_SIZE number of results
-  //   2. The hasMoreData prop is false
-  //   3. The limit is set to less than PAGE_SIZE
-  // below we show the view more button by following the opposite logic from above.
-
-  // Calculate how many cards to display per "view more" button click
+  // limit is default 25 if it's not set in portal config
+  // pageCount increments by 1 whenever the view more button is clicked
   const visibleCardCount = pageCount === 1 ? limit : limit * pageCount
   let showViewMore: boolean = data.queryResult.queryResults.rows.length > visibleCardCount
     || hasMoreData === true
