@@ -10,7 +10,6 @@ import {
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-import { cloneDeep } from 'lodash-es'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(<CardContainer {...props} />)
@@ -52,17 +51,6 @@ describe('it performs all functionality', () => {
     hasMoreData: true,
   }
 
-  const propsWithLimit = {
-    getNextPageOfData,
-    getLastQueryRequest,
-    sql,
-    unitDescription,
-    type,
-    data,
-    limit: 3,
-    hasMoreData: true,
-  }
-
   it('renders without crashing', () => {
     const tree = createShallowComponent(props)
     expect(tree).toBeDefined()
@@ -71,10 +59,9 @@ describe('it performs all functionality', () => {
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
     const { wrapper } = createShallowComponent({
-      ...propsWithLimit,
+      ...props,
       facet: 'projectStatus',
     })
-    console.log(wrapper.debug())
     expect(wrapper.find('Button').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('Button').text()).toEqual('View More')
@@ -87,22 +74,11 @@ describe('it performs all functionality', () => {
   })
 
   it('handleViewMore works', () => {
-    const { wrapper } = createShallowComponent(propsWithLimit)
+    const { wrapper } = createShallowComponent(props)
     // go through calling handle view more
     wrapper.find('Button').simulate('click')
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
-  })
-
-  it('show ViewMore does not render when number of data points less than 25', () => {
-    const dataCopy = cloneDeep(syn16787123Json) as QueryResultBundle
-    dataCopy.queryResult.queryResults.rows.splice(0, 10)
-    const propsWithDataCopy = {
-      ...props,
-      data: dataCopy,
-    }
-    const { wrapper } = createShallowComponent(propsWithDataCopy)
-    expect(wrapper.find('Button')).toHaveLength(0)
   })
 
   it('show ViewMore does not render when hasMoreData is false', () => {
@@ -113,4 +89,14 @@ describe('it performs all functionality', () => {
     const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
     expect(wrapper.find('Button')).toHaveLength(0)
   })
+
+  it('show ViewMore should render when limit is set and data has more than limit', () => {
+    const propsWithHasMoreDataFalse = {
+      ...props,
+      limit: 3,
+    }
+    const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
+    expect(wrapper.find('Button')).toHaveLength(1)
+  })
+
 })
