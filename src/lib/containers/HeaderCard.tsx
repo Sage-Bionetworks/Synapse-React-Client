@@ -1,5 +1,5 @@
 import { CardFooter } from './row_renderers/utils'
-import { MarkdownValue } from './CardContainerLogic'
+import { DescriptionConfig } from './CardContainerLogic'
 import MarkdownSynapse from './MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
 import getColorPalette from './ColorGradient'
@@ -17,7 +17,7 @@ export type HeaderCardProps = {
   secondaryLabelLimit?: number
   values?: string[][]
   isAlignToLeftNav?: boolean
-  descriptionLinkConfig?: MarkdownValue
+  descriptionConfig?: DescriptionConfig
   href?: string
   target?: string
   icon: JSX.Element
@@ -32,7 +32,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   values,
   secondaryLabelLimit,
   isAlignToLeftNav,
-  descriptionLinkConfig,
+  descriptionConfig,
   href,
   target,
   rgbIndex,
@@ -100,7 +100,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
           {subTitle && <div className="SRC-author"> {subTitle} </div>}
           {description && (
             <span className="SRC-font-size-base">
-              {descriptionLinkConfig ? (
+              {descriptionConfig?.isMarkdown ? (
                 <MarkdownSynapse markdown={description} />
               ) : (
                 description

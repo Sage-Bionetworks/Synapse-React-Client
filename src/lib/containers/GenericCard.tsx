@@ -5,7 +5,7 @@ import {
   CardLink,
   CommonCardProps,
   MarkdownLink,
-  MarkdownValue,
+  DescriptionConfig,
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -30,9 +30,10 @@ export type GenericCardSchema = {
   type: string
   title: string
   subTitle?: string
-  description?: string
+  description?: string  
   icon?: string
-  imageFileHandleColumnName?:string
+  imageFileHandleColumnName?: string
+  thumbnailRequiresPadding?: boolean
   secondaryLabels?: any[]
   link?: string
   dataTypeIconNames?: string
@@ -348,7 +349,7 @@ export default class GenericCard extends React.Component<
       ctaButtonLinkConfig,
       labelLinkConfig,
       facetAliases = {},
-      descriptionLinkConfig,
+      descriptionConfig,
       rgbIndex,
       tableId,
       tableEntityConcreteType,
@@ -421,9 +422,9 @@ export default class GenericCard extends React.Component<
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
-    }
+    }    
     const icon:JSX.Element = <>
-        {imageFileHandleIdValue && <div className="SRC-imageThumbnail">
+        {imageFileHandleIdValue && <div className="SRC-imageThumbnail" style={{padding: genericCardSchemaDefined.thumbnailRequiresPadding ? '21px' : undefined}}>
           <ImageFileHandle 
             token={token}
             fileHandleId={imageFileHandleIdValue}
@@ -438,7 +439,7 @@ export default class GenericCard extends React.Component<
     if (isHeader) {
       return (
         <HeaderCard
-          descriptionLinkConfig={descriptionLinkConfig}
+          descriptionConfig={descriptionConfig}
           title={title}
           subTitle={subTitle}
           backgroundColor={backgroundColor}
@@ -531,14 +532,14 @@ export default class GenericCard extends React.Component<
                 description,
                 hasClickedShowMore,
                 descriptionSubTitle,
-                descriptionLinkConfig,
+                descriptionConfig,
               )}
             {description &&
               this.renderLongDescription(
                 description,
                 hasClickedShowMore,
                 descriptionSubTitle,
-                descriptionLinkConfig,
+                descriptionConfig,
                 this.props.token,
               )}
             {ctaButtonLinkConfig &&
@@ -573,14 +574,14 @@ export default class GenericCard extends React.Component<
     description: string,
     hasClickedShowMore: boolean,
     descriptionSubTitle: any,
-    descriptionLinkConfig?: MarkdownValue,
+    descriptionConfig?: DescriptionConfig,
     token?: string,
   ): React.ReactNode {
     let content: JSX.Element | string = description
-    if (descriptionLinkConfig?.isMarkdown) {
+    if (descriptionConfig?.isMarkdown) {
       content = <MarkdownSynapse token={token} markdown={content} />
     }
-    const show = hasClickedShowMore || descriptionLinkConfig
+    const show = hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
     return (
       <div className={show ? '' : 'SRC-hidden'}>
         <span
@@ -597,9 +598,9 @@ export default class GenericCard extends React.Component<
     description: string,
     hasClickedShowMore: boolean,
     descriptionSubTitle: any,
-    descriptionLinkConfig?: MarkdownValue,
+    descriptionConfig?: DescriptionConfig,
   ): React.ReactNode {
-    if (descriptionLinkConfig) {
+    if (descriptionConfig?.showFullDescriptionByDefault) {
       return <></>
     }
     return (
