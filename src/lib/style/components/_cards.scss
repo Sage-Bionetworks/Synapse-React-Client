@@ -50,7 +50,7 @@ $text-color-lighter: #898989;
     margin-bottom: 0px;
     
     @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
-      padding-top: 45px;
+      padding-top: 40px;
     }
     @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
       padding-top: 89px;
