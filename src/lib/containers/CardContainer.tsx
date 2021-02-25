@@ -64,7 +64,7 @@ export const CardContainer = (props: CardContainerProps) => {
 
   useEffect(() => {
     if (mounted) {
-      const queryOffset = getLastQueryRequest!().query.offset!
+      const queryOffset = getLastQueryRequest!().query?.offset!
       if (queryOffset === 0) {
         setPageCount(1)
       }
