@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useEffect, useState } from 'react'
 import {
   DATASET,
   FUNDER,
@@ -18,8 +19,7 @@ import UserCardList from './UserCardList'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
-
-const PAGE_SIZE: number = 25
+import { SynapseConstants } from '../index'
 
 export type CardContainerProps = {
   data?: QueryResultBundle
@@ -40,18 +40,52 @@ export type CardContainerProps = {
 } & CardConfiguration
 
 export const CardContainer = (props: CardContainerProps) => {
+
+  const [pageCount, setPageCount] = useState<number>(1)
+  const {
+    data,
+    limit = SynapseConstants.PAGE_SIZE,
+    isHeader = false,
+    facet,
+    unitDescription,
+    type,
+    isLoading,
+    secondaryLabelLimit = 3,
+    showBarChart = true,
+    title,
+    token,
+    getLastQueryRequest,
+    executeQueryRequest,
+    ...rest
+  } = props
+
+  let mounted = true
+
+  useEffect(() => {
+    if (mounted) {
+      const queryOffset = getLastQueryRequest!().query.offset!
+      if (queryOffset === 0) {
+        setPageCount(1)
+      }
+    }
+    return () => {
+      mounted = false
+    }
+  }, [data])
+
   /**
    * Handle a click on next or previous
    *
    * @memberof SynapseTable
    */
   const handleViewMore = () => {
-    const queryRequest = props.getLastQueryRequest!()
+    const queryRequest = getLastQueryRequest!()
     let offset = queryRequest.query.offset!
     // paginate forward
-    offset += PAGE_SIZE
+    offset += SynapseConstants.PAGE_SIZE  // TODO: Query limit 25 is hardcoded in QueryWrapperPlotNav
     queryRequest.query.offset = offset
     props.getNextPageOfData!(queryRequest)
+    setPageCount(pageCount + 1)
   }
 
   const renderCard = (props: any, type: string) => {
@@ -67,30 +101,15 @@ export const CardContainer = (props: CardContainerProps) => {
     }
   }
 
-  const ids = props.data?.queryResult.queryResults.tableId
-    ? [props.data?.queryResult.queryResults.tableId]
+  const ids = data?.queryResult.queryResults.tableId
+    ? [data?.queryResult.queryResults.tableId]
     : []
   const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
     ids,
     type: 'ENTITY_HEADER',
     token: props.token,
   })
-  const {
-    data,
-    limit = Infinity,
-    isHeader = false,
-    facet,
-    unitDescription,
-    type,
-    isLoading,
-    secondaryLabelLimit = 3,
-    showBarChart = true,
-    title,
-    token,
-    getLastQueryRequest,
-    executeQueryRequest,
-    ...rest
-  } = props
+
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (!data) {
     return <div>{isLoading && loadingScreen}</div>
@@ -116,9 +135,10 @@ export const CardContainer = (props: CardContainerProps) => {
   //   2. The hasMoreData prop is false
   //   3. The limit is set to less than PAGE_SIZE
   // below we show the view more button by following the opposite logic from above.
-  let showViewMore: boolean =
-    limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
-  showViewMore = showViewMore && props.hasMoreData!
+
+  // Calculate how many cards to display per "view more" button click
+  const visibleCardCount = pageCount === 1 ? limit : limit * pageCount
+  let showViewMore: boolean = data.queryResult.queryResults.rows.length > visibleCardCount
 
   const showViewMoreButton = showViewMore && (
     <div className="SRC-viewMore bootstrap-4-backport">
@@ -145,28 +165,28 @@ export const CardContainer = (props: CardContainerProps) => {
     cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
   } else {
     // render the cards
-    cards = data.queryResult.queryResults.rows.map((rowData: any, index) => {
-      if (index < limit) {
-        const key = JSON.stringify(rowData.values)
-        const propsForCard = {
-          key,
-          type,
-          schema,
-          isHeader,
-          secondaryLabelLimit,
-          data: rowData.values,
-          selectColumns: data.selectColumns,
-          columnModels: data.columnModels,
-          tableEntityConcreteType:
-            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
-          tableId: props.data?.queryResult.queryResults.tableId,
-          token,
-          ...rest,
-        }
-        return renderCard(propsForCard, type)
+    const cardsData = data.queryResult.queryResults.rows.slice(0, visibleCardCount)
+    cards = cardsData.length ? cardsData.map((rowData: any, index) => {
+      const key = `${type}-${index}`
+      const propsForCard = {
+        key,
+        type,
+        schema,
+        isHeader,
+        secondaryLabelLimit,
+        data: rowData.values,
+        selectColumns: data.selectColumns,
+        columnModels: data.columnModels,
+        tableEntityConcreteType:
+          tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
+        tableId: props.data?.queryResult.queryResults.tableId,
+        token,
+        ...rest,
       }
-      return false
-    })
+      return renderCard(propsForCard, type)
+    }) : <></>
+
+    console.log("pageCount, cardData, allData", [pageCount, cardsData, data.queryResult.queryResults.rows])
   }
 
   return (
