@@ -424,7 +424,7 @@ export default class GenericCard extends React.Component<
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
     }    
     const icon:JSX.Element = <>
-        {imageFileHandleIdValue && <div className="SRC-imageThumbnail" style={{padding: genericCardSchemaDefined.thumbnailRequiresPadding ? '21px' : '0px'}}>
+        {imageFileHandleIdValue && <div className="SRC-imageThumbnail" style={{padding: genericCardSchemaDefined.thumbnailRequiresPadding ? '21px' : 'inherit'}}>
           <ImageFileHandle 
             token={token}
             fileHandleId={imageFileHandleIdValue}
