@@ -34,7 +34,7 @@ export type GenericCardSchema = {
   type: string
   title: string
   subTitle?: string
-  description?: string  
+  description?: string
   icon?: string
   imageFileHandleColumnName?: string
   thumbnailRequiresPadding?: boolean
@@ -426,21 +426,35 @@ export default class GenericCard extends React.Component<
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
-    }    
-    const icon:JSX.Element = <>
-        {imageFileHandleIdValue && <div className="SRC-imageThumbnail" style={{padding: genericCardSchemaDefined.thumbnailRequiresPadding ? '21px' : 'inherit'}}>
-          <ImageFileHandle 
-            token={token}
-            fileHandleId={imageFileHandleIdValue}
-            tableEntityConcreteType={tableEntityConcreteType}
-            rowId={data![schema.id]}
-            tableId={tableId}
-          /></div>}
-        {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
-          <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
-        </div>}
+    }
+    const icon: JSX.Element = (
+      <>
+        {imageFileHandleIdValue && (
+          <div
+            className="SRC-imageThumbnail"
+            style={{
+              padding: genericCardSchemaDefined.thumbnailRequiresPadding
+                ? '21px'
+                : 'inherit',
+            }}
+          >
+            <ImageFileHandle
+              token={token}
+              fileHandleId={imageFileHandleIdValue}
+              tableEntityConcreteType={tableEntityConcreteType}
+              rowId={data![schema.id]}
+              tableId={tableId}
+            />
+          </div>
+        )}
+        {!imageFileHandleIdValue && (
+          <div className="SRC-cardThumbnail">
+            <Icon iconOptions={iconOptions} value={iconValue} type={type} />
+          </div>
+        )}
       </>
     )
+
     if (isHeader) {
       return (
         <HeaderCard
@@ -483,15 +497,16 @@ export default class GenericCard extends React.Component<
             {
               // If the portal configs has columnIconOptions.columns.dataType option
               // and the column value is not null, display the card data type icons
-              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
-              <div style={{marginTop: "20px"}}>
-                <IconList
-                  iconConfigs={columnIconOptions.columns.dataType}
-                  iconNames={JSON.parse(dataTypeIconNames)}
-                  useBackground={true}
-                  useTheme={true}
-                />
-              </div>
+              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length && (
+                <div style={{ marginTop: '20px' }}>
+                  <IconList
+                    iconConfigs={columnIconOptions.columns.dataType}
+                    iconNames={JSON.parse(dataTypeIconNames)}
+                    useBackground={true}
+                    useTheme={true}
+                  />
+                </div>
+              )
             }
             <div>
               <h3
@@ -590,7 +605,8 @@ export default class GenericCard extends React.Component<
     if (descriptionConfig?.isMarkdown) {
       content = <MarkdownSynapse token={token} markdown={content} />
     }
-    const show = hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
+    const show =
+      hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
     return (
       <div className={show ? '' : 'SRC-hidden'}>
         <span
