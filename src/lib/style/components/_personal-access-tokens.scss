@@ -1,4 +1,41 @@
-.SRC-personalAccessTokenCard {
+.PersonalAccessTokenPage {
+  &__Header {
+    display: flex;
+
+    &__CopyText {
+      align-items: flex-start;
+      flex-grow: 1;
+    }
+
+    &__CreateButton {
+      align-items: flex-end;
+      align-self: center;
+      margin-left: 15px;
+    }
+  }
+
+  &__NoTokensMessage {
+    margin: 40px;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  &__CardList {
+    margin: 20px auto;
+    max-width: 800px;
+
+    &__LoadMore {
+      display: flex;
+      justify-content: flex-end;
+
+      &__Button {
+        margin: 10px;
+      }
+    }
+  }
+}
+
+.PersonalAccessTokenCard {
   // adapted from SRC-userCardMediumUp
   display: inline-flex;
   align-items: center;
@@ -13,61 +50,43 @@
 
   .SRC-cardContent {
     flex-grow: 1;
+    .SRC-eqHeightRow {
+      margin-bottom: 5px;
+    }
   }
 
-  .SRC-scopeName {
+  &__ScopeName {
     margin-inline-start: 3px;
     margin-inline-end: 3px;
   }
 
-  .SRC-scopeName:hover {
+  &__ScopeName:hover {
     cursor: default;
   }
 
-  .SRC-deleteAccessTokenButton {
+  &__DeleteButton {
     align-self: flex-start;
     margin: 10px;
   }
 }
 
-.SRC-accessTokenPageHeaderContainer {
-  display: flex;
-
-  .SRC-accessTokenPageText {
-    align-items: flex-start;
-    flex-grow: 1;
-  }
-
-  .SRC-accessTokenPageCreateButtonContainer {
-    align-items: flex-end;
-    align-self: center;
-    margin-left: 15px;
-  }
-}
-
-.SRC-personalAccessTokenNameInput {
-  width: 325px;
-}
-
-.SRC-createdTokenCopyToClipboardContainer {
-  text-align: center;
-}
-
-.SRC-accessTokenCardList {
-  margin: 20px auto;
-  max-width: 800px;
-
-  .SRC-loadMoreButtonContainer {
-    display: flex;
-    justify-content: flex-end;
-
-    .SRC-loadMoreAccessTokensButton {
-      margin: 10px;
+.AccessTokenModal {
+  margin: 20px 0px;
+  .checkbox {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    span span {
+      font-weight: bold;
     }
   }
-}
+  &__ScopeDescription {
+    color: #8e8e8e !important;
+  }
+  &__CopyToClipboardContainer {
+    text-align: center;
+  }
 
-.SRC-noAccessTokensMessage {
-  margin: 40px;
-  text-align: center;
+  &__TokenNameInput {
+    width: 325px;
+  }
 }

@@ -5,7 +5,7 @@ import {
   CardLink,
   CommonCardProps,
   MarkdownLink,
-  MarkdownValue,
+  DescriptionConfig,
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -34,9 +34,10 @@ export type GenericCardSchema = {
   type: string
   title: string
   subTitle?: string
-  description?: string
+  description?: string  
   icon?: string
   imageFileHandleColumnName?: string
+  thumbnailRequiresPadding?: boolean
   secondaryLabels?: any[]
   link?: string
   dataTypeIconNames?: string
@@ -350,7 +351,7 @@ export default class GenericCard extends React.Component<
       ctaButtonLinkConfig,
       labelLinkConfig,
       facetAliases = {},
-      descriptionLinkConfig,
+      descriptionConfig,
       rgbIndex,
       tableId,
       tableEntityConcreteType,
@@ -425,31 +426,25 @@ export default class GenericCard extends React.Component<
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
-    }
-    const icon: JSX.Element = (
-      <>
-        {imageFileHandleIdValue && (
-          <div className="SRC-imageThumbnail">
-            <ImageFileHandle
-              token={token}
-              fileHandleId={imageFileHandleIdValue}
-              tableEntityConcreteType={tableEntityConcreteType}
-              rowId={data![schema.id]}
-              tableId={tableId}
-            />
-          </div>
-        )}
-        {!imageFileHandleIdValue && (
-          <div className="SRC-cardThumbnail">
-            <Icon iconOptions={iconOptions} value={iconValue} type={type} />
-          </div>
-        )}
+    }    
+    const icon:JSX.Element = <>
+        {imageFileHandleIdValue && <div className="SRC-imageThumbnail" style={{padding: genericCardSchemaDefined.thumbnailRequiresPadding ? '21px' : 'inherit'}}>
+          <ImageFileHandle 
+            token={token}
+            fileHandleId={imageFileHandleIdValue}
+            tableEntityConcreteType={tableEntityConcreteType}
+            rowId={data![schema.id]}
+            tableId={tableId}
+          /></div>}
+        {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
+          <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
+        </div>}
       </>
     )
     if (isHeader) {
       return (
         <HeaderCard
-          descriptionLinkConfig={descriptionLinkConfig}
+          descriptionConfig={descriptionConfig}
           title={title}
           subTitle={subTitle}
           backgroundColor={backgroundColor}
@@ -488,16 +483,15 @@ export default class GenericCard extends React.Component<
             {
               // If the portal configs has columnIconOptions.columns.dataType option
               // and the column value is not null, display the card data type icons
-              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length && (
-                <div style={{ textAlign: 'right' }}>
-                  <IconList
-                    iconConfigs={columnIconOptions.columns.dataType}
-                    iconNames={JSON.parse(dataTypeIconNames)}
-                    useBackground={true}
-                    useTheme={true}
-                  />
-                </div>
-              )
+              columnIconOptions?.columns?.dataType && dataTypeIconNames?.length &&
+              <div style={{marginTop: "20px"}}>
+                <IconList
+                  iconConfigs={columnIconOptions.columns.dataType}
+                  iconNames={JSON.parse(dataTypeIconNames)}
+                  useBackground={true}
+                  useTheme={true}
+                />
+              </div>
             }
             <div>
               <h3
@@ -543,14 +537,14 @@ export default class GenericCard extends React.Component<
                 description,
                 hasClickedShowMore,
                 descriptionSubTitle,
-                descriptionLinkConfig,
+                descriptionConfig,
               )}
             {description &&
               this.renderLongDescription(
                 description,
                 hasClickedShowMore,
                 descriptionSubTitle,
-                descriptionLinkConfig,
+                descriptionConfig,
                 this.props.token,
               )}
             {ctaButtonLinkConfig && (
@@ -589,14 +583,14 @@ export default class GenericCard extends React.Component<
     description: string,
     hasClickedShowMore: boolean,
     descriptionSubTitle: any,
-    descriptionLinkConfig?: MarkdownValue,
+    descriptionConfig?: DescriptionConfig,
     token?: string,
   ): React.ReactNode {
     let content: JSX.Element | string = description
-    if (descriptionLinkConfig?.isMarkdown) {
+    if (descriptionConfig?.isMarkdown) {
       content = <MarkdownSynapse token={token} markdown={content} />
     }
-    const show = hasClickedShowMore || descriptionLinkConfig
+    const show = hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
     return (
       <div className={show ? '' : 'SRC-hidden'}>
         <span
@@ -613,9 +607,9 @@ export default class GenericCard extends React.Component<
     description: string,
     hasClickedShowMore: boolean,
     descriptionSubTitle: any,
-    descriptionLinkConfig?: MarkdownValue,
+    descriptionConfig?: DescriptionConfig,
   ): React.ReactNode {
-    if (descriptionLinkConfig) {
+    if (descriptionConfig?.showFullDescriptionByDefault) {
       return <></>
     }
     return (

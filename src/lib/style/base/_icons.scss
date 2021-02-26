@@ -30,7 +30,7 @@
 .icon-list {
   display: inline-block;
   svg {
-    font-size: 19px;
+    font-size: 24px;
   }
   path,
   circle {
@@ -58,6 +58,7 @@
     .icon-proteomics {
       path {
         stroke: SRC.$primary-action-color-500;
+        fill: none;
       }
     }
     &.bg-circle {
