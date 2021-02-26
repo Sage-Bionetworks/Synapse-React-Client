@@ -95,6 +95,11 @@
     }
   }
 
+  .SearchV2 {
+    // PORTALS-1856: z-index greater than the Show All Graphs button (500)
+    z-index: 600;
+  }
+
   .TopLevelControls {
     h3 {
       display: flex;

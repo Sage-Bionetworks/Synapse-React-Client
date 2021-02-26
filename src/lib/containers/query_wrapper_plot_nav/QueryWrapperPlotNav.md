@@ -54,13 +54,13 @@ Configured to show a table:
       ],
     }}
     searchConfiguration={{
-      searchable: ['assay','name','consortium'],
+      searchable: ['assay','name','consortium', 'study', 'dataType', 'tissue'],
     }}
     visibleColumnCount={10}
-    facetsToPlot={['assay']}
+    facetsToPlot={['assay', 'study', 'dataType', 'tissue']}
     rgbIndex={1}
     name='Table Demo'
     sqlOperator='='
-    sql='SELECT assay, id FROM syn11346063 limit 1000'
+    sql='SELECT * FROM syn11346063'
   />
 ```
