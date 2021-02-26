@@ -13,25 +13,25 @@
     'dockerrepo',
   ]}
   selectableVersions={true}
-  disableSelectionForTypes={[
-  
-  ]}
+  disableSelectionForTypes={[]}
 />
 ```
 
 ### TODO:
 
-* Tooltip when hovering over project name
-* Iconography for tables, views
-  * Change colors of icons when selected  
-* Error Handling
-* Disable caching/don't use `react-query`
+* Iconography for tables, views 🟡 (Update to icons in mockup? Should probably try to change in SWC as well)
+* Error Handling ❌
+* Make version selection more intuitive 🟡 (needs feedback)
+  * Issue - picking "no version" on a versionable entity
+    * Example case: pointing to a FileEntity containing an image in a Wiki. User expects image in wiki to update when the entity is updated.
+* Tweak default cache settings for `react-query` 🟡
+* Tooltip when hovering over project name ✅
 * Optimization/tests/code cleanup
 * Pagination ✅
 * Search ✅
   * Text search ✅
   * Entering a synId ✅
-  * Placeholder before search begins 🟡 (need to use fancy asset)
+  * Placeholder before search begins 🟡 (Should use fancy asset)
 * Space for radio/checkbox ✅
 * Placeholders for no results
 * Version column/select ✅
@@ -44,4 +44,3 @@
   * Favorites ✅
   * Clear/reset details view when switching between options ✅
 * Sorting columns in the detailed view ✅
-* Make version selection more intuitive/predictable 🟡 (needs feedback)
