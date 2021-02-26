@@ -6,6 +6,7 @@ import {
   faFolder,
   faFile,
   faListAlt,
+  faServer,
   faTable,
   faThList,
   IconDefinition,
@@ -13,7 +14,16 @@ import {
 import { faDocker } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-library.add(faLink, faFolder, faFile, faListAlt, faTable, faThList, faDocker)
+library.add(
+  faLink,
+  faFolder,
+  faFile,
+  faListAlt,
+  faServer,
+  faTable,
+  faThList,
+  faDocker,
+)
 
 const _ENTITY_TYPE_ICON_MAP = new Map<EntityType, IconDefinition>([
   [EntityType.PROJECT, faListAlt],
@@ -23,7 +33,7 @@ const _ENTITY_TYPE_ICON_MAP = new Map<EntityType, IconDefinition>([
   [EntityType.LINK, faLink],
   [EntityType.ENTITY_VIEW, faThList],
   [EntityType.DOCKER_REPO, faDocker],
-  [EntityType.SUBMISSION_VIEW, faThList],
+  [EntityType.SUBMISSION_VIEW, faServer],
 ])
 
 const getIconTypeForEntity = (type: EntityType): IconDefinition | '' => {
