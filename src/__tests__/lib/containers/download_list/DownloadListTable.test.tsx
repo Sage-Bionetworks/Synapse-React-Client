@@ -83,8 +83,8 @@ describe('it performs all functionality ', () => {
       },
     ],
   }
-  const mockGetEntityHeaderFn = jest.fn().mockResolvedValue(entityHeaderMock)
-  SynapseClient.getEntityHeader = mockGetEntityHeaderFn
+  const mockGetEntityHeadersFn = jest.fn().mockResolvedValue(entityHeaderMock)
+  SynapseClient.getEntityHeaders = mockGetEntityHeadersFn
   const batchFileResultMock: BatchFileResult = {
     requestedFiles: [
       {
@@ -127,7 +127,7 @@ describe('it performs all functionality ', () => {
       rows.item(1).querySelector<HTMLAnchorElement>('td a')!.innerHTML,
     ).toEqual(fileTwoName)
     expect(mockGetDownloadListFn).toHaveBeenCalledTimes(1)
-    expect(mockGetEntityHeaderFn).toHaveBeenCalledTimes(1)
+    expect(mockGetEntityHeadersFn).toHaveBeenCalledTimes(1)
     expect(mockGetFilesFn).toHaveBeenCalledTimes(1)
   })
   it('deletes a specific row', async () => {
@@ -135,7 +135,7 @@ describe('it performs all functionality ', () => {
       ReactDOM.render(<DownloadListTable {...props} />, container)
     })
     mockGetDownloadListFn.mockClear()
-    mockGetEntityHeaderFn.mockClear()
+    mockGetEntityHeadersFn.mockClear()
     mockGetFilesFn.mockClear()
     const trashBtn = container
       .querySelectorAll<HTMLTableRowElement>('tbody tr')
@@ -153,7 +153,7 @@ describe('it performs all functionality ', () => {
       tokenMock,
     )
     expect(mockGetDownloadListFn).not.toHaveBeenCalled()
-    expect(mockGetEntityHeaderFn).not.toHaveBeenCalled()
+    expect(mockGetEntityHeadersFn).not.toHaveBeenCalled()
     expect(mockGetFilesFn).not.toHaveBeenCalled()
   })
   it('Clears all rows', async () => {
@@ -161,7 +161,7 @@ describe('it performs all functionality ', () => {
       ReactDOM.render(<DownloadListTable {...props} />, container)
     })
     mockGetDownloadListFn.mockClear()
-    mockGetEntityHeaderFn.mockClear()
+    mockGetEntityHeadersFn.mockClear()
     mockGetFilesFn.mockClear()
     await act(async () => {
       container
@@ -169,7 +169,7 @@ describe('it performs all functionality ', () => {
         .click()
     })
     expect(mockGetDownloadListFn).not.toHaveBeenCalled()
-    expect(mockGetEntityHeaderFn).not.toHaveBeenCalled()
+    expect(mockGetEntityHeadersFn).not.toHaveBeenCalled()
     expect(mockGetFilesFn).not.toHaveBeenCalled()
   })
 })
