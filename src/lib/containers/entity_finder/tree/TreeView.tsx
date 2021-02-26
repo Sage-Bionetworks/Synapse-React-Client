@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { SynapseClient } from '../../../utils'
-import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
 import {
   EntityHeader,
   EntityPath,
@@ -52,13 +51,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   setDetailsViewConfiguration = () => {},
   showFakeRootNode = true,
 }) => {
-  useTraceUpdate({
-    sessionToken,
-    initialContainer,
-    setDetailsViewConfiguration,
-    showFakeRootNode,
-  })
-
   const DEFAULT_CONFIGURATION: EntityFinderDetailsConfiguration = {
     type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
     parentContainerParams: {

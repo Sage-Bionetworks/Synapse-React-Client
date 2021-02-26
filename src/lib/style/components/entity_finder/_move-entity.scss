@@ -5,6 +5,11 @@ $-header-height: 40px;
 $-border: 1px solid #dcdcdc;
 $-finder-height: 500px;
 
+// https://github.com/leefsmp/Re-Flex/issues/27
+.EntityViewReflexContainer {
+  width: 100%;
+}
+
 .EntityFinder {
   &__SearchContainer {
     display: flex;

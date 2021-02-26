@@ -2,50 +2,59 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { useInView } from 'react-intersection-observer'
-import { SynapseClient } from '../../../utils'
-import { formatDate } from '../../../utils/functions/DateFormatter'
+import { SynapseClient } from '../../../../utils'
+import { formatDate } from '../../../../utils/functions/DateFormatter'
 import {
   getEntityTypeFromHeader,
   isVersionableEntityType,
-} from '../../../utils/functions/EntityTypeUtils'
-import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
-import { EntityHeader, ProjectHeader } from '../../../utils/synapseTypes'
-import { Hit } from '../../../utils/synapseTypes/Search'
-import { VersionInfo } from '../../../utils/synapseTypes/VersionInfo'
-import { EntityBadge } from '../../EntityBadge'
-import { EntityTypeIcon } from '../../EntityIcon'
-import { Checkbox } from '../../widgets/Checkbox'
-import { RadioGroup } from '../../widgets/RadioGroup'
-import { EntityIdAndVersion } from '../EntityFinder'
+} from '../../../../utils/functions/EntityTypeUtils'
+import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
+import {
+  EntityHeader,
+  ProjectHeader,
+  Reference,
+} from '../../../../utils/synapseTypes'
+import { Hit } from '../../../../utils/synapseTypes/Search'
+import { VersionInfo } from '../../../../utils/synapseTypes/VersionInfo'
+import { EntityBadge } from '../../../EntityBadge'
+import { EntityTypeIcon } from '../../../EntityIcon'
+import { Checkbox } from '../../../widgets/Checkbox'
+import { RadioGroup } from '../../../widgets/RadioGroup'
+
+export type DetailsViewRowAppearance =
+  | 'default'
+  | 'selected'
+  | 'disabled'
+  | 'hidden'
 
 type DetailsViewRowProps = {
   sessionToken: string
   entityHeader: EntityHeader | ProjectHeader | Hit
-  isSelected: boolean
-  disabled: boolean
-  hidden: boolean
+  appearance: DetailsViewRowAppearance
   showVersionColumn: boolean
-  showSelectButton: 'checkbox' | 'radio' | 'none'
-  toggleSelection: (entity: EntityIdAndVersion) => void
+  selectButtonType: 'checkbox' | 'radio' | 'none'
+  toggleSelection: (entity: Reference) => void
 }
 
 export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   sessionToken,
   entityHeader,
-  isSelected, //consider collapsing selected, hidden, and disabled because they are mutually exclusive
-  disabled,
-  hidden,
+  appearance,
   showVersionColumn,
-  showSelectButton: selectButtonType,
+  selectButtonType,
   toggleSelection,
 }) => {
+  const isSelected = appearance === 'selected'
+  const isDisabled = appearance === 'disabled'
+  const isHidden = appearance === 'hidden'
+
   const [versions, setVersions] = useState<VersionInfo[]>()
   const [currentSelectedVersion, setCurrentSelectedVersion] = useState<number>(
     -1,
   )
-  const { ref, inView } = useInView({
-    triggerOnce: false,
-  })
+
+  // We won't load the entity bundle unless the row is visible
+  const { ref, inView } = useInView()
 
   const isVersionableEntity = isVersionableEntityType(
     getEntityTypeFromHeader(entityHeader),
@@ -65,7 +74,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
     undefined,
     {
       enabled: inView,
-      staleTime: 10000,
     },
   )
 
@@ -77,20 +85,20 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         },
       )
     }
-  }, [inView, isSelected])
+  }, [inView, isSelected, versions, sessionToken, entityHeader.id])
 
   return (
     <tr
       ref={ref}
       className={`EntityFinderDetailsView__Row${
         isSelected ? ' EntityFinderDetailsView__Row__Selected' : ''
-      }${disabled ? ' EntityFinderDetailsView__Row__Disabled' : ''}`}
-      style={hidden ? { display: 'none' } : {}}
+      }${isDisabled ? ' EntityFinderDetailsView__Row__Disabled' : ''}`}
+      style={isHidden ? { display: 'none' } : {}}
       onClick={() => {
-        if (!disabled) {
+        if (!isDisabled) {
           toggleSelection({
-            entityId: entityHeader.id,
-            entityVersion:
+            targetId: entityHeader.id,
+            targetVersionNumber:
               currentSelectedVersion === -1
                 ? undefined
                 : currentSelectedVersion,
@@ -100,7 +108,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
     >
       {selectButtonType !== 'none' && (
         <td className="IsSelectedColumn">
-          {!disabled && selectButtonType === 'checkbox' && (
+          {!isDisabled && selectButtonType === 'checkbox' && (
             <Checkbox
               label=""
               id=""
@@ -109,7 +117,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
               onChange={() => {}}
             />
           )}{' '}
-          {!disabled && selectButtonType === 'radio' && (
+          {!isDisabled && selectButtonType === 'radio' && (
             <RadioGroup
               className="SRC-pointer-events-none"
               options={[{ label: '', value: 'true' }]}
@@ -159,8 +167,8 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
                   const version = parseInt(event.target.value)
                   setCurrentSelectedVersion(version)
                   toggleSelection({
-                    entityId: entityHeader.id,
-                    entityVersion: version === -1 ? undefined : version,
+                    targetId: entityHeader.id,
+                    targetVersionNumber: version === -1 ? undefined : version,
                   })
                 }}
               >

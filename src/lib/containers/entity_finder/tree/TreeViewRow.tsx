@@ -85,7 +85,6 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     {
       enabled:
         nodeInView && isContainerType(getEntityTypeFromHeader(entityHeader)),
-      staleTime: Infinity,
     },
   )
 
@@ -103,7 +102,6 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     undefined,
     {
       enabled: nodeInView,
-      staleTime: 10000,
     },
   )
 

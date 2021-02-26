@@ -5,12 +5,11 @@ import React, { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
-import { SizeMe } from 'react-sizeme'
 import { CSSTransition } from 'react-transition-group'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
-import { EntityHeader } from '../../utils/synapseTypes'
+import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import {
   EntityFinderDetails,
@@ -22,23 +21,25 @@ import { TreeView } from './tree/TreeView'
 library.add(faTimes, faSearch)
 
 // Create a client
-const queryClient = new QueryClient()
-
-export type EntityIdAndVersion = {
-  entityId: string
-  entityVersion?: number
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30 * 1000, // 30s
+      retry: false, // SynapseClient knows which queries to retry
+    },
+  },
+})
 
 const EntityPathDisplay: React.FunctionComponent<{
   sessionToken: string
-  entity: EntityIdAndVersion
-  toggleSelection: (entity: EntityIdAndVersion) => void
+  entity: Reference
+  toggleSelection: (entity: Reference) => void
 }> = ({ sessionToken, entity, toggleSelection }) => {
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
-    entity.entityId,
+    entity.targetId,
     { includeEntity: true, includeEntityPath: true },
-    entity.entityVersion,
+    entity.targetVersionNumber,
   )
 
   const [entityName, setEntityName] = useState('')
@@ -82,30 +83,32 @@ const EntityPathDisplay: React.FunctionComponent<{
       </span>
       <span>{pathString ? pathString + '/' : ''}</span>
       <span style={{ fontWeight: 'bold' }}>{entityName}</span>
-      {entity.entityVersion && <span> (Version {entity.entityVersion})</span>}
+      {entity.targetVersionNumber && (
+        <span> (Version {entity.targetVersionNumber})</span>
+      )}
     </>
   )
 }
 
 type EntityFinderProps = {
   sessionToken: string
-  initialContainerId: string // the initial entity container that should be open
+  initialContainerId: string // The SynID of the entity that should open by default. This dictates the 'Current Project'
+  selectMultiple: boolean
+  onSelectedChange: (selected: Reference[]) => void
+  showVersionSelection?: boolean
   showTypes: EntityType[]
-  selectableVersions?: boolean
   selectableTypes?: EntityType[]
-  selectMultiple?: boolean
 }
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   sessionToken,
   initialContainerId,
+  selectMultiple,
+  onSelectedChange,
+  showVersionSelection = true,
   showTypes,
-  selectableVersions = true,
   selectableTypes = Object.values(EntityType),
-  selectMultiple = false,
 }) => {
-  const [selectedEntities, setSelectedEntities] = useState<
-    EntityIdAndVersion[]
-  >([])
+  const [selectedEntities, setSelectedEntities] = useState<Reference[]>([])
 
   const [searchActive, setSearchActive] = useState(false)
   const [searchTerms, setSearchTerms] = useState<string[]>()
@@ -115,32 +118,32 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     setConfigFromTreeView,
   ] = useState<EntityFinderDetailsConfiguration>()
 
-  const isSelected = (entity: EntityIdAndVersion) => {
+  const isSelected = (entity: Reference) => {
     return selectedEntities.some(
       s =>
-        s.entityId === entity.entityId &&
-        s.entityVersion === entity.entityVersion,
+        s.targetId === entity.targetId &&
+        s.targetVersionNumber === entity.targetVersionNumber,
     )
   }
 
-  const otherVersionSelected = (entity: EntityIdAndVersion) => {
+  const otherVersionSelected = (entity: Reference) => {
     return selectedEntities.some(
       s =>
-        s.entityId === entity.entityId &&
-        s.entityVersion !== entity.entityVersion,
+        s.targetId === entity.targetId &&
+        s.targetVersionNumber !== entity.targetVersionNumber,
     )
   }
 
-  const toggleSelection = (entity: EntityIdAndVersion) => {
+  const toggleSelection = (entity: Reference) => {
     if (isSelected(entity)) {
       // remove from selection
       setSelectedEntities(
-        selectedEntities.filter(e => e.entityId !== entity.entityId),
+        selectedEntities.filter(e => e.targetId !== entity.targetId),
       )
     } else if (otherVersionSelected(entity)) {
       // replace with selected version
       setSelectedEntities([
-        ...selectedEntities.filter(e => e.entityId !== entity.entityId),
+        ...selectedEntities.filter(e => e.targetId !== entity.targetId),
         entity,
       ])
     } else {
@@ -149,12 +152,16 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         setSelectedEntities([entity])
       } else {
         setSelectedEntities([
-          ...selectedEntities.filter(s => s.entityId !== entity.entityId),
+          ...selectedEntities.filter(s => s.targetId !== entity.targetId),
           entity,
         ])
       }
     }
   }
+
+  useEffect(() => {
+    onSelectedChange(selectedEntities)
+  }, [onSelectedChange, selectedEntities])
 
   useEffect(() => {
     if (searchTerms?.length === 1) {
@@ -177,7 +184,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     } else {
       setSearchByIdResults([])
     }
-  }, [searchTerms])
+  }, [sessionToken, searchTerms])
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -243,8 +250,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     },
                   }
             }
-            showVersionSelection={selectableVersions}
-            selectMultiple={selectMultiple}
+            showVersionSelection={showVersionSelection}
+            selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
             selected={selectedEntities}
             includeTypes={showTypes}
             selectableTypes={selectableTypes}
@@ -254,42 +261,32 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         {
           <div style={searchActive ? { display: 'none' } : {}}>
             <div className="EntityViewReflexContainer">
-              <SizeMe>
-                {({ size }) => (
-                  // In Synapse.org, this component may not render properly
-                  // We can avoid this by using SizeMe
-                  // https://github.com/leefsmp/Re-Flex/issues/27
-                  <ReflexContainer
-                    orientation="vertical"
-                    key={(!!size).toString()}
-                  >
-                    <ReflexElement minSize={200} size={350}>
-                      <TreeView
-                        sessionToken={sessionToken}
-                        setDetailsViewConfiguration={setConfigFromTreeView}
-                        showFakeRootNode={true}
-                        showDropdown={true}
-                        initialContainer={initialContainerId}
-                      ></TreeView>
-                    </ReflexElement>
-                    <ReflexSplitter></ReflexSplitter>
-                    <ReflexElement minSize={400}>
-                      {configFromTreeView && (
-                        <EntityFinderDetails
-                          sessionToken={sessionToken}
-                          configuration={configFromTreeView}
-                          showVersionSelection={selectableVersions}
-                          selected={selectedEntities}
-                          includeTypes={showTypes}
-                          selectableTypes={selectableTypes}
-                          selectMultiple={selectMultiple}
-                          toggleSelection={toggleSelection}
-                        />
-                      )}
-                    </ReflexElement>
-                  </ReflexContainer>
-                )}
-              </SizeMe>
+              <ReflexContainer orientation="vertical" windowResizeAware>
+                <ReflexElement minSize={200} size={350}>
+                  <TreeView
+                    sessionToken={sessionToken}
+                    setDetailsViewConfiguration={setConfigFromTreeView}
+                    showFakeRootNode={true}
+                    showDropdown={true}
+                    initialContainer={initialContainerId}
+                  ></TreeView>
+                </ReflexElement>
+                <ReflexSplitter></ReflexSplitter>
+                <ReflexElement minSize={400}>
+                  {configFromTreeView && (
+                    <EntityFinderDetails
+                      sessionToken={sessionToken}
+                      configuration={configFromTreeView}
+                      showVersionSelection={showVersionSelection}
+                      selected={selectedEntities}
+                      includeTypes={showTypes}
+                      selectableTypes={selectableTypes}
+                      selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
+                      toggleSelection={toggleSelection}
+                    />
+                  )}
+                </ReflexElement>
+              </ReflexContainer>
             </div>
           </div>
         }
@@ -299,8 +296,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             <div>
               {selectedEntities.map(e => (
                 <div
-                  key={`${e.entityId}${
-                    e.entityVersion ? `.${e.entityVersion}` : ''
+                  key={`${e.targetId}${
+                    e.targetVersionNumber ? `.${e.targetVersionNumber}` : ''
                   }`}
                 >
                   <EntityPathDisplay

@@ -1,20 +1,18 @@
 import React, { useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { useGetFavorites } from '../../../utils/hooks/SynapseAPI/useFavorites'
-import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
-import { useSearchInfinite } from '../../../utils/hooks/SynapseAPI/useSearch'
 import {
-  Direction,
   EntityHeader,
   EntityType,
   ProjectHeader,
-  SortBy,
+  Reference,
 } from '../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
-import { Hit, SearchQuery } from '../../../utils/synapseTypes/Search'
-import { EntityIdAndVersion } from '../EntityFinder'
-import { DetailsView } from './DetailsView'
+import { SearchQuery } from '../../../utils/synapseTypes/Search'
+import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
+import { EntityHeaderListDetails } from './configurations/EntityHeaderListDetails'
+import { FavoritesDetails } from './configurations/FavoritesDetails'
+import { ProjectListDetails } from './configurations/ProjectListDetails'
+import { SearchDetails } from './configurations/SearchDetails'
 
 export enum EntityFinderDetailsConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
@@ -26,35 +24,47 @@ export enum EntityFinderDetailsConfigurationType {
 
 export type EntityFinderDetailsConfiguration = {
   type: EntityFinderDetailsConfigurationType
+  /** Defined if type is HEADER_LIST */
   headerList?: (EntityHeader | ProjectHeader)[]
+  /** Defined if type is PARENT_CONTAINER */
   parentContainerParams?: {
     parentContainerId: string
   }
+  /** Defined if type is USER_PROJECTS */
   getProjectParams?: GetProjectsParameters
+  /** Defined if type is ENTITY_SEARCH */
   query?: SearchQuery
 }
 
-export type EntityFinderDetailsProps = {
+/**
+ * These props are set by a parent to this component, but they are not affected by the configuration.
+ * We collect them into this type to simplify passing them through to the view.
+ */
+export type EntityFinderDetailsSharedProps = {
   sessionToken: string
-  configuration: EntityFinderDetailsConfiguration
   showVersionSelection: boolean
-  selectMultiple: boolean
+  selectColumnType: 'checkbox' | 'radio' | 'none'
   includeTypes: EntityType[]
-  selected: EntityIdAndVersion[] // synId(s)
+  selected: Reference[] // synId(s)
   selectableTypes: EntityType[]
-  toggleSelection: (entity: EntityIdAndVersion) => void
+  toggleSelection: (entity: Reference) => void
+}
+
+export type EntityFinderDetailsProps = EntityFinderDetailsSharedProps & {
+  configuration: EntityFinderDetailsConfiguration
 }
 
 export const EntityFinderDetails: React.FunctionComponent<EntityFinderDetailsProps> = ({
-  sessionToken,
   configuration,
-  showVersionSelection,
-  selectMultiple,
-  selected,
-  includeTypes,
-  selectableTypes,
-  toggleSelection,
+  ...sharedProps
 }) => {
+  /**
+   * This component simply uses the configuration prop to determine which configuration component
+   * to use. Each configuration component has its own logic to utilize different Synapse APIs.
+   * The configuration components also manage view props that are more tightly-coupled with data,
+   * such as pagination and sorting.
+   */
+
   const [component, setComponent] = useState(<div></div>)
 
   useDeepCompareEffect(() => {
@@ -64,336 +74,49 @@ export const EntityFinderDetails: React.FunctionComponent<EntityFinderDetailsPro
       switch (configuration.type) {
         case EntityFinderDetailsConfigurationType.PARENT_CONTAINER:
           return (
-            <ChildrenView
-              sessionToken={sessionToken}
+            <EntityChildrenDetails
               parentContainerId={
                 configuration.parentContainerParams!.parentContainerId
               }
-              includeTypes={includeTypes}
-              showVersionSelection={showVersionSelection}
-              selectMultiple={selectMultiple}
-              selected={selected}
-              selectableTypes={selectableTypes}
-              toggleSelection={toggleSelection}
-            ></ChildrenView>
+              {...sharedProps}
+            />
           )
 
         case EntityFinderDetailsConfigurationType.HEADER_LIST:
           return (
-            <EntityHeaderListView
-              sessionToken={sessionToken}
+            <EntityHeaderListDetails
               entityHeaders={configuration.headerList!}
-              includeTypes={includeTypes}
-              showVersionSelection={showVersionSelection}
-              selectMultiple={selectMultiple}
-              selected={selected}
-              selectableTypes={selectableTypes}
-              toggleSelection={toggleSelection}
+              {...sharedProps}
             />
           )
         case EntityFinderDetailsConfigurationType.USER_FAVORITES:
-          return (
-            <FavoritesView
-              sessionToken={sessionToken}
-              includeTypes={includeTypes}
-              showVersionSelection={showVersionSelection}
-              selectMultiple={selectMultiple}
-              selected={selected}
-              selectableTypes={selectableTypes}
-              toggleSelection={toggleSelection}
-            />
-          )
+          return <FavoritesDetails {...sharedProps} />
         case EntityFinderDetailsConfigurationType.ENTITY_SEARCH:
           return (
-            <SearchView
-              sessionToken={sessionToken}
+            <SearchDetails
               searchQuery={configuration.query!}
-              includeTypes={includeTypes}
-              showVersionSelection={showVersionSelection}
-              selectMultiple={selectMultiple}
-              selected={selected}
-              selectableTypes={selectableTypes}
-              toggleSelection={toggleSelection}
+              {...sharedProps}
             />
           )
 
         case EntityFinderDetailsConfigurationType.USER_PROJECTS:
           return (
-            <ProjectsView
-              sessionToken={sessionToken}
+            <ProjectListDetails
               projectsParams={configuration.getProjectParams!}
-              includeTypes={includeTypes}
-              showVersionSelection={showVersionSelection}
-              selectMultiple={selectMultiple}
-              selected={selected}
-              selectableTypes={selectableTypes}
-              toggleSelection={toggleSelection}
+              {...sharedProps}
             />
           )
 
         default:
+          console.warn(
+            'The configuration type does not map to a known view type. No Details view will be rendered. Invalid configuration: ',
+            configuration,
+          )
           return <div></div>
       }
     }
     setComponent(getComponentFromConfiguration(configuration))
-  }, [configuration, selected])
+  }, [configuration, sharedProps])
 
   return component
-}
-
-type ChildrenViewProps = {
-  sessionToken: string
-  parentContainerId: string
-  includeTypes: EntityType[]
-  showVersionSelection: boolean
-  selectMultiple: boolean
-  selected: EntityIdAndVersion[]
-  selectableTypes: EntityType[]
-  toggleSelection: (entity: EntityIdAndVersion) => void
-}
-
-const ChildrenView: React.FunctionComponent<ChildrenViewProps> = ({
-  sessionToken,
-  parentContainerId,
-  includeTypes,
-  showVersionSelection,
-  selectMultiple,
-  selected,
-  selectableTypes,
-  toggleSelection,
-}) => {
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
-  const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
-
-  const {
-    data,
-    status,
-    hasNextPage,
-    fetchNextPage,
-  } = useGetEntityChildrenInfinite(sessionToken, {
-    parentId: parentContainerId,
-    includeTypes: includeTypes,
-    sortBy: sortBy,
-    sortDirection: sortDirection,
-  })
-  return (
-    <DetailsView
-      sessionToken={sessionToken}
-      entities={
-        data
-          ? ([] as EntityHeader[]).concat.apply(
-              [],
-              data.pages.map(page => page.page),
-            )
-          : []
-      }
-      queryStatus={status}
-      hasNextPage={hasNextPage}
-      fetchNextPage={fetchNextPage}
-      sort={{ sortBy, sortDirection }}
-      setSort={(newSortBy, newSortDirection) => {
-        setSortBy(newSortBy)
-        setSortDirection(newSortDirection)
-      }}
-      showVersionSelection={showVersionSelection}
-      selectMultiple={selectMultiple}
-      selected={selected}
-      showTypes={includeTypes}
-      selectableTypes={selectableTypes}
-      toggleSelection={toggleSelection}
-    ></DetailsView>
-  )
-}
-
-type HeaderListViewProps = {
-  sessionToken: string
-  entityHeaders: (EntityHeader | ProjectHeader)[]
-  includeTypes: EntityType[]
-  showVersionSelection: boolean
-  selectMultiple: boolean
-  selected: EntityIdAndVersion[]
-  selectableTypes: EntityType[]
-  toggleSelection: (entity: EntityIdAndVersion) => void
-}
-
-const EntityHeaderListView: React.FunctionComponent<HeaderListViewProps> = ({
-  sessionToken,
-  entityHeaders,
-  showVersionSelection,
-  selectMultiple,
-  selected,
-  includeTypes,
-  selectableTypes,
-  toggleSelection,
-}) => {
-  return (
-    <DetailsView
-      sessionToken={sessionToken}
-      entities={entityHeaders}
-      queryStatus={'success'}
-      hasNextPage={false}
-      showVersionSelection={showVersionSelection}
-      selectMultiple={selectMultiple}
-      selected={selected}
-      showTypes={includeTypes}
-      selectableTypes={selectableTypes}
-      toggleSelection={toggleSelection}
-    ></DetailsView>
-  )
-}
-
-type FavoritesViewProps = {
-  sessionToken: string
-  includeTypes: EntityType[]
-  showVersionSelection: boolean
-  selectMultiple: boolean
-  selected: EntityIdAndVersion[]
-  selectableTypes: EntityType[]
-  toggleSelection: (entity: EntityIdAndVersion) => void
-}
-
-const FavoritesView: React.FunctionComponent<FavoritesViewProps> = ({
-  sessionToken,
-  showVersionSelection,
-  selectMultiple,
-  selected,
-  includeTypes,
-  selectableTypes,
-  toggleSelection,
-}) => {
-  const { data, status } = useGetFavorites(sessionToken)
-  return (
-    <DetailsView
-      sessionToken={sessionToken}
-      entities={data ? data.results : []}
-      queryStatus={status}
-      hasNextPage={false}
-      showVersionSelection={showVersionSelection}
-      selectMultiple={selectMultiple}
-      selected={selected}
-      showTypes={includeTypes}
-      selectableTypes={selectableTypes}
-      toggleSelection={toggleSelection}
-    ></DetailsView>
-  )
-}
-
-type SearchViewProps = {
-  sessionToken: string
-  searchQuery: SearchQuery
-  includeTypes: EntityType[]
-  showVersionSelection: boolean
-  selectMultiple: boolean
-  selected: EntityIdAndVersion[]
-  selectableTypes: EntityType[]
-  toggleSelection: (entity: EntityIdAndVersion) => void
-}
-
-const SearchView: React.FunctionComponent<SearchViewProps> = ({
-  sessionToken,
-  searchQuery,
-  showVersionSelection,
-  selectMultiple,
-  selected,
-  includeTypes,
-  selectableTypes,
-  toggleSelection,
-}) => {
-  const { data, status, hasNextPage, fetchNextPage } = useSearchInfinite(
-    searchQuery,
-    sessionToken,
-    {
-      enabled: !!searchQuery.queryTerm,
-    },
-  )
-  if (searchQuery.queryTerm) {
-    return (
-      <DetailsView
-        sessionToken={sessionToken}
-        entities={
-          data
-            ? ([] as Hit[]).concat.apply(
-                [],
-                data.pages.map(page => page.hits),
-              )
-            : []
-        }
-        queryStatus={status}
-        hasNextPage={hasNextPage}
-        fetchNextPage={fetchNextPage}
-        showVersionSelection={showVersionSelection}
-        selectMultiple={selectMultiple}
-        selected={selected}
-        showTypes={includeTypes}
-        selectableTypes={selectableTypes}
-        toggleSelection={toggleSelection}
-      ></DetailsView>
-    )
-  } else {
-    return (
-      <DetailsView
-        sessionToken={sessionToken}
-        entities={[]}
-        queryStatus={'success'}
-        hasNextPage={false}
-        showVersionSelection={showVersionSelection}
-        selectMultiple={selectMultiple}
-        selected={selected}
-        showTypes={includeTypes}
-        selectableTypes={selectableTypes}
-        toggleSelection={toggleSelection}
-        noResultsPlaceholder={
-          <div>Enter a term or Synapse ID to start searching</div>
-        }
-      ></DetailsView>
-    )
-  }
-}
-
-type ProjectsViewProps = {
-  sessionToken: string
-  projectsParams: GetProjectsParameters
-  includeTypes: EntityType[]
-  showVersionSelection: boolean
-  selectMultiple: boolean
-  selected: EntityIdAndVersion[]
-  selectableTypes: EntityType[]
-  toggleSelection: (entity: EntityIdAndVersion) => void
-}
-const ProjectsView: React.FunctionComponent<ProjectsViewProps> = ({
-  sessionToken,
-  projectsParams,
-  showVersionSelection,
-  selectMultiple,
-  selected,
-  includeTypes,
-  selectableTypes,
-  toggleSelection,
-}) => {
-  const { data, status, hasNextPage, fetchNextPage } = useGetProjectsInfinite(
-    sessionToken,
-    projectsParams,
-  )
-  return (
-    <DetailsView
-      sessionToken={sessionToken}
-      entities={
-        data
-          ? ([] as ProjectHeader[]).concat.apply(
-              [],
-              data.pages.map(page => page.results),
-            )
-          : []
-      }
-      queryStatus={status}
-      hasNextPage={hasNextPage}
-      fetchNextPage={fetchNextPage}
-      showVersionSelection={showVersionSelection}
-      selectMultiple={selectMultiple}
-      selected={selected}
-      showTypes={includeTypes}
-      selectableTypes={selectableTypes}
-      toggleSelection={toggleSelection}
-    ></DetailsView>
-  )
 }
