@@ -426,34 +426,20 @@ export default class GenericCard extends React.Component<
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
-    }
-    const icon: JSX.Element = (
-      <>
-        {imageFileHandleIdValue && (
-          <div
-            className="SRC-imageThumbnail"
-            style={{
-              padding: genericCardSchemaDefined.thumbnailRequiresPadding
-                ? '21px'
-                : 'inherit',
-            }}
-          >
-            <ImageFileHandle
-              token={token}
-              fileHandleId={imageFileHandleIdValue}
-              tableEntityConcreteType={tableEntityConcreteType}
-              rowId={data![schema.id]}
-              tableId={tableId}
-            />
-          </div>
-        )}
-        {!imageFileHandleIdValue && (
-          <div className="SRC-cardThumbnail">
-            <Icon iconOptions={iconOptions} value={iconValue} type={type} />
-          </div>
-        )}
+    }    
+    const icon:JSX.Element = <>
+        {imageFileHandleIdValue && <div className="SRC-imageThumbnail" style={{padding: genericCardSchemaDefined.thumbnailRequiresPadding ? '21px' : undefined}}>
+          <ImageFileHandle 
+            token={token}
+            fileHandleId={imageFileHandleIdValue}
+            tableEntityConcreteType={tableEntityConcreteType}
+            rowId={data![schema.id]}
+            tableId={tableId}
+          /></div>}
+        {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
+          <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
+        </div>}
       </>
-    )
 
     if (isHeader) {
       return (
