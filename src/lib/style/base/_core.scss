@@ -99,6 +99,13 @@ svg.SRC-hoverBox {
     path {
       fill: SRC.$primary-action-color;
     }
+    .styled-svg-wrapper {
+      svg {
+        vertical-align: middle;
+        width: 1em; // use MUI default
+        height: 1em; // use MUI default
+      }
+    }
   }
   .SRC-selected-table-icon {
     svg {

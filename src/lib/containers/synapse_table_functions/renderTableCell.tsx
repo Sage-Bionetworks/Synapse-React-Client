@@ -9,8 +9,12 @@ import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { noop } from 'lodash-es'
 import { MarkdownLink, CardLink } from '../CardContainerLogic'
 import { renderLabel } from '../GenericCard'
-import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
+import {
+  SelectColumn,
+  ColumnModel, FileHandleAssociateType,
+} from '../../utils/synapseTypes'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
+import DirectDownload from '../DirectDownload'
 
 // Render table cell, supports Entity's and User Icons
 export const renderTableCell = ({
@@ -19,6 +23,7 @@ export const renderTableCell = ({
   dateColumnIndicies,
   dateListColumnIndicies,
   booleanListColumnIndicies,
+  fileHandleIdColumnIndicies,
   otherListColumnIndicies,
   colIndex,
   columnValue,
@@ -30,12 +35,15 @@ export const renderTableCell = ({
   columnName,
   selectColumns,
   columnModels,
+  tableEntityId,
+  token,
 }: {
   entityColumnIndicies: number[]
   userColumnIndicies: number[]
   dateColumnIndicies: number[]
   dateListColumnIndicies: number[]
   booleanListColumnIndicies: number[]
+  fileHandleIdColumnIndicies: number[]
   otherListColumnIndicies: number[]
   colIndex: number
   columnValue: string
@@ -47,6 +55,8 @@ export const renderTableCell = ({
   columnName: string
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
+  tableEntityId?: string
+  token: string | undefined
 }): React.ReactNode => {
   const isShortString = (
     s: string,
@@ -100,6 +110,19 @@ export const renderTableCell = ({
       )
     })}</p>
   }
+
+  // If it's a file from a table view
+  if (fileHandleIdColumnIndicies.includes(colIndex)){
+    return <>
+      <DirectDownload
+        associatedObjectId={tableEntityId!}
+        associatedObjectType={FileHandleAssociateType.TableEntity}
+        fileHandleId={columnValue}
+        displayFileName={true}
+      />
+    </>
+  }
+
   if (otherListColumnIndicies.includes(colIndex)) {
     const jsonData: string[] = JSON.parse(columnValue)
     return <p>{jsonData.map((val: string, index: number) => {

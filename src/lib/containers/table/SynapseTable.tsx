@@ -491,6 +491,7 @@ export default class SynapseTable extends React.Component<
     let isShowDownloadColumn: boolean | undefined =
       showDownloadColumn && this.state.isFileView
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
+    const tableEntityId: string = lastQueryRequest?.entityId
     return (
       <div style={{ minHeight: '400px' }} className="SRC-overflowAuto">
         {this.state.isDownloadConfirmationOpen && (
@@ -523,6 +524,7 @@ export default class SynapseTable extends React.Component<
               isShowingAccessColumn,
               isShowDownloadColumn,
               isRowSelectionVisible,
+              tableEntityId,
             )}
           </tbody>
         </table>
@@ -715,6 +717,7 @@ export default class SynapseTable extends React.Component<
     isShowingAccessColumn: boolean | undefined,
     isShowingDownloadColumn: boolean | undefined,
     isRowSelectionVisible: boolean | undefined,
+    tableEntityId: string | undefined
   ) {
     const rowsFormatted: JSX.Element[] = []
     const {
@@ -747,6 +750,10 @@ export default class SynapseTable extends React.Component<
       data,
       EntityColumnType.BOOLEAN_LIST,
     )
+    const fileHandleIdColumnIndicies = getColumnIndiciesWithType(
+      data,
+      EntityColumnType.FILEHANDLEID,
+    )
     const otherListColumnIndicies = getColumnIndiciesWithType(
       data,
       EntityColumnType.STRING_LIST,
@@ -758,6 +765,9 @@ export default class SynapseTable extends React.Component<
     )
 
     rows.forEach((row, rowIndex) => {
+      const entityVersionNumber = row.versionNumber?.toString()
+      const rowSynapseId = `syn${row.rowId}`
+
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
@@ -794,6 +804,7 @@ export default class SynapseTable extends React.Component<
                     dateColumnIndicies,
                     dateListColumnIndicies,
                     booleanListColumnIndicies,
+                    fileHandleIdColumnIndicies,
                     otherListColumnIndicies,
                     colIndex,
                     columnValue,
@@ -805,6 +816,8 @@ export default class SynapseTable extends React.Component<
                     selectColumns,
                     columnModels,
                     columnName,
+                    tableEntityId,
+                    token,
                   })}
               </td>
             )
@@ -812,9 +825,6 @@ export default class SynapseTable extends React.Component<
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />
         },
       )
-
-      const entityVersionNumber = row.versionNumber?.toString()
-      const rowSynapseId = `syn${row.rowId}`
 
       // also push the access column value if we are showing user access for individual items (still shown if not logged in)
       if (isShowingAccessColumn) {
