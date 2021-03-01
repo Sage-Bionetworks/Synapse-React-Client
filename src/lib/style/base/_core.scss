@@ -101,11 +101,14 @@ svg.SRC-hoverBox {
     }
     .styled-svg-wrapper {
       svg {
-        vertical-align: middle;
         width: 1em; // use MUI default
         height: 1em; // use MUI default
       }
     }
+  }
+  .btn-download-icon {
+    display: flex;
+    text-align: left;
   }
   .SRC-selected-table-icon {
     svg {
