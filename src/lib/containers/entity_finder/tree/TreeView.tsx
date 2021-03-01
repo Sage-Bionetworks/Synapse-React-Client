@@ -54,9 +54,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 }) => {
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
-    parentContainerParams: {
-      parentContainerId: initialContainer,
-    },
+    parentContainerId: initialContainer,
   }
 
   const [expandFakeRoot, setExpandFakeRoot] = useState(true)
@@ -151,9 +149,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     } else {
       setDetailsViewConfiguration({
         type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
-        parentContainerParams: {
-          parentContainerId: currentContainer,
-        },
+        parentContainerId: currentContainer,
       })
     }
   }, [scope, currentContainer, topLevelEntities, setDetailsViewConfiguration])

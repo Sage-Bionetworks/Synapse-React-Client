@@ -27,9 +27,7 @@ export type EntityDetailsListDataConfiguration = {
   /** Defined if type is HEADER_LIST */
   headerList?: (EntityHeader | ProjectHeader)[]
   /** Defined if type is PARENT_CONTAINER */
-  parentContainerParams?: {
-    parentContainerId: string
-  }
+  parentContainerId?: string
   /** Defined if type is USER_PROJECTS */
   getProjectParams?: GetProjectsParameters
   /** Defined if type is ENTITY_SEARCH */
@@ -63,7 +61,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
    * to use. Each configuration component has its own logic to utilize different Synapse APIs.
    * The configuration components also manage view props that are more tightly-coupled with data,
    * such as pagination and sorting.
-   * 
+   *
    * In the future, if we wanted to reuse this in other contexts (e.g. not selecting entities), we should consider refactoring
    * to support different 'Row' components, determining the correct one determined at this level (perhaps as a HOC).
    */
@@ -78,9 +76,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
         case EntityDetailsListDataConfigurationType.PARENT_CONTAINER:
           return (
             <EntityChildrenDetails
-              parentContainerId={
-                config.parentContainerParams!.parentContainerId
-              }
+              parentContainerId={config.parentContainerId!}
               {...sharedProps}
             />
           )
@@ -95,12 +91,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
         case EntityDetailsListDataConfigurationType.USER_FAVORITES:
           return <FavoritesDetails {...sharedProps} />
         case EntityDetailsListDataConfigurationType.ENTITY_SEARCH:
-          return (
-            <SearchDetails
-              searchQuery={config.query!}
-              {...sharedProps}
-            />
-          )
+          return <SearchDetails searchQuery={config.query!} {...sharedProps} />
 
         case EntityDetailsListDataConfigurationType.USER_PROJECTS:
           return (
