@@ -175,7 +175,9 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
                   })
                 }}
               >
-                <option value={-1}>Do not select a version</option>
+                <option value={-1}>
+                  No version (always reference latest version)
+                </option>
                 {versions?.map((version, index) => {
                   return (
                     <option

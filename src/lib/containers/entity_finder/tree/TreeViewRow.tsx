@@ -307,7 +307,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
   return (
     <div className="EntityFinderTreeView" style={{ height: '500px' }}>
-      {/* <div className={`EntityFinderTreeView__SelectionHeader`}></div> */}
       <div style={{ overflow: 'auto' }}>
         {isLoading ? (
           <div className="spinner" />
