@@ -11,34 +11,52 @@ $-finder-height: 500px;
 }
 
 .EntityFinder {
-  &__SearchContainer {
+  &__Search {
     display: flex;
-    align-items: center;
     justify-content: right;
-    border: $-border;
-    margin: 10px 0px;
-    padding: 0px 10px;
-    height: 38px;
-    transition: all 0.5s;
-    &__SearchButton {
-      cursor: pointer;
-
-      padding: 5px;
+    &__Container {
+      display: flex;
+      align-items: center;
+      justify-content: right;
+      border: $-border;
       margin: 10px 0px;
-    }
-    &__SearchBoxContainer {
       padding: 0px 10px;
-      border: none;
-      &__SearchBox {
-        background-color: transparent;
-        height: 100%;
-        width: 100%;
-        margin: 10px;
-        padding: 10px;
+      height: 38px;
+      transition: all 0.5s;
+      &__SearchButton {
+        cursor: pointer;
+
+        padding: 5px;
+        margin: 10px 0px;
+      }
+      &__SearchBoxContainer {
+        padding: 0px 10px;
         border: none;
-        box-shadow: none;
+        &__SearchBox {
+          background-color: transparent;
+          height: 100%;
+          width: 100%;
+          margin: 10px;
+          padding: 10px;
+          border: none;
+          box-shadow: none;
+        }
       }
     }
+  }
+
+  &__Selected {
+    margin: 15px 0px;
+    &__DeselectButton {
+      margin: 5px;
+      cursor: pointer;
+      &__Icon {
+        margin-bottom: 3px;
+      }
+    }
+  }
+  &__EntityName {
+    font-weight: bold;
   }
 }
 

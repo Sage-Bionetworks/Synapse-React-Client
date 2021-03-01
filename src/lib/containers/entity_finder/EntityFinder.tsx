@@ -57,7 +57,7 @@ const EntityPathDisplay: React.FunctionComponent<{
         // Truncate the path, showing only project, parent, and self
         setPathString(
           path[0].name + // Project
-            '/.../' +
+            '/…/' +
             path
               .slice(path.length - 1) // drop everything except parent and self
               .map(header => header.name)
@@ -70,19 +70,21 @@ const EntityPathDisplay: React.FunctionComponent<{
   return (
     <>
       <span
-        style={{ margin: '5px', cursor: 'pointer' }}
+        className="EntityFinder__Selected__DeselectButton"
         onClick={() => {
           toggleSelection(entity)
         }}
       >
         <FontAwesomeIcon
-          style={{ marginBottom: '3px' }}
+          className="EntityFinder__Selected__DeselectButton__Icon"
           size={'sm'}
           icon={faTimes}
         />
       </span>
       <span>{pathString ? pathString + '/' : ''}</span>
-      <span style={{ fontWeight: 'bold' }}>{entityName}</span>
+      <span className="EntityFinder__Selected__DeselectButton__EntityName">
+        {entityName}
+      </span>
       {entity.targetVersionNumber && (
         <span> (Version {entity.targetVersionNumber})</span>
       )}
@@ -189,9 +191,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   return (
     <QueryClientProvider client={queryClient}>
       <div className="bootstrap-4-backport EntityFinder">
-        <div style={{ display: 'flex', justifyContent: 'right' }}>
-          <div className="EntityFinder__SearchContainer">
-            <div className="EntityFinder__SearchContainer__SearchButton">
+        <div className="EntityFinder__Search">
+          <div className="EntityFinder__Search__Container">
+            <div className="EntityFinder__Search__Container__SearchButton">
               <FontAwesomeIcon
                 size={'sm'}
                 icon={faSearch}
@@ -205,9 +207,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               unmountOnExit={true}
               classNames="search-active-container"
             >
-              <div className="EntityFinder__SearchContainer__SearchBoxContainer">
+              <div className="EntityFinder__Search__Container__SearchBoxContainer">
                 <input
-                  className="EntityFinder__SearchContainer__SearchBoxContainer__SearchBox"
+                  className="EntityFinder__Search__Container__SearchBoxContainer__SearchBox"
                   type="search"
                   placeholder="Search all of Synapse"
                   onKeyDown={(event: any) => {
@@ -290,7 +292,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             </div>
           </div>
         }
-        <div style={{ margin: '15px 0px' }}>
+        <div className="EntityFinder__Selected">
           Selected:
           {selectedEntities.length > 0 ? (
             <div>
