@@ -20,10 +20,7 @@
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": true
   },
-  "include": [
-    "src/lib/**.ts",
-    "src/lib/**.tsx"
-  ]
+  "include": ["src/lib/**.ts", "src/lib/**.tsx"]
 }

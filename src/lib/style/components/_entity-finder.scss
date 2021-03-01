@@ -1,0 +1,253 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:color';
+
+$-header-height: 40px;
+$-border: 1px solid #dcdcdc;
+$-finder-height: 500px;
+
+// https://github.com/leefsmp/Re-Flex/issues/27
+.EntityViewReflexContainer {
+  width: 100%;
+}
+
+.EntityFinder {
+  &__Search {
+    display: flex;
+    justify-content: right;
+    &__Container {
+      display: flex;
+      align-items: center;
+      justify-content: right;
+      border: $-border;
+      margin: 10px 0px;
+      padding: 0px 10px;
+      height: 38px;
+      transition: all 0.5s;
+      &__SearchButton {
+        cursor: pointer;
+
+        padding: 5px;
+        margin: 10px 0px;
+      }
+      &__SearchBoxContainer {
+        padding: 0px 10px;
+        border: none;
+        &__SearchBox {
+          background-color: transparent;
+          height: 100%;
+          width: 100%;
+          margin: 10px;
+          padding: 10px;
+          border: none;
+          box-shadow: none;
+        }
+      }
+    }
+  }
+
+  &__Selected {
+    margin: 15px 0px;
+    &__DeselectButton {
+      margin: 5px;
+      cursor: pointer;
+      &__Icon {
+        margin-bottom: 3px;
+      }
+    }
+  }
+  &__EntityName {
+    font-weight: bold;
+  }
+}
+
+.EntityViewReflexContainer {
+  height: $-finder-height;
+}
+
+.EntityFinderTreeView {
+  height: $-finder-height;
+  border: $-border;
+  overflow: auto;
+  &__Row {
+    width: 100%;
+    display: inline-grid;
+    grid-template-columns: 15px 27px auto auto;
+    padding: 16px 10px;
+    align-items: center;
+    &__ExpandButton {
+      text-align: center;
+      grid-column-start: 1;
+      grid-column-end: 2;
+      font-size: large;
+      color: SRC.$primary-action-color-700;
+      cursor: pointer;
+    }
+
+    &__EntityIcon {
+      text-align: center;
+      grid-column-start: 2;
+      grid-column-end: 3;
+      margin-bottom: 3px;
+    }
+
+    &__EntityName {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  &__Row:hover {
+    background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
+  }
+  &__Row__Selected,
+  &__Row__Selected:hover {
+    color: SRC.$primary-action-color-500;
+    // font-weight: bold;
+    background: color.change(SRC.$primary-action-color-500, $alpha: 0.2);
+
+    .EntityFinderTreeView__Row__ExpandButton {
+      color: SRC.$primary-action-color-500;
+    }
+  }
+
+  &__SelectionHeader {
+    height: $-header-height;
+    border-bottom: $-border;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.EntityFinderDetailsView {
+  height: $-finder-height;
+  border: $-border;
+  width: fill-container;
+  &__HeaderRow {
+    height: $-header-height;
+    font-weight: bold;
+    padding: 16px 10px;
+    border-bottom: $-border;
+    // boxShadow: '0 3px 10px rgba(93, 105, 171, 0.1)',
+  }
+  &__Row {
+    border-bottom: 1px solid #f9f9f9;
+    height: 40px;
+  }
+
+  &__Row:nth-child(even) {
+    background: #f9f9f9;
+  }
+
+  &__Row:hover,
+  &__Row:hover:nth-child(even) {
+    background: color.change(SRC.$primary-action-color-500, $alpha: 0.2);
+  }
+
+  &__Row__Selected,
+  &__Row__Selected:hover,
+  &__Row__Selected:nth-child(even),
+  &__Row__Selected:hover:nth-child(even) {
+    background-color: SRC.$primary-action-color-500;
+    color: white;
+  }
+
+  &__Row__Disabled,
+  &__Row__Disabled:hover {
+    opacity: 0.5;
+  }
+
+  &__Placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+    &__Content {
+      font-size: large;
+    }
+  }
+
+  // TODO: probably a better way to do this, maybe with grid?
+  .IsSelectedColumn,
+  .EntityIconColumn,
+  .NameColumn,
+  .AccessColumn,
+  .IdColumn,
+  .CreatedOnColumn,
+  .ModifiedOnColumn,
+  .VersionColumn {
+    padding: 5px 12px;
+    padding-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .IsSelectedColumn {
+    width: 15px;
+    .radio,
+    .checkbox {
+      margin: 7px 0px 2px 5px;
+      min-width: 20px;
+    }
+  }
+
+  .EntityIconColumn {
+    padding-left: 2px;
+    padding-right: 2px;
+    text-align: center;
+    width: 10px;
+    svg {
+      fill: currentColor;
+    }
+  }
+
+  .NameColumn {
+    width: 40%;
+    max-width: 300px;
+  }
+  .AccessColumn {
+    width: 40px;
+  }
+  .IdColumn {
+    width: 10%;
+  }
+  .CreatedOnColumn {
+    width: 15%;
+  }
+  .ModifiedOnColumn {
+    width: 15%;
+  }
+  .VersionColumn {
+    min-width: 150px;
+    width: 20%;
+  }
+
+  .NameColumn:not(th),
+  .AccessColumn:not(th),
+  .IdColumn:not(th),
+  .CreatedOnColumn:not(th),
+  .ModifiedOnColumn:not(th) {
+    border-right: $-border;
+  }
+}
+
+.search-active-container-enter {
+  width: 0%;
+}
+.search-active-container-enter-active {
+  width: 100%;
+  transition: all 0.5s;
+}
+.search-active-container-enter-done {
+  width: 100%;
+}
+.search-active-container-exit {
+  width: 100%;
+}
+.search-active-container-exit-active {
+  width: 0%;
+  transition: all 0.5s;
+}
+.search-active-container-exit-done {
+  width: 0%;
+}

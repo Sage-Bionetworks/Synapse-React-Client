@@ -10,7 +10,7 @@ import {
   deleteDownloadList,
   deleteDownloadListFiles,
   getDownloadList,
-  getEntityHeader,
+  getEntityHeaders,
   getFiles,
 } from '../../utils/SynapseClient'
 import {
@@ -159,7 +159,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         })
       // entity header is used to get the names of the files that the user
       // doesn't have access to
-      const references = await getEntityHeader(referenceCall, token)
+      const references = await getEntityHeaders(referenceCall, token)
       setData({
         references,
         batchFileResult,

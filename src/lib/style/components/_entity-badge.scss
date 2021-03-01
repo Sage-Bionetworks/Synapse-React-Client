@@ -1,0 +1,10 @@
+.EntityBadge {
+  float: right;
+  display: inline-flex;
+  flex-direction: row-reverse;
+  &__Badge {
+    margin: 2px;
+    max-width: 10px;
+    max-height: 10px;
+  }
+}

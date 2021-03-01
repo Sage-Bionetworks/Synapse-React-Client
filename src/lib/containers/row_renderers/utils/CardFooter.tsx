@@ -5,9 +5,9 @@ import {
   faLongArrowAltDown,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { DOI_REGEX } from '../../../containers/GenericCard'
 import IconSVG from '../../IconSvg'
 import { ColumnIconConfigs } from '../../CardContainerLogic'
+import { DOI_REGEX } from '../../../utils/functions/RegularExpressions'
 library.add(faLongArrowAltUp)
 library.add(faLongArrowAltDown)
 

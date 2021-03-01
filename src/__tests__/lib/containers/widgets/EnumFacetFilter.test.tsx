@@ -24,7 +24,7 @@ SynapseClient.getUserProfiles = jest.fn().mockResolvedValue({
   ],
 })
 
-SynapseClient.getEntityHeader = jest.fn().mockResolvedValue({
+SynapseClient.getEntityHeaders = jest.fn().mockResolvedValue({
   results: [
     { id: '123', name: 'Entity1' },
     { id: '1234', name: 'Entity2' },
