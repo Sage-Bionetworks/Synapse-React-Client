@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
-import { getEntityHeader } from '../SynapseClient'
+import { getEntityHeaders } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
 import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
@@ -40,7 +40,7 @@ const getEntityHeaderItems = async (
   lookupList: ReferenceList,
   token: string | undefined,
 ): Promise<EntityHeader[]> => {
-  const newData = await getEntityHeader(lookupList, token)
+  const newData = await getEntityHeaders(lookupList, token)
   const notFound = lookupList.filter(
     item => newData.results.map(item => item.id).indexOf(item.targetId) === -1,
   )

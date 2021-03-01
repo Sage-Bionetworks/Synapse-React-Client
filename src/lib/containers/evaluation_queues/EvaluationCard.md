@@ -7,7 +7,6 @@
   "ownerId": "3345868",
   "createdOn": "2021-01-05T00:41:11.670Z",
   "contentSource": "syn23679309",
-  "status": "OPEN",
   "submissionInstructionsMessage": "Do a barrel roll",
   "submissionReceiptMessage": "We received your submission"
 }}

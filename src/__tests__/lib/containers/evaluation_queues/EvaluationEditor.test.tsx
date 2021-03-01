@@ -1,7 +1,4 @@
-import {
-  Evaluation,
-  EvaluationStatus,
-} from '../../../../lib/utils/synapseTypes'
+import { Evaluation } from '../../../../lib/utils/synapseTypes'
 import {
   EvaluationEditor,
   EvaluationEditorProps,
@@ -38,7 +35,6 @@ describe('test EvaluationEditor', () => {
       ownerId: '1231231321',
       createdOn: '2020-09-18T09:44:04.939Z',
       contentSource: entityId,
-      status: EvaluationStatus.OPEN,
       submissionInstructionsMessage: "no you can't just make a submission",
       submissionReceiptMessage: 'haha submission go brrrrrrrr',
     }
@@ -144,7 +140,6 @@ describe('test EvaluationEditor', () => {
         contentSource: 'syn1111111',
         description: '',
         name: 'E V A L U A T I O N',
-        status: 'PLANNED',
         submissionInstructionsMessage: '',
         submissionReceiptMessage: '',
       },

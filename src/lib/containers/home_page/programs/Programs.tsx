@@ -2,7 +2,7 @@ import React from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
 
-import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import ProgramsMobile from './Programs.Mobile'
 import ProgramsDesktop from './Programs.Desktop'

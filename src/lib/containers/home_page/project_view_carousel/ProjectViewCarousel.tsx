@@ -1,6 +1,6 @@
 import { SynapseClient, SynapseConstants } from '../../../utils'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
-import useGetQueryResultBundle from '../../../utils/hooks/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import React, { useState, useEffect } from 'react'
 import Carousel from '../../Carousel'
