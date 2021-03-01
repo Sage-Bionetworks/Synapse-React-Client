@@ -46,7 +46,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         showVersionSelection={showVersionSelection}
         selectColumnType={selectColumnType}
         selected={selected}
-        showTypes={includeTypes}
+        includeTypes={includeTypes}
         selectableTypes={selectableTypes}
         toggleSelection={toggleSelection}
       ></DetailsView>
@@ -62,7 +62,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         showVersionSelection={showVersionSelection}
         selectColumnType={selectColumnType}
         selected={selected}
-        showTypes={includeTypes}
+        includeTypes={includeTypes}
         selectableTypes={selectableTypes}
         toggleSelection={toggleSelection}
         noResultsPlaceholder={

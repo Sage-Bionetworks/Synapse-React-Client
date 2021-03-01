@@ -223,9 +223,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
-    parentContainerParams: {
-      parentContainerId: initialContainer,
-    },
+    parentContainerId: initialContainer,
   }
 
   const [expandFakeRoot, setExpandFakeRoot] = useState(true)
@@ -302,9 +300,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     } else {
       setDetailsViewConfiguration({
         type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
-        parentContainerParams: {
-          parentContainerId: currentContainer,
-        },
+        parentContainerId: currentContainer,
       })
     }
   }, [scope, currentContainer])
@@ -356,7 +352,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                         <Dropdown.Item
                           key={s}
                           onClick={e => {
-                            console.log('setting scope', s)
                             e.stopPropagation()
                             setScope(s)
                           }}
@@ -381,9 +376,9 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                       setCurrentContainer(entityId)
                     }}
                     autoExpand={entityId => {
-                      return !!(
+                      return (
                         scope === FinderScope.CURRENT_PROJECT &&
-                        initialContainerPath &&
+                        !!initialContainerPath &&
                         isEntityIdInPath(entityId, initialContainerPath)
                       )
                     }}

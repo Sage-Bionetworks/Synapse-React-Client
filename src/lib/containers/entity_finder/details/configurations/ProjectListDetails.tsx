@@ -41,7 +41,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
       showVersionSelection={showVersionSelection}
       selectColumnType={selectColumnType}
       selected={selected}
-      showTypes={includeTypes}
+      includeTypes={includeTypes}
       selectableTypes={selectableTypes}
       toggleSelection={toggleSelection}
     ></DetailsView>

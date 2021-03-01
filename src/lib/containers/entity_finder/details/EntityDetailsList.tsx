@@ -9,10 +9,10 @@ import {
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
 import { SearchQuery } from '../../../utils/synapseTypes/Search'
 import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
-import { EntityHeaderListDetails } from './configurations/EntityHeaderListDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
+import { DetailsView } from './view/DetailsView'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
@@ -63,10 +63,10 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
    * such as pagination and sorting.
    *
    * In the future, if we wanted to reuse this in other contexts (e.g. not selecting entities), we should consider refactoring
-   * to support different 'Row' components, determining the correct one determined at this level (perhaps as a HOC).
+   * to support different 'Row' components, determining the correct one determined at this level.
    */
 
-  const [component, setComponent] = useState(<div></div>)
+  const [component, setComponent] = useState(<></>)
 
   useDeepCompareEffect(() => {
     const getComponentFromConfiguration = (
@@ -83,8 +83,11 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
 
         case EntityDetailsListDataConfigurationType.HEADER_LIST:
           return (
-            <EntityHeaderListDetails
-              entityHeaders={config.headerList!}
+            <DetailsView
+              entities={config.headerList as (EntityHeader | ProjectHeader)[]}
+              queryStatus={'success'}
+              queryIsFetching={false}
+              hasNextPage={false}
               {...sharedProps}
             />
           )
@@ -106,7 +109,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
             'The configuration type does not map to a known view type. No Details view will be rendered. Invalid configuration: ',
             config,
           )
-          return <div></div>
+          return <></>
       }
     }
     setComponent(getComponentFromConfiguration(configuration))

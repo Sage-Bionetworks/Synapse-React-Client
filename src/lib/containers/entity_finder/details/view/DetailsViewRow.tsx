@@ -76,7 +76,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       enabled: inView,
       // We'll make the stale time longer because these requests are expensive + we make a lot of them
       // They also aren't likely to change meaningfully while in the entity finder
-      staleTime: 60 * 1000 // 60 seconds
+      staleTime: 60 * 1000, // 60 seconds
     },
   )
 
@@ -119,7 +119,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
               checked={isSelected}
               onChange={() => {}}
             />
-          )}{' '}
+          )}
           {!isDisabled && selectButtonType === 'radio' && (
             <RadioGroup
               className="SRC-pointer-events-none"

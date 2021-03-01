@@ -56,7 +56,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
       showVersionSelection={showVersionSelection}
       selectColumnType={selectColumnType}
       selected={selected}
-      showTypes={includeTypes}
+      includeTypes={includeTypes}
       selectableTypes={selectableTypes}
       toggleSelection={toggleSelection}
     ></DetailsView>

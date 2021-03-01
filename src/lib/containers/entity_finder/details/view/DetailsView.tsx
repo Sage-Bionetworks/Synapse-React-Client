@@ -7,15 +7,13 @@ import {
   Direction,
   EntityHeader,
   ProjectHeader,
-  Reference,
   SortBy,
 } from '../../../../utils/synapseTypes'
-import { EntityType } from '../../../../utils/synapseTypes/EntityType'
 import { Hit } from '../../../../utils/synapseTypes/Search'
+import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsViewRow, DetailsViewRowAppearance } from './DetailsViewRow'
 
-export type DetailsViewProps = {
-  sessionToken: string
+export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: (EntityHeader | ProjectHeader | Hit)[]
   queryStatus: QueryStatus
   queryIsFetching: boolean
@@ -25,13 +23,6 @@ export type DetailsViewProps = {
   sort?: { sortBy: SortBy; sortDirection: Direction }
   /** If sortable, `setSort` will be invoked when the user tries to change the sort */
   setSort?: (soryBy: SortBy, sortDirection: Direction) => void
-  showVersionSelection: boolean
-  /** Show checkboxes or radio buttons for selection. If `undefined`, the column will be hidden. */
-  selectColumnType: 'checkbox' | 'radio' | 'none'
-  selected: Reference[]
-  showTypes: EntityType[]
-  selectableTypes: EntityType[]
-  toggleSelection: (entity: Reference) => void
   noResultsPlaceholder?: React.ReactElement
 }
 
@@ -54,7 +45,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   showVersionSelection,
   selectColumnType,
   selected,
-  showTypes,
+  includeTypes,
   selectableTypes,
   toggleSelection,
   sort,
@@ -67,7 +58,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   const determineRowAppearance = (
     entity: EntityHeader | ProjectHeader | Hit,
   ): DetailsViewRowAppearance => {
-    if (!showTypes.includes(getEntityTypeFromHeader(entity))) {
+    if (!includeTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'hidden'
     } else if (!selectableTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'disabled'
