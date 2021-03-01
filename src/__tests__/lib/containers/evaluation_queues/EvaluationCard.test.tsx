@@ -2,7 +2,6 @@ import { UserEvaluationPermissions } from '../../../../lib/utils/synapseTypes/Ev
 import React from 'react'
 import JestMockPromise from 'jest-mock-promise'
 import { SynapseClient } from '../../../../lib'
-import { EvaluationStatus } from '../../../../lib/utils/synapseTypes'
 import { mount } from 'enzyme'
 import {
   EvaluationCard,
@@ -35,7 +34,6 @@ describe('test Evaluation Card', () => {
       ownerId: '1231231321',
       createdOn: '2020-09-18T09:44:04.939Z',
       contentSource: 'syn1111111',
-      status: EvaluationStatus.OPEN,
       submissionInstructionsMessage: "no you can't just make a submission",
       submissionReceiptMessage: 'haha submission go brrrrrrrr',
     }
@@ -107,8 +105,6 @@ describe('test Evaluation Card', () => {
 
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.contains(<h4>E V A L U A T I O N (1234)</h4>)).toBe(true)
-    expect(wrapper.find('.status-open').exists()).toBe(true)
-
     expect(
       wrapper.contains(<p>no you can&apos;t just make a submission</p>),
     ).toBe(true)

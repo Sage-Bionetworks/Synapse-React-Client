@@ -4,24 +4,19 @@ import {
   getEvaluationPermissions,
   SynapseClientError,
 } from '../../utils/SynapseClient'
-import { Evaluation, EvaluationStatus } from '../../utils/synapseTypes'
+import { Evaluation } from '../../utils/synapseTypes'
 import { Button, Card, Col, Dropdown, Row } from 'react-bootstrap'
-import {
-  faClipboardCheck,
-  faEllipsisV,
-  faSyncAlt,
-} from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { ErrorBanner } from '../ErrorBanner'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { RequiredProperties } from '../../utils'
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,
-  'id' | 'etag' | 'createdOn' | 'contentSource' | 'ownerId' | 'status'
+  'id' | 'etag' | 'createdOn' | 'contentSource' | 'ownerId'
 >
 
 export type EvaluationCardProps = {
@@ -106,9 +101,6 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
                 {evaluation.name} ({evaluation.id})
               </h4>
 
-              <label>Status</label>
-              <EvaluationDisplayStatus status={evaluation.status} />
-
               <label>Description</label>
               <p>{evaluation.description}</p>
               <label>Instructions</label>
@@ -132,44 +124,6 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
           )}
         </Card.Body>
       </Card>
-    </div>
-  )
-}
-
-type EvaluationDisplayStatusProps = {
-  status: EvaluationStatus
-}
-
-const EvaluationDisplayStatus: React.FunctionComponent<EvaluationDisplayStatusProps> = ({
-  status,
-}) => {
-  let icon: IconDefinition | undefined
-  let className: string
-
-  switch (status) {
-    case EvaluationStatus.PLANNED:
-      className = 'status-planned'
-      icon = undefined
-      break
-    case EvaluationStatus.OPEN:
-      className = 'status-open'
-      icon = faSyncAlt
-      break
-    case EvaluationStatus.COMPLETED:
-      className = 'status-completed'
-      icon = faClipboardCheck
-      break
-    case EvaluationStatus.CLOSED:
-      className = 'status-closed'
-      icon = undefined
-      break
-  }
-  return (
-    <div className={className}>
-      <div className="status">
-        {icon && <FontAwesomeIcon icon={icon} />}
-        <span>{status}</span>
-      </div>
     </div>
   )
 }

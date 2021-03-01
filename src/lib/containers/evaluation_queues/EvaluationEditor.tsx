@@ -1,6 +1,5 @@
 import { Alert, Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
 import React, { useEffect, useState } from 'react'
-import { capitalize } from 'lodash-es'
 import {
   createEvaluation,
   deleteEvaluation,
@@ -9,16 +8,11 @@ import {
   updateEvaluation,
 } from '../../utils/SynapseClient'
 import { ErrorBanner } from '../ErrorBanner'
-import {
-  Evaluation,
-  EvaluationStatus,
-} from '../../utils/synapseTypes/Evaluation/Evaluation'
+import { Evaluation } from '../../utils/synapseTypes/Evaluation/Evaluation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
-
-const defaultEvaluationStatus = EvaluationStatus.PLANNED
 
 export type EvaluationEditorProps = {
   /** session token to make authenticated API calls */
@@ -69,9 +63,6 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
     submissionReceiptMessage,
     setSubmissionReceiptMessage,
   ] = useState<string>('')
-  const [status, setStatus] = useState<EvaluationStatus>(
-    defaultEvaluationStatus,
-  )
 
   const [evaluation, setEvaluation] = useState<Evaluation>({
     contentSource: entityId,
@@ -84,7 +75,6 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
       evaluation.submissionInstructionsMessage ?? '',
     )
     setSubmissionReceiptMessage(evaluation.submissionReceiptMessage ?? '')
-    setStatus(evaluation.status ?? defaultEvaluationStatus)
   }, [evaluation])
 
   useEffect(() => {
@@ -110,7 +100,6 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
       description,
       submissionInstructionsMessage,
       submissionReceiptMessage,
-      status,
     }
 
     const promise = newOrUpdatedEvaluation.id
@@ -157,25 +146,6 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
               value={name}
               onChange={event => setName(event.target.value)}
             />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Status</Form.Label>
-            <Form.Control
-              as="select"
-              custom
-              value={status}
-              onChange={event =>
-                setStatus(event.target.value as EvaluationStatus)
-              }
-            >
-              {Object.keys(EvaluationStatus).map(key => {
-                return (
-                  <option key={key} value={key}>
-                    {capitalize(key)}
-                  </option>
-                )
-              })}
-            </Form.Control>
           </Form.Group>
 
           <Form.Group>
