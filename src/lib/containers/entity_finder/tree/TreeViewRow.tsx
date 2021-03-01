@@ -19,9 +19,9 @@ import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
 import { EntityTypeIcon } from '../../EntityIcon'
 import {
-  EntityFinderDetailsConfiguration,
-  EntityFinderDetailsConfigurationType,
-} from '../details/EntityFinderDetails'
+  EntityDetailsListDataConfiguration,
+  EntityDetailsListDataConfigurationType,
+} from '../details/EntityDetailsList'
 import ReactTooltip from 'react-tooltip'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
@@ -198,7 +198,7 @@ export type TreeViewProps = {
   showDropdown: boolean
   showFakeRootNode?: boolean // necessary to select root nodes in a details view
   setDetailsViewConfiguration?: (
-    configuration: EntityFinderDetailsConfiguration,
+    configuration: EntityDetailsListDataConfiguration,
   ) => void
 }
 
@@ -221,8 +221,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     showFakeRootNode,
   })
 
-  const DEFAULT_CONFIGURATION: EntityFinderDetailsConfiguration = {
-    type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
+  const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
+    type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
     parentContainerParams: {
       parentContainerId: initialContainer,
     },
@@ -282,18 +282,18 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       switch (scope) {
         case FinderScope.ALL_PROJECTS:
           setDetailsViewConfiguration({
-            type: EntityFinderDetailsConfigurationType.USER_PROJECTS,
+            type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
           })
           break
         case FinderScope.CURRENT_PROJECT:
           setDetailsViewConfiguration({
-            type: EntityFinderDetailsConfigurationType.HEADER_LIST,
+            type: EntityDetailsListDataConfigurationType.HEADER_LIST,
             headerList: topLevelEntities,
           })
           break
         case FinderScope.FAVORITES:
           setDetailsViewConfiguration({
-            type: EntityFinderDetailsConfigurationType.USER_FAVORITES,
+            type: EntityDetailsListDataConfigurationType.USER_FAVORITES,
             headerList: topLevelEntities,
           })
 
@@ -301,7 +301,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       }
     } else {
       setDetailsViewConfiguration({
-        type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
+        type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
         parentContainerParams: {
           parentContainerId: currentContainer,
         },

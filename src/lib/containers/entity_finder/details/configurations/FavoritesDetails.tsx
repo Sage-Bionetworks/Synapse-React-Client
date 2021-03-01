@@ -1,9 +1,9 @@
 import React from 'react'
 import { useGetFavorites } from '../../../../utils/hooks/SynapseAPI/useFavorites'
 import { DetailsView } from '../view/DetailsView'
-import { EntityFinderDetailsSharedProps } from './../EntityFinderDetails'
+import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 
-type FavoritesDetailsProps = EntityFinderDetailsSharedProps
+type FavoritesDetailsProps = EntityDetailsListSharedProps
 
 export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = ({
   sessionToken,

@@ -3,9 +3,9 @@ import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/usePr
 import { ProjectHeader } from '../../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { DetailsView } from '../view/DetailsView'
-import { EntityFinderDetailsSharedProps } from './../EntityFinderDetails'
+import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 
-type ProjectListDetailsProps = EntityFinderDetailsSharedProps & {
+type ProjectListDetailsProps = EntityDetailsListSharedProps & {
   projectsParams: GetProjectsParameters
 }
 

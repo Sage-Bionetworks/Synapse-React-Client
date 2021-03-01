@@ -1,9 +1,9 @@
 import React from 'react'
 import { EntityHeader, ProjectHeader } from '../../../../utils/synapseTypes'
 import { DetailsView } from '../view/DetailsView'
-import { EntityFinderDetailsSharedProps } from './../EntityFinderDetails'
+import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 
-type EntityHeaderListDetailsProps = EntityFinderDetailsSharedProps & {
+type EntityHeaderListDetailsProps = EntityDetailsListSharedProps & {
   entityHeaders: (EntityHeader | ProjectHeader)[]
 }
 

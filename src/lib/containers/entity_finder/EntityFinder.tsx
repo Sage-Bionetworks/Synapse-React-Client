@@ -12,10 +12,10 @@ import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import {
-  EntityFinderDetails,
-  EntityFinderDetailsConfiguration,
-  EntityFinderDetailsConfigurationType,
-} from './details/EntityFinderDetails'
+  EntityDetailsList,
+  EntityDetailsListDataConfiguration,
+  EntityDetailsListDataConfigurationType,
+} from './details/EntityDetailsList'
 import { TreeView } from './tree/TreeView'
 
 library.add(faTimes, faSearch)
@@ -116,7 +116,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   const [
     configFromTreeView,
     setConfigFromTreeView,
-  ] = useState<EntityFinderDetailsConfiguration>()
+  ] = useState<EntityDetailsListDataConfiguration>()
 
   const isSelected = (entity: Reference) => {
     return selectedEntities.some(
@@ -235,16 +235,16 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         </div>
         {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
         {searchActive && (
-          <EntityFinderDetails
+          <EntityDetailsList
             sessionToken={sessionToken}
             configuration={
               searchByIdResults && searchByIdResults.length > 0
                 ? {
-                    type: EntityFinderDetailsConfigurationType.HEADER_LIST,
+                    type: EntityDetailsListDataConfigurationType.HEADER_LIST,
                     headerList: searchByIdResults,
                   }
                 : {
-                    type: EntityFinderDetailsConfigurationType.ENTITY_SEARCH,
+                    type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
                     query: {
                       queryTerm: searchTerms,
                     },
@@ -274,7 +274,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 <ReflexSplitter></ReflexSplitter>
                 <ReflexElement minSize={400}>
                   {configFromTreeView && (
-                    <EntityFinderDetails
+                    <EntityDetailsList
                       sessionToken={sessionToken}
                       configuration={configFromTreeView}
                       showVersionSelection={showVersionSelection}

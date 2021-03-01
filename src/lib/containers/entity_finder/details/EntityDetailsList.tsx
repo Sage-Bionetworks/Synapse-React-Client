@@ -14,7 +14,7 @@ import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
 
-export enum EntityFinderDetailsConfigurationType {
+export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
   PARENT_CONTAINER, // retrieve the children for a given entity ID
   USER_PROJECTS, // retrieve the user's projects (using the parameters)
@@ -22,8 +22,8 @@ export enum EntityFinderDetailsConfigurationType {
   ENTITY_SEARCH, // Search for an entity
 }
 
-export type EntityFinderDetailsConfiguration = {
-  type: EntityFinderDetailsConfigurationType
+export type EntityDetailsListDataConfiguration = {
+  type: EntityDetailsListDataConfigurationType
   /** Defined if type is HEADER_LIST */
   headerList?: (EntityHeader | ProjectHeader)[]
   /** Defined if type is PARENT_CONTAINER */
@@ -40,7 +40,7 @@ export type EntityFinderDetailsConfiguration = {
  * These props are set by a parent to this component, but they are not affected by the configuration.
  * We collect them into this type to simplify passing them through to the view.
  */
-export type EntityFinderDetailsSharedProps = {
+export type EntityDetailsListSharedProps = {
   sessionToken: string
   showVersionSelection: boolean
   selectColumnType: 'checkbox' | 'radio' | 'none'
@@ -50,59 +50,62 @@ export type EntityFinderDetailsSharedProps = {
   toggleSelection: (entity: Reference) => void
 }
 
-export type EntityFinderDetailsProps = EntityFinderDetailsSharedProps & {
-  configuration: EntityFinderDetailsConfiguration
+export type EntityDetailsListProps = EntityDetailsListSharedProps & {
+  configuration: EntityDetailsListDataConfiguration
 }
 
-export const EntityFinderDetails: React.FunctionComponent<EntityFinderDetailsProps> = ({
+export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> = ({
   configuration,
   ...sharedProps
 }) => {
   /**
-   * This component simply uses the configuration prop to determine which configuration component
+   * This component simply uses the data configuration prop to determine which configuration component
    * to use. Each configuration component has its own logic to utilize different Synapse APIs.
    * The configuration components also manage view props that are more tightly-coupled with data,
    * such as pagination and sorting.
+   * 
+   * In the future, if we wanted to reuse this in other contexts (e.g. not selecting entities), we should consider refactoring
+   * to support different 'Row' components, determining the correct one determined at this level (perhaps as a HOC).
    */
 
   const [component, setComponent] = useState(<div></div>)
 
   useDeepCompareEffect(() => {
     const getComponentFromConfiguration = (
-      configuration: EntityFinderDetailsConfiguration,
+      config: EntityDetailsListDataConfiguration,
     ) => {
-      switch (configuration.type) {
-        case EntityFinderDetailsConfigurationType.PARENT_CONTAINER:
+      switch (config.type) {
+        case EntityDetailsListDataConfigurationType.PARENT_CONTAINER:
           return (
             <EntityChildrenDetails
               parentContainerId={
-                configuration.parentContainerParams!.parentContainerId
+                config.parentContainerParams!.parentContainerId
               }
               {...sharedProps}
             />
           )
 
-        case EntityFinderDetailsConfigurationType.HEADER_LIST:
+        case EntityDetailsListDataConfigurationType.HEADER_LIST:
           return (
             <EntityHeaderListDetails
-              entityHeaders={configuration.headerList!}
+              entityHeaders={config.headerList!}
               {...sharedProps}
             />
           )
-        case EntityFinderDetailsConfigurationType.USER_FAVORITES:
+        case EntityDetailsListDataConfigurationType.USER_FAVORITES:
           return <FavoritesDetails {...sharedProps} />
-        case EntityFinderDetailsConfigurationType.ENTITY_SEARCH:
+        case EntityDetailsListDataConfigurationType.ENTITY_SEARCH:
           return (
             <SearchDetails
-              searchQuery={configuration.query!}
+              searchQuery={config.query!}
               {...sharedProps}
             />
           )
 
-        case EntityFinderDetailsConfigurationType.USER_PROJECTS:
+        case EntityDetailsListDataConfigurationType.USER_PROJECTS:
           return (
             <ProjectListDetails
-              projectsParams={configuration.getProjectParams!}
+              projectsParams={config.getProjectParams!}
               {...sharedProps}
             />
           )
@@ -110,7 +113,7 @@ export const EntityFinderDetails: React.FunctionComponent<EntityFinderDetailsPro
         default:
           console.warn(
             'The configuration type does not map to a known view type. No Details view will be rendered. Invalid configuration: ',
-            configuration,
+            config,
           )
           return <div></div>
       }

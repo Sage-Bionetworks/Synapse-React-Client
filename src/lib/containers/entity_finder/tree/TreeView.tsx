@@ -7,9 +7,9 @@ import {
   ProjectHeader,
 } from '../../../utils/synapseTypes'
 import {
-  EntityFinderDetailsConfiguration,
-  EntityFinderDetailsConfigurationType,
-} from '../details/EntityFinderDetails'
+  EntityDetailsListDataConfiguration,
+  EntityDetailsListDataConfigurationType,
+} from '../details/EntityDetailsList'
 import { TreeViewRow } from './TreeViewRow'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
@@ -35,14 +35,15 @@ export type TreeViewProps = {
   showDropdown: boolean
   showFakeRootNode?: boolean // necessary to select root nodes in a details view
   setDetailsViewConfiguration?: (
-    configuration: EntityFinderDetailsConfiguration,
+    configuration: EntityDetailsListDataConfiguration,
   ) => void
 }
 
+// TODO: Support picking one or more entities rather than creating a configuration.
 /**
  * The TreeView displays a user's entities hierarchically, allowing a user to quickly dive into an entity tree.
  *
- * The tree view can be used as a standalone entity picker, or can be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
+ * The tree view currently can only be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
  * @param param0
  */
 export const TreeView: React.FunctionComponent<TreeViewProps> = ({
@@ -51,8 +52,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   setDetailsViewConfiguration = () => {},
   showFakeRootNode = true,
 }) => {
-  const DEFAULT_CONFIGURATION: EntityFinderDetailsConfiguration = {
-    type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
+  const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
+    type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
     parentContainerParams: {
       parentContainerId: initialContainer,
     },
@@ -122,12 +123,12 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       switch (scope) {
         case FinderScope.ALL_PROJECTS:
           setDetailsViewConfiguration({
-            type: EntityFinderDetailsConfigurationType.USER_PROJECTS,
+            type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
           })
           break
         case FinderScope.CREATED_BY_ME:
           setDetailsViewConfiguration({
-            type: EntityFinderDetailsConfigurationType.USER_PROJECTS,
+            type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
             getProjectParams: {
               filter: 'CREATED',
             },
@@ -135,13 +136,13 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           break
         case FinderScope.CURRENT_PROJECT:
           setDetailsViewConfiguration({
-            type: EntityFinderDetailsConfigurationType.HEADER_LIST,
+            type: EntityDetailsListDataConfigurationType.HEADER_LIST,
             headerList: topLevelEntities,
           })
           break
         case FinderScope.FAVORITES:
           setDetailsViewConfiguration({
-            type: EntityFinderDetailsConfigurationType.USER_FAVORITES,
+            type: EntityDetailsListDataConfigurationType.USER_FAVORITES,
             headerList: topLevelEntities,
           })
 
@@ -149,7 +150,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       }
     } else {
       setDetailsViewConfiguration({
-        type: EntityFinderDetailsConfigurationType.PARENT_CONTAINER,
+        type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
         parentContainerParams: {
           parentContainerId: currentContainer,
         },

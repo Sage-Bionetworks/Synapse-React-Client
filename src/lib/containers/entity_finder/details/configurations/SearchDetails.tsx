@@ -2,9 +2,9 @@ import React from 'react'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/useSearch'
 import { Hit, SearchQuery } from '../../../../utils/synapseTypes/Search'
 import { DetailsView } from '../view/DetailsView'
-import { EntityFinderDetailsSharedProps } from './../EntityFinderDetails'
+import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 
-type SearchDetailsProps = EntityFinderDetailsSharedProps & {
+type SearchDetailsProps = EntityDetailsListSharedProps & {
   searchQuery: SearchQuery
 }
 
