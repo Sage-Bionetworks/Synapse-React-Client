@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
+import { SizeMe } from 'react-sizeme'
 import { CSSTransition } from 'react-transition-group'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
@@ -225,7 +226,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               </div>
             </CSSTransition>
             <FontAwesomeIcon
-              style={searchActive ? {} : { width: '0px' }}
+              style={searchActive ? { cursor: 'pointer' } : { width: '0px' }}
               size={'sm'}
               icon={faTimes}
               onClick={() => {
@@ -263,32 +264,42 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         {
           <div style={searchActive ? { display: 'none' } : {}}>
             <div className="EntityViewReflexContainer">
-              <ReflexContainer orientation="vertical" windowResizeAware>
-                <ReflexElement minSize={200} size={350}>
-                  <TreeView
-                    sessionToken={sessionToken}
-                    setDetailsViewConfiguration={setConfigFromTreeView}
-                    showFakeRootNode={true}
-                    showDropdown={true}
-                    initialContainer={initialContainerId}
-                  ></TreeView>
-                </ReflexElement>
-                <ReflexSplitter></ReflexSplitter>
-                <ReflexElement minSize={400}>
-                  {configFromTreeView && (
-                    <EntityDetailsList
-                      sessionToken={sessionToken}
-                      configuration={configFromTreeView}
-                      showVersionSelection={showVersionSelection}
-                      selected={selectedEntities}
-                      includeTypes={showTypes}
-                      selectableTypes={selectableTypes}
-                      selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
-                      toggleSelection={toggleSelection}
-                    />
-                  )}
-                </ReflexElement>
-              </ReflexContainer>
+              <SizeMe>
+                {({ size }) => (
+                  <ReflexContainer
+                    key={(!!size.width).toString()}
+                    orientation="vertical"
+                    windowResizeAware
+                  >
+                    <ReflexElement minSize={200} size={350}>
+                      <TreeView
+                        sessionToken={sessionToken}
+                        setDetailsViewConfiguration={setConfigFromTreeView}
+                        showFakeRootNode={true}
+                        showDropdown={true}
+                        initialContainer={initialContainerId}
+                      ></TreeView>
+                    </ReflexElement>
+                    <ReflexSplitter></ReflexSplitter>
+                    <ReflexElement minSize={400}>
+                      {configFromTreeView && (
+                        <EntityDetailsList
+                          sessionToken={sessionToken}
+                          configuration={configFromTreeView}
+                          showVersionSelection={showVersionSelection}
+                          selected={selectedEntities}
+                          includeTypes={showTypes}
+                          selectableTypes={selectableTypes}
+                          selectColumnType={
+                            selectMultiple ? 'checkbox' : 'radio'
+                          }
+                          toggleSelection={toggleSelection}
+                        />
+                      )}
+                    </ReflexElement>
+                  </ReflexContainer>
+                )}
+              </SizeMe>
             </div>
           </div>
         }

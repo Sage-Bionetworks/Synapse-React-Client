@@ -43,6 +43,28 @@ $-finder-height: 500px;
         }
       }
     }
+
+    // CSSTransition classes
+    .search-active-container-enter {
+      width: 0%;
+    }
+    .search-active-container-enter-active {
+      width: 100%;
+      transition: all 0.5s;
+    }
+    .search-active-container-enter-done {
+      width: 100%;
+    }
+    .search-active-container-exit {
+      width: 100%;
+    }
+    .search-active-container-exit-active {
+      width: 0%;
+      transition: all 0.5s;
+    }
+    .search-active-container-exit-done {
+      width: 0%;
+    }
   }
 
   &__Selected {
@@ -229,25 +251,4 @@ $-finder-height: 500px;
   .ModifiedOnColumn:not(th) {
     border-right: $-border;
   }
-}
-
-.search-active-container-enter {
-  width: 0%;
-}
-.search-active-container-enter-active {
-  width: 100%;
-  transition: all 0.5s;
-}
-.search-active-container-enter-done {
-  width: 100%;
-}
-.search-active-container-exit {
-  width: 100%;
-}
-.search-active-container-exit-active {
-  width: 0%;
-  transition: all 0.5s;
-}
-.search-active-container-exit-done {
-  width: 0%;
 }

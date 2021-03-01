@@ -12742,10 +12742,10 @@ react-query@^3.9.8:
     "@babel/runtime" "^7.5.5"
     match-sorter "^6.0.2"
 
-react-reflex@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/react-reflex/-/react-reflex-3.1.1.tgz#d686d3aae901488d065c8d898a6834a4eb459f4f"
-  integrity sha512-Wj6mvroibNCjWmhovPbl2QphUgi8S1tJlEpsu6wJNgyHgFtPhDhbBj1iqaGB1N1TSUjqJn7hu2J9JcAkuKdIqQ==
+react-reflex@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-reflex/-/react-reflex-4.0.0.tgz#7cebf7ff60086b1a0089e532dd2dee35683f47d9"
+  integrity sha512-q9Om4wrtzrqSlL+m7IIibBw/MObG7DkcHLwQkVvhbT2b1uNSlzDQxoj9cwewA2q4Kb2wkaJnlwPRLs+M8hy5eQ==
   dependencies:
     "@babel/runtime" "^7.0.0"
     lodash.throttle "^4.1.1"
