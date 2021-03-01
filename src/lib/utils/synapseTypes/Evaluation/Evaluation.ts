@@ -1,5 +1,6 @@
 import { SubmissionQuota } from './SubmissionQuota'
 
+/** @deprecated. No replacement. Not used for any logic in backend*/
 export enum EvaluationStatus {
   PLANNED = 'PLANNED',
   OPEN = 'OPEN',
@@ -16,9 +17,10 @@ export type Evaluation = {
   ownerId?: string
   createdOn?: string
   contentSource?: string
-  status?: EvaluationStatus
   submissionInstructionsMessage?: string
   submissionReceiptMessage?: string
+  /** @deprecated. No replacement. Not used for any logic in backend*/
+  status?: EvaluationStatus
   /** @deprecated use REST APIs for EvaluationRound instead */
   quota?: SubmissionQuota
 }
