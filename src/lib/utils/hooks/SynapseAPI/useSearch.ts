@@ -9,8 +9,6 @@ import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { SearchQuery, SearchResults } from '../../synapseTypes/Search'
 
-const DEFAULT_SEARCH_RESULTS_SIZE = 30
-
 export function useSearch(
   query: SearchQuery,
   sessionToken?: string,
