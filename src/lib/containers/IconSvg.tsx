@@ -7,6 +7,7 @@ import {
   Check,
   PhotoCameraOutlined,
   Cached,
+  GetApp,
 } from '@material-ui/icons'
 
 import Chromatin from '../assets/mui_components/Chromatin'
@@ -63,6 +64,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <ArrowForwardIos style={muiSvgStyle} />  
     case 'check':
       return <Check style={muiSvgStyle}></Check>
+    case 'download':
+      return <GetApp style={muiSvgStyle}></GetApp>
     case 'reload':
       return <Cached style={muiSvgStyle}></Cached>
     case 'photoCamera':
