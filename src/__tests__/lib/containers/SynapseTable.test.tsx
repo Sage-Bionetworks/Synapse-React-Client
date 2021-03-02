@@ -351,6 +351,7 @@ describe('basic functionality', () => {
     const DATE_LIST_INDEX = 4
     const BOOLEAN_LIST_INDEX = 5
     const INTEGER_LIST_INDEX = 6
+    const FILEHANDLEID_INDEX = 7
     const MOCKED_STRING = 'MOCKED_VALUE'
     const MOCKED_STRING_LIST = '["MOCKED_VALUE1","MOCKED_VALUE2"]'
     const MOCK_DATE_VALUE = '1581360939000'
@@ -398,6 +399,11 @@ describe('basic functionality', () => {
           name: MOCKED_STRING,
           columnType: EntityColumnType.INTEGER_LIST,
         },
+        {
+          id: MOCKED_STRING,
+          name: MOCKED_STRING,
+          columnType: EntityColumnType.FILEHANDLEID,
+        },
       ],
       queryResult: {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
@@ -440,6 +446,11 @@ describe('basic functionality', () => {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
               columnType: EntityColumnType.INTEGER_LIST,
+            },
+            {
+              id: MOCKED_STRING,
+              name: MOCKED_STRING,
+              columnType: EntityColumnType.FILEHANDLEID,
             },
           ],
           rows: [
@@ -527,6 +538,13 @@ describe('basic functionality', () => {
         EntityColumnType.INTEGER_LIST,
       )
       expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
+
+      const fileHandleId = getColumnIndiciesWithType(
+        mockData,
+        EntityColumnType.FILEHANDLEID,
+      )
+      expect(fileHandleId).toEqual([FILEHANDLEID_INDEX])
+
     })
 
     it('gets unique entities', () => {
@@ -562,6 +580,7 @@ describe('basic functionality', () => {
       ]
       const dateListColumnIndicies: number[] = [DATE_LIST_INDEX]
       const booleanListColumnIndicies: number[] = [BOOLEAN_LIST_INDEX]
+      const fileHandleIdColumnIndicies: number[] = [FILEHANDLEID_INDEX]
       const mockEntityLinkValue: string = 'syn122'
       const mockUserCardValue: string = 'syn123'
       const mockAllAuthenticatedUsersValue: string = 'syn124'
@@ -595,6 +614,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: ENTITYID_INDEX,
@@ -620,6 +640,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: USERID_INDEX,
@@ -650,6 +671,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: USERID_INDEX,
@@ -678,6 +700,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: USERID_INDEX,
@@ -704,6 +727,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: USERID_INDEX,
@@ -736,6 +760,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: USERID_INDEX,
@@ -762,6 +787,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: DATE_INDEX,
@@ -790,6 +816,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: DATE_LIST_INDEX,
@@ -818,6 +845,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: INTEGER_LIST_INDEX,
@@ -845,6 +873,7 @@ describe('basic functionality', () => {
               userColumnIndicies,
               dateColumnIndicies,
               booleanListColumnIndicies,
+              fileHandleIdColumnIndicies,
               dateListColumnIndicies,
               otherListColumnIndicies,
               colIndex: BOOLEAN_LIST_INDEX,
