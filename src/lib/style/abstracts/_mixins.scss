@@ -20,28 +20,6 @@
   #{$property}: calc(#{$expression});
 }
 
-
-/* create classes prefixed with the theme for properties for classes using themify */
-@mixin themify($themes: $themes) {
-  @each $theme, $map in $themes {
-    .theme-#{$theme} & {
-      $theme-map: () !global;
-      @each $key, $submap in $map {
-        $value: map-get(map-get($themes, $theme), '#{$key}');
-        $theme-map: map-merge(
-          $theme-map,
-          (
-            $key: $value,
-          )
-        ) !global;
-      }
-
-      @content;
-      $theme-map: null !global;
-    }
-  }
-}
-
 /*
   @param $color string e.g. #eee or red
   @param $width unit e.g. 15%

@@ -31,10 +31,7 @@
       height: $item-height;
       line-height: $item-height;
       text-align: left;
-      @include SrcMixins.themify(SrcVars.$themes) {
-        color: themed('action-color');
-      }
-
+      color: SrcVars.$primary-action-color;
       background-color: SrcVars.$gray-dark;
       border-left-color: SrcVars.$gray-dark;
 
@@ -64,9 +61,7 @@
     }
 
     .btn-link {
-      @include SrcMixins.themify(SrcVars.$themes) {
-        color: themed('action-color');
-      }
+      color: SrcVars.$primary-action-color;
       font-weight: bold;
       padding: 0;
       margin: 0;
@@ -80,9 +75,7 @@
     }
 
     .fa-check-circle {
-      @include SrcMixins.themify(SrcVars.$themes) {
-        color: themed('action-color');
-      }
+      color: SrcVars.$primary-action-color;
     }
 
     .fa-circle {
@@ -93,9 +86,7 @@
 
     .static .fa-circle {
       border: 1px solid SrcVars.$secondary-action-color;
-      @include SrcMixins.themify(SrcVars.$themes) {
-        color: themed('action-color');
-      }
+      color: SrcVars.$primary-action-color;
     }
 
     .fa-exclamation-circle {
