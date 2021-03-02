@@ -18,9 +18,7 @@
     }
     &.submitted {
       div {
-        @include SrcMixins.themify(SrcVariables.$themes) {
-          color: themed('action-color');
-        }
+        color: SrcVariables.$primary-action-color;
         font-weight: bold;
         text-transform: uppercase;
       }
@@ -39,9 +37,7 @@
   .nav-link,
   a.nav-link,
   .nav-link > a {
-    @include SrcMixins.themify(SrcVariables.$themes) {
-      color: themed('action-color');
-    }
+    color: SrcVariables.$primary-action-color;
     font-weight: bold;
     cursor: pointer;
   }
@@ -50,16 +46,12 @@
   }
 
   .btn-action {
-    @include SrcMixins.themify(SrcVariables.$themes) {
-      background-color: themed('action-color');
-    }
+    background-color: SrcVariables.$primary-action-color;    
     color: #fff;
   }
   .btn-action:hover,
   .btn-action:focus {
-    @include SrcMixins.themify(SrcVariables.$themes) {
-      background-color: themed('action-color');
-    }
+    background-color: SrcVariables.$primary-action-color;
     @include SrcMixins.box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
     color: #fff;
   }
@@ -98,9 +90,7 @@
         '#{SrcVariables.$space-unit} * #{3}'
       );
       button.btn {
-        @include SrcMixins.themify(SrcVariables.$themes) {
-          color: themed('action-color');
-        }
+        color: SrcVariables.$primary-action-color;        
       }
       .view-more {
         text-align: right;
@@ -130,19 +120,14 @@
           vertical-align: middle;
         }
         a {
-          @include SrcMixins.themify(SrcVariables.$themes) {
-            color: themed('action-color');
-          }
+          color: SrcVariables.$primary-action-color;          
         }
       }
     }
 
     .btn-large {
       color: #fff;
-      @include SrcMixins.themify(SrcVariables.$themes) {
-        background-color: themed('action-color');
-      }
-
+      background-color: SrcVariables.$primary-action-color;
       text-transform: uppercase;
       padding: 0.75rem 1.5rem;
     }
@@ -178,9 +163,7 @@
   }
 
   .notification-area {
-    @include SrcMixins.themify(SrcVariables.$themes) {
-      color: themed('action-color');
-    }
+    color: SrcVariables.$primary-action-color;
     font-style: italic;
     margin-bottom: SrcVariables.$space-unit;
   }
@@ -235,9 +218,7 @@
     @include SrcMixins.calc(line-height, '#{SrcVariables.$space-unit} * 2');
     @include SrcMixins.calc(height, '#{SrcVariables.$space-unit} * 2');
     button.btn-link {
-      @include SrcMixins.themify(SrcVariables.$themes) {
-        color: themed('action-color');
-      }
+      color: SrcVariables.$primary-action-color;
       font-weight: 700;
       font-style: normal;
       text-transform: uppercase;
@@ -264,9 +245,7 @@
 
   input[type='checkbox']:checked + label::before,
   input[type='checkbox']:checked + span::before {
-    @include SrcMixins.themify(SrcVariables.$themes) {
-      color: themed('action-color');
-    }
+    color: SrcVariables.$primary-action-color;
   }
 
   .has-error .form-control {
@@ -351,9 +330,7 @@
   .radio input[type='radio']:checked + span::before,
   .radio-inline input[type='radio']:checked + label::before,
   .radio-inline input[type='radio']:checked + span::before {
-    @include SrcMixins.themify(SrcVariables.$themes) {
-      background: themed('action-color');
-    }
+    background: SrcVariables.$primary-action-color;
     vertical-align: middle;
     width: 0.7rem;
     height: 0.7rem;
@@ -401,9 +378,7 @@
     button,
     button:hover {
       background-color: transparent;
-      @include SrcMixins.themify(SrcVariables.$themes) {
-        color: themed('action-color');
-      }
+      color: SrcVariables.$primary-action-color;
       border: none;
       box-shadow: none;
       cursor: pointer;
@@ -412,9 +387,7 @@
     }
 
     i.glyphicon {
-      @include SrcMixins.themify(SrcVariables.$themes) {
-        background: themed('action-color');
-      }
+      background: SrcVariables.$primary-action-color;
       color: white;
       font-weight: 100;
       margin-right: 1rem;
@@ -434,9 +407,7 @@
     width: 100%;
     button.btn-info.btn-add {
       background-color: transparent;
-      @include SrcMixins.themify(SrcVariables.$themes) {
-        color: themed('action-color');
-      }
+      color: SrcVariables.$primary-action-color;
       border: 1px solid SrcVariables.$gray-dark;
       padding: 2rem 3.3rem;
       text-align: right;
@@ -448,9 +419,7 @@
     }
 
     i.glyphicon {
-      @include SrcMixins.themify(SrcVariables.$themes) {
-        background-color: themed('action-color');
-      }
+      background-color: SrcVariables.$primary-action-color;
       color: white;
       font-weight: 100;
       margin-right: 1rem;
@@ -474,9 +443,7 @@
     vertical-align: middle;
     margin: 0 5px;
     .react-switch-bg {
-      @include SrcMixins.themify(SrcVariables.$themes) {
-        background-color: themed('action-color') !important;
-      }
+      background-color: SrcVariables.$primary-action-color;      
     }
   }
 
@@ -523,10 +490,8 @@
 .btn-success,
 .btn-success:active,
 .btn-success:focus {
-  @include SrcMixins.themify(SrcVariables.$themes) {
-    background-color: themed('action-color');
-    border-color: themed('action-color');
-  }
+  background-color: SrcVariables.$primary-action-color;
+  border-color: SrcVariables.$primary-action-color;  
 }
 
 @media print {
