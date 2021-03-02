@@ -1,5 +1,6 @@
 const path = require('path')
 const pkg = require('./package.json');
+const homePageComponents = ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx', 'src/lib/containers/**/UserCardListRotate.tsx', 'src/lib/containers/**/RssFeedCards.tsx', 'src/lib/containers/**/TableFeedCards.tsx', 'src/lib/containers/**/UpsetPlot.tsx', 'src/lib/containers/**/MarkdownSynapse.tsx']
 const ignoreComponents = ['**/*.Mobile.tsx','**/*.Desktop.tsx']
 
 module.exports = {
@@ -24,14 +25,14 @@ module.exports = {
             name: 'Home Page',
             //   content: 'docs/homepage.md'
             description: 'Collection of components used in portal home pages',
-            components: ['src/lib/containers/home_page/**/[A-Z]*.tsx', 'src/lib/containers/widgets/themes-plot/**/ThemesPlot.tsx', 'src/lib/containers/**/UserCardListRotate.tsx', 'src/lib/containers/**/RssFeedCards.tsx', 'src/lib/containers/**/TableFeedCards.tsx', 'src/lib/containers/**/UpsetPlot.tsx', 'src/lib/containers/**/MarkdownSynapse.tsx'],
+            components: homePageComponents,
             ignore: ignoreComponents
         },        
         {
-            name: 'All Components',
+            name: 'Other Components',
             //   content: 'docs/all.md'
             components: 'src/lib/containers/**/[A-Z]*.tsx',
-            ignore: ignoreComponents
+            ignore: [...ignoreComponents, ...homePageComponents]
         },
         {
             name: 'Demos and non-components',
