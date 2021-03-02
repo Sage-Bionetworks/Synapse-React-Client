@@ -14,6 +14,7 @@ import {
   getEntity
 } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
+import { useInView } from 'react-intersection-observer'
 
 export type DirectFileDownloadProps = {
   token?: string
@@ -27,6 +28,7 @@ export type DirectFileDownloadProps = {
 const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props) => {
 
   const {token, associatedObjectId, entityVersionNumber, associatedObjectType, fileHandleId, displayFileName} = props
+  const { ref, inView } = useInView()
   const [isExternalFile, setIsExternalFile] = useState<boolean>(false)
   const [hasFileAccess, setHasFileAccess] = useState<boolean>(false)
   const [fileEntity, setFileEntity] = useState<FileEntity>()
@@ -35,19 +37,19 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
   let mounted:boolean = true
 
   useEffect( () => {
-    if (mounted) {
+    if (mounted && inView) {
       getFileEntityFileHandle()
     }
     return () => {
       mounted = false
     }
-  }, [token])
+  }, [token, inView])
 
   const getDownloadLink = async () => {
     let preSignedURL
     try {
       if (associatedObjectType === FileHandleAssociateType.TableEntity) {
-        const files = await getTableEntityFileHandle()
+        const files = await getTableEntityFileHandle(true)
         preSignedURL = files.requestedFiles[0].preSignedURL!
       } else {
         const file = await getFileResult(
@@ -78,7 +80,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
     }
   }
 
-  const getTableEntityFileHandle = () => {
+  const getTableEntityFileHandle = (includePreSignedURLs:boolean = false) => {
     const fileHandleAssociationList: FileHandleAssociation[] = [
       {
         associateObjectId: associatedObjectId!,
@@ -88,7 +90,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
     ]
     const batchFileRequest: BatchFileRequest = {
       includeFileHandles: true,
-      includePreSignedURLs: true,
+      includePreSignedURLs: includePreSignedURLs,
       includePreviewPreSignedURLs: false,
       requestedFiles: fileHandleAssociationList,
     }
@@ -146,7 +148,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
   }
 
   return (
-    <span className="SRC-primary-text-color">{getIcon()}</span>
+    <span ref={ref} className="SRC-primary-text-color">{getIcon()}</span>
   )
 }
 
