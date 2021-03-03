@@ -5,7 +5,7 @@ export type CheckboxProps = {
   id: string
   checked?: boolean
   className?: string
-  onChange: Function
+  onChange: (newValue: boolean) => void
   isSelectAll?: boolean
   children?: React.ReactChild
 }
