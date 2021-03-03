@@ -12,7 +12,7 @@
   .error-page-content {
     display: grid;
     grid-auto-flow: column;
-    grid-template-columns: 40% auto;
+    grid-template-columns: 33% auto;
     grid-gap: 10%;
     max-width: 80%;
     width: 100%;
@@ -29,10 +29,6 @@
     margin-bottom: 20px;
     line-height: 36px;
   }
-  hr {
-    border: 1px solid #eee;
-    margin: 36px 0;
-  }
   ul {
     padding: 0;
     list-style: none;
@@ -40,6 +36,12 @@
   li {
     display: inline-block;
     margin-right: 40px;
+  }
+  p {
+    padding: 0 0 34px;
+    margin-bottom: 34px;
+    border-bottom: 1px solid #DCDCDC;
+    display: inline-block;
   }
   svg {
     max-width: 344px;

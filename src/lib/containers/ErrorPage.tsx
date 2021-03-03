@@ -32,11 +32,10 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = (props) => {
         <div className={"error-page-message"}>
           <h2>{title}</h2>
           <p>{message}</p>
-          <hr />
           <ul>
             <li><a href={"https://www.synapse.org/"}>Synapse Home</a></li>
             <li><a href={"mailto:synapseInfo@sagebionetworks.org"}>Contact Us</a></li>
-            <li><a href={""}>Help</a></li>
+            <li><a href={"http://status.synapse.org/"}>Status</a></li>
           </ul>
         </div>
       </div>
