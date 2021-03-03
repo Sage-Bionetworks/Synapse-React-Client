@@ -78,8 +78,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
               title: 'Full Name',
               subTitle: 'Short Description',
               icon: 'Program',
-            }}
-            backgroundColor={'#5960a5'}
+            }}            
             isHeader={true}
             iconOptions={iconOptions}
           />
