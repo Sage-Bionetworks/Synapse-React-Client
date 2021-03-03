@@ -77,8 +77,7 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
-  facetAliases?: {}
-  backgroundColor?: string
+  facetAliases?: {}  
   rgbIndex?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
