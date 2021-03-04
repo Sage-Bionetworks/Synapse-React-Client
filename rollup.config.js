@@ -10,13 +10,21 @@ import { terser } from 'rollup-plugin-terser'
 import nodePolyfills from 'rollup-plugin-node-polyfills'
 import svgr from '@svgr/rollup'
 import sass from 'sass'
+import analyze from 'rollup-plugin-analyzer'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
-
+const limitBytes = 4e6 // 4MB error
+const onAnalysis = ({ bundleSize }) => {
+  if (bundleSize < limitBytes) return
+  console.log(`Bundle size exceeds ${limitBytes} bytes: ${bundleSize} bytes`)
+  return process.exit(1)
+}
 export default {
   input: 'src/lib/rollup.index.ts',
   external: [
     'react',
+    'react-dom',
+    'sanitize-html',
     'prop-types',
     'react-router-dom',
     'react-measure',
@@ -105,10 +113,12 @@ export default {
     ]),
     // minify the bundle
     terser(),
+    analyze({ onAnalysis, summaryOnly: true, limit: 10 }),
   ],
   output: {
     globals: {
       react: 'React',
+      'react-dom': 'ReactDOM',      
       'react-router-dom': 'ReactRouterDom',
       'react-transition-group': 'ReactTransitionGroup',
       'react-bootstrap': 'ReactBootstrap',
