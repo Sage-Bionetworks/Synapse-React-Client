@@ -22,11 +22,7 @@ describe('Functionality', () => {
     jest.spyOn(console, 'error').mockImplementation(() => {})
 
     try {
-      expect(mount(<BasicComponentWithUseQuery />)).toThrow(
-        expect.stringContaining(
-          'No QueryClient set, use QueryClientProvider to set one',
-        ),
-      )
+      expect(mount(<BasicComponentWithUseQuery />)).toThrow()
     } catch (e) {
       // Do nothing
     }
