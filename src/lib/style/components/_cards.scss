@@ -48,6 +48,7 @@ $text-color-lighter: #898989;
     color: white;
     margin-top: 0px;
     margin-bottom: 0px;
+    background: SRC.$primary-action-color;
     
     @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
       padding-top: 40px;

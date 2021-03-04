@@ -1,6 +1,6 @@
 export type ProjectHeaderList = {
   results: Array<ProjectHeader>
-  nextPageToken: string
+  nextPageToken?: string | null
 }
 
 export type ProjectHeader = {
