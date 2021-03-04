@@ -10,6 +10,7 @@ import { getColorPalette } from '../../../containers/ColorGradient'
 import { CardLink } from '../../../containers/CardContainerLogic'
 import { IconOptions } from '../../../containers/GenericCard'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
+import { withQueryClientProvider } from '../../../utils/hooks/SynapseAPI/QueryClientProviderWrapper'
 
 export type ProgramsProps = {
   entityId: string
@@ -33,73 +34,80 @@ export type ProgramsDataProps = {
   iconOptions: IconOptions
 }
 
-export default function Programs(props: ProgramsProps) {
-  const {
-    entityId,
-    titleColumnName,
-    linkColumnName,
-    summaryColumnName,
-    iconColumnName,
-    linkConfig,
-    token,
-    rgbIndex,
-    iconOptions,
-  } = props
-  const showDesktop = useShowDesktop()
-  const color: string = getColorPalette(rgbIndex ?? 0, 2).colorPalette[0]
-  const queryBundleRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId,
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    query: {
-      sql: `select * from ${entityId}`,
-    },
-  }
-  const { queryResultBundle } = useGetQueryResultBundle({
-    token,
-    queryBundleRequest,
-  })
+export const Programs: React.FC<ProgramsProps> = withQueryClientProvider(
+  (props: ProgramsProps) => {
+    const {
+      entityId,
+      titleColumnName,
+      linkColumnName,
+      summaryColumnName,
+      iconColumnName,
+      linkConfig,
+      token,
+      rgbIndex,
+      iconOptions,
+    } = props
+    const showDesktop = useShowDesktop()
+    const color: string = getColorPalette(rgbIndex ?? 0, 2).colorPalette[0]
+    const queryBundleRequest: QueryBundleRequest = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      entityId,
+      partMask:
+        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      query: {
+        sql: `select * from ${entityId}`,
+      },
+    }
+    const { data: queryResultBundle } = useGetQueryResultBundle(
+      queryBundleRequest,
+      token,
+    )
 
-  const titleColumnIndex = getFieldIndex(titleColumnName, queryResultBundle)
-  const summaryColumnIndex = getFieldIndex(summaryColumnName, queryResultBundle)
-  const linkColumnIndex = getFieldIndex(linkColumnName, queryResultBundle)
-  const iconColumnIndex = getFieldIndex(iconColumnName, queryResultBundle)
-  const matchColIndex = getFieldIndex(
-    linkConfig.matchColumnName,
-    queryResultBundle,
-  )
-  const baseExploreUrl = `/${linkConfig.baseURL}?${linkConfig.URLColumnName}=`
-  return (
-    <div
-      className={`bootstrap-4-backport Programs${
-        showDesktop ? '__Desktop' : ''
-      }`}
-    >
-      {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
-        const values = el.values
-        const title = values[titleColumnIndex]
-        const summary = values[summaryColumnIndex]
-        const link = values[linkColumnIndex]
-        const iconValue = values[iconColumnIndex]
-        const matchValue = values[matchColIndex]
+    const titleColumnIndex = getFieldIndex(titleColumnName, queryResultBundle)
+    const summaryColumnIndex = getFieldIndex(
+      summaryColumnName,
+      queryResultBundle,
+    )
+    const linkColumnIndex = getFieldIndex(linkColumnName, queryResultBundle)
+    const iconColumnIndex = getFieldIndex(iconColumnName, queryResultBundle)
+    const matchColIndex = getFieldIndex(
+      linkConfig.matchColumnName,
+      queryResultBundle,
+    )
+    const baseExploreUrl = `/${linkConfig.baseURL}?${linkConfig.URLColumnName}=`
+    return (
+      <div
+        className={`bootstrap-4-backport Programs${
+          showDesktop ? '__Desktop' : ''
+        }`}
+      >
+        {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
+          const values = el.values
+          const title = values[titleColumnIndex]
+          const summary = values[summaryColumnIndex]
+          const link = values[linkColumnIndex]
+          const iconValue = values[iconColumnIndex]
+          const matchValue = values[matchColIndex]
 
-        const ProgramsDataProps: ProgramsDataProps = {
-          title,
-          summary,
-          link,
-          color,
-          exploreLink: `${baseExploreUrl}${matchValue}`,
-          iconValue,
-          iconOptions,
-        }
-        return showDesktop ? (
-          <ProgramsDesktop {...ProgramsDataProps} />
-        ) : (
-          <ProgramsMobile {...ProgramsDataProps} />
-        )
-      })}
-    </div>
-  )
-}
+          const ProgramsDataProps: ProgramsDataProps = {
+            title,
+            summary,
+            link,
+            color,
+            exploreLink: `${baseExploreUrl}${matchValue}`,
+            iconValue,
+            iconOptions,
+          }
+          return showDesktop ? (
+            <ProgramsDesktop {...ProgramsDataProps} />
+          ) : (
+            <ProgramsMobile {...ProgramsDataProps} />
+          )
+        })}
+      </div>
+    )
+  },
+)
+
+export default Programs

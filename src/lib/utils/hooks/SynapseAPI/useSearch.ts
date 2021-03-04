@@ -1,4 +1,5 @@
 import {
+  QueryFunctionContext,
   QueryOptions,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -7,8 +8,6 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { SearchQuery, SearchResults } from '../../synapseTypes/Search'
-
-const DEFAULT_SEARCH_RESULTS_SIZE = 30
 
 export function useSearch(
   query: SearchQuery,
@@ -33,21 +32,19 @@ export function useSearchInfinite(
 ) {
   return useInfiniteQuery<SearchResults, SynapseClientError>(
     ['search', sessionToken, query],
-    async context => {
-      query.size = query.size ?? DEFAULT_SEARCH_RESULTS_SIZE
-      return await SynapseClient.searchEntities(
+    async (context: QueryFunctionContext) => {
+      return SynapseClient.searchEntities(
         { ...query, start: context.pageParam },
         sessionToken,
       )
     },
     {
       ...options,
-      getNextPageParam: page => {
-        query.size = query.size ?? DEFAULT_SEARCH_RESULTS_SIZE
-        if (page.start + query.size < page.found) {
-          return page.start + (query.size ?? DEFAULT_SEARCH_RESULTS_SIZE)
-        } else {
+      getNextPageParam: prevPage => {
+        if (prevPage.start + prevPage.hits.length === prevPage.found) {
           return null
+        } else {
+          return prevPage.start + prevPage.hits.length
         }
       },
     },
