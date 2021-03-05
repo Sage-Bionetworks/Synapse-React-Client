@@ -2,13 +2,11 @@ import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import MarkdownSynapse from './MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
-import getColorPalette from './ColorGradient'
 
 export type IconOptions = {
   [index: string]: string
 }
-export type HeaderCardProps = {
-  backgroundColor?: string
+export type HeaderCardProps = {  
   rgbIndex?: number
   type: string
   title: string
@@ -28,7 +26,6 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   title,
   subTitle,
   description,
-  backgroundColor,
   values,
   secondaryLabelLimit,
   isAlignToLeftNav,
@@ -65,16 +62,8 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
     }
   })
 
-  const backgroundColorUsed =
-    rgbIndex !== undefined
-      ? getColorPalette(rgbIndex, 1).colorPalette[0]
-      : backgroundColor
-  const style: React.CSSProperties = {
-    background: backgroundColorUsed,
-  }
   return (
-    <div
-      style={style}
+    <div      
       className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}

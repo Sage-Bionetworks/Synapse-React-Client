@@ -51,8 +51,7 @@ export type GenericCardProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   facetAliases?: {}
-  iconOptions?: IconOptions
-  backgroundColor?: string
+  iconOptions?: IconOptions  
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   schema: any
@@ -341,8 +340,7 @@ export default class GenericCard extends React.Component<
       schema,
       data,
       genericCardSchema,
-      secondaryLabelLimit,
-      backgroundColor,
+      secondaryLabelLimit,      
       selectColumns,
       columnModels,
       iconOptions,
@@ -420,8 +418,7 @@ export default class GenericCard extends React.Component<
 
     const showFooter = values.length > 0
 
-    const style: React.CSSProperties = {
-      background: backgroundColor,
+    const style: React.CSSProperties = {      
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
@@ -446,8 +443,7 @@ export default class GenericCard extends React.Component<
         <HeaderCard
           descriptionConfig={descriptionConfig}
           title={title}
-          subTitle={subTitle}
-          backgroundColor={backgroundColor}
+          subTitle={subTitle}          
           description={description}
           type={type}
           icon={icon}

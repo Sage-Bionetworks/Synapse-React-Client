@@ -4,7 +4,7 @@ import SignInButton from './SignInButton'
 import { Alert } from 'react-bootstrap'
 type ErrorProps = {
   token?: string
-  error?: string | Error | SynapseClientError
+  error?: string | Error | SynapseClientError | null
 }
 
 function isSynapseClientError(
