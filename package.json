@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "1.15.77",
+  "version": "1.15.78",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -138,6 +138,7 @@
     "prettier": "^2.1.2",
     "react-styleguidist": "^11.1.2",
     "rollup": "^2.39.0",
+    "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-postprocess": "^1.0.2",
     "rollup-plugin-scss": "^2.6.1",
