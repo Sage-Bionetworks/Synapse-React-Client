@@ -13,10 +13,10 @@ import sass from 'sass'
 import analyze from 'rollup-plugin-analyzer'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
-const limitBytes = 4e6 // 4MB error
+const maxBytes = 4e6 // if > 4MB total, then error
 const onAnalysis = ({ bundleSize }) => {
-  if (bundleSize < limitBytes) return
-  console.log(`Bundle size exceeds ${limitBytes} bytes: ${bundleSize} bytes`)
+  if (bundleSize < maxBytes) return
+  console.log(`Bundle size exceeds ${maxBytes} bytes: ${bundleSize} bytes`)
   return process.exit(1)
 }
 export default {
@@ -118,7 +118,7 @@ export default {
   output: {
     globals: {
       react: 'React',
-      'react-dom': 'ReactDOM',      
+      'react-dom': 'ReactDOM',
       'react-router-dom': 'ReactRouterDom',
       'react-transition-group': 'ReactTransitionGroup',
       'react-bootstrap': 'ReactBootstrap',
@@ -142,7 +142,7 @@ export default {
       markdownitInlineComments: 'markdownitInlineComments',
       markdownitBr: 'markdownitBr',
       markdownitMath: 'markdownitMath',
-      sanitizeHtml: 'sanitizeHtml',
+      'sanitize-html': 'sanitizeHtml',
       'prop-types': 'PropTypes',
       'sql-parser': 'sqlParser',
       'universal-cookie': 'UniversalCookie',
