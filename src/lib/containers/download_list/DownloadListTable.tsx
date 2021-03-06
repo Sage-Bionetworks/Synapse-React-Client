@@ -125,31 +125,31 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
     try {
       setIsLoading(true)
-      const downloadList = await getDownloadList(token)
-      const { filesToDownload } = downloadList
-      if (filesToDownload.length === 0) {
+      const currentDownloadList: DownloadList = await getDownloadList(token)
+      const { filesToDownload: currentFilesToDownload } = currentDownloadList
+      if (currentFilesToDownload.length === 0) {
         setData({
-          downloadList,
+          downloadList: currentDownloadList,
         })
         return
       }
       const batchFileRequest: BatchFileRequest = {
-        requestedFiles: filesToDownload,
+        requestedFiles: currentFilesToDownload,
         includeFileHandles: true,
         includePreSignedURLs: false,
         includePreviewPreSignedURLs: false,
       }
       // batch file result gives FilesHandle for the files the user can download
       // which has additional metadata - createdBy, numBytes, etc.
-      const batchFileResult = await getFiles(batchFileRequest, token)
+      const currentBatchFileResult:BatchFileResult = await getFiles(batchFileRequest, token)
 
       // Only make entity header calls to the files that the user doesn't have access to,
       // which can be determined by whether the batchFileResult has a failure code for the
       // corresponding download list item
-      const referenceCall: Reference[] = filesToDownload
+      const referenceCall: Reference[] = currentFilesToDownload
         .filter(el => {
           return (
-            batchFileResult.requestedFiles.find(
+            currentBatchFileResult.requestedFiles.find(
               batchFile => batchFile.fileHandleId === el.fileHandleId,
             )!.failureCode !== undefined
           )
@@ -159,11 +159,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         })
       // entity header is used to get the names of the files that the user
       // doesn't have access to
-      const references = await getEntityHeaders(referenceCall, token)
+      const currentReferences = await getEntityHeaders(referenceCall, token)
       setData({
-        references,
-        batchFileResult,
-        downloadList,
+        references: currentReferences,
+        batchFileResult: currentBatchFileResult,
+        downloadList: currentDownloadList,
       })
     } catch (e) {
       console.error('Error in DownloadList API call : ', e)
@@ -208,10 +208,10 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
     setFileBeingDeleted(fileHandleId)
     try {
-      const downloadList = await deleteDownloadListFiles(list, token)
+      const currentDownloadList:DownloadList = await deleteDownloadListFiles(list, token)
       // The current references and batchFileResult can be kept because the download
       // list drives the view, so the stale values in those two won't be viewed.
-      setData({ downloadList, references, batchFileResult })
+      setData({ downloadList: currentDownloadList, references, batchFileResult })
       listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on delete from download list', err)
@@ -233,9 +233,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         isDescending,
       })
 
-      const filesToDownload = downloadList?.filesToDownload ?? []
+      const currentFilesToDownload:FileHandleAssociation[] = downloadList?.filesToDownload ?? []
 
-      filesToDownload.sort((itemA, itemB) => {
+      currentFilesToDownload.sort((itemA, itemB) => {
         return sortDownLoadList(itemA, itemB, column, isDescending)
       })
       setData({
