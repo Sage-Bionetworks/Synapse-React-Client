@@ -143,6 +143,10 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 sessionToken={sessionToken}
                 entityHeader={entity}
                 appearance={determineRowAppearance(entity)}
+                selectedVersion={
+                  selected.find(e => e.targetId === entity.id)
+                    ?.targetVersionNumber
+                }
                 showVersionColumn={showVersionSelection}
                 selectButtonType={selectColumnType}
                 toggleSelection={toggleSelection}

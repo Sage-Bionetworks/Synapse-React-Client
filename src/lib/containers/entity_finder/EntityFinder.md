@@ -18,7 +18,7 @@
 />
 ```
 
-### TODO:
+### Work in progress
 
 * Iconography for tables, views 🟡 (Update to icons in mockup? Should probably try to change in SWC as well)
 * Error Handling ❌

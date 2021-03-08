@@ -27,12 +27,13 @@ export type DetailsViewRowAppearance =
   | 'disabled'
   | 'hidden'
 
-type DetailsViewRowProps = {
+export type DetailsViewRowProps = {
   sessionToken: string
   entityHeader: EntityHeader | ProjectHeader | Hit
   appearance: DetailsViewRowAppearance
   showVersionColumn: boolean
   selectButtonType: 'checkbox' | 'radio' | 'none'
+  selectedVersion?: number
   toggleSelection: (entity: Reference) => void
 }
 
@@ -42,6 +43,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   appearance,
   showVersionColumn,
   selectButtonType,
+  selectedVersion,
   toggleSelection,
 }) => {
   const isSelected = appearance === 'selected'
@@ -50,7 +52,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
 
   const [versions, setVersions] = useState<VersionInfo[]>()
   const [currentSelectedVersion, setCurrentSelectedVersion] = useState<number>(
-    -1,
+    selectedVersion ?? -1,
   )
 
   // We won't load the entity bundle unless the row is visible
@@ -93,10 +95,10 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   return (
     <tr
       ref={ref}
-      className={`EntityFinderDetailsView__Row${
-        isSelected ? ' EntityFinderDetailsView__Row__Selected' : ''
-      }${isDisabled ? ' EntityFinderDetailsView__Row__Disabled' : ''}`}
-      style={isHidden ? { display: 'none' } : {}}
+      aria-selected={isSelected}
+      aria-disabled={isDisabled}
+      aria-hidden={isHidden}
+      className="EntityFinderDetailsView__Row"
       onClick={() => {
         if (!isDisabled) {
           toggleSelection({
@@ -110,7 +112,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       }}
     >
       {selectButtonType !== 'none' && (
-        <td className="IsSelectedColumn">
+        <td className="IsSelectedColumn" aria-label="is-selected">
           {!isDisabled && selectButtonType === 'checkbox' && (
             <Checkbox
               label=""
@@ -153,12 +155,13 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         {bundle && formatDate(moment(bundle.entity!.modifiedOn))}
       </td>
       {showVersionColumn && (
-        <td className="VersionColumn">
+        <td className="VersionColumn" aria-label="version">
           {isSelected &&
             isVersionableEntity &&
             versions &&
             versions.length > 0 && (
               <Form.Control
+                role="listbox"
                 size="sm"
                 as="select"
                 value={currentSelectedVersion}
@@ -175,10 +178,9 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
                   })
                 }}
               >
-                <option value={-1}>
-                  No version (always reference latest version)
-                </option>
+                <option value={-1}>Always Latest Version</option>
                 {versions?.map((version, index) => {
+                  console.log('mapping versions')
                   return (
                     <option
                       key={version.versionNumber}
