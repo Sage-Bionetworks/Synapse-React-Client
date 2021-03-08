@@ -17,6 +17,7 @@ import ProjectViewCarousel from './containers/home_page/project_view_carousel/Pr
 import { SynapseHomepage } from './containers/SynapseHomepage'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
+import ErrorPage from './containers/ErrorPage'
 
 const SynapseComponents = {
   Login,
@@ -35,6 +36,7 @@ const SynapseComponents = {
   ProjectViewCarousel,
   SynapseHomepage,
   EntityFinder,
+  ErrorPage,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient }
