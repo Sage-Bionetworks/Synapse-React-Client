@@ -88,6 +88,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       sort &&
       setSort && (
         <SortIcon
+          role="button"
           style={{ height: '20px' }}
           active={sort.sortBy === columnSortBy}
           direction={
@@ -121,36 +122,30 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             {showSelectColumn && <th className="IsSelectedColumn" />}
             <th className="EntityIconColumn" />
             <th className="NameColumn">
-              <div
-                className="ColumnHeaderContent"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
+              <div>
                 <span>Name</span>
                 <span>{showInteractiveSortIcon(SortBy.NAME)}</span>
               </div>
             </th>
             <th className="AccessColumn"></th>
             <th className="IdColumn">
-              <div className="ColumnHeaderContent">ID</div>
+              <div>ID</div>
             </th>
             <th className="CreatedOnColumn">
-              <div className="ColumnHeaderContent">
+              <div>
                 <span>Created On</span>
                 <span>{showInteractiveSortIcon(SortBy.CREATED_ON)}</span>
               </div>
             </th>
             <th className="ModifiedOnColumn">
-              <div className="ColumnHeaderContent">
+              <div>
                 <span>Modified On</span>
                 <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
               </div>
             </th>
             {showVersionSelection && (
               <th className="VersionColumn">
-                <div className="ColumnHeaderContent">Version</div>
+                <div>Version</div>
               </th>
             )}
           </tr>

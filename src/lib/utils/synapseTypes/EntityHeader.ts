@@ -1,8 +1,10 @@
+import { ConcreteEntityType } from './ConcreteEntityType'
+
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityHeader.html
 export type EntityHeader = {
   name: string //	The name of the entity
   id: string //	The id of the entity
-  type: string //	The type of the entity
+  type: ConcreteEntityType //	The type of the entity
   versionNumber: number //	The version number of the entity
   versionLabel: string //	The user defined version label of the entity
   benefactorId: number //	The ID of the entity that this Entity's ACL is inherited from.
