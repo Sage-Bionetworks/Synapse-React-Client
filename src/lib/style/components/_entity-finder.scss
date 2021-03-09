@@ -143,13 +143,30 @@ $-finder-height: 500px;
 .EntityFinderDetailsView {
   height: $-finder-height;
   border: $-border;
-  width: fill-container;
-  &__HeaderRow {
-    height: $-header-height;
-    font-weight: bold;
-    padding: 16px 10px;
-    border-bottom: $-border;
-    // boxShadow: '0 3px 10px rgba(93, 105, 171, 0.1)',
+
+  table {
+    position: relative;
+    border-collapse: separate;
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    th {
+      height: $-header-height;
+      font-weight: bold;
+      border-bottom: $-border;
+      border-top: 1px solid white;
+
+      background-color: white;
+
+      box-shadow: SRC.$box-shadow-soft;
+    }
+
+    th > div,
+    td > div {
+      margin: 5px;
+    }
   }
   &__Row {
     border-bottom: 1px solid #f9f9f9;
@@ -201,15 +218,13 @@ $-finder-height: 500px;
   .CreatedOnColumn,
   .ModifiedOnColumn,
   .VersionColumn {
-    padding: 5px 12px;
-    padding-left: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
   .IsSelectedColumn {
-    width: 15px;
+    text-align: center;
     .radio,
     .checkbox {
       margin: 7px 0px 2px 5px;
@@ -218,18 +233,15 @@ $-finder-height: 500px;
   }
 
   .EntityIconColumn {
-    padding-left: 2px;
-    padding-right: 2px;
     text-align: center;
-    width: 10px;
     svg {
       fill: currentColor;
     }
   }
 
   .NameColumn {
-    width: 40%;
-    max-width: 300px;
+    min-width: 250px;
+    max-width: 250px;
   }
   .AccessColumn {
     width: 40px;
@@ -246,13 +258,5 @@ $-finder-height: 500px;
   .VersionColumn {
     min-width: 150px;
     width: 20%;
-  }
-
-  .NameColumn:not(th),
-  .AccessColumn:not(th),
-  .IdColumn:not(th),
-  .CreatedOnColumn:not(th),
-  .ModifiedOnColumn:not(th) {
-    border-right: $-border;
   }
 }

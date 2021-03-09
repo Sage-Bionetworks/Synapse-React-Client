@@ -55,6 +55,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
 
+  const showSelectColumn = selectColumnType !== 'none'
+
   const determineRowAppearance = (
     entity: EntityHeader | ProjectHeader | Hit,
   ): DetailsViewRowAppearance => {
@@ -86,7 +88,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       sort &&
       setSort && (
         <SortIcon
-          style={{ float: 'right', height: '20px' }}
+          style={{ height: '20px' }}
           active={sort.sortBy === columnSortBy}
           direction={
             sort.sortBy === columnSortBy ? sort.sortDirection : Direction.DESC
@@ -116,23 +118,41 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       <table style={{ width: '100%' }}>
         <thead>
           <tr className="EntityFinderDetailsView__HeaderRow">
+            {showSelectColumn && <th className="IsSelectedColumn" />}
             <th className="EntityIconColumn" />
-            {selectColumnType !== 'none' && <th className="IsSelectedColumn" />}
             <th className="NameColumn">
-              <span>Name</span>
-              <span>{showInteractiveSortIcon(SortBy.NAME)}</span>
+              <div
+                className="ColumnHeaderContent"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <span>Name</span>
+                <span>{showInteractiveSortIcon(SortBy.NAME)}</span>
+              </div>
             </th>
             <th className="AccessColumn"></th>
-            <th className="IdColumn">ID</th>
+            <th className="IdColumn">
+              <div className="ColumnHeaderContent">ID</div>
+            </th>
             <th className="CreatedOnColumn">
-              <span>Created On</span>
-              <span>{showInteractiveSortIcon(SortBy.CREATED_ON)}</span>
+              <div className="ColumnHeaderContent">
+                <span>Created On</span>
+                <span>{showInteractiveSortIcon(SortBy.CREATED_ON)}</span>
+              </div>
             </th>
             <th className="ModifiedOnColumn">
-              <span>Modified On</span>
-              <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
+              <div className="ColumnHeaderContent">
+                <span>Modified On</span>
+                <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
+              </div>
             </th>
-            {showVersionSelection && <th className="VersionColumn">Version</th>}
+            {showVersionSelection && (
+              <th className="VersionColumn">
+                <div className="ColumnHeaderContent">Version</div>
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="EntityFinderDetailsView__TableBody">
