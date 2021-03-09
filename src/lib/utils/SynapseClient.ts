@@ -136,10 +136,12 @@ export type SynapseClientError = {
 
 /*
   0 - no internet connection
-  429 - too many concurrent requests
-  500>= - any status code of 500 or more is a server side error
+  429 - Too Many Requests
+  502 - Bad Gateway
+  503 - Service Unavailable
+  504 - Gateway Timeout
 */
-const RETRY_STATUS_CODES = [0, 429, 500, 502, 503, 504]
+const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
 
 const fetchWithExponentialTimeout = <T>(
   url: RequestInfo,
@@ -793,7 +795,7 @@ export const getBulkFiles = (
     })
     .catch(err => {
       console.error('Error on getBulkFiles ', err)
-      return err
+      throw err
     })
 }
 /**
