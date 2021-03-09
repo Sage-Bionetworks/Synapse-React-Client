@@ -7,6 +7,10 @@ type ErrorProps = {
   error?: string | Error | SynapseClientError | null
 }
 
+export function toError(clientError: SynapseClientError): Error {
+  return new Error(clientError.reason)
+}
+
 function isSynapseClientError(
   error: string | Error | SynapseClientError,
 ): error is SynapseClientError {

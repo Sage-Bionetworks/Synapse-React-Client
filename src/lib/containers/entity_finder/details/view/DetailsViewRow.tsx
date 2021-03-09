@@ -20,6 +20,8 @@ import { EntityBadge } from '../../../EntityBadge'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { RadioGroup } from '../../../widgets/RadioGroup'
+import { useErrorHandler } from 'react-error-boundary'
+import { toError } from '../../../ErrorBanner'
 
 export type DetailsViewRowAppearance =
   | 'default'
@@ -55,6 +57,8 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
     selectedVersion ?? -1,
   )
 
+  const handleError = useErrorHandler()
+
   // We won't load the entity bundle unless the row is visible
   const { ref, inView } = useInView()
 
@@ -62,7 +66,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
     getEntityTypeFromHeader(entityHeader),
   )
 
-  const { data: bundle } = useGetEntityBundle(
+  const { data: bundle, isError, error } = useGetEntityBundle(
     sessionToken,
     entityHeader.id,
     {
@@ -83,10 +87,19 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   )
 
   useEffect(() => {
+    if (isError && error) {
+      handleError(toError(error))
+    }
+  }, [isError, error, handleError])
+
+  useEffect(() => {
     if (isSelected && versions === undefined) {
       SynapseClient.getEntityVersions(sessionToken, entityHeader.id).then(
         response => {
           setVersions(response.results)
+        },
+        error => {
+          handleError(error)
         },
       )
     }
