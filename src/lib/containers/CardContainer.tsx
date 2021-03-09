@@ -18,6 +18,7 @@ import UserCardList from './UserCardList'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
+import SearchResultsNotFound from './table/SearchResultsNotFound'
 
 const PAGE_SIZE: number = 25
 
@@ -96,7 +97,11 @@ export const CardContainer = (props: CardContainerProps) => {
     return <div>{isLoading && loadingScreen}</div>
   } else if (data && data.queryResult.queryResults.rows.length === 0) {
     // data was retrieved from the backend but there is none to show.
-    // show "no results" UI (see PORTALS-1497)
+    const queryRequest = props.getLastQueryRequest!()
+    if (queryRequest.query.additionalFilters) {
+      return <SearchResultsNotFound />
+    }
+    // else show "no results" UI (see PORTALS-1497)
     return <>
       <p className="SRC-no-results-title">
         There is currently no content here.
