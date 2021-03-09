@@ -170,7 +170,7 @@
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css serve:docs",
     "start-deprecated-demo": "npm-run-all -p watch-css start-js",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom --setupFiles ./src/setupTests.js",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom-fourteen --setupFiles ./src/setupTests.js",
     "test:coverage": "yarn test --coverage",
     "test:noPrompt": "CI=true yarn test",
     "eject": "react-scripts eject",
