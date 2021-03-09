@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
@@ -11,8 +11,10 @@ import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEnt
 import {
   EntityBundle,
   EntityType,
+  PaginatedResults,
   Reference,
 } from '../../../../../lib/utils/synapseTypes'
+import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
 
 const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 
@@ -35,6 +37,42 @@ const defaultProps: DetailsViewRowProps = {
   toggleSelection: mockToggleSelection,
 }
 
+const bundleResult: EntityBundle = {
+  entity: {
+    id: defaultProps.entityHeader.id,
+    name: defaultProps.entityHeader.name,
+    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+  },
+}
+
+const versionResult: PaginatedResults<VersionInfo> = {
+  totalNumberOfResults: 2,
+  results: [
+    {
+      id: defaultProps.entityHeader.id,
+      versionNumber: 1,
+      versionLabel: '1',
+      versionComment: 'comment',
+      modifiedBy: 'user',
+      contentSize: '100000',
+      contentMd5: 'abcde0123456789',
+      modifiedByPrincipalId: '1',
+      modifiedOn: 'yesterday',
+    },
+    {
+      id: defaultProps.entityHeader.id,
+      versionNumber: 5,
+      versionLabel: 'version 5 label',
+      versionComment: 'comment 2',
+      modifiedBy: 'user',
+      contentSize: '100001',
+      contentMd5: 'deadbeef',
+      modifiedByPrincipalId: '1',
+      modifiedOn: 'today',
+    },
+  ],
+}
+
 function renderScreen(propOverrides?: Partial<DetailsViewRowProps>) {
   const tbody = document.createElement('tbody')
   return render(<DetailsViewRow {...defaultProps} {...propOverrides} />, {
@@ -45,33 +83,12 @@ function renderScreen(propOverrides?: Partial<DetailsViewRowProps>) {
 describe('DetailsViewRow tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockAllIsIntersecting(true)
-    const mockBundle: EntityBundle = {
-      entity: {
-        id: 'syn123',
-        name: 'My Entity',
-        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-      },
-    }
+    mockAllIsIntersecting(false)
     ;(useGetEntityBundle as jest.Mock).mockImplementation(() => ({
-      data: mockBundle,
+      data: bundleResult,
     }))
 
-    SynapseClient.getEntityVersions = jest.fn().mockResolvedValue({
-      totalNumberOfResults: 2,
-      results: [
-        {
-          id: 'syn123',
-          versionNumber: 1,
-          versionLabel: '1',
-        },
-        {
-          id: 'syn123',
-          versionNumber: 2,
-          versionLabel: '2',
-        },
-      ],
-    })
+    SynapseClient.getEntityVersions = jest.fn().mockResolvedValue(versionResult)
   })
 
   it('invokes toggleSelection when the row is clicked', async () => {
@@ -166,6 +183,10 @@ describe('DetailsViewRow tests', () => {
 
     it('selected appearance', async () => {
       const row = renderScreen({ appearance: 'selected' }).getByRole('row')
+
+      // This just removes the act(...) warning, we test this elsewhere
+      await waitFor(() => expect(SynapseClient.getEntityVersions).toBeCalled())
+
       expect(row).toHaveAttribute('aria-selected', 'true')
       expect(row).toHaveAttribute('aria-disabled', 'false')
       expect(row).toHaveAttribute('aria-hidden', 'false')
@@ -199,41 +220,84 @@ describe('DetailsViewRow tests', () => {
     })
 
     it('retrieves the versions when selected', async () => {
-      mockAllIsIntersecting(false)
-
       const screen = renderScreen({ appearance: 'selected' })
-      expect(() => screen.getByRole('option')).toThrowError()
-
-      mockAllIsIntersecting(true)
+      expect(await screen.findByRole('listbox')).toBeDefined()
 
       expect(SynapseClient.getEntityVersions).toBeCalledWith(
         defaultProps.sessionToken,
         defaultProps.entityHeader.id,
       )
-      expect(screen.getByRole('option')).toBeDefined()
     })
 
-    // it('calls toggle selection when a version is picked', async () => {
-    //   const screen = renderScreen({ appearance: 'selected' })
+    it('calls toggle selection when a version is picked', async () => {
+      const screen = renderScreen({ appearance: 'selected' })
+      expect(await screen.findByRole('listbox')).toBeDefined()
 
-    //   mockAllIsIntersecting(true)
+      // There are two versions, plus "Always Latest"
+      expect(screen.getAllByRole('option').length).toBe(3)
 
-    //   expect(SynapseClient.getEntityVersions).toBeCalledWith(
-    //     defaultProps.sessionToken,
-    //     defaultProps.entityHeader.id,
-    //   )
+      // Select 'always latest'
+      userEvent.selectOptions(screen.getByRole('listbox'), '-1')
+      expect(mockToggleSelection).toBeCalledWith({
+        targetId: defaultProps.entityHeader.id,
+        targetVersionNumber: undefined,
+      })
 
-    //   expect(screen.getByRole('listbox')).toBeDefined()
-    // })
+      // Select v1
+      userEvent.selectOptions(
+        screen.getByRole('listbox'),
+        versionResult.results[0].versionNumber.toString(),
+      )
+      expect(mockToggleSelection).toBeCalledWith({
+        targetId: defaultProps.entityHeader.id,
+        targetVersionNumber: versionResult.results[0].versionNumber,
+      })
 
-    // it('automatically selects no version if none selected', async () => {
-    //   expect(true).toBe(false)
-    // })
+      // Select v2
+      userEvent.selectOptions(
+        screen.getByRole('listbox'),
+        versionResult.results[1].versionNumber.toString(),
+      )
+      expect(mockToggleSelection).toBeCalledWith({
+        targetId: defaultProps.entityHeader.id,
+        targetVersionNumber: versionResult.results[1].versionNumber,
+      })
+    })
 
-    // it('selects the correct version if one is selected', async () => {
-    //   expect(true).toBe(false)
-    // })
-    //   })
-    // })
+    it('automatically selects "Always Latest" if none selected', async () => {
+      const screen = renderScreen({
+        appearance: 'selected',
+        selectedVersion: undefined,
+      })
+      expect(await screen.findByRole('listbox')).toBeDefined()
+
+      expect(
+        (screen.getAllByRole('option')[0] as HTMLOptionElement).selected,
+      ).toBe(true)
+      expect(
+        (screen.getAllByRole('option')[1] as HTMLOptionElement).selected,
+      ).toBe(false)
+      expect(
+        (screen.getAllByRole('option')[2] as HTMLOptionElement).selected,
+      ).toBe(false)
+    })
+
+    it('selects the correct version if one is selected', async () => {
+      const screen = renderScreen({
+        appearance: 'selected',
+        selectedVersion: versionResult.results[1].versionNumber,
+      })
+      expect(await screen.findByRole('listbox')).toBeDefined()
+
+      expect(
+        (screen.getAllByRole('option')[0] as HTMLOptionElement).selected,
+      ).toBe(false)
+      expect(
+        (screen.getAllByRole('option')[1] as HTMLOptionElement).selected,
+      ).toBe(false)
+      expect(
+        (screen.getAllByRole('option')[2] as HTMLOptionElement).selected,
+      ).toBe(true)
+    })
   })
 })

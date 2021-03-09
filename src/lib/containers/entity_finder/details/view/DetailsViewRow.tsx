@@ -83,14 +83,14 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   )
 
   useEffect(() => {
-    if (inView && isSelected && versions === undefined) {
+    if (isSelected && versions === undefined) {
       SynapseClient.getEntityVersions(sessionToken, entityHeader.id).then(
         response => {
           setVersions(response.results)
         },
       )
     }
-  }, [inView, isSelected, versions, sessionToken, entityHeader.id])
+  }, [isSelected, versions, sessionToken, entityHeader.id])
 
   return (
     <tr
@@ -180,7 +180,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
               >
                 <option value={-1}>Always Latest Version</option>
                 {versions?.map((version, index) => {
-                  console.log('mapping versions')
                   return (
                     <option
                       key={version.versionNumber}
