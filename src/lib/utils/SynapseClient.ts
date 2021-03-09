@@ -827,6 +827,18 @@ export const getEntity: GetEntity = <T>(
   ) as Promise<T>
 }
 
+export const getEntityTypeByIds = <T extends PaginatedResults<EntityHeader>> (
+  entityIds: string | number,
+  sessionToken?: string,
+) => {
+  return doGet(
+    `/repo/v1/entity/type?batch=${entityIds}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  ) as Promise<T>
+}
+
 /**
  * Get the EntityHeader for a list of references with a POST.
  * If any item in the batch fails (e.g., with a 404) it will be EXCLUDED in the result set.

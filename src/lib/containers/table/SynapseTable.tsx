@@ -754,6 +754,10 @@ export default class SynapseTable extends React.Component<
       data,
       EntityColumnType.FILEHANDLEID,
     )
+    const entityIdListColumnIndicies = getColumnIndiciesWithType(
+      data,
+      EntityColumnType.ENTITYID_LIST,
+    )
     const otherListColumnIndicies = getColumnIndiciesWithType(
       data,
       EntityColumnType.STRING_LIST,
@@ -805,6 +809,7 @@ export default class SynapseTable extends React.Component<
                     dateListColumnIndicies,
                     booleanListColumnIndicies,
                     fileHandleIdColumnIndicies,
+                    entityIdListColumnIndicies,
                     otherListColumnIndicies,
                     colIndex,
                     columnValue,
