@@ -143,8 +143,10 @@ $-finder-height: 500px;
 .EntityFinderDetailsView {
   height: $-finder-height;
   border: $-border;
-
+  width: 100%;
+  overflow: auto;
   table {
+    width: 100%;
     position: relative;
     border-collapse: separate;
     thead th {

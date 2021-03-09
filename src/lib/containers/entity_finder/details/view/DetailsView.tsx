@@ -112,11 +112,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   }
 
   return (
-    <div
-      className="EntityFinderDetailsView"
-      style={{ width: '100%', overflow: 'auto' }}
-    >
-      <table style={{ width: '100%' }}>
+    <div className="EntityFinderDetailsView">
+      <table>
         <thead>
           <tr className="EntityFinderDetailsView__HeaderRow">
             {showSelectColumn && <th className="IsSelectedColumn" />}
