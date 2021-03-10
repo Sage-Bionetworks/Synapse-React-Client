@@ -10,11 +10,21 @@
     'file',
     'link',
     'entityview',
+    'submissionview',
     'dockerrepo',
   ]}
   selectableVersions={true}
   onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
-  disableSelectionForTypes={[]}
+  selectableTypes={[ 
+    'project',
+    'table',
+    'folder',
+    'file',
+    'link',
+    'entityview',
+    'submissionview',
+    'dockerrepo',
+]}
 />
 ```
 

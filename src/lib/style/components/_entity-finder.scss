@@ -181,20 +181,15 @@ $-finder-height: 500px;
     background: #f9f9f9;
   }
 
-  &__Row:hover,
-  &__Row:hover:nth-child(even) {
+  &__Row:hover {
     background: color.change(SRC.$primary-action-color-500, $alpha: 0.2);
   }
 
-  &__Row[aria-selected='true'],
-  &__Row[aria-selected='true']:hover,
-  &__Row[aria-selected='true']:nth-child(even),
-  &__Row[aria-selected='true']:hover:nth-child(even) {
+  &__Row[aria-selected='true'] {
     background-color: SRC.$primary-action-color-500;
     color: white;
   }
 
-  &__Row[aria-disabled='true'],
   &__Row[aria-disabled='true'] {
     opacity: 0.5;
   }
