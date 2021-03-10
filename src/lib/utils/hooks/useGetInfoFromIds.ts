@@ -26,7 +26,7 @@ const UserProfileTemplate: UserProfile = {
 const entityHeaderTemplate: EntityHeader = {
   name: 'Unknown', //	The name of the entity
   id: 'unknown', //	The id of the entity
-  type: 'unknown', //	The type of the entity
+  type: 'org.sagebionetworks.repo.model.FileEntity', //	The type of the entity
   versionNumber: 0, //	The version number of the entity
   versionLabel: 'placeholder', //	The user defined version label of the entity
   benefactorId: 0, //	The ID of the entity that this Entity's ACL is inherited from.
