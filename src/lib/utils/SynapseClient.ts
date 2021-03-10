@@ -827,6 +827,10 @@ export const getEntity: GetEntity = <T>(
   ) as Promise<T>
 }
 
+/**
+ * Get a list of entity headers given by entity ids
+ * http://rest-docs.synapse.org/rest/GET/entity/type.html
+ */
 export const getEntityTypeByIds = <T extends PaginatedResults<EntityHeader>> (
   entityIds: string | number,
   sessionToken?: string,
