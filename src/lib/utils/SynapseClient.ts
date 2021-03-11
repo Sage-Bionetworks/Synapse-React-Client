@@ -831,12 +831,12 @@ export const getEntity: GetEntity = <T>(
  * Get a list of entity headers given by entity ids
  * http://rest-docs.synapse.org/rest/GET/entity/type.html
  */
-export const getEntityTypeByIds = <T extends PaginatedResults<EntityHeader>> (
-  entityIds: string | number,
+export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>> (
+  entityIds: string[],
   sessionToken?: string,
 ) => {
   return doGet(
-    `/repo/v1/entity/type?batch=${entityIds}`,
+    `/repo/v1/entity/type?batch=${entityIds.join(",")}`,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

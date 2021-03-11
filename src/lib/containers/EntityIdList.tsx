@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import {
-  getEntityTypeByIds
+  getEntityHeadersByIds
 } from '../utils/SynapseClient'
 
 export type EntityIdListProps = {
@@ -25,10 +25,13 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
   }, [entityIdList, inView])
 
   const getEntityTypes = async () => {
-    const entityIds = entityIdList.join(",")
-    getEntityTypeByIds(entityIds, token).then((entity) =>{
+    if (!entityIdList.length) return
+
+    getEntityHeadersByIds(entityIdList, token).then((entity) =>{
       const list = entity.results.map(el => el.name).join(", ")
       setEntityNameList(list)
+    }).catch(e => {
+      console.log("EntityIdList: Error getting entity header names", e)
     })
   }
 
