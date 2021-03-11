@@ -5,13 +5,12 @@ export type RadioGroupProps = {
   id: string
   className?: string
   value?: string
-  onChange: Function
+  onChange: (value: string, checked: boolean) => void
 }
 
 export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
   props: RadioGroupProps,
 ) => {
-
   const className = props.className
     ? `radiogroup ${props.className}`
     : `radiogroup`

@@ -50,7 +50,7 @@ import SearchResultsNotFound from './SearchResultsNotFound'
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
   name: '',
-  type: '',
+  type: 'org.sagebionetworks.repo.model.FileEntity',
   versionNumber: -1,
   versionLabel: '',
   benefactorId: -1,

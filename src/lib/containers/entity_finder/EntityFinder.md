@@ -10,15 +10,25 @@
     'file',
     'link',
     'entityview',
+    'submissionview',
     'dockerrepo',
   ]}
   selectableVersions={true}
   onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
-  disableSelectionForTypes={[]}
+  selectableTypes={[ 
+    'project',
+    'table',
+    'folder',
+    'file',
+    'link',
+    'entityview',
+    'submissionview',
+    'dockerrepo',
+]}
 />
 ```
 
-### TODO:
+### Work in progress
 
 * Iconography for tables, views 🟡 (Update to icons in mockup? Should probably try to change in SWC as well)
 * Error Handling ❌

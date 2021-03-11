@@ -1,4 +1,5 @@
 import { EntityHeader, EntityType, ProjectHeader } from '../synapseTypes'
+import { ConcreteEntityType } from '../synapseTypes/ConcreteEntityType'
 import { Hit } from '../synapseTypes/Search'
 
 export function getEntityTypeFromHeader(
@@ -11,7 +12,7 @@ export function getEntityTypeFromHeader(
   // ProjectHeader doesn't have the `type` field, so we can just check that to determine if it's a ProjectHeader
   return (header as EntityHeader).type === undefined
     ? EntityType.PROJECT
-    : stringToEntityType((header as EntityHeader).type)
+    : convertToEntityType((header as EntityHeader).type)
 }
 
 export function isContainerType(type: EntityType): boolean {
@@ -55,24 +56,32 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
   }
 }
 
-export function stringToEntityType(typeString: string): EntityType {
+export function convertToEntityType(
+  typeString: string | ConcreteEntityType | EntityType,
+): EntityType {
   switch (typeString) {
+    case EntityType.PROJECT:
     case 'org.sagebionetworks.repo.model.Project':
       return EntityType.PROJECT
+    case EntityType.FOLDER:
     case 'org.sagebionetworks.repo.model.Folder':
-    case 'folder':
       return EntityType.FOLDER
+    case EntityType.FILE:
     case 'org.sagebionetworks.repo.model.FileEntity':
-    case 'file':
       return EntityType.FILE
+    case EntityType.LINK:
     case 'org.sagebionetworks.repo.model.Link':
       return EntityType.LINK
+    case EntityType.DOCKER_REPO:
     case 'org.sagebionetworks.repo.model.docker.DockerRepository':
       return EntityType.DOCKER_REPO
+    case EntityType.TABLE:
     case 'org.sagebionetworks.repo.model.table.TableEntity':
       return EntityType.TABLE
+    case EntityType.SUBMISSION_VIEW:
     case 'org.sagebionetworks.repo.model.table.SubmissionView':
       return EntityType.SUBMISSION_VIEW
+    case EntityType.ENTITY_VIEW:
     case 'org.sagebionetworks.repo.model.table.EntityView':
       return EntityType.ENTITY_VIEW
     default:
