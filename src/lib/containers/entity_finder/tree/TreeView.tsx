@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../utils'
+import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
 import {
   EntityHeader,
   EntityPath,
   ProjectHeader,
 } from '../../../utils/synapseTypes'
+import { SynapseSpinner } from '../../LoadingScreen'
 import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
@@ -66,34 +69,58 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   const [scope, setScope] = useState(FinderScope.CURRENT_PROJECT)
   const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
 
-  const [currentContainer, setCurrentContainer] = useState<string>(
-    initialContainer,
-  ) // synId or 'root'
+  const [currentContainer, setCurrentContainer] = useState<
+    string | 'root' | null
+  >(initialContainer)
 
   useEffect(() => {
     setDetailsViewConfiguration(DEFAULT_CONFIGURATION)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const useProjectData =
+    scope === FinderScope.ALL_PROJECTS || scope === FinderScope.CREATED_BY_ME
+
+  const {
+    data: projectData,
+    isSuccess: isSuccessProjects,
+    fetchNextPage: fetchNextPageProjects,
+    hasNextPage: hasNextPageProjects,
+  } = useGetProjectsInfinite(
+    sessionToken,
+    scope === FinderScope.CREATED_BY_ME ? { filter: 'CREATED' } : {},
+    {
+      enabled: useProjectData,
+    },
+  )
+
+  const { ref, inView } = useInView({ rootMargin: '500px' })
+
+  useEffect(() => {
+    if (useProjectData && isSuccessProjects) {
+      if (projectData?.pages) {
+        setTopLevelEntities(
+          ([] as ProjectHeader[]).concat.apply(
+            [],
+            projectData.pages.map(page => page.results),
+          ),
+        )
+      }
+    }
+  }, [useProjectData, isSuccessProjects, projectData?.pages])
+
+  useEffect(() => {
+    if (useProjectData && inView && hasNextPageProjects) {
+      fetchNextPageProjects()
+    }
+  }, [inView, hasNextPageProjects, fetchNextPageProjects, scope])
+
+  // Populates entities in the tree view
   useEffect(() => {
     setIsLoading(true)
     switch (scope) {
       case FinderScope.ALL_PROJECTS:
-        SynapseClient.getMyProjects(sessionToken).then(projects => {
-          setTopLevelEntities(projects.results)
-          // TODO: Pagination
-          setIsLoading(false)
-        })
-
-        break
       case FinderScope.CREATED_BY_ME:
-        SynapseClient.getMyProjects(sessionToken, { filter: 'CREATED' }).then(
-          projects => {
-            setTopLevelEntities(projects.results)
-            // TODO: Pagination
-            setIsLoading(false)
-          },
-        )
-
         break
       case FinderScope.FAVORITES: {
         SynapseClient.getUserFavorites(sessionToken).then(({ results }) => {
@@ -116,8 +143,13 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     }
   }, [sessionToken, scope, initialContainer])
 
+  // Creates the configuration for the details view and calls the callback
   useEffect(() => {
-    if (currentContainer === 'root') {
+    if (currentContainer === null) {
+      setDetailsViewConfiguration({
+        type: EntityDetailsListDataConfigurationType.PROMPT,
+      })
+    } else if (currentContainer === 'root') {
       switch (scope) {
         case FinderScope.ALL_PROJECTS:
           setDetailsViewConfiguration({
@@ -156,26 +188,57 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
   return (
     <div className="EntityFinderTreeView" style={{ height: '500px' }}>
-      {/* <div className={`EntityFinderTreeView__SelectionHeader`}></div> */}
-      <div style={{ overflow: 'auto' }}>
-        {isLoading ? (
-          <div className="spinner" />
-        ) : (
-          <>
+      <div className={`EntityFinderTreeView__SelectionHeader`}>
+        <div
+          style={{ width: 'min-content' }}
+          onClick={e => e.stopPropagation()}
+        >
+          <Dropdown
+            style={{
+              position: 'static',
+            }}
+          >
+            <Dropdown.Toggle variant="light-primary-500" id="dropdown-basic">
+              {scope}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {Object.values(FinderScope).map(scopeOption => {
+                return (
+                  <Dropdown.Item
+                    key={scopeOption}
+                    onClick={e => {
+                      e.stopPropagation()
+                      if (scope !== scopeOption) {
+                        setScope(scopeOption)
+                        setCurrentContainer(null)
+                      }
+                    }}
+                  >
+                    {scopeOption}
+                  </Dropdown.Item>
+                )
+              })}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      </div>
+      {isLoading && topLevelEntities.length === 0 ? (
+        <div className="EntityFinderTreeView__Placeholder">
+          <SynapseSpinner size={30} />
+        </div>
+      ) : (
+        <div style={{ overflow: 'auto' }}>
+          <div className="TreeNode" aria-selected={currentContainer === 'root'}>
             {showFakeRootNode && (
               <div
                 style={{ paddingLeft: `5px` }}
-                className={`EntityFinderTreeView__Row${
-                  currentContainer === 'root'
-                    ? ' EntityFinderTreeView__Row__Selected'
-                    : ''
-                }`}
+                className="TreeNode__Row"
                 onClick={() => {
                   setCurrentContainer('root')
                 }}
               >
                 <div
-                  className={'EntityFinderTreeView__Row__ExpandButton'}
+                  className={'TreeNode__Row__ExpandButton'}
                   onClick={e => {
                     e.stopPropagation()
                     setExpandFakeRoot(!expandFakeRoot)
@@ -183,40 +246,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 >
                   {expandFakeRoot ? '▾' : '▸'}
                 </div>
-                <span></span>{' '}
-                <div
-                  style={{ width: 'min-content' }}
-                  onClick={e => e.stopPropagation()}
-                >
-                  <Dropdown
-                    style={{
-                      position: 'static',
-                    }}
-                  >
-                    <Dropdown.Toggle
-                      variant="light-primary-500"
-                      id="dropdown-basic"
-                    >
-                      {scope}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {Object.values(FinderScope).map(s => {
-                        return (
-                          <Dropdown.Item
-                            key={s}
-                            onClick={e => {
-                              console.log('setting scope', s)
-                              e.stopPropagation()
-                              setScope(s)
-                            }}
-                          >
-                            {s}
-                          </Dropdown.Item>
-                        )
-                      })}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </div>
+                <span></span>
+                {scope}
               </div>
             )}
             <div style={!expandFakeRoot ? { display: 'none' } : {}}>
@@ -241,9 +272,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 )
               })}
             </div>
-          </>
-        )}
-      </div>
+            <div ref={ref}></div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

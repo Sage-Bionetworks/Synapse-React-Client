@@ -4,6 +4,7 @@
 $-header-height: 40px;
 $-border: 1px solid #dcdcdc;
 $-finder-height: 500px;
+$-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
 
 // https://github.com/leefsmp/Re-Flex/issues/27
 .EntityViewReflexContainer {
@@ -68,17 +69,21 @@ $-finder-height: 500px;
   }
 
   &__Selected {
+    font-size: medium;
     margin: 15px 0px;
+    color: SRC.$primary-action-color-700;
     &__DeselectButton {
-      margin: 5px;
+      color: rgb(175, 0, 0);
+      margin: 5px 8px;
       cursor: pointer;
       &__Icon {
         margin-bottom: 3px;
       }
+
+      &__EntityName {
+        font-weight: bold;
+      }
     }
-  }
-  &__EntityName {
-    font-weight: bold;
   }
 }
 
@@ -90,45 +95,53 @@ $-finder-height: 500px;
   height: $-finder-height;
   border: $-border;
   overflow: auto;
-  &__Row {
-    width: 100%;
-    display: inline-grid;
-    grid-template-columns: 15px 27px auto auto;
-    padding: 16px 10px;
-    align-items: center;
-    &__ExpandButton {
-      text-align: center;
-      grid-column-start: 1;
-      grid-column-end: 2;
-      font-size: large;
-      color: SRC.$primary-action-color-700;
-      cursor: pointer;
-    }
+  .TreeNode {
+    &__Row {
+      width: 100%;
+      display: inline-grid;
+      grid-template-columns: 15px 27px auto auto;
+      padding: 16px 10px;
+      align-items: center;
+      &__ExpandButton {
+        text-align: center;
+        grid-column-start: 1;
+        grid-column-end: 2;
+        font-size: large;
+        color: SRC.$primary-action-color-700;
+        cursor: pointer;
+      }
 
-    &__EntityIcon {
-      text-align: center;
-      grid-column-start: 2;
-      grid-column-end: 3;
-      margin-bottom: 3px;
-    }
+      &__EntityIcon {
+        text-align: center;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        margin-bottom: 3px;
+      }
 
-    &__EntityName {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      &__EntityName {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    &__Row:hover {
+      background: color.change(SRC.$primary-action-color-300, $alpha: 0.1);
     }
   }
-  &__Row:hover {
-    background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
-  }
-  &__Row__Selected,
-  &__Row__Selected:hover {
-    color: SRC.$primary-action-color-500;
-    // font-weight: bold;
-    background: color.change(SRC.$primary-action-color-500, $alpha: 0.2);
 
-    .EntityFinderTreeView__Row__ExpandButton {
-      color: SRC.$primary-action-color-500;
+  .TreeNode[aria-selected='true'] {
+    > .TreeNode__Row {
+      background: $-selected-color;
+
+      .EntityFinderTreeView__Row__ExpandButton {
+        color: SRC.$primary-action-color-500;
+      }
+    }
+    .TreeNode[aria-selected='false'] > .TreeNode__Row {
+      background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
+    }
+    .TreeNode[aria-selected='false'] > .TreeNode__Row:hover {
+      background: color.change(SRC.$primary-action-color-500, $alpha: 0.1);
     }
   }
 
@@ -137,6 +150,16 @@ $-finder-height: 500px;
     border-bottom: $-border;
     display: flex;
     align-items: center;
+  }
+
+  &__Placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+    &__Content {
+      font-size: large;
+    }
   }
 }
 
@@ -165,16 +188,19 @@ $-finder-height: 500px;
       box-shadow: SRC.$box-shadow-soft;
     }
 
-    th > div,
-    td > div {
+    th > div {
       display: flex;
       justify-content: space-between;
+      margin: 5px;
+    }
+
+    td > div {
       margin: 5px;
     }
   }
   &__Row {
     border-bottom: 1px solid #f9f9f9;
-    height: 40px;
+    height: 45px;
   }
 
   &__Row:nth-child(even) {
@@ -182,12 +208,11 @@ $-finder-height: 500px;
   }
 
   &__Row:hover {
-    background: color.change(SRC.$primary-action-color-500, $alpha: 0.2);
+    background: color.change(SRC.$primary-action-color-300, $alpha: 0.2);
   }
 
   &__Row[aria-selected='true'] {
-    background-color: SRC.$primary-action-color-500;
-    color: white;
+    background-color: $-selected-color;
   }
 
   &__Row[aria-disabled='true'] {
@@ -223,6 +248,8 @@ $-finder-height: 500px;
   }
 
   .IsSelectedColumn {
+    min-width: 40px;
+    max-width: 40px;
     text-align: center;
     .radio,
     .checkbox {
@@ -232,6 +259,9 @@ $-finder-height: 500px;
   }
 
   .EntityIconColumn {
+    min-width: 40px;
+    max-width: 40px;
+
     text-align: center;
     svg {
       fill: currentColor;
@@ -239,22 +269,19 @@ $-finder-height: 500px;
   }
 
   .NameColumn {
-    width: 250px;
+    min-width: 250px;
   }
   .AccessColumn {
     width: 40px;
   }
   .IdColumn {
-    width: 10%;
+    min-width: 100px;
   }
-  .CreatedOnColumn {
-    width: 15%;
-  }
+  .CreatedOnColumn,
   .ModifiedOnColumn {
-    width: 15%;
+    min-width: 150px;
   }
   .VersionColumn {
-    min-width: 150px;
-    width: 20%;
+    min-width: 200px;
   }
 }
