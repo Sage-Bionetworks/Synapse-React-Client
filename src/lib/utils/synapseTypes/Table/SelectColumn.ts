@@ -13,6 +13,7 @@ export enum EntityColumnType {
   INTEGER_LIST = 'INTEGER_LIST',
   BOOLEAN_LIST = 'BOOLEAN_LIST',
   DATE_LIST = 'DATE_LIST',
+  ENTITYID_LIST = 'ENTITYID_LIST',
 }
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html

@@ -333,7 +333,7 @@ There are open issues in the microsoft vscode repository that block the ability 
     "test",
     "--runInBand",
     "--no-cache",
-    "--env=jsdom",
+    "--env=jsdom-fourteen",
     "--transformIgnorePatterns",
     // https://github.com/microsoft/vscode/issues/81944
     "node_modules/(?!(lodash-es|jest*)/)",

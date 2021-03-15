@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useErrorHandler } from 'react-error-boundary'
 import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/useGetEntityChildren'
 import { Direction, EntityHeader, SortBy } from '../../../../utils/synapseTypes'
-import { DetailsView } from '../view/DetailsView'
+import { toError } from '../../../ErrorBanner'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
+import { DetailsView } from '../view/DetailsView'
 
 type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
@@ -20,6 +22,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 }) => {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
+  const handleError = useErrorHandler()
 
   const {
     data,
@@ -27,12 +30,21 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     isFetching,
     hasNextPage,
     fetchNextPage,
+    isError,
+    error,
   } = useGetEntityChildrenInfinite(sessionToken, {
     parentId: parentContainerId,
     includeTypes: includeTypes,
     sortBy: sortBy,
     sortDirection: sortDirection,
   })
+
+  useEffect(() => {
+    if (isError && error) {
+      handleError(toError(error))
+    }
+  }, [isError, error, handleError])
+
   return (
     <DetailsView
       sessionToken={sessionToken}

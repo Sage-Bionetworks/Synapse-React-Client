@@ -1,4 +1,5 @@
 import { AttachmentData } from './AttachmentData'
+import { ConcreteEntityType } from './ConcreteEntityType'
 
 // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -17,5 +18,5 @@ export interface Entity {
   accessControlList?: string // This field is deprecated and will be removed in future versions of Synapse
   parentId?: string // The ID of the Entity that is the parent of this Entity.
   entityType?: string // This field is deprecated and will be removed in future versions of Synapse
-  concreteType: string // Indicates which implementation of Entity this object represents. It should be set to one of the following: org.sagebionetworks.repo.model.Project, org.sagebionetworks.repo.model.Folder, or org.sagebionetworks.repo.model.FileEntity.
+  concreteType: ConcreteEntityType // Indicates which implementation of Entity this object represents. It should be set to one of the following: org.sagebionetworks.repo.model.Project, org.sagebionetworks.repo.model.Folder, or org.sagebionetworks.repo.model.FileEntity.
 }

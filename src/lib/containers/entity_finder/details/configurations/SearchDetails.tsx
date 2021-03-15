@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useErrorHandler } from 'react-error-boundary'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/useSearch'
 import { Hit, SearchQuery } from '../../../../utils/synapseTypes/Search'
-import { DetailsView } from '../view/DetailsView'
+import { toError } from '../../../ErrorBanner'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
+import { DetailsView } from '../view/DetailsView'
 
 type SearchDetailsProps = EntityDetailsListSharedProps & {
   searchQuery: SearchQuery
@@ -24,9 +26,19 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
     isFetching,
     hasNextPage,
     fetchNextPage,
+    error,
+    isError,
   } = useSearchInfinite(searchQuery, sessionToken, {
     enabled: !!searchQuery.queryTerm,
   })
+  const handleError = useErrorHandler()
+
+  useEffect(() => {
+    if (isError && error) {
+      handleError(toError(error))
+    }
+  }, [isError, error, handleError])
+
   if (searchQuery.queryTerm) {
     return (
       <DetailsView

@@ -352,6 +352,7 @@ describe('basic functionality', () => {
     const BOOLEAN_LIST_INDEX = 5
     const INTEGER_LIST_INDEX = 6
     const FILEHANDLEID_INDEX = 7
+    const ENTITYIDLIST_INDEX = 8
     const MOCKED_STRING = 'MOCKED_VALUE'
     const MOCKED_STRING_LIST = '["MOCKED_VALUE1","MOCKED_VALUE2"]'
     const MOCK_DATE_VALUE = '1581360939000'
@@ -581,6 +582,7 @@ describe('basic functionality', () => {
       const dateListColumnIndicies: number[] = [DATE_LIST_INDEX]
       const booleanListColumnIndicies: number[] = [BOOLEAN_LIST_INDEX]
       const fileHandleIdColumnIndicies: number[] = [FILEHANDLEID_INDEX]
+      const entityIdListColumnIndicies: number[] = [ENTITYIDLIST_INDEX]
       const mockEntityLinkValue: string = 'syn122'
       const mockUserCardValue: string = 'syn123'
       const mockAllAuthenticatedUsersValue: string = 'syn124'
@@ -606,27 +608,33 @@ describe('basic functionality', () => {
         },
         [mockUserCardValue]: {},
       }
+
+      const tableCellProps = {
+        entityColumnIndicies,
+        userColumnIndicies,
+        dateColumnIndicies,
+        dateListColumnIndicies,
+        booleanListColumnIndicies,
+        fileHandleIdColumnIndicies,
+        entityIdListColumnIndicies,
+        otherListColumnIndicies,
+        isBold: '',
+        mapUserIdToHeader: {},
+        columnLinkConfig: undefined,
+        rowIndex: undefined,
+        columnName: '',
+        selectColumns: undefined,
+        columnModels: undefined,
+      }
+
       it('renders an entity link', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: ENTITYID_INDEX,
               columnValue: mockEntityLinkValue,
-              isBold: '',
               mapEntityIdToHeader,
-              mapUserIdToHeader: {},
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -636,23 +644,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: USERID_INDEX,
               columnValue: mockAllAuthenticatedUsersValue,
-              isBold: '',
-              mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -667,23 +662,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
+              mapUserIdToHeader,
               colIndex: USERID_INDEX,
               columnValue: mockTeamValue,
-              isBold: '',
-              mapEntityIdToHeader: {},
-              mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -696,23 +678,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
+              mapUserIdToHeader,
               colIndex: USERID_INDEX,
               columnValue: mockUserCardValue,
-              isBold: '',
-              mapEntityIdToHeader: {},
-              mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -723,28 +692,18 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: USERID_INDEX,
               columnValue: mockMarkdownColumnValue,
-              isBold: '',
-              mapEntityIdToHeader: {},
               mapUserIdToHeader,
               columnLinkConfig: {
                 isMarkdown: true,
                 matchColumnName: 'a',
               },
-              rowIndex: undefined,
               columnName: 'a',
               selectColumns: [
                 { columnType: EntityColumnType.STRING, name: 'a', id: '' },
               ],
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -756,23 +715,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: USERID_INDEX,
               columnValue: mockColumnValue,
-              isBold: '',
-              mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -783,23 +729,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: DATE_INDEX,
               columnValue: mockDateValue,
-              isBold: '',
-              mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -812,23 +745,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: DATE_LIST_INDEX,
               columnValue: MOCKED_DATE_LIST,
-              isBold: '',
-              mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -841,23 +761,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: INTEGER_LIST_INDEX,
               columnValue: MOCKED_INTEGER_LIST,
-              isBold: '',
-              mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -869,23 +776,10 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
-              booleanListColumnIndicies,
-              fileHandleIdColumnIndicies,
-              dateListColumnIndicies,
-              otherListColumnIndicies,
+              ...tableCellProps,
               colIndex: BOOLEAN_LIST_INDEX,
               columnValue: MOCKED_BOOLEAN_LIST,
-              isBold: '',
-              mapEntityIdToHeader: {},
               mapUserIdToHeader,
-              columnLinkConfig: undefined,
-              rowIndex: undefined,
-              columnName: '',
-              selectColumns: undefined,
-              columnModels: undefined,
             })}
           </div>,
         )
@@ -897,15 +791,8 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <div>
             {renderTableCell({
-              entityColumnIndicies,
-              userColumnIndicies,
-              dateColumnIndicies,
+              ...tableCellProps,
               colIndex: DATE_INDEX,
-              // @ts-ignore
-              columnValue: null,
-              isBold: '',
-              mapEntityIdToHeader: {},
-              mapUserIdToHeader,
               isMarkdownColumn: false,
             })}
           </div>,

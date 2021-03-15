@@ -20,6 +20,8 @@ import { EntityBadge } from '../../../EntityBadge'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { RadioGroup } from '../../../widgets/RadioGroup'
+import { useErrorHandler } from 'react-error-boundary'
+import { toError } from '../../../ErrorBanner'
 
 export type DetailsViewRowAppearance =
   | 'default'
@@ -27,12 +29,13 @@ export type DetailsViewRowAppearance =
   | 'disabled'
   | 'hidden'
 
-type DetailsViewRowProps = {
+export type DetailsViewRowProps = {
   sessionToken: string
   entityHeader: EntityHeader | ProjectHeader | Hit
   appearance: DetailsViewRowAppearance
   showVersionColumn: boolean
   selectButtonType: 'checkbox' | 'radio' | 'none'
+  selectedVersion?: number
   toggleSelection: (entity: Reference) => void
 }
 
@@ -42,6 +45,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   appearance,
   showVersionColumn,
   selectButtonType,
+  selectedVersion,
   toggleSelection,
 }) => {
   const isSelected = appearance === 'selected'
@@ -50,8 +54,10 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
 
   const [versions, setVersions] = useState<VersionInfo[]>()
   const [currentSelectedVersion, setCurrentSelectedVersion] = useState<number>(
-    -1,
+    selectedVersion ?? -1,
   )
+
+  const handleError = useErrorHandler()
 
   // We won't load the entity bundle unless the row is visible
   const { ref, inView } = useInView()
@@ -60,7 +66,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
     getEntityTypeFromHeader(entityHeader),
   )
 
-  const { data: bundle } = useGetEntityBundle(
+  const { data: bundle, isError, error } = useGetEntityBundle(
     sessionToken,
     entityHeader.id,
     {
@@ -81,22 +87,31 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   )
 
   useEffect(() => {
-    if (inView && isSelected && versions === undefined) {
+    if (isError && error) {
+      handleError(toError(error))
+    }
+  }, [isError, error, handleError])
+
+  useEffect(() => {
+    if (isSelected && versions === undefined) {
       SynapseClient.getEntityVersions(sessionToken, entityHeader.id).then(
         response => {
           setVersions(response.results)
         },
+        error => {
+          handleError(error)
+        },
       )
     }
-  }, [inView, isSelected, versions, sessionToken, entityHeader.id])
+  }, [isSelected, versions, sessionToken, entityHeader.id])
 
   return (
     <tr
       ref={ref}
-      className={`EntityFinderDetailsView__Row${
-        isSelected ? ' EntityFinderDetailsView__Row__Selected' : ''
-      }${isDisabled ? ' EntityFinderDetailsView__Row__Disabled' : ''}`}
-      style={isHidden ? { display: 'none' } : {}}
+      aria-selected={isSelected}
+      aria-disabled={isDisabled}
+      aria-hidden={isHidden}
+      className="EntityFinderDetailsView__Row"
       onClick={() => {
         if (!isDisabled) {
           toggleSelection({
@@ -110,87 +125,98 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       }}
     >
       {selectButtonType !== 'none' && (
-        <td className="IsSelectedColumn">
-          {!isDisabled && selectButtonType === 'checkbox' && (
-            <Checkbox
-              label=""
-              id=""
-              className="SRC-pointer-events-none"
-              checked={isSelected}
-              onChange={() => {}}
-            />
-          )}
-          {!isDisabled && selectButtonType === 'radio' && (
-            <RadioGroup
-              className="SRC-pointer-events-none"
-              options={[{ label: '', value: 'true' }]}
-              value={isSelected.toString()}
-              id=""
-              onChange={() => {}}
-            />
-          )}
+        <td className="IsSelectedColumn" aria-label="is-selected">
+          <div>
+            {!isDisabled && selectButtonType === 'checkbox' && (
+              <Checkbox
+                label=""
+                id=""
+                className="SRC-pointer-events-none"
+                checked={isSelected}
+                onChange={() => {}}
+              />
+            )}
+            {!isDisabled && selectButtonType === 'radio' && (
+              <RadioGroup
+                className="SRC-pointer-events-none"
+                options={[{ label: '', value: 'true' }]}
+                value={isSelected.toString()}
+                id=""
+                onChange={() => {}}
+              />
+            )}
+          </div>
         </td>
       )}
 
       <td className="EntityIconColumn">
-        {
-          <EntityTypeIcon
-            type={getEntityTypeFromHeader(entityHeader)}
-            style={{ marginBottom: '3px' }}
-          />
-        }
+        <div>
+          {
+            <EntityTypeIcon
+              type={getEntityTypeFromHeader(entityHeader)}
+              style={{ marginBottom: '3px' }}
+            />
+          }
+        </div>
       </td>
 
-      <td className="NameColumn">{entityHeader.name}</td>
-      <td className="AccessColumn">
-        {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
+      <td className="NameColumn">
+        <div>{entityHeader.name}</div>
       </td>
-      <td className="IdColumn">{entityHeader.id}</td>
+      <td className="AccessColumn">
+        <div>
+          {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
+        </div>
+      </td>
+      <td className="IdColumn">
+        <div>{entityHeader.id} </div>
+      </td>
       <td className="CreatedOnColumn">
-        {bundle && formatDate(moment(bundle.entity!.modifiedOn))}
+        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
       </td>
       <td className="ModifiedOnColumn">
-        {bundle && formatDate(moment(bundle.entity!.modifiedOn))}
+        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
       </td>
       {showVersionColumn && (
-        <td className="VersionColumn">
-          {isSelected &&
-            isVersionableEntity &&
-            versions &&
-            versions.length > 0 && (
-              <Form.Control
-                size="sm"
-                as="select"
-                value={currentSelectedVersion}
-                onClick={(event: any) => {
-                  event.stopPropagation()
-                }}
-                onChange={event => {
-                  event.stopPropagation()
-                  const version = parseInt(event.target.value)
-                  setCurrentSelectedVersion(version)
-                  toggleSelection({
-                    targetId: entityHeader.id,
-                    targetVersionNumber: version === -1 ? undefined : version,
-                  })
-                }}
-              >
-                <option value={-1}>
-                  No version (always reference latest version)
-                </option>
-                {versions?.map((version, index) => {
-                  return (
-                    <option
-                      key={version.versionNumber}
-                      value={version.versionNumber}
-                    >
-                      Version {version.versionNumber}
-                      {index === 0 ? ' (Current)' : ''}
-                    </option>
-                  )
-                })}
-              </Form.Control>
-            )}
+        <td className="VersionColumn" aria-label="version">
+          <div>
+            {isSelected &&
+              isVersionableEntity &&
+              versions &&
+              versions.length > 0 && (
+                <Form.Control
+                  role="listbox"
+                  size="sm"
+                  as="select"
+                  value={currentSelectedVersion}
+                  onClick={(event: any) => {
+                    event.stopPropagation()
+                  }}
+                  onChange={event => {
+                    event.stopPropagation()
+                    const version = parseInt(event.target.value)
+                    setCurrentSelectedVersion(version)
+                    toggleSelection({
+                      targetId: entityHeader.id,
+                      targetVersionNumber: version === -1 ? undefined : version,
+                    })
+                  }}
+                >
+                  <option value={-1}>Always Latest Version</option>
+                  {versions?.map((version, index) => {
+                    return (
+                      <option
+                        key={version.versionNumber}
+                        value={version.versionNumber}
+                      >
+                        Version {version.versionNumber}
+                        {index === 0 ? ' (Current)' : ''}
+                      </option>
+                    )
+                  })}
+                </Form.Control>
+              )}
+          </div>
         </td>
       )}
     </tr>
