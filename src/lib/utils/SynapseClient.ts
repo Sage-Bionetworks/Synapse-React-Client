@@ -828,6 +828,22 @@ export const getEntity: GetEntity = <T>(
 }
 
 /**
+ * Get a list of entity headers given by entity ids
+ * http://rest-docs.synapse.org/rest/GET/entity/type.html
+ */
+export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>> (
+  entityIds: string[],
+  sessionToken?: string,
+) => {
+  return doGet(
+    `/repo/v1/entity/type?batch=${entityIds.join(",")}`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  ) as Promise<T>
+}
+
+/**
  * Get the EntityHeader for a list of references with a POST.
  * If any item in the batch fails (e.g., with a 404) it will be EXCLUDED in the result set.
  * https://docs.synapse.org/rest/POST/entity/header.html

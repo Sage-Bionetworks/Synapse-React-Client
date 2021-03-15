@@ -15,6 +15,7 @@ import {
 } from '../../utils/synapseTypes'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import DirectDownload from '../DirectDownload'
+import EntityIdList from '../EntityIdList'
 
 // Render table cell, supports Entity's and User Icons
 export const renderTableCell = ({
@@ -24,6 +25,7 @@ export const renderTableCell = ({
   dateListColumnIndicies,
   booleanListColumnIndicies,
   fileHandleIdColumnIndicies,
+  entityIdListColumnIndicies,
   otherListColumnIndicies,
   colIndex,
   columnValue,
@@ -44,6 +46,7 @@ export const renderTableCell = ({
   dateListColumnIndicies: number[]
   booleanListColumnIndicies: number[]
   fileHandleIdColumnIndicies: number[]
+  entityIdListColumnIndicies: number[]
   otherListColumnIndicies: number[]
   colIndex: number
   columnValue: string
@@ -121,6 +124,17 @@ export const renderTableCell = ({
         displayFileName={true}
       />
     </>
+  }
+
+  // If it's a list of entity ids
+  if (entityIdListColumnIndicies.includes(colIndex)){
+    const jsonData: string[] = JSON.parse(columnValue)
+    return(
+      <EntityIdList
+        entityIdList={jsonData}
+        token={token}
+      />
+    )
   }
 
   if (otherListColumnIndicies.includes(colIndex)) {

@@ -45,6 +45,7 @@ import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
 import { Icon } from '../row_renderers/utils'
 import DirectDownload from '../DirectDownload'
+import SearchResultsNotFound from './SearchResultsNotFound'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -89,7 +90,6 @@ export type SynapseTableState = {
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
   isColumnSelectionOpen: boolean
-  isUserModifiedQuery?: boolean //flag to signal that the selection criterial has been defined by user and if no records are returned do not hide the table
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
 }
@@ -344,15 +344,19 @@ export default class SynapseTable extends React.Component<
       className = 'SRC-marginBottomTop'
     }
     const hasResults = data.queryResult.queryResults.rows.length > 0
-    if (!hasResults && !this.state.isUserModifiedQuery) {
-      return (
-        <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-          <img src={NoData} alt="no data"></img>
-          <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
-            This table is currently empty
+    if (!hasResults) {
+      if (queryRequest.query.additionalFilters) {
+        return (<SearchResultsNotFound />)
+      } else {
+        return (
+          <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+            <img src={NoData} alt="no data"></img>
+            <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+              This table is currently empty
+            </div>
           </div>
-        </div>
-      )
+        )
+      }
     }
     const table = (
 
@@ -754,6 +758,10 @@ export default class SynapseTable extends React.Component<
       data,
       EntityColumnType.FILEHANDLEID,
     )
+    const entityIdListColumnIndicies = getColumnIndiciesWithType(
+      data,
+      EntityColumnType.ENTITYID_LIST,
+    )
     const otherListColumnIndicies = getColumnIndiciesWithType(
       data,
       EntityColumnType.STRING_LIST,
@@ -805,6 +813,7 @@ export default class SynapseTable extends React.Component<
                     dateListColumnIndicies,
                     booleanListColumnIndicies,
                     fileHandleIdColumnIndicies,
+                    entityIdListColumnIndicies,
                     otherListColumnIndicies,
                     colIndex,
                     columnValue,
@@ -1121,7 +1130,6 @@ export default class SynapseTable extends React.Component<
     const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
     queryRequest.query.selectedFacets = facets
     queryRequest.query.offset = 0
-    this.setState({ isUserModifiedQuery: true })
     this.props.executeQueryRequest!(queryRequest)
   }
 }

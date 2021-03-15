@@ -84,6 +84,8 @@ export default function AcceptedRequirements({
         SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
       gotoSynapseAccessRequirementPage()
+      // PORTALS-1483: and close the dialog.
+      onHide?.()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
