@@ -12,10 +12,10 @@ import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
 import { EntityTypeIcon } from '../../EntityIcon'
 
-type TreeViewRowProps = {
+export type TreeViewRowProps = {
   sessionToken: string
   entityHeader: EntityHeader | ProjectHeader
-  selectedId: string
+  selectedId?: string | null
   setSelectedId: (entityId: string) => void
   level?: number
   autoExpand?: (entityId: string) => boolean
@@ -99,10 +99,14 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
         ref={nodeRef}
         style={{ paddingLeft: `${level * 20 + 20}px` }}
         className="TreeNode__Row"
+        role="row"
         key={entityHeader.id}
         onClick={() => setSelectedId(entityHeader.id)}
       >
-        {children && children.pages && children.pages[0].page.length > 0 ? (
+        {children &&
+        children.pages &&
+        children.pages.length > 0 &&
+        children.pages[0].page.length > 0 ? (
           <div
             className={'TreeNode__Row__ExpandButton'}
             onClick={e => {

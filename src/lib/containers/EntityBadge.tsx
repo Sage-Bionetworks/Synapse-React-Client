@@ -4,7 +4,7 @@ import {
   faAlignLeft,
   faCheck,
   faComment,
-  faGlobe,
+  faGlobeAmericas,
   faLock,
   faTag,
 } from '@fortawesome/free-solid-svg-icons'
@@ -77,7 +77,7 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
           {isPublic(bundle) ? (
             <FontAwesomeIcon
               className="EntityBadge__Badge"
-              icon={faGlobe}
+              icon={faGlobeAmericas}
               aria-hidden="true"
               data-for={ENTITY_BADGE_TOOLTIP_ID}
               data-tip={'Public'}

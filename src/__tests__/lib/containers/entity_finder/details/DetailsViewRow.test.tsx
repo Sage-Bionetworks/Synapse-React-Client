@@ -10,7 +10,6 @@ import {
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import {
   EntityBundle,
-  EntityType,
   PaginatedResults,
   Reference,
 } from '../../../../../lib/utils/synapseTypes'
@@ -29,7 +28,7 @@ const defaultProps: DetailsViewRowProps = {
     lastActivity: 'yesterday',
     modifiedOn: 'today',
     modifiedBy: 100000,
-    type: EntityType.FILE,
+    type: 'org.sagebionetworks.repo.model.FileEntity',
   },
   appearance: 'default',
   showVersionColumn: true,

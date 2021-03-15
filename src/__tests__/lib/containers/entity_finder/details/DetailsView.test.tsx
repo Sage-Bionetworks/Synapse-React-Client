@@ -1,4 +1,3 @@
-import { isUnaryExpression } from '@babel/types'
 import '@testing-library/jest-dom'
 import { render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -8,7 +7,6 @@ import {
   DetailsView,
   DetailsViewProps,
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsView'
-import { convertToEntityType } from '../../../../../lib/utils/functions/EntityTypeUtils'
 import {
   Direction,
   EntityHeader,

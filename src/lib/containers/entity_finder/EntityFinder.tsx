@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
-import { CSSTransition } from 'react-transition-group'
+// import { CSSTransition } from 'react-transition-group'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
@@ -115,7 +115,9 @@ type EntityFinderProps = {
   showVersionSelection?: boolean
   showTypes: EntityType[]
   selectableTypes?: EntityType[]
+  selectedCopy?: string // The text to show before the list of selected entities. Default "Selected".
 }
+
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   sessionToken,
   initialContainerId,
@@ -124,6 +126,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   showVersionSelection = true,
   showTypes,
   selectableTypes = Object.values(EntityType),
+  selectedCopy = 'Selected',
 }) => {
   const [selectedEntities, setSelectedEntities] = useState<Reference[]>([])
 
@@ -216,13 +219,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   onClick={() => setSearchActive(true)}
                 />
               </div>
-              <CSSTransition
-                in={searchActive}
-                timeout={200}
-                mountOnEnter={true}
-                unmountOnExit={true}
-                classNames="search-active-container"
-              >
+              {searchActive && (
                 <div className="EntityFinder__Search__Container__SearchBoxContainer">
                   <input
                     className="EntityFinder__Search__Container__SearchBoxContainer__SearchBox"
@@ -239,7 +236,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     }}
                   ></input>
                 </div>
-              </CSSTransition>
+              )}{' '}
               <FontAwesomeIcon
                 style={searchActive ? { cursor: 'pointer' } : { width: '0px' }}
                 size={'sm'}
@@ -320,7 +317,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             </div>
           }
           <div className="EntityFinder__Selected">
-            Selected:
+            {selectedCopy}:
             {selectedEntities.length > 0 ? (
               <div>
                 {selectedEntities.map(e => (

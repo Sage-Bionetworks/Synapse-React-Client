@@ -13,7 +13,7 @@
     'submissionview',
     'dockerrepo',
   ]}
-  selectableVersions={true}
+  showVersionSelection={true}
   onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
   selectableTypes={[ 
     'project',
