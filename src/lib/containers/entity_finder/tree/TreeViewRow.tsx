@@ -84,7 +84,7 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     if (autoExpand(entityHeader.id)) {
       setIsExpanded(true)
     }
-  }, [autoExpand, entityHeader.id])
+  }, [entityHeader.id])
 
   useEffect(() => {
     if (isSuccess && endInView && hasNextPage) {

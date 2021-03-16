@@ -1,6 +1,7 @@
 ```jsx
 <EntityFinder 
   sessionToken={sessionToken}
+  initialScope={"Current Project"}
   initialContainerId={"syn24610451"}
   selectMultiple={true}
   showTypes={[

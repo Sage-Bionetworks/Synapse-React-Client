@@ -4,7 +4,12 @@
 $-header-height: 40px;
 $-border: 1px solid #dcdcdc;
 $-finder-height: 500px;
-$-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
+$-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
+
+@mixin -hover {
+  // we use an inset box-shadow because border will affect the width of the component
+  box-shadow: 0px 0px 0px 2px SRC.$primary-action-color-500 inset;
+}
 
 // https://github.com/leefsmp/Re-Flex/issues/27
 .EntityViewReflexContainer {
@@ -14,62 +19,34 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
 .EntityFinder {
   &__Search {
     display: flex;
-    justify-content: right;
-    &__Container {
-      display: flex;
-      align-items: center;
-      justify-content: right;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 10px 0px 10px 0px;
+    height: 38px;
+    &__SearchButton {
       border: $-border;
+      cursor: pointer;
+      padding: 5px 10px;
       margin: 10px 0px;
-      padding: 0px 10px;
-      height: 38px;
-      transition: all 0.5s;
-      &__SearchButton {
-        cursor: pointer;
-
-        padding: 5px;
-        margin: 10px 0px;
-      }
-      &__SearchBoxContainer {
-        padding: 0px 10px;
-        border: none;
-        &__SearchBox {
-          background-color: transparent;
-          height: 100%;
-          width: 100%;
-          margin: 10px;
-          padding: 10px;
-          border: none;
-          box-shadow: none;
-        }
+      svg {
+        margin-right: 10px;
+        margin-bottom: 2px;
       }
     }
-
-    // CSSTransition classes
-    .search-active-container-enter {
-      width: 0%;
-    }
-    .search-active-container-enter-active {
-      width: 100%;
-      transition: all 0.5s;
-    }
-    .search-active-container-enter-done {
-      width: 100%;
-    }
-    .search-active-container-exit {
-      width: 100%;
-    }
-    .search-active-container-exit-active {
-      width: 0%;
-      transition: all 0.5s;
-    }
-    .search-active-container-exit-done {
-      width: 0%;
+    input.EntityFinder__Search__Input {
+      background-color: transparent;
+      height: 100%;
+      width: 350px;
+      margin: 10px 0px;
+      padding: 5px 28px;
+      box-shadow: none;
     }
   }
 
   &__Selected {
-    font-size: medium;
+    max-width: 50%;
+    background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
+    padding: 15px;
     margin: 15px 0px;
     color: SRC.$primary-action-color-700;
     &__DeselectButton {
@@ -125,7 +102,7 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
       }
     }
     &__Row:hover {
-      background: color.change(SRC.$primary-action-color-300, $alpha: 0.1);
+      @include -hover();
     }
   }
 
@@ -140,9 +117,6 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
     .TreeNode[aria-selected='false'] > .TreeNode__Row {
       background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
     }
-    .TreeNode[aria-selected='false'] > .TreeNode__Row:hover {
-      background: color.change(SRC.$primary-action-color-500, $alpha: 0.1);
-    }
   }
 
   &__SelectionHeader {
@@ -150,6 +124,16 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
     border-bottom: $-border;
     display: flex;
     align-items: center;
+    button.btn {
+      background: none;
+      padding: 0px 10px;
+      margin: 0px;
+      height: $-header-height;
+      border: none;
+    }
+    button.btn::after {
+      margin-left: 7px;
+    }
   }
 
   &__Placeholder {
@@ -171,35 +155,29 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
   table {
     width: 100%;
     position: relative;
-    border-collapse: separate;
-    thead th {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-    th {
-      height: $-header-height;
-      font-weight: bold;
+    border-collapse: collapse;
+    thead {
       border-bottom: $-border;
       border-top: 1px solid white;
+      th {
+        height: $-header-height;
+        font-weight: bold;
 
-      background-color: white;
+        background-color: white;
+      }
 
-      box-shadow: SRC.$box-shadow-soft;
+      th > div {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px;
+      }
     }
-
-    th > div {
-      display: flex;
-      justify-content: space-between;
-      margin: 5px;
-    }
-
     td > div {
       margin: 5px;
     }
   }
   &__Row {
-    border-bottom: 1px solid #f9f9f9;
+    // border-bottom: 1px solid #f9f9f9;
     height: 45px;
   }
 
@@ -208,7 +186,7 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
   }
 
   &__Row:hover {
-    background: color.change(SRC.$primary-action-color-300, $alpha: 0.2);
+    @include -hover();
   }
 
   &__Row[aria-selected='true'] {
@@ -242,9 +220,11 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
   .CreatedOnColumn,
   .ModifiedOnColumn,
   .VersionColumn {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    div {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   .IsSelectedColumn {
@@ -270,6 +250,7 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.5);
 
   .NameColumn {
     min-width: 250px;
+    max-width: 350px;
   }
   .AccessColumn {
     width: 40px;
