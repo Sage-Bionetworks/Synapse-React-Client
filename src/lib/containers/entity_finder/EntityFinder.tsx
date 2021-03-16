@@ -106,7 +106,7 @@ const EntityPathDisplay: React.FunctionComponent<{
   )
 }
 
-export interface EntityFinderProps {
+export type EntityFinderProps = {
   sessionToken: string
   /** Required if `initialScope` is The SynID of the entity that should open by default. This dictates the 'Current Project' */
   initialContainerId: string
