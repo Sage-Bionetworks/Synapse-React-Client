@@ -620,6 +620,16 @@ div.SRC-userImg {
 .SRC-userCard {
   display: inline-flex;
   align-items: center;
+  .SRC-cardContent {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    p, span {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .SRC-userCardName {
