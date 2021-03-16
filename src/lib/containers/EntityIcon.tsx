@@ -13,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { faDocker } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
 
 library.add(
   faLink,
@@ -69,5 +70,11 @@ export const EntityTypeIcon: React.FC<EntityTypeIconProps> = ({
     console.warn('Could not retrieve icon for Entity with type: ', type)
     return <React.Fragment />
   }
-  return <FontAwesomeIcon icon={iconType} style={style} />
+  return (
+    <FontAwesomeIcon
+      icon={iconType}
+      style={style}
+      title={entityTypeToFriendlyName(type)}
+    />
+  )
 }

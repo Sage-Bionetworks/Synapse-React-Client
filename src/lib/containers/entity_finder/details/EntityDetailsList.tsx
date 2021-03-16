@@ -20,6 +20,7 @@ export enum EntityDetailsListDataConfigurationType {
   USER_PROJECTS, // retrieve the user's projects (using the parameters)
   USER_FAVORITES, // retrieve the user's favorites (using the parameters)
   ENTITY_SEARCH, // Search for an entity
+  PROMPT, // Show no entities and instruct the user to make a selection
 }
 
 export type EntityDetailsListDataConfiguration = {
@@ -100,6 +101,21 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
           return (
             <ProjectListDetails
               projectsParams={config.getProjectParams!}
+              {...sharedProps}
+            />
+          )
+        case EntityDetailsListDataConfigurationType.PROMPT:
+          return (
+            <DetailsView
+              entities={[]}
+              queryStatus={'success'}
+              queryIsFetching={false}
+              hasNextPage={false}
+              noResultsPlaceholder={
+                <div>
+                  Use the left pane to make a selection, or search above
+                </div>
+              }
               {...sharedProps}
             />
           )

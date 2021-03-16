@@ -1,6 +1,7 @@
 ```jsx
 <EntityFinder 
   sessionToken={sessionToken}
+  initialScope={"Current Project"}
   initialContainerId={"syn24610451"}
   selectMultiple={true}
   showTypes={[
@@ -13,7 +14,7 @@
     'submissionview',
     'dockerrepo',
   ]}
-  selectableVersions={true}
+  showVersionSelection={true}
   onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
   selectableTypes={[ 
     'project',
