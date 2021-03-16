@@ -10,6 +10,7 @@ import {
   SortBy,
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
+import { SynapseSpinner } from '../../../LoadingScreen'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsViewRow, DetailsViewRowAppearance } from './DetailsViewRow'
 
@@ -174,7 +175,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           <div className="EntityFinderDetailsView__Placeholder__Content">
             {queryStatus !== 'loading' &&
               (noResultsPlaceholder || <div>No results</div>)}
-            {queryStatus === 'loading' && <div className="spinner" />}
+            {queryStatus === 'loading' && <SynapseSpinner size={30} />}
           </div>
         </div>
       )}

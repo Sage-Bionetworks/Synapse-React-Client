@@ -1,6 +1,5 @@
 .EntityBadge {
-  float: right;
-  display: inline-flex;
+  display: flex;
   flex-direction: row-reverse;
   &__Badge {
     margin: 2px;
