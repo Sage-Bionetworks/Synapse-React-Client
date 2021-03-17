@@ -1,5 +1,7 @@
 import '@testing-library/jest-dom'
-import { logRoles, render, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { when } from 'jest-when'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
@@ -10,13 +12,8 @@ import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEnt
 import { useGetEntityChildrenInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityChildren'
 import {
   EntityBundle,
-  EntityChildrenResponse,
   EntityHeader,
 } from '../../../../../lib/utils/synapseTypes'
-import { when } from 'jest-when'
-import { UseInfiniteQueryResult } from 'react-query'
-import { SynapseClientError } from '../../../../../lib/utils/SynapseClient'
-import userEvent from '@testing-library/user-event'
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 jest.mock(

@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
+import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
@@ -49,6 +50,8 @@ const EntityPathDisplay: React.FunctionComponent<{
   entity: Reference
   toggleSelection: (entity: Reference) => void
 }> = ({ sessionToken, entity, toggleSelection }) => {
+  const ENTITY_PATH_TOOLTIP_ID = 'EntityPathDisplayReactTooltip'
+
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
     entity.targetId,
@@ -57,19 +60,21 @@ const EntityPathDisplay: React.FunctionComponent<{
   )
 
   const [entityName, setEntityName] = useState('')
-  const [pathString, setPathString] = useState('')
+  const [fullPath, setFullPath] = useState('')
+  const [displayedPath, setDisplayedPath] = useState('')
 
   useEffect(() => {
     if (bundle?.path?.path) {
       setEntityName(bundle.path.path[bundle.path.path.length - 1].name)
       const path = bundle.path.path.slice(1, bundle.path.path.length - 1) // drop the first element, which is always syn4489 "root"
-
+      const _fullPath = path.map(header => header.name).join('/')
+      setFullPath(_fullPath)
       if (path.length < 4) {
         // Show the full path from project to entity
-        setPathString(path.map(header => header.name).join('/'))
+        setDisplayedPath(_fullPath)
       } else {
         // Truncate the path, showing only project, parent, and self
-        setPathString(
+        setDisplayedPath(
           path[0].name + // Project
             '/…/' +
             path
@@ -83,6 +88,7 @@ const EntityPathDisplay: React.FunctionComponent<{
 
   return (
     <>
+      <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
       <span
         className="EntityFinder__Selected__DeselectButton"
         onClick={() => {
@@ -95,7 +101,12 @@ const EntityPathDisplay: React.FunctionComponent<{
           icon={faTimes}
         />
       </span>
-      <span>{pathString ? pathString + '/' : ''}</span>
+      <span
+        data-for={ENTITY_PATH_TOOLTIP_ID}
+        data-tip={`${fullPath}/${entityName}`}
+      >
+        {displayedPath ? displayedPath + '/' : ''}
+      </span>
       <span className="EntityFinder__Selected__DeselectButton__EntityName">
         {entityName}
       </span>

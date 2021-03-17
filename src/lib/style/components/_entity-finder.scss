@@ -44,7 +44,9 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
   }
 
   &__Selected {
-    max-width: 50%;
+    min-width: 50%;
+    width: max-content;
+    white-space: nowrap;
     background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
     padding: 15px;
     margin: 15px 0px;

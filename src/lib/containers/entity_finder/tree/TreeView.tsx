@@ -114,13 +114,19 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         )
       }
     }
-  }, [useProjectData, isSuccessProjects, projectData?.pages])
+  }, [useProjectData, isSuccessProjects, projectData])
 
   useEffect(() => {
     if (useProjectData && inView && hasNextPageProjects) {
       fetchNextPageProjects()
     }
-  }, [inView, hasNextPageProjects, fetchNextPageProjects, scope])
+  }, [
+    useProjectData,
+    inView,
+    hasNextPageProjects,
+    fetchNextPageProjects,
+    scope,
+  ])
 
   // Populates the first level of entities in the tree view
   useEffect(() => {
