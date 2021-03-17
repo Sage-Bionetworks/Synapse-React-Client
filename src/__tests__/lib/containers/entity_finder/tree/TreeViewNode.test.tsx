@@ -3,9 +3,9 @@ import { logRoles, render, waitFor } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
-  TreeViewRow,
-  TreeViewRowProps,
-} from '../../../../../lib/containers/entity_finder/tree/TreeViewRow'
+  TreeViewNode,
+  TreeViewNodeProps,
+} from '../../../../../lib/containers/entity_finder/tree/TreeViewNode'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetEntityChildrenInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityChildren'
 import {
@@ -31,7 +31,7 @@ const mockSetSelectedId = jest.fn()
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockUseGetEntityChildren = useGetEntityChildrenInfinite as jest.Mock
 
-const defaultProps: TreeViewRowProps = {
+const defaultProps: TreeViewNodeProps = {
   sessionToken: 'abcd',
   entityHeader: {
     id: 'syn123',
@@ -70,13 +70,13 @@ const bundleResult: EntityBundle = {
   },
 }
 
-function renderScreen(propOverrides?: Partial<TreeViewRowProps>) {
-  return render(<TreeViewRow {...defaultProps} {...propOverrides} />)
+function renderScreen(propOverrides?: Partial<TreeViewNodeProps>) {
+  return render(<TreeViewNode {...defaultProps} {...propOverrides} />)
 }
 
 const mockFetchNextPageOfChildren = jest.fn()
 
-describe('TreeViewRow tests', () => {
+describe('TreeViewNode tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockAllIsIntersecting(false)
@@ -129,7 +129,7 @@ describe('TreeViewRow tests', () => {
       })
   })
 
-  it('Renders self and children in rows', async () => {
+  it('Renders self and children', async () => {
     const screen = renderScreen()
 
     await waitFor(() =>

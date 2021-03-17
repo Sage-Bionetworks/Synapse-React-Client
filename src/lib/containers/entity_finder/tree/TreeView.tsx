@@ -15,7 +15,7 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
-import { TreeViewRow } from './TreeViewRow'
+import { TreeViewNode } from './TreeViewNode'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -275,7 +275,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
             <div style={!expandFakeRoot ? { display: 'none' } : {}}>
               {topLevelEntities?.map((entity: EntityHeader | ProjectHeader) => {
                 return (
-                  <TreeViewRow
+                  <TreeViewNode
                     key={entity.id}
                     sessionToken={sessionToken}
                     entityHeader={entity}

@@ -12,7 +12,7 @@ import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
 import { EntityTypeIcon } from '../../EntityIcon'
 
-export type TreeViewRowProps = {
+export type TreeViewNodeProps = {
   sessionToken: string
   entityHeader: EntityHeader | ProjectHeader
   selectedId?: string | null
@@ -22,7 +22,7 @@ export type TreeViewRowProps = {
   visibleTypes?: EntityType[]
 }
 
-export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
+export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
   sessionToken,
   entityHeader,
   selectedId,
@@ -31,7 +31,7 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   autoExpand = () => false,
   visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
 }) => {
-  const TOOLTIP_ID = 'TreeViewRowTooltipId'
+  const TOOLTIP_ID = 'TreeViewNodeTooltipId'
 
   const entityType = getEntityTypeFromHeader(entityHeader)
 
@@ -152,7 +152,7 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
             <div key={'' + page.nextPageToken}>
               {page.page.map(child => {
                 return (
-                  <TreeViewRow
+                  <TreeViewNode
                     key={child.id}
                     sessionToken={sessionToken}
                     entityHeader={child}
@@ -160,7 +160,7 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
                     setSelectedId={setSelectedId}
                     level={level + 1}
                     autoExpand={autoExpand}
-                  ></TreeViewRow>
+                  ></TreeViewNode>
                 )
               })}
             </div>
