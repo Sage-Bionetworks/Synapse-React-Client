@@ -6,7 +6,7 @@ import useCompare from '../../utils/hooks/useCompare'
 import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponent from './managedACTAccess/ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import {
   UserProfile,
@@ -25,6 +25,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile } from '@fortawesome/free-solid-svg-icons'
 import { sortBy } from 'lodash-es'
+import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 
 library.add(faFile)
 
@@ -194,7 +195,7 @@ export default function AccessRequirementList({
         return (
           <ManagedACTAccessRequirementComponent
             accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-            accessRequirementStatus={accessRequirementStatus}
+            accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
             token={token}
             user={user}
             onHide={onHide}

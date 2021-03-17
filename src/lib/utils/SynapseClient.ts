@@ -89,6 +89,7 @@ import {
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
+import { ManagedACTAccessRequirementStatus } from './synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 
 const cookies = new UniversalCookies()
 
@@ -2161,7 +2162,7 @@ export const getAccessRequirement = (
 export const getAccessRequirementStatus = (
   sessionToken: string | undefined,
   requirementId: string | number,
-): Promise<AccessRequirementStatus> => {
+): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
   const url = `repo/v1/accessRequirement/${requirementId}/status`
   return doGet(
     url,
