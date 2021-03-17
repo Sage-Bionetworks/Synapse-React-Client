@@ -249,18 +249,18 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           <SynapseSpinner size={30} />
         </div>
       ) : (
-        <div style={{ overflow: 'auto' }}>
+        <div role="tree" style={{ overflow: 'auto' }}>
           <div className="TreeNode" aria-selected={currentContainer === 'root'}>
             {showFakeRootNode && (
               <div
                 style={{ paddingLeft: `5px` }}
-                className="TreeNode__Row"
+                className="TreeNode__Content"
                 onClick={() => {
                   setCurrentContainer('root')
                 }}
               >
                 <div
-                  className={'TreeNode__Row__ExpandButton'}
+                  className={'TreeNode__Content__ExpandButton'}
                   onClick={e => {
                     e.stopPropagation()
                     setExpandFakeRoot(!expandFakeRoot)
@@ -283,6 +283,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                     setSelectedId={(entityId: string) => {
                       setCurrentContainer(entityId)
                     }}
+                    visibleTypes={visibleTypes}
                     autoExpand={entityId => {
                       return !!(
                         scope === FinderScope.CURRENT_PROJECT &&
@@ -290,7 +291,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                         isEntityIdInPath(entityId, initialContainerPath)
                       )
                     }}
-                  ></TreeViewRow>
+                  />
                 )
               })}
             </div>

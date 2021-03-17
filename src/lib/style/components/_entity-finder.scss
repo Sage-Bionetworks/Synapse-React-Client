@@ -73,7 +73,7 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
   border: $-border;
   overflow: auto;
   .TreeNode {
-    &__Row {
+    &__Content {
       width: 100%;
       display: inline-grid;
       grid-template-columns: 15px 27px auto auto;
@@ -101,20 +101,24 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
         text-overflow: ellipsis;
       }
     }
-    &__Row:hover {
+    &__Content:hover {
       @include -hover();
+    }
+
+    &__Children[aria-hidden='true'] {
+      display: none;
     }
   }
 
   .TreeNode[aria-selected='true'] {
-    > .TreeNode__Row {
+    > .TreeNode__Content {
       background: $-selected-color;
 
-      .EntityFinderTreeView__Row__ExpandButton {
+      .EntityFinderTreeView__Content__ExpandButton {
         color: SRC.$primary-action-color-500;
       }
     }
-    .TreeNode[aria-selected='false'] > .TreeNode__Row {
+    .TreeNode[aria-selected='false'] > .TreeNode__Content {
       background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
     }
   }

@@ -19,6 +19,7 @@ export type TreeViewRowProps = {
   setSelectedId: (entityId: string) => void
   level?: number
   autoExpand?: (entityId: string) => boolean
+  visibleTypes?: EntityType[]
 }
 
 export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
@@ -28,6 +29,7 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   setSelectedId,
   level = 0,
   autoExpand = () => false,
+  visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
 }) => {
   const TOOLTIP_ID = 'TreeViewRowTooltipId'
 
@@ -52,7 +54,7 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
     sessionToken,
     {
       parentId: entityHeader.id,
-      includeTypes: [EntityType.PROJECT, EntityType.FOLDER],
+      includeTypes: visibleTypes,
     },
     {
       enabled:
@@ -93,22 +95,33 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
   }, [isSuccess, endInView, hasNextPage, fetchNextPage])
 
   return (
-    <div className="TreeNode" aria-selected={selectedId === entityHeader.id}>
-      <ReactTooltip id={TOOLTIP_ID} delayShow={500} place={'top'} />
+    <div
+      className="TreeNode"
+      role="treeitem"
+      aria-selected={selectedId === entityHeader.id}
+    >
       <div
         ref={nodeRef}
         style={{ paddingLeft: `${level * 20 + 20}px` }}
-        className="TreeNode__Row"
-        role="row"
+        role="button"
+        aria-label={`Select ${entityHeader.name}`}
+        className="TreeNode__Content"
         key={entityHeader.id}
-        onClick={() => setSelectedId(entityHeader.id)}
+        onClick={event => {
+          event.stopPropagation()
+          setSelectedId(entityHeader.id)
+        }}
       >
+        <ReactTooltip id={TOOLTIP_ID} delayShow={500} place={'top'} />
+
         {children &&
         children.pages &&
         children.pages.length > 0 &&
         children.pages[0].page.length > 0 ? (
           <div
-            className={'TreeNode__Row__ExpandButton'}
+            className={'TreeNode__Content__ExpandButton'}
+            aria-label={`Expand ${entityHeader.name}`}
+            role="button"
             onClick={e => {
               e.stopPropagation()
               setIsExpanded(!isExpanded)
@@ -119,11 +132,11 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
         ) : (
           <span style={{ padding: '10px' }}></span>
         )}
-        <div className="TreeNode__Row__EntityIcon">
+        <div className="TreeNode__Content__EntityIcon">
           {<EntityTypeIcon type={entityType} />}
         </div>
         <div
-          className="TreeNode__Row__EntityName"
+          className="TreeNode__Content__EntityName"
           data-for={TOOLTIP_ID}
           data-tip={entityHeader.name}
         >
@@ -133,7 +146,7 @@ export const TreeViewRow: React.FunctionComponent<TreeViewRowProps> = ({
           {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
         </div>
       </div>
-      <div style={!isExpanded ? { display: 'none' } : {}}>
+      <div className={'TreeNode__Children'} aria-hidden={!isExpanded}>
         {children?.pages.map(page => {
           return (
             <div key={'' + page.nextPageToken}>
