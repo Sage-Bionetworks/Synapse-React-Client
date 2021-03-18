@@ -79,7 +79,7 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
       width: 100%;
       display: inline-grid;
       grid-template-columns: 15px 27px auto auto;
-      padding: 16px 10px;
+      padding: 16px 10px 16px 20px;
       align-items: center;
       &__ExpandButton {
         text-align: center;

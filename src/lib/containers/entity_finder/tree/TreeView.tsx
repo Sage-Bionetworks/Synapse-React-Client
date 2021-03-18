@@ -227,7 +227,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
             <Dropdown.Toggle variant="light-primary-500" id="dropdown-basic">
               {scope}
             </Dropdown.Toggle>
-            <Dropdown.Menu>
+            <Dropdown.Menu role="menu">
               {Object.values(FinderScope).map(scopeOption => {
                 if (
                   // initialContainerId is required to determine the current project. if it's not provided, don't allow the selection.
@@ -238,6 +238,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 }
                 return (
                   <Dropdown.Item
+                    role="menuitem"
                     key={scopeOption}
                     onClick={e => {
                       e.stopPropagation()
@@ -264,7 +265,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           <div className="TreeNode" aria-selected={currentContainer === 'root'}>
             {showFakeRootNode && (
               <div
-                style={{ paddingLeft: `5px` }}
                 className="TreeNode__Content"
                 onClick={() => {
                   setCurrentContainer('root')
@@ -287,6 +287,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               {topLevelEntities?.map((entity: EntityHeader | ProjectHeader) => {
                 return (
                   <TreeViewNode
+                    level={1}
                     key={entity.id}
                     sessionToken={sessionToken}
                     entityHeader={entity}
