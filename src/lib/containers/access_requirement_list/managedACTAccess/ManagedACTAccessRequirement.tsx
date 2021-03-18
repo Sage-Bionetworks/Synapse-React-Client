@@ -15,11 +15,13 @@ export type ManagedACTAccessRequirementComponentProps = {
   accessRequirement: ManagedACTAccessRequirement,
   accessRequirementStatus: ManagedACTAccessRequirementStatus,
   onHide?: Function,
+  requestDataStepCallback?: Function
 }
 
 const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirementComponentProps> = props => {
-  const { entityId, token, user, accessRequirement, accessRequirementStatus, onHide } = props
+  const { entityId, token, user, accessRequirement, accessRequirementStatus, onHide, requestDataStepCallback } = props
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
+
 
   useEffect(() => {
     const getManagedACTAccessData = async () => {
@@ -46,6 +48,7 @@ const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirement
       user={user}
       wikiPage={wikiPage}
       onHide={onHide}
+      requestDataStepCallback={requestDataStepCallback}
     />
   )
 }

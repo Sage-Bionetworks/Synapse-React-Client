@@ -26,6 +26,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile } from '@fortawesome/free-solid-svg-icons'
 import { sortBy } from 'lodash-es'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 
 library.add(faFile)
 
@@ -79,6 +80,7 @@ export default function AccessRequirementList({
   >(undefined)
 
   const [user, setUser] = useState<UserProfile>()
+  const [requestDataStep, setRequestDataStep] = useState<number>()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
@@ -200,6 +202,7 @@ export default function AccessRequirementList({
             user={user}
             onHide={onHide}
             entityId={entityId}
+            requestDataStepCallback={requestDataStepCallback}
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
@@ -218,6 +221,11 @@ export default function AccessRequirementList({
         return undefined
     }
   }
+
+  const requestDataStepCallback = (step:number) => {
+    setRequestDataStep(step)
+  }
+
   const content = (
     <>
       <ReactBootstrap.Modal.Header closeButton={true}>
@@ -295,10 +303,21 @@ export default function AccessRequirementList({
     </>
   )
 
+  let renderContent = content
   if (renderAsModal) {
+    switch (requestDataStep) {
+      case 1:
+        renderContent = <RequestDataAccessStep1
+          requestDataStepCallback={requestDataStepCallback}
+          token={token}
+        />
+        break
+      default:
+        renderContent = content
+    }
     return (
       <ReactBootstrap.Modal
-        className="AccessRequirementList"
+        className={!requestDataStep ? "AccessRequirementList": 'modal-auto-height'}
         onHide={() => onHide?.()}
         show={true}
         animation={false}
@@ -306,9 +325,9 @@ export default function AccessRequirementList({
         scrollable={true}
         size="lg"
       >
-        {content}
+        {renderContent}
       </ReactBootstrap.Modal>
     )
   }
-  return <div className="AccessRequirementList">{content}</div>
+  return <div className="AccessRequirementList">{renderContent}</div>
 }

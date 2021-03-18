@@ -1155,30 +1155,6 @@ hr ~ .SRC-wrapper {
   overflow: auto;
 }
 
-// https://github.com/twbs/bootstrap/blob/c140347bd26851c79e76766ae381e91c159b3f48/scss/_modal.scss
-.modal-dialog-scrollable {
-  height: 100%;
-
-  .modal-content {
-    height: 90%;
-    overflow: hidden;
-  }
-
-  .modal-body {
-    height: 90%;
-    overflow-y: auto;
-    padding: 15px;
-    h4 {
-      margin: 0px;
-    }
-  }
-}
-
-.modal-dialog-centered {
-  margin-top: 0px;
-  min-height: 90%;
-}
-
 .ButtonWithIcon {
   display: inline-flex;
   align-items: center;

@@ -33,26 +33,18 @@ export type RequestDataAccessProps = {
   accessRequirementStatus?: ManagedACTAccessRequirementStatus
   showButton?: boolean
   onHide?: Function
+  requestDataStepCallback?: Function
 }
 
 // const LoginPage: React.FunctionComponent<LoginPageProps> =
-const RequestDataAccess: React.FC<RequestDataAccessProps> = ({
-  user,
-  token,
-  wikiPage,
-  accessRequirement,
-  accessRequirementStatus,
-  showButton = true,
-  entityId,
-  onHide,
-}) => {
+const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
+  const { user, token, wikiPage, accessRequirementStatus, accessRequirement, showButton = true, onHide, requestDataStepCallback } = props
   const [isHide, setIsHide] = useState<boolean>(true)
   const propsIsApproved = accessRequirementStatus?.isApproved
   const [isApproved, setIsApproved] = useState<boolean | undefined>(
     propsIsApproved,
   )
   const [submissionState, setSubmissionState] = useState<SUBMISSION_STATE>()
-  console.log(submissionState)
 
   useEffect(() => {
 
@@ -64,9 +56,10 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = ({
   }, [propsIsApproved])
 
   const gotoSynapseAccessRequirementPage = () => {
-    window.open(
-      `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
-    )
+    // window.open(
+    //   `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
+    // )
+    requestDataStepCallback?.(1)
   }
   const onAcceptClicked = () => {
     if (
@@ -77,7 +70,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = ({
     ) {
       gotoSynapseAccessRequirementPage()
       // PORTALS-1483: and close the dialog.
-      onHide?.()
+      // onHide?.()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
