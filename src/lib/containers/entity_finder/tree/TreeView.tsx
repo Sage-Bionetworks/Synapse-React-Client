@@ -3,6 +3,7 @@ import { Dropdown } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../utils'
+import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
 import {
   EntityHeader,
@@ -138,6 +139,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         break
       case FinderScope.FAVORITES: {
         SynapseClient.getUserFavorites(sessionToken).then(({ results }) => {
+          // TODO: https://sagebionetworks.jira.com/browse/PLFM-6652
+          results = results.filter(result =>
+            visibleTypes.includes(convertToEntityType(result.type)),
+          )
           setTopLevelEntities(results)
           setIsLoading(false)
         })
@@ -162,7 +167,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         }
         break
     }
-  }, [sessionToken, scope, initialContainerId, handleError])
+  }, [sessionToken, scope, initialContainerId, handleError, visibleTypes])
 
   // Creates the configuration for the details view and calls the callback
   useEffect(() => {
