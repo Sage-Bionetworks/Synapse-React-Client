@@ -209,10 +209,14 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
   &__Placeholder {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     height: 80%;
-    &__Content {
-      font-size: large;
+    font-size: large;
+
+    .SearchPlaceholderImage {
+      width: 150px;
+      margin: 20px;
     }
   }
 

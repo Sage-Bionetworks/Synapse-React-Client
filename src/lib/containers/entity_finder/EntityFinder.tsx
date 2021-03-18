@@ -241,9 +241,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 <FontAwesomeIcon
                   size={'sm'}
                   icon={faSearch}
-                  style={{ position: 'relative', left: '20px' }}
+                  style={{ position: 'relative', left: '22px', top: '1px' }}
                 />
                 <FormControl
+                  autoFocus={true}
                   className="EntityFinder__Search__Input"
                   type="search"
                   placeholder="Search all of Synapse"
@@ -252,7 +253,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       if (event.target.value === '') {
                         setSearchTerms(undefined)
                       } else {
-                        setSearchTerms(event.target.value.split(' '))
+                        setSearchTerms([event.target.value.trim()])
                       }
                     }
                   }}
