@@ -24,6 +24,8 @@ import { FinderScope, TreeView } from './tree/TreeView'
 
 library.add(faTimes, faSearch)
 
+const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
+
 const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
   error,
   resetErrorBoundary,
@@ -149,7 +151,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   showTypes,
   selectableTypes = Object.values(EntityType),
   selectedCopy = 'Selected',
-  visibleTypesInTree = [EntityType.PROJECT, EntityType.FOLDER],
+  visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
 }: EntityFinderProps) => {
   const [selectedEntities, setSelectedEntities] = useState<Reference[]>([])
 
