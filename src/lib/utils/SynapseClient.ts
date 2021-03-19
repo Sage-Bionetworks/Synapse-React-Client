@@ -90,6 +90,7 @@ import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
 import { ManagedACTAccessRequirementStatus } from './synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import { ResearchProject } from './synapseTypes/ResearchProject'
 
 const cookies = new UniversalCookies()
 
@@ -2457,6 +2458,17 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
   return doPost<SearchResults>(
     '/repo/v1/search',
     query,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/researchProject.html
+export const createResearchProject = (requestObj: ResearchProject, sessionToken?: string) => {
+  return doPost<SearchResults>(
+    '/repo/v1/researchProject',
+    requestObj,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

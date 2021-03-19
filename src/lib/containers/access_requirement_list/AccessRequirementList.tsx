@@ -81,6 +81,7 @@ export default function AccessRequirementList({
 
   const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
+  const [accessRequirementId, setAccessRequirementId] = useState<string>("")
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
@@ -222,8 +223,9 @@ export default function AccessRequirementList({
     }
   }
 
-  const requestDataStepCallback = (step:number) => {
+  const requestDataStepCallback = (accessRequirementId:string, step:number) => {
     setRequestDataStep(step)
+    setAccessRequirementId(accessRequirementId)
   }
 
   const content = (
@@ -308,8 +310,9 @@ export default function AccessRequirementList({
     switch (requestDataStep) {
       case 1:
         renderContent = <RequestDataAccessStep1
-          requestDataStepCallback={requestDataStepCallback}
           token={token}
+          accessRequirementId={accessRequirementId}
+          requestDataStepCallback={requestDataStepCallback}
         />
         break
       default:
