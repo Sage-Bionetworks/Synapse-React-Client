@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../utils'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
+import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
 import {
   EntityHeader,
   EntityPath,
@@ -62,6 +63,15 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   setDetailsViewConfiguration = () => {},
   showFakeRootNode = true,
 }) => {
+  useTraceUpdate({
+    sessionToken,
+    initialScope,
+    initialContainerId,
+    visibleTypes,
+    setDetailsViewConfiguration,
+    showFakeRootNode,
+  })
+
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
@@ -261,7 +271,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           <SynapseSpinner size={30} />
         </div>
       ) : (
-        <div role="tree" style={{ overflow: 'auto' }}>
+        <div className="EntityFinderTreeView__Tree" role="tree">
           <div className="TreeNode" aria-selected={currentContainer === 'root'}>
             {showFakeRootNode && (
               <div
