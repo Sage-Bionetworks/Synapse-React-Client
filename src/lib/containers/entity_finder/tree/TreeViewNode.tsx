@@ -86,10 +86,7 @@ export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
     if (autoExpand(entityHeader.id)) {
       setIsExpanded(true)
     }
-    // TODO: Currently, the autoExpand function changes when the expand button is clicked, which re-invokes the function. Thus the node cannot be 'unexpanded'
-    // We should fix this, but in practice the function doesn't need to change, so we can get away with this for now
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entityHeader.id])
+  }, [autoExpand, entityHeader.id])
 
   useEffect(() => {
     if (isSuccess && endInView && hasNextPage) {

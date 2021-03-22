@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
@@ -212,6 +212,17 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     }
   }, [scope, currentContainer, topLevelEntities, setDetailsViewConfiguration])
 
+  const shouldAutoExpand = useCallback(
+    (entityId: string) => {
+      return !!(
+        scope === FinderScope.CURRENT_PROJECT &&
+        initialContainerPath &&
+        isEntityIdInPath(entityId, initialContainerPath)
+      )
+    },
+    [scope, initialContainerPath],
+  )
+
   return (
     <div className="EntityFinderTreeView" style={{ height: '500px' }}>
       <div className={`EntityFinderTreeView__SelectionHeader`}>
@@ -296,13 +307,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                       setCurrentContainer(entityId)
                     }}
                     visibleTypes={visibleTypes}
-                    autoExpand={entityId => {
-                      return !!(
-                        scope === FinderScope.CURRENT_PROJECT &&
-                        initialContainerPath &&
-                        isEntityIdInPath(entityId, initialContainerPath)
-                      )
-                    }}
+                    autoExpand={shouldAutoExpand}
                   />
                 )
               })}
