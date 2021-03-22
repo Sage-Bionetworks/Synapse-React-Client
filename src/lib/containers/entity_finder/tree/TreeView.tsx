@@ -235,7 +235,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               position: 'static',
             }}
           >
-            <Dropdown.Toggle variant="light-primary-500" id="dropdown-basic">
+            <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
               {scope}
             </Dropdown.Toggle>
             <Dropdown.Menu role="menu">

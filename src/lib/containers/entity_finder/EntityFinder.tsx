@@ -1,5 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTimes, faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { Button, FormControl } from 'react-bootstrap'
@@ -22,7 +22,7 @@ import {
 } from './details/EntityDetailsList'
 import { FinderScope, TreeView } from './tree/TreeView'
 
-library.add(faTimes, faSearch)
+library.add(faTimes, faSearch, faCircle)
 
 const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
 
@@ -89,19 +89,26 @@ const EntityPathDisplay: React.FunctionComponent<{
   }, [bundle])
 
   return (
-    <>
+    <div className="EntityFinder__Selected__Row">
       <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
       <span
-        className="EntityFinder__Selected__DeselectButton"
+        className="EntityFinder__Selected__Row__DeselectButton"
         onClick={() => {
           toggleSelection(entity)
         }}
       >
-        <FontAwesomeIcon
-          className="EntityFinder__Selected__DeselectButton__Icon"
-          size={'sm'}
-          icon={faTimes}
-        />
+        <span className="fa-layers fa-fw">
+          <FontAwesomeIcon
+            className="EntityFinder__Selected__Row__DeselectButton__IconCircle"
+            icon={faCircle}
+            size="lg"
+          />
+          <FontAwesomeIcon
+            className="EntityFinder__Selected__Row__DeselectButton__IconCross"
+            size={'sm'}
+            icon={faTimes}
+          />
+        </span>
       </span>
       <span
         data-for={ENTITY_PATH_TOOLTIP_ID}
@@ -115,7 +122,7 @@ const EntityPathDisplay: React.FunctionComponent<{
       {entity.targetVersionNumber && (
         <span> (Version {entity.targetVersionNumber})</span>
       )}
-    </>
+    </div>
   )
 }
 
@@ -267,6 +274,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     cursor: 'pointer',
                     position: 'relative',
                     left: '-20px',
+                    marginRight: '-8px',
                   }}
                   onClick={() => {
                     setSearchActive(false)
@@ -354,7 +362,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             </div>
           }
           <div className="EntityFinder__Selected">
-            {selectedCopy}:
+            <h2>{selectedCopy}</h2>
             {selectedEntities.length > 0 ? (
               <div>
                 {selectedEntities.map(e => (
@@ -372,7 +380,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 ))}
               </div>
             ) : (
-              ' None'
+              'Nothing selected. Make a selection above.'
             )}
           </div>
         </div>

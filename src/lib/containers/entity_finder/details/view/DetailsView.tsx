@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { QueryStatus } from 'react-query'
 import SortIcon from '../../../../assets/icons/Sort'
@@ -13,6 +13,7 @@ import { Hit } from '../../../../utils/synapseTypes/Search'
 import { SynapseSpinner } from '../../../LoadingScreen'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsViewRow, DetailsViewRowAppearance } from './DetailsViewRow'
+import ColumnResizer from 'column-resizer'
 
 export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: (EntityHeader | ProjectHeader | Hit)[]
@@ -84,6 +85,21 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     }
   }, [queryStatus, queryIsFetching, hasNextPage, fetchNextPage, inView])
 
+  const tableRef = useRef()
+
+  useEffect(() => {
+    if (tableRef) {
+      const RESIZER_OPTIONS: any = {
+        resizeMode: 'overflow',
+        partialRefresh: 'true',
+        liveDrag: true,
+        headerOnly: 'true',
+      }
+
+      new ColumnResizer(tableRef.current, RESIZER_OPTIONS)
+    }
+  }, [tableRef])
+
   const showInteractiveSortIcon = (columnSortBy: SortBy) => {
     return (
       sort &&
@@ -114,7 +130,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   return (
     <div className="EntityFinderDetailsView">
-      <table>
+      <table ref={tableRef}>
         <thead>
           <tr className="EntityFinderDetailsView__HeaderRow">
             {showSelectColumn && <th className="IsSelectedColumn" />}
