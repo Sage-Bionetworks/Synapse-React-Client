@@ -14,6 +14,7 @@ import { SynapseSpinner } from '../../../LoadingScreen'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsViewRow, DetailsViewRowAppearance } from './DetailsViewRow'
 import ColumnResizer from 'column-resizer'
+import { HelpButtonPopover } from '../../../HelpButtonPopover'
 
 export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: (EntityHeader | ProjectHeader | Hit)[]
@@ -159,7 +160,16 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             </th>
             {showVersionSelection && (
               <th className="VersionColumn">
-                <div>Version</div>
+                <div>
+                  <span>
+                    Version
+                    <HelpButtonPopover
+                      contentMarkdown={
+                        'Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”'
+                      }
+                    />
+                  </span>
+                </div>
               </th>
             )}
           </tr>

@@ -64,3 +64,14 @@
     }
   }
 }
+
+// Popovers
+.bootstrap-4-backport.fade {
+  opacity: 1;
+  .popover {
+    width: 500px;
+  }
+  .popover > .arrow {
+    border-width: unset;
+  }
+}
