@@ -85,7 +85,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     }
   }, [queryStatus, queryIsFetching, hasNextPage, fetchNextPage, inView])
 
-  const tableRef = useRef()
+  const tableRef = useRef(null)
 
   useEffect(() => {
     if (tableRef) {
