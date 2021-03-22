@@ -275,13 +275,14 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 />
               </>
             ) : (
-              <div
+              <Button
+                variant="gray-primary-500"
                 className="EntityFinder__Search__SearchButton"
                 onClick={() => setSearchActive(true)}
               >
                 <FontAwesomeIcon size={'sm'} icon={faSearch} />
                 Search
-              </div>
+              </Button>
             )}
           </div>
           {/* We have a separate Details component for search in order to preserve state in the other component between searches */}

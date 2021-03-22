@@ -29,6 +29,7 @@ export const ButtonDemo: React.FunctionComponent = () => {
     'light-primary-500',
     'light-primary-700',
     'light-primary-900',
+    'gray-primary-500',
     'secondary',
     'light-secondary',
     'default',

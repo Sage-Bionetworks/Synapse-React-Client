@@ -23,16 +23,11 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
     align-items: center;
     margin: 10px 0px 10px 0px;
     height: 38px;
-    &__SearchButton {
-      border: $-border;
-      cursor: pointer;
-      padding: 5px 10px;
-      margin: 10px 0px;
-      svg {
-        margin-right: 10px;
-        margin-bottom: 2px;
-      }
+    &__SearchButton > svg {
+      margin-right: 10px;
+      margin-bottom: 2px;
     }
+
     input.EntityFinder__Search__Input {
       background-color: transparent;
       height: 100%;
