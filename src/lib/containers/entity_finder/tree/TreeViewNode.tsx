@@ -113,7 +113,6 @@ export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
         }}
       >
         <ReactTooltip id={TOOLTIP_ID} delayShow={500} place={'top'} />
-
         {children &&
         children.pages &&
         children.pages.length > 0 &&

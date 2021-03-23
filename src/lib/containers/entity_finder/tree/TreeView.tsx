@@ -41,7 +41,6 @@ export type TreeViewProps = {
   initialContainerId?: string // Necessary to show the current project (including if initialScope === CURRENT_PROJECT). initialContainerId must the synId of the current project or a container within that project.
   showDropdown: boolean
   visibleTypes?: EntityType[] // Default ['project', 'folder']
-  showFakeRootNode?: boolean // necessary to select root nodes in a details view
   setDetailsViewConfiguration?: (
     configuration: EntityDetailsListDataConfiguration,
   ) => void
@@ -52,7 +51,6 @@ export type TreeViewProps = {
  * The TreeView displays a user's entities hierarchically, allowing a user to quickly dive into an entity tree.
  *
  * The tree view currently can only be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
- * @param param0
  */
 export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   sessionToken,
@@ -60,13 +58,12 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   initialContainerId,
   visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
   setDetailsViewConfiguration = () => {},
-  showFakeRootNode = true,
-}) => {
+}: TreeViewProps) => {
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
 
-  const [expandFakeRoot, setExpandFakeRoot] = useState(true)
+  const [expandRoot, setExpandRoot] = useState(true)
 
   const [isLoading, setIsLoading] = useState(false)
   const [topLevelEntities, setTopLevelEntities] = useState<
@@ -86,6 +83,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // For these scopes, use the `useGetProjectsInfinite` hook
   const useProjectData =
     scope === FinderScope.ALL_PROJECTS || scope === FinderScope.CREATED_BY_ME
 
@@ -169,7 +167,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     }
   }, [sessionToken, scope, initialContainerId, handleError, visibleTypes])
 
-  // Creates the configuration for the details view and calls the callback
+  // Creates the configuration for the details view and invokes the callback
   useEffect(() => {
     if (currentContainer === null) {
       setDetailsViewConfiguration({
@@ -226,15 +224,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   return (
     <div className="EntityFinderTreeView" style={{ height: '500px' }}>
       <div className={`EntityFinderTreeView__SelectionHeader`}>
-        <div
-          style={{ width: 'min-content' }}
-          onClick={e => e.stopPropagation()}
-        >
-          <Dropdown
-            style={{
-              position: 'static',
-            }}
-          >
+        <div onClick={e => e.stopPropagation()}>
+          <Dropdown>
             <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
               {scope}
             </Dropdown.Toggle>
@@ -274,27 +265,25 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       ) : (
         <div className="EntityFinderTreeView__Tree" role="tree">
           <div className="TreeNode" aria-selected={currentContainer === 'root'}>
-            {showFakeRootNode && (
+            <div
+              className="TreeNode__Content TreeNodeRootContent"
+              onClick={() => {
+                setCurrentContainer('root')
+              }}
+            >
               <div
-                className="TreeNode__Content"
-                onClick={() => {
-                  setCurrentContainer('root')
+                className={'TreeNode__Content__ExpandButton'}
+                onClick={e => {
+                  e.stopPropagation()
+                  setExpandRoot(!expandRoot)
                 }}
               >
-                <div
-                  className={'TreeNode__Content__ExpandButton'}
-                  onClick={e => {
-                    e.stopPropagation()
-                    setExpandFakeRoot(!expandFakeRoot)
-                  }}
-                >
-                  {expandFakeRoot ? '▾' : '▸'}
-                </div>
-                <span></span>
-                {scope}
+                {expandRoot ? '▾' : '▸'}
               </div>
-            )}
-            <div style={!expandFakeRoot ? { display: 'none' } : {}}>
+              <span></span>
+              <span>{scope}</span>
+            </div>
+            <div style={!expandRoot ? { display: 'none' } : {}}>
               {topLevelEntities?.map((entity: EntityHeader | ProjectHeader) => {
                 return (
                   <TreeViewNode

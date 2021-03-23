@@ -68,6 +68,19 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
       }
     }
   }
+
+  .reflex-container.vertical > .reflex-splitter {
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    background: transparent;
+    box-sizing: border-box;
+    width: 1px;
+  }
+  .reflex-container.vertical > .reflex-splitter:hover,
+  .reflex-container.vertical > .reflex-splitter:active {
+    border-color: SRC.$primary-action-color;
+    background-color: SRC.$primary-action-color;
+  }
 }
 
 .EntityViewReflexContainer {
@@ -132,6 +145,10 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
       .TreeNode[aria-selected='false'] > .TreeNode__Content {
         background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
       }
+    }
+
+    .TreeNode__Content.TreeNodeRootContent {
+      grid-template-columns: 15px 5px auto;
     }
   }
 
