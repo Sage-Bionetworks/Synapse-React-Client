@@ -27,6 +27,7 @@ import { faFile } from '@fortawesome/free-solid-svg-icons'
 import { sortBy } from 'lodash-es'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
+import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 
 library.add(faFile)
 
@@ -315,12 +316,19 @@ export default function AccessRequirementList({
           requestDataStepCallback={requestDataStepCallback}
         />
         break
+      case 2:
+        renderContent = <RequestDataAccessStep2
+          token={token}
+          accessRequirementId={accessRequirementId}
+          requestDataStepCallback={requestDataStepCallback}
+        />
+        break
       default:
         renderContent = content
     }
     return (
       <ReactBootstrap.Modal
-        className={!requestDataStep ? "AccessRequirementList": 'modal-auto-height'}
+        className={!requestDataStep ? "AccessRequirementList": 'bootstrap-4-backport modal-auto-height'}
         onHide={() => onHide?.()}
         show={true}
         animation={false}

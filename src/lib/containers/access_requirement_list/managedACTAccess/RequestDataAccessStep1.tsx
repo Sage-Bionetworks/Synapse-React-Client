@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { Button, Form } from 'react-bootstrap'
 import * as ReactBootstrap from 'react-bootstrap'
-import { useState } from 'react'
-import { createResearchProject } from '../../../utils/SynapseClient'
+import { useEffect, useRef, useState } from 'react'
+import { updateResearchProject, getResearchProject } from '../../../utils/SynapseClient'
 import { ResearchProject } from '../../../utils/synapseTypes/ResearchProject'
 
 export type RequestDataAccessStep1 = {
@@ -16,6 +16,31 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
   const [projectLead, setProjectLead] = useState<string>("")
   const [institution, setInstitution] = useState<string>("")
   const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<string>("")
+  const researchProjectRef = useRef({})
+  let mounted = true
+
+  useEffect(() => {
+    if (mounted) {
+      retrieveExistingResearchProject()
+    }
+    return () => {
+      mounted = false
+    }
+  }, [token, accessRequirementId])
+
+  const retrieveExistingResearchProject = async () => {
+    try {
+      const researchProject = await getResearchProject(accessRequirementId, token)
+      if (researchProject.id) {
+        researchProjectRef.current = researchProject
+        setProjectLead(researchProject.projectLead)
+        setInstitution(researchProject.institution)
+        setIntendedDataUseStatement(researchProject.intendedDataUseStatement)
+      }
+    } catch (e) {
+      console.log("RequestDataAccessStep1: Error getting research project data: ", e)
+    }
+  }
 
   const goBack = () => {
     requestDataStepCallback?.()
@@ -23,13 +48,21 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault();
-    const responseObj:ResearchProject = {
+    const requestObj:ResearchProject = Object.assign({}, researchProjectRef.current, {
       accessRequirementId: accessRequirementId,
       institution: institution,
       projectLead: projectLead,
       intendedDataUseStatement: intendedDataUseStatement
+    })
+
+    try {
+      const resp = await updateResearchProject(requestObj, token)
+      console.log("updateResearchProject", resp)
+      requestDataStepCallback?.(accessRequirementId, 2)
+    } catch (e) {
+      console.log("RequestDataAccessStep1: Error updating research project data: ", e)
+      // TODO: surface error
     }
-    // const resp = await createResearchProject(responseObj, token)
   };
 
   return (<>
@@ -40,38 +73,38 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
       </ReactBootstrap.Modal.Title>
     </ReactBootstrap.Modal.Header>
     <ReactBootstrap.Modal.Body>
-      <h4>Please tell us about your project</h4>
-        <Form.Group style={{marginTop: "2rem"}} >
-          <Form.Label htmlFor={"project-lead"}>Project Lead</Form.Label>
-          <Form.Control
-            id={"project-lead"}
-            type="text"
-            value={projectLead}
-            required
-            onChange={e => setProjectLead(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group>
-          <Form.Label htmlFor={"institution"}>Institution</Form.Label>
-          <Form.Control
-            id={"institution"}
-            type="text"
-            value={institution}
-            required
-            onChange={e => setInstitution(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group>
-          <Form.Label htmlFor={"data-use"}>Intended Data Use Statement - <i>this will be visible to the public</i></Form.Label>
-          <Form.Control
-            id={"data-use"}
-            as="textarea"
-            value={intendedDataUseStatement}
-            rows={10}
-            required
-            onChange={e => setIntendedDataUseStatement(e.target.value)}
-          />
-        </Form.Group>
+      <h4>Please tell us about your project.</h4>
+      <Form.Group style={{marginTop: "2rem"}} >
+        <Form.Label htmlFor={"project-lead"}>Project Lead</Form.Label>
+        <Form.Control
+          id={"project-lead"}
+          type="text"
+          value={projectLead}
+          required
+          onChange={e => setProjectLead(e.target.value)}
+        />
+      </Form.Group>
+      <Form.Group>
+        <Form.Label htmlFor={"institution"}>Institution</Form.Label>
+        <Form.Control
+          id={"institution"}
+          type="text"
+          value={institution}
+          required
+          onChange={e => setInstitution(e.target.value)}
+        />
+      </Form.Group>
+      <Form.Group>
+        <Form.Label htmlFor={"data-use"}>Intended Data Use Statement - <i>this will be visible to the public</i></Form.Label>
+        <Form.Control
+          id={"data-use"}
+          as="textarea"
+          value={intendedDataUseStatement}
+          rows={10}
+          required
+          onChange={e => setIntendedDataUseStatement(e.target.value)}
+        />
+      </Form.Group>
     </ReactBootstrap.Modal.Body>
     <ReactBootstrap.Modal.Footer>
       <Button variant="link" onClick={goBack}>Cancel</Button>
