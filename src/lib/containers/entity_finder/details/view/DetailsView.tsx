@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { QueryStatus } from 'react-query'
 import SortIcon from '../../../../assets/icons/Sort'
@@ -13,6 +13,8 @@ import { Hit } from '../../../../utils/synapseTypes/Search'
 import { SynapseSpinner } from '../../../LoadingScreen'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsViewRow, DetailsViewRowAppearance } from './DetailsViewRow'
+import ColumnResizer from 'column-resizer'
+import { HelpButtonPopover } from '../../../HelpButtonPopover'
 
 export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: (EntityHeader | ProjectHeader | Hit)[]
@@ -84,6 +86,21 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     }
   }, [queryStatus, queryIsFetching, hasNextPage, fetchNextPage, inView])
 
+  const tableRef = useRef(null)
+
+  useEffect(() => {
+    if (tableRef) {
+      const RESIZER_OPTIONS: any = {
+        resizeMode: 'overflow',
+        partialRefresh: 'true',
+        liveDrag: true,
+        headerOnly: 'true',
+      }
+
+      new ColumnResizer(tableRef.current, RESIZER_OPTIONS)
+    }
+  }, [tableRef])
+
   const showInteractiveSortIcon = (columnSortBy: SortBy) => {
     return (
       sort &&
@@ -114,7 +131,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   return (
     <div className="EntityFinderDetailsView">
-      <table>
+      <table ref={tableRef}>
         <thead>
           <tr className="EntityFinderDetailsView__HeaderRow">
             {showSelectColumn && <th className="IsSelectedColumn" />}
@@ -143,7 +160,16 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             </th>
             {showVersionSelection && (
               <th className="VersionColumn">
-                <div>Version</div>
+                <div>
+                  <span>
+                    Version
+                    <HelpButtonPopover
+                      contentMarkdown={
+                        'Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”'
+                      }
+                    />
+                  </span>
+                </div>
               </th>
             )}
           </tr>
@@ -172,11 +198,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       </table>
       {entities.length === 0 && (
         <div className="EntityFinderDetailsView__Placeholder">
-          <div className="EntityFinderDetailsView__Placeholder__Content">
-            {queryStatus !== 'loading' &&
-              (noResultsPlaceholder || <div>No results</div>)}
-            {queryStatus === 'loading' && <SynapseSpinner size={30} />}
-          </div>
+          {queryStatus !== 'loading' &&
+            (noResultsPlaceholder || <div>No results</div>)}
+          {queryStatus === 'loading' && <SynapseSpinner size={30} />}
         </div>
       )}
     </div>

@@ -19,6 +19,7 @@ const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 const mockToggleSelection = jest.fn()
+const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 
 const defaultProps: DetailsViewRowProps = {
   sessionToken: 'abcd',
@@ -83,7 +84,7 @@ describe('DetailsViewRow tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockAllIsIntersecting(false)
-    ;(useGetEntityBundle as jest.Mock).mockImplementation(() => ({
+    mockUseGetEntityBundle.mockImplementation(() => ({
       data: bundleResult,
     }))
 
@@ -147,7 +148,7 @@ describe('DetailsViewRow tests', () => {
 
     renderScreen()
 
-    expect(useGetEntityBundle).toBeCalledWith(
+    expect(mockUseGetEntityBundle).toBeCalledWith(
       defaultProps.sessionToken,
       defaultProps.entityHeader.id,
       expect.anything(),
@@ -160,7 +161,7 @@ describe('DetailsViewRow tests', () => {
 
     mockAllIsIntersecting(true)
 
-    expect(useGetEntityBundle).toBeCalledWith(
+    expect(mockUseGetEntityBundle).toBeCalledWith(
       defaultProps.sessionToken,
       defaultProps.entityHeader.id,
       expect.anything(),
