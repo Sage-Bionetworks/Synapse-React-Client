@@ -147,7 +147,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         break
       }
       case FinderScope.CURRENT_PROJECT:
-      default:
         if (initialContainerId == null) {
           handleError(
             new Error(
@@ -164,6 +163,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           )
         }
         break
+      default:
+        handleError(new Error('No scope selected'))
     }
   }, [sessionToken, scope, initialContainerId, handleError, visibleTypes])
 
@@ -197,7 +198,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         case FinderScope.FAVORITES:
           setDetailsViewConfiguration({
             type: EntityDetailsListDataConfigurationType.USER_FAVORITES,
-            headerList: topLevelEntities,
           })
 
           break
