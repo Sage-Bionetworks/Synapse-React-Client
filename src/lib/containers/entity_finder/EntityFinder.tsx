@@ -333,7 +333,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         <TreeView
                           sessionToken={sessionToken}
                           setDetailsViewConfiguration={setConfigFromTreeView}
-                          showFakeRootNode={true}
                           showDropdown={true}
                           visibleTypes={visibleTypesInTree}
                           initialScope={initialScope}
