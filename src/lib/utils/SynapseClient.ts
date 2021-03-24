@@ -2466,7 +2466,7 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
 
 // http://rest-docs.synapse.org/rest/POST/researchProject.html
 export const updateResearchProject = (requestObj: ResearchProject, sessionToken?: string) => {
-  return doPost<SearchResults>(
+  return doPost<ResearchProject>(
     '/repo/v1/researchProject',
     requestObj,
     sessionToken,

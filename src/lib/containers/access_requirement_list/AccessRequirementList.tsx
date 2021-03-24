@@ -328,7 +328,7 @@ export default function AccessRequirementList({
     }
     return (
       <ReactBootstrap.Modal
-        className={!requestDataStep ? "AccessRequirementList": 'bootstrap-4-backport modal-auto-height'}
+        className={!requestDataStep ? "bootstrap-4-backport AccessRequirementList": 'bootstrap-4-backport AccessRequirementList modal-auto-height'}
         onHide={() => onHide?.()}
         show={true}
         animation={false}

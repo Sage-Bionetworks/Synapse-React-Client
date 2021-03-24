@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Form } from 'react-bootstrap'
+import { Alert, Button, Form } from 'react-bootstrap'
 import * as ReactBootstrap from 'react-bootstrap'
 import { useEffect, useRef, useState } from 'react'
 import { updateResearchProject, getResearchProject } from '../../../utils/SynapseClient'
@@ -16,11 +16,13 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
   const [projectLead, setProjectLead] = useState<string>("")
   const [institution, setInstitution] = useState<string>("")
   const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<string>("")
+  const [errMessage, setErrMessage] = useState<string>("")
   const researchProjectRef = useRef({})
   let mounted = true
 
   useEffect(() => {
     if (mounted) {
+      setErrMessage("")
       retrieveExistingResearchProject()
     }
     return () => {
@@ -36,6 +38,8 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
         setProjectLead(researchProject.projectLead)
         setInstitution(researchProject.institution)
         setIntendedDataUseStatement(researchProject.intendedDataUseStatement)
+      } else {
+        console.log("RequestDataAccessStep1: Error getting research project data: ")
       }
     } catch (e) {
       console.log("RequestDataAccessStep1: Error getting research project data: ", e)
@@ -56,17 +60,20 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
     })
 
     try {
-      const resp = await updateResearchProject(requestObj, token)
-      console.log("updateResearchProject", resp)
-      requestDataStepCallback?.(accessRequirementId, 2)
+      updateResearchProject(requestObj, token).then((researchProject) => {
+        requestDataStepCallback?.(accessRequirementId, 2) // TODO: remove resp?
+      }).catch(e => {
+        console.log("RequestDataAccessStep1: Error updating research project data: ", e)
+        setErrMessage("Unable to update form data. Please try again later.")
+      })
     } catch (e) {
       console.log("RequestDataAccessStep1: Error updating research project data: ", e)
-      // TODO: surface error
+      setErrMessage("Unable to update form data. Please try again later.")
     }
   };
 
   return (<>
-  <Form onSubmit={handleSubmit}>
+  <Form className={"access-request-form1"} onSubmit={handleSubmit}>
     <ReactBootstrap.Modal.Header closeButton={true}>
       <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
         Request Access
@@ -74,6 +81,7 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
     </ReactBootstrap.Modal.Header>
     <ReactBootstrap.Modal.Body>
       <h4>Please tell us about your project.</h4>
+      {errMessage && <Alert variant={"danger"}>{errMessage}</Alert>}
       <Form.Group style={{marginTop: "2rem"}} >
         <Form.Label htmlFor={"project-lead"}>Project Lead</Form.Label>
         <Form.Control

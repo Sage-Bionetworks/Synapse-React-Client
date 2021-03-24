@@ -40,7 +40,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }
 
   return (<>
-    <Form className={"model-form"} onSubmit={handleSubmit}>
+    <Form className={"access-request-form2"} onSubmit={handleSubmit}>
       <ReactBootstrap.Modal.Header closeButton={true}>
         <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
           Request Access
@@ -61,17 +61,14 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             required
             onChange={e => setRequester(e.target.value)}
           />
-        </Form.Group>
-        <Form.Group>
           <Checkbox
             label="@emmanmills"
             id="ch1"
             checked={false}
             onChange={(checked: boolean) => setCheck(checked)}
+            className={"ch1"}
           ></Checkbox>
-        </Form.Group>
-        <hr />
-        <Form.Group>
+          <hr />
           <Button variant="link" style={{paddingLeft: "0"}}>Select All</Button>
           <Button variant="link" disabled>Remove Selected</Button>
         </Form.Group>
@@ -98,9 +95,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             onChange={(checked: boolean) => setCheck(checked)}
           ></Checkbox>
           <Button variant={"light-primary-base"}>Browse...</Button>
-        </Form.Group>
-        <hr />
-        <Form.Group>
+          <hr />
           <Button variant="link" style={{paddingLeft: "0"}}>Select All</Button>
           <Button variant="link" disabled>Remove Selected</Button>
         </Form.Group>

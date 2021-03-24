@@ -24,26 +24,52 @@
   min-height: 90%;
 }
 
-.bootstrap-4-backport.modal-auto-height {
-  .modal-dialog-scrollable {
-    height: auto;
-    max-height: none;
+.bootstrap-4-backport {
+
+  &.modal-auto-height {
+    .modal-dialog-scrollable {
+      height: auto;
+      max-height: none;
+    }
   }
-  .form-check-inline {
-    display: inline-flex;
-  }
-  input[type='checkbox'] {
-    margin-right: 0.5rem;
-  }
-  .btn-link[disabled] {
-    color: #777;
-    opacity: 1;
-  }
-  .SRC-noPadding.btn {
-    padding: 0;
-  }
-  label.SRC-noMargin {
-    margin: 0;
+
+  .modal-dialog {
+    .form-check-inline {
+      display: inline-flex;
+    }
+    .btn-link:hover {
+      box-shadow: none;
+    }
+    input[type='checkbox'] {
+      margin-right: 0.5rem;
+    }
+    .btn-link[disabled] {
+      color: #777;
+      opacity: 1;
+    }
+    .SRC-noPadding.btn {
+      padding: 0;
+    }
+    label.SRC-noMargin {
+      margin: 0;
+    }
+    .fade.alert.show {
+      transition: none;
+      opacity: 1;
+    }
+    .alert {
+      margin: 1rem 0;
+    }
+    .access-request-form2 {
+      .form-group {
+        margin-bottom: 2rem;
+      }
+      .ch1 {
+        label {
+          margin-bottom: 0;
+        }
+      }
+    }
   }
 
 }
