@@ -149,7 +149,7 @@ const entityPath: EntityPath = {
   ],
 }
 
-function renderScreen(propOverrides?: Partial<TreeViewProps>) {
+function renderComponent(propOverrides?: Partial<TreeViewProps>) {
   return render(<TreeView {...defaultProps} {...propOverrides} />)
 }
 
@@ -200,7 +200,7 @@ describe('TreeView tests', () => {
       isLoading: false,
     })
 
-    renderScreen({ initialScope: FinderScope.ALL_PROJECTS })
+    renderComponent({ initialScope: FinderScope.ALL_PROJECTS })
 
     // Don't fetch the next page until it's in view
     expect(mockFetchNextPage).not.toBeCalled()
@@ -220,7 +220,7 @@ describe('TreeView tests', () => {
   describe('DetailsViewConfiguration callback tests', () => {
     // Test what happens e.g. when 'setCurrentContainer' is called with different values,
     it('Creates a prompt configuration there is no currentContainer', async () => {
-      renderScreen({
+      renderComponent({
         initialContainerId: undefined,
         initialScope: FinderScope.ALL_PROJECTS,
       })
@@ -232,7 +232,7 @@ describe('TreeView tests', () => {
       })
     })
     it('Configures to get all projects when the root node is selected with a scope of all projects', async () => {
-      renderScreen({
+      renderComponent({
         initialContainerId: 'root',
         initialScope: FinderScope.ALL_PROJECTS,
       })
@@ -246,7 +246,7 @@ describe('TreeView tests', () => {
     })
 
     it('Configures to get projects created by the user when the root node is selected with a scope of projects created by the user', () => {
-      renderScreen({
+      renderComponent({
         initialContainerId: 'root',
         initialScope: FinderScope.CREATED_BY_ME,
       })
@@ -258,7 +258,7 @@ describe('TreeView tests', () => {
     })
 
     it('Configures to display a list containing just the current project when the root node is selected with a scope of the current project', async () => {
-      renderScreen({
+      renderComponent({
         initialContainerId: 'root',
         initialScope: FinderScope.CURRENT_PROJECT,
       })
@@ -274,7 +274,7 @@ describe('TreeView tests', () => {
     })
 
     it('Configures to get favorites when the root node is selected with a scope of favorites', async () => {
-      renderScreen({
+      renderComponent({
         initialContainerId: 'root',
         initialScope: FinderScope.FAVORITES,
       })
@@ -287,7 +287,7 @@ describe('TreeView tests', () => {
     })
 
     it('Configures to get children of the current container when a container is selected', async () => {
-      renderScreen()
+      renderComponent()
 
       await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
@@ -306,7 +306,7 @@ describe('TreeView tests', () => {
   })
 
   it('passes down props to children', async () => {
-    renderScreen()
+    renderComponent()
 
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 

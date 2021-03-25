@@ -13,25 +13,27 @@ Configured to show cards:
 
   cardConfiguration={{
     type: GENERIC_CARD,
+    titleLinkConfig: {
+        matchColumnName: 'initiative',
+        isMarkdown: false,
+        baseURL: 'Explore/Initiatives/DetailsPage',
+        URLColumnName: 'Initiative',
+    },
     genericCardSchema: {
       type: 'Initiative',
-      title: 'initiative',    
-      description: 'summary',    
+      title: 'initiative',
+      description: 'summary',
       link: 'website',
       imageFileHandleColumnName: 'image',
+      
       // secondaryLabels: [
       //   'fundingAgency',
       //   'abbreviation',
       // ],
     },
-    ctaButtonLinkConfig: {
-      buttonText: 'Explore Studies',
-      linkConfig: {
-        matchColumnName: 'initiative',
-        isMarkdown: false,
-        baseURL: 'Explore/Initiatives/DetailsPage',
-        URLColumnName: 'Initiative',
-      }
+    ctaLinkConfig: {
+      text: 'Visit Website',
+      link: 'website'
     }
   }}
 />
