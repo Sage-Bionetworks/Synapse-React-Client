@@ -47,7 +47,7 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
     white-space: nowrap;
     background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
     padding: 15px;
-    margin: 15px 0px;
+    margin: 15px 0px 0px auto;
     &__Row {
       margin-bottom: 10px;
       &__DeselectButton {

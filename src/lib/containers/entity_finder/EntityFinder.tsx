@@ -360,9 +360,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               </div>
             </div>
           }
-          <div className="EntityFinder__Selected">
-            <h2>{selectedCopy}</h2>
-            {selectedEntities.length > 0 ? (
+          {selectedEntities.length > 0 && (
+            <div className="EntityFinder__Selected">
+              <h3>{selectedCopy}</h3>
               <div>
                 {selectedEntities.map(e => (
                   <div
@@ -378,10 +378,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   </div>
                 ))}
               </div>
-            ) : (
-              'Nothing selected. Make a selection above.'
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </ErrorBoundary>
     </QueryClientProvider>
