@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
@@ -7,7 +7,6 @@ import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
 import {
   EntityHeader,
-  EntityPath,
   EntityType,
   ProjectHeader,
 } from '../../../utils/synapseTypes'
@@ -18,14 +17,14 @@ import {
 } from '../details/EntityDetailsList'
 import { TreeViewNode } from './TreeViewNode'
 
-const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
-  for (const eh of path.path) {
-    if (entityId === eh.id) {
-      return true
-    }
-  }
-  return false
-}
+// const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
+//   for (const eh of path.path) {
+//     if (entityId === eh.id) {
+//       return true
+//     }
+//   }
+//   return false
+// }
 
 export enum FinderScope {
   CURRENT_PROJECT = 'Current Project',
@@ -67,11 +66,11 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     (EntityHeader | ProjectHeader)[]
   >([])
   const [scope, setScope] = useState(initialScope)
-  const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
+  // const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
 
   const [currentContainer, setCurrentContainer] = useState<
     string | 'root' | null
-  >(initialScope === FinderScope.CURRENT_PROJECT ? initialContainerId! : 'root')
+  >(null)
 
   const handleError = useErrorHandler()
 
@@ -156,7 +155,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         } else {
           SynapseClient.getEntityPath(sessionToken, initialContainerId).then(
             path => {
-              setInitialContainerPath(path)
+              // setInitialContainerPath(path)
               setTopLevelEntities([path.path[1]])
               setIsLoading(false)
             },
@@ -217,16 +216,17 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     }
   }, [scope, currentContainer, topLevelEntities, setDetailsViewConfiguration])
 
-  const shouldAutoExpand = useCallback(
-    (entityId: string) => {
-      return !!(
-        scope === FinderScope.CURRENT_PROJECT &&
-        initialContainerPath &&
-        isEntityIdInPath(entityId, initialContainerPath)
-      )
-    },
-    [scope, initialContainerPath],
-  )
+  // TODO: Determine if this is correct behavior
+  // const shouldAutoExpand = useCallback(
+  //   (entityId: string) => {
+  //     return !!(
+  //       scope === FinderScope.CURRENT_PROJECT &&
+  //       initialContainerPath &&
+  //       isEntityIdInPath(entityId, initialContainerPath)
+  //     )
+  //   },
+  //   [scope, initialContainerPath],
+  // )
 
   return (
     <div className="EntityFinderTreeView">
@@ -279,7 +279,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               setCurrentContainer(entityId)
             }}
             visibleTypes={visibleTypes}
-            autoExpand={shouldAutoExpand}
+            autoExpand={() => false}
             rootNodeConfiguration={{
               nodeText: scope,
               children: topLevelEntities,

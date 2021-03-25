@@ -101,7 +101,10 @@ export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
   )
 
   useEffect(() => {
-    if (isRootNode || autoExpand(nodeId)) {
+    if (
+      // isRootNode || // TODO: decide if we ever want to use autoexpand
+      autoExpand(nodeId)
+    ) {
       setIsExpanded(true)
     }
   }, [isRootNode, autoExpand, nodeId])
