@@ -14,7 +14,6 @@ import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
 import IconList from './IconList'
 import { ImageFileHandle } from './widgets/ImageFileHandle'
-import { Button } from 'react-bootstrap'
 import {
   DOI_REGEX,
   SYNAPSE_ENTITY_ID_REGEX,
@@ -234,15 +233,15 @@ export default class GenericCard extends React.Component<
     this.state = {
       hasClickedShowMore: false,
     }
-    this.getTitleParams = this.getTitleParams.bind(this)
+    this.getLinkParams = this.getLinkParams.bind(this)
     this.getCardLinkHref = this.getCardLinkHref.bind(this)
     this.renderLongDescription = this.renderLongDescription.bind(this)
     this.renderShortDescription = this.renderShortDescription.bind(this)
   }
 
-  public getTitleParams(
+  public getLinkParams(
     link: string,
-    titleLink: CardLink | undefined,
+    cardLinkConfig: CardLink | undefined,
     data: string[] | undefined,
     schema: any | undefined,
   ): {
@@ -258,10 +257,10 @@ export default class GenericCard extends React.Component<
     } else if (link.match(DOI_REGEX)) {
       target = '_blank'
       href = `https://dx.doi.org/${link}`
-    } else if (!titleLink) {
+    } else if (!cardLinkConfig) {
       target = '_blank'
-    } else if (titleLink) {
-      href = this.getCardLinkHref(titleLink, data, schema) ?? ''
+    } else if (cardLinkConfig) {
+      href = this.getCardLinkHref(cardLinkConfig, data, schema) ?? ''
     }
     return { href, target }
   }
@@ -346,7 +345,7 @@ export default class GenericCard extends React.Component<
       iconOptions,
       isHeader = false,
       titleLinkConfig,
-      ctaButtonLinkConfig,
+      ctaLinkConfig,
       labelLinkConfig,
       facetAliases = {},
       descriptionConfig,
@@ -387,7 +386,7 @@ export default class GenericCard extends React.Component<
     const titleColumnType = titleColumnModel?.columnType
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { href, target } = this.getTitleParams(
+    const { href, target } = this.getLinkParams(
       linkValue,
       titleLinkConfig,
       data,
@@ -469,7 +468,19 @@ export default class GenericCard extends React.Component<
       genericCardSchemaDefined.description,
       facetAliases,
     )
-
+    
+    let ctaHref: string | undefined = undefined, ctaTarget: string | undefined = undefined
+    if (ctaLinkConfig) {
+      const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
+      const { href: newCtaHref, target: newCtaTarget } = this.getLinkParams(
+        ctaLinkValue,
+        undefined, //card link config
+        data,
+        schema,
+      )
+      ctaHref = newCtaHref
+      ctaTarget = newCtaTarget
+    }
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className={'SRC-portalCardMain'}>
@@ -544,21 +555,13 @@ export default class GenericCard extends React.Component<
                 descriptionConfig,
                 this.props.token,
               )}
-            {ctaButtonLinkConfig && (
-              <div className="SRC-portalCardCTAButton bootstrap-4-backport">
-                <Button
-                  variant="primary"
-                  href={this.getCardLinkHref(
-                    ctaButtonLinkConfig?.linkConfig,
-                    data,
-                    schema,
-                  )}
-                  type="button"
-                  className="pill-xl"
-                  size="sm"
-                >
-                  {ctaButtonLinkConfig.buttonText}
-                </Button>
+            {ctaLinkConfig && ctaHref && ctaTarget && (
+              <div className="SRC-portalCardCTALink bootstrap-4-backport">
+                <a target={ctaTarget}
+                  rel="noopener noreferrer"
+                  href={ctaHref}>
+                  {ctaLinkConfig.text}
+                </a>
               </div>
             )}
           </div>

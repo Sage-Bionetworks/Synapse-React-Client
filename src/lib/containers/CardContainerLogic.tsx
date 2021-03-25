@@ -32,9 +32,11 @@ export type MarkdownLink = {
   matchColumnName: string
 }
 
-export type CTAButtonCardLink = {
-  buttonText: string
-  linkConfig: CardLink
+export type CTACardLink = {
+  // link text
+  text: string
+  // column name to use for href
+  link: string
 }
 
 export type DescriptionConfig = {
@@ -57,7 +59,7 @@ export type CommonCardProps = {
   genericCardSchema?: GenericCardSchema
   secondaryLabelLimit?: number
   titleLinkConfig?: CardLink
-  ctaButtonLinkConfig?: CTAButtonCardLink
+  ctaLinkConfig?: CTACardLink
   labelLinkConfig?: LabelLinkConfig
   descriptionConfig?: DescriptionConfig
   rgbIndex?: number
