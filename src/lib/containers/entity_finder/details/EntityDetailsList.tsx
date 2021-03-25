@@ -113,7 +113,8 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
               hasNextPage={false}
               noResultsPlaceholder={
                 <div>
-                  Use the left pane to make a selection, or search above
+                  Use the left panel to browse Synapse, then make a selection in
+                  this panel
                 </div>
               }
               {...sharedProps}
