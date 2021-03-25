@@ -471,7 +471,7 @@ export default class GenericCard extends React.Component<
     
     let ctaHref: string | undefined = undefined, ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
-      const ctaLinkValue: string = data[schema[ctaLinkConfig.link]]
+      const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
       const { href: newCtaHref, target: newCtaTarget } = this.getLinkParams(
         ctaLinkValue,
         undefined, //card link config
