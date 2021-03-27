@@ -83,6 +83,7 @@ export default function AccessRequirementList({
   const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
   const [accessRequirementId, setAccessRequirementId] = useState<string>("")
+  const [managedACTAccessRequirement, setManagedACTAccessRequirement] = useState<ManagedACTAccessRequirement>()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
@@ -224,9 +225,14 @@ export default function AccessRequirementList({
     }
   }
 
-  const requestDataStepCallback = (accessRequirementId:string, step:number) => {
+  const requestDataStepCallback = (managedACTAccessRequirement:ManagedACTAccessRequirement, step:number) => {
     setRequestDataStep(step)
-    setAccessRequirementId(accessRequirementId)
+    if (managedACTAccessRequirement) {
+      // to identify which managedACTAccessRequirement we are looking at in step 1 & 2 forms
+      setAccessRequirementId(String(managedACTAccessRequirement.id))
+      // required for step 2 form
+      setManagedACTAccessRequirement(managedACTAccessRequirement)
+    }
   }
 
   const content = (
@@ -319,6 +325,7 @@ export default function AccessRequirementList({
       case 2:
         renderContent = <RequestDataAccessStep2
           token={token}
+          managedACTAccessRequirement={managedACTAccessRequirement!}
           accessRequirementId={accessRequirementId}
           requestDataStepCallback={requestDataStepCallback}
         />

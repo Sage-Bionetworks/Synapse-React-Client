@@ -59,7 +59,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
     // window.open(
     //   `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
     // )
-    requestDataStepCallback?.(accessRequirementStatus?.accessRequirementId, 1)  //TODO: update test code
+    requestDataStepCallback?.(accessRequirement, 2)  //TODO: update test code
   }
   const onAcceptClicked = () => {
     if (

@@ -89,8 +89,11 @@ import {
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
-import { ManagedACTAccessRequirementStatus } from './synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import { ResearchProject } from './synapseTypes/ResearchProject'
+import {
+  ManagedACTAccessRequirementStatus,
+  RequestInterface
+} from './synapseTypes/AccessRequirement'
 
 const cookies = new UniversalCookies()
 
@@ -2486,8 +2489,8 @@ export const getResearchProject = (requirementId: string, sessionToken?: string)
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
-export const getDataAccessRequest = (requirementId: string, sessionToken?: string) => {
-  return doGet<ResearchProject>(
+export const getDataAccessRequestForUpdate = (requirementId: string, sessionToken?: string) => {
+  return doGet<RequestInterface>(
     `/repo/v1/accessRequirement/${requirementId}/dataAccessRequestForUpdate`,
     sessionToken,
     undefined,
