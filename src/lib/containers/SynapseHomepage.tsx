@@ -9,6 +9,7 @@ import {
   getEndpoint,
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
+import { SynapsePoweredPortal } from './SynapsePoweredPortal'
 
 export type SynapseHomepageProps = {
   token?: string
@@ -319,6 +320,21 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
         </div>
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
+        <div className="SynapseHomepage__Section__Centered">
+          <h2>Powered By Synapse</h2>
+          <p>Our knowledge portals are community-specific interfaces that enable researchers to explore and share data, analyses, and tools.</p>
+          <div className="PoweredBySynapseFlexContainer">
+              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/ADKnowledgePortal.svg' name='AD Knowledge Portal' description="Data and tools for the study of Alzheimer's disease, related dementias, and healthy aging." url='https://adknowledgeportal.synapse.org/'/>
+              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/BSMN.svg' name='BSMN Portal' description="Data and tools to study the role of brain somatic mosaicism in neuropsychiatric disease." url='https://bsmn.synapse.org/'/>
+              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/CSBC.svg' name='Cancer Complexity Knowledge Portal' description="Approaches, data, and tools to address important questions in basic and translational cancer research." url='https://cancercomplexity.synapse.org/'/>
+              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/dHealth.svg' name='dHealth Digital Health Knowledge Portal' description="Discover and download digital and mobile health data, tools, benchmarked outcomes and digital biomarkers." url='https://dhealth.synapse.org/'/>
+              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/NFPortal.svg' name='NF Data Portal' description="Datasets, analysis tools, resources, and publications related to neurofibromatosis and schwannomatosis." url='https://nf.synapse.org/'/>
+              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/Psychencode.svg' name='Psychencode Knowledge Portal' description="Investigation and large-scale data sets of genomic influences on neuropsychiatric disease." url='https://psychencode.synapse.org/'/>
+          </div>
+        </div>
+      </div>
+
+      <div className="SynapseHomepage__Section OffWhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
           <h2>Our Partners</h2>
           <div className="PartnerFlexContainer">

@@ -46,7 +46,6 @@ export type TreeViewProps = {
   ) => void
 }
 
-// TODO: Support picking one or more entities rather than creating a configuration.
 /**
  * The TreeView displays a user's entities hierarchically, allowing a user to quickly dive into an entity tree.
  *
@@ -62,8 +61,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
-
-  const [expandRoot, setExpandRoot] = useState(true)
 
   const [isLoading, setIsLoading] = useState(false)
   const [topLevelEntities, setTopLevelEntities] = useState<
@@ -92,6 +89,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     isSuccess: isSuccessProjects,
     fetchNextPage: fetchNextPageProjects,
     hasNextPage: hasNextPageProjects,
+    isLoading: isLoadingProjects,
   } = useGetProjectsInfinite(
     sessionToken,
     scope === FinderScope.CREATED_BY_ME ? { filter: 'CREATED' } : {},
@@ -116,7 +114,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   }, [useProjectData, isSuccessProjects, projectData])
 
   useEffect(() => {
-    if (useProjectData && inView && hasNextPageProjects) {
+    if (useProjectData && inView && hasNextPageProjects && !isLoadingProjects) {
       fetchNextPageProjects()
     }
   }, [
@@ -125,6 +123,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     hasNextPageProjects,
     fetchNextPageProjects,
     scope,
+    isLoadingProjects,
   ])
 
   // Populates the first level of entities in the tree view
@@ -133,6 +132,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     switch (scope) {
       case FinderScope.ALL_PROJECTS:
       case FinderScope.CREATED_BY_ME:
+        setIsLoading(isLoadingProjects)
         // See the useGetProjectsInfinite hook
         break
       case FinderScope.FAVORITES: {
@@ -147,7 +147,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         break
       }
       case FinderScope.CURRENT_PROJECT:
-      default:
         if (initialContainerId == null) {
           handleError(
             new Error(
@@ -164,8 +163,17 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           )
         }
         break
+      default:
+        handleError(new Error('No scope selected'))
     }
-  }, [sessionToken, scope, initialContainerId, handleError, visibleTypes])
+  }, [
+    sessionToken,
+    scope,
+    initialContainerId,
+    handleError,
+    visibleTypes,
+    isLoadingProjects,
+  ])
 
   // Creates the configuration for the details view and invokes the callback
   useEffect(() => {
@@ -197,7 +205,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         case FinderScope.FAVORITES:
           setDetailsViewConfiguration({
             type: EntityDetailsListDataConfigurationType.USER_FAVORITES,
-            headerList: topLevelEntities,
           })
 
           break
@@ -222,7 +229,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   )
 
   return (
-    <div className="EntityFinderTreeView" style={{ height: '500px' }}>
+    <div className="EntityFinderTreeView">
       <div className={`EntityFinderTreeView__SelectionHeader`}>
         <div onClick={e => e.stopPropagation()}>
           <Dropdown>
@@ -236,7 +243,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                   scopeOption === FinderScope.CURRENT_PROJECT &&
                   initialContainerId == null
                 ) {
-                  return <></>
+                  return <React.Fragment key={scopeOption} />
                 }
                 return (
                   <Dropdown.Item
@@ -264,45 +271,21 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         </div>
       ) : (
         <div className="EntityFinderTreeView__Tree" role="tree">
-          <div className="TreeNode" aria-selected={currentContainer === 'root'}>
-            <div
-              className="TreeNode__Content TreeNodeRootContent"
-              onClick={() => {
-                setCurrentContainer('root')
-              }}
-            >
-              <div
-                className={'TreeNode__Content__ExpandButton'}
-                onClick={e => {
-                  e.stopPropagation()
-                  setExpandRoot(!expandRoot)
-                }}
-              >
-                {expandRoot ? '▾' : '▸'}
-              </div>
-              <span></span>
-              <span>{scope}</span>
-            </div>
-            <div style={!expandRoot ? { display: 'none' } : {}}>
-              {topLevelEntities?.map((entity: EntityHeader | ProjectHeader) => {
-                return (
-                  <TreeViewNode
-                    level={1}
-                    key={entity.id}
-                    sessionToken={sessionToken}
-                    entityHeader={entity}
-                    selectedId={currentContainer}
-                    setSelectedId={(entityId: string) => {
-                      setCurrentContainer(entityId)
-                    }}
-                    visibleTypes={visibleTypes}
-                    autoExpand={shouldAutoExpand}
-                  />
-                )
-              })}
-            </div>
-            <div ref={ref}></div>
-          </div>
+          <TreeViewNode
+            level={0}
+            sessionToken={sessionToken}
+            selectedId={currentContainer}
+            setSelectedId={(entityId: string) => {
+              setCurrentContainer(entityId)
+            }}
+            visibleTypes={visibleTypes}
+            autoExpand={shouldAutoExpand}
+            rootNodeConfiguration={{
+              nodeText: scope,
+              children: topLevelEntities,
+            }}
+          />
+          <div ref={ref} style={{ height: '5px', width: '100%' }}></div>
         </div>
       )}
     </div>
