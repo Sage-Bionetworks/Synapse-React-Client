@@ -64,11 +64,14 @@
       .form-group {
         margin-bottom: 2rem;
       }
-      .ch1 {
+      .ch1, .ch2 {
         label {
           margin-bottom: 0;
         }
         display: inline-block;
+      }
+      .ch2 {
+        margin: 5px 0;
       }
     }
   }

@@ -10,7 +10,7 @@ import {
 } from '../../../utils/SynapseClient'
 import { UserCardSmall } from '../../UserCardSmall'
 import {
-  BatchFileRequest, BatchFileResult,
+  BatchFileRequest,
   FileHandleAssociateType,
   ManagedACTAccessRequirement, RequestInterface,
   UserProfile,
@@ -23,13 +23,29 @@ export type RequestDataAccessStep2Props = {
   requestDataStepCallback?: Function
 }
 
+export type DataAccessDoc = {
+  name: string,
+  preSignedURL: string
+}
+
+export type DataAccessDocs = {
+  DUCTemplate: DataAccessDoc | undefined,
+  DUC: DataAccessDoc | undefined,
+  IRB: DataAccessDoc | undefined,
+  attachments: DataAccessDoc[] | undefined
+} | undefined
+
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement} = props
   const [requester, setRequester] = useState<string>("")
   const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
-  const [requiredFiles, setRequiredFiles] = useState<BatchFileResult>()
+  const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
+  const [DUC, setDUC] = useState<DataAccessDoc>()
+  const [IRB, setIRB] = useState<DataAccessDoc>()
+  const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
+
   let mounted = true
-  const requestedFiles = {}
+  const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
     includeFileHandles: true,
@@ -61,8 +77,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       })
     }
 
+    // get data access required docs data
     getFilesData(dataAccessRequestData)
-
   }
 
   // TODO: Add other file attachments
@@ -74,7 +90,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         associateObjectType: FileHandleAssociateType.AccessRequirementAttachment,
         fileHandleId: managedACTAccessRequirement!.ducTemplateFileHandleId,
       })
-      requestedFiles["DUCTemplate"] = managedACTAccessRequirement.ducTemplateFileHandleId
+      if (!requestedFileTypes[managedACTAccessRequirement.ducTemplateFileHandleId]) {
+        requestedFileTypes[managedACTAccessRequirement.ducTemplateFileHandleId] = []
+      }
+      requestedFileTypes[managedACTAccessRequirement.ducTemplateFileHandleId].push("DUCTemplate")
     }
 
     if (managedACTAccessRequirement.isDUCRequired && dataAccessRequestData!.ducFileHandleId) {
@@ -83,7 +102,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         associateObjectType: FileHandleAssociateType.DataAccessRequestAttachment,
         fileHandleId: dataAccessRequestData!.ducFileHandleId,
       })
-      requestedFiles["DUC"] =  dataAccessRequestData!.ducFileHandleId
+      if (!requestedFileTypes[dataAccessRequestData.ducFileHandleId]) {
+        requestedFileTypes[dataAccessRequestData.ducFileHandleId] = []
+      }
+      requestedFileTypes[dataAccessRequestData!.ducFileHandleId].push("DUC")
     }
 
     if (managedACTAccessRequirement.isIRBApprovalRequired) {
@@ -92,15 +114,69 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         associateObjectType: FileHandleAssociateType.DataAccessRequestAttachment,
         fileHandleId: dataAccessRequestData!.irbFileHandleId,
       })
-      requestedFiles["IRB"] = dataAccessRequestData!.irbFileHandleId
+      if (!requestedFileTypes[dataAccessRequestData.ducFileHandleId]) {
+        requestedFileTypes[dataAccessRequestData.ducFileHandleId] = []
+      }
+      requestedFileTypes[dataAccessRequestData!.irbFileHandleId].push("IRB")
     }
 
-    if (batchFileRequest.requestedFiles.length) {
-      getFiles(batchFileRequest, token).then(files => {
-        setRequiredFiles(files)
+    if(dataAccessRequestData.attachments.length) {
+      dataAccessRequestData.attachments.forEach(id => {
+        batchFileRequest.requestedFiles.push({
+          associateObjectId: dataAccessRequestData!.id,
+          associateObjectType: FileHandleAssociateType.DataAccessRequestAttachment,
+          fileHandleId: id,
+        })
+        if (!requestedFileTypes[id]) {
+          requestedFileTypes[id] = []
+        }
+        requestedFileTypes[id].push("attachments")
       })
     }
 
+    if (batchFileRequest.requestedFiles.length) {
+      getFiles(batchFileRequest, token).then(resp => {
+        resp.requestedFiles.forEach(file => {
+          const fileName = file.fileHandle!.fileName
+          const preSignedURL = file.preSignedURL!
+          const fileTypes = requestedFileTypes[file.fileHandleId]
+
+          fileTypes.forEach((type:string) => {
+            switch (type) {
+              case "DUCTemplate":
+                setDUCTemplate({
+                  name: fileName,
+                  preSignedURL: preSignedURL
+                })
+                requestedFileTypes[file.fileHandleId].splice(fileTypes.indexOf("DUCTemplate"), 1)
+                break
+              case "DUC":
+                setDUC({
+                  name: fileName,
+                  preSignedURL: preSignedURL
+                })
+                requestedFileTypes[file.fileHandleId].splice(fileTypes.indexOf("DUC"), 1)
+                break
+              case "IRB":
+                setIRB({
+                  name: fileName,
+                  preSignedURL: preSignedURL
+                })
+                requestedFileTypes[file.fileHandleId].splice(fileTypes.indexOf("IRB"), 1)
+                break
+              case "attachments":
+                setAttachments(prev => [...prev, {
+                  name: fileName,
+                  preSignedURL: preSignedURL
+                }])
+                requestedFileTypes[file.fileHandleId].splice(fileTypes.indexOf("attachments"), 1)
+                break
+              default:
+            }
+          })
+        })
+      }) // end getFiles
+    }
   }
 
   const goBack = () => {
@@ -139,6 +215,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           />
         </Form.Group>
 
+        {/* Accessors Checkboxes */}
         <Form.Group>
           <Checkbox
             label=""
@@ -158,36 +235,73 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           <Button variant="link" disabled>Remove Selected</Button>
         </Form.Group>
 
+        {/* DUC */}
         { managedACTAccessRequirement?.isDUCRequired &&
           <>
             <Form.Group>
               <Form.Label htmlFor={"duc-temp"} className={"SRC-noMargin"}>DUC template</Form.Label><br />
-              {/*<Button id={"duc-temp"} variant="link" className={"SRC-noPadding"} onClick={() => {}}>{getFileName(fileHandleIds?.ducTemplateFileHandleId)}</Button>*/}
+              <Button
+                id={"duc-temp"}
+                variant="link"
+                className={"SRC-noPadding"}
+                onClick={() => { window.open(DUCTemplate?.preSignedURL) }}>
+                {DUCTemplate?.name}
+              </Button>
             </Form.Group>
 
             <Form.Group>
               <Form.Label htmlFor={"duc"} className={"SRC-noMargin"}>Upload DUC</Form.Label><br />
-              <Button variant="link" className={"SRC-noPadding"}>duc.txt</Button><br />
+              <Button
+                id={"duc"}
+                variant="link"
+                className={"SRC-noPadding"}
+                onClick={() => { window.open(DUC?.preSignedURL) }}>
+                {DUC?.name}
+              </Button>
+              <br />
               <Button id={"duc"} variant={"light-primary-base"}>Browse...</Button>
             </Form.Group>
           </>
         }
 
+        {/* IRB */}
         { managedACTAccessRequirement?.isIRBApprovalRequired &&
           <Form.Group>
             <Form.Label htmlFor={"irb"} className={"SRC-noMargin"}>Upload IRB approval</Form.Label><br/>
-            <Button variant="link" className={"SRC-noPadding"}>irb.txt</Button><br/>
+            <Button
+              id={"irb"}
+              variant="link"
+              className={"SRC-noPadding"}
+              onClick={() => { window.open(IRB?.preSignedURL) }}>
+              {IRB?.name}
+            </Button>
+            <br/>
             <Button id={"irb"} variant={"light-primary-base"}>Browse...</Button>
           </Form.Group>
         }
+
+        {/* Attachments */}
         <Form.Group>
-          <Form.Label htmlFor={"irb"} className={"SRC-noMargin"}>Upload other required documents</Form.Label><br />
-          <Checkbox
-            label="irb.json"
-            id="ch2"
-            checked={false}
-            onChange={(checked: boolean) => setCheck(checked)}
-          ></Checkbox>
+          <Form.Label className={"SRC-noMargin"}>Upload other required documents</Form.Label><br />
+          {
+            attachments?.length && attachments.map((attachment, i) => {
+              return (<div key={`file-attachment-${i}`}>
+                <Checkbox
+                  id={""}
+                  label={""}
+                  checked={false}
+                  onChange={(checked: boolean) => setCheck(checked)}
+                  className={"ch2"}
+                ></Checkbox>
+                <Button
+                  variant="link"
+                  className={"SRC-noPadding"}
+                  onClick={() => { window.open(attachment?.preSignedURL) }}>
+                  {attachment?.name}
+                </Button>
+              </div>)
+            })
+          }
           <Button variant={"light-primary-base"}>Browse...</Button>
           <hr />
           <Button variant="link" style={{paddingLeft: "0"}}>Select All</Button>
