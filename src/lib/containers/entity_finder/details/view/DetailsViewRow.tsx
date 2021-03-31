@@ -1,27 +1,27 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Form } from 'react-bootstrap'
+import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../../utils'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
 import {
   getEntityTypeFromHeader,
-  isVersionableEntityType,
+  isVersionableEntityType
 } from '../../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
 import {
   EntityHeader,
   ProjectHeader,
-  Reference,
+  Reference
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
 import { VersionInfo } from '../../../../utils/synapseTypes/VersionInfo'
 import { EntityBadge } from '../../../EntityBadge'
 import { EntityTypeIcon } from '../../../EntityIcon'
+import { toError } from '../../../ErrorBanner'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { RadioGroup } from '../../../widgets/RadioGroup'
-import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../../ErrorBanner'
 
 export type DetailsViewRowAppearance =
   | 'default'
@@ -98,12 +98,12 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         response => {
           setVersions(response.results)
         },
-        error => {
-          handleError(error)
+        err => {
+          handleError(err)
         },
       )
     }
-  }, [isSelected, versions, sessionToken, entityHeader.id])
+  }, [isSelected, versions, sessionToken, entityHeader.id, handleError])
 
   return (
     <tr

@@ -1,10 +1,50 @@
+
+View "Props & Methods" above for full configurability.
+
+Regular two-pane Entity Finder with multi-select
+
 ```jsx
 <EntityFinder 
   sessionToken={sessionToken}
+  treeOnly={false}
   initialScope={"Current Project"}
   initialContainerId={"syn24610451"}
   selectMultiple={true}
-  showTypes={[
+  visibleTypesInList={[
+    'project',
+    'table',
+    'folder',
+    'file',
+    'link',
+    'entityview',
+    'submissionview',
+    'dockerrepo',
+  ]}
+  showVersionSelection={true}
+  onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
+  selectableTypes={[ 
+    'project',
+    'table',
+    'folder',
+    'file',
+    'link',
+    'entityview',
+    'submissionview',
+    'dockerrepo',
+]}
+/>
+```
+
+One-pane entity finder with single select: 
+
+```jsx
+<EntityFinder 
+  sessionToken={sessionToken}
+  treeOnly={true}
+  initialScope={"Current Project"}
+  initialContainerId={"syn24610451"}
+  selectMultiple={false}
+  visibleTypesInList={[
     'project',
     'table',
     'folder',

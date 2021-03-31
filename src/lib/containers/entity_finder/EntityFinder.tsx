@@ -1,7 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faTimes, faCircle } from '@fortawesome/free-solid-svg-icons'
+import { faCircle, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useEffect, useState } from 'react'
+import { Clear } from '@material-ui/icons'
+import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { Button, FormControl } from 'react-bootstrap'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from 'react-query'
@@ -15,11 +16,13 @@ import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { ErrorBanner } from '../ErrorBanner'
+import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
   EntityDetailsList,
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
+import { NodeAppearance } from './tree/TreeNode'
 import { FinderScope, TreeView } from './tree/TreeView'
 
 library.add(faTimes, faSearch, faCircle)
@@ -52,7 +55,7 @@ const EntityPathDisplay: React.FunctionComponent<{
   entity: Reference
   toggleSelection: (entity: Reference) => void
 }> = ({ sessionToken, entity, toggleSelection }) => {
-  const ENTITY_PATH_TOOLTIP_ID = 'EntityPathDisplayReactTooltip'
+  const ENTITY_PATH_TOOLTIP_ID = `EntityPathDisplayReactTooltip_${entity.targetId}`
 
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
@@ -92,60 +95,49 @@ const EntityPathDisplay: React.FunctionComponent<{
     <div className="EntityFinder__Selected__Row">
       <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
       <span
-        className="EntityFinder__Selected__Row__DeselectButton"
-        onClick={() => {
-          toggleSelection(entity)
-        }}
-      >
-        <span className="fa-layers fa-fw">
-          <FontAwesomeIcon
-            className="EntityFinder__Selected__Row__DeselectButton__IconCircle"
-            icon={faCircle}
-            size="lg"
-          />
-          <FontAwesomeIcon
-            className="EntityFinder__Selected__Row__DeselectButton__IconCross"
-            size={'sm'}
-            icon={faTimes}
-          />
-        </span>
-      </span>
-      <span
         data-for={ENTITY_PATH_TOOLTIP_ID}
         data-tip={`${fullPath}/${entityName}`}
       >
         {displayedPath ? displayedPath + '/' : ''}
       </span>
-      <span className="EntityFinder__Selected__DeselectButton__EntityName">
+      <span className="EntityFinder__Selected__Row__EntityName">
         {entityName}
       </span>
       {entity.targetVersionNumber && (
         <span> (Version {entity.targetVersionNumber})</span>
       )}
+      <Clear
+        className="EntityFinder__Selected__Row__DeselectButton"
+        onClick={() => {
+          toggleSelection(entity)
+        }}
+      />
     </div>
   )
 }
 
 export type EntityFinderProps = {
   sessionToken: string
-  /** Required if `initialScope` is The SynID of the entity that should open by default. This dictates the 'Current Project' */
-  initialContainerId: string
   /** Whether or not it is possible to select multiple entities */
   selectMultiple: boolean
   /** Callback invoked when the selection changes */
   onSelectedChange: (selected: Reference[]) => void
   /** The initial appearance of the entity finder. Possible values include "Current Project", "All Projects", "Projects Created By Me", "My Favorites" */
   initialScope: FinderScope
+  /** Required if `initialScope` is The SynID of the entity that should open by default. This dictates the 'Current Project' */
+  initialContainerId: string
   /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
   /** The entity types to show in the details view (right pane) */
-  showTypes: EntityType[]
-  /** The entity types that may be selected. Types in `showTypes` that are not in `selectableTypes` will appear as disabled options */
+  visibleTypesInList: EntityType[]
+  /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options */
   selectableTypes?: EntityType[]
   /** The types to show in the tree used to navigate. */
   visibleTypesInTree?: EntityType[]
   /** The text to show before the list of selected entities */
   selectedCopy?: string
+  /** Whether to show only the tree, which will be used to make selections */
+  treeOnly?: boolean
 }
 
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
@@ -155,15 +147,17 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
-  showTypes,
+  visibleTypesInList,
   selectableTypes = Object.values(EntityType),
   selectedCopy = 'Selected',
   visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
+  treeOnly = false,
 }: EntityFinderProps) => {
-  const [selectedEntities, setSelectedEntities] = useState<Reference[]>([])
-
   const [searchActive, setSearchActive] = useState(false)
   const [searchTerms, setSearchTerms] = useState<string[]>()
+  const [breadcrumbsProps, setBreadcrumbsProps] = useState<BreadcrumbsProps>({
+    items: [],
+  })
   const [searchByIdResults, setSearchByIdResults] = useState<EntityHeader[]>([])
   const [
     configFromTreeView,
@@ -172,46 +166,65 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     type: EntityDetailsListDataConfigurationType.PROMPT,
   })
 
-  const isSelected = (entity: Reference) => {
-    return selectedEntities.some(
+  const setBreadcrumbs = useCallback(
+    (items: BreadcrumbItem[]) => {
+      setBreadcrumbsProps({
+        items,
+      })
+    },
+    [setBreadcrumbsProps, sessionToken],
+  )
+
+  function isSelected(entity: Reference, selected: Reference[]): boolean {
+    return selected.some(
       s =>
         s.targetId === entity.targetId &&
         s.targetVersionNumber === entity.targetVersionNumber,
     )
   }
 
-  const otherVersionSelected = (entity: Reference) => {
-    return selectedEntities.some(
+  function otherVersionSelected(
+    entity: Reference,
+    selected: Reference[],
+  ): boolean {
+    return selected.some(
       s =>
         s.targetId === entity.targetId &&
         s.targetVersionNumber !== entity.targetVersionNumber,
     )
   }
 
-  const toggleSelection = (entity: Reference) => {
-    if (isSelected(entity)) {
+  function entitySelectionReducer(
+    selected: Reference[],
+    toggledReference: Reference,
+  ): Reference[] {
+    if (isSelected(toggledReference, selected)) {
       // remove from selection
-      setSelectedEntities(
-        selectedEntities.filter(e => e.targetId !== entity.targetId),
-      )
-    } else if (otherVersionSelected(entity)) {
-      // replace with selected version
-      setSelectedEntities([
-        ...selectedEntities.filter(e => e.targetId !== entity.targetId),
-        entity,
-      ])
+      return selected.filter(e => e.targetId !== toggledReference.targetId)
+    } else if (otherVersionSelected(toggledReference, selected)) {
+      // Currently don't allow selecting two versions of the same entity
+      // replace previous selected version with new selected version
+      return [
+        ...selected.filter(e => e.targetId !== toggledReference.targetId),
+        toggledReference,
+      ]
     } else {
       // add to selection
       if (!selectMultiple) {
-        setSelectedEntities([entity])
+        return [toggledReference]
       } else {
-        setSelectedEntities([
-          ...selectedEntities.filter(s => s.targetId !== entity.targetId),
-          entity,
-        ])
+        return [
+          ...selected.filter(s => s.targetId !== toggledReference.targetId),
+          toggledReference,
+        ]
       }
     }
   }
+
+  const [selectedEntities, toggleSelection] = useReducer(
+    entitySelectionReducer,
+    [] as Reference[],
+  )
 
   useEffect(() => {
     onSelectedChange(selectedEntities)
@@ -256,7 +269,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   autoFocus={true}
                   className="EntityFinder__Search__Input"
                   type="search"
-                  placeholder="Search all of Synapse"
+                  placeholder="Search by name, Wiki contents, or Synapse ID"
                   onKeyDown={(event: any) => {
                     if (event.key === 'Enter') {
                       if (event.target.value === '') {
@@ -289,7 +302,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 onClick={() => setSearchActive(true)}
               >
                 <FontAwesomeIcon size={'sm'} icon={faSearch} />
-                Search
+                Search all of Synapse
               </Button>
             )}
           </div>
@@ -314,50 +327,78 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               showVersionSelection={showVersionSelection}
               selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
               selected={selectedEntities}
-              includeTypes={showTypes}
+              includeTypes={visibleTypesInList}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
             />
           )}
           {
             <div style={searchActive ? { display: 'none' } : {}}>
-              <div className="EntityViewReflexContainer">
-                <SizeMe>
-                  {({ size }) => (
-                    <ReflexContainer
-                      key={(!!size.width).toString()}
-                      orientation="vertical"
-                      windowResizeAware
-                    >
-                      <ReflexElement minSize={200} size={350}>
-                        <TreeView
-                          sessionToken={sessionToken}
-                          setDetailsViewConfiguration={setConfigFromTreeView}
-                          showDropdown={true}
-                          visibleTypes={visibleTypesInTree}
-                          initialScope={initialScope}
-                          initialContainerId={initialContainerId}
-                        />
-                      </ReflexElement>
-                      <ReflexSplitter></ReflexSplitter>
-                      <ReflexElement minSize={400}>
-                        <EntityDetailsList
-                          sessionToken={sessionToken}
-                          configuration={configFromTreeView}
-                          showVersionSelection={showVersionSelection}
-                          selected={selectedEntities}
-                          includeTypes={showTypes}
-                          selectableTypes={selectableTypes}
-                          selectColumnType={
-                            selectMultiple ? 'checkbox' : 'radio'
-                          }
-                          toggleSelection={toggleSelection}
-                        />
-                      </ReflexElement>
-                    </ReflexContainer>
-                  )}
-                </SizeMe>
-              </div>
+              {treeOnly ? (
+                <div style={{ width: '550px', margin: 'auto' }}>
+                  <TreeView
+                    sessionToken={sessionToken}
+                    toggleSelection={toggleSelection}
+                    setDetailsViewConfiguration={() => {}}
+                    showDropdown={true}
+                    visibleTypes={visibleTypesInTree}
+                    initialScope={initialScope}
+                    initialContainerId={initialContainerId}
+                    showFakeRoot={false}
+                    nodeAppearance={NodeAppearance.SELECT}
+                    setBreadcrumbItems={() => {}}
+                  />
+                </div>
+              ) : (
+                <div className="EntityViewReflexContainer">
+                  <SizeMe>
+                    {({ size }) => (
+                      <ReflexContainer
+                        key={(!!size.width).toString()}
+                        orientation="vertical"
+                        windowResizeAware
+                      >
+                        <ReflexElement
+                          className="TreeViewReflexElement"
+                          minSize={200}
+                          size={275}
+                        >
+                          <TreeView
+                            sessionToken={sessionToken}
+                            toggleSelection={() => {}}
+                            setDetailsViewConfiguration={setConfigFromTreeView}
+                            showDropdown={true}
+                            visibleTypes={visibleTypesInTree}
+                            initialScope={initialScope}
+                            initialContainerId={initialContainerId}
+                            nodeAppearance={NodeAppearance.BROWSE}
+                            setBreadcrumbItems={setBreadcrumbs}
+                          />
+                        </ReflexElement>
+                        <ReflexSplitter></ReflexSplitter>
+                        <ReflexElement
+                          className="DetailsViewReflexElement"
+                          minSize={400}
+                        >
+                          <EntityDetailsList
+                            sessionToken={sessionToken}
+                            configuration={configFromTreeView}
+                            showVersionSelection={showVersionSelection}
+                            selected={selectedEntities}
+                            includeTypes={visibleTypesInList}
+                            selectableTypes={selectableTypes}
+                            selectColumnType={
+                              selectMultiple ? 'checkbox' : 'radio'
+                            }
+                            toggleSelection={toggleSelection}
+                          />
+                          <Breadcrumbs {...breadcrumbsProps} />
+                        </ReflexElement>
+                      </ReflexContainer>
+                    )}
+                  </SizeMe>
+                </div>
+              )}
             </div>
           }
           {selectedEntities.length > 0 && (

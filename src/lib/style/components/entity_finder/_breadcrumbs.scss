@@ -1,0 +1,25 @@
+@use '../../abstracts/variables' as SRC;
+@use './entity-finder' as EntityFinder;
+
+.Breadcrumbs {
+  height: $-breadcrumb-height;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  .BreadcrumbItem {
+    text-transform: uppercase;
+    color: SRC.$primary-action-color;
+  }
+  .BreadcrumbItem:hover {
+    text-decoration: underline;
+  }
+  .BreadcrumbItem.Current {
+    color: unset;
+    font-weight: bold;
+    cursor: unset;
+  }
+  .BreadcrumbItem.Current:hover {
+    text-decoration: unset;
+  }
+}

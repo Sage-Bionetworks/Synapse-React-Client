@@ -1,0 +1,18 @@
+@use '../../abstracts/variables' as SRC;
+@use './entity-finder' as EntityFinder;
+@use 'sass:color';
+
+.TreeView.SelectTree {
+  background: unset;
+  .Tree {
+    .Node.SelectNode {
+      border-top: 1px solid white;
+      .NodeContent {
+        padding: 16px 10px 16px 20px;
+        .ExpandButton {
+          font-size: large;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+@use '../../abstracts/variables' as SRC;
+@use './entity-finder' as EntityFinder;
+
+.DetailsViewReflexElement {
+  .EntityFinderDetailsView {
+    border: none;
+    border-bottom: 1px solid $-border-color;
+  }
+}
+
+.EntityFinderDetailsView {
+  border: 2px solid $-border-color;
+  height: $-finder-height - $-breadcrumb-height;
+  width: 100%;
+  overflow: auto;
+  border-bottom: $-border;
+  table {
+    width: 100%;
+    table-layout: auto;
+    position: relative;
+    border-collapse: collapse;
+    thead {
+      border-bottom: $-border;
+      border-top: 1px solid white;
+      th {
+        height: $-header-height;
+        font-weight: bold;
+        background-color: white;
+        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.5);
+
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+
+      th > div {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px;
+      }
+    }
+    td > div {
+      margin: 5px;
+    }
+  }
+  &__Row {
+    height: 45px;
+  }
+
+  &__Row:nth-child(even) {
+    background: #f9f9f9;
+  }
+
+  &__Row[aria-disabled='false']:hover {
+    @include -hover();
+  }
+
+  &__Row[aria-selected='true'] {
+    background-color: $-selected-color;
+  }
+
+  &__Row[aria-disabled='true'] {
+    opacity: 0.5;
+  }
+
+  &__Row[aria-hidden='true'] {
+    display: none;
+  }
+
+  &__Placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 80%;
+    font-size: large;
+    margin: 15px;
+
+    .SearchPlaceholderImage {
+      width: 150px;
+      margin: 20px;
+    }
+  }
+
+  // TODO: probably a better way to do this, maybe with grid?
+  .IsSelectedColumn,
+  .EntityIconColumn,
+  .NameColumn,
+  .AccessColumn,
+  .IdColumn,
+  .CreatedOnColumn,
+  .ModifiedOnColumn,
+  .VersionColumn {
+    div {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .IsSelectedColumn {
+    min-width: 40px;
+    max-width: 40px;
+    text-align: center;
+    .radio,
+    .checkbox {
+      margin: 7px 0px 2px 5px;
+      min-width: 20px;
+    }
+  }
+
+  .EntityIconColumn {
+    min-width: 40px;
+    max-width: 40px;
+
+    text-align: center;
+    svg {
+      fill: currentColor;
+    }
+  }
+
+  .NameColumn {
+    min-width: 250px;
+    max-width: 350px;
+  }
+  .AccessColumn {
+    width: 40px;
+  }
+  .IdColumn {
+    width: 100px;
+  }
+  .CreatedOnColumn,
+  .ModifiedOnColumn {
+    width: 150px;
+  }
+  .VersionColumn {
+    min-width: 200px;
+  }
+}
