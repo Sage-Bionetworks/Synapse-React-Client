@@ -8,12 +8,13 @@ export type CheckboxProps = {
   onChange: (newValue: boolean) => void
   isSelectAll?: boolean
   children?: React.ReactChild
+  value?: string
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
 ) => {
-  const { checked: propsChecked = false, isSelectAll = false } = props
+  const { checked: propsChecked = false, isSelectAll = false, value } = props
   const [checked, setChecked] = useState<boolean>(propsChecked)
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
             checked={checked}
             id={props.id}
             onChange={handleCheckboxChange}
+            value={value}
           />
           <span>{props.label}</span>
           {props.children ?? <></>}
