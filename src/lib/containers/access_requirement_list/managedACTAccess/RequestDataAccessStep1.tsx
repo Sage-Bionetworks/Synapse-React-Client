@@ -7,7 +7,7 @@ import { ResearchProject } from '../../../utils/synapseTypes/ResearchProject'
 import { ManagedACTAccessRequirement } from '../../../utils/synapseTypes'
 
 export type RequestDataAccessStep1 = {
-  token: string | undefined
+  token: string
   accessRequirementId: string
   requestDataStepCallback?: Function
   managedACTAccessRequirement: ManagedACTAccessRequirement

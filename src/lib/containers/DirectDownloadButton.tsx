@@ -5,7 +5,7 @@ import { getFiles } from '../utils/SynapseClient'
 
 export type DirectFileDownloadButtonProps = {
   id?: string
-  token?: string
+  token: string
   associatedObjectId: string | undefined
   associateObjectType: FileHandleAssociateType | undefined
   fileHandleId: string | undefined
@@ -42,7 +42,6 @@ const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
       includePreviewPreSignedURLs: false
     }
     try {
-      // TODO: Check permission
       const file = await getFiles(batchFileRequest, token)
       const preSignedURL = file.requestedFiles[0].preSignedURL
       if (!preSignedURL) {

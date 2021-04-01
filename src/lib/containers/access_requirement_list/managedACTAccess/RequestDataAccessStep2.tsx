@@ -18,7 +18,7 @@ import {
 import DirectDownloadButton from '../../DirectDownloadButton'
 
 export type RequestDataAccessStep2Props = {
-  token: string | undefined,
+  token: string,
   managedACTAccessRequirement: ManagedACTAccessRequirement,
   accessRequirementId: string,
   requestDataStepCallback?: Function
@@ -257,6 +257,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 id={"duc-temp"}
                 variant={"link"}
                 className={"SRC-noPadding"}
+                token={token}
               />
             </Form.Group>
 
@@ -270,6 +271,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 id={"duc-download"}
                 variant={"link"}
                 className={"SRC-noPadding"}
+                token={token}
               />
               <br />
               <Button id={"duc-browse"} variant={"light-primary-base"}>Browse...</Button>
@@ -289,6 +291,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               id={"irb-download"}
               variant={"link"}
               className={"SRC-noPadding"}
+              token={token}
             />
             <br/>
             <Button id={"irb-browse"} variant={"light-primary-base"}>Browse...</Button>
@@ -319,6 +322,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   fileName={attachment?.fileName}
                   variant={"link"}
                   className={"SRC-noPadding"}
+                  token={token}
                 />
                 <br/>
               </>)
