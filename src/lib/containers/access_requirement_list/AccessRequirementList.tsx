@@ -318,6 +318,7 @@ export default function AccessRequirementList({
       case 1:
         renderContent = <RequestDataAccessStep1
           token={token}
+          managedACTAccessRequirement={managedACTAccessRequirement!}
           accessRequirementId={accessRequirementId}
           requestDataStepCallback={requestDataStepCallback}
         />

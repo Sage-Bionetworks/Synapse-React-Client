@@ -4,15 +4,17 @@ import * as ReactBootstrap from 'react-bootstrap'
 import { useEffect, useRef, useState } from 'react'
 import { updateResearchProject, getResearchProject } from '../../../utils/SynapseClient'
 import { ResearchProject } from '../../../utils/synapseTypes/ResearchProject'
+import { ManagedACTAccessRequirement } from '../../../utils/synapseTypes'
 
 export type RequestDataAccessStep1 = {
   token: string | undefined
   accessRequirementId: string
   requestDataStepCallback?: Function
+  managedACTAccessRequirement: ManagedACTAccessRequirement
 }
 
 const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
-  const {requestDataStepCallback, token, accessRequirementId} = props
+  const {requestDataStepCallback, token, accessRequirementId, managedACTAccessRequirement} = props
   const [projectLead, setProjectLead] = useState<string>("")
   const [institution, setInstitution] = useState<string>("")
   const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<string>("")
@@ -102,17 +104,22 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
           onChange={e => setInstitution(e.target.value)}
         />
       </Form.Group>
-      <Form.Group>
-        <Form.Label htmlFor={"data-use"}>Intended Data Use Statement - <i>this will be visible to the public</i></Form.Label>
-        <Form.Control
-          id={"data-use"}
-          as="textarea"
-          value={intendedDataUseStatement}
-          rows={10}
-          required
-          onChange={e => setIntendedDataUseStatement(e.target.value)}
-        />
-      </Form.Group>
+      { managedACTAccessRequirement.isIDURequired &&
+        <Form.Group>
+          <Form.Label htmlFor={"data-use"}>Intended Data Use Statement -
+            { managedACTAccessRequirement.isIDUPublic && <i>this will be visible to the public</i>}
+          </Form.Label>
+          <Form.Control
+            id={"data-use"}
+            as="textarea"
+            value={intendedDataUseStatement}
+            rows={10}
+            required
+            onChange={e => setIntendedDataUseStatement(e.target.value)}
+          />
+        </Form.Group>
+      }
+
     </ReactBootstrap.Modal.Body>
     <ReactBootstrap.Modal.Footer>
       <Button variant="link" onClick={goBack}>Cancel</Button>
