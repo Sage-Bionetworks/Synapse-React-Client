@@ -16,6 +16,7 @@ import {
   UserProfile,
 } from '../../../utils/synapseTypes'
 import DirectDownloadButton from '../../DirectDownloadButton'
+import FileUpload from '../../FileUpload'
 
 export type RequestDataAccessStep2Props = {
   token: string,
@@ -144,7 +145,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
     if (batchFileRequest.requestedFiles.length) {
       getFiles(batchFileRequest, token).then(resp => {
-        console.log("emma", resp)
         resp.requestedFiles.forEach(file => {
           const fileName = file.fileHandle!.fileName
           const fileTypes = requestedFileTypes[file.fileHandleId]
@@ -249,32 +249,38 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           <>
             <Form.Group>
               <Form.Label htmlFor={"duc-temp"} className={"SRC-noMargin"}>DUC template</Form.Label><br />
-              <DirectDownloadButton
-                associatedObjectId={DUCTemplate?.associateObjectId}
-                associateObjectType={DUCTemplate?.associateObjectType as FileHandleAssociateType}
-                fileHandleId={DUCTemplate?.fileHandleId}
-                fileName={DUCTemplate?.fileName}
-                id={"duc-temp"}
-                variant={"link"}
-                className={"SRC-noPadding"}
-                token={token}
-              />
+              { DUCTemplate && <DirectDownloadButton
+                  fileHandleAssociation={{
+                    associateObjectId: DUCTemplate.associateObjectId,
+                    associateObjectType: DUCTemplate.associateObjectType as FileHandleAssociateType,
+                    fileHandleId: DUCTemplate.fileHandleId
+                  }}
+                  fileName={DUCTemplate.fileName}
+                  id={"duc-temp"}
+                  variant={"link"}
+                  className={"SRC-noPadding"}
+                  token={token}
+                />
+              }
             </Form.Group>
 
             <Form.Group>
               <Form.Label htmlFor={"duc"} className={"SRC-noMargin"}>Upload DUC</Form.Label><br />
-              <DirectDownloadButton
-                associatedObjectId={DUC?.associateObjectId}
-                associateObjectType={DUC?.associateObjectType as FileHandleAssociateType}
-                fileHandleId={DUC?.fileHandleId}
-                fileName={DUC?.fileName}
-                id={"duc-download"}
-                variant={"link"}
-                className={"SRC-noPadding"}
-                token={token}
-              />
+              { DUC && <DirectDownloadButton
+                  fileHandleAssociation={{
+                    associateObjectId: DUC.associateObjectId,
+                    associateObjectType: DUC.associateObjectType as FileHandleAssociateType,
+                    fileHandleId: DUC.fileHandleId
+                  }}
+                  fileName={DUC?.fileName}
+                  id={"duc-download"}
+                  variant={"link"}
+                  className={"SRC-noPadding"}
+                  token={token}
+                />
+              }
               <br />
-              <Button id={"duc-browse"} variant={"light-primary-base"}>Browse...</Button>
+              <FileUpload token={token} id={"duc-browse"} variant={"light-primary-base"}></FileUpload>
             </Form.Group>
           </>
         }
@@ -283,18 +289,21 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         { managedACTAccessRequirement?.isIRBApprovalRequired &&
           <Form.Group>
             <Form.Label htmlFor={"irb"} className={"SRC-noMargin"}>Upload IRB approval</Form.Label><br/>
-            <DirectDownloadButton
-              associatedObjectId={IRB?.associateObjectId}
-              associateObjectType={IRB?.associateObjectType as FileHandleAssociateType}
-              fileHandleId={IRB?.fileHandleId}
-              fileName={IRB?.fileName}
-              id={"irb-download"}
-              variant={"link"}
-              className={"SRC-noPadding"}
-              token={token}
-            />
+            { IRB && <DirectDownloadButton
+                fileHandleAssociation={{
+                  associateObjectId: IRB.associateObjectId,
+                  associateObjectType: IRB.associateObjectType as FileHandleAssociateType,
+                  fileHandleId: IRB.fileHandleId
+                }}
+                fileName={IRB?.fileName}
+                id={"irb-download"}
+                variant={"link"}
+                className={"SRC-noPadding"}
+                token={token}
+              />
+            }
             <br/>
-            <Button id={"irb-browse"} variant={"light-primary-base"}>Browse...</Button>
+            <FileUpload token={token} id={"irb-browse"} variant={"light-primary-base"}></FileUpload>
           </Form.Group>
         }
 
@@ -316,9 +325,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
                 <DirectDownloadButton
                   key={`file-attachment-btn-${i}`}
-                  associatedObjectId={attachment?.associateObjectId}
-                  associateObjectType={attachment?.associateObjectType as FileHandleAssociateType}
-                  fileHandleId={attachment?.fileHandleId}
+                  fileHandleAssociation={{
+                    associateObjectId: attachment.associateObjectId,
+                    associateObjectType: attachment.associateObjectType as FileHandleAssociateType,
+                    fileHandleId: attachment.fileHandleId
+                  }}
                   fileName={attachment?.fileName}
                   variant={"link"}
                   className={"SRC-noPadding"}
@@ -328,7 +339,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               </>)
             })
           }
-          <Button variant={"light-primary-base"}>Browse...</Button>
+          <FileUpload token={token} id={"attachment-browse"} variant={"light-primary-base"}></FileUpload>
           <hr />
           <Button variant="link" style={{paddingLeft: "0"}}>Select All</Button>
           <Button variant="link" disabled>Remove Selected</Button>

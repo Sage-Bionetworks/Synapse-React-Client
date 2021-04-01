@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react'
 import { Button } from 'react-bootstrap'
-import { BatchFileRequest, FileHandleAssociateType } from '../utils/synapseTypes'
+import { BatchFileRequest, FileHandleAssociation } from '../utils/synapseTypes'
 import { getFiles } from '../utils/SynapseClient'
 
 export type DirectFileDownloadButtonProps = {
   id?: string
   token: string
-  associatedObjectId: string | undefined
-  associateObjectType: FileHandleAssociateType | undefined
-  fileHandleId: string | undefined
+  fileHandleAssociation: FileHandleAssociation
   fileName: string | undefined
   className?: string
   variant?: string  // This allows you to change the look of the button (see react bootstrap doc)
@@ -16,7 +14,7 @@ export type DirectFileDownloadButtonProps = {
 
 const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
 
-  const {id, token, associatedObjectId, associateObjectType, fileHandleId, className, variant, fileName}  = props
+  const {id, token, fileHandleAssociation, className, variant, fileName}  = props
   let mounted:boolean = true
 
   useEffect( () => {
@@ -29,14 +27,10 @@ const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
   }, [token])
 
   const getDownloadLink = async () => {
-    if (!fileHandleId) return
+    if (!fileHandleAssociation.fileHandleId || !token) return
 
     const batchFileRequest:BatchFileRequest = {
-      requestedFiles: [{
-        associateObjectId: associatedObjectId!,
-        associateObjectType: associateObjectType!,
-        fileHandleId: fileHandleId!,
-      }],
+      requestedFiles: [fileHandleAssociation],
       includePreSignedURLs: true,
       includeFileHandles: true,
       includePreviewPreSignedURLs: false
