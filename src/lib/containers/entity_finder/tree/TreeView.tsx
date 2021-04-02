@@ -4,10 +4,12 @@ import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../utils'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
+import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
 import {
   EntityHeader,
+  EntityPath,
   EntityType,
   ProjectHeader,
   Reference,
@@ -20,14 +22,14 @@ import {
 } from '../details/EntityDetailsList'
 import { NodeAppearance, TreeNode } from './TreeNode'
 
-// const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
-//   for (const eh of path.path) {
-//     if (entityId === eh.id) {
-//       return true
-//     }
-//   }
-//   return false
-// }
+const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
+  for (const eh of path.path) {
+    if (entityId === eh.id) {
+      return true
+    }
+  }
+  return false
+}
 
 export enum FinderScope {
   CURRENT_PROJECT = 'Current Project',
@@ -40,7 +42,9 @@ export enum FinderScope {
 export type TreeViewProps = {
   sessionToken: string
   initialScope?: FinderScope
-  initialContainerId?: string // Necessary to show the current project (including if initialScope === CURRENT_PROJECT). initialContainerId must the synId of the current project or a container within that project.
+  /** To show the current project, initialProject must be defined */
+  projectId?: string
+  initialContainer: string | 'root' | null
   showDropdown: boolean
   visibleTypes?: EntityType[] // Default ['project', 'folder']
   toggleSelection: (entity: Reference) => void
@@ -50,6 +54,8 @@ export type TreeViewProps = {
   setBreadcrumbItems: (items: BreadcrumbItem[]) => void
   showFakeRoot?: boolean
   nodeAppearance: NodeAppearance
+  /** The entity types that may be selected. */
+  selectableTypes: EntityType[]
 }
 
 /**
@@ -60,13 +66,15 @@ export type TreeViewProps = {
 export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   sessionToken,
   initialScope = FinderScope.CURRENT_PROJECT,
-  initialContainerId,
+  projectId,
+  initialContainer = null,
   visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
   toggleSelection,
   setDetailsViewConfiguration,
   setBreadcrumbItems,
   showFakeRoot = true,
   nodeAppearance,
+  selectableTypes
 }: TreeViewProps) => {
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
@@ -77,11 +85,11 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     (EntityHeader | ProjectHeader)[]
   >([])
   const [scope, setScope] = useState(initialScope)
-  // const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
+  const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
 
   const [currentContainer, setCurrentContainer] = useState<
     string | 'root' | null
-  >(null)
+  >(initialContainer)
 
   const handleError = useErrorHandler()
 
@@ -180,19 +188,31 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         break
       }
       case FinderScope.CURRENT_PROJECT:
-        if (initialContainerId == null) {
+        if (projectId) {
+          if (initialContainer?.match(SYNAPSE_ENTITY_ID_REGEX)) {
+            SynapseClient.getEntityPath(sessionToken, initialContainer)
+              .then(path => {
+                setInitialContainerPath(path)
+                setTopLevelEntities([path.path[1]])
+                setIsLoading(false)
+              })
+              .catch(e => handleError(e))
+          } else {
+            SynapseClient.getEntityHeaders(
+              [{ targetId: projectId }],
+              sessionToken,
+            )
+              .then(headers => {
+                setTopLevelEntities(headers.results)
+                setIsLoading(false)
+              })
+              .catch(e => handleError(e))
+          }
+        } else {
           handleError(
             new Error(
               'Cannot open current project because the current project is unknown',
             ),
-          )
-        } else {
-          SynapseClient.getEntityPath(sessionToken, initialContainerId).then(
-            path => {
-              // setInitialContainerPath(path)
-              setTopLevelEntities([path.path[1]])
-              setIsLoading(false)
-            },
           )
         }
         break
@@ -202,10 +222,11 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   }, [
     sessionToken,
     scope,
-    initialContainerId,
+    initialContainer,
     handleError,
     visibleTypes,
     isLoadingProjects,
+    projectId,
   ])
 
   // Creates the configuration for the details view and invokes the callback
@@ -293,17 +314,16 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     nodeText: scope,
     children: topLevelEntities,
   }
-  // TODO: Determine if this is correct behavior
-  // const shouldAutoExpand = useCallback(
-  //   (entityId: string) => {
-  //     return !!(
-  //       scope === FinderScope.CURRENT_PROJECT &&
-  //       initialContainerPath &&
-  //       isEntityIdInPath(entityId, initialContainerPath)
-  //     )
-  //   },
-  //   [scope, initialContainerPath],
-  // )
+  const shouldAutoExpand = useCallback(
+    (entityId: string) => {
+      return !!(
+        scope === FinderScope.CURRENT_PROJECT &&
+        initialContainerPath &&
+        isEntityIdInPath(entityId, initialContainerPath)
+      )
+    },
+    [scope, initialContainerPath],
+  )
 
   return (
     <div
@@ -321,9 +341,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
             <Dropdown.Menu role="menu">
               {Object.values(FinderScope).map(scopeOption => {
                 if (
-                  // initialContainerId is required to determine the current project. if it's not provided, don't allow the selection.
                   scopeOption === FinderScope.CURRENT_PROJECT &&
-                  initialContainerId == null
+                  projectId == null
                 ) {
                   return <React.Fragment key={scopeOption} />
                 }
@@ -360,9 +379,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               selectedId={currentContainer}
               setSelectedId={setSelectedId}
               visibleTypes={visibleTypes}
-              autoExpand={noOp}
+              autoExpand={shouldAutoExpand}
               rootNodeConfiguration={rootNodeConfiguration}
               appearance={nodeAppearance}
+              selectableTypes={selectableTypes}
             />
           ) : (
             topLevelEntities.map(entity => (
@@ -373,9 +393,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 selectedId={currentContainer}
                 setSelectedId={setSelectedId}
                 visibleTypes={visibleTypes}
-                autoExpand={noOp}
+                autoExpand={shouldAutoExpand}
                 entityHeader={entity}
                 appearance={nodeAppearance}
+                selectableTypes={selectableTypes}
               />
             ))
           )}
@@ -384,8 +405,4 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       )}
     </div>
   )
-}
-
-function noOp() {
-  return false
 }

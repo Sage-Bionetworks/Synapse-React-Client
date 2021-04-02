@@ -8,6 +8,7 @@ Regular two-pane Entity Finder with multi-select
   sessionToken={sessionToken}
   treeOnly={false}
   initialScope={"Current Project"}
+  projectId={"syn24610451"}
   initialContainerId={"syn24610451"}
   selectMultiple={true}
   visibleTypesInList={[
@@ -42,6 +43,7 @@ One-pane entity finder with single select:
   sessionToken={sessionToken}
   treeOnly={true}
   initialScope={"Current Project"}
+  projectId={"syn23567475"}
   initialContainerId={"syn24610451"}
   selectMultiple={false}
   visibleTypesInList={[
@@ -54,17 +56,18 @@ One-pane entity finder with single select:
     'submissionview',
     'dockerrepo',
   ]}
+  visibleTypesInTree={[
+    'project',
+    'table',
+    'folder',
+    'entityview',
+    'submissionview',
+  ]}
   showVersionSelection={true}
   onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
   selectableTypes={[ 
     'project',
-    'table',
     'folder',
-    'file',
-    'link',
-    'entityview',
-    'submissionview',
-    'dockerrepo',
 ]}
 />
 ```

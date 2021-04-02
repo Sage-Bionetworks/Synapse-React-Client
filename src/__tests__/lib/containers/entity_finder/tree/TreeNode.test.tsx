@@ -5,14 +5,16 @@ import { when } from 'jest-when'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
-  TreeViewNode,
-  TreeViewNodeProps,
-} from '../../../../../lib/containers/entity_finder/tree/TreeViewNode'
+  NodeAppearance,
+  TreeNode,
+  TreeNodeProps,
+} from '../../../../../lib/containers/entity_finder/tree/TreeNode'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetEntityChildrenInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityChildren'
 import {
   EntityBundle,
   EntityHeader,
+  EntityType,
 } from '../../../../../lib/utils/synapseTypes'
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
@@ -28,7 +30,7 @@ const mockSetSelectedId = jest.fn()
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockUseGetEntityChildren = useGetEntityChildrenInfinite as jest.Mock
 
-const defaultProps: TreeViewNodeProps = {
+const defaultProps: TreeNodeProps = {
   sessionToken: 'abcd',
   entityHeader: {
     id: 'syn123',
@@ -40,6 +42,8 @@ const defaultProps: TreeViewNodeProps = {
   },
   selectedId: 'syn456',
   setSelectedId: mockSetSelectedId,
+  appearance: NodeAppearance.SELECT,
+  selectableTypes: Object.values(EntityType),
 }
 
 const childrenFromAPI: EntityHeader[] = [
@@ -104,8 +108,8 @@ const bundleResult: EntityBundle = {
   },
 }
 
-function renderComponent(propOverrides?: Partial<TreeViewNodeProps>) {
-  return render(<TreeViewNode {...defaultProps} {...propOverrides} />)
+function renderComponent(propOverrides?: Partial<TreeNodeProps>) {
+  return render(<TreeNode {...defaultProps} {...propOverrides} />)
 }
 
 const mockFetchNextPageOfChildren = jest.fn()

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import ReactTooltip from 'react-tooltip'
 import {
-    getEntityTypeFromHeader,
-    isContainerType
+  getEntityTypeFromHeader,
+  isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
@@ -33,6 +33,7 @@ export type TreeNodeProps = {
   appearance: NodeAppearance
   /* If rootNodeConfiguration is defined, then entityHeader will be ignored */
   rootNodeConfiguration?: RootNodeConfiguration
+  selectableTypes: EntityType[]
 }
 
 export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
@@ -45,8 +46,13 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
   rootNodeConfiguration,
   appearance,
+  selectableTypes,
 }: TreeNodeProps) => {
   const isRootNode = !!rootNodeConfiguration
+
+  const isDisabled =
+    entityHeader &&
+    !selectableTypes.includes(getEntityTypeFromHeader(entityHeader))
 
   const nodeId = isRootNode ? 'root' : entityHeader!.id
   const nodeName = isRootNode
@@ -147,6 +153,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
       }`}
       role="treeitem"
       aria-selected={selectedId === nodeId}
+      aria-disabled={isDisabled}
     >
       <div
         ref={nodeRef}
@@ -157,7 +164,9 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         key={nodeId}
         onClick={event => {
           event.stopPropagation()
-          setSelectedId(nodeId)
+          if (!isDisabled) {
+            setSelectedId(nodeId)
+          }
         }}
       >
         <ReactTooltip id={TOOLTIP_ID} delayShow={500} place={'top'} />
@@ -204,6 +213,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
                 autoExpand={autoExpand}
                 visibleTypes={visibleTypes}
                 appearance={appearance}
+                selectableTypes={selectableTypes}
               />
             )
           })}

@@ -124,8 +124,10 @@ export type EntityFinderProps = {
   onSelectedChange: (selected: Reference[]) => void
   /** The initial appearance of the entity finder. Possible values include "Current Project", "All Projects", "Projects Created By Me", "My Favorites" */
   initialScope: FinderScope
-  /** Required if `initialScope` is The SynID of the entity that should open by default. This dictates the 'Current Project' */
-  initialContainerId: string
+  /** The SynID of the 'Current Project'. If this is not a defined, then the scope cannot be "Current Project" */
+  projectId?: string
+  /** The SynID of the entity that should open by default. This dictates the 'Current Project'. If this is not a synID, then the scope cannot be "Current Project" */
+  initialContainer: string | 'root' | null
   /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
   /** The entity types to show in the details view (right pane) */
@@ -143,7 +145,8 @@ export type EntityFinderProps = {
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   sessionToken,
   initialScope,
-  initialContainerId,
+  projectId,
+  initialContainer,
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
@@ -172,7 +175,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
         items,
       })
     },
-    [setBreadcrumbsProps, sessionToken],
+    [setBreadcrumbsProps],
   )
 
   function isSelected(entity: Reference, selected: Reference[]): boolean {
@@ -343,10 +346,12 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     showDropdown={true}
                     visibleTypes={visibleTypesInTree}
                     initialScope={initialScope}
-                    initialContainerId={initialContainerId}
+                    projectId={projectId}
+                    initialContainer={initialContainer}
                     showFakeRoot={false}
                     nodeAppearance={NodeAppearance.SELECT}
                     setBreadcrumbItems={() => {}}
+                    selectableTypes={selectableTypes}
                   />
                 </div>
               ) : (
@@ -370,9 +375,11 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             showDropdown={true}
                             visibleTypes={visibleTypesInTree}
                             initialScope={initialScope}
-                            initialContainerId={initialContainerId}
+                            projectId={projectId}
+                            initialContainer={initialContainer}
                             nodeAppearance={NodeAppearance.BROWSE}
                             setBreadcrumbItems={setBreadcrumbs}
+                            selectableTypes={visibleTypesInTree}
                           />
                         </ReflexElement>
                         <ReflexSplitter></ReflexSplitter>

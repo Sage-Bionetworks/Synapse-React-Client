@@ -16,7 +16,7 @@
   border-bottom: $-border;
   table {
     width: 100%;
-    table-layout: auto;
+    table-layout: fixed;
     position: relative;
     border-collapse: collapse;
     thead {
@@ -100,8 +100,7 @@
   }
 
   .IsSelectedColumn {
-    min-width: 40px;
-    max-width: 40px;
+    width: 40px;
     text-align: center;
     .radio,
     .checkbox {
@@ -111,9 +110,7 @@
   }
 
   .EntityIconColumn {
-    min-width: 40px;
-    max-width: 40px;
-
+    width: 40px;
     text-align: center;
     svg {
       fill: currentColor;
@@ -121,20 +118,19 @@
   }
 
   .NameColumn {
-    min-width: 250px;
-    max-width: 350px;
+    width: 300px;
   }
   .AccessColumn {
-    width: 40px;
+    width: 100px;
   }
   .IdColumn {
-    width: 100px;
+    width: 120px;
   }
   .CreatedOnColumn,
   .ModifiedOnColumn {
     width: 150px;
   }
   .VersionColumn {
-    min-width: 200px;
+    width: 200px;
   }
 }

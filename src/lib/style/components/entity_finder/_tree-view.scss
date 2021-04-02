@@ -21,8 +21,9 @@
     height: $-finder-height - $-header-height;
     overflow: auto;
 
-    // This defines general behavior for the node elements of the tree
+    // This defines general styles for the node elements of the tree
     // Other classes may override for specific components
+    // See _tree-node-*.scss files
     .Node {
       .NodeContent {
         width: 100%;
@@ -56,8 +57,14 @@
       }
     }
 
-    .NodeContent:hover {
-      @include -hover();
+    .Node[aria-disabled='false'] {
+      > .NodeContent:hover {
+        @include -hover();
+      }
+    }
+
+    .Node[aria-disabled='true'] {
+      opacity: 0.5;
     }
 
     .Node[aria-selected='true'] {
