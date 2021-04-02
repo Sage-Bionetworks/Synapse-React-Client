@@ -8,14 +8,16 @@ export type BreadcrumbItem = {
 
 export type BreadcrumbsProps = {
   items: BreadcrumbItem[]
+  maxItemCount?: number
 }
 
 export const Breadcrumbs: React.FunctionComponent<BreadcrumbsProps> = ({
   items,
+  maxItemCount = 4,
 }: BreadcrumbsProps) => {
-  const truncateBreadcrumbs = items.length > 4
+  const truncateBreadcrumbs = items.length > maxItemCount
   if (truncateBreadcrumbs) {
-    items = items.slice(-4)
+    items = items.slice(-maxItemCount)
   }
   return (
     <div className="Breadcrumbs">
