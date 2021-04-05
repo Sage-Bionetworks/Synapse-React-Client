@@ -3,10 +3,11 @@
 
 .Breadcrumbs {
   height: $-breadcrumb-height;
-  padding: 5px;
+  padding-left: 15px;
   display: flex;
   align-items: center;
   white-space: nowrap;
+  overflow-x: auto;
   .BreadcrumbItem {
     text-transform: uppercase;
     color: SRC.$primary-action-color;
