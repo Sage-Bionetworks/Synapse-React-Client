@@ -1,7 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCircle, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Clear } from '@material-ui/icons'
 import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { Button, FormControl } from 'react-bootstrap'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
@@ -9,10 +8,8 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
-import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
-import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { ErrorBanner } from '../ErrorBanner'
@@ -22,10 +19,11 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
+import { SelectionPane } from './SelectionPane'
 import { NodeAppearance } from './tree/TreeNode'
 import { FinderScope, TreeView } from './tree/TreeView'
 
-library.add(faTimes, faSearch, faCircle)
+library.add(faTimes, faSearch)
 
 const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
 
@@ -49,72 +47,6 @@ const queryClient = new QueryClient({
     },
   },
 })
-
-const EntityPathDisplay: React.FunctionComponent<{
-  sessionToken: string
-  entity: Reference
-  toggleSelection: (entity: Reference) => void
-}> = ({ sessionToken, entity, toggleSelection }) => {
-  const ENTITY_PATH_TOOLTIP_ID = `EntityPathDisplayReactTooltip_${entity.targetId}`
-
-  const { data: bundle } = useGetEntityBundle(
-    sessionToken,
-    entity.targetId,
-    { includeEntity: true, includeEntityPath: true },
-    entity.targetVersionNumber,
-  )
-
-  const [entityName, setEntityName] = useState('')
-  const [fullPath, setFullPath] = useState('')
-  const [displayedPath, setDisplayedPath] = useState('')
-
-  useEffect(() => {
-    if (bundle?.path?.path) {
-      setEntityName(bundle.path.path[bundle.path.path.length - 1].name)
-      const path = bundle.path.path.slice(1, bundle.path.path.length - 1) // drop the first element, which is always syn4489 "root"
-      const _fullPath = path.map(header => header.name).join('/')
-      setFullPath(_fullPath)
-      if (path.length < 4) {
-        // Show the full path from project to entity
-        setDisplayedPath(_fullPath)
-      } else {
-        // Truncate the path, showing only project, parent, and self
-        setDisplayedPath(
-          path[0].name + // Project
-            '/…/' +
-            path
-              .slice(path.length - 1) // drop everything except parent and self
-              .map(header => header.name)
-              .join('/'),
-        )
-      }
-    }
-  }, [bundle])
-
-  return (
-    <div className="EntityFinder__Selected__Row">
-      <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
-      <span
-        data-for={ENTITY_PATH_TOOLTIP_ID}
-        data-tip={`${fullPath}/${entityName}`}
-      >
-        {displayedPath ? displayedPath + '/' : ''}
-      </span>
-      <span className="EntityFinder__Selected__Row__EntityName">
-        {entityName}
-      </span>
-      {entity.targetVersionNumber && (
-        <span> (Version {entity.targetVersionNumber})</span>
-      )}
-      <Clear
-        className="EntityFinder__Selected__Row__DeselectButton"
-        onClick={() => {
-          toggleSelection(entity)
-        }}
-      />
-    </div>
-  )
-}
 
 export type EntityFinderProps = {
   sessionToken: string
@@ -409,24 +341,12 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             </div>
           }
           {selectedEntities.length > 0 && (
-            <div className="EntityFinder__Selected">
-              <h3>{selectedCopy}</h3>
-              <div>
-                {selectedEntities.map(e => (
-                  <div
-                    key={`${e.targetId}${
-                      e.targetVersionNumber ? `.${e.targetVersionNumber}` : ''
-                    }`}
-                  >
-                    <EntityPathDisplay
-                      sessionToken={sessionToken}
-                      entity={e}
-                      toggleSelection={toggleSelection}
-                    ></EntityPathDisplay>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <SelectionPane
+              sessionToken={sessionToken}
+              title={selectedCopy}
+              selectedEntities={selectedEntities}
+              toggleSelection={toggleSelection}
+            />
           )}
         </div>
       </ErrorBoundary>
