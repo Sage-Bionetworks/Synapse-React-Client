@@ -74,7 +74,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   setBreadcrumbItems,
   showFakeRoot = true,
   nodeAppearance,
-  selectableTypes
+  selectableTypes,
 }: TreeViewProps) => {
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
@@ -192,18 +192,22 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           if (initialContainer?.match(SYNAPSE_ENTITY_ID_REGEX)) {
             SynapseClient.getEntityPath(sessionToken, initialContainer)
               .then(path => {
+                if (!path.path.map(entity => entity.id).includes(projectId)) {
+                  handleError(
+                    new Error(
+                      `An initial container (${initialContainer}) was provided but is not within or the same as the provided project (${projectId})`,
+                    ),
+                  )
+                }
                 setInitialContainerPath(path)
                 setTopLevelEntities([path.path[1]])
                 setIsLoading(false)
               })
               .catch(e => handleError(e))
           } else {
-            SynapseClient.getEntityHeaders(
-              [{ targetId: projectId }],
-              sessionToken,
-            )
-              .then(headers => {
-                setTopLevelEntities(headers.results)
+            SynapseClient.getEntityHeader(projectId, sessionToken)
+              .then(header => {
+                setTopLevelEntities([header])
                 setIsLoading(false)
               })
               .catch(e => handleError(e))

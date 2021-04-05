@@ -861,6 +861,19 @@ export const getEntityHeaders = (
   ) as Promise<PaginatedResults<EntityHeader>>
 }
 
+/**
+ * Get the EntityHeader for a single entity
+ * https://docs.synapse.org/rest/GET/entity/id/type.html
+ */
+export const getEntityHeader = (entityId: string, sessionToken?: string) => {
+  return doGet(
+    `repo/v1/entity/${entityId}/type`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  ) as Promise<EntityHeader>
+}
+
 export const updateEntity = <T extends Entity>(
   entity: T,
   sessionToken: string | undefined = undefined,
