@@ -7,13 +7,13 @@ import { SynapseClient } from '../../../../utils'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
 import {
   getEntityTypeFromHeader,
-  isVersionableEntityType
+  isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
 import {
   EntityHeader,
   ProjectHeader,
-  Reference
+  Reference,
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
 import { VersionInfo } from '../../../../utils/synapseTypes/VersionInfo'
@@ -169,12 +169,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       <td className="IdColumn">
         <div>{entityHeader.id} </div>
       </td>
-      <td className="CreatedOnColumn">
-        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
-      </td>
-      <td className="ModifiedOnColumn">
-        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
-      </td>
       {showVersionColumn && (
         <td className="VersionColumn" aria-label="version">
           <div>
@@ -217,6 +211,12 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
           </div>
         </td>
       )}
+      <td className="CreatedOnColumn">
+        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
+      </td>
+      <td className="ModifiedOnColumn">
+        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
+      </td>
     </tr>
   )
 }

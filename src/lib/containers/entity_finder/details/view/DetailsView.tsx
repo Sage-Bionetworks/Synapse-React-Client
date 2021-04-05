@@ -130,18 +130,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             <th className="IdColumn">
               <div>ID</div>
             </th>
-            <th className="CreatedOnColumn">
-              <div>
-                <span>Created On</span>
-                <span>{showInteractiveSortIcon(SortBy.CREATED_ON)}</span>
-              </div>
-            </th>
-            <th className="ModifiedOnColumn">
-              <div>
-                <span>Modified On</span>
-                <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
-              </div>
-            </th>
             {showVersionSelection && (
               <th className="VersionColumn">
                 <div>
@@ -156,6 +144,18 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 </div>
               </th>
             )}
+            <th className="CreatedOnColumn">
+              <div>
+                <span>Created On</span>
+                <span>{showInteractiveSortIcon(SortBy.CREATED_ON)}</span>
+              </div>
+            </th>
+            <th className="ModifiedOnColumn">
+              <div>
+                <span>Modified On</span>
+                <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody className="EntityFinderDetailsView__TableBody">
