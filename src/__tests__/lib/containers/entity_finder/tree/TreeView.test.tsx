@@ -42,7 +42,7 @@ jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useProjects', () => {
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle', () => {
   return {
-    __esModule: true, // this property makes it work
+    __esModule: true,
     default: jest.fn(),
   }
 })
@@ -51,10 +51,12 @@ jest.mock('../../../../../lib/utils/SynapseClient', () => {
   return {
     getUserFavorites: jest.fn(),
     getEntityPath: jest.fn(),
+    getEntityHeader: jest.fn(),
   }
 })
 const mockGetUserFavorites = SynapseClient.getUserFavorites as jest.Mock
 const mockGetEntityPath = SynapseClient.getEntityPath as jest.Mock
+const mockGetEntityHeader = SynapseClient.getEntityHeader as jest.Mock
 const mockFetchNextPage = jest.fn()
 
 const mockSetDetailsViewConfiguration = jest.fn()
@@ -67,6 +69,7 @@ const mockToggleSelection = jest.fn()
 const defaultProps: TreeViewProps = {
   sessionToken: 'abcd',
   initialScope: FinderScope.CURRENT_PROJECT,
+  projectId: 'syn5',
   initialContainer: 'syn123',
   showDropdown: true,
   visibleTypes: [EntityType.PROJECT, EntityType.FOLDER],
@@ -177,6 +180,7 @@ describe('TreeView tests', () => {
 
     mockGetUserFavorites.mockResolvedValue(favorites)
     mockGetEntityPath.mockResolvedValue(entityPath)
+    mockGetEntityHeader.mockResolvedValue(entityPath.path[1])
 
     mockUseGetEntityBundle.mockReturnValue({
       data: {
@@ -235,10 +239,10 @@ describe('TreeView tests', () => {
   })
 
   describe('Dropdown selection tests', () => {
-    it('can select `Current Project` if initial container is provided', async () => {
+    it('cannot select `Current Project` if project ID is not provided', async () => {
       renderComponent({
         initialScope: FinderScope.ALL_PROJECTS,
-        initialContainer: undefined,
+        projectId: undefined,
       })
 
       userEvent.click(screen.getByRole('button'))
@@ -248,7 +252,7 @@ describe('TreeView tests', () => {
     it('can select `Current Project` if initial container is provided', async () => {
       renderComponent({
         initialScope: FinderScope.ALL_PROJECTS,
-        initialContainer: defaultProps.initialContainer,
+        projectId: 'syn123',
       })
 
       userEvent.click(screen.getByRole('button'))
@@ -311,10 +315,12 @@ describe('TreeView tests', () => {
     it('Configures to display a list containing just the current project when the root node is selected with a scope of the current project', async () => {
       renderComponent({
         initialContainer: 'root',
+        projectId: defaultProps.projectId,
         initialScope: FinderScope.CURRENT_PROJECT,
       })
 
-      await waitFor(() => expect(mockGetEntityPath).toBeCalled())
+      await waitFor(() => expect(mockGetEntityHeader).toBeCalled())
+      expect(mockGetEntityPath).not.toBeCalled()
 
       const currentProject = entityPath.path[1]
 
