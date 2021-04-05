@@ -2,8 +2,7 @@
 @use 'sass:color';
 
 $-header-height: 40px;
-$-border-color: #dcdcdc;
-$-border: 1px solid $-border-color;
+$-border: 1px solid SRC.$border-color-gray;
 $-finder-height: 500px;
 $-breadcrumb-height: 40px;
 $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
@@ -82,5 +81,5 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
 .EntityViewReflexContainer {
   $-border-size: 2px;
   height: $-finder-height + ($-border-size * 2);
-  border: $-border-size solid $-border-color;
+  border: $-border-size solid SRC.$border-color-gray;
 }
