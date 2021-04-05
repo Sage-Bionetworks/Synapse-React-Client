@@ -8,7 +8,7 @@ Regular two-pane Entity Finder with multi-select
   sessionToken={sessionToken}
   treeOnly={false}
   initialScope={"Current Project"}
-  projectId={"syn24610451"}
+  projectId={"syn23567475"}
   initialContainerId={"syn24610451"}
   selectMultiple={true}
   visibleTypesInList={[
