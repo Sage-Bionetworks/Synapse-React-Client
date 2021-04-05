@@ -83,9 +83,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   onSelectedChange,
   showVersionSelection = true,
   visibleTypesInList,
+  visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
   selectableTypes = Object.values(EntityType),
   selectedCopy = 'Selected',
-  visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
   treeOnly = false,
 }: EntityFinderProps) => {
   const [searchActive, setSearchActive] = useState(false)
@@ -169,6 +169,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     if (searchTerms?.length === 1) {
       const synIdMatch = searchTerms[0].match(SYNAPSE_ENTITY_ID_REGEX)
       if (synIdMatch) {
+        console.log('should not search')
         SynapseClient.getEntityHeaders(
           [
             {
@@ -210,7 +211,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       if (event.target.value === '') {
                         setSearchTerms(undefined)
                       } else {
-                        setSearchTerms([event.target.value.trim()])
+                        setSearchTerms(event.target.value.trim().split(' '))
                       }
                     }
                   }}
