@@ -185,7 +185,13 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
           )}
         </div>
         <div className="EntityName" data-for={TOOLTIP_ID} data-tip={nodeName}>
-          {nodeName}
+          <span>{nodeName}</span>
+          {!isRootNode &&
+            appearance === NodeAppearance.BROWSE &&
+            entityHeader &&
+            getEntityTypeFromHeader(entityHeader) === EntityType.PROJECT && (
+              <span> (Directory)</span>
+            )}
         </div>
         {appearance === NodeAppearance.SELECT && (
           <div>
