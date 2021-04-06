@@ -39,6 +39,16 @@ export enum FinderScope {
   FAVORITES = 'My Favorites',
 }
 
+function getScopeOptionNodeName(scope: FinderScope): string {
+  switch (scope) {
+    case FinderScope.CURRENT_PROJECT:
+    case FinderScope.ALL_PROJECTS:
+    case FinderScope.CREATED_BY_ME:
+      return 'Projects'
+    case FinderScope.FAVORITES:
+      return 'Favorites'
+  }
+}
 // if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
 export type TreeViewProps = {
   sessionToken: string
@@ -314,7 +324,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   ])
 
   const rootNodeConfiguration = {
-    nodeText: scope,
+    nodeText: getScopeOptionNodeName(scope),
     children: topLevelEntities,
   }
   const shouldAutoExpand = useCallback(
