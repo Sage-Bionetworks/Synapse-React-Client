@@ -46,7 +46,7 @@ export type UploadCallbackResp = {
   context?: any
 }
 
-export type AttachmentCheckboxes = {
+export type CheckboxProps = {
   value: string,
   isChecked: boolean
 }
@@ -59,7 +59,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
   const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
-  const [attachmentCheckboxes, setAttachmentCheckboxes] = useState<AttachmentCheckboxes[]>()
+  const [attachmentCheckboxes, setAttachmentCheckboxes] = useState<CheckboxProps[]>([])
+  const [accessorCheckboxes, setAccessorCheckboxes] = useState<CheckboxProps[]>([])
+  const [enableRemAccessorChecks, setEnableRemAccessorChecks] = useState<boolean>(false)
+  const [enableRemAttachmentChecks, setEnableRemAttachmentChecks] = useState<boolean>(false)
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
   const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
@@ -91,7 +94,14 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
     // save assessors' user profiles
     if (accessorChanges && accessorChanges.length) {
-      const ids = accessorChanges.map(item => item.userId)
+      let ids:string[] = []
+      accessorChanges.forEach((item, index) => {
+        ids.push(item.userId)
+        accessorCheckboxes[index] = {
+          value: item.userId,
+          isChecked: false
+        }
+      })
       const promises = ids.map((userId, i) => {
         return getUserProfileById(token, userId)
       })
@@ -104,7 +114,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   const getFilesData = (dataAccessRequestData:RequestInterface) => {
 
-    const attachmentCheckboxArr:AttachmentCheckboxes[] = []
+    const attachmentCheckboxArr:CheckboxProps[] = []
 
     // Create the request objects for required documents and save them in the state variables
     if (managedACTAccessRequirement.isDUCRequired && managedACTAccessRequirement.ducTemplateFileHandleId) {
@@ -222,15 +232,60 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     // requestDataStepCallback?.(accessRequirementId)
   }
 
-  const setCheck = (checkbox:AttachmentCheckboxes) => {
-    console.log("checkbox", checkbox)
-    const attachmentCheckboxArr = attachmentCheckboxes
-    attachmentCheckboxArr?.forEach(item => {
-      if (item.value === checkbox.value) {
-        item.isChecked = !item.isChecked
-      }
-    })
-    setAttachmentCheckboxes(attachmentCheckboxArr)
+  const setCheck = (groupName: string, checkbox:CheckboxProps) => {
+    if (!groupName) return
+
+    let checkboxArr:CheckboxProps[] | undefined
+    switch (groupName) {
+      case "accessors":
+        checkboxArr = accessorCheckboxes
+        checkboxArr?.forEach(item => {
+          if (item.value === checkbox.value) {
+            item.isChecked = !item.isChecked
+          }
+        })
+        checkboxArr.filter(item => item.isChecked === true).length > 0
+          ? setEnableRemAccessorChecks(true) : setEnableRemAccessorChecks(false)
+        setAccessorCheckboxes(checkboxArr)
+        break
+      case "attachments":
+        checkboxArr = attachmentCheckboxes
+        checkboxArr?.forEach(item => {
+          if (item.value === checkbox.value) {
+            item.isChecked = !item.isChecked
+          }
+        })
+        checkboxArr.filter(item => item.isChecked === true).length > 0
+          ? setEnableRemAttachmentChecks(true) : setEnableRemAttachmentChecks(false)
+        setAttachmentCheckboxes(checkboxArr)
+        break
+      default:
+    }
+  }
+
+  const setCheckAll = (groupName:string, checked: boolean) => {
+    if (!groupName) return
+
+    let checkboxArr:CheckboxProps[] | undefined
+    switch (groupName) {
+      case "accessors":
+        checkboxArr = accessorCheckboxes
+        checkboxArr?.forEach(item => {
+          item.isChecked = checked
+        })
+        setAccessorCheckboxes(checkboxArr)
+        checked === true ? setEnableRemAccessorChecks(true) : setEnableRemAccessorChecks(false)
+        break
+      case "attachments":
+        checkboxArr = attachmentCheckboxes
+        checkboxArr?.forEach(item => {
+          item.isChecked = checked
+        })
+        setAttachmentCheckboxes(checkboxArr)
+        checked === true ? setEnableRemAttachmentChecks(true) : setEnableRemAttachmentChecks(false)
+        break
+      default:
+    }
   }
 
   const uploadCallback = (data: UploadCallbackResp) => {
@@ -278,23 +333,32 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         {/* Accessors Checkboxes */}
         <Form.Group>
           {accessorProfiles?.map((profile, i) => {
+            const checkbox: CheckboxProps = accessorCheckboxes![i]
               return (<>
                 <Checkbox
                   label=""
                   id=""
-                  checked={false}
-                  onChange={() => {}}
+                  onChange={() => setCheck('accessors', checkbox)}
                   className={"ch1"}
                   key={`checkbox-accessor-${i}`}
-                  value={profile.ownerId}
+                  value={checkbox?.value}
+                  checked={checkbox?.isChecked}
                 ></Checkbox>
                 <UserCardSmall key={`accessor-${i}`} userProfile={profile}></UserCardSmall>
               </>)
             })
           }
           <hr />
-          <Button variant="link" style={{paddingLeft: "0"}}>Select All</Button>
-          <Button variant="link" disabled>Remove Selected</Button>
+          <Button
+            variant="link"
+            style={{paddingLeft: "0"}}
+            onClick={() => setCheckAll('accessors', true)}
+          >Select All</Button>
+          <Button
+            variant="link"
+            disabled={!enableRemAccessorChecks}
+            onClick={() => setCheckAll('accessors', false)}
+          >Remove Selected</Button>
         </Form.Group>
 
         {/* DUC */}
@@ -377,15 +441,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           <Form.Label className={"SRC-noMargin"}>Upload other required documents</Form.Label><br />
           {
             attachments.map((attachment, i) => {
-              const checkbox: AttachmentCheckboxes = attachmentCheckboxes![i]
+              const checkbox: CheckboxProps = attachmentCheckboxes[i]
               return (<>
                 <Checkbox
                   id={`checkbox-ch2-${i}`}
                   label={""}
-                  onChange={() => setCheck(checkbox)}
+                  onChange={() => setCheck('attachments', checkbox)}
                   className={"ch2"}
                   key={`file-attachment-checkbox-${i}`}
-                  value={checkbox?.value}
+                  value={checkbox.value}
+                  checked={attachmentCheckboxes[i].isChecked}
                 ></Checkbox>
 
                 <DirectDownloadButton
@@ -412,8 +477,17 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             context={"attachments"}
           ></FileUpload>
           <hr />
-          <Button variant="link" style={{paddingLeft: "0"}}>Select All</Button>
-          <Button variant="link" disabled>Remove Selected</Button>
+          <Button
+            variant="link"
+            style={{paddingLeft: "0"}}
+            onClick={() => setCheckAll('attachments', true)}
+          >Select All
+          </Button>
+          <Button
+            variant="link"
+            disabled={!enableRemAttachmentChecks}
+            onClick={() => setCheckAll('attachments', false)}
+          >Remove Selected</Button>
         </Form.Group>
 
       </ReactBootstrap.Modal.Body>
