@@ -7,9 +7,13 @@ $-finder-height: 500px;
 $-breadcrumb-height: 40px;
 $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
 
-@mixin -hover {
+@mixin -hover($color: '') {
   // we use an inset box-shadow because border will affect the width of the component
-  box-shadow: 0px 0px 0px 2px SRC.$primary-action-color-500 inset;
+  @if $color != '' {
+    box-shadow: 0px 0px 0px 2px $color inset;
+  } @else {
+    box-shadow: 0px 0px 0px 2px SRC.$primary-action-color-500 inset;
+  }
 }
 
 // https://github.com/leefsmp/Re-Flex/issues/27

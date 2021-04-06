@@ -51,12 +51,16 @@
     background: SRC.$background-color-gray;
   }
 
-  &__Row[aria-disabled='false']:hover {
+  &__Row[aria-disabled='false'][aria-selected='false']:hover {
     @include -hover();
+  }
+  &__Row[aria-disabled='false'][aria-selected='true']:hover {
+    @include -hover(rgba(0, 0, 0, 0.25));
   }
 
   &__Row[aria-selected='true'] {
-    background-color: $-selected-color;
+    color: white;
+    background-color: SRC.$primary-action-color-500;
   }
 
   &__Row[aria-disabled='true'] {
