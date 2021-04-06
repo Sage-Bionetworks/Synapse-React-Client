@@ -14,5 +14,17 @@
         }
       }
     }
+    .Node.SelectNode[aria-selected='true'] {
+      > .NodeContent {
+        background: SRC.$primary-action-color-500;
+        color: white;
+        > .ExpandButton {
+          color: rgb(255, 255, 255);
+        }
+      }
+      > .NodeContent:hover {
+        @include -hover(rgb(0, 0, 0, 0.25));
+      }
+    }
   }
 }

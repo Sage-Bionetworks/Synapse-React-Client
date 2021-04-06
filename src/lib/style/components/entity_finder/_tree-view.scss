@@ -73,10 +73,6 @@
     .Node[aria-selected='true'] {
       > .NodeContent {
         background: $-selected-color;
-
-        .ExpandButton {
-          color: SRC.$primary-action-color-500;
-        }
       }
       .Node[aria-selected='false'] > .NodeContent {
         background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
