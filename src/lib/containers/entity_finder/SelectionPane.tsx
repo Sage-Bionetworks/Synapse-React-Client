@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
+import { BUNDLE_REQUEST_OBJECT } from './EntityFinderUtils'
 
 export type SelectionPaneProps = {
   sessionToken: string
@@ -49,7 +50,7 @@ const EntityPathDisplay: React.FunctionComponent<{
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
     entity.targetId,
-    { includeEntity: true, includeEntityPath: true },
+    BUNDLE_REQUEST_OBJECT,
     entity.targetVersionNumber,
   )
 

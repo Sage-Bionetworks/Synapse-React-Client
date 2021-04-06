@@ -11,6 +11,7 @@ import { EntityHeader, ProjectHeader } from '../../../utils/synapseTypes'
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
 import { EntityTypeIcon } from '../../EntityIcon'
+import { BUNDLE_REQUEST_OBJECT } from '../EntityFinderUtils'
 
 export type RootNodeConfiguration = {
   nodeText: string
@@ -98,14 +99,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
     nodeId,
-    {
-      includeEntity: true,
-      includeAnnotations: true,
-      includeBenefactorACL: true,
-      includePermissions: true,
-      includeRootWikiId: true,
-      includeThreadCount: true,
-    },
+    BUNDLE_REQUEST_OBJECT,
     undefined,
     {
       enabled:

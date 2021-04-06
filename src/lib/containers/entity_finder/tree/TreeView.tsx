@@ -20,6 +20,7 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
+import { BUNDLE_REQUEST_OBJECT } from '../EntityFinderUtils'
 import { NodeAppearance, TreeNode } from './TreeNode'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
@@ -130,9 +131,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   } = useGetEntityBundle(
     sessionToken,
     currentContainer!,
-    {
-      includeEntityPath: true,
-    },
+    BUNDLE_REQUEST_OBJECT,
     undefined,
     {
       enabled: !!currentContainer && currentContainer !== 'root',
