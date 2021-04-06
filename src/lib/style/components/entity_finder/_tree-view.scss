@@ -65,6 +65,9 @@
 
     .Node[aria-disabled='true'] {
       opacity: 0.5;
+      > .NodeContent {
+        cursor: default;
+      }
     }
 
     .Node[aria-selected='true'] {
