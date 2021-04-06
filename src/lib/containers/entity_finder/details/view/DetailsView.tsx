@@ -47,7 +47,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   showVersionSelection,
   selectColumnType,
   selected,
-  includeTypes,
+  visibleTypes,
   selectableTypes,
   toggleSelection,
   sort,
@@ -62,7 +62,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   const determineRowAppearance = (
     entity: EntityHeader | ProjectHeader | Hit,
   ): DetailsViewRowAppearance => {
-    if (!includeTypes.includes(getEntityTypeFromHeader(entity))) {
+    if (!visibleTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'hidden'
     } else if (!selectableTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'disabled'

@@ -43,7 +43,7 @@ export type EntityDetailsListSharedProps = {
   sessionToken: string
   showVersionSelection: boolean
   selectColumnType: 'checkbox' | 'radio' | 'none'
-  includeTypes: EntityType[]
+  visibleTypes: EntityType[]
   selected: Reference[] // synId(s)
   selectableTypes: EntityType[]
   toggleSelection: (entity: Reference) => void

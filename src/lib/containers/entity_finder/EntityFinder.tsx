@@ -133,27 +133,30 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     selected: Reference[],
     toggledReference: Reference,
   ): Reference[] {
+    let result: Reference[] = []
     if (isSelected(toggledReference, selected)) {
       // remove from selection
-      return selected.filter(e => e.targetId !== toggledReference.targetId)
+      result = selected.filter(e => e.targetId !== toggledReference.targetId)
     } else if (otherVersionSelected(toggledReference, selected)) {
       // Currently don't allow selecting two versions of the same entity
       // replace previous selected version with new selected version
-      return [
+      result = [
         ...selected.filter(e => e.targetId !== toggledReference.targetId),
         toggledReference,
       ]
     } else {
       // add to selection
       if (!selectMultiple) {
-        return [toggledReference]
+        result = [toggledReference]
       } else {
-        return [
+        result = [
           ...selected.filter(s => s.targetId !== toggledReference.targetId),
           toggledReference,
         ]
       }
     }
+    onSelectedChange(result)
+    return result
   }
 
   const [selectedEntities, toggleSelection] = useReducer(
@@ -162,14 +165,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   )
 
   useEffect(() => {
-    onSelectedChange(selectedEntities)
-  }, [onSelectedChange, selectedEntities])
-
-  useEffect(() => {
     if (searchTerms?.length === 1) {
       const synIdMatch = searchTerms[0].match(SYNAPSE_ENTITY_ID_REGEX)
       if (synIdMatch) {
-        console.log('should not search')
         SynapseClient.getEntityHeaders(
           [
             {
@@ -263,7 +261,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               showVersionSelection={showVersionSelection}
               selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
               selected={selectedEntities}
-              includeTypes={visibleTypesInList}
+              visibleTypes={visibleTypesInList}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
             />
@@ -325,7 +323,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             configuration={configFromTreeView}
                             showVersionSelection={showVersionSelection}
                             selected={selectedEntities}
-                            includeTypes={visibleTypesInList}
+                            visibleTypes={visibleTypesInList}
                             selectableTypes={selectableTypes}
                             selectColumnType={
                               selectMultiple ? 'checkbox' : 'radio'
