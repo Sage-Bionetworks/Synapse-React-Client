@@ -3,7 +3,11 @@ import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { Button, FormControl } from 'react-bootstrap'
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
+import {
+  ErrorBoundary,
+  FallbackProps,
+  useErrorHandler,
+} from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
@@ -101,6 +105,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     type: EntityDetailsListDataConfigurationType.PROMPT,
   })
 
+  const handleError = useErrorHandler()
+
   const setBreadcrumbs = useCallback(
     (items: BreadcrumbItem[]) => {
       setBreadcrumbsProps({
@@ -178,14 +184,16 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             },
           ],
           sessionToken,
-        ).then(response => {
-          setSearchByIdResults(response.results)
-        })
+        )
+          .then(response => {
+            setSearchByIdResults(response.results)
+          })
+          .catch(e => handleError(e))
       }
     } else {
       setSearchByIdResults([])
     }
-  }, [sessionToken, searchTerms])
+  }, [sessionToken, searchTerms, handleError])
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -201,6 +209,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 />
                 <FormControl
                   autoFocus={true}
+                  role="textbox"
                   className="EntityFinder__Search__Input"
                   type="search"
                   placeholder="Search by name, Wiki contents, or Synapse ID"
@@ -217,6 +226,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 <FontAwesomeIcon
                   size={'sm'}
                   icon={faTimes}
+                  role="button"
+                  title="Close Search"
                   style={{
                     cursor: 'pointer',
                     position: 'relative',

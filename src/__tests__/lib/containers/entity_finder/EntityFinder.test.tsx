@@ -1,21 +1,24 @@
 import '@testing-library/jest-dom'
-import { act, render, waitFor, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { when } from 'jest-when'
 import React from 'react'
 import { SynapseClient } from '../../../../lib'
-import EntityFinder, {
-  EntityFinderProps,
-} from '../../../../lib/containers/entity_finder/EntityFinder'
-import { FinderScope } from '../../../../lib/containers/entity_finder/tree/TreeView'
-import { EntityType, Reference } from '../../../../lib/utils/synapseTypes'
-import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
-import useGetEntityBundle from '../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
-import { when } from 'jquery'
-import { config } from '@fortawesome/fontawesome-svg-core'
 import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from '../../../../lib/containers/entity_finder/details/EntityDetailsList'
-import userEvent from '@testing-library/user-event'
+import EntityFinder, {
+  EntityFinderProps,
+} from '../../../../lib/containers/entity_finder/EntityFinder'
+import { FinderScope } from '../../../../lib/containers/entity_finder/tree/TreeView'
+import useGetEntityBundle from '../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
+import {
+  EntityHeader,
+  EntityType,
+  PaginatedResults,
+  Reference,
+} from '../../../../lib/utils/synapseTypes'
 
 jest.mock('../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 jest.mock('react-reflex', () => {
@@ -64,14 +67,12 @@ const mockDetailsList = DetailsList.EntityDetailsList
 
 jest.mock('../../../../lib/utils/SynapseClient', () => {
   return {
-    getUserFavorites: jest.fn(),
     getEntityPath: jest.fn(),
     getEntityHeader: jest.fn(),
+    getEntityHeaders: jest.fn(),
   }
 })
-const mockGetUserFavorites = SynapseClient.getUserFavorites as jest.Mock
-const mockGetEntityPath = SynapseClient.getEntityPath as jest.Mock
-const mockGetEntityHeader = SynapseClient.getEntityHeader as jest.Mock
+const mockGetEntityHeaders = SynapseClient.getEntityHeaders as jest.Mock
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 
 const mockOnSelectionChange = jest.fn()
@@ -359,15 +360,117 @@ describe('EntityFinder tests', () => {
     )
   })
 
-  // it('clicking the search button opens the input field', async () => {
-  //   renderComponent()
+  it('clicking the search button opens the input field', async () => {
+    renderComponent({ treeOnly: true })
 
-  //   userEvent.click(screen.getByRole('button'))
+    // Tree should be visible before we start search. No table should be visible
+    expect(() => screen.getByRole('tree')).not.toThrowError()
+    expect(() => screen.getByRole('table')).toThrowError()
 
-  //   await waitFor(() => screen.getByRole('entry'))
-  // })
+    // Don't show the search box before the button is clicked
+    expect(() => screen.getByRole('textbox')).toThrowError()
 
-  it('handles searching for terms', async () => {})
+    userEvent.click(screen.getByText('Search all of Synapse'))
+    await waitFor(() => screen.getByRole('textbox'))
 
-  it('handles searching for a synId', async () => {})
+    // The tree should be hidden when searching. The table of search results should be visible
+    expect(() => screen.getByRole('tree')).toThrowError()
+    expect(() => screen.getByRole('table')).not.toThrowError()
+
+    // Close the search
+    userEvent.click(screen.getByLabelText('Close Search'))
+
+    // Tree should come back, table should be gone
+    await waitFor(() => screen.getByRole('tree'))
+    expect(() => screen.getByRole('table')).toThrowError()
+
+    // Search input field should be gone too
+    expect(() => screen.getByRole('textbox')).toThrowError()
+  })
+
+  it('handles searching for terms', async () => {
+    renderComponent()
+
+    const query = 'my search terms '
+    const queryTerms = ['my', 'search', 'terms']
+    userEvent.click(screen.getByText('Search all of Synapse'))
+    await waitFor(() => screen.getByRole('textbox'))
+    userEvent.type(screen.getByRole('textbox'), query)
+    userEvent.type(screen.getByRole('textbox'), '{enter}')
+
+    await waitFor(() =>
+      expect(mockDetailsList).toBeCalledWith(
+        expect.objectContaining({
+          configuration: {
+            type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+            query: {
+              queryTerm: queryTerms,
+            },
+          },
+        }),
+        {},
+      ),
+    )
+  })
+
+  it('handles searching for a synId', async () => {
+    renderComponent()
+
+    const entityId = 'syn123'
+    const version = 2
+
+    const entityHeaderResult = { results: [{ id: entityId }] }
+    const entityHeaderResultWithVersion: PaginatedResults<
+      Partial<EntityHeader>
+    > = {
+      results: [{ id: entityId, versionNumber: version }],
+    }
+
+    when(mockGetEntityHeaders)
+      .calledWith([{ targetId: entityId }], defaultProps.sessionToken)
+      .mockResolvedValue(entityHeaderResult)
+
+    when(mockGetEntityHeaders)
+      .calledWith(
+        [{ targetId: entityId, targetVersionNumber: version }],
+        defaultProps.sessionToken,
+      )
+      .mockResolvedValue(entityHeaderResultWithVersion)
+
+    userEvent.click(screen.getByText('Search all of Synapse'))
+    await waitFor(() => screen.getByRole('textbox'))
+    userEvent.type(screen.getByRole('textbox'), entityId)
+    userEvent.type(screen.getByRole('textbox'), '{enter}')
+
+    await waitFor(() =>
+      expect(mockDetailsList).toBeCalledWith(
+        expect.objectContaining({
+          configuration: {
+            type: EntityDetailsListDataConfigurationType.HEADER_LIST,
+            headerList: entityHeaderResult.results,
+          },
+        }),
+        {},
+      ),
+    )
+    expect(mockGetEntityHeaders).toBeCalledTimes(1)
+
+    // Search with a version number
+    userEvent.clear(screen.getByRole('textbox'))
+    userEvent.type(screen.getByRole('textbox'), `${entityId}.${version}`)
+    userEvent.type(screen.getByRole('textbox'), '{enter}')
+    await waitFor(() =>
+      expect(mockDetailsList).toBeCalledWith(
+        expect.objectContaining({
+          configuration: {
+            type: EntityDetailsListDataConfigurationType.HEADER_LIST,
+            headerList: entityHeaderResultWithVersion.results,
+          },
+        }),
+        {},
+      ),
+    )
+
+    expect(mockGetEntityHeaders).toHaveBeenCalledTimes(2)
+  })
 })
