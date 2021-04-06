@@ -54,16 +54,25 @@ $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
     padding: 15px;
     margin: 15px 0px 0px auto;
     &__Row {
-      text-align: right;
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
 
-      margin-bottom: 10px;
-      &__DeselectButton {
-        color: SRC.$primary-action-color-500;
-        margin: 5px;
-        cursor: pointer;
+      .EntityIcon {
+        margin: 10px;
+        width: 15px;
       }
+
       &__EntityName {
         font-weight: bold;
+        text-decoration: underline;
+        margin-right: 10px;
+      }
+
+      &__DeselectButton {
+        margin-left: auto;
+        color: SRC.$primary-action-color-500;
+        cursor: pointer;
       }
     }
   }

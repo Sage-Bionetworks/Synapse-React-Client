@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
+import { EntityTypeIcon } from '../EntityIcon'
 import { BUNDLE_REQUEST_OBJECT } from './EntityFinderUtils'
 
 export type SelectionPaneProps = {
@@ -84,6 +85,9 @@ const EntityPathDisplay: React.FunctionComponent<{
   return (
     <div className="EntityFinder__Selected__Row">
       <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
+      {bundle && (
+        <EntityTypeIcon className="EntityIcon" type={bundle.entityType!} />
+      )}
       <span
         data-for={ENTITY_PATH_TOOLTIP_ID}
         data-tip={`${fullPath}/${entityName}`}
