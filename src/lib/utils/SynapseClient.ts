@@ -2468,7 +2468,7 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
 }
 
 // http://rest-docs.synapse.org/rest/POST/researchProject.html
-export const updateResearchProject = (requestObj: ResearchProject, sessionToken?: string) => {
+export const updateResearchProject = (requestObj: ResearchProject, sessionToken: string) => {
   return doPost<ResearchProject>(
     '/repo/v1/researchProject',
     requestObj,
@@ -2479,7 +2479,7 @@ export const updateResearchProject = (requestObj: ResearchProject, sessionToken?
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/researchProjectForUpdate.html
-export const getResearchProject = (requirementId: string, sessionToken?: string) => {
+export const getResearchProject = (requirementId: string, sessionToken: string) => {
   return doGet<ResearchProject>(
     `/repo/v1/accessRequirement/${requirementId}/researchProjectForUpdate`,
     sessionToken,
@@ -2489,9 +2489,20 @@ export const getResearchProject = (requirementId: string, sessionToken?: string)
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
-export const getDataAccessRequestForUpdate = (requirementId: string, sessionToken?: string) => {
+export const getDataAccessRequestForUpdate = (requirementId: string, sessionToken: string) => {
   return doGet<RequestInterface>(
     `/repo/v1/accessRequirement/${requirementId}/dataAccessRequestForUpdate`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
+export const updateDataAccessRequest = (requestObj: RequestInterface, sessionToken: string) => {
+  return doPost<RequestInterface>(
+    `/repo/v1/dataAccessRequest`,
+    requestObj,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

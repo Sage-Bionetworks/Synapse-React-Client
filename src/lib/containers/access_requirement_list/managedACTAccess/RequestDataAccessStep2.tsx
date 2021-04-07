@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button, Form } from 'react-bootstrap'
+import { Alert, Button, Form } from 'react-bootstrap'
 import * as ReactBootstrap from 'react-bootstrap'
 import { useEffect, useState } from 'react'
 import { Checkbox } from '../../widgets/Checkbox'
@@ -7,6 +7,7 @@ import {
   getDataAccessRequestForUpdate,
   getUserProfileById,
   getFiles,
+  updateDataAccessRequest,
 } from '../../../utils/SynapseClient'
 import { UserCardSmall } from '../../UserCardSmall'
 import {
@@ -51,6 +52,11 @@ export type CheckboxProps = {
   isChecked: boolean
 }
 
+export type AlertProps = {
+  key: string,
+  message: string
+}
+
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement} = props
   const [requester, setRequester] = useState<string>("")
@@ -64,6 +70,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [enableRemAccessorChecks, setEnableRemAccessorChecks] = useState<boolean>(false)
   const [enableRemAttachmentChecks, setEnableRemAttachmentChecks] = useState<boolean>(false)
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
+  const [alert, setAlert] = useState<AlertProps | undefined>()
   const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
@@ -152,8 +159,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         fileHandleId: dataAccessRequestData!.irbFileHandleId,
       }
       batchFileRequest.requestedFiles.push(requestObj)
-      if (!requestedFileTypes[dataAccessRequestData.ducFileHandleId]) {
-        requestedFileTypes[dataAccessRequestData.ducFileHandleId] = []
+      if (!requestedFileTypes[dataAccessRequestData.irbFileHandleId]) {
+        requestedFileTypes[dataAccessRequestData.irbFileHandleId] = []
       }
       requestedFileTypes[dataAccessRequestData!.irbFileHandleId].push("IRB")
       setIRB(requestObj)
@@ -229,7 +236,26 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
-    // requestDataStepCallback?.(accessRequirementId)
+    e.preventDefault()
+    if (formSubmitRequestObject) {
+      try {
+        const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
+        if (resp.id) {
+          setAlert({
+            key: 'success',
+            message: 'The information you submitted has been updated. You may close this dialog.'
+          })
+        }
+
+        // requestDataStepCallback?.(accessRequirementId)
+      } catch (e) {
+        console.log("RequestDataAccessStep2: Error updating form", e)
+        setAlert({
+          key: 'danger',
+          message: 'Sorry, there is an error in submitting your request. Please try again later.'
+        })
+      }
+    }
   }
 
   const setCheck = (groupName: string, checkbox:CheckboxProps) => {
@@ -250,6 +276,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         break
       case "attachments":
         checkboxArr = attachmentCheckboxes
+        setAttachmentCheckboxes([])
         checkboxArr?.forEach(item => {
           if (item.value === checkbox.value) {
             item.isChecked = !item.isChecked
@@ -278,6 +305,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         break
       case "attachments":
         checkboxArr = attachmentCheckboxes
+        setAttachmentCheckboxes([])
         checkboxArr?.forEach(item => {
           item.isChecked = checked
         })
@@ -295,6 +323,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       setFormSubmitRequestObject(prevState => {
         return Object.assign({}, prevState, {[data.context]: docs})
       })
+      // Update the view
       setAttachments(prev => [...prev, {
         fileName: data.resp.fileName,
         fileHandleId: data.resp.fileHandleId
@@ -303,6 +332,23 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       setFormSubmitRequestObject(prevState => {
         return Object.assign({}, prevState, {[data.context]: data.resp.fileHandleId})
       })
+      // Update the view
+      if (data.context == "ducFileHandleId") {
+        setDUC(prevState => {
+          return Object.assign({}, prevState, {
+            fileName: data.resp.fileName,
+            fileHandleId: data.resp.fileHandleId
+          })
+        })
+      }
+      if (data.context == "irbFileHandleId") {
+        setIRB(prevState => {
+          return Object.assign({}, prevState, {
+            fileName: data.resp.fileName,
+            fileHandleId: data.resp.fileHandleId
+          })
+        })
+      }
     }
   }
 
@@ -315,6 +361,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       </ReactBootstrap.Modal.Header>
       <ReactBootstrap.Modal.Body>
         <h4>Please provide the information below to submit the request for access.</h4>
+        {
+          alert && <Alert variant={alert.key}>
+            {alert.message}
+          </Alert>
+        }
         <Form.Group style={{marginTop: "2rem"}} >
           <Form.Label htmlFor={"requesters"}>
             Data Requesters<br/>
@@ -325,7 +376,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             id={"requesters"}
             type="text"
             value={requester}
-            required
             onChange={e => setRequester(e.target.value)}
           />
         </Form.Group>
@@ -443,32 +493,32 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             attachments.map((attachment, i) => {
               const checkbox: CheckboxProps = attachmentCheckboxes[i]
               return (<>
-                <Checkbox
-                  id={`checkbox-ch2-${i}`}
-                  label={""}
-                  onChange={() => setCheck('attachments', checkbox)}
-                  className={"ch2"}
-                  key={`file-attachment-checkbox-${i}`}
-                  value={checkbox.value}
-                  checked={attachmentCheckboxes[i].isChecked}
-                ></Checkbox>
+                  <Checkbox
+                    id={`checkbox-ch2-${i}`}
+                    label={""}
+                    onChange={() => setCheck('attachments', checkbox)}
+                    className={"ch2"}
+                    key={`file-attachment-checkbox-${i}`}
+                    value={checkbox.value}
+                    checked={checkbox.isChecked}
+                  ></Checkbox>
 
-                <DirectDownloadButton
-                  key={`file-attachment-btn-${i}`}
-                  fileHandleAssociation={{
-                    associateObjectId: attachment.associateObjectId!,
-                    associateObjectType: attachment.associateObjectType as FileHandleAssociateType,
-                    fileHandleId: attachment.fileHandleId
-                  }}
-                  fileName={attachment?.fileName}
-                  variant={"link"}
-                  className={"SRC-noPadding"}
-                  token={token}
-                />
-                <br/>
-              </>)
-            })
-          }
+                  <DirectDownloadButton
+                    key={`file-attachment-btn-${i}`}
+                    fileHandleAssociation={{
+                      associateObjectId: attachment.associateObjectId!,
+                      associateObjectType: attachment.associateObjectType as FileHandleAssociateType,
+                      fileHandleId: attachment.fileHandleId
+                    }}
+                    fileName={attachment?.fileName}
+                    variant={"link"}
+                    className={"SRC-noPadding"}
+                    token={token}
+                  />
+                  <br/>
+                </>)
+              })
+            }
           <FileUpload
             token={token}
             id={"attachment-browse"}
