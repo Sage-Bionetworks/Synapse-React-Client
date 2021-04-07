@@ -52,6 +52,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   const isRootNode = !!rootNodeConfiguration
 
   const isDisabled =
+    !isRootNode &&
     entityHeader &&
     !selectableTypes.includes(getEntityTypeFromHeader(entityHeader))
 
