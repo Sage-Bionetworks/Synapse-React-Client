@@ -379,7 +379,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           </Dropdown>
         </div>
       </div>
-      {isLoading && topLevelEntities.length === 0 ? (
+      {isLoading ? (
         <div className="Placeholder">
           <SynapseSpinner size={30} />
         </div>
