@@ -19,19 +19,31 @@ export type UserCardSize =
   | 'LARGE USER CARD'
 
 export type UserCardProps = {
-  // Note - either specify userProfile OR (alias or ownerId)
+  /** A UserProfile may be used for data for the card. You must supply one of `userProfile`, `alias`, `ownerId` */
   userProfile?: UserProfile
+  /** Whether or not to hide the user's Synapse email address */
   hideEmail?: boolean
+  /** If set, the corresponding image will be shown for the user. */
   preSignedURL?: string
+  /** An alias that resolves the ownerId for the UserProfile. You must supply one of `userProfile`, `alias`, `ownerId` */
   alias?: string
+  /** The unique ownerId of the UserProfile. You must supply one of `userProfile`, `alias`, `ownerId` */
   ownerId?: string
+  /** Specifies the card size */
   size: UserCardSize
+  /** For the small user card, hides the text next to the user profile image */
   hideText?: boolean
+  /** For the small user card, hides the tooltip observed when hovering over the profile image. */
   hideTooltip?: boolean
+  /** Specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. If left undefined, the menu will not render to the screen. */
   menuActions?: MenuAction[]
+  /** The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
   link?: string
+  /** Authentication token used to retrieve data */
   token?: string
+  /** For the medium user card, disables linking the user's name to their profile (or other specified destination) */
   disableLink?: boolean
+  /** For the small user card, reduces the size of the image to approximately the height of the text. */
   extraSmall?: boolean
   isCertified?: boolean
   isValidated?: boolean
@@ -66,22 +78,17 @@ export default class UserCard extends React.Component<
 
   public getUserProfile(ownerId: string) {
     getUserProfileWithProfilePic(ownerId!, this.props.token)
-      .then((data) => {
+      .then(data => {
         const { userProfile, preSignedURL } = data
         this.setState({ userProfile, preSignedURL, isLoading: false })
       })
-      .catch((err) => {
+      .catch(err => {
         console.log('failed to get user bundle ', err)
       })
   }
 
   public render() {
-    const {
-      userProfile,
-      preSignedURL,
-      size,
-      ...rest
-    } = this.props
+    const { userProfile, preSignedURL, size, ...rest } = this.props
     let userProfileAtRender
     let preSignedURLAtRender
     if (!userProfile) {
