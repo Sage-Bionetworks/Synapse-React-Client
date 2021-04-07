@@ -68,7 +68,7 @@ export type EntityFinderProps = {
   showVersionSelection?: boolean
   /** The entity types to show in the details view (right pane) */
   visibleTypesInList: EntityType[]
-  /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options */
+  /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
   selectableTypes?: EntityType[]
   /** The types to show in the tree used to navigate. */
   visibleTypesInTree?: EntityType[]
@@ -272,7 +272,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               showVersionSelection={showVersionSelection}
               selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
               selected={selectedEntities}
-              visibleTypes={visibleTypesInList}
+              visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
             />
