@@ -66,11 +66,11 @@ export type EntityFinderProps = {
   initialContainer: string | 'root' | null
   /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
-  /** The entity types to show in the details view (right pane) */
+  /** The entity types to show in the details view (right pane). Any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInList: EntityType[]
   /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
   selectableTypes?: EntityType[]
-  /** The types to show in the tree used to navigate. */
+  /** The types to show in the tree used to navigate. If `treeOnly` is true, any types in `selectableTypes` will automatically be included. */
   visibleTypesInTree?: EntityType[]
   /** The text to show before the list of selected entities */
   selectedCopy?: string
@@ -286,7 +286,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     toggleSelection={toggleSelection}
                     setDetailsViewConfiguration={() => {}}
                     showDropdown={true}
-                    visibleTypes={visibleTypesInTree}
+                    visibleTypes={[...visibleTypesInTree, ...selectableTypes]}
                     initialScope={initialScope}
                     projectId={projectId}
                     initialContainer={initialContainer}
@@ -334,7 +334,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             configuration={configFromTreeView}
                             showVersionSelection={showVersionSelection}
                             selected={selectedEntities}
-                            visibleTypes={visibleTypesInList}
+                            visibleTypes={[
+                              ...visibleTypesInList,
+                              ...selectableTypes,
+                            ]}
                             selectableTypes={selectableTypes}
                             selectColumnType={
                               selectMultiple ? 'checkbox' : 'radio'
