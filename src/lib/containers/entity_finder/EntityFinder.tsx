@@ -67,7 +67,7 @@ export type EntityFinderProps = {
   /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
   /** The entity types to show in the details view (right pane). Any types specified in `selectableTypes` will automatically be included. */
-  visibleTypesInList: EntityType[]
+  visibleTypesInList?: EntityType[]
   /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
   selectableTypes?: EntityType[]
   /** The types to show in the tree used to navigate. */
@@ -284,15 +284,14 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   <TreeView
                     sessionToken={sessionToken}
                     toggleSelection={toggleSelection}
-                    setDetailsViewConfiguration={() => {}}
                     showDropdown={true}
                     visibleTypes={visibleTypesInTree}
                     initialScope={initialScope}
+                    selectedEntities={selectedEntities}
                     projectId={projectId}
                     initialContainer={initialContainer}
                     showFakeRoot={false}
                     nodeAppearance={NodeAppearance.SELECT}
-                    setBreadcrumbItems={() => {}}
                     selectableTypes={selectableTypes}
                   />
                 </div>
@@ -312,7 +311,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         >
                           <TreeView
                             sessionToken={sessionToken}
-                            toggleSelection={() => {}}
+                            selectedEntities={selectedEntities}
                             setDetailsViewConfiguration={setConfigFromTreeView}
                             showDropdown={true}
                             visibleTypes={visibleTypesInTree}

@@ -57,12 +57,13 @@ export type TreeViewProps = {
   projectId?: string
   initialContainer: string | 'root' | null
   showDropdown: boolean
+  selectedEntities: Reference[]
   visibleTypes?: EntityType[] // Default ['project', 'folder']
-  toggleSelection: (entity: Reference) => void
-  setDetailsViewConfiguration: (
+  toggleSelection?: (entity: Reference) => void
+  setDetailsViewConfiguration?: (
     configuration: EntityDetailsListDataConfiguration,
   ) => void
-  setBreadcrumbItems: (items: BreadcrumbItem[]) => void
+  setBreadcrumbItems?: (items: BreadcrumbItem[]) => void
   showFakeRoot?: boolean
   nodeAppearance: NodeAppearance
   /** The entity types that may be selected. */
@@ -81,6 +82,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   initialContainer = null,
   visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
   toggleSelection,
+  selectedEntities,
   setDetailsViewConfiguration,
   setBreadcrumbItems,
   showFakeRoot = true,
@@ -100,18 +102,31 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
   const [currentContainer, setCurrentContainer] = useState<
     string | 'root' | null
-  >(initialContainer)
+  >(
+    nodeAppearance === NodeAppearance.BROWSE
+      ? initialContainer
+      : initialContainer,
+  )
+
+  const selected =
+    nodeAppearance === NodeAppearance.SELECT
+      ? selectedEntities
+      : [{ targetId: currentContainer } as Reference]
 
   const handleError = useErrorHandler()
 
   useEffect(() => {
-    setDetailsViewConfiguration(DEFAULT_CONFIGURATION)
+    if (setDetailsViewConfiguration) {
+      setDetailsViewConfiguration(DEFAULT_CONFIGURATION)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const setSelectedId = useCallback(
     (entityId: string) => {
-      toggleSelection({ targetId: entityId })
+      if (toggleSelection) {
+        toggleSelection({ targetId: entityId })
+      }
       setCurrentContainer(entityId)
     },
     [toggleSelection],
@@ -244,73 +259,83 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
   // Creates the configuration for the details view and invokes the callback
   useEffect(() => {
-    if (currentContainer === null) {
-      setDetailsViewConfiguration({
-        type: EntityDetailsListDataConfigurationType.PROMPT,
-      })
-      setBreadcrumbItems([])
-    } else if (currentContainer === 'root') {
-      switch (scope) {
-        case FinderScope.ALL_PROJECTS:
-          setDetailsViewConfiguration({
-            type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
-          })
-          break
-        case FinderScope.CREATED_BY_ME:
-          setDetailsViewConfiguration({
-            type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
-            getProjectParams: {
-              filter: 'CREATED',
-            },
-          })
-          break
-        case FinderScope.CURRENT_PROJECT:
-          setDetailsViewConfiguration({
-            type: EntityDetailsListDataConfigurationType.HEADER_LIST,
-            headerList: topLevelEntities,
-          })
-          break
-        case FinderScope.FAVORITES:
-          setDetailsViewConfiguration({
-            type: EntityDetailsListDataConfigurationType.USER_FAVORITES,
-          })
-          break
-      }
-      setBreadcrumbItems([
-        {
-          name: scope,
-          isCurrent: true,
-          action: () => {
-            setCurrentContainer('root')
-          },
-        },
-      ])
-    } else {
-      setDetailsViewConfiguration({
-        type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
-        parentContainerId: currentContainer,
-      })
-      if (isSuccessBundle) {
-        setBreadcrumbItems([
+    if (setDetailsViewConfiguration || setBreadcrumbItems) {
+      let detailsViewConfig: EntityDetailsListDataConfiguration
+      let breadcrumbItems: BreadcrumbItem[] = []
+      if (currentContainer === null) {
+        detailsViewConfig = {
+          type: EntityDetailsListDataConfigurationType.PROMPT,
+        }
+        breadcrumbItems = []
+      } else if (currentContainer === 'root') {
+        switch (scope) {
+          case FinderScope.ALL_PROJECTS:
+            detailsViewConfig = {
+              type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
+            }
+            break
+          case FinderScope.CREATED_BY_ME:
+            detailsViewConfig = {
+              type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
+              getProjectParams: {
+                filter: 'CREATED',
+              },
+            }
+            break
+          case FinderScope.CURRENT_PROJECT:
+            detailsViewConfig = {
+              type: EntityDetailsListDataConfigurationType.HEADER_LIST,
+              headerList: topLevelEntities,
+            }
+            break
+          case FinderScope.FAVORITES:
+            detailsViewConfig = {
+              type: EntityDetailsListDataConfigurationType.USER_FAVORITES,
+            }
+            break
+        }
+        breadcrumbItems = [
           {
             name: scope,
-            isCurrent: false,
+            isCurrent: true,
             action: () => {
               setCurrentContainer('root')
             },
           },
-          ...currentContainerBundle!
-            .path!.path.slice(1) // Remove the root entity, syn4489
-            .map(entity => {
-              return {
-                name: entity.name,
-                isCurrent: entity.id === currentContainer,
-                action: () => {
-                  setCurrentContainer(entity.id)
-                },
-              }
-            }),
-        ])
+        ]
+      } else {
+        detailsViewConfig = {
+          type: EntityDetailsListDataConfigurationType.PARENT_CONTAINER,
+          parentContainerId: currentContainer,
+        }
+        if (isSuccessBundle) {
+          breadcrumbItems = [
+            {
+              name: scope,
+              isCurrent: false,
+              action: () => {
+                setCurrentContainer('root')
+              },
+            },
+            ...currentContainerBundle!
+              .path!.path.slice(1) // Remove the root entity, syn4489
+              .map(entity => {
+                return {
+                  name: entity.name,
+                  isCurrent: entity.id === currentContainer,
+                  action: () => {
+                    setCurrentContainer(entity.id)
+                  },
+                }
+              }),
+          ]
+        }
+      }
+      if (setDetailsViewConfiguration) {
+        setDetailsViewConfiguration(detailsViewConfig)
+      }
+      if (setBreadcrumbItems) {
+        setBreadcrumbItems(breadcrumbItems)
       }
     }
   }, [
@@ -389,7 +414,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
             <TreeNode
               level={0}
               sessionToken={sessionToken}
-              selectedId={currentContainer}
+              selected={selected}
               setSelectedId={setSelectedId}
               visibleTypes={visibleTypes}
               autoExpand={shouldAutoExpand}
@@ -403,7 +428,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 key={entity.id}
                 level={0}
                 sessionToken={sessionToken}
-                selectedId={currentContainer}
+                selected={selected}
                 setSelectedId={setSelectedId}
                 visibleTypes={visibleTypes}
                 autoExpand={shouldAutoExpand}

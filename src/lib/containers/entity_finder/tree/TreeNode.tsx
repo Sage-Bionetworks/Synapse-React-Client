@@ -7,7 +7,11 @@ import {
 } from '../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import { EntityHeader, ProjectHeader } from '../../../utils/synapseTypes'
+import {
+  EntityHeader,
+  ProjectHeader,
+  Reference,
+} from '../../../utils/synapseTypes'
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
 import { EntityTypeIcon } from '../../EntityIcon'
@@ -26,7 +30,7 @@ export enum NodeAppearance {
 export type TreeNodeProps = {
   sessionToken: string
   entityHeader?: EntityHeader | ProjectHeader
-  selectedId?: string | null
+  selected: Reference[]
   setSelectedId: (entityId: string) => void
   level?: number
   autoExpand?: (entityId: string) => boolean
@@ -40,7 +44,7 @@ export type TreeNodeProps = {
 export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   sessionToken,
   entityHeader,
-  selectedId,
+  selected,
   setSelectedId,
   level = 0,
   autoExpand = () => false,
@@ -63,7 +67,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
 
   const TOOLTIP_ID = `TreeViewNodeTooltipId_${nodeId}`
 
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(isRootNode || autoExpand(nodeId))
   const [entityChildren, setEntityChildren] = useState<
     (EntityHeader | ProjectHeader)[]
   >([])
@@ -114,12 +118,6 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   )
 
   useEffect(() => {
-    if (isRootNode || autoExpand(nodeId)) {
-      setIsExpanded(true)
-    }
-  }, [isRootNode, autoExpand, nodeId])
-
-  useEffect(() => {
     if (isSuccess && endInView && hasNextPage) {
       fetchNextPage()
     }
@@ -144,7 +142,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         appearance === NodeAppearance.SELECT ? 'SelectNode' : 'BrowseNode'
       }`}
       role="treeitem"
-      aria-selected={selectedId === nodeId}
+      aria-selected={selected.map(e => e.targetId).includes(nodeId)}
       aria-disabled={isDisabled}
     >
       <div
@@ -205,7 +203,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
                 key={child.id}
                 sessionToken={sessionToken}
                 entityHeader={child}
-                selectedId={selectedId}
+                selected={selected}
                 setSelectedId={setSelectedId}
                 level={level + 1}
                 autoExpand={autoExpand}
