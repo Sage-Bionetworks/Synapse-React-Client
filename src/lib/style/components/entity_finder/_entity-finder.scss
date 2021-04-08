@@ -20,7 +20,6 @@ $-tree-only-width: 600px;
 // https://github.com/leefsmp/Re-Flex/issues/27
 .EntityFinderReflexContainer {
   width: 100%;
-  max-width: 1200px;
   $-border-size: 2px;
   height: $-finder-height + ($-border-size * 2);
   border: $-border-size solid SRC.$border-color-gray;
