@@ -9,7 +9,7 @@ Regular two-pane Entity Finder with multi-select
   treeOnly={false}
   initialScope={"Current Project"}
   projectId={"syn23567475"}
-  initialContainerId={"syn24610451"}
+  initialContainer={"syn24183903"}
   selectMultiple={true}
   visibleTypesInList={[
     'project',
@@ -44,24 +44,12 @@ One-pane entity finder with single select:
   treeOnly={true}
   initialScope={"Current Project"}
   projectId={"syn23567475"}
-  initialContainerId={"syn24610451"}
+  initialContainer={"syn24183903"}
   selectMultiple={false}
-  visibleTypesInList={[
-    'project',
-    'table',
-    'folder',
-    'file',
-    'link',
-    'entityview',
-    'submissionview',
-    'dockerrepo',
-  ]}
   visibleTypesInTree={[
     'project',
-    'table',
     'folder',
-    'entityview',
-    'submissionview',
+    'table',
   ]}
   showVersionSelection={true}
   onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
