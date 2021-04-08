@@ -1,11 +1,16 @@
 import * as React from 'react'
+import { useEffect, useState } from 'react'
 // ignore because this is rollup requiring imports be named a certain way
 // tslint:disable-next-line
 import ReactTooltip from 'react-tooltip'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCircle } from '@fortawesome/free-solid-svg-icons'
-import { UserProfile } from '../utils/synapseTypes/'
+import { UserBundle, UserProfile } from '../utils/synapseTypes/'
 import { getColor } from '../utils/functions/getUserData'
+import { SynapseClient, SynapseConstants } from '../utils'
+import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
+import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
+import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
 
 library.add(faCircle)
 
@@ -15,7 +20,8 @@ export type UserCardSmallProps = {
   hideText?: boolean
   hideTooltip?: boolean
   link?: string
-  extraSmall?: boolean
+  extraSmall?: boolean,
+  showAccountLevelIcon?: boolean
 }
 
 export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
@@ -25,11 +31,14 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   preSignedURL,
   link,
   extraSmall = false,
+  showAccountLevelIcon = false
 }) => {
+  const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
   const linkLocation = link
     ? link
     : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
   let img
+  let icon = <Registered />
   let marginLeft
   let label = ''
   if (!hideTooltip) {
@@ -72,7 +81,43 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       </div>
     )
   }
-  return (
+
+  let mounted = true
+  useEffect(() => {
+    if (mounted) {
+      if (showAccountLevelIcon) {
+        getUserAccountLevelIcon()
+      }
+    }
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const getUserAccountLevelIcon = async() => {
+    try {
+      const certificationOrVerification =
+        SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
+        SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
+
+      const bundle: UserBundle = await SynapseClient.getUserBundle(
+        userProfile.ownerId,
+        certificationOrVerification,
+        undefined,
+      )
+      if (userBundle?.isCertified) {
+        icon = <Certified />
+      }
+      if (userBundle?.isVerified) {
+        icon = <Validated />
+      }
+      setUserBundle(bundle)
+    } catch (err) {
+      console.log("getUserAccountLevelIcon", err)
+    }
+  }
+
+  return (<>
     <a
       href={linkLocation}
       className={
@@ -88,5 +133,6 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         >{`@${userProfile.userName}`}</span>
       )}
     </a>
-  )
+    { showAccountLevelIcon && (<span className={"account-level-icon"}>{icon}</span>) }
+  </>)
 }

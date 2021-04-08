@@ -394,7 +394,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   value={checkbox?.value}
                   checked={checkbox?.isChecked}
                 ></Checkbox>
-                <UserCardSmall key={`accessor-${i}`} userProfile={profile}></UserCardSmall>
+                <UserCardSmall
+                  key={`accessor-${i}`}
+                  userProfile={profile}
+                  showAccountLevelIcon={true}
+                ></UserCardSmall>
               </>)
             })
           }
