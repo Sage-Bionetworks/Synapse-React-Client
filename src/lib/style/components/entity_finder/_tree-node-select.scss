@@ -4,6 +4,7 @@
 
 .TreeView.SelectTree {
   background: unset;
+  width: $-tree-only-width;
   .Tree {
     .Node.SelectNode {
       border-top: 1px solid white;

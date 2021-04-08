@@ -70,7 +70,7 @@ export type EntityFinderProps = {
   visibleTypesInList: EntityType[]
   /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
   selectableTypes?: EntityType[]
-  /** The types to show in the tree used to navigate. If `treeOnly` is true, any types in `selectableTypes` will automatically be included. */
+  /** The types to show in the tree used to navigate. */
   visibleTypesInTree?: EntityType[]
   /** The text to show before the list of selected entities */
   selectedCopy?: string
@@ -86,7 +86,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
-  visibleTypesInList,
+  visibleTypesInList = Object.values(EntityType),
   visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
   selectableTypes = Object.values(EntityType),
   selectedCopy = 'Selected',
@@ -280,13 +280,13 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           {
             <div style={searchActive ? { display: 'none' } : {}}>
               {treeOnly ? (
-                <div style={{ width: '550px', margin: 'auto' }}>
+                <div>
                   <TreeView
                     sessionToken={sessionToken}
                     toggleSelection={toggleSelection}
                     setDetailsViewConfiguration={() => {}}
                     showDropdown={true}
-                    visibleTypes={[...visibleTypesInTree, ...selectableTypes]}
+                    visibleTypes={visibleTypesInTree}
                     initialScope={initialScope}
                     projectId={projectId}
                     initialContainer={initialContainer}
@@ -297,7 +297,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   />
                 </div>
               ) : (
-                <div className="EntityViewReflexContainer">
+                <div className="EntityFinderReflexContainer">
                   <SizeMe>
                     {({ size }) => (
                       <ReflexContainer
