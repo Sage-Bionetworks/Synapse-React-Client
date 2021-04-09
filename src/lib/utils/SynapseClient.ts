@@ -700,7 +700,7 @@ export const getUserGroupHeaders = (
   prefix: string = "",
   typeFilter: string = "ALL",
   offset: number = 0,
-  limit: number = 50,
+  limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     `repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,

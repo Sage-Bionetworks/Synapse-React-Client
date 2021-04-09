@@ -21,6 +21,10 @@ import {
 import DirectDownloadButton from '../../DirectDownloadButton'
 import FileUpload from '../../FileUpload'
 import UserSearchBox from '../../UserSearchBox'
+import {
+  AccessorChange,
+  AccessType
+} from '../../../utils/synapseTypes/AccessRequirement/AccessorChange'
 
 export type RequestDataAccessStep2Props = {
   token: string,
@@ -60,7 +64,6 @@ export type AlertProps = {
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement} = props
-  const [requester, setRequester] = useState<string>("")
   const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
@@ -102,15 +105,15 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
     // save assessors' user profiles
     if (accessorChanges && accessorChanges.length) {
-      let ids:string[] = []
+      const ids:string[] = []
       accessorChanges.forEach((item, index) => {
         ids.push(item.userId)
-        accessorCheckboxes[index] = {
-          value: item.userId,
-          isChecked: false
-        }
+        // accessorCheckboxes[index] = {
+        //   value: item.userId,
+        //   isChecked: false
+        // }
       })
-      const promises = ids.map((userId, i) => {
+      const promises = ids.map(userId => {
         return getUserProfileById(token, userId)
       })
       Promise.all(promises).then(profiles => {
@@ -194,7 +197,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           const fileName = file.fileHandle!.fileName
           const fileTypes = requestedFileTypes[file.fileHandleId]
 
-          fileTypes.forEach((type:string, index:number) => {
+          fileTypes.forEach((type:string) => {
             switch (type) {
               case "DUCTemplate":
                 setDUCTemplate(prevState => {
@@ -270,7 +273,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             item.isChecked = !item.isChecked
           }
         })
-        checkboxArr.filter(item => item.isChecked === true).length > 0
+        checkboxArr.filter(item => item.isChecked).length > 0
           ? setEnableRemAccessorChecks(true) : setEnableRemAccessorChecks(false)
         setAccessorCheckboxes(checkboxArr)
         break
@@ -282,7 +285,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             item.isChecked = !item.isChecked
           }
         })
-        checkboxArr.filter(item => item.isChecked === true).length > 0
+        checkboxArr.filter(item => item.isChecked).length > 0
           ? setEnableRemAttachmentChecks(true) : setEnableRemAttachmentChecks(false)
         setAttachmentCheckboxes(checkboxArr)
         break
@@ -301,7 +304,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           item.isChecked = checked
         })
         setAccessorCheckboxes(checkboxArr)
-        checked === true ? setEnableRemAccessorChecks(true) : setEnableRemAccessorChecks(false)
+        checked ? setEnableRemAccessorChecks(true) : setEnableRemAccessorChecks(false)
         break
       case "attachments":
         checkboxArr = attachmentCheckboxes
@@ -310,14 +313,14 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           item.isChecked = checked
         })
         setAttachmentCheckboxes(checkboxArr)
-        checked === true ? setEnableRemAttachmentChecks(true) : setEnableRemAttachmentChecks(false)
+        checked ? setEnableRemAttachmentChecks(true) : setEnableRemAttachmentChecks(false)
         break
       default:
     }
   }
 
   const uploadCallback = (data: UploadCallbackResp) => {
-    if (data.context == "attachments") {
+    if (data.context === "attachments") {
       const docs = formSubmitRequestObject?.attachments
       docs?.push(data.resp.fileHandleId)
       setFormSubmitRequestObject(prevState => {
@@ -333,7 +336,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         return Object.assign({}, prevState, {[data.context]: data.resp.fileHandleId})
       })
       // Update the view
-      if (data.context == "ducFileHandleId") {
+      if (data.context === "ducFileHandleId") {
         setDUC(prevState => {
           return Object.assign({}, prevState, {
             fileName: data.resp.fileName,
@@ -341,7 +344,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           })
         })
       }
-      if (data.context == "irbFileHandleId") {
+      if (data.context === "irbFileHandleId") {
         setIRB(prevState => {
           return Object.assign({}, prevState, {
             fileName: data.resp.fileName,
@@ -350,6 +353,26 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         })
       }
     }
+  }
+
+  const onSelectUserCallback = (selected:UserProfile) => {
+    setAccessorProfiles(prev => [...prev, {
+      ownerId: selected.ownerId,
+      firstName: selected.firstName,
+      lastName: selected.lastName,
+      userName: selected.userName
+    }])
+    const selectedAccessor:AccessorChange = {
+      userId: selected.ownerId,
+      type: AccessType.GAIN_ACCESS
+    }
+    const accessorsArr = formSubmitRequestObject?.accessorChanges || []
+    accessorsArr.push(selectedAccessor)
+    setFormSubmitRequestObject(prevState => {
+      return Object.assign({}, prevState, {
+        accessorChanges: accessorsArr
+      })
+    })
   }
 
   return (<>
@@ -372,35 +395,30 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             <em>This list should match those listed on your DUC.<br/>
             All data requesters must have a <a href={"#"}>validated user profile</a>.</em>
           </Form.Label>
-          <Form.Control
+          <UserSearchBox
             id={"requesters"}
-            type="text"
-            value={requester}
-            onChange={e => setRequester(e.target.value)}
+            onSelectCallback={onSelectUserCallback}
           />
-          <UserSearchBox></UserSearchBox>
         </Form.Group>
 
         {/* Accessors Checkboxes */}
         <Form.Group>
           {accessorProfiles?.map((profile, i) => {
             const checkbox: CheckboxProps = accessorCheckboxes![i]
-              return (<>
+              return (<div key={`checkbox-accessor-${i}`}>
                 <Checkbox
                   label=""
                   id=""
                   onChange={() => setCheck('accessors', checkbox)}
                   className={"ch1"}
-                  key={`checkbox-accessor-${i}`}
                   value={checkbox?.value}
                   checked={checkbox?.isChecked}
-                ></Checkbox>
+                />
                 <UserCardSmall
-                  key={`accessor-${i}`}
                   userProfile={profile}
                   showAccountLevelIcon={true}
-                ></UserCardSmall>
-              </>)
+                />
+              </div>)
             })
           }
           <hr />
@@ -458,7 +476,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 variant={"light-primary-base"}
                 uploadCallback={uploadCallback}
                 context={"ducFileHandleId"}
-              ></FileUpload>
+              />
             </Form.Group>
           </>
         }
@@ -487,7 +505,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               variant={"light-primary-base"}
               uploadCallback={uploadCallback}
               context={"irbFileHandleId"}
-            ></FileUpload>
+            />
           </Form.Group>
         }
 
@@ -506,7 +524,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                     key={`file-attachment-checkbox-${i}`}
                     value={checkbox.value}
                     checked={checkbox.isChecked}
-                  ></Checkbox>
+                  />
 
                   <DirectDownloadButton
                     key={`file-attachment-btn-${i}`}
@@ -530,7 +548,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             variant={"light-primary-base"}
             uploadCallback={uploadCallback}
             context={"attachments"}
-          ></FileUpload>
+          />
           <hr />
           <Button
             variant="link"
