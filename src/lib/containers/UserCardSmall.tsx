@@ -11,6 +11,12 @@ export type UserCardSmallProps = {
   link?: string
 }
 
+function resetTimer(timer: React.MutableRefObject<NodeJS.Timeout | null>) {
+  if (timer.current) {
+    clearTimeout(timer.current)
+  }
+}
+
 export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   userProfile,
   showCardOnHover = true,
@@ -22,12 +28,6 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   const [show, setShow] = useState(false)
 
   const target = useRef(null)
-
-  function resetTimer(timer: React.MutableRefObject<NodeJS.Timeout | null>) {
-    if (timer.current) {
-      clearTimeout(timer.current)
-    }
-  }
 
   const OverlayComponent = (
     <Overlay target={target.current} show={show} placement="top-start">

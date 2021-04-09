@@ -71,6 +71,7 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
 
   useEffect(() => {
     if (userProfile) {
+      setIsLoading(false)
       // Do nothing
     } else if (alias) {
       getPrincipalAliasRequest(token, alias, 'USER_NAME').then(
