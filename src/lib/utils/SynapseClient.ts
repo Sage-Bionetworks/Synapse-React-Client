@@ -693,6 +693,24 @@ export const getUserBundle = (
 }
 
 /**
+ * Get Users and Groups that match the given prefix.
+ * http://rest-docs.synapse.org/rest/GET/userGroupHeaders.html
+ */
+export const getUserGroupHeaders = (
+  prefix: string = "",
+  typeFilter: string = "ALL",
+  offset: number = 0,
+  limit: number = 50,
+): Promise<UserGroupHeaderResponsePage> => {
+  return doGet<UserGroupHeaderResponsePage>(
+    `repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Return batch of user group headers
  * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserGroupHeaderResponsePage.html
  */

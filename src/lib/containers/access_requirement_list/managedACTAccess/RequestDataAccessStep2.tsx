@@ -20,6 +20,7 @@ import {
 } from '../../../utils/synapseTypes'
 import DirectDownloadButton from '../../DirectDownloadButton'
 import FileUpload from '../../FileUpload'
+import UserSearchBox from '../../UserSearchBox'
 
 export type RequestDataAccessStep2Props = {
   token: string,
@@ -235,8 +236,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     requestDataStepCallback?.()
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     if (formSubmitRequestObject) {
       try {
         const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
@@ -353,7 +353,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }
 
   return (<>
-    <Form className={"access-request-form2"} onSubmit={handleSubmit}>
+    <Form className={"access-request-form2"} onSubmit={e => e.preventDefault()}>
       <ReactBootstrap.Modal.Header closeButton={true}>
         <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
           Request Access
@@ -378,6 +378,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             value={requester}
             onChange={e => setRequester(e.target.value)}
           />
+          <UserSearchBox></UserSearchBox>
         </Form.Group>
 
         {/* Accessors Checkboxes */}
@@ -547,7 +548,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       </ReactBootstrap.Modal.Body>
       <ReactBootstrap.Modal.Footer>
         <Button variant="link" onClick={goBack}>Cancel</Button>
-        <Button variant="primary" type="submit">Submit</Button>
+        <Button variant="primary" onClick={handleSubmit}>Submit</Button>
       </ReactBootstrap.Modal.Footer>
     </Form>
   </>)
