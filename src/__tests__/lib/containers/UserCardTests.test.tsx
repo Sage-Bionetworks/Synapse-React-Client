@@ -15,7 +15,12 @@ import UserCardContextMenu, {
   UserCardContextMenuProps,
   MenuAction,
 } from '../../../lib/containers/UserCardContextMenu'
-import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
+import {
+  MEDIUM_USER_CARD,
+  SEPERATOR,
+} from '../../../lib/utils/SynapseConstants'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
+import { act } from 'react-dom/test-utils'
 
 const { firstName } = mockUserProfileData
 
@@ -91,6 +96,20 @@ describe('it creates the correct UI for the small card', () => {
     expect(wrapper.find('span.UserCardSmall').text()).toEqual(
       `@${mockUserProfileData.userName}`,
     )
+  })
+
+  it('shows a medium user card when clicked', async () => {
+    const { wrapper } = createMountedComponent({ ...props })
+    expect(wrapper.find('span.UserCardSmall')).not.toBeNull()
+    act(() => {
+      wrapper
+        .find('span.UserCardSmall')
+        .props()
+        .onClick({} as any)
+    })
+    await resolveAllPending(wrapper)
+    expect(wrapper.find(UserCard)).toHaveLength(2)
+    expect(wrapper.find(UserCard).at(1).prop('size')).toBe(MEDIUM_USER_CARD)
   })
 
   it('creates an anchor link when showCardOnHover is false', () => {
