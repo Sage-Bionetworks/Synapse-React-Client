@@ -87,8 +87,8 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
           value={radioValue}
           id="rangeSelector"
           options={options}
-          onChange={(radioValue: RadioValuesEnum) =>
-            handleRadioGroupChange(radioValue, onChange)
+          onChange={(radioValue: string) =>
+            handleRadioGroupChange(radioValue as RadioValuesEnum, onChange)
           }
         ></RadioGroup>
         {radioValue === RadioValuesEnum.RANGE &&

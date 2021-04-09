@@ -1,14 +1,14 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTimes, faCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, FormControl } from 'react-bootstrap'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
-import { CSSTransition } from 'react-transition-group'
+import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
@@ -20,9 +20,11 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
-import { TreeView } from './tree/TreeView'
+import { FinderScope, TreeView } from './tree/TreeView'
 
-library.add(faTimes, faSearch)
+library.add(faTimes, faSearch, faCircle)
+
+const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
 
 const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
   error,
@@ -50,6 +52,8 @@ const EntityPathDisplay: React.FunctionComponent<{
   entity: Reference
   toggleSelection: (entity: Reference) => void
 }> = ({ sessionToken, entity, toggleSelection }) => {
+  const ENTITY_PATH_TOOLTIP_ID = 'EntityPathDisplayReactTooltip'
+
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
     entity.targetId,
@@ -58,19 +62,21 @@ const EntityPathDisplay: React.FunctionComponent<{
   )
 
   const [entityName, setEntityName] = useState('')
-  const [pathString, setPathString] = useState('')
+  const [fullPath, setFullPath] = useState('')
+  const [displayedPath, setDisplayedPath] = useState('')
 
   useEffect(() => {
     if (bundle?.path?.path) {
       setEntityName(bundle.path.path[bundle.path.path.length - 1].name)
       const path = bundle.path.path.slice(1, bundle.path.path.length - 1) // drop the first element, which is always syn4489 "root"
-
+      const _fullPath = path.map(header => header.name).join('/')
+      setFullPath(_fullPath)
       if (path.length < 4) {
         // Show the full path from project to entity
-        setPathString(path.map(header => header.name).join('/'))
+        setDisplayedPath(_fullPath)
       } else {
         // Truncate the path, showing only project, parent, and self
-        setPathString(
+        setDisplayedPath(
           path[0].name + // Project
             '/…/' +
             path
@@ -83,48 +89,77 @@ const EntityPathDisplay: React.FunctionComponent<{
   }, [bundle])
 
   return (
-    <>
+    <div className="EntityFinder__Selected__Row">
+      <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
       <span
-        className="EntityFinder__Selected__DeselectButton"
+        className="EntityFinder__Selected__Row__DeselectButton"
         onClick={() => {
           toggleSelection(entity)
         }}
       >
-        <FontAwesomeIcon
-          className="EntityFinder__Selected__DeselectButton__Icon"
-          size={'sm'}
-          icon={faTimes}
-        />
+        <span className="fa-layers fa-fw">
+          <FontAwesomeIcon
+            className="EntityFinder__Selected__Row__DeselectButton__IconCircle"
+            icon={faCircle}
+            size="lg"
+          />
+          <FontAwesomeIcon
+            className="EntityFinder__Selected__Row__DeselectButton__IconCross"
+            size={'sm'}
+            icon={faTimes}
+          />
+        </span>
       </span>
-      <span>{pathString ? pathString + '/' : ''}</span>
+      <span
+        data-for={ENTITY_PATH_TOOLTIP_ID}
+        data-tip={`${fullPath}/${entityName}`}
+      >
+        {displayedPath ? displayedPath + '/' : ''}
+      </span>
       <span className="EntityFinder__Selected__DeselectButton__EntityName">
         {entityName}
       </span>
       {entity.targetVersionNumber && (
         <span> (Version {entity.targetVersionNumber})</span>
       )}
-    </>
+    </div>
   )
 }
 
-type EntityFinderProps = {
+export type EntityFinderProps = {
   sessionToken: string
-  initialContainerId: string // The SynID of the entity that should open by default. This dictates the 'Current Project'
+  /** Required if `initialScope` is The SynID of the entity that should open by default. This dictates the 'Current Project' */
+  initialContainerId: string
+  /** Whether or not it is possible to select multiple entities */
   selectMultiple: boolean
+  /** Callback invoked when the selection changes */
   onSelectedChange: (selected: Reference[]) => void
+  /** The initial appearance of the entity finder. Possible values include "Current Project", "All Projects", "Projects Created By Me", "My Favorites" */
+  initialScope: FinderScope
+  /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
+  /** The entity types to show in the details view (right pane) */
   showTypes: EntityType[]
+  /** The entity types that may be selected. Types in `showTypes` that are not in `selectableTypes` will appear as disabled options */
   selectableTypes?: EntityType[]
+  /** The types to show in the tree used to navigate. */
+  visibleTypesInTree?: EntityType[]
+  /** The text to show before the list of selected entities */
+  selectedCopy?: string
 }
+
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   sessionToken,
+  initialScope,
   initialContainerId,
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
   showTypes,
   selectableTypes = Object.values(EntityType),
-}) => {
+  selectedCopy = 'Selected',
+  visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
+}: EntityFinderProps) => {
   const [selectedEntities, setSelectedEntities] = useState<Reference[]>([])
 
   const [searchActive, setSearchActive] = useState(false)
@@ -133,7 +168,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   const [
     configFromTreeView,
     setConfigFromTreeView,
-  ] = useState<EntityDetailsListDataConfiguration>()
+  ] = useState<EntityDetailsListDataConfiguration>({
+    type: EntityDetailsListDataConfigurationType.PROMPT,
+  })
 
   const isSelected = (entity: Reference) => {
     return selectedEntities.some(
@@ -208,48 +245,53 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <div className="bootstrap-4-backport EntityFinder">
           <div className="EntityFinder__Search">
-            <div className="EntityFinder__Search__Container">
-              <div className="EntityFinder__Search__Container__SearchButton">
+            {searchActive ? (
+              <>
                 <FontAwesomeIcon
                   size={'sm'}
                   icon={faSearch}
-                  onClick={() => setSearchActive(true)}
+                  style={{ position: 'relative', left: '22px', top: '1px' }}
                 />
-              </div>
-              <CSSTransition
-                in={searchActive}
-                timeout={200}
-                mountOnEnter={true}
-                unmountOnExit={true}
-                classNames="search-active-container"
-              >
-                <div className="EntityFinder__Search__Container__SearchBoxContainer">
-                  <input
-                    className="EntityFinder__Search__Container__SearchBoxContainer__SearchBox"
-                    type="search"
-                    placeholder="Search all of Synapse"
-                    onKeyDown={(event: any) => {
-                      if (event.key === 'Enter') {
-                        if (event.target.value === '') {
-                          setSearchTerms(undefined)
-                        } else {
-                          setSearchTerms(event.target.value.split(' '))
-                        }
+                <FormControl
+                  autoFocus={true}
+                  className="EntityFinder__Search__Input"
+                  type="search"
+                  placeholder="Search all of Synapse"
+                  onKeyDown={(event: any) => {
+                    if (event.key === 'Enter') {
+                      if (event.target.value === '') {
+                        setSearchTerms(undefined)
+                      } else {
+                        setSearchTerms([event.target.value.trim()])
                       }
-                    }}
-                  ></input>
-                </div>
-              </CSSTransition>
-              <FontAwesomeIcon
-                style={searchActive ? { cursor: 'pointer' } : { width: '0px' }}
-                size={'sm'}
-                icon={faTimes}
-                onClick={() => {
-                  setSearchActive(false)
-                  setSearchTerms(undefined)
-                }}
-              />
-            </div>
+                    }
+                  }}
+                ></FormControl>
+                <FontAwesomeIcon
+                  size={'sm'}
+                  icon={faTimes}
+                  style={{
+                    cursor: 'pointer',
+                    position: 'relative',
+                    left: '-20px',
+                    marginRight: '-8px',
+                  }}
+                  onClick={() => {
+                    setSearchActive(false)
+                    setSearchTerms(undefined)
+                  }}
+                />
+              </>
+            ) : (
+              <Button
+                variant="gray-primary-500"
+                className="EntityFinder__Search__SearchButton"
+                onClick={() => setSearchActive(true)}
+              >
+                <FontAwesomeIcon size={'sm'} icon={faSearch} />
+                Search
+              </Button>
+            )}
           </div>
           {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
           {searchActive && (
@@ -291,27 +333,26 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         <TreeView
                           sessionToken={sessionToken}
                           setDetailsViewConfiguration={setConfigFromTreeView}
-                          showFakeRootNode={true}
                           showDropdown={true}
-                          initialContainer={initialContainerId}
-                        ></TreeView>
+                          visibleTypes={visibleTypesInTree}
+                          initialScope={initialScope}
+                          initialContainerId={initialContainerId}
+                        />
                       </ReflexElement>
                       <ReflexSplitter></ReflexSplitter>
                       <ReflexElement minSize={400}>
-                        {configFromTreeView && (
-                          <EntityDetailsList
-                            sessionToken={sessionToken}
-                            configuration={configFromTreeView}
-                            showVersionSelection={showVersionSelection}
-                            selected={selectedEntities}
-                            includeTypes={showTypes}
-                            selectableTypes={selectableTypes}
-                            selectColumnType={
-                              selectMultiple ? 'checkbox' : 'radio'
-                            }
-                            toggleSelection={toggleSelection}
-                          />
-                        )}
+                        <EntityDetailsList
+                          sessionToken={sessionToken}
+                          configuration={configFromTreeView}
+                          showVersionSelection={showVersionSelection}
+                          selected={selectedEntities}
+                          includeTypes={showTypes}
+                          selectableTypes={selectableTypes}
+                          selectColumnType={
+                            selectMultiple ? 'checkbox' : 'radio'
+                          }
+                          toggleSelection={toggleSelection}
+                        />
                       </ReflexElement>
                     </ReflexContainer>
                   )}
@@ -320,7 +361,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             </div>
           }
           <div className="EntityFinder__Selected">
-            Selected:
+            <h2>{selectedCopy}</h2>
             {selectedEntities.length > 0 ? (
               <div>
                 {selectedEntities.map(e => (
@@ -338,7 +379,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 ))}
               </div>
             ) : (
-              ' None'
+              'Nothing selected. Make a selection above.'
             )}
           </div>
         </div>

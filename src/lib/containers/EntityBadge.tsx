@@ -4,7 +4,7 @@ import {
   faAlignLeft,
   faCheck,
   faComment,
-  faGlobe,
+  faGlobeAmericas,
   faLock,
   faTag,
 } from '@fortawesome/free-solid-svg-icons'
@@ -32,7 +32,7 @@ const isPublic = (bundle: EntityBundle): boolean => {
 type EntityBadgeProps = {
   entityId: string
   bundle: EntityBundle
-  wrap?: // possible settings for flex-wrap
+  flexWrap?: // possible settings for flex-wrap
   | 'wrap'
     | 'nowrap'
     | '-moz-initial'
@@ -41,6 +41,7 @@ type EntityBadgeProps = {
     | 'revert'
     | 'unset'
     | 'wrap-reverse'
+  justifyContent?: 'flex-start' | 'flex-end' | string
 }
 
 /**
@@ -57,12 +58,13 @@ type EntityBadgeProps = {
 export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
   entityId,
   bundle,
-  wrap = 'nowrap',
+  flexWrap = 'nowrap',
+  justifyContent = 'flex-start',
 }) => {
   // TODO: Unlink (this should only be shown in contexts where the entity should be editable)
   // TODO: Download list?
   return (
-    <div className="EntityBadge" style={{ flexWrap: wrap }}>
+    <div className="EntityBadge" style={{ flexWrap, justifyContent }}>
       <ReactTooltip
         id={ENTITY_BADGE_TOOLTIP_ID}
         delayShow={100}
@@ -75,7 +77,7 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
           {isPublic(bundle) ? (
             <FontAwesomeIcon
               className="EntityBadge__Badge"
-              icon={faGlobe}
+              icon={faGlobeAmericas}
               aria-hidden="true"
               data-for={ENTITY_BADGE_TOOLTIP_ID}
               data-tip={'Public'}
@@ -89,14 +91,15 @@ export const EntityBadge: React.FunctionComponent<EntityBadgeProps> = ({
               data-tip={'Private'}
             />
           )}
-          {entityId === bundle.benefactorAcl.id}
-          <FontAwesomeIcon
-            className="EntityBadge__Badge"
-            icon={faCheck}
-            aria-hidden="true"
-            data-for={ENTITY_BADGE_TOOLTIP_ID}
-            data-tip="Sharing Settings have been set"
-          />
+          {entityId === bundle.benefactorAcl.id && (
+            <FontAwesomeIcon
+              className="EntityBadge__Badge"
+              icon={faCheck}
+              aria-hidden="true"
+              data-for={ENTITY_BADGE_TOOLTIP_ID}
+              data-tip="Sharing Settings have been set"
+            />
+          )}
         </>
       )}
       {bundle.annotations && !_.isEmpty(bundle.annotations.annotations) && (

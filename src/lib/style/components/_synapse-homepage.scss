@@ -282,4 +282,37 @@
       }
     }
   }
+
+  .PoweredBySynapseFlexContainer {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-content: center;
+    .PoweredBySynapseItem {
+      margin: 0 auto;
+      justify-content: space-around;
+      align-self: center;
+      max-width: 350px;
+      .PoweredBySynapseItemGrid {
+        display: grid;
+        margin: 20px 10px;
+        grid-template-columns: 70px auto;
+        .logo {
+          grid-column: 1 / span 1;
+        }
+        .body {
+          grid-column: 2 / span 1;
+          margin: 0px 9px 0px 15px;
+        }
+        .title {
+          margin: 0px 0px 10px 0px;
+        }
+        .title, .description {
+          text-align: left;
+        }
+        .link {
+          float: left;
+        }
+      }
+    }
+  }
 }

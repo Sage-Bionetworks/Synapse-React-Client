@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { render, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
@@ -10,7 +10,6 @@ import {
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import {
   EntityBundle,
-  EntityType,
   PaginatedResults,
   Reference,
 } from '../../../../../lib/utils/synapseTypes'
@@ -20,6 +19,7 @@ const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 const mockToggleSelection = jest.fn()
+const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 
 const defaultProps: DetailsViewRowProps = {
   sessionToken: 'abcd',
@@ -29,7 +29,7 @@ const defaultProps: DetailsViewRowProps = {
     lastActivity: 'yesterday',
     modifiedOn: 'today',
     modifiedBy: 100000,
-    type: EntityType.FILE,
+    type: 'org.sagebionetworks.repo.model.FileEntity',
   },
   appearance: 'default',
   showVersionColumn: true,
@@ -73,7 +73,7 @@ const versionResult: PaginatedResults<VersionInfo> = {
   ],
 }
 
-function renderScreen(propOverrides?: Partial<DetailsViewRowProps>) {
+function renderComponent(propOverrides?: Partial<DetailsViewRowProps>) {
   const tbody = document.createElement('tbody')
   return render(<DetailsViewRow {...defaultProps} {...propOverrides} />, {
     container: document.body.appendChild(tbody),
@@ -84,7 +84,7 @@ describe('DetailsViewRow tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockAllIsIntersecting(false)
-    ;(useGetEntityBundle as jest.Mock).mockImplementation(() => ({
+    mockUseGetEntityBundle.mockImplementation(() => ({
       data: bundleResult,
     }))
 
@@ -92,7 +92,7 @@ describe('DetailsViewRow tests', () => {
   })
 
   it('invokes toggleSelection when the row is clicked', async () => {
-    const screen = renderScreen()
+    renderComponent()
     userEvent.click(screen.getByRole('row'))
 
     const expectedArg: Reference = { targetId: 'syn123' }
@@ -100,7 +100,7 @@ describe('DetailsViewRow tests', () => {
   })
 
   it('does nothing when clicked and disabled', async () => {
-    const screen = renderScreen({ appearance: 'disabled' })
+    renderComponent({ appearance: 'disabled' })
 
     userEvent.click(screen.getByRole('row'))
 
@@ -109,35 +109,39 @@ describe('DetailsViewRow tests', () => {
 
   describe('renders the correct button', () => {
     it('renders checkbox', async () => {
-      const screen = renderScreen({ selectButtonType: 'checkbox' })
+      renderComponent({ selectButtonType: 'checkbox' })
       expect(screen.getByRole('checkbox')).toBeDefined()
     })
     it('renders radio', async () => {
-      const screen = renderScreen({ selectButtonType: 'radio' })
+      renderComponent({ selectButtonType: 'radio' })
       expect(screen.getByRole('radio')).toBeDefined()
     })
-    it('no button is created because of disabled state', async () => {
-      const checkBoxScreen = renderScreen({
+    it('no checkbox button is created because of disabled state', async () => {
+      renderComponent({
         selectButtonType: 'checkbox',
         appearance: 'disabled',
       })
 
-      expect(() => checkBoxScreen.getByRole('checkbox')).toThrowError()
+      expect(() => screen.getByRole('checkbox')).toThrowError()
 
-      const radioScreen = renderScreen({
+      // There should still be a column for the button, just no button
+      expect(screen.getByLabelText('is-selected')).toBeDefined()
+    })
+
+    it('no radio button is created because of disabled state', async () => {
+      renderComponent({
         selectButtonType: 'radio',
         appearance: 'disabled',
       })
 
-      expect(() => radioScreen.getByRole('radio')).toThrow()
+      expect(() => screen.getByRole('radio')).toThrowError()
 
       // There should still be a column for the button, just no button
-      expect(checkBoxScreen.getByLabelText('is-selected')).toBeDefined()
-      expect(checkBoxScreen.getByLabelText('is-selected')).toBeDefined()
+      expect(screen.getByLabelText('is-selected')).toBeDefined()
     })
 
     it('no column is rendered', async () => {
-      const screen = renderScreen({ selectButtonType: 'none' })
+      renderComponent({ selectButtonType: 'none' })
 
       expect(() => screen.getByLabelText('is-selected')).toThrowError()
     })
@@ -146,9 +150,9 @@ describe('DetailsViewRow tests', () => {
   it('Only retrieves the entity bundle when in view', async () => {
     mockAllIsIntersecting(false)
 
-    renderScreen()
+    renderComponent()
 
-    expect(useGetEntityBundle).toBeCalledWith(
+    expect(mockUseGetEntityBundle).toBeCalledWith(
       defaultProps.sessionToken,
       defaultProps.entityHeader.id,
       expect.anything(),
@@ -161,7 +165,7 @@ describe('DetailsViewRow tests', () => {
 
     mockAllIsIntersecting(true)
 
-    expect(useGetEntityBundle).toBeCalledWith(
+    expect(mockUseGetEntityBundle).toBeCalledWith(
       defaultProps.sessionToken,
       defaultProps.entityHeader.id,
       expect.anything(),
@@ -175,14 +179,16 @@ describe('DetailsViewRow tests', () => {
 
   describe('correct aria labels based on state', () => {
     it('default appearance', async () => {
-      const row = renderScreen({ appearance: 'default' }).getByRole('row')
+      renderComponent({ appearance: 'default' })
+      const row = screen.getByRole('row')
       expect(row).toHaveAttribute('aria-selected', 'false')
       expect(row).toHaveAttribute('aria-disabled', 'false')
       expect(row).toHaveAttribute('aria-hidden', 'false')
     })
 
     it('selected appearance', async () => {
-      const row = renderScreen({ appearance: 'selected' }).getByRole('row')
+      renderComponent({ appearance: 'selected' })
+      const row = screen.getByRole('row')
 
       // This just removes the act(...) warning, we test this elsewhere
       await waitFor(() => expect(SynapseClient.getEntityVersions).toBeCalled())
@@ -193,14 +199,15 @@ describe('DetailsViewRow tests', () => {
     })
 
     it('disabled appearance', async () => {
-      const row = renderScreen({ appearance: 'disabled' }).getByRole('row')
+      renderComponent({ appearance: 'disabled' })
+      const row = screen.getByRole('row')
       expect(row).toHaveAttribute('aria-selected', 'false')
       expect(row).toHaveAttribute('aria-disabled', 'true')
       expect(row).toHaveAttribute('aria-hidden', 'false')
     })
 
     it('hidden appearance', async () => {
-      const screen = renderScreen({ appearance: 'hidden' })
+      renderComponent({ appearance: 'hidden' })
       const row = screen.getByRole('row', { hidden: true })
       expect(row).toHaveAttribute('aria-selected', 'false')
       expect(row).toHaveAttribute('aria-disabled', 'false')
@@ -210,17 +217,17 @@ describe('DetailsViewRow tests', () => {
 
   describe('version selection', () => {
     it('does not render the version column when specified', async () => {
-      const showColumnWrapper = renderScreen({ showVersionColumn: true })
+      const showColumnWrapper = renderComponent({ showVersionColumn: true })
 
       expect(showColumnWrapper.getByLabelText('version')).toBeDefined()
 
-      const hideColumnWrapper = renderScreen({ showVersionColumn: false })
+      const hideColumnWrapper = renderComponent({ showVersionColumn: false })
 
       expect(() => hideColumnWrapper.getByLabelText('version')).toThrowError()
     })
 
     it('retrieves the versions when selected', async () => {
-      const screen = renderScreen({ appearance: 'selected' })
+      renderComponent({ appearance: 'selected' })
       expect(await screen.findByRole('listbox')).toBeDefined()
 
       expect(SynapseClient.getEntityVersions).toBeCalledWith(
@@ -230,7 +237,7 @@ describe('DetailsViewRow tests', () => {
     })
 
     it('calls toggle selection when a version is picked', async () => {
-      const screen = renderScreen({ appearance: 'selected' })
+      renderComponent({ appearance: 'selected' })
       expect(await screen.findByRole('listbox')).toBeDefined()
 
       // There are two versions, plus "Always Latest"
@@ -265,7 +272,7 @@ describe('DetailsViewRow tests', () => {
     })
 
     it('automatically selects "Always Latest" if none selected', async () => {
-      const screen = renderScreen({
+      renderComponent({
         appearance: 'selected',
         selectedVersion: undefined,
       })
@@ -283,7 +290,7 @@ describe('DetailsViewRow tests', () => {
     })
 
     it('selects the correct version if one is selected', async () => {
-      const screen = renderScreen({
+      renderComponent({
         appearance: 'selected',
         selectedVersion: versionResult.results[1].versionNumber,
       })

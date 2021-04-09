@@ -154,7 +154,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
           {
             <EntityTypeIcon
               type={getEntityTypeFromHeader(entityHeader)}
-              style={{ marginBottom: '3px' }}
+              style={{ margin: '5px auto' }}
             />
           }
         </div>
@@ -164,9 +164,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         <div>{entityHeader.name}</div>
       </td>
       <td className="AccessColumn">
-        <div>
-          {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
-        </div>
+        {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
       </td>
       <td className="IdColumn">
         <div>{entityHeader.id} </div>

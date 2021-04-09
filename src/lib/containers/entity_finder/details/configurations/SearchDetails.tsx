@@ -61,6 +61,18 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         includeTypes={includeTypes}
         selectableTypes={selectableTypes}
         toggleSelection={toggleSelection}
+        noResultsPlaceholder={
+          <>
+            <img
+              className="SearchPlaceholderImage"
+              alt="No results found"
+              src="https://s3.amazonaws.com/static.synapse.org/images/search-sad.svg"
+            />
+            <p>
+              No results for &ldquo;{searchQuery.queryTerm.join(' ')}&rdquo;
+            </p>
+          </>
+        }
       ></DetailsView>
     )
   } else {
@@ -78,7 +90,14 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         selectableTypes={selectableTypes}
         toggleSelection={toggleSelection}
         noResultsPlaceholder={
-          <div>Enter a term or Synapse ID to start searching</div>
+          <>
+            <img
+              className="SearchPlaceholderImage"
+              alt="Begin searching"
+              src="https://s3.amazonaws.com/static.synapse.org/images/search-happy.svg"
+            />
+            <p>Enter a term or Synapse ID to start searching</p>
+          </>
         }
       ></DetailsView>
     )

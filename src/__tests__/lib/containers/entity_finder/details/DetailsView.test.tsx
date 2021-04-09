@@ -1,6 +1,5 @@
-import { isUnaryExpression } from '@babel/types'
 import '@testing-library/jest-dom'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
@@ -8,7 +7,6 @@ import {
   DetailsView,
   DetailsViewProps,
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsView'
-import { convertToEntityType } from '../../../../../lib/utils/functions/EntityTypeUtils'
 import {
   Direction,
   EntityHeader,
@@ -69,7 +67,7 @@ const defaultProps: DetailsViewProps = {
   noResultsPlaceholder: <></>,
 }
 
-function renderScreen(propOverrides?: Partial<DetailsViewProps>) {
+function renderComponent(propOverrides?: Partial<DetailsViewProps>) {
   return render(<DetailsView {...defaultProps} {...propOverrides} />)
 }
 
@@ -84,7 +82,7 @@ describe('DetailsView tests', () => {
       // We already have 2 rows that don't map to entities: the header, and the next page ref
       const UNMAPPED_ROW_COUNT = 2
 
-      const screen = renderScreen()
+      renderComponent()
       expect(mockDetailsViewRow).toBeCalledTimes(2)
 
       expect(screen.getAllByRole('row').length).toBe(
@@ -94,7 +92,7 @@ describe('DetailsView tests', () => {
 
     describe('Determines correct row appearance', () => {
       it('Creates a row with the default appearance', async () => {
-        renderScreen({
+        renderComponent({
           selected: [],
           includeTypes: Object.values(EntityType),
           selectableTypes: Object.values(EntityType),
@@ -113,7 +111,7 @@ describe('DetailsView tests', () => {
       })
 
       it('Creates a row with the selected appearance', async () => {
-        renderScreen({
+        renderComponent({
           selected: [{ targetId: entityHeaders[0].id }], // !
           includeTypes: Object.values(EntityType),
           selectableTypes: Object.values(EntityType),
@@ -132,7 +130,7 @@ describe('DetailsView tests', () => {
       })
 
       it('Creates a row with the disabled appearance', async () => {
-        renderScreen({
+        renderComponent({
           selected: [],
           includeTypes: Object.values(EntityType),
           selectableTypes: [EntityType.PROJECT], // !
@@ -153,7 +151,7 @@ describe('DetailsView tests', () => {
         )
       })
       it('Creates a row with the hidden appearance', async () => {
-        renderScreen({
+        renderComponent({
           selected: [],
           includeTypes: [EntityType.FILE], // !
           selectableTypes: Object.values(EntityType),
@@ -177,7 +175,7 @@ describe('DetailsView tests', () => {
   })
 
   it('must have the ref in view to fetch the next page', () => {
-    renderScreen({
+    renderComponent({
       queryStatus: 'success',
       queryIsFetching: false,
       hasNextPage: true,
@@ -191,7 +189,7 @@ describe('DetailsView tests', () => {
 
   describe('Conditionally hiding columns', () => {
     it('shows both the selected and version columns', () => {
-      const screen = renderScreen({
+      renderComponent({
         selectColumnType: 'checkbox',
         showVersionSelection: true,
       })
@@ -199,7 +197,7 @@ describe('DetailsView tests', () => {
       expect(screen.getAllByRole('columnheader').length).toBe(8)
     })
     it('hides the selected column', () => {
-      const screen = renderScreen({
+      renderComponent({
         selectColumnType: 'none',
         showVersionSelection: true,
       })
@@ -207,7 +205,7 @@ describe('DetailsView tests', () => {
       expect(screen.getAllByRole('columnheader').length).toBe(7)
     })
     it('hides the version column', () => {
-      const screen = renderScreen({
+      renderComponent({
         selectColumnType: 'checkbox',
         showVersionSelection: false,
       })
@@ -218,7 +216,7 @@ describe('DetailsView tests', () => {
 
   describe('Sort functionality', () => {
     it('requests to sort descending on new SortBy', () => {
-      const screen = renderScreen({
+      renderComponent({
         sort: { sortBy: SortBy.CREATED_ON, sortDirection: Direction.ASC },
         setSort: mockSetSort,
       })
@@ -229,7 +227,7 @@ describe('DetailsView tests', () => {
     })
 
     it('toggles from descending to ascending on same SortBy', () => {
-      const screen = renderScreen({
+      renderComponent({
         sort: { sortBy: SortBy.CREATED_ON, sortDirection: Direction.ASC },
         setSort: mockSetSort,
       })
@@ -240,7 +238,7 @@ describe('DetailsView tests', () => {
     })
 
     it('toggles from ascending to descending on same SortBy', () => {
-      const screen = renderScreen({
+      renderComponent({
         sort: { sortBy: SortBy.MODIFIED_ON, sortDirection: Direction.DESC },
         setSort: mockSetSort,
       })

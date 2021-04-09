@@ -263,7 +263,7 @@ describe('it makes the correct URL for the title', () => {
   it('creates a link to synapse', () => {
     const synId = 'syn12345678'
     const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { href, target } = instance.getTitleParams(
+    const { href, target } = instance.getLinkParams(
       synId,
       undefined,
       undefined,
@@ -276,7 +276,7 @@ describe('it makes the correct URL for the title', () => {
   it('creates a DOI link ', () => {
     const doi = '10.1093/neuonc/noy046'
     const doiLink = `https://dx.doi.org/${doi}`
-    const { href, target } = instance.getTitleParams(
+    const { href, target } = instance.getLinkParams(
       doi,
       undefined,
       undefined,
@@ -289,7 +289,7 @@ describe('it makes the correct URL for the title', () => {
   it('creates a DOI link PORTALS-1801', () => {
     const doi = '10.1007/s00401-020-02230-x '
     const doiLink = `https://dx.doi.org/${doi.trim()}`
-    const { href, target } = instance.getTitleParams(
+    const { href, target } = instance.getLinkParams(
       doi,
       undefined,
       undefined,
@@ -314,7 +314,7 @@ describe('it makes the correct URL for the title', () => {
       URLColumnName,
     }
     const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-    const { href, target } = instance.getTitleParams('', titleLinkConfig, data, schema)
+    const { href, target } = instance.getLinkParams('', titleLinkConfig, data, schema)
     expect(href).toEqual(expectedLink)
     expect(target).toEqual(SELF)
   })
