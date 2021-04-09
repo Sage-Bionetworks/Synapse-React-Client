@@ -578,6 +578,7 @@ div.SRC-logo-cursor * {
 .UserCardSmall {
   height: fit-content;
   width: fit-content;
+  cursor: pointer;
 }
 
 .SRC-userImgSmall {
@@ -625,9 +626,11 @@ div.SRC-userImg {
     overflow: hidden;
     white-space: nowrap;
     p, span {
-      width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+    svg {
+      flex-shrink: 0;
     }
   }
 }

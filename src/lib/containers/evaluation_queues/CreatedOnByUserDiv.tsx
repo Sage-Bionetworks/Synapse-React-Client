@@ -34,7 +34,6 @@ export const CreatedOnByUserDiv: React.FunctionComponent<CreatedOnByUserDivProps
         token={sessionToken}
         size={SynapseConstants.SMALL_USER_CARD}
         ownerId={userId}
-        extraSmall={true}
       />
     </div>
   )
