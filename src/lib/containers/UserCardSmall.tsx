@@ -11,6 +11,8 @@ export type UserCardSmallProps = {
   link?: string
 }
 
+const TIMER_DELAY = 1000 // 1 second
+
 function resetTimer(timer: React.MutableRefObject<NodeJS.Timeout | null>) {
   if (timer.current) {
     clearTimeout(timer.current)
@@ -44,7 +46,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
               resetTimer(timer)
               timer.current = setTimeout(() => {
                 setShow(false)
-              }, 1000)
+              }, TIMER_DELAY)
             }}
             {...props}
             style={{ ...props.style, width: 'max-content', minWidth: '300px' }}
@@ -69,11 +71,11 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         ref={target}
         onMouseEnter={() => {
           resetTimer(timer)
-          timer.current = setTimeout(() => setShow(true), 1000)
+          timer.current = setTimeout(() => setShow(true), TIMER_DELAY)
         }}
         onMouseLeave={() => {
           resetTimer(timer)
-          timer.current = setTimeout(() => setShow(false), 1000)
+          timer.current = setTimeout(() => setShow(false), TIMER_DELAY)
         }}
         onClick={() => {
           resetTimer(timer)
