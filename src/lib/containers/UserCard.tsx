@@ -54,42 +54,42 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
     ...rest
   } = props
   const [userProfile, setUserProfile] = useState(initialProfile)
+  const [principalId, setPrincipalId] = useState(ownerId)
   const [isLoading, setIsLoading] = useState(true)
   const [preSignedURL, setPresignedUrl] = useState(initialPreSignedURL ?? '')
-
-  function getUserProfile(ownerId: string) {
-    getUserProfileWithProfilePic(ownerId!, token)
-      .then(data => {
-        setUserProfile(data.userProfile)
-        setPresignedUrl(data.preSignedURL)
-        setIsLoading(false)
-      })
-      .catch(err => {
-        console.log('failed to get user bundle ', err)
-      })
-  }
 
   useEffect(() => {
     if (userProfile) {
       setIsLoading(false)
-      // Do nothing
     } else if (alias) {
+      // Before we can get the profile, we must get the principal ID using the alias
       getPrincipalAliasRequest(token, alias, 'USER_NAME').then(
         (aliasData: any) => {
-          getUserProfile(aliasData.principalId!)
+          setPrincipalId(aliasData.principalId)
         },
       )
-    } else {
-      // check for ownerId!
-      getUserProfile(ownerId!)
     }
-  })
+  }, [userProfile, alias, token])
+
+  useEffect(() => {
+    if (!userProfile && principalId) {
+      getUserProfileWithProfilePic(principalId, token)
+        .then(data => {
+          setUserProfile(data.userProfile)
+          setPresignedUrl(data.preSignedURL)
+          setIsLoading(false)
+        })
+        .catch(err => {
+          console.warn('failed to get user bundle ', err)
+        })
+    }
+  }, [userProfile, principalId, token])
 
   function getCard(
-    size: UserCardSize,
+    cardSize: UserCardSize,
     propsForChild: UserCardSmallProps | UserCardMediumProps,
   ) {
-    switch (size) {
+    switch (cardSize) {
       case SynapseConstants.SMALL_USER_CARD:
         return <UserCardSmall {...propsForChild} />
       case SynapseConstants.MEDIUM_USER_CARD:
