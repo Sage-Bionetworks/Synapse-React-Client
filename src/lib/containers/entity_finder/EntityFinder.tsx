@@ -6,7 +6,7 @@ import { Button, FormControl } from 'react-bootstrap'
 import {
   ErrorBoundary,
   FallbackProps,
-  useErrorHandler,
+  useErrorHandler
 } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
@@ -21,7 +21,7 @@ import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
   EntityDetailsList,
   EntityDetailsListDataConfiguration,
-  EntityDetailsListDataConfigurationType,
+  EntityDetailsListDataConfigurationType
 } from './details/EntityDetailsList'
 import { SelectionPane } from './SelectionPane'
 import { NodeAppearance } from './tree/TreeNode'
@@ -62,7 +62,7 @@ export type EntityFinderProps = {
   initialScope: FinderScope
   /** The SynID of the 'Current Project'. If this is not a defined, then the scope cannot be "Current Project" */
   projectId?: string
-  /** The SynID of the entity that should open by default. This dictates the 'Current Project'. If this is not a synID, then the scope cannot be "Current Project" */
+  /** The SynID of the entity that should open by default. If this is a Syn ID, then it must be in the project specified in `projectId` */
   initialContainer: string | 'root' | null
   /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
@@ -74,7 +74,7 @@ export type EntityFinderProps = {
   visibleTypesInTree?: EntityType[]
   /** The text to show before the list of selected entities */
   selectedCopy?: string
-  /** Whether to show only the tree, which will be used to make selections */
+  /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
 }
 
@@ -132,7 +132,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       s =>
         s.targetId === entity.targetId &&
         s.targetVersionNumber !== entity.targetVersionNumber,
-    )
+   )
   }
 
   function entitySelectionReducer(
@@ -290,7 +290,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     selectedEntities={selectedEntities}
                     projectId={projectId}
                     initialContainer={initialContainer}
-                    showFakeRoot={false}
+                    showScopeAsRootNode={false}
                     nodeAppearance={NodeAppearance.SELECT}
                     selectableTypes={selectableTypes}
                   />

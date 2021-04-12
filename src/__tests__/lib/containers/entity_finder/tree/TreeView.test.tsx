@@ -68,6 +68,7 @@ const mockToggleSelection = jest.fn()
 
 const defaultProps: TreeViewProps = {
   sessionToken: 'abcd',
+  selectedEntities: [],
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: 'syn5',
   initialContainer: 'syn123',
@@ -77,7 +78,7 @@ const defaultProps: TreeViewProps = {
   setBreadcrumbItems: mockSetBreadcrumbItems,
   toggleSelection: mockToggleSelection,
   nodeAppearance: NodeAppearance.SELECT,
-  showFakeRoot: true,
+  showScopeAsRootNode: true,
   selectableTypes: Object.values(EntityType),
 }
 

@@ -63,11 +63,10 @@ const EntityPathDisplay: React.FunctionComponent<{
     if (bundle?.path?.path) {
       setEntityName(bundle.path.path[bundle.path.path.length - 1].name)
       const path = bundle.path.path.slice(1, bundle.path.path.length - 1) // drop the first element, which is always syn4489 "root"
-      const _fullPath = path.map(header => header.name).join('/')
-      setFullPath(_fullPath)
+      setFullPath(path.map(header => header.name).join('/'))
       if (path.length < 4) {
         // Show the full path from project to entity
-        setDisplayedPath(_fullPath)
+        setDisplayedPath(fullPath)
       } else {
         // Truncate the path, showing only project, parent, and self
         setDisplayedPath(
@@ -80,7 +79,7 @@ const EntityPathDisplay: React.FunctionComponent<{
         )
       }
     }
-  }, [bundle])
+  }, [bundle, fullPath])
 
   return (
     <div className="EntityFinder__Selected__Row">

@@ -53,18 +53,19 @@ function getScopeOptionNodeName(scope: FinderScope): string {
 export type TreeViewProps = {
   sessionToken: string
   initialScope?: FinderScope
-  /** To show the current project, initialProject must be defined */
+  /** To show the current project, projectId must be defined */
   projectId?: string
   initialContainer: string | 'root' | null
   showDropdown: boolean
   selectedEntities: Reference[]
-  visibleTypes?: EntityType[] // Default ['project', 'folder']
+  visibleTypes?: EntityType[]
   toggleSelection?: (entity: Reference) => void
   setDetailsViewConfiguration?: (
     configuration: EntityDetailsListDataConfiguration,
   ) => void
   setBreadcrumbItems?: (items: BreadcrumbItem[]) => void
-  showFakeRoot?: boolean
+  /** Determines whether to show the root node corresponding to the selected scope */
+  showScopeAsRootNode?: boolean
   nodeAppearance: NodeAppearance
   /** The entity types that may be selected. */
   selectableTypes: EntityType[]
@@ -85,7 +86,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   selectedEntities,
   setDetailsViewConfiguration,
   setBreadcrumbItems,
-  showFakeRoot = true,
+  showScopeAsRootNode = true,
   nodeAppearance,
   selectableTypes,
 }: TreeViewProps) => {
@@ -410,7 +411,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         </div>
       ) : (
         <div className="Tree" role="tree">
-          {showFakeRoot ? (
+          {showScopeAsRootNode ? (
             <TreeNode
               level={0}
               sessionToken={sessionToken}
