@@ -1,12 +1,18 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useCallback, useEffect, useReducer, useState } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react'
 import { Button, FormControl } from 'react-bootstrap'
 import {
   ErrorBoundary,
   FallbackProps,
-  useErrorHandler
+  useErrorHandler,
 } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
@@ -21,7 +27,7 @@ import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
   EntityDetailsList,
   EntityDetailsListDataConfiguration,
-  EntityDetailsListDataConfigurationType
+  EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
 import { SelectionPane } from './SelectionPane'
 import { NodeAppearance } from './tree/TreeNode'
@@ -70,7 +76,7 @@ export type EntityFinderProps = {
   visibleTypesInList?: EntityType[]
   /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
   selectableTypes?: EntityType[]
-  /** The types to show in the tree used to navigate. */
+  /** The types to show in the tree used to navigate. If `treeOnly` is true, any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInTree?: EntityType[]
   /** The text to show before the list of selected entities */
   selectedCopy?: string
@@ -86,9 +92,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
+  selectableTypes = Object.values(EntityType),
   visibleTypesInList = Object.values(EntityType),
   visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
-  selectableTypes = Object.values(EntityType),
   selectedCopy = 'Selected',
   treeOnly = false,
 }: EntityFinderProps) => {
@@ -104,6 +110,16 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   ] = useState<EntityDetailsListDataConfiguration>({
     type: EntityDetailsListDataConfigurationType.PROMPT,
   })
+
+  // If a type is selectable, it should be visible in the tree/list (depending on treeOnly)
+  const selectableAndVisibleTypesInTree = useMemo(
+    () => [...visibleTypesInTree, ...selectableTypes],
+    [visibleTypesInTree, selectableTypes],
+  )
+  const selectableAndVisibleTypesInList = useMemo(
+    () => [...visibleTypesInList, ...selectableTypes],
+    [visibleTypesInList, selectableTypes],
+  )
 
   const handleError = useErrorHandler()
 
@@ -132,7 +148,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       s =>
         s.targetId === entity.targetId &&
         s.targetVersionNumber !== entity.targetVersionNumber,
-   )
+    )
   }
 
   function entitySelectionReducer(
@@ -285,7 +301,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     sessionToken={sessionToken}
                     toggleSelection={toggleSelection}
                     showDropdown={true}
-                    visibleTypes={visibleTypesInTree}
+                    visibleTypes={selectableAndVisibleTypesInTree}
                     initialScope={initialScope}
                     selectedEntities={selectedEntities}
                     projectId={projectId}
@@ -333,10 +349,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             configuration={configFromTreeView}
                             showVersionSelection={showVersionSelection}
                             selected={selectedEntities}
-                            visibleTypes={[
-                              ...visibleTypesInList,
-                              ...selectableTypes,
-                            ]}
+                            visibleTypes={selectableAndVisibleTypesInList}
                             selectableTypes={selectableTypes}
                             selectColumnType={
                               selectMultiple ? 'checkbox' : 'radio'
