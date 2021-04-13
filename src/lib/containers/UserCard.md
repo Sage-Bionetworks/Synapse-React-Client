@@ -2,15 +2,15 @@ Must log in to view these cards.
 
 Small:
 ```jsx
-<UserCard size={SMALL_USER_CARD} ownerId={currentUserProfile.ownerId}/>
+currentUserProfile ? <UserCard size={SMALL_USER_CARD} ownerId={currentUserProfile.ownerId}/> : <UserCard size={SMALL_USER_CARD} ownerId={273950}/>
 ```
 
 Medium:
 ```jsx
-<UserCard size={MEDIUM_USER_CARD} ownerId={currentUserProfile.ownerId}/>
+currentUserProfile ? <UserCard size={MEDIUM_USER_CARD} ownerId={currentUserProfile.ownerId}/> : <UserCard size={MEDIUM_USER_CARD} ownerId={273950}/>
 ```
 
 Large:
 ```jsx
-<UserCard size={LARGE_USER_CARD} ownerId={currentUserProfile.ownerId}/>
+currentUserProfile ? <UserCard size={LARGE_USER_CARD} ownerId={currentUserProfile.ownerId}/> : <UserCard size={LARGE_USER_CARD} ownerId={273950}/>
 ```

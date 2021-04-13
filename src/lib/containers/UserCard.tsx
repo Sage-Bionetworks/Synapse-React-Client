@@ -1,17 +1,12 @@
-import * as React from 'react'
+import React, { useState, useEffect } from 'react'
 import { getUserProfileWithProfilePic } from '../utils/functions/getUserData'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/synapseTypes/'
 import { SynapseConstants } from '../utils/'
-import { UserCardSmall } from './UserCardSmall'
-import UserCardMedium from './UserCardMedium'
-
-type UserCardState = {
-  userProfile: UserProfile | undefined
-  preSignedURL: string
-  isLoading: boolean
-}
+import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
+import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
+import usePreFetchResource from '../utils/hooks/usePreFetchImage'
 
 export type UserCardSize =
   | 'SMALL USER CARD'
@@ -19,90 +14,85 @@ export type UserCardSize =
   | 'LARGE USER CARD'
 
 export type UserCardProps = {
-  // Note - either specify userProfile OR (alias or ownerId)
+  /** A UserProfile may be used for data for the card. You must supply one of `userProfile`, `alias`, `ownerId` */
   userProfile?: UserProfile
+  /** Whether or not to hide the user's Synapse email address */
   hideEmail?: boolean
+  /** If set, the corresponding image will be shown for the user. */
   preSignedURL?: string
+  /** An alias that resolves the ownerId for the UserProfile. You must supply one of `userProfile`, `alias`, `ownerId` */
   alias?: string
+  /** The unique ownerId of the UserProfile. You must supply one of `userProfile`, `alias`, `ownerId` */
   ownerId?: string
+  /** Specifies the card size */
   size: UserCardSize
-  hideText?: boolean
+  /** For the small user card, shows the medium user card on mouseover */
+  showCardOnHover?: boolean
+  /** For the small user card, hides the tooltip observed when hovering over the profile image. */
   hideTooltip?: boolean
+  /** Specifies the dropdown menu functionality for the ellipsis on medium/large cards. If field === 'SEPERATOR' then a break will occur in the menu. If left undefined, the menu will not render to the screen. */
   menuActions?: MenuAction[]
+  /** The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
   link?: string
+  /** Authentication token used to retrieve data */
   token?: string
+  /** Disables the `@username` link for the small user card (if `showCardOnHover` is false). For the medium user card, disables linking the user's name to their profile (or other specified destination) */
   disableLink?: boolean
-  extraSmall?: boolean
   isCertified?: boolean
   isValidated?: boolean
 }
 
-export default class UserCard extends React.Component<
-  UserCardProps,
-  UserCardState
-> {
-  constructor(props: UserCardProps) {
-    super(props)
-    this.state = { userProfile: undefined, isLoading: true, preSignedURL: '' }
-    this.getUserProfile = this.getUserProfile.bind(this)
-  }
+export const UserCard: React.FunctionComponent<UserCardProps> = (
+  props: UserCardProps,
+) => {
+  const {
+    userProfile: initialProfile,
+    preSignedURL: initialPreSignedURL,
+    size,
+    ownerId,
+    alias,
+    token,
+    ...rest
+  } = props
+  const [userProfile, setUserProfile] = useState(initialProfile)
+  const [principalId, setPrincipalId] = useState(ownerId)
+  const [isLoading, setIsLoading] = useState(true)
+  const [preSignedURL, setPresignedUrl] = useState(initialPreSignedURL ?? '')
+  // We fetch the image right away in case it is an expiring presigned URL
+  const imageURL = usePreFetchResource(preSignedURL)
 
-  public componentDidMount() {
-    const { userProfile, ownerId, alias, token } = this.props
+  useEffect(() => {
     if (userProfile) {
-      return
-    }
-    if (alias) {
+      setIsLoading(false)
+    } else if (alias) {
+      // Before we can get the profile, we must get the principal ID using the alias
       getPrincipalAliasRequest(token, alias, 'USER_NAME').then(
         (aliasData: any) => {
-          this.getUserProfile(aliasData.principalId!)
+          setPrincipalId(aliasData.principalId)
         },
       )
-    } else {
-      // check for ownerId!
-      this.getUserProfile(ownerId!)
     }
-  }
+  }, [userProfile, alias, token])
 
-  public getUserProfile(ownerId: string) {
-    getUserProfileWithProfilePic(ownerId!, this.props.token)
-      .then((data) => {
-        const { userProfile, preSignedURL } = data
-        this.setState({ userProfile, preSignedURL, isLoading: false })
-      })
-      .catch((err) => {
-        console.log('failed to get user bundle ', err)
-      })
-  }
+  useEffect(() => {
+    if (!userProfile && principalId) {
+      getUserProfileWithProfilePic(principalId, token)
+        .then(data => {
+          setUserProfile(data.userProfile)
+          setPresignedUrl(data.preSignedURL)
+          setIsLoading(false)
+        })
+        .catch(err => {
+          console.warn('failed to get user bundle ', err)
+        })
+    }
+  }, [userProfile, principalId, token])
 
-  public render() {
-    const {
-      userProfile,
-      preSignedURL,
-      size,
-      ...rest
-    } = this.props
-    let userProfileAtRender
-    let preSignedURLAtRender
-    if (!userProfile) {
-      // userProfile wasn't passed in from props
-      if (this.state.isLoading) {
-        // still making the API call
-        return <></>
-      }
-      userProfileAtRender = this.state.userProfile
-      preSignedURLAtRender = this.state.preSignedURL
-    } else {
-      // otherwise we have the profile from props
-      userProfileAtRender = userProfile
-      preSignedURLAtRender = preSignedURL
-    }
-    const propsForChild = {
-      userProfile: userProfileAtRender!,
-      preSignedURL: preSignedURLAtRender,
-      ...rest,
-    }
-    switch (size) {
+  function getCard(
+    cardSize: UserCardSize,
+    propsForChild: UserCardSmallProps | UserCardMediumProps,
+  ) {
+    switch (cardSize) {
       case SynapseConstants.SMALL_USER_CARD:
         return <UserCardSmall {...propsForChild} />
       case SynapseConstants.MEDIUM_USER_CARD:
@@ -113,4 +103,11 @@ export default class UserCard extends React.Component<
         return <span />
     }
   }
+
+  return isLoading || userProfile == null ? (
+    <></>
+  ) : (
+    getCard(props.size, { userProfile, imageURL, ...rest })
+  )
 }
+export default UserCard

@@ -27,7 +27,7 @@ type UserCardState = {
 export type UserCardMediumProps = {
   userProfile: UserProfile
   menuActions?: MenuAction[]
-  preSignedURL?: string
+  imageURL?: string
   hideEmail?: boolean
   isLarge?: boolean
   link?: string
@@ -107,7 +107,7 @@ export default class UserCardMedium extends React.Component<
       userProfile,
       menuActions,
       isLarge = false,
-      preSignedURL,
+      imageURL,
       hideEmail = false,
       disableLink = false,
       link,
@@ -138,10 +138,10 @@ export default class UserCardMedium extends React.Component<
     } else if (userName) {
       name = userName
     }
-    if (preSignedURL) {
+    if (imageURL) {
       img = (
         <div
-          style={{ backgroundImage: `url(${preSignedURL})` }}
+          style={{ backgroundImage: `url(${imageURL})` }}
           className="SRC-userImg"
         />
       )
