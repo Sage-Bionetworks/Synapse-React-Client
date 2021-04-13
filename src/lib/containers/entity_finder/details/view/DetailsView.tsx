@@ -156,6 +156,11 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
               </div>
             </th>
+            <th className="ModifiedByColumn">
+              <div>
+                <span>Modified By</span>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody className="EntityFinderDetailsView__TableBody">
