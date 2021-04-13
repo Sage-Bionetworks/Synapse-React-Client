@@ -317,7 +317,10 @@ describe('EntityFinder tests', () => {
           configuration: configuration, // !
           sessionToken: defaultProps.sessionToken,
           selectableTypes: defaultProps.selectableTypes,
-          visibleTypes: defaultProps.visibleTypesInList,
+          visibleTypes: [
+            ...defaultProps.visibleTypesInList!,
+            ...defaultProps.selectableTypes!,
+          ],
         }),
         {},
       ),

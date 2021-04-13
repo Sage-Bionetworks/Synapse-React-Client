@@ -40,7 +40,7 @@ const defaultProps: TreeNodeProps = {
     modifiedBy: 100000,
     type: 'org.sagebionetworks.repo.model.FileEntity',
   },
-  selectedId: 'syn456',
+  selected: [{ targetId: 'syn456' }],
   setSelectedId: mockSetSelectedId,
   appearance: NodeAppearance.SELECT,
   selectableTypes: Object.values(EntityType),
@@ -246,7 +246,7 @@ describe('TreeViewNode tests', () => {
   it('Has aria-selected as true when the selectedId matches the entity ID', async () => {
     // Set auto-expand to render children and ensure that they don't get the selected attribute
     renderComponent({
-      selectedId: defaultProps.entityHeader!.id,
+      selected: [{ targetId: defaultProps.entityHeader!.id }],
       autoExpand: () => true,
     })
     await waitFor(() =>

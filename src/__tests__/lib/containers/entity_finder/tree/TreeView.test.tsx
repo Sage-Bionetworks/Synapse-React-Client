@@ -373,11 +373,11 @@ describe('TreeView tests', () => {
         sessionToken: defaultProps.sessionToken,
         level: 0,
         rootNodeConfiguration: {
-          nodeText: defaultProps.initialScope,
+          nodeText: 'Projects',
           children: [entityPath.path[1]],
         },
         autoExpand: expect.anything(),
-        selectedId: defaultProps.initialContainer,
+        selected: [],
         setSelectedId: expect.anything(),
         visibleTypes: defaultProps.visibleTypes,
       }),
@@ -390,6 +390,11 @@ describe('TreeView tests', () => {
       invokeSetSelectedId(newSelectedId)
     })
 
+    await waitFor(() => expect(mockToggleSelection).toBeCalled())
+
+    // The wrapping component that controls the selection should be updated via callback, changing the prop
+    renderComponent({ selectedEntities: [{ targetId: newSelectedId }] })
+
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
     expect(mockTreeNode).toHaveBeenLastCalledWith(
@@ -397,11 +402,12 @@ describe('TreeView tests', () => {
         sessionToken: defaultProps.sessionToken,
         level: 0,
         rootNodeConfiguration: {
-          nodeText: defaultProps.initialScope,
+          nodeText: 'Projects',
           children: [entityPath.path[1]],
         },
         autoExpand: expect.anything(),
-        selectedId: newSelectedId,
+        selectableTypes: defaultProps.selectableTypes,
+        selected: [{ targetId: newSelectedId }],
         setSelectedId: expect.anything(),
         visibleTypes: defaultProps.visibleTypes,
       }),
