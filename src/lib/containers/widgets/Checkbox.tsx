@@ -9,12 +9,13 @@ export type CheckboxProps = {
   isSelectAll?: boolean
   children?: React.ReactChild
   value?: string
+  onChangeCallBack?: Function // callback to send back both value of the checkbox and the checked status
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
 ) => {
-  const { checked: propsChecked = false, isSelectAll = false, value } = props
+  const { checked: propsChecked = false, isSelectAll = false, value, onChangeCallBack } = props
   const [checked, setChecked] = useState<boolean>(propsChecked)
 
   useEffect(() => {
@@ -31,6 +32,9 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
       setChecked(true)
     } else {
       setChecked(event.target.checked)
+    }
+    if (onChangeCallBack) {
+      onChangeCallBack(event.target.checked, value)
     }
   }
 
