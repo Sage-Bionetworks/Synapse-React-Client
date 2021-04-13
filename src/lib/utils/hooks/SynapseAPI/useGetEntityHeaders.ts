@@ -1,4 +1,4 @@
-import { QueryOptions, useQuery } from 'react-query'
+import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import {
@@ -10,7 +10,7 @@ import {
 export function useGetEntityHeaders(
   references: ReferenceList,
   sessionToken?: string,
-  options?: QueryOptions<
+  options?: UseQueryOptions<
     PaginatedResults<EntityHeader>,
     SynapseClientError,
     PaginatedResults<EntityHeader>
