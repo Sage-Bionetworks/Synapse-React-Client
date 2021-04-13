@@ -22,6 +22,13 @@ import {
 import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 import { act } from 'react-dom/test-utils'
 
+jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
+  return {
+    __esModule: true,
+    default: jest.fn().mockResolvedValue(''),
+  }
+})
+
 const { firstName } = mockUserProfileData
 
 const createUserCardContextMenu = (props: UserCardContextMenuProps) => {

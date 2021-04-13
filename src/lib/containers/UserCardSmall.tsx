@@ -54,7 +54,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
           >
             <UserCard
               size={MEDIUM_USER_CARD}
-              ownerId={userProfile.ownerId}
+              userProfile={userProfile}
               link={link}
               disableLink={disableLink}
               {...rest}
