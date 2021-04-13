@@ -76,8 +76,15 @@
       .btn-light-primary-base {
         margin-top: 0.5rem;
       }
-      .account-level-icon svg {
-        width: 25px;
+      .list-items {
+        display: flex;
+        align-items: center;
+        .account-level-icon svg {
+          width: 25px;
+        }
+        .clear-x {
+          padding: 0
+        }
       }
     }
   }

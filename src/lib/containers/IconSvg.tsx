@@ -5,6 +5,7 @@ import {
   ArrowBackIos,
   ArrowForwardIos,
   Check,
+  Clear,
   PhotoCameraOutlined,
   Cached,
   GetApp,
@@ -64,6 +65,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <ArrowForwardIos style={muiSvgStyle} />  
     case 'check':
       return <Check style={muiSvgStyle}></Check>
+    case 'clear':
+      return <Clear style={muiSvgStyle}></Clear>
     case 'download':
       return <GetApp style={muiSvgStyle}></GetApp>
     case 'reload':

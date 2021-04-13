@@ -23,8 +23,8 @@ import {
   AccessorChange,
   AccessType
 } from '../../../utils/synapseTypes/AccessRequirement/AccessorChange'
-import AttachmentCheckboxes, { CheckboxState } from './AttachmentCheckboxes'
-import AccessorCheckboxes from './AccessorCheckboxes'
+import { UserCardSmall } from '../../UserCardSmall'
+import IconSvg from '../../IconSvg'
 
 export type RequestDataAccessStep2Props = {
   token: string,
@@ -52,11 +52,6 @@ export type UploadCallbackResp = {
   context?: any
 }
 
-export type CheckboxProps = {
-  value: string,
-  isChecked: boolean
-}
-
 export type AlertProps = {
   key: string,
   message: string
@@ -64,15 +59,11 @@ export type AlertProps = {
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement} = props
-  const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
   const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
-  const [attachmentsAllChecked, setAttachmentsAllChecked] = useState<boolean | undefined>()
-  const [accessorAllChecked, setAccessorAllChecked] = useState<boolean | undefined>()
-  const [enableRemoveAccessorChecks, setEnableRemoveAccessorChecks] = useState<boolean>(false)
-  const [enableRemoveAttachmentChecks, setEnableRemoveAttachmentChecks] = useState<boolean>(false)
+  const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const requestedFileTypes = {}
@@ -98,17 +89,20 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     const dataAccessRequestData = await getDataAccessRequestForUpdate(accessRequirementId, token)
     const accessorChanges = dataAccessRequestData.accessorChanges
 
+    // initialize form submission request object
     setFormSubmitRequestObject(dataAccessRequestData)
 
-    // get data access required docs data
+    // get data access required docs data to display file names
     getFilesData(dataAccessRequestData)
 
-    // save assessors' user profiles
+    // get assessors' user profiles data for display and save them in the state variables
     if (accessorChanges && accessorChanges.length) {
       const ids:string[] = []
+
       accessorChanges.forEach((item, index) => {
         ids.push(item.userId)
       })
+
       const promises = ids.map(userId => {
         return getUserProfileById(token, userId)
       })
@@ -120,8 +114,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }
 
   const getFilesData = (dataAccessRequestData:RequestInterface) => {
-
-    const attachmentCheckboxArr:CheckboxProps[] = []
 
     // Create the request objects for required documents and save them in the state variables
     if (managedACTAccessRequirement.isDUCRequired && managedACTAccessRequirement.ducTemplateFileHandleId) {
@@ -177,10 +169,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           requestedFileTypes[id] = []
         }
         requestedFileTypes[id].push("attachments")
-        attachmentCheckboxArr[index] = {
-          value: id,
-          isChecked: false
-        }
       })
     }
 
@@ -255,42 +243,35 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
   }
 
-  const setCheckAll = (groupName:string) => {
-    if (!groupName) return
-    switch (groupName) {
-      case "accessors":
-        setAccessorAllChecked(true)
-        setEnableRemoveAccessorChecks(true)
-        break
-      case "attachments":
-        setAttachmentsAllChecked(true)
-        setEnableRemoveAttachmentChecks(true)
-        break
-      default:
-    }
+  const onClearAccessor = (pid:string) => {
+    const filtered:UserProfile[] = accessorProfiles.filter(item => item.ownerId !== pid)
+    setAccessorProfiles(filtered)
+
+    // Update form submission request object
+    const newAccessorChanges:AccessorChange[] = filtered.map(item => {
+      return {
+        userId: item.ownerId,
+        type: AccessType.GAIN_ACCESS
+      }
+    })
+    setFormSubmitRequestObject(prevState => {
+      return Object.assign({}, prevState, {
+        accessorChanges: newAccessorChanges
+      })
+    })
   }
 
-  const removeChecked = (groupName:string) => {
-    switch (groupName) {
-      case "accessors":
-        break
-      case "attachments":
-        break
-      default:
-    }
-  }
+  const onClearAttachment = (fid:string) => {
+    const filtered:DataAccessDoc[] = attachments.filter(item => item.fileHandleId !== fid)
+    setAttachments(filtered)
 
-  const onCheckboxChangeCallback = (groupName: string, checkboxState:CheckboxState[]) => {
-    const hasChecked = checkboxState.some(item => item.checked === true)
-    switch (groupName) {
-      case "accessors":
-        break
-      case "attachments":
-        setEnableRemoveAttachmentChecks(hasChecked)
-        setAttachmentsAllChecked(undefined)
-        break
-      default:
-    }
+    // Update form submission request object
+    const newAttachments:string[] = filtered.map(item => item.fileHandleId)
+    setFormSubmitRequestObject(prevState => {
+      return Object.assign({}, prevState, {
+        attachments: newAttachments
+      })
+    })
   }
 
   const uploadCallback = (data: UploadCallbackResp) => {
@@ -329,6 +310,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
   }
 
+  // User search input event handler
   const onSelectUserCallback = (selected:UserProfile) => {
     setAccessorProfiles(prev => [...prev, {
       ownerId: selected.ownerId,
@@ -376,25 +358,22 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         </Form.Group>
 
         {/* Accessors Checkboxes */}
-        <Form.Group>
+        <Form.Group style={{marginBottom: "1rem"}}>
           {
-            <AccessorCheckboxes
-              allChecked={accessorAllChecked}
-              accessorProfiles={accessorProfiles}
-              onChangeCallback={onCheckboxChangeCallback}
-            />
+            accessorProfiles.map((profile, i) => {
+              return (<div className={"list-items"} key={`accessors-${i}`}>
+                <UserCardSmall
+                  userProfile={profile}
+                  showAccountLevelIcon={true}
+                />
+                <Button
+                  className={"clear-x"}
+                  variant={"link"}
+                  onClick={(e) => onClearAccessor(profile.ownerId)}
+                ><IconSvg options={{icon: 'clear'}} /></Button>
+              </div>)
+            })
           }
-          <hr />
-          <Button
-            variant="link"
-            style={{paddingLeft: "0"}}
-            onClick={() => setCheckAll('accessors')}
-          >Select All</Button>
-          <Button
-            variant="link"
-            disabled={!enableRemoveAccessorChecks}
-            onClick={() => removeChecked('accessors')}
-          >Remove Selected</Button>
         </Form.Group>
 
         {/* DUC */}
@@ -476,12 +455,26 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         <Form.Group>
           <Form.Label className={"SRC-noMargin"}>Upload other required documents</Form.Label><br />
           {
-            <AttachmentCheckboxes
-              allChecked={attachmentsAllChecked}
-              attachments={attachments}
-              token={token}
-              onChangeCallback={onCheckboxChangeCallback}
-            />
+            attachments.map((attachment:DataAccessDoc, i:number) => {
+              return (<div className={"list-items"} key={`file-attachment-${i}`}>
+                <DirectDownloadButton
+                  fileHandleAssociation={{
+                    associateObjectId: attachment.associateObjectId!,
+                    associateObjectType: attachment.associateObjectType as FileHandleAssociateType,
+                    fileHandleId: attachment.fileHandleId
+                  }}
+                  fileName={attachment?.fileName}
+                  variant={"link"}
+                  className={"SRC-noPadding"}
+                  token={token}
+                />
+                <Button
+                  className={"clear-x"}
+                  variant={"link"}
+                  onClick={(e) => onClearAttachment(attachment.fileHandleId)}
+                ><IconSvg options={{icon: 'clear'}} /></Button>
+              </div>)
+            })
           }
           <FileUpload
             token={token}
@@ -490,18 +483,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             uploadCallback={uploadCallback}
             context={"attachments"}
           />
-          <hr />
-          <Button
-            variant="link"
-            style={{paddingLeft: "0"}}
-            onClick={() => setCheckAll('attachments')}
-          >Select All
-          </Button>
-          <Button
-            variant="link"
-            disabled={!enableRemoveAttachmentChecks}
-            onClick={() => removeChecked('attachments')}
-          >Remove Selected</Button>
         </Form.Group>
 
       </ReactBootstrap.Modal.Body>

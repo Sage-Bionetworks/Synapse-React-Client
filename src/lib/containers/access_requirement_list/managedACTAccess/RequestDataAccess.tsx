@@ -123,12 +123,14 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
   if (wikiPage) {
     markdown = (
       <div className="AcceptRequirementsMarkdown">
-        <MarkdownSynapse
-          token={token}
-          wikiId={wikiPage?.wikiPageId}
-          ownerId={wikiPage?.ownerObjectId}
-          objectType={wikiPage?.ownerObjectType}
-        />
+        {
+          wikiPage && <MarkdownSynapse  // remove React mount/unmount error
+            token={token}
+            wikiId={wikiPage?.wikiPageId}
+            ownerId={wikiPage?.ownerObjectId}
+            objectType={wikiPage?.ownerObjectType}
+          />
+        }
       </div>
     )
   } else if (isActOrTermsOfUse) {
