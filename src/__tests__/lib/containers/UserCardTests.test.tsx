@@ -15,7 +15,19 @@ import UserCardContextMenu, {
   UserCardContextMenuProps,
   MenuAction,
 } from '../../../lib/containers/UserCardContextMenu'
-import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
+import {
+  MEDIUM_USER_CARD,
+  SEPERATOR,
+} from '../../../lib/utils/SynapseConstants'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
+import { act } from 'react-dom/test-utils'
+
+jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
+  return {
+    __esModule: true,
+    default: jest.fn().mockResolvedValue(''),
+  }
+})
 
 const { firstName } = mockUserProfileData
 
@@ -46,7 +58,7 @@ const createSmallComponent = (props: UserCardSmallProps) => {
 
 // need mount because of the deep render of the children
 const createMountedComponent = (props: UserCardProps) => {
-  const wrapper = mount<UserCard>(<UserCard {...props} />)
+  const wrapper = mount(<UserCard {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -82,39 +94,55 @@ describe('it creates the correct UI for the small card', () => {
   const props = {
     userProfile: mockUserProfileData,
     size: SynapseConstants.SMALL_USER_CARD,
+    showCardOnHover: true,
   }
 
-  it('displays a div with text for a user without an img', () => {
+  it('displays a span with text for a user without an img', () => {
     const { wrapper } = createSmallComponent({ ...props })
-    expect(wrapper.render().find('div.SRC-userImgSmall')).toHaveLength(1)
-    expect(wrapper.render().find('div.SRC-userImgSmall').text()).toEqual(
-      firstName[0],
+    expect(wrapper.find('span.UserCardSmall')).not.toBeNull()
+    expect(wrapper.find('span.UserCardSmall').text()).toEqual(
+      `@${mockUserProfileData.userName}`,
     )
   })
 
-  it('displays an img for a user with an img set', () => {
-    const { wrapper } = createSmallComponent({
-      ...props,
-      preSignedURL: 'link-to-user-img.com',
+  it('shows a medium user card when clicked', async () => {
+    const { wrapper } = createMountedComponent({ ...props })
+    expect(wrapper.find('span.UserCardSmall')).not.toBeNull()
+    act(() => {
+      wrapper
+        .find('span.UserCardSmall')
+        .props()
+        .onClick({} as any)
     })
-    expect(wrapper.render().find('div.SRC-userImgSmall')).toHaveLength(1)
+    await resolveAllPending(wrapper)
+    expect(wrapper.find(UserCard)).toHaveLength(2)
+    expect(wrapper.find(UserCard).at(1).prop('size')).toBe(MEDIUM_USER_CARD)
   })
 
-  it("doesn't hide text by default", () => {
+  it('creates an anchor link when showCardOnHover is false', () => {
+    const link = 'someweblink.domain'
     const { wrapper } = createSmallComponent({
       ...props,
-      preSignedURL: 'link-to-user-img.com',
+      showCardOnHover: false,
+      link,
     })
-    expect(wrapper.render().find('span.SRC-primary-text-color')).toHaveLength(1)
+    expect(wrapper.find('a.UserCardSmall')).toHaveLength(1)
+    expect(wrapper.find('a.UserCardSmall').text()).toEqual(
+      `@${mockUserProfileData.userName}`,
+    )
+    expect(wrapper.find('a.UserCardSmall').prop('href')).toEqual(link)
   })
 
-  it('hides text when hideText is set to true', () => {
+  it('just shows the username when showCardOnHover is false and disableLink is true', () => {
     const { wrapper } = createSmallComponent({
       ...props,
-      preSignedURL: 'link-to-user-img.com',
-      hideText: true,
+      showCardOnHover: false,
+      disableLink: true,
     })
-    expect(wrapper.render().find('span.SRC-primary-text-color')).toHaveLength(0)
+    expect(wrapper.find('span.UserCardSmall')).toHaveLength(1)
+    expect(wrapper.find('span.UserCardSmall').text()).toEqual(
+      `@${mockUserProfileData.userName}`,
+    )
   })
 })
 
