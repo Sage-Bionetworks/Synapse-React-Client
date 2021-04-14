@@ -84,12 +84,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   useEffect(() => {
     if (mounted) {
+      setAlert(undefined)
       setFormData()
     }
     return () => {
       mounted = false
     }
-  }, [token, accessRequirementId])
+  }, [token])
 
   const setFormData = async () => {
     const dataAccessRequestData = await getDataAccessRequestForUpdate(accessRequirementId, token)
@@ -384,10 +385,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         <h4>Please provide the information below to submit the request for access.</h4>
         <Form.Group style={{marginTop: "2rem"}} >
           <Form.Label htmlFor={"requesters"}>
-            Data Requesters<br/>
-            <em>This list should match those listed on your DUC.<br/>
-            All data requesters must have a <a href={"#"}>validated user profile</a>.</em>
-          </Form.Label>
+            Data Requesters
+          </Form.Label><br/>
+          <em>This list should match those listed on your DUC.<br/>
+            All data requesters must have a <a href={"https://docs.synapse.org/articles/accounts_certified_users_and_profile_validation.html#validated-profile"} target={"_blank"} rel={"noreferrer"}>validated user profile</a>
+          </em>
           <UserSearchBox
             id={"requesters"}
             onSelectCallback={onSelectUserCallback}
@@ -522,8 +524,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           />
         </Form.Group>
 
-        {/* Alert message */}
-        {
+        { /* Alert message */
           alert && <Alert variant={alert.key}>
             {alert.message}
           </Alert>

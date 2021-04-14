@@ -328,8 +328,8 @@ export default function AccessRequirementList({
           token={token!}
           managedACTAccessRequirement={managedACTAccessRequirement!}
           accessRequirementId={accessRequirementId}
-          entityId={entityId}
-          requestDataStepCallback={() => onHide?.()}
+          entityId={entityId}  // for form submission after save
+          requestDataStepCallback={() => onHide?.()}  // for closing dialogs
         />
         break
       default:
