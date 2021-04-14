@@ -221,7 +221,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 <FontAwesomeIcon
                   size={'sm'}
                   icon={faSearch}
-                  style={{ position: 'relative', left: '22px', top: '1px' }}
+                  className="SearchIcon"
                 />
                 <FormControl
                   autoFocus={true}
@@ -244,12 +244,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   icon={faTimes}
                   role="button"
                   title="Close Search"
-                  style={{
-                    cursor: 'pointer',
-                    position: 'relative',
-                    left: '-20px',
-                    marginRight: '-8px',
-                  }}
+                  className="CloseSearchIcon"
                   onClick={() => {
                     setSearchActive(false)
                     setSearchTerms(undefined)
