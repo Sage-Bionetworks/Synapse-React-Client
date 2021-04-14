@@ -1,28 +1,31 @@
 import * as React from 'react'
-import { Alert, Button, Form } from 'react-bootstrap'
-import * as ReactBootstrap from 'react-bootstrap'
 import { useEffect, useState } from 'react'
+import * as ReactBootstrap from 'react-bootstrap'
+import { Alert, Button, Form } from 'react-bootstrap'
 import {
   getDataAccessRequestForUpdate,
-  getUserProfileById,
   getFiles,
+  getUserProfileById,
+  submitDataAccessRequest,
   updateDataAccessRequest,
 } from '../../../utils/SynapseClient'
 import {
+  AccessorChange,
+  AccessType,
   BatchFileRequest,
+  CreateSubmissionRequest,
   FileHandleAssociateType,
   FileUploadComplete,
   ManagedACTAccessRequirement,
   RequestInterface,
+  RestrictableObjectType,
+  SUBMISSION_STATE,
+  SubmissionStatus,
   UserProfile,
 } from '../../../utils/synapseTypes'
 import DirectDownloadButton from '../../DirectDownloadButton'
 import FileUpload from '../../FileUpload'
 import UserSearchBox from '../../UserSearchBox'
-import {
-  AccessorChange,
-  AccessType
-} from '../../../utils/synapseTypes/AccessRequirement/AccessorChange'
 import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
 
@@ -30,8 +33,8 @@ export type RequestDataAccessStep2Props = {
   token: string,
   managedACTAccessRequirement: ManagedACTAccessRequirement,
   accessRequirementId: string,
-  requestDataStepCallback?: Function
-  onHide: Function
+  entityId: string,
+  requestDataStepCallback: Function
 }
 
 export type DataAccessDoc = {
@@ -59,7 +62,7 @@ export type AlertProps = {
 }
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
-  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, onHide} = props
+  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, entityId} = props
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
@@ -68,6 +71,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false)
+  const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false)
   const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
@@ -101,7 +105,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     if (accessorChanges && accessorChanges.length) {
       const ids:string[] = []
 
-      accessorChanges.forEach((item, index) => {
+      accessorChanges.forEach((item) => {
         ids.push(item.userId)
       })
 
@@ -161,7 +165,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
 
     if(dataAccessRequestData.attachments && dataAccessRequestData.attachments.length) {
-      dataAccessRequestData.attachments.forEach((id, index) => {
+      dataAccessRequestData.attachments.forEach((id) => {
         batchFileRequest.requestedFiles.push({
           associateObjectId: dataAccessRequestData!.id,
           associateObjectType: FileHandleAssociateType.DataAccessRequestAttachment,
@@ -216,32 +220,71 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         })
       }) // end getFiles
     }
-
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (submit:boolean = true) => {
     if (formSubmitRequestObject) {
       try {
         const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
-        if (resp.id) {
-          setAlert({
-            key: 'success',
-            message: 'The information you submitted has been updated. You may close this dialog.'
-          })
-        }
+        if (resp.id) { // save success
+          const requestObject:CreateSubmissionRequest = {
+            requestId: resp.id,
+            requestEtag: resp.etag,
+            subjectId: entityId,
+            subjectType: RestrictableObjectType.ENTITY
+          }
 
-        // requestDataStepCallback?.(accessRequirementId)
+          // save and submit
+          if (submit) {
+            const submission_resp:SubmissionStatus = await submitDataAccessRequest(requestObject, token)
+            const alertMsg = getSubmissionMsg(submission_resp)
+            if (submission_resp.state === SUBMISSION_STATE.REJECTED) {
+              setAlert({
+                key: 'danger',
+                message: alertMsg
+              })
+            } else {
+              setAlert({
+                key: 'success',
+                message: alertMsg
+              })
+            }
+
+          // save only
+          } else {
+            setAlert({
+              key: 'success',
+              message: 'The information you submitted has been saved. You may close this dialog.'
+            })
+          }
+        }
       } catch (e) {
         console.log("RequestDataAccessStep2: Error updating form", e)
         setAlert({
           key: 'danger',
-          message: 'Sorry, there is an error in submitting your request. Please try again later.'
+          message: `Sorry, there is an error in submitting your request. ${e.reason || ''}`
         })
       }
+      setShowCloseBtn(true)
+    }
+  }
+
+  const getSubmissionMsg = (submission_resp:SubmissionStatus) => {
+    const msgStart = 'The information you submitted has been '
+    switch (submission_resp.state) {
+      case SUBMISSION_STATE.SUBMITTED:
+        return `${msgStart} submitted. You may close this dialog.`
+      case SUBMISSION_STATE.APPROVED:
+        return `${msgStart} approved. You may close this dialog.`
+      case SUBMISSION_STATE.CANCELLED:
+        return `${msgStart} canceled. You may close this dialog.`
+      case SUBMISSION_STATE.REJECTED:
+        return `${msgStart} rejected. Reason: ${submission_resp.rejectedReason}. Please close this dialog and try again later.`
     }
   }
 
   const onClearAccessor = (pid:string) => {
+    // Update the view
     const filtered:UserProfile[] = accessorProfiles.filter(item => item.ownerId !== pid)
     setAccessorProfiles(filtered)
 
@@ -260,6 +303,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }
 
   const onClearAttachment = (fid:string) => {
+    // Update the view
     const filtered:DataAccessDoc[] = attachments.filter(item => item.fileHandleId !== fid)
     setAttachments(filtered)
 
@@ -338,11 +382,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       </ReactBootstrap.Modal.Header>
       <ReactBootstrap.Modal.Body>
         <h4>Please provide the information below to submit the request for access.</h4>
-        {
-          alert && <Alert variant={alert.key}>
-            {alert.message}
-          </Alert>
-        }
         <Form.Group style={{marginTop: "2rem"}} >
           <Form.Label htmlFor={"requesters"}>
             Data Requesters<br/>
@@ -367,7 +406,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 <Button
                   className={"clear-x"}
                   variant={"link"}
-                  onClick={(e) => onClearAccessor(profile.ownerId)}
+                  onClick={() => onClearAccessor(profile.ownerId)}
                 ><IconSvg options={{icon: 'clear'}} /></Button>
               </div>)
             })
@@ -469,7 +508,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 <Button
                   className={"clear-x"}
                   variant={"link"}
-                  onClick={(e) => onClearAttachment(attachment.fileHandleId)}
+                  onClick={() => onClearAttachment(attachment.fileHandleId)}
                 ><IconSvg options={{icon: 'clear'}} /></Button>
               </div>)
             })
@@ -483,10 +522,20 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           />
         </Form.Group>
 
+        {/* Alert message */}
+        {
+          alert && <Alert variant={alert.key}>
+            {alert.message}
+          </Alert>
+        }
       </ReactBootstrap.Modal.Body>
       <ReactBootstrap.Modal.Footer>
-        <Button variant="link" onClick={() => setShowCancelModal(true)}>Cancel</Button>
-        <Button variant="primary" onClick={handleSubmit}>Submit</Button>
+        { !showCloseBtn && <>
+          <Button variant="link" onClick={() => setShowCancelModal(true)}>Cancel</Button>
+          <Button variant="primary" onClick={() => handleSubmit(true)}>Submit</Button>
+        </>}
+        { showCloseBtn &&
+        <Button variant="primary" onClick={() => requestDataStepCallback?.()}>Close</Button>}
       </ReactBootstrap.Modal.Footer>
     </Form>
 
@@ -505,13 +554,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         </ReactBootstrap.Modal.Body>
 
         <ReactBootstrap.Modal.Footer>
-          <Button variant="link" onClick={() => onHide()}>Cancel</Button>
-          <Button variant="primary">Save changes</Button>
+          <Button variant="link" onClick={() => requestDataStepCallback?.()}>Cancel</Button>
+          <Button variant="primary" onClick={() => handleSubmit(false)}>Save changes</Button>
         </ReactBootstrap.Modal.Footer>
       </ReactBootstrap.Modal>
     </div>
-
-
   </>)
 }
 

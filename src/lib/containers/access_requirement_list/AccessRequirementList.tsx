@@ -328,8 +328,8 @@ export default function AccessRequirementList({
           token={token!}
           managedACTAccessRequirement={managedACTAccessRequirement!}
           accessRequirementId={accessRequirementId}
-          requestDataStepCallback={requestDataStepCallback}
-          onHide={() => onHide?.()}
+          entityId={entityId}
+          requestDataStepCallback={() => onHide?.()}
         />
         break
       default:

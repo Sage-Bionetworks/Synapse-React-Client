@@ -67,6 +67,7 @@ import {
   EntityPath,
   EntityBundleRequest,
   EntityBundle,
+  SubmissionStatus,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -92,7 +93,8 @@ import { SearchQuery, SearchResults } from './synapseTypes/Search'
 import { ResearchProject } from './synapseTypes/ResearchProject'
 import {
   ManagedACTAccessRequirementStatus,
-  RequestInterface
+  RequestInterface,
+  CreateSubmissionRequest,
 } from './synapseTypes/AccessRequirement'
 
 const cookies = new UniversalCookies()
@@ -2520,6 +2522,17 @@ export const getDataAccessRequestForUpdate = (requirementId: string, sessionToke
 export const updateDataAccessRequest = (requestObj: RequestInterface, sessionToken: string) => {
   return doPost<RequestInterface>(
     `/repo/v1/dataAccessRequest`,
+    requestObj,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/dataAccessRequest/requestId/submission.html
+export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, sessionToken: string) => {
+  return doPost<SubmissionStatus>(
+    `/repo/v1/dataAccessRequest/${requestObj.requestId}/submission`,
     requestObj,
     sessionToken,
     undefined,
