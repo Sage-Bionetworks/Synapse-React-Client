@@ -1,0 +1,112 @@
+@use '../../abstracts/variables' as SRC;
+@use './entity-finder' as EntityFinder;
+@use 'sass:color';
+
+.TreeViewReflexElement {
+  position: relative;
+  box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+
+  .TreeView {
+    border: none;
+  }
+}
+
+.TreeView {
+  background-color: SRC.$background-color-gray;
+  height: $-finder-height;
+  border: 2px solid SRC.$border-color-gray;
+  overflow: hidden;
+  .Tree {
+    height: $-finder-height - $-header-height;
+    overflow: auto;
+
+    // This defines general styles for the node elements of the tree
+    // Other classes may override for specific components
+    // See _tree-node-*.scss files
+    .Node {
+      .NodeContent {
+        width: 100%;
+        align-items: center;
+        display: inline-grid;
+        grid-template-columns: 15px 27px auto auto;
+        .ExpandButton {
+          grid-column-start: 1;
+          grid-column-end: 2;
+          text-align: center;
+          color: SRC.$primary-action-color-700;
+          cursor: pointer;
+        }
+
+        .EntityIcon {
+          text-align: center;
+          grid-column-start: 2;
+          grid-column-end: 3;
+          margin-bottom: 3px;
+        }
+
+        .EntityName {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      .NodeChildren[aria-hidden='true'] {
+        display: none;
+      }
+    }
+
+    .Node[aria-disabled='false'] {
+      > .NodeContent:hover {
+        @include -hover();
+      }
+    }
+
+    .Node[aria-disabled='true'] {
+      opacity: 0.5;
+      > .NodeContent {
+        cursor: default;
+      }
+    }
+
+    .Node[aria-selected='true'] {
+      > .NodeContent {
+        background: $-selected-color;
+      }
+      .Node[aria-selected='false'] > .NodeContent {
+        background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
+      }
+    }
+    .NodeContent.NodeRootContent {
+      grid-template-columns: 15px 5px auto;
+    }
+  }
+
+  .Header {
+    height: $-header-height;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .Browse {
+      padding: 0px 10px;
+      font-weight: bold;
+    }
+    button.btn {
+      padding: 5px 10px;
+    }
+    button.btn::after {
+      margin-left: 7px;
+    }
+  }
+
+  .Placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+    &__Content {
+      font-size: large;
+    }
+  }
+}

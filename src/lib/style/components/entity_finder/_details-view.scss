@@ -1,0 +1,139 @@
+@use '../../abstracts/variables' as SRC;
+@use './entity-finder' as EntityFinder;
+
+.DetailsViewReflexElement {
+  .EntityFinderDetailsView {
+    border: none;
+    border-bottom: 1px solid SRC.$border-color-gray;
+  }
+}
+
+.EntityFinderDetailsView {
+  border: 2px solid SRC.$border-color-gray;
+  height: $-finder-height - $-breadcrumb-height;
+  width: 100%;
+  overflow: auto;
+  border-bottom: $-border;
+  table {
+    width: 100%;
+    table-layout: fixed;
+    position: relative;
+    border-collapse: collapse;
+    thead {
+      border-bottom: $-border;
+      border-top: 1px solid white;
+      th {
+        height: $-header-height;
+        font-weight: bold;
+        background-color: white;
+        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.5);
+
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+
+      th > div {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px;
+      }
+    }
+    td > div {
+      margin: 5px;
+    }
+  }
+  &__Row {
+    height: 45px;
+  }
+
+  &__Row:nth-child(even) {
+    background: SRC.$background-color-gray;
+  }
+
+  &__Row[aria-disabled='false'][aria-selected='false']:hover {
+    @include -hover();
+  }
+  &__Row[aria-disabled='false'][aria-selected='true']:hover {
+    @include -hover(rgba(0, 0, 0, 0.25));
+  }
+
+  &__Row[aria-selected='true'] {
+    color: white;
+    background-color: SRC.$primary-action-color-500;
+  }
+
+  &__Row[aria-disabled='true'] {
+    opacity: 0.5;
+  }
+
+  &__Row[aria-hidden='true'] {
+    display: none;
+  }
+
+  &__Placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 80%;
+    font-size: large;
+    margin: 15px;
+
+    .SearchPlaceholderImage {
+      width: 150px;
+      margin: 20px;
+    }
+  }
+
+  .IsSelectedColumn,
+  .EntityIconColumn,
+  .NameColumn,
+  .AccessColumn,
+  .IdColumn,
+  .CreatedOnColumn,
+  .ModifiedOnColumn,
+  .VersionColumn {
+    div {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .IsSelectedColumn {
+    width: 40px;
+    text-align: center;
+    .radio,
+    .checkbox {
+      margin: 7px 0px 2px 5px;
+      min-width: 20px;
+    }
+  }
+
+  .EntityIconColumn {
+    width: 40px;
+    text-align: center;
+    svg {
+      fill: currentColor;
+    }
+  }
+
+  .NameColumn {
+    width: 300px;
+  }
+  .AccessColumn {
+    width: 75px;
+  }
+  .IdColumn {
+    width: 120px;
+  }
+  .CreatedOnColumn,
+  .ModifiedOnColumn {
+    width: 150px;
+  }
+  .VersionColumn {
+    width: 200px;
+  }
+}

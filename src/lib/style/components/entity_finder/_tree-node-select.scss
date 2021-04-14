@@ -1,0 +1,31 @@
+@use '../../abstracts/variables' as SRC;
+@use './entity-finder' as EntityFinder;
+@use 'sass:color';
+
+.TreeView.SelectTree {
+  background: unset;
+  width: $-tree-only-width;
+  .Tree {
+    .Node.SelectNode {
+      border-top: 1px solid white;
+      .NodeContent {
+        padding: 16px 10px 16px 20px;
+        .ExpandButton {
+          font-size: large;
+        }
+      }
+    }
+    .Node.SelectNode[aria-selected='true'] {
+      > .NodeContent {
+        background: SRC.$primary-action-color-500;
+        color: white;
+        > .ExpandButton {
+          color: rgb(255, 255, 255);
+        }
+      }
+      > .NodeContent:hover {
+        @include -hover(rgb(0, 0, 0, 0.25));
+      }
+    }
+  }
+}

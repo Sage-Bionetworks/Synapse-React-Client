@@ -7,54 +7,75 @@ import {
 } from '../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import { EntityHeader, ProjectHeader } from '../../../utils/synapseTypes'
+import {
+  EntityHeader,
+  ProjectHeader,
+  Reference,
+} from '../../../utils/synapseTypes'
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadge } from '../../EntityBadge'
 import { EntityTypeIcon } from '../../EntityIcon'
+import { BUNDLE_REQUEST_OBJECT } from '../EntityFinderUtils'
 
 export type RootNodeConfiguration = {
   nodeText: string
   children: (EntityHeader | ProjectHeader)[]
 }
 
-export type TreeViewNodeProps = {
+export enum NodeAppearance {
+  SELECT,
+  BROWSE,
+}
+
+export type TreeNodeProps = {
   sessionToken: string
   entityHeader?: EntityHeader | ProjectHeader
-  selectedId?: string | null
+  selected: Reference[]
   setSelectedId: (entityId: string) => void
   level?: number
   autoExpand?: (entityId: string) => boolean
   visibleTypes?: EntityType[]
+  appearance: NodeAppearance
   /* If rootNodeConfiguration is defined, then entityHeader will be ignored */
   rootNodeConfiguration?: RootNodeConfiguration
+  selectableTypes: EntityType[]
 }
 
-export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
+export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   sessionToken,
   entityHeader,
-  selectedId,
+  selected,
   setSelectedId,
   level = 0,
   autoExpand = () => false,
   visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
   rootNodeConfiguration,
-}: TreeViewNodeProps) => {
+  appearance,
+  selectableTypes,
+}: TreeNodeProps) => {
   const isRootNode = !!rootNodeConfiguration
+
+  const isDisabled =
+    !isRootNode &&
+    entityHeader &&
+    !selectableTypes.includes(getEntityTypeFromHeader(entityHeader))
 
   const nodeId = isRootNode ? 'root' : entityHeader!.id
   const nodeName = isRootNode
     ? rootNodeConfiguration?.nodeText
     : entityHeader!.name
 
-  const TOOLTIP_ID = 'TreeViewNodeTooltipId'
+  const TOOLTIP_ID = `TreeViewNodeTooltipId_${nodeId}`
 
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(isRootNode || autoExpand(nodeId))
   const [entityChildren, setEntityChildren] = useState<
     (EntityHeader | ProjectHeader)[]
   >([])
 
-  // For retrieving the entity bundle
-  const { ref: nodeRef, inView: nodeInView } = useInView()
+  // For retrieving the entity bundle and children
+  const { ref: nodeRef, inView: nodeInView } = useInView({
+    triggerOnce: true,
+  })
 
   // For "infinite scroll" paginated retrieval of the children
   const { ref: endRef, inView: endInView } = useInView({
@@ -74,7 +95,7 @@ export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
     },
     {
       enabled:
-        nodeInView &&
+        (nodeInView || endInView) &&
         !isRootNode &&
         isContainerType(getEntityTypeFromHeader(entityHeader!)),
     },
@@ -83,28 +104,18 @@ export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
   const { data: bundle } = useGetEntityBundle(
     sessionToken,
     nodeId,
-    {
-      includeEntity: true,
-      includeAnnotations: true,
-      includeBenefactorACL: true,
-      includePermissions: true,
-      includeRootWikiId: true,
-      includeThreadCount: true,
-    },
+    BUNDLE_REQUEST_OBJECT,
     undefined,
     {
-      enabled: nodeInView && !isRootNode,
+      enabled:
+        appearance === NodeAppearance.SELECT && // We don't need the entity bundle for the browse appearance
+        nodeInView &&
+        !isRootNode,
       // We'll make the stale time longer because these requests are expensive + we make a lot of them
       // They also aren't likely to change meaningfully while in the entity finder
       staleTime: 60 * 1000, // 60 seconds
     },
   )
-
-  useEffect(() => {
-    if (isRootNode || autoExpand(nodeId)) {
-      setIsExpanded(true)
-    }
-  }, [isRootNode, autoExpand, nodeId])
 
   useEffect(() => {
     if (isSuccess && endInView && hasNextPage) {
@@ -123,30 +134,35 @@ export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
         ),
       )
     }
-  }, [isRootNode, children?.pages, rootNodeConfiguration])
+  }, [isRootNode, children, rootNodeConfiguration])
 
   return (
     <div
-      className="TreeNode"
+      className={`Node ${
+        appearance === NodeAppearance.SELECT ? 'SelectNode' : 'BrowseNode'
+      }`}
       role="treeitem"
-      aria-selected={selectedId === nodeId}
+      aria-selected={selected.map(e => e.targetId).includes(nodeId)}
+      aria-disabled={isDisabled}
     >
       <div
         ref={nodeRef}
         style={{ paddingLeft: `${level * 20 + 20}px` }}
         role="button"
         aria-label={`Select ${nodeName}`}
-        className={`TreeNode__Content ${isRootNode && 'TreeNodeRootContent'}`}
+        className={`NodeContent ${isRootNode && 'NodeRootContent'}`}
         key={nodeId}
         onClick={event => {
           event.stopPropagation()
-          setSelectedId(nodeId)
+          if (!isDisabled) {
+            setSelectedId(nodeId)
+          }
         }}
       >
         <ReactTooltip id={TOOLTIP_ID} delayShow={500} place={'top'} />
         {entityChildren && entityChildren.length > 0 ? (
           <div
-            className={'TreeNode__Content__ExpandButton'}
+            className={'ExpandButton'}
             aria-label={`Expand ${nodeName}`}
             role="button"
             onClick={e => {
@@ -159,33 +175,41 @@ export const TreeViewNode: React.FunctionComponent<TreeViewNodeProps> = ({
         ) : (
           <span></span>
         )}
-        <div className="TreeNode__Content__EntityIcon">
+        <div className="EntityIcon">
           {!isRootNode && entityHeader && (
             <EntityTypeIcon type={getEntityTypeFromHeader(entityHeader)} />
           )}
         </div>
-        <div
-          className="TreeNode__Content__EntityName"
-          data-for={TOOLTIP_ID}
-          data-tip={nodeName}
-        >
-          {nodeName}
+        <div className="EntityName" data-for={TOOLTIP_ID} data-tip={nodeName}>
+          <span>{nodeName}</span>
+          {!isRootNode &&
+            appearance === NodeAppearance.BROWSE &&
+            entityHeader &&
+            getEntityTypeFromHeader(entityHeader) === EntityType.PROJECT && (
+              <span> (Directory)</span>
+            )}
         </div>
-        <div>{bundle && <EntityBadge entityId={nodeId} bundle={bundle} />}</div>
+        {appearance === NodeAppearance.SELECT && (
+          <div>
+            {bundle && <EntityBadge entityId={nodeId} bundle={bundle} />}
+          </div>
+        )}
       </div>
-      <div className={'TreeNode__Children'} aria-hidden={!isExpanded}>
+      <div className={'NodeChildren'} aria-hidden={!isExpanded}>
         {entityChildren &&
           entityChildren.map(child => {
             return (
-              <TreeViewNode
+              <TreeNode
                 key={child.id}
                 sessionToken={sessionToken}
                 entityHeader={child}
-                selectedId={selectedId}
+                selected={selected}
                 setSelectedId={setSelectedId}
                 level={level + 1}
                 autoExpand={autoExpand}
                 visibleTypes={visibleTypes}
+                appearance={appearance}
+                selectableTypes={selectableTypes}
               />
             )
           })}

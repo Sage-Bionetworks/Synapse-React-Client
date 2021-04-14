@@ -43,8 +43,8 @@ export type EntityDetailsListSharedProps = {
   sessionToken: string
   showVersionSelection: boolean
   selectColumnType: 'checkbox' | 'radio' | 'none'
-  includeTypes: EntityType[]
-  selected: Reference[] // synId(s)
+  visibleTypes: EntityType[]
+  selected: Reference[]
   selectableTypes: EntityType[]
   toggleSelection: (entity: Reference) => void
 }
@@ -113,7 +113,8 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
               hasNextPage={false}
               noResultsPlaceholder={
                 <div>
-                  Use the left pane to make a selection, or search above
+                  Use the left panel to browse Synapse, then make a selection in
+                  this panel
                 </div>
               }
               {...sharedProps}
@@ -124,7 +125,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
           console.warn(
             'The configuration type does not map to a known view type. No Details view will be rendered. Invalid configuration: ',
             config,
-          )
+        )
           return <></>
       }
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { QueryStatus } from 'react-query'
 import SortIcon from '../../../../assets/icons/Sort'
@@ -10,11 +10,10 @@ import {
   SortBy,
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
+import { HelpButtonPopover } from '../../../HelpButtonPopover'
 import { SynapseSpinner } from '../../../LoadingScreen'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsViewRow, DetailsViewRowAppearance } from './DetailsViewRow'
-import ColumnResizer from 'column-resizer'
-import { HelpButtonPopover } from '../../../HelpButtonPopover'
 
 export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: (EntityHeader | ProjectHeader | Hit)[]
@@ -48,7 +47,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   showVersionSelection,
   selectColumnType,
   selected,
-  includeTypes,
+  visibleTypes,
   selectableTypes,
   toggleSelection,
   sort,
@@ -63,7 +62,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   const determineRowAppearance = (
     entity: EntityHeader | ProjectHeader | Hit,
   ): DetailsViewRowAppearance => {
-    if (!includeTypes.includes(getEntityTypeFromHeader(entity))) {
+    if (!visibleTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'hidden'
     } else if (!selectableTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'disabled'
@@ -85,21 +84,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       fetchNextPage()
     }
   }, [queryStatus, queryIsFetching, hasNextPage, fetchNextPage, inView])
-
-  const tableRef = useRef(null)
-
-  useEffect(() => {
-    if (tableRef) {
-      const RESIZER_OPTIONS: any = {
-        resizeMode: 'overflow',
-        partialRefresh: 'true',
-        liveDrag: true,
-        headerOnly: 'true',
-      }
-
-      new ColumnResizer(tableRef.current, RESIZER_OPTIONS)
-    }
-  }, [tableRef])
 
   const showInteractiveSortIcon = (columnSortBy: SortBy) => {
     return (
@@ -131,7 +115,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   return (
     <div className="EntityFinderDetailsView">
-      <table ref={tableRef}>
+      <table>
         <thead>
           <tr className="EntityFinderDetailsView__HeaderRow">
             {showSelectColumn && <th className="IsSelectedColumn" />}
@@ -145,18 +129,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             <th className="AccessColumn"></th>
             <th className="IdColumn">
               <div>ID</div>
-            </th>
-            <th className="CreatedOnColumn">
-              <div>
-                <span>Created On</span>
-                <span>{showInteractiveSortIcon(SortBy.CREATED_ON)}</span>
-              </div>
-            </th>
-            <th className="ModifiedOnColumn">
-              <div>
-                <span>Modified On</span>
-                <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
-              </div>
             </th>
             {showVersionSelection && (
               <th className="VersionColumn">
@@ -172,6 +144,18 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 </div>
               </th>
             )}
+            <th className="CreatedOnColumn">
+              <div>
+                <span>Created On</span>
+                <span>{showInteractiveSortIcon(SortBy.CREATED_ON)}</span>
+              </div>
+            </th>
+            <th className="ModifiedOnColumn">
+              <div>
+                <span>Modified On</span>
+                <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody className="EntityFinderDetailsView__TableBody">
