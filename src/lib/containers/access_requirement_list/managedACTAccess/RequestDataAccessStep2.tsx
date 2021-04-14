@@ -31,6 +31,7 @@ export type RequestDataAccessStep2Props = {
   managedACTAccessRequirement: ManagedACTAccessRequirement,
   accessRequirementId: string,
   requestDataStepCallback?: Function
+  onHide: Function
 }
 
 export type DataAccessDoc = {
@@ -58,7 +59,7 @@ export type AlertProps = {
 }
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
-  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement} = props
+  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, onHide} = props
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
@@ -66,6 +67,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
+  const [showCancelModal, setShowCancelModal] = useState<boolean>(false)
   const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
@@ -215,10 +217,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       }) // end getFiles
     }
 
-  }
-
-  const goBack = () => {
-    requestDataStepCallback?.()
   }
 
   const handleSubmit = async () => {
@@ -487,10 +485,33 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
       </ReactBootstrap.Modal.Body>
       <ReactBootstrap.Modal.Footer>
-        <Button variant="link" onClick={goBack}>Cancel</Button>
+        <Button variant="link" onClick={() => setShowCancelModal(true)}>Cancel</Button>
         <Button variant="primary" onClick={handleSubmit}>Submit</Button>
       </ReactBootstrap.Modal.Footer>
     </Form>
+
+    {/* Cancel Dialog */}
+    <div>
+      <ReactBootstrap.Modal
+        show={showCancelModal}
+        className={'bootstrap-4-backport AccessRequirementList modal-auto-height cancel-modal'}
+      >
+        <ReactBootstrap.Modal.Header>
+          <ReactBootstrap.Modal.Title>Save?</ReactBootstrap.Modal.Title>
+        </ReactBootstrap.Modal.Header>
+
+        <ReactBootstrap.Modal.Body>
+          <p>Would you want to save your recent changes?</p>
+        </ReactBootstrap.Modal.Body>
+
+        <ReactBootstrap.Modal.Footer>
+          <Button variant="link" onClick={() => onHide()}>Cancel</Button>
+          <Button variant="primary">Save changes</Button>
+        </ReactBootstrap.Modal.Footer>
+      </ReactBootstrap.Modal>
+    </div>
+
+
   </>)
 }
 

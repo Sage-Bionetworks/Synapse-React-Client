@@ -329,6 +329,7 @@ export default function AccessRequirementList({
           managedACTAccessRequirement={managedACTAccessRequirement!}
           accessRequirementId={accessRequirementId}
           requestDataStepCallback={requestDataStepCallback}
+          onHide={() => onHide?.()}
         />
         break
       default:
