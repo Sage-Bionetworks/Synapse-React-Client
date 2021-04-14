@@ -35,6 +35,17 @@ $-tree-only-width: 600px;
     align-items: center;
     margin: 10px 0px 10px 0px;
     height: 38px;
+    .SearchIcon {
+      position: relative;
+      left: 22px;
+      top: 1px;
+    }
+    .CloseSearchIcon {
+      cursor: pointer;
+      position: relative;
+      left: -20px;
+      margin-right: -8px;
+    }
     &__SearchButton {
       height: 100%;
       svg {
