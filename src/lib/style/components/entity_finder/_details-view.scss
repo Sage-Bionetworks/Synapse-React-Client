@@ -59,10 +59,11 @@
   }
 
   &__Row[aria-selected='true'] {
-    color: white;
+    $-selected-text-color: white;
+    color: $-selected-text-color;
     background-color: SRC.$primary-action-color-500;
     .UserCardSmall {
-      color: white;
+      color: $-selected-text-color;
     }
   }
 
