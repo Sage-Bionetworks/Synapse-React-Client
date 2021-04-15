@@ -7,8 +7,10 @@ import { SynapseConstants } from '../utils/'
 import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
 import usePreFetchResource from '../utils/hooks/usePreFetchImage'
+import { Avatar, AvatarSize } from './Avatar'
 
 export type UserCardSize =
+  | 'AVATAR'
   | 'SMALL USER CARD'
   | 'MEDIUM USER CARD'
   | 'LARGE USER CARD'
@@ -40,6 +42,7 @@ export type UserCardProps = {
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
+  avatarSize?: AvatarSize
 }
 
 export const UserCard: React.FunctionComponent<UserCardProps> = (
@@ -93,6 +96,8 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
     propsForChild: UserCardSmallProps | UserCardMediumProps,
   ) {
     switch (cardSize) {
+      case SynapseConstants.AVATAR:
+        return <Avatar {...propsForChild} />
       case SynapseConstants.SMALL_USER_CARD:
         return <UserCardSmall {...propsForChild} />
       case SynapseConstants.MEDIUM_USER_CARD:

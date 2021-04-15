@@ -21,6 +21,7 @@ import {
 } from '../../../lib/utils/SynapseConstants'
 import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 import { act } from 'react-dom/test-utils'
+import { Avatar, AvatarProps } from '../../../lib/containers/Avatar'
 
 jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
   return {
@@ -56,6 +57,12 @@ const createSmallComponent = (props: UserCardSmallProps) => {
   return { wrapper, instance }
 }
 
+const createAvatarComponent = (props: AvatarProps) => {
+  const wrapper = shallow(<Avatar {...props} />)
+  const instance = wrapper.instance()
+  return { wrapper, instance }
+}
+
 // need mount because of the deep render of the children
 const createMountedComponent = (props: UserCardProps) => {
   const wrapper = mount(<UserCard {...props} />)
@@ -67,6 +74,13 @@ describe('it renders the different sized cards without failing', () => {
   const props = {
     userProfile: mockUserProfileData,
   }
+
+  it('renders an avatar', () => {
+    const size = SynapseConstants.AVATAR
+    const { wrapper } = createMountedComponent({ ...props, size })
+    expect(wrapper).toBeDefined()
+    expect(wrapper.find(Avatar)).toHaveLength(1)
+  })
 
   it('renders a small card', () => {
     const size = SynapseConstants.SMALL_USER_CARD
@@ -89,7 +103,40 @@ describe('it renders the different sized cards without failing', () => {
     expect(wrapper.find(UserCardLarge)).toHaveLength(1)
   })
 })
+describe('it creates the correct UI for the avatar', () => {
+  const props = {
+    userProfile: mockUserProfileData,
+  }
 
+  it('creates a small avatar', () => {
+    const { wrapper } = createAvatarComponent({ ...props, avatarSize: 'SMALL' })
+    // one svg is for the clipboard icon, the other is for the user
+    expect(wrapper.find('div.SRC-userImgSmall')).toHaveLength(1)
+    expect(wrapper.find('div.SRC-userImgSmall').text()).toEqual(firstName[0])
+  })
+
+  it('creates a large avatar', () => {
+    const { wrapper } = createAvatarComponent({ ...props, avatarSize: 'LARGE' })
+    // one svg is for the clipboard icon, the other is for the user
+    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
+    expect(wrapper.find('div.SRC-userImg').text()).toEqual(firstName[0])
+  })
+
+  it('displays an svg for a user without an img', () => {
+    const { wrapper } = createAvatarComponent({ ...props, imageURL: undefined })
+    // one svg is for the clipboard icon, the other is for the user
+    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
+    expect(wrapper.find('div.SRC-userImg').text()).toEqual(firstName[0])
+  })
+
+  it('displays an img for a user with an img set', () => {
+    const { wrapper } = createAvatarComponent({
+      ...props,
+      imageURL: 'my-img-url',
+    })
+    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
+  })
+})
 describe('it creates the correct UI for the small card', () => {
   const props = {
     userProfile: mockUserProfileData,
@@ -152,21 +199,9 @@ describe('it creates the correct UI for the medium card', () => {
     size: SynapseConstants.MEDIUM_USER_CARD,
   }
 
-  it('displays an svg for a user without an img', () => {
+  it('shows an avatar', () => {
     const { wrapper } = createMediumComponent({ ...props })
-    // one svg is for the clipboard icon, the other is for the user
-    expect(wrapper.render().find('div.SRC-userImg')).toHaveLength(1)
-    expect(wrapper.render().find('div.SRC-userImg').text()).toEqual(
-      firstName[0],
-    )
-  })
-
-  it('displays an img for a user with an img set', () => {
-    const { wrapper } = createMediumComponent({
-      ...props,
-      preSignedURL: 'my-img-url',
-    })
-    expect(wrapper.render().find('div.SRC-userImg')).toHaveLength(1)
+    expect(wrapper.find(Avatar)).toHaveLength(1)
   })
 
   it("doesn't hide user email by default", () => {
@@ -189,7 +224,7 @@ describe('it creates the correct UI for the medium card', () => {
     const { wrapper } = createMediumComponent({ ...props, menuActions })
     const instance = wrapper.instance() as UserCardMedium
     const _event = {} as any
-    await instance.toggleContextMenu(_event)
+    instance.toggleContextMenu(_event)
     expect(wrapper.render().find('div.dropdown')).toHaveLength(1)
   })
 })

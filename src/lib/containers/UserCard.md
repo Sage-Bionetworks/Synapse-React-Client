@@ -1,5 +1,10 @@
 Must log in to view these cards.
 
+Avatar:
+```jsx
+currentUserProfile ? <UserCard size={AVATAR} ownerId={currentUserProfile.ownerId}/> : <UserCard size={AVATAR} ownerId={273950}/>
+```
+
 Small:
 ```jsx
 currentUserProfile ? <UserCard size={SMALL_USER_CARD} ownerId={currentUserProfile.ownerId}/> : <UserCard size={SMALL_USER_CARD} ownerId={273950}/>
