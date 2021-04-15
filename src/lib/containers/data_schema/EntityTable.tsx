@@ -4,6 +4,7 @@ import ArrowDownward from '@material-ui/icons/ArrowDownward'
 import { DataSchemaData } from './types/IDataSchemaTypes'
 import IdLink from './IdLink'
 import ItemList from './ItemList'
+import { DATA_TYPES, DATA_TYPE_NAMES, VIEW_TYPES } from './constants'
 import { stateData } from './state/DataState'
 import { tableConfig } from './utils/tableConfig'
 
@@ -16,7 +17,7 @@ interface RowData extends DataSchemaData {
   [key: string]: unknown
 }
 
-function EntityTable({ list, parent }: EntityTableProps): ReactElement {
+function EntityTable({ list, parent }: EntityTableProps): ReactElement | null {
   const data: DataSchemaData[] = stateData()
   const entityData = buildEntityData(list, data)
 
@@ -30,62 +31,62 @@ function EntityTable({ list, parent }: EntityTableProps): ReactElement {
       }}
       columns={[
         {
-          title: 'ID',
-          field: 'id',
+          title: DATA_TYPE_NAMES[DATA_TYPES.ID],
+          field: DATA_TYPES.ID,
           render: ({ id }: RowData) => (
             <IdLink id={id} isParent={parent === id} />
           ),
         },
         {
-          title: 'Attribute',
-          field: 'attribute',
+          title: DATA_TYPE_NAMES[DATA_TYPES.DISPLAY_NAME],
+          field: DATA_TYPES.DISPLAY_NAME,
           headerStyle: { width: 135 },
         },
         {
-          title: 'Label',
-          field: 'label',
+          title: DATA_TYPE_NAMES[DATA_TYPES.LABEL],
+          field: DATA_TYPES.LABEL,
           headerStyle: { width: 135 },
         },
         {
-          title: 'Description',
-          field: 'description',
+          title: DATA_TYPE_NAMES[DATA_TYPES.COMMENT],
+          field: DATA_TYPES.COMMENT,
           headerStyle: { width: 135 },
         },
         {
-          title: 'Type',
-          field: 'type',
+          title: DATA_TYPE_NAMES[DATA_TYPES.TYPE],
+          field: DATA_TYPES.TYPE,
           headerStyle: { width: 135 },
           render: ({ type }: RowData) => (
             <ItemList list={type} parent={parent} />
           ),
         },
         {
-          title: 'Valid Values',
-          field: 'validValues',
+          title: DATA_TYPE_NAMES[VIEW_TYPES.RANGE_INCLUDES],
+          field: VIEW_TYPES.RANGE_INCLUDES,
           headerStyle: { width: 135 },
           render: ({ validValues }: RowData) => (
             <ItemList list={validValues} parent={parent} />
           ),
         },
         {
-          title: 'Requires',
-          field: 'requiredDependencies',
+          title: DATA_TYPE_NAMES[VIEW_TYPES.REQUIRES_DEPENDENCY],
+          field: VIEW_TYPES.REQUIRES_DEPENDENCY,
           headerStyle: { width: 150 },
           render: ({ requiredDependencies }: RowData) => (
             <ItemList list={requiredDependencies} parent={parent} />
           ),
         },
         {
-          title: 'Properties',
-          field: 'domainIncludes',
+          title: DATA_TYPE_NAMES[VIEW_TYPES.DOMAIN_INCLUDES],
+          field: VIEW_TYPES.DOMAIN_INCLUDES,
           headerStyle: { width: 120 },
           render: ({ domainIncludes }: RowData) => (
             <ItemList list={domainIncludes} parent={parent} />
           ),
         },
         {
-          title: 'Required',
-          field: 'required',
+          title: DATA_TYPE_NAMES[DATA_TYPES.REQUIRED],
+          field: DATA_TYPES.REQUIRED,
           headerStyle: { width: 120 },
           type: 'boolean',
           render: ({ required }: RowData) => (
@@ -93,23 +94,23 @@ function EntityTable({ list, parent }: EntityTableProps): ReactElement {
           ),
         },
         {
-          title: 'Parent',
-          field: 'parentIds',
+          title: DATA_TYPE_NAMES[VIEW_TYPES.SUBCLASS_OF],
+          field: VIEW_TYPES.SUBCLASS_OF,
           headerStyle: { width: 135 },
           render: ({ parentIds }: RowData) => (
             <ItemList list={parentIds} parent={parent} />
           ),
         },
         {
-          title: 'Requires Component',
-          field: 'requiresComponent',
+          title: DATA_TYPE_NAMES[VIEW_TYPES.REQUIRES_COMPONENT],
+          field: VIEW_TYPES.REQUIRES_COMPONENT,
           render: ({ requiresComponent }: RowData) => (
             <ItemList list={requiresComponent} parent={parent} />
           ),
         },
         {
-          title: 'Validation Rules',
-          field: 'validationRules',
+          title: DATA_TYPE_NAMES[DATA_TYPES.VALIDATION_RULES],
+          field: DATA_TYPES.VALIDATION_RULES,
           render: ({ validationRules }: RowData) => (
             <ItemList list={validationRules} parent={parent} />
           ),
@@ -117,24 +118,14 @@ function EntityTable({ list, parent }: EntityTableProps): ReactElement {
       ]}
       data={entityData as RowData[]}
     />
-  ) : (
-    <></>
-  )
+  ) : null
 }
 
 function buildEntityData(
   list: string[],
   data: DataSchemaData[],
 ): DataSchemaData[] {
-  return data.reduce(
-    (acc: DataSchemaData[], entity: DataSchemaData): DataSchemaData[] => {
-      if (list.includes(entity.id)) {
-        acc.push(entity)
-      }
-      return acc
-    },
-    [] as DataSchemaData[],
-  )
+  return data.filter(entity => list.includes(entity.id))
 }
 
 export default EntityTable

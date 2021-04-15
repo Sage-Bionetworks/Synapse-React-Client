@@ -9,6 +9,10 @@ import { SchemaJson } from './types/IDataSchemaTypes'
 import { DEFAULT_SCHEMA, MINUTES_TO_CACHE } from './constants'
 import getSchemaData from './services/getSchemaData'
 import { replaceContext, replaceData } from './state/DataState'
+import getTestIDs from './utils/getTestIds'
+import { setLoading } from './state/LoadingState'
+
+export const TEST_IDS = getTestIDs()
 
 export default function UploadButton(): ReactElement {
   const [open, setOpen] = useState(false)
@@ -21,12 +25,14 @@ export default function UploadButton(): ReactElement {
       <Button
         aria-label={`Upload Schema File`}
         className={`button-upload`}
+        data-testid={TEST_IDS.button}
         onClick={() => setOpen(true)}
       >
         <FontAwesomeIcon icon={faFileUpload} />
       </Button>
       <Modal
         animation={false}
+        data-testid={TEST_IDS.modal}
         show={open}
         onHide={() => setOpen(false)}
         aria-labelledby={`title-dialog-upload`}
@@ -35,6 +41,7 @@ export default function UploadButton(): ReactElement {
         <Modal.Header closeButton>
           <Modal.Title
             className={`h1`}
+            data-testid={TEST_IDS.title}
             id={`title-dialog-upload`}
           >{`Upload a schema file`}</Modal.Title>
         </Modal.Header>
@@ -43,6 +50,7 @@ export default function UploadButton(): ReactElement {
           <Form.Label id={`schemaUrlLabel`}>{`Schema URL`}</Form.Label>
           <InputGroup>
             <Form.Control
+              data-testid={TEST_IDS.urlInput}
               isInvalid={!validUrl}
               type={`url`}
               id={`schemaUrl`}
@@ -85,6 +93,7 @@ export default function UploadButton(): ReactElement {
         <Modal.Footer>
           <Button
             className={`button-cancelUpload`}
+            data-testid={TEST_IDS.cancelButton}
             onClick={() => {
               console.log(`upload cancelled`)
               setOpen(false)
@@ -96,6 +105,7 @@ export default function UploadButton(): ReactElement {
           </Button>
           <Button
             className={`button-submitUpload`}
+            data-testid={TEST_IDS.submitButton}
             disabled={fileObjects.length > 0 || url ? false : true}
             onClick={submitFile}
             variant={`primary`}
@@ -120,6 +130,7 @@ export default function UploadButton(): ReactElement {
           // TODO: Add error handling for bad schema files.
           console.log(`error:`, error)
         }
+        setLoading(true)
         replaceData(content)
         replaceContext(content)
         dbSet(SUFFIX.scma, encode(content), MINUTES_TO_CACHE, true)
@@ -127,6 +138,7 @@ export default function UploadButton(): ReactElement {
       fileReader.readAsText(file.file)
     } else if (url) {
       getSchemaData(url, true).then(data => {
+        setLoading(true)
         replaceData(data)
         replaceContext(data)
       })

@@ -5,13 +5,20 @@ import React, {
   useCallback,
   useRef,
 } from 'react'
+import {
+  FullScreen,
+  FullScreenHandle,
+  useFullScreenHandle,
+} from 'react-full-screen'
 //@ts-ignore
 import Graph from 'react-graph-network'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { stateData } from './state/DataState'
+import { stateFullscreen, setStateFullscreen } from './state/FullscreenState'
 import { searchEntity, setIdMap } from './state/SearchEntityState'
 import { stateViewType } from './state/ViewTypeState'
+import { loading, setLoading } from './state/LoadingState'
 import { PRIMARY_ENTITY, SECONDARY_ENTITY, VIEW_TYPES } from './constants'
 import {
   DataSchemaData,
@@ -39,13 +46,15 @@ export interface DataSchemaViewerProps {
 
 function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
   const data = stateData()
+  const isLoading = loading()
   const startId = searchEntity()
+  const { isFullscreen } = stateFullscreen()
   const viewType = stateViewType()
+  const fullscreenHandle: FullScreenHandle = useFullScreenHandle()
   const [graphNetworkData, setGraphNetworkData] = useState<GraphNetworkData>()
   const [clickedNode, setClickedNode] = useState<DataSchemaData>()
   const [deps, setDeps] = useState<DepState>({} as DepState)
   const nodeColorRefs = useRef<{ [key: string]: string }>({})
-  const [isFullScreen, setFullScreen] = useState<boolean>(false)
 
   const onNodeClick = useCallback(
     (id: string) => (event: React.MouseEvent<SVGCircleElement, MouseEvent>) => {
@@ -56,17 +65,6 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
     },
     [data],
   )
-
-  const toggleFullScreen = useCallback(() => {
-    setFullScreen(!isFullScreen)
-  }, [isFullScreen])
-
-  useEffect(() => {
-    window.removeEventListener('keyup', handleEscapeKey, false)
-    if (isFullScreen) {
-      window.addEventListener('keyup', handleEscapeKey, false)
-    }
-  }, [isFullScreen])
 
   useEffect(() => {
     if (data.length > 0) {
@@ -187,52 +185,54 @@ function DataSchemaViewer({ title }: DataSchemaViewerProps): ReactElement {
     setGraphNetworkData({ nodes, links })
   }, [data, deps, viewType, onNodeClick, nodeColorRefs])
 
-  function handleEscapeKey(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-      setFullScreen(false)
-    }
-  }
-
   if (!graphNetworkData) {
     return <></>
   }
 
   return (
-    <div className={`DataSchemaViewerWrapper`}>
+    <div className={`DataSchemaViewerWrapper${isLoading ? ' loading' : ''}`}>
       <h2 className={`h2`}>{title}</h2>
       <div className={`tools-dd`}>
         <UploadButton />
         <ViewTypeChooser />
         <EntitySearch />
       </div>
-      <div
-        className={`graphCanvasContainer ${isFullScreen ? 'fullscreen' : ''}`}
+      <FullScreen
+        handle={fullscreenHandle}
+        onChange={(state: boolean, handle: FullScreenHandle) =>
+          setStateFullscreen({ isFullscreen: state, handle })
+        }
       >
-        <button
-          aria-label={`toggle graph fullscreen`}
-          className={`fullscreenToggleButton ${
-            isFullScreen ? 'fullscreen' : ''
-          }`}
-          onClick={() => toggleFullScreen()}
-        >
-          <FontAwesomeIcon icon={isFullScreen ? faCompress : faExpand} />
-        </button>
-        <Graph
-          className={`graph-dd`}
-          data={graphNetworkData}
-          NodeComponent={GraphNetworkNode}
-          LineComponent={GraphNetworkLine}
-          LoaderComponent={GraphLoader}
-          id={`dd-graph`}
-          hoverOpacity={0.3}
-          enableDrag={true}
-          zoomDepth={10}
-          enableZoomOut={true}
-          nodeDistance={1000}
-          pullIn={false}
-          animateNodes={false}
-        />
-      </div>
+        <div className={`graphCanvasContainer`}>
+          <button
+            aria-label={`Toggle Graph Fullscreen`}
+            className={`fullscreenToggleButton`}
+            onClick={
+              isFullscreen ? fullscreenHandle.exit : fullscreenHandle.enter
+            }
+          >
+            <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} />
+          </button>
+          {isLoading && <GraphLoader nodes={graphNetworkData.nodes} />}
+          <Graph
+            className={`graph-dd`}
+            data={graphNetworkData}
+            NodeComponent={GraphNetworkNode}
+            LineComponent={GraphNetworkLine}
+            id={`dd-graph`}
+            hoverOpacity={0.3}
+            enableDrag={true}
+            zoomDepth={10}
+            enableZoomOut={true}
+            nodeDistance={500}
+            collisionRadius={50}
+            nodeRadius={30}
+            pullIn={false}
+            animateNodes={false}
+            onEnd={() => setLoading(false)}
+          />
+        </div>
+      </FullScreen>
       <EntityDetailViewer
         open={!!clickedNode}
         onClose={() => setClickedNode(undefined)}

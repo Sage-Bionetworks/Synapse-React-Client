@@ -1,8 +1,11 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { DataSchemaData, SchemaContext } from './types/IDataSchemaTypes'
 import EntityDetailViewer from './EntityDetailViewer'
 import { stateContext, stateData } from './state/DataState'
+import getTestIDs from './utils/getTestIds'
+
+export const TEST_IDS = getTestIDs()
 
 interface IdLinkProps {
   id: string
@@ -30,10 +33,15 @@ function IdLink(props: IdLinkProps): ReactElement {
 function ToolTipTarget({ id, isParent }: IdLinkProps) {
   const data: DataSchemaData[] = stateData()
   const context: SchemaContext = stateContext()
-  const itemData: DataSchemaData | undefined = data.find(item => item.id === id)
+  const [itemData, setItemData] = useState<DataSchemaData>()
   const [entityDetailViewerOpen, setEntityDetailViewerOpen] = useState<boolean>(
     false,
   )
+
+  useEffect(() => {
+    setItemData(data.find(item => item.id === id))
+  }, [data, setItemData])
+
   return itemData && !isParent ? (
     <>
       <a
@@ -45,6 +53,7 @@ function ToolTipTarget({ id, isParent }: IdLinkProps) {
           event.preventDefault()
           setEntityDetailViewerOpen(true)
         }}
+        data-testid={TEST_IDS.link}
       >
         {itemData.attribute || itemData.label}
       </a>
@@ -55,7 +64,11 @@ function ToolTipTarget({ id, isParent }: IdLinkProps) {
       />
     </>
   ) : (
-    <span data-tip data-for={`${toolTipIdPrefix}${id}`}>
+    <span
+      data-tip
+      data-for={`${toolTipIdPrefix}${id}`}
+      data-testid={TEST_IDS.noLink}
+    >
       {itemData ? itemData.attribute || itemData.label : buildLink(id, context)}
     </span>
   )
@@ -64,10 +77,12 @@ function ToolTipTarget({ id, isParent }: IdLinkProps) {
 function buildLink(id: string, context: SchemaContext) {
   const pieces: string[] = id.split(`:`)
   const contexts = Object.keys(context)
-  if (pieces.length > 1 && contexts.indexOf(pieces[0])) {
+  if (pieces.length > 1 && contexts.indexOf(pieces[0]) + 1) {
     return (
       <a
+        data-testid={TEST_IDS.externalLink}
         href={`${context[pieces[0]]}${pieces[1]}`}
+        rel={`noopener`}
         target={`_blank`}
         title={`View details of ${id}`}
       >
