@@ -41,8 +41,6 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
         setProjectLead(researchProject.projectLead)
         setInstitution(researchProject.institution)
         setIntendedDataUseStatement(researchProject.intendedDataUseStatement)
-      } else {
-        console.log("RequestDataAccessStep1: Error getting research project data: ")
       }
     } catch (e) {
       console.log("RequestDataAccessStep1: Error getting research project data: ", e)
@@ -68,7 +66,7 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
 
     try {
       updateResearchProject(requestObj, token).then((researchProject) => {
-        requestDataStepCallback?.(managedACTAccessRequirement, 2)
+        requestDataStepCallback?.(managedACTAccessRequirement, 2, researchProject.id)
       }).catch(e => {
         console.log("RequestDataAccessStep1: Error updating research project data: ", e)
         setAlert(errAlert)
