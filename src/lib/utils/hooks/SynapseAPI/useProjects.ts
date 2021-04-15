@@ -1,8 +1,8 @@
 import {
-  QueryOptions,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
+  UseQueryOptions
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
@@ -12,7 +12,7 @@ import { GetProjectsParameters } from '../../synapseTypes/GetProjectsParams'
 export function useGetProjects(
   sessionToken: string,
   params?: GetProjectsParameters,
-  options?: QueryOptions<
+  options?: UseQueryOptions<
     ProjectHeaderList,
     SynapseClientError,
     ProjectHeaderList

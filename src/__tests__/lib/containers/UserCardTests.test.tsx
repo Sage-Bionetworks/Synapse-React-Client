@@ -112,7 +112,7 @@ describe('it creates the correct UI for the small card', () => {
       wrapper
         .find('span.UserCardSmall')
         .props()
-        .onClick({} as any)
+        .onClick({ stopPropagation: () => {} } as any)
     })
     await resolveAllPending(wrapper)
     expect(wrapper.find(UserCard)).toHaveLength(2)

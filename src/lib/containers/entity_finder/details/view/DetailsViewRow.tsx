@@ -10,6 +10,8 @@ import {
   isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
+import { useGetUserProfileWithProfilePic } from '../../../../utils/hooks/SynapseAPI/useUserBundle'
+import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import {
   EntityHeader,
   ProjectHeader,
@@ -20,6 +22,7 @@ import { VersionInfo } from '../../../../utils/synapseTypes/VersionInfo'
 import { EntityBadge } from '../../../EntityBadge'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { toError } from '../../../ErrorBanner'
+import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { RadioGroup } from '../../../widgets/RadioGroup'
 import { BUNDLE_REQUEST_OBJECT } from '../../EntityFinderUtils'
@@ -76,6 +79,15 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       enabled: inView,
       // We'll make the stale time longer because these requests are expensive + we make a lot of them
       // They also aren't likely to change meaningfully while in the entity finder
+      staleTime: 60 * 1000, // 60 seconds
+    },
+  )
+
+  const { data: modifiedByUserProfile } = useGetUserProfileWithProfilePic(
+    bundle?.entity?.modifiedBy ?? '273950',
+    sessionToken,
+    {
+      enabled: !!bundle,
       staleTime: 60 * 1000, // 60 seconds
     },
   )
@@ -210,6 +222,18 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       </td>
       <td className="ModifiedOnColumn">
         <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
+      </td>
+      <td className="ModifiedByColumn">
+        <div>
+          {modifiedByUserProfile && (
+            <UserCard
+              size={SMALL_USER_CARD}
+              openLinkInNewTab={true}
+              userProfile={modifiedByUserProfile.userProfile}
+              preSignedURL={modifiedByUserProfile.preSignedURL}
+            />
+          )}
+        </div>
       </td>
     </tr>
   )

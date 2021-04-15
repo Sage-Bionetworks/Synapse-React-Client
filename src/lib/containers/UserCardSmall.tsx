@@ -9,6 +9,7 @@ export type UserCardSmallProps = {
   showCardOnHover?: boolean
   disableLink?: boolean
   link?: string
+  openLinkInNewTab?: boolean
 }
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
@@ -25,6 +26,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   showCardOnHover = true,
   disableLink,
   link,
+  openLinkInNewTab,
   ...rest
 }) => {
   const timer = useRef<NodeJS.Timeout | null>(null)
@@ -57,6 +59,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
               userProfile={userProfile}
               link={link}
               disableLink={disableLink}
+              openLinkInNewTab={openLinkInNewTab}
               {...rest}
             />
           </div>
@@ -78,11 +81,12 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
           resetTimer(timer)
           timer.current = setTimeout(() => setShow(false), TIMER_DELAY_HIDE)
         }}
-        onClick={() => {
+        onClick={event => {
+          event.stopPropagation()
           resetTimer(timer)
           setShow(!show)
         }}
-        className="SRC-userCard UserCardSmall SRC-primary-text-color SRC-underline-on-hover"
+        className="SRC-userCard UserCardSmall SRC-underline-on-hover"
         style={{ whiteSpace: 'nowrap' }}
       >{`@${userProfile.userName}`}</span>
     </>
@@ -92,8 +96,11 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       style={{ cursor: 'unset' }}
     >{`@${userProfile.userName}`}</span>
   ) : (
+    // eslint-disable-next-line react/jsx-no-target-blank
     <a
       className="SRC-userCard UserCardSmall"
+      target={openLinkInNewTab ? '_blank' : ''}
+      rel={openLinkInNewTab ? 'noreferrer' : ''}
       href={
         link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
       }

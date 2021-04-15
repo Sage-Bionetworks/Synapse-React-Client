@@ -31,6 +31,7 @@ export type UserCardMediumProps = {
   hideEmail?: boolean
   isLarge?: boolean
   link?: string
+  openLinkInNewTab?: boolean
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
@@ -111,6 +112,7 @@ export default class UserCardMedium extends React.Component<
       hideEmail = false,
       disableLink = false,
       link,
+      openLinkInNewTab = false,
       isValidated,
       isCertified,
     } = this.props
@@ -167,8 +169,11 @@ export default class UserCardMedium extends React.Component<
         )}
         {disableLink && img}
         {!disableLink && (
+          // eslint-disable-next-line react/jsx-no-target-blank
           <a
             href={linkLocation}
+            target={openLinkInNewTab ? '_blank' : ''}
+            rel={openLinkInNewTab ? 'noreferrer' : ''}
             className={`SRC-no-underline-on-hover ${
               isLarge ? 'SRC-isLargeCard' : ''
             }`}
@@ -189,8 +194,11 @@ export default class UserCardMedium extends React.Component<
               </span>
             ) : (
               // consolidate click events
+              // eslint-disable-next-line react/jsx-no-target-blank
               <a
                 href={linkLocation}
+                target={openLinkInNewTab ? '_blank' : ''}
+                rel={openLinkInNewTab ? 'noreferrer' : ''}
                 tabIndex={0}
                 className={'SRC-hand-cursor SRC-primary-text-color'}
               >

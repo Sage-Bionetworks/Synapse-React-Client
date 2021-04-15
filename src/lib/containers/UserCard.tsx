@@ -34,6 +34,7 @@ export type UserCardProps = {
   menuActions?: MenuAction[]
   /** The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
   link?: string
+  openLinkInNewTab?: boolean
   /** Authentication token used to retrieve data */
   token?: string
   /** Disables the `@username` link for the small user card (if `showCardOnHover` is false). For the medium user card, disables linking the user's name to their profile (or other specified destination) */
