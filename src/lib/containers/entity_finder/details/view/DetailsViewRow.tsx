@@ -1,6 +1,7 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Form } from 'react-bootstrap'
+import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../../utils'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
@@ -9,6 +10,8 @@ import {
   isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
+import { useGetUserProfileWithProfilePic } from '../../../../utils/hooks/SynapseAPI/useUserBundle'
+import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import {
   EntityHeader,
   ProjectHeader,
@@ -18,10 +21,11 @@ import { Hit } from '../../../../utils/synapseTypes/Search'
 import { VersionInfo } from '../../../../utils/synapseTypes/VersionInfo'
 import { EntityBadge } from '../../../EntityBadge'
 import { EntityTypeIcon } from '../../../EntityIcon'
+import { toError } from '../../../ErrorBanner'
+import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { RadioGroup } from '../../../widgets/RadioGroup'
-import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../../ErrorBanner'
+import { BUNDLE_REQUEST_OBJECT } from '../../EntityFinderUtils'
 
 export type DetailsViewRowAppearance =
   | 'default'
@@ -69,19 +73,21 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   const { data: bundle, isError, error } = useGetEntityBundle(
     sessionToken,
     entityHeader.id,
-    {
-      includeEntity: true,
-      includeAnnotations: true,
-      includeBenefactorACL: true,
-      includePermissions: true,
-      includeRootWikiId: true,
-      includeThreadCount: true,
-    },
+    BUNDLE_REQUEST_OBJECT,
     undefined,
     {
       enabled: inView,
       // We'll make the stale time longer because these requests are expensive + we make a lot of them
       // They also aren't likely to change meaningfully while in the entity finder
+      staleTime: 60 * 1000, // 60 seconds
+    },
+  )
+
+  const { data: modifiedByUserProfile } = useGetUserProfileWithProfilePic(
+    bundle?.entity?.modifiedBy ?? '273950',
+    sessionToken,
+    {
+      enabled: !!bundle,
       staleTime: 60 * 1000, // 60 seconds
     },
   )
@@ -98,12 +104,12 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         response => {
           setVersions(response.results)
         },
-        error => {
-          handleError(error)
+        err => {
+          handleError(err)
         },
       )
     }
-  }, [isSelected, versions, sessionToken, entityHeader.id])
+  }, [isSelected, versions, sessionToken, entityHeader.id, handleError])
 
   return (
     <tr
@@ -169,12 +175,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       <td className="IdColumn">
         <div>{entityHeader.id} </div>
       </td>
-      <td className="CreatedOnColumn">
-        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
-      </td>
-      <td className="ModifiedOnColumn">
-        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
-      </td>
       {showVersionColumn && (
         <td className="VersionColumn" aria-label="version">
           <div>
@@ -217,6 +217,24 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
           </div>
         </td>
       )}
+      <td className="CreatedOnColumn">
+        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
+      </td>
+      <td className="ModifiedOnColumn">
+        <div>{bundle && formatDate(moment(bundle.entity!.modifiedOn))}</div>
+      </td>
+      <td className="ModifiedByColumn">
+        <div>
+          {modifiedByUserProfile && (
+            <UserCard
+              size={SMALL_USER_CARD}
+              openLinkInNewTab={true}
+              userProfile={modifiedByUserProfile.userProfile}
+              preSignedURL={modifiedByUserProfile.preSignedURL}
+            />
+          )}
+        </div>
+      </td>
     </tr>
   )
 }

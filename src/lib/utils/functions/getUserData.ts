@@ -51,7 +51,7 @@ function getUserProfileWithProfilePicAttached(
   })
 }
 
-type UserProfileAndImg = {
+export type UserProfileAndImg = {
   userProfile: UserProfile
   preSignedURL: string
 }

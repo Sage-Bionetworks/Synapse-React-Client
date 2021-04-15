@@ -1,8 +1,8 @@
 import {
-  QueryOptions,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
+  UseQueryOptions,
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
@@ -14,7 +14,7 @@ import {
 export function useGetEntityChildren(
   sessionToken: string,
   request: EntityChildrenRequest,
-  options?: QueryOptions<
+  options?: UseQueryOptions<
     EntityChildrenResponse,
     SynapseClientError,
     EntityChildrenResponse

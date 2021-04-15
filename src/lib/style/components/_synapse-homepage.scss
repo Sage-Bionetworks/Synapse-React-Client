@@ -298,6 +298,7 @@
         grid-template-columns: 70px auto;
         .logo {
           grid-column: 1 / span 1;
+          justify-self: center;
         }
         .body {
           grid-column: 2 / span 1;

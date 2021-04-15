@@ -9,7 +9,7 @@ module.exports = {
     pagePerSection: true,
     skipComponentsWithoutExample: true,
     styleguideComponents: {
-        Wrapper: path.resolve(__dirname, 'src/lib/containers/RenderIfInView'),
+        Wrapper: path.resolve(__dirname, 'src/lib/containers/StyleGuidistComponentWrapper'),
     },
     sections: [
         {

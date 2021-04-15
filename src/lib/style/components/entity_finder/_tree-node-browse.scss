@@ -1,0 +1,15 @@
+@use '../../abstracts/variables' as SRC;
+@use './entity-finder' as EntityFinder;
+@use 'sass:color';
+
+.TreeView.BrowseTree {
+  .Node.BrowseNode {
+    .NodeContent {
+      font-size: small;
+      padding: 5px 10px 5px 20px;
+      .ExpandButton {
+        font-size: 15px;
+      }
+    }
+  }
+}
