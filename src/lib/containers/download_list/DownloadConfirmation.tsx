@@ -10,8 +10,9 @@ import {
 import DownloadDetails from './DownloadDetails'
 import DownloadListTable from './DownloadListTable'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { TopLevelControlsState, QueryWrapperState } from '../QueryWrapper'
+import { TopLevelControlsState, QueryWrapperState, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
+import { Alert } from 'react-bootstrap'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -260,13 +261,19 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         return <></>
     }
   }
-
+  const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
     <>
-      <div
-        className={`alert download-confirmation ${
-          StatusConstruct[state.status].className
-        } ${showDownloadConfirmation ? '' : 'hidden'}`}
+      <Alert
+        dismissible={false}
+        show={true}
+        variant={'info'}
+        transition={false}
+        className={`download-confirmation ${
+            StatusConstruct[state.status].className
+          } ${showDownloadConfirmation ? '' : 'hidden'}
+          ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}
+        `}
       >
         <div>{getContent(state, token)}</div>
         <div className="download-confirmation-action">
@@ -286,7 +293,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             </button>
           )}
         </div>
-      </div>
+      </Alert>
       {showDownloadList && (
         <DownloadListTable
           token={token}
