@@ -41,24 +41,27 @@
       .TopLevelControls {
         grid-row: 1 / span 1;
       }
-      .SearchV2 {
+      .download-confirmation {
         grid-row: 2 / span 1;
+      }
+      .SearchV2 {
+        grid-row: 3 / span 1;
         margin-bottom: 10px;
       }
       .FacetNav {
-        grid-row: 3 / span 1;
-      }
-      .TotalQueryResults {
         grid-row: 4 / span 1;
       }
-      .FilterAndView {
+      .TotalQueryResults {
         grid-row: 5 / span 1;
+      }
+      .FilterAndView {
+        grid-row: 6 / span 1;
       }
       
       // column (depends on if we are showing facet filters)
       .isShowingFacetFilters {
         &.QueryFilter {
-          grid-column: 1 / span 3;          
+          grid-column: 1 / span 3;
         }
         &.QueryFilterToggleButton {
           grid-column: 4 / span 1;
@@ -66,7 +69,7 @@
             margin-left: 2px;
           }
         }
-        &.FacetNav, &.TotalQueryResults, &.FilterAndView, &.TopLevelControls, &.SearchV2 {
+        &.download-confirmation, &.FacetNav, &.TotalQueryResults, &.FilterAndView, &.TopLevelControls, &.SearchV2 {
           grid-column: 5 / span 1;
         }
       }
@@ -78,11 +81,11 @@
           }          
         }
         &.QueryFilterToggleButton {
-          grid-column: 2 / span 1;        
+          grid-column: 2 / span 1;
         }
       }
     }
-    .TotalQueryResults, .FacetNav, .FilterAndView, .TopLevelControls, .SearchV2 {
+    .download-confirmation, .TotalQueryResults, .FacetNav, .FilterAndView, .TopLevelControls, .SearchV2 {
       margin-left: 30px;
     }  
   }
@@ -90,7 +93,7 @@
   @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
     .SRC-wrapper {
         .QueryFilterToggleButton {
-          display:none;        
+          display:none;
         }
     }
   }
@@ -112,7 +115,7 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     margin-bottom: 25px;
     &__showhidefacetfilters{
-      display: none;    
+      display: none;
     }
     .QueryWrapperPlotNav__querycount {
       display: inline-flex;
