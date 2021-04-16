@@ -7,9 +7,10 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
+import { SynapseClient, SynapseConstants } from '..'
 import IconCopy from '../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
-import { UserProfile } from '../utils/synapseTypes/'
+import { UserBundle, UserProfile } from '../utils/synapseTypes/'
 import { Avatar } from './Avatar'
 import { ToastMessage } from './ToastMessage'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
@@ -22,6 +23,7 @@ library.add(faCopy)
 type UserCardState = {
   showModal: boolean
   isContextMenuOpen: boolean
+  ORCIDHref?: string
 }
 
 export type UserCardMediumProps = {
@@ -48,6 +50,7 @@ export default class UserCardMedium extends React.Component<
     this.state = {
       showModal: false,
       isContextMenuOpen: false,
+      ORCIDHref: undefined
     }
   }
 
@@ -82,9 +85,29 @@ export default class UserCardMedium extends React.Component<
     this.setState({ isContextMenuOpen: !this.state.isContextMenuOpen })
   }
 
+  public async updateOrcID() {
+    // PORTALS-1893: Add ORCID to medium/large card
+    const { ORCIDHref } = this.state
+    if (!ORCIDHref) {
+      const {
+        userProfile
+      } = this.props
+      const {
+        ownerId
+      } = userProfile
+      const bundle: UserBundle = await SynapseClient.getUserBundle(
+        ownerId,
+        SynapseConstants.USER_BUNDLE_MASK_ORCID,
+        undefined,
+      )
+      this.setState({ ORCIDHref: bundle.ORCID })
+    }
+  }
+
   public componentDidMount() {
     // SWC-4778: https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
     window.addEventListener('mouseup', this.pageClick, false)
+    this.updateOrcID()
   }
 
   public componentWillUnmount() {
@@ -232,6 +255,18 @@ export default class UserCardMedium extends React.Component<
               </span>
               {IconCopy}
             </p>
+          )}
+          {this.state.ORCIDHref && (
+              <a
+              href={this.state.ORCIDHref}
+              target='_blank'
+              rel='noopener noreferrer'
+              tabIndex={0}
+            >
+              <p className={isLarge
+                ? 'SRC-whiteText'
+                : 'SRC-primary-text-color SRC-primary-color-hover'}>View ORCID</p>
+            </a>
           )}
         </div>
         {/* conditionally render menu actions, if its not defined then we don't show the button */}
