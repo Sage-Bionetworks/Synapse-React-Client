@@ -252,6 +252,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             subjectType: RestrictableObjectType.ENTITY
           }
 
+          // Update save etag
+          setFormSubmitRequestObject(prevState => {
+            return Object.assign({}, prevState, {
+              etag: resp.etag
+            })
+          })
+
           // save and submit
           if (submit) {
             const submission_resp:SubmissionStatus = await submitDataAccessRequest(requestObject, token)
@@ -275,6 +282,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               message: 'The information you submitted has been saved. You may close this dialog.'
             })
           }
+          setShowCloseBtn(true)
         }
       } catch (e) {
         console.log("RequestDataAccessStep2: Error updating form", e)
@@ -283,7 +291,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           message: `Sorry, there is an error in submitting your request. ${e.reason || ''}`
         })
       }
-      setShowCloseBtn(true)
     }
   }
 
