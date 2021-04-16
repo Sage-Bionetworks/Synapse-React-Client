@@ -42,7 +42,7 @@ export default function ManagedACTAccessRequirementComponent({
       user={user}
       wikiPage={wikiPage}
       onHide={onHide}
-      showRequestAccessButton={true}
+      isRequestAccessButton={true}
     />
   )
 }

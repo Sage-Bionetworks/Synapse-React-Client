@@ -29,7 +29,7 @@ export type AcceptedRequirementsProps = {
     | ManagedACTAccessRequirement
   accessRequirementStatus: AccessRequirementStatus | undefined
   showButton?: boolean
-  showRequestAccessButton?: boolean
+  isRequestAccessButton?: boolean
   onHide?: Function
 }
 
@@ -40,7 +40,7 @@ export default function AcceptedRequirements({
   accessRequirement,
   accessRequirementStatus,
   showButton = true,
-  showRequestAccessButton = false,
+  isRequestAccessButton = false,
   entityId,
   onHide,
 }: AcceptedRequirementsProps) {
@@ -185,16 +185,23 @@ export default function AcceptedRequirements({
           )}
         </div>
       </div>
-      {showRequestAccessButton && ( // Show request access button for ManagedACTAccessRequirement component without logged in
+      { // Show request access button for ManagedACTAccessRequirement component without logged in
+        isRequestAccessButton && showButton && (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
               {acceptButtonText}
             </button>
           </div>
+          <div className="not-accept-button-container">
+            <button className="not-accpet-button" onClick={() => onHide?.()}>
+              I do not accept
+            </button>
+          </div>
         </div>
       )}
-      {token && showButton && (
+      { // Other buttons on the same page
+        !isRequestAccessButton && token && showButton && (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
