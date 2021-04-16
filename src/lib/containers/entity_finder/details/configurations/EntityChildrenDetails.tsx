@@ -13,7 +13,7 @@ type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
 export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetailsProps> = ({
   sessionToken,
   parentContainerId,
-  includeTypes,
+  visibleTypes: includeTypes,
   showVersionSelection,
   selectColumnType,
   selected,
@@ -68,7 +68,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
       showVersionSelection={showVersionSelection}
       selectColumnType={selectColumnType}
       selected={selected}
-      includeTypes={includeTypes}
+      visibleTypes={includeTypes}
       selectableTypes={selectableTypes}
       toggleSelection={toggleSelection}
     ></DetailsView>

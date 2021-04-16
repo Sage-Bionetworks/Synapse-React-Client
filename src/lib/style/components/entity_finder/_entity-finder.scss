@@ -1,0 +1,110 @@
+@use '../../abstracts/variables' as SRC;
+@use 'sass:color';
+
+$-header-height: 40px;
+$-border: 1px solid SRC.$border-color-gray;
+$-finder-height: 500px;
+$-breadcrumb-height: 40px;
+$-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
+$-tree-only-width: 600px;
+
+@mixin -hover($color: '') {
+  // we use an inset box-shadow because border will affect the width of the component
+  @if $color != '' {
+    box-shadow: 0px 0px 0px 2px $color inset;
+  } @else {
+    box-shadow: 0px 0px 0px 2px SRC.$primary-action-color-500 inset;
+  }
+}
+
+// https://github.com/leefsmp/Re-Flex/issues/27
+.EntityFinderReflexContainer {
+  width: 100%;
+  $-border-size: 2px;
+  height: $-finder-height + ($-border-size * 2);
+  border: $-border-size solid SRC.$border-color-gray;
+}
+
+.EntityFinder {
+  width: 100%;
+  max-width: max-content;
+  margin: auto;
+  &__Search {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 10px 0px 10px 0px;
+    height: 38px;
+    .SearchIcon {
+      position: relative;
+      left: 22px;
+      top: 1px;
+    }
+    .CloseSearchIcon {
+      cursor: pointer;
+      position: relative;
+      left: -20px;
+      margin-right: -8px;
+    }
+    &__SearchButton {
+      height: 100%;
+      svg {
+        margin-right: 10px;
+        margin-bottom: 2px;
+      }
+    }
+
+    input.EntityFinder__Search__Input {
+      background-color: transparent;
+      height: 100%;
+      width: 350px;
+      margin: 10px 0px;
+      padding: 5px 28px;
+      box-shadow: none;
+    }
+  }
+
+  &__Selected {
+    min-width: max-content;
+    max-width: $-tree-only-width;
+    white-space: nowrap;
+    border: 2px solid SRC.$primary-action-color-500;
+    padding: 15px;
+    margin: 15px 0px 0px auto;
+    &__Row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+
+      .EntityIcon {
+        margin: 10px;
+        width: 15px;
+      }
+
+      &__EntityName {
+        font-weight: bold;
+        text-decoration: underline;
+        margin-right: 10px;
+      }
+
+      &__DeselectButton {
+        margin-left: auto;
+        color: SRC.$primary-action-color-500;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .reflex-container.vertical > .reflex-splitter {
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    background: transparent;
+    box-sizing: border-box;
+    width: 1px;
+  }
+  .reflex-container.vertical > .reflex-splitter:hover,
+  .reflex-container.vertical > .reflex-splitter:active {
+    border-color: SRC.$primary-action-color;
+    background-color: SRC.$primary-action-color;
+  }
+}

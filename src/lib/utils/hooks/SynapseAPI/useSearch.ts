@@ -1,9 +1,9 @@
 import {
   QueryFunctionContext,
-  QueryOptions,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
+  UseQueryOptions,
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
@@ -12,7 +12,7 @@ import { SearchQuery, SearchResults } from '../../synapseTypes/Search'
 export function useSearch(
   query: SearchQuery,
   sessionToken?: string,
-  options?: QueryOptions<SearchResults, SynapseClientError, SearchResults>,
+  options?: UseQueryOptions<SearchResults, SynapseClientError, SearchResults>,
 ) {
   return useQuery<SearchResults, SynapseClientError>(
     ['search', sessionToken, query],

@@ -17,7 +17,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
   showVersionSelection,
   selectColumnType,
   selected,
-  includeTypes,
+  visibleTypes: includeTypes,
   selectableTypes,
   toggleSelection,
 }) => {
@@ -56,7 +56,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
       showVersionSelection={showVersionSelection}
       selectColumnType={selectColumnType}
       selected={selected}
-      includeTypes={includeTypes}
+      visibleTypes={includeTypes}
       selectableTypes={selectableTypes}
       toggleSelection={toggleSelection}
     ></DetailsView>

@@ -53,7 +53,7 @@ const defaultProps: DetailsViewProps = {
   sessionToken: 'abcd',
   showVersionSelection: true,
   selectColumnType: 'none',
-  includeTypes: Object.values(EntityType),
+  visibleTypes: Object.values(EntityType),
   selected: [],
   selectableTypes: Object.values(EntityType),
   toggleSelection: mockToggleSelection,
@@ -94,7 +94,7 @@ describe('DetailsView tests', () => {
       it('Creates a row with the default appearance', async () => {
         renderComponent({
           selected: [],
-          includeTypes: Object.values(EntityType),
+          visibleTypes: Object.values(EntityType),
           selectableTypes: Object.values(EntityType),
         })
 
@@ -113,7 +113,7 @@ describe('DetailsView tests', () => {
       it('Creates a row with the selected appearance', async () => {
         renderComponent({
           selected: [{ targetId: entityHeaders[0].id }], // !
-          includeTypes: Object.values(EntityType),
+          visibleTypes: Object.values(EntityType),
           selectableTypes: Object.values(EntityType),
         })
 
@@ -132,7 +132,7 @@ describe('DetailsView tests', () => {
       it('Creates a row with the disabled appearance', async () => {
         renderComponent({
           selected: [],
-          includeTypes: Object.values(EntityType),
+          visibleTypes: Object.values(EntityType),
           selectableTypes: [EntityType.PROJECT], // !
         })
 
@@ -153,7 +153,7 @@ describe('DetailsView tests', () => {
       it('Creates a row with the hidden appearance', async () => {
         renderComponent({
           selected: [],
-          includeTypes: [EntityType.FILE], // !
+          visibleTypes: [EntityType.FILE], // !
           selectableTypes: Object.values(EntityType),
         })
 
@@ -194,7 +194,7 @@ describe('DetailsView tests', () => {
         showVersionSelection: true,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(8)
+      expect(screen.getAllByRole('columnheader').length).toBe(9)
     })
     it('hides the selected column', () => {
       renderComponent({
@@ -202,7 +202,7 @@ describe('DetailsView tests', () => {
         showVersionSelection: true,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(7)
+      expect(screen.getAllByRole('columnheader').length).toBe(8)
     })
     it('hides the version column', () => {
       renderComponent({
@@ -210,7 +210,7 @@ describe('DetailsView tests', () => {
         showVersionSelection: false,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(7)
+      expect(screen.getAllByRole('columnheader').length).toBe(8)
     })
   })
 

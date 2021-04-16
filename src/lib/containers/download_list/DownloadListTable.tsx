@@ -514,7 +514,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         userProfile={userProfile}
                         preSignedURL={userProfile.clientPreSignedURL}
                         token={token}
-                        extraSmall={true}
                       />
                     )}
                     {canDownload && !userProfile && (

@@ -8,6 +8,7 @@ import {
   DetailsViewRowProps,
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsViewRow'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
+import { useGetUserProfileWithProfilePic } from '../../../../../lib/utils/hooks/SynapseAPI/useUserBundle'
 import {
   EntityBundle,
   PaginatedResults,
@@ -18,6 +19,12 @@ import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
 const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
+jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useUserBundle', () => {
+  return {
+    useGetUserProfileWithProfilePic: jest.fn().mockReturnValue({}),
+  }
+})
+jest.mock('../../../../../lib/containers/UserCard')
 const mockToggleSelection = jest.fn()
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 

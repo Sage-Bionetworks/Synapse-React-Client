@@ -1,4 +1,4 @@
-import { QueryOptions, useQuery } from 'react-query'
+import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { QueryBundleRequest, QueryResultBundle } from '../../synapseTypes'
@@ -6,7 +6,7 @@ import { QueryBundleRequest, QueryResultBundle } from '../../synapseTypes'
 export default function useGetQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
   token?: string,
-  options?: QueryOptions<
+  options?: UseQueryOptions<
     QueryResultBundle,
     SynapseClientError,
     QueryResultBundle

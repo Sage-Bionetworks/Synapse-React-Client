@@ -166,12 +166,7 @@ const TopLevelControls = (
                 <DownloadOptions
                   darkTheme={true}
                   onDownloadFiles={() =>
-                    updateParentState!({
-                      topLevelControlsState: {
-                        ...topLevelControlsState!,
-                        showDownloadConfirmation: true,
-                      },
-                    })
+                    setControlState(key)
                   }
                   token={token}
                   queryResultBundle={data}

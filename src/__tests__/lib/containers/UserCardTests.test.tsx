@@ -15,7 +15,20 @@ import UserCardContextMenu, {
   UserCardContextMenuProps,
   MenuAction,
 } from '../../../lib/containers/UserCardContextMenu'
-import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
+import {
+  MEDIUM_USER_CARD,
+  SEPERATOR,
+} from '../../../lib/utils/SynapseConstants'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
+import { act } from 'react-dom/test-utils'
+import { Avatar, AvatarProps } from '../../../lib/containers/Avatar'
+
+jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
+  return {
+    __esModule: true,
+    default: jest.fn().mockResolvedValue(''),
+  }
+})
 
 const { firstName } = mockUserProfileData
 
@@ -44,9 +57,15 @@ const createSmallComponent = (props: UserCardSmallProps) => {
   return { wrapper, instance }
 }
 
+const createAvatarComponent = (props: AvatarProps) => {
+  const wrapper = shallow(<Avatar {...props} />)
+  const instance = wrapper.instance()
+  return { wrapper, instance }
+}
+
 // need mount because of the deep render of the children
 const createMountedComponent = (props: UserCardProps) => {
-  const wrapper = mount<UserCard>(<UserCard {...props} />)
+  const wrapper = mount(<UserCard {...props} />)
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -55,6 +74,13 @@ describe('it renders the different sized cards without failing', () => {
   const props = {
     userProfile: mockUserProfileData,
   }
+
+  it('renders an avatar', () => {
+    const size = SynapseConstants.AVATAR
+    const { wrapper } = createMountedComponent({ ...props, size })
+    expect(wrapper).toBeDefined()
+    expect(wrapper.find(Avatar)).toHaveLength(1)
+  })
 
   it('renders a small card', () => {
     const size = SynapseConstants.SMALL_USER_CARD
@@ -77,44 +103,93 @@ describe('it renders the different sized cards without failing', () => {
     expect(wrapper.find(UserCardLarge)).toHaveLength(1)
   })
 })
+describe('it creates the correct UI for the avatar', () => {
+  const props = {
+    userProfile: mockUserProfileData,
+  }
 
+  it('creates a small avatar', () => {
+    const { wrapper } = createAvatarComponent({ ...props, avatarSize: 'SMALL' })
+    // one svg is for the clipboard icon, the other is for the user
+    expect(wrapper.find('div.SRC-userImgSmall')).toHaveLength(1)
+    expect(wrapper.find('div.SRC-userImgSmall').text()).toEqual(firstName[0])
+  })
+
+  it('creates a large avatar', () => {
+    const { wrapper } = createAvatarComponent({ ...props, avatarSize: 'LARGE' })
+    // one svg is for the clipboard icon, the other is for the user
+    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
+    expect(wrapper.find('div.SRC-userImg').text()).toEqual(firstName[0])
+  })
+
+  it('displays an svg for a user without an img', () => {
+    const { wrapper } = createAvatarComponent({ ...props, imageURL: undefined })
+    // one svg is for the clipboard icon, the other is for the user
+    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
+    expect(wrapper.find('div.SRC-userImg').text()).toEqual(firstName[0])
+  })
+
+  it('displays an img for a user with an img set', () => {
+    const { wrapper } = createAvatarComponent({
+      ...props,
+      imageURL: 'my-img-url',
+    })
+    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
+  })
+})
 describe('it creates the correct UI for the small card', () => {
   const props = {
     userProfile: mockUserProfileData,
     size: SynapseConstants.SMALL_USER_CARD,
+    showCardOnHover: true,
   }
 
-  it('displays a div with text for a user without an img', () => {
+  it('displays a span with text for a user without an img', () => {
     const { wrapper } = createSmallComponent({ ...props })
-    expect(wrapper.render().find('div.SRC-userImgSmall')).toHaveLength(1)
-    expect(wrapper.render().find('div.SRC-userImgSmall').text()).toEqual(
-      firstName[0],
+    expect(wrapper.find('span.UserCardSmall')).not.toBeNull()
+    expect(wrapper.find('span.UserCardSmall').text()).toEqual(
+      `@${mockUserProfileData.userName}`,
     )
   })
 
-  it('displays an img for a user with an img set', () => {
-    const { wrapper } = createSmallComponent({
-      ...props,
-      preSignedURL: 'link-to-user-img.com',
+  it('shows a medium user card when clicked', async () => {
+    const { wrapper } = createMountedComponent({ ...props })
+    expect(wrapper.find('span.UserCardSmall')).not.toBeNull()
+    act(() => {
+      wrapper
+        .find('span.UserCardSmall')
+        .props()
+        .onClick({ stopPropagation: () => {} } as any)
     })
-    expect(wrapper.render().find('div.SRC-userImgSmall')).toHaveLength(1)
+    await resolveAllPending(wrapper)
+    expect(wrapper.find(UserCard)).toHaveLength(2)
+    expect(wrapper.find(UserCard).at(1).prop('size')).toBe(MEDIUM_USER_CARD)
   })
 
-  it("doesn't hide text by default", () => {
+  it('creates an anchor link when showCardOnHover is false', () => {
+    const link = 'someweblink.domain'
     const { wrapper } = createSmallComponent({
       ...props,
-      preSignedURL: 'link-to-user-img.com',
+      showCardOnHover: false,
+      link,
     })
-    expect(wrapper.render().find('span.SRC-primary-text-color')).toHaveLength(1)
+    expect(wrapper.find('a.UserCardSmall')).toHaveLength(1)
+    expect(wrapper.find('a.UserCardSmall').text()).toEqual(
+      `@${mockUserProfileData.userName}`,
+    )
+    expect(wrapper.find('a.UserCardSmall').prop('href')).toEqual(link)
   })
 
-  it('hides text when hideText is set to true', () => {
+  it('just shows the username when showCardOnHover is false and disableLink is true', () => {
     const { wrapper } = createSmallComponent({
       ...props,
-      preSignedURL: 'link-to-user-img.com',
-      hideText: true,
+      showCardOnHover: false,
+      disableLink: true,
     })
-    expect(wrapper.render().find('span.SRC-primary-text-color')).toHaveLength(0)
+    expect(wrapper.find('span.UserCardSmall')).toHaveLength(1)
+    expect(wrapper.find('span.UserCardSmall').text()).toEqual(
+      `@${mockUserProfileData.userName}`,
+    )
   })
 })
 
@@ -124,21 +199,9 @@ describe('it creates the correct UI for the medium card', () => {
     size: SynapseConstants.MEDIUM_USER_CARD,
   }
 
-  it('displays an svg for a user without an img', () => {
+  it('shows an avatar', () => {
     const { wrapper } = createMediumComponent({ ...props })
-    // one svg is for the clipboard icon, the other is for the user
-    expect(wrapper.render().find('div.SRC-userImg')).toHaveLength(1)
-    expect(wrapper.render().find('div.SRC-userImg').text()).toEqual(
-      firstName[0],
-    )
-  })
-
-  it('displays an img for a user with an img set', () => {
-    const { wrapper } = createMediumComponent({
-      ...props,
-      preSignedURL: 'my-img-url',
-    })
-    expect(wrapper.render().find('div.SRC-userImg')).toHaveLength(1)
+    expect(wrapper.find(Avatar)).toHaveLength(1)
   })
 
   it("doesn't hide user email by default", () => {
@@ -161,7 +224,7 @@ describe('it creates the correct UI for the medium card', () => {
     const { wrapper } = createMediumComponent({ ...props, menuActions })
     const instance = wrapper.instance() as UserCardMedium
     const _event = {} as any
-    await instance.toggleContextMenu(_event)
+    instance.toggleContextMenu(_event)
     expect(wrapper.render().find('div.dropdown')).toHaveLength(1)
   })
 })

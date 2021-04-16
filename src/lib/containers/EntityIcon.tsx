@@ -12,7 +12,10 @@ import {
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
 import { faDocker } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  FontAwesomeIcon,
+  FontAwesomeIconProps,
+} from '@fortawesome/react-fontawesome'
 import { entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
 
 library.add(
@@ -55,13 +58,12 @@ const getIconTypeForEntity = (type: EntityType): IconDefinition | '' => {
 
 type EntityTypeIconProps = {
   type: EntityType
-  style?: React.CSSProperties
 }
 
-export const EntityTypeIcon: React.FC<EntityTypeIconProps> = ({
-  type,
-  style,
-}) => {
+export const EntityTypeIcon: React.FC<
+  Omit<FontAwesomeIconProps, 'icon'> & EntityTypeIconProps
+> = props => {
+  const { type } = props
   if (!type) {
     return <></>
   }
@@ -72,9 +74,9 @@ export const EntityTypeIcon: React.FC<EntityTypeIconProps> = ({
   }
   return (
     <FontAwesomeIcon
-      icon={iconType}
-      style={style}
       title={entityTypeToFriendlyName(type)}
+      {...props}
+      icon={iconType}
     />
   )
 }

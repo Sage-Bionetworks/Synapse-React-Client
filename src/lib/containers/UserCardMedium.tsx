@@ -1,19 +1,19 @@
-import * as React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCircle,
-  faEllipsisV,
   faCopy,
+  faEllipsisV,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getColor } from '../utils/functions/getUserData'
-import { UserProfile } from '../utils/synapseTypes/'
-import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
-import { UserCardLarge } from './UserCardLarge'
+import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import IconCopy from '../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
-import ReactTooltip from 'react-tooltip'
+import { UserProfile } from '../utils/synapseTypes/'
+import { Avatar } from './Avatar'
 import { ToastMessage } from './ToastMessage'
+import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
+import { UserCardLarge } from './UserCardLarge'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -27,10 +27,11 @@ type UserCardState = {
 export type UserCardMediumProps = {
   userProfile: UserProfile
   menuActions?: MenuAction[]
-  preSignedURL?: string
+  imageURL?: string
   hideEmail?: boolean
   isLarge?: boolean
   link?: string
+  openLinkInNewTab?: boolean
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
@@ -107,10 +108,11 @@ export default class UserCardMedium extends React.Component<
       userProfile,
       menuActions,
       isLarge = false,
-      preSignedURL,
+      imageURL,
       hideEmail = false,
       disableLink = false,
       link,
+      openLinkInNewTab = false,
       isValidated,
       isCertified,
     } = this.props
@@ -124,7 +126,6 @@ export default class UserCardMedium extends React.Component<
       company,
     } = userProfile
     const validatedUserProfileTooltipId = `${userName}-tooltip`
-    let img
     let name = ''
     const linkLocation = link
       ? link
@@ -138,24 +139,13 @@ export default class UserCardMedium extends React.Component<
     } else if (userName) {
       name = userName
     }
-    if (preSignedURL) {
-      img = (
-        <div
-          style={{ backgroundImage: `url(${preSignedURL})` }}
-          className="SRC-userImg"
-        />
-      )
-    } else {
-      img = (
-        <div
-          style={{ background: getColor(userName) }}
-          className="SRC-userImg SRC-centerContentInline"
-        >
-          {userProfile.firstName &&
-            (userProfile.firstName[0] || userProfile.userName[0])}
-        </div>
-      )
-    }
+    const avatar = (
+      <Avatar
+        userProfile={userProfile}
+        imageURL={imageURL}
+        avatarSize={'LARGE'}
+      />
+    )
     const mediumCard = (
       <React.Fragment>
         {!hideEmail && (
@@ -165,15 +155,18 @@ export default class UserCardMedium extends React.Component<
             autohide={true}
           ></ToastMessage>
         )}
-        {disableLink && img}
+        {disableLink && avatar}
         {!disableLink && (
+          // eslint-disable-next-line react/jsx-no-target-blank
           <a
             href={linkLocation}
+            target={openLinkInNewTab ? '_blank' : ''}
+            rel={openLinkInNewTab ? 'noreferrer' : ''}
             className={`SRC-no-underline-on-hover ${
               isLarge ? 'SRC-isLargeCard' : ''
             }`}
           >
-            {img}
+            {avatar}
           </a>
         )}
         <div className="SRC-cardContent">
@@ -189,8 +182,11 @@ export default class UserCardMedium extends React.Component<
               </span>
             ) : (
               // consolidate click events
+              // eslint-disable-next-line react/jsx-no-target-blank
               <a
                 href={linkLocation}
+                target={openLinkInNewTab ? '_blank' : ''}
+                rel={openLinkInNewTab ? 'noreferrer' : ''}
                 tabIndex={0}
                 className={'SRC-hand-cursor SRC-primary-text-color'}
               >

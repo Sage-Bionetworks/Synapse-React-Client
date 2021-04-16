@@ -12,7 +12,7 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
   showVersionSelection,
   selectColumnType,
   selected,
-  includeTypes,
+  visibleTypes: includeTypes,
   selectableTypes,
   toggleSelection,
 }) => {
@@ -37,7 +37,7 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
       showVersionSelection={showVersionSelection}
       selectColumnType={selectColumnType}
       selected={selected}
-      includeTypes={includeTypes}
+      visibleTypes={includeTypes}
       selectableTypes={selectableTypes}
       toggleSelection={toggleSelection}
     ></DetailsView>
