@@ -29,6 +29,7 @@ export type AcceptedRequirementsProps = {
     | ManagedACTAccessRequirement
   accessRequirementStatus: AccessRequirementStatus | undefined
   showButton?: boolean
+  showRequestAccessButton?: boolean
   onHide?: Function
 }
 
@@ -39,6 +40,7 @@ export default function AcceptedRequirements({
   accessRequirement,
   accessRequirementStatus,
   showButton = true,
+  showRequestAccessButton = false,
   entityId,
   onHide,
 }: AcceptedRequirementsProps) {
@@ -183,6 +185,15 @@ export default function AcceptedRequirements({
           )}
         </div>
       </div>
+      {showRequestAccessButton && ( // Show request access button for ManagedACTAccessRequirement component without logged in
+        <div className={`button-container ${isApproved ? `hide` : `default`}`}>
+          <div className="accept-button-container">
+            <button className="accept-button" onClick={onAcceptClicked}>
+              {acceptButtonText}
+            </button>
+          </div>
+        </div>
+      )}
       {token && showButton && (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
