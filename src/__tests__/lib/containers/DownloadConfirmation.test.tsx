@@ -11,6 +11,7 @@ import {
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
 import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
+import { Alert } from 'react-bootstrap'
 
 let getQueryTableResultsFn: Function
 let addFilesToDownloadRequestFn: Function
@@ -104,7 +105,7 @@ describe('it performs the expected functionality', () => {
     const { wrapper } = createMountedComponent(props)
     expect(wrapper).toBeDefined()
     const mainDiv = wrapper.find('.download-confirmation')
-    expect(mainDiv.hasClass('alert-info')).toBe(true)
+    expect(mainDiv.find('Alert')).toHaveLength(1)
     expect(wrapper.find('button')).toHaveLength(1)
     expect(wrapper.find('button').text()).toBe('Cancel')
     expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
