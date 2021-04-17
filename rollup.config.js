@@ -13,7 +13,7 @@ import sass from 'sass'
 import analyze from 'rollup-plugin-analyzer'
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx']
-const maxBytes = 4e6 // if > 4MB total, then error
+const maxBytes = 5e6 // if > 5MB total, then error
 const onAnalysis = ({ bundleSize }) => {
   if (bundleSize < maxBytes) return
   console.log(`Bundle size exceeds ${maxBytes} bytes: ${bundleSize} bytes`)
