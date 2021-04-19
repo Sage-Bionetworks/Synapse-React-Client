@@ -46,8 +46,17 @@ $-tree-only-width: 600px;
       left: -20px;
       margin-right: -8px;
     }
-    &__SearchButton {
+    button.btn {
       height: 100%;
+    }
+    button.btn:hover {
+      svg {
+        path {
+          fill: white;
+        }
+      }
+    }
+    &__SearchButton {
       svg {
         margin-right: 10px;
         margin-bottom: 2px;
