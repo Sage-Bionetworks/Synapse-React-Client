@@ -14,6 +14,7 @@ $card-rotate-margin: 21px;
       height: auto;
       margin-left: $card-rotate-margin;
       margin-right: $card-rotate-margin;
+      overflow: hidden;
     }
 
     & > .SRC-grid-item:first-child {
