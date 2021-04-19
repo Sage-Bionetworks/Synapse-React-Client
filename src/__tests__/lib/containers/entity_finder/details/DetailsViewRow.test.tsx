@@ -119,10 +119,7 @@ describe('DetailsViewRow tests', () => {
       renderComponent({ selectButtonType: 'checkbox' })
       expect(screen.getByRole('checkbox')).toBeDefined()
     })
-    it('renders radio', async () => {
-      renderComponent({ selectButtonType: 'radio' })
-      expect(screen.getByRole('radio')).toBeDefined()
-    })
+
     it('no checkbox button is created because of disabled state', async () => {
       renderComponent({
         selectButtonType: 'checkbox',
@@ -130,18 +127,6 @@ describe('DetailsViewRow tests', () => {
       })
 
       expect(() => screen.getByRole('checkbox')).toThrowError()
-
-      // There should still be a column for the button, just no button
-      expect(screen.getByLabelText('is-selected')).toBeDefined()
-    })
-
-    it('no radio button is created because of disabled state', async () => {
-      renderComponent({
-        selectButtonType: 'radio',
-        appearance: 'disabled',
-      })
-
-      expect(() => screen.getByRole('radio')).toThrowError()
 
       // There should still be a column for the button, just no button
       expect(screen.getByLabelText('is-selected')).toBeDefined()

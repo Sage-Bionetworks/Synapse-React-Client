@@ -23,8 +23,8 @@ const DesktopProps: BrainhubCarouselProps = {
   slidesPerScroll: 1,
   slidesPerPage: 3,
   centered: true,
-  arrowLeft: <Arrow className="SRC-Carousel__LeftArrow" />,
-  arrowRight: <Arrow className="SRC-Carousel__RightArrow" />,
+  arrowLeft: <Arrow className="SRC-Carousel__Arrow" arrowDirection="left" />,
+  arrowRight: <Arrow className="SRC-Carousel__Arrow" arrowDirection="right" />,
   addArrowClickHandler: true,
   breakpoints: {
     1100: {

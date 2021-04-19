@@ -116,8 +116,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   return (
     <div className="EntityFinderDetailsView">
       <table>
-        <thead>
-          <tr className="EntityFinderDetailsView__HeaderRow">
+        <thead className={entities.length === 0 ? 'Inactive' : ''}>
+          <tr>
             {showSelectColumn && <th className="IsSelectedColumn" />}
             <th className="EntityIconColumn" />
             <th className="NameColumn">
