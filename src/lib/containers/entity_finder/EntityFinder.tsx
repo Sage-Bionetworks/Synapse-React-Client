@@ -317,8 +317,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       >
                         <ReflexElement
                           className="TreeViewReflexElement"
-                          minSize={200}
-                          size={275}
+                          flex={0.18}
                         >
                           <TreeView
                             sessionToken={sessionToken}
@@ -335,10 +334,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                           />
                         </ReflexElement>
                         <ReflexSplitter></ReflexSplitter>
-                        <ReflexElement
-                          className="DetailsViewReflexElement"
-                          minSize={400}
-                        >
+                        <ReflexElement className="DetailsViewReflexElement">
                           <EntityDetailsList
                             sessionToken={sessionToken}
                             configuration={configFromTreeView}
