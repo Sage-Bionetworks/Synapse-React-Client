@@ -1,7 +1,5 @@
 @use '../abstracts/variables' as SRC;
 
-$card-rotate-margin: 21px;
-
 .UserCardListRotate {
 
   .SRC-card-grid-row {
@@ -12,17 +10,8 @@ $card-rotate-margin: 21px;
     & > .SRC-grid-item {
       width: auto;
       height: auto;
-      margin-left: $card-rotate-margin;
-      margin-right: $card-rotate-margin;
       overflow: hidden;
-    }
-
-    & > .SRC-grid-item:first-child {
-      margin-right: $card-rotate-margin;
-    }
-
-    & > .SRC-grid-item:last-child {
-      margin-left: $card-rotate-margin;
+      padding: 5px;
     }
 
     .SRC-cardMetaData-scroll {
