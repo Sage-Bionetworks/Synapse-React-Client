@@ -5,6 +5,11 @@
 .TreeView.SelectTree {
   background: unset;
   width: $-tree-only-width;
+
+  .Header {
+    background-color: SRC.$background-color-gray;
+  }
+
   .Tree {
     .Node.SelectNode {
       border-top: 1px solid white;
