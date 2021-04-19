@@ -33,4 +33,9 @@
       }
     }
   }
+  .Node[aria-disabled='false'] {
+    > .NodeContent:hover {
+      @include -hover();
+    }
+  }
 }
