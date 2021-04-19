@@ -80,10 +80,15 @@
         display: flex;
         align-items: center;
         .account-level-icon svg {
-          width: 25px;
+          width: 30px;
+          height: auto;
         }
         .clear-x {
-          padding: 0
+          padding: 0;
+          .styled-svg-wrapper {
+            display: inline-block;
+            line-height: 1rem;
+          }
         }
       }
     }

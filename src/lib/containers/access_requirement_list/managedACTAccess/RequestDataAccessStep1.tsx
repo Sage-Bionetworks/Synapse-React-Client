@@ -48,7 +48,9 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
   }
 
   const goBack = () => {
-    requestDataStepCallback?.()
+    requestDataStepCallback?.({
+      step:undefined
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
@@ -66,7 +68,11 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
 
     try {
       updateResearchProject(requestObj, token).then((researchProject) => {
-        requestDataStepCallback?.(managedACTAccessRequirement, 2, researchProject.id)
+        requestDataStepCallback?.({
+          managedACTAccessRequirement,
+          step: 2,
+          researchProjectId: researchProject.id
+        })
       }).catch(e => {
         console.log("RequestDataAccessStep1: Error updating research project data: ", e)
         setAlert(errAlert)

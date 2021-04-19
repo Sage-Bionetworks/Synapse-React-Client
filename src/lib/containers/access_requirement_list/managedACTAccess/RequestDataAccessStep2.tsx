@@ -72,7 +72,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
-  const [showCancelModal, setShowCancelModal] = useState<boolean>(false)
   const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false)
   const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
@@ -240,11 +239,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
   }
 
-  const handleSubmit = async (submit:boolean = true) => {
+  const handleSubmit = async () => {
     if (formSubmitRequestObject) {
       try {
         const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
-        if (resp.id) { // save success
+        if (resp.etag) { // save success
           const requestObject:CreateSubmissionRequest = {
             requestId: resp.id,
             requestEtag: resp.etag,
@@ -259,27 +258,18 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             })
           })
 
-          // save and submit
-          if (submit) {
-            const submission_resp:SubmissionStatus = await submitDataAccessRequest(requestObject, token)
-            const alertMsg = getSubmissionMsg(submission_resp)
-            if (submission_resp.state === SUBMISSION_STATE.REJECTED) {
-              setAlert({
-                key: 'danger',
-                message: alertMsg
-              })
-            } else {
-              setAlert({
-                key: 'success',
-                message: alertMsg
-              })
-            }
-
-          // save only
+          // and submit
+          const submission_resp:SubmissionStatus = await submitDataAccessRequest(requestObject, token)
+          const alertMsg = getSubmissionMsg(submission_resp)
+          if (submission_resp.state === SUBMISSION_STATE.REJECTED) {
+            setAlert({
+              key: 'danger',
+              message: alertMsg
+            })
           } else {
             setAlert({
               key: 'success',
-              message: 'The information you submitted has been saved. You may close this dialog.'
+              message: alertMsg
             })
           }
           setShowCloseBtn(true)
@@ -428,6 +418,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 <UserCardSmall
                   userProfile={profile}
                   showAccountLevelIcon={true}
+                  disableLink={true}
                 />
                 { // only display delete button if the user profile is other users.
                   user.ownerId !== profile.ownerId && <Button
@@ -561,34 +552,18 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       </ReactBootstrap.Modal.Body>
       <ReactBootstrap.Modal.Footer>
         { !showCloseBtn && <>
-          <Button variant="link" onClick={() => setShowCancelModal(true)}>Cancel</Button>
-          <Button variant="primary" onClick={() => handleSubmit(true)}>Submit</Button>
+          <Button variant="link" onClick={() => requestDataStepCallback?.({
+            step: 3,
+            formSubmitRequestObject: formSubmitRequestObject
+          })}>Cancel</Button>
+          <Button variant="primary" onClick={() => handleSubmit()}>Submit</Button>
         </>}
         { showCloseBtn &&
-        <Button variant="primary" onClick={() => requestDataStepCallback?.()}>Close</Button>}
+        <Button variant="primary" onClick={() => requestDataStepCallback?.({
+          step: undefined
+        })}>Close</Button>}
       </ReactBootstrap.Modal.Footer>
     </Form>
-
-    {/* Cancel Dialog */}
-    <div>
-      <ReactBootstrap.Modal
-        show={showCancelModal}
-        className={'bootstrap-4-backport AccessRequirementList modal-auto-height cancel-modal'}
-      >
-        <ReactBootstrap.Modal.Header>
-          <ReactBootstrap.Modal.Title>Save?</ReactBootstrap.Modal.Title>
-        </ReactBootstrap.Modal.Header>
-
-        <ReactBootstrap.Modal.Body>
-          <p>Would you want to save your recent changes?</p>
-        </ReactBootstrap.Modal.Body>
-
-        <ReactBootstrap.Modal.Footer>
-          <Button variant="link" onClick={() => requestDataStepCallback?.()}>Cancel</Button>
-          <Button variant="primary" onClick={() => handleSubmit(false)}>Save changes</Button>
-        </ReactBootstrap.Modal.Footer>
-      </ReactBootstrap.Modal>
-    </div>
   </>)
 }
 

@@ -16,6 +16,7 @@ import {
   TermsOfUseAccessRequirement,
   SelfSignAccessRequirement,
   AccessRequirementStatus,
+  RequestInterface,
 } from '../../utils/synapseTypes'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
@@ -28,6 +29,7 @@ import { sortBy } from 'lodash-es'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
+import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 
 library.add(faFile)
 
@@ -42,6 +44,13 @@ export type AccessRequirementListProps = {
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
+}
+
+export type requestDataStepCallbackProps = {
+  managedACTAccessRequirement: ManagedACTAccessRequirement,
+  step: number,
+  researchProjectId: string,
+  formSubmitRequestObject: RequestInterface
 }
 
 export enum SUPPORTED_ACCESS_REQUIREMENTS {
@@ -85,6 +94,7 @@ export default function AccessRequirementList({
   const [accessRequirementId, setAccessRequirementId] = useState<string>("")
   const [managedACTAccessRequirement, setManagedACTAccessRequirement] = useState<ManagedACTAccessRequirement>()
   const [researchProjectId, setresearchProjectId] = useState<string>("")
+  const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
@@ -226,15 +236,21 @@ export default function AccessRequirementList({
     }
   }
 
-  const requestDataStepCallback = (managedACTAccessRequirement:ManagedACTAccessRequirement, step:number, researchProjectId:string) => {
-    setRequestDataStep(step)
+  const requestDataStepCallback = (props:requestDataStepCallbackProps) => {
+    const {managedACTAccessRequirement, step, researchProjectId, formSubmitRequestObject} = props
     if (managedACTAccessRequirement) {
       // to identify which managedACTAccessRequirement we are looking at in step 1 & 2 forms
       setAccessRequirementId(String(managedACTAccessRequirement.id))
       // required for step 2 form
       setManagedACTAccessRequirement(managedACTAccessRequirement)
+    }
+    if (researchProjectId) {
       setresearchProjectId(researchProjectId)
     }
+    if (formSubmitRequestObject) {
+      setFormSubmitRequestObject(formSubmitRequestObject)
+    }
+    setRequestDataStep(step)
   }
 
   const content = (
@@ -333,6 +349,13 @@ export default function AccessRequirementList({
           managedACTAccessRequirement={managedACTAccessRequirement!}
           accessRequirementId={accessRequirementId}
           entityId={entityId}  // for form submission after save
+          requestDataStepCallback={requestDataStepCallback}
+        />
+        break
+      case 3:
+        renderContent = <CancelRequestDataAccess
+          token={token!}
+          formSubmitRequestObject={formSubmitRequestObject}
           requestDataStepCallback={() => onHide?.()}  // for closing dialogs
         />
         break

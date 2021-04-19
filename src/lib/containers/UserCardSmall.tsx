@@ -132,15 +132,15 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         className="SRC-userCard UserCardSmall SRC-underline-on-hover"
         style={{ whiteSpace: 'nowrap' }}
       >{`@${userProfile.userName}`}</span>
+      {showAccountLevelIcon && <span className={"account-level-icon"}>{icon}</span>}
     </>
   ) : disableLink ? (
     <span
       className="SRC-userCard UserCardSmall SRC-boldText"
       style={{ cursor: 'unset' }}
     >{`@${userProfile.userName}`}</span>
-  ) : (
-    // eslint-disable-next-line react/jsx-no-target-blank
-    <><a
+  ) : (// eslint-disable-next-line react/jsx-no-target-blank
+    <a
         className="SRC-userCard UserCardSmall"
         target={openLinkInNewTab ? '_blank' : ''}
         rel={openLinkInNewTab ? 'noreferrer' : ''}
@@ -148,6 +148,5 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
           link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
         }
       >{`@${userProfile.userName}`}</a>
-      {showAccountLevelIcon && <span className={"account-level-icon"}>{icon}</span>}
-  </>)
+  )
 }
