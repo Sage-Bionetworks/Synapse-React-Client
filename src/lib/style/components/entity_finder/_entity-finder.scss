@@ -104,15 +104,17 @@ $-tree-only-width: 600px;
   }
 
   .reflex-container.vertical > .reflex-splitter {
-    border-left: 1px solid transparent;
-    border-right: 1px solid transparent;
+    border-left: 3px solid transparent;
+    border-right: none;
     background: transparent;
     box-sizing: border-box;
-    width: 1px;
+    width: 12px;
   }
   .reflex-container.vertical > .reflex-splitter:hover,
   .reflex-container.vertical > .reflex-splitter:active {
-    border-color: SRC.$primary-action-color;
-    background-color: SRC.$primary-action-color;
+    border-left: 3px solid SRC.$primary-action-color;
+    border-right: none;
+
+    background-color: transparent;
   }
 }
