@@ -7,7 +7,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
-import { SynapseClient, SynapseConstants } from '..'
+import { SynapseClient, SynapseConstants } from '../utils'
 import IconCopy from '../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
 import { UserBundle, UserProfile } from '../utils/synapseTypes/'

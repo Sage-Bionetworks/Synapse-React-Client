@@ -5,11 +5,16 @@
 .TreeView.SelectTree {
   background: unset;
   width: $-tree-only-width;
+
+  .Header {
+    background-color: SRC.$background-color-gray;
+  }
+
   .Tree {
     .Node.SelectNode {
       border-top: 1px solid white;
       .NodeContent {
-        padding: 16px 10px 16px 20px;
+        padding: 16px 20px;
         .ExpandButton {
           font-size: large;
         }
@@ -26,6 +31,11 @@
       > .NodeContent:hover {
         @include -hover(rgb(0, 0, 0, 0.25));
       }
+    }
+  }
+  .Node[aria-disabled='false'] {
+    > .NodeContent:hover {
+      @include -hover();
     }
   }
 }

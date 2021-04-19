@@ -24,7 +24,6 @@ import { EntityTypeIcon } from '../../../EntityIcon'
 import { toError } from '../../../ErrorBanner'
 import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
-import { RadioGroup } from '../../../widgets/RadioGroup'
 import { BUNDLE_REQUEST_OBJECT } from '../../EntityFinderUtils'
 
 export type DetailsViewRowAppearance =
@@ -38,7 +37,7 @@ export type DetailsViewRowProps = {
   entityHeader: EntityHeader | ProjectHeader | Hit
   appearance: DetailsViewRowAppearance
   showVersionColumn: boolean
-  selectButtonType: 'checkbox' | 'radio' | 'none'
+  selectButtonType: 'checkbox' | 'none'
   selectedVersion?: number
   toggleSelection: (entity: Reference) => void
 }
@@ -139,15 +138,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
                 id=""
                 className="SRC-pointer-events-none"
                 checked={isSelected}
-                onChange={() => {}}
-              />
-            )}
-            {!isDisabled && selectButtonType === 'radio' && (
-              <RadioGroup
-                className="SRC-pointer-events-none"
-                options={[{ label: '', value: 'true' }]}
-                value={isSelected.toString()}
-                id=""
                 onChange={() => {}}
               />
             )}

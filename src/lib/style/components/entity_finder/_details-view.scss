@@ -2,6 +2,7 @@
 @use './entity-finder' as EntityFinder;
 
 .DetailsViewReflexElement {
+  right: $-splitter-width;
   .EntityFinderDetailsView {
     border: none;
     border-bottom: 1px solid SRC.$border-color-gray;
@@ -14,6 +15,7 @@
   width: 100%;
   overflow: auto;
   border-bottom: $-border;
+  background-color: SRC.$background-color-gray-light;
   table {
     width: 100%;
     table-layout: fixed;
@@ -38,6 +40,9 @@
         justify-content: space-between;
         margin: 5px;
       }
+    }
+    thead.Inactive {
+      opacity: 50%;
     }
     td > div {
       margin: 5px;

@@ -18,6 +18,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
+import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
@@ -186,6 +187,11 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     [] as Reference[],
   )
 
+  function closeSearch() {
+    setSearchActive(false)
+    setSearchTerms(undefined)
+  }
+
   useEffect(() => {
     if (searchTerms?.length === 1) {
       const synIdMatch = searchTerms[0].match(SYNAPSE_ENTITY_ID_REGEX)
@@ -218,6 +224,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           <div className="EntityFinder__Search">
             {searchActive ? (
               <>
+                <Button variant="gray-primary-500" onClick={closeSearch}>
+                  <Arrow arrowDirection="left" style={{ height: '18px' }} />
+                  Back to Browse
+                </Button>
                 <FontAwesomeIcon
                   size={'sm'}
                   icon={faSearch}
@@ -245,10 +255,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   role="button"
                   title="Close Search"
                   className="CloseSearchIcon"
-                  onClick={() => {
-                    setSearchActive(false)
-                    setSearchTerms(undefined)
-                  }}
+                  onClick={closeSearch}
                 />
               </>
             ) : (
@@ -281,7 +288,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     }
               }
               showVersionSelection={showVersionSelection}
-              selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
+              selectColumnType={selectMultiple ? 'checkbox' : 'none'}
               selected={selectedEntities}
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
@@ -317,8 +324,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       >
                         <ReflexElement
                           className="TreeViewReflexElement"
-                          minSize={200}
-                          size={275}
+                          flex={0.18}
                         >
                           <TreeView
                             sessionToken={sessionToken}
@@ -335,10 +341,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                           />
                         </ReflexElement>
                         <ReflexSplitter></ReflexSplitter>
-                        <ReflexElement
-                          className="DetailsViewReflexElement"
-                          minSize={400}
-                        >
+                        <ReflexElement className="DetailsViewReflexElement">
                           <EntityDetailsList
                             sessionToken={sessionToken}
                             configuration={configFromTreeView}
@@ -347,7 +350,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             visibleTypes={selectableAndVisibleTypesInList}
                             selectableTypes={selectableTypes}
                             selectColumnType={
-                              selectMultiple ? 'checkbox' : 'radio'
+                              selectMultiple ? 'checkbox' : 'none'
                             }
                             toggleSelection={toggleSelection}
                           />
