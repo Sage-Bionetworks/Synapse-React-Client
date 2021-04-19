@@ -7,6 +7,7 @@ $-finder-height: 500px;
 $-breadcrumb-height: 40px;
 $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
 $-tree-only-width: 600px;
+$-splitter-width: 12px;
 
 @mixin -hover($color: '') {
   // we use an inset box-shadow because border will affect the width of the component
@@ -108,7 +109,7 @@ $-tree-only-width: 600px;
     border-right: none;
     background: transparent;
     box-sizing: border-box;
-    width: 12px;
+    width: $-splitter-width;
   }
   .reflex-container.vertical > .reflex-splitter:hover,
   .reflex-container.vertical > .reflex-splitter:active {

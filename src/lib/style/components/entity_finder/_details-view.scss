@@ -2,6 +2,7 @@
 @use './entity-finder' as EntityFinder;
 
 .DetailsViewReflexElement {
+  right: $-splitter-width;
   .EntityFinderDetailsView {
     border: none;
     border-bottom: 1px solid SRC.$border-color-gray;
