@@ -281,7 +281,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     }
               }
               showVersionSelection={showVersionSelection}
-              selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
+              selectColumnType={selectMultiple ? 'checkbox' : 'none'}
               selected={selectedEntities}
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
@@ -343,7 +343,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             visibleTypes={selectableAndVisibleTypesInList}
                             selectableTypes={selectableTypes}
                             selectColumnType={
-                              selectMultiple ? 'checkbox' : 'radio'
+                              selectMultiple ? 'checkbox' : 'none'
                             }
                             toggleSelection={toggleSelection}
                           />

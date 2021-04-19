@@ -42,7 +42,7 @@ export type EntityDetailsListDataConfiguration = {
 export type EntityDetailsListSharedProps = {
   sessionToken: string
   showVersionSelection: boolean
-  selectColumnType: 'checkbox' | 'radio' | 'none'
+  selectColumnType: 'checkbox' | 'none'
   visibleTypes: EntityType[]
   selected: Reference[]
   selectableTypes: EntityType[]
@@ -125,7 +125,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
           console.warn(
             'The configuration type does not map to a known view type. No Details view will be rendered. Invalid configuration: ',
             config,
-        )
+          )
           return <></>
       }
     }
