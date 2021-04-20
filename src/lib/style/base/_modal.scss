@@ -94,10 +94,15 @@
     }
   }
 
-  &.AccessRequirementList.cancel-modal {
-    .modal-dialog {
-      transform: none;
-      min-height: calc(100% - 3.5rem);
+  &.AccessRequirementList {
+    &.cancel-modal {
+      .modal-dialog {
+        transform: none;
+        min-height: calc(100% - 3.5rem);
+      }
+    }
+    .LoginComponent {
+      width: 350px
     }
   }
 

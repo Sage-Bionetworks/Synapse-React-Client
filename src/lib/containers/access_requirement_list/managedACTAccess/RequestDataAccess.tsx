@@ -1,3 +1,7 @@
+/**
+ * Copied from src/lib/containers/access_requirement_list/AcceptedRequirements.tsx
+ */
+
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import MarkdownSynapse from '../../MarkdownSynapse'
@@ -61,6 +65,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
       step: 1
     })
   }
+
   const onAcceptClicked = () => {
     if (
       accessRequirement.concreteType ===
@@ -68,7 +73,15 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
       accessRequirement.concreteType ===
         SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
-      gotoSynapseAccessRequirementPage()
+      if (token) {
+        gotoSynapseAccessRequirementPage()
+      } else {
+        requestDataStepCallback?.({
+          managedACTAccessRequirement: accessRequirement,
+          step: 4
+        })
+      }
+
       // PORTALS-1483: and close the dialog.
       // onHide?.()
     } else {
@@ -183,7 +196,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           )}
         </div>
       </div>
-      {token && showButton && (
+      {showButton && (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>

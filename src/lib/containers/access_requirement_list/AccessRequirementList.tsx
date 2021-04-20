@@ -30,6 +30,7 @@ import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/Acce
 import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
+import Login from '../Login'
 
 library.add(faFile)
 
@@ -358,6 +359,18 @@ export default function AccessRequirementList({
           formSubmitRequestObject={formSubmitRequestObject}
           requestDataStepCallback={() => onHide?.()}  // for closing dialogs
         />
+        break
+      case 4:
+        renderContent = <>
+            <ReactBootstrap.Modal.Header closeButton={false}>
+              <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
+                Please Log In
+              </ReactBootstrap.Modal.Title>
+            </ReactBootstrap.Modal.Header>
+            <ReactBootstrap.Modal.Body className={"AccessRequirementList login-modal "}>
+              <Login sessionCallback={()=>{window.location.reload()}}/>
+            </ReactBootstrap.Modal.Body>
+          </>
         break
       default:
         renderContent = content
