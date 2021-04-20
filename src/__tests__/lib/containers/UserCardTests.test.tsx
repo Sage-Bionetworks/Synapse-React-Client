@@ -162,8 +162,7 @@ describe('it creates the correct UI for the small card', () => {
         .onClick({ stopPropagation: () => {} } as any)
     })
     await resolveAllPending(wrapper)
-    expect(wrapper.find(UserCard)).toHaveLength(2)
-    expect(wrapper.find(UserCard).at(1).prop('size')).toBe(MEDIUM_USER_CARD)
+    expect(wrapper.find(UserCardMedium)).toHaveLength(1)
   })
 
   it('creates an anchor link when showCardOnHover is false', () => {
