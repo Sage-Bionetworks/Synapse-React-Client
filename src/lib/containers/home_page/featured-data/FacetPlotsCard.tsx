@@ -65,7 +65,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
   const { colorPalette } = getColorPalette(rgbIndex ?? 0, 2)
-  
+
   useEffect(() => {
     if (!facetsToPlot || !data) {
       return
@@ -126,7 +126,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       detailsPageLink = (
         <div className="FacetPlotsCard__link">
           <a href={detailsPagePath}>View {selectedFacetValue}</a>
-        </div>      
+        </div>
       )
     }
     const isShowingMultiplePlots = facetPlotDataArray.length > 1
@@ -142,7 +142,9 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           style={{ backgroundColor: colorPalette[0].replace(')', ',.05)') }}
         >
           <span className="FacetPlotsCard__title">{cardTitle}</span>
-          {description && <span className="FacetPlotsCard__description">{description}</span>}
+          {description && (
+            <span className="FacetPlotsCard__description">{description}</span>
+          )}
           {detailsPageLink}
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
@@ -182,7 +184,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 </div>
               </div>
             )
-          })}          
+          })}
         </div>
       </div>
     )

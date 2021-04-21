@@ -313,7 +313,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
   // we close it.
   const onToggle = (_show: boolean, _event: any, metadata: any) => {
-    if (metadata.source) {
+    if (!_show) {
+      setIsShowDropdown(false)
+    } else if (metadata.source) {
       setIsShowDropdown(true)
     } else {
       setIsShowDropdown(false)
@@ -332,7 +334,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           tooltipText="Filter by specific facet"
           key="facetFilterTooltip"
           darkTheme={true}
-          icon={"filter"}
+          icon={'filter'}
         />
         <Dropdown.Menu>{content}</Dropdown.Menu>
       </Dropdown>

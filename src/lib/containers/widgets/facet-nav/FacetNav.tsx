@@ -1,6 +1,10 @@
 import * as React from 'react'
 import FacetNavPanel from './FacetNavPanel'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../../QueryWrapper'
+import {
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from '../../QueryWrapper'
 import {
   FacetColumnResultValues,
   FacetColumnRequest,
@@ -35,7 +39,7 @@ export type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
 
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 
-export function getFacets (
+export function getFacets(
   data: QueryResultBundle | undefined,
   facetsToPlot?: string[],
 ): FacetColumnResult[] {
@@ -55,14 +59,13 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   isLoading,
   executeQueryRequest,
   token,
-  asyncJobStatus,
   topLevelControlsState,
   facetsToPlot,
   getInitQueryRequest,
-  updateParentState,
   facetAliases,
   showNotch = false,
   error,
+  ...rest
 }: FacetNavProps): JSX.Element => {
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
@@ -192,15 +195,19 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else if (isLoadingNewData) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
-        {asyncJobStatus?.progressMessage && (
-          <div> <span className="spinner" /> {asyncJobStatus.progressMessage} </div>
-        )}
+        <span className="spinner" />
       </div>
     )
   } else {
     return (
       <>
-        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS} ${showMoreButtonState === 'LESS' ? 'less' : ''}`}>
+        <div
+          className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${
+            showFacetFilter
+              ? QUERY_FILTERS_EXPANDED_CSS
+              : QUERY_FILTERS_COLLAPSED_CSS
+          } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
+        >
           <div className="FacetNav__expanded">
             {expandedFacets.map((facet, index) => (
               <div key={facet.columnName}>
@@ -229,6 +236,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   }
                   facetAliases={facetAliases}
                   lastQueryRequest={lastQueryRequest}
+                  {...rest}
                 ></FacetNavPanel>
               </div>
             ))}
@@ -274,6 +282,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                     )
                   }
                   facetAliases={facetAliases}
+                  {...rest}
                 ></FacetNavPanel>
               </div>
             ))}
@@ -302,6 +311,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           frontText={'Showing'}
           showNotch={showNotch}
           topLevelControlsState={topLevelControlsState}
+          {...rest}
         />
       </>
     )

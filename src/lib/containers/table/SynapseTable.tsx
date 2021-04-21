@@ -99,7 +99,7 @@ export type SynapseTableProps = {
   showAccessColumn?: boolean
   showDownloadColumn?: boolean
   columnLinks?: LabelLinkConfig
-  hideDownload?: boolean  
+  hideDownload?: boolean
   isRowSelectionVisible?: boolean
 }
 
@@ -316,7 +316,7 @@ export default class SynapseTable extends React.Component<
    * Display the view
    */
   public render() {
-    if (this.props.isLoadingNewData) {
+    if (this.props.isLoading) {
       return loadingScreen
     } else if (!this.props.data) {
       return <></>
@@ -346,7 +346,7 @@ export default class SynapseTable extends React.Component<
     const hasResults = data.queryResult.queryResults.rows.length > 0
     if (!hasResults) {
       if (queryRequest.query.additionalFilters) {
-        return (<SearchResultsNotFound />)
+        return <SearchResultsNotFound />
       } else {
         return (
           <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
@@ -359,10 +359,7 @@ export default class SynapseTable extends React.Component<
       }
     }
     const table = (
-
-      <div>
-        {this.renderTable(headers, columnModels, facets, rows)}
-      </div>
+      <div>{this.renderTable(headers, columnModels, facets, rows)}</div>
     )
     const content = (
       <>
@@ -395,6 +392,7 @@ export default class SynapseTable extends React.Component<
                   applyChanges={(newFacets: FacetColumnRequest[]) =>
                     this.applyChangesFromQueryFilter(newFacets)
                   }
+                  {...this.props}
                 />
               </div>
             )}
@@ -721,15 +719,16 @@ export default class SynapseTable extends React.Component<
     isShowingAccessColumn: boolean | undefined,
     isShowingDownloadColumn: boolean | undefined,
     isRowSelectionVisible: boolean | undefined,
-    tableEntityId: string | undefined
+    tableEntityId: string | undefined,
   ) {
+    console.log('createTableRows called')
     const rowsFormatted: JSX.Element[] = []
     const {
       token,
       data,
       isColumnSelected,
       selectedRowIndices,
-      updateParentState,
+      setSelectedRowIndices,
       columnLinks = [],
     } = this.props
     const { selectColumns = [], columnModels = [] } = data!
@@ -853,12 +852,12 @@ export default class SynapseTable extends React.Component<
         rowContent.unshift(
           <td className="SRC_noBorderTop direct-download">
             <DirectDownload
-              key={"direct-download-"+rowSynapseId}
+              key={'direct-download-' + rowSynapseId}
               token={token}
               associatedObjectId={rowSynapseId}
               entityVersionNumber={entityVersionNumber}
             ></DirectDownload>
-          </td>
+          </td>,
         )
       }
 
@@ -880,9 +879,7 @@ export default class SynapseTable extends React.Component<
                   }
                 }
                 // update parent state on change
-                updateParentState!({
-                  selectedRowIndices: cloneSelectedRowIndices,
-                })
+                setSelectedRowIndices!(cloneSelectedRowIndices)
               }}
             ></Checkbox>
           </td>,
@@ -1017,7 +1014,7 @@ export default class SynapseTable extends React.Component<
       tableColumnHeaderElements.unshift(
         <th key="downloadColumn">
           <div className="SRC-centerContent">&nbsp;</div>
-        </th>
+        </th>,
       )
     }
     if (isRowSelectionVisible) {
@@ -1080,7 +1077,7 @@ export default class SynapseTable extends React.Component<
     } else {
       isColumnSelected.push(columnName)
     }
-    this.props.updateParentState!({ isColumnSelected })
+    this.props.setIsColumnSelected!(isColumnSelected)
   }
 
   /**

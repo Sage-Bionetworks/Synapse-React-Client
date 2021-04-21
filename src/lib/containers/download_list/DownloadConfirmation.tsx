@@ -10,7 +10,7 @@ import {
 import DownloadDetails from './DownloadDetails'
 import DownloadListTable from './DownloadListTable'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { TopLevelControlsState, QueryWrapperState } from '../QueryWrapper'
+import { TopLevelControlsState } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
 
 enum StatusEnum {
@@ -35,9 +35,7 @@ export type DownloadConfirmationProps = {
   token?: string
   getLastQueryRequest?: () => QueryBundleRequest
   topLevelControlsState?: TopLevelControlsState
-  updateParentState?: <K extends keyof QueryWrapperState>(
-    param: Pick<QueryWrapperState, K>,
-  ) => void
+  setTopLevelControlsState?: (state: TopLevelControlsState) => void
   onExportTable?: () => void
 }
 
@@ -116,7 +114,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   getLastQueryRequest,
   token,
   fnClose,
-  updateParentState,
+  setTopLevelControlsState,
   topLevelControlsState,
   onExportTable,
 }) => {
@@ -176,11 +174,9 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   const onCancel = fnClose
     ? () => fnClose()
     : () => {
-        updateParentState!({
-          topLevelControlsState: {
-            ...topLevelControlsState!,
-            showDownloadConfirmation: false,
-          },
+        setTopLevelControlsState!({
+          ...topLevelControlsState!,
+          showDownloadConfirmation: false,
         })
       }
 
@@ -242,9 +238,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             >
               View Download List
             </button>
-            
-            {onExportTable && <span>
-                or 
+
+            {onExportTable && (
+              <span>
+                or
                 <button
                   className="test-download-metadata btn-link"
                   onClick={onExportTable}
@@ -252,7 +249,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
                   Download File Metadata
                 </button>
               </span>
-            }
+            )}
           </span>
         )
 

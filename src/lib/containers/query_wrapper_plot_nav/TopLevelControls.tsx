@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import QueryCount from '../QueryCount'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS, TopLevelControlsState } from '../QueryWrapper'
+import {
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+  TopLevelControlsState,
+} from '../QueryWrapper'
 import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
@@ -69,7 +74,8 @@ const TopLevelControls = (
     token,
     name,
     sql,
-    updateParentState,
+    setTopLevelControlsState,
+    setIsColumnSelected,
     topLevelControlsState,
     data,
     showColumnSelection = false,
@@ -95,9 +101,8 @@ const TopLevelControls = (
     if (control === 'showDownloadConfirmation') {
       updatedTopLevelControlsState.showSearchBar = false
     }
-    updateParentState!({
-      topLevelControlsState: updatedTopLevelControlsState,
-    })
+
+    setTopLevelControlsState!(updatedTopLevelControlsState)
   }
 
   useEffect(() => {
@@ -126,12 +131,18 @@ const TopLevelControls = (
     } else {
       isColumnSelectedCopy.push(columnName)
     }
-    updateParentState!({ isColumnSelected: isColumnSelectedCopy })
+    setIsColumnSelected!(isColumnSelectedCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
-    <div className={`TopLevelControls ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
-      <h3>        
+    <div
+      className={`TopLevelControls ${
+        showFacetFilter
+          ? QUERY_FILTERS_EXPANDED_CSS
+          : QUERY_FILTERS_COLLAPSED_CSS
+      }`}
+    >
+      <h3>
         <div className="QueryWrapperPlotNav__querycount">
           <QueryCount token={token} name={name} sql={sql} parens={true} />
         </div>
@@ -165,14 +176,12 @@ const TopLevelControls = (
               return (
                 <DownloadOptions
                   darkTheme={true}
-                  onDownloadFiles={() =>
-                    updateParentState!({
-                      topLevelControlsState: {
-                        ...topLevelControlsState!,
-                        showDownloadConfirmation: true,
-                      },
+                  onDownloadFiles={() => {
+                    setTopLevelControlsState!({
+                      ...topLevelControlsState!,
+                      showDownloadConfirmation: true,
                     })
-                  }
+                  }}
                   token={token}
                   queryResultBundle={data}
                   queryBundleRequest={getLastQueryRequest!()}

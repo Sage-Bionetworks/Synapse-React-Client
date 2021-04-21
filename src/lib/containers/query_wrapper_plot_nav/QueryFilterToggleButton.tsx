@@ -1,32 +1,34 @@
 import React from 'react'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS, TopLevelControlsState } from '../QueryWrapper'
+import {
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+  TopLevelControlsState,
+} from '../QueryWrapper'
 import { Button } from 'react-bootstrap'
 import IconSvg, { IconSvgOptions } from '../IconSvg'
 
-
-const QueryFilterToggleButton = (
-  props: QueryWrapperChildProps,
-) => {
-  const {
-    updateParentState,
-    topLevelControlsState,
-  } = props
-  const { showFacetFilter } = topLevelControlsState!
+const QueryFilterToggleButton = (props: QueryWrapperChildProps) => {
+  const showFacetFilter = props.topLevelControlsState?.showFacetFilter
   const toggleFilterShowingState = () => {
     const updatedTopLevelControlsState: TopLevelControlsState = {
-      ...topLevelControlsState!,
-      'showFacetFilter': !topLevelControlsState!['showFacetFilter'],
+      ...props.topLevelControlsState!,
+      showFacetFilter: !props.topLevelControlsState?.showFacetFilter,
     }
-    updateParentState!({
-      topLevelControlsState: updatedTopLevelControlsState,
-    })
+    props.setTopLevelControlsState!(updatedTopLevelControlsState)
   }
-  const iconOptions:IconSvgOptions = {
+  const iconOptions: IconSvgOptions = {
     icon: showFacetFilter ? 'arrowBack' : 'arrowForward',
-    color: 'inherit'
+    color: 'inherit',
   }
   return (
-    <div className={`QueryFilterToggleButton bootstrap-4-backport ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
+    <div
+      className={`QueryFilterToggleButton bootstrap-4-backport ${
+        showFacetFilter
+          ? QUERY_FILTERS_EXPANDED_CSS
+          : QUERY_FILTERS_COLLAPSED_CSS
+      }`}
+    >
       <Button
         variant="outline-primary"
         onClick={toggleFilterShowingState}
@@ -36,7 +38,6 @@ const QueryFilterToggleButton = (
         <IconSvg options={iconOptions}></IconSvg>
       </Button>
     </div>
-
   )
 }
 

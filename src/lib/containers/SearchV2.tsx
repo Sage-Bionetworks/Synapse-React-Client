@@ -1,6 +1,11 @@
 import * as React from 'react'
 import { CSSTransition } from 'react-transition-group'
-import { LockedFacet, QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
+import {
+  LockedFacet,
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from './QueryWrapper'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCaretDown,
@@ -126,12 +131,15 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (columnName === '') {
       if (searchable) {
         // If searchable column names are defined in the config, grab the first one (that is not locked)
-        columnName = searchable.filter(colName => colName !== lockedFacet?.facet)[0]        
+        columnName = searchable.filter(
+          colName => colName !== lockedFacet?.facet,
+        )[0]
       } else {
         // Otherwise, get the first column model that can be searched.
         // And for study details page: if lockedFacet is defined, remove it from the search
-        const searchableColumnModels = this.props.data?.columnModels?.filter(el => el.name !== lockedFacet?.facet)
-            .filter(el => this.isSupportedColumn(el))
+        const searchableColumnModels = this.props.data?.columnModels
+          ?.filter(el => el.name !== lockedFacet?.facet)
+          .filter(el => this.isSupportedColumn(el))
         columnName = searchableColumnModels?.[0].name ?? ''
       }
     }
@@ -187,24 +195,28 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   public isSupportedColumnAndInProps = (columnModel?: ColumnModel) => {
     if (this.isSupportedColumn(columnModel)) {
-        // return true if the searchable array contains this column name
-        const { searchable } = this.props
-        return searchable?.some(e => e === columnModel?.name)
+      // return true if the searchable array contains this column name
+      const { searchable } = this.props
+      return searchable?.some(e => e === columnModel?.name)
     }
     return false
   }
 
   render() {
-    const { data, topLevelControlsState, facetAliases, searchable, lockedFacet } = this.props
+    const {
+      data,
+      topLevelControlsState,
+      facetAliases,
+      searchable,
+      lockedFacet,
+    } = this.props
     const { searchText, show, columnName } = this.state
     let searchColumns: string[] = []
 
     // searchable specifies the order of the columns to search
     if (searchable) {
       searchColumns = searchable
-        .map(el =>
-          data?.columnModels?.find(model => model.name === el),
-        )
+        .map(el => data?.columnModels?.find(model => model.name === el))
         .filter(this.isSupportedColumnAndInProps)
         .map(el => el!.name)
     } else if (data?.columnModels) {
@@ -219,7 +231,13 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const showFacetFilter = topLevelControlsState?.showFacetFilter
     return (
-      <div className={`SearchV2 ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
+      <div
+        className={`SearchV2 ${
+          showFacetFilter
+            ? QUERY_FILTERS_EXPANDED_CSS
+            : QUERY_FILTERS_COLLAPSED_CSS
+        }`}
+      >
         <CSSTransition
           in={topLevelControlsState?.showSearchBar}
           classNames="SearchV2__animate_bar"
@@ -287,7 +305,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 const isSelected =
                   (columnName === '' && index === 0) || columnName === name
                 return (
-                  <div className="radio">
+                  <div className="radio" key={index}>
                     <label>
                       <span>
                         <input
@@ -296,7 +314,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                           value={name}
                           checked={isSelected}
                           onClick={() => {
-                            this.searchFormRef?.current?.querySelector('input')?.focus()
+                            this.searchFormRef?.current
+                              ?.querySelector('input')
+                              ?.focus()
                             this.setState({
                               columnName: name,
                             })

@@ -122,7 +122,7 @@ export function extractPlotDataArray(
   const getLabel = (
     facetValue: FacetColumnResultValueCount,
     truncateFlag: boolean,
-    columnType?: ColumnType,    
+    columnType?: ColumnType,
   ): string => {
     if (facetValue.value === SynapseConstants.VALUE_NOT_SET) {
       return SynapseConstants.FRIENDLY_VALUE_NOT_SET
@@ -149,17 +149,25 @@ export function extractPlotDataArray(
     const value = facetValue.value
     return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
-  
+
   const labels = getLabels(facetToPlot.facetValues, false, columnType)
   const text = getLabels(facetToPlot.facetValues, true, columnType).map(
     el => el.label,
   )
 
-  const anyFacetsSelected = facetToPlot.facetValues.some(value => value.isSelected)
+  const anyFacetsSelected = facetToPlot.facetValues.some(
+    value => value.isSelected,
+  )
 
-  const selectionAwareColorPalette = anyFacetsSelected ? facetToPlot.facetValues.map((facetValue, index) =>
-    facetValue.isSelected ? colorPalette[index] : colorPalette[index].replace('rgb(', 'rgba(').replace(')', ', 0.25)'),
-  ) : colorPalette
+  const selectionAwareColorPalette = anyFacetsSelected
+    ? facetToPlot.facetValues.map((facetValue, index) =>
+        facetValue.isSelected
+          ? colorPalette[index]
+          : colorPalette[index]
+              .replace('rgb(', 'rgba(')
+              .replace(')', ', 0.25)'),
+      )
+    : colorPalette
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
@@ -191,7 +199,7 @@ export function extractPlotDataArray(
     pull:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map(facetValue =>
-            facetValue.isSelected ? 0.10 : 0,
+            facetValue.isSelected ? 0.1 : 0,
           )
         : undefined,
     marker: {
@@ -206,7 +214,7 @@ export function extractPlotDataArray(
     colors:
       plotType === 'PIE'
         ? ((singleChartData as any).marker?.colors as string[])
-        : ((singleChartData as any).marker?.color as string[]),    
+        : ((singleChartData as any).marker?.color as string[]),
   }
   return result
 }
@@ -231,7 +239,7 @@ const applyFacetFilter = (
   }
 }
 
-export function getPlotStyle (
+export function getPlotStyle(
   parentWidth: number | null,
   plotType: PlotType,
   maxHeight: number,
@@ -255,7 +263,7 @@ export type FacetWithLabel = {
   count: number
 }
 
-export function renderLegend (
+export function renderLegend(
   labels: FacetWithLabel[] | undefined,
   colors: string[] = [],
   isExpanded: boolean,
@@ -375,7 +383,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         key="toggleChart"
         className="SRC-primary-color"
         darkTheme={true}
-        icon={"chart"}
+        icon={'chart'}
       />
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
@@ -440,7 +448,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 callbackFn={() => onExpand!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
-                icon={"expand"}
+                icon={'expand'}
               />
             )}
             {isExpanded && (
@@ -451,7 +459,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 callbackFn={() => onCollapse!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
-                icon={"collapse"}
+                icon={'collapse'}
               />
             )}
             <ElementWithTooltip
@@ -461,7 +469,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               callbackFn={() => onHide(index)}
               className="SRC-primary-color"
               darkTheme={true}
-              icon={"close"}
+              icon={'close'}
             />
           </div>
         </div>

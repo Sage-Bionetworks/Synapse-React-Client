@@ -214,11 +214,9 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       columnName: facet,
     } as FacetSelection
     isAllFilterSelectedForFacet[facet] = selector === SELECT_ALL
-    this.props.updateParentState!({
-      lastFacetSelection,
-      isAllFilterSelectedForFacet,
-      chartSelectionIndex: index,
-    })
+    this.props.setLastFacetSelection!(lastFacetSelection)
+    this.props.setIsAllFilterSelectedForFacet!(isAllFilterSelectedForFacet)
+    this.props.setChartSelectionIndex!(index)
 
     // read input and fetch data
     const htmlCheckboxes = Array.from(

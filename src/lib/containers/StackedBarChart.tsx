@@ -109,7 +109,7 @@ export default class StackedBarChart extends React.Component<
     _event: React.MouseEvent<SVGElement>,
   ) => {
     // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
-    this.props.updateParentState!({ chartSelectionIndex: dict.index })
+    this.props.setChartSelectionIndex!(dict.index)
   }
 
   public handleArrowClick = (direction: string) => (
@@ -129,7 +129,7 @@ export default class StackedBarChart extends React.Component<
     chartSelectionIndex = chartSelectionIndex % length
 
     dict = dict[chartSelectionIndex]
-    this.props.updateParentState!({ chartSelectionIndex })
+    this.props.setChartSelectionIndex!(chartSelectionIndex)
     // return is only for testing purposes
     return chartSelectionIndex
   }
@@ -171,14 +171,12 @@ export default class StackedBarChart extends React.Component<
       lastFacetSelection,
       isAllFilterSelectedForFacet,
       chartSelectionIndex,
-      asyncJobStatus,
     } = this.props
     // while loading
     if (isLoadingNewData) {
       return (
         <div className="SRC-loadingContainer SRC-centerContentColumn">
           {loadingScreen}
-          <div>{asyncJobStatus && asyncJobStatus.progressMessage}</div>
         </div>
       )
     }

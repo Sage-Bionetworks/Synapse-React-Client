@@ -709,12 +709,12 @@ export type UserProfileList = { list: UserProfile[] }
  * http://docs.synapse.org/rest/POST/userProfile.html
  */
 export const getUserProfiles = (
-  list: string[],
+  userIds: string[],
   sessionToken: string | undefined = undefined,
 ): Promise<UserProfileList> => {
   return doPost(
     '/repo/v1/userProfile',
-    { list },
+    { list: userIds },
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -831,12 +831,12 @@ export const getEntity: GetEntity = <T>(
  * Get a list of entity headers given by entity ids
  * http://rest-docs.synapse.org/rest/GET/entity/type.html
  */
-export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>> (
+export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>>(
   entityIds: string[],
   sessionToken?: string,
 ) => {
   return doGet(
-    `/repo/v1/entity/type?batch=${entityIds.join(",")}`,
+    `/repo/v1/entity/type?batch=${entityIds.join(',')}`,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
