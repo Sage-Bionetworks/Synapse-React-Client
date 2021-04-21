@@ -2,7 +2,7 @@ import FacetNav, {
   FacetNavProps,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
 import * as React from 'react'
-import * as _ from 'lodash'
+import * as _ from 'lodash-es'
 import { render, fireEvent } from '@testing-library/react'
 import {
   QueryResultBundle,
