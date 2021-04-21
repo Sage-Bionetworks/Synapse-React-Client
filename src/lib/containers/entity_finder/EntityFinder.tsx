@@ -262,8 +262,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   size={'sm'}
                   icon={faTimes}
                   role="button"
-                  title="Close Search"
-                  className="CloseSearchIcon"
+                  title="Clear Search"
+                  className="ClearSearchIcon"
                   onClick={() => {
                     setSearchInput('')
                     setSearchTerms(undefined)
