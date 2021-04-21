@@ -7,7 +7,7 @@ import { SynapseConstants } from '../utils/'
 import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
 import usePreFetchResource from '../utils/hooks/usePreFetchImage'
-import { Avatar, AvatarSize } from './Avatar'
+import { Avatar, AvatarProps, AvatarSize } from './Avatar'
 
 export type UserCardSize =
   | 'AVATAR'
@@ -28,7 +28,7 @@ export type UserCardProps = {
   ownerId?: string
   /** Specifies the card size */
   size: UserCardSize
-  /** For the small user card, shows the medium user card on mouseover */
+  /** For the small user card or avatar, shows the medium user card on mouseover */
   showCardOnHover?: boolean
   /** For the small user card, hides the tooltip observed when hovering over the profile image. */
   hideTooltip?: boolean
@@ -43,7 +43,10 @@ export type UserCardProps = {
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
+  /** Determines the size of the avatar when size === 'AVATAR' or (size === 'SMALL' and withAvatar is true) */
   avatarSize?: AvatarSize
+  /** Whether to show the avatar with the name for the small user card */
+  withAvatar?: boolean
 }
 
 export const UserCard: React.FunctionComponent<UserCardProps> = (
@@ -94,7 +97,7 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
 
   function getCard(
     cardSize: UserCardSize,
-    propsForChild: UserCardSmallProps | UserCardMediumProps,
+    propsForChild: AvatarProps | UserCardSmallProps | UserCardMediumProps,
   ) {
     switch (cardSize) {
       case SynapseConstants.AVATAR:

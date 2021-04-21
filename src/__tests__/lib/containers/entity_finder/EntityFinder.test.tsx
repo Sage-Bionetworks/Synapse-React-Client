@@ -381,7 +381,7 @@ describe('EntityFinder tests', () => {
     expect(() => screen.getByRole('table')).not.toThrowError()
 
     // Close the search
-    userEvent.click(screen.getByLabelText('Close Search'))
+    userEvent.click(screen.getByText('Back to Browse'))
 
     // Tree should come back, table should be gone
     await waitFor(() => screen.getByRole('tree'))
