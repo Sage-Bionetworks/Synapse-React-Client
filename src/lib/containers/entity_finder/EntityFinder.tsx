@@ -100,6 +100,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   treeOnly = false,
 }: EntityFinderProps) => {
   const [searchActive, setSearchActive] = useState(false)
+  // The raw value of the search input box:
+  const [searchInput, setSearchInput] = useState<string>()
+  // The "parsed" search terms, which are only calculated when Enter is pressed:
   const [searchTerms, setSearchTerms] = useState<string[]>()
   const [breadcrumbsProps, setBreadcrumbsProps] = useState<BreadcrumbsProps>({
     items: [],
@@ -187,11 +190,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     [] as Reference[],
   )
 
-  function closeSearch() {
-    setSearchActive(false)
-    setSearchTerms(undefined)
-  }
-
   useEffect(() => {
     if (searchTerms?.length === 1) {
       const synIdMatch = searchTerms[0].match(SYNAPSE_ENTITY_ID_REGEX)
@@ -224,7 +222,14 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           <div className="EntityFinder__Search">
             {searchActive ? (
               <>
-                <Button variant="gray-primary-500" onClick={closeSearch}>
+                <Button
+                  variant="gray-primary-500"
+                  onClick={() => {
+                    setSearchActive(false)
+                    setSearchInput('')
+                    setSearchTerms(undefined)
+                  }}
+                >
                   <Arrow arrowDirection="left" style={{ height: '18px' }} />
                   Back to Browse
                 </Button>
@@ -239,6 +244,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   className="EntityFinder__Search__Input"
                   type="search"
                   placeholder="Search by name, Wiki contents, or Synapse ID"
+                  value={searchInput}
+                  onChange={event => {
+                    setSearchInput(event.target.value)
+                  }}
                   onKeyDown={(event: any) => {
                     if (event.key === 'Enter') {
                       if (event.target.value === '') {
@@ -255,7 +264,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   role="button"
                   title="Close Search"
                   className="CloseSearchIcon"
-                  onClick={closeSearch}
+                  onClick={() => {
+                    setSearchInput('')
+                    setSearchTerms(undefined)
+                  }}
                 />
               </>
             ) : (
