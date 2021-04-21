@@ -22,7 +22,7 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
   return (
     <div className="EntityFinder__Selected">
       <div className="alert alert-warning">
-        <h3>{title}</h3>
+        <h4>{title}</h4>
         <div>
           {selectedEntities.map(e => (
             <div
