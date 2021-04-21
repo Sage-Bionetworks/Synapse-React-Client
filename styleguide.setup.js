@@ -1,5 +1,5 @@
 import {detectSSOCode, getSessionTokenFromCookie, signOut, getUserProfile} from './src/lib/utils/SynapseClient'
-import {SMALL_USER_CARD, MEDIUM_USER_CARD, LARGE_USER_CARD,GENERIC_CARD,COMPUTATIONAL, PUBLICATION} from './src/lib/utils/SynapseConstants'
+import {AVATAR, SMALL_USER_CARD, MEDIUM_USER_CARD, LARGE_USER_CARD,GENERIC_CARD,COMPUTATIONAL, PUBLICATION} from './src/lib/utils/SynapseConstants'
 import brainSvg from './src/demo/containers/playground/icons/brain.svg'
 import circleSvg from './src/demo/containers/playground/icons/circle.svg'
 import mouseSvg from './src/demo/containers/playground/icons/mouse.svg'
@@ -38,6 +38,7 @@ global.iconOptions = {
 }
 
 
+global.AVATAR = AVATAR
 global.SMALL_USER_CARD = SMALL_USER_CARD
 global.MEDIUM_USER_CARD = MEDIUM_USER_CARD
 global.LARGE_USER_CARD = LARGE_USER_CARD

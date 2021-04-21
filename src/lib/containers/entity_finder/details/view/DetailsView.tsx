@@ -116,8 +116,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   return (
     <div className="EntityFinderDetailsView">
       <table>
-        <thead>
-          <tr className="EntityFinderDetailsView__HeaderRow">
+        <thead className={entities.length === 0 ? 'Inactive' : ''}>
+          <tr>
             {showSelectColumn && <th className="IsSelectedColumn" />}
             <th className="EntityIconColumn" />
             <th className="NameColumn">
@@ -154,6 +154,11 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               <div>
                 <span>Modified On</span>
                 <span>{showInteractiveSortIcon(SortBy.MODIFIED_ON)}</span>
+              </div>
+            </th>
+            <th className="ModifiedByColumn">
+              <div>
+                <span>Modified By</span>
               </div>
             </th>
           </tr>

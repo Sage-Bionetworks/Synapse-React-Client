@@ -194,7 +194,7 @@ describe('DetailsView tests', () => {
         showVersionSelection: true,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(8)
+      expect(screen.getAllByRole('columnheader').length).toBe(9)
     })
     it('hides the selected column', () => {
       renderComponent({
@@ -202,7 +202,7 @@ describe('DetailsView tests', () => {
         showVersionSelection: true,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(7)
+      expect(screen.getAllByRole('columnheader').length).toBe(8)
     })
     it('hides the version column', () => {
       renderComponent({
@@ -210,7 +210,7 @@ describe('DetailsView tests', () => {
         showVersionSelection: false,
       })
 
-      expect(screen.getAllByRole('columnheader').length).toBe(7)
+      expect(screen.getAllByRole('columnheader').length).toBe(8)
     })
   })
 

@@ -76,6 +76,7 @@
 // Popovers
 .bootstrap-4-backport.fade {
   opacity: 1;
+  z-index: 1060; //https://getbootstrap.com/docs/4.0/layout/overview/#z-index
   .popover {
     width: 500px;
   }

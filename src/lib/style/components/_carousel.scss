@@ -21,13 +21,7 @@
     transition-duration: 0.75s;
   }
 
-  &__LeftArrow {
-    cursor: pointer;
-    margin: 10px;
-    transform: rotate(180deg);
-  }
-
-  &__RightArrow {
+  &__Arrow {
     cursor: pointer;
     margin: 10px;
   }

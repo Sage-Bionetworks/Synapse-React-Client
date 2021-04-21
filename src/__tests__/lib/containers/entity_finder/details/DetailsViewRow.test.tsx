@@ -8,6 +8,7 @@ import {
   DetailsViewRowProps,
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsViewRow'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
+import { useGetUserProfileWithProfilePic } from '../../../../../lib/utils/hooks/SynapseAPI/useUserBundle'
 import {
   EntityBundle,
   PaginatedResults,
@@ -18,6 +19,12 @@ import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
 const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
+jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useUserBundle', () => {
+  return {
+    useGetUserProfileWithProfilePic: jest.fn().mockReturnValue({}),
+  }
+})
+jest.mock('../../../../../lib/containers/UserCard')
 const mockToggleSelection = jest.fn()
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 
@@ -112,10 +119,7 @@ describe('DetailsViewRow tests', () => {
       renderComponent({ selectButtonType: 'checkbox' })
       expect(screen.getByRole('checkbox')).toBeDefined()
     })
-    it('renders radio', async () => {
-      renderComponent({ selectButtonType: 'radio' })
-      expect(screen.getByRole('radio')).toBeDefined()
-    })
+
     it('no checkbox button is created because of disabled state', async () => {
       renderComponent({
         selectButtonType: 'checkbox',
@@ -123,18 +127,6 @@ describe('DetailsViewRow tests', () => {
       })
 
       expect(() => screen.getByRole('checkbox')).toThrowError()
-
-      // There should still be a column for the button, just no button
-      expect(screen.getByLabelText('is-selected')).toBeDefined()
-    })
-
-    it('no radio button is created because of disabled state', async () => {
-      renderComponent({
-        selectButtonType: 'radio',
-        appearance: 'disabled',
-      })
-
-      expect(() => screen.getByRole('radio')).toThrowError()
 
       // There should still be a column for the button, just no button
       expect(screen.getByLabelText('is-selected')).toBeDefined()

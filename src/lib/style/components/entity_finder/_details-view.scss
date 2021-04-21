@@ -2,6 +2,7 @@
 @use './entity-finder' as EntityFinder;
 
 .DetailsViewReflexElement {
+  right: $-splitter-width;
   .EntityFinderDetailsView {
     border: none;
     border-bottom: 1px solid SRC.$border-color-gray;
@@ -14,6 +15,7 @@
   width: 100%;
   overflow: auto;
   border-bottom: $-border;
+  background-color: SRC.$background-color-gray-light;
   table {
     width: 100%;
     table-layout: fixed;
@@ -30,7 +32,7 @@
 
         position: sticky;
         top: 0;
-        z-index: 5;
+        z-index: 2;
       }
 
       th > div {
@@ -38,6 +40,9 @@
         justify-content: space-between;
         margin: 5px;
       }
+    }
+    thead.Inactive {
+      opacity: 50%;
     }
     td > div {
       margin: 5px;
@@ -59,8 +64,12 @@
   }
 
   &__Row[aria-selected='true'] {
-    color: white;
+    $-selected-text-color: white;
+    color: $-selected-text-color;
     background-color: SRC.$primary-action-color-500;
+    .UserCardSmall {
+      color: $-selected-text-color;
+    }
   }
 
   &__Row[aria-disabled='true'] {
@@ -94,7 +103,8 @@
   .IdColumn,
   .CreatedOnColumn,
   .ModifiedOnColumn,
-  .VersionColumn {
+  .VersionColumn,
+  .ModifiedByColumn {
     div {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -130,7 +140,8 @@
     width: 120px;
   }
   .CreatedOnColumn,
-  .ModifiedOnColumn {
+  .ModifiedOnColumn,
+  .ModifiedByColumn {
     width: 150px;
   }
   .VersionColumn {

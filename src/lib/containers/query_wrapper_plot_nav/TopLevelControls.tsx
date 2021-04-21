@@ -176,12 +176,9 @@ const TopLevelControls = (
               return (
                 <DownloadOptions
                   darkTheme={true}
-                  onDownloadFiles={() => {
-                    setTopLevelControlsState!({
-                      ...topLevelControlsState!,
-                      showDownloadConfirmation: true,
-                    })
-                  }}
+                  onDownloadFiles={() =>
+                    setControlState(key)
+                  }
                   token={token}
                   queryResultBundle={data}
                   queryBundleRequest={getLastQueryRequest!()}

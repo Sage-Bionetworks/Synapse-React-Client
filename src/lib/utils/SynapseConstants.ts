@@ -66,6 +66,7 @@ export const EXTERNALLINK: string = 'externallink'
 
 export const PAGE_SIZE: number = 25
 // For User Profile Cards
+export const AVATAR: UserCardSize = 'AVATAR'
 export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'
 export const MEDIUM_USER_CARD: UserCardSize = 'MEDIUM USER CARD'
 export const LARGE_USER_CARD: UserCardSize = 'LARGE USER CARD'

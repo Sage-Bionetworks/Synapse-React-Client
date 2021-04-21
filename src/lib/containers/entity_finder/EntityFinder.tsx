@@ -18,6 +18,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
+import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
@@ -99,6 +100,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   treeOnly = false,
 }: EntityFinderProps) => {
   const [searchActive, setSearchActive] = useState(false)
+  // The raw value of the search input box:
+  const [searchInput, setSearchInput] = useState<string>()
+  // The "parsed" search terms, which are only calculated when Enter is pressed:
   const [searchTerms, setSearchTerms] = useState<string[]>()
   const [breadcrumbsProps, setBreadcrumbsProps] = useState<BreadcrumbsProps>({
     items: [],
@@ -218,6 +222,17 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           <div className="EntityFinder__Search">
             {searchActive ? (
               <>
+                <Button
+                  variant="gray-primary-500"
+                  onClick={() => {
+                    setSearchActive(false)
+                    setSearchInput('')
+                    setSearchTerms(undefined)
+                  }}
+                >
+                  <Arrow arrowDirection="left" style={{ height: '18px' }} />
+                  Back to Browse
+                </Button>
                 <FontAwesomeIcon
                   size={'sm'}
                   icon={faSearch}
@@ -229,6 +244,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   className="EntityFinder__Search__Input"
                   type="search"
                   placeholder="Search by name, Wiki contents, or Synapse ID"
+                  value={searchInput}
+                  onChange={event => {
+                    setSearchInput(event.target.value)
+                  }}
                   onKeyDown={(event: any) => {
                     if (event.key === 'Enter') {
                       if (event.target.value === '') {
@@ -243,10 +262,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   size={'sm'}
                   icon={faTimes}
                   role="button"
-                  title="Close Search"
-                  className="CloseSearchIcon"
+                  title="Clear Search"
+                  className="ClearSearchIcon"
                   onClick={() => {
-                    setSearchActive(false)
+                    setSearchInput('')
                     setSearchTerms(undefined)
                   }}
                 />
@@ -281,7 +300,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     }
               }
               showVersionSelection={showVersionSelection}
-              selectColumnType={selectMultiple ? 'checkbox' : 'radio'}
+              selectColumnType={selectMultiple ? 'checkbox' : 'none'}
               selected={selectedEntities}
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
@@ -317,8 +336,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       >
                         <ReflexElement
                           className="TreeViewReflexElement"
-                          minSize={200}
-                          size={275}
+                          flex={0.18}
                         >
                           <TreeView
                             sessionToken={sessionToken}
@@ -335,10 +353,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                           />
                         </ReflexElement>
                         <ReflexSplitter></ReflexSplitter>
-                        <ReflexElement
-                          className="DetailsViewReflexElement"
-                          minSize={400}
-                        >
+                        <ReflexElement className="DetailsViewReflexElement">
                           <EntityDetailsList
                             sessionToken={sessionToken}
                             configuration={configFromTreeView}
@@ -347,7 +362,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             visibleTypes={selectableAndVisibleTypesInList}
                             selectableTypes={selectableTypes}
                             selectColumnType={
-                              selectMultiple ? 'checkbox' : 'radio'
+                              selectMultiple ? 'checkbox' : 'none'
                             }
                             toggleSelection={toggleSelection}
                           />

@@ -7,8 +7,10 @@ import { SynapseConstants } from '../utils/'
 import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
 import usePreFetchResource from '../utils/hooks/usePreFetchImage'
+import { Avatar, AvatarProps, AvatarSize } from './Avatar'
 
 export type UserCardSize =
+  | 'AVATAR'
   | 'SMALL USER CARD'
   | 'MEDIUM USER CARD'
   | 'LARGE USER CARD'
@@ -26,7 +28,7 @@ export type UserCardProps = {
   ownerId?: string
   /** Specifies the card size */
   size: UserCardSize
-  /** For the small user card, shows the medium user card on mouseover */
+  /** For the small user card or avatar, shows the medium user card on mouseover */
   showCardOnHover?: boolean
   /** For the small user card, hides the tooltip observed when hovering over the profile image. */
   hideTooltip?: boolean
@@ -34,12 +36,17 @@ export type UserCardProps = {
   menuActions?: MenuAction[]
   /** The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
   link?: string
+  openLinkInNewTab?: boolean
   /** Authentication token used to retrieve data */
   token?: string
   /** Disables the `@username` link for the small user card (if `showCardOnHover` is false). For the medium user card, disables linking the user's name to their profile (or other specified destination) */
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
+  /** Determines the size of the avatar when size === 'AVATAR' or (size === 'SMALL' and withAvatar is true) */
+  avatarSize?: AvatarSize
+  /** Whether to show the avatar with the name for the small user card */
+  withAvatar?: boolean
 }
 
 export const UserCard: React.FunctionComponent<UserCardProps> = (
@@ -90,9 +97,11 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
 
   function getCard(
     cardSize: UserCardSize,
-    propsForChild: UserCardSmallProps | UserCardMediumProps,
+    propsForChild: AvatarProps | UserCardSmallProps | UserCardMediumProps,
   ) {
     switch (cardSize) {
+      case SynapseConstants.AVATAR:
+        return <Avatar {...propsForChild} />
       case SynapseConstants.SMALL_USER_CARD:
         return <UserCardSmall {...propsForChild} />
       case SynapseConstants.MEDIUM_USER_CARD:

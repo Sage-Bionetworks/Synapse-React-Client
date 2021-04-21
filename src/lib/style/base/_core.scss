@@ -579,9 +579,23 @@ div.SRC-logo-cursor * {
   height: fit-content;
   width: fit-content;
   cursor: pointer;
+  color: SRC.$primary-action-color;
 }
 
 .SRC-userImgSmall {
+  font-size: 12px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  padding: 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  text-transform: capitalize;
+  color: white;
+}
+
+.SRC-userImgMedium {
   font-size: 18px;
   border-radius: 50%;
   width: 30px;
@@ -593,6 +607,11 @@ div.SRC-logo-cursor * {
   text-transform: capitalize;
   color: white;
 }
+
+.SRC-inline-avatar {
+  margin-right: 5px;
+}
+
 .extraSmall {
   width: 10px !important;
   height: 10px !important;
@@ -625,7 +644,8 @@ div.SRC-userImg {
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
-    p, span {
+    p,
+    span {
       overflow: hidden;
       text-overflow: ellipsis;
     }
