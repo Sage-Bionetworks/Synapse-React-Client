@@ -115,7 +115,7 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
       { managedACTAccessRequirement.isIDURequired &&
         <Form.Group>
           <Form.Label htmlFor={"data-use"}>Intended Data Use Statement -
-            { managedACTAccessRequirement.isIDUPublic && <i>this will be visible to the public</i>}
+            { managedACTAccessRequirement.isIDUPublic && <i id={"idu-visible"}>this will be visible to the public</i>}
           </Form.Label>
           <Form.Control
             id={"data-use"}

@@ -1,59 +1,71 @@
 import * as React from 'react'
-import { mount } from 'enzyme'
 import RequestDataAccessStep1
   from '../../../../../lib/containers/access_requirement_list/managedACTAccess/RequestDataAccessStep1'
 import { ACCESS_TYPE, ManagedACTAccessRequirement } from '../../../../../lib/utils/synapseTypes'
+import { render } from '@testing-library/react'
+
+const token = '12345'
+const mockAccessRequirement:ManagedACTAccessRequirement = {
+  concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+  isCertifiedUserRequired: false,
+  isValidatedProfileRequired: false,
+  isDUCRequired: false,
+  ducTemplateFileHandleId: '123',
+  isIRBApprovalRequired: false,
+  areOtherAttachmentsRequired: false,
+  expirationPeriod: 1,
+  isIDUPublic: false,
+  isIDURequired: false,
+  versionNumber: 1,
+  id: 1234,
+  etag: '12345',
+  createdOn: '',
+  createdBy: '',
+  modifiedOn: '',
+  modifiedBy: '',
+  subjectIds: [],
+  accessType: ACCESS_TYPE.UPDATE
+}
+
+function renderComponent(override?:object) {
+  return render(<RequestDataAccessStep1
+    token={token}
+    accessRequirementId={'123'}
+    managedACTAccessRequirement={mockAccessRequirement}
+  />)
+}
 
 describe('RequestDataAccessStep1: basic functionality', () => {
 
-  const mockAccessRequirement:ManagedACTAccessRequirement = {
-    concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
-    isCertifiedUserRequired: false,
-    isValidatedProfileRequired: false,
-    isDUCRequired: false,
-    ducTemplateFileHandleId: '123',
-    isIRBApprovalRequired: false,
-    areOtherAttachmentsRequired: false,
-    expirationPeriod: 1,
-    isIDUPublic: false,
-    isIDURequired: false,
-    versionNumber: 1,
-    id: 1234,
-    etag: '12345',
-    createdOn: '',
-    createdBy: '',
-    modifiedOn: '',
-    modifiedBy: '',
-    subjectIds: [],
-    accessType: ACCESS_TYPE.UPDATE
-  }
-
   it('render component without crashing', async () => {
-    const wrapper = mount(<RequestDataAccessStep1
-      token={'123'}
-      accessRequirementId={'123'}
-      managedACTAccessRequirement={mockAccessRequirement}
-    />)
-    expect(wrapper).toBeDefined()
-  })
-
-  it('should show IDU field if not required', async () => {
-    const wrapper = mount(<RequestDataAccessStep1
-      token={'123'}
-      accessRequirementId={'123'}
-      managedACTAccessRequirement={mockAccessRequirement}
-    />)
-    expect(wrapper.find('#data-use')).toHaveLength(0)
+    const { container }  = renderComponent()
+    expect(container).toBeDefined()
   })
 
   it('should show IDU field if required', async () => {
     mockAccessRequirement.isIDURequired = true
-    const wrapper = mount(<RequestDataAccessStep1
-      token={'123'}
-      accessRequirementId={'123'}
-      managedACTAccessRequirement={mockAccessRequirement}
-    />)
-    expect(wrapper.find('#data-use')).toBeDefined()
+    const { container }  = renderComponent()
+    expect(container.querySelector('#data-use')).toBeDefined()
+  })
+
+  it('should not show IDU field if not required', async () => {
+    mockAccessRequirement.isIDURequired = false
+    const { container } = renderComponent()
+    expect(container.querySelector('#data-use')).toEqual(null)
+  })
+
+  it('should show IDU public text if isIDUPublic is true', async () => {
+    mockAccessRequirement.isIDURequired = true
+    mockAccessRequirement.isIDUPublic = true
+    const { container } = renderComponent()
+    expect(container.querySelector('#idu-visible')?.textContent).toEqual("this will be visible to the public")
+  })
+
+  it('should not show IDU public text if isIDUPublic is false', async () => {
+    mockAccessRequirement.isIDURequired = false
+    mockAccessRequirement.isIDUPublic = false
+    const { container } = renderComponent()
+    expect(container.querySelector('#idu-visible')).toEqual(null)
   })
 
 })

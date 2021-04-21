@@ -523,7 +523,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                     }}
                     fileName={attachment?.fileName}
                     variant={"link"}
-                    className={"SRC-noPadding"}
+                    className={"SRC-noPadding attachment-download"}
                     token={token}
                   />
                   <Button
