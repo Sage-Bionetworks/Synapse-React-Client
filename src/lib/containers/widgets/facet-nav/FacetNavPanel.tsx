@@ -23,7 +23,7 @@ import {
   getStoredEntityHeaders,
   getStoredUserProfiles,
 } from '../../../utils/functions/getDataFromFromStorage'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
@@ -32,6 +32,7 @@ import {
 } from '../query-filter/QueryFilter'
 import loadingScreen from '../../LoadingScreen'
 import { SynapseConstants } from '../../../utils'
+import { FacetPlotLegend } from './FacetPlotLegend'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -47,7 +48,6 @@ export type FacetNavPanelOwnProps = {
 }
 
 const maxLabelLength: number = 19
-const maxLegendLength: number = 30
 
 type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
 
@@ -65,21 +65,6 @@ const layout: Partial<PlotlyTyped.Layout> = {
     visible: false,
     showgrid: false,
   },
-}
-
-// https://github.com/plotly/plotly.js/blob/fa51e33d3e1f8ca0c029b3029f3d006a5205c8f3/src/lib/index.js#L1173
-const formatPercent = (ratio: number, n: number) => {
-  n = n || 0
-  let str =
-    (Math.round(100 * ratio * Math.pow(10, n)) * Math.pow(0.1, n)).toFixed(n) +
-    '%'
-  for (let i = 0; i < n; i++) {
-    if (str.indexOf('.') !== -1) {
-      str = str.replace('0%', '%')
-      str = str.replace('.%', '%')
-    }
-  }
-  return str
 }
 
 export type GraphData = {
@@ -122,7 +107,7 @@ export function extractPlotDataArray(
   const getLabel = (
     facetValue: FacetColumnResultValueCount,
     truncateFlag: boolean,
-    columnType?: ColumnType,    
+    columnType?: ColumnType,
   ): string => {
     if (facetValue.value === SynapseConstants.VALUE_NOT_SET) {
       return SynapseConstants.FRIENDLY_VALUE_NOT_SET
@@ -149,17 +134,25 @@ export function extractPlotDataArray(
     const value = facetValue.value
     return truncateFlag ? truncate(value, maxLabelLength)! : value
   }
-  
+
   const labels = getLabels(facetToPlot.facetValues, false, columnType)
   const text = getLabels(facetToPlot.facetValues, true, columnType).map(
     el => el.label,
   )
 
-  const anyFacetsSelected = facetToPlot.facetValues.some(value => value.isSelected)
+  const anyFacetsSelected = facetToPlot.facetValues.some(
+    value => value.isSelected,
+  )
 
-  const selectionAwareColorPalette = anyFacetsSelected ? facetToPlot.facetValues.map((facetValue, index) =>
-    facetValue.isSelected ? colorPalette[index] : colorPalette[index].replace('rgb(', 'rgba(').replace(')', ', 0.25)'),
-  ) : colorPalette
+  const selectionAwareColorPalette = anyFacetsSelected
+    ? facetToPlot.facetValues.map((facetValue, index) =>
+        facetValue.isSelected
+          ? colorPalette[index]
+          : colorPalette[index]
+              .replace('rgb(', 'rgba(')
+              .replace(')', ', 0.25)'),
+      )
+    : colorPalette
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
@@ -191,7 +184,7 @@ export function extractPlotDataArray(
     pull:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map(facetValue =>
-            facetValue.isSelected ? 0.10 : 0,
+            facetValue.isSelected ? 0.1 : 0,
           )
         : undefined,
     marker: {
@@ -206,7 +199,7 @@ export function extractPlotDataArray(
     colors:
       plotType === 'PIE'
         ? ((singleChartData as any).marker?.colors as string[])
-        : ((singleChartData as any).marker?.color as string[]),    
+        : ((singleChartData as any).marker?.color as string[]),
   }
   return result
 }
@@ -231,7 +224,7 @@ const applyFacetFilter = (
   }
 }
 
-export function getPlotStyle (
+export function getPlotStyle(
   parentWidth: number | null,
   plotType: PlotType,
   maxHeight: number,
@@ -253,53 +246,6 @@ export function getPlotStyle (
 export type FacetWithLabel = {
   label: string
   count: number
-}
-
-export function renderLegend (
-  labels: FacetWithLabel[] | undefined,
-  colors: string[] = [],
-  isExpanded: boolean,
-): JSX.Element {
-  if (!labels) {
-    return <></>
-  }
-  const numLegendItems = isExpanded
-    ? Math.min(labels.length, 9)
-    : Math.min(labels.length, 3)
-  if (numLegendItems === 0) {
-    return <></>
-  }
-  const totalCount = labels.reduce(
-    (curValue, curFacet) => curValue + curFacet.count,
-    0,
-  )
-  return (
-    <div
-      className={`FacetNavPanel__body__legend${isExpanded ? '--expanded' : ''}`}
-    >
-      {labels.slice(0, numLegendItems).map((facetValue, index) => {
-        const percent = formatPercent(facetValue.count / totalCount, 1)
-        const label = `(${percent}) ${facetValue.label}`
-        const labelDisplay = truncate(label, maxLegendLength)
-        return (
-          <ElementWithTooltip
-            idForToolTip={facetValue.label}
-            tooltipText={facetValue.label}
-            key={facetValue.label}
-          >
-            <div
-              className="FacetNavPanel__body__legend__row"
-              key={`legendLabel_${index}`}
-              style={{ cursor: 'default' }}
-            >
-              <div style={{ backgroundColor: colors[index] }}></div>
-              <label>{labelDisplay}</label>
-            </div>
-          </ElementWithTooltip>
-        )
-      })}
-    </div>
-  )
 }
 
 const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
@@ -330,10 +276,13 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   const [isExpanded, setIsExpanded] = useState(false)
   const [plotType, setPlotType] = useState<PlotType>('PIE')
 
-  const getColumnType = (): ColumnType | undefined =>
-    data?.columnModels?.find(
-      columnModel => columnModel.name === facetToPlot.columnName,
-    )?.columnType as ColumnType
+  const getColumnType = useCallback(
+    (): ColumnType | undefined =>
+      data?.columnModels?.find(
+        columnModel => columnModel.name === facetToPlot.columnName,
+      )?.columnType as ColumnType,
+    [data, facetToPlot.columnName],
+  )
 
   useEffect(() => {
     if (!facetToPlot) {
@@ -347,7 +296,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
       )
       setPlotData(plotData)
     }
-  }, [facetToPlot, data, index])
+  }, [facetToPlot, data, index, getColumnType])
 
   useEffect(() => {
     setIsExpanded(onCollapse !== undefined)
@@ -375,7 +324,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         key="toggleChart"
         className="SRC-primary-color"
         darkTheme={true}
-        icon={"chart"}
+        icon={'chart'}
       />
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
@@ -440,7 +389,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 callbackFn={() => onExpand!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
-                icon={"expand"}
+                icon={'expand'}
               />
             )}
             {isExpanded && (
@@ -451,7 +400,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 callbackFn={() => onCollapse!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
-                icon={"collapse"}
+                icon={'collapse'}
               />
             )}
             <ElementWithTooltip
@@ -461,7 +410,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               callbackFn={() => onHide(index)}
               className="SRC-primary-color"
               darkTheme={true}
-              icon={"close"}
+              icon={'close'}
             />
           </div>
         </div>
@@ -487,7 +436,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               </div>
             )}
           </SizeMe>
-          {renderLegend(plotData?.labels, plotData?.colors, isExpanded)}
+          <FacetPlotLegend
+            labels={plotData?.labels}
+            colors={plotData?.colors}
+            isExpanded={isExpanded}
+          />
         </div>
       </div>
     )
