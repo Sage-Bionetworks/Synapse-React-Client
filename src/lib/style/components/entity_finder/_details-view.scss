@@ -2,19 +2,16 @@
 @use './entity-finder' as EntityFinder;
 
 .DetailsViewReflexElement {
-  right: $-splitter-width;
   .EntityFinderDetailsView {
-    border: none;
+    height: $-finder-height - $-breadcrumb-height;
     border-bottom: 1px solid SRC.$border-color-gray;
   }
 }
 
 .EntityFinderDetailsView {
-  border: 2px solid SRC.$border-color-gray;
-  height: $-finder-height - $-breadcrumb-height;
+  height: $-finder-height;
   width: 100%;
   overflow: auto;
-  border-bottom: $-border;
   background-color: SRC.$background-color-gray-light;
   table {
     width: 100%;
@@ -24,6 +21,7 @@
     thead {
       border-bottom: $-border;
       border-top: 1px solid white;
+      display: contents; // For some reason, this fixes https://sagebionetworks.jira.com/browse/SWC-5566
       th {
         height: $-header-height;
         font-weight: bold;
