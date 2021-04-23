@@ -215,6 +215,12 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     }
   }, [sessionToken, searchTerms, handleError])
 
+  const mainPanelClass = searchActive
+    ? 'MainPanelSearch'
+    : treeOnly
+    ? 'MainPanelSinglePane'
+    : 'MainPanelDualPane'
+
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -281,100 +287,106 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               </Button>
             )}
           </div>
-          {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
-          {searchActive && (
-            <EntityDetailsList
-              sessionToken={sessionToken}
-              configuration={
-                searchByIdResults && searchByIdResults.length > 0
-                  ? {
-                      type: EntityDetailsListDataConfigurationType.HEADER_LIST,
-                      headerList: searchByIdResults,
-                    }
-                  : {
-                      type:
-                        EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
-                      query: {
-                        queryTerm: searchTerms,
-                      },
-                    }
-              }
-              showVersionSelection={showVersionSelection}
-              selectColumnType={selectMultiple ? 'checkbox' : 'none'}
-              selected={selectedEntities}
-              visibleTypes={selectableTypes}
-              selectableTypes={selectableTypes}
-              toggleSelection={toggleSelection}
-            />
-          )}
-          {
-            <div style={searchActive ? { display: 'none' } : {}}>
-              {treeOnly ? (
-                <div>
-                  <TreeView
-                    sessionToken={sessionToken}
-                    toggleSelection={toggleSelection}
-                    showDropdown={true}
-                    visibleTypes={selectableAndVisibleTypesInTree}
-                    initialScope={initialScope}
-                    selectedEntities={selectedEntities}
-                    projectId={projectId}
-                    initialContainer={initialContainer}
-                    showScopeAsRootNode={false}
-                    nodeAppearance={NodeAppearance.SELECT}
-                    selectableTypes={selectableTypes}
-                  />
-                </div>
-              ) : (
-                <div className="EntityFinderReflexContainer">
-                  <SizeMe>
-                    {({ size }) => (
-                      <ReflexContainer
-                        key={(!!size.width).toString()}
-                        orientation="vertical"
-                        windowResizeAware
-                      >
-                        <ReflexElement
-                          className="TreeViewReflexElement"
-                          flex={0.18}
+          <div className={`EntityFinder__MainPanel ${mainPanelClass}`}>
+            {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
+            {searchActive && (
+              <EntityDetailsList
+                sessionToken={sessionToken}
+                configuration={
+                  searchByIdResults && searchByIdResults.length > 0
+                    ? {
+                        type:
+                          EntityDetailsListDataConfigurationType.HEADER_LIST,
+                        headerList: searchByIdResults,
+                      }
+                    : {
+                        type:
+                          EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+                        query: {
+                          queryTerm: searchTerms,
+                        },
+                      }
+                }
+                showVersionSelection={showVersionSelection}
+                selectColumnType={selectMultiple ? 'checkbox' : 'none'}
+                selected={selectedEntities}
+                visibleTypes={selectableTypes}
+                selectableTypes={selectableTypes}
+                toggleSelection={toggleSelection}
+              />
+            )}
+            {
+              <div style={searchActive ? { display: 'none' } : {}}>
+                {treeOnly ? (
+                  <div>
+                    <TreeView
+                      sessionToken={sessionToken}
+                      toggleSelection={toggleSelection}
+                      showDropdown={true}
+                      visibleTypes={selectableAndVisibleTypesInTree}
+                      initialScope={initialScope}
+                      selectedEntities={selectedEntities}
+                      projectId={projectId}
+                      initialContainer={initialContainer}
+                      showScopeAsRootNode={false}
+                      nodeAppearance={NodeAppearance.SELECT}
+                      selectableTypes={selectableTypes}
+                    />
+                  </div>
+                ) : (
+                  <div className="EntityFinderReflexContainer">
+                    <SizeMe>
+                      {({ size }) => (
+                        <ReflexContainer
+                          key={(!!size.width).toString()}
+                          orientation="vertical"
+                          windowResizeAware
                         >
-                          <TreeView
-                            sessionToken={sessionToken}
-                            selectedEntities={selectedEntities}
-                            setDetailsViewConfiguration={setConfigFromTreeView}
-                            showDropdown={true}
-                            visibleTypes={visibleTypesInTree}
-                            initialScope={initialScope}
-                            projectId={projectId}
-                            initialContainer={initialContainer}
-                            nodeAppearance={NodeAppearance.BROWSE}
-                            setBreadcrumbItems={setBreadcrumbs}
-                            selectableTypes={visibleTypesInTree}
-                          />
-                        </ReflexElement>
-                        <ReflexSplitter></ReflexSplitter>
-                        <ReflexElement className="DetailsViewReflexElement">
-                          <EntityDetailsList
-                            sessionToken={sessionToken}
-                            configuration={configFromTreeView}
-                            showVersionSelection={showVersionSelection}
-                            selected={selectedEntities}
-                            visibleTypes={selectableAndVisibleTypesInList}
-                            selectableTypes={selectableTypes}
-                            selectColumnType={
-                              selectMultiple ? 'checkbox' : 'none'
-                            }
-                            toggleSelection={toggleSelection}
-                          />
-                          <Breadcrumbs {...breadcrumbsProps} />
-                        </ReflexElement>
-                      </ReflexContainer>
-                    )}
-                  </SizeMe>
-                </div>
-              )}
-            </div>
-          }
+                          <ReflexElement
+                            className="TreeViewReflexElement"
+                            flex={0.18}
+                          >
+                            <TreeView
+                              sessionToken={sessionToken}
+                              selectedEntities={selectedEntities}
+                              setDetailsViewConfiguration={
+                                setConfigFromTreeView
+                              }
+                              showDropdown={true}
+                              visibleTypes={visibleTypesInTree}
+                              initialScope={initialScope}
+                              projectId={projectId}
+                              initialContainer={initialContainer}
+                              nodeAppearance={NodeAppearance.BROWSE}
+                              setBreadcrumbItems={setBreadcrumbs}
+                              selectableTypes={visibleTypesInTree}
+                            />
+                          </ReflexElement>
+                          <ReflexSplitter></ReflexSplitter>
+                          <ReflexElement className="DetailsViewReflexElement">
+                            <EntityDetailsList
+                              sessionToken={sessionToken}
+                              configuration={configFromTreeView}
+                              showVersionSelection={showVersionSelection}
+                              selected={selectedEntities}
+                              visibleTypes={selectableAndVisibleTypesInList}
+                              selectableTypes={selectableTypes}
+                              selectColumnType={
+                                selectMultiple ? 'checkbox' : 'none'
+                              }
+                              toggleSelection={toggleSelection}
+                            />
+                            <Breadcrumbs {...breadcrumbsProps} />
+                          </ReflexElement>
+                        </ReflexContainer>
+                      )}
+                    </SizeMe>
+                  </div>
+                )}
+              </div>
+            }
+          </div>
+
           {selectedEntities.length > 0 && (
             <SelectionPane
               sessionToken={sessionToken}

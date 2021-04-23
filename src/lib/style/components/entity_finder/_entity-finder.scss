@@ -21,9 +21,6 @@ $-splitter-width: 12px;
 // https://github.com/leefsmp/Re-Flex/issues/27
 .EntityFinderReflexContainer {
   width: 100%;
-  $-border-size: 2px;
-  height: $-finder-height + ($-border-size * 2);
-  border: $-border-size solid SRC.$border-color-gray;
 }
 
 .EntityFinder {
@@ -74,12 +71,32 @@ $-splitter-width: 12px;
     }
   }
 
+  &__MainPanel {
+    max-width: 100%;
+    transition: width 0.25s linear;
+    $-border-size: 1px;
+    border: $-border-size solid SRC.$border-color-gray;
+    height: $-finder-height + ($-border-size * 2);
+  }
+
+  &__MainPanel.MainPanelSearch {
+    width: 85vw;
+  }
+  &__MainPanel.MainPanelSinglePane {
+    width: $-tree-only-width + 5px;
+  }
+  &__MainPanel.MainPanelDualPane {
+    width: 85vw;
+  }
+
   &__Selected {
     min-width: max-content;
     max-width: $-tree-only-width;
     white-space: nowrap;
     padding: 15px;
     margin: 15px 0px 0px auto;
+    max-height: 200px;
+    overflow-y: auto;
     &__Row {
       display: flex;
       align-items: center;
@@ -105,11 +122,13 @@ $-splitter-width: 12px;
   }
 
   .reflex-container.vertical > .reflex-splitter {
+    height: $-finder-height;
     border-left: 3px solid transparent;
     border-right: none;
     background: transparent;
     box-sizing: border-box;
     width: $-splitter-width;
+    margin-right: -1 * $-splitter-width;
   }
   .reflex-container.vertical > .reflex-splitter:hover,
   .reflex-container.vertical > .reflex-splitter:active {
