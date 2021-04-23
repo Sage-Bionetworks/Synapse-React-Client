@@ -12,6 +12,7 @@ import {
   ApprovalState,
   ManagedACTAccessRequirement,
   SelfSignAccessRequirement,
+  SUBMISSION_STATE,
   TermsOfUseAccessRequirement,
   UserProfile,
   WikiPageKey,
@@ -19,10 +20,7 @@ import {
 import { SynapseClient } from '../../../utils'
 import AccessApprovalCheckMark from '../AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from '../AccessRequirementList'
-import {
-  ManagedACTAccessRequirementStatus,
-  SUBMISSION_STATE,
-} from '../../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 
 export type RequestDataAccessProps = {
   user: UserProfile | undefined
@@ -74,7 +72,11 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
         SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
       if (token) {
-        gotoSynapseAccessRequirementPage()
+        if (submissionState === SUBMISSION_STATE.CANCELLED) {
+          // TODO: add logic to handle cancel request
+        } else {
+          gotoSynapseAccessRequirementPage()
+        }
       } else {
         requestDataStepCallback?.({
           managedACTAccessRequirement: accessRequirement,
@@ -106,13 +108,39 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
     if ( accessRequirement.concreteType === SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
       accessRequirement.concreteType === SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement ) {
       if (submissionState) {
-        return `Your data access request has been ${submissionState.toLocaleLowerCase()}`
+        let btnActionText
+        switch (submissionState) {
+          case SUBMISSION_STATE.SUBMITTED:
+            btnActionText = `Cancel Request`
+            break
+          case SUBMISSION_STATE.APPROVED:
+          case SUBMISSION_STATE.REJECTED:
+            btnActionText = 'Update Request'
+        }
+        return btnActionText
+        // return `Your data access request has been ${submissionState.toLocaleLowerCase()}`  // TODO: delete
       } else {
         return 'Request access'
       }
     } else {
       return 'I Accept Terms of Use'
     }
+  }
+
+  const getSubmissionStatusText = () => {
+    switch (submissionState) {
+      case SUBMISSION_STATE.SUBMITTED:
+        return `You have submitted a data access request.`
+      case SUBMISSION_STATE.APPROVED:
+        return 'Your data access request has been approved.'
+      case SUBMISSION_STATE.REJECTED:
+        return `Your data access request has been rejected. Before I can accept your request, please address the following: ` +
+          `Please upload every page of the DUC. Please contact us at act@sagebionetworks.org if you have any questions.` +
+          `Regards, Access and Compliance Team (ACT) act@sagebionetworks.org`
+      case SUBMISSION_STATE.CANCELLED:
+        return 'Your data access request has been canceled.'
+    }
+    return ''
   }
 
   const termsOfUse = (accessRequirement as TermsOfUseAccessRequirement)
@@ -144,11 +172,11 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
             objectType={wikiPage?.ownerObjectType}
           />
         }
+        { submissionState && <div>{getSubmissionStatusText()}</div> }
       </div>
     )
   } else if (isActOrTermsOfUse) {
-    markdown = (
-      <MarkdownSynapse
+    markdown = (<MarkdownSynapse
         markdown={isTermsOfUse ? termsOfUse : actContactInfo}
         token={token}
       />
@@ -174,9 +202,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
                     onClick={() => {
                       gotoSynapseAccessRequirementPage()
                     }}
-                  >
-                    Update Request
-                  </button>
+                  >{ getAcceptButtonText() }</button>
                 )}
                 <button
                   className="view-terms-button bold-text"
@@ -196,7 +222,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           )}
         </div>
       </div>
-      {showButton && (
+      {showButton && submissionState !== SUBMISSION_STATE.CANCELLED && ( // This will show when the access is not approved
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>
