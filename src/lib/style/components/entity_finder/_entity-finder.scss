@@ -1,8 +1,9 @@
 @use '../../abstracts/variables' as SRC;
 @use 'sass:color';
 
+$-border-size: 1px;
 $-header-height: 45px;
-$-border: 1px solid SRC.$border-color-gray;
+$-border: $-border-size solid SRC.$border-color-gray;
 $-finder-height: 500px;
 $-breadcrumb-height: 40px;
 $-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
@@ -74,7 +75,6 @@ $-splitter-width: 12px;
   &__MainPanel {
     max-width: 100%;
     transition: width 0.25s linear;
-    $-border-size: 1px;
     border: $-border-size solid SRC.$border-color-gray;
     height: $-finder-height + ($-border-size * 2);
   }
@@ -83,7 +83,7 @@ $-splitter-width: 12px;
     width: 85vw;
   }
   &__MainPanel.MainPanelSinglePane {
-    width: $-tree-only-width + 5px;
+    width: $-tree-only-width + ($-border-size * 2);
   }
   &__MainPanel.MainPanelDualPane {
     width: 85vw;
