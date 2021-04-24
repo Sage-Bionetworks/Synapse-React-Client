@@ -2552,3 +2552,15 @@ export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, ses
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+// http://rest-docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId/cancellation.html
+// Cancel a submission. Only the user who created this submission can cancel it.
+export const cancelDataAccessRequest = (submissionId: string|number, sessionToken: string) => {
+  return doPut<SubmissionStatus>(
+    `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
+    undefined,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}

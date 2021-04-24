@@ -21,6 +21,9 @@ import { SynapseClient } from '../../../utils'
 import AccessApprovalCheckMark from '../AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from '../AccessRequirementList'
 import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import { cancelDataAccessRequest } from '../../../utils/SynapseClient'
+import { AlertProps } from './RequestDataAccessStep2'
+import { Alert } from 'react-bootstrap'
 
 export type RequestDataAccessProps = {
   user: UserProfile | undefined
@@ -47,6 +50,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
     propsIsApproved,
   )
   const [submissionState, setSubmissionState] = useState<SUBMISSION_STATE>()
+  const [alert, setAlert] = useState<AlertProps | undefined>()
 
   useEffect(() => {
 
@@ -64,7 +68,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
     })
   }
 
-  const onAcceptClicked = () => {
+  const onAcceptClicked = async () => {
     if (
       accessRequirement.concreteType ===
         SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
@@ -73,7 +77,16 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
     ) {
       if (token) {
         if (submissionState === SUBMISSION_STATE.CANCELLED) {
-          // TODO: add logic to handle cancel request
+          const errAlert = {
+            key: 'danger',
+            message: 'Unable to perform your request. Please try again later.'
+          }
+          try {
+            cancelDataAccessRequest(accessRequirement.id, token)
+          } catch (e) {
+            setAlert(errAlert)
+            console.log("RequestDataAccess: error canceling data access request:", e)
+          }
         } else {
           gotoSynapseAccessRequirementPage()
         }
@@ -222,6 +235,11 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           )}
         </div>
       </div>
+      { /* Alert message */
+        alert && <Alert variant={alert.key}>
+          {alert.message}
+        </Alert>
+      }
       {showButton && submissionState !== SUBMISSION_STATE.CANCELLED && ( // This will show when the access is not approved
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
