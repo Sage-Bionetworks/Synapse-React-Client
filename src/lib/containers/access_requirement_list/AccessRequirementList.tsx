@@ -340,6 +340,7 @@ export default function AccessRequirementList({
           managedACTAccessRequirement={managedACTAccessRequirement!}
           accessRequirementId={accessRequirementId}
           requestDataStepCallback={requestDataStepCallback}
+          onHide={() => onHide?.()}
         />
         break
       case 2:
@@ -351,13 +352,14 @@ export default function AccessRequirementList({
           accessRequirementId={accessRequirementId}
           entityId={entityId}  // for form submission after save
           requestDataStepCallback={requestDataStepCallback}
+          onHide={() => onHide?.()}
         />
         break
       case 3:
         renderContent = <CancelRequestDataAccess
           token={token!}
           formSubmitRequestObject={formSubmitRequestObject}
-          requestDataStepCallback={() => onHide?.()}  // for closing dialogs
+          onHide={() => onHide?.()}  // for closing dialogs
         />
         break
       case 4:

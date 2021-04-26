@@ -9,12 +9,12 @@ import { AlertProps } from './RequestDataAccessStep2'
 export type CancelRequestDataAccessProps = {
   formSubmitRequestObject: RequestInterface | undefined,
   token: string,
-  requestDataStepCallback: Function
+  onHide: Function
 }
 
 const CancelRequestDataAccess:React.FC<CancelRequestDataAccessProps> = props => {
 
-  const {formSubmitRequestObject, token, requestDataStepCallback} = props
+  const {formSubmitRequestObject, token, onHide} = props
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false)
 
@@ -23,7 +23,7 @@ const CancelRequestDataAccess:React.FC<CancelRequestDataAccessProps> = props => 
       try {
         const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
         if (resp.etag) {  // save success, close dialog
-          requestDataStepCallback?.()
+          onHide?.()
         } else {
           setAlert({
             key: 'danger',
@@ -58,10 +58,10 @@ const CancelRequestDataAccess:React.FC<CancelRequestDataAccessProps> = props => 
 
     <ReactBootstrap.Modal.Footer>
       { !showCloseBtn && <>
-      <Button variant="link" onClick={() => requestDataStepCallback?.()}>Cancel</Button>
+      <Button variant="link" onClick={() => onHide?.()}>Cancel</Button>
       <Button variant="primary" onClick={() => handleSave()}>Save changes</Button>
       </>}
-      { showCloseBtn && <Button variant="primary" onClick={() => requestDataStepCallback?.()}>Close</Button>}
+      { showCloseBtn && <Button variant="primary" onClick={() => onHide?.()}>Close</Button>}
     </ReactBootstrap.Modal.Footer>
   </>)
 }

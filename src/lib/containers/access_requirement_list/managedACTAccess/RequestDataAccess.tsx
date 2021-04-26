@@ -24,6 +24,7 @@ import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/A
 import { cancelDataAccessRequest } from '../../../utils/SynapseClient'
 import { AlertProps } from './RequestDataAccessStep2'
 import { Alert } from 'react-bootstrap'
+import { SubmissionStatus } from '../../../utils/synapseTypes/AccessRequirement/SubmissionStatus'
 
 export type RequestDataAccessProps = {
   user: UserProfile | undefined
@@ -51,6 +52,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
   )
   const [submissionState, setSubmissionState] = useState<SUBMISSION_STATE>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
+  const [isSubmissionCanceled, setIsSubmissionCanceled] = useState<boolean>(false)
 
   useEffect(() => {
 
@@ -76,16 +78,26 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
         SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
     ) {
       if (token) {
-        if (submissionState === SUBMISSION_STATE.CANCELLED) {
+        // !isSubmissionCanceled: if the submission has already been canceled, don't cancel again
+        if (submissionState === SUBMISSION_STATE.SUBMITTED && !isSubmissionCanceled) {
           const errAlert = {
             key: 'danger',
             message: 'Unable to perform your request. Please try again later.'
           }
           try {
-            cancelDataAccessRequest(accessRequirement.id, token)
+            const resp:SubmissionStatus | any = await cancelDataAccessRequest(accessRequirementStatus?.currentSubmissionStatus!.submissionId, token)
+            if (resp.state === SUBMISSION_STATE.CANCELLED) {  // successfully cancelled
+              setAlert({
+                key: 'success',
+                message: 'Your data access request has been canceled.'
+              })
+              setIsSubmissionCanceled(true)
+            } else {
+              setAlert(errAlert)
+            }
           } catch (e) {
-            setAlert(errAlert)
             console.log("RequestDataAccess: error canceling data access request:", e)
+            setAlert(errAlert)
           }
         } else {
           gotoSynapseAccessRequirementPage()
@@ -124,14 +136,14 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
         let btnActionText
         switch (submissionState) {
           case SUBMISSION_STATE.SUBMITTED:
-            btnActionText = `Cancel Request`
+            btnActionText = isSubmissionCanceled ? 'Update Request' : `Cancel Request`
             break
           case SUBMISSION_STATE.APPROVED:
           case SUBMISSION_STATE.REJECTED:
+          case SUBMISSION_STATE.CANCELLED:
             btnActionText = 'Update Request'
         }
         return btnActionText
-        // return `Your data access request has been ${submissionState.toLocaleLowerCase()}`  // TODO: delete
       } else {
         return 'Request access'
       }
@@ -150,8 +162,6 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
         return `Your data access request has been rejected. Before I can accept your request, please address the following: ` +
           `Please upload every page of the DUC. Please contact us at act@sagebionetworks.org if you have any questions.` +
           `Regards, Access and Compliance Team (ACT) act@sagebionetworks.org`
-      case SUBMISSION_STATE.CANCELLED:
-        return 'Your data access request has been canceled.'
     }
     return ''
   }
@@ -240,7 +250,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           {alert.message}
         </Alert>
       }
-      {showButton && submissionState !== SUBMISSION_STATE.CANCELLED && ( // This will show when the access is not approved
+      {showButton && ( // This will show when the access is not approved
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>

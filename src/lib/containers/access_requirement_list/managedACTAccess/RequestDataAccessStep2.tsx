@@ -20,7 +20,6 @@ import {
   RequestInterface,
   RestrictableObjectType,
   SUBMISSION_STATE,
-  SubmissionStatus,
   UserProfile,
 } from '../../../utils/synapseTypes'
 import DirectDownloadButton from '../../DirectDownloadButton'
@@ -28,6 +27,7 @@ import FileUpload from '../../FileUpload'
 import UserSearchBox from '../../UserSearchBox'
 import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
+import { SubmissionStatus } from '../../../utils/synapseTypes/AccessRequirement/SubmissionStatus'
 
 export type RequestDataAccessStep2Props = {
   token: string,
@@ -37,6 +37,7 @@ export type RequestDataAccessStep2Props = {
   requestDataStepCallback: Function
   user: UserProfile
   researchProjectId: string
+  onHide: Function
 }
 
 export type DataAccessDoc = {
@@ -64,7 +65,7 @@ export type AlertProps = {
 }
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
-  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, entityId, user, researchProjectId} = props
+  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, entityId, user, researchProjectId, onHide} = props
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
@@ -266,7 +267,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               key: 'danger',
               message: alertMsg
             })
-          } else {
+          } else {  // TODO: pass submission id back to RequestDataAccess
             setAlert({
               key: 'success',
               message: alertMsg
@@ -295,6 +296,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         return `${msgStart} canceled. You may close this dialog.`
       case SUBMISSION_STATE.REJECTED:
         return `${msgStart} rejected. Reason: ${submission_resp.rejectedReason}. Please close this dialog and try again later.`
+      default:
+        return ''
     }
   }
 
@@ -559,9 +562,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           <Button variant="primary" onClick={() => handleSubmit()}>Submit</Button>
         </>}
         { showCloseBtn &&
-        <Button variant="primary" onClick={() => requestDataStepCallback?.({
-          step: undefined
-        })}>Close</Button>}
+        <Button variant="primary" onClick={() => onHide?.()}>Close</Button>}
       </ReactBootstrap.Modal.Footer>
     </Form>
   </>)

@@ -67,7 +67,6 @@ import {
   EntityPath,
   EntityBundleRequest,
   EntityBundle,
-  SubmissionStatus,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -96,6 +95,7 @@ import {
   RequestInterface,
   CreateSubmissionRequest,
 } from './synapseTypes/AccessRequirement'
+import { SubmissionStatus } from './synapseTypes/AccessRequirement/SubmissionStatus'
 
 const cookies = new UniversalCookies()
 
@@ -2555,7 +2555,7 @@ export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, ses
 
 // http://rest-docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId/cancellation.html
 // Cancel a submission. Only the user who created this submission can cancel it.
-export const cancelDataAccessRequest = (submissionId: string|number, sessionToken: string) => {
+export const cancelDataAccessRequest = (submissionId: string, sessionToken: string) => {
   return doPut<SubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,

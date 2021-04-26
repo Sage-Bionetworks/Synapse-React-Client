@@ -12,10 +12,11 @@ export type RequestDataAccessStep1 = {
   accessRequirementId: string
   requestDataStepCallback?: Function
   managedACTAccessRequirement: ManagedACTAccessRequirement
+  onHide: Function
 }
 
 const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
-  const {requestDataStepCallback, token, accessRequirementId, managedACTAccessRequirement} = props
+  const {requestDataStepCallback, token, accessRequirementId, managedACTAccessRequirement, onHide} = props
   const [projectLead, setProjectLead] = useState<string>("")
   const [institution, setInstitution] = useState<string>("")
   const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<string>("")
@@ -45,12 +46,6 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
     } catch (e) {
       console.log("RequestDataAccessStep1: Error getting research project data: ", e)
     }
-  }
-
-  const goBack = () => {
-    requestDataStepCallback?.({
-      step:undefined
-    })
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
@@ -134,7 +129,7 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
       }
     </ReactBootstrap.Modal.Body>
     <ReactBootstrap.Modal.Footer>
-      <Button variant="link" onClick={goBack}>Cancel</Button>
+      <Button variant="link" onClick={() => onHide?.()}>Cancel</Button>
       <Button variant="primary" type="submit">Save changes</Button>
     </ReactBootstrap.Modal.Footer>
   </Form>
