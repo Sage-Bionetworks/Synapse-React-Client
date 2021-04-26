@@ -6,16 +6,27 @@ $-header-height: 45px;
 $-border: $-border-size solid SRC.$border-color-gray;
 $-finder-height: 500px;
 $-breadcrumb-height: 40px;
-$-selected-color: color.change(SRC.$primary-action-color-300, $alpha: 0.3);
+$-selected-color: white;
+$-selected-background-color: SRC.$primary-action-color-active;
+$-selected-hover-background-color: color.adjust(
+  $-selected-background-color,
+  $lightness: -5%
+);
+$-hover-background-color: color.change(
+  SRC.$primary-action-color-active,
+  $alpha: 0.2
+);
 $-tree-only-width: 600px;
 $-splitter-width: 12px;
 
-@mixin -hover($color: '') {
-  // we use an inset box-shadow because border will affect the width of the component
-  @if $color != '' {
-    box-shadow: 0px 0px 0px 2px $color inset;
+@mixin -hover($background-color: '', $text-color: '') {
+  @if $background-color != '' {
+    background-color: $background-color;
   } @else {
-    box-shadow: 0px 0px 0px 2px SRC.$primary-action-color-500 inset;
+    background-color: $-hover-background-color;
+  }
+  @if $text-color != '' {
+    color: $text-color;
   }
 }
 
@@ -35,11 +46,13 @@ $-splitter-width: 12px;
     margin: 10px 0px 10px 0px;
     height: 38px;
     .SearchIcon {
+      color: SRC.$primary-action-color-500;
       position: relative;
       left: 22px;
       top: 1px;
     }
     .ClearSearchIcon {
+      color: SRC.$primary-action-color-500;
       cursor: pointer;
       position: relative;
       left: -20px;
@@ -65,10 +78,30 @@ $-splitter-width: 12px;
     input.EntityFinder__Search__Input {
       background-color: transparent;
       height: 100%;
-      width: 350px;
       margin: 10px 0px;
       padding: 5px 28px;
       box-shadow: none;
+      transition: flex-grow 250ms ease-in-out, width 250ms ease-in-out;
+    }
+  }
+
+  &__Search[data-active='true'] {
+    input.EntityFinder__Search__Input {
+      width: 100%;
+      flex-grow: 1;
+    }
+  }
+
+  &__Search[data-active='false'] {
+    input.EntityFinder__Search__Input {
+      border: none;
+      padding: 0px;
+      width: 0px;
+      flex-grow: 0.00001;
+    }
+    .SearchIcon,
+    .ClearSearchIcon {
+      display: none;
     }
   }
 

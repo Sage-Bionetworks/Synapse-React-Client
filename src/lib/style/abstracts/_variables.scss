@@ -7,7 +7,7 @@ $gray-light: #f9f9f9 !default;
 $background-color-gray: $gray-light !default;
 $border-color-gray: $gray-dark !default;
 $background-color-gray-light: #fcfcfc !default;
-$primary-action-color: rgb(64, 123, 160) !default;
+$primary-action-color: #2b688f !default;
 $primary-bgcolor-rgba: rgba(201, 66, 129, 0.03) !default;
 
 $text-color-disabled: #bbbbbc !default;
@@ -38,6 +38,12 @@ $themes: (
   ),
 );
 
+$primary-action-color-active: adjust-color(
+  $primary-action-color,
+  $saturation: 50%,
+  $lightness: 0%
+) !default;
+
 $primary-action-color-900: adjust-color(
   $primary-action-color,
   $saturation: 24%,
@@ -64,6 +70,7 @@ $primary-action-color-300: adjust-color(
 
 $primary-color-palette: (
   base: $primary-action-color,
+  active: $primary-action-color-active,
   300: $primary-action-color-300,
   500: $primary-action-color-500,
   700: $primary-action-color-700,

@@ -13,20 +13,11 @@
     }
   }
   .Node[aria-disabled='false'] {
-    > .NodeContent:hover {
-      background-color: color.adjust(
-        SRC.$background-color-gray,
-        $lightness: -10%
-      );
-    }
   }
 
-  .Node[aria-disabled='false'][aria-selected='true'] {
-    > .NodeContent:hover {
-      background-color: color.adjust($-selected-color, $lightness: -10%);
-    }
-    .Node[aria-selected='false'] > .NodeContent:hover {
-      background: color.adjust($-selected-descendant-color, $lightness: -10%);
+  .Node.BrowseNode[aria-disabled='false'][aria-selected='true'] {
+    > .NodeContent {
+      font-weight: bold;
     }
   }
 }
