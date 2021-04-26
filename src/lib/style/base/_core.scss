@@ -584,6 +584,19 @@ div.SRC-logo-cursor * {
 }
 
 .SRC-userImgSmall {
+  font-size: 12px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  padding: 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  text-transform: capitalize;
+  color: white;
+}
+
+.SRC-userImgMedium {
   font-size: 18px;
   border-radius: 50%;
   width: 30px;
@@ -595,6 +608,11 @@ div.SRC-logo-cursor * {
   text-transform: capitalize;
   color: white;
 }
+
+.SRC-inline-avatar {
+  margin-right: 5px;
+}
+
 .extraSmall {
   width: 10px !important;
   height: 10px !important;
@@ -636,6 +654,10 @@ div.SRC-userImg {
       flex-shrink: 0;
     }
   }
+}
+
+.fade > .SRC-userCard {
+  max-width: 450px;
 }
 
 .SRC-userCardName {

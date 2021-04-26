@@ -10,7 +10,6 @@ import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ElementWithTooltip } from '../ElementWithTooltip'
-import _ from 'lodash'
 import { SynapseConstants } from '../../../utils'
 
 export type FacetWithSelection = {
@@ -38,7 +37,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
 }) => {
   let innerText,
     tooltipText: string | null = ''
-  if (facetWithSelection) {    
+  if (facetWithSelection) {
     if (facetWithSelection.facet.facetType === 'enumeration') {
       innerText =
         facetWithSelection.displayValue === SynapseConstants.VALUE_NOT_SET
@@ -57,7 +56,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     let filterValue = filter?.value
     if (filterValue?.startsWith('%') && filterValue?.endsWith('%')) {
       // strip '%' wildcard character when using a LIKE condition
-      filterValue = filterValue.substring(1, filterValue.length-1)
+      filterValue = filterValue.substring(1, filterValue.length - 1)
     }
     innerText = `"${filterValue}" in ${unCamelCase(filter?.columnName)}`
     tooltipText = `${unCamelCase(filter?.columnName)}: ${filterValue}`
@@ -66,7 +65,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     <ElementWithTooltip
       idForToolTip={`selectionCriteria_${+index}`}
       tooltipText={tooltipText}
-      callbackFn={() => _.noop}
+      callbackFn={() => {}}
     >
       <label
         className="SelectionCriteriaPill"

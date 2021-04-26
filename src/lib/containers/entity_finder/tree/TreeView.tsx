@@ -371,7 +371,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       }`}
     >
       <div className="Header">
-        <div className="Browse">Browse</div>
+        <div className="Browse">Browse:</div>
         <div onClick={e => e.stopPropagation()}>
           <Dropdown>
             <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">

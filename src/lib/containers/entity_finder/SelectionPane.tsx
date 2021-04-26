@@ -20,8 +20,8 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
   toggleSelection,
 }: SelectionPaneProps) => {
   return (
-    <div className="EntityFinder__Selected">
-      <h3>{title}</h3>
+    <div className="EntityFinder__Selected alert alert-warning">
+      <h4>{title}</h4>
       <div>
         {selectedEntities.map(e => (
           <div

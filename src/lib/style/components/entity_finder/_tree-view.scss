@@ -2,6 +2,8 @@
 @use './entity-finder' as EntityFinder;
 @use 'sass:color';
 
+$-selected-descendant-color: color.adjust($-selected-color, $lightness: 25%);
+
 .TreeViewReflexElement {
   position: relative;
   box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.3);
@@ -15,7 +17,6 @@
 .TreeView {
   background-color: SRC.$background-color-gray;
   height: $-finder-height;
-  border: 2px solid SRC.$border-color-gray;
   overflow: hidden;
   .Tree {
     height: $-finder-height - $-header-height;
@@ -57,12 +58,6 @@
       }
     }
 
-    .Node[aria-disabled='false'] {
-      > .NodeContent:hover {
-        @include -hover();
-      }
-    }
-
     .Node[aria-disabled='true'] {
       opacity: 0.5;
       > .NodeContent {
@@ -75,7 +70,7 @@
         background: $-selected-color;
       }
       .Node[aria-selected='false'] > .NodeContent {
-        background: color.change(SRC.$primary-action-color-500, $alpha: 0.05);
+        background: $-selected-descendant-color;
       }
     }
     .NodeContent.NodeRootContent {

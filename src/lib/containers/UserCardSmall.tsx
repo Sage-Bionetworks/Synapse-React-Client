@@ -1,8 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Overlay } from 'react-bootstrap'
-import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
+import { Avatar, AvatarSize } from './Avatar'
+import UserCardMedium from './UserCardMedium'
+import { useOverlay } from '../utils/hooks/useOverlay'
 import { UserBundle, UserProfile } from '../utils/synapseTypes/'
-import UserCard from './UserCard'
 import { SynapseClient, SynapseConstants } from '../utils'
 import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
 import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
@@ -15,16 +15,13 @@ export type UserCardSmallProps = {
   link?: string
   showAccountLevelIcon?: boolean
   openLinkInNewTab?: boolean
+  withAvatar?: boolean
+  avatarSize?: AvatarSize
+  imageURL?: string
 }
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
-
-function resetTimer(timer: React.MutableRefObject<NodeJS.Timeout | null>) {
-  if (timer.current) {
-    clearTimeout(timer.current)
-  }
-}
 
 export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   userProfile,
@@ -33,10 +30,12 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   link,
   showAccountLevelIcon = false,
   openLinkInNewTab,
+  withAvatar = false,
+  avatarSize = 'SMALL',
+  imageURL,
   ...rest
 }) => {
-  const timer = useRef<NodeJS.Timeout | null>(null)
-  const [show, setShow] = useState(false)
+
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
   const target = useRef(null)
   
@@ -77,76 +76,73 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
     }
   }
 
-  const OverlayComponent = (
-    <Overlay target={target.current} show={show} placement="top-start">
-      {({ placement, arrowProps, show: _show, popper, ...props }) => {
-        return (
-          <div
-            className="bootstrap-4-backport"
-            onMouseEnter={() => {
-              resetTimer(timer)
-              setShow(true)
-            }}
-            onMouseLeave={() => {
-              // Assume the user is done with the card regardless of click state
-              resetTimer(timer)
-              timer.current = setTimeout(() => {
-                setShow(false)
-              }, TIMER_DELAY_HIDE)
-            }}
-            {...props}
-            style={{ ...props.style, width: 'max-content', minWidth: '300px' }}
-          >
-            <UserCard
-              size={MEDIUM_USER_CARD}
-              userProfile={userProfile}
-              link={link}
-              disableLink={disableLink}
-              openLinkInNewTab={openLinkInNewTab}
-              {...rest}
-            />
-          </div>
-        )
-      }}
-    </Overlay>
+  const mediumUserCard = (
+    <UserCardMedium userProfile={userProfile} imageURL={imageURL} />
+  )
+
+  const {
+    OverlayComponent,
+    isShowing: isShowingOverlay,
+    toggleShow,
+    toggleHide,
+  } = useOverlay(mediumUserCard, target, TIMER_DELAY_SHOW, TIMER_DELAY_HIDE)
+
+  const avatar = withAvatar ? (
+    <span className="SRC-inline-avatar">
+      <Avatar
+        userProfile={userProfile}
+        avatarSize={avatarSize}
+        imageURL={imageURL}
+      />
+    </span>
+  ) : (
+    <></>
   )
 
   return showCardOnHover ? (
     <>
       {OverlayComponent}
+
       <span
         ref={target}
-        onMouseEnter={() => {
-          resetTimer(timer)
-          timer.current = setTimeout(() => setShow(true), TIMER_DELAY_SHOW)
-        }}
-        onMouseLeave={() => {
-          resetTimer(timer)
-          timer.current = setTimeout(() => setShow(false), TIMER_DELAY_HIDE)
-        }}
+        onMouseEnter={() => toggleShow()}
+        onMouseLeave={() => toggleHide()}
         onClick={event => {
           event.stopPropagation()
-          resetTimer(timer)
-          setShow(!show)
+          isShowingOverlay ? toggleHide(false) : toggleShow(false)
         }}
         className="SRC-userCard UserCardSmall SRC-underline-on-hover"
         style={{ whiteSpace: 'nowrap' }}
-      >{`@${userProfile.userName}`}</span>
-      {showAccountLevelIcon && <span className={"account-level-icon"}>{icon}</span>}
+      >
+        {avatar}
+        {`@${userProfile.userName}`}
+        {showAccountLevelIcon && <span className={"account-level-icon"}>{icon}</span>}
+      </span>
     </>
   ) : disableLink ? (
     <span
       className="SRC-userCard UserCardSmall SRC-boldText"
       style={{ cursor: 'unset' }}
-    >{`@${userProfile.userName}`}</span>
-  ) : (// eslint-disable-next-line react/jsx-no-target-blank
-    <a
+    >
+      {avatar}
+      {`@${userProfile.userName}`}
+    </span>
+  ) : (
+    <span>
+      {avatar}
+      {/* eslint-disable-next-line react/jsx-no-target-blank*/}
+      <a
         className="SRC-userCard UserCardSmall"
         target={openLinkInNewTab ? '_blank' : ''}
         rel={openLinkInNewTab ? 'noreferrer' : ''}
         href={
-          link ? link : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+          link
+            ? link
+            : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
         }
-      >{`@${userProfile.userName}`}</a>
+      >
+        {`@${userProfile.userName}`}
+      </a>
+    </span>
   )
 }
