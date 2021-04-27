@@ -1114,6 +1114,11 @@ export const getPresignedUrlForWikiAttachment = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+export const isInSynapseExperimentalMode = ():boolean => {
+  return cookies.get('SynapseTestWebsite')
+}
+
 /**
  * Set the session token cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
