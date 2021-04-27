@@ -255,6 +255,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 className="SearchIcon"
               />
               <FormControl
+                aria-hidden={!searchActive}
                 autoFocus={true}
                 role="textbox"
                 className="EntityFinder__Search__Input"
