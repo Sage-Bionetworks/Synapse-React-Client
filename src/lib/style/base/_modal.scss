@@ -95,6 +95,11 @@
   }
 
   &.AccessRequirementList {
+    .modal-dialog {
+      .status-alert.alert{
+        margin: 0
+      }
+    }
     &.cancel-modal {
       .modal-dialog {
         transform: none;

@@ -267,7 +267,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               key: 'danger',
               message: alertMsg
             })
-          } else {  // TODO: pass submission id back to RequestDataAccess
+          } else {
             setAlert({
               key: 'success',
               message: alertMsg

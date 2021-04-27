@@ -50,10 +50,6 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault();
-    const errAlert = {
-      key: 'danger',
-      message: 'Unable to update form data. Please try again later.'
-    }
     const requestObj:ResearchProject = Object.assign({}, researchProjectRef.current, {
       accessRequirementId: accessRequirementId,
       institution: institution,
@@ -70,11 +66,17 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
         })
       }).catch(e => {
         console.log("RequestDataAccessStep1: Error updating research project data: ", e)
-        setAlert(errAlert)
+        setAlert({
+          key: 'danger',
+          message: `Unable to update research project data. ${e.reason}`
+        })
       })
     } catch (e) {
       console.log("RequestDataAccessStep1: Error updating research project data: ", e)
-      setAlert(errAlert)
+      setAlert({
+        key: 'danger',
+        message: `Unable to update research project data. ${e.reason}`
+      })
     }
   }
 
