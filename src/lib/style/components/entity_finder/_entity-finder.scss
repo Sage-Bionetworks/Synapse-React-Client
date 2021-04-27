@@ -123,8 +123,7 @@ $-splitter-width: 12px;
   }
 
   &__Selected {
-    min-width: max-content;
-    max-width: $-tree-only-width;
+    width: 100%;
     white-space: nowrap;
     padding: 15px;
     margin: 15px 0px 0px auto;
@@ -136,7 +135,7 @@ $-splitter-width: 12px;
       margin-bottom: 5px;
 
       .EntityIcon {
-        margin: 10px;
+        margin: 10px 10px 10px 0px;
         width: 15px;
       }
 
@@ -147,7 +146,6 @@ $-splitter-width: 12px;
       }
 
       &__DeselectButton {
-        margin-left: auto;
         color: SRC.$primary-action-color-500;
         cursor: pointer;
       }
