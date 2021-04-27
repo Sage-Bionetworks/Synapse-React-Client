@@ -61,7 +61,7 @@ module.exports = {
         head: {
           scripts: [
             {
-                src:"https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js",                
+                src:"https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js",
             },
             {
                 src:"https://unpkg.com/markdown-it-synapse@1.1.1/dist/markdown-it-synapse.min.js",
@@ -102,12 +102,18 @@ module.exports = {
             {
                 src:"https://cdn.jsdelivr.net/npm/sanitize-html@1.20.0/dist/sanitize-html.min.js",
             },
+            {
+                src:"https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js",
+            },
         ],
         links: [
             {
               rel: 'stylesheet',
-              href:
-                'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
+              href: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'
+            },
+            {
+                rel: 'stylesheet',
+                href: 'https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css'
             }
           ]
         }

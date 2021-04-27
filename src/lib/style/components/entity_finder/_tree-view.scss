@@ -17,7 +17,6 @@ $-selected-descendant-color: color.adjust($-selected-color, $lightness: 25%);
 .TreeView {
   background-color: SRC.$background-color-gray;
   height: $-finder-height;
-  border: 2px solid SRC.$border-color-gray;
   overflow: hidden;
   .Tree {
     height: $-finder-height - $-header-height;

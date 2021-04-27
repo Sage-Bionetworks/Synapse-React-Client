@@ -108,7 +108,12 @@ class SynapseImage extends React.Component<
   public render() {
     const { params } = this.props
     const { align = '', altText = 'synapse image' } = params
-    let scale = `${Number(params.scale) ?? 100}%`
+
+    let scale = 'auto'
+    if (params.scale && params.scale !== '100') {
+      scale = `${Number(params.scale)}%`
+    }
+    
     const alignLowerCase = align.toLowerCase()
     let className = ''
     if (alignLowerCase === 'left') {

@@ -53,6 +53,7 @@ export default {
     'react-transition-group',
     'sql-parser',
     'universal-cookie',
+    'json-schema-ref-parser', // bundling this results in a non-functional build (without error). see PORTALS-1907
   ],
   onwarn: function (args) {
     // Skip certain warnings
@@ -72,10 +73,10 @@ export default {
   },
   // NOTE - the order matters for the extensions below
   plugins: [
-    resolve({ extensions, browser: true, preferBuiltins: true }),
+    resolve({ extensions, browser: true, preferBuiltins: false }),
     babel({
       extensions,
-      exclude: 'node_modules/*.*',
+      exclude: 'node_modules/**',
     }),
     // Common js is used to handle the import of older javascript modules not using es6
     commonjs(),

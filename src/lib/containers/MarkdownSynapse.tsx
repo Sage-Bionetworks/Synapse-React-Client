@@ -262,13 +262,18 @@ export default class MarkdownSynapse extends React.Component<
       '[id^="mathjax-"]',
     )
     // go through all obtained elements and transform them with katex
+    const regEx = new RegExp(/\\[()[\]]/, 'g') // Look for a '\' followed by either '(', ')', '[', or ']'. We delete these strings since they interfere with katex processing.
     mathExpressions.forEach(element => {
-      element.textContent &&
-        katex.render(element.textContent, element, {
+      if (element.textContent && !element.getAttribute('processed')) {
+        // only process a math element once, used to double/triple process
+        element.setAttribute('processed', 'true')
+        const textContent = element.textContent.replace(regEx, '')
+        return katex.render(textContent, element, {
           // @ts-ignore
           output: 'html',
           throwOnError: false,
         })
+      }
     })
   }
   /**

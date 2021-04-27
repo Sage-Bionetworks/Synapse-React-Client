@@ -1,4 +1,4 @@
-import {detectSSOCode, getSessionTokenFromCookie, signOut, getUserProfile} from './src/lib/utils/SynapseClient'
+import {detectSSOCode, getSessionTokenFromCookie, signOut, getUserProfile, isInSynapseExperimentalMode} from './src/lib/utils/SynapseClient'
 import {AVATAR, SMALL_USER_CARD, MEDIUM_USER_CARD, LARGE_USER_CARD,GENERIC_CARD,COMPUTATIONAL, PUBLICATION} from './src/lib/utils/SynapseConstants'
 import brainSvg from './src/demo/containers/playground/icons/brain.svg'
 import circleSvg from './src/demo/containers/playground/icons/circle.svg'
@@ -28,6 +28,8 @@ global.sessionChangeHandler = async () => {
 
 global.signOut = signOut
 global.sessionChangeHandler()
+
+console.log(`Is in Synapse Experimental Mode? ${isInSynapseExperimentalMode()}`)
 
 // example iconOptions (for custom icon mapping)
 global.iconOptions = {

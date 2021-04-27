@@ -20,24 +20,22 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
   toggleSelection,
 }: SelectionPaneProps) => {
   return (
-    <div className="EntityFinder__Selected">
-      <div className="alert alert-warning">
-        <h4>{title}</h4>
-        <div>
-          {selectedEntities.map(e => (
-            <div
-              key={`${e.targetId}${
-                e.targetVersionNumber ? `.${e.targetVersionNumber}` : ''
-              }`}
-            >
-              <EntityPathDisplay
-                sessionToken={sessionToken}
-                entity={e}
-                toggleSelection={toggleSelection}
-              ></EntityPathDisplay>
-            </div>
-          ))}
-        </div>
+    <div className="EntityFinder__Selected alert alert-warning">
+      <h4>{title}</h4>
+      <div>
+        {selectedEntities.map(e => (
+          <div
+            key={`${e.targetId}${
+              e.targetVersionNumber ? `.${e.targetVersionNumber}` : ''
+            }`}
+          >
+            <EntityPathDisplay
+              sessionToken={sessionToken}
+              entity={e}
+              toggleSelection={toggleSelection}
+            ></EntityPathDisplay>
+          </div>
+        ))}
       </div>
     </div>
   )
