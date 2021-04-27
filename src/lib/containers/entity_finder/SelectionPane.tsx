@@ -1,4 +1,4 @@
-import { Clear } from '@material-ui/icons'
+import Clear from '@material-ui/icons/Clear'
 import React, { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'

@@ -62,7 +62,7 @@
     "markdown-it-synapse-table": "^1.0.6",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.32",
-    "plotly.js-basic-dist": "^1.54.7",
+    "plotly.js-basic-dist-min": "^1.58.4",
     "raf": "^3.4.1",
     "react": "16.13.1",
     "react-app-polyfill": "^1.0.1",

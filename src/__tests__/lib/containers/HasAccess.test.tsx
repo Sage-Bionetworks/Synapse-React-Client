@@ -1,9 +1,8 @@
-import {
-  faDatabase,
-  faLink,
-  faUnlockAlt,
-  faLock,
-} from '@fortawesome/free-solid-svg-icons'
+import faDatabase from '@fortawesome/free-solid-svg-icons/faDatabase'
+import faLink from '@fortawesome/free-solid-svg-icons/faLink'
+import faUnlockAlt from '@fortawesome/free-solid-svg-icons/faUnlockAlt'
+import faLock from '@fortawesome/free-solid-svg-icons/faLock'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { shallow } from 'enzyme'
 import {

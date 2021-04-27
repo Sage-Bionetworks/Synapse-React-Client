@@ -11729,10 +11729,10 @@ pkg-up@3.1.0, pkg-up@^3.1.0:
   dependencies:
     find-up "^3.0.0"
 
-plotly.js-basic-dist@^1.54.7:
+plotly.js-basic-dist-min@^1.58.4:
   version "1.58.4"
-  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist/-/plotly.js-basic-dist-1.58.4.tgz"
-  integrity sha512-WaxrfR06KGeR73PEEcbQIws4E2TZeI5LFWrqNN3COrT12+y6WI7IONgz0iFSvZouRL/8VQvvzWjJHf5MJ/MwfQ==
+  resolved "https://registry.yarnpkg.com/plotly.js-basic-dist-min/-/plotly.js-basic-dist-min-1.58.4.tgz#14ea6116756f389b10c2b5e3a300b85f92f17881"
+  integrity sha512-Z/1xo+OYhBcuGPw1B2+BvTEuwiPutPqVVH/C/CrHeAsNYmmUyR/c1KtnAhZq0izd0s2V+GDwsOWn+g7iSz2psA==
 
 pn@^1.1.0:
   version "1.1.0"

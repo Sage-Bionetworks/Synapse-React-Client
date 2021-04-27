@@ -1,5 +1,5 @@
 import React, { FunctionComponent /*, useState , useEffect */ } from 'react' // importing FunctionComponent
-import Plotly from 'plotly.js-basic-dist'
+import Plotly from 'plotly.js-basic-dist-min'
 import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { GraphItem, PlotStyle, Dictionary } from './types'

@@ -1,4 +1,4 @@
-import { HelpOutline } from '@material-ui/icons'
+import HelpOutline from '@material-ui/icons/HelpOutline'
 import { OverlayTrigger, Popover } from 'react-bootstrap'
 import React from 'react'
 import MarkdownIt from 'markdown-it'

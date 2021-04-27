@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Plotly from 'plotly.js-basic-dist'
+import Plotly from 'plotly.js-basic-dist-min'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseClient } from '../utils'
 import {

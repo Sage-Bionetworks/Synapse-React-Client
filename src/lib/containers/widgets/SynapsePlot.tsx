@@ -1,4 +1,4 @@
-import Plotly from 'plotly.js-basic-dist'
+import Plotly from 'plotly.js-basic-dist-min'
 import * as React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SynapseConstants } from '../../utils/'

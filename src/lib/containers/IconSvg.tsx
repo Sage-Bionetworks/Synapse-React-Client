@@ -1,15 +1,12 @@
 import React, { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
-import {
-  ArrowBackIos,
-  ArrowForwardIos,
-  Check,
-  PhotoCameraOutlined,
-  Cached,
-  GetApp,
-} from '@material-ui/icons'
-
+import ArrowBackIos from '@material-ui/icons/ArrowBackIos'
+import ArrowForwardIos from '@material-ui/icons/ArrowForwardIos'
+import Check from '@material-ui/icons/Check'
+import PhotoCameraOutlined from '@material-ui/icons/PhotoCameraOutlined'
+import Cached from '@material-ui/icons/Cached'
+import GetApp from '@material-ui/icons/GetApp'
 import Chromatin from '../assets/mui_components/Chromatin'
 import Data from '../assets/mui_components/Data'
 import DataLocked from '../assets/mui_components/DataLocked'
