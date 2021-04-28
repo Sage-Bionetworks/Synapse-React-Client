@@ -277,7 +277,7 @@ export default function AccessRequirementList({
             />
             &nbsp;{entityInformation[0]?.name}
           </a>
-          <h4 className="AccessRequirementList__instruction">
+          <h4 className="AccessRequirementList__instruction" style={{marginTop: "3rem"}}>
             What do I need to do?
           </h4>
           <div className="requirement-container">
