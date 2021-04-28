@@ -155,7 +155,6 @@ export async function extractPlotDataArray(
     return label
   }
 
-  // TODO: Fetch once, truncate later
   const labels = await getLabels(facetToPlot.facetValues, columnType)
   const text = labels.map(el => el.truncatedLabel)
 
