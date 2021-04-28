@@ -150,7 +150,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         style={{ paddingLeft: `${level * 20 + 20}px` }}
         role="button"
         aria-label={`Select ${nodeName}`}
-        className={`NodeContent ${isRootNode && 'NodeRootContent'}`}
+        className={`NodeContent ${isRootNode ? 'NodeRootContent' : ''}`}
         key={nodeId}
         onClick={event => {
           event.stopPropagation()

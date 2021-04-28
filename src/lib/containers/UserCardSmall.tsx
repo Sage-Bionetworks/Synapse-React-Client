@@ -32,15 +32,19 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   const target = useRef(null)
 
   const mediumUserCard = (
-    <UserCardMedium userProfile={userProfile} imageURL={imageURL} />
+    <UserCardMedium userProfile={userProfile} imageURL={imageURL} {...rest} />
   )
 
-  const {
-    OverlayComponent,
-    isShowing: isShowingOverlay,
-    toggleShow,
-    toggleHide,
-  } = useOverlay(mediumUserCard, target, TIMER_DELAY_SHOW, TIMER_DELAY_HIDE)
+  if (link == null) {
+    link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+  }
+
+  const { OverlayComponent, toggleShow, toggleHide } = useOverlay(
+    mediumUserCard,
+    target,
+    TIMER_DELAY_SHOW,
+    TIMER_DELAY_HIDE,
+  )
 
   const avatar = withAvatar ? (
     <span className="SRC-inline-avatar">
@@ -63,8 +67,8 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         onMouseEnter={() => toggleShow()}
         onMouseLeave={() => toggleHide()}
         onClick={event => {
-          event.stopPropagation()
-          isShowingOverlay ? toggleHide(false) : toggleShow(false)
+          event.preventDefault()
+          window.open(link, '_blank')
         }}
         className="SRC-userCard UserCardSmall SRC-underline-on-hover"
         style={{ whiteSpace: 'nowrap' }}
@@ -89,11 +93,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         className="SRC-userCard UserCardSmall"
         target={openLinkInNewTab ? '_blank' : ''}
         rel={openLinkInNewTab ? 'noreferrer' : ''}
-        href={
-          link
-            ? link
-            : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
-        }
+        href={link}
       >
         {`@${userProfile.userName}`}
       </a>
