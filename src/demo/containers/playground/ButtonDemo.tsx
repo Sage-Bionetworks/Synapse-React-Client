@@ -20,11 +20,13 @@ export const ButtonDemo: React.FunctionComponent = () => {
   const shapeClasses: string[] = ['', 'pill', 'pill-xl']
   const colorVariants: string[] = [
     'primary-base',
+    'primary-active',
     'primary-300',
     'primary-500',
     'primary-700',
     'primary-900',
     'light-primary-base',
+    'light-primary-active',
     'light-primary-300',
     'light-primary-500',
     'light-primary-700',

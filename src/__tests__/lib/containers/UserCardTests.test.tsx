@@ -15,13 +15,12 @@ import UserCardContextMenu, {
   UserCardContextMenuProps,
   MenuAction,
 } from '../../../lib/containers/UserCardContextMenu'
-import {
-  MEDIUM_USER_CARD,
-  SEPERATOR,
-} from '../../../lib/utils/SynapseConstants'
+import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
 import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 import { act } from 'react-dom/test-utils'
 import { Avatar, AvatarProps } from '../../../lib/containers/Avatar'
+import { render, waitFor, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
   return {
@@ -152,17 +151,41 @@ describe('it creates the correct UI for the small card', () => {
     )
   })
 
-  it('shows a medium user card when clicked', async () => {
-    const { wrapper } = createMountedComponent({ ...props })
-    expect(wrapper.find('span.UserCardSmall')).not.toBeNull()
-    act(() => {
-      wrapper
-        .find('span.UserCardSmall')
-        .props()
-        .onClick({ stopPropagation: () => {} } as any)
+  it('shows a medium user card when mouse enters', async () => {
+    render(<UserCard {...props} />)
+    expect(screen.getByText(`@${props.userProfile.userName}`)).not.toBeNull()
+
+    // There is no medium user card, so we shouldn't be able to find the full name anywhere
+    expect(() =>
+      screen.getAllByText(
+        `${props.userProfile.firstName} ${props.userProfile.lastName}`,
+      ),
+    ).toThrowError()
+
+    // Hover over the username
+    await act(async () => {
+      userEvent.hover(screen.getByText(`@${props.userProfile.userName}`))
+
+      // The card should appear, which would let us see first/last name
+      // we have to wrap in a waitFor because of the delay
+      await waitFor(() =>
+        expect(() =>
+          screen.getAllByText(
+            `${props.userProfile.firstName} ${props.userProfile.lastName}`,
+          ),
+        ).not.toThrowError(),
+      )
+
+      // Unhover and confirm that the card disappears (we will no longer see a full name anywhere)
+      userEvent.unhover(screen.getByText(`@${props.userProfile.userName}`))
+      await waitFor(() =>
+        expect(() =>
+          screen.getAllByText(
+            `${props.userProfile.firstName} ${props.userProfile.lastName}`,
+          ),
+        ).toThrowError(),
+      )
     })
-    await resolveAllPending(wrapper)
-    expect(wrapper.find(UserCardMedium)).toHaveLength(1)
   })
 
   it('creates an anchor link when showCardOnHover is false', () => {

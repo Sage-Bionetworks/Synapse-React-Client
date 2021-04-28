@@ -2,15 +2,10 @@
 @use './entity-finder' as EntityFinder;
 @use 'sass:color';
 
-$-selected-descendant-color: color.adjust($-selected-color, $lightness: 25%);
-
 .TreeViewReflexElement {
-  position: relative;
-  box-shadow: 3px 1px 3px rgba(0, 0, 0, 0.3);
-  z-index: 10;
-
   .TreeView {
     border: none;
+    border-right: $-border;
   }
 }
 
@@ -27,6 +22,7 @@ $-selected-descendant-color: color.adjust($-selected-color, $lightness: 25%);
     // See _tree-node-*.scss files
     .Node {
       .NodeContent {
+        transition: background-color 200ms ease-in;
         width: 100%;
         align-items: center;
         display: inline-grid;
@@ -35,7 +31,7 @@ $-selected-descendant-color: color.adjust($-selected-color, $lightness: 25%);
           grid-column-start: 1;
           grid-column-end: 2;
           text-align: center;
-          color: SRC.$primary-action-color-700;
+          color: SRC.$primary-action-color-active;
           cursor: pointer;
         }
 
@@ -65,14 +61,6 @@ $-selected-descendant-color: color.adjust($-selected-color, $lightness: 25%);
       }
     }
 
-    .Node[aria-selected='true'] {
-      > .NodeContent {
-        background: $-selected-color;
-      }
-      .Node[aria-selected='false'] > .NodeContent {
-        background: $-selected-descendant-color;
-      }
-    }
     .NodeContent.NodeRootContent {
       grid-template-columns: 15px 5px auto;
     }
