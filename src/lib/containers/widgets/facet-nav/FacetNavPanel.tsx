@@ -182,7 +182,8 @@ export async function extractPlotDataArray(
     x:
       plotType === 'BAR'
         ? facetToPlot.facetValues.map(
-            facet => labels.find(label => label.facet === facet)?.label,
+            facet =>
+              labels.find(label => label.facet === facet)?.label ?? facet.value,
           )
         : undefined,
     y:
