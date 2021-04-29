@@ -2,7 +2,7 @@ import * as React from 'react'
 import { DATASET } from '../../utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import * as Utils from './utils'
-import { renderValueOrMultiValue } from '../GenericCard'
+import { getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
 
@@ -31,13 +31,13 @@ class Dataset extends React.Component<DatasetProps, {}> {
     const { data, schema, selectColumns, columnModels } = this.props
     const datasetName = data[schema.datasetName]
     const summary = data[schema.summary]
-    const tumorType = renderValueOrMultiValue({
+    const tumorType = getValueOrMultiValue({
       columnName: 'tumorType',
       value: data[schema.tumorType],
       selectColumns,
       columnModels,
     }).str
-    const diseaseFocus = renderValueOrMultiValue({
+    const diseaseFocus = getValueOrMultiValue({
       columnName: 'diseaseFocus',
       value: data[schema.diseaseFocus],
       selectColumns,
@@ -50,7 +50,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
     const values = [
       [
         'FUNDER',
-        renderValueOrMultiValue({
+        getValueOrMultiValue({
           columnName: 'fundingAgency',
           value: fundingAgency,
           selectColumns,

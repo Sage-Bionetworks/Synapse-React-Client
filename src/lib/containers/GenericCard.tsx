@@ -9,7 +9,7 @@ import {
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
-import { SelectColumn, ColumnModel, ColumnType } from '../utils/synapseTypes'
+import { SelectColumn, ColumnModel, ColumnType, EntityColumnType } from '../utils/synapseTypes'
 import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
 import IconList from './IconList'
@@ -18,6 +18,8 @@ import {
   DOI_REGEX,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '../utils/functions/RegularExpressions'
+import { SMALL_USER_CARD } from '../utils/SynapseConstants'
+import UserCard from './UserCard'
 
 export type KeyToAlias = {
   key: string
@@ -83,7 +85,7 @@ export const getCutoff = (summary: string) => {
   return { previewText }
 }
 
-export const renderValueOrMultiValue = ({
+export const getValueOrMultiValue = ({
   columnName,
   value,
   selectColumns,
@@ -98,14 +100,14 @@ export const renderValueOrMultiValue = ({
     return {
       str: '',
       strList: undefined,
+      columnModelType: undefined,
     }
   }
   const selectedColumnOrUndefined =
     selectColumns?.find(el => el.name === columnName) ||
     columnModels?.find(el => el.name === columnName)
   const isMultiValue =
-    selectedColumnOrUndefined?.columnType === 'STRING_LIST' ||
-    selectedColumnOrUndefined?.columnType === 'INTEGER_LIST'
+    selectedColumnOrUndefined?.columnType.endsWith('_LIST')
 
   if (isMultiValue) {
     let val: any = value
@@ -116,6 +118,7 @@ export const renderValueOrMultiValue = ({
       return {
         strList,
         str: val,
+        columnModelType: selectedColumnOrUndefined?.columnType
       }
     } catch (e) {
       console.error(
@@ -126,7 +129,7 @@ export const renderValueOrMultiValue = ({
       )
     }
   }
-  return { str: value }
+  return { str: value, columnModelType: selectedColumnOrUndefined?.columnType }
 }
 
 export const renderLabel = (args: {
@@ -148,7 +151,7 @@ export const renderLabel = (args: {
   if (!value) {
     return value
   }
-  const { strList, str } = renderValueOrMultiValue({
+  const { strList, str, columnModelType } = getValueOrMultiValue({
     columnName,
     value,
     selectColumns,
@@ -166,6 +169,24 @@ export const renderLabel = (args: {
     className = 'SRC-lightLink'
   } else {
     className = 'SRC-primary-text-color'
+  }
+
+  // PORTALS-1913: special rendering for user ID lists
+  if (columnModelType === 'USERID_LIST' && strList) {
+      return strList.map((val:string, index:number) => {
+        return (
+          <span key={val}>
+            <UserCard ownerId={val} size={SMALL_USER_CARD}/>
+            {/* \u00a0 is a nbsp; */}
+            {index < strList.length - 1 && ',\u00a0\u00a0'}
+          </span>
+        )
+    })
+  }
+  if (columnModelType === 'USERID' && str) {
+      return (
+        <UserCard ownerId={str} size={SMALL_USER_CARD}/>
+      )
   }
 
   if (!labelLink) {
@@ -192,7 +213,7 @@ export const renderLabel = (args: {
     if (strList) {
       return strList.map((el, index) => {
         return (
-          <span>
+          <span key={el}>
             <MarkdownSynapse key={el} renderInline={true} markdown={el} />
             {/* \u00a0 is a nbsp; */}
             {index < strList.length - 1 && ',\u00a0\u00a0'}
@@ -221,7 +242,8 @@ export const renderLabel = (args: {
 
 type ValueOrMultiValue = {
   str: string
-  strList?: string[]
+  strList?: string[],
+  columnModelType?: ColumnType | EntityColumnType
 }
 
 export default class GenericCard extends React.Component<
@@ -367,7 +389,7 @@ export default class GenericCard extends React.Component<
       data[schema[genericCardSchemaDefined.subTitle]]
     subTitle =
       genericCardSchemaDefined?.subTitle &&
-      renderValueOrMultiValue({
+      getValueOrMultiValue({
         value: subTitle,
         columnName: genericCardSchemaDefined?.subTitle,
         selectColumns,
