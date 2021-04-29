@@ -258,23 +258,23 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           ) : (
             markdown
           )}
+          {showButton && ( // This will show when the access is not approved
+            <div className={`button-container ${isApproved ? `hide` : `default`}`}>
+              <div className="accept-button-container">
+                <button className="accept-button" onClick={onAcceptClicked}>
+                  {getAcceptButtonText()}
+                </button>
+              </div>
+
+              <div className="not-accept-button-container">
+                <button className="not-accpet-button" onClick={() => onHide?.()}>
+                  I do not accept
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-      {showButton && ( // This will show when the access is not approved
-        <div className={`button-container ${isApproved ? `hide` : `default`}`}>
-          <div className="accept-button-container">
-            <button className="accept-button" onClick={onAcceptClicked}>
-              {getAcceptButtonText()}
-            </button>
-          </div>
-
-          <div className="not-accept-button-container">
-            <button className="not-accpet-button" onClick={() => onHide?.()}>
-              I do not accept
-            </button>
-          </div>
-        </div>
-      )}
     </>
   )
 }

@@ -65,7 +65,8 @@
   .accept-button-container {
     align-content: center;
     justify-content: center;
-    text-align: center;
+    display: inline;
+    margin-right: 2rem;
   }
 
   .accept-button {
@@ -81,6 +82,7 @@
     justify-content: center;
     text-align: center;
     color: SRC.$primary-action-color;
+    display: inline;
   }
 
   .get-access-requirement-button {
@@ -116,6 +118,9 @@
 
 .bootstrap-4-backport {
   &.AccessRequirementList {
+    .terms-of-use-content {
+      flex-grow: 1;
+    }
     .modal-dialog {
       .status-alert.alert{
         margin-top: 0
