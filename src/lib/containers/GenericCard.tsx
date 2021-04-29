@@ -170,7 +170,6 @@ export const renderLabel = (args: {
   } else {
     className = 'SRC-primary-text-color'
   }
-
   // PORTALS-1913: special rendering for user ID lists
   if (columnModelType === 'USERID_LIST' && strList) {
       return strList.map((val:string, index:number) => {
