@@ -4,6 +4,8 @@ import {
   RadioGroup,
   RadioGroupProps,
 } from '../../../../lib/containers/widgets/RadioGroup'
+import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
+import { act } from 'react-dom/test-utils'
 
 const mockCallback = jest.fn()
 
@@ -38,70 +40,26 @@ describe('basic function', () => {
     expect(wrapper.find('.radio')).toHaveLength(props.options.length)
     expect(wrapper.find('input')).toHaveLength(props.options.length)
     expect(wrapper.find('div').at(0).hasClass('radioGroupClass')).toBe(true)
-    expect(
-      wrapper
-        .find('label')
-        .at(0)
-        .find('span span')
-        .text(),
-    ).toBe(props.options[0].label)
+    expect(wrapper.find('label').at(0).find('span span').text()).toBe(
+      props.options[0].label,
+    )
 
-    expect(
-      wrapper
-        .find('input')
-        .at(1)
-        .props().checked,
-    ).toBe(true)
-    expect(
-      wrapper
-        .find('input')
-        .at(2)
-        .props().checked,
-    ).toBe(false)
+    expect(wrapper.find('input').at(1).props().checked).toBe(true)
+    expect(wrapper.find('input').at(2).props().checked).toBe(false)
   })
 
   it('should have correct item changed', () => {
     init({ ...props, value: 'value2' })
-    expect(
-      wrapper
-        .find('input')
-        .at(0)
-        .props().checked,
-    ).toBe(false)
-    expect(
-      wrapper
-        .find('input')
-        .at(1)
-        .props().checked,
-    ).toBe(false)
-    expect(
-      wrapper
-        .find('input')
-        .at(2)
-        .props().checked,
-    ).toBe(true)
+    expect(wrapper.find('input').at(0).props().checked).toBe(false)
+    expect(wrapper.find('input').at(1).props().checked).toBe(false)
+    expect(wrapper.find('input').at(2).props().checked).toBe(true)
   })
 
   it('should not crash without value specified', () => {
     init({ ...props, value: undefined })
-    expect(
-      wrapper
-        .find('input')
-        .at(0)
-        .props().checked,
-    ).toBe(false)
-    expect(
-      wrapper
-        .find('input')
-        .at(1)
-        .props().checked,
-    ).toBe(false)
-    expect(
-      wrapper
-        .find('input')
-        .at(2)
-        .props().checked,
-    ).toBe(false)
+    expect(wrapper.find('input').at(0).props().checked).toBe(false)
+    expect(wrapper.find('input').at(1).props().checked).toBe(false)
+    expect(wrapper.find('input').at(2).props().checked).toBe(false)
   })
 
   it('should call callbackFn on change with correct params and change the value', () => {
@@ -116,10 +74,23 @@ describe('basic function', () => {
       },
     }
 
-    wrapper
-      .find('input')
-      .at(1)
-      .simulate('change', event)
+    wrapper.find('input').at(1).simulate('change', event)
     expect(mockCallback).toHaveBeenCalledWith(props.options[1].value, false)
+  })
+
+  it('should append focused class when focused', async () => {
+    init({ ...props, value: undefined })
+
+    expect(wrapper.find('.radio-focused').length).toEqual(0)
+    act(() => {
+      wrapper.find('input').at(0).props().onFocus!({} as any)
+    })
+    await resolveAllPending(wrapper)
+    expect(wrapper.find('.radio-focused').length).toEqual(1)
+    act(() => {
+      wrapper.find('input').at(0).props().onBlur!({} as any)
+    })
+    await resolveAllPending(wrapper)
+    expect(wrapper.find('.radio-focused').length).toEqual(0)
   })
 })
