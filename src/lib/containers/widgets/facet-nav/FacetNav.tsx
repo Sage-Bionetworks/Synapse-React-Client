@@ -198,8 +198,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {asyncJobStatus?.progressMessage && (
           <div>
-            {' '}
-            <span className="spinner" /> {asyncJobStatus.progressMessage}{' '}
+            <span className="spinner" />
+            {asyncJobStatus.progressMessage}
           </div>
         )}
       </div>
