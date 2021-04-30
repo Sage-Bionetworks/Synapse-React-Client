@@ -15,6 +15,7 @@ import {
 import { useState, useEffect } from 'react'
 import TotalQueryResults from '../../../containers/TotalQueryResults'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
+import { Button } from 'react-bootstrap'
 
 export type FacetNavOwnProps = {
   facetsToPlot?: string[]
@@ -28,7 +29,7 @@ type UiFacetState = {
   index?: number
 }
 
-const DEFAULT_VISIBLE_FACETS = 3
+const DEFAULT_VISIBLE_FACETS = 2
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
@@ -260,7 +261,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               </div>
             ))}
           </div>
-          <div className="FacetNav__row clearfix">
+          <div className="FacetNav__row">
             {restOfFacets.map((facet, index) => (
               <div
                 className="col-sm-12 col-md-4"
@@ -305,17 +306,18 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               </div>
             ))}
           </div>
-          <div className="FacetNav__showMoreContainer">
+          <div className="FacetNav__showMoreContainer bootstrap-4-backport">
             {showMoreButtonState !== 'NONE' && (
-              <button
-                className="btn btn-default FacetNav__showMore"
+              <Button
+                variant="secondary"
+                className="pill-xl FacetNav__showMore"
                 onClick={() => onShowMoreClick(showMoreButtonState === 'MORE')}
                 style={{ zIndex: 500 }}
               >
                 {showMoreButtonState === 'LESS'
-                  ? 'Hide Optional Graphs'
-                  : 'Show All Graphs'}
-              </button>
+                  ? 'Hide Charts'
+                  : 'View All Charts'}
+              </Button>
             )}
           </div>
         </div>
