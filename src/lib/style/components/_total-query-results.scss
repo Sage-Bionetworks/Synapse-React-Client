@@ -37,7 +37,7 @@
   margin-left: 1rem;
   line-height: 100%;
   cursor: pointer;
-  background-color: color.change(SRC.$primary-action-color, $alpha: 0.1);
+  background-color: color.change(SRC.$secondary-action-color, $alpha: 0.1);
   color: SRC.$text-color-dark;
   font-weight: normal;
   margin: 10px;
@@ -46,7 +46,7 @@
   }
 
   &__btnRemove {
-    color: SRC.$primary-action-color;
+    color: SRC.$secondary-action-color;
     padding: 0;
     margin-left: 5px;
     margin-top: 1px;
