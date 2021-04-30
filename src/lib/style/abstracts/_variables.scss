@@ -38,6 +38,12 @@ $themes: (
   ),
 );
 
+$primary-action-color-active: adjust-color(
+  $primary-action-color,
+  $saturation: 50%,
+  $lightness: 0%
+) !default;
+
 $primary-action-color-900: adjust-color(
   $primary-action-color,
   $saturation: 24%,
@@ -64,6 +70,7 @@ $primary-action-color-300: adjust-color(
 
 $primary-color-palette: (
   base: $primary-action-color,
+  active: $primary-action-color-active,
   300: $primary-action-color-300,
   500: $primary-action-color-500,
   700: $primary-action-color-700,

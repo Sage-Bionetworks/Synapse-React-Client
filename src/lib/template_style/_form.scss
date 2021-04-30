@@ -10,7 +10,11 @@
 }
 input[type='checkbox'],
 input[type='radio'] {
-  display: none;
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
 }
 .checkbox > label::before,
 .radio::before,
@@ -24,6 +28,11 @@ input[type='radio'] {
   border-radius: 2px;
   background: radial-gradient(white, #eee);
   margin-right: 5px;
+}
+
+.checkbox-focused > label::before,
+.radio-focused::before {
+  box-shadow: 0px 0px 2px 2px SRC.$primary-action-color-active;
 }
 
 .radio::before {
