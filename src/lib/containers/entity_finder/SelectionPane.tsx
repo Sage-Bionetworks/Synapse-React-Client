@@ -20,9 +20,9 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
   toggleSelection,
 }: SelectionPaneProps) => {
   return (
-    <div className="EntityFinder__Selected alert alert-warning">
+    <div className="EntityFinderSelectionPane alert alert-warning">
       <h4>{title}</h4>
-      <div>
+      <div className={"EntityFinderSelectionPane__Items"} style={{ display: 'flex', flexDirection: 'column-reverse' }}>
         {selectedEntities.map(e => (
           <div
             key={`${e.targetId}${
@@ -82,7 +82,7 @@ const EntityPathDisplay: React.FunctionComponent<{
   }, [bundle, fullPath])
 
   return (
-    <div className="EntityFinder__Selected__Row">
+    <div className="EntityFinderSelectionPane__Row">
       <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
       {bundle && (
         <EntityTypeIcon className="EntityIcon" type={bundle.entityType!} />
@@ -93,14 +93,14 @@ const EntityPathDisplay: React.FunctionComponent<{
       >
         {displayedPath ? displayedPath + '/' : ''}
       </span>
-      <span className="EntityFinder__Selected__Row__EntityName">
+      <span className="EntityFinderSelectionPane__Row__EntityName">
         {entityName}
       </span>
       {entity.targetVersionNumber && (
         <span> (Version {entity.targetVersionNumber})</span>
       )}
       <Clear
-        className="EntityFinder__Selected__Row__DeselectButton"
+        className="EntityFinderSelectionPane__Row__DeselectButton"
         onClick={() => {
           toggleSelection(entity)
         }}
