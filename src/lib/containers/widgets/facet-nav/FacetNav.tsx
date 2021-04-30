@@ -214,7 +214,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           getInitQueryRequest={getInitQueryRequest}
           token={token}
           unitDescription={
-            hasSelectedFacets ? 'Results Filtered By:' : 'Results'
+            hasSelectedFacets ? 'Results Filtered By' : 'Results'
           }
           frontText={''}
           showNotch={showNotch}
