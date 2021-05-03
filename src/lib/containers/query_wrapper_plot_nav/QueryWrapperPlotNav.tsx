@@ -65,8 +65,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     hideDownload,
     searchConfiguration,
     ...rest
-  } = props  
-  let sqlUsed = sql  
+  } = props
+  let sqlUsed = sql
   if (searchParams) {
     sqlUsed = insertConditionsFromSearchParams(
       searchParams,
@@ -107,13 +107,13 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <QueryFilter {...rest} />
         <QueryFilterToggleButton />
-        <FacetNav facetsToPlot={facetsToPlot} showNotch={true} />
+        <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
         <FilterAndView
           facetsToFilter={facetsToFilter}
           tableConfiguration={tableConfiguration}
           hideDownload={hideDownload}
           cardConfiguration={cardConfiguration}
-        />        
+        />
         {showExportMetadata && (
           <ModalDownload onClose={() => setShowExportMetadata(false)} />
         )}

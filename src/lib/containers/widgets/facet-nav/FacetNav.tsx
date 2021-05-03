@@ -1,6 +1,10 @@
 import * as React from 'react'
 import FacetNavPanel from './FacetNavPanel'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../../QueryWrapper'
+import {
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from '../../QueryWrapper'
 import {
   FacetColumnResultValues,
   FacetColumnRequest,
@@ -35,7 +39,7 @@ export type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
 
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 
-export function getFacets (
+export function getFacets(
   data: QueryResultBundle | undefined,
   facetsToPlot?: string[],
 ): FacetColumnResult[] {
@@ -193,14 +197,37 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {asyncJobStatus?.progressMessage && (
-          <div> <span className="spinner" /> {asyncJobStatus.progressMessage} </div>
+          <div>
+            <span className="spinner" />
+            {asyncJobStatus.progressMessage}
+          </div>
         )}
       </div>
     )
   } else {
     return (
       <>
-        <div className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS} ${showMoreButtonState === 'LESS' ? 'less' : ''}`}>
+        <TotalQueryResults
+          isLoading={isLoading!}
+          executeQueryRequest={executeQueryRequest!}
+          lastQueryRequest={getLastQueryRequest?.()!}
+          getInitQueryRequest={getInitQueryRequest}
+          token={token}
+          unitDescription={
+            hasSelectedFacets ? 'Results Filtered By' : 'Results'
+          }
+          frontText={''}
+          showNotch={showNotch}
+          topLevelControlsState={topLevelControlsState}
+        />
+
+        <div
+          className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${
+            showFacetFilter
+              ? QUERY_FILTERS_EXPANDED_CSS
+              : QUERY_FILTERS_COLLAPSED_CSS
+          } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
+        >
           <div className="FacetNav__expanded">
             {expandedFacets.map((facet, index) => (
               <div key={facet.columnName}>
@@ -292,17 +319,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
             )}
           </div>
         </div>
-        <TotalQueryResults
-          isLoading={isLoading!}
-          executeQueryRequest={executeQueryRequest!}
-          lastQueryRequest={getLastQueryRequest?.()!}
-          getInitQueryRequest={getInitQueryRequest}
-          token={token}
-          unitDescription={hasSelectedFacets ? 'results via:' : 'results'}
-          frontText={'Showing'}
-          showNotch={showNotch}
-          topLevelControlsState={topLevelControlsState}
-        />
       </>
     )
   }
