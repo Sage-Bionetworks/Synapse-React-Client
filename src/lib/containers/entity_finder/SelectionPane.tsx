@@ -21,8 +21,8 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
 }: SelectionPaneProps) => {
   return (
     <div className="EntityFinderSelectionPane alert alert-warning">
-      <h4>{title}</h4>
-      <div className={"EntityFinderSelectionPane__Items"} style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+      <h5>{title}</h5>
+      <div className={'EntityFinderSelectionPane__Items'}>
         {selectedEntities.map(e => (
           <div
             key={`${e.targetId}${

@@ -1,13 +1,13 @@
 @use '../abstracts/variables' as SRC;
+@use 'sass:color';
 
 .TotalQueryResults {
-  background: SRC.$gray-light;
+  color: SRC.$text-color-dark;
+  background: unset;
   /* Divider */
-  margin-top: -1px;
-  border: 1px solid #dcdcdc;
-  padding: 1.6rem 2.4rem;  
-  margin-bottom: 2rem;
+  padding: 1px 0px;
   display: flex;
+  align-items: baseline;
 
   &__selections {
     display: flex;
@@ -30,16 +30,15 @@
 }
 
 .SelectionCriteriaPill {
-  padding: 5px 10px;
+  padding: 3px 10px;
   display: inline-flex;
   justify-content: center;
   border-radius: 20px;
   margin-left: 1rem;
-  font-size: 1.2rem;
   line-height: 100%;
   cursor: pointer;
-  background-color: SRC.$primary-action-color !important;
-  color: #fff;
+  background-color: color.change(SRC.$secondary-action-color, $alpha: 0.1);
+  color: SRC.$text-color-dark;
   font-weight: normal;
   margin: 10px;
   span {
@@ -47,9 +46,13 @@
   }
 
   &__btnRemove {
+    color: SRC.$secondary-action-color;
     padding: 0;
     margin-left: 5px;
-    font-size: 1rem;
+    margin-top: 1px;
+    svg {
+      font-size: 1.25rem;
+    }
   }
 }
 
