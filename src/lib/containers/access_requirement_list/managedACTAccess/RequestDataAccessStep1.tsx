@@ -94,8 +94,8 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
       </ReactBootstrap.Modal.Title>
     </ReactBootstrap.Modal.Header>
     <ReactBootstrap.Modal.Body>
-      <h4>Please tell us about your project.</h4>
-      <Form.Group style={{marginTop: "2rem"}} >
+      <p>Please tell us about your project.</p>
+      <Form.Group>
         <Form.Label htmlFor={"project-lead"}>Project Lead</Form.Label>
         <Form.Control
           id={"project-lead"}

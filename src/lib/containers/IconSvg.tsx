@@ -9,6 +9,7 @@ import {
   PhotoCameraOutlined,
   Cached,
   GetApp,
+  InfoOutlined,
 } from '@material-ui/icons'
 
 import Chromatin from '../assets/mui_components/Chromatin'
@@ -38,7 +39,6 @@ export type IconSvgProps = {
 
 export type SVGStyleProps = {
   color?: string
-  fontSize?: string
   verticalAlign?: string
   fill?: string
 }
@@ -73,6 +73,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <Cached style={muiSvgStyle}></Cached>
     case 'photoCamera':
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
+    case 'info':
+      return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
     case 'rat':
       return <Rat fill={color} style={customSvgStyle}></Rat>
     case 'chromatin':

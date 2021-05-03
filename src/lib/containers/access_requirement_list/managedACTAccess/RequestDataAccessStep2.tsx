@@ -400,14 +400,21 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         </ReactBootstrap.Modal.Title>
       </ReactBootstrap.Modal.Header>
       <ReactBootstrap.Modal.Body>
-        <h4>Please provide the information below to submit the request for access.</h4>
-        <Form.Group style={{marginTop: "2rem"}} >
+        <p>Please provide the information below to submit the request for access.</p>
+        <Form.Group>
           <Form.Label htmlFor={"requesters"}>
             Data Requesters
           </Form.Label><br/>
-          <em>This list should match those listed on your DUC.<br/>
-            All data requesters must have a <a href={"https://docs.synapse.org/articles/accounts_certified_users_and_profile_validation.html#validated-profile"} target={"_blank"} rel={"noreferrer"}>validated user profile</a>
-          </em>
+          <label>This list should match those listed on your DUC.<br/>
+            <span style={{verticalAlign: "middle"}}>All data requesters must have a validated user profile.</span>
+            <a href={"https://docs.synapse.org/articles/accounts_certified_users_and_profile_validation.html#validated-profile"} target={"_blank"} rel={"noreferrer"}>
+              <IconSvg
+                options={{
+                  icon: 'info'
+                }}
+              />
+            </a>
+          </label>
           <UserSearchBox
             id={"requesters"}
             onSelectCallback={onSelectUserCallback}
