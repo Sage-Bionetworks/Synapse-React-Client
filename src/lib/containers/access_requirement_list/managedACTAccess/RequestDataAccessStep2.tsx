@@ -61,7 +61,7 @@ export type UploadCallbackResp = {
 
 export type AlertProps = {
   key: string,
-  message: string
+  message: string | JSX.Element
 }
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {

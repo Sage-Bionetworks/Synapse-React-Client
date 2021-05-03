@@ -181,23 +181,23 @@ export default function AcceptedRequirements({
           ) : (
             markdown
           )}
+          {token && showButton && (
+            <div className={`button-container ${isApproved ? `hide` : `default`}`}>
+              <div className="accept-button-container">
+                <button className="accept-button" onClick={onAcceptClicked}>
+                  {acceptButtonText}
+                </button>
+              </div>
+
+              <div className="not-accept-button-container">
+                <button className="not-accpet-button" onClick={() => onHide?.()}>
+                  I do not accept
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-      {token && showButton && (
-        <div className={`button-container ${isApproved ? `hide` : `default`}`}>
-          <div className="accept-button-container">
-            <button className="accept-button" onClick={onAcceptClicked}>
-              {acceptButtonText}
-            </button>
-          </div>
-
-          <div className="not-accept-button-container">
-            <button className="not-accpet-button" onClick={() => onHide?.()}>
-              I do not accept
-            </button>
-          </div>
-        </div>
-      )}
     </>
   )
 }

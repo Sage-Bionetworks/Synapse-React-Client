@@ -28,7 +28,7 @@
   .requirement-container {
     display: flex;
     align-items: center;
-    margin-top: 15px;
+    margin: 1rem 0 4rem;
   }
 
   &__register-text-link {
@@ -122,7 +122,7 @@
       flex-grow: 1;
     }
     .modal-dialog {
-      .status-alert.alert{
+      .access-requirement-list-alert.alert{
         margin-top: 0
       }
     }

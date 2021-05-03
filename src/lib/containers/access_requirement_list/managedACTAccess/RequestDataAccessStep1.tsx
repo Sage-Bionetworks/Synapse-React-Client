@@ -68,14 +68,20 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1> = props => {
         console.log("RequestDataAccessStep1: Error updating research project data: ", e)
         setAlert({
           key: 'danger',
-          message: `Unable to update research project data. ${e.reason}`
+          message: (<>
+            <strong>Unable to update research project data.</strong><br />
+            ${e.reason}
+          </>)
         })
       })
     } catch (e) {
       console.log("RequestDataAccessStep1: Error updating research project data: ", e)
       setAlert({
         key: 'danger',
-        message: `Unable to update research project data. ${e.reason}`
+        message: (<>
+          <strong>Unable to update research project data.</strong><br />
+          ${e.reason}
+        </>)
       })
     }
   }

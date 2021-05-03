@@ -83,14 +83,17 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
         if (submissionState === SUBMISSION_STATE.SUBMITTED && !isSubmissionCanceled) {
           const errAlert = {
             key: 'danger',
-            message: 'Error canceling your data access request. Please try again later.'
+            message: (<>
+              <strong>Error canceling your data access request.</strong><br />
+              Please try again later.
+            </>)
           }
           try {
             const resp:SubmissionStatus | any = await cancelDataAccessRequest(accessRequirementStatus?.currentSubmissionStatus!.submissionId, token)
             if (resp.state === SUBMISSION_STATE.CANCELLED) {  // successfully cancelled
               setAlert({
                 key: 'success',
-                message: 'Your data access request has been canceled.'
+                message: (<strong>Your data access request has been canceled.</strong>)
               })
               setIsSubmissionCanceled(true)
             } else {
@@ -158,19 +161,26 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
       case SUBMISSION_STATE.SUBMITTED:
         setAlert({
           key: 'primary',
-          message: 'You have submitted a data access request.'
+          message: (<strong>You have submitted a data access request.</strong>)
         })
         break
       case SUBMISSION_STATE.APPROVED:
         setAlert({
           key: 'success',
-          message: 'Your data access request has been approved.'
+          message: (<strong>Your data access request has been approved.</strong>)
         })
         break
       case SUBMISSION_STATE.REJECTED:
         setAlert({
-          key: 'warning',
-          message: 'Your data access request has been rejected. Before I can accept your request, please address the following: Please upload every page of the DUC. Please contact us at act@sagebionetworks.org if you have any questions. Regards, Access and Compliance Team (ACT) act@sagebionetworks.org'
+          key: 'danger',
+          message: (<>
+            <strong>Your data access request has been rejected.</strong><br />
+            Before I can accept your request, please address the following:
+            <ul>
+              <li>Please upload every page of the DUC.</li>
+              <li>Please contact us at <a href={"mailto:act@sagebionetworks.org"}>act@sagebionetworks.org</a> if you have any questions.</li>
+            </ul>
+          </>)
         })
         break
     }
@@ -207,7 +217,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           />
         }
         { /* Alert message */
-          alert && <Alert className={"status-alert"} variant={alert.key}>
+          alert && <Alert className={"access-requirement-list-alert"} variant={alert.key}>
             {alert.message}
           </Alert>
         }
