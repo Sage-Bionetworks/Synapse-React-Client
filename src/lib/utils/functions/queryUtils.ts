@@ -42,7 +42,7 @@ export const getNextPageOfData = async (
       // push on the new data retrieved from the API call
       const hasMoreData =
         newData.queryResult.queryResults.rows.length ===
-        SynapseConstants.PAGE_SIZE
+        queryRequest.query.limit ?? SynapseConstants.PAGE_SIZE
       oldData.queryResult.queryResults.rows.push(
         ...newData.queryResult.queryResults.rows,
       )

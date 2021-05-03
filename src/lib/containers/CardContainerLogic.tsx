@@ -106,10 +106,6 @@ export default class CardContainerLogic extends React.Component<
   CardContainerLogicProps,
   State
 > {
-  public static defaultProps = {
-    token: '',
-  }
-
   public static defaultState = {
     data: undefined,
     isLoading: true,
@@ -214,7 +210,7 @@ export default class CardContainerLogic extends React.Component<
       )
     }
     const entityId = parseEntityIdFromSqlStatement(sqlUsed)
-
+    const limit = this.props.limit ?? 25
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
     const initQueryRequest: QueryBundleRequest = {
@@ -227,7 +223,7 @@ export default class CardContainerLogic extends React.Component<
       entityId,
       query: {
         sql: sqlUsed,
-        limit: 25,
+        limit: limit,
         offset: 0,
       },
     }
@@ -239,10 +235,9 @@ export default class CardContainerLogic extends React.Component<
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
-          SynapseConstants.PAGE_SIZE
+          limit
         const newState = {
           hasMoreData,
           data,

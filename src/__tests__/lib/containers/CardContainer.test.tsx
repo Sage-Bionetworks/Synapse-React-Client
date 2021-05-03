@@ -10,7 +10,6 @@ import {
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/syn16787123.json'
-import { cloneDeep } from 'lodash-es'
 
 const createShallowComponent = (props: CardContainerProps) => {
   const wrapper = shallow(<CardContainer {...props} />)
@@ -82,17 +81,6 @@ describe('it performs all functionality', () => {
     expect(getNextPageOfData).toHaveBeenCalled()
   })
 
-  it('show ViewMore does not render when number of data points less than 25', () => {
-    const dataCopy = cloneDeep(syn16787123Json) as QueryResultBundle
-    dataCopy.queryResult.queryResults.rows.splice(0, 10)
-    const propsWithDataCopy = {
-      ...props,
-      data: dataCopy,
-    }
-    const { wrapper } = createShallowComponent(propsWithDataCopy)
-    expect(wrapper.find('Button')).toHaveLength(0)
-  })
-
   it('show ViewMore does not render when hasMoreData is false', () => {
     const propsWithHasMoreDataFalse = {
       ...props,
@@ -101,4 +89,14 @@ describe('it performs all functionality', () => {
     const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
     expect(wrapper.find('Button')).toHaveLength(0)
   })
+
+  it('show ViewMore should render when limit is set and data has more than limit', () => {
+    const propsWithHasMoreDataFalse = {
+      ...props,
+      limit: 3,
+    }
+    const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
+    expect(wrapper.find('Button')).toHaveLength(1)
+  })
+
 })
