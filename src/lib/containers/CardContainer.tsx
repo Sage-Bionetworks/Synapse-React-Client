@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useEffect, useState } from 'react'
 import {
   DATASET,
   FUNDER,
@@ -24,7 +23,6 @@ import SearchResultsNotFound from './table/SearchResultsNotFound'
 
 export type CardContainerProps = {
   data?: QueryResultBundle
-  limit?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   title?: string
@@ -41,11 +39,8 @@ export type CardContainerProps = {
 } & CardConfiguration
 
 export const CardContainer = (props: CardContainerProps) => {
-
-  const [pageCount, setPageCount] = useState<number>(1)
   const {
     data,
-    limit = PAGE_SIZE,
     isHeader = false,
     facet,
     unitDescription,
@@ -61,32 +56,18 @@ export const CardContainer = (props: CardContainerProps) => {
     ...rest
   } = props
 
-  useEffect(() => {
-    let mounted = true
-    if (mounted) {
-      const queryOffset = getLastQueryRequest!().query?.offset!
-      if (queryOffset === 0) {
-        setPageCount(1)
-      }
-    }
-    return () => {
-      mounted = false
-    }
-  }, [getLastQueryRequest])
-
+  const queryRequest = props.getLastQueryRequest!()
   /**
    * Handle a click on next or previous
    *
    * @memberof SynapseTable
    */
   const handleViewMore = () => {
-    const queryRequest = props.getLastQueryRequest!()
     let offset = queryRequest.query.offset!
     // paginate forward
-    offset += limit
+    offset += queryRequest.query.limit ?? PAGE_SIZE
     queryRequest.query.offset = offset
     props.getNextPageOfData!(queryRequest)
-    setPageCount(pageCount + 1)
   }
 
   const renderCard = (props: any, type: string) => {
@@ -115,7 +96,6 @@ export const CardContainer = (props: CardContainerProps) => {
     return <div>{isLoading && loadingScreen}</div>
   } else if (data && data.queryResult.queryResults.rows.length === 0) {
     // data was retrieved from the backend but there is none to show.
-    const queryRequest = props.getLastQueryRequest!()
     if (queryRequest.query.additionalFilters) {
       return <SearchResultsNotFound />
     }
@@ -133,13 +113,7 @@ export const CardContainer = (props: CardContainerProps) => {
   data.queryResult.queryResults.headers.forEach((element, index) => {
     schema[element.name] = index
   })
-
-  // limit is default 25 if it's not set in portal config
-  // pageCount increments by 1 whenever the view more button is clicked
-  const visibleCardCount = pageCount === 1 ? limit : limit * pageCount
-  const showViewMore: boolean = data.queryResult.queryResults.rows.length > visibleCardCount
-    || hasMoreData === true
-  const showViewMoreButton = showViewMore && (
+  const showViewMoreButton = hasMoreData && (
     <div className="SRC-viewMore bootstrap-4-backport">
       <Button variant="secondary" className="pill-xl" onClick={handleViewMore}>
         View More
@@ -164,7 +138,7 @@ export const CardContainer = (props: CardContainerProps) => {
     cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
   } else {
     // render the cards
-    const cardsData = data.queryResult.queryResults.rows.slice(0, visibleCardCount)
+    const cardsData = data.queryResult.queryResults.rows
     cards = cardsData.length ? cardsData.map((rowData: any, index) => {
       const key = JSON.stringify(rowData.values)
       const propsForCard = {
