@@ -27,7 +27,6 @@ function createTestProps(overrides?: FacetNavProps): FacetNavProps {
   return {
     getLastQueryRequest: mockGetLastQueryRequest,
     data: testData as QueryResultBundle,
-    loadingScreen: <div className="loading"></div>,
     ...overrides,
     topLevelControlsState: {
       showFacetVisualization: true,
@@ -82,14 +81,17 @@ describe('facets display hide/show', () => {
       expectedLength,
     )
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
     ).toBe(false)
+    expect(
+      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
+    ).toBe(true)
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[3]),
     ).toBe(true)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Show All Graphs')
+    ).toBe('View All Charts')
   })
 
   it('when show more is clicked', async () => {
@@ -97,6 +99,9 @@ describe('facets display hide/show', () => {
     const button = container.querySelector('button.FacetNav__showMore')
     fireEvent.click(button!)
     expect(
+      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
+    ).toBe(false)
+    expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[2]),
     ).toBe(false)
     expect(
@@ -104,17 +109,20 @@ describe('facets display hide/show', () => {
     ).toBe(false)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Hide Optional Graphs')
+    ).toBe('Hide Charts')
     fireEvent.click(button!)
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
     ).toBe(false)
+    expect(
+      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
+    ).toBe(true)
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[3]),
     ).toBe(true)
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Show All Graphs')
+    ).toBe('View All Charts')
   })
 
   it('if there are only 4 facets show more button should not exist', async () => {
@@ -157,15 +165,15 @@ describe('facets display hide/show', () => {
       ?.children
     expect(expandedFacets?.length).toBe(0)
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
     ).toBe(false)
-    const icon = getButtonOnFacet(container, 'expand', 2)
+    const icon = getButtonOnFacet(container, 'expand', 1)
     fireEvent.click(icon?.parentNode as HTMLElement)
     expandedFacets = container.querySelector('.FacetNav__expanded')?.children
     expect(expandedFacets?.length).toBe(1)
 
     expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
+      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
     ).toBe(true)
   })
 })
