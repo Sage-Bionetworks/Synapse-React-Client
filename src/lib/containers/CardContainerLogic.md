@@ -4,7 +4,7 @@ Standard generic card renderer:
   rgbIndex={1}
   name='Publications'
   sql="SELECT * FROM syn22095937.4 order by authors asc"
-  limit={10}
+  limit={2}
   type={GENERIC_CARD}
   genericCardSchema={{
     type: PUBLICATION,
