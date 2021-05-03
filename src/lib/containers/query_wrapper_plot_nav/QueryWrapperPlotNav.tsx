@@ -19,7 +19,7 @@ import ModalDownload from '../ModalDownload'
 import { DownloadConfirmation } from '../download_list'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import QueryFilterToggleButton from './QueryFilterToggleButton'
-import { PAGE_SIZE } from '../../utils/SynapseConstants'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 
 type OwnProps = {
   sql: string
@@ -66,7 +66,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     facetsToFilter,
     hideDownload,
     searchConfiguration,
-    limit=PAGE_SIZE,
+    limit=DEFAULT_PAGE_SIZE,
     ...rest
   } = props
   let sqlUsed = sql

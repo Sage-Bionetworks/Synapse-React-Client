@@ -4,7 +4,7 @@ import {
   FUNDER,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
-  PAGE_SIZE,
+  DEFAULT_PAGE_SIZE,
 } from '../utils/SynapseConstants'
 import {
   QueryBundleRequest,
@@ -65,7 +65,7 @@ export const CardContainer = (props: CardContainerProps) => {
   const handleViewMore = () => {
     let offset = queryRequest.query.offset!
     // paginate forward
-    offset += queryRequest.query.limit ?? PAGE_SIZE
+    offset += queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
     queryRequest.query.offset = offset
     props.getNextPageOfData!(queryRequest)
   }

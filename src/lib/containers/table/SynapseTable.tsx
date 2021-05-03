@@ -46,7 +46,7 @@ import loadingScreen from '../LoadingScreen'
 import { Icon } from '../row_renderers/utils'
 import DirectDownload from '../DirectDownload'
 import SearchResultsNotFound from './SearchResultsNotFound'
-import { PAGE_SIZE } from '../../utils/SynapseConstants'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -672,10 +672,10 @@ export default class SynapseTable extends React.Component<
     // if its a "previous" click subtract from the offset
     // otherwise its next and we paginate forward
     if (eventType === PREVIOUS) {
-      currentOffset -= queryRequest.query.limit ?? PAGE_SIZE
+      currentOffset -= queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
     }
     if (eventType === NEXT) {
-      currentOffset += queryRequest.query.limit ?? PAGE_SIZE
+      currentOffset += queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
     }
     queryRequest.query.offset = currentOffset
     this.props.executeQueryRequest!(queryRequest)

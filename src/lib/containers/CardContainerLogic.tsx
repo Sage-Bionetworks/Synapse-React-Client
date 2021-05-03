@@ -14,7 +14,7 @@ import { GenericCardSchema, IconOptions } from './GenericCard'
 // will have to find a way to use individual lodash packages instead of the entire thing
 import { cloneDeep, isEqual } from 'lodash-es'
 import { IconSvgOptions } from './IconSvg'
-import { PAGE_SIZE } from '../utils/SynapseConstants'
+import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -211,7 +211,7 @@ export default class CardContainerLogic extends React.Component<
       )
     }
     const entityId = parseEntityIdFromSqlStatement(sqlUsed)
-    const limit = this.props.limit ?? PAGE_SIZE
+    const limit = this.props.limit ?? DEFAULT_PAGE_SIZE
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
     // we need the sql to change
     const initQueryRequest: QueryBundleRequest = {
