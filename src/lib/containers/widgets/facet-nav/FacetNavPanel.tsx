@@ -272,11 +272,14 @@ export type FacetWithLabel = {
   count: number
 }
 
-export function renderLegend(
-  labels: FacetWithLabel[] | undefined,
-  colors: string[] = [],
-  isExpanded: boolean,
-): JSX.Element {
+type FacetPlotLegendProps = {
+  labels?: FacetWithLabel[]
+  colors?: string[]
+  isExpanded: boolean
+}
+
+export function FacetPlotLegend(props: FacetPlotLegendProps) {
+  const { labels, colors = [], isExpanded } = props
   if (!labels) {
     return <></>
   }
@@ -515,7 +518,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               </div>
             )}
           </SizeMe>
-          {renderLegend(plotData?.labels, plotData?.colors, isExpanded)}
+          <FacetPlotLegend
+            labels={plotData?.labels}
+            colors={plotData?.colors}
+            isExpanded={isExpanded}
+          />
         </div>
       </div>
     )
