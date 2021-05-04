@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
 } from 'react'
 import { Button, FormControl } from 'react-bootstrap'
@@ -114,6 +115,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   ] = useState<EntityDetailsListDataConfiguration>({
     type: EntityDetailsListDataConfigurationType.PROMPT,
   })
+
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // If a type is selectable, it should be visible in the tree/list (depending on treeOnly)
   const selectableAndVisibleTypesInTree = useMemo(
@@ -243,7 +246,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 <Button
                   variant="gray-primary-500"
                   className="EntityFinder__Search__SearchButton"
-                  onClick={() => setSearchActive(true)}
+                  onClick={() => {
+                    setSearchActive(true)
+                    searchInputRef!.current!.focus()
+                  }}
                 >
                   <FontAwesomeIcon size={'sm'} icon={faSearch} />
                   Search all of Synapse
@@ -255,8 +261,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 className="SearchIcon"
               />
               <FormControl
+                ref={searchInputRef}
                 aria-hidden={!searchActive}
-                autoFocus={true}
                 role="textbox"
                 className="EntityFinder__Search__Input"
                 type="search"
@@ -274,18 +280,20 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     }
                   }
                 }}
-              ></FormControl>
-              <FontAwesomeIcon
-                size={'sm'}
-                icon={faTimes}
-                role="button"
-                title="Clear Search"
-                className="ClearSearchIcon"
-                onClick={() => {
-                  setSearchInput('')
-                  setSearchTerms(undefined)
-                }}
               />
+              {searchInput && (
+                <FontAwesomeIcon
+                  size={'sm'}
+                  icon={faTimes}
+                  role="button"
+                  title="Clear Search"
+                  className="ClearSearchIcon"
+                  onClick={() => {
+                    setSearchInput('')
+                    setSearchTerms(undefined)
+                  }}
+                />
+              )}
             </>
           </div>
           <div className={`EntityFinder__MainPanel ${mainPanelClass}`}>

@@ -4,6 +4,7 @@ Configured to show cards:
   rgbIndex={1}
   name='Initiatives'
   sql='SELECT * from syn24189696'
+  limit={5}
   defaultShowFacetVisualization={false}
   shouldDeepLink={true}
   facetsToPlot={['fundingAgency']}

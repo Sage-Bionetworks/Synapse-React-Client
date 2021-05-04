@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { SynapseClient, SynapseConstants } from '../utils/'
+import { SynapseClient } from '../utils/'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import {
@@ -11,6 +11,7 @@ import {
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
+import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 export type QueryWrapperProps = {
   visibleColumnCount?: number
   initQueryRequest: QueryBundleRequest
@@ -263,7 +264,7 @@ export default class QueryWrapper extends React.Component<
       .then((data: QueryResultBundle) => {
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
-          SynapseConstants.PAGE_SIZE
+          clonedQueryRequest.query.limit
         const newState = {
           hasMoreData,
           data,
@@ -330,7 +331,7 @@ export default class QueryWrapper extends React.Component<
       .then((data: QueryResultBundle) => {
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
-          SynapseConstants.PAGE_SIZE
+          initQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
         const isAllFilterSelectedForFacet = cloneDeep(
           this.state.isAllFilterSelectedForFacet,
         )

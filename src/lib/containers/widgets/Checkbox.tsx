@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { useState, useEffect } from 'react'
 export type CheckboxProps = {
   label: string
@@ -17,6 +17,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
 ) => {
   const { checked: propsChecked = false, isSelectAll = false, value, onChangeCallBack } = props
   const [checked, setChecked] = useState<boolean>(propsChecked)
+  const [focused, setFocused] = useState<boolean>(false)
 
   useEffect(() => {
     setChecked(propsChecked)
@@ -38,13 +39,21 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
     }
   }
 
-  const className = props.className ? `checkbox ${props.className}` : `checkbox`
+  let className = 'checkbox'
+  if (focused) {
+    className += ' checkbox-focused'
+  }
+  if (props.className) {
+    className += ` ${props.className}`
+  }
 
   return (
     <div className={className}>
       <label>
         <span>
           <input
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
             type="checkbox"
             checked={checked}
             id={props.id}

@@ -60,12 +60,13 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   data,
   isLoading,
   facetAliases,
+  token,
 }: FacetPlotsCardProps): JSX.Element => {
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
   const { colorPalette } = getColorPalette(rgbIndex ?? 0, 2)
-  
+
   useEffect(() => {
     if (!facetsToPlot || !data) {
       return
@@ -78,17 +79,19 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         )?.columnType as ColumnType
 
       const facetsDataToPlot = getFacets(data, facetsToPlot)
-      const newPlotData = facetsDataToPlot.map((item, index) => {
-        const plotData = extractPlotDataArray(
-          item as FacetColumnResultValues,
-          getColumnType(item),
-          index + 1, //individual plot rgbIndex
-          'PIE',
-        )
-        return plotData
-      })
-      setFacetPlotDataArray(newPlotData)
       setFacetDataArray(facetsDataToPlot)
+      Promise.all(
+        facetsDataToPlot.map(async (item, index) => {
+          const plotData = await extractPlotDataArray(
+            item as FacetColumnResultValues,
+            getColumnType(item),
+            index + 1, //individual plot rgbIndex
+            'PIE',
+            token,
+          )
+          return plotData
+        }),
+      ).then(newPlotData => setFacetPlotDataArray(newPlotData))
       // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
       const selectedFacet:
         | FacetColumnResultValueCount
@@ -114,7 +117,12 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
     }
   }, [facetsToPlot, data])
 
-  if (isLoadingNewData || !facetPlotDataArray || !facetDataArray) {
+  if (
+    isLoadingNewData ||
+    !facetPlotDataArray ||
+    !facetDataArray ||
+    facetDataArray.length === 0
+  ) {
     return (
       <div className="FacetPlotsCard FacetPlotsCard__loading SRC-centerContentColumn">
         {loadingScreen}
@@ -126,7 +134,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
       detailsPageLink = (
         <div className="FacetPlotsCard__link">
           <a href={detailsPagePath}>View {selectedFacetValue}</a>
-        </div>      
+        </div>
       )
     }
     const isShowingMultiplePlots = facetPlotDataArray.length > 1
@@ -142,7 +150,9 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
           style={{ backgroundColor: colorPalette[0].replace(')', ',.05)') }}
         >
           <span className="FacetPlotsCard__title">{cardTitle}</span>
-          {description && <span className="FacetPlotsCard__description">{description}</span>}
+          {description && (
+            <span className="FacetPlotsCard__description">{description}</span>
+          )}
           {detailsPageLink}
           {isLoading && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
@@ -182,7 +192,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                 </div>
               </div>
             )
-          })}          
+          })}
         </div>
       </div>
     )

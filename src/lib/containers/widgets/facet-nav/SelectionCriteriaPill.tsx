@@ -7,10 +7,9 @@ import {
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ElementWithTooltip } from '../ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
+import { Close } from '@material-ui/icons'
 
 export type FacetWithSelection = {
   facet: FacetColumnResult
@@ -75,8 +74,9 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
         <button
           onClick={() => onRemove(facetWithSelection)}
           className="SelectionCriteriaPill__btnRemove"
+          title="deselect"
         >
-          <FontAwesomeIcon icon={faTimes} title="deselect" />
+          <Close />
         </button>
       </label>
     </ElementWithTooltip>

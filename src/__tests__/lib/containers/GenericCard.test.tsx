@@ -21,6 +21,7 @@ import {
 import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
 import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import UserCard from '../../../lib/containers/UserCard'
 
 const createShallowComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />)
@@ -63,6 +64,7 @@ describe('it renders the UI correctly', () => {
     link: 6,
     id: 7,
     image: 8,
+    userIdList: 9,
   }
 
   const MOCKED_TITLE = 'MOCKED TITLE'
@@ -74,6 +76,7 @@ describe('it renders the UI correctly', () => {
   const MOCKED_LINK = 'MOCKED_LINK'
   const MOCKED_ID = 'MOCKED_ID'
   const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
+  const MOCKED_USER_ID = '[12345]'
 
   const data = [
     MOCKED_TITLE,
@@ -85,6 +88,7 @@ describe('it renders the UI correctly', () => {
     MOCKED_LINK,
     MOCKED_ID,
     MOCKED_IMAGE_FILE_HANDLE_ID,
+    MOCKED_USER_ID,
   ]
 
   const propsForNonHeaderMode: GenericCardProps = {
@@ -142,6 +146,37 @@ describe('it renders the UI correctly', () => {
     expect(wrapper.find(`[data-search-handle]`).text()).toEqual(
       commonProps.title,
     )
+  })
+
+
+  describe('Renders UserCards when a UserId_List column is present', () => {
+    const tableId = 'TABLE_ID_MOCK'
+    const columnModelWithUserIdList = [
+      {
+        columnType: ColumnType.USERID_LIST,
+        id: 'MOCKID',
+        name: 'userIdList',
+      },
+    ]
+    it('Renders a UserCard with an EntityView associate type', () => {
+      const tableEntityConcreteType = 'EntityView'
+      const { wrapper } = createShallowComponent({
+        ...propsForNonHeaderMode,
+        genericCardSchema: {
+          ...genericCardSchema,
+          secondaryLabels: ['userIdList'],
+        },
+        tableEntityConcreteType,
+        columnModels: columnModelWithUserIdList,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(UserCard)).toHaveLength(1)
+      expect(wrapper.find(UserCard).props()).toEqual({
+        ownerId: 12345,
+        size: "SMALL USER CARD"
+      })
+    })
   })
 
   describe('Renders a FileHandleLink when the title is a file handle ', () => {
@@ -521,6 +556,7 @@ describe('it makes the correct URL for the secondary labels', () => {
     expect(link.props().href).toEqual(`https://www.synapse.org/#!Synapse:${value}`)    
   })
 })
+
 
 describe('It renders markdown for the description', () => {
   const renderShortDescription = GenericCard.prototype.renderShortDescription

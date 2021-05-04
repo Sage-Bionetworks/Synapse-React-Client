@@ -2,36 +2,30 @@
 // - bar chart
 // - filter
 // - show 9 labels on expanded facet
-import * as React from 'react'
-import Plotly from 'plotly.js-basic-dist'
 import * as PlotlyTyped from 'plotly.js'
+import Plotly from 'plotly.js-basic-dist'
+import React from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import { Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
-import { Dropdown } from 'react-bootstrap'
-
-import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
-import {
-  FacetColumnResultValues,
-  FacetColumnResultValueCount,
-  ColumnType,
-  QueryBundleRequest,
-} from '../../../utils/synapseTypes'
 import getColorPalette from '../../../containers/ColorGradient'
-
+import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
+import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+import { SynapseClient, SynapseConstants } from '../../../utils'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import {
-  getStoredEntityHeaders,
-  getStoredUserProfiles,
-} from '../../../utils/functions/getDataFromFromStorage'
-import { useEffect, useState } from 'react'
-import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+  ColumnType,
+  FacetColumnResultValueCount,
+  FacetColumnResultValues,
+  QueryBundleRequest,
+} from '../../../utils/synapseTypes'
+import loadingScreen from '../../LoadingScreen'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
-  applyMultipleChangesToValuesColumn,
   applyChangesToValuesColumn,
+  applyMultipleChangesToValuesColumn,
 } from '../query-filter/QueryFilter'
-import loadingScreen from '../../LoadingScreen'
-import { SynapseConstants } from '../../../utils'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -96,11 +90,12 @@ export function truncate(str: string | undefined, n: number) {
   return trimmedStr.length > n ? trimmedStr.substr(0, n - 1) + '…' : str
 }
 
-export function extractPlotDataArray(
+export async function extractPlotDataArray(
   facetToPlot: FacetColumnResultValues,
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
+  sessionToken?: string,
   facetAliases?: {},
 ) {
   const { colorPalette } = getColorPalette(
@@ -108,13 +103,43 @@ export function extractPlotDataArray(
     facetToPlot.facetValues.length,
   )
 
-  const getLabels = (
+  const getLabels = async (
     facetValues: FacetColumnResultValueCount[],
-    truncateFlag: boolean,
     columnType?: ColumnType,
+    sessionToken?: string,
   ) => {
+    const map = new Map<string, string>()
+    map.set(
+      SynapseConstants.VALUE_NOT_SET,
+      SynapseConstants.FRIENDLY_VALUE_NOT_SET,
+    )
+    // Filter out empties
+    const filteredValues = facetValues
+      .map(value => value.value)
+      .filter(val => val !== SynapseConstants.VALUE_NOT_SET)
+    if (columnType === ColumnType.ENTITYID) {
+      // TODO: Pagination
+      const response = await SynapseClient.getEntityHeadersByIds(
+        filteredValues,
+        sessionToken,
+      )
+      for (const header of response.results) {
+        map.set(header.id, header.name)
+      }
+    } else if (columnType === ColumnType.USERID) {
+      const response = await SynapseClient.getGroupHeadersBatch(
+        filteredValues,
+        sessionToken,
+      )
+      for (const header of response.children) {
+        map.set(header.ownerId, header.userName)
+      }
+    }
+
     return facetValues.map(facetValue => ({
-      label: getLabel(facetValue, truncateFlag, columnType),
+      facet: facetValue,
+      label: getLabel(facetValue, false, map),
+      truncatedLabel: getLabel(facetValue, true, map),
       count: facetValue.count,
     }))
   }
@@ -122,44 +147,35 @@ export function extractPlotDataArray(
   const getLabel = (
     facetValue: FacetColumnResultValueCount,
     truncateFlag: boolean,
-    columnType?: ColumnType,    
+    labelMap: Map<string, string>,
   ): string => {
-    if (facetValue.value === SynapseConstants.VALUE_NOT_SET) {
-      return SynapseConstants.FRIENDLY_VALUE_NOT_SET
+    let label = labelMap.get(facetValue.value) ?? facetValue.value
+    if (truncateFlag) {
+      label = truncate(label, maxLabelLength)!
     }
-
-    if (columnType === 'ENTITYID') {
-      const lookup = getStoredEntityHeaders()
-      let value = lookup.find(item => item.id === facetValue.value)?.name
-      if (truncateFlag) {
-        value = truncate(value, maxLabelLength)
-      }
-      return value || facetValue.value
-    }
-
-    if (columnType === 'USERID') {
-      const lookup = getStoredUserProfiles()
-      let value = lookup.find(item => item.ownerId === facetValue.value)
-        ?.userName
-      if (truncateFlag) {
-        value = truncate(value, maxLabelLength)
-      }
-      return value || facetValue.value
-    }
-    const value = facetValue.value
-    return truncateFlag ? truncate(value, maxLabelLength)! : value
+    return label
   }
-  
-  const labels = getLabels(facetToPlot.facetValues, false, columnType)
-  const text = getLabels(facetToPlot.facetValues, true, columnType).map(
-    el => el.label,
+
+  const labels = await getLabels(
+    facetToPlot.facetValues,
+    columnType,
+    sessionToken,
+  )
+  const text = labels.map(el => el.truncatedLabel)
+
+  const anyFacetsSelected = facetToPlot.facetValues.some(
+    value => value.isSelected,
   )
 
-  const anyFacetsSelected = facetToPlot.facetValues.some(value => value.isSelected)
-
-  const selectionAwareColorPalette = anyFacetsSelected ? facetToPlot.facetValues.map((facetValue, index) =>
-    facetValue.isSelected ? colorPalette[index] : colorPalette[index].replace('rgb(', 'rgba(').replace(')', ', 0.25)'),
-  ) : colorPalette
+  const selectionAwareColorPalette = anyFacetsSelected
+    ? facetToPlot.facetValues.map((facetValue, index) =>
+        facetValue.isSelected
+          ? colorPalette[index]
+          : colorPalette[index]
+              .replace('rgb(', 'rgba(')
+              .replace(')', ', 0.25)'),
+      )
+    : colorPalette
   const singleChartData: PlotlyTyped.Data = {
     values:
       plotType === 'PIE'
@@ -169,8 +185,9 @@ export function extractPlotDataArray(
     text,
     x:
       plotType === 'BAR'
-        ? facetToPlot.facetValues.map(facet =>
-            getLabel(facet, false, columnType),
+        ? facetToPlot.facetValues.map(
+            facet =>
+              labels.find(label => label.facet === facet)?.label ?? facet.value,
           )
         : undefined,
     y:
@@ -191,7 +208,7 @@ export function extractPlotDataArray(
     pull:
       plotType === 'PIE'
         ? facetToPlot.facetValues.map(facetValue =>
-            facetValue.isSelected ? 0.10 : 0,
+            facetValue.isSelected ? 0.1 : 0,
           )
         : undefined,
     marker: {
@@ -206,7 +223,7 @@ export function extractPlotDataArray(
     colors:
       plotType === 'PIE'
         ? ((singleChartData as any).marker?.colors as string[])
-        : ((singleChartData as any).marker?.color as string[]),    
+        : ((singleChartData as any).marker?.color as string[]),
   }
   return result
 }
@@ -231,7 +248,7 @@ const applyFacetFilter = (
   }
 }
 
-export function getPlotStyle (
+export function getPlotStyle(
   parentWidth: number | null,
   plotType: PlotType,
   maxHeight: number,
@@ -255,7 +272,7 @@ export type FacetWithLabel = {
   count: number
 }
 
-export function renderLegend (
+export function renderLegend(
   labels: FacetWithLabel[] | undefined,
   colors: string[] = [],
   isExpanded: boolean,
@@ -330,24 +347,27 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   const [isExpanded, setIsExpanded] = useState(false)
   const [plotType, setPlotType] = useState<PlotType>('PIE')
 
-  const getColumnType = (): ColumnType | undefined =>
-    data?.columnModels?.find(
-      columnModel => columnModel.name === facetToPlot.columnName,
-    )?.columnType as ColumnType
+  const getColumnType = useCallback(
+    (): ColumnType | undefined =>
+      data?.columnModels?.find(
+        columnModel => columnModel.name === facetToPlot.columnName,
+      )?.columnType as ColumnType,
+    [data, facetToPlot.columnName],
+  )
 
   useEffect(() => {
     if (!facetToPlot) {
       return
     } else {
-      const plotData = extractPlotDataArray(
+      extractPlotDataArray(
         facetToPlot,
         getColumnType(),
         index,
         'PIE',
-      )
-      setPlotData(plotData)
+        token
+      ).then(plotData => setPlotData(plotData))
     }
-  }, [facetToPlot, data, index])
+  }, [facetToPlot, data, index, getColumnType])
 
   useEffect(() => {
     setIsExpanded(onCollapse !== undefined)
@@ -355,13 +375,21 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
 
   const changePlotType = (plotType: PlotType) => {
     if (plotType === 'BAR') {
-      setPlotData(
-        extractPlotDataArray(facetToPlot, getColumnType(), index, 'BAR'),
-      )
+      extractPlotDataArray(
+        facetToPlot,
+        getColumnType(),
+        index,
+        'BAR',
+        token,
+      ).then(plotData => setPlotData(plotData))
     } else {
-      setPlotData(
-        extractPlotDataArray(facetToPlot, getColumnType(), index, 'PIE'),
-      )
+      extractPlotDataArray(
+        facetToPlot,
+        getColumnType(),
+        index,
+        'PIE',
+        token,
+      ).then(plotData => setPlotData(plotData))
     }
     setPlotType(plotType)
   }
@@ -375,7 +403,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         key="toggleChart"
         className="SRC-primary-color"
         darkTheme={true}
-        icon={"chart"}
+        icon={'chart'}
       />
       <Dropdown.Menu className="chart-tools">
         <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
@@ -440,7 +468,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 callbackFn={() => onExpand!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
-                icon={"expand"}
+                icon={'expand'}
               />
             )}
             {isExpanded && (
@@ -451,7 +479,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                 callbackFn={() => onCollapse!(index)}
                 className="SRC-primary-color"
                 darkTheme={true}
-                icon={"collapse"}
+                icon={'collapse'}
               />
             )}
             <ElementWithTooltip
@@ -461,7 +489,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
               callbackFn={() => onHide(index)}
               className="SRC-primary-color"
               darkTheme={true}
-              icon={"close"}
+              icon={'close'}
             />
           </div>
         </div>

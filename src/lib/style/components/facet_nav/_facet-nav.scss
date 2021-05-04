@@ -2,43 +2,32 @@
 
 .FacetNav {
   padding-top: 5px;
-  padding-bottom: 5px;
   border: 1px solid SRC.$gray-dark;
 
   &__row {
     background-color: #fff;
 
-    div[class*=' col-'] {
-      height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    > div {
+      margin: 3px;
+      flex-grow: 1;
+      flex-basis: 49%;
     }
   }
 
   &__showMoreContainer {
+    background-color: SRC.$gray-light;
     display: flex;
-    justify-content: flex-end;
-    padding-right: 15px;
-    padding-bottom: 10px;
-    &__showMore {
-      margin-right: 15px;
-      margin-top: 15px;
-    }
-
-    .FacetNav__showMore:focus {
-      // somehow &__showMore:focus doesn't work
-      outline-color: SRC.$primary-action-color;
-    }
-  }
-}
-
-.container-full-width .FacetNav.less{
-  .FacetNav {
-    &__row {
-      display: flex;
-      flex-wrap: wrap;
-
-      > div {
-        flex: 0 0 380px;
-      }
+    justify-content: center;
+    padding: 10px;
+    margin-top: 10px;
+    button.FacetNav__showMore {
+      // padding: 5px 70px;
+      width: 250px;
+      text-transform: uppercase;
     }
   }
 }

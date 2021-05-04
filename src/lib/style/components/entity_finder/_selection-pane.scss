@@ -1,0 +1,35 @@
+@use '../../abstracts/variables' as SRC;
+@use 'sass:color';
+
+.EntityFinderSelectionPane {
+  width: 100%;
+  white-space: nowrap;
+  padding: 15px;
+  margin: 15px 0px 0px auto;
+  max-height: 175px;
+  overflow-y: auto;
+  &__Items {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  &__Row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+
+    .EntityIcon {
+      margin: 10px 10px 10px 0px;
+      width: 15px;
+    }
+
+    &__EntityName {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    &__DeselectButton {
+      color: SRC.$primary-action-color-500;
+      cursor: pointer;
+    }
+  }
+}
