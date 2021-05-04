@@ -14,19 +14,6 @@
     }
   }
 
-  label {
-    //color: SRC.$gray-deemphasized;  TODO: Delete?
-    color: SRC.$gray-formtext;
-    font-weight: normal;
-  }
-
-  // disabled input boxes should be "flat"
-  input:disabled,
-  input:read-only {
-    box-shadow: none;
-    cursor: text;
-  }
-
   // change styling of dropdowns
   %dropdown-active-state {
     background: SRC.$primary-action-color;
@@ -65,13 +52,6 @@
     }
   }
 
-  // Placeholder text styling in input forms
-  .form-control::placeholder {
-    color: SRC.$text-color-disabled;
-  }
-  .form-control:focus-visible {
-    text-shadow: none;
-  }
 }
 
 // Popovers

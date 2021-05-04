@@ -43,12 +43,14 @@ const CancelRequestDataAccess:React.FC<CancelRequestDataAccessProps> = props => 
   }
 
   return (<>
-    <ReactBootstrap.Modal.Header>
-      <ReactBootstrap.Modal.Title>Save?</ReactBootstrap.Modal.Title>
+    <ReactBootstrap.Modal.Header closeButton={true}>
+      <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
+        Save Changes
+      </ReactBootstrap.Modal.Title>
     </ReactBootstrap.Modal.Header>
 
     <ReactBootstrap.Modal.Body>
-      <p>Would you want to save your recent changes?</p>
+      <p>Would you like to save your recent changes?</p>
       { /* Alert message */
         alert && <Alert variant={alert.key}>
           {alert.message}
