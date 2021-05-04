@@ -65,7 +65,7 @@ export type AlertProps = {
 }
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
-  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, entityId, user, researchProjectId, onHide} = props
+  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, entityId, user, researchProjectId } = props
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
@@ -73,7 +73,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
-  const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false)
   const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
@@ -273,13 +272,15 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               message: alertMsg
             })
           }
-          setShowCloseBtn(true)
         }
       } catch (e) {
         console.log("RequestDataAccessStep2: Error updating form", e)
         setAlert({
           key: 'danger',
-          message: `Sorry, there is an error in submitting your request. ${e.reason || ''}`
+          message:  (<>
+            <strong>Sorry, there is an error in submitting your request.</strong><br />
+            {e.reason || ''}
+          </>)
         })
       }
     }
@@ -289,15 +290,15 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     const msgStart = 'The information you submitted has been '
     switch (submission_resp.state) {
       case SUBMISSION_STATE.SUBMITTED:
-        return `${msgStart} submitted. You may close this dialog.`
+        return <strong>{msgStart} submitted.</strong>
       case SUBMISSION_STATE.APPROVED:
-        return `${msgStart} approved. You may close this dialog.`
+        return <strong>{msgStart} approved.</strong>
       case SUBMISSION_STATE.CANCELLED:
-        return `${msgStart} canceled. You may close this dialog.`
+          return <strong>{msgStart} canceled.</strong>
       case SUBMISSION_STATE.REJECTED:
-        return `${msgStart} rejected. Reason: ${submission_resp.rejectedReason}. Please close this dialog and try again later.`
+        return <><strong>{msgStart} rejected.</strong> {submission_resp.rejectedReason}. Please close this dialog and try again later.</>
       default:
-        return ''
+        return <></>
     }
   }
 
@@ -562,15 +563,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         }
       </ReactBootstrap.Modal.Body>
       <ReactBootstrap.Modal.Footer>
-        { !showCloseBtn && <>
+        {<>
           <Button variant="link" onClick={() => requestDataStepCallback?.({
             step: 3,
             formSubmitRequestObject: formSubmitRequestObject
           })}>Cancel</Button>
           <Button variant="primary" onClick={() => handleSubmit()}>Submit</Button>
         </>}
-        { showCloseBtn &&
-        <Button variant="primary" onClick={() => onHide?.()}>Close</Button>}
       </ReactBootstrap.Modal.Footer>
     </Form>
   </>)
