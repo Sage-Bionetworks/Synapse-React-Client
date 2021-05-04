@@ -95,6 +95,7 @@ export async function extractPlotDataArray(
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
+  sessionToken?: string,
   facetAliases?: {},
 ) {
   const { colorPalette } = getColorPalette(
@@ -155,7 +156,11 @@ export async function extractPlotDataArray(
     return label
   }
 
-  const labels = await getLabels(facetToPlot.facetValues, columnType)
+  const labels = await getLabels(
+    facetToPlot.facetValues,
+    columnType,
+    sessionToken,
+  )
   const text = labels.map(el => el.truncatedLabel)
 
   const anyFacetsSelected = facetToPlot.facetValues.some(
@@ -359,6 +364,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'PIE',
+        token
       ).then(plotData => setPlotData(plotData))
     }
   }, [facetToPlot, data, index, getColumnType])
@@ -374,6 +380,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'BAR',
+        token,
       ).then(plotData => setPlotData(plotData))
     } else {
       extractPlotDataArray(
@@ -381,6 +388,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'PIE',
+        token,
       ).then(plotData => setPlotData(plotData))
     }
     setPlotType(plotType)
