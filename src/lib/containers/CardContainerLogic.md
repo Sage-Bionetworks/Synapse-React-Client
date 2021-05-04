@@ -3,7 +3,8 @@ Standard generic card renderer:
 <CardContainerLogic token={sessionToken}  
   rgbIndex={1}
   name='Publications'
-  sql="SELECT * FROM syn22095937.4 order by authors asc limit 2"
+  sql="SELECT * FROM syn22095937.4 order by authors asc"
+  limit={2}
   type={GENERIC_CARD}
   genericCardSchema={{
     type: PUBLICATION,

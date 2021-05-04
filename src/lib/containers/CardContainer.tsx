@@ -4,6 +4,7 @@ import {
   FUNDER,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
+  DEFAULT_PAGE_SIZE,
 } from '../utils/SynapseConstants'
 import {
   QueryBundleRequest,
@@ -20,11 +21,8 @@ import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
 import SearchResultsNotFound from './table/SearchResultsNotFound'
 
-const PAGE_SIZE: number = 25
-
 export type CardContainerProps = {
   data?: QueryResultBundle
-  limit?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   title?: string
@@ -41,16 +39,33 @@ export type CardContainerProps = {
 } & CardConfiguration
 
 export const CardContainer = (props: CardContainerProps) => {
+  const {
+    data,
+    isHeader = false,
+    facet,
+    unitDescription,
+    type,
+    isLoading,
+    secondaryLabelLimit = 3,
+    showBarChart = true,
+    title,
+    token,
+    getLastQueryRequest,
+    executeQueryRequest,
+    hasMoreData,
+    ...rest
+  } = props
+
+  const queryRequest = props.getLastQueryRequest!()
   /**
    * Handle a click on next or previous
    *
    * @memberof SynapseTable
    */
   const handleViewMore = () => {
-    const queryRequest = props.getLastQueryRequest!()
     let offset = queryRequest.query.offset!
     // paginate forward
-    offset += PAGE_SIZE
+    offset += queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
     queryRequest.query.offset = offset
     props.getNextPageOfData!(queryRequest)
   }
@@ -68,36 +83,19 @@ export const CardContainer = (props: CardContainerProps) => {
     }
   }
 
-  const ids = props.data?.queryResult.queryResults.tableId
-    ? [props.data?.queryResult.queryResults.tableId]
+  const ids = data?.queryResult.queryResults.tableId
+    ? [data?.queryResult.queryResults.tableId]
     : []
   const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
     ids,
     type: 'ENTITY_HEADER',
     token: props.token,
   })
-  const {
-    data,
-    limit = Infinity,
-    isHeader = false,
-    facet,
-    unitDescription,
-    type,
-    isLoading,
-    secondaryLabelLimit = 3,
-    showBarChart = true,
-    title,
-    token,
-    getLastQueryRequest,
-    executeQueryRequest,
-    ...rest
-  } = props
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (!data) {
     return <div>{isLoading && loadingScreen}</div>
   } else if (data && data.queryResult.queryResults.rows.length === 0) {
     // data was retrieved from the backend but there is none to show.
-    const queryRequest = props.getLastQueryRequest!()
     if (queryRequest.query.additionalFilters) {
       return <SearchResultsNotFound />
     }
@@ -115,17 +113,7 @@ export const CardContainer = (props: CardContainerProps) => {
   data.queryResult.queryResults.headers.forEach((element, index) => {
     schema[element.name] = index
   })
-
-  // We want to hide the view more button if:
-  //   1. The data fed in has !== PAGE_SIZE number of results
-  //   2. The hasMoreData prop is false
-  //   3. The limit is set to less than PAGE_SIZE
-  // below we show the view more button by following the opposite logic from above.
-  let showViewMore: boolean =
-    limit >= PAGE_SIZE && data.queryResult.queryResults.rows.length >= PAGE_SIZE
-  showViewMore = showViewMore && props.hasMoreData!
-
-  const showViewMoreButton = showViewMore && (
+  const showViewMoreButton = hasMoreData && (
     <div className="SRC-viewMore bootstrap-4-backport">
       <Button variant="secondary" className="pill-xl" onClick={handleViewMore}>
         View More
@@ -150,28 +138,26 @@ export const CardContainer = (props: CardContainerProps) => {
     cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
   } else {
     // render the cards
-    cards = data.queryResult.queryResults.rows.map((rowData: any, index) => {
-      if (index < limit) {
-        const key = JSON.stringify(rowData.values)
-        const propsForCard = {
-          key,
-          type,
-          schema,
-          isHeader,
-          secondaryLabelLimit,
-          data: rowData.values,
-          selectColumns: data.selectColumns,
-          columnModels: data.columnModels,
-          tableEntityConcreteType:
-            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
-          tableId: props.data?.queryResult.queryResults.tableId,
-          token,
-          ...rest,
-        }
-        return renderCard(propsForCard, type)
+    const cardsData = data.queryResult.queryResults.rows
+    cards = cardsData.length ? cardsData.map((rowData: any, index) => {
+      const key = JSON.stringify(rowData.values)
+      const propsForCard = {
+        key,
+        type,
+        schema,
+        isHeader,
+        secondaryLabelLimit,
+        data: rowData.values,
+        selectColumns: data.selectColumns,
+        columnModels: data.columnModels,
+        tableEntityConcreteType:
+          tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
+        tableId: props.data?.queryResult.queryResults.tableId,
+        token,
+        ...rest,
       }
-      return false
-    })
+      return renderCard(propsForCard, type)
+    }) : <></>
   }
 
   return (
