@@ -89,6 +89,8 @@ import {
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
+import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
+import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 
 const cookies = new UniversalCookies()
 
@@ -1603,6 +1605,29 @@ export const getFileResult = (
         reject(err)
       })
   })
+}
+
+/**
+ * Add a file to the user's download list.
+ * Uses http://rest-docs.synapse.org/rest/POST/download/list/add.html
+ * @param fileEntityId 
+ * @param versionNumber 
+ */
+export const addFileToDownloadListV2 = (
+  fileEntityId: string,
+  versionNumber?: number,
+  sessionToken?: string,
+): Promise<AddBatchOfFilesToDownloadListResponse> => {
+  const request: AddBatchOfFilesToDownloadListRequest = {
+    batchToAdd: [{fileEntityId, versionNumber}]
+  }
+  return doPost(
+    'repo/v1/download/list/add',
+    request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
