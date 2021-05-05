@@ -160,7 +160,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       }
       additionalFilters.push(columnSingleValueQueryFilter)
     } else {
-      additionalFilters[indexOfColumn].values.push(searchText)
+      additionalFilters[indexOfColumn].values.push(`%${searchText}%`)
     }
     lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
     executeQueryRequest!(lastQueryRequestDeepClone)
