@@ -64,7 +64,7 @@ export const FILE: string = 'file'
 export const CHART2: string = 'chart2'
 export const EXTERNALLINK: string = 'externallink'
 
-export const PAGE_SIZE: number = 25
+export const DEFAULT_PAGE_SIZE: number = 25
 // For User Profile Cards
 export const AVATAR: UserCardSize = 'AVATAR'
 export const SMALL_USER_CARD: UserCardSize = 'SMALL USER CARD'

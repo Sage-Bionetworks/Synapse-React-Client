@@ -46,6 +46,8 @@ import loadingScreen from '../LoadingScreen'
 import { Icon } from '../row_renderers/utils'
 import DirectDownload from '../DirectDownload'
 import SearchResultsNotFound from './SearchResultsNotFound'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import AddToDownloadListV2 from '../AddToDownloadListV2'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -490,10 +492,12 @@ export default class SynapseTable extends React.Component<
       </Button>
     )
 
-    let isShowingAccessColumn: boolean | undefined =
+    const isShowingAccessColumn: boolean | undefined =
       showAccessColumn && this.state.isFileView
-    let isShowDownloadColumn: boolean | undefined =
+    const isShowDownloadColumn: boolean | undefined =
       showDownloadColumn && this.state.isFileView
+    const isShowingAddToV2DownloadListColumn: boolean = this.state.isFileView && SynapseClient.isInSynapseExperimentalMode()
+
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
     return (
@@ -516,6 +520,7 @@ export default class SynapseTable extends React.Component<
                 facets,
                 isShowingAccessColumn,
                 isShowDownloadColumn,
+                isShowingAddToV2DownloadListColumn,
                 isRowSelectionVisible,
                 lastQueryRequest,
               )}
@@ -527,6 +532,7 @@ export default class SynapseTable extends React.Component<
               headers,
               isShowingAccessColumn,
               isShowDownloadColumn,
+              isShowingAddToV2DownloadListColumn,
               isRowSelectionVisible,
               tableEntityId,
             )}
@@ -671,10 +677,10 @@ export default class SynapseTable extends React.Component<
     // if its a "previous" click subtract from the offset
     // otherwise its next and we paginate forward
     if (eventType === PREVIOUS) {
-      currentOffset -= 25
+      currentOffset -= queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
     }
     if (eventType === NEXT) {
-      currentOffset += 25
+      currentOffset += queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
     }
     queryRequest.query.offset = currentOffset
     this.props.executeQueryRequest!(queryRequest)
@@ -720,6 +726,7 @@ export default class SynapseTable extends React.Component<
     headers: SelectColumn[],
     isShowingAccessColumn: boolean | undefined,
     isShowingDownloadColumn: boolean | undefined,
+    isShowingAddToV2DownloadListColumn: boolean,
     isRowSelectionVisible: boolean | undefined,
     tableEntityId: string | undefined
   ) {
@@ -861,6 +868,18 @@ export default class SynapseTable extends React.Component<
           </td>
         )
       }
+      if (isShowingAddToV2DownloadListColumn) {
+        rowContent.unshift(
+          <td className="SRC_noBorderTop add-to-download-list-v2">
+            <AddToDownloadListV2
+              key={"add-to-download-list-v2-"+rowSynapseId}
+              token={token}
+              entityId={rowSynapseId}
+              entityVersionNumber={parseInt(entityVersionNumber)}
+            ></AddToDownloadListV2>
+          </td>
+        )
+      }
 
       if (isRowSelectionVisible && selectedRowIndices) {
         rowContent.unshift(
@@ -912,6 +931,7 @@ export default class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     isShowingAccessColumn: boolean | undefined,
     isShowingDownloadColumn: boolean | undefined,
+    isShowingAddToV2DownloadListColumn: boolean,
     isRowSelectionVisible: boolean | undefined,
     lastQueryRequest: QueryBundleRequest,
   ) {
@@ -1016,6 +1036,13 @@ export default class SynapseTable extends React.Component<
     if (isShowingDownloadColumn) {
       tableColumnHeaderElements.unshift(
         <th key="downloadColumn">
+          <div className="SRC-centerContent">&nbsp;</div>
+        </th>
+      )
+    }
+    if (isShowingAddToV2DownloadListColumn) {
+      tableColumnHeaderElements.unshift(
+        <th key="addToV2DownloadListColumn">
           <div className="SRC-centerContent">&nbsp;</div>
         </th>
       )

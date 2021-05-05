@@ -60,7 +60,8 @@ $text-color-lighter: #898989;
     .SRC-cardThumbnail {
       color: inherit;
     }  
-    a {
+    a,
+    .SRC-userCard {
       text-decoration: underline;
       color: white !important;
     }

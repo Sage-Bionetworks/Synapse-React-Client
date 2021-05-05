@@ -19,9 +19,11 @@ import ModalDownload from '../ModalDownload'
 import { DownloadConfirmation } from '../download_list'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import QueryFilterToggleButton from './QueryFilterToggleButton'
+import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 
 type OwnProps = {
   sql: string
+  limit?: number
   shouldDeepLink?: boolean
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
@@ -64,6 +66,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     facetsToFilter,
     hideDownload,
     searchConfiguration,
+    limit=DEFAULT_PAGE_SIZE,
     ...rest
   } = props
   let sqlUsed = sql
@@ -86,7 +89,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
       sql: sqlUsed,
-      limit: 25,
+      limit: limit,
       offset: 0,
     },
   }

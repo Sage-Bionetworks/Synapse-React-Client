@@ -8,6 +8,7 @@ import {
   PhotoCameraOutlined,
   Cached,
   GetApp,
+  AddShoppingCart,
 } from '@material-ui/icons'
 
 import Chromatin from '../assets/mui_components/Chromatin'
@@ -66,6 +67,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <Check style={muiSvgStyle}></Check>
     case 'download':
       return <GetApp style={muiSvgStyle}></GetApp>
+    case 'addToCart':
+      return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
     case 'reload':
       return <Cached style={muiSvgStyle}></Cached>
     case 'photoCamera':
