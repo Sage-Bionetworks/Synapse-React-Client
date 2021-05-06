@@ -423,7 +423,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         </Form.Group>
 
         {/* Accessors Checkboxes */}
-        <Form.Group style={{marginBottom: "1rem"}}>
+        <Form.Group style={{marginBottom: "4rem"}}>
           {
             accessorProfiles.map((profile, i) => {
               return (<div className={"list-items"} key={`accessors-${i}`}>

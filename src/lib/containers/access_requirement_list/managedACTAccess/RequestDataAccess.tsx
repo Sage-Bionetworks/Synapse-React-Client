@@ -244,16 +244,22 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
             <div>
               <p>
                 {approvedText}
+              </p>
+              <p style={{marginBottom: '0'}}>
                 {isManagedActAr && (
                   <button
-                    className="update-request-button bold-text"
+                    className="update-request-button"
                     onClick={() => {
                       gotoSynapseAccessRequirementPage()
+                    }}
+                    style={{
+                      paddingLeft: '0',
+                      marginRight: '2rem'
                     }}
                   >{ getAcceptButtonText() }</button>
                 )}
                 <button
-                  className="view-terms-button bold-text"
+                  className="view-terms-button"
                   onClick={() => {
                     setIsHide(!isHide)
                   }}

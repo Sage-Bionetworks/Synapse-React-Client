@@ -74,7 +74,10 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
                           rel="noreferrer"
                           className={"user-profile-link"}
                         >{`@${item.userName}`}</a>
-                        <span>{`${item.firstName} ${item.lastName}`}</span>
+                        <span>
+                          { item.firstName && <>{item.firstName}</> }
+                          { item.lastName && <>{item.lastName}</> }
+                        </span>
                       </>}
                     </li>
                   ))
