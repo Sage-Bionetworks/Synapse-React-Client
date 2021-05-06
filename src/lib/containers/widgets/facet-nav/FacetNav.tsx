@@ -257,6 +257,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   }
                   facetAliases={facetAliases}
                   lastQueryRequest={lastQueryRequest}
+                  token={token}
                 ></FacetNavPanel>
               </div>
             ))}
@@ -302,7 +303,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                     )
                   }
                   facetAliases={facetAliases}
-                ></FacetNavPanel>
+                  token={token}
+                />
               </div>
             ))}
           </div>
