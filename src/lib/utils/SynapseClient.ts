@@ -93,6 +93,8 @@ import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadLis
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
+import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import { AvailableFilesResponse } from './synapseTypes/DownloadListV2/QueryResponseDetails'
 
 const cookies = new UniversalCookies()
 
@@ -2512,12 +2514,16 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
  export const getDownloadListV2 = (
-  request: DownloadListQueryRequest,
+  request: AvailableFilesRequest,
   sessionToken: string | undefined = undefined,
 ): Promise<DownloadListQueryResponse> => {
+  const downloadListQueryRequest:DownloadListQueryRequest = {
+    concreteType:'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+    requestDetails: request
+  }
   return doPost<AsyncJobId>(
     '/repo/v1/download/list/query/async/start',
-    request,
+    downloadListQueryRequest,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
