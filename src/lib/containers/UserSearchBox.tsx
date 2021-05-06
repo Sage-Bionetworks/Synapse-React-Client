@@ -59,8 +59,10 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
         <div className={"user-search-box"}>
           <input {...getInputProps({
             className: 'form-control',
-            id: id
-          })} />
+            id: id,
+            placeholder: "Enter data requester's name or username",
+            type: 'text'
+          })} style={{marginBottom: '0'}} />
           <ul {...getMenuProps()} className={isOpen ? "users-visible" : ""}>
             { isOpen ? users.filter((user:FormattedUserHeader) => !inputValue
               || `${user.firstName} ${user.lastName}`.includes(inputValue)

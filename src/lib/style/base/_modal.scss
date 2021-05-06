@@ -60,39 +60,7 @@
     .alert {
       margin: 1rem 0;
     }
-    .access-request-form2 {
-      .form-group {
-        margin-bottom: 2rem;
-      }
-      .ch1, .ch2 {
-        label {
-          margin-bottom: 0;
-        }
-        display: inline-block;
-      }
-      .ch2 {
-        margin: 5px 0;
-      }
-      .btn-light-primary-base {
-        margin-top: 0.5rem;
-      }
-      .list-items {
-        display: flex;
-        align-items: center;
-        .account-level-icon svg {
-          width: 30px;
-          height: auto;
-        }
-        .clear-x {
-          padding: 0;
-          margin-left: 1rem;
-          .styled-svg-wrapper {
-            display: inline-block;
-            line-height: 1rem;
-          }
-        }
-      }
-    }
+
   }
 }
 

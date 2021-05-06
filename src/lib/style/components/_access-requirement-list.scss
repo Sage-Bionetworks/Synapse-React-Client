@@ -134,5 +134,35 @@
     .LoginComponent {
       width: 350px
     }
+
+    .access-request-form2 {
+      .form-group {
+        margin-bottom: 2rem;
+      }
+      .btn-light-primary-base {
+        margin-top: 0.5rem;
+      }
+      .list-items {
+        display: flex;
+        align-items: center;
+        .account-level-icon svg {
+          width: 30px;
+          height: auto;
+        }
+        .clear-x {
+          padding: 0;
+          margin-left: 1rem;
+          .styled-svg-wrapper {
+            display: inline-block;
+            line-height: 1rem;
+          }
+        }
+      }
+      .requester-label {
+        vertical-align: middle;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+      }
+    }
   }
 }
