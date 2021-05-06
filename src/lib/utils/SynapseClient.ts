@@ -91,6 +91,8 @@ import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
+import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
+import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
 
 const cookies = new UniversalCookies()
 
@@ -2503,4 +2505,32 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+/**
+ * Get Download List v2
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+ export const getDownloadListV2 = (
+  request: DownloadListQueryRequest,
+  sessionToken: string | undefined = undefined,
+): Promise<DownloadListQueryResponse> => {
+  return doPost<AsyncJobId>(
+    '/repo/v1/download/list/query/async/start',
+    request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((asyncJobId: AsyncJobId) => {
+      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
+      return getAsyncResultFromJobId<DownloadListQueryResponse>(
+        urlRequest,
+        sessionToken,
+      )
+    })
+    .catch(err => {
+      console.error('Error on getDownloadListV2 ', err)
+      throw err
+    })
 }
