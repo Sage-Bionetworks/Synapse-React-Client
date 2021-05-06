@@ -27,14 +27,18 @@ const FileUpload: React.FC<FileUploadProps> = props => {
       const file = e.target.files[0]
       try {
         const resp:FileUploadComplete = await uploadFile(token, file.name, file)
-        if (uploadCallback) {
-          uploadCallback({
-            resp: resp,
-            context: context
-          })
-        }
+        uploadCallback?.({
+          success: true,
+          resp: resp,
+          context: context
+        })
+
       } catch (e) {
-        console.log("Fail to upload file", e)
+        console.log("FileUpload: fail to upload file", e)
+        uploadCallback?.({
+          success: false,
+          message: e
+        })
       }
     }
   }
