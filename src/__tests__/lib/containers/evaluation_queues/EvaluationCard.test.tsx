@@ -63,7 +63,7 @@ describe('test Evaluation Card', () => {
       onModifyAccess: mockOnModifyAccess,
       onSubmit: mockOnSubmit,
       onDeleteSuccess: mockOnDeleteSuccess,
-      sessionToken: 'session token',
+      accessToken: 'access token',
       utc: false,
     }
 

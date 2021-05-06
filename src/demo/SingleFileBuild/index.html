@@ -161,7 +161,7 @@
     //   PORTAL: 'https://staging.synapse.org/',
     // }
     
-    //attempt to read session token from cookies
+    //attempt to read access token from cookies
     function getCookie(name) {
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${name}=`);
@@ -294,7 +294,7 @@
     
     const evaluationQueueEditorListContainer = document.querySelector('#panel10')
     const evaluationRoundEditorListProps = {
-      sessionToken: token,
+      accessToken: token,
       evaluationId: '9614644',
       utc: true
     }
@@ -305,7 +305,7 @@
     )
     const evaluationQueueCardContainer = document.querySelector('#panel11')
     const evaluationQueueCardProps = {
-      sessionToken: token,
+      accessToken: token,
       evaluationId: '9614644',
       utc: true
     }
@@ -316,7 +316,7 @@
     )
     const evaluationQueueEditorContainer = document.querySelector('#panel12')
     const evaluationQueueEditorProps = {
-      sessionToken: token,
+      accessToken: token,
       evaluationId: '9614644',
       utc: true
     }

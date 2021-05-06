@@ -5,7 +5,7 @@ import React from 'react'
 export type CreatedOnByUserDivProps = {
   userId: string
   date: Date
-  sessionToken: string
+  accessToken: string
   utc: boolean
 }
 
@@ -15,7 +15,7 @@ const dateFormatOptionUTC = { timeZone: 'UTC', timeZoneName: 'short' }
 export const CreatedOnByUserDiv: React.FunctionComponent<CreatedOnByUserDivProps> = ({
   userId,
   date,
-  sessionToken,
+  accessToken,
   utc,
 }) => {
   return (
@@ -31,7 +31,7 @@ export const CreatedOnByUserDiv: React.FunctionComponent<CreatedOnByUserDivProps
         by{' '}
       </span>
       <UserCard
-        token={sessionToken}
+        token={accessToken}
         size={SynapseConstants.SMALL_USER_CARD}
         ownerId={userId}
       />

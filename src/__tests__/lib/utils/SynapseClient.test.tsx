@@ -40,11 +40,11 @@ describe('it works at integration level testing', () => {
     )
       .then((data) => {
         fail(
-          'should not be able to delete an entity with an invalid session token',
+          'should not be able to delete an entity with an invalid access token',
         )
       })
       .catch((resp) => {
-        // invalid session token
+        // invalid access token
         expect(resp['status']).toBe(401)
       })
   })
@@ -90,7 +90,7 @@ describe('it works at integration level testing', () => {
   it('get files', () => {
     const request: BatchFileRequest = {
       includeFileHandles: true, // set to true to get file metadata
-      includePreSignedURLs: true, // set to true to get presigned url to s3 resource (authorization required, include a session token in this case!)
+      includePreSignedURLs: true, // set to true to get presigned url to s3 resource (authorization required, include a access token in this case!)
       includePreviewPreSignedURLs: false,
       requestedFiles: [
         {

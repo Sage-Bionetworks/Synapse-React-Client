@@ -39,11 +39,11 @@ export default class App extends React.Component<{}, AppState> {
 
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
-    // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
+    // This looks for the access token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
-    SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken =>
-        this.handleChange({ token: sessionToken, getSessionCalled: true }),
+    SynapseClient.getAccessTokenFromCookie()
+      .then(accessToken =>
+        this.handleChange({ token: accessToken, getSessionCalled: true }),
       )
       .catch((error: any) => {
         console.error(error)
@@ -55,9 +55,9 @@ export default class App extends React.Component<{}, AppState> {
 
   getSession = async () => {
     SynapseClient.detectSSOCode()
-    SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken => {
-        this.handleChange({ token: sessionToken })
+    SynapseClient.getAccessTokenFromCookie()
+      .then(accessToken => {
+        this.handleChange({ token: accessToken })
       })
       .catch((error: any) => {
         console.error(error)
@@ -133,7 +133,7 @@ export default class App extends React.Component<{}, AppState> {
             <h4 className="white-text">Synapse React Client Demo</h4>
           </div>
           {alert}
-          <p> Getting session token... </p>
+          <p> Getting access token... </p>
         </div>
       )
     }

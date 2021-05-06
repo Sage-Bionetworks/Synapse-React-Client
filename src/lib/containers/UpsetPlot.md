@@ -1,7 +1,7 @@
 
 ```jsx
       <UpsetPlot
-        token={sessionToken}
+        token={accessToken}
         sql={"SELECT unnest(individualID), assay FROM syn20821313 WHERE individualID is not null GROUP BY assay, unnest(individualID)"}
         rgbIndex={0}
         maxBarCount={20}

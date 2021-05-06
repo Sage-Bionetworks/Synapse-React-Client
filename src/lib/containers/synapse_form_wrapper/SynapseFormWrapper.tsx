@@ -22,7 +22,7 @@ export type SynapseFormWrapperProps = {
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
   formNavSchemaEntityId: string //Synapse file that consists screen nav schema
-  token?: string // user's session token
+  token?: string // user's access token
   searchParams?: UploadToolSearchParams
   isWizardMode?: boolean // if we are displaying the form in wizard mode
   fileNamePath: string // path in data to specify the name of saved file

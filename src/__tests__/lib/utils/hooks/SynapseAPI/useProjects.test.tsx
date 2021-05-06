@@ -55,16 +55,16 @@ describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
     SynapseClient.getMyProjects.mockResolvedValueOnce(page1)
 
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
 
     const { result, waitFor } = renderHook(
-      () => useGetProjects(sessionToken, request),
+      () => useGetProjects(accessToken, request),
       { wrapper },
     )
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(sessionToken, request)
+    expect(SynapseClient.getMyProjects).toBeCalledWith(accessToken, request)
     expect(result.current.data).toEqual(page1)
   })
 
@@ -73,16 +73,16 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
 
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
 
     const { result, waitFor } = renderHook(
-      () => useGetProjectsInfinite(sessionToken, request),
+      () => useGetProjectsInfinite(accessToken, request),
       { wrapper },
     )
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(sessionToken, request)
+    expect(SynapseClient.getMyProjects).toBeCalledWith(accessToken, request)
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
 
@@ -91,7 +91,7 @@ describe('basic functionality', () => {
     await waitFor(() => result.current.isFetching)
     await waitFor(() => !result.current.isFetching)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(sessionToken, {
+    expect(SynapseClient.getMyProjects).toBeCalledWith(accessToken, {
       ...request,
       nextPageToken: page1.nextPageToken,
     })

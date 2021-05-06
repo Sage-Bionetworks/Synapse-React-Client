@@ -15,8 +15,8 @@ import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation
 import { ErrorBanner } from '../ErrorBanner'
 
 export type EvaluationRoundEditorListProps = {
-  /** session token to make authenticated API calls */
-  sessionToken: string
+  /** access token to make authenticated API calls */
+  accessToken: string
   /** id of the Evaluation containing EvaluationRounds to edit*/
   evaluationId: string
   /** If true, dates for start/end are displayed in UTC instead of local time*/
@@ -25,7 +25,7 @@ export type EvaluationRoundEditorListProps = {
 
 const fetchEvaluationList = (
   evaluationId: string,
-  sessionToken: string,
+  accessToken: string,
   setListCallback: (items: EvaluationRoundInput[]) => void,
   errorHandleCallback: (error: string | SynapseClientError | undefined) => void,
 ): void => {
@@ -35,7 +35,7 @@ const fetchEvaluationList = (
     getEvaluationRoundsList(
       evaluationId,
       { nextPageToken: nextPageToken },
-      sessionToken,
+      accessToken,
     )
       .then((response: EvaluationRoundListResponse) => {
         const convertedToInput: EvaluationRoundInput[] = response.page.map(
@@ -65,7 +65,7 @@ const fetchEvaluationList = (
  * Edits EvaluationsRounds for an Evaluation.
  */
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
-  sessionToken,
+  accessToken,
   evaluationId,
   utc,
 }: EvaluationRoundEditorListProps) => {
@@ -84,7 +84,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
     () => {
       fetchEvaluationList(
         evaluationId,
-        sessionToken,
+        accessToken,
         setEvaluationRoundInputList,
         setError,
       )
@@ -92,11 +92,11 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
     // we explicitly dont want to list setEvaluationRoundInputList nor setError as a dependency
     // if we do, the fetchEvaluationList will re-fetch from the backend on every new render
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [sessionToken, evaluationId],
+    [accessToken, evaluationId],
   )
 
   if (error) {
-    return <ErrorBanner error={error} token={sessionToken} />
+    return <ErrorBanner error={error} token={accessToken} />
   }
 
   return (
@@ -105,7 +105,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
         {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (
             <EvaluationRoundEditor
-              sessionToken={sessionToken}
+              accessToken={accessToken}
               key={evaluationRoundInput.reactListKey}
               evaluationRoundInput={evaluationRoundInput}
               onSave={handleEvaluationRoundInputListChange(index)}
