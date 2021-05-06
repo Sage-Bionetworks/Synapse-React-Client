@@ -9,6 +9,7 @@ import {
   AccessApproval,
   AccessRequirement,
   ACTAccessRequirement,
+  ACTSubmissionStatus,
   ApprovalState,
   ManagedACTAccessRequirement,
   SelfSignAccessRequirement,
@@ -24,7 +25,6 @@ import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/A
 import { cancelDataAccessRequest } from '../../../utils/SynapseClient'
 import { AlertProps } from './RequestDataAccessStep2'
 import { Alert } from 'react-bootstrap'
-import { SubmissionStatus } from '../../../utils/synapseTypes/AccessRequirement/SubmissionStatus'
 
 export type RequestDataAccessProps = {
   user: UserProfile | undefined
@@ -89,7 +89,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
             </>)
           }
           try {
-            const resp:SubmissionStatus | any = await cancelDataAccessRequest(accessRequirementStatus?.currentSubmissionStatus!.submissionId, token)
+            const resp:ACTSubmissionStatus | any = await cancelDataAccessRequest(accessRequirementStatus?.currentSubmissionStatus!.submissionId, token)
             if (resp.state === SUBMISSION_STATE.CANCELLED) {  // successfully cancelled
               setAlert({
                 key: 'success',

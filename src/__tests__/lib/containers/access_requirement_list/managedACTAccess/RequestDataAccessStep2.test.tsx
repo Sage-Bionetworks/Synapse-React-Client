@@ -51,6 +51,7 @@ function renderComponent(override?:object) {
     user={mockUserProfile}
     managedACTAccessRequirement={accessRequirement}
     researchProjectId={"890"}
+    onHide={() => {}}
   />)
 }
 

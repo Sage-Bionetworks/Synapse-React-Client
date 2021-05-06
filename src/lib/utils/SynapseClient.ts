@@ -67,6 +67,7 @@ import {
   EntityPath,
   EntityBundleRequest,
   EntityBundle,
+  ACTSubmissionStatus,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -95,7 +96,6 @@ import {
   RequestInterface,
   CreateSubmissionRequest,
 } from './synapseTypes/AccessRequirement'
-import { SubmissionStatus } from './synapseTypes/AccessRequirement/SubmissionStatus'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 
@@ -2574,7 +2574,7 @@ export const updateDataAccessRequest = (requestObj: RequestInterface, sessionTok
 
 // http://rest-docs.synapse.org/rest/POST/dataAccessRequest/requestId/submission.html
 export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, sessionToken: string) => {
-  return doPost<SubmissionStatus>(
+  return doPost<ACTSubmissionStatus>(
     `/repo/v1/dataAccessRequest/${requestObj.requestId}/submission`,
     requestObj,
     sessionToken,
@@ -2586,7 +2586,7 @@ export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, ses
 // http://rest-docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId/cancellation.html
 // Cancel a submission. Only the user who created this submission can cancel it.
 export const cancelDataAccessRequest = (submissionId: string, sessionToken: string) => {
-  return doPut<SubmissionStatus>(
+  return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
     sessionToken,

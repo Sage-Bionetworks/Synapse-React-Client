@@ -32,6 +32,7 @@ function renderComponent(override?:object) {
     token={token}
     accessRequirementId={'123'}
     managedACTAccessRequirement={mockAccessRequirement}
+    onHide={() => {}}
   />)
 }
 

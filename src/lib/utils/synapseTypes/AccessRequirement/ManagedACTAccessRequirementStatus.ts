@@ -16,7 +16,7 @@ export enum SUBMISSION_STATE  {
  * The status of a Submission.
  * http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/dataaccess/SubmissionStatus.html
  */
-export type SubmissionStatus = {
+export type ACTSubmissionStatus = {
   submissionId: string,
   submittedBy: string,
   rejectedReason: string,
@@ -29,5 +29,5 @@ export type SubmissionStatus = {
  * http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/dataaccess/ManagedACTAccessRequirementStatus.html
  */
 export interface ManagedACTAccessRequirementStatus extends AccessRequirementStatus {
-  currentSubmissionStatus: SubmissionStatus
+  currentSubmissionStatus: ACTSubmissionStatus
 }

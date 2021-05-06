@@ -12,6 +12,7 @@ import {
 import {
   AccessorChange,
   AccessType,
+  ACTSubmissionStatus,
   BatchFileRequest,
   CreateSubmissionRequest,
   FileHandleAssociateType,
@@ -27,7 +28,6 @@ import FileUpload from '../../FileUpload'
 import UserSearchBox from '../../UserSearchBox'
 import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
-import { SubmissionStatus } from '../../../utils/synapseTypes/AccessRequirement/SubmissionStatus'
 
 export type RequestDataAccessStep2Props = {
   token: string,
@@ -259,7 +259,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           })
 
           // and submit
-          const submission_resp:SubmissionStatus = await submitDataAccessRequest(requestObject, token)
+          const submission_resp:ACTSubmissionStatus = await submitDataAccessRequest(requestObject, token)
           const alertMsg = getSubmissionMsg(submission_resp)
           if (submission_resp.state === SUBMISSION_STATE.REJECTED) {
             setAlert({
@@ -286,7 +286,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
   }
 
-  const getSubmissionMsg = (submission_resp:SubmissionStatus) => {
+  const getSubmissionMsg = (submission_resp:ACTSubmissionStatus) => {
     const msgStart = 'The information you submitted has been '
     switch (submission_resp.state) {
       case SUBMISSION_STATE.SUBMITTED:

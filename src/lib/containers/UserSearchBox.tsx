@@ -5,7 +5,7 @@ import { getUserGroupHeaders } from '../utils/SynapseClient'
 import { UserGroupHeader } from '../utils/synapseTypes'
 
 export type UserSearchBoxProps = {
-  id?: string
+  id?: string  // id for the input tag
   onSelectCallback?: Function
 }
 
@@ -60,9 +60,10 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
           <input {...getInputProps({
             className: 'form-control',
             id: id,
-            type: 'text'
+            type: 'search',
+            role: 'searchbox'
           })} style={{marginBottom: '0'}} />
-          <ul {...getMenuProps()} className={isOpen ? "users-visible" : ""}>
+          <ul {...getMenuProps()} className={isOpen ? "users-visible" : ""} role='list'>
             { isOpen ? users.filter((user:FormattedUserHeader) => !inputValue
               || `${user.firstName} ${user.lastName}`.includes(inputValue)
               || user.userName.includes(inputValue))
