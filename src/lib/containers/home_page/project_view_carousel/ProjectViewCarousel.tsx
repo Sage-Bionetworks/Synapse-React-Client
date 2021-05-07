@@ -9,7 +9,6 @@ import { ErrorBanner } from '../../ErrorBanner'
 import { withQueryClientProvider } from '../../../utils/hooks/SynapseAPI/QueryClientProviderWrapper'
 
 export type ProjectViewCarouselProps = {
-  token?: string
   entityId: string
 }
 
@@ -35,7 +34,7 @@ enum ExpectedColumns {
  * be an attachment on the project's root wiki page.
  */
 export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselProps> = withQueryClientProvider(
-  ({ token, entityId }) => {
+  ({ entityId }) => {
     const queryBundleRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       entityId,
@@ -53,7 +52,7 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
       data: queryResultBundle,
       error: queryError,
       isLoading,
-    } = useGetQueryResultBundle(queryBundleRequest, token)
+    } = useGetQueryResultBundle(queryBundleRequest)
 
     useEffect(() => {
       const getData = async () => {
@@ -102,12 +101,10 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
             try {
               if (project.imageFileName) {
                 const wikiPageKey = await SynapseClient.getWikiPageKeyForEntity(
-                  token,
                   project.entityId,
                 )
 
                 project.imageUrl = await SynapseClient.getPresignedUrlForWikiAttachment(
-                  token,
                   project.entityId,
                   wikiPageKey.wikiPageId,
                   project.imageFileName!,
@@ -127,7 +124,7 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
         }
       }
       getData()
-    }, [entityId, token, queryResultBundle, queryError])
+    }, [entityId, queryResultBundle, queryError])
 
     return error ? (
       <ErrorBanner error={error}></ErrorBanner>

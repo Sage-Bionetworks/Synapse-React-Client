@@ -12,7 +12,6 @@ import {
 type SynapseImageProps = {
   wikiId?: string
   synapseId?: string
-  token?: string
   fileName?: string
   fileResults?: FileHandle[]
   params: {
@@ -43,9 +42,9 @@ class SynapseImage extends React.Component<
   }
 
   public getEntity() {
-    const { token, synapseId } = this.props
+    const { synapseId } = this.props
     if (synapseId) {
-      getEntity<FileEntity>(token, synapseId).then(
+      getEntity<FileEntity>(synapseId).then(
         // https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
         (data: FileEntity) => {
           const fileHandleAssociationList = [
@@ -73,7 +72,7 @@ class SynapseImage extends React.Component<
       includePreviewPreSignedURLs: false,
       requestedFiles: fileHandleAssociationList,
     }
-    getFiles(request, this.props.token)
+    getFiles(request)
       .then((data: BatchFileResult) => {
         const { preSignedURL } = data.requestedFiles.filter(
           el => el.fileHandleId === id,
@@ -113,7 +112,7 @@ class SynapseImage extends React.Component<
     if (params.scale && params.scale !== '100') {
       scale = `${Number(params.scale)}%`
     }
-    
+
     const alignLowerCase = align.toLowerCase()
     let className = ''
     if (alignLowerCase === 'left') {

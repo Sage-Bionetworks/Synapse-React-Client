@@ -19,13 +19,7 @@ import ColorPaletteInspector from './ColorPaletteInspector'
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-const App = ({
-  match,
-  token,
-}: {
-  match?: RouteChildrenProps['match']
-  token: string
-}) => {
+const App = ({ match }: { match?: RouteChildrenProps['match'] }) => {
   if (!match) {
     return <div />
   }
@@ -112,7 +106,6 @@ const App = ({
           <div className="container download-list-demo">
             <div className="col-xs-10">
               <DownloadListTable
-                token={token}
                 listUpdatedCallback={() => {
                   console.log('DownloadList updated')
                 }}
@@ -125,13 +118,13 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/WidgetDemo`}
-        component={() => <WidgetDemo token={token} />}
+        component={() => <WidgetDemo />}
       />
 
       <Route
         exact={true}
         path={`${match.url}/AccessRequirementDemo`}
-        component={() => <AccessRequirementDemo token={token} />}
+        component={() => <AccessRequirementDemo />}
       />
 
       <Route
@@ -143,13 +136,13 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/ShowDownloadDemo`}
-        component={() => <ShowDownloadDemo token={token} />}
+        component={() => <ShowDownloadDemo />}
       />
 
       <Route
         exact={true}
         path={`${match.url}/SynapsePlotDemo`}
-        component={() => <SynapsePlotDemo token={token} />}
+        component={() => <SynapsePlotDemo />}
       />
 
       <Route
@@ -158,7 +151,7 @@ const App = ({
         component={() => (
           <div className="container">
             {' '}
-            <Resources entityId="syn22311127" token={token} />{' '}
+            <Resources entityId="syn22311127" />{' '}
           </div>
         )}
       />
@@ -166,9 +159,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/ExternalFileHandleLink`}
-        component={() => (
-          <ExternalFileHandleLink synId={'syn22276050'} token={token} />
-        )}
+        component={() => <ExternalFileHandleLink synId={'syn22276050'} />}
       />
 
       <Route

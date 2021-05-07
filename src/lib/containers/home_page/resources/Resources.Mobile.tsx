@@ -5,18 +5,17 @@ import ExpandableContent from '../ExpandableContent'
 
 export type ResourcesMobileProps = {
   data: Data
-  token?: string
 }
 
-export default function ResourcesMobile({ data, token }: ResourcesMobileProps) {
+export default function ResourcesMobile({ data }: ResourcesMobileProps) {
   return (
     <div className="Resources_Mobile">
       {data.map(({ name, ownerId, wikiId }) => {
         let title = <> {name} </>
-        let markdown = (
-          <MarkdownSynapse token={token} ownerId={ownerId} wikiId={wikiId} />
+        let markdown = <MarkdownSynapse ownerId={ownerId} wikiId={wikiId} />
+        return (
+          <ExpandableContent key={wikiId} title={title} content={markdown} />
         )
-        return <ExpandableContent title={title} content={markdown} />
       })}
     </div>
   )

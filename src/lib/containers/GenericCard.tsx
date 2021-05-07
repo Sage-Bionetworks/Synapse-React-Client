@@ -9,7 +9,12 @@ import {
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
-import { SelectColumn, ColumnModel, ColumnType, EntityColumnType } from '../utils/synapseTypes'
+import {
+  SelectColumn,
+  ColumnModel,
+  ColumnType,
+  EntityColumnType,
+} from '../utils/synapseTypes'
 import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
 import IconList from './IconList'
@@ -52,12 +57,11 @@ export type GenericCardProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   facetAliases?: {}
-  iconOptions?: IconOptions  
+  iconOptions?: IconOptions
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   schema: any
   data: any
-  token?: string
   tableEntityConcreteType: string | undefined
   tableId: string | undefined
   columnIconOptions?: {}
@@ -106,8 +110,7 @@ export const getValueOrMultiValue = ({
   const selectedColumnOrUndefined =
     selectColumns?.find(el => el.name === columnName) ||
     columnModels?.find(el => el.name === columnName)
-  const isMultiValue =
-    selectedColumnOrUndefined?.columnType.endsWith('_LIST')
+  const isMultiValue = selectedColumnOrUndefined?.columnType.endsWith('_LIST')
 
   if (isMultiValue) {
     let val: any = value
@@ -118,7 +121,7 @@ export const getValueOrMultiValue = ({
       return {
         strList,
         str: val,
-        columnModelType: selectedColumnOrUndefined?.columnType
+        columnModelType: selectedColumnOrUndefined?.columnType,
       }
     } catch (e) {
       console.error(
@@ -172,20 +175,18 @@ export const renderLabel = (args: {
   }
   // PORTALS-1913: special rendering for user ID lists
   if (columnModelType === 'USERID_LIST' && strList) {
-      return strList.map((val:string, index:number) => {
-        return (
-          <span key={val}>
-            <UserCard ownerId={val} size={SMALL_USER_CARD}/>
-            {/* \u00a0 is a nbsp; */}
-            {index < strList.length - 1 && ',\u00a0\u00a0'}
-          </span>
-        )
+    return strList.map((val: string, index: number) => {
+      return (
+        <span key={val}>
+          <UserCard ownerId={val} size={SMALL_USER_CARD} />
+          {/* \u00a0 is a nbsp; */}
+          {index < strList.length - 1 && ',\u00a0\u00a0'}
+        </span>
+      )
     })
   }
   if (columnModelType === 'USERID' && str) {
-      return (
-        <UserCard ownerId={str} size={SMALL_USER_CARD}/>
-      )
+    return <UserCard ownerId={str} size={SMALL_USER_CARD} />
   }
 
   if (!labelLink) {
@@ -241,7 +242,7 @@ export const renderLabel = (args: {
 
 type ValueOrMultiValue = {
   str: string
-  strList?: string[],
+  strList?: string[]
   columnModelType?: ColumnType | EntityColumnType
 }
 
@@ -360,7 +361,7 @@ export default class GenericCard extends React.Component<
       schema,
       data,
       genericCardSchema,
-      secondaryLabelLimit,      
+      secondaryLabelLimit,
       selectColumns,
       columnModels,
       iconOptions,
@@ -374,7 +375,6 @@ export default class GenericCard extends React.Component<
       tableId,
       tableEntityConcreteType,
       columnIconOptions,
-      token,
     } = this.props
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
@@ -438,32 +438,45 @@ export default class GenericCard extends React.Component<
 
     const showFooter = values.length > 0
 
-    const style: React.CSSProperties = {      
+    const style: React.CSSProperties = {
       // undefined, take default value from class
       marginTop: isHeader ? '0px' : undefined,
       marginBottom: isHeader ? '0px' : undefined,
       paddingBottom: showFooter || imageFileHandleIdValue ? undefined : '15px',
-    }    
-    const icon:JSX.Element = <>
-        {imageFileHandleIdValue && <div className="SRC-imageThumbnail" style={{padding: genericCardSchemaDefined.thumbnailRequiresPadding ? '21px' : undefined}}>
-          <ImageFileHandle 
-            token={token}
-            fileHandleId={imageFileHandleIdValue}
-            tableEntityConcreteType={tableEntityConcreteType}
-            rowId={data![schema.id]}
-            tableId={tableId}
-          /></div>}
-        {!imageFileHandleIdValue && <div className="SRC-cardThumbnail">
-          <Icon iconOptions={iconOptions} value={iconValue} type={type} />          
-        </div>}
+    }
+    const icon: JSX.Element = (
+      <>
+        {imageFileHandleIdValue && (
+          <div
+            className="SRC-imageThumbnail"
+            style={{
+              padding: genericCardSchemaDefined.thumbnailRequiresPadding
+                ? '21px'
+                : undefined,
+            }}
+          >
+            <ImageFileHandle
+              fileHandleId={imageFileHandleIdValue}
+              tableEntityConcreteType={tableEntityConcreteType}
+              rowId={data![schema.id]}
+              tableId={tableId}
+            />
+          </div>
+        )}
+        {!imageFileHandleIdValue && (
+          <div className="SRC-cardThumbnail">
+            <Icon iconOptions={iconOptions} value={iconValue} type={type} />
+          </div>
+        )}
       </>
+    )
 
     if (isHeader) {
       return (
         <HeaderCard
           descriptionConfig={descriptionConfig}
           title={title}
-          subTitle={subTitle}          
+          subTitle={subTitle}
           description={description}
           type={type}
           icon={icon}
@@ -489,8 +502,9 @@ export default class GenericCard extends React.Component<
       genericCardSchemaDefined.description,
       facetAliases,
     )
-    
-    let ctaHref: string | undefined = undefined, ctaTarget: string | undefined = undefined
+
+    let ctaHref: string | undefined = undefined,
+      ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
       const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
       const { href: newCtaHref, target: newCtaTarget } = this.getLinkParams(
@@ -530,7 +544,6 @@ export default class GenericCard extends React.Component<
                 {!titleLinkConfig &&
                 titleColumnType === ColumnType.FILEHANDLEID ? (
                   <FileHandleLink
-                    token={token}
                     fileHandleId={linkValue}
                     tableEntityConcreteType={tableEntityConcreteType}
                     showDownloadIcon={type !== SynapseConstants.EXPERIMENTAL}
@@ -574,13 +587,10 @@ export default class GenericCard extends React.Component<
                 hasClickedShowMore,
                 descriptionSubTitle,
                 descriptionConfig,
-                this.props.token,
               )}
             {ctaLinkConfig && ctaHref && ctaTarget && (
               <div className="SRC-portalCardCTALink bootstrap-4-backport">
-                <a target={ctaTarget}
-                  rel="noopener noreferrer"
-                  href={ctaHref}>
+                <a target={ctaTarget} rel="noopener noreferrer" href={ctaHref}>
                   {ctaLinkConfig.text}
                 </a>
               </div>
@@ -605,11 +615,10 @@ export default class GenericCard extends React.Component<
     hasClickedShowMore: boolean,
     descriptionSubTitle: any,
     descriptionConfig?: DescriptionConfig,
-    token?: string,
   ): React.ReactNode {
     let content: JSX.Element | string = description
     if (descriptionConfig?.isMarkdown) {
-      content = <MarkdownSynapse token={token} markdown={content} />
+      content = <MarkdownSynapse markdown={content} />
     }
     const show =
       hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault

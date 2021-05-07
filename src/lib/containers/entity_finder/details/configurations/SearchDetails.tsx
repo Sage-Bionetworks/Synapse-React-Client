@@ -11,7 +11,6 @@ type SearchDetailsProps = EntityDetailsListSharedProps & {
 }
 
 export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
-  sessionToken,
   searchQuery,
   showVersionSelection,
   selectColumnType,
@@ -28,7 +27,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
     fetchNextPage,
     error,
     isError,
-  } = useSearchInfinite(searchQuery, sessionToken, {
+  } = useSearchInfinite(searchQuery, {
     enabled: !!searchQuery.queryTerm,
   })
   const handleError = useErrorHandler()
@@ -42,7 +41,6 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   if (searchQuery.queryTerm) {
     return (
       <DetailsView
-        sessionToken={sessionToken}
         entities={
           data
             ? ([] as Hit[]).concat.apply(
@@ -78,7 +76,6 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   } else {
     return (
       <DetailsView
-        sessionToken={sessionToken}
         entities={[]}
         queryStatus={'success'}
         queryIsFetching={false}

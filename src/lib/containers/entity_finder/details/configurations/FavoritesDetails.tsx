@@ -8,7 +8,6 @@ import { DetailsView } from '../view/DetailsView'
 type FavoritesDetailsProps = EntityDetailsListSharedProps
 
 export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = ({
-  sessionToken,
   showVersionSelection,
   selectColumnType,
   selected,
@@ -16,9 +15,7 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
   selectableTypes,
   toggleSelection,
 }) => {
-  const { data, status, isFetching, isError, error } = useGetFavorites(
-    sessionToken,
-  )
+  const { data, status, isFetching, isError, error } = useGetFavorites()
   const handleError = useErrorHandler()
 
   useEffect(() => {
@@ -29,7 +26,6 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
 
   return (
     <DetailsView
-      sessionToken={sessionToken}
       entities={data ? data.results : []}
       queryStatus={status}
       queryIsFetching={isFetching}

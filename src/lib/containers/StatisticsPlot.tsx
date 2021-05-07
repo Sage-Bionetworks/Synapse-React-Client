@@ -26,7 +26,6 @@ const months = [
 
 export type StatisticsPlotProps = {
   request: ProjectFilesStatisticsRequest
-  token?: string
   title?: string
   xtitle?: string
   ytitle?: string
@@ -61,8 +60,8 @@ class StatisticsPlot extends React.Component<
    * @returns data corresponding to plotly widget
    */
   fetchPlotlyData = async () => {
-    const { request, token } = this.props
-    return SynapseClient.getProjectStatistics(request, token)
+    const { request } = this.props
+    return SynapseClient.getProjectStatistics(request)
       .then((data: ProjectFilesStatisticsResponse) => {
         this.setState({
           isLoaded: true,

@@ -332,7 +332,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
           style={totalQueryResultsStyle}
           isLoading={isLoading!}
           frontText={'Displaying'}
-          token={this.props.token}
           lastQueryRequest={getLastQueryRequest!()}
           unitDescription={usedUnitDescription}
         />

@@ -16,12 +16,11 @@ library.add(faExternalLinkAlt)
 
 export type ExternalFileHandleLinkProps = {
   synId: string
-  token?: string
   className?: string
 }
 
 export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
-  const { synId, token, className } = props
+  const { synId, className } = props
   const [data, setData] = useState<
     | { fileEntity: FileEntity; externalFileHandle: ExternalFileHandle }
     | undefined
@@ -29,10 +28,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
   useEffect(() => {
     const getEntity = async () => {
       try {
-        const fileEntity = await SynapseClient.getEntity<FileEntity>(
-          token,
-          synId,
-        )
+        const fileEntity = await SynapseClient.getEntity<FileEntity>(synId)
         assertIsFileEntity(fileEntity)
         const batchFileRequest: BatchFileRequest = {
           requestedFiles: [
@@ -46,7 +42,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
           includePreSignedURLs: false,
           includePreviewPreSignedURLs: false,
         }
-        const file = await SynapseClient.getFiles(batchFileRequest, token)
+        const file = await SynapseClient.getFiles(batchFileRequest)
         const externalFileHandle = file.requestedFiles[0].fileHandle
         assertIsExternalFileHandle(externalFileHandle)
         setData({
@@ -58,7 +54,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
       }
     }
     getEntity()
-  }, [synId, token])
+  }, [synId])
 
   const externalFileHandle = data?.externalFileHandle
   const fileEntity = data?.fileEntity
@@ -68,6 +64,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
       href={externalFileHandle.externalURL}
       className={className}
       target="_blank"
+      rel="noopener noreferrer"
     >
       <span>
         {fileEntity?.name}

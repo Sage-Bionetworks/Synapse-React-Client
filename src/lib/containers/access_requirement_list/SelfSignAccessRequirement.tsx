@@ -12,7 +12,6 @@ import { AccessRequirementProps } from './AccessRequirementProps'
 
 export default function SelfSignAccessRequirementComponent({
   accessRequirement,
-  token,
   user,
   onHide,
   accessRequirementStatus,
@@ -29,7 +28,6 @@ export default function SelfSignAccessRequirementComponent({
       try {
         setIsLoading(true)
         const wikiPageRequirment = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          token,
           accessRequirement.id,
         )
 
@@ -43,7 +41,6 @@ export default function SelfSignAccessRequirementComponent({
           const bundle = await SynapseClient.getUserBundle(
             user.ownerId,
             certificationOrVerification,
-            token,
           )
           setUserBundle(bundle)
         }
@@ -55,7 +52,7 @@ export default function SelfSignAccessRequirementComponent({
     }
 
     getSelfSignAccessData()
-  }, [accessRequirement, token, user])
+  }, [accessRequirement, user])
 
   return (
     <>
@@ -111,7 +108,6 @@ export default function SelfSignAccessRequirementComponent({
       )}
       <AcceptedRequirements
         user={user}
-        token={token}
         wikiPage={wikiPage}
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}

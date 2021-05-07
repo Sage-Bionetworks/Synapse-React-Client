@@ -102,7 +102,6 @@ describe('it works', () => {
   const props: TotalQueryResultsProps = {
     unitDescription,
     isLoading: false,
-    token: '',
     lastQueryRequest,
     frontText: 'Displaying',
   }
@@ -127,7 +126,6 @@ describe('it works', () => {
             SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
             SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS,
         }),
-        '',
       )
     })
   })

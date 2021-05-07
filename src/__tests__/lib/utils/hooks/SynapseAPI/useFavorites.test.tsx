@@ -4,8 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { useGetFavorites } from '../../../../../lib/utils/hooks/SynapseAPI/useFavorites'
 import {
   EntityHeader,
-  EntityType,
-  PaginatedResults
+  PaginatedResults,
 } from '../../../../../lib/utils/synapseTypes'
 
 const wrapper = (props: { children: React.ReactChildren }) => (
@@ -19,7 +18,7 @@ const expected: PaginatedResults<EntityHeader> = {
     {
       id: 'syn123',
       name: 'My Favorite Entity',
-      type: EntityType.FILE,
+      type: 'org.sagebionetworks.repo.model.FileEntity',
       versionNumber: 1,
       versionLabel: '1',
       benefactorId: 122,
@@ -36,16 +35,11 @@ SynapseClient.getUserFavorites = jest.fn().mockResolvedValue(expected)
 
 describe('useFavorites functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const sessionToken = 'abcdef'
-
-    const { result, waitFor } = renderHook(
-      () => useGetFavorites(sessionToken),
-      { wrapper },
-    )
+    const { result, waitFor } = renderHook(() => useGetFavorites(), { wrapper })
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getUserFavorites).toBeCalledWith(sessionToken)
+    expect(SynapseClient.getUserFavorites).toBeCalled()
     expect(result.current.data).toEqual(expected)
   })
 })

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
-import { getAllAccessRequirements } from '../../utils/SynapseClient'
+import { getAllAccessRequirements, isSignedIn } from '../../utils/SynapseClient'
 import { SynapseConstants, SynapseClient } from '../../utils/'
-import useCompare from '../../utils/hooks/useCompare'
 import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
@@ -35,7 +34,6 @@ type AccessRequirementAndStatus = {
 
 export type AccessRequirementListProps = {
   entityId: string
-  token?: string
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
@@ -68,7 +66,6 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
 
 export default function AccessRequirementList({
   entityId,
-  token,
   onHide,
   accessRequirementFromProps,
   renderAsModal,
@@ -81,12 +78,10 @@ export default function AccessRequirementList({
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
-    token: token,
     type: 'ENTITY_HEADER',
   }
 
-  const hasTokenChanged = useCompare(token)
-  const shouldUpdateData = hasTokenChanged || !accessRequirements
+  const shouldUpdateData = !accessRequirements
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
@@ -95,7 +90,7 @@ export default function AccessRequirementList({
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {
       const statuses = requirements.map(req => {
-        return SynapseClient.getAccessRequirementStatus(token, req.id)
+        return SynapseClient.getAccessRequirementStatus(req.id)
       })
       const accessRequirementStatuses = await Promise.all(statuses)
 
@@ -126,7 +121,7 @@ export default function AccessRequirementList({
           return
         }
         if (!accessRequirementFromProps) {
-          const requirements = await getAllAccessRequirements(token, entityId)
+          const requirements = await getAllAccessRequirements(entityId)
           const sortedAccessRequirements = await sortAccessRequirementByCompletion(
             requirements,
           )
@@ -138,7 +133,7 @@ export default function AccessRequirementList({
           setAccessRequirements(sortedAccessRequirements)
         }
 
-        const userProfile = await SynapseClient.getUserProfile(token)
+        const userProfile = await SynapseClient.getUserProfile()
         setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
@@ -149,12 +144,7 @@ export default function AccessRequirementList({
     }
 
     getAccessRequirements()
-  }, [token, entityId, accessRequirementFromProps, shouldUpdateData])
-
-  // Using Boolean(value) converts undefined,null, 0,'',false -> false
-  // one alternative to using Boolean(value) is the double bang operator !!value,
-  // but doesn't ready well
-  const isSignedIn: boolean = Boolean(token)
+  }, [entityId, accessRequirementFromProps, shouldUpdateData])
 
   /**
    * Returns rendering for the access requirement.
@@ -173,7 +163,6 @@ export default function AccessRequirementList({
           <SelfSignAccessRequirementComponent
             accessRequirement={accessRequirement as SelfSignAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -184,7 +173,6 @@ export default function AccessRequirementList({
           <TermsOfUseAccessRequirementComponent
             accessRequirement={accessRequirement as TermsOfUseAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -195,7 +183,6 @@ export default function AccessRequirementList({
           <ManagedACTAccessRequirementComponent
             accessRequirement={accessRequirement as ManagedACTAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -206,7 +193,6 @@ export default function AccessRequirementList({
           <ACTAccessRequirementComponent
             accessRequirement={accessRequirement as ACTAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -244,9 +230,9 @@ export default function AccessRequirementList({
             What do I need to do?
           </h4>
           <div className="requirement-container">
-            <AccessApprovalCheckMark isCompleted={isSignedIn} />
+            <AccessApprovalCheckMark isCompleted={isSignedIn()} />
             <div>
-              {!isSignedIn && (
+              {!isSignedIn() && (
                 <>
                   <p className="AccessRequirementList__signin">
                     <button
@@ -267,7 +253,7 @@ export default function AccessRequirementList({
                   </p>
                 </>
               )}
-              {isSignedIn && (
+              {isSignedIn() && (
                 <p>
                   You have signed with Sage Platform (Synapse) user account as{' '}
                   <b className="SRC-primary-text-color">

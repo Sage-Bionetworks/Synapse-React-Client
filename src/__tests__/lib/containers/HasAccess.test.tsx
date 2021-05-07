@@ -28,7 +28,6 @@ import { mockFolderEntity } from '../../../mocks/mock_folder_entity'
 import { mockFileEntity } from '../../../mocks/mock_file_entity'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
-const token: string = '123444'
 const entityId = 'syn9988882982'
 const isInDownloadList: boolean = true
 const externalFileHandle: FileHandle = {
@@ -68,7 +67,6 @@ const createShallowComponent = async (
   return { wrapper, instance }
 }
 const props: HasAccessProps = {
-  token,
   entityId,
   isInDownloadList,
 }
@@ -80,9 +78,7 @@ describe('basic tests', () => {
 
   it('works with open data no restrictions', async () => {
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.getFileResult = jest.fn(() =>
-      Promise.resolve(mockFileHandle),
-    )
+    SynapseClient.getFileResult = jest.fn(() => Promise.resolve(mockFileHandle))
 
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
@@ -96,7 +92,6 @@ describe('basic tests', () => {
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledTimes(1)
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token,
     )
     expect(instance.state.restrictionInformation).toEqual(
       mockOpenRestrictionInformation,
@@ -105,7 +100,7 @@ describe('basic tests', () => {
     expect(SynapseClient.getFileResult).toHaveBeenCalledTimes(1)
     // verify UI
     instance.setState({
-      fileHandleDownloadType: FileHandleDownloadTypeEnum.Accessible
+      fileHandleDownloadType: FileHandleDownloadTypeEnum.Accessible,
     })
 
     const icons = wrapper.find(FontAwesomeIcon)
@@ -167,7 +162,8 @@ describe('basic tests', () => {
       etag: '',
       createdBy: '',
       createdOn: '',
-      concreteType: CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle,
+      concreteType:
+        CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle,
       contentType: '',
       contentMd5: '',
       fileName: '',
@@ -250,6 +246,7 @@ describe('basic tests', () => {
   })
 
   it('works with unmet controlled access data AND an UNAUTHORIZED ACL', async () => {
+    SynapseClient.isSignedIn = jest.fn().mockReturnValue(true)
     SynapseClient.getEntity = jest.fn(() => Promise.reject('UNAUTHORIZED'))
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockUnmetControlledDataRestrictionInformationACT),
@@ -262,7 +259,6 @@ describe('basic tests', () => {
     }
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token,
     )
     expect(wrapper.instance().state.restrictionInformation).toEqual(
       mockUnmetControlledDataRestrictionInformationACT,
@@ -293,7 +289,6 @@ describe('basic tests', () => {
     }
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token,
     )
     expect(wrapper.instance().state.restrictionInformation).toEqual(
       mockOpenRestrictionInformation,

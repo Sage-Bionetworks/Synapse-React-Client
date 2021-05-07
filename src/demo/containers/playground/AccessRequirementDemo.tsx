@@ -1,12 +1,9 @@
 import * as React from 'react'
 import AccessRequirementList from '../../../lib/containers/access_requirement_list/AccessRequirementList'
 
-type AccessRequirementDemoProps = {
-  token: string
-}
+type AccessRequirementDemoProps = {}
 
 export const AccessRequirementDemo: React.FunctionComponent<AccessRequirementDemoProps> = props => {
-  const { token } = props
   const [
     displayAccessRequirement,
     setDisplayAccessRequirement,
@@ -29,7 +26,6 @@ export const AccessRequirementDemo: React.FunctionComponent<AccessRequirementDem
             setDisplayAccessRequirement(false)
           }}
           entityId={inputValue}
-          token={token}
         />
       ) : (
         <>

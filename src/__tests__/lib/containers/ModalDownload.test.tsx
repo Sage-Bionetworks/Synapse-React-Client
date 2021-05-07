@@ -24,6 +24,7 @@ describe('it performs the expected functionality', () => {
       resultFileHandleId: 'hello',
     }),
   )
+  SynapseClient.isSignedIn = jest.fn().mockReturnValue(true)
   SynapseClient.getDownloadFromTableRequest = mockGetDownloadFromTableRequest
   SynapseClient.getFileHandleByIdURL = jest.fn(() => 'testurl')
   const props: ModalDownloadProps = {
@@ -62,7 +63,6 @@ describe('it performs the expected functionality', () => {
         writeHeader: true,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
     )
   })
 
@@ -87,7 +87,6 @@ describe('it performs the expected functionality', () => {
         writeHeader: false,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
     )
   })
 
@@ -111,7 +110,6 @@ describe('it performs the expected functionality', () => {
         writeHeader: true,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
     )
   })
 
@@ -135,7 +133,6 @@ describe('it performs the expected functionality', () => {
         writeHeader: false,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
     )
   })
 })

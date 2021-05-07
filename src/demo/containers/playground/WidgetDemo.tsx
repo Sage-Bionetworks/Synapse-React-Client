@@ -10,9 +10,7 @@ import { Range, RangeValues } from '../../../lib/containers/widgets/Range'
 import { RangeSlider } from '../../../lib/containers/widgets/RangeSlider'
 import { useState } from 'react'
 
-type WigetDemoPros = {
-  token: string
-}
+type WigetDemoPros = {}
 
 export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
   props: WigetDemoPros,
@@ -157,7 +155,6 @@ export const WidgetDemo: React.FunctionComponent<WigetDemoPros> = (
         step={1}
       ></RangeSlider>
       <ThemesPlot
-        token={props.token}
         onPointClick={plotCallback}
         topBarPlot={topBarPlotProps}
         sideBarPlot={sideBarPlotProps}

@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap'
 import Alert from 'react-bootstrap/Alert'
 import { UiSchema } from 'react-jsonschema-form'
 import { SynapseClient } from '../../utils'
+import { isSignedIn } from '../../utils/SynapseClient'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { FileEntity, FormData } from '../../utils/synapseTypes/'
 import SynapseForm from './SynapseForm'
@@ -22,7 +23,6 @@ export type SynapseFormWrapperProps = {
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
   formNavSchemaEntityId: string //Synapse file that consists screen nav schema
-  token?: string // user's session token
   searchParams?: UploadToolSearchParams
   isWizardMode?: boolean // if we are displaying the form in wizard mode
   fileNamePath: string // path in data to specify the name of saved file
@@ -64,35 +64,28 @@ class SynapseFormWrapper extends React.Component<
   }
 
   async componentDidMount() {
-    await this.getData(this.props.token)
-  }
-
-  async componentDidUpdate(prevProps: SynapseFormWrapperProps) {
-    const shouldUpdate = this.props.token !== prevProps.token
-    if (shouldUpdate) {
-      await this.getData(this.props.token)
-    }
+    await this.getData()
   }
 
   //gets a file entity with content
   getFileEntityData = async (
-    token: string,
     entityId: string,
     versionNumber?: string,
   ): Promise<{ version?: number; content: JSON }> => {
     try {
       const entity: FileEntity = await SynapseClient.getEntity(
-        token,
         entityId,
         versionNumber,
       )
       const fileHandleContent = await SynapseClient.getFileResult(
         entity,
-        token,
         true,
         true,
       )
-      const fileContent = await SynapseClient.getFileHandleContent(fileHandleContent.fileHandle!, fileHandleContent.preSignedURL!)
+      const fileContent = await SynapseClient.getFileHandleContent(
+        fileHandleContent.fileHandle!,
+        fileHandleContent.preSignedURL!,
+      )
       const content = JSON.parse(fileContent)
       return {
         version: entity.versionNumber,
@@ -109,12 +102,10 @@ class SynapseFormWrapper extends React.Component<
 
   //same as above but also uses $RefParser to convert json $refs to regular json
   getFileEntityDataDereferenced = async (
-    token: string,
     entityId: string,
     versionNumber?: string,
   ): Promise<{ version?: number; content: JSON }> => {
     const { version, content } = await this.getFileEntityData(
-      token,
       entityId,
       versionNumber,
     )
@@ -125,8 +116,8 @@ class SynapseFormWrapper extends React.Component<
     }
   }
 
-  getData = async (token?: string): Promise<void> => {
-    if (!token) {
+  getData = async (): Promise<void> => {
+    if (!isSignedIn()) {
       return
     }
     try {
@@ -148,7 +139,6 @@ class SynapseFormWrapper extends React.Component<
       if (dataFileHandleId) {
         const fileData = await SynapseClient.getFileHandleContentFromID(
           dataFileHandleId,
-          token,
         )
         formData = JSON.parse(fileData)
         if (submitted && formData && formData['metadata']) {
@@ -160,17 +150,14 @@ class SynapseFormWrapper extends React.Component<
 
       const promises = [
         this.getFileEntityDataDereferenced(
-          token,
           this.props.formSchemaEntityId,
           formSchemaVersion,
         ),
         this.getFileEntityData(
-          token,
           this.props.formUiSchemaEntityId,
           uiSchemaVersion,
         ),
         this.getFileEntityData(
-          token,
           this.props.formNavSchemaEntityId,
           navSchemaVersion,
         ),
@@ -234,7 +221,7 @@ class SynapseFormWrapper extends React.Component<
       isLoading: true,
     })
 
-    await SynapseClient.submitFormData(this.state.formDataId!, this.props.token)
+    await SynapseClient.submitFormData(this.state.formDataId!)
     this.finishedProcessing(StatusEnum.SUBMIT_SUCCESS, 'File Submitted')
   }
 
@@ -244,7 +231,6 @@ class SynapseFormWrapper extends React.Component<
   ): Promise<FormData> => {
     fileName = `${fileName}.json`
     const fileUploadComplete = await SynapseClient.uploadFile(
-      this.props.token,
       fileName,
       fileContentsBlob,
     )
@@ -264,14 +250,12 @@ class SynapseFormWrapper extends React.Component<
           this.state.formDataId,
           fileName,
           newFileHandleId,
-          this.props.token!,
         )
       } else {
         formData = await SynapseClient.createFormData(
           formGroupId,
           fileName,
           newFileHandleId,
-          this.props.token!,
         )
       }
 
@@ -347,7 +331,7 @@ class SynapseFormWrapper extends React.Component<
   ): JSX.Element => {
     if (
       includes([StatusEnum.ERROR, StatusEnum.ERROR_CRITICAL], state.status) &&
-      props.token &&
+      isSignedIn() &&
       state.isLoading
     ) {
       return (
@@ -382,8 +366,8 @@ class SynapseFormWrapper extends React.Component<
     return <></>
   }
 
-  renderUnauthenticatedView = (token: string | undefined) => {
-    if (token) {
+  renderUnauthenticatedView = () => {
+    if (isSignedIn()) {
       return <></>
     } else {
       return (
@@ -408,7 +392,7 @@ class SynapseFormWrapper extends React.Component<
         <div className="SRC-ReactJsonForm">
           {this.renderNotification(this.state.notification)}
           {this.renderLoader(this.state, this.props)}
-          {this.renderUnauthenticatedView(this.props.token)}
+          {this.renderUnauthenticatedView()}
 
           {this.isReadyToDisplayForm(this.state) && (
             <div>

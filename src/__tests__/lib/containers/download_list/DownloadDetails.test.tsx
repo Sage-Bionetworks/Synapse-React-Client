@@ -18,11 +18,12 @@ describe('it performs all functionality ', () => {
   })
 
   const fn = require('../../../../lib/utils/functions/testDownloadSpeed')
+  const SynapseClient = require('../../../../lib/utils/SynapseClient')
   fn.testDownloadSpeed = jest.fn().mockResolvedValue(20)
+  SynapseClient.isSignedIn = jest.fn().mockReturnValue(true)
   const props: DownloadDetailsProps = {
     numFiles: 3,
     numBytes: 10,
-    token: 'token',
   }
   it('renders without crashing', async () => {
     await act(async () => {

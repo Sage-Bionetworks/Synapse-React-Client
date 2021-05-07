@@ -54,13 +54,14 @@ describe('it performs all functionality ', () => {
   }
   const mockGetDownloadListFn = jest.fn().mockResolvedValue(downloadListMock)
   SynapseClient.getDownloadList = mockGetDownloadListFn
+  SynapseClient.isSignedIn = jest.fn().mockReturnValue(true)
   const entityHeaderMock: PaginatedResults<EntityHeader> = {
     totalNumberOfResults: 3,
     results: [
       {
         name: fileOneName,
         id: entityOneId,
-        type: '',
+        type: 'org.sagebionetworks.repo.model.FileEntity',
         versionNumber: 0,
         versionLabel: '',
         benefactorId: 0,
@@ -72,7 +73,7 @@ describe('it performs all functionality ', () => {
       {
         name: fileTwoName,
         id: entityTwoId,
-        type: '',
+        type: 'org.sagebionetworks.repo.model.FileEntity',
         versionNumber: 0,
         versionLabel: '',
         benefactorId: 0,
@@ -103,10 +104,7 @@ describe('it performs all functionality ', () => {
   const mockClearDownloadListFn = jest.fn().mockResolvedValue('')
   SynapseClient.deleteDownloadList = mockClearDownloadListFn
 
-  const tokenMock = 'token'
-  const props: DownloadListTableProps = {
-    token: tokenMock,
-  }
+  const props: DownloadListTableProps = {}
   it('renders without crashing', async () => {
     await act(async () => {
       ReactDOM.render(<DownloadListTable {...props} />, container)
@@ -150,7 +148,6 @@ describe('it performs all functionality ', () => {
           fileHandleId: fileOneId,
         }),
       ]),
-      tokenMock,
     )
     expect(mockGetDownloadListFn).not.toHaveBeenCalled()
     expect(mockGetEntityHeadersFn).not.toHaveBeenCalled()

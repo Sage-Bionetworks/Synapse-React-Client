@@ -14,7 +14,6 @@ import {
 } from '../utils/synapseTypes/'
 
 type UploaderState = {
-  token?: string
   error?: any
   totalFilesToUploadCount: number
   filesUploadedCount: number
@@ -23,7 +22,6 @@ type UploaderState = {
 }
 
 export type UploaderProps = {
-  token?: string
   parentContainerId: string
 }
 
@@ -36,7 +34,6 @@ export default class Uploader extends React.Component<
   constructor(props: UploaderProps) {
     super(props)
     this.state = {
-      token: '',
       isUploading: false,
       filesUploadedCount: 0,
       totalFilesToUploadCount: 0,
@@ -94,10 +91,10 @@ export default class Uploader extends React.Component<
         entityName: file.name,
         parentId: this.props.parentContainerId,
       }
-      lookupChildEntity(entityLookupRequest, this.props.token)
+      lookupChildEntity(entityLookupRequest)
         .then((entityId: EntityId) => {
           // ok, found an entity of the same name.
-          getEntity<FileEntity>(this.props.token, entityId.id).then(
+          getEntity<FileEntity>(entityId.id).then(
             (existingEntity: FileEntity) => {
               if (
                 existingEntity.concreteType ===
@@ -122,12 +119,12 @@ export default class Uploader extends React.Component<
   }
 
   updateEntityFile = (fileEntity: FileEntity, file: File) => {
-    uploadFile(this.props.token, file.name, file)
+    uploadFile(file.name, file)
       .then((fileUploadComplete: FileUploadComplete) => {
         const isCreate = fileEntity.dataFileHandleId === ''
         fileEntity.dataFileHandleId = fileUploadComplete.fileHandleId
         const createOrUpdate = isCreate ? createEntity : updateEntity
-        createOrUpdate(fileEntity, this.props.token).then(() => {
+        createOrUpdate(fileEntity).then(() => {
           this.finishedProcessingOneFile()
         })
       })

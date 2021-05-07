@@ -61,7 +61,6 @@ const queryClient = new QueryClient({
 })
 
 export type EntityFinderProps = {
-  sessionToken: string
   /** Whether or not it is possible to select multiple entities */
   selectMultiple: boolean
   /** Callback invoked when the selection changes */
@@ -87,7 +86,6 @@ export type EntityFinderProps = {
 }
 
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
-  sessionToken,
   initialScope,
   projectId,
   initialContainer,
@@ -206,7 +204,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 : undefined,
             },
           ],
-          sessionToken,
         )
           .then(response => {
             setSearchByIdResults(response.results)
@@ -216,7 +213,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     } else {
       setSearchByIdResults([])
     }
-  }, [sessionToken, searchTerms, handleError])
+  }, [searchTerms, handleError])
 
   const mainPanelClass = searchActive
     ? 'MainPanelSearch'
@@ -300,7 +297,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
             {searchActive && (
               <EntityDetailsList
-                sessionToken={sessionToken}
                 configuration={
                   searchByIdResults && searchByIdResults.length > 0
                     ? {
@@ -329,7 +325,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 {treeOnly ? (
                   <div>
                     <TreeView
-                      sessionToken={sessionToken}
                       toggleSelection={toggleSelection}
                       showDropdown={true}
                       visibleTypes={selectableAndVisibleTypesInTree}
@@ -356,7 +351,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             flex={0.18}
                           >
                             <TreeView
-                              sessionToken={sessionToken}
                               selectedEntities={selectedEntities}
                               setDetailsViewConfiguration={
                                 setConfigFromTreeView
@@ -374,7 +368,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                           <ReflexSplitter></ReflexSplitter>
                           <ReflexElement className="DetailsViewReflexElement">
                             <EntityDetailsList
-                              sessionToken={sessionToken}
                               configuration={configFromTreeView}
                               showVersionSelection={showVersionSelection}
                               selected={selectedEntities}
@@ -398,7 +391,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
 
           {selectedEntities.length > 0 && (
             <SelectionPane
-              sessionToken={sessionToken}
               title={selectedCopy}
               selectedEntities={selectedEntities}
               toggleSelection={toggleSelection}

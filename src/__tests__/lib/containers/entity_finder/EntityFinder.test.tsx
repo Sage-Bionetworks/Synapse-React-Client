@@ -62,7 +62,6 @@ DetailsList.EntityDetailsList = jest
     return <div role="table"></div>
   })
 
-const mockTreeView = TreeView.TreeView
 const mockDetailsList = DetailsList.EntityDetailsList
 
 jest.mock('../../../../lib/utils/SynapseClient', () => {
@@ -78,7 +77,6 @@ const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockOnSelectionChange = jest.fn()
 
 const defaultProps: EntityFinderProps = {
-  sessionToken: 'abcd',
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: 'syn456',
   initialContainer: 'syn123',
@@ -315,7 +313,6 @@ describe('EntityFinder tests', () => {
       expect(mockDetailsList).toHaveBeenLastCalledWith(
         expect.objectContaining({
           configuration: configuration, // !
-          sessionToken: defaultProps.sessionToken,
           selectableTypes: defaultProps.selectableTypes,
           visibleTypes: [
             ...defaultProps.visibleTypesInList!,
@@ -430,14 +427,11 @@ describe('EntityFinder tests', () => {
     }
 
     when(mockGetEntityHeaders)
-      .calledWith([{ targetId: entityId }], defaultProps.sessionToken)
+      .calledWith([{ targetId: entityId }])
       .mockResolvedValue(entityHeaderResult)
 
     when(mockGetEntityHeaders)
-      .calledWith(
-        [{ targetId: entityId, targetVersionNumber: version }],
-        defaultProps.sessionToken,
-      )
+      .calledWith([{ targetId: entityId, targetVersionNumber: version }])
       .mockResolvedValue(entityHeaderResultWithVersion)
 
     userEvent.click(screen.getByText('Search all of Synapse'))

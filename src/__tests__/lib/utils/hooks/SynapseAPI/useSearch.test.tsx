@@ -82,18 +82,15 @@ describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
     SynapseClient.searchEntities.mockResolvedValueOnce(page1)
 
-    const sessionToken = 'abcdef'
-
-    const { result, waitFor } = renderHook(
-      () => useSearch(request, sessionToken),
-      { wrapper },
-    )
+    const { result, waitFor } = renderHook(() => useSearch(request), {
+      wrapper,
+    })
 
     await waitFor(() => {
       return result.current.isSuccess
     })
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(request, sessionToken)
+    expect(SynapseClient.searchEntities).toBeCalledWith(request)
     expect(result.current.data).toEqual(page1)
   })
 
@@ -102,15 +99,12 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
 
-    const sessionToken = 'abcdef'
-
-    const { result, waitFor } = renderHook(
-      () => useSearchInfinite(request, sessionToken),
-      { wrapper },
-    )
+    const { result, waitFor } = renderHook(() => useSearchInfinite(request), {
+      wrapper,
+    })
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(request, sessionToken)
+    expect(SynapseClient.searchEntities).toBeCalledWith(request)
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
 
@@ -119,13 +113,10 @@ describe('basic functionality', () => {
     await waitFor(() => result.current.isFetching)
     await waitFor(() => !result.current.isFetching)
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(
-      {
-        ...request,
-        start: 1,
-      },
-      sessionToken,
-    )
+    expect(SynapseClient.searchEntities).toBeCalledWith({
+      ...request,
+      start: 1,
+    })
     expect(result.current.data?.pages[1]).toEqual(page2)
     expect(result.current.hasNextPage).toBe(false)
   })

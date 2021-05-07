@@ -29,7 +29,6 @@ const mockToggleSelection = jest.fn()
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 
 const defaultProps: DetailsViewRowProps = {
-  sessionToken: 'abcd',
   entityHeader: {
     id: 'syn123',
     name: 'My File',
@@ -145,7 +144,6 @@ describe('DetailsViewRow tests', () => {
     renderComponent()
 
     expect(mockUseGetEntityBundle).toBeCalledWith(
-      defaultProps.sessionToken,
       defaultProps.entityHeader.id,
       expect.anything(),
       undefined,
@@ -158,7 +156,6 @@ describe('DetailsViewRow tests', () => {
     mockAllIsIntersecting(true)
 
     expect(mockUseGetEntityBundle).toBeCalledWith(
-      defaultProps.sessionToken,
       defaultProps.entityHeader.id,
       expect.anything(),
       undefined,
@@ -223,7 +220,6 @@ describe('DetailsViewRow tests', () => {
       expect(await screen.findByRole('listbox')).toBeDefined()
 
       expect(SynapseClient.getEntityVersions).toBeCalledWith(
-        defaultProps.sessionToken,
         defaultProps.entityHeader.id,
       )
     })

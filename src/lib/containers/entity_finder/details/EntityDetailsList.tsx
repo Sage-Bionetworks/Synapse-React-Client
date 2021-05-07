@@ -40,7 +40,6 @@ export type EntityDetailsListDataConfiguration = {
  * We collect them into this type to simplify passing them through to the view.
  */
 export type EntityDetailsListSharedProps = {
-  sessionToken: string
   showVersionSelection: boolean
   selectColumnType: 'checkbox' | 'none'
   visibleTypes: EntityType[]

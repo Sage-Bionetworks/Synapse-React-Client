@@ -23,20 +23,17 @@ SynapseClient.getEntityBundleV2 = jest.fn().mockResolvedValue(expected)
 
 describe('useEntityBundle functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const sessionToken = 'abcdef'
     const entityId = 'syn123'
 
-    const { result, waitFor } = renderHook(
-      () => useGetEntityBundle(sessionToken, entityId),
-      { wrapper },
-    )
+    const { result, waitFor } = renderHook(() => useGetEntityBundle(entityId), {
+      wrapper,
+    })
 
     await waitFor(() => result.current.isSuccess)
     expect(SynapseClient.getEntityBundleV2).toBeCalledWith(
       entityId,
       expect.anything(),
       undefined,
-      sessionToken,
     )
     expect(result.current.data).toEqual(expected)
   })

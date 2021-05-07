@@ -19,7 +19,6 @@ export type EntityFormProps = {
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
   initFormData: boolean // If true, it indicates that you’d like to download and pre-fill the form with the user's previous response.
-  token?: string // user's session token
   synIdCallback: (synId: string) => void // callback.  Once the form output has been saved to a FileEntity, will send synID back
 }
 type EntityFormState = {
@@ -53,34 +52,21 @@ export default class EntityForm extends React.Component<
     this.refresh()
   }
 
-  componentDidUpdate(prevProps: any) {
-    const shouldUpdate = this.props.token !== prevProps.token
-    if (shouldUpdate) {
-      this.refresh()
-    }
-  }
-
   submitForm = () => {
     this.formRef.current.submit()
   }
 
   refresh = () => {
-    if (this.props.token) {
+    if (SynapseClient.isSignedIn()) {
       const promises = [
-        SynapseClient.getUserProfile(this.props.token),
-        SynapseClient.getEntity(
-          this.props.token,
-          this.props.formSchemaEntityId,
-        ),
-        SynapseClient.getEntity(
-          this.props.token,
-          this.props.formUiSchemaEntityId,
-        ),
+        SynapseClient.getUserProfile(),
+        SynapseClient.getEntity(this.props.formSchemaEntityId),
+        SynapseClient.getEntity(this.props.formUiSchemaEntityId),
       ] as Promise<any>[]
       Promise.all(promises)
         .then(values => {
           const userprofile: UserProfile = values[0]
-          this.getTargetContainer(userprofile, this.props.token!).then(
+          this.getTargetContainer(userprofile).then(
             // @ts-ignore
             (targetContainerId: string) => {
               const formSchemaFileEntity: FileEntity = values[1]
@@ -105,42 +91,32 @@ export default class EntityForm extends React.Component<
     formUiSchemaFileEntity: FileEntity,
   ) => {
     const promises = [
-      SynapseClient.getFileResult(
-        formSchemaFileEntity,
-        this.props.token!,
-        true,
-        true
-      ),
-      SynapseClient.getFileResult(
-        formUiSchemaFileEntity,
-        this.props.token!,
-        true,
-        true
-      ),
+      SynapseClient.getFileResult(formSchemaFileEntity, true, true),
+      SynapseClient.getFileResult(formUiSchemaFileEntity, true, true),
     ]
 
     Promise.all(promises)
       .then(values => {
-
         try {
           const fileContent = values.map(el => {
             return getFileHandleContent(el.fileHandle!, el.preSignedURL!)
           })
-          Promise.all(fileContent).then(el => {
-            const formSchemaContent = JSON.parse(el[0])
-            const formUiSchemaContent = JSON.parse(el[1])
-            this.getExistingFileData(
-              targetFolderId,
-              formSchemaContent,
-              formUiSchemaContent,
-            )
-          }).catch(e => {
-            console.log("getSchemaFileContent: Error getting form content", e)
-          })
+          Promise.all(fileContent)
+            .then(el => {
+              const formSchemaContent = JSON.parse(el[0])
+              const formUiSchemaContent = JSON.parse(el[1])
+              this.getExistingFileData(
+                targetFolderId,
+                formSchemaContent,
+                formUiSchemaContent,
+              )
+            })
+            .catch(e => {
+              console.log('getSchemaFileContent: Error getting form content', e)
+            })
         } catch (e) {
-          console.log("getSchemaFileContent: Error getting schema content", e)
+          console.log('getSchemaFileContent: Error getting schema content', e)
         }
-
       })
       .catch(error => {
         this.onError(error)
@@ -160,26 +136,25 @@ export default class EntityForm extends React.Component<
     }
     let formData: any
     let currentFileEntity: FileEntity
-    SynapseClient.lookupChildEntity(entityLookupRequest, this.props.token)
+    SynapseClient.lookupChildEntity(entityLookupRequest)
       .then((entityId: EntityId) => {
         // ok, found the existing file
-        return SynapseClient.getEntity<FileEntity>(
-          this.props.token,
-          entityId.id,
-        ).then(entity => {
+        return SynapseClient.getEntity<FileEntity>(entityId.id).then(entity => {
           currentFileEntity = entity
           if (this.props.initFormData) {
             return SynapseClient.getFileResult(
               currentFileEntity,
-              this.props.token!,
               true,
               true,
-            ).then(async (existingFileData) => {
+            ).then(async existingFileData => {
               try {
-                const fileContent = await getFileHandleContent(existingFileData.fileHandle!, existingFileData.preSignedURL!)
+                const fileContent = await getFileHandleContent(
+                  existingFileData.fileHandle!,
+                  existingFileData.preSignedURL!,
+                )
                 formData = JSON.parse(fileContent)
               } catch (e) {
-                console.log("getExistingFileData: Error setting form data", e)
+                console.log('getExistingFileData: Error setting form data', e)
               }
             })
           }
@@ -197,7 +172,7 @@ export default class EntityForm extends React.Component<
       })
   }
 
-  getTargetContainer = async (userprofile: UserProfile, token: string) => {
+  getTargetContainer = async (userprofile: UserProfile) => {
     const entityLookupRequest: EntityLookupRequest = {
       entityName: userprofile.ownerId,
       parentId: this.props.parentContainerId,
@@ -205,7 +180,6 @@ export default class EntityForm extends React.Component<
     try {
       const entityId = await SynapseClient.lookupChildEntity(
         entityLookupRequest,
-        token,
       )
       // ok, found an entity of the same name.
       console.log(
@@ -259,16 +233,13 @@ export default class EntityForm extends React.Component<
 
   createEntityFile = (fileContentsBlob: Blob) => {
     const fileName = `${this.state.formSchema.title}.json`
-    SynapseClient.uploadFile(this.props.token, fileName, fileContentsBlob)
+    SynapseClient.uploadFile(fileName, fileContentsBlob)
       .then(fileUploadComplete => {
         // do we need to create a new file entity, or update an existing file entity?
         const newFileHandleId = fileUploadComplete.fileHandleId
         if (this.state.currentFileEntity) {
           this.state.currentFileEntity.dataFileHandleId = newFileHandleId
-          return SynapseClient.updateEntity(
-            this.state.currentFileEntity,
-            this.props.token,
-          )
+          return SynapseClient.updateEntity(this.state.currentFileEntity)
         }
         // else, it's a new file entity
         const newFileEntity: FileEntity = {
@@ -277,7 +248,7 @@ export default class EntityForm extends React.Component<
           concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           dataFileHandleId: newFileHandleId,
         }
-        return SynapseClient.createEntity(newFileEntity, this.props.token)
+        return SynapseClient.createEntity(newFileEntity)
       })
       .then(fileEntity => {
         // by this point we've either found and updated the existing file entity, or created a new one.
@@ -307,7 +278,7 @@ export default class EntityForm extends React.Component<
             </ul>
           </div>
         )}
-        {this.props.token &&
+        {SynapseClient.isSignedIn() &&
           !this.state.isLoading &&
           !this.state.successfullyUploaded &&
           this.state.formSchema &&
@@ -328,12 +299,14 @@ export default class EntityForm extends React.Component<
               </div>
             </Form>
           )}
-        {!this.state.error && this.props.token && this.state.isLoading && (
-          <React.Fragment>
-            <span>Saving&hellip;</span>
-            <span style={{ marginLeft: '2px' }} className={'spinner'} />
-          </React.Fragment>
-        )}
+        {!this.state.error &&
+          SynapseClient.isSignedIn() &&
+          this.state.isLoading && (
+            <React.Fragment>
+              <span>Saving&hellip;</span>
+              <span style={{ marginLeft: '2px' }} className={'spinner'} />
+            </React.Fragment>
+          )}
       </div>
     )
   }

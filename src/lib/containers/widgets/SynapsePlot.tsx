@@ -11,7 +11,6 @@ import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunction
 const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotProps = {
-  token?: string
   ownerId?: string
   wikiId?: string
   widgetparamsMapped?: any
@@ -42,7 +41,6 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
    * @returns data corresponding to plotly widget
    */
   public fetchPlotlyData() {
-    const { token } = this.props
     const { query } = this.props.widgetparamsMapped
     const queryRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -53,7 +51,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
       },
     }
 
-    getFullQueryTableResults(queryRequest, token)
+    getFullQueryTableResults(queryRequest)
       .then((data: QueryResultBundle) => {
         this.setState({
           isLoaded: true,

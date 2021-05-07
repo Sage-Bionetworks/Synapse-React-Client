@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { useGetEntityHeaders } from '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityHeaders'
 import {
   EntityHeader,
-  EntityType,
   PaginatedResults,
   ReferenceList,
 } from '../../../../../lib/utils/synapseTypes'
@@ -20,7 +19,7 @@ const expected: PaginatedResults<EntityHeader> = {
     {
       id: 'syn123',
       name: 'My Entity',
-      type: EntityType.FILE,
+      type: 'org.sagebionetworks.repo.model.FileEntity',
       versionNumber: 1,
       versionLabel: '1',
       benefactorId: 122,
@@ -37,20 +36,16 @@ SynapseClient.getEntityHeaders = jest.fn().mockResolvedValue(expected)
 
 describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const sessionToken = 'abcdef'
     const references: ReferenceList = [{ targetId: 'syn123' }]
 
     const { result, waitFor } = renderHook(
-      () => useGetEntityHeaders(references, sessionToken),
+      () => useGetEntityHeaders(references),
       { wrapper },
     )
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getEntityHeaders).toBeCalledWith(
-      references,
-      sessionToken,
-    )
+    expect(SynapseClient.getEntityHeaders).toBeCalledWith(references)
     expect(result.current.data).toEqual(expected)
   })
 })

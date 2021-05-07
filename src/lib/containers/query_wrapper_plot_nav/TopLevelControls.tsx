@@ -14,7 +14,6 @@ export type TopLevelControlsProps = {
   name: string
   entityId: string
   sql: string
-  token?: string
   hideDownload?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
@@ -66,7 +65,6 @@ const TopLevelControls = (
   props: QueryWrapperChildProps & TopLevelControlsProps,
 ) => {
   const {
-    token,
     name,
     sql,
     updateParentState,
@@ -102,11 +100,11 @@ const TopLevelControls = (
 
   useEffect(() => {
     const getIsFileView = async () => {
-      const entityData = await SynapseClient.getEntity(token, entityId)
+      const entityData = await SynapseClient.getEntity(entityId)
       setIsFileView(entityData.concreteType.includes('EntityView'))
     }
     getIsFileView()
-  }, [entityId, token])
+  }, [entityId])
 
   const refresh = () => {
     executeQueryRequest!(getLastQueryRequest!())
@@ -133,7 +131,7 @@ const TopLevelControls = (
     <div className={`TopLevelControls ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
       <h3>        
         <div className="QueryWrapperPlotNav__querycount">
-          <QueryCount token={token} name={name} sql={sql} parens={true} />
+          <QueryCount name={name} sql={sql} parens={true} />
         </div>
         <div className="QueryWrapperPlotNav__actions">
           {customControls &&
@@ -168,7 +166,6 @@ const TopLevelControls = (
                   onDownloadFiles={() =>
                     setControlState(key)
                   }
-                  token={token}
                   queryResultBundle={data}
                   queryBundleRequest={getLastQueryRequest!()}
                   isFileView={isFileView && !hideDownload}

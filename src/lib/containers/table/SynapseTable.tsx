@@ -101,7 +101,7 @@ export type SynapseTableProps = {
   showAccessColumn?: boolean
   showDownloadColumn?: boolean
   columnLinks?: LabelLinkConfig
-  hideDownload?: boolean  
+  hideDownload?: boolean
   isRowSelectionVisible?: boolean
 }
 
@@ -175,7 +175,6 @@ export default class SynapseTable extends React.Component<
       : true
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
-    this.getEntityHeadersInData(prevProps.token !== this.props.token)
     this.getTableConcreteType(prevProps)
     this.enableResize()
   }
@@ -183,13 +182,10 @@ export default class SynapseTable extends React.Component<
   public async getTableConcreteType(
     prevProps: QueryWrapperChildProps & SynapseTableProps,
   ) {
-    const { data, token } = this.props
+    const { data } = this.props
     if (!data) {
       return
-    } else if (
-      this.state.isFetchingEntityVersion &&
-      prevProps.token === this.props.token
-    ) {
+    } else if (this.state.isFetchingEntityVersion) {
       return
     }
     const currentTableId = data?.queryResult.queryResults.tableId
@@ -198,7 +194,7 @@ export default class SynapseTable extends React.Component<
       this.setState({
         isFetchingEntityVersion: true,
       })
-      const entityData = await SynapseClient.getEntity(token, currentTableId)
+      const entityData = await SynapseClient.getEntity(currentTableId)
       this.setState({
         isFileView: entityData.concreteType.includes('EntityView'),
         isFetchingEntityVersion: false,
@@ -223,7 +219,7 @@ export default class SynapseTable extends React.Component<
   }
 
   public async getEntityHeadersInData(forceRefresh: boolean) {
-    const { data, token } = this.props
+    const { data } = this.props
     if (!data) {
       return
     } else if (this.state.isFetchingEntityHeaders && !forceRefresh) {
@@ -267,7 +263,7 @@ export default class SynapseTable extends React.Component<
         referenceList.forEach(el => {
           mapEntityIdToHeader[el.targetId] = EMPTY_HEADER
         })
-        const data = await SynapseClient.getEntityHeaders(referenceList, token)
+        const data = await SynapseClient.getEntityHeaders(referenceList)
         const { results } = data
         results.forEach(el => {
           mapEntityIdToHeader[el.id] = el
@@ -282,7 +278,7 @@ export default class SynapseTable extends React.Component<
       const ids = Array.from(distinctUserIds)
       // TODO: Grab Team Badge
       try {
-        const data = await SynapseClient.getGroupHeadersBatch(ids, token)
+        const data = await SynapseClient.getGroupHeadersBatch(ids)
         data.children.forEach(el => {
           if (el.isIndividual) {
             userPorfileIds.push(el.ownerId)
@@ -296,10 +292,7 @@ export default class SynapseTable extends React.Component<
     }
     if (userPorfileIds.length > 0) {
       try {
-        const data = await getUserProfileWithProfilePicAttached(
-          userPorfileIds,
-          token,
-        )
+        const data = await getUserProfileWithProfilePicAttached(userPorfileIds)
         data.list.forEach((el: UserProfile) => {
           mapUserIdToHeader[el.ownerId] = el
         })
@@ -328,7 +321,6 @@ export default class SynapseTable extends React.Component<
       data,
       isLoading = true,
       unitDescription,
-      token,
       showBarChart,
       topLevelControlsState,
     } = this.props
@@ -348,7 +340,7 @@ export default class SynapseTable extends React.Component<
     const hasResults = data.queryResult.queryResults.rows.length > 0
     if (!hasResults) {
       if (queryRequest.query.additionalFilters) {
-        return (<SearchResultsNotFound />)
+        return <SearchResultsNotFound />
       } else {
         return (
           <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
@@ -361,10 +353,7 @@ export default class SynapseTable extends React.Component<
       }
     }
     const table = (
-
-      <div>
-        {this.renderTable(headers, columnModels, facets, rows)}
-      </div>
+      <div>{this.renderTable(headers, columnModels, facets, rows)}</div>
     )
     const content = (
       <>
@@ -377,7 +366,6 @@ export default class SynapseTable extends React.Component<
                 })
               }}
               queryBundleRequest={queryRequest}
-              token={token}
             />
           )}
           {!showFacetFilter &&
@@ -392,7 +380,6 @@ export default class SynapseTable extends React.Component<
                   style={{ fontSize: 15 }}
                   unitDescription={unitDescription}
                   lastQueryRequest={queryRequest}
-                  token={token}
                   frontText={'Showing'}
                   applyChanges={(newFacets: FacetColumnRequest[]) =>
                     this.applyChangesFromQueryFilter(newFacets)
@@ -453,7 +440,6 @@ export default class SynapseTable extends React.Component<
       hasMoreData,
       showAccessColumn,
       showDownloadColumn,
-      token,
       isRowSelectionVisible,
     } = this.props
 
@@ -496,7 +482,8 @@ export default class SynapseTable extends React.Component<
       showAccessColumn && this.state.isFileView
     const isShowDownloadColumn: boolean | undefined =
       showDownloadColumn && this.state.isFileView
-    const isShowingAddToV2DownloadListColumn: boolean = this.state.isFileView && SynapseClient.isInSynapseExperimentalMode()
+    const isShowingAddToV2DownloadListColumn: boolean =
+      this.state.isFileView && SynapseClient.isInSynapseExperimentalMode()
 
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
@@ -504,7 +491,6 @@ export default class SynapseTable extends React.Component<
       <div style={{ minHeight: '400px' }} className="SRC-overflowAuto">
         {this.state.isDownloadConfirmationOpen && (
           <DownloadConfirmation
-            token={token!}
             getLastQueryRequest={this.props.getLastQueryRequest!}
           />
         )}
@@ -728,11 +714,10 @@ export default class SynapseTable extends React.Component<
     isShowingDownloadColumn: boolean | undefined,
     isShowingAddToV2DownloadListColumn: boolean,
     isRowSelectionVisible: boolean | undefined,
-    tableEntityId: string | undefined
+    tableEntityId: string | undefined,
   ) {
     const rowsFormatted: JSX.Element[] = []
     const {
-      token,
       data,
       isColumnSelected,
       selectedRowIndices,
@@ -833,7 +818,6 @@ export default class SynapseTable extends React.Component<
                     columnModels,
                     columnName,
                     tableEntityId,
-                    token,
                   })}
               </td>
             )
@@ -850,7 +834,6 @@ export default class SynapseTable extends React.Component<
               key={rowSynapseId}
               entityId={rowSynapseId}
               entityVersionNumber={entityVersionNumber}
-              token={token}
             ></HasAccess>
           </td>,
         )
@@ -860,24 +843,22 @@ export default class SynapseTable extends React.Component<
         rowContent.unshift(
           <td className="SRC_noBorderTop direct-download">
             <DirectDownload
-              key={"direct-download-"+rowSynapseId}
-              token={token}
+              key={'direct-download-' + rowSynapseId}
               associatedObjectId={rowSynapseId}
               entityVersionNumber={entityVersionNumber}
             ></DirectDownload>
-          </td>
+          </td>,
         )
       }
       if (isShowingAddToV2DownloadListColumn) {
         rowContent.unshift(
           <td className="SRC_noBorderTop add-to-download-list-v2">
             <AddToDownloadListV2
-              key={"add-to-download-list-v2-"+rowSynapseId}
-              token={token}
+              key={'add-to-download-list-v2-' + rowSynapseId}
               entityId={rowSynapseId}
               entityVersionNumber={parseInt(entityVersionNumber)}
             ></AddToDownloadListV2>
-          </td>
+          </td>,
         )
       }
 
@@ -936,12 +917,7 @@ export default class SynapseTable extends React.Component<
     lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
-    const {
-      facetAliases = {},
-      isColumnSelected,
-      token,
-      lockedFacet,
-    } = this.props
+    const { facetAliases = {}, isColumnSelected, lockedFacet } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
       (column: SelectColumn, index: number) => {
         const isHeaderSelected = isColumnSelected!.includes(column.name)
@@ -991,7 +967,6 @@ export default class SynapseTable extends React.Component<
                       facet,
                       columnModel,
                       lastQueryRequest,
-                      token,
                       facetAliases,
                     )}
                   {this.isSortableColumn(column.columnType) && (
@@ -1037,14 +1012,14 @@ export default class SynapseTable extends React.Component<
       tableColumnHeaderElements.unshift(
         <th key="downloadColumn">
           <div className="SRC-centerContent">&nbsp;</div>
-        </th>
+        </th>,
       )
     }
     if (isShowingAddToV2DownloadListColumn) {
       tableColumnHeaderElements.unshift(
         <th key="addToV2DownloadListColumn">
           <div className="SRC-centerContent">&nbsp;</div>
-        </th>
+        </th>,
       )
     }
     if (isRowSelectionVisible) {
@@ -1124,7 +1099,6 @@ export default class SynapseTable extends React.Component<
     facetColumnResult: FacetColumnResultValues,
     columnModel: ColumnModel,
     lastQueryRequest: QueryBundleRequest,
-    token?: string,
     facetAliases?: {},
   ) {
     return (
@@ -1132,7 +1106,6 @@ export default class SynapseTable extends React.Component<
         containerAs="Dropdown"
         facetValues={facetColumnResult.facetValues}
         columnModel={columnModel!}
-        token={token}
         facetAliases={facetAliases}
         onChange={(facetNamesMap: {}) => {
           applyMultipleChangesToValuesColumn(

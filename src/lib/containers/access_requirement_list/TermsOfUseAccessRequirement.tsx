@@ -10,7 +10,6 @@ import { AccessRequirementProps } from './AccessRequirementProps'
 
 export default function TermsOfUseAccessRequirementComponent({
   accessRequirement,
-  token,
   user,
   onHide,
   accessRequirementStatus,
@@ -25,7 +24,6 @@ export default function TermsOfUseAccessRequirementComponent({
 
       try {
         const wikiPageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          token,
           accessRequirement.id,
         )
         setWikiPage(wikiPageRequirement)
@@ -37,14 +35,13 @@ export default function TermsOfUseAccessRequirementComponent({
     }
 
     getTermsOfUseData()
-  }, [token, accessRequirement])
+  }, [accessRequirement])
 
   return (
     <>
       {isLoading && <span className="spinner" />}
       <AcceptedRequirements
         user={user}
-        token={token}
         wikiPage={wikiPage}
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}

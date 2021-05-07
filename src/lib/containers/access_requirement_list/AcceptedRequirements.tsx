@@ -16,10 +16,10 @@ import {
 import { SynapseClient } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
+import { isSignedIn } from '../../utils/SynapseClient'
 
 export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
-  token: string | undefined
   wikiPage: WikiPageKey | undefined
   entityId: string
   accessRequirement:
@@ -34,7 +34,6 @@ export type AcceptedRequirementsProps = {
 
 export default function AcceptedRequirements({
   user,
-  token,
   wikiPage,
   accessRequirement,
   accessRequirementStatus,
@@ -95,7 +94,7 @@ export default function AcceptedRequirements({
           state: ApprovalState.APPROVED,
         }
 
-        SynapseClient.postAccessApproval(token, accessApprovalRequest)
+        SynapseClient.postAccessApproval(accessApprovalRequest)
           .then(_ => {
             setIsApproved(true)
           })
@@ -126,7 +125,6 @@ export default function AcceptedRequirements({
     markdown = (
       <div className="AcceptRequirementsMarkdown">
         <MarkdownSynapse
-          token={token}
           wikiId={wikiPage?.wikiPageId}
           ownerId={wikiPage?.ownerObjectId}
           objectType={wikiPage?.ownerObjectType}
@@ -135,17 +133,16 @@ export default function AcceptedRequirements({
     )
   } else if (isActOrTermsOfUse) {
     markdown = (
-      <MarkdownSynapse
-        markdown={isTermsOfUse ? termsOfUse : actContactInfo}
-        token={token}
-      />
+      <MarkdownSynapse markdown={isTermsOfUse ? termsOfUse : actContactInfo} />
     )
   }
 
   const isManagedActAr =
     accessRequirement.concreteType ===
-    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement  
-  const approvedText = isManagedActAr ? "Your data access request has been approved." : "You have accepted the terms of use."
+    SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
+  const approvedText = isManagedActAr
+    ? 'Your data access request has been approved.'
+    : 'You have accepted the terms of use.'
   return (
     <>
       <div className="requirement-container">
@@ -183,7 +180,7 @@ export default function AcceptedRequirements({
           )}
         </div>
       </div>
-      {token && showButton && (
+      {isSignedIn() && showButton && (
         <div className={`button-container ${isApproved ? `hide` : `default`}`}>
           <div className="accept-button-container">
             <button className="accept-button" onClick={onAcceptClicked}>

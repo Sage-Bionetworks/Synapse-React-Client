@@ -16,9 +16,9 @@ import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
+import { isSignedIn } from '../../utils/SynapseClient'
 
 export type SynapseFormSubmissionGridProps = {
-  token?: string
   formGroupId: string
   pathpart: string
   formClass?: string
@@ -89,18 +89,11 @@ export default class SynapseFormSubmissionGrid extends React.Component<
   }
 
   async componentDidMount() {
-    await this.refresh(this.props.token)
+    await this.refresh()
   }
 
-  async componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
-    const shouldUpdate = this.props.token !== prevProps.token
-    if (shouldUpdate) {
-      await this.refresh(this.props.token)
-    }
-  }
-
-  async refresh(token?: string) {
-    if (token) {
+  async refresh() {
+    if (isSignedIn()) {
       await this.getUserFileListing().catch(error => {
         this.onError(error)
       })
@@ -114,7 +107,6 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     this.setState({
       isLoading: true,
     })
-    const token = this.props.token
     const groupId = this.props.formGroupId
     try {
       const cleanUpName = (item: FormData): FormData => {
@@ -127,10 +119,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
         nextPageToken: nextPageToken,
       }
 
-      const response: ListResponse = await SynapseClient.listFormData(
-        request,
-        token,
-      )
+      const response: ListResponse = await SynapseClient.listFormData(request)
       const fileList = response.page
         ? response.page.map(item => cleanUpName(item))
         : []
@@ -193,14 +182,14 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     console.log(args)
   }
 
-  deleteFile = async (token: string, formDataId: string): Promise<any> => {
+  deleteFile = async (formDataId: string): Promise<any> => {
     this.setState({
       isLoading: true,
       modalContext: undefined,
     })
     try {
-      await SynapseClient.deleteFormData(formDataId, token)
-      //await this.getUserFileListing(token, this.props.formGroupId)
+      await SynapseClient.deleteFormData(formDataId)
+      //await this.getUserFileListing(this.props.formGroupId)
       this.setState((prevState, props) => ({
         inProgress: {
           fileList: prevState.inProgress.fileList.filter(
@@ -219,21 +208,18 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     }
   }
 
-  setModalConfirmationState = (token: string, formDataId: string) => {
+  setModalConfirmationState = (formDataId: string) => {
     this.setState({
       modalContext: {
         action: this.deleteFile,
-        arguments: [token, formDataId],
+        arguments: [formDataId],
       },
     })
   }
   /* ------------------------------------------   rendering fns  ------------------------------------------------*/
 
-  renderLoading = (
-    token: string | undefined,
-    isLoading: boolean,
-  ): JSX.Element => {
-    if (token && isLoading) {
+  renderLoading = (isLoading: boolean): JSX.Element => {
+    if (isSignedIn() && isLoading) {
       return (
         <div className="text-center">
           <span>Loading&hellip;</span>
@@ -245,8 +231,8 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     }
   }
 
-  renderUnauthenticatedView = (token: string | undefined) => {
-    if (token) {
+  renderUnauthenticatedView = () => {
+    if (isSignedIn()) {
       return <></>
     } else {
       return (
@@ -344,7 +330,6 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                           aria-label="delete"
                           onClick={() =>
                             this.setModalConfirmationState(
-                              this.props.token!,
                               dataFileRecord.formDataId!,
                             )
                           }
@@ -438,8 +423,8 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     return (
       <div className={`theme-${this.props.formClass}`}>
         <div className="SRC-ReactJsonForm">
-          {this.renderLoading(this.props.token, this.state.isLoading)}
-          {this.renderUnauthenticatedView(this.props.token)}
+          {this.renderLoading(this.state.isLoading)}
+          {this.renderUnauthenticatedView()}
 
           {!this.state.isLoading && (
             <div className="file-grid ">
@@ -472,9 +457,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
               modalBody={this.modalCopy}
               onConfirmCallbackArgs={this.state.modalContext.arguments}
               onCancel={() => this.setState({ modalContext: undefined })}
-              onConfirm={(token: string, formDataId: string) =>
-                this.deleteFile(token, formDataId)
-              }
+              onConfirm={(formDataId: string) => this.deleteFile(formDataId)}
             />
           )}
 

@@ -50,8 +50,8 @@ export type LabelLinkConfig = (MarkdownLink | CardLink)[]
 
 export type ColumnIconConfigs = {
   columns: {
-    [index:string]: {
-      [index:string]: IconSvgOptions
+    [index: string]: {
+      [index: string]: IconSvgOptions
     }
   }
 }
@@ -73,14 +73,13 @@ export type CardConfiguration = {
 } & CommonCardProps
 
 export type CardContainerLogicProps = {
-  token?: string
   limit?: number
   title?: string
   unitDescription?: string
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
-  facetAliases?: {}  
+  facetAliases?: {}
   rgbIndex?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
@@ -138,8 +137,7 @@ export default class CardContainerLogic extends React.Component<
    */
   public componentDidUpdate(prevProps: CardContainerLogicProps) {
     /**
-     *  If token has changed (they signed in) or sql query has changed
-     *  or search params have updated then perform an update.
+     *  If sql query has changed or search params have updated then perform an update.
      */
     const { searchParams: prevSearchParams = {} } = prevProps
     const { searchParams: currentSearchParams = {} } = this.props
@@ -147,9 +145,8 @@ export default class CardContainerLogic extends React.Component<
       prevSearchParams,
       currentSearchParams,
     )
-    const hasTokenChanged = this.props.token !== prevProps.token
     const hasSqlChanged = this.props.sql !== prevProps.sql
-    if (hasTokenChanged || hasSqlChanged || hasSearchParamsChanged) {
+    if (hasSqlChanged || hasSearchParamsChanged) {
       this.executeInitialQueryRequest()
     }
   }
@@ -177,11 +174,7 @@ export default class CardContainerLogic extends React.Component<
       isLoading: true,
     })
 
-    await getNextPageOfData(
-      queryRequest,
-      this.state.data!,
-      this.props.token,
-    ).then(newState => {
+    await getNextPageOfData(queryRequest, this.state.data!).then(newState => {
       this.setState({
         ...newState,
         isLoading: false,
@@ -229,16 +222,14 @@ export default class CardContainerLogic extends React.Component<
       },
     }
 
-    SynapseClient.getQueryTableResults(initQueryRequest, this.props.token)
+    SynapseClient.getQueryTableResults(initQueryRequest)
       .then((data: QueryResultBundle) => {
         const queryRequestWithoutCount = cloneDeep(initQueryRequest)
         queryRequestWithoutCount.partMask =
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-        const hasMoreData =
-          data.queryResult.queryResults.rows.length ===
-          limit
+        const hasMoreData = data.queryResult.queryResults.rows.length === limit
         const newState = {
           hasMoreData,
           data,
@@ -258,12 +249,11 @@ export default class CardContainerLogic extends React.Component<
    */
   public render() {
     // only forward the necessary props
-    const { sql, searchParams, token, ...rest } = this.props
+    const { sql, searchParams, ...rest } = this.props
     return (
       <CardContainer
         {...rest}
         data={this.state.data}
-        token={token}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         hasMoreData={this.state.hasMoreData}

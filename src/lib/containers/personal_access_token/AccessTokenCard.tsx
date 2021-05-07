@@ -15,13 +15,11 @@ import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type AccessTokenCardProps = {
   accessToken: AccessTokenRecord
-  token?: string
   onDelete: (...args: any[]) => void
 }
 
 export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
   accessToken,
-  token,
   onDelete,
 }: AccessTokenCardProps) => {
   const [showModal, setShowModal] = useState(false)
@@ -58,7 +56,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         confirmButtonText={'Delete Token'}
         onCancel={() => setShowModal(false)}
         onConfirm={(id: string) => {
-          SynapseClient.deletePersonalAccessToken(id, token)
+          SynapseClient.deletePersonalAccessToken(id)
             .then(() => {
               onDelete()
               setShowModal(false)
@@ -69,7 +67,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         }}
         confirmButtonVariant="danger"
         show={showModal}
-        onConfirmCallbackArgs={[accessToken.id, token]}
+        onConfirmCallbackArgs={[accessToken.id]}
       ></WarningModal>
 
       <div className="SRC-cardContent">
@@ -117,7 +115,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
           onClick={() => {
             if (isExpired) {
               // token no longer works, no need for warning/confirmation
-              SynapseClient.deletePersonalAccessToken(accessToken.id, token)
+              SynapseClient.deletePersonalAccessToken(accessToken.id)
                 .then(() => {
                   onDelete()
                 })

@@ -12,7 +12,6 @@ import {
 } from '../../synapseTypes'
 
 export function useGetEntityChildren(
-  sessionToken: string,
   request: EntityChildrenRequest,
   options?: UseQueryOptions<
     EntityChildrenResponse,
@@ -21,14 +20,13 @@ export function useGetEntityChildren(
   >,
 ) {
   return useQuery<EntityChildrenResponse, SynapseClientError>(
-    ['entitychildren', sessionToken, request],
-    () => SynapseClient.getEntityChildren(request, sessionToken),
+    ['entitychildren', request],
+    () => SynapseClient.getEntityChildren(request),
     options,
   )
 }
 
 export function useGetEntityChildrenInfinite(
-  sessionToken: string,
   request: EntityChildrenRequest,
   options?: UseInfiniteQueryOptions<
     EntityChildrenResponse,
@@ -41,7 +39,6 @@ export function useGetEntityChildrenInfinite(
     async context => {
       return await SynapseClient.getEntityChildren(
         { ...request, nextPageToken: context.pageParam },
-        sessionToken,
       )
     },
     {

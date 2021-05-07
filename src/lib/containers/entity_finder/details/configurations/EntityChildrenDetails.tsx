@@ -11,7 +11,6 @@ type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
 }
 
 export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetailsProps> = ({
-  sessionToken,
   parentContainerId,
   visibleTypes: includeTypes,
   showVersionSelection,
@@ -32,7 +31,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     fetchNextPage,
     isError,
     error,
-  } = useGetEntityChildrenInfinite(sessionToken, {
+  } = useGetEntityChildrenInfinite({
     parentId: parentContainerId,
     includeTypes: includeTypes,
     sortBy: sortBy,
@@ -47,7 +46,6 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 
   return (
     <DetailsView
-      sessionToken={sessionToken}
       entities={
         data
           ? ([] as EntityHeader[]).concat.apply(

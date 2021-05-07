@@ -13,7 +13,7 @@ import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
 // shallow doesn't await all nested promises resolve inside component...
 
 const createShallowComponent = async (props: MarkdownSynapseProps) => {
-  const wrapper = await shallow<MarkdownSynapse>(
+  const wrapper = shallow<MarkdownSynapse>(
     <MarkdownSynapse
       ownerId="mock_owner_id"
       wikiId="mock_wiki_id"
@@ -29,6 +29,7 @@ describe('it performs all functionality', () => {
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   const mockGetWikiAttachments = jest.fn().mockResolvedValue([''])
   SynapseClient.getWikiAttachmentsFromEntity = jest.fn(mockGetWikiAttachments)
+  SynapseClient.isSignedIn = jest.fn().mockReturnValue(true)
   beforeEach(() => {
     mockGetWikiAttachments.mockClear()
   })
@@ -107,9 +108,7 @@ describe('it performs all functionality', () => {
         .mockResolvedValue({ markdown: 'text' })
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const { wrapper } = await createShallowComponent(props)
-      await wrapper.setProps({
-        token: '123',
-      })
+      await wrapper.setProps({ ownerId: 'yyy' })
       // await again for componentDidUpdate to run
       await delay(_TIME_DELAY)
       // Note- verifying these API calls were made ensures that
@@ -121,28 +120,31 @@ describe('it performs all functionality', () => {
 
   describe('it renders a video widget', () => {
     it('renders a video widget given a synapseID', async () => {
+      const mockIsSignedIn = jest.fn().mockResolvedValue(true)
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
         // markdown: '${youtube?videoId=Bey4XXJAqS8}',
         markdown: '${video?mp4SynapseId=syn21714374}',
       })
+      SynapseClient.isSignedIn = mockIsSignedIn
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
-        token: '_',
       }
 
       const { wrapper } = await createShallowComponent(props)
       expect(wrapper.find(SynapseVideo)).toHaveLength(1)
     })
 
-    it('do not render a video widget without token', async () => {
+    it('do not render a video widget when not signed in', async () => {
+      const mockIsSignedIn = jest.fn().mockReturnValue(false)
+
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
         markdown: '${video?mp4SynapseId=syn21714374}',
       })
+      SynapseClient.isSignedIn = mockIsSignedIn
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
-        token: undefined,
       }
       const { wrapper } = await createShallowComponent(props)
       expect(wrapper.find(SynapseVideo).html()).toMatch(
@@ -159,13 +161,14 @@ describe('it performs all functionality', () => {
         .concat(`${width}`)
         .concat('}')
 
+      const mockIsSignedIn = jest.fn().mockResolvedValue(true)
       const mockGetEntityWiki = jest.fn().mockResolvedValue({
         markdown: givenMarkdown,
       })
+      SynapseClient.isSignedIn = mockIsSignedIn
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
-        token: '_',
       }
 
       const { wrapper } = await createShallowComponent(props)

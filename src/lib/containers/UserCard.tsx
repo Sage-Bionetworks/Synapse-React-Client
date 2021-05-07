@@ -37,8 +37,6 @@ export type UserCardProps = {
   /** The link to point to on the user name, defaults to https://www.synapse.org/#!Profile:${userProfile.ownerId} */
   link?: string
   openLinkInNewTab?: boolean
-  /** Authentication token used to retrieve data */
-  token?: string
   /** Disables the `@username` link for the small user card (if `showCardOnHover` is false). For the medium user card, disables linking the user's name to their profile (or other specified destination) */
   disableLink?: boolean
   isCertified?: boolean
@@ -58,7 +56,6 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
     size,
     ownerId,
     alias,
-    token,
     ...rest
   } = props
   const [userProfile, setUserProfile] = useState(initialProfile)
@@ -73,17 +70,15 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
       setIsLoading(false)
     } else if (alias) {
       // Before we can get the profile, we must get the principal ID using the alias
-      getPrincipalAliasRequest(token, alias, 'USER_NAME').then(
-        (aliasData: any) => {
-          setPrincipalId(aliasData.principalId)
-        },
-      )
+      getPrincipalAliasRequest(alias, 'USER_NAME').then((aliasData: any) => {
+        setPrincipalId(aliasData.principalId)
+      })
     }
-  }, [userProfile, alias, token])
+  }, [userProfile, alias])
 
   useEffect(() => {
     if (!userProfile && principalId) {
-      getUserProfileWithProfilePic(principalId, token)
+      getUserProfileWithProfilePic(principalId)
         .then(data => {
           setUserProfile(data.userProfile)
           setPresignedUrl(data.preSignedURL)
@@ -93,7 +88,7 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
           console.warn('failed to get user bundle ', err)
         })
     }
-  }, [userProfile, principalId, token])
+  }, [userProfile, principalId])
 
   function getCard(
     cardSize: UserCardSize,

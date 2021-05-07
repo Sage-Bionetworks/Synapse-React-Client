@@ -12,6 +12,7 @@ import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrappe
 import { SynapseClient } from '../../lib/utils/'
 import { RouteChildrenProps } from 'react-router'
 import { Alert } from 'react-bootstrap'
+import { isSignedIn } from '../../lib/utils/SynapseClient'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -19,7 +20,6 @@ import { Alert } from 'react-bootstrap'
  */
 
 type AppState = {
-  token: string
   getSessionCalled: boolean
 }
 export const TokenContext = React.createContext('')
@@ -28,7 +28,6 @@ export default class App extends React.Component<{}, AppState> {
   constructor(props: any) {
     super(props)
     this.state = {
-      token: '',
       getSessionCalled: false,
     }
   }
@@ -42,9 +41,7 @@ export default class App extends React.Component<{}, AppState> {
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
     SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken =>
-        this.handleChange({ token: sessionToken, getSessionCalled: true }),
-      )
+      .then(() => this.handleChange({ getSessionCalled: true }))
       .catch((error: any) => {
         console.error(error)
         this.setState({
@@ -55,16 +52,12 @@ export default class App extends React.Component<{}, AppState> {
 
   getSession = async () => {
     SynapseClient.detectSSOCode()
-    SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken => {
-        this.handleChange({ token: sessionToken })
-      })
-      .catch((error: any) => {
-        console.error(error)
-      })
+    SynapseClient.getSessionTokenFromCookie().catch((error: any) => {
+      console.error(error)
+    })
   }
 
-  renderLoginAndSignout(token: string): JSX.Element {
+  renderLoginAndSignout(): JSX.Element {
     const signedInState = (
       <div className="bg-success text-center" role="alert">
         You are logged in.&nbsp;
@@ -97,7 +90,7 @@ export default class App extends React.Component<{}, AppState> {
       </div>
     )
 
-    if (token && token !== '') {
+    if (isSignedIn()) {
       return signedInState
     } else {
       return notSignedInState
@@ -105,7 +98,7 @@ export default class App extends React.Component<{}, AppState> {
   }
 
   public render(): JSX.Element {
-    const { token, getSessionCalled } = this.state
+    const { getSessionCalled } = this.state
 
     const alert = (
       <Alert
@@ -138,110 +131,102 @@ export default class App extends React.Component<{}, AppState> {
       )
     }
     return (
-      <TokenContext.Provider value={token}>
-        <Router basename={process.env.PUBLIC_URL}>
-          <div>
-            <div className="App-header text-center">
-              <img src={logoSvg} className="App-logo" alt="logo" />
-              <h4 className="white-text">Synapse React Client Demo</h4>
-            </div>
-            {alert}
-            {this.renderLoginAndSignout(token)}
-            <ul>
-              <li>
-                <Link to="/">Demo</Link>
-              </li>
-              <li>
-                <Link to="/Playground">Playground</Link>
-              </li>
-              <li>
-                <Link to="/drugUploadTool">Drug Upload Tool</Link>
-              </li>
-              <li>
-                <Link to="/contribReqForm">
-                  AMP-AD external data contribution{' '}
-                </Link>
-              </li>
-            </ul>
-            <Route exact={true} path="/" component={Demo} />
-            <Route
-              path="/Playground"
-              component={(props: RouteChildrenProps) => (
-                <Playground {...props} token={token} />
-              )}
-            />
-            <Route
-              exact={true}
-              path="/drugUploadTool"
-              render={props => {
-                const searchParamsProps: any = {}
-                // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
-                const searchParams = new URLSearchParams(props.location.search)
-                searchParams.forEach((value, key) => {
-                  searchParamsProps[key] = value
-                })
-                return !props.location.search ? (
-                  <SynapseFormSubmissionsGrid
-                    pathpart="drugUploadTool"
-                    token={token}
-                    formClass="drug-upload-tool"
-                    formGroupId="9"
-                    itemNoun="Compound"
-                  />
-                ) : (
-                  <SynapseFormWrapper
-                    {...props}
-                    formSchemaEntityId="syn20680102"
-                    fileNamePath="naming.compound_name"
-                    formUiSchemaEntityId="syn20693568"
-                    formNavSchemaEntityId="syn20680027"
-                    token={token}
-                    formTitle="Your Submission"
-                    formClass="drug-upload-tool"
-                    searchParams={searchParamsProps}
-                  />
-                )
-              }}
-            />
-
-            {/*------------------- contributions request form ---------------------------------*/}
-            <Route
-              exact={true}
-              path="/contribReqForm"
-              render={props => {
-                let searchParamsProps: any = {}
-                // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
-                const searchParams = new URLSearchParams(props.location.search)
-                searchParams.forEach((value, key) => {
-                  searchParamsProps[key] = value
-                })
-                return !props.location.search ? (
-                  <SynapseFormSubmissionsGrid
-                    pathpart="contribReqForm"
-                    formGroupId="11"
-                    token={token}
-                    formClass="contribution-request"
-                    itemNoun={'Contribution Request'}
-                  />
-                ) : (
-                  <SynapseFormWrapper
-                    {...props}
-                    formSchemaEntityId="syn20692910"
-                    fileNamePath="study.submission_name"
-                    formUiSchemaEntityId="syn20692911"
-                    formNavSchemaEntityId="syn20968007"
-                    isWizardMode={true}
-                    token={token}
-                    formTitle="Your Contribution Request"
-                    formClass="contribution-request"
-                    searchParams={searchParamsProps}
-                  />
-                )
-              }}
-            />
+      <Router basename={process.env.PUBLIC_URL}>
+        <div>
+          <div className="App-header text-center">
+            <img src={logoSvg} className="App-logo" alt="logo" />
+            <h4 className="white-text">Synapse React Client Demo</h4>
           </div>
-        </Router>
-      </TokenContext.Provider>
+          {alert}
+          {this.renderLoginAndSignout()}
+          <ul>
+            <li>
+              <Link to="/">Demo</Link>
+            </li>
+            <li>
+              <Link to="/Playground">Playground</Link>
+            </li>
+            <li>
+              <Link to="/drugUploadTool">Drug Upload Tool</Link>
+            </li>
+            <li>
+              <Link to="/contribReqForm">
+                AMP-AD external data contribution{' '}
+              </Link>
+            </li>
+          </ul>
+          <Route exact={true} path="/" component={Demo} />
+          <Route
+            path="/Playground"
+            component={(props: RouteChildrenProps) => <Playground {...props} />}
+          />
+          <Route
+            exact={true}
+            path="/drugUploadTool"
+            render={props => {
+              const searchParamsProps: any = {}
+              // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+              const searchParams = new URLSearchParams(props.location.search)
+              searchParams.forEach((value, key) => {
+                searchParamsProps[key] = value
+              })
+              return !props.location.search ? (
+                <SynapseFormSubmissionsGrid
+                  pathpart="drugUploadTool"
+                  formClass="drug-upload-tool"
+                  formGroupId="9"
+                  itemNoun="Compound"
+                />
+              ) : (
+                <SynapseFormWrapper
+                  {...props}
+                  formSchemaEntityId="syn20680102"
+                  fileNamePath="naming.compound_name"
+                  formUiSchemaEntityId="syn20693568"
+                  formNavSchemaEntityId="syn20680027"
+                  formTitle="Your Submission"
+                  formClass="drug-upload-tool"
+                  searchParams={searchParamsProps}
+                />
+              )
+            }}
+          />
+
+          {/*------------------- contributions request form ---------------------------------*/}
+          <Route
+            exact={true}
+            path="/contribReqForm"
+            render={props => {
+              let searchParamsProps: any = {}
+              // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams -- needs polyfill for ie11
+              const searchParams = new URLSearchParams(props.location.search)
+              searchParams.forEach((value, key) => {
+                searchParamsProps[key] = value
+              })
+              return !props.location.search ? (
+                <SynapseFormSubmissionsGrid
+                  pathpart="contribReqForm"
+                  formGroupId="11"
+                  formClass="contribution-request"
+                  itemNoun={'Contribution Request'}
+                />
+              ) : (
+                <SynapseFormWrapper
+                  {...props}
+                  formSchemaEntityId="syn20692910"
+                  fileNamePath="study.submission_name"
+                  formUiSchemaEntityId="syn20692911"
+                  formNavSchemaEntityId="syn20968007"
+                  isWizardMode={true}
+                  formTitle="Your Contribution Request"
+                  formClass="contribution-request"
+                  searchParams={searchParamsProps}
+                />
+              )
+            }}
+          />
+        </div>
+      </Router>
     )
   }
 }

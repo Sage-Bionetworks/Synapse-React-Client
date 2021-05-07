@@ -301,7 +301,6 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
         {!showBarChart && (
           <TotalQueryResults
             lastQueryRequest={this.props.getLastQueryRequest!()}
-            token={this.props.token}
             unitDescription={unitDescription!}
             frontText={'Displaying'}
             isLoading={isLoading!}

@@ -9,7 +9,6 @@ import { AccessRequirementProps } from './AccessRequirementProps'
 
 export default function ManagedACTAccessRequirementComponent({
   accessRequirement,
-  token,
   user,
   onHide,
   accessRequirementStatus,
@@ -21,7 +20,6 @@ export default function ManagedACTAccessRequirementComponent({
     const getManagedACTAccessData = async () => {
       try {
         const wikipageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          token,
           accessRequirement.id,
         )
         setWikiPage(wikipageRequirement)
@@ -31,14 +29,13 @@ export default function ManagedACTAccessRequirementComponent({
     }
 
     getManagedACTAccessData()
-  }, [token, accessRequirement])
+  }, [accessRequirement])
 
   return (
     <AcceptedRequirements
       accessRequirement={accessRequirement}
       accessRequirementStatus={accessRequirementStatus}
       entityId={entityId}
-      token={token}
       user={user}
       wikiPage={wikiPage}
       onHide={onHide}

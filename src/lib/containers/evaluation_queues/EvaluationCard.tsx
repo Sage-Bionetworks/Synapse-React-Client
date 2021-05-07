@@ -22,8 +22,6 @@ export type ExistingEvaluation = RequiredProperties<
 export type EvaluationCardProps = {
   /** properties of the Evaluation to show*/
   evaluation: ExistingEvaluation
-  /** session token to make authenticated API calls */
-  sessionToken: string
   /** If true, dates for start/end are displayed in UTC instead of local time*/
   utc: boolean
   /** Callback when the Edit option in the dropdown is clicked*/
@@ -47,7 +45,6 @@ export type EvaluationCardProps = {
  */
 export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
   evaluation,
-  sessionToken,
   utc,
   onEdit,
   onModifyAccess,
@@ -61,18 +58,16 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
     //clear error
     setError(undefined)
 
-    getEvaluationPermissions(evaluation.id, sessionToken)
+    getEvaluationPermissions(evaluation.id)
       .then(retrievedPermissions => {
         setPermissions(retrievedPermissions)
       })
       .catch(error => setError(error))
-  }, [evaluation, sessionToken])
+  }, [evaluation])
 
   const onDelete = () => {
     setError(undefined)
-    deleteEvaluation(evaluation.id, sessionToken)
-      .then(onDeleteSuccess)
-      .catch(setError)
+    deleteEvaluation(evaluation.id).then(onDeleteSuccess).catch(setError)
   }
 
   return (
@@ -108,7 +103,6 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
               <CreatedOnByUserDiv
                 userId={evaluation.ownerId}
                 date={new Date(evaluation.createdOn)}
-                sessionToken={sessionToken}
                 utc={utc}
               />
               {permissions?.canSubmit && (

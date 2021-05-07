@@ -2,7 +2,7 @@ import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useQuery,
-  UseQueryOptions
+  UseQueryOptions,
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
@@ -10,7 +10,6 @@ import { ProjectHeaderList } from '../../synapseTypes'
 import { GetProjectsParameters } from '../../synapseTypes/GetProjectsParams'
 
 export function useGetProjects(
-  sessionToken: string,
   params?: GetProjectsParameters,
   options?: UseQueryOptions<
     ProjectHeaderList,
@@ -19,14 +18,13 @@ export function useGetProjects(
   >,
 ) {
   return useQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', sessionToken, params],
-    () => SynapseClient.getMyProjects(sessionToken, params),
+    ['myProjects', params],
+    () => SynapseClient.getMyProjects(params),
     options,
   )
 }
 
 export function useGetProjectsInfinite(
-  sessionToken: string,
   params: GetProjectsParameters,
   options?: UseInfiniteQueryOptions<
     ProjectHeaderList,
@@ -35,9 +33,9 @@ export function useGetProjectsInfinite(
   >,
 ) {
   return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', sessionToken, params],
+    ['myProjects', params],
     async context => {
-      return await SynapseClient.getMyProjects(sessionToken, {
+      return await SynapseClient.getMyProjects({
         ...params,
         nextPageToken: context.pageParam,
       })

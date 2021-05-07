@@ -11,19 +11,17 @@ import { SearchQuery, SearchResults } from '../../synapseTypes/Search'
 
 export function useSearch(
   query: SearchQuery,
-  sessionToken?: string,
   options?: UseQueryOptions<SearchResults, SynapseClientError, SearchResults>,
 ) {
   return useQuery<SearchResults, SynapseClientError>(
-    ['search', sessionToken, query],
-    () => SynapseClient.searchEntities(query, sessionToken),
+    ['search', query],
+    () => SynapseClient.searchEntities(query),
     options,
   )
 }
 
 export function useSearchInfinite(
   query: Omit<SearchQuery, 'start'>,
-  sessionToken?: string,
   options?: UseInfiniteQueryOptions<
     SearchResults,
     SynapseClientError,
@@ -31,12 +29,12 @@ export function useSearchInfinite(
   >,
 ) {
   return useInfiniteQuery<SearchResults, SynapseClientError>(
-    ['search', sessionToken, query],
+    ['search', query],
     async (context: QueryFunctionContext) => {
-      return SynapseClient.searchEntities(
-        { ...query, start: context.pageParam },
-        sessionToken,
-      )
+      return SynapseClient.searchEntities({
+        ...query,
+        start: context.pageParam,
+      })
     },
     {
       ...options,

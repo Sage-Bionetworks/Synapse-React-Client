@@ -7,14 +7,12 @@ import { EntityTypeIcon } from '../EntityIcon'
 import { BUNDLE_REQUEST_OBJECT } from './EntityFinderUtils'
 
 export type SelectionPaneProps = {
-  sessionToken: string
   title: string
   selectedEntities: Reference[]
   toggleSelection: (entity: Reference) => void
 }
 
 export const SelectionPane: React.FC<SelectionPaneProps> = ({
-  sessionToken,
   title,
   selectedEntities,
   toggleSelection,
@@ -30,7 +28,6 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
             }`}
           >
             <EntityPathDisplay
-              sessionToken={sessionToken}
               entity={e}
               toggleSelection={toggleSelection}
             ></EntityPathDisplay>
@@ -42,14 +39,12 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
 }
 
 const EntityPathDisplay: React.FunctionComponent<{
-  sessionToken: string
   entity: Reference
   toggleSelection: (entity: Reference) => void
-}> = ({ sessionToken, entity, toggleSelection }) => {
+}> = ({ entity, toggleSelection }) => {
   const ENTITY_PATH_TOOLTIP_ID = `EntityPathDisplayReactTooltip_${entity.targetId}`
 
   const { data: bundle } = useGetEntityBundle(
-    sessionToken,
     entity.targetId,
     BUNDLE_REQUEST_OBJECT,
     entity.targetVersionNumber,

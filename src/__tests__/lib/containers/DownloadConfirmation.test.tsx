@@ -86,6 +86,8 @@ describe('it performs the expected functionality', () => {
     .fn()
     .mockResolvedValue(addFilesToDownloadListResponse)
 
+  SynapseClient.isSignedIn = jest.fn().mockReturnValue(true)
+
   TestDownloadSpeed.testDownloadSpeed = jest.fn().mockResolvedValue(55)
   getQueryTableResultsFn = SynapseClient.getQueryTableResults = jest
     .fn()
@@ -93,7 +95,6 @@ describe('it performs the expected functionality', () => {
 
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
-    token: '12345',
     getLastQueryRequest: () => queryBundleRequest,
   }
 
@@ -122,7 +123,6 @@ describe('it performs the expected functionality', () => {
     await resolveAllPending(wrapper)
     expect(getQueryTableResultsFn).toHaveBeenCalledWith(
       mockGetQueryTableRequest,
-      props.token,
     )
     expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
     expect(wrapper.find('button')).toHaveLength(2)
@@ -137,7 +137,6 @@ describe('it performs the expected functionality', () => {
     wrapper.find('button.btn-primary').simulate('click')
     expect(addFilesToDownloadRequestFn).toHaveBeenCalledWith(
       addFilesToDownloadListRequest,
-      props.token,
     )
     expect(wrapper.text()).toBe('Adding Files To List')
     expect(wrapper.find('button')).toHaveLength(0)

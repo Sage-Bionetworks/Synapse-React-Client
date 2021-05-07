@@ -32,7 +32,6 @@ import { ErrorBanner } from '../ErrorBanner'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 export type EvaluationRoundEditorProps = {
-  sessionToken: string
   evaluationRoundInput: EvaluationRoundInput
   //If true, dates for start/end are displayed in UTC instead of local time
   utc: boolean
@@ -123,7 +122,6 @@ const convertInputsToEvaluationRound = (
 }
 
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
-  sessionToken,
   evaluationRoundInput,
   onSave,
   onDelete,
@@ -191,8 +189,8 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
     }
     if (evaluationRound) {
       const promise = evaluationRound.id
-        ? updateEvaluationRound(evaluationRound, sessionToken)
-        : createEvaluationRound(evaluationRound, sessionToken)
+        ? updateEvaluationRound(evaluationRound)
+        : createEvaluationRound(evaluationRound)
 
       promise
         .then(createdOrUpdatedRound => {
@@ -214,7 +212,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
       deleteEvaluationRound(
         evaluationRoundInput.evaluationId,
         evaluationRoundInput.id,
-        sessionToken,
       )
         .then(() => onDelete())
         .catch(error => setError(error))
@@ -335,7 +332,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             {error && (
               <Row className="my-3">
                 <Col>
-                  <ErrorBanner error={error} token={sessionToken} />
+                  <ErrorBanner error={error} />
                 </Col>
               </Row>
             )}

@@ -60,7 +60,6 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   data,
   isLoading,
   facetAliases,
-  token,
 }: FacetPlotsCardProps): JSX.Element => {
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
@@ -87,7 +86,6 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
             getColumnType(item),
             index + 1, //individual plot rgbIndex
             'PIE',
-            token,
           )
           return plotData
         }),

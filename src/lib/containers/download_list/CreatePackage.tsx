@@ -24,7 +24,6 @@ library.add(faDownload)
 library.add(faFolder)
 
 export type CreatePackageProps = {
-  token?: string
   children?: JSX.Element
   updateDownloadList: Function
 }
@@ -51,7 +50,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
     BulkFileDownloadResponse | undefined
   >(undefined)
-  const { token, children, updateDownloadList } = props
+  const { children, updateDownloadList } = props
 
   const createPackageHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault()
@@ -67,10 +66,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
     setIsLoading(true)
     try {
       const fileNameWithZipExtension = `${fileName}.zip`
-      const downloadOrder = await getDownloadOrder(
-        fileNameWithZipExtension,
-        token,
-      )
+      const downloadOrder = await getDownloadOrder(fileNameWithZipExtension)
       const bulkFileDownloadRequest: BulkFileDownloadRequest = {
         concreteType:
           'org.sagebionetworks.repo.model.file.BulkFileDownloadRequest',
@@ -80,7 +76,6 @@ export const CreatePackage = (props: CreatePackageProps) => {
       }
       const currentBulkFileDownloadResponse: BulkFileDownloadResponse = await getBulkFiles(
         bulkFileDownloadRequest,
-        token,
       )
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
     } catch (err) {
@@ -105,7 +100,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
         className: 'SRC-primary-background-color SRC-whiteText',
         variant: undefined,
       })
-      const url = await getFileHandleByIdURL(resultZipFileHandleId, token)
+      const url = await getFileHandleByIdURL(resultZipFileHandleId)
       window.location.href = url
       updateDownloadList()
       setBulkFileDownloadResponse(undefined)

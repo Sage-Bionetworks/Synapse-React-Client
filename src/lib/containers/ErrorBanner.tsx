@@ -1,9 +1,8 @@
-import * as React from 'react'
-import { SynapseClientError } from '../utils/SynapseClient'
+import React from 'react'
+import { isSignedIn, SynapseClientError } from '../utils/SynapseClient'
 import SignInButton from './SignInButton'
 import { Alert } from 'react-bootstrap'
 type ErrorProps = {
-  token?: string
   error?: string | Error | SynapseClientError | null
 }
 
@@ -25,13 +24,11 @@ function isString(error: string | Error | SynapseClientError): error is string {
   return typeof error === 'string'
 }
 
-export const ClientError = (props: {
-  error: SynapseClientError
-  token?: string
-}) => {
-  const { error, token } = props
-  const loginError = (error.status === 403 || error.status === 401) && !token
-  const accessDenied = error.status === 403 && token
+export const ClientError = (props: { error: SynapseClientError }) => {
+  const { error } = props
+  const loginError =
+    (error.status === 403 || error.status === 401) && !isSignedIn()
+  const accessDenied = error.status === 403 && isSignedIn()
 
   return (
     <>
@@ -50,7 +47,7 @@ export const ClientError = (props: {
 }
 
 export const ErrorBanner = (props: ErrorProps) => {
-  const { error, token } = props
+  const { error } = props
 
   if (!error) {
     return <></>
@@ -75,9 +72,7 @@ export const ErrorBanner = (props: ErrorProps) => {
         transition={false}
       >
         <p>
-          {synapseClientError && (
-            <ClientError error={synapseClientError} token={token} />
-          )}
+          {synapseClientError && <ClientError error={synapseClientError} />}
           {jsError && jsError.message}
           {stringError && stringError}
         </p>

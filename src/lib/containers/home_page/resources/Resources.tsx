@@ -11,7 +11,6 @@ import { withQueryClientProvider } from '../../../utils/hooks/SynapseAPI/QueryCl
 
 export type ResourcesProps = {
   entityId: string
-  token?: string
 }
 
 enum ExpectedColumns {
@@ -27,7 +26,7 @@ export type Data = {
 
 export const Resources: React.FC<ResourcesProps> = withQueryClientProvider(
   (props: ResourcesProps) => {
-    const { entityId, token } = props
+    const { entityId } = props
     const showDesktop = useShowDesktop()
 
     const queryBundleRequest: QueryBundleRequest = {
@@ -42,7 +41,6 @@ export const Resources: React.FC<ResourcesProps> = withQueryClientProvider(
     }
     const { data: queryResultBundle, error } = useGetQueryResultBundle(
       queryBundleRequest,
-      token,
     )
 
     const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResultBundle)
@@ -63,11 +61,11 @@ export const Resources: React.FC<ResourcesProps> = withQueryClientProvider(
       }) ?? []
     return (
       <div className="Resources">
-        <ErrorBanner error={error} token={token} />
+        <ErrorBanner error={error} />
         {showDesktop ? (
-          <ResourcesDesktop data={data} token={token} />
+          <ResourcesDesktop data={data} />
         ) : (
-          <ResourcesMobile data={data} token={token} />
+          <ResourcesMobile data={data}/>
         )}
       </div>
     )

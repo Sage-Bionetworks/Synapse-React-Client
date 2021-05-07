@@ -11,7 +11,8 @@ import { MarkdownLink, CardLink } from '../CardContainerLogic'
 import { renderLabel } from '../GenericCard'
 import {
   SelectColumn,
-  ColumnModel, FileHandleAssociateType,
+  ColumnModel,
+  FileHandleAssociateType,
 } from '../../utils/synapseTypes'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import DirectDownload from '../DirectDownload'
@@ -38,7 +39,6 @@ export const renderTableCell = ({
   selectColumns,
   columnModels,
   tableEntityId,
-  token,
 }: {
   entityColumnIndicies: number[]
   userColumnIndicies: number[]
@@ -59,16 +59,14 @@ export const renderTableCell = ({
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   tableEntityId?: string
-  token: string | undefined
 }): React.ReactNode => {
-  const isShortString = (
-    s: string,
-    maxCharCount = 20,
-  ): boolean => {
-    return (!s || s.length <= maxCharCount)
+  const isShortString = (s: string, maxCharCount = 20): boolean => {
+    return !s || s.length <= maxCharCount
   }
   if (!columnValue) {
-    return <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
+    return (
+      <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
+    )
   }
   if (columnLinkConfig) {
     return renderLabel({
@@ -93,60 +91,69 @@ export const renderTableCell = ({
   }
   if (dateListColumnIndicies.includes(colIndex)) {
     const jsonData: number[] = JSON.parse(columnValue)
-    return <p>{jsonData.map((val: number, index: number) => {
-      return (
-        <span key={index} className={isBold}>
-          {new Date(val).toLocaleString()}
-          {index !== jsonData.length - 1 ? ', ' : ''}
-        </span>
-      )
-    })} </p>
+    return (
+      <p>
+        {jsonData.map((val: number, index: number) => {
+          return (
+            <span key={index} className={isBold}>
+              {new Date(val).toLocaleString()}
+              {index !== jsonData.length - 1 ? ', ' : ''}
+            </span>
+          )
+        })}{' '}
+      </p>
+    )
   }
   if (booleanListColumnIndicies.includes(colIndex)) {
     const jsonData: boolean[] = JSON.parse(columnValue)
-    return <p>{jsonData.map((val: boolean, index: number) => {
-      return (
-        <span key={index} className={isBold}>
-          {val ? 'true' : 'false'}
-          {index !== jsonData.length - 1 ? ', ' : ''}
-        </span>
-      )
-    })}</p>
+    return (
+      <p>
+        {jsonData.map((val: boolean, index: number) => {
+          return (
+            <span key={index} className={isBold}>
+              {val ? 'true' : 'false'}
+              {index !== jsonData.length - 1 ? ', ' : ''}
+            </span>
+          )
+        })}
+      </p>
+    )
   }
 
   // If it's a file from a table view
-  if (fileHandleIdColumnIndicies.includes(colIndex)){
-    return <>
-      <DirectDownload
-        associatedObjectId={tableEntityId!}
-        associatedObjectType={FileHandleAssociateType.TableEntity}
-        fileHandleId={columnValue}
-        displayFileName={true}
-      />
-    </>
+  if (fileHandleIdColumnIndicies.includes(colIndex)) {
+    return (
+      <>
+        <DirectDownload
+          associatedObjectId={tableEntityId!}
+          associatedObjectType={FileHandleAssociateType.TableEntity}
+          fileHandleId={columnValue}
+          displayFileName={true}
+        />
+      </>
+    )
   }
 
   // If it's a list of entity ids
-  if (entityIdListColumnIndicies.includes(colIndex)){
+  if (entityIdListColumnIndicies.includes(colIndex)) {
     const jsonData: string[] = JSON.parse(columnValue)
-    return(
-      <EntityIdList
-        entityIdList={jsonData}
-        token={token}
-      />
-    )
+    return <EntityIdList entityIdList={jsonData} />
   }
 
   if (otherListColumnIndicies.includes(colIndex)) {
     const jsonData: string[] = JSON.parse(columnValue)
-    return <p>{jsonData.map((val: string, index: number) => {
-      return (
-        <span key={val} className={isBold}>
-          {val}
-          {index !== jsonData.length - 1 ? ', ' : ''}
-        </span>
-      )
-    })}</p>
+    return (
+      <p>
+        {jsonData.map((val: string, index: number) => {
+          return (
+            <span key={val} className={isBold}>
+              {val}
+              {index !== jsonData.length - 1 ? ', ' : ''}
+            </span>
+          )
+        })}
+      </p>
+    )
   }
   if (dateColumnIndicies.includes(colIndex)) {
     return (

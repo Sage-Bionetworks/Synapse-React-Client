@@ -36,7 +36,6 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
         const bundle: UserBundle = await SynapseClient.getUserBundle(
           userId,
           certificationOrVerification,
-          undefined,
         )
         setUserBundle(bundle)
       } catch (err) {

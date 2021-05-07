@@ -15,8 +15,6 @@ import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation
 import { ErrorBanner } from '../ErrorBanner'
 
 export type EvaluationRoundEditorListProps = {
-  /** session token to make authenticated API calls */
-  sessionToken: string
   /** id of the Evaluation containing EvaluationRounds to edit*/
   evaluationId: string
   /** If true, dates for start/end are displayed in UTC instead of local time*/
@@ -25,18 +23,13 @@ export type EvaluationRoundEditorListProps = {
 
 const fetchEvaluationList = (
   evaluationId: string,
-  sessionToken: string,
   setListCallback: (items: EvaluationRoundInput[]) => void,
   errorHandleCallback: (error: string | SynapseClientError | undefined) => void,
 ): void => {
   const allEvaluationRoundInputList: EvaluationRoundInput[] = []
 
   const getEvaluationRounds = (nextPageToken?: string) => {
-    getEvaluationRoundsList(
-      evaluationId,
-      { nextPageToken: nextPageToken },
-      sessionToken,
-    )
+    getEvaluationRoundsList(evaluationId, { nextPageToken: nextPageToken })
       .then((response: EvaluationRoundListResponse) => {
         const convertedToInput: EvaluationRoundInput[] = response.page.map(
           evaluationRound => convertEvaluationRoundToInput(evaluationRound),
@@ -65,7 +58,6 @@ const fetchEvaluationList = (
  * Edits EvaluationsRounds for an Evaluation.
  */
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
-  sessionToken,
   evaluationId,
   utc,
 }: EvaluationRoundEditorListProps) => {
@@ -82,21 +74,16 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   //run only once
   useEffect(
     () => {
-      fetchEvaluationList(
-        evaluationId,
-        sessionToken,
-        setEvaluationRoundInputList,
-        setError,
-      )
+      fetchEvaluationList(evaluationId, setEvaluationRoundInputList, setError)
     },
     // we explicitly dont want to list setEvaluationRoundInputList nor setError as a dependency
     // if we do, the fetchEvaluationList will re-fetch from the backend on every new render
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [sessionToken, evaluationId],
+    [evaluationId],
   )
 
   if (error) {
-    return <ErrorBanner error={error} token={sessionToken} />
+    return <ErrorBanner error={error} />
   }
 
   return (
@@ -105,7 +92,6 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
         {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (
             <EvaluationRoundEditor
-              sessionToken={sessionToken}
               key={evaluationRoundInput.reactListKey}
               evaluationRoundInput={evaluationRoundInput}
               onSave={handleEvaluationRoundInputListChange(index)}

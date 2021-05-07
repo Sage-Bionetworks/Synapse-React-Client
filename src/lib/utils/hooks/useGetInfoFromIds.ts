@@ -10,7 +10,6 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
   ids: string[]
-  token: string | undefined
   type: HookType
 }
 
@@ -38,9 +37,8 @@ const entityHeaderTemplate: EntityHeader = {
 
 const getEntityHeaderItems = async (
   lookupList: ReferenceList,
-  token: string | undefined,
 ): Promise<EntityHeader[]> => {
-  const newData = await getEntityHeaders(lookupList, token)
+  const newData = await getEntityHeaders(lookupList)
   const notFound = lookupList.filter(
     item => newData.results.map(item => item.id).indexOf(item.targetId) === -1,
   )
@@ -55,9 +53,8 @@ const getEntityHeaderItems = async (
 
 const getUserProfileItems = async (
   lookupList: string[],
-  token: string | undefined,
 ): Promise<UserProfile[]> => {
-  const newData = await getUserProfileWithProfilePicAttached(lookupList, token)
+  const newData = await getUserProfileWithProfilePicAttached(lookupList)
   const notFound = lookupList.filter(
     item => newData.list.map(item => item.ownerId).indexOf(item) === -1,
   )
@@ -75,7 +72,7 @@ const getUserProfileItems = async (
 export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
   props: UseGetInfoFromIdsProps,
 ) {
-  const { token, ids, type } = props
+  const { ids, type } = props
   const [data, setData] = useState<Array<T>>([])
 
   const idProp = (type: HookType) =>
@@ -137,11 +134,8 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
           for (const newReferences of newReferencesChunks) {
             const newData =
               type === 'USER_PROFILE'
-                ? await getUserProfileItems(newReferences as string[], token)
-                : await getEntityHeaderItems(
-                    newReferences as ReferenceList,
-                    token,
-                  )
+                ? await getUserProfileItems(newReferences as string[])
+                : await getEntityHeaderItems(newReferences as ReferenceList)
             totalData.push(...(newData as T[]))
           }
           setData(oldData => oldData.concat(...(totalData as T[])))
@@ -152,6 +146,6 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
       saveToSessionStorage(data, type)
     }
     getData()
-  }, [token, type, newValues])
+  }, [type, newValues])
   return data
 }

@@ -21,13 +21,11 @@ const INVALID_INPUT_MSG =
 export type CreateAccessTokenModalProps = {
   onClose: (...args: any[]) => void
   onCreate: (...args: any[]) => void
-  token: string
 }
 
 export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenModalProps> = ({
   onClose,
   onCreate,
-  token,
 }: CreateAccessTokenModalProps) => {
   const [tokenName, setTokenName] = React.useState('')
   const [viewAccess, setViewAccess] = React.useState(true)
@@ -66,10 +64,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
 
         setIsLoading(true)
 
-        const response = await SynapseClient.createPersonalAccessToken(
-          request,
-          token,
-        )
+        const response = await SynapseClient.createPersonalAccessToken(request)
 
         setIsLoading(false)
         setCreatedToken(response.token)

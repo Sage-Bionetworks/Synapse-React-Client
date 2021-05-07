@@ -8,10 +8,9 @@ import {
   StatusEnum,
 } from '../../../lib/utils/synapseTypes/'
 import * as React from 'react'
-import { TokenContext } from '../App'
+import { isSignedIn } from '../../../lib/utils/SynapseClient'
 
 type FormServicesIntegrationDemoState = {
-  token?: string
   formGroup?: FormGroup
   formData?: FormData
   myFormDataList?: ListResponse
@@ -37,10 +36,7 @@ class FormServicesIntegrationDemo extends React.Component<
   }
 
   public onCreateFormGroup(): void {
-    SynapseClient.createFormGroup(
-      'AAMP-ADExternalContribution(production)',
-      this.state.token!,
-    )
+    SynapseClient.createFormGroup('AAMP-ADExternalContribution(production)')
       .then((data: FormGroup) => {
         console.log('Successfully created FormGroup', data)
         this.setState({ formGroup: data })
@@ -50,11 +46,7 @@ class FormServicesIntegrationDemo extends React.Component<
       )
   }
   public onUpdateFormData(): void {
-    SynapseClient.uploadFile(
-      this.state.token,
-      'my test file',
-      new Blob(['hello form data 2']),
-    )
+    SynapseClient.uploadFile('my test file', new Blob(['hello form data 2']))
       .then((fileUploadComplete: FileUploadComplete) => {
         console.log(
           'Successfully created test file handle, now update the form data!',
@@ -63,7 +55,6 @@ class FormServicesIntegrationDemo extends React.Component<
           this.state.formData!.formDataId!,
           'my test form data',
           fileUploadComplete.fileHandleId,
-          this.state.token!,
         )
           .then((data: FormData) => {
             console.log('Successfully updated FormData', data)
@@ -79,11 +70,7 @@ class FormServicesIntegrationDemo extends React.Component<
   }
 
   public onCreateFormData(): void {
-    SynapseClient.uploadFile(
-      this.state.token,
-      'my test file',
-      new Blob(['hello form data']),
-    )
+    SynapseClient.uploadFile('my test file', new Blob(['hello form data']))
       .then((fileUploadComplete: FileUploadComplete) => {
         console.log(
           'Successfully created test file handle, now create the form data!',
@@ -92,7 +79,6 @@ class FormServicesIntegrationDemo extends React.Component<
           this.state.formGroup!.groupId!,
           'my test form data',
           fileUploadComplete.fileHandleId,
-          this.state.token!,
         )
           .then((data: FormData) => {
             console.log('Successfully created FormData', data)
@@ -108,10 +94,7 @@ class FormServicesIntegrationDemo extends React.Component<
   }
 
   public onSubmitFormData(): void {
-    SynapseClient.submitFormData(
-      this.state.formData!.formDataId!,
-      this.state.token!,
-    )
+    SynapseClient.submitFormData(this.state.formData!.formDataId!)
       .then((data: FormData) => {
         console.log('Successfully submitted FormData', data)
       })
@@ -119,11 +102,7 @@ class FormServicesIntegrationDemo extends React.Component<
   }
 
   private listMyFormData = () => {
-    if (
-      this.state.token &&
-      this.state.formGroup &&
-      !this.state.myFormDataList
-    ) {
+    if (isSignedIn() && this.state.formGroup && !this.state.myFormDataList) {
       let request: ListRequest = {
         groupId: this.state.formGroup.groupId!,
         filterByState: [
@@ -132,7 +111,7 @@ class FormServicesIntegrationDemo extends React.Component<
           StatusEnum.WAITING_FOR_SUBMISSION,
         ],
       }
-      SynapseClient.listFormData(request, this.state.token)
+      SynapseClient.listFormData(request)
         .then((resp: ListResponse) => {
           console.log('Successfully got a my FormData list', resp)
           this.setState({ myFormDataList: resp })
@@ -145,7 +124,7 @@ class FormServicesIntegrationDemo extends React.Component<
 
   private listFormAdminFormData = () => {
     if (
-      this.state.token &&
+      isSignedIn() &&
       this.state.formGroup &&
       !this.state.formAdminFormDataList
     ) {
@@ -156,7 +135,7 @@ class FormServicesIntegrationDemo extends React.Component<
           StatusEnum.SUBMITTED_WAITING_FOR_REVIEW,
         ],
       }
-      SynapseClient.listFormDataAsFormAdmin(request, this.state.token)
+      SynapseClient.listFormDataAsFormAdmin(request)
         .then((resp: ListResponse) => {
           console.log('Successfully got FormGroup admin list', resp)
           this.setState({ formAdminFormDataList: resp })
@@ -170,7 +149,6 @@ class FormServicesIntegrationDemo extends React.Component<
   private onReadFormDataFileHandleContents = () => {
     SynapseClient.getFileHandleContentFromID(
       this.state.formData!.dataFileHandleId,
-      this.state.token!,
     )
       .then((data: string) => {
         console.log('Successfully fetched file handle contents: ', data)
@@ -186,109 +164,99 @@ class FormServicesIntegrationDemo extends React.Component<
   }
 
   render() {
-    return (
-      <TokenContext.Consumer>
-        {(token: string) => {
-          if (token !== this.state.token) {
-            this.setState({
-              token,
-            })
-          }
-          if (token) {
-            return (
-              <>
-                <div>
-                  <a onClick={this.onCreateFormGroup}>
-                    Create Form Group
-                    <br />
-                  </a>
-                  {!this.state.formData && (
-                    <a onClick={this.onCreateFormData}>
-                      Create Form Data
-                      <br />
-                    </a>
-                  )}
-                  {this.state.formData && (
-                    <a onClick={this.onReadFormDataFileHandleContents}>
-                      Get Form Data FileHandle contents
-                      <br />
-                    </a>
-                  )}
+    if (isSignedIn()) {
+      return (
+        <>
+          <div>
+            <a onClick={this.onCreateFormGroup}>
+              Create Form Group
+              <br />
+            </a>
+            {!this.state.formData && (
+              <a onClick={this.onCreateFormData}>
+                Create Form Data
+                <br />
+              </a>
+            )}
+            {this.state.formData && (
+              <a onClick={this.onReadFormDataFileHandleContents}>
+                Get Form Data FileHandle contents
+                <br />
+              </a>
+            )}
 
-                  {this.state.formData && (
-                    <a onClick={this.onUpdateFormData}>
-                      Update Form Data
-                      <br />
-                    </a>
-                  )}
-                  {this.state.formData && (
-                    <a onClick={this.onSubmitFormData}>
-                      Submit Form Data
-                      <br />
-                    </a>
-                  )}
-                </div>
-                {<h3>My FormData</h3>}
-                {this.state.myFormDataList && (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Form Data name</th>
-                        <th>Data File Handle ID</th>
-                        <th>Status</th>
-                        <th>Rejection Reason</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.myFormDataList.page.map(value => {
-                        return (
-                          <tr key={value.formDataId}>
-                            <td>{value.name}</td>
-                            <td>{value.dataFileHandleId}</td>
-                            <td>{value.submissionStatus.state}</td>
-                            <td>{value.submissionStatus.rejectionMessage}</td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                )}
-                {<h3>FormGroup Admin FormData</h3>}
-                {this.state.formAdminFormDataList && (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Form Data name</th>
-                        <th>Data File Handle ID</th>
-                        <th>Status</th>
-                        <th>Rejection Reason</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.formAdminFormDataList.page.map(value => {
-                        return (
-                          <tr key={value.formDataId}>
-                            <td>{value.name}</td>
-                            <td>{value.dataFileHandleId}</td>
-                            <td>{value.submissionStatus.state}</td>
-                            <td>{value.submissionStatus.rejectionMessage}</td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                )}
-              </>
-            )
-          } else
-            return (
-              <>
-                <p>Please log in and reload this route</p>
-              </>
-            )
-        }}
-      </TokenContext.Consumer>
-    )
+            {this.state.formData && (
+              <a onClick={this.onUpdateFormData}>
+                Update Form Data
+                <br />
+              </a>
+            )}
+            {this.state.formData && (
+              <a onClick={this.onSubmitFormData}>
+                Submit Form Data
+                <br />
+              </a>
+            )}
+          </div>
+          {<h3>My FormData</h3>}
+          {this.state.myFormDataList && (
+            <table>
+              <thead>
+                <tr>
+                  <th>Form Data name</th>
+                  <th>Data File Handle ID</th>
+                  <th>Status</th>
+                  <th>Rejection Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.myFormDataList.page.map(value => {
+                  return (
+                    <tr key={value.formDataId}>
+                      <td>{value.name}</td>
+                      <td>{value.dataFileHandleId}</td>
+                      <td>{value.submissionStatus.state}</td>
+                      <td>{value.submissionStatus.rejectionMessage}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          )}
+          {<h3>FormGroup Admin FormData</h3>}
+          {this.state.formAdminFormDataList && (
+            <table>
+              <thead>
+                <tr>
+                  <th>Form Data name</th>
+                  <th>Data File Handle ID</th>
+                  <th>Status</th>
+                  <th>Rejection Reason</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.formAdminFormDataList.page.map(value => {
+                  return (
+                    <tr key={value.formDataId}>
+                      <td>{value.name}</td>
+                      <td>{value.dataFileHandleId}</td>
+                      <td>{value.submissionStatus.state}</td>
+                      <td>{value.submissionStatus.rejectionMessage}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          )}
+        </>
+      )
+    } else {
+      return (
+        <>
+          <p>Please log in and reload this route</p>
+        </>
+      )
+    }
   }
 }
 

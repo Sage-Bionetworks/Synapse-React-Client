@@ -20,7 +20,7 @@ type State = {
 type Props = {
   googleRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
-  sessionCallback: Function // Callback is invoked after login
+  sessionCallback: () => void // Callback is invoked after login
 }
 
 /**
@@ -161,7 +161,7 @@ class Login extends React.Component<Props, State> {
           or
         </div>
         <Form onSubmit={this.handleLogin}>
-          <label htmlFor={"exampleEmail"}>Username or Email Address</label>
+          <label htmlFor={'exampleEmail'}>Username or Email Address</label>
           <Form.Control
             required
             autoComplete="username"
@@ -173,7 +173,7 @@ class Login extends React.Component<Props, State> {
             value={this.state.username}
             onChange={this.handleChange}
           />
-          <label htmlFor={"examplePassword"}>Password</label>
+          <label htmlFor={'examplePassword'}>Password</label>
           <Form.Control
             required
             autoComplete="password"
@@ -203,7 +203,7 @@ class Login extends React.Component<Props, State> {
             Log in
           </Button>
         </Form>
-        <div className={"SRC-center-text"}>
+        <div className={'SRC-center-text'}>
           <a
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,

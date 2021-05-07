@@ -95,7 +95,6 @@ export async function extractPlotDataArray(
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
-  sessionToken?: string,
   facetAliases?: {},
 ) {
   const { colorPalette } = getColorPalette(
@@ -106,7 +105,6 @@ export async function extractPlotDataArray(
   const getLabels = async (
     facetValues: FacetColumnResultValueCount[],
     columnType?: ColumnType,
-    sessionToken?: string,
   ) => {
     const map = new Map<string, string>()
     map.set(
@@ -119,18 +117,12 @@ export async function extractPlotDataArray(
       .filter(val => val !== SynapseConstants.VALUE_NOT_SET)
     if (columnType === ColumnType.ENTITYID) {
       // TODO: Pagination
-      const response = await SynapseClient.getEntityHeadersByIds(
-        filteredValues,
-        sessionToken,
-      )
+      const response = await SynapseClient.getEntityHeadersByIds(filteredValues)
       for (const header of response.results) {
         map.set(header.id, header.name)
       }
     } else if (columnType === ColumnType.USERID) {
-      const response = await SynapseClient.getGroupHeadersBatch(
-        filteredValues,
-        sessionToken,
-      )
+      const response = await SynapseClient.getGroupHeadersBatch(filteredValues)
       for (const header of response.children) {
         map.set(header.ownerId, header.userName)
       }
@@ -156,11 +148,7 @@ export async function extractPlotDataArray(
     return label
   }
 
-  const labels = await getLabels(
-    facetToPlot.facetValues,
-    columnType,
-    sessionToken,
-  )
+  const labels = await getLabels(facetToPlot.facetValues, columnType)
   const text = labels.map(el => el.truncatedLabel)
 
   const anyFacetsSelected = facetToPlot.facetValues.some(
@@ -340,7 +328,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
   data,
   isLoading,
   facetAliases,
-  token,
   lastQueryRequest,
 }: FacetNavPanelProps): JSX.Element => {
   const [plotData, setPlotData] = useState<GraphData>()
@@ -364,7 +351,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'PIE',
-        token
       ).then(plotData => setPlotData(plotData))
     }
   }, [facetToPlot, data, index, getColumnType])
@@ -380,7 +366,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'BAR',
-        token,
       ).then(plotData => setPlotData(plotData))
     } else {
       extractPlotDataArray(
@@ -388,7 +373,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         getColumnType(),
         index,
         'PIE',
-        token,
       ).then(plotData => setPlotData(plotData))
     }
     setPlotType(plotType)
@@ -441,7 +425,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
                   el => el.name === facetToPlot.columnName,
                 )!
               }
-              token={token}
               facetAliases={facetAliases}
               onChange={(facetNamesMap: {}) => {
                 applyMultipleChangesToValuesColumn(

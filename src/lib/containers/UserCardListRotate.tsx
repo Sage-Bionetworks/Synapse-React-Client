@@ -18,7 +18,6 @@ const DEFAULT_DISPLAY_COUNT = 3
 export type UserCardListRotateProps = {
   sql: string
   count: number
-  token?: string
   useQueryResultUserData?: boolean
   size?: UserCardSize
   summaryLink?: string
@@ -64,7 +63,6 @@ export const getDisplayIds = (
 const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   sql,
   count,
-  token,
   useQueryResultUserData = false,
   size = LARGE_USER_CARD,
   summaryLink,
@@ -96,7 +94,6 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
 
       const queryResultBundle = await SynapseClient.getFullQueryTableResults(
         request,
-        token,
       )
       const { queryResult } = queryResultBundle
       if (queryResult.queryResults.rows) {
@@ -124,7 +121,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     return () => {
       mounted = false
     }
-  }, [sql, selectedFacets, count, token])
+  }, [sql, selectedFacets, count])
 
   return (
     <div className="UserCardListRotate bootstrap-4-backport">

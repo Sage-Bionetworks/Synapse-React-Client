@@ -10,7 +10,6 @@ import {
 } from '../../../../mocks/mock_drug_tool_data'
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
-const token: string = '123444'
 const pathpart = 'someTool'
 const formGroupId = '5'
 const itemNoun = 'submission'
@@ -30,7 +29,6 @@ const createShallowComponent = async (
 
 describe('basic tests', () => {
   const props: SynapseFormSubmissionGridProps = {
-    token,
     pathpart,
     formGroupId,
     itemNoun,
@@ -42,6 +40,8 @@ describe('basic tests', () => {
       .mockResolvedValue(formListDataSubmitted)
       .mockResolvedValueOnce(formListDataSubmitted)
       .mockResolvedValueOnce(formListDataInProgress)
+
+    SynapseClient.isSignedIn = jest.fn().mockReturnValue(true)
   })
 
   it('displays table with file list when files are present', async () => {
@@ -58,13 +58,11 @@ describe('basic tests', () => {
     expect(spy).toHaveBeenCalledTimes(1)
     expect(synapseCall).toHaveBeenCalledWith(
       expect.objectContaining({ filterByState: ['WAITING_FOR_SUBMISSION'] }),
-      expect.anything(),
     )
     expect(synapseCall).toHaveBeenCalledWith(
       expect.objectContaining({
         filterByState: ['SUBMITTED_WAITING_FOR_REVIEW', 'ACCEPTED', 'REJECTED'],
       }),
-      expect.anything(),
     )
   })
 
@@ -92,8 +90,8 @@ describe('basic tests', () => {
     const spy = jest.spyOn(SynapseClient, 'deleteFormData')
     const { instance } = await createShallowComponent(props)
     await instance.componentDidMount()
-    await instance.deleteFile('123', '456')
-    expect(spy).toHaveBeenCalledWith('456', '123')
+    await instance.deleteFile('456')
+    expect(spy).toHaveBeenCalledWith('456')
   })
 
   it('should have view more link if there is a token for next page and call the back end fn to get the additional items', async () => {
@@ -103,13 +101,10 @@ describe('basic tests', () => {
     const viewMoreButton = wrapper.find('.view-more button')
     expect(viewMoreButton).toHaveLength(1)
     viewMoreButton.simulate('click')
-    expect(spy).lastCalledWith(
-      {
-        filterByState: ['WAITING_FOR_SUBMISSION'],
-        groupId: formGroupId,
-        nextPageToken: formListDataInProgress.nextPageToken,
-      },
-      token,
-    )
+    expect(spy).lastCalledWith({
+      filterByState: ['WAITING_FOR_SUBMISSION'],
+      groupId: formGroupId,
+      nextPageToken: formListDataInProgress.nextPageToken,
+    })
   })
 })

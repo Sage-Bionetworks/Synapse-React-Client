@@ -7,7 +7,6 @@ import React from 'react'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 
 describe('test EvaluationRoundEditorList', () => {
-  const fakeSessionToken = 'asdfasdfasdf'
   const evaluationId = '123123123'
   const nextPageToken = 'firstPage'
 
@@ -86,11 +85,7 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     const wrapper = mount(
-      <EvaluationRoundEditorList
-        sessionToken={fakeSessionToken}
-        evaluationId={evaluationId}
-        utc={true}
-      />,
+      <EvaluationRoundEditorList evaluationId={evaluationId} utc={true} />,
     )
 
     expect(wrapper.find('.evaluation-round-editor').exists()).toBe(false)
@@ -99,23 +94,15 @@ describe('test EvaluationRoundEditorList', () => {
 
   it('fetched pages', () => {
     const wrapper = mount(
-      <EvaluationRoundEditorList
-        sessionToken={fakeSessionToken}
-        evaluationId={evaluationId}
-        utc={true}
-      />,
+      <EvaluationRoundEditorList evaluationId={evaluationId} utc={true} />,
     )
 
-    expect(mockGetEvaulationsList).toBeCalledWith(
-      evaluationId,
-      { nextPageToken: undefined },
-      fakeSessionToken,
-    )
-    expect(mockGetEvaulationsList).toBeCalledWith(
-      evaluationId,
-      { nextPageToken: nextPageToken },
-      fakeSessionToken,
-    )
+    expect(mockGetEvaulationsList).toBeCalledWith(evaluationId, {
+      nextPageToken: undefined,
+    })
+    expect(mockGetEvaulationsList).toBeCalledWith(evaluationId, {
+      nextPageToken: nextPageToken,
+    })
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
@@ -123,11 +110,7 @@ describe('test EvaluationRoundEditorList', () => {
 
   it('add round button', () => {
     const wrapper = mount(
-      <EvaluationRoundEditorList
-        sessionToken={fakeSessionToken}
-        evaluationId={evaluationId}
-        utc={true}
-      />,
+      <EvaluationRoundEditorList evaluationId={evaluationId} utc={true} />,
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)

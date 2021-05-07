@@ -24,7 +24,6 @@ import BarPlot from './BarPlot'
 import loadingScreen from '../../LoadingScreen'
 
 export type ThemesPlotProps = {
-  token?: string
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
@@ -105,10 +104,14 @@ const barLayoutConfig: Partial<PlotlyTyped.Layout> = {
   },
 }
 
-function fetchData(
-  token: string,
-  { xField, yField, groupField, entityId, whereClause, infoField }: PlotProps,
-): Promise<RowSet> {
+function fetchData({
+  xField,
+  yField,
+  groupField,
+  entityId,
+  whereClause,
+  infoField,
+}: PlotProps): Promise<RowSet> {
   const sql = `SELECT ${xField} as "x", ${yField} as "y", ${
     infoField ? infoField + ' as "info", ' : ''
   }   ${groupField} as "group" FROM ${entityId} ${
@@ -124,7 +127,7 @@ function fetchData(
     },
   }
 
-  return getFullQueryTableResults(queryRequest, token).then(
+  return getFullQueryTableResults(queryRequest).then(
     (data: QueryResultBundle) => {
       return data.queryResult.queryResults
     },
@@ -199,7 +202,6 @@ const getTooltip = (data: GraphItem[], filter: string) => {
 }
 
 const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
-  token,
   dotPlot,
   topBarPlot,
   sideBarPlot,
@@ -213,9 +215,9 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   const [sideBarPlotData, setSideBarQueryData] = useState<GraphItem[]>([])
 
   useEffect(() => {
-    const dotPlotData = fetchData(token!, dotPlot)
-    const topBarPlotData = fetchData(token!, topBarPlot)
-    const sideBarPlotData = fetchData(token!, sideBarPlot)
+    const dotPlotData = fetchData(dotPlot)
+    const topBarPlotData = fetchData(topBarPlot)
+    const sideBarPlotData = fetchData(sideBarPlot)
     Promise.all([dotPlotData, topBarPlotData, sideBarPlotData])
       .then(result => {
         setDotPlotQueryData(resultToJson(result[0].headers, result[0].rows))
@@ -227,7 +229,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
         throw err
       })
     return () => {}
-  }, [token, dotPlot, topBarPlot, sideBarPlot])
+  }, [dotPlot, topBarPlot, sideBarPlot])
   let yLabelsForDotPlot: string[] = []
   let xLabelsForTopBarPlot: string[] = []
   let xMaxForDotPlot = 0
@@ -252,9 +254,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
 
   return (
     <>
-      {!isLoaded && (
-        loadingScreen
-      )}
+      {!isLoaded && loadingScreen}
 
       {isLoaded && (
         <div className="ThemesPlot">

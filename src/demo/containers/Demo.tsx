@@ -6,9 +6,9 @@ import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownl
 import StatisticsPlot from '../../lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
 import HasAccess from '../../lib/containers/HasAccess'
+import { isSignedIn } from '../../lib/utils/SynapseClient'
 
 type DemoState = {
-  token: string | null
   ownerId: string
   isLoading: boolean
   showMarkdown: boolean
@@ -38,7 +38,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
       isLoading: true,
       ownerId: '',
       showMarkdown: true,
-      token: '',
       version: 0,
     }
     this.getVersion = this.getVersion.bind(this)
@@ -59,9 +58,8 @@ class Demo extends React.Component<DemoProps, DemoState> {
   }
 
   public onRunDownloadSpeedTest() {
-    const { token } = this.state
-    if (token) {
-      testDownloadSpeed(token)
+    if (isSignedIn()) {
+      testDownloadSpeed()
         .then((estimatedDownloadBytesPerSecond: number) => {
           this.setState({ estimatedDownloadBytesPerSecond })
         })
@@ -90,26 +88,20 @@ class Demo extends React.Component<DemoProps, DemoState> {
     // Note:  All portals should do this once on the initial app load.
     // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
-    SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken => {
-        this.setState({
-          token: sessionToken,
-        })
-      })
-      .catch((error: any) => {
-        console.error(error)
-      })
+    SynapseClient.getSessionTokenFromCookie().catch((error: any) => {
+      console.error(error)
+    })
     this.getVersion()
   }
   public render(): JSX.Element {
     const { forceSamePage = false } = this.props
-    const { token, estimatedDownloadBytesPerSecond } = this.state
+    const { estimatedDownloadBytesPerSecond } = this.state
     return (
       <div>
         <p className="App-intro text-center">
           Synapse production version: {this.state.version}
         </p>
-        {token && (
+        {isSignedIn() && (
           <div className="container">
             <button
               className="btn btn-default"
@@ -129,20 +121,17 @@ class Demo extends React.Component<DemoProps, DemoState> {
             <hr />
           </div>
         )}
-        {token && (
+        {isSignedIn() && (
           <div className="container">
             <h5>Upload File(s) Demo</h5>
-            <Uploader token={token} parentContainerId="syn18987891" />
+            <Uploader parentContainerId="syn18987891" />
             <hr />
           </div>
         )}
-        {token && (
+        {isSignedIn() && (
           <div className="container">
             <h5>Download File Content Demo (syn12196718)</h5>
-            <FileContentDownloadUploadDemo
-              token={token}
-              targetEntityId="syn12196718"
-            />
+            <FileContentDownloadUploadDemo targetEntityId="syn12196718" />
             <hr />
           </div>
         )}
@@ -150,28 +139,24 @@ class Demo extends React.Component<DemoProps, DemoState> {
           <div className="container">
             <h5>Public Folder - HasAccess widget</h5>
             <HasAccess
-              token={token ? token : undefined}
               entityId={'syn7122428'}
               isInDownloadList={false}
               forceSamePage={forceSamePage}
             />
             <h5>A Controlled Access Folder - HasAccess widget</h5>
             <HasAccess
-              token={token ? token : undefined}
               entityId={'syn7383419'}
               isInDownloadList={false}
               forceSamePage={forceSamePage}
             />
             <h5>Open Data</h5>
             <HasAccess
-              token={token ? token : undefined}
               entityId={'syn5481758'}
               isInDownloadList={false}
               forceSamePage={forceSamePage}
             />
             <h5>Acces Requirements required Data</h5>
             <HasAccess
-              token={token ? token : undefined}
               entityId={'syn2426398'}
               isInDownloadList={false}
               forceSamePage={forceSamePage}
@@ -180,7 +165,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
               Acces Requirements required Data without unsupported requirement
             </h5>
             <HasAccess
-              token={token ? token : undefined}
               entityId={'syn4993293'}
               isInDownloadList={false}
               forceSamePage={forceSamePage}
@@ -189,11 +173,10 @@ class Demo extends React.Component<DemoProps, DemoState> {
             <hr />
           </div>
         }
-        {token && (
+        {isSignedIn() && (
           <div className="container">
             <h5>Project Statistics Demo</h5>
             <StatisticsPlot
-              token={token}
               request={{
                 concreteType:
                   'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
@@ -203,7 +186,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
               }}
             />
             <StatisticsPlot
-              token={token}
               request={{
                 concreteType:
                   'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
@@ -215,7 +197,6 @@ class Demo extends React.Component<DemoProps, DemoState> {
             <hr />
           </div>
         )}
-
       </div>
     )
   }

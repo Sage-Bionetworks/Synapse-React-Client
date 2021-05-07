@@ -12,7 +12,6 @@ import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 
 describe('test EvaluationEditor', () => {
-  const sessionToken = 'sssssssssssssssssssssss'
   const evaluationId = '1234'
   const entityId = 'syn1111111'
   let evaluation: Evaluation
@@ -43,7 +42,6 @@ describe('test EvaluationEditor', () => {
     mockOnSaveSuccess = jest.fn()
 
     props = {
-      sessionToken: sessionToken,
       evaluationId: evaluationId,
       utc: true,
       onDeleteSuccess: mockOnDeleteSuccess,
@@ -87,7 +85,7 @@ describe('test EvaluationEditor', () => {
     const wrapper = mount(<EvaluationEditor {...props} />)
 
     expect(wrapper.find('h4').text()).toBe('Edit Evaluation Queue')
-    expect(mockGetEvaluation).toBeCalledWith(evaluationId, sessionToken)
+    expect(mockGetEvaluation).toBeCalledWith(evaluationId)
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
   })
 
@@ -110,7 +108,7 @@ describe('test EvaluationEditor', () => {
 
     const wrapper = mount(<EvaluationEditor {...props} />)
 
-    expect(mockGetEvaluation).toBeCalledWith(evaluationId, sessionToken)
+    expect(mockGetEvaluation).toBeCalledWith(evaluationId)
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
   })
 
@@ -135,22 +133,19 @@ describe('test EvaluationEditor', () => {
 
     wrapper.find('Button.save-button').simulate('click')
 
-    expect(mockCreateEvaluation).toBeCalledWith(
-      {
-        contentSource: 'syn1111111',
-        description: '',
-        name: 'E V A L U A T I O N',
-        submissionInstructionsMessage: '',
-        submissionReceiptMessage: '',
-      },
-      sessionToken,
-    )
+    expect(mockCreateEvaluation).toBeCalledWith({
+      contentSource: 'syn1111111',
+      description: '',
+      name: 'E V A L U A T I O N',
+      submissionInstructionsMessage: '',
+      submissionReceiptMessage: '',
+    })
     expect(mockUpdateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
+    expect(mockUpdateEvaluation).toBeCalledWith(evaluation)
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
@@ -161,7 +156,7 @@ describe('test EvaluationEditor', () => {
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
+    expect(mockUpdateEvaluation).toBeCalledWith(evaluation)
     expect(mockCreateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
@@ -180,7 +175,7 @@ describe('test EvaluationEditor', () => {
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(evaluation, sessionToken)
+    expect(mockUpdateEvaluation).toBeCalledWith(evaluation)
     expect(mockCreateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).not.toBeCalled()
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)

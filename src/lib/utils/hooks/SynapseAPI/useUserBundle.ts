@@ -7,7 +7,6 @@ import { SynapseClientError } from '../../SynapseClient'
 
 export function useGetUserProfileWithProfilePic(
   principalId: string,
-  sessionToken?: string,
   options?: UseQueryOptions<
     UserProfileAndImg,
     SynapseClientError,
@@ -15,8 +14,8 @@ export function useGetUserProfileWithProfilePic(
   >,
 ) {
   return useQuery<UserProfileAndImg, SynapseClientError>(
-    ['userprofile', principalId, sessionToken],
-    () => getUserProfileWithProfilePic(principalId, sessionToken),
+    ['userprofile', principalId],
+    () => getUserProfileWithProfilePic(principalId),
     options,
   )
 }

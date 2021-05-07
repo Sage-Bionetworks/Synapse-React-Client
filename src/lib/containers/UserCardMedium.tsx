@@ -50,7 +50,7 @@ export default class UserCardMedium extends React.Component<
     this.state = {
       showModal: false,
       isContextMenuOpen: false,
-      ORCIDHref: undefined
+      ORCIDHref: undefined,
     }
   }
 
@@ -89,16 +89,11 @@ export default class UserCardMedium extends React.Component<
     // PORTALS-1893: Add ORCID to medium/large card
     const { ORCIDHref } = this.state
     if (!ORCIDHref) {
-      const {
-        userProfile
-      } = this.props
-      const {
-        ownerId
-      } = userProfile
+      const { userProfile } = this.props
+      const { ownerId } = userProfile
       const bundle: UserBundle = await SynapseClient.getUserBundle(
         ownerId,
         SynapseConstants.USER_BUNDLE_MASK_ORCID,
-        undefined,
       )
       this.setState({ ORCIDHref: bundle.ORCID })
     }
@@ -257,15 +252,21 @@ export default class UserCardMedium extends React.Component<
             </p>
           )}
           {this.state.ORCIDHref && (
-              <a
+            <a
               href={this.state.ORCIDHref}
-              target='_blank'
-              rel='noopener noreferrer'
+              target="_blank"
+              rel="noopener noreferrer"
               tabIndex={0}
             >
-              <p className={isLarge
-                ? 'SRC-whiteText'
-                : 'SRC-primary-text-color SRC-primary-color-hover'}>View ORCID</p>
+              <p
+                className={
+                  isLarge
+                    ? 'SRC-whiteText'
+                    : 'SRC-primary-text-color SRC-primary-color-hover'
+                }
+              >
+                View ORCID
+              </p>
             </a>
           )}
         </div>

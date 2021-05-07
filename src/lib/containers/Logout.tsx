@@ -3,7 +3,7 @@ import React from 'react'
 import { Button } from 'react-bootstrap'
 
 export type LogoutProps = {
-  callback: Function
+  callback: () => void
 }
 
 export default function Logout(props: LogoutProps) {

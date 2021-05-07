@@ -25,7 +25,6 @@ export type UpsetPlotProps = {
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
-  token?: string
 }
 
 export type UpsetPlotData = {
@@ -45,7 +44,6 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   height = 700,
   summaryLinkText,
   summaryLink,
-  token,
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>()
   const [data, setData] = useState<UpsetPlotData>()
@@ -75,7 +73,6 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         }
         const { queryResult } = await SynapseClient.getFullQueryTableResults(
           queryRequest,
-          token,
         )
         // transform query data into plot data, and store.
         // collect all values for each key
@@ -136,7 +133,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
     return () => {
       isCancelled = true
     }
-  }, [sql, token])
+  }, [sql])
 
   return (
     <>
@@ -180,7 +177,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           )}
         </SizeMe>
       )}
-      <ErrorBanner error={error} token={token} />
+      <ErrorBanner error={error} />
     </>
   )
 }

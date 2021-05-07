@@ -19,7 +19,7 @@ global.sessionChangeHandler = async () => {
             }
           })
           
-          console.log('Session has successfully been changed' + sessionToken)
+          console.log('Session has successfully been changed: ' + sessionToken)
       })
       .catch((error) => {
         console.error(error)

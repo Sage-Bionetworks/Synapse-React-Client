@@ -128,23 +128,12 @@ describe('it performs basic functionality', () => {
     const { wrapper, instance } = await createShallowComponent(props)
 
     const newSql = 'SELECT * FROM OTHER_TABLE'
-    const newToken = '123'
     const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
     // if sql changes in props then we expect the component to have called executeInitialQueryRequest
     // since there's an entirely new sql statement
-    await wrapper.setProps({
+    wrapper.setProps({
       sql: newSql,
-      token: '',
     })
-
-    spy.mockReset()
-    // if token changes in props then we expect the component to have called executeInitialQueryRequest
-    await wrapper.setProps({ sql: newSql, token: newToken })
     expect(spy).toHaveBeenCalled()
-
-    spy.mockReset()
-    // if token changes in props then we expect the component to have called executeInitialQueryRequest
-    await wrapper.setProps({ sql: newSql, token: newToken })
-    expect(spy).toHaveBeenCalledTimes(0)
   })
 })

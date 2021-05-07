@@ -98,7 +98,7 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
-    topLevelControlsState : {
+    topLevelControlsState: {
       showColumnFilter: true,
       showFacetFilter: true,
       showFacetVisualization: true,
@@ -144,14 +144,14 @@ describe('basic functionality', () => {
     dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
     // listen to function call
 
-    await wrapper.setProps({
+    wrapper.setProps({
       data: dataWithNewTableId,
     })
     // since we now disable lifecycle methods during construction (because of DOM interaction for column-resizer), manually call update functions
     instance.getEntityHeadersInData(true)
     instance.getTableConcreteType(props)
 
-    expect(mockEntityCall).toHaveBeenCalledWith(undefined, newTableId)
+    expect(mockEntityCall).toHaveBeenCalledWith(newTableId)
   })
 
   describe('unCamelCase', () => {
@@ -545,7 +545,6 @@ describe('basic functionality', () => {
         EntityColumnType.FILEHANDLEID,
       )
       expect(fileHandleId).toEqual([FILEHANDLEID_INDEX])
-
     })
 
     it('gets unique entities', () => {
@@ -595,9 +594,9 @@ describe('basic functionality', () => {
       const mapEntityIdToHeader = {
         [mockEntityLinkValue]: {} as EntityHeader,
       }
-      const mapUserIdToHeader: Dictionary<Partial<
-        UserGroupHeader & UserProfile
-      >> = {
+      const mapUserIdToHeader: Dictionary<
+        Partial<UserGroupHeader & UserProfile>
+      > = {
         [mockAllAuthenticatedUsersValue]: {
           isIndividual: false,
           userName: AUTHENTICATED_USERS,
@@ -797,7 +796,9 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(tableCell.find('p').first().text().trim()).toEqual(NOT_SET_DISPLAY_VALUE)
+        expect(tableCell.find('p').first().text().trim()).toEqual(
+          NOT_SET_DISPLAY_VALUE,
+        )
       })
     })
   })

@@ -28,7 +28,6 @@ type OwnProps = {
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
   searchConfiguration?: SearchV2Props
-  token?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   facetsToFilter?: string[]
@@ -110,11 +109,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <QueryFilter {...rest} />
         <QueryFilterToggleButton />
-        <FacetNav
-          facetsToPlot={facetsToPlot}
-          showNotch={false}
-          token={props.token}
-        />
+        <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
         <FilterAndView
           facetsToFilter={facetsToFilter}
           tableConfiguration={tableConfiguration}

@@ -21,7 +21,6 @@ const ALL_FIELDS: EntityBundleRequest = {
 }
 
 export default function useGetEntityBundle(
-  sessionToken: string,
   entityId: string,
   bundleRequest: EntityBundleRequest = ALL_FIELDS,
   version?: number,
@@ -29,13 +28,7 @@ export default function useGetEntityBundle(
 ) {
   return useQuery<EntityBundle, SynapseClientError>(
     ['entitybundle', entityId, version, bundleRequest],
-    () =>
-      SynapseClient.getEntityBundleV2(
-        entityId,
-        bundleRequest,
-        version,
-        sessionToken,
-      ),
+    () => SynapseClient.getEntityBundleV2(entityId, bundleRequest, version),
     options,
   )
 }

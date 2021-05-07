@@ -15,8 +15,6 @@ import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type EvaluationEditorProps = {
-  /** session token to make authenticated API calls */
-  readonly sessionToken: string
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
   readonly evaluationId?: string
   /** Use if CREATING a new Evaluation. Id of the Entity that will be associated with the Evaluation */
@@ -33,7 +31,6 @@ export type EvaluationEditorProps = {
  * Edits basic properties of an Evaluation
  */
 export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = ({
-  sessionToken,
   evaluationId,
   entityId,
   utc,
@@ -82,13 +79,13 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
     if (evaluationId) {
       //clear error
       setError(undefined)
-      getEvaluation(evaluationId, sessionToken)
+      getEvaluation(evaluationId)
         .then(retrievedEvaluation => {
           setEvaluation(retrievedEvaluation)
         })
         .catch(error => setError(error))
     }
-  }, [evaluationId, sessionToken])
+  }, [evaluationId])
 
   const onSave = () => {
     // clear out error
@@ -103,8 +100,8 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
     }
 
     const promise = newOrUpdatedEvaluation.id
-      ? updateEvaluation(newOrUpdatedEvaluation, sessionToken)
-      : createEvaluation(newOrUpdatedEvaluation, sessionToken)
+      ? updateEvaluation(newOrUpdatedEvaluation)
+      : createEvaluation(newOrUpdatedEvaluation)
 
     promise
       .then(evaluation => {
@@ -121,7 +118,7 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
   const onDelete = evaluation?.id
     ? () => {
         setError(undefined)
-        deleteEvaluation(evaluation.id!, sessionToken)
+        deleteEvaluation(evaluation.id!)
           .then(onDeleteSuccess)
           .catch(error => setError(error))
       }
@@ -182,11 +179,10 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
             <CreatedOnByUserDiv
               userId={evaluation.ownerId!}
               date={new Date(evaluation.createdOn)}
-              sessionToken={sessionToken}
               utc={utc}
             />
           )}
-          {error && <ErrorBanner error={error} token={sessionToken} />}
+          {error && <ErrorBanner error={error}/>}
           {showSaveSuccess && (
             <Alert
               className="save-success-alert"

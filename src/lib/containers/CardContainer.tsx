@@ -35,7 +35,6 @@ export type CardContainerProps = {
   unitDescription?: string
   hasMoreData?: boolean
   showBarChart?: boolean
-  token?: string
 } & CardConfiguration
 
 export const CardContainer = (props: CardContainerProps) => {
@@ -49,7 +48,6 @@ export const CardContainer = (props: CardContainerProps) => {
     secondaryLabelLimit = 3,
     showBarChart = true,
     title,
-    token,
     getLastQueryRequest,
     executeQueryRequest,
     hasMoreData,
@@ -89,7 +87,6 @@ export const CardContainer = (props: CardContainerProps) => {
   const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
     ids,
     type: 'ENTITY_HEADER',
-    token: props.token,
   })
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (!data) {
@@ -100,14 +97,17 @@ export const CardContainer = (props: CardContainerProps) => {
       return <SearchResultsNotFound />
     }
     // else show "no results" UI (see PORTALS-1497)
-    return <>
-      <p className="SRC-no-results-title">
-        There is currently no content here.
-      </p>
-      <p className="SRC-no-results-description">
-        Information is always being updated, so check back later to see if content has been added.
-      </p>
-    </>
+    return (
+      <>
+        <p className="SRC-no-results-title">
+          There is currently no content here.
+        </p>
+        <p className="SRC-no-results-description">
+          Information is always being updated, so check back later to see if
+          content has been added.
+        </p>
+      </>
+    )
   }
   const schema = {}
   data.queryResult.queryResults.headers.forEach((element, index) => {
@@ -139,25 +139,28 @@ export const CardContainer = (props: CardContainerProps) => {
   } else {
     // render the cards
     const cardsData = data.queryResult.queryResults.rows
-    cards = cardsData.length ? cardsData.map((rowData: any, index) => {
-      const key = JSON.stringify(rowData.values)
-      const propsForCard = {
-        key,
-        type,
-        schema,
-        isHeader,
-        secondaryLabelLimit,
-        data: rowData.values,
-        selectColumns: data.selectColumns,
-        columnModels: data.columnModels,
-        tableEntityConcreteType:
-          tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
-        tableId: props.data?.queryResult.queryResults.tableId,
-        token,
-        ...rest,
-      }
-      return renderCard(propsForCard, type)
-    }) : <></>
+    cards = cardsData.length ? (
+      cardsData.map((rowData: any, index) => {
+        const key = JSON.stringify(rowData.values)
+        const propsForCard = {
+          key,
+          type,
+          schema,
+          isHeader,
+          secondaryLabelLimit,
+          data: rowData.values,
+          selectColumns: data.selectColumns,
+          columnModels: data.columnModels,
+          tableEntityConcreteType:
+            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
+          tableId: props.data?.queryResult.queryResults.tableId,
+          ...rest,
+        }
+        return renderCard(propsForCard, type)
+      })
+    ) : (
+      <></>
+    )
   }
 
   return (
@@ -165,7 +168,6 @@ export const CardContainer = (props: CardContainerProps) => {
       {title && <h2 className="SRC-card-overview-title">{title}</h2>}
       {!title && unitDescription && showBarChart && (
         <TotalQueryResults
-          token={token}
           isLoading={isLoading!}
           unitDescription={unitDescription}
           executeQueryRequest={executeQueryRequest}

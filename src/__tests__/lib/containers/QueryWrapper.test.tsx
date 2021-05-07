@@ -78,15 +78,6 @@ describe('basic functionality', () => {
   it('componentDidUpdate works', async () => {
     const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
 
-    const newToken = '123'
-    const spyOnExecuteQueryRequest = jest.spyOn(instance, 'executeQueryRequest')
-
-    // test login
-    wrapper.setProps({
-      token: newToken,
-    })
-    expect(spyOnExecuteQueryRequest).toHaveBeenCalled()
-
     const spyOnExecuteInitQueryRequest = jest.spyOn(
       instance,
       'executeInitialQueryRequest',
@@ -180,40 +171,39 @@ describe('deep linking', () => {
 })
 
 describe('locked facet', () => {
-
   const newProps = {
     lockedFacet: {
       facet: 'abc',
-      value: '123'
-    }
+      value: '123',
+    },
   }
   const newProps2 = {
-    lockedFacet: {}
+    lockedFacet: {},
   }
   const newState = {
     data: {
       facets: [
-        {columnName: 'abc', facetType: "enumeration", concreteType: "blah"},
-        {columnName: 'def', facetType: "enumeration", concreteType: "blah"}
-      ]
-    }
+        { columnName: 'abc', facetType: 'enumeration', concreteType: 'blah' },
+        { columnName: 'def', facetType: 'enumeration', concreteType: 'blah' },
+      ],
+    },
   }
 
-  it('removeLockedFacetData should remove locked facet data', async() => {
+  it('removeLockedFacetData should remove locked facet data', async () => {
     const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
     wrapper.setProps(newProps)
     wrapper.setState(newState)
     expect(instance.removeLockedFacetData()).toEqual({
-        facets: [{columnName: 'def', facetType: "enumeration", concreteType: "blah"}]
-      }
-    )
+      facets: [
+        { columnName: 'def', facetType: 'enumeration', concreteType: 'blah' },
+      ],
+    })
   })
 
-  it('removeLockedFacetData should not remove any data if locked facet value is not set', async() => {
+  it('removeLockedFacetData should not remove any data if locked facet value is not set', async () => {
     const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
     wrapper.setProps(newProps2)
     wrapper.setState(newState)
     expect(instance.removeLockedFacetData()?.facets).toHaveLength(2)
   })
-
 })
