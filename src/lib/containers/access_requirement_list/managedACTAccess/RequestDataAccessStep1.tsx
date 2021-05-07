@@ -47,7 +47,7 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1Props> = props => {
     }
   }
 
-  const getErrorMessage = (reason: string) => {
+  const getErrorMessage = (reason: string = '') => {
     return (<>
       <strong>Unable to update research project data.</strong><br />
       {reason}

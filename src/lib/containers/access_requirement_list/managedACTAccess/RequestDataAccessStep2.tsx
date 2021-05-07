@@ -271,18 +271,27 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               message: alertMsg
             })
           }
+        } else {
+          setAlert({
+            key: 'danger',
+            message: getErrorMessage()
+          })
         }
       } catch (e) {
         console.log("RequestDataAccessStep2: Error updating form", e)
         setAlert({
           key: 'danger',
-          message:  (<>
-            <strong>Sorry, there is an error in submitting your request.</strong><br />
-            {e.reason || ''}
-          </>)
+          message: getErrorMessage(e.reason)
         })
       }
     }
+  }
+
+  const getErrorMessage = (reason:string = '') => {
+    return (<>
+      <strong>Sorry, there is an error in submitting your request.</strong><br />
+      {reason}
+    </>)
   }
 
   const getSubmissionMsg = (submission_resp:ACTSubmissionStatus) => {
