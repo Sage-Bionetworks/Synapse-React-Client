@@ -58,12 +58,12 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
     setIsApproved(propsIsApproved)
     if (accessRequirementStatus?.currentSubmissionStatus) {
       setSubmissionState(accessRequirementStatus.currentSubmissionStatus.state)
-      showSubmissionStatusAlert(accessRequirementStatus.currentSubmissionStatus.state)
+      showSubmissionStatusAlert(accessRequirementStatus.currentSubmissionStatus)
     }
 
   }, [propsIsApproved])
 
-  const gotoSynapseAccessRequirementPage = () => {
+  const showRequestAccess = () => {
     requestDataStepCallback?.({
       managedACTAccessRequirement: accessRequirement,
       step: 1
@@ -73,9 +73,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
   const onAcceptClicked = async () => {
     if (
       accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement ||
-      accessRequirement.concreteType ===
-        SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement
+        SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
     ) {
       if (token) {
         // !isSubmissionCanceled: if the submission has already been canceled, don't cancel again
@@ -103,7 +101,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
             setAlert(errAlert)
           }
         } else {
-          gotoSynapseAccessRequirementPage()
+          showRequestAccess()
         }
       } else {
         requestDataStepCallback?.({
@@ -112,8 +110,6 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
         })
       }
 
-      // PORTALS-1483: and close the dialog.
-      // onHide?.()
     } else {
       if (!isApproved) {
         const accessApprovalRequest: AccessApproval = {
@@ -155,8 +151,8 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
     }
   }
 
-  const showSubmissionStatusAlert = (state:string) => {
-    switch (state) {
+  const showSubmissionStatusAlert = (submissionStatus:ACTSubmissionStatus) => {
+    switch (submissionStatus.state) {
       case SUBMISSION_STATE.SUBMITTED:
         setAlert({
           key: 'primary',
@@ -174,11 +170,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           key: 'danger',
           message: (<>
             <strong>Your data access request has been rejected.</strong><br />
-            Before I can accept your request, please address the following:
-            <ul>
-              <li>Please upload every page of the DUC.</li>
-              <li>Please contact us at <a href={"mailto:act@sagebionetworks.org"}>act@sagebionetworks.org</a> if you have any questions.</li>
-            </ul>
+            ${submissionStatus.rejectedReason || ''}
           </>)
         })
         break
@@ -249,7 +241,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
                   <button
                     className="update-request-button"
                     onClick={() => {
-                      gotoSynapseAccessRequirementPage()
+                      showRequestAccess()
                     }}
                     style={{
                       paddingLeft: '0',
