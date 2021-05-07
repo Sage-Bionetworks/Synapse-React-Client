@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Button } from 'react-bootstrap'
 import { BatchFileRequest, FileHandleAssociation } from '../utils/synapseTypes'
 import { getFiles } from '../utils/SynapseClient'
@@ -15,16 +15,6 @@ export type DirectFileDownloadButtonProps = {
 const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
 
   const {id, token, fileHandleAssociation, className, variant, fileName}  = props
-  let mounted:boolean = true
-
-  useEffect( () => {
-    if (mounted) {
-      //
-    }
-    return () => {
-      mounted = false
-    }
-  }, [token])
 
   const getDownloadLink = async () => {
     if (!fileHandleAssociation.fileHandleId || !token) return
