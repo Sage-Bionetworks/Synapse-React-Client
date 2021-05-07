@@ -8,14 +8,12 @@ export type CheckboxProps = {
   onChange: (newValue: boolean) => void
   isSelectAll?: boolean
   children?: React.ReactChild
-  value?: string
-  onChangeCallBack?: Function // callback to send back both value of the checkbox and the checked status
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
 ) => {
-  const { checked: propsChecked = false, isSelectAll = false, value, onChangeCallBack } = props
+  const { checked: propsChecked = false, isSelectAll = false } = props
   const [checked, setChecked] = useState<boolean>(propsChecked)
   const [focused, setFocused] = useState<boolean>(false)
 
@@ -33,9 +31,6 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
       setChecked(true)
     } else {
       setChecked(event.target.checked)
-    }
-    if (onChangeCallBack) {
-      onChangeCallBack(event.target.checked, value)
     }
   }
 
@@ -58,7 +53,6 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
             checked={checked}
             id={props.id}
             onChange={handleCheckboxChange}
-            value={value}
           />
           <span>{props.label}</span>
           {props.children ?? <></>}

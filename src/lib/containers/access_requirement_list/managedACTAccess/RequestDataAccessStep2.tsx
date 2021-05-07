@@ -339,7 +339,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     if (data.context === "attachments") {
       const docs = formSubmitRequestObject?.attachments ? formSubmitRequestObject?.attachments : []
       docs?.push(data.resp.fileHandleId)
-      console.log("docs", docs)
       setFormSubmitRequestObject(prevState => {
         return Object.assign({}, prevState, {"attachments": docs})
       })
