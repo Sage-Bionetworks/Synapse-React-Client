@@ -45,7 +45,6 @@ function renderComponent(override?:object) {
   }
   return render(<RequestDataAccessStep2
     token={token}
-    accessRequirementId={'123'}
     requestDataStepCallback={() => {}}
     entityId={'abc12'}
     user={mockUserProfile}

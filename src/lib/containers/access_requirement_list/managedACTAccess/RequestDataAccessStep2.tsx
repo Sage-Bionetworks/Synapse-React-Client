@@ -32,7 +32,6 @@ import IconSvg from '../../IconSvg'
 export type RequestDataAccessStep2Props = {
   token: string,
   managedACTAccessRequirement: ManagedACTAccessRequirement,
-  accessRequirementId: string,
   entityId: string,
   requestDataStepCallback: Function
   user: UserProfile
@@ -65,7 +64,7 @@ export type AlertProps = {
 }
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
-  const {token, requestDataStepCallback, accessRequirementId, managedACTAccessRequirement, entityId, user, researchProjectId } = props
+  const {token, requestDataStepCallback, managedACTAccessRequirement, entityId, user, researchProjectId } = props
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
@@ -94,7 +93,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }, [token, researchProjectId])
 
   const setFormData = async () => {
-    const dataAccessRequestData = await getDataAccessRequestForUpdate(accessRequirementId, token)
+    const dataAccessRequestData = await getDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), token)
 
     // initialize form submission request object
     dataAccessRequestData.researchProjectId = researchProjectId
@@ -141,7 +140,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     // Create the request objects for required documents and save them in the state variables
     if (managedACTAccessRequirement.isDUCRequired && managedACTAccessRequirement.ducTemplateFileHandleId) {
       const requestObj = {
-        associateObjectId: accessRequirementId,
+        associateObjectId: String(managedACTAccessRequirement.id),
         associateObjectType: FileHandleAssociateType.AccessRequirementAttachment,
         fileHandleId: managedACTAccessRequirement!.ducTemplateFileHandleId,
       }

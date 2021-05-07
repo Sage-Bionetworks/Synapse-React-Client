@@ -92,7 +92,6 @@ export default function AccessRequirementList({
 
   const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
-  const [accessRequirementId, setAccessRequirementId] = useState<string>("")
   const [managedACTAccessRequirement, setManagedACTAccessRequirement] = useState<ManagedACTAccessRequirement>()
   const [researchProjectId, setresearchProjectId] = useState<string>("")
   const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
@@ -240,9 +239,7 @@ export default function AccessRequirementList({
   const requestDataStepCallback = (props:requestDataStepCallbackProps) => {
     const {managedACTAccessRequirement, step, researchProjectId, formSubmitRequestObject} = props
     if (managedACTAccessRequirement) {
-      // to identify which managedACTAccessRequirement we are looking at in step 1 & 2 forms
-      setAccessRequirementId(String(managedACTAccessRequirement.id))
-      // required for step 2 form
+      // required for step 1, 2 form
       setManagedACTAccessRequirement(managedACTAccessRequirement)
     }
     if (researchProjectId) {
@@ -338,7 +335,6 @@ export default function AccessRequirementList({
         renderContent = <RequestDataAccessStep1
           token={token!}
           managedACTAccessRequirement={managedACTAccessRequirement!}
-          accessRequirementId={accessRequirementId}
           requestDataStepCallback={requestDataStepCallback}
           onHide={() => onHide?.()}
         />
@@ -349,7 +345,6 @@ export default function AccessRequirementList({
           user={user!}
           researchProjectId={researchProjectId}
           managedACTAccessRequirement={managedACTAccessRequirement!}
-          accessRequirementId={accessRequirementId}
           entityId={entityId}  // for form submission after save
           requestDataStepCallback={requestDataStepCallback}
           onHide={() => onHide?.()}

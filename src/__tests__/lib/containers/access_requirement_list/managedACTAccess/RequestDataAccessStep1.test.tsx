@@ -30,7 +30,6 @@ const mockAccessRequirement:ManagedACTAccessRequirement = {
 function renderComponent(override?:object) {
   return render(<RequestDataAccessStep1
     token={token}
-    accessRequirementId={'123'}
     managedACTAccessRequirement={mockAccessRequirement}
     onHide={() => {}}
   />)

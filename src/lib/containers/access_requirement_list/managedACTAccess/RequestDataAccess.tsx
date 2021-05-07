@@ -42,7 +42,6 @@ export type RequestDataAccessProps = {
   requestDataStepCallback?: Function
 }
 
-// const LoginPage: React.FunctionComponent<LoginPageProps> =
 const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
   const { user, token, wikiPage, accessRequirementStatus, accessRequirement, showButton = true, onHide, requestDataStepCallback } = props
   const [isHide, setIsHide] = useState<boolean>(true)
