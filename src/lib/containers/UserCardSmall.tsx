@@ -37,9 +37,9 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
 }) => {
 
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
+  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(<Registered />)
   const target = useRef(null)
-  
-  let icon = <Registered />
+
   let mounted = true
 
   useEffect(() => {
@@ -65,10 +65,10 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         undefined,
       )
       if (userBundle?.isCertified) {
-        icon = <Certified />
+        setAccountLevelIcon(<Certified />)
       }
       if (userBundle?.isVerified) {
-        icon = <Validated />
+        setAccountLevelIcon(<Validated />)
       }
       setUserBundle(bundle)
     } catch (err) {
@@ -113,6 +113,11 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         onMouseLeave={() => toggleHide()}
         onClick={event => {
           event.preventDefault()
+          // if someone explicitly set the disable link,
+          // we just return without going to the Synapse's user profile page
+          if (disableLink) {
+            return
+          }
           window.open(link, '_blank')
         }}
         className="SRC-userCard UserCardSmall SRC-underline-on-hover"
@@ -120,7 +125,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
-        {showAccountLevelIcon && <span className={"account-level-icon"}>{icon}</span>}
+        {showAccountLevelIcon && <span className={"account-level-icon"}>{accountLevelIcon}</span>}
       </span>
     </>
   ) : disableLink ? (

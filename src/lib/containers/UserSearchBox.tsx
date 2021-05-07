@@ -3,6 +3,7 @@ import Downshift from 'downshift'
 import { useState } from 'react'
 import { getUserGroupHeaders } from '../utils/SynapseClient'
 import { UserGroupHeader } from '../utils/synapseTypes'
+import { UserCardSmall } from './UserCardSmall'
 
 export type UserSearchBoxProps = {
   id?: string  // id for the input tag
@@ -69,18 +70,14 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
               || user.userName.includes(inputValue))
                   .map((item, index) => (
                     <li key={`userSearchBox-${index}`} {...getItemProps({key:item.ownerId, index, item})}>
-                      {<>
-                        <a
-                          href={`https://www.synapse.org/#!Profile:${item.ownerId}`}
-                          target={"_blank"}
-                          rel="noreferrer"
-                          className={"user-profile-link"}
-                        >{`@${item.userName}`}</a>
-                        <span>
-                          { item.firstName && <>{item.firstName}</> }
-                          { item.lastName && <>{item.lastName}</> }
-                        </span>
-                      </>}
+                      <UserCardSmall
+                        userProfile={{
+                          ownerId: item.ownerId,
+                          firstName: item.firstName || '',
+                          lastName: item.lastName || '',
+                          userName: item.userName
+                        }}
+                        disableLink={true} />
                     </li>
                   ))
                 : null

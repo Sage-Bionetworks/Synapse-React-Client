@@ -32,7 +32,7 @@ const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
     const batchFileRequest:BatchFileRequest = {
       requestedFiles: [fileHandleAssociation],
       includePreSignedURLs: true,
-      includeFileHandles: true,
+      includeFileHandles: false,
       includePreviewPreSignedURLs: false
     }
     try {
