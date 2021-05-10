@@ -1,14 +1,19 @@
-import React, { useRef } from 'react'
-import { UserProfile } from '../utils/synapseTypes/'
+import React, { useRef, useState, useEffect } from 'react'
 import { Avatar, AvatarSize } from './Avatar'
 import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../utils/hooks/useOverlay'
+import { UserBundle, UserProfile } from '../utils/synapseTypes/'
+import { SynapseClient, SynapseConstants } from '../utils'
+import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
+import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
+import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
 
 export type UserCardSmallProps = {
   userProfile: UserProfile
   showCardOnHover?: boolean
   disableLink?: boolean
   link?: string
+  showAccountLevelIcon?: boolean
   openLinkInNewTab?: boolean
   withAvatar?: boolean
   avatarSize?: AvatarSize
@@ -23,13 +28,53 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   showCardOnHover = true,
   disableLink,
   link,
+  showAccountLevelIcon = false,
   openLinkInNewTab,
   withAvatar = false,
   avatarSize = 'SMALL',
   imageURL,
   ...rest
 }) => {
+
+  const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
+  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(<Registered />)
   const target = useRef(null)
+
+  let mounted = true
+
+  useEffect(() => {
+    if (mounted) {
+      if (showAccountLevelIcon) {
+        getUserAccountLevelIcon()
+      }
+    }
+    return () => {
+      mounted = false
+    }
+  }, [])
+  
+  const getUserAccountLevelIcon = async() => {
+    try {
+      const certificationOrVerification =
+        SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
+        SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
+
+      const bundle: UserBundle = await SynapseClient.getUserBundle(
+        userProfile.ownerId,
+        certificationOrVerification,
+        undefined,
+      )
+      if (userBundle?.isCertified) {
+        setAccountLevelIcon(<Certified />)
+      }
+      if (userBundle?.isVerified) {
+        setAccountLevelIcon(<Validated />)
+      }
+      setUserBundle(bundle)
+    } catch (err) {
+      console.log("getUserAccountLevelIcon", err)
+    }
+  }
 
   const mediumUserCard = (
     <UserCardMedium userProfile={userProfile} imageURL={imageURL} {...rest} />
@@ -68,6 +113,11 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         onMouseLeave={() => toggleHide()}
         onClick={event => {
           event.preventDefault()
+          // if someone explicitly set the disable link,
+          // we just return without going to the Synapse's user profile page
+          if (disableLink) {
+            return
+          }
           window.open(link, '_blank')
         }}
         className="SRC-userCard UserCardSmall SRC-underline-on-hover"
@@ -75,6 +125,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
+        {showAccountLevelIcon && <span className={"account-level-icon"}>{accountLevelIcon}</span>}
       </span>
     </>
   ) : disableLink ? (

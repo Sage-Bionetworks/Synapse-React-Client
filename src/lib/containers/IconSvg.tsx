@@ -5,9 +5,11 @@ import {
   ArrowBackIos,
   ArrowForwardIos,
   Check,
+  Clear,
   PhotoCameraOutlined,
   Cached,
   GetApp,
+  InfoOutlined,
   AddShoppingCart,
 } from '@material-ui/icons'
 
@@ -38,7 +40,6 @@ export type IconSvgProps = {
 
 export type SVGStyleProps = {
   color?: string
-  fontSize?: string
   verticalAlign?: string
   fill?: string
 }
@@ -65,6 +66,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <ArrowForwardIos style={muiSvgStyle} />  
     case 'check':
       return <Check style={muiSvgStyle}></Check>
+    case 'clear':
+      return <Clear style={muiSvgStyle}></Clear>
     case 'download':
       return <GetApp style={muiSvgStyle}></GetApp>
     case 'addToCart':
@@ -73,6 +76,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <Cached style={muiSvgStyle}></Cached>
     case 'photoCamera':
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
+    case 'info':
+      return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
     case 'rat':
       return <Rat fill={color} style={customSvgStyle}></Rat>
     case 'chromatin':

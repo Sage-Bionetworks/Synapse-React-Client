@@ -15,7 +15,6 @@
   }
 
   &__title {
-    margin-left: -5px;
     font-size: 23px;
     font-weight: bold;
   }
@@ -28,7 +27,7 @@
   .requirement-container {
     display: flex;
     align-items: center;
-    margin-top: 15px;
+    margin: 1rem 0 4rem;
   }
 
   &__register-text-link {
@@ -63,10 +62,10 @@
   }
 
   .accept-button-container {
-    margin-top: 30px;
     align-content: center;
     justify-content: center;
-    text-align: center;
+    display: inline;
+    margin-right: 2rem;
   }
 
   .accept-button {
@@ -82,6 +81,7 @@
     justify-content: center;
     text-align: center;
     color: SRC.$primary-action-color;
+    display: inline;
   }
 
   .get-access-requirement-button {
@@ -111,5 +111,58 @@
   }
   .AcceptRequirementsMarkdown {
     padding-right: 15px;
+  }
+}
+
+
+.bootstrap-4-backport {
+  &.AccessRequirementList {
+    .terms-of-use-content {
+      flex-grow: 1;
+    }
+    .modal-dialog {
+      .access-requirement-list-alert.alert{
+        margin-top: 0
+      }
+    }
+    &.cancel-modal {
+      .modal-dialog {
+        transform: none;
+        min-height: calc(100% - 3.5rem);
+      }
+    }
+    .LoginComponent {
+      width: 350px
+    }
+
+    .access-request-form2 {
+      .form-group {
+        margin-bottom: 2rem;
+      }
+      .btn-light-primary-base {
+        margin-top: 0.5rem;
+      }
+      .list-items {
+        display: flex;
+        align-items: center;
+        .account-level-icon svg {
+          width: 30px;
+          height: auto;
+        }
+        .clear-x {
+          padding: 0;
+          margin-left: 1rem;
+          .styled-svg-wrapper {
+            display: inline-block;
+            line-height: 1rem;
+          }
+        }
+      }
+      .requester-label {
+        vertical-align: middle;
+        margin-bottom: 0.5rem;
+        display: inline-block;
+      }
+    }
   }
 }

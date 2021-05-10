@@ -573,6 +573,7 @@ div.SRC-logo-cursor * {
   height: 80px;
   width: 80px;
   font-size: 26px;
+  min-width: 80px;
 }
 
 .UserCardSmall {
@@ -1190,30 +1191,6 @@ hr ~ .SRC-wrapper {
 #addAndRemoveColumns ~ div.dropdown-menu {
   max-height: 300px;
   overflow: auto;
-}
-
-// https://github.com/twbs/bootstrap/blob/c140347bd26851c79e76766ae381e91c159b3f48/scss/_modal.scss
-.modal-dialog-scrollable {
-  height: 100%;
-
-  .modal-content {
-    height: 90%;
-    overflow: hidden;
-  }
-
-  .modal-body {
-    height: 90%;
-    overflow-y: auto;
-    padding: 15px;
-    h4 {
-      margin: 0px;
-    }
-  }
-}
-
-.modal-dialog-centered {
-  margin-top: 0px;
-  min-height: 90%;
 }
 
 .ButtonWithIcon {

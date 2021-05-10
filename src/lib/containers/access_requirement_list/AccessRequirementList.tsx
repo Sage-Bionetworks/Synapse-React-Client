@@ -6,7 +6,8 @@ import useCompare from '../../utils/hooks/useCompare'
 import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponentNew  from './managedACTAccess/ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponent  from './ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import {
   UserProfile,
@@ -16,6 +17,7 @@ import {
   TermsOfUseAccessRequirement,
   SelfSignAccessRequirement,
   AccessRequirementStatus,
+  RequestInterface,
 } from '../../utils/synapseTypes'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
@@ -25,6 +27,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile } from '@fortawesome/free-solid-svg-icons'
 import { sortBy } from 'lodash-es'
+import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
+import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
+import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
+import Login from '../Login'
 
 library.add(faFile)
 
@@ -39,6 +46,13 @@ export type AccessRequirementListProps = {
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
+}
+
+export type requestDataStepCallbackProps = {
+  managedACTAccessRequirement: ManagedACTAccessRequirement,
+  step: number,
+  researchProjectId: string,
+  formSubmitRequestObject: RequestInterface
 }
 
 export enum SUPPORTED_ACCESS_REQUIREMENTS {
@@ -78,6 +92,10 @@ export default function AccessRequirementList({
   >(undefined)
 
   const [user, setUser] = useState<UserProfile>()
+  const [requestDataStep, setRequestDataStep] = useState<number>()
+  const [managedACTAccessRequirement, setManagedACTAccessRequirement] = useState<ManagedACTAccessRequirement>()
+  const [researchProjectId, setresearchProjectId] = useState<string>("")
+  const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
@@ -91,6 +109,11 @@ export default function AccessRequirementList({
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
+
+    if (!SynapseClient.isInSynapseExperimentalMode()) { // TODO to be deleted when out of alpha mode
+      setRequestDataStep(-1)
+    }
+
     const sortAccessRequirementByCompletion = async (
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {
@@ -191,16 +214,30 @@ export default function AccessRequirementList({
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
-        return (
-          <ManagedACTAccessRequirementComponent
-            accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-            accessRequirementStatus={accessRequirementStatus}
-            token={token}
-            user={user}
-            onHide={onHide}
-            entityId={entityId}
-          />
-        )
+        if (SynapseClient.isInSynapseExperimentalMode()) {  // TODO to be deleted when out of alpha mode
+          return (
+            <ManagedACTAccessRequirementComponentNew
+              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
+              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
+              token={token}
+              user={user}
+              onHide={onHide}
+              entityId={entityId}
+              requestDataStepCallback={requestDataStepCallback}
+            />
+          )
+        } else {
+          return (
+            <ManagedACTAccessRequirementComponent
+              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
+              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
+              token={token}
+              user={user}
+              onHide={onHide}
+              entityId={entityId}
+            />
+          )
+        }
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
         return (
           <ACTAccessRequirementComponent
@@ -217,6 +254,22 @@ export default function AccessRequirementList({
         return undefined
     }
   }
+
+  const requestDataStepCallback = (props:requestDataStepCallbackProps) => {
+    const {managedACTAccessRequirement, step, researchProjectId, formSubmitRequestObject} = props
+    if (managedACTAccessRequirement) {
+      // required for step 1, 2 form
+      setManagedACTAccessRequirement(managedACTAccessRequirement)
+    }
+    if (researchProjectId) {
+      setresearchProjectId(researchProjectId)
+    }
+    if (formSubmitRequestObject) {
+      setFormSubmitRequestObject(formSubmitRequestObject)
+    }
+    setRequestDataStep(step)
+  }
+
   const content = (
     <>
       <ReactBootstrap.Modal.Header closeButton={true}>
@@ -240,7 +293,7 @@ export default function AccessRequirementList({
             />
             &nbsp;{entityInformation[0]?.name}
           </a>
-          <h4 className="AccessRequirementList__instruction">
+          <h4 className="AccessRequirementList__instruction" style={{marginTop: "3rem"}}>
             What do I need to do?
           </h4>
           <div className="requirement-container">
@@ -294,10 +347,53 @@ export default function AccessRequirementList({
     </>
   )
 
+  let renderContent = content
   if (renderAsModal) {
+    switch (requestDataStep) {
+      case 1:
+        renderContent = <RequestDataAccessStep1
+          token={token!}
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          requestDataStepCallback={requestDataStepCallback}
+          onHide={() => onHide?.()}
+        />
+        break
+      case 2:
+        renderContent = <RequestDataAccessStep2
+          token={token!}
+          user={user!}
+          researchProjectId={researchProjectId}
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          entityId={entityId}  // for form submission after save
+          requestDataStepCallback={requestDataStepCallback}
+          onHide={() => onHide?.()}
+        />
+        break
+      case 3:
+        renderContent = <CancelRequestDataAccess
+          token={token!}
+          formSubmitRequestObject={formSubmitRequestObject}
+          onHide={() => onHide?.()}  // for closing dialogs
+        />
+        break
+      case 4:
+        renderContent = <>
+            <ReactBootstrap.Modal.Header closeButton={false}>
+              <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
+                Please Log In
+              </ReactBootstrap.Modal.Title>
+            </ReactBootstrap.Modal.Header>
+            <ReactBootstrap.Modal.Body className={"AccessRequirementList login-modal "}>
+              <Login sessionCallback={()=>{window.location.reload()}}/>
+            </ReactBootstrap.Modal.Body>
+          </>
+        break
+      default:
+        renderContent = content
+    }
     return (
       <ReactBootstrap.Modal
-        className="AccessRequirementList"
+        className={!requestDataStep ? "bootstrap-4-backport AccessRequirementList": 'bootstrap-4-backport AccessRequirementList modal-auto-height'}
         onHide={() => onHide?.()}
         show={true}
         animation={false}
@@ -305,9 +401,9 @@ export default function AccessRequirementList({
         scrollable={true}
         size="lg"
       >
-        {content}
+        {renderContent}
       </ReactBootstrap.Modal>
     )
   }
-  return <div className="AccessRequirementList">{content}</div>
+  return <div className="AccessRequirementList">{renderContent}</div>
 }
