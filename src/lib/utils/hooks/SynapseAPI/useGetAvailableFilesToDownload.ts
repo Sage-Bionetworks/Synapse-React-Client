@@ -28,7 +28,7 @@ export function useGetAvailableFilesToDownload(
 
 export function useGetAvailableFilesToDownloadInfinite(
   token: string,
-  sort: Sort,
+  sort?: Sort,
   options?: UseInfiniteQueryOptions<
   DownloadListQueryResponse,
     SynapseClientError,
@@ -37,7 +37,9 @@ export function useGetAvailableFilesToDownloadInfinite(
 ) {
   const request:AvailableFilesRequest = {
     concreteType: 'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
-    sort: [sort]
+  }
+  if (sort) {
+    request.sort = [sort]
   }
   return useInfiniteQuery<DownloadListQueryResponse, SynapseClientError>(
     ['downloadlistv2', request],

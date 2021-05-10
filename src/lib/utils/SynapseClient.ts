@@ -95,6 +95,9 @@ import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/Download
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
 import { AvailableFilesResponse } from './synapseTypes/DownloadListV2/QueryResponseDetails'
+import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
+import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
+import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
 
 const cookies = new UniversalCookies()
 
@@ -2539,4 +2542,23 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
       console.error('Error on getDownloadListV2 ', err)
       throw err
     })
+}
+/**
+ * Remove item from Download List v2
+ * http://rest-docs.synapse.org/rest/POST/download/list/remove.html
+ */
+ export const removeItemFromDownloadListV2 = (
+  item: DownloadListItem,
+  sessionToken: string | undefined = undefined,
+): Promise<RemoveBatchOfFilesFromDownloadListResponse> => {
+  const request:RemoveBatchOfFilesFromDownloadListRequest = {
+    batchToRemove: [item]
+  }
+  return doPost<RemoveBatchOfFilesFromDownloadListResponse>(
+    '/repo/v1/download/list/remove',
+    request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
