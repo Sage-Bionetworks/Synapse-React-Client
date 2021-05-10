@@ -22,7 +22,7 @@ const CancelRequestDataAccess:React.FC<CancelRequestDataAccessProps> = props => 
     if (formSubmitRequestObject) {
       try {
         const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
-        if (resp.etag) {  // save success, close dialog
+        if (resp) {  // save success, close dialog
           onHide?.()
         } else {
           setAlert({

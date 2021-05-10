@@ -242,7 +242,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     if (formSubmitRequestObject) {
       try {
         const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
-        if (resp.etag) { // save success
+        if (resp && resp.etag) { // save success
           const requestObject:CreateSubmissionRequest = {
             requestId: resp.id,
             requestEtag: resp.etag,
