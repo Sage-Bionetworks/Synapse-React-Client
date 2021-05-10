@@ -6,7 +6,8 @@ import useCompare from '../../utils/hooks/useCompare'
 import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponent from './managedACTAccess/ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponentNew  from './managedACTAccess/ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponent  from './ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import {
   UserProfile,
@@ -108,6 +109,11 @@ export default function AccessRequirementList({
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
+
+    if (!SynapseClient.isInSynapseExperimentalMode()) { // TODO to be deleted when out of alpha mode
+      setRequestDataStep(-1)
+    }
+
     const sortAccessRequirementByCompletion = async (
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {
@@ -208,17 +214,30 @@ export default function AccessRequirementList({
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
-        return (
-          <ManagedACTAccessRequirementComponent
-            accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-            accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
-            token={token}
-            user={user}
-            onHide={onHide}
-            entityId={entityId}
-            requestDataStepCallback={requestDataStepCallback}
-          />
-        )
+        if (SynapseClient.isInSynapseExperimentalMode()) {  // TODO to be deleted when out of alpha mode
+          return (
+            <ManagedACTAccessRequirementComponentNew
+              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
+              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
+              token={token}
+              user={user}
+              onHide={onHide}
+              entityId={entityId}
+              requestDataStepCallback={requestDataStepCallback}
+            />
+          )
+        } else {
+          return (
+            <ManagedACTAccessRequirementComponent
+              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
+              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
+              token={token}
+              user={user}
+              onHide={onHide}
+              entityId={entityId}
+            />
+          )
+        }
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
         return (
           <ACTAccessRequirementComponent
