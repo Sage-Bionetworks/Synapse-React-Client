@@ -9,14 +9,12 @@ import { useInView } from 'react-intersection-observer';
 import { AvailableFilesResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Sort, SortField } from '../../utils/synapseTypes/DownloadListV2/QueryRequestDetails';
-import {
-    faSortAmountDown,
-    faSortAmountUp,
-} from '@fortawesome/free-solid-svg-icons'
 import { DownloadListItem } from '../../utils/synapseTypes/DownloadListV2/DownloadListItem';
 import { SynapseClient } from '../../utils';
 import moment from 'moment';
 import UserCard from '../UserCard';
+import SortIcon from '../../assets/icons/Sort';
+import { Direction } from '../../utils/synapseTypes';
 
 export type DownloadListTableV2Props = {
     token: string
@@ -59,21 +57,6 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
         }
     }, [status, isFetching, hasNextPage, fetchNextPage, inView])
 
-    const sortColumn = async (field: SortField) => {
-        try {
-            const direction =
-                field === sort?.field ? (sort.direction === 'ASC' ? 'DESC' : 'ASC') : 'DESC'
-
-            setSort({
-                field,
-                direction,
-            })
-        } catch (err) {
-            console.error(err)
-        }
-    }
-
-
     const allRows = data ? ([] as DownloadListItemResult[]).concat.apply(
         [],
         data.pages.map(page => (page.reponseDetails as AvailableFilesResponse).page),
@@ -92,170 +75,59 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
         }
     }
 
+    const showInteractiveSortIcon = (columnSortBy: SortField) => {
+        return (
+          setSort && (
+            <SortIcon
+              role="button"
+              style={{ height: '20px' }}
+              active={sort?.field === columnSortBy}
+              direction={
+                sort?.field === columnSortBy ? (sort.direction === 'DESC' ? Direction.DESC : Direction.ASC) : Direction.DESC
+              }
+              onClick={() => {
+                    const direction =
+                    columnSortBy === sort?.field ? (sort.direction === 'ASC' ? 'DESC' : 'ASC') : 'DESC'
+                setSort({
+                    field: columnSortBy,
+                    direction,
+                })
+              }}
+            />
+          )
+        )
+      }
     return (
         <ReactBootstrap.Table striped={true} responsive={true} className="DownloadListTableV2">
             <thead>
                 <tr>
                     <th>
                         File Name
-                <button
-                            className={`sort SRC-primary-background-color-hover ${sort?.field === 'fileName'
-                                    ? 'SRC-primary-background-color'
-                                    : ''
-                                }`}
-                            onClick={() => {
-                                sortColumn('fileName')
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    sort?.field === 'fileName'
-                                        ? sort.direction === 'DESC'
-                                            ? faSortAmountDown
-                                            : faSortAmountUp
-                                        : faSortAmountDown
-                                }
-                                color={sort?.field === 'fileName' ? 'white' : ''}
-                            />
-                        </button>
+                        <span>{showInteractiveSortIcon('fileName')}</span>
                     </th>
                     <th>
                         Project
-                <button
-                            className={`sort SRC-primary-background-color-hover ${sort?.field === 'projectName'
-                                    ? 'SRC-primary-background-color'
-                                    : ''
-                                }`}
-                            onClick={() => {
-                                sortColumn('projectName')
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    sort?.field === 'projectName'
-                                        ? sort.direction === 'DESC'
-                                            ? faSortAmountDown
-                                            : faSortAmountUp
-                                        : faSortAmountDown
-                                }
-                                color={sort?.field === 'projectName' ? 'white' : ''}
-                            />
-                        </button>
+                        <span>{showInteractiveSortIcon('projectName')}</span>
                     </th>
                     <th>
                         SynID
-                <button
-                            className={`sort SRC-primary-background-color-hover ${sort?.field === 'synId'
-                                    ? 'SRC-primary-background-color'
-                                    : ''
-                                }`}
-                            onClick={() => {
-                                sortColumn('synId')
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    sort?.field === 'synId'
-                                        ? sort.direction === 'DESC'
-                                            ? faSortAmountDown
-                                            : faSortAmountUp
-                                        : faSortAmountDown
-                                }
-                                color={sort?.field === 'synId' ? 'white' : ''}
-                            />
-                        </button>
+                        <span>{showInteractiveSortIcon('synId')}</span>
                     </th>
                     <th>
                         Added On
-                <button
-                            className={`sort SRC-primary-background-color-hover ${sort?.field === 'addedOn'
-                                    ? 'SRC-primary-background-color'
-                                    : ''
-                                }`}
-                            onClick={() => {
-                                sortColumn('addedOn')
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    sort?.field === 'addedOn'
-                                        ? sort.direction === 'DESC'
-                                            ? faSortAmountDown
-                                            : faSortAmountUp
-                                        : faSortAmountDown
-                                }
-                                color={sort?.field === 'addedOn' ? 'white' : ''}
-                            />
-                        </button>
+                        <span>{showInteractiveSortIcon('addedOn')}</span>
                     </th>
                     <th>
                         Created By
-                <button
-                            className={`sort SRC-primary-background-color-hover ${sort?.field === 'createdBy'
-                                    ? 'SRC-primary-background-color'
-                                    : ''
-                                }`}
-                            onClick={() => {
-                                sortColumn('createdBy')
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    sort?.field === 'createdBy'
-                                        ? sort.direction === 'DESC'
-                                            ? faSortAmountDown
-                                            : faSortAmountUp
-                                        : faSortAmountDown
-                                }
-                                color={sort?.field === 'createdBy' ? 'white' : ''}
-                            />
-                        </button>
+                        <span>{showInteractiveSortIcon('createdBy')}</span>
                     </th>
                     <th>
                         Created On
-                <button
-                            className={`sort SRC-primary-background-color-hover ${sort?.field === 'createdOn'
-                                    ? 'SRC-primary-background-color'
-                                    : ''
-                                }`}
-                            onClick={() => {
-                                sortColumn('createdOn')
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    sort?.field === 'createdOn'
-                                        ? sort.direction === 'DESC'
-                                            ? faSortAmountDown
-                                            : faSortAmountUp
-                                        : faSortAmountDown
-                                }
-                                color={sort?.field === 'createdOn' ? 'white' : ''}
-                            />
-                        </button>
+                        <span>{showInteractiveSortIcon('createdOn')}</span>
                     </th>
                     <th>
                         Size
-                <button
-                            className={`sort SRC-primary-background-color-hover ${sort?.field === 'fileSize'
-                                    ? 'SRC-primary-background-color'
-                                    : ''
-                                }`}
-                            onClick={() => {
-                                sortColumn('fileSize')
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    sort?.field === 'fileSize'
-                                        ? sort.direction === 'DESC'
-                                            ? faSortAmountDown
-                                            : faSortAmountUp
-                                        : faSortAmountDown
-                                }
-                                color={sort?.field === 'fileSize' ? 'white' : ''}
-                            />
-                        </button>
+                        <span>{showInteractiveSortIcon('fileSize')}</span>
                     </th>
                     {/* th below is made for trash can icon but holds no content */}
                     <th />

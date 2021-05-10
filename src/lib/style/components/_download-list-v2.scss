@@ -1,6 +1,11 @@
 .DownloadListTableV2 {
-  th {
-    border: 1px solid black
+  thead>tr>th, thead:first-child>tr:first-child>th {
+    padding: 10px 6px 5px 7px;
+    border: 1px solid #DDDDDF;
+    color: #515359;
+    span {
+      float: right;
+    }
   }
   td {
     vertical-align: middle !important;
