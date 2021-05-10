@@ -10,6 +10,11 @@
   td {
     vertical-align: middle !important;
   }
+  tbody>tr>td:first-child { // file name column
+    overflow-x: hidden;
+    max-width: 310px;
+    text-overflow: ellipsis;
+  }
 }
 .sort {
   padding-left: 5px;
