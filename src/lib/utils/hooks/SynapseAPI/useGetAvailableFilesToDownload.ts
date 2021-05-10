@@ -7,7 +7,7 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import { AvailableFilesRequest } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
+import { AvailableFilesRequest, Sort } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
 import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetAvailableFilesToDownload(
@@ -28,13 +28,17 @@ export function useGetAvailableFilesToDownload(
 
 export function useGetAvailableFilesToDownloadInfinite(
   token: string,
-  request: AvailableFilesRequest,
+  sort: Sort,
   options?: UseInfiniteQueryOptions<
   DownloadListQueryResponse,
     SynapseClientError,
     DownloadListQueryResponse
   >,
 ) {
+  const request:AvailableFilesRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
+    sort: [sort]
+  }
   return useInfiniteQuery<DownloadListQueryResponse, SynapseClientError>(
     ['downloadlistv2', request],
     async context => {
