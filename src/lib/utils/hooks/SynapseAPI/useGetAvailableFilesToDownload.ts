@@ -10,7 +10,7 @@ import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/Dow
 import { AvailableFilesRequest } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
 import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
-export function useGetDownloadListV2(
+export function useGetAvailableFilesToDownload(
   token: string,
   request: AvailableFilesRequest,
   options?: UseQueryOptions<
@@ -21,12 +21,12 @@ export function useGetDownloadListV2(
 ) {
   return useQuery<DownloadListQueryResponse, SynapseClientError>(
     ['downloadlistv2', token, request],
-    () => SynapseClient.getDownloadListV2(request, token),
+    () => SynapseClient.getAvailableFilesToDownload(request, token),
     options,
   )
 }
 
-export function useGetDownloadListV2Infinite(
+export function useGetAvailableFilesToDownloadInfinite(
   token: string,
   request: AvailableFilesRequest,
   options?: UseInfiniteQueryOptions<
@@ -38,7 +38,7 @@ export function useGetDownloadListV2Infinite(
   return useInfiniteQuery<DownloadListQueryResponse, SynapseClientError>(
     ['downloadlistv2', request],
     async context => {
-      return await SynapseClient.getDownloadListV2(
+      return await SynapseClient.getAvailableFilesToDownload(
         { ...request, nextPageToken: context.pageParam },
         token,
       )

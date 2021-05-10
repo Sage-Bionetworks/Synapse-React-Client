@@ -5,7 +5,7 @@ import * as ReactBootstrap from 'react-bootstrap'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import DownloadListTableV2, { DownloadListTableV2Props } from './DownloadListTableV2'
 
-export default function DownloadListTableV2Wrapper(props: DownloadListTableV2Props) {
+export default function AvailableForDownloadTable(props: DownloadListTableV2Props) {
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {

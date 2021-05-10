@@ -2513,7 +2513,7 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
  * Get Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
- export const getDownloadListV2 = (
+ export const getAvailableFilesToDownload = (
   request: AvailableFilesRequest,
   sessionToken: string | undefined = undefined,
 ): Promise<DownloadListQueryResponse> => {
