@@ -67,6 +67,7 @@ import {
   EntityPath,
   EntityBundleRequest,
   EntityBundle,
+  ACTSubmissionStatus,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -89,12 +90,16 @@ import {
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
+import { ResearchProject } from './synapseTypes/ResearchProject'
+import {
+  RequestInterface,
+  CreateSubmissionRequest,
+} from './synapseTypes/AccessRequirement'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
-import { AvailableFilesResponse } from './synapseTypes/DownloadListV2/QueryResponseDetails'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
@@ -691,6 +696,24 @@ export const getUserBundle = (
   return doGet<UserBundle>(
     `repo/v1/user/${id}/bundle?mask=${mask}`,
     sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Users and Groups that match the given prefix.
+ * http://rest-docs.synapse.org/rest/GET/userGroupHeaders.html
+ */
+export const getUserGroupHeaders = (
+  prefix: string = "",
+  typeFilter: string = "ALL",
+  offset: number = 0,
+  limit: number = 20,
+): Promise<UserGroupHeaderResponsePage> => {
+  return doGet<UserGroupHeaderResponsePage>(
+    `repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
+    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2557,6 +2580,71 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
   return doPost<RemoveBatchOfFilesFromDownloadListResponse>(
     '/repo/v1/download/list/remove',
     request,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/researchProject.html
+export const updateResearchProject = (requestObj: ResearchProject, sessionToken: string) => {
+  return doPost<ResearchProject>(
+    '/repo/v1/researchProject',
+    requestObj,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/researchProjectForUpdate.html
+export const getResearchProject = (requirementId: string, sessionToken: string) => {
+  return doGet<ResearchProject>(
+    `/repo/v1/accessRequirement/${requirementId}/researchProjectForUpdate`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
+export const getDataAccessRequestForUpdate = (requirementId: string, sessionToken: string) => {
+  return doGet<RequestInterface>(
+    `/repo/v1/accessRequirement/${requirementId}/dataAccessRequestForUpdate`,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
+export const updateDataAccessRequest = (requestObj: RequestInterface, sessionToken: string) => {
+  return doPost<RequestInterface>(
+    `/repo/v1/dataAccessRequest`,
+    requestObj,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/dataAccessRequest/requestId/submission.html
+export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, sessionToken: string) => {
+  return doPost<ACTSubmissionStatus>(
+    `/repo/v1/dataAccessRequest/${requestObj.requestId}/submission`,
+    requestObj,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId/cancellation.html
+// Cancel a submission. Only the user who created this submission can cancel it.
+export const cancelDataAccessRequest = (submissionId: string, sessionToken: string) => {
+  return doPut<ACTSubmissionStatus>(
+    `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
+    undefined,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

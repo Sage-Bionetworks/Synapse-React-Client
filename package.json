@@ -41,6 +41,7 @@
     "@upsetjs/react": "^1.6.2",
     "bootstrap": "^4.6.0",
     "column-resizer": "^1.3.5",
+    "downshift": "^6.1.2",
     "gh-pages": "^2.0.0",
     "i": "^0.3.6",
     "json-rules-engine": "^4.0.0",

@@ -11,4 +11,5 @@ export interface ManagedACTAccessRequirement
   areOtherAttachmentsRequired: boolean //If true, then accessor needs to upload attachment(s) other than Data Use Certificate (DUC) and Institutional Review Board (IRB) Approval document to gain access to the data.
   expirationPeriod: number //After an AccessApproval is granted for this AccessRequirement, it will be expired after expirationPeriod miliseconds. Set this value to 0 to indicate that AccessApproval will never be expired.
   isIDUPublic: boolean //If true, the Intended Data Use Statements submitted to gain access to the data will be presented to public.
+  isIDURequired: boolean // If true (default), the Intended Data Use Statement for a research project is required.
 }
