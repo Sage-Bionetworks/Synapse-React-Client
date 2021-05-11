@@ -25,7 +25,6 @@ export type FacetNavOwnProps = {
 type UiFacetState = {
   name: string
   isHidden: boolean
-  isExpanded: boolean
   plotType: PlotType
   index?: number
 }
@@ -86,7 +85,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
         result.map((item, index) => ({
           name: item.columnName,
           isHidden: index >= DEFAULT_VISIBLE_FACETS,
-          isExpanded: false,
           plotType: 'PIE',
         })),
       )
