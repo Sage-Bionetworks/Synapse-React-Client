@@ -48,7 +48,6 @@
     font-weight: bold;
   }
 
-
   //removes shadow surrounding buttons and anchors when they are clicked
   .btn:focus,
   a:focus {
@@ -74,10 +73,6 @@
   .popover > .arrow {
     border-width: unset;
   }
-}
-
-.fade {
-  opacity: 1;
 }
 
 // Modals
