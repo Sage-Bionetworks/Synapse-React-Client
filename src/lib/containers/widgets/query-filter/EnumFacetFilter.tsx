@@ -323,22 +323,20 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       )
     } else {
       return (
-        <div style={{ display: 'flex' }}>
-          <Dropdown
-            className="EnumFacetFilter"
-            show={isShowDropdown}
-            onToggle={onToggle}
-          >
-            <ElementWithTooltip
-              idForToolTip="facetFilterTooltip"
-              tooltipText="Filter by specific facet"
-              key="facetFilterTooltip"
-              darkTheme={true}
-              icon={'filter'}
-            />
-            <Dropdown.Menu>{content}</Dropdown.Menu>
-          </Dropdown>
-        </div>
+        <Dropdown
+          className="EnumFacetFilter"
+          show={isShowDropdown}
+          onToggle={onToggle}
+        >
+          <ElementWithTooltip
+            idForToolTip="facetFilterTooltip"
+            tooltipText="Filter by specific facet"
+            key="facetFilterTooltip"
+            darkTheme={true}
+            icon={'filter'}
+          />
+          <Dropdown.Menu>{content}</Dropdown.Menu>
+        </Dropdown>
       )
     }
   } else {
