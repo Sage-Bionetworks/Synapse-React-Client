@@ -18,7 +18,6 @@ import {
   QueryBundleRequest,
 } from '../../../utils/synapseTypes'
 import loadingScreen from '../../LoadingScreen'
-import SynapseModal from '../../SynapseModal'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
@@ -519,7 +518,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       applyChangesToFacetFilter,
                     )
                   }}
-                  containerAs="Select"
+                  containerAs="Dropdown"
+                  dropdownType="SelectBox"
                 />
                 <ReactTooltip id={TOOLTIP_ID} effect="solid" event="click" />
                 <InfoOutlined

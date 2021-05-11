@@ -26,7 +26,8 @@ export type EnumFacetFilterProps = {
   onChange: Function
   onClear: Function
   facetAliases: {} | undefined
-  containerAs?: 'Collapsible' | 'Dropdown' | 'Select'
+  containerAs?: 'Collapsible' | 'Dropdown'
+  dropdownType?: 'Icon' | 'SelectBox'
   collapsed?: boolean
 }
 
@@ -86,6 +87,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   onChange,
   facetAliases,
   containerAs = 'Collapsible',
+  dropdownType = 'Icon',
   collapsed = false,
 }: EnumFacetFilterProps) => {
   const [isShowAll, setIsShowAll] = useState<boolean>(false)
@@ -157,7 +159,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   if (!columnModel) {
     return <></>
   }
-  const isDropdown = containerAs === 'Dropdown' || containerAs === 'Select'
+  const isDropdown = containerAs === 'Dropdown'
   const content = (
     <div className={isDropdown ? 'EnumFacetFilter__dropdown_menu' : ''}>
       <div className="EnumFacetFilter__checkboxContainer--forAll">
@@ -300,7 +302,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const onToggle = () => setIsShowDropdown(!isShowDropdown)
 
   if (isDropdown) {
-    if (containerAs === 'Select') {
+    if (dropdownType === 'SelectBox') {
       return (
         <Dropdown
           className={'EnumFacetFilter EnumFacetFilterSelect'}
