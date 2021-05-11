@@ -87,3 +87,21 @@
 .fade {
   opacity: 1;
 }
+
+// Modals
+.modal-content {
+  padding: 5px 30px;
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0px;
+
+    .modal-title {
+      order: -99;
+    }
+    button.close {
+      order: 99;
+    }
+  }
+}
