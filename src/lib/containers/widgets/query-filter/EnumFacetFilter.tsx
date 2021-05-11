@@ -332,7 +332,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             idForToolTip="facetFilterTooltip"
             tooltipText="Filter by specific facet"
             key="facetFilterTooltip"
-            darkTheme={true}
+            darkTheme={false}
             icon={'filter'}
           />
           <Dropdown.Menu>{content}</Dropdown.Menu>

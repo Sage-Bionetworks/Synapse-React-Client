@@ -469,7 +469,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   key="expandGraph"
                   callbackFn={() => setShowModal(true)}
                   className="SRC-primary-color"
-                  darkTheme={true}
+                  darkTheme={false}
                   icon={'expand'}
                 />
                 <ElementWithTooltip
@@ -478,7 +478,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   key="hideGraph"
                   callbackFn={() => onHide()}
                   className="SRC-primary-color"
-                  darkTheme={true}
+                  darkTheme={false}
                   icon={'close'}
                 />
               </div>

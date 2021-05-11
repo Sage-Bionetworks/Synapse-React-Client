@@ -7,6 +7,18 @@
   padding: 10px;
   line-height: 0px;
 
+  svg {
+    path {
+      fill: SRC.$primary-action-color;
+    }
+  }
+
+  &:hover {
+    svg,
+    path {
+      fill: #fff;
+    }
+  }
   &.dark-theme {
     svg {
       fill: SRC.$primary-action-color;
