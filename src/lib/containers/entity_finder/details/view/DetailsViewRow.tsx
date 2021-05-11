@@ -191,14 +191,13 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
                   }}
                 >
                   <option value={-1}>Always Latest Version</option>
-                  {versions?.map((version, index) => {
+                  {versions?.map(version => {
                     return (
                       <option
                         key={version.versionNumber}
                         value={version.versionNumber}
                       >
                         Version {version.versionNumber}
-                        {index === 0 ? ' (Current)' : ''}
                       </option>
                     )
                   })}

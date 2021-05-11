@@ -22,6 +22,11 @@ module.exports = {
             components: ['src/lib/containers/**/Login.tsx','src/lib/containers/**/Logout.tsx'],
         },
         {
+            name: 'Experimental Mode',
+            description: 'For components that are in experimental mode',
+            components: 'src/lib/containers/**/ExperimentalMode.tsx'
+        },
+        {
             name: 'Home Page',
             //   content: 'docs/homepage.md'
             description: 'Collection of components used in portal home pages',

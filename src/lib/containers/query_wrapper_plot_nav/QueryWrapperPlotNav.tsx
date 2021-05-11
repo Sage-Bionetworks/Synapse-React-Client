@@ -66,7 +66,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     facetsToFilter,
     hideDownload,
     searchConfiguration,
-    limit=DEFAULT_PAGE_SIZE,
+    limit = DEFAULT_PAGE_SIZE,
     ...rest
   } = props
   let sqlUsed = sql
@@ -110,7 +110,11 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
         />
         <QueryFilter {...rest} />
         <QueryFilterToggleButton />
-        <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
+        <FacetNav
+          facetsToPlot={facetsToPlot}
+          showNotch={false}
+          token={props.token}
+        />
         <FilterAndView
           facetsToFilter={facetsToFilter}
           tableConfiguration={tableConfiguration}
