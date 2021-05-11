@@ -14,20 +14,6 @@
     }
   }
 
-  label {
-    margin-bottom: 0.5rem;
-    margin-top: 0.5rem;
-    color: SRC.$gray-deemphasized;
-    font-weight: normal;
-  }
-
-  // disabled input boxes should be "flat"
-  input:disabled,
-  input:read-only {
-    box-shadow: none;
-    cursor: text;
-  }
-
   .dropdown-menu {
     a.dropdown-item:hover:not(.disabled) {
       background: SRC.$primary-action-color;
@@ -56,6 +42,12 @@
   button.dropdown-toggle.btn::after {
     font-size: 18px;
   }
+
+  .dropdown-toggle.secondary-caret::after {
+    color: SRC.$secondary-action-color;
+    font-weight: bold;
+  }
+
 
   //removes shadow surrounding buttons and anchors when they are clicked
   .btn:focus,

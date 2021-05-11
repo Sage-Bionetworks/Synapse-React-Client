@@ -383,7 +383,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     <div className="bootstrap-4-backport SRC-labeled-dropdown">
       <span className="SRC-labeled-dropdown__label">Chart Type</span>
       <Dropdown>
-        <Dropdown.Toggle variant="enum-facet-filter-select">
+        <Dropdown.Toggle className="secondary-caret" variant="gray-select">
           {plotType === 'PIE' ? 'Pie Chart' : 'Bar Chart'}
         </Dropdown.Toggle>
         <Dropdown.Menu className="chart-tools">

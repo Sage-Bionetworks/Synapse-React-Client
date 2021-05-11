@@ -309,7 +309,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           show={isShowDropdown}
           onToggle={onToggle}
         >
-          <Dropdown.Toggle variant="enum-facet-filter-select">
+          <Dropdown.Toggle className="secondary-caret" variant="gray-select">
             {allIsSelected && 'All'}
             {!allIsSelected &&
               facetValues.filter(item => item.isSelected).length === 1 &&

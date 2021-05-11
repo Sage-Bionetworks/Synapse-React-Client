@@ -121,7 +121,7 @@
     );
   }
 
-  .btn-enum-facet-filter-select {
+  .btn-gray-select {
     color: SRC.$text-color-dark;
     @include button-variant(
       $background: SRC.$gray-light,
@@ -129,9 +129,5 @@
       $hover-background: SRC.$gray-light,
       $active-background: SRC.$gray-light
     );
-  }
-  .btn-enum-facet-filter-select::after {
-    color: SRC.$secondary-action-color;
-    font-weight: bold;
   }
 }
