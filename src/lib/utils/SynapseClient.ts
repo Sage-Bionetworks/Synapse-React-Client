@@ -1143,7 +1143,7 @@ export const getPresignedUrlForWikiAttachment = (
 }
 
 export const isInSynapseExperimentalMode = ():boolean => {
-  return cookies.get('SynapseTestWebsite')
+  return cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
 }
 
 /**
