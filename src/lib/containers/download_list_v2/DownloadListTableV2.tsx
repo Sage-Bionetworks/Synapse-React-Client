@@ -26,7 +26,6 @@ export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 export default function DownloadListTableV2(props: DownloadListTableV2Props) {
     const handleError = useErrorHandler()
-
     // Load the next page when this ref comes into view.
     const { ref, inView } = useInView()
     const [sort, setSort] = useState<Sort | undefined>(undefined)
@@ -44,7 +43,7 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
         if (isError && newError) {
             handleError(toError(newError))
         }
-    }, [isError, newError, handleError])
+    }, [props.token, isError, newError, handleError])
 
     useEffect(() => {
         if (
