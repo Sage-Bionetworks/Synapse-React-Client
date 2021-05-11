@@ -25,7 +25,9 @@ export default function AvailableForDownloadTable(props: DownloadListTableV2Prop
             </div>
         )
     }
-    
+    if (!props.token) {
+        return <></>
+    }
     return (
         <QueryClientProvider client={queryClient}>
             <ErrorBoundary FallbackComponent={ErrorFallback}>

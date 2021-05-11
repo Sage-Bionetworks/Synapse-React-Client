@@ -1,3 +1,3 @@
 ```jsx
-sessionToken && <AvailableForDownloadTable token={sessionToken} />
+<AvailableForDownloadTable token={sessionToken} />
 ```

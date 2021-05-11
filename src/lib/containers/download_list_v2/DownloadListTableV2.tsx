@@ -39,11 +39,12 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
         error: newError,
         refetch
     } = useGetAvailableFilesToDownloadInfinite(props.token, sort)
+    
     useEffect(() => {
         if (isError && newError) {
             handleError(toError(newError))
         }
-    }, [props.token, isError, newError, handleError])
+    }, [isError, newError, handleError])
 
     useEffect(() => {
         if (
