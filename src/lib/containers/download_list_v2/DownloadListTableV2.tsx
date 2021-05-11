@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { useErrorHandler } from 'react-error-boundary';
-import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult';
-import { toError } from '../ErrorBanner';
+import React, { useState, useEffect } from 'react'
+import { useErrorHandler } from 'react-error-boundary'
+import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult'
+import { toError } from '../ErrorBanner'
 import * as ReactBootstrap from 'react-bootstrap'
-import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize';
-import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload';
-import { useInView } from 'react-intersection-observer';
-import { AvailableFilesResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails';
+import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
+import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
+import { useInView } from 'react-intersection-observer'
+import { AvailableFilesResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Sort, SortField } from '../../utils/synapseTypes/DownloadListV2/QueryRequestDetails';
-import { DownloadListItem } from '../../utils/synapseTypes/DownloadListV2/DownloadListItem';
-import { SynapseClient } from '../../utils';
-import moment from 'moment';
-import UserCard from '../UserCard';
-import SortIcon from '../../assets/icons/Sort';
-import { Direction } from '../../utils/synapseTypes';
-import { SynapseSpinner } from '../LoadingScreen';
+import { Sort, SortField } from '../../utils/synapseTypes/DownloadListV2/QueryRequestDetails'
+import { DownloadListItem } from '../../utils/synapseTypes/DownloadListV2/DownloadListItem'
+import { SynapseClient } from '../../utils'
+import moment from 'moment'
+import UserCard from '../UserCard'
+import SortIcon from '../../assets/icons/Sort'
+import { Direction } from '../../utils/synapseTypes'
+import { SynapseSpinner } from '../LoadingScreen'
 
 export type DownloadListTableV2Props = {
     token: string

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { getUserProfileWithProfilePic } from '../utils/functions/getUserData'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/synapseTypes/'
@@ -82,41 +81,43 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
   }, [userProfile, alias, token])
 
   useEffect(() => {
+    const getProfilePicture = (profileOwnerId:string, fileHandleId?: string) => {
+      if (fileHandleId) {
+        const fha = {
+          associateObjectId: profileOwnerId,
+          associateObjectType: 'UserProfileAttachment',
+          fileHandleId: fileHandleId,
+        }
+        const request: any = {
+          includeFileHandles: false,
+          includePreSignedURLs: true,
+          includePreviewPreSignedURLs: false,
+          requestedFiles: [fha],
+        }
+        SynapseClient.getFiles(request, token)
+          .then((fileHandleList) => {
+            setPresignedUrl(fileHandleList.requestedFiles[0].preSignedURL!)
+            setIsLoading(false)
+          }).catch(err => {
+            console.warn('failed to get user profile picture ', err)
+          })
+      } else {
+        setIsLoading(false)
+      }
+    }
+
     if (!userProfile && principalId) {
-      const cachedProfileString = localStorage.getItem(`USER_PROFILE_${principalId}`)
+      const cachedProfileString = sessionStorage.getItem(`${principalId}_USER_PROFILE`)
       if (cachedProfileString) {
         const cachedProfile = JSON.parse(cachedProfileString) as UserProfile
         setUserProfile(cachedProfile)
-        // get profile picture
-        if (cachedProfile.profilePicureFileHandleId) {
-          const fha = {
-            associateObjectId: principalId,
-            associateObjectType: 'UserProfileAttachment',
-            fileHandleId: cachedProfile.profilePicureFileHandleId,
-          }
-          const request: any = {
-            includeFileHandles: false,
-            includePreSignedURLs: true,
-            includePreviewPreSignedURLs: false,
-            requestedFiles: [fha],
-          }
-          SynapseClient.getFiles(request, token)
-            .then((fileHandleList) => {
-              setPresignedUrl(fileHandleList.requestedFiles[0].preSignedURL!)
-              setIsLoading(false)
-            }).catch(err => {
-              console.warn('failed to get user profile picture ', err)
-            })
-          } else {
-            setIsLoading(false)
-          }
+        getProfilePicture(principalId, cachedProfile.profilePicureFileHandleId)
       } else {
-        getUserProfileWithProfilePic(principalId, token)
-        .then(data => {
-          localStorage.setItem(`USER_PROFILE_${principalId}`, JSON.stringify(data.userProfile));
-          setUserProfile(data.userProfile)
-          setPresignedUrl(data.preSignedURL)
-          setIsLoading(false)
+        SynapseClient.getUserProfileById(token, principalId).then(
+          (profile: UserProfile) => {
+          sessionStorage.setItem(`${principalId}_USER_PROFILE`, JSON.stringify(profile))
+          setUserProfile(profile)
+          getProfilePicture(principalId, profile.profilePicureFileHandleId)
         })
         .catch(err => {
           console.warn('failed to get user bundle ', err)
