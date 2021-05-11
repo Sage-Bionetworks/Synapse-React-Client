@@ -117,7 +117,7 @@ describe('test EvaluationEditor', () => {
   test('error thrown when using both evaluationId and entityId', () => {
     props = { ...props, entityId, evaluationId }
 
-    spyOn(console, 'error')
+    jest.spyOn(console, 'error')
 
     expect(() => mount(<EvaluationEditor {...props} />)).toThrow(Error)
   })

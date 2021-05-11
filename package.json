@@ -81,7 +81,7 @@
     "react-query": "^3.9.8",
     "react-reflex": "^4.0.0",
     "react-router-dom": "5.1.2",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.3",
     "react-sizeme": "^2.6.12",
     "react-spinners": "^0.9.0",
     "react-switch": "^5.0.1",
@@ -134,7 +134,7 @@
     "core-js": "^3.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint": "6.6.0",
+    "eslint": "7.26.0",
     "eslint-plugin-jest-dom": "^3.6.5",
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "^2.5.0",
@@ -166,7 +166,6 @@
     ]
   },
   "scripts": {
-    "postinstall": "npm rebuild node-sass",
     "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
     "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html && cp favicon.png styleguide/favicon.png",
     "build-gh": "yarn run build:docs",
@@ -177,7 +176,7 @@
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css serve:docs",
     "start-deprecated-demo": "npm-run-all -p watch-css start-js",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom-fourteen --setupFiles ./src/setupTests.js",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom --setupFiles ./src/setupTests.js  --resetMocks=false",
     "test:coverage": "yarn test --coverage",
     "test:noPrompt": "CI=true yarn test",
     "eject": "react-scripts eject",
@@ -199,7 +198,7 @@
     "react-dom": "16.13.1",
     "@types/react": "16.9.34",
     "@types/react-tooltip": "^3.11.0",
-    "eslint": "6.6.0"
+    "eslint": "7.26.0"
   },
   "browserslist": {
     "production": [
