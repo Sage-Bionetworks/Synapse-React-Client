@@ -37,6 +37,8 @@ function createTestProps(overrides?: FacetNavPanelOwnProps): FacetNavProps {
     facetToPlot: stringFacetValues,
     onHide: mockHideCallback,
     onExpand: mockExpandCallback,
+    plotType: 'PIE',
+    isExpanded: false,
     ...overrides,
     // @ts-ignore
     data: testData,
@@ -51,14 +53,14 @@ function init(overrides?: FacetNavPanelOwnProps) {
   container = render(<FacetNavPanel {...props} />).container
 }
 
-beforeEach(() => init())
-
 describe('initialization', () => {
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
     const panel = container.querySelectorAll<HTMLElement>('div.FacetNavPanel')
     expect(panel).toHaveLength(1)
 
-    const buttons = container.querySelectorAll<HTMLElement>('button > span > svg')
+    const buttons = container.querySelectorAll<HTMLElement>(
+      'button > span > svg',
+    )
     expect(buttons.length).toBe(3)
     expect(buttons[0].getAttribute('data-icon')).toBe('filter')
     expect(buttons[1].getAttribute('data-icon')).toBe('expand')
@@ -77,6 +79,7 @@ describe('initialization', () => {
     init({
       ...props,
       onCollapse: mockExpandCallback,
+      isExpanded: true,
       onExpand: undefined,
     })
     const panel = container.querySelectorAll<HTMLElement>(
@@ -84,12 +87,10 @@ describe('initialization', () => {
     )
     expect(panel).toHaveLength(1)
 
-    const buttons = container.querySelectorAll<HTMLElement>('button > span > svg')
-    expect(buttons.length).toBe(4)
-    expect(buttons[0].getAttribute('data-icon')).toBe('chart')
-    expect(buttons[1].getAttribute('data-icon')).toBe('filter')
-    expect(buttons[2].getAttribute('data-icon')).toBe('collapse')
-    expect(buttons[3].getAttribute('data-icon')).toBe('close')
+    const buttons = container.querySelectorAll<HTMLElement>(
+      'div.SRC-labeled-dropdown',
+    )
+    expect(buttons.length).toBe(2)
 
     const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
     expect(panelBody.length).toBe(0)

@@ -26,7 +26,7 @@ export type EnumFacetFilterProps = {
   onChange: Function
   onClear: Function
   facetAliases: {} | undefined
-  containerAs?: 'Collapsible' | 'Dropdown'
+  containerAs?: 'Collapsible' | 'Dropdown' | 'Select'
   collapsed?: boolean
 }
 
@@ -107,6 +107,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const selectedValuesMap = {}
   let timer: ReturnType<typeof setTimeout>
 
+  const allIsSelected = facetValues.filter(item => item.isSelected).length === 0
+
   const userIds =
     columnModel?.columnType === 'USERID'
       ? facetValues.map(facet => facet.value)
@@ -155,7 +157,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   if (!columnModel) {
     return <></>
   }
-  const isDropdown = containerAs === 'Dropdown'
+  const isDropdown = containerAs === 'Dropdown' || containerAs === 'Select'
   const content = (
     <div className={isDropdown ? 'EnumFacetFilter__dropdown_menu' : ''}>
       <div className="EnumFacetFilter__checkboxContainer--forAll">
@@ -211,7 +213,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 onClear()
               }}
               key="select_all"
-              checked={facetValues.filter(item => item.isSelected).length === 0}
+              checked={allIsSelected}
               label="All"
               id="select_all"
               isSelectAll={true}
@@ -238,38 +240,25 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
             filteredSet,
             isShowAll || isDropdown,
             visibleItemsCount,
-          ).map((facet, index: number) => {
-            const id = valueToId(facet.value)
-            return (
-              <div
-                className="EnumFacetFilter__checkboxContainer"
-                key={`checkLabel${index}`}
-              >
-                <Checkbox
-                  className="EnumFacetFilter__checkbox"
-                  onChange={(isChecked: boolean) => {
-                    selectedValuesMap[facet.value] = isChecked
-                    clearTimeout(timer)
-                    timer = setTimeout(() => {
-                      onChange(selectedValuesMap)
-                    }, selectionDelay)
-                  }}
-                  key={id + index}
-                  checked={facet.isSelected}
-                  label={valueToLabel(facet, userProfiles, entityHeaders)}
-                  id={id}
-                ></Checkbox>
-                {isDropdown && (
-                  <span className="EnumFacetFilter__count">
-                    ({facet.count})
-                  </span>
-                )}
-                {!isDropdown && (
-                  <div className="EnumFacetFilter__count">{facet.count}</div>
-                )}
-              </div>
-            )
-          })}
+          ).map((facet, index: number) => (
+            <EnumFacetFilterOption
+              key={`checkLabel${index}`}
+              id={valueToId(facet.value)}
+              index={index}
+              label={valueToLabel(facet, userProfiles, entityHeaders)}
+              count={facet.count}
+              isDropdown={isDropdown}
+              initialIsSelected={facet.isSelected}
+              onChange={(isChecked: boolean) => {
+                selectedValuesMap[facet.value] = isChecked
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                  onChange(selectedValuesMap)
+                  setIsShowDropdown(false)
+                }, selectionDelay)
+              }}
+            />
+          ))}
         {!isDropdown && (
           <>
             {!isShowAll && filteredSet.length > visibleItemsCount && (
@@ -308,35 +297,48 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     </div>
   )
 
-  // Any click event for the Dropdown will close the dropdown (assuming its open), so we have
-  // to handle the onToggle event and manually manage the dropdown open state. If metadata
-  // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
-  // we close it.
-  const onToggle = (_show: boolean, _event: any, metadata: any) => {
-    if (metadata.source) {
-      setIsShowDropdown(true)
-    } else {
-      setIsShowDropdown(false)
-    }
-  }
+  const onToggle = () => setIsShowDropdown(!isShowDropdown)
 
   if (isDropdown) {
-    return (
-      <Dropdown
-        className="EnumFacetFilter"
-        show={isShowDropdown}
-        onToggle={onToggle}
-      >
-        <ElementWithTooltip
-          idForToolTip="facetFilterTooltip"
-          tooltipText="Filter by specific facet"
-          key="facetFilterTooltip"
-          darkTheme={true}
-          icon={"filter"}
-        />
-        <Dropdown.Menu>{content}</Dropdown.Menu>
-      </Dropdown>
-    )
+    if (containerAs === 'Select') {
+      return (
+        <Dropdown
+          className={'EnumFacetFilter EnumFacetFilterSelect'}
+          show={isShowDropdown}
+          onToggle={onToggle}
+        >
+          <Dropdown.Toggle variant="enum-facet-filter-select">
+            {allIsSelected && 'All'}
+            {!allIsSelected &&
+              facetValues.filter(item => item.isSelected).length === 1 &&
+              facetValues.filter(item => item.isSelected)[0].value}
+            {!allIsSelected &&
+              facetValues.filter(item => item.isSelected).length > 1 &&
+              'Multiple Values Selected'}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>{content}</Dropdown.Menu>
+        </Dropdown>
+      )
+    } else {
+      return (
+        <div style={{ display: 'flex' }}>
+          <Dropdown
+            className="EnumFacetFilter"
+            show={isShowDropdown}
+            onToggle={onToggle}
+          >
+            <ElementWithTooltip
+              idForToolTip="facetFilterTooltip"
+              tooltipText="Filter by specific facet"
+              key="facetFilterTooltip"
+              darkTheme={true}
+              icon={'filter'}
+            />
+            <Dropdown.Menu>{content}</Dropdown.Menu>
+          </Dropdown>
+        </div>
+      )
+    }
   } else {
     return (
       <>
@@ -355,4 +357,57 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       </>
     )
   }
+}
+
+type EnumFacetFilterOptionProps = {
+  readonly id: string
+  readonly index: number
+  readonly label: string
+  readonly count: number
+  readonly isDropdown: boolean
+  readonly initialIsSelected: boolean
+  readonly onChange: (selected: boolean) => void
+}
+
+function EnumFacetFilterOption({
+  id,
+  index,
+  label,
+  count,
+  isDropdown,
+  initialIsSelected,
+  onChange,
+}: EnumFacetFilterOptionProps) {
+  const [isSelected, setIsSelected] = useState(initialIsSelected)
+
+  React.useEffect(() => {
+    setIsSelected(initialIsSelected)
+  }, [initialIsSelected])
+
+  return (
+    <div
+      className="EnumFacetFilter__checkboxContainer"
+      onClick={() => {
+        if (isDropdown) {
+          setIsSelected(!isSelected)
+          onChange(!isSelected)
+        }
+      }}
+    >
+      <Checkbox
+        className="EnumFacetFilter__checkbox"
+        onClick={event => event.stopPropagation()}
+        onChange={newValue => {
+          setIsSelected(newValue)
+          onChange(newValue)
+        }}
+        key={id + index}
+        checked={isSelected}
+        label={label}
+        id={id}
+      ></Checkbox>
+      {isDropdown && <span className="EnumFacetFilter__count">({count})</span>}
+      {!isDropdown && <div className="EnumFacetFilter__count">{count}</div>}
+    </div>
+  )
 }

@@ -54,7 +54,12 @@
 
   // default variant is in BS3 but not BS4, so we recreate it here
   .btn-default {
-    @include button-variant(#fff, #ccc, #e6e6e6, #adadad);
+    @include button-variant(
+      $background: #fff,
+      $border: #ccc,
+      $hover-background: #e6e6e6,
+      $hover-border: #adadad
+    );
   }
 
   // Override built-in btn-white with this
@@ -74,22 +79,22 @@
    */
   @each $color-variant, $color in SRC.$primary-color-palette {
     .btn-primary-#{$color-variant} {
-      @include button-variant($color, $color);
+      @include button-variant($background: $color, $border: $color);
     }
 
     .btn-light-primary-#{$color-variant} {
       @include button-variant(
-        #dfdfdf,
-        #dfdfdf,
-        $color,
-        $color,
-        color.scale($color, $lightness: -20%),
-        color.scale($color, $lightness: -30%)
+        $background: #dfdfdf,
+        $border: #dfdfdf,
+        $hover-background: $color,
+        $hover-border: $color,
+        $active-background: color.scale($color, $lightness: -20%),
+        $active-border: color.scale($color, $lightness: -30%)
       );
     }
 
     .btn-gray-primary-#{$color-variant} {
-      @include button-outline-variant($color);
+      @include button-outline-variant($color: $color);
       background-color: #f9f9f9;
       border-color: #e3e3e3;
     }
@@ -98,20 +103,35 @@
   .btn-secondary,
   .btn-secondary-base {
     @include button-variant(
-      SRC.$secondary-action-color,
-      SRC.$secondary-action-color
+      $background: SRC.$secondary-action-color,
+      $border: SRC.$secondary-action-color
     );
   }
 
   .btn-light-secondary,
   .btn-light-secondary-base {
     @include button-variant(
-      #dfdfdf,
-      #dfdfdf,
-      SRC.$secondary-action-color,
-      SRC.$secondary-action-color,
-      color.scale(SRC.$secondary-action-color, $lightness: -20%),
-      color.scale(SRC.$secondary-action-color, $lightness: -30%)
+      $background: #dfdfdf,
+      $border: #dfdfdf,
+      $hover-background: SRC.$secondary-action-color,
+      $hover-border: SRC.$secondary-action-color,
+      $active-background:
+        color.scale(SRC.$secondary-action-color, $lightness: -20%),
+      $active-border: color.scale(SRC.$secondary-action-color, $lightness: -30%)
     );
+  }
+
+  .btn-enum-facet-filter-select {
+    color: SRC.$text-color-dark;
+    @include button-variant(
+      $background: SRC.$gray-light,
+      $border: SRC.$gray-dark,
+      $hover-background: SRC.$gray-light,
+      $active-background: SRC.$gray-light
+    );
+  }
+  .btn-enum-facet-filter-select::after {
+    color: SRC.$secondary-action-color;
+    font-weight: bold;
   }
 }

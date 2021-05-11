@@ -1,14 +1,11 @@
-// ALINA WIP TODO:
-// - bar chart
-// - filter
-// - show 9 labels on expanded facet
+import { InfoOutlined } from '@material-ui/icons'
 import * as PlotlyTyped from 'plotly.js'
 import Plotly from 'plotly.js-basic-dist'
-import React from 'react'
-import { useEffect, useState, useCallback } from 'react'
-import { Dropdown } from 'react-bootstrap'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Button, Dropdown } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
+import ReactTooltip from 'react-tooltip'
 import getColorPalette from '../../../containers/ColorGradient'
 import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
@@ -21,6 +18,7 @@ import {
   QueryBundleRequest,
 } from '../../../utils/synapseTypes'
 import loadingScreen from '../../LoadingScreen'
+import SynapseModal from '../../SynapseModal'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
@@ -34,9 +32,11 @@ export type FacetNavPanelOwnProps = {
   applyChangesToFacetFilter: Function
   index: number
   facetToPlot: FacetColumnResultValues
-  onHide: Function
-  onExpand?: Function
-  onCollapse?: Function
+  plotType: PlotType
+  onSetPlotType: (plotType: PlotType) => void
+  onHide: () => void
+  isExpanded: boolean
+  onCloseModal?: () => void
   lastQueryRequest: QueryBundleRequest | undefined
 }
 
@@ -331,24 +331,31 @@ const getClassNameForPlotDiv = (isExpanded: boolean, plotType: PlotType) => {
   }`
 }
 
-const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
-  onHide,
-  onExpand,
-  onCollapse,
-  applyChangesToFacetFilter,
-  applyChangesToGraphSlice,
-  isLoadingNewData,
-  index,
-  facetToPlot,
-  data,
-  isLoading,
-  facetAliases,
-  token,
-  lastQueryRequest,
-}: FacetNavPanelProps): JSX.Element => {
+const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
+  props: FacetNavPanelProps,
+): JSX.Element => {
+  const {
+    onHide,
+    isExpanded,
+    applyChangesToFacetFilter,
+    applyChangesToGraphSlice,
+    isLoadingNewData,
+    index,
+    facetToPlot,
+    data,
+    isLoading,
+    facetAliases,
+    token,
+    lastQueryRequest,
+    plotType,
+    onSetPlotType,
+  } = props
   const [plotData, setPlotData] = useState<GraphData>()
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [plotType, setPlotType] = useState<PlotType>('PIE')
+  const [showModal, setShowModal] = useState(false)
+
+  const plotTitle = unCamelCase(facetToPlot.columnName, facetAliases)
+
+  const TOOLTIP_ID = 'facet-nav-panel-tooltip'
 
   const getColumnType = useCallback(
     (): ColumnType | undefined =>
@@ -366,57 +373,30 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
         facetToPlot,
         getColumnType(),
         index,
-        'PIE',
-        token
-      ).then(plotData => setPlotData(plotData))
-    }
-  }, [facetToPlot, data, index, getColumnType])
-
-  useEffect(() => {
-    setIsExpanded(onCollapse !== undefined)
-  }, [onCollapse])
-
-  const changePlotType = (plotType: PlotType) => {
-    if (plotType === 'BAR') {
-      extractPlotDataArray(
-        facetToPlot,
-        getColumnType(),
-        index,
-        'BAR',
-        token,
-      ).then(plotData => setPlotData(plotData))
-    } else {
-      extractPlotDataArray(
-        facetToPlot,
-        getColumnType(),
-        index,
-        'PIE',
+        plotType,
         token,
       ).then(plotData => setPlotData(plotData))
     }
-    setPlotType(plotType)
-  }
+  }, [facetToPlot, data, index, plotType, token, getColumnType])
 
   /* rendering functions */
-  const renderChartSelectionToggle = (): JSX.Element => (
-    <Dropdown>
-      <ElementWithTooltip
-        idForToolTip="toggleChart"
-        tooltipText="Toggle chart type"
-        key="toggleChart"
-        className="SRC-primary-color"
-        darkTheme={true}
-        icon={'chart'}
-      />
-      <Dropdown.Menu className="chart-tools">
-        <Dropdown.Item as="button" onClick={() => changePlotType('BAR')}>
-          Bar Chart
-        </Dropdown.Item>
-        <Dropdown.Item as="button" onClick={() => changePlotType('PIE')}>
-          Pie Chart
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+  const ChartSelectionToggle = (): JSX.Element => (
+    <div className="bootstrap-4-backport SRC-labeled-dropdown">
+      <span className="SRC-labeled-dropdown__label">Chart Type</span>
+      <Dropdown>
+        <Dropdown.Toggle variant="enum-facet-filter-select">
+          {plotType === 'PIE' ? 'Pie Chart' : 'Bar Chart'}
+        </Dropdown.Toggle>
+        <Dropdown.Menu className="chart-tools">
+          <Dropdown.Item as="button" onClick={() => onSetPlotType('BAR')}>
+            Bar Chart
+          </Dropdown.Item>
+          <Dropdown.Item as="button" onClick={() => onSetPlotType('PIE')}>
+            Pie Chart
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
   )
 
   if (isLoadingNewData || !facetToPlot) {
@@ -427,104 +407,162 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = ({
     )
   } else {
     return (
-      <div className={`FacetNavPanel${isExpanded ? '--expanded' : ''}`}>
-        <div className="FacetNavPanel__title">
-          <span className="FacetNavPanel__title__name">
-            {unCamelCase(facetToPlot.columnName, facetAliases)}
-          </span>
-          {isLoading && (
-            <span style={{ marginLeft: '2px' }} className={'spinner'} />
+      <>
+        <SynapseModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          title={plotTitle ?? ''}
+        >
+          <FacetNavPanel {...props} isExpanded={true} />
+          <div className="bootstrap-4-backport SaveFiltersButtonContainer">
+            <Button
+              variant="secondary"
+              className="pill-xl SaveFiltersButton"
+              size="sm"
+              onClick={() => setShowModal(false)}
+            >
+              Save Filters
+            </Button>
+          </div>
+        </SynapseModal>
+        <div className={`FacetNavPanel${isExpanded ? '--expanded' : ''}`}>
+          {!isExpanded && (
+            <div className="FacetNavPanel__title">
+              <span className="FacetNavPanel__title__name">{plotTitle}</span>
+              {isLoading && (
+                <span style={{ marginLeft: '2px' }} className={'spinner'} />
+              )}
+              <div className="FacetNavPanel__title__tools">
+                <EnumFacetFilter
+                  facetValues={facetToPlot.facetValues}
+                  columnModel={
+                    data?.columnModels!.find(
+                      el => el.name === facetToPlot.columnName,
+                    )!
+                  }
+                  token={token}
+                  facetAliases={facetAliases}
+                  onChange={(facetNamesMap: {}) => {
+                    applyMultipleChangesToValuesColumn(
+                      lastQueryRequest,
+                      facetToPlot,
+                      applyChangesToFacetFilter,
+                      facetNamesMap,
+                    )
+                  }}
+                  onClear={() => {
+                    applyChangesToValuesColumn(
+                      lastQueryRequest,
+                      facetToPlot,
+                      applyChangesToFacetFilter,
+                    )
+                  }}
+                  containerAs="Dropdown"
+                />
+                {!isExpanded && (
+                  <ElementWithTooltip
+                    idForToolTip="expandGraph"
+                    tooltipText="Expand to large graph"
+                    key="expandGraph"
+                    callbackFn={() => setShowModal(true)}
+                    className="SRC-primary-color"
+                    darkTheme={true}
+                    icon={'expand'}
+                  />
+                )}
+                {!isExpanded && (
+                  <ElementWithTooltip
+                    idForToolTip="hideGraph"
+                    tooltipText="Hide graph under Show More"
+                    key="hideGraph"
+                    callbackFn={() => onHide()}
+                    className="SRC-primary-color"
+                    darkTheme={true}
+                    icon={'close'}
+                  />
+                )}
+              </div>
+            </div>
           )}
-          <div className="FacetNavPanel__title__tools">
-            {isExpanded && renderChartSelectionToggle()}
-            <EnumFacetFilter
-              facetValues={facetToPlot.facetValues}
-              columnModel={
-                data?.columnModels!.find(
-                  el => el.name === facetToPlot.columnName,
-                )!
-              }
-              token={token}
-              facetAliases={facetAliases}
-              onChange={(facetNamesMap: {}) => {
-                applyMultipleChangesToValuesColumn(
-                  lastQueryRequest,
-                  facetToPlot,
-                  applyChangesToFacetFilter,
-                  facetNamesMap,
-                )
-              }}
-              onClear={() => {
-                applyChangesToValuesColumn(
-                  lastQueryRequest,
-                  facetToPlot,
-                  applyChangesToFacetFilter,
-                )
-              }}
-              containerAs="Dropdown"
-            />
-            {!isExpanded && (
-              <ElementWithTooltip
-                idForToolTip="expandGraph"
-                tooltipText="Expand to large graph"
-                key="expandGraph"
-                callbackFn={() => onExpand!(index)}
-                className="SRC-primary-color"
-                darkTheme={true}
-                icon={'expand'}
-              />
-            )}
-            {isExpanded && (
-              <ElementWithTooltip
-                idForToolTip="collapseGraph"
-                tooltipText="Collapse to small graph"
-                key="collapseGraph"
-                callbackFn={() => onCollapse!(index)}
-                className="SRC-primary-color"
-                darkTheme={true}
-                icon={'collapse'}
-              />
-            )}
-            <ElementWithTooltip
-              idForToolTip="hideGraph"
-              tooltipText="Hide graph under Show More"
-              key="hideGraph"
-              callbackFn={() => onHide(index)}
-              className="SRC-primary-color"
-              darkTheme={true}
-              icon={'close'}
+          {isExpanded && (
+            <>
+              <div className={'bootstrap-4-backport SRC-labeled-dropdown'}>
+                <span className="SRC-labeled-dropdown__label">
+                  Filter All Data By
+                </span>
+                <EnumFacetFilter
+                  facetValues={facetToPlot.facetValues}
+                  columnModel={
+                    data?.columnModels!.find(
+                      el => el.name === facetToPlot.columnName,
+                    )!
+                  }
+                  token={token}
+                  facetAliases={facetAliases}
+                  onChange={(facetNamesMap: {}) => {
+                    applyMultipleChangesToValuesColumn(
+                      lastQueryRequest,
+                      facetToPlot,
+                      applyChangesToFacetFilter,
+                      facetNamesMap,
+                    )
+                  }}
+                  onClear={() => {
+                    applyChangesToValuesColumn(
+                      lastQueryRequest,
+                      facetToPlot,
+                      applyChangesToFacetFilter,
+                    )
+                  }}
+                  containerAs="Select"
+                />
+                <ReactTooltip id={TOOLTIP_ID} effect="solid" event="click" />
+                <InfoOutlined
+                  data-for={TOOLTIP_ID}
+                  data-tip={
+                    'Selecting items in this dropdown will affect all facets on the Explore page.'
+                  }
+                  className="SRC-hand-cursor SRC-secondary-text-color"
+                />
+              </div>
+              <ChartSelectionToggle />
+            </>
+          )}
+          <div
+            className={`FacetNavPanel__body${isExpanded ? '--expanded' : ''}`}
+          >
+            <SizeMe monitorHeight>
+              {({ size }) => (
+                <div className={getClassNameForPlotDiv(isExpanded, plotType)}>
+                  <Plot
+                    key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
+                    layout={layout}
+                    data={plotData?.data ?? []}
+                    style={getPlotStyle(
+                      size.width,
+                      plotType,
+                      isExpanded ? 300 : 150,
+                    )}
+                    config={{ displayModeBar: false }}
+                    onClick={evt =>
+                      applyFacetFilter(
+                        evt,
+                        facetToPlot,
+                        applyChangesToGraphSlice,
+                      )
+                    }
+                  ></Plot>
+                </div>
+              )}
+            </SizeMe>
+            <FacetPlotLegend
+              labels={plotData?.labels}
+              colors={plotData?.colors}
+              isExpanded={isExpanded}
             />
           </div>
         </div>
-
-        <div className={`FacetNavPanel__body${isExpanded ? '--expanded' : ''}`}>
-          <SizeMe monitorHeight>
-            {({ size }) => (
-              <div className={getClassNameForPlotDiv(isExpanded, plotType)}>
-                <Plot
-                  key={`${facetToPlot.columnName}-${size.width}`}
-                  layout={layout}
-                  data={plotData?.data ?? []}
-                  style={getPlotStyle(
-                    size.width,
-                    plotType,
-                    isExpanded ? 300 : 150,
-                  )}
-                  config={{ displayModeBar: false }}
-                  onClick={evt =>
-                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
-                  }
-                ></Plot>
-              </div>
-            )}
-          </SizeMe>
-          <FacetPlotLegend
-            labels={plotData?.labels}
-            colors={plotData?.colors}
-            isExpanded={isExpanded}
-          />
-        </div>
-      </div>
+      </>
     )
   }
 }

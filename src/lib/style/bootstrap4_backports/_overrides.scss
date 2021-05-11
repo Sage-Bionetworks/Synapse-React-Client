@@ -15,6 +15,8 @@
   }
 
   label {
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
     color: SRC.$gray-deemphasized;
     font-weight: normal;
   }
@@ -26,17 +28,6 @@
     cursor: text;
   }
 
-  // change styling of dropdowns
-  %dropdown-active-state {
-    background: SRC.$primary-action-color;
-    color: white;
-  }
-  .show button.dropdown-toggle {
-    @extend %dropdown-active-state;
-  }
-  button.dropdown-toggle:hover {
-    @extend %dropdown-active-state;
-  }
   .dropdown-menu {
     a.dropdown-item:hover:not(.disabled) {
       background: SRC.$primary-action-color;
@@ -48,6 +39,22 @@
       color: white !important;
       text-decoration: none;
     }
+  }
+
+  button.dropdown-toggle.btn {
+    // Aligns dropdown toggle text to the left and caret to the right
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 8px;
+  }
+
+  button.dropdown-toggle.btn:hover {
+    box-shadow: SRC.$box-shadow-soft;
+  }
+
+  button.dropdown-toggle.btn::after {
+    font-size: 18px;
   }
 
   //removes shadow surrounding buttons and anchors when they are clicked
@@ -83,4 +90,8 @@
   .popover > .arrow {
     border-width: unset;
   }
+}
+
+.fade {
+  opacity: 1;
 }

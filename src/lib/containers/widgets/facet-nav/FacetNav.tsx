@@ -1,5 +1,5 @@
 import * as React from 'react'
-import FacetNavPanel from './FacetNavPanel'
+import FacetNavPanel, { PlotType } from './FacetNavPanel'
 import {
   QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
@@ -26,6 +26,7 @@ type UiFacetState = {
   name: string
   isHidden: boolean
   isExpanded: boolean
+  plotType: PlotType
   index?: number
 }
 
@@ -86,6 +87,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           name: item.columnName,
           isHidden: index >= DEFAULT_VISIBLE_FACETS,
           isExpanded: false,
+          plotType: 'PIE',
         })),
       )
       setIsFirstTime(false)
@@ -113,12 +115,10 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     executeQueryRequest!(lastQueryRequest!)
   }
 
-  // don't show expanded or hidden facets
+  // don't show hidden facets
   const isFacetHiddenInGrid = (columnName: string) => {
     const itemHidden = facetUiStateArray.find(
-      item =>
-        item.name === columnName &&
-        (item.isHidden === true || item.isExpanded === true),
+      item => item.name === columnName && item.isHidden === true,
     )
     const result = itemHidden !== undefined
     return result
@@ -137,31 +137,25 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     return 'LESS'
   }
 
-  // hides expanded facet under 'show more'
-  const hideExpandedFacet = (facet: FacetColumnResult) => {
-    setFacetUiStateArray(facetUiStateArray =>
-      facetUiStateArray.map(item =>
-        item.name === facet.columnName
-          ? { ...item, isExpanded: false, isHidden: true }
-          : item,
-      ),
-    )
-  }
-
-  //expands to collapses a facet
-  const toggleExpandFacet = (facet: FacetColumnResult, doExpand: boolean) => {
-    setUiPropertyForFacet(facet.columnName, 'isExpanded', doExpand)
-  }
-
   // hides facet graph
   const hideFacetInGrid = (columnName: string) => {
     setUiPropertyForFacet(columnName, 'isHidden', true)
   }
 
+  const setPlotType = (columnName: string, plotType: PlotType) => {
+    setUiPropertyForFacet(columnName, 'plotType', plotType)
+  }
+
+  const getPlotType = (columnName: string): PlotType => {
+    const plotType = facetUiStateArray.find(item => item.name === columnName)
+      ?.plotType
+    return plotType ?? 'PIE'
+  }
+
   const setUiPropertyForFacet = (
     columnName: string,
-    propName: 'isHidden' | 'isExpanded',
-    value: boolean,
+    propName: keyof UiFacetState,
+    value: boolean | PlotType, // 'the possible values of the above type' (currently can't be specified in TS using symbols)
   ) => {
     setFacetUiStateArray(facetUiStateArray =>
       facetUiStateArray.map(item =>
@@ -174,15 +168,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     lastQueryRequest?.query.selectedFacets !== undefined &&
     lastQueryRequest.query.selectedFacets.length > 0
 
-  const expandedFacets = getFacets(data, facetsToPlot).filter(el => {
-    return facetUiStateArray.find(uiState => {
-      return uiState.name === el.columnName
-    })?.isExpanded
-  })
-  const restOfFacets = getFacets(data, facetsToPlot).filter(el => {
-    return !facetUiStateArray.find(uiState => uiState.name === el.columnName)
-      ?.isExpanded
-  })
+  const facets = getFacets(data, facetsToPlot)
 
   const colorTracker = getFacets(data, facetsToPlot).map((el, index) => {
     return {
@@ -229,40 +215,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               : QUERY_FILTERS_COLLAPSED_CSS
           } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
         >
-          <div className="FacetNav__expanded">
-            {expandedFacets.map((facet, index) => (
-              <div key={facet.columnName}>
-                <FacetNavPanel
-                  data={data}
-                  index={
-                    colorTracker.find(el => el.columnName === facet.columnName)
-                      ?.colorIndex!
-                  }
-                  onHide={() => hideExpandedFacet(facet)}
-                  onCollapse={() => toggleExpandFacet(facet, false)}
-                  facetToPlot={facet as FacetColumnResultValues}
-                  applyChangesToFacetFilter={applyChangesFromQueryFilter}
-                  applyChangesToGraphSlice={(
-                    facet: FacetColumnResultValues,
-                    value: FacetColumnResultValueCount | undefined,
-                    isSelected: boolean,
-                  ) =>
-                    applyChangesToValuesColumn(
-                      lastQueryRequest,
-                      facet,
-                      applyChangesFromQueryFilter,
-                      value?.value,
-                      isSelected,
-                    )
-                  }
-                  facetAliases={facetAliases}
-                  lastQueryRequest={lastQueryRequest}
-                ></FacetNavPanel>
-              </div>
-            ))}
-          </div>
           <div className="FacetNav__row">
-            {restOfFacets.map((facet, index) => (
+            {facets.map(facet => (
               <div
                 className="col-sm-12 col-md-4"
                 style={{
@@ -280,7 +234,10 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   }
                   data={data}
                   onHide={() => hideFacetInGrid(facet.columnName)}
-                  onExpand={() => toggleExpandFacet(facet, true)}
+                  plotType={getPlotType(facet.columnName)}
+                  onSetPlotType={(plotType: PlotType) =>
+                    setPlotType(facet.columnName, plotType)
+                  }
                   facetToPlot={facet as FacetColumnResultValues}
                   lastQueryRequest={lastQueryRequest}
                   /*
@@ -301,8 +258,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                       isSelected,
                     )
                   }
+                  isExpanded={false}
                   facetAliases={facetAliases}
-                ></FacetNavPanel>
+                />
               </div>
             ))}
           </div>

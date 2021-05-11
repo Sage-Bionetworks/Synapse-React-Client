@@ -3,7 +3,7 @@ import FacetNav, {
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
 import * as React from 'react'
 import * as _ from 'lodash-es'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, act, screen } from '@testing-library/react'
 import {
   QueryResultBundle,
   QueryBundleRequest,
@@ -97,7 +97,9 @@ describe('facets display hide/show', () => {
   it('when show more is clicked', async () => {
     //const panel = container.querySelector<HTMLElement>('div.FacetNav')
     const button = container.querySelector('button.FacetNav__showMore')
-    fireEvent.click(button!)
+    act(() => {
+      fireEvent.click(button!)
+    })
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[1]),
     ).toBe(false)
@@ -110,7 +112,9 @@ describe('facets display hide/show', () => {
     expect(
       container.querySelector('button.FacetNav__showMore')?.innerHTML,
     ).toBe('Hide Charts')
-    fireEvent.click(button!)
+    act(() => {
+      fireEvent.click(button!)
+    })
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[1]),
     ).toBe(false)
@@ -153,27 +157,31 @@ describe('facets display hide/show', () => {
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[0]),
     ).toBe(false)
-    fireEvent.click(icon?.parentNode as HTMLElement)
+    act(() => {
+      fireEvent.click(icon?.parentNode as HTMLElement)
+    })
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[0]),
     ).toBe(true)
   })
 
-  it('expanding facet should hide it from facet grid and add to expanded area', async () => {
+  it('expanding facet should additionally show the facet in a modal', async () => {
     init(props)
-    let expandedFacets = container.querySelector('.FacetNav__expanded')
-      ?.children
-    expect(expandedFacets?.length).toBe(0)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
-    ).toBe(false)
-    const icon = getButtonOnFacet(container, 'expand', 1)
-    fireEvent.click(icon?.parentNode as HTMLElement)
-    expandedFacets = container.querySelector('.FacetNav__expanded')?.children
-    expect(expandedFacets?.length).toBe(1)
 
     expect(
       isHidden(container.querySelector('.FacetNav__row')!.children[1]),
-    ).toBe(true)
+    ).toBe(false)
+    expect(() => screen.getByRole('dialog')).toThrowError()
+
+    const icon = getButtonOnFacet(container, 'expand', 1)
+    act(() => {
+      fireEvent.click(icon?.parentNode as HTMLElement)
+    })
+
+    expect(
+      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
+    ).toBe(false)
+
+    expect(() => screen.getByRole('dialog')).not.toThrowError()
   })
 })
