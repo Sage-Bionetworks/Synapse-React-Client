@@ -79,7 +79,7 @@ describe('initialization', () => {
     init({
       ...props,
       onCollapse: mockExpandCallback,
-      isExpanded: true,
+      isModalView: true,
       onExpand: undefined,
     })
     const panel = container.querySelectorAll<HTMLElement>(

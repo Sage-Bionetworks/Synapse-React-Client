@@ -256,7 +256,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                       isSelected,
                     )
                   }
-                  isExpanded={false}
+                  isModalView={false}
                   facetAliases={facetAliases}
                   token={token}
                 />

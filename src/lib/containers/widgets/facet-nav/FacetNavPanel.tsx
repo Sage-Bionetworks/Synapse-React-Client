@@ -34,7 +34,7 @@ export type FacetNavPanelOwnProps = {
   plotType: PlotType
   onSetPlotType: (plotType: PlotType) => void
   onHide: () => void
-  isExpanded: boolean
+  isModalView: boolean
   onCloseModal?: () => void
   lastQueryRequest: QueryBundleRequest | undefined
 }
@@ -335,7 +335,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
 ): JSX.Element => {
   const {
     onHide,
-    isExpanded,
+    isModalView,
     applyChangesToFacetFilter,
     applyChangesToGraphSlice,
     isLoadingNewData,
@@ -416,7 +416,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             <Modal.Title>{plotTitle ?? ''}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <FacetNavPanel {...props} isExpanded={true} />
+            <FacetNavPanel {...props} isModalView={true} />
             <div className="bootstrap-4-backport SaveFiltersButtonContainer">
               <Button
                 variant="secondary"
@@ -429,8 +429,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             </div>
           </Modal.Body>
         </Modal>
-        <div className={`FacetNavPanel${isExpanded ? '--expanded' : ''}`}>
-          {!isExpanded && (
+        <div className={`FacetNavPanel${isModalView ? '--expanded' : ''}`}>
+          {!isModalView && (
             <div className="FacetNavPanel__title">
               <span className="FacetNavPanel__title__name">{plotTitle}</span>
               {isLoading && (
@@ -484,7 +484,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
               </div>
             </div>
           )}
-          {isExpanded && (
+          {isModalView && (
             <>
               <div className={'bootstrap-4-backport SRC-labeled-dropdown'}>
                 <span className="SRC-labeled-dropdown__label">
@@ -530,11 +530,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             </>
           )}
           <div
-            className={`FacetNavPanel__body${isExpanded ? '--expanded' : ''}`}
+            className={`FacetNavPanel__body${isModalView ? '--expanded' : ''}`}
           >
             <SizeMe monitorHeight>
               {({ size }) => (
-                <div className={getClassNameForPlotDiv(isExpanded, plotType)}>
+                <div className={getClassNameForPlotDiv(isModalView, plotType)}>
                   <Plot
                     key={`${facetToPlot.columnName}-${plotType}-${size.width}`}
                     layout={layout}
@@ -542,7 +542,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                     style={getPlotStyle(
                       size.width,
                       plotType,
-                      isExpanded ? 300 : 150,
+                      isModalView ? 300 : 150,
                     )}
                     config={{ displayModeBar: false }}
                     onClick={evt =>
@@ -559,7 +559,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
             <FacetPlotLegend
               labels={plotData?.labels}
               colors={plotData?.colors}
-              isExpanded={isExpanded}
+              isExpanded={isModalView}
             />
           </div>
         </div>
