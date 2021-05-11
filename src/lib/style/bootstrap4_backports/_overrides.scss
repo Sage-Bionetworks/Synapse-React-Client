@@ -70,14 +70,6 @@
       padding-bottom: 0.75rem;
     }
   }
-
-  // Placeholder text styling in input forms
-  .form-control::placeholder {
-    color: SRC.$text-color-disabled;
-  }
-  .form-control:focus-visible {
-    text-shadow: none;
-  }
 }
 
 // Popovers

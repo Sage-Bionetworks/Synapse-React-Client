@@ -260,6 +260,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   }
                   isExpanded={false}
                   facetAliases={facetAliases}
+                  token={token}
                 />
               </div>
             ))}
