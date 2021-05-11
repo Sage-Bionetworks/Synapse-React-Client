@@ -72,9 +72,11 @@ export const MEDIUM_USER_CARD: UserCardSize = 'MEDIUM USER CARD'
 export const LARGE_USER_CARD: UserCardSize = 'LARGE USER CARD'
 export const SEPERATOR = 'SEPERATOR'
 export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS'
+
 // For internal testing only
 export const _TIME_DELAY = 75
 export const SRC_SIGN_IN_CLASS = 'SRC-SIGN-IN-CLASS'
+export const EXPERIMENTAL_MODE_COOKIE = 'SynapseTestWebsite'
 
 // UserBundle constants
 export const USER_BUNDLE_MASK_USER_PROFILE = 0x1
