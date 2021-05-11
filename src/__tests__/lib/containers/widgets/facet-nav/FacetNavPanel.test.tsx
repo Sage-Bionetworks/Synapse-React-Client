@@ -6,12 +6,11 @@ import FacetNavPanel, {
 import { render } from '@testing-library/react'
 import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
-import { FacetNavProps } from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
 import { SynapseConstants } from '../../../../../lib'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
-const mockExpandCallback = jest.fn(() => null)
+const mockSetPlotTypeCallback = jest.fn(() => null)
 
 const stringFacetValues: FacetColumnResultValues = {
   facetType: 'enumeration',
@@ -28,17 +27,22 @@ const stringFacetValues: FacetColumnResultValues = {
   ],
 }
 
-function createTestProps(overrides?: FacetNavPanelOwnProps): FacetNavProps {
-  return {
+function createTestProps(
+  overrides?: FacetNavPanelOwnProps,
+): FacetNavPanelOwnProps {
+  const defaultProps: FacetNavPanelOwnProps = {
     applyChangesToGraphSlice: mockApplyCallback,
     applyChangesToFacetFilter: mockApplyCallback,
     index: 1,
-    loadingScreen: <div className="loading"></div>,
     facetToPlot: stringFacetValues,
     onHide: mockHideCallback,
-    onExpand: mockExpandCallback,
     plotType: 'PIE',
-    isExpanded: false,
+    onSetPlotType: mockSetPlotTypeCallback,
+    lastQueryRequest: {} as any,
+    isModalView: false,
+  }
+  return {
+    ...defaultProps,
     ...overrides,
     // @ts-ignore
     data: testData,
@@ -55,6 +59,7 @@ function init(overrides?: FacetNavPanelOwnProps) {
 
 describe('initialization', () => {
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
+    init()
     const panel = container.querySelectorAll<HTMLElement>('div.FacetNavPanel')
     expect(panel).toHaveLength(1)
 
@@ -78,9 +83,8 @@ describe('initialization', () => {
     //when expanded the onCollapse callback is passed but onExpand is not
     init({
       ...props,
-      onCollapse: mockExpandCallback,
+      onSetPlotType: mockSetPlotTypeCallback,
       isModalView: true,
-      onExpand: undefined,
     })
     const panel = container.querySelectorAll<HTMLElement>(
       'div.FacetNavPanel--expanded',
