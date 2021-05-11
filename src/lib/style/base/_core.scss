@@ -1192,6 +1192,23 @@ hr ~ .SRC-wrapper {
   overflow: auto;
 }
 
+.modal-content {
+  padding: 5px 30px;
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0px;
+
+    .modal-title {
+      order: -99;
+    }
+    button.close {
+      order: 99;
+    }
+  }
+}
+
 // https://github.com/twbs/bootstrap/blob/c140347bd26851c79e76766ae381e91c159b3f48/scss/_modal.scss
 .modal-dialog-scrollable {
   height: 100%;
@@ -1236,7 +1253,7 @@ hr ~ .SRC-wrapper {
 .SRC-labeled-dropdown {
   display: flex;
   align-items: center;
-  margin: 3px 0px;
+  margin: 3px 0px 10px;
   &__label {
     color: SRC.$text-color-dark;
     margin-right: 5px;

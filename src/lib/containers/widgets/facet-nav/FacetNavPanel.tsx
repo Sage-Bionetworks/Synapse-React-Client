@@ -2,7 +2,7 @@ import { InfoOutlined } from '@material-ui/icons'
 import * as PlotlyTyped from 'plotly.js'
 import Plotly from 'plotly.js-basic-dist'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Dropdown } from 'react-bootstrap'
+import { Button, Dropdown, Modal } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import ReactTooltip from 'react-tooltip'
@@ -408,23 +408,28 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   } else {
     return (
       <>
-        <SynapseModal
+        <Modal
+          animation={false}
           show={showModal}
           onHide={() => setShowModal(false)}
-          title={plotTitle ?? ''}
         >
-          <FacetNavPanel {...props} isExpanded={true} />
-          <div className="bootstrap-4-backport SaveFiltersButtonContainer">
-            <Button
-              variant="secondary"
-              className="pill-xl SaveFiltersButton"
-              size="sm"
-              onClick={() => setShowModal(false)}
-            >
-              Save Filters
-            </Button>
-          </div>
-        </SynapseModal>
+          <Modal.Header closeButton={true}>
+            <Modal.Title>{plotTitle ?? ''}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <FacetNavPanel {...props} isExpanded={true} />
+            <div className="bootstrap-4-backport SaveFiltersButtonContainer">
+              <Button
+                variant="secondary"
+                className="pill-xl SaveFiltersButton"
+                size="sm"
+                onClick={() => setShowModal(false)}
+              >
+                Save Filters
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
         <div className={`FacetNavPanel${isExpanded ? '--expanded' : ''}`}>
           {!isExpanded && (
             <div className="FacetNavPanel__title">
