@@ -182,12 +182,15 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
                         <tr ref={ref} />
                     </tbody>
                 </ReactBootstrap.Table>}
-            {allRows.length === 0 && (
-            <div className="EntityFinderDetailsView__Placeholder">
-                {status !== 'loading' && <div>No rows</div>}
-                {status === 'loading' && <SynapseSpinner size={30} />}
-            </div>
-            )}
+                {isFetching && 
+                    <div className="EntityFinderDetailsView__Placeholder">
+                        <SynapseSpinner size={30} />
+                    </div>}
+                {!isFetching && allRows.length === 0 && (
+                    <div className="EntityFinderDetailsView__Placeholder">
+                        <div>No rows</div>
+                    </div>
+                )}
         </>
     )
 }
