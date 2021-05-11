@@ -463,28 +463,24 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }}
                   containerAs="Dropdown"
                 />
-                {!isExpanded && (
-                  <ElementWithTooltip
-                    idForToolTip="expandGraph"
-                    tooltipText="Expand to large graph"
-                    key="expandGraph"
-                    callbackFn={() => setShowModal(true)}
-                    className="SRC-primary-color"
-                    darkTheme={true}
-                    icon={'expand'}
-                  />
-                )}
-                {!isExpanded && (
-                  <ElementWithTooltip
-                    idForToolTip="hideGraph"
-                    tooltipText="Hide graph under Show More"
-                    key="hideGraph"
-                    callbackFn={() => onHide()}
-                    className="SRC-primary-color"
-                    darkTheme={true}
-                    icon={'close'}
-                  />
-                )}
+                <ElementWithTooltip
+                  idForToolTip="expandGraph"
+                  tooltipText="Expand to large graph"
+                  key="expandGraph"
+                  callbackFn={() => setShowModal(true)}
+                  className="SRC-primary-color"
+                  darkTheme={true}
+                  icon={'expand'}
+                />
+                <ElementWithTooltip
+                  idForToolTip="hideGraph"
+                  tooltipText="Hide graph under Show More"
+                  key="hideGraph"
+                  callbackFn={() => onHide()}
+                  className="SRC-primary-color"
+                  darkTheme={true}
+                  icon={'close'}
+                />
               </div>
             </div>
           )}
