@@ -27,7 +27,7 @@ const ExperimentalMode: React.FC = () => {
   }
 
   const deleteExperimentalModeCookie = () => {
-    cookies.remove(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
+    cookies.remove(EXPERIMENTAL_MODE_COOKIE)
     setIsExperimentalModeOn(false)
   }
 
