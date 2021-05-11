@@ -71,7 +71,7 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
             console.error(err)
         }
     }
-
+    
     const showInteractiveSortIcon = (columnSortBy: SortField) => {
         return (
           setSort && (

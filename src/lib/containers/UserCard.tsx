@@ -3,7 +3,7 @@ import { getUserProfileWithProfilePic } from '../utils/functions/getUserData'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/synapseTypes/'
-import { SynapseConstants } from '../utils/'
+import { SynapseClient, SynapseConstants } from '../utils/'
 import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
 import usePreFetchResource from '../utils/hooks/usePreFetchImage'
@@ -83,8 +83,37 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
 
   useEffect(() => {
     if (!userProfile && principalId) {
-      getUserProfileWithProfilePic(principalId, token)
+      const cachedProfileString = localStorage.getItem(`USER_PROFILE_${principalId}`)
+      if (cachedProfileString) {
+        const cachedProfile = JSON.parse(cachedProfileString) as UserProfile
+        setUserProfile(cachedProfile)
+        // get profile picture
+        if (cachedProfile.profilePicureFileHandleId) {
+          const fha = {
+            associateObjectId: principalId,
+            associateObjectType: 'UserProfileAttachment',
+            fileHandleId: cachedProfile.profilePicureFileHandleId,
+          }
+          const request: any = {
+            includeFileHandles: false,
+            includePreSignedURLs: true,
+            includePreviewPreSignedURLs: false,
+            requestedFiles: [fha],
+          }
+          SynapseClient.getFiles(request, token)
+            .then((fileHandleList) => {
+              setPresignedUrl(fileHandleList.requestedFiles[0].preSignedURL!)
+              setIsLoading(false)
+            }).catch(err => {
+              console.warn('failed to get user profile picture ', err)
+            })
+          } else {
+            setIsLoading(false)
+          }
+      } else {
+        getUserProfileWithProfilePic(principalId, token)
         .then(data => {
+          localStorage.setItem(`USER_PROFILE_${principalId}`, JSON.stringify(data.userProfile));
           setUserProfile(data.userProfile)
           setPresignedUrl(data.preSignedURL)
           setIsLoading(false)
@@ -92,6 +121,7 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
         .catch(err => {
           console.warn('failed to get user bundle ', err)
         })
+      }
     }
   }, [userProfile, principalId, token])
 
