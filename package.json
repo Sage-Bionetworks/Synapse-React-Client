@@ -131,6 +131,8 @@
     "@types/react-dom": "^16.9.6",
     "@types/react-transition-group": "^2.0.16",
     "@types/sanitize-html": "^1.27.1",
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
     "core-js": "^3.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
@@ -154,7 +156,7 @@
     "rollup-plugin-svg": "^2.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "sinon": "^7.2.2",
-    "typescript": "3.8.3",
+    "typescript": "4.2.4",
     "yarn": "^1.22.4"
   },
   "jest": {
@@ -187,7 +189,8 @@
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
     "serve:docs": "npx styleguidist server --open",
-    "build:docs": "yarn run build-css && npx styleguidist build"
+    "build:docs": "yarn run build-css && npx styleguidist build",
+    "lint": "eslint src/lib/**/*.{ts,tsx}"
   },
   "resolutions": {
     "fstream": "1.0.12",
@@ -197,8 +200,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "@types/react": "16.9.34",
-    "@types/react-tooltip": "^3.11.0",
-    "eslint": "7.26.0"
+    "@types/react-tooltip": "^3.11.0"
   },
   "browserslist": {
     "production": [

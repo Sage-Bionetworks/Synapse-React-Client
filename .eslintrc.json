@@ -1,7 +1,22 @@
 {
-  "extends": ["react-app", "eslint:recommended", "plugin:react/recommended"],
-  "plugins": ["react", "react-hooks", "testing-library", "jest-dom"],
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "react",
+    "react-hooks",
+    "testing-library",
+    "jest-dom",
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "react-app",
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "parserOptions": {
+    "tsconfigRootDir": ".",
+    "project": ["./tsconfig.json"],
     "ecmaFeatures": {
       "jsx": true
     }
