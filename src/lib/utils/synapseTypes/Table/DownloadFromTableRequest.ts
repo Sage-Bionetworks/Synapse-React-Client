@@ -2,7 +2,7 @@ import { CsvTableDescriptor } from './CsvTableDescription'
 import { SortItem } from './Query'
 import { FacetColumnRequest } from './FacetColumnRequest'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/DownloadFromTableRequest.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/DownloadFromTableRequest.html
 // A CSV table download request.
 export type DownloadFromTableRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.DownloadFromTableRequest'

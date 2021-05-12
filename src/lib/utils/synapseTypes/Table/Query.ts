@@ -1,13 +1,13 @@
 import { FacetColumnRequest } from './FacetColumnRequest'
 import { QueryFilter } from './QueryFilter'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SortDirection.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SortDirection.html
 export type SortItem = {
   column: string
   direction: '' | 'ASC' | 'DESC'
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
 export type Query = {
   sql: string // The SQL query string
   selectedFacets?: FacetColumnRequest[] // The selected facet filters.

@@ -79,7 +79,7 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
           className="AccountLevelBadge__body__moreInfoLink"
           target="_blank"
           rel="noopener noreferrer"
-          href="https://docs.synapse.org/articles/accounts_certified_users_and_profile_validation.html"
+          href="https://help.synapse.org/docs/User-Types.2007072795.html"
         >
           Learn more
         </a>

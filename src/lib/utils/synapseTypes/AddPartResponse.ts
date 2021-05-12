@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/AddPartResponse.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/AddPartResponse.html
 
 export type AddPartResponse = {
   uploadId: string

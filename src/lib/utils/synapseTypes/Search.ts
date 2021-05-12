@@ -1,7 +1,7 @@
 import { EntityPath } from './EntityHeader'
 import { EntityType } from './EntityType'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchQuery.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchQuery.html
 export type SearchQuery = {
   queryTerm?: string[]
   booleanQuery?: KeyValue[]
@@ -12,7 +12,7 @@ export type SearchQuery = {
   size?: number
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/SearchResults.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/SearchResults.html
 export type SearchResults = {
   found: number
   start: number
@@ -20,28 +20,28 @@ export type SearchResults = {
   facets: Facet[]
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/KeyValue.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/KeyValue.html
 export type KeyValue = {
   key: string
   value: string
   not: boolean
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/KeyRange.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/KeyRange.html
 export type KeyRange = {
   key: string
   min: string
   max: string
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchFacetOption.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchFacetOption.html
 export type SearchFacetOption = {
   name: SearchFieldName
   maxResultCount: number
   sortType: SearchFacetSort
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchFieldName.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchFieldName.html
 export enum SearchFieldName {
   ID = 'Id',
   NAME = 'Name',
@@ -57,13 +57,13 @@ export enum SearchFieldName {
   TISSUE = 'Tissue',
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchFacetSort.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/query/SearchFacetSort.html
 export enum SearchFacetSort {
   ALPHA = 'ALPHA',
   COUNT = 'COUNT',
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/Hit.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/Hit.html
 export type Hit = {
   id: string // entity ID
   etag: string
@@ -82,7 +82,7 @@ export type Hit = {
   organ: string
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/Facet.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/Facet.html
 export type Facet = {
   name: string
   type: FacetTypeNames
@@ -91,14 +91,14 @@ export type Facet = {
   constraints: FacetConstraint[]
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/FacetTypeNames.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/FacetTypeNames.html
 export enum FacetTypeNames {
   LITERAL = 'LITERAL',
   DATE = 'DATE',
   CONTINUOUS = 'CONTINUOUS',
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/search/FacetConstraint.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/FacetConstraint.html
 export type FacetConstraint = {
   value: string
   count: number

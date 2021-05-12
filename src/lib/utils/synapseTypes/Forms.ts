@@ -1,4 +1,4 @@
-//https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormGroup.html
+//https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormGroup.html
 export type FormGroup = {
   groupId: string
   name: string
@@ -6,7 +6,7 @@ export type FormGroup = {
   createdOn: string
 }
 
-// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormData.html
+// see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormData.html
 export type FormData = {
   formDataId: string
   etag: string
@@ -19,18 +19,18 @@ export type FormData = {
   submissionStatus: SubmissionStatus
 }
 
-// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormChangeRequest.html
+// see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormChangeRequest.html
 export type FormChangeRequest = {
   name: string
   fileHandleId: string
 }
 
-// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormRejection.html
+// see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/FormRejection.html
 export type FormRejection = {
   reason: string
 }
 
-// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/SubmissionStatus.html
+// see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/SubmissionStatus.html
 export type SubmissionStatus = {
   submittedOn?: string
   reviewedOn?: string
@@ -39,7 +39,7 @@ export type SubmissionStatus = {
   rejectionMessage?: string
 }
 
-// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/StatusEnum.html
+// see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/StatusEnum.html
 export enum StatusEnum {
   WAITING_FOR_SUBMISSION = 'WAITING_FOR_SUBMISSION',
   SUBMITTED_WAITING_FOR_REVIEW = 'SUBMITTED_WAITING_FOR_REVIEW',
@@ -47,14 +47,14 @@ export enum StatusEnum {
   REJECTED = 'REJECTED',
 }
 
-// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/ListRequest.html
+// see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/ListRequest.html
 export type ListRequest = {
   filterByState?: StatusEnum[]
   groupId: string
   nextPageToken?: string
 }
 
-// see https://docs.synapse.org/rest/org/sagebionetworks/repo/model/form/ListResponse.html
+// see https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/form/ListResponse.html
 export type ListResponse = {
   page: FormData[]
   nextPageToken?: string

@@ -1,6 +1,6 @@
 import { FileHandle } from './FileHandle'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileResult.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileResult.html
 export type FileResult = {
   fileHandleId: string // The ID of the requested FileHandle.
   fileHandle?: FileHandle // The FileHandle interface defines all

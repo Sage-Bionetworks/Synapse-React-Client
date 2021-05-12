@@ -15,7 +15,7 @@ export enum FileDownloadCode {
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileDownloadSummary.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileDownloadSummary.html
 export type FileDownloadSummary = {
   fileHandleId: string //	The file handle id of a requested file.
   associateObjectId: string //	The ID of the object associated with the file
