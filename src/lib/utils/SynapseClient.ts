@@ -92,6 +92,7 @@ import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
 import { ResearchProject } from './synapseTypes/ResearchProject'
 import {
+  ManagedACTAccessRequirementStatus,
   RequestInterface,
   CreateSubmissionRequest,
 } from './synapseTypes/AccessRequirement'
@@ -2234,7 +2235,7 @@ export const getAccessRequirement = (
 export const getAccessRequirementStatus = (
   sessionToken: string | undefined,
   requirementId: string | number,
-): Promise<AccessRequirementStatus> => {
+): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
   const url = `repo/v1/accessRequirement/${requirementId}/status`
   return doGet(
     url,
