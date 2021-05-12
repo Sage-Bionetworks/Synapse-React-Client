@@ -94,7 +94,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
       onHide={onClose}
     >
       <Form>
-        <Modal.Header>
+        <Modal.Header closeButton>
           <Modal.Title>Create New Personal Access Token</Modal.Title>
         </Modal.Header>
         <ModalBody>

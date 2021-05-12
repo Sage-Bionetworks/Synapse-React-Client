@@ -8,6 +8,7 @@ export type CheckboxProps = {
   onChange: (newValue: boolean) => void
   isSelectAll?: boolean
   children?: React.ReactChild
+  onClick?: (event: React.SyntheticEvent<HTMLDivElement>) => void
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
@@ -43,7 +44,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   }
 
   return (
-    <div className={className}>
+    <div className={className} onClick={props.onClick}>
       <label>
         <span>
           <input
