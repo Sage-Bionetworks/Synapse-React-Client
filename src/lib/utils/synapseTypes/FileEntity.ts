@@ -1,7 +1,7 @@
 import { Entity } from './Entity'
 import { AssertionError } from 'assert'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
 export interface FileEntity extends Entity {
   concreteType: 'org.sagebionetworks.repo.model.FileEntity'
   versionNumber?: number // 	The version number issued to this version on the object.

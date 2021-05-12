@@ -1,6 +1,6 @@
 import { ConcreteEntityType } from './ConcreteEntityType'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityHeader.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityHeader.html
 export type EntityHeader = {
   name: string //	The name of the entity
   id: string //	The id of the entity

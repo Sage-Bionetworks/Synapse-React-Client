@@ -1,6 +1,6 @@
 import { ResourceAccess } from './ResourceAccess'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/AccessControlList.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/AccessControlList.html
 
 export type AccessControlList = {
   id: string

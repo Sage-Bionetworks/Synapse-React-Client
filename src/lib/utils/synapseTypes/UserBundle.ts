@@ -1,7 +1,7 @@
 import { VerificationSubmission } from './VerificationSubmission'
 import { UserProfile } from './UserProfile'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
 export type UserBundle = {
   userId: string // The ID of the user described by this bundle
   userProfile?: UserProfile // JSON schema for UserProfile POJO

@@ -8,7 +8,7 @@ This project helps you integrate your app with the Synapse API backend.
 
 [See the available Components](https://sage-bionetworks.github.io/Synapse-React-Client/)
 
-[Getting started](http://docs.synapse.org/articles/getting_started.html) with Synapse.
+[Getting started](https://help.synapse.org/docs/Getting-Started.2055471150.html) with Synapse.
 
 [Synapse.org](https://www.synapse.org/) is a client written for the Synapse platform.
 

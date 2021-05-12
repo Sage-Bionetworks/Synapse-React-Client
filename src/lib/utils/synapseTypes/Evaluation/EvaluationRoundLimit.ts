@@ -1,4 +1,4 @@
-//https://docs.synapse.org/rest/org/sagebionetworks/evaluation/model/EvaluationRoundLimit.html
+//https://rest-docs.synapse.org/rest/org/sagebionetworks/evaluation/model/EvaluationRoundLimit.html
 export type EvaluationRoundLimitType = 'TOTAL' | 'DAILY' | 'WEEKLY' | 'MONTHLY'
 
 export type EvaluationRoundLimit = {

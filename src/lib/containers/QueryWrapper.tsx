@@ -233,7 +233,7 @@ export default class QueryWrapper extends React.Component<
    * Execute the given query
    *
    * @param {*} queryRequest Query request as specified by
-   *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+   *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
@@ -285,7 +285,7 @@ export default class QueryWrapper extends React.Component<
    * Grab the next page of data, pulling in 25 more rows.
    *
    * @param {*} queryRequest Query request as specified by
-   *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+   *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
   public async getNextPageOfData(queryRequest: QueryBundleRequest) {
@@ -310,7 +310,7 @@ export default class QueryWrapper extends React.Component<
    * Execute the initial query passed into the component
    *
    * @param {*} queryRequest Query request as specified by
-   *                         https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
+   *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    * @memberof QueryWrapper
    */
   public executeInitialQueryRequest(

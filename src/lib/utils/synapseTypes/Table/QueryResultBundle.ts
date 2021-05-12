@@ -4,7 +4,7 @@ import { QueryResult } from './QueryResult'
 import { SelectColumn } from './SelectColumn'
 import { SumFileSizes } from './SumFileSizes'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/QueryResultBundle.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/QueryResultBundle.html
 export interface QueryResultBundle {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle'
   queryResult: QueryResult // A page of query result.

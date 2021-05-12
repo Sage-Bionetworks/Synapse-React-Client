@@ -77,7 +77,7 @@ function ProgrammaticOptions({
           instructions are available
           <a
             className="ProgrammaticOptions__docslink"
-            href="https://docs.synapse.org/articles/tutorial-download-data-portal.html#command-line"
+            href="https://help.synapse.org/docs/Download-Data-Programmatically-from-a-Portal.1982693983.html"
             target="_blank"
             rel="noopener noreferrer"
           >

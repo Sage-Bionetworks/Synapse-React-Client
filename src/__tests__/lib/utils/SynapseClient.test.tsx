@@ -18,7 +18,7 @@ describe('it works at integration level testing', () => {
     ).catch((error) => {
       expect(error.status).toEqual(404)
       expect(error.reason).toEqual(
-        'GET was not found. Please reference API documentation at https://docs.synapse.org/rest/',
+        'GET was not found. Please reference API documentation at https://rest-docs.synapse.org/rest/',
       )
     })
   })

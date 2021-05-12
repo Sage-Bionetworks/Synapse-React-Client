@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OIDCAuthorizationRequest.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OIDCAuthorizationRequest.html
 
 export type OIDCAuthorizationRequest = {
   clientId: string

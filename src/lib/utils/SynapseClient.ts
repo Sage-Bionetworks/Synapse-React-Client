@@ -327,7 +327,7 @@ export const getVersion = (): Promise<SynapseVersion> => {
 }
 
 /**
- * https://docs.synapse.org/rest/POST/download/list/add/async/start.html
+ * https://rest-docs.synapse.org/rest/POST/download/list/add/async/start.html
  */
 //Start an asynchronous job to add files to a user's download list.
 export const addFilesToDownloadList = (
@@ -359,7 +359,7 @@ export const addFilesToDownloadList = (
 }
 
 /**
- * https://docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
+ * https://rest-docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
  */
 export const getDownloadFromTableRequest = (
   request: DownloadFromTableRequest,
@@ -387,7 +387,7 @@ export const getDownloadFromTableRequest = (
 }
 
 /**
- * https://docs.synapse.org/rest/GET/fileHandle/handleId.html
+ * https://rest-docs.synapse.org/rest/GET/fileHandle/handleId.html
  * Get a FileHandle using its ID.
  * Note: Only the user that created the FileHandle can access it directly.
  * @return FileHandle
@@ -426,7 +426,7 @@ export const getActualFileHandleByIdURL = (
 }
 
 /**
- * https://docs.synapse.org/rest/GET/fileHandle/handleId/url.html
+ * https://rest-docs.synapse.org/rest/GET/fileHandle/handleId/url.html
  * Note: Only the user that created the FileHandle can use this method for download.
  * @return a short lived presignedURL to be redirected with
  **/
@@ -479,7 +479,7 @@ export const getAsyncResultFromJobId = <T>(
 }
 
 /**
- * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
+ * https://rest-docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
  * @param {*} queryBundleRequest
  * @param {*} sessionToken
  * @param {*} endpoint
@@ -565,7 +565,7 @@ export const getFullQueryTableResults = async (
 /**
  *  Log-in using the given username and password.  Will return a session token that must be used in
  *  authenticated requests.
- *  http://docs.synapse.org/rest/POST/login.html
+ *  https://rest-docs.synapse.org/rest/POST/login.html
  */
 export const login = (
   username: string,
@@ -583,7 +583,7 @@ export const login = (
 }
 /**
  * Get redirect url
- * https://docs.synapse.org/rest/POST/oauth2/authurl.html
+ * https://rest-docs.synapse.org/rest/POST/oauth2/authurl.html
  * @param {*} provider
  * @param {*} redirectUrl
  * @param {*} endpoint
@@ -603,7 +603,7 @@ export const oAuthUrlRequest = (
 }
 /**
  * Get session token from SSO
- * https://docs.synapse.org/rest/POST/oauth2/session.html
+ * https://rest-docs.synapse.org/rest/POST/oauth2/session.html
  * @param {*} provider
  * @param {*} authenticationCode
  * @param {*} redirectUrl
@@ -625,7 +625,7 @@ export const oAuthSessionRequest = (
 }
 /**
  * Create an entity (Project, Folder, File, Table, View)
- * http://docs.synapse.org/rest/POST/entity.html
+ * https://rest-docs.synapse.org/rest/POST/entity.html
  */
 export const createEntity = <T extends Entity>(
   entity: T,
@@ -641,7 +641,7 @@ export const createEntity = <T extends Entity>(
 }
 /**
  * Create a project with the given name.
- * http://docs.synapse.org/rest/POST/entity.html
+ * https://rest-docs.synapse.org/rest/POST/entity.html
  */
 export const createProject = (
   name: string,
@@ -658,7 +658,7 @@ export const createProject = (
 
 /**
  * Return this user's UserProfile
- * http://docs.synapse.org/rest/GET/userProfile.html
+ * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfile = (sessionToken: string | undefined) => {
   return doGet<UserProfile>(
@@ -671,7 +671,7 @@ export const getUserProfile = (sessionToken: string | undefined) => {
 
 /**
  * Return this user's UserProfile
- * http://docs.synapse.org/rest/GET/userProfile.html
+ * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfileById = (
   sessionToken: string | undefined,
@@ -687,7 +687,7 @@ export const getUserProfileById = (
 
 /**
  * Return this user's profile bundle
- * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
  */
 export const getUserBundle = (
   id: string,
@@ -722,7 +722,7 @@ export const getUserGroupHeaders = (
 
 /**
  * Return batch of user group headers
- * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserGroupHeaderResponsePage.html
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserGroupHeaderResponsePage.html
  */
 export const getGroupHeadersBatch = (
   ids: string[],
@@ -739,7 +739,7 @@ export const getGroupHeadersBatch = (
 export type UserProfileList = { list: UserProfile[] }
 /**
  * Return the User Profiles for the given list of user IDs
- * http://docs.synapse.org/rest/POST/userProfile.html
+ * https://rest-docs.synapse.org/rest/POST/userProfile.html
  */
 export const getUserProfiles = (
   list: string[],
@@ -756,7 +756,7 @@ export const getUserProfiles = (
 
 /**
  * Return the children (Files/Folders) of the given entity (Project or Folder).
- * http://docs.synapse.org/rest/POST/entity/children.html
+ * https://rest-docs.synapse.org/rest/POST/entity/children.html
  */
 export const getEntityChildren = (
   request: EntityChildrenRequest,
@@ -772,7 +772,7 @@ export const getEntityChildren = (
 }
 /**
  * Retrieve an entityId for a given parent ID and entity name.
- * https://docs.synapse.org/rest/POST/entity/child.html
+ * https://rest-docs.synapse.org/rest/POST/entity/child.html
  */
 export const lookupChildEntity = (
   request: EntityLookupRequest,
@@ -789,7 +789,7 @@ export const lookupChildEntity = (
 
 /**
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
- * http://docs.synapse.org/rest/POST/fileHandle/batch.html
+ * https://rest-docs.synapse.org/rest/POST/fileHandle/batch.html
  */
 export const getFiles = (
   request: BatchFileRequest,
@@ -806,7 +806,7 @@ export const getFiles = (
 
 /**
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
- * http://docs.synapse.org/rest/POST/fileHandle/batch.html
+ * https://rest-docs.synapse.org/rest/POST/fileHandle/batch.html
  */
 export const getBulkFiles = (
   bulkFileDownloadRequest: BulkFileDownloadRequest,
@@ -836,7 +836,7 @@ export const getBulkFiles = (
  * An EntityBundle can be used to create, fetch, or update an Entity and associated
  * objects with a single web service request.
  * See SynapseClient.test.js for an example partsMask.
- * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
  */
 type GetEntity = <T extends Entity>(
   sessionToken: string | undefined,
@@ -879,7 +879,7 @@ export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>> 
 /**
  * Get the EntityHeader for a list of references with a POST.
  * If any item in the batch fails (e.g., with a 404) it will be EXCLUDED in the result set.
- * https://docs.synapse.org/rest/POST/entity/header.html
+ * https://rest-docs.synapse.org/rest/POST/entity/header.html
  */
 export const getEntityHeaders = (
   references: ReferenceList,
@@ -896,7 +896,7 @@ export const getEntityHeaders = (
 
 /**
  * Get the EntityHeader for a single entity
- * https://docs.synapse.org/rest/GET/entity/id/type.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/type.html
  */
 export const getEntityHeader = (entityId: string, sessionToken?: string) => {
   return doGet(
@@ -939,7 +939,7 @@ export const deleteEntity = (
  * An EntityBundle can be used to create, fetch, or update an Entity and
  * associated objects with a single web service request.
  * See SynapseClient.test.js for an example partsMask.
- * http://docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
+ * https://rest-docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
  */
 export const getEntityBundleForVersion = (
   entityId: string | number,
@@ -986,7 +986,7 @@ function getObjectTypeToString(key: ObjectType) {
 
 /**
  * Get Wiki page contents, call is of the form:
- * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
+ * https://rest-docs.synapse.org/rest/GET/entity/ownerId/wiki.html
  */
 export const getEntityWiki = (
   sessionToken: string | undefined,
@@ -1007,7 +1007,7 @@ export const getEntityWiki = (
 
 /**
  * Returns synapse user favorites list given their session token
- * http://docs.synapse.org/rest/GET/favorite.html
+ * https://rest-docs.synapse.org/rest/GET/favorite.html
  */
 export const getUserFavorites = (sessionToken: string | undefined) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
@@ -1023,7 +1023,7 @@ export const getUserFavorites = (sessionToken: string | undefined) => {
 /**
  * Get the user's list of teams they are on
  *
- * @param {*} id ownerID of the synapse user see - http://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
+ * @param {*} id ownerID of the synapse user see - https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
  */
 export const getUserTeamList = (
   sessionToken: string | undefined,
@@ -1040,7 +1040,7 @@ export const getUserTeamList = (
 /**
  * Get the user's list of teams they are on
  *
- * @param {*} id ownerID of the synapse user see -https://docs.synapse.org/rest/GET/teamMembers/id.html
+ * @param {*} id ownerID of the synapse user see -https://rest-docs.synapse.org/rest/GET/teamMembers/id.html
  * @param {*} fragment (optional) a prefix of the user's first or last name or email address (optional)
  * @param {*} limit    (optional) the maximum number of members to return (default 10, max limit 50)
  * @param {*} offset   (optional) the starting index of the returned results (default 0)
@@ -1663,7 +1663,7 @@ export const addFileToDownloadListV2 = (
 
 /**
  * Create an ACL
- * https://docs.synapse.org/rest/POST/entity/id/acl.html
+ * https://rest-docs.synapse.org/rest/POST/entity/id/acl.html
  */
 export const createACL = (
   entityId: string,
@@ -1681,7 +1681,7 @@ export const createACL = (
 
 /**
  * Submit an entity to an evaluation queue
- * https://docs.synapse.org/rest/POST/evaluation/submission.html
+ * https://rest-docs.synapse.org/rest/POST/evaluation/submission.html
  */
 export const submitToEvaluation = (
   submission: Submission,
@@ -1711,7 +1711,7 @@ export const getEvaluationPermissions = (
 
 /**
  * Get an evaluation queue
- * https://docs.synapse.org/rest/GET/evaluation/evalId.html
+ * https://rest-docs.synapse.org/rest/GET/evaluation/evalId.html
  */
 export const getEvaluation = (
   evalId: string,
@@ -1732,7 +1732,7 @@ export const getEvaluation = (
 
 /**
  * Update an existing evaluation queue
- * https://docs.synapse.org/rest/PUT/evaluation/evalId.html
+ * https://rest-docs.synapse.org/rest/PUT/evaluation/evalId.html
  */
 export const updateEvaluation = (
   evaluation: Evaluation,
@@ -1754,7 +1754,7 @@ export const updateEvaluation = (
 
 /**
  * Create an evaluation queue
- * https://docs.synapse.org/rest/POST/evaluation.html
+ * https://rest-docs.synapse.org/rest/POST/evaluation.html
  */
 export const createEvaluation = (
   evaluation: Evaluation,
@@ -1771,7 +1771,7 @@ export const createEvaluation = (
 
 /**
  * Delete an existing evaluation queue
- * https://docs.synapse.org/rest/PUT/evaluation/evalId.html
+ * https://rest-docs.synapse.org/rest/PUT/evaluation/evalId.html
  */
 export const deleteEvaluation = (
   evalId: string,
@@ -1787,7 +1787,7 @@ export const deleteEvaluation = (
 
 /**
  * Get an evaluation round
- * https://docs.synapse.org/rest/GET/evaluation/evalId/round/evalRoundId.html
+ * https://rest-docs.synapse.org/rest/GET/evaluation/evalId/round/evalRoundId.html
  */
 export const getEvaluationRound = (
   evalId: string,
@@ -1804,7 +1804,7 @@ export const getEvaluationRound = (
 
 /**
  * Get all evaluation rounds
- * https://docs.synapse.org/rest/GET/evaluation/evalId/round/list.html
+ * https://rest-docs.synapse.org/rest/GET/evaluation/evalId/round/list.html
  */
 export const getEvaluationRoundsList = (
   evalId: string,
@@ -1822,7 +1822,7 @@ export const getEvaluationRoundsList = (
 
 /**
  * Create an evaluation round
- * https://docs.synapse.org/rest/POST/evaluation/evalId/round/evalRoundId.html
+ * https://rest-docs.synapse.org/rest/POST/evaluation/evalId/round/evalRoundId.html
  */
 export const createEvaluationRound = (
   evaluationRound: EvaluationRound,
@@ -1839,7 +1839,7 @@ export const createEvaluationRound = (
 
 /**
  * Update an evaluation round
- * https://docs.synapse.org/rest/PUT/evaluation/evalId/round/evalRoundId.html
+ * https://rest-docs.synapse.org/rest/PUT/evaluation/evalId/round/evalRoundId.html
  */
 export const updateEvaluationRound = (
   evaluationRound: EvaluationRound,
@@ -1856,7 +1856,7 @@ export const updateEvaluationRound = (
 
 /**
  * Delete an evaluation round
- * https://docs.synapse.org/rest/DELETE/evaluation/evalId/round/evalRoundId.html
+ * https://rest-docs.synapse.org/rest/DELETE/evaluation/evalId/round/evalRoundId.html
  */
 export const deleteEvaluationRound = (
   evalId: string,
@@ -1873,7 +1873,7 @@ export const deleteEvaluationRound = (
 
 /**
  * Executes a user-defined query over the Submissions of a specific Evaluation.
- * https://docs.synapse.org/rest/GET/evaluation/submission/query.html
+ * https://rest-docs.synapse.org/rest/GET/evaluation/submission/query.html
  */
 export const getEvaluationSubmissions = (
   query: string,
@@ -1955,11 +1955,11 @@ export const consentToOAuth2Request = (
 
 /***********************
  * FORM SERVICES
- * https://docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.FormController
+ * https://rest-docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.FormController
  *************************/
 /**
  * Create a FormGroup
- * https://docs.synapse.org/rest/POST/form/group.html
+ * https://rest-docs.synapse.org/rest/POST/form/group.html
  * @param name
  * @param sessionToken
  * @param endpoint
@@ -1979,7 +1979,7 @@ export const createFormGroup = (
 
 /**
  * Get FormGroup ACL
- * https://docs.synapse.org/rest/GET/form/group/id/acl.html
+ * https://rest-docs.synapse.org/rest/GET/form/group/id/acl.html
  */
 export const getFormACL = (
   formGroupId: string,
@@ -1995,7 +1995,7 @@ export const getFormACL = (
 
 /**
  * Update FormGroup ACL
- * https://docs.synapse.org/rest/PUT/form/group/id/acl.html
+ * https://rest-docs.synapse.org/rest/PUT/form/group/id/acl.html
  */
 export const updateFormACL = (
   formGroupId: string,
@@ -2013,7 +2013,7 @@ export const updateFormACL = (
 
 /**
  * Create a new FormData object
- * https://docs.synapse.org/rest/POST/form/data.html
+ * https://rest-docs.synapse.org/rest/POST/form/data.html
  * @param formGroupId
  * @param name
  * @param sessionToken
@@ -2040,7 +2040,7 @@ export const createFormData = (
 
 /**
  * Update FormData object
- * https://docs.synapse.org/rest/PUT/form/data.html
+ * https://rest-docs.synapse.org/rest/PUT/form/data.html
  */
 export const updateFormData = (
   formDataId: string,
@@ -2063,7 +2063,7 @@ export const updateFormData = (
 
 /**
  * Delete FormData object
- * https://docs.synapse.org/rest/DELETE/form/data.html
+ * https://rest-docs.synapse.org/rest/DELETE/form/data.html
  */
 export const deleteFormData = (
   formDataId: string,
@@ -2079,7 +2079,7 @@ export const deleteFormData = (
 
 /**
  * Submit the identified FormData for review.
- * https://docs.synapse.org/rest/POST/form/data/id/submit.html
+ * https://rest-docs.synapse.org/rest/POST/form/data/id/submit.html
  */
 export const submitFormData = (
   formDataId: string,
@@ -2097,7 +2097,7 @@ export const submitFormData = (
 /**
  * List FormData objects and their associated status that match the filters of the provided request that are
  * owned by the caller. Note: Only objects owned by the caller will be returned.
- * https://docs.synapse.org/rest/POST/form/data/list.html
+ * https://rest-docs.synapse.org/rest/POST/form/data/list.html
  */
 export const listFormData = (
   request: ListRequest,
@@ -2115,7 +2115,7 @@ export const listFormData = (
 /**
  * List FormData objects and their associated status that match the filters of the provided request for the entire
  * group. This is used by service accounts to process submissions.
- * https://docs.synapse.org/rest/POST/form/data/list/reviewer.html
+ * https://rest-docs.synapse.org/rest/POST/form/data/list/reviewer.html
  */
 export const listFormDataAsFormAdmin = (
   request: ListRequest,
@@ -2132,7 +2132,7 @@ export const listFormDataAsFormAdmin = (
 
 /**
  * Called by the form processing service to accept a submitted data.
- * https://docs.synapse.org/rest/PUT/form/data/id/accept.html
+ * https://rest-docs.synapse.org/rest/PUT/form/data/id/accept.html
  */
 export const acceptFormData = (
   formDataId: string,
@@ -2149,7 +2149,7 @@ export const acceptFormData = (
 
 /**
  * Called by the form processing service to reject a submitted data.
- * https://docs.synapse.org/rest/PUT/form/data/id/reject.html
+ * https://rest-docs.synapse.org/rest/PUT/form/data/id/reject.html
  */
 export const rejectFormData = (
   formDataId: string,
@@ -2170,7 +2170,7 @@ export const rejectFormData = (
 
 /**
  * Get Statistics
- * https://docs.synapse.org/rest/POST/statistics.html
+ * https://rest-docs.synapse.org/rest/POST/statistics.html
  * Generic endpoint to retrieve statistics about objects. The user should have VIEW_STATISTICS access on the object referenced by the objectId in the request.
  */
 export const getProjectStatistics = (
@@ -2186,7 +2186,7 @@ export const getProjectStatistics = (
   )
 }
 
-// see https://docs.synapse.org/rest/POST/restrictionInformation.html
+// see https://rest-docs.synapse.org/rest/POST/restrictionInformation.html
 export const getRestrictionInformation = (
   request: RestrictionInformationRequest,
   sessionToken: string | undefined,
@@ -2514,7 +2514,7 @@ export const getEntityPath = (sessionToken: string, entityId: string) => {
   )
 }
 
-// https://docs.synapse.org/rest/GET/entity/id/version.html
+// https://rest-docs.synapse.org/rest/GET/entity/id/version.html
 // TODO: Pagination
 export const getEntityVersions = (sessionToken: string, entityId: string) => {
   return doGet<PaginatedResults<VersionInfo>>(
@@ -2525,7 +2525,7 @@ export const getEntityVersions = (sessionToken: string, entityId: string) => {
   )
 }
 
-// https://docs.synapse.org/rest/POST/search.html
+// https://rest-docs.synapse.org/rest/POST/search.html
 export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
   return doPost<SearchResults>(
     '/repo/v1/search',

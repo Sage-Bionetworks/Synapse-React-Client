@@ -1,6 +1,6 @@
 import { FileHandleAssociation } from './FileHandleAssociation'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ZipFileFormat.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ZipFileFormat.html
 export enum ZipFileFormat {
   CommandLineCache = 'CommandLineCache', // This is the default format. Zip file format structure is: (%1000)//
   Flat = 'Flat', // Files are writtent to the zip 'flat' with no directory structure.
@@ -8,7 +8,7 @@ export enum ZipFileFormat {
 }
 
 // Request for a bulk file download.
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/BulkFileDownloadRequest.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/BulkFileDownloadRequest.html
 export type BulkFileDownloadRequest = {
   concreteType: 'org.sagebionetworks.repo.model.file.BulkFileDownloadRequest'
   requestedFiles: FileHandleAssociation[] // The files to be included in the download.

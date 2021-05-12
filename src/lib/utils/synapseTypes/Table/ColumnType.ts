@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnType.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnType.html
 export enum ColumnType {
   STRING = 'STRING',
   DOUBLE = 'DOUBLE',

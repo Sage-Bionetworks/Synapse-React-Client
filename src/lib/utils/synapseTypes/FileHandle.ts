@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileHandle.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileHandle.html
 
 export interface FileHandle {
   id: string // The ID of this FileHandle. All references to this FileHandle will use this ID. Synapse will generate this ID when the FileHandle is created.
