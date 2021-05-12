@@ -1,5 +1,5 @@
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/AccessTokenRecord.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/AccessTokenRecord.html
 export type AccessTokenRecord = {
   id: string
   userId: string
@@ -11,7 +11,7 @@ export type AccessTokenRecord = {
   state: "ACTIVE" | "EXPIRED"
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/AccessTokenRecordList.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/AccessTokenRecordList.html
 export type AccessTokenRecordList = {
   results: AccessTokenRecord[]
   nextPageToken?: string

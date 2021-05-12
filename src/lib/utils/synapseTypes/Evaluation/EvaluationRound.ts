@@ -1,5 +1,5 @@
 import { EvaluationRoundLimit } from './EvaluationRoundLimit'
-//https://docs.synapse.org/rest/org/sagebionetworks/evaluation/model/EvaluationRound.html
+//https://rest-docs.synapse.org/rest/org/sagebionetworks/evaluation/model/EvaluationRound.html
 export type EvaluationRound = {
   id?: string
   etag?: string

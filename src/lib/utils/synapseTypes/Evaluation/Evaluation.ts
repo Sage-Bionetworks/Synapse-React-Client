@@ -1,6 +1,6 @@
 import { SubmissionQuota } from './SubmissionQuota'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/evaluation/model/Evaluation.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/evaluation/model/Evaluation.html
 export type Evaluation = {
   id?: string
   etag?: string

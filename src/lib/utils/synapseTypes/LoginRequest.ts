@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/LoginRequest.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/LoginRequest.html
 // Used to login via username, password, and previous authentication receipt.
 export type LoginRequest = {
   username: string // The user's username

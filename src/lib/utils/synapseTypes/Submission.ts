@@ -1,6 +1,6 @@
 import { SubmissionContributor } from './SubmissionContributor'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/evaluation/model/Submission.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/evaluation/model/Submission.html
 
 export type Submission = {
   id?: string

@@ -9,7 +9,7 @@ import { UserEntityPermissions } from './UserEntityPermissions'
 import { TableBundle } from './Table/TableBundle'
 import { DoiAssociation } from './DoiAssociation'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/entitybundle/v2/EntityBundle.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/entitybundle/v2/EntityBundle.html
 export type EntityBundle = {
   entity?: Entity
   entityType?: EntityType
@@ -28,7 +28,7 @@ export type EntityBundle = {
   restrictionInformation?: RestrictionInformationResponse
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/entitybundle/v2/EntityBundleRequest.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/entitybundle/v2/EntityBundleRequest.html
 export type EntityBundleRequest = {
   includeEntity?: boolean
   includeAnnotations?: boolean

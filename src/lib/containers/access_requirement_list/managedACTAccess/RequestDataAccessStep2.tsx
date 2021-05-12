@@ -415,7 +415,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           </Form.Label><br/>
           <span>This list should match those listed on your DUC.</span><br/>
           <span className={"requester-label"}>All data requesters must have a validated user profile.</span>
-          <a href={"https://docs.synapse.org/articles/accounts_certified_users_and_profile_validation.html#validated-profile"} target={"_blank"} rel={"noreferrer"}>
+          <a href={"https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers"} target={"_blank"} rel={"noreferrer"}>
             <IconSvg
               options={{
                 icon: 'info'

@@ -26,7 +26,7 @@ export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps
         <p>
           To find out more see&nbsp;
           <a
-            href="https://docs.synapse.org/articles/user_profiles.html"
+            href="https://help.synapse.org/docs/Managing-your-account.2055405596.html"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -34,7 +34,7 @@ export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps
           </a>
           <span> and </span>
           <a
-            href="https://docs.synapse.org/articles/governance.html"
+            href="https://help.synapse.org/docs/Governance-Overview.2009597114.html"
             rel="noopener noreferrer"
             target="_blank"
           >

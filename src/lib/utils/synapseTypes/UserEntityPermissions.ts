@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/UserEntityPermissions.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/UserEntityPermissions.html
 export type UserEntityPermissions = {
   canView: boolean
   canEdit: boolean

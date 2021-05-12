@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionInfo.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionInfo.html
 export type VersionInfo = {
     id: string
     versionNumber: number

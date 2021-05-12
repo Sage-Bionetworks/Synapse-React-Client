@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/CsvTableDescriptor.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/CsvTableDescriptor.html
 // The description of a csv for upload or download.
 
 export type CsvTableDescriptor = {

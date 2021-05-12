@@ -1,7 +1,7 @@
 import { AttachmentData } from './AttachmentData'
 import { ConcreteEntityType } from './ConcreteEntityType'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
 export interface Entity {
   attachments?: AttachmentData[] // 	This field is deprecated and will be removed in future versions of Synapse

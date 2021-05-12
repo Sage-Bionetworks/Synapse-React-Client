@@ -1,6 +1,6 @@
 import { FileHandleAssociation } from '../FileHandleAssociation'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/DownloadOrder.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/DownloadOrder.html
 export interface DownloadOrder {
   files: FileHandleAssociation[] //	The list of files included in this order.
   orderId: string //	The ID of this order.

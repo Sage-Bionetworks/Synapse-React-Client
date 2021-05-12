@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/DownloadList.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/DownloadList.html
 import { FileHandleAssociation } from '../FileHandleAssociation'
 
 // User's list of files they wish to download.
