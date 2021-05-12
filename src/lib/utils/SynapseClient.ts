@@ -98,6 +98,12 @@ import {
 } from './synapseTypes/AccessRequirement'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
+import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
+import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
+import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
+import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
+import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
 
 const cookies = new UniversalCookies()
 
@@ -2524,6 +2530,57 @@ export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
   return doPost<SearchResults>(
     '/repo/v1/search',
     query,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Download List v2
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+ export const getAvailableFilesToDownload = (
+  request: AvailableFilesRequest,
+  sessionToken: string | undefined = undefined,
+): Promise<DownloadListQueryResponse> => {
+  const downloadListQueryRequest:DownloadListQueryRequest = {
+    concreteType:'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+    requestDetails: request
+  }
+  return doPost<AsyncJobId>(
+    '/repo/v1/download/list/query/async/start',
+    downloadListQueryRequest,
+    sessionToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((asyncJobId: AsyncJobId) => {
+      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
+      return getAsyncResultFromJobId<DownloadListQueryResponse>(
+        urlRequest,
+        sessionToken,
+      )
+    })
+    .catch(err => {
+      console.error('Error on getDownloadListV2 ', err)
+      throw err
+    })
+}
+/**
+ * Remove item from Download List v2
+ * http://rest-docs.synapse.org/rest/POST/download/list/remove.html
+ */
+ export const removeItemFromDownloadListV2 = (
+  item: DownloadListItem,
+  sessionToken: string | undefined = undefined,
+): Promise<RemoveBatchOfFilesFromDownloadListResponse> => {
+  const request:RemoveBatchOfFilesFromDownloadListRequest = {
+    batchToRemove: [item]
+  }
+  return doPost<RemoveBatchOfFilesFromDownloadListResponse>(
+    '/repo/v1/download/list/remove',
+    request,
     sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
