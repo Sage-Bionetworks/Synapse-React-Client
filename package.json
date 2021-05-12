@@ -175,7 +175,7 @@
     "deploy:origin": "yarn install && yarn run predeploy && gh-pages -d styleguide && gh-pages -d styleguide -o origin",
     "build-css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=. && sass src/demo/style:src/demo/style --load-path=.",
     "watch-css": "yarn run build-css && sass src --watch -I .",
-    "start-js": "react-scripts start",
+    "start-js": "DISABLE_ESLINT_PLUGIN=true react-scripts start",
     "start": "npm-run-all -p watch-css serve:docs",
     "start-deprecated-demo": "npm-run-all -p watch-css start-js",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom --setupFiles ./src/setupTests.js  --resetMocks=false",
@@ -188,9 +188,8 @@
     "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
-    "serve:docs": "npx styleguidist server --open",
+    "serve:docs": "DISABLE_ESLINT_PLUGIN=true npx styleguidist server --open",
     "build:docs": "yarn run build-css && npx styleguidist build",
-    "lint": "eslint src/lib/**/*.{ts,tsx}"
   },
   "resolutions": {
     "fstream": "1.0.12",
