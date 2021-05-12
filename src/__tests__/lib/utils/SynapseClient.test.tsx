@@ -17,8 +17,8 @@ describe('it works at integration level testing', () => {
       BackendDestinationEnum.REPO_ENDPOINT,
     ).catch((error) => {
       expect(error.status).toEqual(404)
-      expect(error.reason).toEqual(
-        'GET was not found. Please reference API documentation at https://rest-docs.synapse.org/rest/',
+      expect(error.reason).toContain(
+        'GET was not found.',
       )
     })
   })
