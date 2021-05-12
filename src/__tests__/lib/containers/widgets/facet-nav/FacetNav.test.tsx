@@ -140,15 +140,11 @@ describe('facets display hide/show', () => {
     const expandButton = getButtonOnFacet('expand', 1)!
     userEvent.click(expandButton)
 
-    await waitFor(() => {
-      expect(() => screen.getByRole('dialog')).not.toThrowError()
-    })
+    screen.getByRole('dialog')
     expect(screen.getAllByRole('graphics-document').length).toBe(1)
 
     // Close the modal
     userEvent.click(screen.getByRole('button', { name: 'Close' }))
-    await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document').length).toBe(2)
-    })
+    expect(screen.getAllByRole('graphics-document').length).toBe(2)
   })
 })
