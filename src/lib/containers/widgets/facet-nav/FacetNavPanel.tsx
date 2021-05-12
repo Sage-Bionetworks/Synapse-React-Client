@@ -424,12 +424,15 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                 size="sm"
                 onClick={() => setShowModal(false)}
               >
-                Save Filters
+                Apply Filters
               </Button>
             </div>
           </Modal.Body>
         </Modal>
-        <div className={`FacetNavPanel${isModalView ? '--expanded' : ''}`}>
+        <div
+          role="graphics-document"
+          className={`FacetNavPanel${isModalView ? '--expanded' : ''}`}
+        >
           {!isModalView && (
             <div className="FacetNavPanel__title">
               <span className="FacetNavPanel__title__name">{plotTitle}</span>

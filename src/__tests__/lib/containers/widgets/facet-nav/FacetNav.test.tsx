@@ -2,14 +2,15 @@ import FacetNav, {
   FacetNavProps,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
 import * as React from 'react'
-import * as _ from 'lodash-es'
-import { render, fireEvent, act, screen } from '@testing-library/react'
+import { cloneDeep } from 'lodash-es'
+import { render, screen, waitFor } from '@testing-library/react'
 import {
   QueryResultBundle,
   QueryBundleRequest,
 } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
 import { SynapseConstants } from '../../../../../lib'
+import userEvent from '@testing-library/user-event'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -23,19 +24,24 @@ const lastQueryRequest: QueryBundleRequest = {
 }
 const mockGetLastQueryRequest = jest.fn(() => lastQueryRequest)
 
+const defaultProps: FacetNavProps = {
+  isLoading: false,
+  getLastQueryRequest: mockGetLastQueryRequest,
+  data: testData as QueryResultBundle,
+  topLevelControlsState: {
+    showFacetVisualization: true,
+    showFacetFilter: true,
+    showColumnFilter: true,
+    showSearchBar: true,
+    showDownloadConfirmation: false,
+    showColumnSelectDropdown: false,
+  },
+}
+
 function createTestProps(overrides?: FacetNavProps): FacetNavProps {
   return {
-    getLastQueryRequest: mockGetLastQueryRequest,
-    data: testData as QueryResultBundle,
+    ...defaultProps,
     ...overrides,
-    topLevelControlsState: {
-      showFacetVisualization: true,
-      showFacetFilter: true,
-      showColumnFilter: true,
-      showSearchBar: true,
-      showDownloadConfirmation: false,
-      showColumnSelectDropdown: false,
-    },
   }
 }
 
@@ -44,13 +50,10 @@ function isHidden(element: Element | null): boolean {
 }
 
 function getButtonOnFacet(
-  container: HTMLElement,
-  dataIcon: string,
+  text: string,
   facetIndex: number = 0,
 ): HTMLElement | undefined {
-  const itemList = container.querySelectorAll(
-    `.FacetNavPanel__title svg[data-icon=${dataIcon}]`,
-  )
+  const itemList = screen.getAllByLabelText(text, { exact: false })
   if (itemList ? [facetIndex] : undefined) {
     return itemList[facetIndex] as HTMLElement
   } else {
@@ -58,130 +61,94 @@ function getButtonOnFacet(
   }
 }
 
-let container: HTMLElement
-let props: FacetNavProps
-
-function init(overrides?: FacetNavProps) {
-  props = createTestProps(overrides)
-  const { container: _container, ...others } = render(<FacetNav {...props} />)
-  container = _container
-  return others
+async function init(overrides?: FacetNavProps) {
+  const props = createTestProps(overrides)
+  render(<FacetNav {...props} />)
+  await waitFor(() => expect(() => screen.getByRole('list')).not.toThrowError())
 }
 
-beforeEach(() => init())
-
 describe('facets display hide/show', () => {
-  it("should display 3 facets with 'show more' button", async () => {
-    const panel = container.querySelector<HTMLElement>('div.FacetNav')
-    const expectedLength = props.data?.facets?.filter(
+  it("should display 2 facets with 'show more' button", async () => {
+    await init()
+    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    screen.getByRole('button', { name: 'View All Charts' })
+  })
+
+  it('shows all facet plots when show more is clicked', async () => {
+    await init()
+    const showMoreButton = screen.getByRole('button', {
+      name: 'View All Charts',
+    })
+    userEvent.click(showMoreButton!)
+
+    const expectedLength = defaultProps.data?.facets?.filter(
       facet => facet.facetType === 'enumeration',
     ).length
-    expect(panel).not.toBeNull()
-    expect(container.querySelector('.FacetNav__row')!.children.length).toBe(
-      expectedLength,
-    )
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
-    ).toBe(false)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
-    ).toBe(true)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
-    ).toBe(true)
-    expect(
-      container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('View All Charts')
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('graphics-document').length).toBe(
+        expectedLength,
+      )
+    })
+
+    expect(() =>
+      screen.getByRole('button', { name: 'View All Charts' }),
+    ).toThrowError()
   })
 
-  it('when show more is clicked', async () => {
-    //const panel = container.querySelector<HTMLElement>('div.FacetNav')
-    const button = container.querySelector('button.FacetNav__showMore')
-    act(() => {
-      fireEvent.click(button!)
-    })
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
-    ).toBe(false)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
-    ).toBe(false)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
-    ).toBe(false)
-    expect(
-      container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('Hide Charts')
-    act(() => {
-      fireEvent.click(button!)
-    })
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
-    ).toBe(false)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[2]),
-    ).toBe(true)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[3]),
-    ).toBe(true)
-    expect(
-      container.querySelector('button.FacetNav__showMore')?.innerHTML,
-    ).toBe('View All Charts')
-  })
-
-  it('if there are only 4 facets show more button should not exist', async () => {
-    const data = _.cloneDeep(props.data)
-    data!.facets = data?.facets?.splice(0, 3)
-    init({
-      ...props,
+  it('if there are only 2 facets show more button should not exist', async () => {
+    const data = cloneDeep(defaultProps.data)
+    data!.facets = data?.facets?.splice(0, 2)
+    await init({
       data: data,
     })
-    expect(isHidden(container.querySelector('button.FacetNav__showMore'))).toBe(
-      true,
-    )
+    expect(() =>
+      screen.getByRole('button', { name: 'View All Charts' }),
+    ).toThrowError()
   })
+
   it("should only show specified facets if 'facetsToPlot' are set", async () => {
-    init({
-      ...props,
+    await init({
       facetsToPlot: ['Make', 'Model'],
     })
 
-    expect(container.querySelector('.FacetNav__row')!.children.length).toBe(2)
-    expect(isHidden(container.querySelector('button.FacetNav__showMore'))).toBe(
-      true,
-    )
+    // Only two plots are shown and the button is hidden
+    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    expect(() =>
+      screen.getByRole('button', { name: 'View All Charts' }),
+    ).toThrowError()
   })
+
   it('hiding facet should hide it from facet grid', async () => {
-    init(props)
-    const icon = getButtonOnFacet(container, 'close', 0)
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[0]),
-    ).toBe(false)
-    act(() => {
-      fireEvent.click(icon?.parentNode as HTMLElement)
+    await init()
+
+    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+
+    const closeFacetPlotButton = getButtonOnFacet('Hide graph', 0)!
+    userEvent.click(closeFacetPlotButton)
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('graphics-document').length).toBe(1)
     })
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[0]),
-    ).toBe(true)
   })
 
   it('expanding facet should additionally show the facet in a modal', async () => {
-    init(props)
+    await init()
+    expect(screen.getAllByRole('graphics-document').length).toBe(2)
 
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
-    ).toBe(false)
     expect(() => screen.getByRole('dialog')).toThrowError()
+    const expandButton = getButtonOnFacet('expand', 1)!
+    userEvent.click(expandButton)
 
-    const icon = getButtonOnFacet(container, 'expand', 1)
-    act(() => {
-      fireEvent.click(icon?.parentNode as HTMLElement)
+    await waitFor(() => {
+      expect(() => screen.getByRole('dialog')).not.toThrowError()
     })
+    expect(screen.getAllByRole('graphics-document').length).toBe(1)
 
-    expect(
-      isHidden(container.querySelector('.FacetNav__row')!.children[1]),
-    ).toBe(false)
-
-    expect(() => screen.getByRole('dialog')).not.toThrowError()
+    // Close the modal
+    userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    await waitFor(() => {
+      expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    })
   })
 })

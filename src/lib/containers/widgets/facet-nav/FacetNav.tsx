@@ -12,7 +12,7 @@ import {
   QueryResultBundle,
   FacetColumnResultValueCount,
 } from '../../../utils/synapseTypes'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import TotalQueryResults from '../../../containers/TotalQueryResults'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import { Button } from 'react-bootstrap'
@@ -64,7 +64,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   topLevelControlsState,
   facetsToPlot,
   getInitQueryRequest,
-  updateParentState,
   facetAliases,
   showNotch = false,
   error,
@@ -122,18 +121,18 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     return result
   }
 
-  const getShowMoreState = (): ShowMoreState => {
-    if (facetUiStateArray.length <= DEFAULT_VISIBLE_FACETS) {
-      return 'NONE'
-    }
+  const showMoreButtonState = useMemo<ShowMoreState>(() => {
     if (
       // if at least one item is hidden
       facetUiStateArray.find(item => item.isHidden === true)
     ) {
       return 'MORE'
+    } else if (facetUiStateArray.length <= DEFAULT_VISIBLE_FACETS) {
+      return 'NONE'
+    } else {
+      return 'LESS'
     }
-    return 'LESS'
-  }
+  }, [facetUiStateArray])
 
   // hides facet graph
   const hideFacetInGrid = (columnName: string) => {
@@ -174,7 +173,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       colorIndex: index,
     }
   })
-  const showMoreButtonState = getShowMoreState()
 
   if (error) {
     return <></>
@@ -213,7 +211,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               : QUERY_FILTERS_COLLAPSED_CSS
           } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
         >
-          <div className="FacetNav__row">
+          <div className="FacetNav__row" role="list">
             {facets.map(facet => (
               <div
                 className="col-sm-12 col-md-4"
@@ -263,8 +261,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
               </div>
             ))}
           </div>
-          <div className="FacetNav__showMoreContainer bootstrap-4-backport">
-            {showMoreButtonState !== 'NONE' && (
+          {showMoreButtonState !== 'NONE' && (
+            <div className="FacetNav__showMoreContainer bootstrap-4-backport">
               <Button
                 variant="secondary"
                 className="pill-xl FacetNav__showMore"
@@ -275,8 +273,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   ? 'Hide Charts'
                   : 'View All Charts'}
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </>
     )
