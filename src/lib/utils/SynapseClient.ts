@@ -1187,7 +1187,7 @@ export const setAccessTokenCookie = async (
  * Get the current access token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
-export const getaccessTokenFromCookie = async () => {
+export const getAccessTokenFromCookie = async () => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     return cookies.get(ACCESS_TOKEN_COOKIE_KEY)
   }
