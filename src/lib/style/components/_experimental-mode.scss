@@ -1,0 +1,15 @@
+
+@use '../abstracts/variables' as SRC;
+
+button.experimental-mode {
+  text-transform: uppercase;
+  padding-right: 0.2rem;
+  color: inherit;
+  font-weight: normal;
+
+  &.btn-link:focus,
+  &.btn-link:hover {
+    color: inherit;
+  }
+}
+
