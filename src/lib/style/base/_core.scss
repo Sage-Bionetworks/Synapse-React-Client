@@ -1032,7 +1032,7 @@ a.dropdown-item {
   border-top: 1px solid #e9ecef;
 }
 
-.dropdown button.btn {
+.dropdown .btn {
   padding: 3px;
   margin: 0px 3px;
 
@@ -1208,4 +1208,14 @@ hr ~ .SRC-wrapper {
 
 .SRC-pointer-events-none {
   pointer-events: none;
+}
+
+.SRC-labeled-dropdown {
+  display: flex;
+  align-items: center;
+  margin: 3px 0px 10px;
+  &__label {
+    color: SRC.$text-color-dark;
+    margin-right: 5px;
+  }
 }

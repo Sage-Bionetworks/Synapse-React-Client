@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Button, FormControl } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import {
   ErrorBoundary,
   FallbackProps,
@@ -260,10 +260,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 icon={faSearch}
                 className="SearchIcon"
               />
-              <FormControl
+              <input
+                role="textbox"
                 ref={searchInputRef}
                 aria-hidden={!searchActive}
-                role="textbox"
                 className="EntityFinder__Search__Input"
                 type="search"
                 placeholder="Search by name, Wiki contents, or Synapse ID"
