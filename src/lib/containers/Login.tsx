@@ -91,6 +91,10 @@ class Login extends React.Component<Props, State> {
         data.accessToken,
         this.props.sessionCallback,
       )
+      // edge case, user did not accept the Synapse ToU during registration. Cookie is set, so we should pick up the session on synapse.org.  Goodbye!
+      if (!data.acceptsTermsOfUse) {
+        window.location.href = 'https://www.synapse.org/#!Login:SynapseAwarenessEthicsPledge'
+      }
       // Set the new receipt
       localStorage.setItem(
         this.authenticationReceiptKey,

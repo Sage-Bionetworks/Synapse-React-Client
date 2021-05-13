@@ -1170,7 +1170,7 @@ export const setAccessTokenCookie = async (
     // will set cookie in the http header
     doPost(
       'Portal/sessioncookie',
-      { accessToken: token },
+      { token: token },
       undefined,
       'include',
       BackendDestinationEnum.PORTAL_ENDPOINT,
