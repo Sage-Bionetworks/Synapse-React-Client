@@ -16,7 +16,7 @@ export enum EntityColumnType {
   ENTITYID_LIST = 'ENTITYID_LIST',
 }
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html
 export type SelectColumn = {
   name: string // The required display name of the column
   columnType: EntityColumnType

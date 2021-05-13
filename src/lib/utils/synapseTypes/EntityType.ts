@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityType.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityType.html
 export enum EntityType {
   PROJECT = 'project',
   FOLDER = 'folder',

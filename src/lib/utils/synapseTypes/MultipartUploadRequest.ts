@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/MultipartUploadRequest.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/MultipartUploadRequest.html
 
 export type MultipartUploadRequest = {
   contentMD5Hex?: string

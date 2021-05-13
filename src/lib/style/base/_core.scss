@@ -573,6 +573,7 @@ div.SRC-logo-cursor * {
   height: 80px;
   width: 80px;
   font-size: 26px;
+  min-width: 80px;
 }
 
 .UserCardSmall {
@@ -1031,7 +1032,7 @@ a.dropdown-item {
   border-top: 1px solid #e9ecef;
 }
 
-.dropdown button.btn {
+.dropdown .btn {
   padding: 3px;
   margin: 0px 3px;
 
@@ -1192,30 +1193,6 @@ hr ~ .SRC-wrapper {
   overflow: auto;
 }
 
-// https://github.com/twbs/bootstrap/blob/c140347bd26851c79e76766ae381e91c159b3f48/scss/_modal.scss
-.modal-dialog-scrollable {
-  height: 100%;
-
-  .modal-content {
-    height: 90%;
-    overflow: hidden;
-  }
-
-  .modal-body {
-    height: 90%;
-    overflow-y: auto;
-    padding: 15px;
-    h4 {
-      margin: 0px;
-    }
-  }
-}
-
-.modal-dialog-centered {
-  margin-top: 0px;
-  min-height: 90%;
-}
-
 .ButtonWithIcon {
   display: inline-flex;
   align-items: center;
@@ -1231,4 +1208,14 @@ hr ~ .SRC-wrapper {
 
 .SRC-pointer-events-none {
   pointer-events: none;
+}
+
+.SRC-labeled-dropdown {
+  display: flex;
+  align-items: center;
+  margin: 3px 0px 10px;
+  &__label {
+    color: SRC.$text-color-dark;
+    margin-right: 5px;
+  }
 }

@@ -70,7 +70,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 <Button
                   onClick={() =>
                     window.open(
-                      'https://docs.synapse.org/articles/getting_started.html',
+                      'https://help.synapse.org/docs/Getting-Started.2055471150.html',
                       '_blank',
                       'noopener',
                     )
@@ -238,7 +238,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
               variant="primary"
               onClick={() =>
                 window.open(
-                  'https://docs.synapse.org/articles/governance.html',
+                  'https://help.synapse.org/docs/Governance-Overview.2009597114.html',
                   '_blank',
                   'noopener',
                 )
@@ -301,7 +301,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             <Button
               onClick={() =>
                 window.open(
-                  'https://docs.synapse.org/articles/api_documentation.html',
+                  'https://help.synapse.org/docs/API-Documentation.1985184035.html',
                   '_blank',
                   'noopener',
                 )
@@ -444,7 +444,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 <Button
                   onClick={() =>
                     window.open(
-                      'https://docs.synapse.org/articles/getting_started.html',
+                      'https://help.synapse.org/docs/Getting-Started.2055471150.html',
                       '_blank',
                       'noopener',
                     )

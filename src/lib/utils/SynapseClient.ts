@@ -67,6 +67,7 @@ import {
   EntityPath,
   EntityBundleRequest,
   EntityBundle,
+  ACTSubmissionStatus,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -89,8 +90,20 @@ import {
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import { SearchQuery, SearchResults } from './synapseTypes/Search'
+import { ResearchProject } from './synapseTypes/ResearchProject'
+import {
+  ManagedACTAccessRequirementStatus,
+  RequestInterface,
+  CreateSubmissionRequest,
+} from './synapseTypes/AccessRequirement'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
+import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
+import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
+import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
+import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
+import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
 
 const cookies = new UniversalCookies()
 
@@ -101,7 +114,7 @@ export const IS_OUTSIDE_SYNAPSE_ORG = window.location.hostname
   ? false
   : true
 
-export const ACCESS_TOKEN_COOKIE_KEY =
+export const SESSION_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 
 // Max size file that we will allow the caller to read into memory (5MB)
@@ -200,7 +213,7 @@ const fetchWithExponentialTimeout = <T>(
 export const doPost = <T>(
   url: string,
   requestJsonObject: any,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ): Promise<T> => {
@@ -208,38 +221,38 @@ export const doPost = <T>(
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
+      'Access-Control-Request-Headers': 'sessiontoken',
       'Content-Type': 'application/json',
     },
     method: 'POST',
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (accessToken) {
+  if (sessionToken) {
     // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
 }
 export const doGet = <T>(
   url: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
   const options: RequestInit = {
     headers: {
       Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
+      'Access-Control-Request-Headers': 'sessiontoken',
     },
     method: 'GET',
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (accessToken) {
+  if (sessionToken) {
     // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
@@ -247,22 +260,22 @@ export const doGet = <T>(
 
 export const doDelete = (
   url: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ) => {
   const options: RequestInit = {
     headers: {
       Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
+      'Access-Control-Request-Headers': 'sessiontoken',
     },
     method: 'DELETE',
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (accessToken) {
+  if (sessionToken) {
     // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
@@ -271,7 +284,7 @@ export const doDelete = (
 export const doPut = <T>(
   url: string,
   requestJsonObject: any,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
 ): Promise<any> => {
@@ -279,19 +292,29 @@ export const doPut = <T>(
     body: JSON.stringify(requestJsonObject),
     headers: {
       Accept: '*/*',
-      'Access-Control-Request-Headers': 'authorization',
+      'Access-Control-Request-Headers': 'sessiontoken',
       'Content-Type': 'application/json',
     },
     method: 'PUT',
     mode: 'cors',
     credentials: initCredentials,
   }
-  if (accessToken) {
+  if (sessionToken) {
     // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers.sessionToken = sessionToken
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
+}
+
+export const putRefreshSessionToken = (sessionToken: string) => {
+  return doPut(
+    '/auth/v1/session',
+    { sessionToken },
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 export const getVersion = (): Promise<SynapseVersion> => {
@@ -309,13 +332,13 @@ export const getVersion = (): Promise<SynapseVersion> => {
 //Start an asynchronous job to add files to a user's download list.
 export const addFilesToDownloadList = (
   request: AddFilesToDownloadListRequest,
-  accessToken: string,
+  sessionToken: string,
   updateParentState?: any,
 ) => {
   return doPost<AsyncJobId>(
     `file/v1/download/list/add/async/start`,
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -323,7 +346,7 @@ export const addFilesToDownloadList = (
       const requestUrl = `file/v1/download/list/add/async/get/${resp.token}`
       return getAsyncResultFromJobId<AddFilesToDownloadListResponse>(
         requestUrl,
-        accessToken,
+        sessionToken,
         updateParentState,
       ).then(data => {
         dispatchDownloadListChangeEvent(data.downloadList)
@@ -340,13 +363,13 @@ export const addFilesToDownloadList = (
  */
 export const getDownloadFromTableRequest = (
   request: DownloadFromTableRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ) => {
   return doPost<AsyncJobId>(
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/start`,
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -354,7 +377,7 @@ export const getDownloadFromTableRequest = (
       const requestUrl = `/repo/v1/entity/${request.entityId}/table/download/csv/async/get/${resp.token}`
       return getAsyncResultFromJobId<DownloadFromTableResult>(
         requestUrl,
-        accessToken,
+        sessionToken,
         updateParentState,
       )
     })
@@ -371,11 +394,11 @@ export const getDownloadFromTableRequest = (
  **/
 export const getFileHandleById = (
   handleId: string,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ): Promise<FileHandle> => {
   return doGet<FileHandle>(
     `file/v1/fileHandle/${handleId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -388,7 +411,7 @@ export const getFileHandleById = (
  **/
 export const getActualFileHandleByIdURL = (
   handleId: string,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
   fileAssociateType: FileHandleAssociateType,
   fileAssociateId: string,
   redirect: boolean = true,
@@ -396,7 +419,7 @@ export const getActualFileHandleByIdURL = (
   // get the presigned URL for this file handle association.
   return doGet<string>(
     `/file/v1/file/${handleId}?fileAssociateType=${fileAssociateType}&fileAssociateId=${fileAssociateId}&redirect=${redirect}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -409,12 +432,12 @@ export const getActualFileHandleByIdURL = (
  **/
 export const getFileHandleByIdURL = (
   handleId: string,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ) => {
   // get the presigned URL for this file handle
   return doGet<string>(
     `file/v1/fileHandle/${handleId}/url?redirect=false`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -422,12 +445,12 @@ export const getFileHandleByIdURL = (
 
 export const getAsyncResultFromJobId = <T>(
   urlRequest: string,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ): Promise<T> => {
   return doGet(
     urlRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -442,7 +465,7 @@ export const getAsyncResultFromJobId = <T>(
         return delay(500).then(() => {
           return getAsyncResultFromJobId<T>(
             urlRequest,
-            accessToken,
+            sessionToken,
             updateParentState,
           )
         })
@@ -458,25 +481,25 @@ export const getAsyncResultFromJobId = <T>(
 /**
  * http://docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
  * @param {*} queryBundleRequest
- * @param {*} accessToken
+ * @param {*} sessionToken
  * @param {*} endpoint
  */
 export const getQueryTableResults = (
   queryBundleRequest: QueryBundleRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ): Promise<QueryResultBundle> => {
   return doPost<AsyncJobId>(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then(resp => {
       return getAsyncResultFromJobId<QueryResultBundle>(
         `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${resp.token}`,
-        accessToken,
+        sessionToken,
         updateParentState,
       )
     })
@@ -495,7 +518,7 @@ export const getQueryTableResults = (
  *        }
  *     }
  * @param {*} queryBundleRequest
- * @param {*} [accessToken=undefined]
+ * @param {*} [sessionToken=undefined]
  * @param {boolean} [onlyGetFacets=false] Specify if the query only needs facets and no
  * data-- (internally this limits the row count to 1 on the request)
  * @returns Full dataset from synapse table query
@@ -503,7 +526,7 @@ export const getQueryTableResults = (
 
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -516,7 +539,7 @@ export const getFullQueryTableResults = async (
       queryBundleRequest.partMask |
       SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
   }
-  let response = await getQueryTableResults(queryRequest, accessToken)
+  let response = await getQueryTableResults(queryRequest, sessionToken)
   data = response
   // we are done if we return less than a max pagesize that the backend is willing to return.
   let isDone =
@@ -528,7 +551,7 @@ export const getFullQueryTableResults = async (
     queryRequest.query.offset = offset
     // update the maxPageSize to the largest possible value after the first page is complete.  This is a no-op after the second page.
 
-    let response = await getQueryTableResults(queryRequest, accessToken)
+    let response = await getQueryTableResults(queryRequest, sessionToken)
     data.queryResult.queryResults.rows.push(
       ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
     )
@@ -540,9 +563,9 @@ export const getFullQueryTableResults = async (
 }
 
 /**
- *  Log-in using the given username and password.  Will return a access token that must be used in
+ *  Log-in using the given username and password.  Will return a session token that must be used in
  *  authenticated requests.
- *  http://docs.synapse.org/rest/POST/login.html
+ *  https://rest-docs.synapse.org/rest/POST/login2.html
  */
 export const login = (
   username: string,
@@ -580,7 +603,7 @@ export const oAuthUrlRequest = (
 }
 /**
  * Get access token from SSO
- * https://docs.synapse.org/rest/POST/oauth2/session2.html
+ * https://rest-docs.synapse.org/rest/POST/oauth2/session2.html
  * @param {*} provider
  * @param {*} authenticationCode
  * @param {*} redirectUrl
@@ -593,7 +616,7 @@ export const oAuthSessionRequest = (
   endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
 ) => {
   return doPost(
-    '/auth/v1/oauth2/session2',
+    '/auth/v1/oauth2/session',
     { provider, authenticationCode, redirectUrl },
     undefined,
     undefined,
@@ -606,12 +629,12 @@ export const oAuthSessionRequest = (
  */
 export const createEntity = <T extends Entity>(
   entity: T,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doPost<T>(
     '/repo/v1/entity',
     entity,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -622,14 +645,14 @@ export const createEntity = <T extends Entity>(
  */
 export const createProject = (
   name: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<Entity> => {
   return createEntity(
     {
       name,
       concreteType: 'org.sagebionetworks.repo.model.Project',
     },
-    accessToken,
+    sessionToken,
   )
 }
 
@@ -637,10 +660,10 @@ export const createProject = (
  * Return this user's UserProfile
  * http://docs.synapse.org/rest/GET/userProfile.html
  */
-export const getUserProfile = (accessToken: string | undefined) => {
+export const getUserProfile = (sessionToken: string | undefined) => {
   return doGet<UserProfile>(
     '/repo/v1/userProfile',
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -651,12 +674,12 @@ export const getUserProfile = (accessToken: string | undefined) => {
  * http://docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfileById = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   ownerId: string,
 ) => {
   return doGet<UserProfile>(
     `/repo/v1/userProfile/${ownerId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -669,11 +692,11 @@ export const getUserProfileById = (
 export const getUserBundle = (
   id: string,
   mask: number,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<UserBundle> => {
   return doGet<UserBundle>(
     `repo/v1/user/${id}/bundle?mask=${mask}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -685,11 +708,11 @@ export const getUserBundle = (
  */
 export const getGroupHeadersBatch = (
   ids: string[],
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     `repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -702,12 +725,12 @@ export type UserProfileList = { list: UserProfile[] }
  */
 export const getUserProfiles = (
   list: string[],
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ): Promise<UserProfileList> => {
   return doPost(
     '/repo/v1/userProfile',
     { list },
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -719,12 +742,12 @@ export const getUserProfiles = (
  */
 export const getEntityChildren = (
   request: EntityChildrenRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ) => {
   return doPost<EntityChildrenResponse>(
     '/repo/v1/entity/children',
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -735,12 +758,12 @@ export const getEntityChildren = (
  */
 export const lookupChildEntity = (
   request: EntityLookupRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ) => {
   return doPost<EntityId>(
     '/repo/v1/entity/child',
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -752,12 +775,12 @@ export const lookupChildEntity = (
  */
 export const getFiles = (
   request: BatchFileRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ): Promise<BatchFileResult> => {
   return doPost(
     '/file/v1/fileHandle/batch',
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -769,12 +792,12 @@ export const getFiles = (
  */
 export const getBulkFiles = (
   bulkFileDownloadRequest: BulkFileDownloadRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
   return doPost<AsyncJobId>(
     'file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -782,7 +805,7 @@ export const getBulkFiles = (
       const urlRequest = `/file/v1/file/bulk/async/get/${asyncJobId.token}`
       return getAsyncResultFromJobId<BulkFileDownloadResponse>(
         urlRequest,
-        accessToken,
+        sessionToken,
       )
     })
     .catch(err => {
@@ -798,13 +821,13 @@ export const getBulkFiles = (
  * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
  */
 type GetEntity = <T extends Entity>(
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   entityId: string | number,
   versionNumber?: string,
 ) => Promise<T>
 
 export const getEntity: GetEntity = <T>(
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
   entityId: string | number,
   versionNumber?: string,
 ) => {
@@ -813,7 +836,7 @@ export const getEntity: GetEntity = <T>(
     : `/repo/v1/entity/${entityId}`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<T>
@@ -825,11 +848,11 @@ export const getEntity: GetEntity = <T>(
  */
 export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>> (
   entityIds: string[],
-  accessToken?: string,
+  sessionToken?: string,
 ) => {
   return doGet(
     `/repo/v1/entity/type?batch=${entityIds.join(",")}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<T>
@@ -842,12 +865,12 @@ export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>> 
  */
 export const getEntityHeaders = (
   references: ReferenceList,
-  accessToken?: string,
+  sessionToken?: string,
 ) => {
   return doPost(
     'repo/v1/entity/header',
     { references: references },
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<PaginatedResults<EntityHeader>>
@@ -857,10 +880,10 @@ export const getEntityHeaders = (
  * Get the EntityHeader for a single entity
  * https://docs.synapse.org/rest/GET/entity/id/type.html
  */
-export const getEntityHeader = (entityId: string, accessToken?: string) => {
+export const getEntityHeader = (entityId: string, sessionToken?: string) => {
   return doGet(
     `repo/v1/entity/${entityId}/type`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<EntityHeader>
@@ -868,26 +891,26 @@ export const getEntityHeader = (entityId: string, accessToken?: string) => {
 
 export const updateEntity = <T extends Entity>(
   entity: T,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
   return doPut(
     url,
     entity,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 export const deleteEntity = (
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
   entityId: string | number,
 ) => {
   const url = `/repo/v1/entity/${entityId}`
   return doDelete(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -904,7 +927,7 @@ export const getEntityBundleForVersion = (
   entityId: string | number,
   version: string | number | undefined,
   partsMask: string | number,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
 ) => {
   let url = `/repo/v1/entity/${entityId}`
   if (version) {
@@ -913,7 +936,7 @@ export const getEntityBundleForVersion = (
   url += `/bundle?mask= ${partsMask}`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ) as Promise<any>
@@ -923,14 +946,14 @@ export const getEntityBundleV2 = (
   entityId: string | number,
   requestObject: EntityBundleRequest,
   version?: number,
-  accessToken?: string,
+  sessionToken?: string,
 ): Promise<EntityBundle> => {
   return doPost<EntityBundle>(
     `repo/v1/entity/${entityId}/${
       version ? `version/${version}/` : ''
     }/bundle2`,
     requestObject,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -948,7 +971,7 @@ function getObjectTypeToString(key: ObjectType) {
  * http://docs.synapse.org/rest/GET/entity/ownerId/wiki.html
  */
 export const getEntityWiki = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   ownerId: string | undefined,
   wikiId: string | undefined = '',
   objectType: ObjectType = ObjectType.ENTITY,
@@ -958,22 +981,22 @@ export const getEntityWiki = (
   const url = `/repo/v1/${objectTypeString?.toLocaleLowerCase()}/${ownerId}/wiki/${wikiId}`
   return doGet<WikiPage>(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 /**
- * Returns synapse user favorites list given their access token
+ * Returns synapse user favorites list given their session token
  * http://docs.synapse.org/rest/GET/favorite.html
  */
-export const getUserFavorites = (accessToken: string | undefined) => {
+export const getUserFavorites = (sessionToken: string | undefined) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
   const url = 'repo/v1/favorite?offset=0&limit=200'
   return doGet<PaginatedResults<EntityHeader>>(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -985,13 +1008,13 @@ export const getUserFavorites = (accessToken: string | undefined) => {
  * @param {*} id ownerID of the synapse user see - http://docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
  */
 export const getUserTeamList = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   id: string | number,
 ) => {
   const url = `repo/v1/user/${id}/team?offset=0&limit=200`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1006,7 +1029,7 @@ export const getUserTeamList = (
  *
  */
 export const getTeamList = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   id: string | number,
   fragment: string = '',
   limit: number = 10,
@@ -1017,7 +1040,7 @@ export const getTeamList = (
   }`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1030,13 +1053,13 @@ export const getTeamList = (
  * @return WikiPageKey
  **/
 export const getWikiPageKeyForEntity = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
   const url = `repo/v1/entity/${ownerId}/wikikey`
   return doGet<WikiPageKey>(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1049,20 +1072,20 @@ export const getWikiPageKeyForEntity = (
  * @return WikiPageKey
  **/
 export const getWikiPageKeyForAccessRequirement = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
   const url = `repo/v1/access_requirement/${ownerId}/wikikey`
   return doGet<WikiPageKey>(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 export const getWikiAttachmentsFromEntity = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   id: string | number,
   wikiId: string | number,
   objectType: ObjectType = ObjectType.ENTITY,
@@ -1071,27 +1094,27 @@ export const getWikiAttachmentsFromEntity = (
   const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 export const getWikiAttachmentsFromEvaluation = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   id: string | number,
   wikiId: string | number,
 ) => {
   const url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 export const getPresignedUrlForWikiAttachment = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   id: string | number,
   wikiId: string | number,
   fileName: string,
@@ -1101,7 +1124,7 @@ export const getPresignedUrlForWikiAttachment = (
   const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1112,23 +1135,23 @@ export const isInSynapseExperimentalMode = ():boolean => {
 }
 
 /**
- * Set the access token cookie.  Note that this will only succeed if your app is running on
+ * Set the session token cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  *
- * @param {*} token Access token.  If undefined, then call should instruct the browser to delete the cookie.
+ * @param {*} token Session token.  If undefined, then call should instruct the browser to delete the cookie.
  */
-export const setAccessTokenCookie = async (
+export const setSessionTokenCookie = async (
   token: string | undefined,
   sessionCallback: Function,
 ) => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
-      cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
+      cookies.remove(SESSION_TOKEN_COOKIE_KEY, { path: '/' })
       // See - https://github.com/reactivestack/cookies/issues/189
       await delay(100)
     } else {
       // set's cookie in session storage
-      cookies.set(ACCESS_TOKEN_COOKIE_KEY, token, {
+      cookies.set(SESSION_TOKEN_COOKIE_KEY, token, {
         // expires in a day
         maxAge: 60 * 60 * 24,
         path: '/',
@@ -1139,7 +1162,7 @@ export const setAccessTokenCookie = async (
     // will set cookie in the http header
     doPost(
       'Portal/sessioncookie',
-      { accessToken: token },
+      { sessionToken: token },
       undefined,
       'include',
       BackendDestinationEnum.PORTAL_ENDPOINT,
@@ -1148,17 +1171,17 @@ export const setAccessTokenCookie = async (
         sessionCallback()
       })
       .catch(err => {
-        console.error('Error on setting access token ', err)
+        console.error('Error on setting session token ', err)
       })
   }
 }
 /**
- * Get the current access token from a cookie.  Note that this will only succeed if your app is running on
+ * Get the current session token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
-export const getAccessTokenFromCookie = async () => {
+export const getSessionTokenFromCookie = async () => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
-    return cookies.get(ACCESS_TOKEN_COOKIE_KEY)
+    return cookies.get(SESSION_TOKEN_COOKIE_KEY)
   }
   return doGet<string>(
     'Portal/sessioncookie',
@@ -1169,7 +1192,7 @@ export const getAccessTokenFromCookie = async () => {
 }
 
 export const getPrincipalAliasRequest = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   alias: string,
   type: string,
 ) => {
@@ -1177,7 +1200,7 @@ export const getPrincipalAliasRequest = (
   return doPost(
     url,
     { alias, type },
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1208,7 +1231,7 @@ export const detectSSOCode = () => {
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((synToken: any) => {
-        setAccessTokenCookie(synToken.accessToken, () => {
+        setSessionTokenCookie(synToken.sessionToken, () => {
           // go back to original route after successful SSO login
           const originalUrl = localStorage.getItem('after-sso-login-url')
           localStorage.removeItem('after-sso-login-url')
@@ -1228,17 +1251,17 @@ export const detectSSOCode = () => {
 }
 
 export const signOut = (sessionCallback: Function) => {
-  setAccessTokenCookie(undefined, sessionCallback)
+  setSessionTokenCookie(undefined, sessionCallback)
 }
 
 /**
  * Upload file.  Note that this currently only supports Synapse storage (Sage s3 bucket)
- * @param accessToken
+ * @param sessionToken
  * @param file
  * @param endpoint
  */
 export const uploadFile = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   filename: string,
   file: Blob,
 ) => {
@@ -1255,7 +1278,7 @@ export const uploadFile = (
       calculateMd5(file).then((md5: string) => {
         request.contentMD5Hex = md5
         startMultipartUpload(
-          accessToken,
+          sessionToken,
           filename,
           file,
           request,
@@ -1311,7 +1334,7 @@ const calculateMd5 = (fileBlob: File | Blob): Promise<string> => {
 const processFilePart = (
   partNumber: number,
   multipartUploadStatus: MultipartUploadStatus,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   fileName: string,
   file: Blob,
   request: MultipartUploadRequest,
@@ -1333,7 +1356,7 @@ const processFilePart = (
   doPost<BatchPresignedUploadUrlResponse>(
     presignedUrlUrl,
     presignedUploadUrlRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ).then(async (presignedUrlResponse: BatchPresignedUploadUrlResponse) => {
@@ -1361,7 +1384,7 @@ const processFilePart = (
       doPut(
         addPartUrl,
         undefined,
-        accessToken,
+        sessionToken,
         undefined,
         BackendDestinationEnum.REPO_ENDPOINT,
       ).then((addPartResponse: AddPartResponse) => {
@@ -1371,7 +1394,7 @@ const processFilePart = (
           checkUploadComplete(
             multipartUploadStatus,
             fileName,
-            accessToken,
+            sessionToken,
             fileUploadResolve,
             fileUploadReject,
           )
@@ -1381,7 +1404,7 @@ const processFilePart = (
             processFilePart(
               partNumber,
               multipartUploadStatus,
-              accessToken,
+              sessionToken,
               fileName,
               file,
               request,
@@ -1397,7 +1420,7 @@ const processFilePart = (
 export const checkUploadComplete = (
   status: MultipartUploadStatus,
   fileHandleName: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
 ) => {
@@ -1411,7 +1434,7 @@ export const checkUploadComplete = (
     doPut(
       url,
       undefined,
-      accessToken,
+      sessionToken,
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
@@ -1444,7 +1467,7 @@ const uploadFilePart = async (
   })
 }
 export const startMultipartUpload = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   fileName: string,
   file: Blob,
   request: MultipartUploadRequest,
@@ -1455,7 +1478,7 @@ export const startMultipartUpload = (
   doPost<MultipartUploadStatus>(
     url,
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1472,7 +1495,7 @@ export const startMultipartUpload = (
           await processFilePart(
             i + 1,
             status,
-            accessToken,
+            sessionToken,
             fileName,
             file,
             request,
@@ -1485,7 +1508,7 @@ export const startMultipartUpload = (
       checkUploadComplete(
         status,
         fileName,
-        accessToken,
+        sessionToken,
         fileUploadResolve,
         fileUploadReject,
       )
@@ -1497,18 +1520,18 @@ export const startMultipartUpload = (
 
 export const getFileHandleContentFromID = (
   fileHandleId: string,
-  accessToken: string,
+  sessionToken: string,
 ): Promise<string> => {
   // get the presigned URL, download the data, and send that back (via resolve())
   return new Promise((resolve, reject) => {
     // get the file handle and url
     const getFileHandleByIdPromise = getFileHandleById(
       fileHandleId,
-      accessToken,
+      sessionToken,
     )
     const getFileHandlePresignedUrlPromis = getFileHandleByIdURL(
       fileHandleId,
-      accessToken,
+      sessionToken,
     )
     Promise.all([getFileHandleByIdPromise, getFileHandlePresignedUrlPromis])
       .then(values => {
@@ -1556,12 +1579,12 @@ export const getFileHandleContent = (
 /**
  * Return the FileHandle of the file associated to the given FileEntity.
  * * @param fileEntity: FileEntity
- * @param accessToken
+ * @param sessionToken
  * @param endpoint
  */
 export const getFileResult = (
   fileEntity: FileEntity,
-  accessToken?: string,
+  sessionToken?: string,
   includeFileHandles?: boolean,
   includePreSignedURLs?: boolean,
   includePreviewPreSignedURLs?: boolean,
@@ -1580,7 +1603,7 @@ export const getFileResult = (
       includePreviewPreSignedURLs: includePreviewPreSignedURLs || false,
       requestedFiles: fileHandleAssociationList,
     }
-    getFiles(request, accessToken)
+    getFiles(request, sessionToken)
       .then((data: BatchFileResult) => {
         if (
           data.requestedFiles.length &&
@@ -1606,7 +1629,7 @@ export const getFileResult = (
 export const addFileToDownloadListV2 = (
   fileEntityId: string,
   versionNumber?: number,
-  accessToken?: string,
+  sessionToken?: string,
 ): Promise<AddBatchOfFilesToDownloadListResponse> => {
   const request: AddBatchOfFilesToDownloadListRequest = {
     batchToAdd: [{fileEntityId, versionNumber}]
@@ -1614,7 +1637,7 @@ export const addFileToDownloadListV2 = (
   return doPost(
     'repo/v1/download/list/add',
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1627,12 +1650,12 @@ export const addFileToDownloadListV2 = (
 export const createACL = (
   entityId: string,
   acl: AccessControlList,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doPost(
     `/repo/v1/entity/${entityId}/acl`,
     acl,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1645,12 +1668,12 @@ export const createACL = (
 export const submitToEvaluation = (
   submission: Submission,
   etag: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doPost(
     `/repo/v1/evaluation/submission?etag=${etag}`,
     submission,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1658,11 +1681,11 @@ export const submitToEvaluation = (
 
 export const getEvaluationPermissions = (
   evalId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doGet<UserEvaluationPermissions>(
     `/repo/v1/evaluation/${evalId}/permissions`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1674,7 +1697,7 @@ export const getEvaluationPermissions = (
  */
 export const getEvaluation = (
   evalId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<Evaluation> => {
   if (!evalId) {
     // we must explicitly handle this because /repo/v1/evaluation
@@ -1683,7 +1706,7 @@ export const getEvaluation = (
   }
   return doGet<Evaluation>(
     `/repo/v1/evaluation/${evalId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1695,7 +1718,7 @@ export const getEvaluation = (
  */
 export const updateEvaluation = (
   evaluation: Evaluation,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<Evaluation> => {
   if (!evaluation.id) {
     // we must explicitly handle this because /repo/v1/evaluation
@@ -1705,7 +1728,7 @@ export const updateEvaluation = (
   return doPut<Evaluation>(
     `/repo/v1/evaluation/${evaluation.id}`,
     evaluation,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1717,12 +1740,12 @@ export const updateEvaluation = (
  */
 export const createEvaluation = (
   evaluation: Evaluation,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<Evaluation> => {
   return doPost<Evaluation>(
     '/repo/v1/evaluation/',
     evaluation,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1734,11 +1757,11 @@ export const createEvaluation = (
  */
 export const deleteEvaluation = (
   evalId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<void> => {
   return doDelete(
     `/repo/v1/evaluation/${evalId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1751,11 +1774,11 @@ export const deleteEvaluation = (
 export const getEvaluationRound = (
   evalId: string,
   evalRoundId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<EvaluationRound> => {
   return doGet(
     `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1768,12 +1791,12 @@ export const getEvaluationRound = (
 export const getEvaluationRoundsList = (
   evalId: string,
   evaluationRoundListRequest: EvaluationRoundListRequest | undefined,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<EvaluationRoundListResponse> => {
   return doPost(
     `/repo/v1/evaluation/${evalId}/round/list`,
     evaluationRoundListRequest ?? {},
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1785,12 +1808,12 @@ export const getEvaluationRoundsList = (
  */
 export const createEvaluationRound = (
   evaluationRound: EvaluationRound,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<EvaluationRound> => {
   return doPost(
     `/repo/v1/evaluation/${evaluationRound.evaluationId}/round`,
     evaluationRound,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1802,12 +1825,12 @@ export const createEvaluationRound = (
  */
 export const updateEvaluationRound = (
   evaluationRound: EvaluationRound,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<EvaluationRound> => {
   return doPut(
     `/repo/v1/evaluation/${evaluationRound.evaluationId}/round/${evaluationRound.id}`,
     evaluationRound,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1820,11 +1843,11 @@ export const updateEvaluationRound = (
 export const deleteEvaluationRound = (
   evalId: string,
   evalRoundId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doDelete(
     `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1836,11 +1859,11 @@ export const deleteEvaluationRound = (
  */
 export const getEvaluationSubmissions = (
   query: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<QueryTableResults> => {
   return doGet(
     `/repo/v1/evaluation/submission/query?query=${encodeURI(query)}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1856,7 +1879,7 @@ export const getOAuth2RequestDescription = (
   return doPost(
     '/auth/v1/oauth2/description',
     oidcAuthRequest,
-    undefined, // accessToken: this is not an authenticated call
+    undefined, // sessionToken: this is not an authenticated call
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1868,12 +1891,12 @@ export const getOAuth2RequestDescription = (
  */
 export const hasUserAuthorizedOAuthClient = (
   oidcAuthRequest: OIDCAuthorizationRequest,
-  accessToken: string,
+  sessionToken: string,
 ): Promise<OAuthConsentGrantedResponse> => {
   return doPost(
     '/auth/v1/oauth2/consentcheck',
     oidcAuthRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1896,17 +1919,17 @@ export const getOAuth2Client = (
 /**
  * User consents to the given OIDCAuthorizationRequest (after being presented with all information returned by getOAuth2RequestDescription())
  * @param oidcAuthRequest
- * @param accessToken
+ * @param sessionToken
  * @param endpoint
  */
 export const consentToOAuth2Request = (
   oidcAuthRequest: OIDCAuthorizationRequest,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<AccessCodeResponse> => {
   return doPost(
     '/auth/v1/oauth2/consent',
     oidcAuthRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1920,17 +1943,17 @@ export const consentToOAuth2Request = (
  * Create a FormGroup
  * https://docs.synapse.org/rest/POST/form/group.html
  * @param name
- * @param accessToken
+ * @param sessionToken
  * @param endpoint
  */
 export const createFormGroup = (
   name: string,
-  accessToken: string,
+  sessionToken: string,
 ): Promise<FormGroup> => {
   return doPost(
     `/repo/v1/form/group?name=${encodeURI(name)}`,
     undefined,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1942,11 +1965,11 @@ export const createFormGroup = (
  */
 export const getFormACL = (
   formGroupId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<AccessControlList> => {
   return doGet(
     `/repo/v1/form/group/${formGroupId}/acl`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1959,12 +1982,12 @@ export const getFormACL = (
 export const updateFormACL = (
   formGroupId: string,
   newAcl: AccessControlList,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<AccessControlList> => {
   return doPut(
     `/repo/v1/form/group/${formGroupId}/acl`,
     newAcl,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -1975,14 +1998,14 @@ export const updateFormACL = (
  * https://docs.synapse.org/rest/POST/form/data.html
  * @param formGroupId
  * @param name
- * @param accessToken
+ * @param sessionToken
  * @param endpoint
  */
 export const createFormData = (
   formGroupId: string,
   name: string,
   dataFileHandleId: string,
-  accessToken: string,
+  sessionToken: string,
 ): Promise<FormData> => {
   const newFormData: FormChangeRequest = {
     name,
@@ -1991,7 +2014,7 @@ export const createFormData = (
   return doPost(
     `/repo/v1/form/data?groupId=${formGroupId}`,
     newFormData,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2005,7 +2028,7 @@ export const updateFormData = (
   formDataId: string,
   name: string,
   dataFileHandleId: string,
-  accessToken: string,
+  sessionToken: string,
 ): Promise<FormData> => {
   const updatedFormData: FormChangeRequest = {
     name,
@@ -2014,7 +2037,7 @@ export const updateFormData = (
   return doPut(
     `/repo/v1/form/data/${formDataId}`,
     updatedFormData,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2026,11 +2049,11 @@ export const updateFormData = (
  */
 export const deleteFormData = (
   formDataId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doDelete(
     `/repo/v1/form/data/${formDataId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2042,12 +2065,12 @@ export const deleteFormData = (
  */
 export const submitFormData = (
   formDataId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<FormData> => {
   return doPost(
     `/repo/v1/form/data/${formDataId}/submit`,
     undefined,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2060,12 +2083,12 @@ export const submitFormData = (
  */
 export const listFormData = (
   request: ListRequest,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<ListResponse> => {
   return doPost(
     `/repo/v1/form/data/list`,
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2078,12 +2101,12 @@ export const listFormData = (
  */
 export const listFormDataAsFormAdmin = (
   request: ListRequest,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<ListResponse> => {
   return doPost(
     `/repo/v1/form/data/list/reviewer`,
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2095,12 +2118,12 @@ export const listFormDataAsFormAdmin = (
  */
 export const acceptFormData = (
   formDataId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<FormData> => {
   return doPut(
     `/repo/v1/form/data/${formDataId}/accept`,
     undefined,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2113,7 +2136,7 @@ export const acceptFormData = (
 export const rejectFormData = (
   formDataId: string,
   reason: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<FormData> => {
   const formRejection: FormRejection = {
     reason,
@@ -2121,7 +2144,7 @@ export const rejectFormData = (
   return doPut(
     `/repo/v1/form/data/${formDataId}/reject`,
     formRejection,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2134,12 +2157,12 @@ export const rejectFormData = (
  */
 export const getProjectStatistics = (
   request: ProjectFilesStatisticsRequest,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<ProjectFilesStatisticsResponse> => {
   return doPost(
     `/repo/v1/statistics`,
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2148,12 +2171,12 @@ export const getProjectStatistics = (
 // see https://docs.synapse.org/rest/POST/restrictionInformation.html
 export const getRestrictionInformation = (
   request: RestrictionInformationRequest,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<RestrictionInformationResponse> => {
   return doPost(
     `/repo/v1/restrictionInformation`,
     request,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2163,14 +2186,14 @@ export const getRestrictionInformation = (
  *
  * See https://rest-docs.synapse.org/rest/GET/entity/id/accessRequirement.html
  *
- * @param {(string | undefined)} accessToken token of user
+ * @param {(string | undefined)} sessionToken token of user
  * @param {string} id id of entity
  * @param {number} [limit=50]
  * @param {number} [offset=0]
  * @returns {Promise<PaginatedResults<AccessRequirement>>}
  */
 export const getAccessRequirement = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   id: string,
   limit: number = 50,
   offset: number = 0,
@@ -2178,7 +2201,7 @@ export const getAccessRequirement = (
   const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
   return doGet<PaginatedResults<AccessRequirement>>(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2192,13 +2215,13 @@ export const getAccessRequirement = (
  */
 
 export const getAccessRequirementStatus = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   requirementId: string | number,
 ): Promise<AccessRequirementStatus> => {
   const url = `repo/v1/accessRequirement/${requirementId}/status`
   return doGet(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2208,12 +2231,12 @@ export const getAccessRequirementStatus = (
  * Returns all the access requirements associated to an entity {id}, calling the
  * paginated getAccessRequirement service until all results are returned.
  *
- * @param {(string | undefined)} accessToken token of user
+ * @param {(string | undefined)} sessionToken token of user
  * @param {string} id id of entity to lookup
  * @returns {Promise<Array<AccessRequirement>>}
  */
 export const getAllAccessRequirements = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   id: string,
 ): Promise<Array<AccessRequirement>> => {
   // format function to be callable by getAllOfPaginatedService
@@ -2221,7 +2244,7 @@ export const getAllAccessRequirements = (
     const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
     return doGet<PaginatedResults<AccessRequirement>>(
       url,
-      accessToken,
+      sessionToken,
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
@@ -2232,18 +2255,18 @@ export const getAllAccessRequirements = (
 /**
  *
  *
- * @param {(string | undefined)} accessToken user access token
+ * @param {(string | undefined)} sessionToken user session token
  * @param {(number | undefined)} id the unique immutable ID
  * @returns {AccessApproval}
  */
 export const getAccessApproval = async (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   approvalId: number | undefined,
 ): Promise<AccessApproval> => {
   const url = `repo/v1/accessApproval/${approvalId}`
   return doGet<AccessApproval>(
     url,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2252,28 +2275,28 @@ export const getAccessApproval = async (
 /**
  *
  *
- * @param {(string | undefined)} accessToken user access token
+ * @param {(string | undefined)} sessionToken user session token
  * @param {AccessApproval} accessApproval access approval request object
  * @returns {AccessApproval}
  */
 export const postAccessApproval = async (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
   return doPost<AccessApproval>(
     'repo/v1/accessApproval',
     accessApproval,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 // https://rest-docs.synapse.org/rest/GET/download/list.html
-export const getDownloadList = (accessToken: string | undefined) => {
+export const getDownloadList = (sessionToken: string | undefined) => {
   return doGet<DownloadList>(
     '/file/v1/download/list',
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2281,14 +2304,14 @@ export const getDownloadList = (accessToken: string | undefined) => {
 
 export const getDownloadOrder = (
   zipFileName: string | undefined,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<DownloadOrder> => {
   const baseURL = '/file/v1/download/order'
   const url = zipFileName ? `${baseURL}?zipFileName=${zipFileName}` : baseURL
   return doPost(
     url,
     undefined,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2332,12 +2355,12 @@ export const getAllOfPaginatedService = async <T>(
 // https://rest-docs.synapse.org/rest/POST/download/list/remove.html
 export const deleteDownloadListFiles = (
   list: FileHandleAssociation[],
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ): Promise<DownloadList> => {
   return doPost<DownloadList>(
     '/file/v1/download/list/remove',
     { list },
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ).then(data => {
@@ -2347,10 +2370,10 @@ export const deleteDownloadListFiles = (
 }
 
 // https://rest-docs.synapse.org/rest/DELETE/download/list.html ?
-export const deleteDownloadList = (accessToken: string | undefined) => {
+export const deleteDownloadList = (sessionToken: string | undefined) => {
   return doDelete(
     '/file/v1/download/list',
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ).then(_ => {
@@ -2361,26 +2384,26 @@ export const deleteDownloadList = (accessToken: string | undefined) => {
 /**
  * http://rest-docs.synapse.org/rest/POST/entity/id/table/transaction/async/start.html
  * @param {*} tableUpdateRequest
- * @param {*} accessToken
+ * @param {*} sessionToken
  * @param {*} endpoint
  * // technically returns a TableUpdateTransactionResponse, but I don't see any reason we need this
  */
 export const updateTable = (
   tableUpdateRequest: TableUpdateTransactionRequest,
-  accessToken: string | undefined = undefined,
+  sessionToken: string | undefined = undefined,
   updateParentState?: any,
 ): Promise<any> => {
   return doPost<AsyncJobId>(
     `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/start`,
     tableUpdateRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then(resp => {
       return getAsyncResultFromJobId<any>(
         `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/get/${resp.token}`,
-        accessToken,
+        sessionToken,
         updateParentState,
       )
     })
@@ -2403,26 +2426,26 @@ export const getTransformSqlWithFacetsRequest = (
 
 export const createPersonalAccessToken = (
   accessTokenGenerationRequest: AccessTokenGenerationRequest,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doPost<AccessTokenGenerationResponse>(
     '/auth/v1/personalAccessToken',
     accessTokenGenerationRequest,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 export const getPersonalAccessTokenRecords = (
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
   nextPageToken: string | undefined,
 ) => {
   return doGet<AccessTokenRecordList>(
     `/auth/v1/personalAccessToken${
       nextPageToken ? '?nextPageToken=' + nextPageToken : ''
     }`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2430,11 +2453,11 @@ export const getPersonalAccessTokenRecords = (
 
 export const deletePersonalAccessToken = (
   accessTokenId: string,
-  accessToken: string | undefined,
+  sessionToken: string | undefined,
 ) => {
   return doDelete(
     `/auth/v1/personalAccessToken/${accessTokenId}`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2442,7 +2465,7 @@ export const deletePersonalAccessToken = (
 
 // https://rest-docs.synapse.org/rest/GET/projects.html
 export const getMyProjects = (
-  accessToken: string,
+  sessionToken: string,
   params?: GetProjectsParameters,
 ) => {
   const { nextPageToken, teamId, filter, sort, sortDirection } = params || {}
@@ -2457,17 +2480,17 @@ export const getMyProjects = (
     ${sort ? 'sort=' + sort + '&' : ''}${
       sortDirection ? 'sortDirection=' + sortDirection + '&' : ''
     }`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 // https://rest-docs.synapse.org/rest/GET/entity/id/path.html
-export const getEntityPath = (accessToken: string, entityId: string) => {
+export const getEntityPath = (sessionToken: string, entityId: string) => {
   return doGet<EntityPath>(
     `/repo/v1/entity/${entityId}/path`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2475,21 +2498,21 @@ export const getEntityPath = (accessToken: string, entityId: string) => {
 
 // https://docs.synapse.org/rest/GET/entity/id/version.html
 // TODO: Pagination
-export const getEntityVersions = (accessToken: string, entityId: string) => {
+export const getEntityVersions = (sessionToken: string, entityId: string) => {
   return doGet<PaginatedResults<VersionInfo>>(
     `/repo/v1/entity/${entityId}/version?offset=0&limit=200`,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 // https://docs.synapse.org/rest/POST/search.html
-export const searchEntities = (query: SearchQuery, accessToken?: string) => {
+export const searchEntities = (query: SearchQuery, sessionToken?: string) => {
   return doPost<SearchResults>(
     '/repo/v1/search',
     query,
-    accessToken,
+    sessionToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

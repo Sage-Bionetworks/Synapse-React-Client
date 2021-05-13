@@ -1,6 +1,6 @@
 import { FileDownloadSummary } from './FileDownloadSummary'
 
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/BulkFileDownloadResponse.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/BulkFileDownloadResponse.html
 export type BulkFileDownloadResponse = {
   concreteType: 'org.sagebionetworks.repo.model.file.BulkFileDownloadResponse'
   resultZipFileHandleId: string // The FileHandle.id of the resulting zip file. This zip file will contain all of the requested files that the caller was authorized to download.

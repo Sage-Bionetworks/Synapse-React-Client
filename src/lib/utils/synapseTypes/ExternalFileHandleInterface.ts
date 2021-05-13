@@ -8,7 +8,7 @@ export enum ExternalFileHandleConcreteTypeEnum {
 }
 
 /*
-https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ExternalObjectStoreFileHandle.html
+https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ExternalObjectStoreFileHandle.html
 Represents a file stored in an S3 Bucket to which Synapse cannot access. 
 Together with ExternalObjectStorageLocationSetting, this object provides the information the client requires to access the S3 file.
 
@@ -31,7 +31,7 @@ export function assertIsExternalFileHandle(
 }
 
 /*
-  https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ExternalFileHandle.html
+  https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ExternalFileHandle.html
   An ExternalFileHandle represents a file that is not stored in Synapse. Instead, ExternalFileHandles reside somewhere accessible via a URL. Synapse will attempt to generate a preview for any external URL that can be publicly read.
 */
 export type ExternalFileHandle = ExternalFileHandleInterface & {
@@ -40,7 +40,7 @@ export type ExternalFileHandle = ExternalFileHandleInterface & {
 }
 
 /*
- https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ProxyFileHandle.html
+ https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ProxyFileHandle.html
  Reference to a file that accessible via a proxy server. Each ProxyFileHandle must reference a ProxyStorageLocationSettings that defines how the files are accessed.
 */
 export type ProxyFileHandle = ExternalFileHandleInterface & {

@@ -1,4 +1,5 @@
 @use '../../abstracts/variables' as SRC;
+@use 'sass:color';
 
 .EnumFacetFilter {
   $input-icon-margin: 5px;
@@ -7,12 +8,39 @@
     overflow-y: auto;
     max-height: 300px;
     z-index: 10;
-    padding: 10px;
+    padding: 0px;
+    margin: 0px;
     max-width: 300px;
+
+    .EnumFacetFilter__checkboxContainer {
+      cursor: pointer;
+    }
+
+    .EnumFacetFilter__checkboxContainer,
+    .EnumFacetFilter__checkboxContainer--forAll {
+      transition: background-color 200ms ease-in-out;
+
+      padding: 0px 5px;
+      margin: 0px;
+      .checkbox,
+      .checkbox-focused {
+        margin: 5px 0px;
+        > label::before {
+          border: none;
+          background: none;
+          box-shadow: none;
+        }
+      }
+    }
+
+    .EnumFacetFilter__checkboxContainer:hover {
+      background-color: color.change(SRC.$primary-action-color, $alpha: 0.1);
+    }
   }
   &__checkboxContainer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
     &:first-child {
       margin-top: 0;
@@ -120,5 +148,11 @@
 
   button {
     color: SRC.$primary-action-color;
+  }
+}
+
+.EnumFacetFilter.EnumFacetFilterSelect.dropdown {
+  button.dropdown-toggle {
+    width: 200px;
   }
 }

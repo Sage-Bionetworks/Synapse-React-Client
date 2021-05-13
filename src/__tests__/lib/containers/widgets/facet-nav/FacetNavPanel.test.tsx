@@ -6,12 +6,11 @@ import FacetNavPanel, {
 import { render } from '@testing-library/react'
 import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
-import { FacetNavProps } from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
 import { SynapseConstants } from '../../../../../lib'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
-const mockExpandCallback = jest.fn(() => null)
+const mockSetPlotTypeCallback = jest.fn(() => null)
 
 const stringFacetValues: FacetColumnResultValues = {
   facetType: 'enumeration',
@@ -28,15 +27,22 @@ const stringFacetValues: FacetColumnResultValues = {
   ],
 }
 
-function createTestProps(overrides?: FacetNavPanelOwnProps): FacetNavProps {
-  return {
+function createTestProps(
+  overrides?: FacetNavPanelOwnProps,
+): FacetNavPanelOwnProps {
+  const defaultProps: FacetNavPanelOwnProps = {
     applyChangesToGraphSlice: mockApplyCallback,
     applyChangesToFacetFilter: mockApplyCallback,
     index: 1,
-    loadingScreen: <div className="loading"></div>,
     facetToPlot: stringFacetValues,
     onHide: mockHideCallback,
-    onExpand: mockExpandCallback,
+    plotType: 'PIE',
+    onSetPlotType: mockSetPlotTypeCallback,
+    lastQueryRequest: {} as any,
+    isModalView: false,
+  }
+  return {
+    ...defaultProps,
     ...overrides,
     // @ts-ignore
     data: testData,
@@ -51,14 +57,15 @@ function init(overrides?: FacetNavPanelOwnProps) {
   container = render(<FacetNavPanel {...props} />).container
 }
 
-beforeEach(() => init())
-
 describe('initialization', () => {
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
+    init()
     const panel = container.querySelectorAll<HTMLElement>('div.FacetNavPanel')
     expect(panel).toHaveLength(1)
 
-    const buttons = container.querySelectorAll<HTMLElement>('button > span > svg')
+    const buttons = container.querySelectorAll<HTMLElement>(
+      'button > span > svg',
+    )
     expect(buttons.length).toBe(3)
     expect(buttons[0].getAttribute('data-icon')).toBe('filter')
     expect(buttons[1].getAttribute('data-icon')).toBe('expand')
@@ -76,20 +83,18 @@ describe('initialization', () => {
     //when expanded the onCollapse callback is passed but onExpand is not
     init({
       ...props,
-      onCollapse: mockExpandCallback,
-      onExpand: undefined,
+      onSetPlotType: mockSetPlotTypeCallback,
+      isModalView: true,
     })
     const panel = container.querySelectorAll<HTMLElement>(
       'div.FacetNavPanel--expanded',
     )
     expect(panel).toHaveLength(1)
 
-    const buttons = container.querySelectorAll<HTMLElement>('button > span > svg')
-    expect(buttons.length).toBe(4)
-    expect(buttons[0].getAttribute('data-icon')).toBe('chart')
-    expect(buttons[1].getAttribute('data-icon')).toBe('filter')
-    expect(buttons[2].getAttribute('data-icon')).toBe('collapse')
-    expect(buttons[3].getAttribute('data-icon')).toBe('close')
+    const buttons = container.querySelectorAll<HTMLElement>(
+      'div.SRC-labeled-dropdown',
+    )
+    expect(buttons.length).toBe(2)
 
     const panelBody = container.querySelectorAll('div.FacetNavPanel__body')
     expect(panelBody.length).toBe(0)

@@ -20,7 +20,7 @@ import {
   GraphData,
   extractPlotDataArray,
   getPlotStyle,
-  renderLegend,
+  FacetPlotLegend,
 } from '../../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../../widgets/facet-nav/FacetNav'
 
@@ -188,7 +188,11 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
                       </div>
                     )}
                   </SizeMe>
-                  {renderLegend(plotData?.labels, plotData?.colors, false)}
+                  <FacetPlotLegend
+                    labels={plotData?.labels}
+                    colors={plotData?.colors}
+                    isExpanded={false}
+                  />
                 </div>
               </div>
             )

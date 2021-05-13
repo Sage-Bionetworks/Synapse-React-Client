@@ -75,6 +75,7 @@ $-splitter-width: 12px;
     }
 
     input.EntityFinder__Search__Input {
+      border: 1px solid SRC.$gray-dark;
       background-color: transparent;
       height: 100%;
       margin: 10px 0px;

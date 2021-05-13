@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/file/MultipartUploadStatus.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/MultipartUploadStatus.html
 export type MultipartUploadStatus = {
   uploadId: string
   startedBy: string

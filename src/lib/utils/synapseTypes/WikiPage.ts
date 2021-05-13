@@ -1,4 +1,4 @@
-// https://docs.synapse.org/rest/org/sagebionetworks/repo/model/wiki/WikiPage.html
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/wiki/WikiPage.html
 
 export type WikiPage = {
   attachmentFileHandleIds: string[]

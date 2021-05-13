@@ -14,29 +14,6 @@
     }
   }
 
-  label {
-    color: SRC.$gray-deemphasized;
-    font-weight: normal;
-  }
-
-  // disabled input boxes should be "flat"
-  input:disabled,
-  input:read-only {
-    box-shadow: none;
-    cursor: text;
-  }
-
-  // change styling of dropdowns
-  %dropdown-active-state {
-    background: SRC.$primary-action-color;
-    color: white;
-  }
-  .show button.dropdown-toggle {
-    @extend %dropdown-active-state;
-  }
-  button.dropdown-toggle:hover {
-    @extend %dropdown-active-state;
-  }
   .dropdown-menu {
     a.dropdown-item:hover:not(.disabled) {
       background: SRC.$primary-action-color;
@@ -48,6 +25,27 @@
       color: white !important;
       text-decoration: none;
     }
+  }
+
+  button.dropdown-toggle.btn {
+    // Aligns dropdown toggle text to the left and caret to the right
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 8px;
+  }
+
+  button.dropdown-toggle.btn:hover {
+    box-shadow: SRC.$box-shadow-soft;
+  }
+
+  button.dropdown-toggle.btn::after {
+    font-size: 18px;
+  }
+
+  .dropdown-toggle.secondary-caret::after {
+    color: SRC.$secondary-action-color;
+    font-weight: bold;
   }
 
   //removes shadow surrounding buttons and anchors when they are clicked
@@ -63,14 +61,6 @@
       padding-bottom: 0.75rem;
     }
   }
-
-  // Placeholder text styling in input forms
-  .form-control::placeholder {
-    color: SRC.$text-color-disabled;
-  }
-  .form-control:focus-visible {
-    text-shadow: none;
-  }
 }
 
 // Popovers
@@ -82,5 +72,23 @@
   }
   .popover > .arrow {
     border-width: unset;
+  }
+}
+
+// Modals
+.modal-content {
+  padding: 5px 30px;
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0px;
+
+    .modal-title {
+      order: -99;
+    }
+    button.close {
+      order: 99;
+    }
   }
 }

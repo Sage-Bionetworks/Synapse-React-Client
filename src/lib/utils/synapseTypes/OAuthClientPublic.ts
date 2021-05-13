@@ -1,4 +1,4 @@
-// Subset of fields found in https://docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClient.html
+// Subset of fields found in https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClient.html
 
 export type OAuthClientPublic = {
   client_id: string
