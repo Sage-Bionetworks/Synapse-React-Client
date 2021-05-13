@@ -26,13 +26,12 @@ const ExperimentalMode: React.FC = () => {
   const createExperimentalModeCookie = () => {
     cookies.set(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
     setIsExperimentalModeOn(true)
-    window.location.reload();
   }
 
   const deleteExperimentalModeCookie = () => {
-    cookies.remove(EXPERIMENTAL_MODE_COOKIE)
+    // cookie.remove requires to re-calculate date obj each time, this is more straightforward
+    document.cookie = `${EXPERIMENTAL_MODE_COOKIE}= ; expires = Thu, 01 Jan 1970 00:00:00 GMT`
     setIsExperimentalModeOn(false)
-    window.location.reload();
   }
 
   const popover = ({...props}) =>  (
@@ -45,7 +44,7 @@ const ExperimentalMode: React.FC = () => {
     </div>
   );
 
-  return (<>
+  return (<span className={"experimental-mode-wrapper"}>
     <Button
       className={"experimental-mode"}
       variant="link"
@@ -60,7 +59,7 @@ const ExperimentalMode: React.FC = () => {
     >
       <InfoOutlined style={{verticalAlign: 'middle'}} />
     </OverlayTrigger>
-  </>)
+  </span>)
 }
 
 export default ExperimentalMode
