@@ -37,11 +37,11 @@ SynapseClient.getEntityHeaders = jest.fn().mockResolvedValue(expected)
 
 describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
     const references: ReferenceList = [{ targetId: 'syn123' }]
 
     const { result, waitFor } = renderHook(
-      () => useGetEntityHeaders(references, sessionToken),
+      () => useGetEntityHeaders(references, accessToken),
       { wrapper },
     )
 
@@ -49,7 +49,7 @@ describe('basic functionality', () => {
 
     expect(SynapseClient.getEntityHeaders).toBeCalledWith(
       references,
-      sessionToken,
+      accessToken,
     )
     expect(result.current.data).toEqual(expected)
   })

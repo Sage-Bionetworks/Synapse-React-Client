@@ -5,7 +5,7 @@ Regular two-pane Entity Finder with multi-select
 
 ```jsx
 <EntityFinder 
-  sessionToken={sessionToken}
+  accessToken={accessToken}
   treeOnly={false}
   initialScope={"Current Project"}
   projectId={"syn23567475"}
@@ -40,7 +40,7 @@ One-pane entity finder with single select:
 
 ```jsx
 <EntityFinder 
-  sessionToken={sessionToken}
+  accessToken={accessToken}
   treeOnly={true}
   initialScope={"Current Project"}
   projectId={"syn23567475"}

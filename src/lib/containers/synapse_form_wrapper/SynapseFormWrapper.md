@@ -6,7 +6,7 @@ fileNamePath="study.submission_name"
 formUiSchemaEntityId="syn20692911"
 formNavSchemaEntityId="syn20968007"
 isWizardMode={true}
-token={sessionToken}
+token={accessToken}
 formTitle="Your Contribution Request"
 formClass="contribution-request"
 />

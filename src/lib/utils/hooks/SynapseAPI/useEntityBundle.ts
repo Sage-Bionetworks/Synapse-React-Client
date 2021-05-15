@@ -21,7 +21,7 @@ const ALL_FIELDS: EntityBundleRequest = {
 }
 
 export default function useGetEntityBundle(
-  sessionToken: string,
+  accessToken: string,
   entityId: string,
   bundleRequest: EntityBundleRequest = ALL_FIELDS,
   version?: number,
@@ -34,7 +34,7 @@ export default function useGetEntityBundle(
         entityId,
         bundleRequest,
         version,
-        sessionToken,
+        accessToken,
       ),
     options,
   )

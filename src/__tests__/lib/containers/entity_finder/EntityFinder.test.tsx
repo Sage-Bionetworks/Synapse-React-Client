@@ -78,7 +78,7 @@ const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockOnSelectionChange = jest.fn()
 
 const defaultProps: EntityFinderProps = {
-  sessionToken: 'abcd',
+  accessToken: 'abcd',
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: 'syn456',
   initialContainer: 'syn123',
@@ -315,7 +315,7 @@ describe('EntityFinder tests', () => {
       expect(mockDetailsList).toHaveBeenLastCalledWith(
         expect.objectContaining({
           configuration: configuration, // !
-          sessionToken: defaultProps.sessionToken,
+          accessToken: defaultProps.accessToken,
           selectableTypes: defaultProps.selectableTypes,
           visibleTypes: [
             ...defaultProps.visibleTypesInList!,
@@ -430,13 +430,13 @@ describe('EntityFinder tests', () => {
     }
 
     when(mockGetEntityHeaders)
-      .calledWith([{ targetId: entityId }], defaultProps.sessionToken)
+      .calledWith([{ targetId: entityId }], defaultProps.accessToken)
       .mockResolvedValue(entityHeaderResult)
 
     when(mockGetEntityHeaders)
       .calledWith(
         [{ targetId: entityId, targetVersionNumber: version }],
-        defaultProps.sessionToken,
+        defaultProps.accessToken,
       )
       .mockResolvedValue(entityHeaderResultWithVersion)
 

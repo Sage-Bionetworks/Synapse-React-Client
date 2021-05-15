@@ -88,12 +88,12 @@ class Demo extends React.Component<DemoProps, DemoState> {
 
   public componentDidMount() {
     // Note:  All portals should do this once on the initial app load.
-    // This looks for the session token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
+    // This looks for the access token cookie (HttpOnly, unable to directly access), and initialize the session if it does exists.
     SynapseClient.detectSSOCode()
-    SynapseClient.getSessionTokenFromCookie()
-      .then(sessionToken => {
+    SynapseClient.getAccessTokenFromCookie()
+      .then(accessToken => {
         this.setState({
-          token: sessionToken,
+          token: accessToken,
         })
       })
       .catch((error: any) => {

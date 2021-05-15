@@ -19,7 +19,7 @@ export type EntityFormProps = {
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
   initFormData: boolean // If true, it indicates that you’d like to download and pre-fill the form with the user's previous response.
-  token?: string // user's session token
+  token?: string // user's access token
   synIdCallback: (synId: string) => void // callback.  Once the form output has been saved to a FileEntity, will send synID back
 }
 type EntityFormState = {

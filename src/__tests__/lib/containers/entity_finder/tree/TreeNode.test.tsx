@@ -31,7 +31,7 @@ const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockUseGetEntityChildren = useGetEntityChildrenInfinite as jest.Mock
 
 const defaultProps: TreeNodeProps = {
-  sessionToken: 'abcd',
+  accessToken: 'abcd',
   entityHeader: {
     id: 'syn123',
     name: 'My File',
@@ -210,7 +210,7 @@ describe('TreeViewNode tests', () => {
     // Not in view
     mockAllIsIntersecting(false)
     expect(useGetEntityBundle).toBeCalledWith(
-      defaultProps.sessionToken,
+      defaultProps.accessToken,
       defaultProps.entityHeader!.id,
       expect.anything(),
       undefined,
@@ -222,7 +222,7 @@ describe('TreeViewNode tests', () => {
     // Comes into view, call under test:
     mockAllIsIntersecting(true)
     expect(useGetEntityBundle).toBeCalledWith(
-      defaultProps.sessionToken,
+      defaultProps.accessToken,
       defaultProps.entityHeader!.id,
       expect.anything(),
       undefined,
@@ -332,14 +332,14 @@ describe('TreeViewNode tests', () => {
         },
       })
       expect(mockUseGetEntityChildren).toBeCalledWith(
-        defaultProps.sessionToken,
+        defaultProps.accessToken,
         expect.anything(),
         expect.objectContaining({
           enabled: false, // !
         }),
       )
       expect(mockUseGetEntityBundle).toBeCalledWith(
-        defaultProps.sessionToken,
+        defaultProps.accessToken,
         expect.anything(),
         expect.anything(),
         undefined,

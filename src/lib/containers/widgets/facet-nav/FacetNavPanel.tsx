@@ -94,7 +94,7 @@ export async function extractPlotDataArray(
   columnType: ColumnType | undefined,
   index: number,
   plotType: PlotType,
-  sessionToken?: string,
+  accessToken?: string,
   facetAliases?: {},
 ) {
   const { colorPalette } = getColorPalette(
@@ -105,7 +105,7 @@ export async function extractPlotDataArray(
   const getLabels = async (
     facetValues: FacetColumnResultValueCount[],
     columnType?: ColumnType,
-    sessionToken?: string,
+    accessToken?: string,
   ) => {
     const map = new Map<string, string>()
     map.set(
@@ -120,7 +120,7 @@ export async function extractPlotDataArray(
       // TODO: Pagination
       const response = await SynapseClient.getEntityHeadersByIds(
         filteredValues,
-        sessionToken,
+        accessToken,
       )
       for (const header of response.results) {
         map.set(header.id, header.name)
@@ -128,7 +128,7 @@ export async function extractPlotDataArray(
     } else if (columnType === ColumnType.USERID) {
       const response = await SynapseClient.getGroupHeadersBatch(
         filteredValues,
-        sessionToken,
+        accessToken,
       )
       for (const header of response.children) {
         map.set(header.ownerId, header.userName)
@@ -158,7 +158,7 @@ export async function extractPlotDataArray(
   const labels = await getLabels(
     facetToPlot.facetValues,
     columnType,
-    sessionToken,
+    accessToken,
   )
   const text = labels.map(el => el.truncatedLabel)
 

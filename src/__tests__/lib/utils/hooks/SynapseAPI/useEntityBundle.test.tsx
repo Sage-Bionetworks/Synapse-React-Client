@@ -23,11 +23,11 @@ SynapseClient.getEntityBundleV2 = jest.fn().mockResolvedValue(expected)
 
 describe('useEntityBundle functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
     const entityId = 'syn123'
 
     const { result, waitFor } = renderHook(
-      () => useGetEntityBundle(sessionToken, entityId),
+      () => useGetEntityBundle(accessToken, entityId),
       { wrapper },
     )
 
@@ -36,7 +36,7 @@ describe('useEntityBundle functionality', () => {
       entityId,
       expect.anything(),
       undefined,
-      sessionToken,
+      accessToken,
     )
     expect(result.current.data).toEqual(expected)
   })

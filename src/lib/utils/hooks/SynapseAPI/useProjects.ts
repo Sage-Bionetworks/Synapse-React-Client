@@ -10,7 +10,7 @@ import { ProjectHeaderList } from '../../synapseTypes'
 import { GetProjectsParameters } from '../../synapseTypes/GetProjectsParams'
 
 export function useGetProjects(
-  sessionToken: string,
+  accessToken: string,
   params?: GetProjectsParameters,
   options?: UseQueryOptions<
     ProjectHeaderList,
@@ -19,14 +19,14 @@ export function useGetProjects(
   >,
 ) {
   return useQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', sessionToken, params],
-    () => SynapseClient.getMyProjects(sessionToken, params),
+    ['myProjects', accessToken, params],
+    () => SynapseClient.getMyProjects(accessToken, params),
     options,
   )
 }
 
 export function useGetProjectsInfinite(
-  sessionToken: string,
+  accessToken: string,
   params: GetProjectsParameters,
   options?: UseInfiniteQueryOptions<
     ProjectHeaderList,
@@ -35,9 +35,9 @@ export function useGetProjectsInfinite(
   >,
 ) {
   return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
-    ['myProjects', sessionToken, params],
+    ['myProjects', accessToken, params],
     async context => {
-      return await SynapseClient.getMyProjects(sessionToken, {
+      return await SynapseClient.getMyProjects(accessToken, {
         ...params,
         nextPageToken: context.pageParam,
       })

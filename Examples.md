@@ -6,7 +6,7 @@
 import { SynapseClient } from 'synapse-react-client'
 
 SynapseClient.login('username', 'password').then(response => {
-  // session token available in response.sessionToken
+  // access token available in response.accessToken
 })
 ```
 
@@ -31,7 +31,7 @@ let request = {
     SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
     SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
 }
-SynapseClient.getQueryTableResults(request, sessionToken)
+SynapseClient.getQueryTableResults(request, accessToken)
   .then(response => {
     // query results are available
   })

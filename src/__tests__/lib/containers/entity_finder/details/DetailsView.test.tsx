@@ -50,7 +50,7 @@ const entityHeaders: EntityHeader[] = [
 ]
 
 const defaultProps: DetailsViewProps = {
-  sessionToken: 'abcd',
+  accessToken: 'abcd',
   showVersionSelection: true,
   selectColumnType: 'none',
   visibleTypes: Object.values(EntityType),

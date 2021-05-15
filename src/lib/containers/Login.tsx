@@ -86,9 +86,9 @@ class Login extends React.Component<Props, State> {
         this.state.password,
         authenticationReceipt,
       )
-      // now get session token from cookie has to be called in the portals repo
-      await SynapseClient.setSessionTokenCookie(
-        data.sessionToken,
+      // now get access token from cookie has to be called in the portals repo
+      await SynapseClient.setAccessTokenCookie(
+        data.accessToken,
         this.props.sessionCallback,
       )
       // Set the new receipt

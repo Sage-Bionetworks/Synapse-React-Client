@@ -12,7 +12,7 @@ type ProjectListDetailsProps = EntityDetailsListSharedProps & {
 }
 
 export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps> = ({
-  sessionToken,
+  accessToken,
   projectsParams,
   showVersionSelection,
   selectColumnType,
@@ -29,7 +29,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
     fetchNextPage,
     isError,
     error,
-  } = useGetProjectsInfinite(sessionToken, projectsParams)
+  } = useGetProjectsInfinite(accessToken, projectsParams)
   const handleError = useErrorHandler()
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
 
   return (
     <DetailsView
-      sessionToken={sessionToken}
+      accessToken={accessToken}
       entities={
         data
           ? ([] as ProjectHeader[]).concat.apply(

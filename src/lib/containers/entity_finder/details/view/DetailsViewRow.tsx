@@ -33,7 +33,7 @@ export type DetailsViewRowAppearance =
   | 'hidden'
 
 export type DetailsViewRowProps = {
-  sessionToken: string
+  accessToken: string
   entityHeader: EntityHeader | ProjectHeader | Hit
   appearance: DetailsViewRowAppearance
   showVersionColumn: boolean
@@ -43,7 +43,7 @@ export type DetailsViewRowProps = {
 }
 
 export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
-  sessionToken,
+  accessToken,
   entityHeader,
   appearance,
   showVersionColumn,
@@ -70,7 +70,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   )
 
   const { data: bundle, isError, error } = useGetEntityBundle(
-    sessionToken,
+    accessToken,
     entityHeader.id,
     BUNDLE_REQUEST_OBJECT,
     undefined,
@@ -84,7 +84,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
 
   const { data: modifiedByUserProfile } = useGetUserProfileWithProfilePic(
     bundle?.entity?.modifiedBy ?? '273950',
-    sessionToken,
+    accessToken,
     {
       enabled: !!bundle,
       staleTime: 60 * 1000, // 60 seconds
@@ -99,7 +99,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
 
   useEffect(() => {
     if (isSelected && versions === undefined) {
-      SynapseClient.getEntityVersions(sessionToken, entityHeader.id).then(
+      SynapseClient.getEntityVersions(accessToken, entityHeader.id).then(
         response => {
           setVersions(response.results)
         },
@@ -108,7 +108,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         },
       )
     }
-  }, [isSelected, versions, sessionToken, entityHeader.id, handleError])
+  }, [isSelected, versions, accessToken, entityHeader.id, handleError])
 
   return (
     <tr

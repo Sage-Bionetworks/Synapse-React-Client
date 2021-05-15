@@ -4,8 +4,8 @@ import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
 import { Alert, Button } from 'react-bootstrap'
 
 export type EvaluationEditorPageProps = {
-  /** session token to make authenticated API calls */
-  readonly sessionToken: string
+  /** access token to make authenticated API calls */
+  readonly accessToken: string
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
   readonly evaluationId?: string
   /** Use if CREATING a new Evaluation. Id of the Entity that will be associated with the Evaluation */
@@ -20,7 +20,7 @@ export type EvaluationEditorPageProps = {
  * Combined editor that allows editing an Evaluation's data and also it's associated rounds (once the Evaluation exists on Synapse)
  */
 export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageProps> = ({
-  sessionToken,
+  accessToken,
   evaluationId,
   entityId,
   utc,
@@ -32,7 +32,7 @@ export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageP
   return (
     <div className="bootstrap-4-backport">
       <EvaluationEditor
-        sessionToken={sessionToken}
+        accessToken={accessToken}
         evaluationId={savedEvaluationId}
         //do not use entityId if we already have the evaluation Id
         entityId={savedEvaluationId ? undefined : entityId}
@@ -44,7 +44,7 @@ export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageP
       <div className="mt-4">
         {savedEvaluationId ? (
           <EvaluationRoundEditorList
-            sessionToken={sessionToken}
+            accessToken={accessToken}
             evaluationId={savedEvaluationId}
             utc={utc}
           />

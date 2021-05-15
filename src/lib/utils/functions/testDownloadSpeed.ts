@@ -18,9 +18,9 @@ const TEST_FILE_ENTITY_ID: string = 'syn12600511'
  * Return the estimated download speed (bytes/second).  Result is cached.
  * Result is crude estimate since it's a single test file (small sample, only ~2MB), but is a valid test (since it's a Synapse file on s3).
  * The intent is to let the user know if the package download will take many hours to download.
- * @param sessionToken
+ * @param accessToken
  */
-export const testDownloadSpeed = (sessionToken: string): Promise<number> => {
+export const testDownloadSpeed = (accessToken: string): Promise<number> => {
   return new Promise((resolve, reject) => {
     // check cache
     const cachedSpeedExpireTime = localStorage.getItem(
@@ -41,7 +41,7 @@ export const testDownloadSpeed = (sessionToken: string): Promise<number> => {
      * 2.  Get the file handle and presigned URL associated to the latest version of the test File Entity
      * 3.  Start the timer and fetch the file content using that presigned URL
      */
-    getEntity(sessionToken, TEST_FILE_ENTITY_ID)
+    getEntity(accessToken, TEST_FILE_ENTITY_ID)
       .then((entity: Entity) => {
         const fileEntity: FileEntity = entity as FileEntity
         const fileHandleAssociationList: FileHandleAssociation[] = [
@@ -57,7 +57,7 @@ export const testDownloadSpeed = (sessionToken: string): Promise<number> => {
           includePreviewPreSignedURLs: false,
           requestedFiles: fileHandleAssociationList,
         }
-        getFiles(request, sessionToken).then((data: BatchFileResult) => {
+        getFiles(request, accessToken).then((data: BatchFileResult) => {
           const presignedUrl: string = data.requestedFiles[0].preSignedURL!
           // we know this file exists
           const fileHandle: FileHandle = data.requestedFiles[0].fileHandle!

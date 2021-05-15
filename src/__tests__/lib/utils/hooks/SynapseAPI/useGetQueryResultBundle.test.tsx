@@ -39,10 +39,10 @@ SynapseClient.getQueryTableResults = jest.fn().mockResolvedValue(expected)
 
 describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
 
     const { result, waitFor } = renderHook(
-      () => useGetQueryResultBundle(request, sessionToken),
+      () => useGetQueryResultBundle(request, accessToken),
       { wrapper },
     )
 
@@ -50,7 +50,7 @@ describe('basic functionality', () => {
 
     expect(SynapseClient.getQueryTableResults).toBeCalledWith(
       request,
-      sessionToken,
+      accessToken,
     )
     expect(result.current.data).toEqual(expected)
   })
