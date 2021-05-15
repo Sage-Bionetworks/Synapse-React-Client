@@ -13,6 +13,6 @@
     URLColumnName: 'Program',
     matchColumnName: 'Program',
   }}
-  token={sessionToken}
+  token={accessToken}
 />
 ```

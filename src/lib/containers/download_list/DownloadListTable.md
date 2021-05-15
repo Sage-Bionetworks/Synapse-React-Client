@@ -1,3 +1,3 @@
 ```jsx
-sessionToken && <DownloadListTable token={sessionToken} />
+accessToken && <DownloadListTable token={accessToken} />
 ```

@@ -5,7 +5,7 @@ import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 SynapseClient.login = jest.fn().mockResolvedValue({
-  sessionToken: 'abc-123',
+  accessToken: 'abc-123',
   acceptsTermsOfUse: true,
   authenticationReceipt: 'xyz-456',
 })

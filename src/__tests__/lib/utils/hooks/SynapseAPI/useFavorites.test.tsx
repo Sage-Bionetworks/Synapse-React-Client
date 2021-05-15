@@ -36,16 +36,16 @@ SynapseClient.getUserFavorites = jest.fn().mockResolvedValue(expected)
 
 describe('useFavorites functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
 
     const { result, waitFor } = renderHook(
-      () => useGetFavorites(sessionToken),
+      () => useGetFavorites(accessToken),
       { wrapper },
     )
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getUserFavorites).toBeCalledWith(sessionToken)
+    expect(SynapseClient.getUserFavorites).toBeCalledWith(accessToken)
     expect(result.current.data).toEqual(expected)
   })
 })

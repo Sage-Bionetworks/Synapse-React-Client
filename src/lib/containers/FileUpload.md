@@ -1,7 +1,7 @@
 ```jsx
 <>
   <FileUpload 
-    token={sessionToken} 
+    token={accessToken} 
     uploadCallback={(resp) => {
       if (resp.success) {
         document.getElementById("demo-upload-file").textContent = `Your file "${resp.resp.fileName}" upload is successful!`

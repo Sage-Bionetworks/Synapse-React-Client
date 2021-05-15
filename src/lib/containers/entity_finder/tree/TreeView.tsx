@@ -51,7 +51,7 @@ function getScopeOptionNodeName(scope: FinderScope): string {
 }
 // if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
 export type TreeViewProps = {
-  sessionToken: string
+  accessToken: string
   initialScope?: FinderScope
   /** To show the current project, projectId must be defined */
   projectId?: string
@@ -77,7 +77,7 @@ export type TreeViewProps = {
  * The tree view currently can only be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
  */
 export const TreeView: React.FunctionComponent<TreeViewProps> = ({
-  sessionToken,
+  accessToken,
   initialScope = FinderScope.CURRENT_PROJECT,
   projectId,
   initialContainer = null,
@@ -144,7 +144,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     hasNextPage: hasNextPageProjects,
     isLoading: isLoadingProjects,
   } = useGetProjectsInfinite(
-    sessionToken,
+    accessToken,
     scope === FinderScope.CREATED_BY_ME ? { filter: 'CREATED' } : {},
     {
       enabled: useProjectData,
@@ -155,7 +155,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     data: currentContainerBundle,
     isSuccess: isSuccessBundle,
   } = useGetEntityBundle(
-    sessionToken,
+    accessToken,
     currentContainer!,
     BUNDLE_REQUEST_OBJECT,
     undefined,
@@ -202,7 +202,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         // See the useGetProjectsInfinite hook
         break
       case FinderScope.FAVORITES: {
-        SynapseClient.getUserFavorites(sessionToken).then(({ results }) => {
+        SynapseClient.getUserFavorites(accessToken).then(({ results }) => {
           // TODO: https://sagebionetworks.jira.com/browse/PLFM-6652
           results = results.filter(result =>
             visibleTypes.includes(convertToEntityType(result.type)),
@@ -215,7 +215,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       case FinderScope.CURRENT_PROJECT:
         if (projectId) {
           if (initialContainer?.match(SYNAPSE_ENTITY_ID_REGEX)) {
-            SynapseClient.getEntityPath(sessionToken, initialContainer)
+            SynapseClient.getEntityPath(accessToken, initialContainer)
               .then(path => {
                 if (!path.path.map(entity => entity.id).includes(projectId)) {
                   handleError(
@@ -230,7 +230,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               })
               .catch(e => handleError(e))
           } else {
-            SynapseClient.getEntityHeader(projectId, sessionToken)
+            SynapseClient.getEntityHeader(projectId, accessToken)
               .then(header => {
                 setTopLevelEntities([header])
                 setIsLoading(false)
@@ -249,7 +249,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         handleError(new Error('No scope selected'))
     }
   }, [
-    sessionToken,
+    accessToken,
     scope,
     initialContainer,
     handleError,
@@ -414,7 +414,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           {showScopeAsRootNode ? (
             <TreeNode
               level={0}
-              sessionToken={sessionToken}
+              accessToken={accessToken}
               selected={selected}
               setSelectedId={setSelectedId}
               visibleTypes={visibleTypes}
@@ -428,7 +428,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               <TreeNode
                 key={entity.id}
                 level={0}
-                sessionToken={sessionToken}
+                accessToken={accessToken}
                 selected={selected}
                 setSelectedId={setSelectedId}
                 visibleTypes={visibleTypes}

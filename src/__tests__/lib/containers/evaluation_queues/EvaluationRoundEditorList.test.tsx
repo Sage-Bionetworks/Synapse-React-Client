@@ -7,7 +7,7 @@ import React from 'react'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 
 describe('test EvaluationRoundEditorList', () => {
-  const fakeSessionToken = 'asdfasdfasdf'
+  const fakeAccessToken = 'asdfasdfasdf'
   const evaluationId = '123123123'
   const nextPageToken = 'firstPage'
 
@@ -87,7 +87,7 @@ describe('test EvaluationRoundEditorList', () => {
 
     const wrapper = mount(
       <EvaluationRoundEditorList
-        sessionToken={fakeSessionToken}
+        accessToken={fakeAccessToken}
         evaluationId={evaluationId}
         utc={true}
       />,
@@ -100,7 +100,7 @@ describe('test EvaluationRoundEditorList', () => {
   it('fetched pages', () => {
     const wrapper = mount(
       <EvaluationRoundEditorList
-        sessionToken={fakeSessionToken}
+        accessToken={fakeAccessToken}
         evaluationId={evaluationId}
         utc={true}
       />,
@@ -109,12 +109,12 @@ describe('test EvaluationRoundEditorList', () => {
     expect(mockGetEvaulationsList).toBeCalledWith(
       evaluationId,
       { nextPageToken: undefined },
-      fakeSessionToken,
+      fakeAccessToken,
     )
     expect(mockGetEvaulationsList).toBeCalledWith(
       evaluationId,
       { nextPageToken: nextPageToken },
-      fakeSessionToken,
+      fakeAccessToken,
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
@@ -124,7 +124,7 @@ describe('test EvaluationRoundEditorList', () => {
   it('add round button', () => {
     const wrapper = mount(
       <EvaluationRoundEditorList
-        sessionToken={fakeSessionToken}
+        accessToken={fakeAccessToken}
         evaluationId={evaluationId}
         utc={true}
       />,

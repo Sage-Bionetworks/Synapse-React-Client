@@ -9,7 +9,7 @@ import {
 
 export function useGetEntityHeaders(
   references: ReferenceList,
-  sessionToken?: string,
+  accessToken?: string,
   options?: UseQueryOptions<
     PaginatedResults<EntityHeader>,
     SynapseClientError,
@@ -17,8 +17,8 @@ export function useGetEntityHeaders(
   >,
 ) {
   return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    ['entityHeaders', sessionToken, references],
-    () => SynapseClient.getEntityHeaders(references, sessionToken),
+    ['entityHeaders', accessToken, references],
+    () => SynapseClient.getEntityHeaders(references, accessToken),
     options,
   )
 }

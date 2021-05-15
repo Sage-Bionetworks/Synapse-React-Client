@@ -35,7 +35,7 @@ describe('test EvaluationRoundEditor', () => {
     roundEnd: '1231232',
   }
 
-  const fakeSessionToken = 'fakeToken'
+  const fakeAccessToken = 'fakeToken'
 
   beforeEach(() => {
     mockOnDelete = jest.fn()
@@ -63,7 +63,7 @@ describe('test EvaluationRoundEditor', () => {
       .mockImplementation(mockDeleteEvaluationRound)
 
     props = {
-      sessionToken: fakeSessionToken,
+      accessToken: fakeAccessToken,
       evaluationRoundInput: {
         reactListKey: 'SOME FAKE KEY',
         evaluationId: '123',
@@ -176,7 +176,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockCreateEvaluationRound).toBeCalledWith(
       expectedConvertedEvaulationRound,
-      fakeSessionToken,
+      fakeAccessToken,
     )
     expect(mockUpdateEvaluationRound).not.toBeCalled()
 
@@ -209,7 +209,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockUpdateEvaluationRound).toBeCalledWith(
       expectedConvertedEvaulationRound,
-      fakeSessionToken,
+      fakeAccessToken,
     )
     expect(mockCreateEvaluationRound).not.toBeCalled()
 
@@ -250,7 +250,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockUpdateEvaluationRound).toBeCalledWith(
       expectedConvertedEvaulationRound,
-      fakeSessionToken,
+      fakeAccessToken,
     )
     expect(mockCreateEvaluationRound).not.toBeCalled()
 
@@ -307,7 +307,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockDeleteEvaluationRound).toBeCalledWith(
       props.evaluationRoundInput.evaluationId,
       id,
-      fakeSessionToken,
+      fakeAccessToken,
     )
   })
 
@@ -332,7 +332,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockDeleteEvaluationRound).toBeCalledWith(
       props.evaluationRoundInput.evaluationId,
       id,
-      fakeSessionToken,
+      fakeAccessToken,
     )
 
     //error occurred so we never used the passed in callback from props

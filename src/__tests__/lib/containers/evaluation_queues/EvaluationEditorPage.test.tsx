@@ -9,7 +9,7 @@ import { EvaluationEditor } from '../../../../lib/containers/evaluation_queues/E
 
 describe('test EvaluationEditorPage', () => {
   let mockOnDeleteSuccess: () => void
-  const sessionToken = 'fake session token'
+  const accessToken = 'fake access token'
 
   beforeEach(() => {
     mockOnDeleteSuccess = jest.fn()
@@ -20,7 +20,7 @@ describe('test EvaluationEditorPage', () => {
       <EvaluationEditorPage
         entityId="syn123"
         onDeleteSuccess={mockOnDeleteSuccess}
-        sessionToken={sessionToken}
+        accessToken={accessToken}
         utc={false}
       />,
     )
@@ -50,7 +50,7 @@ describe('test EvaluationEditorPage', () => {
       <EvaluationEditorPage
         evaluationId="1122334455"
         onDeleteSuccess={mockOnDeleteSuccess}
-        sessionToken={sessionToken}
+        accessToken={accessToken}
         utc={false}
       />,
     )

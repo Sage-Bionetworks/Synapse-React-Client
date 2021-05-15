@@ -67,7 +67,7 @@ const mockSetBreadcrumbItems = jest.fn()
 const mockToggleSelection = jest.fn()
 
 const defaultProps: TreeViewProps = {
-  sessionToken: 'abcd',
+  accessToken: 'abcd',
   selectedEntities: [],
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: 'syn5',
@@ -370,7 +370,7 @@ describe('TreeView tests', () => {
 
     expect(mockTreeNode).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        sessionToken: defaultProps.sessionToken,
+        accessToken: defaultProps.accessToken,
         level: 0,
         rootNodeConfiguration: {
           nodeText: 'Projects',
@@ -399,7 +399,7 @@ describe('TreeView tests', () => {
 
     expect(mockTreeNode).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        sessionToken: defaultProps.sessionToken,
+        accessToken: defaultProps.accessToken,
         level: 0,
         rootNodeConfiguration: {
           nodeText: 'Projects',

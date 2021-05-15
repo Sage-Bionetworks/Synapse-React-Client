@@ -65,10 +65,10 @@ describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
     SynapseClient.getEntityChildren.mockResolvedValueOnce(page1)
 
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
 
     const { result, waitFor } = renderHook(
-      () => useGetEntityChildren(sessionToken, request),
+      () => useGetEntityChildren(accessToken, request),
       { wrapper },
     )
 
@@ -76,7 +76,7 @@ describe('basic functionality', () => {
 
     expect(SynapseClient.getEntityChildren).toBeCalledWith(
       request,
-      sessionToken,
+      accessToken,
     )
     expect(result.current.data).toEqual(page1)
   })
@@ -86,10 +86,10 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
 
-    const sessionToken = 'abcdef'
+    const accessToken = 'abcdef'
 
     const { result, waitFor } = renderHook(
-      () => useGetEntityChildrenInfinite(sessionToken, request),
+      () => useGetEntityChildrenInfinite(accessToken, request),
       { wrapper },
     )
 
@@ -97,7 +97,7 @@ describe('basic functionality', () => {
 
     expect(SynapseClient.getEntityChildren).toBeCalledWith(
       request,
-      sessionToken,
+      accessToken,
     )
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
@@ -112,7 +112,7 @@ describe('basic functionality', () => {
         ...request,
         nextPageToken: page1.nextPageToken,
       },
-      sessionToken,
+      accessToken,
     )
     expect(result.current.data?.pages[1]).toEqual(page2)
     expect(result.current.hasNextPage).toBe(false)
