@@ -121,6 +121,12 @@
       flex-grow: 1;
     }
     .modal-dialog {
+      .modal-content {
+        padding: 0;
+        .modal-header {
+          padding: 10px
+        }
+      }
       .access-requirement-list-alert.alert{
         margin-top: 0
       }
