@@ -1192,7 +1192,7 @@ export const getAccessTokenFromCookie = async () => {
     return cookies.get(ACCESS_TOKEN_COOKIE_KEY)
   }
   return doGet<string>(
-    'Portal/sessioncookie',
+    'Portal/sessioncookie?validate=true',
     undefined,
     'include',
     BackendDestinationEnum.PORTAL_ENDPOINT,
