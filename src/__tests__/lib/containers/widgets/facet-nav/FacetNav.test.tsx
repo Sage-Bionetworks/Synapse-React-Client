@@ -45,10 +45,6 @@ function createTestProps(overrides?: FacetNavProps): FacetNavProps {
   }
 }
 
-function isHidden(element: Element | null): boolean {
-  return !element || (element as HTMLElement).style.display === 'none'
-}
-
 function getButtonOnFacet(
   text: string,
   facetIndex: number = 0,
@@ -61,24 +57,21 @@ function getButtonOnFacet(
   }
 }
 
-async function init(overrides?: FacetNavProps) {
+function init(overrides?: FacetNavProps) {
   const props = createTestProps(overrides)
   render(<FacetNav {...props} />)
-  await waitFor(() => expect(() => screen.getByRole('list')).not.toThrowError())
 }
 
 describe('facets display hide/show', () => {
   it("should display 2 facets with 'show more' button", async () => {
-    await init()
+    init()
     expect(screen.getAllByRole('graphics-document').length).toBe(2)
     screen.getByRole('button', { name: 'View All Charts' })
   })
 
   it('shows all facet plots when show more is clicked', async () => {
-    await init()
-    const showMoreButton = screen.getByRole('button', {
-      name: 'View All Charts',
-    })
+    init()
+    const showMoreButton = screen.getByText('View All Charts')
     userEvent.click(showMoreButton!)
 
     const expectedLength = defaultProps.data?.facets?.filter(
@@ -91,36 +84,30 @@ describe('facets display hide/show', () => {
       )
     })
 
-    expect(() =>
-      screen.getByRole('button', { name: 'View All Charts' }),
-    ).toThrowError()
+    expect(() => screen.getByText('View All Charts')).toThrowError()
   })
 
   it('if there are only 2 facets show more button should not exist', async () => {
     const data = cloneDeep(defaultProps.data)
     data!.facets = data?.facets?.splice(0, 2)
-    await init({
+    init({
       data: data,
     })
-    expect(() =>
-      screen.getByRole('button', { name: 'View All Charts' }),
-    ).toThrowError()
+    expect(() => screen.getByText('View All Charts')).toThrowError()
   })
 
   it("should only show specified facets if 'facetsToPlot' are set", async () => {
-    await init({
+    init({
       facetsToPlot: ['Make', 'Model'],
     })
 
     // Only two plots are shown and the button is hidden
     expect(screen.getAllByRole('graphics-document').length).toBe(2)
-    expect(() =>
-      screen.getByRole('button', { name: 'View All Charts' }),
-    ).toThrowError()
+    expect(() => screen.getByText('View All Charts')).toThrowError()
   })
 
   it('hiding facet should hide it from facet grid', async () => {
-    await init()
+    init()
 
     expect(screen.getAllByRole('graphics-document').length).toBe(2)
 
@@ -133,7 +120,7 @@ describe('facets display hide/show', () => {
   })
 
   it('expanding facet should additionally show the facet in a modal', async () => {
-    await init()
+    init()
     expect(screen.getAllByRole('graphics-document').length).toBe(2)
 
     expect(() => screen.getByRole('dialog')).toThrowError()
