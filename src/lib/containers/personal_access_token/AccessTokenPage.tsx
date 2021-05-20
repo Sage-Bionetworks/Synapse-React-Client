@@ -1,25 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { SynapseClient } from '../../utils'
 import { useListState } from '../../utils/hooks/useListState'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
-import { ErrorBanner } from '../ErrorBanner'
+import { ErrorBanner, SynapseErrorBoundary } from '../ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
 import { CreateAccessTokenModal } from './CreateAccessTokenModal'
-
-const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
-  error,
-  resetErrorBoundary,
-}) => {
-  return (
-    <div role="alert" className="SRC-marginBottomTop">
-      <ErrorBanner error={error}></ErrorBanner>
-      <Button onClick={resetErrorBoundary}>Reload Access Tokens</Button>
-    </div>
-  )
-}
 
 export type AccessTokenPageProps = {
   title: string
@@ -95,7 +82,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           </Button>
         </div>
       </div>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <SynapseErrorBoundary>
         {showCreateTokenModal && (
           <CreateAccessTokenModal
             token={token}
@@ -136,7 +123,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           </div>
           {showErrorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
         </div>
-      </ErrorBoundary>
+      </SynapseErrorBoundary>
     </div>
   )
 }

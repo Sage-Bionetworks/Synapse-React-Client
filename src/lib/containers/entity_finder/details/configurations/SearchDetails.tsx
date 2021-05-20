@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/useSearch'
 import { Hit, SearchQuery } from '../../../../utils/synapseTypes/Search'
-import { toError } from '../../../ErrorBanner'
+import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 
