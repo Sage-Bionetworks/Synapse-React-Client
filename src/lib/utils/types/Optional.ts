@@ -11,7 +11,7 @@
  * To make only  the 'baz' property optional
  * type OptionalBaz = Optional<FooBarBaz, 'baz'>
  * Would result in :
- * RequireBar === {
+ * OptionalBaz === {
  *   foo: string
  *   bar: string
  *   baz?: string // this is now optional
