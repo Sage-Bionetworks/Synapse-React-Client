@@ -26,7 +26,6 @@ const months = [
 
 export type StatisticsPlotProps = {
   request: ProjectFilesStatisticsRequest
-  token?: string
   title?: string
   xtitle?: string
   ytitle?: string

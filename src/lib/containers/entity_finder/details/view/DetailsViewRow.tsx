@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
@@ -12,6 +12,7 @@ import {
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetUserProfileWithProfilePic } from '../../../../utils/hooks/SynapseAPI/useUserBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
+import { SynapseContext } from '../../../../utils/SynapseContext'
 import {
   EntityHeader,
   ProjectHeader,
@@ -33,7 +34,6 @@ export type DetailsViewRowAppearance =
   | 'hidden'
 
 export type DetailsViewRowProps = {
-  accessToken: string
   entityHeader: EntityHeader | ProjectHeader | Hit
   appearance: DetailsViewRowAppearance
   showVersionColumn: boolean
@@ -43,7 +43,6 @@ export type DetailsViewRowProps = {
 }
 
 export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
-  accessToken,
   entityHeader,
   appearance,
   showVersionColumn,
@@ -51,6 +50,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   selectedVersion,
   toggleSelection,
 }) => {
+  const { accessToken } = useContext(SynapseContext)
   const isSelected = appearance === 'selected'
   const isDisabled = appearance === 'disabled'
   const isHidden = appearance === 'hidden'
@@ -70,7 +70,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   )
 
   const { data: bundle, isError, error } = useGetEntityBundle(
-    accessToken,
     entityHeader.id,
     BUNDLE_REQUEST_OBJECT,
     undefined,
@@ -84,7 +83,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
 
   const { data: modifiedByUserProfile } = useGetUserProfileWithProfilePic(
     bundle?.entity?.modifiedBy ?? '273950',
-    accessToken,
     {
       enabled: !!bundle,
       staleTime: 60 * 1000, // 60 seconds
@@ -99,7 +97,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
 
   useEffect(() => {
     if (isSelected && versions === undefined) {
-      SynapseClient.getEntityVersions(accessToken, entityHeader.id).then(
+      SynapseClient.getEntityVersions(entityHeader.id, accessToken).then(
         response => {
           setVersions(response.results)
         },

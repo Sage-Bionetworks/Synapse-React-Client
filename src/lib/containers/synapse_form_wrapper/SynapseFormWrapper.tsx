@@ -6,6 +6,7 @@ import Alert from 'react-bootstrap/Alert'
 import { UiSchema } from 'react-jsonschema-form'
 import { SynapseClient } from '../../utils'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
+import { SynapseContext } from '../../utils/SynapseContext'
 import { FileEntity, FormData } from '../../utils/synapseTypes/'
 import SynapseForm from './SynapseForm'
 import { StatusEnum } from './types'
@@ -22,7 +23,6 @@ export type SynapseFormWrapperProps = {
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
   formNavSchemaEntityId: string //Synapse file that consists screen nav schema
-  token?: string // user's access token
   searchParams?: UploadToolSearchParams
   isWizardMode?: boolean // if we are displaying the form in wizard mode
   fileNamePath: string // path in data to specify the name of saved file
@@ -55,6 +55,7 @@ class SynapseFormWrapper extends React.Component<
   SynapseFormWrapperProps,
   SynapseFormWrapperState
 > {
+  static contextType = SynapseContext
   constructor(props: SynapseFormWrapperProps) {
     super(props)
     this.state = {
@@ -64,14 +65,7 @@ class SynapseFormWrapper extends React.Component<
   }
 
   async componentDidMount() {
-    await this.getData(this.props.token)
-  }
-
-  async componentDidUpdate(prevProps: SynapseFormWrapperProps) {
-    const shouldUpdate = this.props.token !== prevProps.token
-    if (shouldUpdate) {
-      await this.getData(this.props.token)
-    }
+    await this.getData(this.context.accessToken)
   }
 
   //gets a file entity with content
@@ -234,7 +228,7 @@ class SynapseFormWrapper extends React.Component<
       isLoading: true,
     })
 
-    await SynapseClient.submitFormData(this.state.formDataId!, this.props.token)
+    await SynapseClient.submitFormData(this.state.formDataId!, this.context.accessToken)
     this.finishedProcessing(StatusEnum.SUBMIT_SUCCESS, 'File Submitted')
   }
 
@@ -244,7 +238,7 @@ class SynapseFormWrapper extends React.Component<
   ): Promise<FormData> => {
     fileName = `${fileName}.json`
     const fileUploadComplete = await SynapseClient.uploadFile(
-      this.props.token,
+      this.context.accessToken,
       fileName,
       fileContentsBlob,
     )
@@ -264,14 +258,14 @@ class SynapseFormWrapper extends React.Component<
           this.state.formDataId,
           fileName,
           newFileHandleId,
-          this.props.token!,
+          this.context.accessToken!,
         )
       } else {
         formData = await SynapseClient.createFormData(
           formGroupId,
           fileName,
           newFileHandleId,
-          this.props.token!,
+          this.context.accessToken!,
         )
       }
 
@@ -347,7 +341,7 @@ class SynapseFormWrapper extends React.Component<
   ): JSX.Element => {
     if (
       includes([StatusEnum.ERROR, StatusEnum.ERROR_CRITICAL], state.status) &&
-      props.token &&
+      this.context.accessToken &&
       state.isLoading
     ) {
       return (
@@ -408,7 +402,7 @@ class SynapseFormWrapper extends React.Component<
         <div className="SRC-ReactJsonForm">
           {this.renderNotification(this.state.notification)}
           {this.renderLoader(this.state, this.props)}
-          {this.renderUnauthenticatedView(this.props.token)}
+          {this.renderUnauthenticatedView(this.context.accessToken)}
 
           {this.isReadyToDisplayForm(this.state) && (
             <div>

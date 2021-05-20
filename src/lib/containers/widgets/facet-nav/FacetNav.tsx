@@ -59,7 +59,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   isLoadingNewData,
   isLoading,
   executeQueryRequest,
-  token,
   asyncJobStatus,
   topLevelControlsState,
   facetsToPlot,
@@ -195,7 +194,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           executeQueryRequest={executeQueryRequest!}
           lastQueryRequest={getLastQueryRequest?.()!}
           getInitQueryRequest={getInitQueryRequest}
-          token={token}
           unitDescription={
             hasSelectedFacets ? 'Results Filtered By' : 'Results'
           }
@@ -256,7 +254,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   }
                   isModalView={false}
                   facetAliases={facetAliases}
-                  token={token}
                 />
               </div>
             ))}

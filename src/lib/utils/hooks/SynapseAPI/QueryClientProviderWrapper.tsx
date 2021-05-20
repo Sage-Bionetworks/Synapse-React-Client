@@ -2,7 +2,7 @@ import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 // Create a client
-const queryClient = new QueryClient({
+export const defaultQueryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 30 * 1000, // 30s
@@ -28,7 +28,7 @@ export const withQueryClientProvider = <P extends object>(
 ): React.FC<P> =>
   function _(props: P) {
     return (
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={defaultQueryClient}>
         <Component {...(props as P)} />
       </QueryClientProvider>
     )

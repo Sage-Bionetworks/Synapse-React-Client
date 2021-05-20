@@ -1,3 +1,4 @@
+import { useContext } from 'react'
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -6,12 +7,12 @@ import {
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
+import { SynapseContext } from '../../SynapseContext'
 import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import { AvailableFilesRequest, Sort } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
 import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetAvailableFilesToDownload(
-  token: string,
   request: AvailableFilesRequest,
   options?: UseQueryOptions<
     DownloadListQueryResponse,
@@ -19,15 +20,15 @@ export function useGetAvailableFilesToDownload(
     DownloadListQueryResponse
   >,
 ) {
+  const { accessToken } = useContext(SynapseContext)
   return useQuery<DownloadListQueryResponse, SynapseClientError>(
-    ['downloadlistv2', token, request],
-    () => SynapseClient.getAvailableFilesToDownload(request, token),
+    ['downloadlistv2', accessToken, request],
+    () => SynapseClient.getAvailableFilesToDownload(request, accessToken),
     options,
   )
 }
 
 export function useGetAvailableFilesToDownloadInfinite(
-  token: string,
   sort?: Sort,
   options?: UseInfiniteQueryOptions<
   DownloadListQueryResponse,
@@ -35,6 +36,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     DownloadListQueryResponse
   >,
 ) {
+  const { accessToken } = useContext(SynapseContext)
   const request:AvailableFilesRequest = {
     concreteType: 'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
   }
@@ -46,7 +48,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     async context => {
       return await SynapseClient.getAvailableFilesToDownload(
         { ...request, nextPageToken: context.pageParam },
-        token,
+        accessToken,
       )
     },
     {

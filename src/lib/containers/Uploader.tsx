@@ -6,6 +6,7 @@ import {
   updateEntity,
   uploadFile,
 } from '../utils/SynapseClient'
+import { SynapseContext } from '../utils/SynapseContext'
 import {
   EntityId,
   EntityLookupRequest,
@@ -14,7 +15,6 @@ import {
 } from '../utils/synapseTypes/'
 
 type UploaderState = {
-  token?: string
   error?: any
   totalFilesToUploadCount: number
   filesUploadedCount: number
@@ -23,7 +23,6 @@ type UploaderState = {
 }
 
 export type UploaderProps = {
-  token?: string
   parentContainerId: string
 }
 
@@ -32,11 +31,11 @@ export default class Uploader extends React.Component<
   UploaderState
 > {
   private readonly inputOpenFileRef: React.RefObject<HTMLInputElement>
+  static contextType = SynapseContext
 
   constructor(props: UploaderProps) {
     super(props)
     this.state = {
-      token: '',
       isUploading: false,
       filesUploadedCount: 0,
       totalFilesToUploadCount: 0,
@@ -94,10 +93,10 @@ export default class Uploader extends React.Component<
         entityName: file.name,
         parentId: this.props.parentContainerId,
       }
-      lookupChildEntity(entityLookupRequest, this.props.token)
+      lookupChildEntity(entityLookupRequest, this.context.accessToken)
         .then((entityId: EntityId) => {
           // ok, found an entity of the same name.
-          getEntity<FileEntity>(this.props.token, entityId.id).then(
+          getEntity<FileEntity>(this.context.accessToken, entityId.id).then(
             (existingEntity: FileEntity) => {
               if (
                 existingEntity.concreteType ===
@@ -122,12 +121,12 @@ export default class Uploader extends React.Component<
   }
 
   updateEntityFile = (fileEntity: FileEntity, file: File) => {
-    uploadFile(this.props.token, file.name, file)
+    uploadFile(this.context.accessToken, file.name, file)
       .then((fileUploadComplete: FileUploadComplete) => {
         const isCreate = fileEntity.dataFileHandleId === ''
         fileEntity.dataFileHandleId = fileUploadComplete.fileHandleId
         const createOrUpdate = isCreate ? createEntity : updateEntity
-        createOrUpdate(fileEntity, this.props.token).then(() => {
+        createOrUpdate(fileEntity, this.context.accessToken).then(() => {
           this.finishedProcessingOneFile()
         })
       })

@@ -22,7 +22,6 @@ library.add(faArrowLeft)
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
   columnModel: ColumnModel
-  token?: string
   onChange: Function
   onClear: Function
   facetAliases: {} | undefined
@@ -80,7 +79,6 @@ function formatFacetValuesForDisplay(
 /************* QUERY ENUM CONMPONENT  *************/
 
 export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
-  token,
   facetValues,
   columnModel,
   onClear,
@@ -117,7 +115,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       : []
   const userProfiles = useGetInfoFromIds<UserProfile>({
     ids: userIds,
-    token,
     type: 'USER_PROFILE',
   })
 
@@ -127,7 +124,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
       : []
   const entityHeaders = useGetInfoFromIds<EntityHeader>({
     ids: entityIds,
-    token,
     type: 'ENTITY_HEADER',
   })
 

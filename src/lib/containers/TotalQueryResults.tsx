@@ -28,12 +28,12 @@ import { useState, FunctionComponent } from 'react'
 import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
 import { ColumnSingleValueFilterOperator } from '../utils/synapseTypes/Table/QueryFilter'
 import { Button } from 'react-bootstrap'
+import { SynapseContext } from '../utils/SynapseContext'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
   style?: React.CSSProperties
   lastQueryRequest: QueryBundleRequest
-  token: string | undefined
   unitDescription: string
   frontText: string
   applyChanges?: Function
@@ -48,7 +48,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   unitDescription,
   frontText,
   lastQueryRequest,
-  token,
   isLoading: parentLoading,
   executeQueryRequest,
   getInitQueryRequest,
@@ -56,6 +55,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   topLevelControlsState,
   error,
 }) => {
+  const { accessToken } = React.useContext(SynapseContext)
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
   const [isLoading, setIsLoading] = useState(false)
   const [facetsWithSelection, setFacetsWithSelection] = useState<
@@ -156,7 +156,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
       if (parentLoading || total === undefined) {
         setIsLoading(true)
-        SynapseClient.getQueryTableResults(cloneLastQueryRequest, token)
+        SynapseClient.getQueryTableResults(cloneLastQueryRequest, accessToken)
           .then(data => {
             setTotal(data.queryCount!)
             const rangeFacetsWithSelections = getRangeFacetsWithSelections(
@@ -187,7 +187,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       }
     }
     calculateTotal()
-  }, [parentLoading, token, lastQueryRequest])
+  }, [parentLoading, accessToken, lastQueryRequest])
 
   const removeFacetSelection = ({
     facet,

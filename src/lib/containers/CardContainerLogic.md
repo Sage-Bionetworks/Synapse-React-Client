@@ -1,6 +1,6 @@
 Standard generic card renderer:
 ```jsx
-<CardContainerLogic token={accessToken}  
+<CardContainerLogic
   rgbIndex={1}
   name='Publications'
   sql="SELECT * FROM syn22095937.4 order by authors asc"
@@ -18,7 +18,7 @@ Standard generic card renderer:
 
 Empty results:
 ```jsx
-<CardContainerLogic token={accessToken}  
+<CardContainerLogic  
   rgbIndex={1}
   name='Publications'
   sql="SELECT * FROM syn22095937.4 WHERE study='not a study value'"

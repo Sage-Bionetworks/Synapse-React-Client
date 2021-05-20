@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import UpSetJS, {
   extractSets,
   generateCombinations,
@@ -15,6 +15,7 @@ import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { ErrorBanner } from './ErrorBanner'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
+import { SynapseContext } from '../utils/SynapseContext'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
@@ -25,7 +26,6 @@ export type UpsetPlotProps = {
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
-  token?: string
 }
 
 export type UpsetPlotData = {
@@ -45,8 +45,8 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   height = 700,
   summaryLinkText,
   summaryLink,
-  token,
 }) => {
+  const { accessToken } = useContext(SynapseContext)  
   const [isLoading, setIsLoading] = useState<boolean>()
   const [data, setData] = useState<UpsetPlotData>()
   const [error, setError] = useState<string>()
@@ -75,7 +75,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         }
         const { queryResult } = await SynapseClient.getFullQueryTableResults(
           queryRequest,
-          token,
+          accessToken,
         )
         // transform query data into plot data, and store.
         // collect all values for each key
@@ -136,7 +136,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
     return () => {
       isCancelled = true
     }
-  }, [sql, token])
+  }, [sql, accessToken])
 
   return (
     <>
@@ -180,7 +180,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           )}
         </SizeMe>
       )}
-      <ErrorBanner error={error} token={token} />
+      <ErrorBanner error={error} />
     </>
   )
 }

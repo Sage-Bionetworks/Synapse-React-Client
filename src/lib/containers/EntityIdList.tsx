@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import {
   getEntityHeadersByIds
 } from '../utils/SynapseClient'
+import { SynapseContext } from '../utils/SynapseContext'
 
 export type EntityIdListProps = {
   entityIdList: string[],
-  token: string | undefined
 }
 
 const EntityIdList: React.FC<EntityIdListProps> = props => {
-  const { entityIdList, token } = props
+  const { accessToken } = useContext(SynapseContext)
+  const { entityIdList } = props
   const [entityNameList, setEntityNameList] = useState<string>("")
   const { ref, inView } = useInView()
   let mounted:boolean = true
@@ -27,7 +28,7 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
   const getEntityTypes = async () => {
     if (!entityIdList.length) return
 
-    getEntityHeadersByIds(entityIdList, token).then((entity) =>{
+    getEntityHeadersByIds(entityIdList, accessToken).then((entity) =>{
       const list = entity.results.map(el => el.name).join(", ")
       setEntityNameList(list)
     }).catch(e => {

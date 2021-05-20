@@ -6,16 +6,17 @@ import { updateResearchProject, getResearchProject } from '../../../utils/Synaps
 import { ResearchProject } from '../../../utils/synapseTypes/ResearchProject'
 import { ManagedACTAccessRequirement } from '../../../utils/synapseTypes'
 import { AlertProps } from './RequestDataAccessStep2'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type RequestDataAccessStep1Props = {
-  token: string
   requestDataStepCallback?: Function
   managedACTAccessRequirement: ManagedACTAccessRequirement
   onHide: Function
 }
 
 const RequestDataAccessStep1:React.FC<RequestDataAccessStep1Props> = props => {
-  const {requestDataStepCallback, token, managedACTAccessRequirement, onHide} = props
+  const {requestDataStepCallback, managedACTAccessRequirement, onHide} = props
+  const { accessToken } = React.useContext(SynapseContext)
   const [projectLead, setProjectLead] = useState<string>("")
   const [institution, setInstitution] = useState<string>("")
   const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<string>("")
@@ -31,11 +32,11 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1Props> = props => {
     return () => {
       mounted = false
     }
-  }, [token])
+  }, [accessToken])
 
   const retrieveExistingResearchProject = async () => {
     try {
-      const researchProject = await getResearchProject(String(managedACTAccessRequirement.id), token)
+      const researchProject = await getResearchProject(String(managedACTAccessRequirement.id), accessToken)
       if (researchProject.id) {
         researchProjectRef.current = researchProject
         setProjectLead(researchProject.projectLead)
@@ -64,7 +65,7 @@ const RequestDataAccessStep1:React.FC<RequestDataAccessStep1Props> = props => {
     })
 
     try {
-      updateResearchProject(requestObj, token).then((researchProject) => {
+      updateResearchProject(requestObj, accessToken).then((researchProject) => {
         requestDataStepCallback?.({
           managedACTAccessRequirement,
           step: 2,

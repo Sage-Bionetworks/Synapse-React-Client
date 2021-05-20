@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { SynapseClient } from '../../utils'
 import { useListState } from '../../utils/hooks/useListState'
+import { SynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { ErrorBanner } from '../ErrorBanner'
 import loadingScreen from '../LoadingScreen'
@@ -24,14 +25,13 @@ const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
 export type AccessTokenPageProps = {
   title: string
   body: string | JSX.Element
-  token: string
 }
 
 export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
   title,
   body,
-  token,
 }: AccessTokenPageProps) => {
+  const { accessToken } = useContext(SynapseContext)
   const [isLoading, setIsLoading] = useState(false)
 
   const [showCreateTokenModal, setShowCreateTokenModal] = useState(false)
@@ -61,7 +61,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
     if (loadNextPage) {
       setLoadNextPage(false)
       setIsLoading(true)
-      SynapseClient.getPersonalAccessTokenRecords(token, nextPageToken)
+      SynapseClient.getPersonalAccessTokenRecords(accessToken, nextPageToken)
         .then(response => {
           setIsLoading(false)
           appendTokenRecords(...response.results)
@@ -77,7 +77,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
           setShowErrorMessage(true)
         })
     }
-  }, [loadNextPage, token, nextPageToken])
+  }, [loadNextPage, accessToken, nextPageToken])
 
   return (
     <div className="PersonalAccessTokenPage bootstrap-4-backport">
@@ -98,7 +98,6 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         {showCreateTokenModal && (
           <CreateAccessTokenModal
-            token={token}
             onClose={() => setShowCreateTokenModal(false)}
             onCreate={rerenderList}
           ></CreateAccessTokenModal>
@@ -116,7 +115,6 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
                 <AccessTokenCard
                   key={accessToken.id}
                   accessToken={accessToken}
-                  token={token}
                   onDelete={rerenderList}
                 />
               )

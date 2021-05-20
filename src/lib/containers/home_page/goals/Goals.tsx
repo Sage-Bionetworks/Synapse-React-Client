@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   QueryBundleRequest,
   FileHandleAssociation,
@@ -14,10 +14,10 @@ import GoalsMobile from './Goals.Mobile'
 import GoalsDesktop from './Goals.Desktop'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
 import { withQueryClientProvider } from '../../../utils/hooks/SynapseAPI/QueryClientProviderWrapper'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type GoalsProps = {
   entityId: string
-  token?: string
 }
 
 export type GoalsDataProps = {
@@ -26,7 +26,6 @@ export type GoalsDataProps = {
   summary: string
   link: string
   asset: string
-  token?: string
 }
 
 enum ExpectedColumns {
@@ -40,7 +39,8 @@ enum ExpectedColumns {
 
 export const Goals: React.FC<GoalsProps> = withQueryClientProvider(
   (props: GoalsProps) => {
-    const { entityId, token } = props
+    const { entityId } = props
+    const { accessToken } = useContext(SynapseContext)
     const [assets, setAssets] = useState<string[] | undefined>()
     const [error, setError] = useState<
       string | SynapseClientError | undefined
@@ -58,7 +58,6 @@ export const Goals: React.FC<GoalsProps> = withQueryClientProvider(
     }
     const { data: queryResultBundle } = useGetQueryResultBundle(
       queryBundleRequest,
-      token,
     )
 
     useEffect(() => {
@@ -91,7 +90,7 @@ export const Goals: React.FC<GoalsProps> = withQueryClientProvider(
             includePreviewPreSignedURLs: false,
             requestedFiles: fileHandleAssociationList,
           }
-          const files = await getFiles(batchFileRequest, token)
+          const files = await getFiles(batchFileRequest, accessToken)
           setError(undefined)
           setAssets(
             files.requestedFiles
@@ -104,7 +103,7 @@ export const Goals: React.FC<GoalsProps> = withQueryClientProvider(
         }
       }
       getData()
-    }, [entityId, token, queryResultBundle])
+    }, [entityId, accessToken, queryResultBundle])
 
     const tableIdColumnIndex = getFieldIndex(
       ExpectedColumns.TABLEID,
@@ -130,7 +129,7 @@ export const Goals: React.FC<GoalsProps> = withQueryClientProvider(
 
     return (
       <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
-        {error && <ErrorBanner error={error} token={token} />}
+        {error && <ErrorBanner error={error} />}
         {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
           const values = el.values
           const tableId =
@@ -153,7 +152,6 @@ export const Goals: React.FC<GoalsProps> = withQueryClientProvider(
             summary,
             link,
             asset,
-            token,
           }
           return showDesktop ? (
             <GoalsDesktop {...goalsDataProps} />

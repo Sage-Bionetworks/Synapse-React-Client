@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { BatchFileRequest, FileHandleAssociation } from '../utils/synapseTypes'
 import { getFiles } from '../utils/SynapseClient'
+import { SynapseContext } from '../utils/SynapseContext'
 
 export type DirectFileDownloadButtonProps = {
   id?: string
-  token: string
   fileHandleAssociation: FileHandleAssociation
   fileName: string | undefined
   className?: string
@@ -13,11 +13,11 @@ export type DirectFileDownloadButtonProps = {
 }
 
 const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
-
-  const {id, token, fileHandleAssociation, className, variant, fileName}  = props
+  const {id, fileHandleAssociation, className, variant, fileName}  = props
+  const { accessToken } = useContext(SynapseContext)
 
   const getDownloadLink = async () => {
-    if (!fileHandleAssociation.fileHandleId || !token) return
+    if (!fileHandleAssociation.fileHandleId || !accessToken) return
 
     const batchFileRequest:BatchFileRequest = {
       requestedFiles: [fileHandleAssociation],
@@ -26,7 +26,7 @@ const DirectDownloadButton: React.FC<DirectFileDownloadButtonProps> = props => {
       includePreviewPreSignedURLs: false
     }
     try {
-      const file = await getFiles(batchFileRequest, token)
+      const file = await getFiles(batchFileRequest, accessToken)
       const preSignedURL = file.requestedFiles[0].preSignedURL
       if (!preSignedURL) {
         console.log("Fail to get file download link")

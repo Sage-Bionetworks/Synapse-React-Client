@@ -21,7 +21,6 @@ export type ProgramsProps = {
   iconColumnName: string
   linkConfig: CardLink
   iconOptions: IconOptions
-  token?: string
 }
 
 export type ProgramsDataProps = {
@@ -43,7 +42,6 @@ export const Programs: React.FC<ProgramsProps> = withQueryClientProvider(
       summaryColumnName,
       iconColumnName,
       linkConfig,
-      token,
       rgbIndex,
       iconOptions,
     } = props
@@ -61,7 +59,6 @@ export const Programs: React.FC<ProgramsProps> = withQueryClientProvider(
     }
     const { data: queryResultBundle } = useGetQueryResultBundle(
       queryBundleRequest,
-      token,
     )
 
     const titleColumnIndex = getFieldIndex(titleColumnName, queryResultBundle)

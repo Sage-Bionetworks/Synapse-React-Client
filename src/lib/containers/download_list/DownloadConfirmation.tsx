@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import {
@@ -13,6 +13,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { TopLevelControlsState, QueryWrapperState, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
 import { Alert } from 'react-bootstrap'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -33,7 +34,6 @@ export type DownloadConfirmationState = {
 }
 export type DownloadConfirmationProps = {
   fnClose?: Function
-  token?: string
   getLastQueryRequest?: () => QueryBundleRequest
   topLevelControlsState?: TopLevelControlsState
   updateParentState?: <K extends keyof QueryWrapperState>(
@@ -115,17 +115,17 @@ const StatusConstruct: UiStateDictionary = {
 
 export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> = ({
   getLastQueryRequest,
-  token,
   fnClose,
   updateParentState,
   topLevelControlsState,
   onExportTable,
 }) => {
+  const { accessToken } = useContext(SynapseContext)
   const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
   const [state, setState] = useState<DownloadConfirmationState>({
     fileCount: 0,
     fileSize: 0,
-    status: token ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
+    status: accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
   })
   const [showDownloadList, setShowDownloadList] = useState(false)
   const queryBundleRequest = getLastQueryRequest!()
@@ -171,8 +171,8 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   // This fails drastically with the queryBundleRequest object which is a complex object of many fields that
   // change, we could use a custom comparitor but this also introduces risk
   useDeepCompareEffect(() => {
-    token && getFilesInformation(queryBundleRequest, token)
-  }, [queryBundleRequest, token])
+    accessToken && getFilesInformation(queryBundleRequest, accessToken!)
+  }, [queryBundleRequest, accessToken])
 
   const onCancel = fnClose
     ? () => fnClose()
@@ -186,18 +186,18 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       }
 
   const triggerAddToDownload = async () => {
-    if (!token) {
+    if (!accessToken) {
       setState({ ...state, status: StatusEnum.SIGNED_OUT })
-      return
-    }
-    setState({ ...state, status: StatusEnum.PROCESSING })
-    const result = await addToDownload(queryBundleRequest.query, token)
-    const status = result[0]
-
-    if (status === StatusEnum.SUCCESS) {
-      setState({ ...state, ownerId: result[1], status })
     } else {
-      setState({ ...state, errorMessage: result[1], status })
+      setState({ ...state, status: StatusEnum.PROCESSING })
+      const result = await addToDownload(queryBundleRequest.query, accessToken)
+      const status = result[0]
+
+      if (status === StatusEnum.SUCCESS) {
+        setState({ ...state, ownerId: result[1], status })
+      } else {
+        setState({ ...state, errorMessage: result[1], status })
+      }
     }
   }
 
@@ -226,7 +226,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         return (
           <>
             <DownloadDetails
-              token={token}
               numFiles={fileCount}
               numBytes={fileSize}
             ></DownloadDetails>
@@ -275,7 +274,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}
         `}
       >
-        <div>{getContent(state, token)}</div>
+        <div>{getContent(state, accessToken)}</div>
         <div className="download-confirmation-action">
           {state.status !== StatusEnum.PROCESSING && (
             <button className="btn btn-link" onClick={onCancel}>
@@ -296,7 +295,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       </Alert>
       {showDownloadList && (
         <DownloadListTable
-          token={token}
           renderAsModal={true}
           onHide={() => setShowDownloadList(false)}
         />

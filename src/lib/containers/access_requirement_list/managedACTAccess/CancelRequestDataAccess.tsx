@@ -5,23 +5,23 @@ import { Alert, Button } from 'react-bootstrap'
 import { useState } from 'react'
 import { updateDataAccessRequest } from '../../../utils/SynapseClient'
 import { AlertProps } from './RequestDataAccessStep2'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type CancelRequestDataAccessProps = {
   formSubmitRequestObject: RequestInterface | undefined,
-  token: string,
   onHide: Function
 }
 
 const CancelRequestDataAccess:React.FC<CancelRequestDataAccessProps> = props => {
-
-  const {formSubmitRequestObject, token, onHide} = props
+  const { accessToken } = React.useContext(SynapseContext)
+  const {formSubmitRequestObject, onHide} = props
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [showCloseBtn, setShowCloseBtn] = useState<boolean>(false)
 
   const handleSave = async () => {
     if (formSubmitRequestObject) {
       try {
-        const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
+        const resp = await updateDataAccessRequest(formSubmitRequestObject, accessToken!)
         if (resp) {  // save success, close dialog
           onHide?.()
         } else {

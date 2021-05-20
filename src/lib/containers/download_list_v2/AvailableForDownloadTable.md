@@ -1,3 +1,3 @@
 ```jsx
-<AvailableForDownloadTable token={accessToken} />
+<AvailableForDownloadTable />
 ```

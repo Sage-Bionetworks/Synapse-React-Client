@@ -1,20 +1,23 @@
+import { useContext } from 'react'
 import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
+import { SynapseContext } from '../../SynapseContext'
 import { QueryBundleRequest, QueryResultBundle } from '../../synapseTypes'
 
 export default function useGetQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
-  token?: string,
   options?: UseQueryOptions<
     QueryResultBundle,
     SynapseClientError,
     QueryResultBundle
   >,
 ) {
+  const { accessToken } = useContext(SynapseContext)
+
   return useQuery<QueryResultBundle, SynapseClientError, QueryResultBundle>(
-    ['queryResultBundle', token, queryBundleRequest],
-    () => SynapseClient.getQueryTableResults(queryBundleRequest, token),
+    ['queryResultBundle', accessToken, queryBundleRequest],
+    () => SynapseClient.getQueryTableResults(queryBundleRequest, accessToken),
     options,
   )
 }

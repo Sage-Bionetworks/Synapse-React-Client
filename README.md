@@ -14,7 +14,11 @@ This project helps you integrate your app with the Synapse API backend.
 
 Interested in contributing to this project? See [contributing](./CONTRIBUTING.md).
 
-## Installation with npm
+## Installation
+
+We provide multiple ways to add Synapse React Client to your project
+
+### NPM
 
 Run the following command:<br>
 `npm install synapse-react-client`
@@ -28,7 +32,7 @@ If using Typescript then you'll need to create a file called "synapse-react-clie
  declare module "synapse-react-client"
 ```
 
-## Installation without npm or yarn
+### Installation without npm or yarn
 
 To see an example index.html page with all the necessary imports view [here](./src/demo/SingleFileBuild/index.html)
 
@@ -127,6 +131,12 @@ Note there are a number of CDNs required to finish this functionality-
 <script src="https://unpkg.com/markdown-it-inline-comments@1.0.1/dist/markdown-it-inline-comments.min.js"></script>
 <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
 ```
+
+## Usage
+
+Virtually all components require a SynapseContext (exported....)
+
+Example: 
 
 ## Setting Endpoints
 

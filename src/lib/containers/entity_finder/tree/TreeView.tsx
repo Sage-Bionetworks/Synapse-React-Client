@@ -51,7 +51,6 @@ function getScopeOptionNodeName(scope: FinderScope): string {
 }
 // if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
 export type TreeViewProps = {
-  accessToken: string
   initialScope?: FinderScope
   /** To show the current project, projectId must be defined */
   projectId?: string
@@ -414,7 +413,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           {showScopeAsRootNode ? (
             <TreeNode
               level={0}
-              accessToken={accessToken}
               selected={selected}
               setSelectedId={setSelectedId}
               visibleTypes={visibleTypes}
@@ -428,7 +426,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               <TreeNode
                 key={entity.id}
                 level={0}
-                accessToken={accessToken}
                 selected={selected}
                 setSelectedId={setSelectedId}
                 visibleTypes={visibleTypes}

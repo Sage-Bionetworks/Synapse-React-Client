@@ -88,3 +88,7 @@ export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0x2
 // SessionStorage keys for info from ids
 export const USER_PROFILE_STORAGE_KEY = 'INFO_FROM_IDS_USER_PROFILE'
 export const ENTITY_HEADER_STORAGE_KEY = 'INFO_FROM_IDS_ENTITY_HEADER'
+
+// TODO: Move to SynapseConstants
+export const DATETIME_UTC_COOKIE_KEY =
+  'org.sagebionetworks.synapse.datetime.utc'

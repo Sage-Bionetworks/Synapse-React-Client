@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { getAllAccessRequirements } from '../../utils/SynapseClient'
 import { SynapseConstants, SynapseClient } from '../../utils/'
@@ -32,6 +32,7 @@ import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 import Login from '../Login'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 library.add(faFile)
 
@@ -42,7 +43,6 @@ type AccessRequirementAndStatus = {
 
 export type AccessRequirementListProps = {
   entityId: string
-  token?: string
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
@@ -82,11 +82,12 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
 
 export default function AccessRequirementList({
   entityId,
-  token,
   onHide,
   accessRequirementFromProps,
   renderAsModal,
 }: AccessRequirementListProps) {
+  const { accessToken } = useContext(SynapseContext)
+
   const [accessRequirements, setAccessRequirements] = useState<
     Array<AccessRequirementAndStatus> | undefined
   >(undefined)
@@ -99,11 +100,10 @@ export default function AccessRequirementList({
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
-    token: token,
-    type: 'ENTITY_HEADER',
+    type: 'ENTITY_HEADER'
   }
 
-  const hasTokenChanged = useCompare(token)
+  const hasTokenChanged = useCompare(accessToken)
   const shouldUpdateData = hasTokenChanged || !accessRequirements
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
@@ -118,7 +118,7 @@ export default function AccessRequirementList({
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {
       const statuses = requirements.map(req => {
-        return SynapseClient.getAccessRequirementStatus(token, req.id)
+        return SynapseClient.getAccessRequirementStatus(accessToken, req.id)
       })
       const accessRequirementStatuses = await Promise.all(statuses)
 
@@ -149,7 +149,7 @@ export default function AccessRequirementList({
           return
         }
         if (!accessRequirementFromProps) {
-          const requirements = await getAllAccessRequirements(token, entityId)
+          const requirements = await getAllAccessRequirements(accessToken, entityId)
           const sortedAccessRequirements = await sortAccessRequirementByCompletion(
             requirements,
           )
@@ -161,7 +161,7 @@ export default function AccessRequirementList({
           setAccessRequirements(sortedAccessRequirements)
         }
 
-        const userProfile = await SynapseClient.getUserProfile(token)
+        const userProfile = await SynapseClient.getUserProfile(accessToken)
         setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
@@ -172,12 +172,12 @@ export default function AccessRequirementList({
     }
 
     getAccessRequirements()
-  }, [token, entityId, accessRequirementFromProps, shouldUpdateData])
+  }, [accessToken, entityId, accessRequirementFromProps, shouldUpdateData])
 
   // Using Boolean(value) converts undefined,null, 0,'',false -> false
   // one alternative to using Boolean(value) is the double bang operator !!value,
   // but doesn't ready well
-  const isSignedIn: boolean = Boolean(token)
+  const isSignedIn: boolean = Boolean(accessToken)
 
   /**
    * Returns rendering for the access requirement.
@@ -196,7 +196,6 @@ export default function AccessRequirementList({
           <SelfSignAccessRequirementComponent
             accessRequirement={accessRequirement as SelfSignAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -207,7 +206,6 @@ export default function AccessRequirementList({
           <TermsOfUseAccessRequirementComponent
             accessRequirement={accessRequirement as TermsOfUseAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -219,7 +217,6 @@ export default function AccessRequirementList({
             <ManagedACTAccessRequirementComponentNew
               accessRequirement={accessRequirement as ManagedACTAccessRequirement}
               accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
-              token={token}
               user={user}
               onHide={onHide}
               entityId={entityId}
@@ -231,7 +228,6 @@ export default function AccessRequirementList({
             <ManagedACTAccessRequirementComponent
               accessRequirement={accessRequirement as ManagedACTAccessRequirement}
               accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
-              token={token}
               user={user}
               onHide={onHide}
               entityId={entityId}
@@ -243,7 +239,6 @@ export default function AccessRequirementList({
           <ACTAccessRequirementComponent
             accessRequirement={accessRequirement as ACTAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -352,7 +347,6 @@ export default function AccessRequirementList({
     switch (requestDataStep) {
       case 1:
         renderContent = <RequestDataAccessStep1
-          token={token!}
           managedACTAccessRequirement={managedACTAccessRequirement!}
           requestDataStepCallback={requestDataStepCallback}
           onHide={() => onHide?.()}
@@ -360,7 +354,6 @@ export default function AccessRequirementList({
         break
       case 2:
         renderContent = <RequestDataAccessStep2
-          token={token!}
           user={user!}
           researchProjectId={researchProjectId}
           managedACTAccessRequirement={managedACTAccessRequirement!}
@@ -371,7 +364,6 @@ export default function AccessRequirementList({
         break
       case 3:
         renderContent = <CancelRequestDataAccess
-          token={token!}
           formSubmitRequestObject={formSubmitRequestObject}
           onHide={() => onHide?.()}  // for closing dialogs
         />

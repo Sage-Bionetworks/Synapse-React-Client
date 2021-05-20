@@ -2,14 +2,14 @@ import { SynapseClient, SynapseConstants } from '../../../utils'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
 import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Carousel from '../../Carousel'
 import { ProjectViewCard } from './ProjectViewCard'
 import { ErrorBanner } from '../../ErrorBanner'
 import { withQueryClientProvider } from '../../../utils/hooks/SynapseAPI/QueryClientProviderWrapper'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type ProjectViewCarouselProps = {
-  token?: string
   entityId: string
 }
 
@@ -35,7 +35,7 @@ enum ExpectedColumns {
  * be an attachment on the project's root wiki page.
  */
 export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselProps> = withQueryClientProvider(
-  ({ token, entityId }) => {
+  ({ entityId }) => {
     const queryBundleRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       entityId,
@@ -47,13 +47,14 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
       },
     }
 
+    const { accessToken } = useContext(SynapseContext)
     const [projects, setProjects] = useState<ProjectData[]>([])
     const [error, setError] = useState<Error>()
     const {
       data: queryResultBundle,
       error: queryError,
       isLoading,
-    } = useGetQueryResultBundle(queryBundleRequest, token)
+    } = useGetQueryResultBundle(queryBundleRequest)
 
     useEffect(() => {
       const getData = async () => {
@@ -102,12 +103,12 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
             try {
               if (project.imageFileName) {
                 const wikiPageKey = await SynapseClient.getWikiPageKeyForEntity(
-                  token,
+                  accessToken,
                   project.entityId,
                 )
 
                 project.imageUrl = await SynapseClient.getPresignedUrlForWikiAttachment(
-                  token,
+                  accessToken,
                   project.entityId,
                   wikiPageKey.wikiPageId,
                   project.imageFileName!,
@@ -127,7 +128,7 @@ export const ProjectViewCarousel: React.FunctionComponent<ProjectViewCarouselPro
         }
       }
       getData()
-    }, [entityId, token, queryResultBundle, queryError])
+    }, [entityId, accessToken, queryResultBundle, queryError])
 
     return error ? (
       <ErrorBanner error={error}></ErrorBanner>

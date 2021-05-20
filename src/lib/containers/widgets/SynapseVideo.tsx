@@ -1,5 +1,5 @@
-import * as React from 'react'
-import { useEffect, useState } from 'react'
+import React from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { getEntity, getFiles } from '../../utils/SynapseClient'
 import {
   FileEntity,
@@ -9,13 +9,14 @@ import {
   BatchFileResult,
 } from '../../utils/synapseTypes'
 import { SynapseConstants } from '../../utils/'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 export type Props = {
   params: any
-  token?: string
 }
 
-export default function SynapseVideo({ params, token }: Props) {
+export default function SynapseVideo({ params }: Props) {
+  const { accessToken } = useContext(SynapseContext)
   const [video, setVideo] = useState<string>()
   const [videoUrl, setVideoUrl] = useState<string>()
 
@@ -31,16 +32,18 @@ export default function SynapseVideo({ params, token }: Props) {
         const videoKey =
           params.oggSynapseId || params.mp4SynapseId || params.webmSynapseId
 
-        getEntity<FileEntity>(token, videoKey).then((data: FileEntity) => {
-          const fileHandleAssociationList: FileHandleAssociation[] = [
-            {
-              associateObjectId: videoKey,
-              associateObjectType: FileHandleAssociateType.FileEntity,
-              fileHandleId: data.dataFileHandleId,
-            },
-          ]
-          getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
-        })
+        getEntity<FileEntity>(accessToken, videoKey).then(
+          (data: FileEntity) => {
+            const fileHandleAssociationList: FileHandleAssociation[] = [
+              {
+                associateObjectId: videoKey,
+                associateObjectType: FileHandleAssociateType.FileEntity,
+                fileHandleId: data.dataFileHandleId,
+              },
+            ]
+            getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
+          },
+        )
       }
     }
 
@@ -55,7 +58,7 @@ export default function SynapseVideo({ params, token }: Props) {
         requestedFiles: fileHandleAssociationList,
       }
 
-      getFiles(request, token)
+      getFiles(request, accessToken)
         .then((data: BatchFileResult) => {
           const { preSignedURL } = data.requestedFiles.filter(
             el => el.fileHandleId === id,
@@ -67,7 +70,7 @@ export default function SynapseVideo({ params, token }: Props) {
         })
     }
     getVideo()
-  }, [video, params, token, videoHeight, videoWidth])
+  }, [video, params, accessToken, videoHeight, videoWidth])
 
   const RenderVideo = () => {
     return (
@@ -94,7 +97,7 @@ export default function SynapseVideo({ params, token }: Props) {
   }
   return (
     <div>
-      {token ? (
+      {accessToken ? (
         <RenderVideo />
       ) : (
         <p>

@@ -38,7 +38,6 @@ export const renderTableCell = ({
   selectColumns,
   columnModels,
   tableEntityId,
-  token,
 }: {
   entityColumnIndicies: number[]
   userColumnIndicies: number[]
@@ -59,7 +58,6 @@ export const renderTableCell = ({
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   tableEntityId?: string
-  token: string | undefined
 }): React.ReactNode => {
   const isShortString = (
     s: string,
@@ -132,7 +130,6 @@ export const renderTableCell = ({
     return(
       <EntityIdList
         entityIdList={jsonData}
-        token={token}
       />
     )
   }

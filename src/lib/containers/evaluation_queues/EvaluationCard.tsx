@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   deleteEvaluation,
   getEvaluationPermissions,
@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { RequiredProperties } from '../../utils'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,
@@ -22,8 +23,6 @@ export type ExistingEvaluation = RequiredProperties<
 export type EvaluationCardProps = {
   /** properties of the Evaluation to show*/
   evaluation: ExistingEvaluation
-  /** access token to make authenticated API calls */
-  accessToken: string
   /** If true, dates for start/end are displayed in UTC instead of local time*/
   utc: boolean
   /** Callback when the Edit option in the dropdown is clicked*/
@@ -47,13 +46,13 @@ export type EvaluationCardProps = {
  */
 export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
   evaluation,
-  accessToken,
   utc,
   onEdit,
   onModifyAccess,
   onSubmit,
   onDeleteSuccess,
 }: EvaluationCardProps) => {
+  const { accessToken } = useContext(SynapseContext)
   const [error, setError] = useState<SynapseClientError>()
   const [permissions, setPermissions] = useState<UserEvaluationPermissions>()
 
@@ -108,7 +107,6 @@ export const EvaluationCard: React.FunctionComponent<EvaluationCardProps> = ({
               <CreatedOnByUserDiv
                 userId={evaluation.ownerId}
                 date={new Date(evaluation.createdOn)}
-                accessToken={accessToken}
                 utc={utc}
               />
               {permissions?.canSubmit && (

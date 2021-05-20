@@ -25,10 +25,10 @@ import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/A
 import { cancelDataAccessRequest } from '../../../utils/SynapseClient'
 import { AlertProps } from './RequestDataAccessStep2'
 import { Alert } from 'react-bootstrap'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type RequestDataAccessProps = {
   user: UserProfile | undefined
-  token: string | undefined
   wikiPage: WikiPageKey | undefined
   entityId: string
   accessRequirement:
@@ -43,7 +43,8 @@ export type RequestDataAccessProps = {
 }
 
 const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
-  const { user, token, wikiPage, accessRequirementStatus, accessRequirement, showButton = true, onHide, requestDataStepCallback } = props
+  const { user, wikiPage, accessRequirementStatus, accessRequirement, showButton = true, onHide, requestDataStepCallback } = props
+  const { accessToken } = React.useContext(SynapseContext)
   const [isHide, setIsHide] = useState<boolean>(true)
   const propsIsApproved = accessRequirementStatus?.isApproved
   const [isApproved, setIsApproved] = useState<boolean | undefined>(
@@ -75,7 +76,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
       accessRequirement.concreteType ===
         SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement
     ) {
-      if (token) {
+      if (accessToken) {
         // !isSubmissionCanceled: if the submission has already been canceled, don't cancel again
         if (submissionState === SUBMISSION_STATE.SUBMITTED && !isSubmissionCanceled) {
           const errAlert = {
@@ -86,7 +87,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
             </>)
           }
           try {
-            const resp:ACTSubmissionStatus | any = await cancelDataAccessRequest(accessRequirementStatus?.currentSubmissionStatus!.submissionId, token)
+            const resp:ACTSubmissionStatus | any = await cancelDataAccessRequest(accessRequirementStatus?.currentSubmissionStatus!.submissionId, accessToken!)
             if (resp.state === SUBMISSION_STATE.CANCELLED) {  // successfully cancelled
               setAlert({
                 key: 'success',
@@ -119,7 +120,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
           state: ApprovalState.APPROVED,
         }
 
-        SynapseClient.postAccessApproval(token, accessApprovalRequest)
+        SynapseClient.postAccessApproval(accessToken, accessApprovalRequest)
           .then(_ => {
             setIsApproved(true)
           })
@@ -201,7 +202,6 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
       <div className="AcceptRequirementsMarkdown">
         {
           wikiPage && <MarkdownSynapse  // remove React mount/unmount error
-            token={token}
             wikiId={wikiPage?.wikiPageId}
             ownerId={wikiPage?.ownerObjectId}
             objectType={wikiPage?.ownerObjectType}
@@ -215,11 +215,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = (props) => {
       </div>
     )
   } else if (isActOrTermsOfUse) {
-    markdown = (<MarkdownSynapse
-        markdown={isTermsOfUse ? termsOfUse : actContactInfo}
-        token={token}
-      />
-    )
+    markdown = (<MarkdownSynapse markdown={isTermsOfUse ? termsOfUse : actContactInfo} />)
   }
 
   const isManagedActAr =

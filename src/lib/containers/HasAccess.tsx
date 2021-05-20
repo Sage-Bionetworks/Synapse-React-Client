@@ -49,6 +49,7 @@ import AccessRequirementList, {
   AccessRequirementListProps,
 } from './access_requirement_list/AccessRequirementList'
 import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
+import { SynapseContext } from '../utils/SynapseContext'
 
 library.add(faUnlockAlt)
 library.add(faDatabase)
@@ -60,7 +61,6 @@ export type HasAccessProps = {
   entityId: string
   isInDownloadList?: boolean // set to show errors in UI about package creation
   entityVersionNumber?: string
-  token?: string
   forceSamePage?: boolean
   set_arPropsFromHasAccess?: (props: AccessRequirementListProps) => void
 }
@@ -101,7 +101,10 @@ export const getDownloadTypeForFileHandle = (
     return FileHandleDownloadTypeEnum.TooLarge
   }
   // check if it's a google cloud file handle
-  if (concreteType === CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle) {
+  if (
+    concreteType ===
+    CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle
+  ) {
     return FileHandleDownloadTypeEnum.ExternalCloudFile
   }
   // check if it's an external file handle
@@ -142,6 +145,8 @@ export default class HasAccess extends React.Component<
       'This file must be downloaded manually (e.g. a file in Google Cloud).',
   }
 
+  static contextType = SynapseContext
+
   constructor(props: HasAccessProps) {
     super(props)
     this.getRestrictionInformation = this.getRestrictionInformation.bind(this)
@@ -164,12 +169,6 @@ export default class HasAccess extends React.Component<
     this.refresh()
   }
 
-  componentDidUpdate(prevProps: HasAccessProps) {
-    const forceRefresh = prevProps.token !== this.props.token
-    // if there token has updated then force refresh the component state
-    this.refresh(forceRefresh)
-  }
-
   refresh = (forceRefresh?: boolean) => {
     if (
       this.state.isGettingEntityInformation ||
@@ -183,8 +182,7 @@ export default class HasAccess extends React.Component<
   }
 
   updateStateFileHandleAccessBlocked = () => {
-    const { token } = this.props
-    const fileHandleDownloadType = token
+    const fileHandleDownloadType = this.context.accessToken
       ? FileHandleDownloadTypeEnum.AccessBlockedByACL
       : FileHandleDownloadTypeEnum.AccessBlockedToAnonymous
     this.setState({
@@ -196,7 +194,6 @@ export default class HasAccess extends React.Component<
     const {
       entityId,
       entityVersionNumber,
-      token,
       isInDownloadList,
       fileHandle,
     } = this.props
@@ -220,14 +217,18 @@ export default class HasAccess extends React.Component<
     })
     // fileHandle was not passed to us, ask for it.
     // is this a FileEntity?
-    return SynapseClient.getEntity(token, entityId, entityVersionNumber)
+    return SynapseClient.getEntity(
+      this.context.accessToken,
+      entityId,
+      entityVersionNumber,
+    )
       .then(entity => {
         if (entity.hasOwnProperty('dataFileHandleId')) {
           // looks like a FileEntity, get the FileHandle
           return SynapseClient.getFileResult(
             entity as FileEntity,
-            token,
-            true
+            this.context.accessToken,
+            true,
           ).then((fileHandle: FileResult) => {
             const fileHandleDownloadType = getDownloadTypeForFileHandle(
               fileHandle.fileHandle!,
@@ -261,7 +262,7 @@ export default class HasAccess extends React.Component<
   }
 
   getRestrictionInformation = (forceRefresh?: boolean) => {
-    const { entityId, token } = this.props
+    const { entityId } = this.props
     if (this.state.restrictionInformation && !forceRefresh) {
       return
     }
@@ -272,7 +273,10 @@ export default class HasAccess extends React.Component<
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: entityId,
     }
-    return SynapseClient.getRestrictionInformation(request, token)
+    return SynapseClient.getRestrictionInformation(
+      request,
+      this.context.accessToken,
+    )
       .then(restrictionInformation => {
         this.setState({
           restrictionInformation,
@@ -345,36 +349,37 @@ export default class HasAccess extends React.Component<
   }
 
   handleGetAccess = () => {
-    const { token, entityId, set_arPropsFromHasAccess } = this.props
-    SynapseClient.getAllAccessRequirements(token, entityId).then(
-      requirements => {
-        if (checkHasUnsportedRequirement(requirements)) {
-          window.open(
-            `${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-            '_blank',
-          )
+    const { entityId, set_arPropsFromHasAccess } = this.props
+    SynapseClient.getAllAccessRequirements(
+      this.context.accessToken,
+      entityId,
+    ).then(requirements => {
+      if (checkHasUnsportedRequirement(requirements)) {
+        window.open(
+          `${getEndpoint(
+            BackendDestinationEnum.PORTAL_ENDPOINT,
+          )}#!AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+          '_blank',
+        )
+      } else {
+        if (set_arPropsFromHasAccess) {
+          set_arPropsFromHasAccess({
+            accessRequirementFromProps: requirements,
+            entityId,
+          })
         } else {
-          if (set_arPropsFromHasAccess) {
-            set_arPropsFromHasAccess({
-              accessRequirementFromProps: requirements,
-              entityId,
-            })
-          } else {
-            this.setState({
-              accessRequirements: requirements,
-              displayAccessRequirement: true,
-            })
-          }
+          this.setState({
+            accessRequirements: requirements,
+            displayAccessRequirement: true,
+          })
         }
-      },
-    )
+      }
+    })
   }
 
   // Show Access Requirements
   renderARsLink = () => {
-    const { entityId, token } = this.props
+    const { entityId } = this.props
     const {
       restrictionInformation,
       displayAccessRequirement,
@@ -412,7 +417,6 @@ export default class HasAccess extends React.Component<
         </button>
         {displayAccessRequirement && (
           <AccessRequirementList
-            token={token}
             entityId={entityId}
             accessRequirementFromProps={accessRequirements}
             renderAsModal={true}

@@ -1,30 +1,24 @@
 import { FileHandleAssociateType } from '../../utils/synapseTypes'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SynapseClient } from '../../utils'
 import { useInView } from 'react-intersection-observer'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 type ImageFileHandleProps = {
-  token: string | undefined
   fileHandleId: string
   tableEntityConcreteType: string | undefined
   rowId: string | undefined
-  tableId: string | undefined  
+  tableId: string | undefined
 }
 export const ImageFileHandle = (props: ImageFileHandleProps) => {
-  const {
-    token,
-    fileHandleId,
-    tableEntityConcreteType,
-    rowId,
-    tableId,    
-  } = props
-
+  const { fileHandleId, tableEntityConcreteType, rowId, tableId } = props
+  const { accessToken } = useContext(SynapseContext)
   const [url, setUrl] = useState<string>()
   const { ref, inView } = useInView({
     triggerOnce: true,
     rootMargin: '500px 0px',
   })
-  
+
   useEffect(() => {
     const getData = async () => {
       const isFileView = tableEntityConcreteType?.includes('EntityView')
@@ -35,31 +29,28 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
       if (fileAssociateId && inView) {
         SynapseClient.getActualFileHandleByIdURL(
           fileHandleId,
-          token,
+          accessToken,
           fileAssociateType,
           fileAssociateId,
           false,
-        ).then(url => {
-          setUrl(url)
-        })
-        .catch(err => {
-          console.error('Error on retrieving file handle url ', err)
-        })
+        )
+          .then(url => {
+            setUrl(url)
+          })
+          .catch(err => {
+            console.error('Error on retrieving file handle url ', err)
+          })
       }
     }
 
     getData()
-  }, [inView, fileHandleId, rowId, tableId, tableEntityConcreteType, token])
+  }, [inView, fileHandleId, rowId, tableId, tableEntityConcreteType, accessToken])
 
   return (
     <span ref={ref}>
-      {url && <img
-        src={url}
-        alt=''
-        className='ImageFileHandle'
-        loading="lazy"
-      >
-      </img>}
+      {url && (
+        <img src={url} alt="" className="ImageFileHandle" loading="lazy"></img>
+      )}
     </span>
   )
 }

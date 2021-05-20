@@ -1,5 +1,5 @@
 import { EvaluationRound, EvaluationRoundLimit } from '../../utils/synapseTypes'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Alert,
   Button,
@@ -30,9 +30,9 @@ import {
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationRoundEditorProps = {
-  accessToken: string
   evaluationRoundInput: EvaluationRoundInput
   //If true, dates for start/end are displayed in UTC instead of local time
   utc: boolean
@@ -123,12 +123,12 @@ const convertInputsToEvaluationRound = (
 }
 
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
-  accessToken,
   evaluationRoundInput,
   onSave,
   onDelete,
   utc,
 }) => {
+  const { accessToken } = useContext(SynapseContext)
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
 
@@ -335,7 +335,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             {error && (
               <Row className="my-3">
                 <Col>
-                  <ErrorBanner error={error} token={accessToken} />
+                  <ErrorBanner error={error} />
                 </Col>
               </Row>
             )}

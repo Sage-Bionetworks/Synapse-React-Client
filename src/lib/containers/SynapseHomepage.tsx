@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import RLogo from '../assets/icons/RLogo'
 import Python from '../assets/icons/Python'
@@ -10,16 +10,16 @@ import {
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
 import { SynapsePoweredPortal } from './SynapsePoweredPortal'
+import { SynapseContext } from '../utils/SynapseContext'
 
 export type SynapseHomepageProps = {
-  token?: string
   projectViewId: string
 }
 
 export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
-  token,
   projectViewId,
 }) => {
+  const { accessToken } = useContext(SynapseContext)
   const LOGIN_LINK = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}#!LoginPlace:0`
@@ -62,7 +62,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             alt=""
           />
           <div className="SignUpButtonContainer">
-            {token ? (
+            {accessToken ? (
               <>
                 <Button href={DASHBOARD_LINK} variant="light">
                   View Your Dashboard
@@ -143,9 +143,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </div>
             <Button
               variant="primary"
-              href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
+              href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              {token ? 'View Your Dashboard' : 'Get Started Now'}
+              {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -176,9 +176,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </div>
             <Button
               variant="primary"
-              href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
+              href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              {token ? 'View Your Dashboard' : 'Get Started Now'}
+              {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -210,9 +210,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             </div>
             <Button
               variant="primary"
-              href={token ? DASHBOARD_LINK : REGISTRATION_LINK}
+              href={accessToken ? DASHBOARD_LINK : REGISTRATION_LINK}
             >
-              {token ? 'View Your Dashboard' : 'Get Started Now'}
+              {accessToken ? 'View Your Dashboard' : 'Get Started Now'}
             </Button>
           </div>
         </div>
@@ -322,14 +322,47 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="SynapseHomepage__Section__Centered">
           <h2>Powered By Synapse</h2>
-          <p>Our knowledge portals are community-specific interfaces that enable researchers to explore and share data, analyses, and tools.</p>
+          <p>
+            Our knowledge portals are community-specific interfaces that enable
+            researchers to explore and share data, analyses, and tools.
+          </p>
           <div className="PoweredBySynapseFlexContainer">
-              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/ADKnowledgePortal.svg' name='AD Knowledge Portal' description="Data and tools for the study of Alzheimer's disease, related dementias, and healthy aging." url='https://adknowledgeportal.synapse.org/'/>
-              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/BSMN.svg' name='BSMN Portal' description="Data and tools to study the role of brain somatic mosaicism in neuropsychiatric disease." url='https://bsmn.synapse.org/'/>
-              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/CSBC.svg' name='Cancer Complexity Knowledge Portal' description="Approaches, data, and tools to address important questions in basic and translational cancer research." url='https://cancercomplexity.synapse.org/'/>
-              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/dHealth.svg' name='dHealth Digital Health Knowledge Portal' description="Discover and download digital and mobile health data, tools, benchmarked outcomes and digital biomarkers." url='https://dhealth.synapse.org/'/>
-              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/NFPortal.svg' name='NF Data Portal' description="Datasets, analysis tools, resources, and publications related to neurofibromatosis and schwannomatosis." url='https://nf.synapse.org/'/>
-              <SynapsePoweredPortal logoUrl='https://s3.amazonaws.com/static.synapse.org/images/Psychencode.svg' name='Psychencode Knowledge Portal' description="Investigation and large-scale data sets of genomic influences on neuropsychiatric disease." url='https://psychencode.synapse.org/'/>
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/ADKnowledgePortal.svg"
+              name="AD Knowledge Portal"
+              description="Data and tools for the study of Alzheimer's disease, related dementias, and healthy aging."
+              url="https://adknowledgeportal.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/BSMN.svg"
+              name="BSMN Portal"
+              description="Data and tools to study the role of brain somatic mosaicism in neuropsychiatric disease."
+              url="https://bsmn.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/CSBC.svg"
+              name="Cancer Complexity Knowledge Portal"
+              description="Approaches, data, and tools to address important questions in basic and translational cancer research."
+              url="https://cancercomplexity.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/dHealth.svg"
+              name="dHealth Digital Health Knowledge Portal"
+              description="Discover and download digital and mobile health data, tools, benchmarked outcomes and digital biomarkers."
+              url="https://dhealth.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/NFPortal.svg"
+              name="NF Data Portal"
+              description="Datasets, analysis tools, resources, and publications related to neurofibromatosis and schwannomatosis."
+              url="https://nf.synapse.org/"
+            />
+            <SynapsePoweredPortal
+              logoUrl="https://s3.amazonaws.com/static.synapse.org/images/Psychencode.svg"
+              name="Psychencode Knowledge Portal"
+              description="Investigation and large-scale data sets of genomic influences on neuropsychiatric disease."
+              url="https://psychencode.synapse.org/"
+            />
           </div>
         </div>
       </div>
@@ -436,7 +469,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
         <div className="SynapseHomepage__Section__Centered SynapseHomepage__FlexColumn">
           <h2 className="WhiteText">Sign up for Synapse today</h2>
           <div className="SignUpButtonContainer SynapseHomepage__MarginAutoDesktop">
-            {token ? (
+            {accessToken ? (
               <>
                 <Button href={DASHBOARD_LINK} variant="light">
                   View Your Dashboard

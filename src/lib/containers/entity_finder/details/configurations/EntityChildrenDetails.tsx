@@ -11,7 +11,6 @@ type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
 }
 
 export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetailsProps> = ({
-  accessToken,
   parentContainerId,
   visibleTypes: includeTypes,
   showVersionSelection,
@@ -32,7 +31,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     fetchNextPage,
     isError,
     error,
-  } = useGetEntityChildrenInfinite(accessToken, {
+  } = useGetEntityChildrenInfinite({
     parentId: parentContainerId,
     includeTypes: includeTypes,
     sortBy: sortBy,
@@ -47,7 +46,6 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 
   return (
     <DetailsView
-      accessToken={accessToken}
       entities={
         data
           ? ([] as EntityHeader[]).concat.apply(
@@ -71,6 +69,6 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
       visibleTypes={includeTypes}
       selectableTypes={selectableTypes}
       toggleSelection={toggleSelection}
-    ></DetailsView>
+    />
   )
 }

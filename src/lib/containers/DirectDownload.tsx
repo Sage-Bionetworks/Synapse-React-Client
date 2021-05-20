@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Icon } from './row_renderers/utils'
 import {
   BatchFileRequest,
@@ -15,9 +15,9 @@ import {
 } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
 import { useInView } from 'react-intersection-observer'
+import { SynapseContext } from '../utils/SynapseContext'
 
 export type DirectFileDownloadProps = {
-  token?: string
   associatedObjectId: string
   entityVersionNumber?: string
   associatedObjectType?: FileHandleAssociateType
@@ -27,7 +27,8 @@ export type DirectFileDownloadProps = {
 
 const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props) => {
 
-  const {token, associatedObjectId, entityVersionNumber, associatedObjectType, fileHandleId, displayFileName} = props
+  const { accessToken } = useContext(SynapseContext)
+  const { associatedObjectId, entityVersionNumber, associatedObjectType, fileHandleId, displayFileName} = props
   const { ref, inView } = useInView()
   const [isExternalFile, setIsExternalFile] = useState<boolean>(false)
   const [hasFileAccess, setHasFileAccess] = useState<boolean>(false)
@@ -43,7 +44,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
     return () => {
       mounted = false
     }
-  }, [token, inView])
+  }, [accessToken, inView])
 
   const getDownloadLink = async () => {
     let preSignedURL
@@ -54,7 +55,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
       } else {
         const file = await getFileResult(
           fileEntity!,
-          token,
+          accessToken,
           false,
           true
         )
@@ -94,11 +95,11 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
       includePreviewPreSignedURLs: false,
       requestedFiles: fileHandleAssociationList,
     }
-    return getFiles(batchFileRequest, token)
+    return getFiles(batchFileRequest, accessToken)
   }
 
   const getFileEntityFileHandle = () => {
-    return getEntity(token, associatedObjectId, entityVersionNumber)
+    return getEntity(accessToken, associatedObjectId, entityVersionNumber)
       .then( async (entity) => {
 
         // From file view
@@ -107,7 +108,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = (props)
           setFileEntity(entity as FileEntity)
           return getFileResult(   // TODO: Why can we just use getFiles here?
             entity as FileEntity,
-            token,
+            accessToken,
             true,
           ).then((data) => {
             const fh = data.fileHandle

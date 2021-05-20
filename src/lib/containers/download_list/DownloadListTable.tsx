@@ -50,7 +50,6 @@ type DownloadListTableData = {
 
 type LoadingState = boolean
 export type DownloadListTableProps = {
-  token?: string
   listUpdatedCallback?: VoidFunction
   forceSamePage?: boolean
   renderAsModal?: boolean
@@ -113,7 +112,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // use bang operator because filter function guarentee's that file handle will be defined
   const userProfiles = useGetInfoFromIds<UserProfile>({
     ids: ownerIds,
-    token,
     type: 'USER_PROFILE',
   })
 
@@ -500,7 +498,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     <HasAccess
                       onHide={onHide}
                       fileHandle={fileHandle}
-                      token={token}
                       set_arPropsFromHasAccess={set_arPropsFromHasAccess}
                       entityId={synId}
                       isInDownloadList={true}
@@ -513,7 +510,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         size={'SMALL USER CARD'}
                         userProfile={userProfile}
                         preSignedURL={userProfile.clientPreSignedURL}
-                        token={token}
                       />
                     )}
                     {canDownload && !userProfile && (
@@ -544,18 +540,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             })}
           </tbody>
         </ReactBootstrap.Table>
-        <CreatePackage updateDownloadList={fetchData} token={token}>
+        <CreatePackage updateDownloadList={fetchData}>
           <DownloadDetails
             numBytes={numBytes}
             numFiles={numFiles}
-            token={token}
           />
         </CreatePackage>
       </div>
       {arPropsFromHasAccess && (
         <AccessRequirementList
           {...arPropsFromHasAccess}
-          token={token}
           onHide={() => {
             set_arPropsFromHasAccess(undefined)
           }}

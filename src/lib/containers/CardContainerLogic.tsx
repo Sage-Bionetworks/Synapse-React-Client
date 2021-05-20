@@ -15,6 +15,7 @@ import { GenericCardSchema, IconOptions } from './GenericCard'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { IconSvgOptions } from './IconSvg'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+import { SynapseContext } from '../utils/SynapseContext'
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -73,7 +74,6 @@ export type CardConfiguration = {
 } & CommonCardProps
 
 export type CardContainerLogicProps = {
-  token?: string
   limit?: number
   title?: string
   unitDescription?: string
@@ -115,6 +115,8 @@ export default class CardContainerLogic extends React.Component<
     hasMoreData: true,
   }
 
+  static contextType = SynapseContext
+
   constructor(props: CardContainerLogicProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -147,9 +149,8 @@ export default class CardContainerLogic extends React.Component<
       prevSearchParams,
       currentSearchParams,
     )
-    const hasTokenChanged = this.props.token !== prevProps.token
     const hasSqlChanged = this.props.sql !== prevProps.sql
-    if (hasTokenChanged || hasSqlChanged || hasSearchParamsChanged) {
+    if (hasSqlChanged || hasSearchParamsChanged) {
       this.executeInitialQueryRequest()
     }
   }
@@ -180,7 +181,7 @@ export default class CardContainerLogic extends React.Component<
     await getNextPageOfData(
       queryRequest,
       this.state.data!,
-      this.props.token,
+      this.context.accessToken,
     ).then(newState => {
       this.setState({
         ...newState,
@@ -229,7 +230,7 @@ export default class CardContainerLogic extends React.Component<
       },
     }
 
-    SynapseClient.getQueryTableResults(initQueryRequest, this.props.token)
+    SynapseClient.getQueryTableResults(initQueryRequest, this.context.accessToken)
       .then((data: QueryResultBundle) => {
         const queryRequestWithoutCount = cloneDeep(initQueryRequest)
         queryRequestWithoutCount.partMask =
@@ -258,12 +259,11 @@ export default class CardContainerLogic extends React.Component<
    */
   public render() {
     // only forward the necessary props
-    const { sql, searchParams, token, ...rest } = this.props
+    const { sql, searchParams, ...rest } = this.props
     return (
       <CardContainer
         {...rest}
         data={this.state.data}
-        token={token}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         hasMoreData={this.state.hasMoreData}

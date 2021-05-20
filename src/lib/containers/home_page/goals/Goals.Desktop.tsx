@@ -9,7 +9,6 @@ export default function GoalsDesktop({
   summary,
   countSql,
   title,
-  token,
 }: GoalsDataProps) {
   return (
     <div className="Goals__Card bootstrap-4-backport">
@@ -21,7 +20,7 @@ export default function GoalsDesktop({
           <span className="Goals__Card__header__title"> {title} </span>
           {countSql && (
             <span className="Goals__Card__header__count">
-              <QueryCount parens={false} sql={countSql} token={token} name="" />
+              <QueryCount parens={false} sql={countSql} name="" />
             </span>
           )}
         </p>

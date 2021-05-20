@@ -28,9 +28,9 @@ import FileUpload from '../../FileUpload'
 import UserSearchBox from '../../UserSearchBox'
 import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type RequestDataAccessStep2Props = {
-  token: string,
   managedACTAccessRequirement: ManagedACTAccessRequirement,
   entityId: string,
   requestDataStepCallback: Function
@@ -64,7 +64,8 @@ export type AlertProps = {
 }
 
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
-  const {token, requestDataStepCallback, managedACTAccessRequirement, entityId, user, researchProjectId } = props
+  const {requestDataStepCallback, managedACTAccessRequirement, entityId, user, researchProjectId } = props
+  const { accessToken } = React.useContext(SynapseContext)
   const [DUCTemplate, setDUCTemplate] = useState<DataAccessDoc>()
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
@@ -90,10 +91,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     return () => {
       mounted = false
     }
-  }, [token, researchProjectId])
+  }, [accessToken, researchProjectId])
 
   const setFormData = async () => {
-    const dataAccessRequestData = await getDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), token)
+    const dataAccessRequestData = await getDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), accessToken)
 
     // initialize form submission request object
     dataAccessRequestData.researchProjectId = researchProjectId
@@ -127,7 +128,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
 
     const promises = ids.map(userId => {
-      return getUserProfileById(token, userId)
+      return getUserProfileById(accessToken, userId)
     })
     Promise.all(promises).then(profiles => {
       setAccessorProfiles(profiles)
@@ -196,7 +197,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
     // Fetch the required doc file names and save them in the state variables
     if (batchFileRequest.requestedFiles.length) {
-      getFiles(batchFileRequest, token).then(resp => {
+      getFiles(batchFileRequest, accessToken).then(resp => {
         resp.requestedFiles.forEach(file => {
           const fileName = file.fileHandle!.fileName
           const fileTypes = requestedFileTypes[file.fileHandleId]
@@ -241,7 +242,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const handleSubmit = async () => {
     if (formSubmitRequestObject) {
       try {
-        const resp = await updateDataAccessRequest(formSubmitRequestObject, token)
+        const resp = await updateDataAccessRequest(formSubmitRequestObject, accessToken!)
         if (resp && resp.etag) { // save success
           const requestObject:CreateSubmissionRequest = {
             requestId: resp.id,
@@ -258,7 +259,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           })
 
           // and submit
-          const submission_resp:ACTSubmissionStatus = await submitDataAccessRequest(requestObject, token)
+          const submission_resp:ACTSubmissionStatus = await submitDataAccessRequest(requestObject, accessToken!)
           const alertMsg = getSubmissionMsg(submission_resp)
           if (submission_resp.state === SUBMISSION_STATE.REJECTED) {
             setAlert({
@@ -466,7 +467,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   id={"duc-temp"}
                   variant={"link"}
                   className={"SRC-noPadding"}
-                  token={token}
                 /></div>
               }
             </Form.Group>
@@ -484,11 +484,9 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   id={"duc-download"}
                   variant={"link"}
                   className={"SRC-noPadding"}
-                  token={token}
                 /></div>
               }
               <FileUpload
-                token={token}
                 id={"duc-browse"}
                 variant={"light-primary-base"}
                 uploadCallback={uploadCallback}
@@ -513,11 +511,9 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                 id={"irb-download"}
                 variant={"link"}
                 className={"SRC-noPadding"}
-                token={token}
               /></div>
             }
             <FileUpload
-              token={token}
               id={"irb-browse"}
               variant={"light-primary-base"}
               uploadCallback={uploadCallback}
@@ -542,7 +538,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                     fileName={attachment?.fileName}
                     variant={"link"}
                     className={"SRC-noPadding attachment-download"}
-                    token={token}
                   />
                   <Button
                     className={"clear-x"}
@@ -553,7 +548,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               })
             }
             <FileUpload
-              token={token}
               id={"attachment-browse"}
               variant={"light-primary-base"}
               uploadCallback={uploadCallback}

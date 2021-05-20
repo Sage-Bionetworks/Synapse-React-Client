@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   ManagedACTAccessRequirement,
   UserProfile,
@@ -7,10 +7,10 @@ import {
 import { SynapseClient } from '../../../utils'
 import RequestDataAccess from './RequestDataAccess'
 import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type ManagedACTAccessRequirementComponentProps = {
   entityId: string
-  token: string | undefined
   user: UserProfile | undefined,
   accessRequirement: ManagedACTAccessRequirement,
   accessRequirementStatus: ManagedACTAccessRequirementStatus,
@@ -19,7 +19,8 @@ export type ManagedACTAccessRequirementComponentProps = {
 }
 
 const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirementComponentProps> = props => {
-  const { entityId, token, user, accessRequirement, accessRequirementStatus, onHide, requestDataStepCallback } = props
+  const { entityId, user, accessRequirement, accessRequirementStatus, onHide, requestDataStepCallback } = props
+  const { accessToken } = useContext(SynapseContext)
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
 
 
@@ -27,7 +28,7 @@ const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirement
     const getManagedACTAccessData = async () => {
       try {
         const wikipageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          token,
+          accessToken,
           accessRequirement.id,
         )
         setWikiPage(wikipageRequirement)
@@ -37,14 +38,13 @@ const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirement
     }
 
     getManagedACTAccessData()
-  }, [token, accessRequirement])
+  }, [accessToken, accessRequirement])
 
   return (
     <RequestDataAccess
       accessRequirement={accessRequirement}
       accessRequirementStatus={accessRequirementStatus}
       entityId={entityId}
-      token={token}
       user={user}
       wikiPage={wikiPage}
       onHide={onHide}

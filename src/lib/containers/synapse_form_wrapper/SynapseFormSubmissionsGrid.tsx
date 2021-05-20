@@ -16,9 +16,9 @@ import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 export type SynapseFormSubmissionGridProps = {
-  token?: string
   formGroupId: string
   pathpart: string
   formClass?: string
@@ -74,6 +74,8 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     ],
   }
 
+  static contextType = SynapseContext
+
   constructor(props: SynapseFormSubmissionGridProps) {
     super(props)
     this.state = {
@@ -89,14 +91,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
   }
 
   async componentDidMount() {
-    await this.refresh(this.props.token)
-  }
-
-  async componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
-    const shouldUpdate = this.props.token !== prevProps.token
-    if (shouldUpdate) {
-      await this.refresh(this.props.token)
-    }
+    await this.refresh(this.context.accessToken)
   }
 
   async refresh(token?: string) {
@@ -114,7 +109,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     this.setState({
       isLoading: true,
     })
-    const token = this.props.token
+    const token = this.context.accessToken
     const groupId = this.props.formGroupId
     try {
       const cleanUpName = (item: FormData): FormData => {
@@ -344,7 +339,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                           aria-label="delete"
                           onClick={() =>
                             this.setModalConfirmationState(
-                              this.props.token!,
+                              this.context.accessToken!,
                               dataFileRecord.formDataId!,
                             )
                           }
@@ -438,8 +433,8 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     return (
       <div className={`theme-${this.props.formClass}`}>
         <div className="SRC-ReactJsonForm">
-          {this.renderLoading(this.props.token, this.state.isLoading)}
-          {this.renderUnauthenticatedView(this.props.token)}
+          {this.renderLoading(this.context.accessToken, this.state.isLoading)}
+          {this.renderUnauthenticatedView(this.context.accessToken)}
 
           {!this.state.isLoading && (
             <div className="file-grid ">

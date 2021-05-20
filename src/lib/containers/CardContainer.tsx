@@ -35,7 +35,6 @@ export type CardContainerProps = {
   unitDescription?: string
   hasMoreData?: boolean
   showBarChart?: boolean
-  token?: string
 } & CardConfiguration
 
 export const CardContainer = (props: CardContainerProps) => {
@@ -49,13 +48,11 @@ export const CardContainer = (props: CardContainerProps) => {
     secondaryLabelLimit = 3,
     showBarChart = true,
     title,
-    token,
     getLastQueryRequest,
     executeQueryRequest,
     hasMoreData,
     ...rest
   } = props
-
   const queryRequest = props.getLastQueryRequest!()
   /**
    * Handle a click on next or previous
@@ -89,7 +86,6 @@ export const CardContainer = (props: CardContainerProps) => {
   const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
     ids,
     type: 'ENTITY_HEADER',
-    token: props.token,
   })
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (!data) {
@@ -153,7 +149,6 @@ export const CardContainer = (props: CardContainerProps) => {
         tableEntityConcreteType:
           tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
         tableId: props.data?.queryResult.queryResults.tableId,
-        token,
         ...rest,
       }
       return renderCard(propsForCard, type)
@@ -165,7 +160,6 @@ export const CardContainer = (props: CardContainerProps) => {
       {title && <h2 className="SRC-card-overview-title">{title}</h2>}
       {!title && unitDescription && showBarChart && (
         <TotalQueryResults
-          token={token}
           isLoading={isLoading!}
           unitDescription={unitDescription}
           executeQueryRequest={executeQueryRequest}

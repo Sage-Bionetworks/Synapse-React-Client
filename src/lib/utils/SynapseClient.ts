@@ -2506,7 +2506,7 @@ export const getEntityPath = (accessToken: string, entityId: string) => {
 
 // https://rest-docs.synapse.org/rest/GET/entity/id/version.html
 // TODO: Pagination
-export const getEntityVersions = (accessToken: string, entityId: string) => {
+export const getEntityVersions = (entityId: string, accessToken?: string) => {
   return doGet<PaginatedResults<VersionInfo>>(
     `/repo/v1/entity/${entityId}/version?offset=0&limit=200`,
     accessToken,

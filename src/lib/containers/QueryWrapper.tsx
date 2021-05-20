@@ -12,11 +12,11 @@ import {
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+import { SynapseContext } from '../utils/SynapseContext'
 export type QueryWrapperProps = {
   visibleColumnCount?: number
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
-  token?: string
   facet?: string
   unitDescription?: string
   facetAliases?: {}
@@ -74,7 +74,7 @@ export type QueryWrapperState = {
   in SRC won't generate type errors.
  */
 export type LockedFacet = {
-  facet?: string,
+  facet?: string
   value?: string
 }
 
@@ -88,7 +88,6 @@ export type FacetSelection = {
 export type QueryWrapperChildProps = {
   isAllFilterSelectedForFacet?: {}
   isLoading?: boolean
-  token?: string
   entityId?: string
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
@@ -112,7 +111,7 @@ export type QueryWrapperChildProps = {
   topLevelControlsState?: TopLevelControlsState
   isColumnSelected?: string[]
   selectedRowIndices?: number[]
-  error?: SynapseClientError | undefined,
+  error?: SynapseClientError | undefined
   lockedFacet?: LockedFacet
 }
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
@@ -130,6 +129,7 @@ export default class QueryWrapper extends React.Component<
   QueryWrapperState
 > {
   private componentIndex: number
+  static contextType = SynapseContext
   constructor(props: QueryWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -153,7 +153,7 @@ export default class QueryWrapper extends React.Component<
       isAllFilterSelectedForFacet: {},
       loadNowStarted: false,
       lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
-      topLevelControlsState : {
+      topLevelControlsState: {
         showColumnFilter: true,
         showFacetFilter: true,
         showFacetVisualization,
@@ -197,9 +197,6 @@ export default class QueryWrapper extends React.Component<
     const { loadNow = true } = this.props
     if (loadNow && !this.state.loadNowStarted) {
       this.executeInitialQueryRequest()
-    } else if (loadNow && this.props.token !== prevProps.token) {
-      // if loadNow is true and they've logged in with a token that is not undefined, null, or an empty string when it was before
-      this.executeQueryRequest(this.getLastQueryRequest())
     } else if (
       prevProps.initQueryRequest.query.sql !==
       this.props.initQueryRequest!.query.sql
@@ -258,7 +255,7 @@ export default class QueryWrapper extends React.Component<
     }
     return SynapseClient.getQueryTableResults(
       clonedQueryRequest,
-      this.props.token,
+      this.context.accessToken,
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
@@ -296,7 +293,7 @@ export default class QueryWrapper extends React.Component<
     await getNextPageOfData(
       queryRequest,
       this.state.data!,
-      this.props.token,
+      this.context.accessToken,
     ).then(newState => {
       this.setState({
         ...newState,
@@ -325,13 +322,13 @@ export default class QueryWrapper extends React.Component<
     })
     SynapseClient.getQueryTableResults(
       initQueryRequest,
-      this.props.token,
+      this.context.accessToken,
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
-          initQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+            initQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
         const isAllFilterSelectedForFacet = cloneDeep(
           this.state.isAllFilterSelectedForFacet,
         )
@@ -398,14 +395,18 @@ export default class QueryWrapper extends React.Component<
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  public removeLockedFacetData (){
+  public removeLockedFacetData() {
     const lockedFacet = this.props.lockedFacet?.facet
-    if (lockedFacet && this.state.data) {  // for details page, return data without the "locked" facet
+    if (lockedFacet && this.state.data) {
+      // for details page, return data without the "locked" facet
       const data = cloneDeep(this.state.data)
-      const facets = data.facets?.filter( item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase())
+      const facets = data.facets?.filter(
+        item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase(),
+      )
       data.facets = facets
       return data
-    } else {  // for other pages, just return the data
+    } else {
+      // for other pages, just return the data
       return this.state.data
     }
   }

@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useState, useEffect } from 'react' // importing FunctionComponent
+import React, {
+  FunctionComponent,
+  useState,
+  useEffect,
+  useContext,
+} from 'react' // importing FunctionComponent
 import * as PlotlyTyped from 'plotly.js'
 
 import { ElementWithTooltip, TooltipVisualProps } from '../ElementWithTooltip'
@@ -22,9 +27,9 @@ import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
 import loadingScreen from '../../LoadingScreen'
+import { SynapseContext } from '../../../utils/SynapseContext'
 
 export type ThemesPlotProps = {
-  token?: string
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
   dotPlot: PlotProps
   topBarPlot: PlotProps
@@ -199,7 +204,6 @@ const getTooltip = (data: GraphItem[], filter: string) => {
 }
 
 const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
-  token,
   dotPlot,
   topBarPlot,
   sideBarPlot,
@@ -207,15 +211,16 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   onPointClick,
   dotPlotYAxisLabel = 'Research Themes',
 }: ThemesPlotProps) => {
+  const { accessToken } = useContext(SynapseContext)
   const [isLoaded, setIsLoaded] = useState(false)
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])
   const [topBarPlotData, setTopBarQueryData] = useState<GraphItem[]>([])
   const [sideBarPlotData, setSideBarQueryData] = useState<GraphItem[]>([])
 
   useEffect(() => {
-    const dotPlotData = fetchData(token!, dotPlot)
-    const topBarPlotData = fetchData(token!, topBarPlot)
-    const sideBarPlotData = fetchData(token!, sideBarPlot)
+    const dotPlotData = fetchData(accessToken!, dotPlot)
+    const topBarPlotData = fetchData(accessToken!, topBarPlot)
+    const sideBarPlotData = fetchData(accessToken!, sideBarPlot)
     Promise.all([dotPlotData, topBarPlotData, sideBarPlotData])
       .then(result => {
         setDotPlotQueryData(resultToJson(result[0].headers, result[0].rows))
@@ -227,7 +232,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
         throw err
       })
     return () => {}
-  }, [token, dotPlot, topBarPlot, sideBarPlot])
+  }, [accessToken, dotPlot, topBarPlot, sideBarPlot])
   let yLabelsForDotPlot: string[] = []
   let xLabelsForTopBarPlot: string[] = []
   let xMaxForDotPlot = 0
@@ -252,9 +257,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
 
   return (
     <>
-      {!isLoaded && (
-        loadingScreen
-      )}
+      {!isLoaded && loadingScreen}
 
       {isLoaded && (
         <div className="ThemesPlot">

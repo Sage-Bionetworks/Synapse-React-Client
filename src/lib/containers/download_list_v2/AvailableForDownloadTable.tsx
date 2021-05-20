@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { ErrorBanner } from '../ErrorBanner'
 import * as ReactBootstrap from 'react-bootstrap'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import DownloadListTableV2, { DownloadListTableV2Props } from './DownloadListTableV2'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 export default function AvailableForDownloadTable(props: DownloadListTableV2Props) {
+    const { accessToken } = useContext(SynapseContext)
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
@@ -25,13 +27,13 @@ export default function AvailableForDownloadTable(props: DownloadListTableV2Prop
             </div>
         )
     }
-    if (!props.token) {
+    if (accessToken) {
         return <></>
     }
     return (
         <QueryClientProvider client={queryClient}>
             <ErrorBoundary FallbackComponent={ErrorFallback}>
-                <DownloadListTableV2 token={props.token} />
+                <DownloadListTableV2 />
             </ErrorBoundary>
         </QueryClientProvider>
     )

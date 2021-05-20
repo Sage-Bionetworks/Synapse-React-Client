@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult'
 import { toError } from '../ErrorBanner'
@@ -16,15 +16,16 @@ import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
 import { Direction } from '../../utils/synapseTypes'
 import { SynapseSpinner } from '../LoadingScreen'
+import { SynapseContext } from '../../utils/SynapseContext'
 
 export type DownloadListTableV2Props = {
-    token: string
 }
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 export default function DownloadListTableV2(props: DownloadListTableV2Props) {
+    const { accessToken } = useContext(SynapseContext)
     const handleError = useErrorHandler()
     // Load the next page when this ref comes into view.
     const { ref, inView } = useInView()
@@ -38,7 +39,7 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
         isError,
         error: newError,
         refetch
-    } = useGetAvailableFilesToDownloadInfinite(props.token, sort)
+    } = useGetAvailableFilesToDownloadInfinite(sort)
     
     useEffect(() => {
         if (isError && newError) {
@@ -65,7 +66,7 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
 
     const removeItem = async (item: DownloadListItem) => {
         try {
-            await SynapseClient.removeItemFromDownloadListV2(item, props.token)
+            await SynapseClient.removeItemFromDownloadListV2(item, accessToken)
             refetch()
         } catch (err) {
             console.error(err)
@@ -155,7 +156,6 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
                                             <UserCard
                                                 size={'SMALL USER CARD'}
                                                 ownerId={item.createdBy}
-                                                token={props.token}
                                             />
                                         </td>
                                         <td>{createdOn}</td>
