@@ -1,9 +1,10 @@
-import {detectSSOCode, getAccessTokenFromCookie, signOut, getUserProfile, isInSynapseExperimentalMode} from './src/lib/utils/SynapseClient'
+import {detectSSOCode, getAccessTokenFromCookie, signOut, getUserProfile, isInSynapseExperimentalMode, getAuthenticatedOn} from './src/lib/utils/SynapseClient'
 import {AVATAR, SMALL_USER_CARD, MEDIUM_USER_CARD, LARGE_USER_CARD,GENERIC_CARD,COMPUTATIONAL, PUBLICATION} from './src/lib/utils/SynapseConstants'
 import brainSvg from './src/demo/containers/playground/icons/brain.svg'
 import circleSvg from './src/demo/containers/playground/icons/circle.svg'
 import mouseSvg from './src/demo/containers/playground/icons/mouse.svg'
 import resilienceadSvg from './src/demo/containers/playground/icons/resiliencead.svg'
+import moment from 'moment'
 
 global.currentUserProfile = false
 global.accessToken = false
@@ -15,10 +16,12 @@ global.sessionChangeHandler = async () => {
           getUserProfile(accessToken).then(profile => {
             global.currentUserProfile = profile
             if (accessToken) {
-              alert(`You are currently logged in as ${profile.userName}`)
+              getAuthenticatedOn(accessToken).then(authenticatedOn => {
+                const date = moment(authenticatedOn.authenticatedOn).format('L LT')
+                alert(`You are currently logged in as ${profile.userName} (last authenticated at ${date})`)
+              })
             }
           })
-          
           console.log('Session has successfully been changed' + accessToken)
       })
       .catch((error) => {
