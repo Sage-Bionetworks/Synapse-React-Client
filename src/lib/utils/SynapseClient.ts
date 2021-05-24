@@ -1925,6 +1925,20 @@ export const getOAuth2Client = (
 }
 
 /**
+ * Get OAuth2 Client information (available to the public)
+ */
+ export const getAuthenticatedOn = async (
+  accessToken: string,
+): Promise<OAuthClientPublic> => {
+  return doGet(
+    `/auth/v1/authenticatedOn`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * User consents to the given OIDCAuthorizationRequest (after being presented with all information returned by getOAuth2RequestDescription())
  * @param oidcAuthRequest
  * @param accessToken
