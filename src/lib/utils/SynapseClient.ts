@@ -104,6 +104,7 @@ import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryReques
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
+import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 
 const cookies = new UniversalCookies()
 
@@ -1929,7 +1930,7 @@ export const getOAuth2Client = (
  */
  export const getAuthenticatedOn = async (
   accessToken: string,
-): Promise<OAuthClientPublic> => {
+): Promise<AuthenticatedOn> => {
   return doGet(
     `/auth/v1/authenticatedOn`,
     accessToken,
