@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
@@ -11,7 +11,7 @@ import loadingScreen from './LoadingScreen'
 import { UserCardSize } from './UserCard'
 import { LARGE_USER_CARD } from '../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -70,7 +70,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   summaryLinkText,
   selectedFacets,
 }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [userIds, setUserIds] = useState<string[]>([])
   const [queryData, setQueryData] = useState<QueryResultBundle>()
   const [isLoading, setIsLoading] = useState<boolean>()

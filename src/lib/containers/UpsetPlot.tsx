@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import UpSetJS, {
   extractSets,
   generateCombinations,
@@ -15,7 +15,7 @@ import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { ErrorBanner } from './ErrorBanner'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
@@ -46,7 +46,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
   summaryLinkText,
   summaryLink,
 }) => {
-  const { accessToken } = useContext(SynapseContext)  
+  const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
   const [data, setData] = useState<UpsetPlotData>()
   const [error, setError] = useState<string>()

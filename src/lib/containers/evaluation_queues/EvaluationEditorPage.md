@@ -1,6 +1,6 @@
 ```jsx
-<EvaluationEditorPage entityId={"syn123-replace-this-id"} utc={true} />
+<EvaluationEditorPage entityId={"syn123-replace-this-id"} />
 ```
 ```jsx
-<EvaluationEditorPage evaluationId={"9614690"} utc={false}/>
+<EvaluationEditorPage evaluationId={"9614690"} />
 ```

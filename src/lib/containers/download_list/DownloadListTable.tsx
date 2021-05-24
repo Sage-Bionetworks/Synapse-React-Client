@@ -39,6 +39,7 @@ import {
   faSortAmountDown,
   faSortAmountUp,
 } from '@fortawesome/free-solid-svg-icons'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 library.add(faTrash)
 
@@ -60,6 +61,8 @@ export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 export default function DownloadListTable(props: DownloadListTableProps) {
+  const { accessToken } = useSynapseContext()
+
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
   const [data, setData] = useState<DownloadListTableData>({
     references: undefined,
@@ -83,7 +86,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables
   const [isLoading, setIsLoading] = useState<LoadingState>(true)
   const [fileBeingDeleted, setFileBeingDeleted] = useState<string>('')
-  const { token } = props
   const {
     forceSamePage = false,
     renderAsModal = false,
@@ -116,14 +118,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   })
 
   const fetchData = useCallback(async () => {
-    if (!token) {
+    if (!accessToken) {
       setIsLoading(false)
       // doesn't make sense with anonymous user!
       return
     }
     try {
       setIsLoading(true)
-      const currentDownloadList: DownloadList = await getDownloadList(token)
+      const currentDownloadList: DownloadList = await getDownloadList(
+        accessToken,
+      )
       const { filesToDownload: currentFilesToDownload } = currentDownloadList
       if (currentFilesToDownload.length === 0) {
         setData({
@@ -139,7 +143,10 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       }
       // batch file result gives FilesHandle for the files the user can download
       // which has additional metadata - createdBy, numBytes, etc.
-      const currentBatchFileResult:BatchFileResult = await getFiles(batchFileRequest, token)
+      const currentBatchFileResult: BatchFileResult = await getFiles(
+        batchFileRequest,
+        accessToken,
+      )
 
       // Only make entity header calls to the files that the user doesn't have access to,
       // which can be determined by whether the batchFileResult has a failure code for the
@@ -157,7 +164,10 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         })
       // entity header is used to get the names of the files that the user
       // doesn't have access to
-      const currentReferences = await getEntityHeaders(referenceCall, token)
+      const currentReferences = await getEntityHeaders(
+        referenceCall,
+        accessToken,
+      )
       setData({
         references: currentReferences,
         batchFileResult: currentBatchFileResult,
@@ -168,7 +178,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [token])
+  }, [accessToken])
 
   useEffect(() => {
     fetchData()
@@ -179,7 +189,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   ) => {
     setIsLoading(true)
     try {
-      await deleteDownloadList(token)
+      await deleteDownloadList(accessToken)
       setData({
         downloadList: undefined,
       })
@@ -206,10 +216,17 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
     setFileBeingDeleted(fileHandleId)
     try {
-      const currentDownloadList:DownloadList = await deleteDownloadListFiles(list, token)
+      const currentDownloadList: DownloadList = await deleteDownloadListFiles(
+        list,
+        accessToken,
+      )
       // The current references and batchFileResult can be kept because the download
       // list drives the view, so the stale values in those two won't be viewed.
-      setData({ downloadList: currentDownloadList, references, batchFileResult })
+      setData({
+        downloadList: currentDownloadList,
+        references,
+        batchFileResult,
+      })
       listUpdatedCallback?.()
     } catch (err) {
       console.error('Error on delete from download list', err)
@@ -231,7 +248,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         isDescending,
       })
 
-      const currentFilesToDownload:FileHandleAssociation[] = downloadList?.filesToDownload ?? []
+      const currentFilesToDownload: FileHandleAssociation[] =
+        downloadList?.filesToDownload ?? []
 
       currentFilesToDownload.sort((itemA, itemB) => {
         return sortDownLoadList(itemA, itemB, column, isDescending)
@@ -541,10 +559,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           </tbody>
         </ReactBootstrap.Table>
         <CreatePackage updateDownloadList={fetchData}>
-          <DownloadDetails
-            numBytes={numBytes}
-            numFiles={numFiles}
-          />
+          <DownloadDetails numBytes={numBytes} numFiles={numFiles} />
         </CreatePackage>
       </div>
       {arPropsFromHasAccess && (
@@ -573,11 +588,11 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       right: 20,
       zIndex: 10,
     }
-    
+
     return (
       <ReactBootstrap.Modal
         centered={true}
-        animation={false}        
+        animation={false}
         size={'lg'}
         dialogClassName={'download-list-modal-container'}
         show={true}

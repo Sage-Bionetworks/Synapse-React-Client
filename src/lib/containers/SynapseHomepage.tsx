@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { Button } from 'react-bootstrap'
 import RLogo from '../assets/icons/RLogo'
 import Python from '../assets/icons/Python'
@@ -10,7 +10,7 @@ import {
   BackendDestinationEnum,
 } from '../utils/functions/getEndpoint'
 import { SynapsePoweredPortal } from './SynapsePoweredPortal'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -19,7 +19,7 @@ export type SynapseHomepageProps = {
 export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
   projectViewId,
 }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const LOGIN_LINK = `${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}#!LoginPlace:0`

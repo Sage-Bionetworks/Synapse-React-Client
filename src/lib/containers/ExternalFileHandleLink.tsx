@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   BatchFileRequest,
   FileHandleAssociateType,
@@ -11,7 +11,7 @@ import { SynapseClient } from '../utils/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 library.add(faExternalLinkAlt)
 
@@ -21,7 +21,7 @@ export type ExternalFileHandleLinkProps = {
 }
 
 export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const { synId, className } = props
   const [data, setData] = useState<
     | { fileEntity: FileEntity; externalFileHandle: ExternalFileHandle }

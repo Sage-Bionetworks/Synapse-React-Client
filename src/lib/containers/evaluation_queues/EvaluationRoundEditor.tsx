@@ -1,5 +1,5 @@
 import { EvaluationRound, EvaluationRoundLimit } from '../../utils/synapseTypes'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Alert,
   Button,
@@ -30,12 +30,10 @@ import {
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationRoundEditorProps = {
   evaluationRoundInput: EvaluationRoundInput
-  //If true, dates for start/end are displayed in UTC instead of local time
-  utc: boolean
   onDelete: () => void
   onSave: (evaluationRound: EvaluationRoundInput) => void
 }
@@ -126,9 +124,8 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
   evaluationRoundInput,
   onSave,
   onDelete,
-  utc,
 }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
 
@@ -269,7 +266,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
                   value={startDate}
                   setterCallback={setStartDate}
                   label="Round Start"
-                  utc={utc}
                   isValidDate={disallowDatesBeforeNow}
                   disabled={moment().isSameOrAfter(
                     evaluationRoundInput.roundStart,
@@ -281,7 +277,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
                   value={endDate}
                   label="Round End"
                   setterCallback={setEndDate}
-                  utc={utc}
                   isValidDate={disallowDatesBeforeNow}
                 />
               </Col>

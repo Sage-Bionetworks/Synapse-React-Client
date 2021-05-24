@@ -1,12 +1,8 @@
-import React, { useContext } from 'react'
-import {
-  AddBatchOfFilesToDownloadListResponse,
-} from '../utils/synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
-import {
-  addFileToDownloadListV2,
-} from '../utils/SynapseClient'
+import React from 'react'
+import { AddBatchOfFilesToDownloadListResponse } from '../utils/synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
+import { addFileToDownloadListV2 } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type AddToDownloadListV2Props = {
   entityId: string
@@ -16,7 +12,7 @@ export type AddToDownloadListV2Props = {
 const AddToDownloadListV2: React.FunctionComponent<AddToDownloadListV2Props> = (props) => {
 
   const {entityId, entityVersionNumber} = props
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const addToDownloadListV2 = async () => {
     try {
       const result:AddBatchOfFilesToDownloadListResponse = await addFileToDownloadListV2(entityId, entityVersionNumber, accessToken)

@@ -7,7 +7,6 @@ import ResourcesDesktop from './Resources.Desktop'
 import ResourcesMobile from './Resources.Mobile'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
-import { withQueryClientProvider } from '../../../utils/hooks/SynapseAPI/QueryClientProviderWrapper'
 
 export type ResourcesProps = {
   entityId: string
@@ -24,52 +23,50 @@ export type Data = {
   wikiId: string
 }[]
 
-export const Resources: React.FC<ResourcesProps> = withQueryClientProvider(
-  (props: ResourcesProps) => {
-    const { entityId } = props
-    const showDesktop = useShowDesktop()
+export const Resources: React.FC<ResourcesProps> = (props: ResourcesProps) => {
+  const { entityId } = props
+  const showDesktop = useShowDesktop()
 
-    const queryBundleRequest: QueryBundleRequest = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      entityId,
-      partMask:
-        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-      query: {
-        sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
-      },
-    }
-    const { data: queryResultBundle, error } = useGetQueryResultBundle(
-      queryBundleRequest,
-    )
+  const queryBundleRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {
+      sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
+    },
+  }
+  const { data: queryResultBundle, error } = useGetQueryResultBundle(
+    queryBundleRequest,
+  )
 
-    const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResultBundle)
-    const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResultBundle)
-    const data: Data =
-      queryResultBundle?.queryResult.queryResults.rows.map(el => {
-        const values = el.values
-        const name = values[nameIndex]
-        const wikiValue = values[wikiIndex] ?? ''
-        const split = wikiValue.split('/')
-        const ownerId = split[0]
-        const wikiId = split[2]
-        return {
-          name,
-          ownerId,
-          wikiId,
-        }
-      }) ?? []
-    return (
-      <div className="Resources">
-        <ErrorBanner error={error} />
-        {showDesktop ? (
-          <ResourcesDesktop data={data} />
-        ) : (
-          <ResourcesMobile data={data} />
-        )}
-      </div>
-    )
-  },
-)
+  const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResultBundle)
+  const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResultBundle)
+  const data: Data =
+    queryResultBundle?.queryResult.queryResults.rows.map(el => {
+      const values = el.values
+      const name = values[nameIndex]
+      const wikiValue = values[wikiIndex] ?? ''
+      const split = wikiValue.split('/')
+      const ownerId = split[0]
+      const wikiId = split[2]
+      return {
+        name,
+        ownerId,
+        wikiId,
+      }
+    }) ?? []
+  return (
+    <div className="Resources">
+      <ErrorBanner error={error} />
+      {showDesktop ? (
+        <ResourcesDesktop data={data} />
+      ) : (
+        <ResourcesMobile data={data} />
+      )}
+    </div>
+  )
+}
 
 export default Resources

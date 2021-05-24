@@ -4,8 +4,7 @@ import {
   UserProfileAndImg,
 } from '../../functions/getUserData'
 import { SynapseClientError } from '../../SynapseClient'
-import { SynapseContext } from '../../SynapseContext'
-import { useContext } from 'react'
+import { useSynapseContext } from '../../SynapseContext'
 
 export function useGetUserProfileWithProfilePic(
   principalId: string,
@@ -15,7 +14,7 @@ export function useGetUserProfileWithProfilePic(
     UserProfileAndImg
   >,
 ) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   return useQuery<UserProfileAndImg, SynapseClientError>(
     ['userprofile', principalId, accessToken],
     () => getUserProfileWithProfilePic(principalId, accessToken),

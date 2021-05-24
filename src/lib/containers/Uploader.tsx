@@ -6,7 +6,7 @@ import {
   updateEntity,
   uploadFile,
 } from '../utils/SynapseClient'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 import {
   EntityId,
   EntityLookupRequest,

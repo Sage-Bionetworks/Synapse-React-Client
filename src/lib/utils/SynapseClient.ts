@@ -104,6 +104,10 @@ import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryReques
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
+import {
+  DATETIME_UTC_COOKIE_KEY,
+  EXPERIMENTAL_MODE_COOKIE,
+} from './SynapseConstants'
 
 const cookies = new UniversalCookies()
 
@@ -697,8 +701,8 @@ export const getUserBundle = (
  * http://rest-docs.synapse.org/rest/GET/userGroupHeaders.html
  */
 export const getUserGroupHeaders = (
-  prefix: string = "",
-  typeFilter: string = "ALL",
+  prefix: string = '',
+  typeFilter: string = 'ALL',
   offset: number = 0,
   limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {
@@ -854,12 +858,12 @@ export const getEntity: GetEntity = <T>(
  * Get a list of entity headers given by entity ids
  * http://rest-docs.synapse.org/rest/GET/entity/type.html
  */
-export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>> (
+export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>>(
   entityIds: string[],
   accessToken?: string,
 ) => {
   return doGet(
-    `/repo/v1/entity/type?batch=${entityIds.join(",")}`,
+    `/repo/v1/entity/type?batch=${entityIds.join(',')}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1138,7 +1142,7 @@ export const getPresignedUrlForWikiAttachment = (
   )
 }
 
-export const isInSynapseExperimentalMode = ():boolean => {
+export const isInSynapseExperimentalMode = (): boolean => {
   return cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
 }
 
@@ -1197,6 +1201,14 @@ export const getAccessTokenFromCookie = async () => {
     'include',
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )
+}
+
+export const getIsInExperimentalModeFromCookie = () => {
+  return !!cookies.get(EXPERIMENTAL_MODE_COOKIE)
+}
+
+export const getUseUtcTimeFromCookie = () => {
+  return cookies.get(DATETIME_UTC_COOKIE_KEY) === 'true'
 }
 
 export const getPrincipalAliasRequest = (
@@ -1631,8 +1643,8 @@ export const getFileResult = (
 /**
  * Add a file to the user's download list.
  * Uses http://rest-docs.synapse.org/rest/POST/download/list/add.html
- * @param fileEntityId 
- * @param versionNumber 
+ * @param fileEntityId
+ * @param versionNumber
  */
 export const addFileToDownloadListV2 = (
   fileEntityId: string,
@@ -1640,7 +1652,7 @@ export const addFileToDownloadListV2 = (
   accessToken?: string,
 ): Promise<AddBatchOfFilesToDownloadListResponse> => {
   const request: AddBatchOfFilesToDownloadListRequest = {
-    batchToAdd: [{fileEntityId, versionNumber}]
+    batchToAdd: [{ fileEntityId, versionNumber }],
   }
   return doPost(
     'repo/v1/download/list/add',
@@ -2495,7 +2507,7 @@ export const getMyProjects = (
 }
 
 // https://rest-docs.synapse.org/rest/GET/entity/id/path.html
-export const getEntityPath = (accessToken: string, entityId: string) => {
+export const getEntityPath = (entityId: string, accessToken?: string) => {
   return doGet<EntityPath>(
     `/repo/v1/entity/${entityId}/path`,
     accessToken,
@@ -2530,13 +2542,14 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
  * Get Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
- export const getAvailableFilesToDownload = (
+export const getAvailableFilesToDownload = (
   request: AvailableFilesRequest,
   accessToken: string | undefined = undefined,
 ): Promise<DownloadListQueryResponse> => {
-  const downloadListQueryRequest:DownloadListQueryRequest = {
-    concreteType:'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
-    requestDetails: request
+  const downloadListQueryRequest: DownloadListQueryRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+    requestDetails: request,
   }
   return doPost<AsyncJobId>(
     '/repo/v1/download/list/query/async/start',
@@ -2561,12 +2574,12 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
  * Remove item from Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/remove.html
  */
- export const removeItemFromDownloadListV2 = (
+export const removeItemFromDownloadListV2 = (
   item: DownloadListItem,
   accessToken: string | undefined = undefined,
 ): Promise<RemoveBatchOfFilesFromDownloadListResponse> => {
-  const request:RemoveBatchOfFilesFromDownloadListRequest = {
-    batchToRemove: [item]
+  const request: RemoveBatchOfFilesFromDownloadListRequest = {
+    batchToRemove: [item],
   }
   return doPost<RemoveBatchOfFilesFromDownloadListResponse>(
     '/repo/v1/download/list/remove',
@@ -2578,7 +2591,10 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
 }
 
 // http://rest-docs.synapse.org/rest/POST/researchProject.html
-export const updateResearchProject = (requestObj: ResearchProject, accessToken: string) => {
+export const updateResearchProject = (
+  requestObj: ResearchProject,
+  accessToken: string,
+) => {
   return doPost<ResearchProject>(
     '/repo/v1/researchProject',
     requestObj,
@@ -2589,7 +2605,10 @@ export const updateResearchProject = (requestObj: ResearchProject, accessToken: 
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/researchProjectForUpdate.html
-export const getResearchProject = (requirementId: string, accessToken: string) => {
+export const getResearchProject = (
+  requirementId: string,
+  accessToken: string,
+) => {
   return doGet<ResearchProject>(
     `/repo/v1/accessRequirement/${requirementId}/researchProjectForUpdate`,
     accessToken,
@@ -2599,7 +2618,10 @@ export const getResearchProject = (requirementId: string, accessToken: string) =
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
-export const getDataAccessRequestForUpdate = (requirementId: string, accessToken: string) => {
+export const getDataAccessRequestForUpdate = (
+  requirementId: string,
+  accessToken: string,
+) => {
   return doGet<RequestInterface>(
     `/repo/v1/accessRequirement/${requirementId}/dataAccessRequestForUpdate`,
     accessToken,
@@ -2609,7 +2631,10 @@ export const getDataAccessRequestForUpdate = (requirementId: string, accessToken
 }
 
 // http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/dataAccessRequestForUpdate.html
-export const updateDataAccessRequest = (requestObj: RequestInterface, accessToken: string) => {
+export const updateDataAccessRequest = (
+  requestObj: RequestInterface,
+  accessToken: string,
+) => {
   return doPost<RequestInterface>(
     `/repo/v1/dataAccessRequest`,
     requestObj,
@@ -2620,7 +2645,10 @@ export const updateDataAccessRequest = (requestObj: RequestInterface, accessToke
 }
 
 // http://rest-docs.synapse.org/rest/POST/dataAccessRequest/requestId/submission.html
-export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, accessToken: string) => {
+export const submitDataAccessRequest = (
+  requestObj: CreateSubmissionRequest,
+  accessToken: string,
+) => {
   return doPost<ACTSubmissionStatus>(
     `/repo/v1/dataAccessRequest/${requestObj.requestId}/submission`,
     requestObj,
@@ -2632,7 +2660,10 @@ export const submitDataAccessRequest = (requestObj: CreateSubmissionRequest, acc
 
 // http://rest-docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId/cancellation.html
 // Cancel a submission. Only the user who created this submission can cancel it.
-export const cancelDataAccessRequest = (submissionId: string, accessToken: string) => {
+export const cancelDataAccessRequest = (
+  submissionId: string,
+  accessToken: string,
+) => {
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,

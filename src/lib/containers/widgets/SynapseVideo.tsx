@@ -1,5 +1,5 @@
 import React from 'react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getEntity, getFiles } from '../../utils/SynapseClient'
 import {
   FileEntity,
@@ -9,14 +9,14 @@ import {
   BatchFileResult,
 } from '../../utils/synapseTypes'
 import { SynapseConstants } from '../../utils/'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type Props = {
   params: any
 }
 
 export default function SynapseVideo({ params }: Props) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [video, setVideo] = useState<string>()
   const [videoUrl, setVideoUrl] = useState<string>()
 

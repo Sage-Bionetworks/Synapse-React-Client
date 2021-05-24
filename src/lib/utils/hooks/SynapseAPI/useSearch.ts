@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import {
   QueryFunctionContext,
   useInfiniteQuery,
@@ -8,14 +7,14 @@ import {
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
-import { SynapseContext } from '../../SynapseContext'
+import { useSynapseContext } from '../../SynapseContext'
 import { SearchQuery, SearchResults } from '../../synapseTypes/Search'
 
 export function useSearch(
   query: SearchQuery,
   options?: UseQueryOptions<SearchResults, SynapseClientError, SearchResults>,
 ) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   return useQuery<SearchResults, SynapseClientError>(
     ['search', accessToken, query],
     () => SynapseClient.searchEntities(query, accessToken),
@@ -31,7 +30,7 @@ export function useSearchInfinite(
     SearchResults
   >,
 ) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
 
   return useInfiniteQuery<SearchResults, SynapseClientError>(
     ['search', accessToken, query],

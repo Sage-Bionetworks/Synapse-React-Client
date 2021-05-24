@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
 import { getEntityHeaders } from '../SynapseClient'
 import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
@@ -6,7 +6,7 @@ import { UserProfile } from '../synapseTypes'
 import { SynapseConstants } from '..'
 import { without, chunk, uniq } from 'lodash-es'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseContext } from '../SynapseContext'
+import { useSynapseContext } from '../SynapseContext'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
@@ -76,7 +76,7 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
   props: UseGetInfoFromIdsProps,
 ) {
   const { ids, type } = props
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
 
   const [data, setData] = useState<Array<T>>([])
 
@@ -139,7 +139,10 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
           for (const newReferences of newReferencesChunks) {
             const newData =
               type === 'USER_PROFILE'
-                ? await getUserProfileItems(newReferences as string[], accessToken)
+                ? await getUserProfileItems(
+                    newReferences as string[],
+                    accessToken,
+                  )
                 : await getEntityHeaderItems(
                     newReferences as ReferenceList,
                     accessToken,

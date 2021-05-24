@@ -8,7 +8,7 @@ import {
   ModalBody,
 } from 'react-bootstrap'
 import { SynapseClient } from '../../utils'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import { CopyToClipboardInput } from '../CopyToClipboardInput'
@@ -28,7 +28,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
   onClose,
   onCreate,
 }: CreateAccessTokenModalProps) => {
-  const { accessToken } = React.useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [tokenName, setTokenName] = React.useState('')
   const [viewAccess, setViewAccess] = React.useState(true)
   const [downloadAccess, setDownloadAccess] = React.useState(false)

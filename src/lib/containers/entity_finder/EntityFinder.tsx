@@ -3,7 +3,6 @@ import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useReducer,
@@ -23,7 +22,7 @@ import { SizeMe } from 'react-sizeme'
 import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { ErrorBanner } from '../ErrorBanner'
@@ -100,7 +99,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectedCopy = 'Selected',
   treeOnly = false,
 }: EntityFinderProps) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
 
   const [searchActive, setSearchActive] = useState(false)
   // The raw value of the search input box:

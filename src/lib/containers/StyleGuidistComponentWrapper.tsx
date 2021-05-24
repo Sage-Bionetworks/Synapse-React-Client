@@ -1,25 +1,22 @@
 import React from 'react'
 import { MemoryRouter } from 'react-router'
-import { SynapseWrapper } from '../utils/SynapseContext'
+import { SynapseContextProvider } from '../utils/SynapseContext'
 import RenderIfInView from './RenderIfInView'
-import UniversalCookies from 'universal-cookie'
-import { EXPERIMENTAL_MODE_COOKIE } from '../utils/SynapseConstants'
-import { DATETIME_UTC_COOKIE_KEY } from '../utils/functions/DateFormatter'
-const cookies = new UniversalCookies()
+import { SynapseClient } from '../utils'
 
 export const StyleGuidistComponentWrapper: React.FC = props => {
   return (
-    <SynapseWrapper
+    <SynapseContextProvider
       synapseContext={{
-        accessToken: global.accessToken!,
-        isInExperimentalMode: cookies.get(EXPERIMENTAL_MODE_COOKIE),
-        utcTime: cookies.get(DATETIME_UTC_COOKIE_KEY),
+        accessToken: (global as any).accessToken,
+        isInExperimentalMode: SynapseClient.getIsInExperimentalModeFromCookie(),
+        utcTime: SynapseClient.getUseUtcTimeFromCookie(),
       }}
     >
       <MemoryRouter>
         <RenderIfInView>{props.children}</RenderIfInView>
       </MemoryRouter>
-    </SynapseWrapper>
+    </SynapseContextProvider>
   )
 }
 

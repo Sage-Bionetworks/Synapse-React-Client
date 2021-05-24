@@ -1,9 +1,4 @@
-import React, {
-  FunctionComponent,
-  useState,
-  useEffect,
-  useContext,
-} from 'react' // importing FunctionComponent
+import React, { FunctionComponent, useState, useEffect } from 'react' // importing FunctionComponent
 import * as PlotlyTyped from 'plotly.js'
 
 import { ElementWithTooltip, TooltipVisualProps } from '../ElementWithTooltip'
@@ -27,7 +22,7 @@ import _ from 'lodash-es'
 import DotPlot from './DotPlot'
 import BarPlot from './BarPlot'
 import loadingScreen from '../../LoadingScreen'
-import { SynapseContext } from '../../../utils/SynapseContext'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 
 export type ThemesPlotProps = {
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
@@ -211,7 +206,7 @@ const ThemesPlot: FunctionComponent<ThemesPlotProps> = ({
   onPointClick,
   dotPlotYAxisLabel = 'Research Themes',
 }: ThemesPlotProps) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [isLoaded, setIsLoaded] = useState(false)
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])
   const [topBarPlotData, setTopBarQueryData] = useState<GraphItem[]>([])

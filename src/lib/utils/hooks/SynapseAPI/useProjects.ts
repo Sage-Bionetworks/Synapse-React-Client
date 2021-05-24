@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -7,7 +6,7 @@ import {
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
-import { SynapseContext } from '../../SynapseContext'
+import { useSynapseContext } from '../../SynapseContext'
 import { ProjectHeaderList } from '../../synapseTypes'
 import { GetProjectsParameters } from '../../synapseTypes/GetProjectsParams'
 
@@ -19,7 +18,7 @@ export function useGetProjects(
     ProjectHeaderList
   >,
 ) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   return useQuery<ProjectHeaderList, SynapseClientError>(
     ['myProjects', accessToken, params],
     () => SynapseClient.getMyProjects(accessToken!, params),
@@ -35,7 +34,7 @@ export function useGetProjectsInfinite(
     ProjectHeaderList
   >,
 ) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
 
   return useInfiniteQuery<ProjectHeaderList, SynapseClientError>(
     ['myProjects', accessToken, params],

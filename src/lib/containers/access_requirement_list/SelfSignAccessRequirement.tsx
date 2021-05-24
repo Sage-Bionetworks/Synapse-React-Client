@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   SelfSignAccessRequirement,
   WikiPageKey,
@@ -9,7 +9,7 @@ import { SynapseClient, SynapseConstants } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import AcceptedRequirements from './AcceptedRequirements'
 import { AccessRequirementProps } from './AccessRequirementProps'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export default function SelfSignAccessRequirementComponent({
   accessRequirement,
@@ -18,7 +18,7 @@ export default function SelfSignAccessRequirementComponent({
   accessRequirementStatus,
   entityId,
 }: AccessRequirementProps<SelfSignAccessRequirement>) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>(
     undefined,

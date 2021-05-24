@@ -1,8 +1,8 @@
 import { FileHandleAssociateType } from '../../utils/synapseTypes'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SynapseClient } from '../../utils'
 import { useInView } from 'react-intersection-observer'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 type ImageFileHandleProps = {
   fileHandleId: string
@@ -12,7 +12,7 @@ type ImageFileHandleProps = {
 }
 export const ImageFileHandle = (props: ImageFileHandleProps) => {
   const { fileHandleId, tableEntityConcreteType, rowId, tableId } = props
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [url, setUrl] = useState<string>()
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -44,7 +44,14 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
     }
 
     getData()
-  }, [inView, fileHandleId, rowId, tableId, tableEntityConcreteType, accessToken])
+  }, [
+    inView,
+    fileHandleId,
+    rowId,
+    tableId,
+    tableEntityConcreteType,
+    accessToken,
+  ])
 
   return (
     <span ref={ref}>

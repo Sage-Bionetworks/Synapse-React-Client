@@ -1,7 +1,7 @@
 import { InfoOutlined } from '@material-ui/icons'
 import * as PlotlyTyped from 'plotly.js'
 import Plotly from 'plotly.js-basic-dist'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Dropdown, Modal } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
@@ -11,7 +11,7 @@ import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseClient, SynapseConstants } from '../../../utils'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-import { SynapseContext } from '../../../utils/SynapseContext'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   ColumnType,
   FacetColumnResultValueCount,
@@ -349,7 +349,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     plotType,
     onSetPlotType,
   } = props
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [plotData, setPlotData] = useState<GraphData>()
   const [showModal, setShowModal] = useState(false)
 

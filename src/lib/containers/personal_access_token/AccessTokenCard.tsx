@@ -4,12 +4,12 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../../utils/'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
@@ -24,7 +24,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
   accessToken,
   onDelete,
 }: AccessTokenCardProps) => {
-  const { accessToken: authToken } = useContext(SynapseContext)
+  const { accessToken: authToken } = useSynapseContext()
   const [showModal, setShowModal] = useState(false)
   const handleError = useErrorHandler()
 

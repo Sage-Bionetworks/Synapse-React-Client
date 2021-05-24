@@ -1,8 +1,8 @@
 import { FileHandleAssociateType } from '../../utils/synapseTypes'
-import React, { useContext } from 'react'
+import React from 'react'
 import { SynapseConstants, SynapseClient } from '../../utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 type FileHandleLinkProps = {
   fileHandleId: string
@@ -23,7 +23,7 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
     redirect = false,
     displayValue,
   } = props
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   if (!tableEntityConcreteType) {
     // still loading
     return <></>

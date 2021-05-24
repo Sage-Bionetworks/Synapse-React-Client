@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ManagedACTAccessRequirement,
   UserProfile,
@@ -7,22 +7,28 @@ import {
 import { SynapseClient } from '../../../utils'
 import RequestDataAccess from './RequestDataAccess'
 import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
-import { SynapseContext } from '../../../utils/SynapseContext'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 
 export type ManagedACTAccessRequirementComponentProps = {
   entityId: string
-  user: UserProfile | undefined,
-  accessRequirement: ManagedACTAccessRequirement,
-  accessRequirementStatus: ManagedACTAccessRequirementStatus,
-  onHide?: Function,
+  user: UserProfile | undefined
+  accessRequirement: ManagedACTAccessRequirement
+  accessRequirementStatus: ManagedACTAccessRequirementStatus
+  onHide?: Function
   requestDataStepCallback?: Function
 }
 
 const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirementComponentProps> = props => {
-  const { entityId, user, accessRequirement, accessRequirementStatus, onHide, requestDataStepCallback } = props
-  const { accessToken } = useContext(SynapseContext)
+  const {
+    entityId,
+    user,
+    accessRequirement,
+    accessRequirementStatus,
+    onHide,
+    requestDataStepCallback,
+  } = props
+  const { accessToken } = useSynapseContext()
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
-
 
   useEffect(() => {
     const getManagedACTAccessData = async () => {

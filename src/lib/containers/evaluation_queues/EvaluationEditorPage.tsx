@@ -8,8 +8,6 @@ export type EvaluationEditorPageProps = {
   readonly evaluationId?: string
   /** Use if CREATING a new Evaluation. Id of the Entity that will be associated with the Evaluation */
   readonly entityId?: string
-  /** If true, the "Created on" date will be displayed in UTC time */
-  readonly utc: boolean
   /** Callback after successful deletion of the Evaluation */
   readonly onDeleteSuccess: () => void
 }
@@ -20,7 +18,6 @@ export type EvaluationEditorPageProps = {
 export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageProps> = ({
   evaluationId,
   entityId,
-  utc,
   onDeleteSuccess,
 }: EvaluationEditorPageProps) => {
   const [savedEvaluationId, setSavedEvaluationId] = useState<
@@ -32,17 +29,13 @@ export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageP
         evaluationId={savedEvaluationId}
         //do not use entityId if we already have the evaluation Id
         entityId={savedEvaluationId ? undefined : entityId}
-        utc={utc}
         onDeleteSuccess={onDeleteSuccess}
         onSaveSuccess={setSavedEvaluationId}
       />
 
       <div className="mt-4">
         {savedEvaluationId ? (
-          <EvaluationRoundEditorList
-            evaluationId={savedEvaluationId}
-            utc={utc}
-          />
+          <EvaluationRoundEditorList evaluationId={savedEvaluationId} />
         ) : (
           // shows an alert informing user to first create an Evaluation if they
           // click the "Add Round" button

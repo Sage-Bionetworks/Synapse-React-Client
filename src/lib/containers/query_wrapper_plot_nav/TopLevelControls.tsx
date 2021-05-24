@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import QueryCount from '../QueryCount'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -14,7 +14,7 @@ import { cloneDeep } from 'lodash-es'
 import { QueryResultBundle } from '../../utils/synapseTypes/'
 import { DownloadOptions } from '../table/table-top'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type TopLevelControlsProps = {
   name: string
@@ -85,7 +85,7 @@ const TopLevelControls = (
     getLastQueryRequest,
     facetAliases,
   } = props
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const entityId = parseEntityIdFromSqlStatement(sql)
   const [isFileView, setIsFileView] = useState(false)
 

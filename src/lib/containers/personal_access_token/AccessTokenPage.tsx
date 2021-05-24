@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { SynapseClient } from '../../utils'
 import { useListState } from '../../utils/hooks/useListState'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { ErrorBanner } from '../ErrorBanner'
 import loadingScreen from '../LoadingScreen'
@@ -31,7 +31,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
   title,
   body,
 }: AccessTokenPageProps) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
 
   const [showCreateTokenModal, setShowCreateTokenModal] = useState(false)

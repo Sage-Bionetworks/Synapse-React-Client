@@ -33,7 +33,7 @@ export type ModalDownloadState = {
 export type ModalDownloadProps = {
   onClose: (...args: any[]) => void
   includeEntityEtag?: boolean
-  queryBundleRequest?: QueryBundleRequest  // either the query bundle request needs to be provided, or getLastQueryRequest
+  queryBundleRequest?: QueryBundleRequest // either the query bundle request needs to be provided, or getLastQueryRequest
   getLastQueryRequest?: () => QueryBundleRequest
   offset?: number
   limit?: number
@@ -91,7 +91,10 @@ export default class ModalDownload extends React.Component<
       includeRowIdAndRowVersion,
       csvTableDescriptor: { separator },
     }
-    SynapseClient.getDownloadFromTableRequest(downloadFromTableRequest, this.context.accessToken)
+    SynapseClient.getDownloadFromTableRequest(
+      downloadFromTableRequest,
+      this.context.accessToken,
+    )
       .then(data => {
         this.setState({
           isLoading: false,
@@ -107,12 +110,13 @@ export default class ModalDownload extends React.Component<
   onDownload = () => {
     const { data } = this.state
     // data will always be defined if calling this function
-    SynapseClient.getFileHandleByIdURL(data!.resultsFileHandleId, this.context.accessToken).then(
-      url => {
-        window.location.href = url
-        this.props.onClose()
-      },
-    )
+    SynapseClient.getFileHandleByIdURL(
+      data!.resultsFileHandleId,
+      this.context.accessToken,
+    ).then(url => {
+      window.location.href = url
+      this.props.onClose()
+    })
   }
 
   handleChange = (event: IChangeEvent) => {

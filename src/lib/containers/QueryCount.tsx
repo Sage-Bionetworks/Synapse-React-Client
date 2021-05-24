@@ -1,11 +1,11 @@
 import { SynapseConstants, SynapseClient } from '../utils/'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   QueryBundleRequest,
   FacetColumnValuesRequest,
 } from '../utils/synapseTypes/'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type QueryCountProps = {
   sql: string
@@ -20,7 +20,7 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
   parens,
   name,
 }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [storedSqlQueryCount, setStoredSqlQueryCount] = useState<{}>({})
   // maps sql string to true/false, true if already made a request for this sql's query count
   // false or undefined if not

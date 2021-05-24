@@ -1,8 +1,8 @@
 import { SynapseClientError } from '../utils/SynapseClient'
 import SignInButton from './SignInButton'
 import { Alert } from 'react-bootstrap'
-import { SynapseContext } from '../utils/SynapseContext'
-import React, { useContext } from 'react'
+import { useSynapseContext } from '../utils/SynapseContext'
+import React from 'react'
 type ErrorProps = {
   error?: string | Error | SynapseClientError | null
 }
@@ -26,9 +26,10 @@ function isString(error: string | Error | SynapseClientError): error is string {
 }
 
 export const ClientError = (props: { error: SynapseClientError }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const { error } = props
-  const loginError = (error.status === 403 || error.status === 401) && !accessToken
+  const loginError =
+    (error.status === 403 || error.status === 401) && !accessToken
   const accessDenied = error.status === 403 && accessToken
 
   return (

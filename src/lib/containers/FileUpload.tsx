@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
 import { uploadFile } from '../utils/SynapseClient'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 import { FileUploadComplete } from '../utils/synapseTypes'
 
 export type FileUploadProps = {
@@ -14,7 +14,7 @@ export type FileUploadProps = {
 
 const FileUpload: React.FC<FileUploadProps> = props => {
   const { id, variant, label = 'Browse...', uploadCallback, context } = props
-  const { accessToken } = React.useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const hiddenFileInput = React.useRef<HTMLInputElement>(null)
 
   const clickHandler = () => {

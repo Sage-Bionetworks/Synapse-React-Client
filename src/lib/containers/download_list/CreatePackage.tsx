@@ -5,14 +5,14 @@ import {
   faFolder,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import * as ReactBoostrap from 'react-bootstrap'
 import {
   getBulkFiles,
   getDownloadOrder,
   getFileHandleByIdURL,
 } from '../../utils/SynapseClient'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import {
   BulkFileDownloadRequest,
   BulkFileDownloadResponse,
@@ -41,7 +41,7 @@ export const TEMPLATE_ERROR_FILE_NAME =
   'Please provide a package file name and try again.'
 
 export const CreatePackage = (props: CreatePackageProps) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
   const [alert, setAlert] = useState<Alert>({

@@ -1,11 +1,11 @@
 import UserCard from '../UserCard'
 import { SynapseConstants } from '../../utils'
 import React from 'react'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type CreatedOnByUserDivProps = {
   userId: string
   date: Date
-  utc: boolean
 }
 
 const dateFormatOptionLocal = { timeZoneName: 'short' }
@@ -14,8 +14,8 @@ const dateFormatOptionUTC = { timeZone: 'UTC', timeZoneName: 'short' }
 export const CreatedOnByUserDiv: React.FunctionComponent<CreatedOnByUserDivProps> = ({
   userId,
   date,
-  utc,
 }) => {
+  const { utcTime } = useSynapseContext()
   return (
     <div className="created-on">
       <span>
@@ -23,7 +23,7 @@ export const CreatedOnByUserDiv: React.FunctionComponent<CreatedOnByUserDivProps
         {date
           .toLocaleDateString(
             undefined,
-            utc ? dateFormatOptionUTC : dateFormatOptionLocal,
+            utcTime ? dateFormatOptionUTC : dateFormatOptionLocal,
           )
           .replace(',', '')}{' '}
         by{' '}

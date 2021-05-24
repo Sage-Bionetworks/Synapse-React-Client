@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { getAllAccessRequirements } from '../../utils/SynapseClient'
 import { SynapseConstants, SynapseClient } from '../../utils/'
@@ -6,8 +6,8 @@ import useCompare from '../../utils/hooks/useCompare'
 import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponentNew  from './managedACTAccess/ManagedACTAccessRequirement'
-import ManagedACTAccessRequirementComponent  from './ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponentNew from './managedACTAccess/ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import {
   UserProfile,
@@ -32,7 +32,7 @@ import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 import Login from '../Login'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 library.add(faFile)
 
@@ -49,9 +49,9 @@ export type AccessRequirementListProps = {
 }
 
 export type requestDataStepCallbackProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement,
-  step: number,
-  researchProjectId: string,
+  managedACTAccessRequirement: ManagedACTAccessRequirement
+  step: number
+  researchProjectId: string
   formSubmitRequestObject: RequestInterface
 }
 
@@ -86,7 +86,7 @@ export default function AccessRequirementList({
   accessRequirementFromProps,
   renderAsModal,
 }: AccessRequirementListProps) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
 
   const [accessRequirements, setAccessRequirements] = useState<
     Array<AccessRequirementAndStatus> | undefined
@@ -94,13 +94,19 @@ export default function AccessRequirementList({
 
   const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
-  const [managedACTAccessRequirement, setManagedACTAccessRequirement] = useState<ManagedACTAccessRequirement>()
-  const [researchProjectId, setresearchProjectId] = useState<string>("")
-  const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
+  const [
+    managedACTAccessRequirement,
+    setManagedACTAccessRequirement,
+  ] = useState<ManagedACTAccessRequirement>()
+  const [researchProjectId, setresearchProjectId] = useState<string>('')
+  const [
+    formSubmitRequestObject,
+    setFormSubmitRequestObject,
+  ] = useState<RequestInterface>()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
-    type: 'ENTITY_HEADER'
+    type: 'ENTITY_HEADER',
   }
 
   const hasTokenChanged = useCompare(accessToken)
@@ -109,8 +115,8 @@ export default function AccessRequirementList({
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
-
-    if (!SynapseClient.isInSynapseExperimentalMode()) { // TODO to be deleted when out of alpha mode
+    if (!SynapseClient.isInSynapseExperimentalMode()) {
+      // TODO to be deleted when out of alpha mode
       setRequestDataStep(-1)
     }
 
@@ -149,7 +155,10 @@ export default function AccessRequirementList({
           return
         }
         if (!accessRequirementFromProps) {
-          const requirements = await getAllAccessRequirements(accessToken, entityId)
+          const requirements = await getAllAccessRequirements(
+            accessToken,
+            entityId,
+          )
           const sortedAccessRequirements = await sortAccessRequirementByCompletion(
             requirements,
           )
@@ -212,11 +221,16 @@ export default function AccessRequirementList({
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
-        if (SynapseClient.isInSynapseExperimentalMode()) {  // TODO to be deleted when out of alpha mode
+        if (SynapseClient.isInSynapseExperimentalMode()) {
+          // TODO to be deleted when out of alpha mode
           return (
             <ManagedACTAccessRequirementComponentNew
-              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
+              accessRequirement={
+                accessRequirement as ManagedACTAccessRequirement
+              }
+              accessRequirementStatus={
+                accessRequirementStatus as ManagedACTAccessRequirementStatus
+              }
               user={user}
               onHide={onHide}
               entityId={entityId}
@@ -226,8 +240,12 @@ export default function AccessRequirementList({
         } else {
           return (
             <ManagedACTAccessRequirementComponent
-              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
+              accessRequirement={
+                accessRequirement as ManagedACTAccessRequirement
+              }
+              accessRequirementStatus={
+                accessRequirementStatus as ManagedACTAccessRequirementStatus
+              }
               user={user}
               onHide={onHide}
               entityId={entityId}
@@ -250,8 +268,13 @@ export default function AccessRequirementList({
     }
   }
 
-  const requestDataStepCallback = (props:requestDataStepCallbackProps) => {
-    const {managedACTAccessRequirement, step, researchProjectId, formSubmitRequestObject} = props
+  const requestDataStepCallback = (props: requestDataStepCallbackProps) => {
+    const {
+      managedACTAccessRequirement,
+      step,
+      researchProjectId,
+      formSubmitRequestObject,
+    } = props
     if (managedACTAccessRequirement) {
       // required for step 1, 2 form
       setManagedACTAccessRequirement(managedACTAccessRequirement)
@@ -288,7 +311,10 @@ export default function AccessRequirementList({
             />
             &nbsp;{entityInformation[0]?.name}
           </a>
-          <h4 className="AccessRequirementList__instruction" style={{marginTop: "3rem"}}>
+          <h4
+            className="AccessRequirementList__instruction"
+            style={{ marginTop: '3rem' }}
+          >
             What do I need to do?
           </h4>
           <div className="requirement-container">
@@ -346,46 +372,64 @@ export default function AccessRequirementList({
   if (renderAsModal) {
     switch (requestDataStep) {
       case 1:
-        renderContent = <RequestDataAccessStep1
-          managedACTAccessRequirement={managedACTAccessRequirement!}
-          requestDataStepCallback={requestDataStepCallback}
-          onHide={() => onHide?.()}
-        />
+        renderContent = (
+          <RequestDataAccessStep1
+            managedACTAccessRequirement={managedACTAccessRequirement!}
+            requestDataStepCallback={requestDataStepCallback}
+            onHide={() => onHide?.()}
+          />
+        )
         break
       case 2:
-        renderContent = <RequestDataAccessStep2
-          user={user!}
-          researchProjectId={researchProjectId}
-          managedACTAccessRequirement={managedACTAccessRequirement!}
-          entityId={entityId}  // for form submission after save
-          requestDataStepCallback={requestDataStepCallback}
-          onHide={() => onHide?.()}
-        />
+        renderContent = (
+          <RequestDataAccessStep2
+            user={user!}
+            researchProjectId={researchProjectId}
+            managedACTAccessRequirement={managedACTAccessRequirement!}
+            entityId={entityId} // for form submission after save
+            requestDataStepCallback={requestDataStepCallback}
+            onHide={() => onHide?.()}
+          />
+        )
         break
       case 3:
-        renderContent = <CancelRequestDataAccess
-          formSubmitRequestObject={formSubmitRequestObject}
-          onHide={() => onHide?.()}  // for closing dialogs
-        />
+        renderContent = (
+          <CancelRequestDataAccess
+            formSubmitRequestObject={formSubmitRequestObject}
+            onHide={() => onHide?.()} // for closing dialogs
+          />
+        )
         break
       case 4:
-        renderContent = <>
+        renderContent = (
+          <>
             <ReactBootstrap.Modal.Header closeButton={false}>
               <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
                 Please Log In
               </ReactBootstrap.Modal.Title>
             </ReactBootstrap.Modal.Header>
-            <ReactBootstrap.Modal.Body className={"AccessRequirementList login-modal "}>
-              <Login sessionCallback={()=>{window.location.reload()}}/>
+            <ReactBootstrap.Modal.Body
+              className={'AccessRequirementList login-modal '}
+            >
+              <Login
+                sessionCallback={() => {
+                  window.location.reload()
+                }}
+              />
             </ReactBootstrap.Modal.Body>
           </>
+        )
         break
       default:
         renderContent = content
     }
     return (
       <ReactBootstrap.Modal
-        className={!requestDataStep ? "bootstrap-4-backport AccessRequirementList": 'bootstrap-4-backport AccessRequirementList modal-auto-height'}
+        className={
+          !requestDataStep
+            ? 'bootstrap-4-backport AccessRequirementList'
+            : 'bootstrap-4-backport AccessRequirementList modal-auto-height'
+        }
         onHide={() => onHide?.()}
         show={true}
         animation={false}

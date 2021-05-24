@@ -8,7 +8,7 @@ import {
 } from '../../../utils/synapseTypes'
 import ProgrammaticOptions from './ProgrammaticOptions'
 import ModalDownload from '../../../containers/ModalDownload'
-import { SynapseContext } from '../../../utils/SynapseContext'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
@@ -25,7 +25,7 @@ export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download List'
 const tooltipDownloadId = 'download'
 
 export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = props => {
-  const { accessToken } = React.useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] = React.useState(

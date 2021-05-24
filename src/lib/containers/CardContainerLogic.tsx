@@ -51,8 +51,8 @@ export type LabelLinkConfig = (MarkdownLink | CardLink)[]
 
 export type ColumnIconConfigs = {
   columns: {
-    [index:string]: {
-      [index:string]: IconSvgOptions
+    [index: string]: {
+      [index: string]: IconSvgOptions
     }
   }
 }
@@ -80,7 +80,7 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
-  facetAliases?: {}  
+  facetAliases?: {}
   rgbIndex?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
@@ -230,16 +230,17 @@ export default class CardContainerLogic extends React.Component<
       },
     }
 
-    SynapseClient.getQueryTableResults(initQueryRequest, this.context.accessToken)
+    SynapseClient.getQueryTableResults(
+      initQueryRequest,
+      this.context.accessToken,
+    )
       .then((data: QueryResultBundle) => {
         const queryRequestWithoutCount = cloneDeep(initQueryRequest)
         queryRequestWithoutCount.partMask =
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-        const hasMoreData =
-          data.queryResult.queryResults.rows.length ===
-          limit
+        const hasMoreData = data.queryResult.queryResults.rows.length === limit
         const newState = {
           hasMoreData,
           data,

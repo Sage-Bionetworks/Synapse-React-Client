@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import Cookies from 'universal-cookie'
-import { DATETIME_UTC_COOKIE_KEY } from './functions/DateFormatter'
-import { defaultQueryClient } from './hooks/SynapseAPI/QueryClientProviderWrapper'
-import { EXPERIMENTAL_MODE_COOKIE } from './SynapseConstants'
 
-const cookies = new Cookies()
+const defaultQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30 * 1000, // 30s
+      retry: false, // SynapseClient knows which queries to retry
+    },
+  },
+})
 
 export type SynapseContextType = {
   accessToken?: string
@@ -13,17 +16,11 @@ export type SynapseContextType = {
   utcTime: boolean
 }
 
-export const DEFAULT_SYNAPSE_CONTEXT: SynapseContextType = {
-  accessToken: undefined, // TODO
-  isInExperimentalMode: cookies.get(EXPERIMENTAL_MODE_COOKIE),
-  utcTime: cookies.get(DATETIME_UTC_COOKIE_KEY),
-}
+export const SynapseContext = React.createContext<
+  SynapseContextType | undefined
+>(undefined)
 
-export const SynapseContext = React.createContext<SynapseContextType>(
-  DEFAULT_SYNAPSE_CONTEXT,
-)
-
-export type SynapseWrapperProps = {
+export type SynapseContextProviderProps = {
   synapseContext?: SynapseContextType
   queryClient?: QueryClient
 }
@@ -33,16 +30,26 @@ export type SynapseWrapperProps = {
  * @param param0
  * @returns
  */
-export const SynapseWrapper: React.FunctionComponent<SynapseWrapperProps> = ({
+export const SynapseContextProvider: React.FunctionComponent<SynapseContextProviderProps> = ({
   children,
   synapseContext,
   queryClient,
 }) => {
   return (
-    <SynapseContext.Provider value={synapseContext ?? DEFAULT_SYNAPSE_CONTEXT}>
+    <SynapseContext.Provider value={synapseContext}>
       <QueryClientProvider client={queryClient ?? defaultQueryClient}>
         {children}
       </QueryClientProvider>
     </SynapseContext.Provider>
   )
+}
+
+export function useSynapseContext(): SynapseContextType {
+  const context = useContext(SynapseContext)
+  if (context === undefined) {
+    throw new Error(
+      'useSynapseContext must be used within a SynapseContextProvider',
+    )
+  }
+  return context
 }

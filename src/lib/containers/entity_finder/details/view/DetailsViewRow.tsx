@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
@@ -12,7 +12,7 @@ import {
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetUserProfileWithProfilePic } from '../../../../utils/hooks/SynapseAPI/useUserBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
-import { SynapseContext } from '../../../../utils/SynapseContext'
+import { useSynapseContext } from '../../../../utils/SynapseContext'
 import {
   EntityHeader,
   ProjectHeader,
@@ -50,7 +50,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   selectedVersion,
   toggleSelection,
 }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const isSelected = appearance === 'selected'
   const isDisabled = appearance === 'disabled'
   const isHidden = appearance === 'hidden'

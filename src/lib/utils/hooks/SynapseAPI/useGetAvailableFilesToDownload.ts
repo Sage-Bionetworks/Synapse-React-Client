@@ -7,9 +7,12 @@ import {
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
-import { SynapseContext } from '../../SynapseContext'
+import { useSynapseContext } from '../../SynapseContext'
 import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import { AvailableFilesRequest, Sort } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
+import {
+  AvailableFilesRequest,
+  Sort,
+} from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
 import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetAvailableFilesToDownload(
@@ -20,7 +23,7 @@ export function useGetAvailableFilesToDownload(
     DownloadListQueryResponse
   >,
 ) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   return useQuery<DownloadListQueryResponse, SynapseClientError>(
     ['downloadlistv2', accessToken, request],
     () => SynapseClient.getAvailableFilesToDownload(request, accessToken),
@@ -31,14 +34,15 @@ export function useGetAvailableFilesToDownload(
 export function useGetAvailableFilesToDownloadInfinite(
   sort?: Sort,
   options?: UseInfiniteQueryOptions<
-  DownloadListQueryResponse,
+    DownloadListQueryResponse,
     SynapseClientError,
     DownloadListQueryResponse
   >,
 ) {
-  const { accessToken } = useContext(SynapseContext)
-  const request:AvailableFilesRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
+  const { accessToken } = useSynapseContext()
+  const request: AvailableFilesRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
   }
   if (sort) {
     request.sort = [sort]
@@ -53,7 +57,8 @@ export function useGetAvailableFilesToDownloadInfinite(
     },
     {
       ...options,
-      getNextPageParam: page => (page.reponseDetails as AvailableFilesResponse).nextPageToken,
+      getNextPageParam: page =>
+        (page.reponseDetails as AvailableFilesResponse).nextPageToken,
     },
   )
 }

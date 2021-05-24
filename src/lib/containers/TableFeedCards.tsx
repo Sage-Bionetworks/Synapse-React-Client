@@ -1,5 +1,5 @@
 import { SynapseConstants, SynapseClient } from '../utils/'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import {
   QueryBundleRequest,
@@ -9,7 +9,7 @@ import {
 import MarkdownSynapse from './MarkdownSynapse'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
-import { SynapseContext } from '../utils/SynapseContext'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type TableFeedCardsProps = {
   tableEntityId: string
@@ -18,7 +18,7 @@ export type TableFeedCardsProps = {
 const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
   tableEntityId,
 }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [itemCountShowing, setItemCountShowing] = useState<number>(3)
 

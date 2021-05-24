@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useListState } from '../../utils/hooks/useListState'
 import { EvaluationRoundEditor } from './EvaluationRoundEditor'
 import { Button } from 'react-bootstrap'
@@ -13,13 +13,11 @@ import {
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
 import { ErrorBanner } from '../ErrorBanner'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationRoundEditorListProps = {
   /** id of the Evaluation containing EvaluationRounds to edit*/
   evaluationId: string
-  /** If true, dates for start/end are displayed in UTC instead of local time*/
-  utc: boolean
 }
 
 const fetchEvaluationList = (
@@ -65,9 +63,8 @@ const fetchEvaluationList = (
  */
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
   evaluationId,
-  utc,
 }: EvaluationRoundEditorListProps) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
 
   const {
@@ -108,7 +105,6 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
               evaluationRoundInput={evaluationRoundInput}
               onSave={handleEvaluationRoundInputListChange(index)}
               onDelete={handleEvaluationRoundInputListRemove(index)}
-              utc={utc}
             />
           )
         })}

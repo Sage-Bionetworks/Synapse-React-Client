@@ -1,5 +1,5 @@
 import { Alert, Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   createEvaluation,
   deleteEvaluation,
@@ -13,15 +13,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationEditorProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
   readonly evaluationId?: string
   /** Use if CREATING a new Evaluation. Id of the Entity that will be associated with the Evaluation */
   readonly entityId?: string
-  /** If true, the "Created on" date will be displayed in UTC time */
-  readonly utc: boolean
   /** Callback after successful deletion of the Evaluation */
   readonly onDeleteSuccess: () => void
   /** Callback after successful save of the Evaluation */
@@ -34,14 +32,13 @@ export type EvaluationEditorProps = {
 export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = ({
   evaluationId,
   entityId,
-  utc,
   onDeleteSuccess,
   onSaveSuccess,
 }: EvaluationEditorProps) => {
   if (evaluationId && entityId) {
     throw new Error('please use either evaluationId or entityId but not both')
   }
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [error, setError] = useState<SynapseClientError>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
 
@@ -180,7 +177,6 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
             <CreatedOnByUserDiv
               userId={evaluation.ownerId!}
               date={new Date(evaluation.createdOn)}
-              utc={utc}
             />
           )}
           {error && <ErrorBanner error={error} />}

@@ -7,7 +7,7 @@ import {
 import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
 import { AccessRequirementProps } from './AccessRequirementProps'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export default function TermsOfUseAccessRequirementComponent({
   accessRequirement,
@@ -16,7 +16,7 @@ export default function TermsOfUseAccessRequirementComponent({
   accessRequirementStatus,
   entityId,
 }: AccessRequirementProps<TermsOfUseAccessRequirement>) {
-  const { accessToken } = React.useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 

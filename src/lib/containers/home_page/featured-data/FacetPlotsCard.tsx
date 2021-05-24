@@ -14,7 +14,7 @@ import {
 
 import { getColorPalette } from '../../../containers/ColorGradient'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import loadingScreen from '../../LoadingScreen'
 import {
   GraphData,
@@ -23,7 +23,7 @@ import {
   FacetPlotLegend,
 } from '../../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../../widgets/facet-nav/FacetNav'
-import { SynapseContext } from '../../../utils/SynapseContext'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -62,7 +62,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   isLoading,
   facetAliases,
 }: FacetPlotsCardProps): JSX.Element => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')

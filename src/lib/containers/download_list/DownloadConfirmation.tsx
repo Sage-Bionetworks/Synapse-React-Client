@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import {
@@ -10,10 +10,15 @@ import {
 import DownloadDetails from './DownloadDetails'
 import DownloadListTable from './DownloadListTable'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { TopLevelControlsState, QueryWrapperState, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../QueryWrapper'
+import {
+  TopLevelControlsState,
+  QueryWrapperState,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from '../QueryWrapper'
 import SignInButton from '../SignInButton'
 import { Alert } from 'react-bootstrap'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -120,7 +125,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   topLevelControlsState,
   onExportTable,
 }) => {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
   const [state, setState] = useState<DownloadConfirmationState>({
     fileCount: 0,
@@ -242,9 +247,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             >
               View Download List
             </button>
-            
-            {onExportTable && <span>
-                or 
+
+            {onExportTable && (
+              <span>
+                or
                 <button
                   className="test-download-metadata btn-link"
                   onClick={onExportTable}
@@ -252,7 +258,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
                   Download File Metadata
                 </button>
               </span>
-            }
+            )}
           </span>
         )
 
@@ -269,9 +275,13 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         variant={'info'}
         transition={false}
         className={`download-confirmation ${
-            StatusConstruct[state.status].className
-          } ${showDownloadConfirmation ? '' : 'hidden'}
-          ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}
+          StatusConstruct[state.status].className
+        } ${showDownloadConfirmation ? '' : 'hidden'}
+          ${
+            showFacetFilter
+              ? QUERY_FILTERS_EXPANDED_CSS
+              : QUERY_FILTERS_COLLAPSED_CSS
+          }
         `}
       >
         <div>{getContent(state, accessToken)}</div>

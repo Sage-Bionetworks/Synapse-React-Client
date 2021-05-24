@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile, faDatabase, faClock } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -7,7 +7,7 @@ import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriend
 import ReactTooltip from 'react-tooltip'
 import moment from 'moment'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 library.add(faFile)
 library.add(faDatabase)
@@ -28,7 +28,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
     isLoading: true,
     downloadSpeed: 0,
   })
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const { isLoading, downloadSpeed } = state
   const { numFiles, numBytes } = props
 

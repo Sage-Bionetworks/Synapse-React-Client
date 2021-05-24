@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   ManagedACTAccessRequirement,
   WikiPageKey,
@@ -6,7 +6,7 @@ import {
 import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
 import { AccessRequirementProps } from './AccessRequirementProps'
-import { SynapseContext } from '../../utils/SynapseContext'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export default function ManagedACTAccessRequirementComponent({
   accessRequirement,
@@ -15,7 +15,7 @@ export default function ManagedACTAccessRequirementComponent({
   accessRequirementStatus,
   entityId,
 }: AccessRequirementProps<ManagedACTAccessRequirement>) {
-  const { accessToken } = useContext(SynapseContext)
+  const { accessToken } = useSynapseContext()
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
 
   useEffect(() => {

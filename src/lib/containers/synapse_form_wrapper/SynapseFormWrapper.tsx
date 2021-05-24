@@ -86,7 +86,10 @@ class SynapseFormWrapper extends React.Component<
         true,
         true,
       )
-      const fileContent = await SynapseClient.getFileHandleContent(fileHandleContent.fileHandle!, fileHandleContent.preSignedURL!)
+      const fileContent = await SynapseClient.getFileHandleContent(
+        fileHandleContent.fileHandle!,
+        fileHandleContent.preSignedURL!,
+      )
       const content = JSON.parse(fileContent)
       return {
         version: entity.versionNumber,
@@ -228,7 +231,10 @@ class SynapseFormWrapper extends React.Component<
       isLoading: true,
     })
 
-    await SynapseClient.submitFormData(this.state.formDataId!, this.context.accessToken)
+    await SynapseClient.submitFormData(
+      this.state.formDataId!,
+      this.context.accessToken,
+    )
     this.finishedProcessing(StatusEnum.SUBMIT_SUCCESS, 'File Submitted')
   }
 

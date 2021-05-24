@@ -38,7 +38,7 @@ export default class EntityForm extends React.Component<
   EntityFormProps,
   EntityFormState
 > {
-  static contextType = SynapseContext;
+  static contextType = SynapseContext
   formRef: any
 
   constructor(props: EntityFormProps) {
@@ -103,38 +103,38 @@ export default class EntityForm extends React.Component<
         formSchemaFileEntity,
         this.context.accessToken!,
         true,
-        true
+        true,
       ),
       SynapseClient.getFileResult(
         formUiSchemaFileEntity,
         this.context.accessToken!,
         true,
-        true
+        true,
       ),
     ]
 
     Promise.all(promises)
       .then(values => {
-
         try {
           const fileContent = values.map(el => {
             return getFileHandleContent(el.fileHandle!, el.preSignedURL!)
           })
-          Promise.all(fileContent).then(el => {
-            const formSchemaContent = JSON.parse(el[0])
-            const formUiSchemaContent = JSON.parse(el[1])
-            this.getExistingFileData(
-              targetFolderId,
-              formSchemaContent,
-              formUiSchemaContent,
-            )
-          }).catch(e => {
-            console.log("getSchemaFileContent: Error getting form content", e)
-          })
+          Promise.all(fileContent)
+            .then(el => {
+              const formSchemaContent = JSON.parse(el[0])
+              const formUiSchemaContent = JSON.parse(el[1])
+              this.getExistingFileData(
+                targetFolderId,
+                formSchemaContent,
+                formUiSchemaContent,
+              )
+            })
+            .catch(e => {
+              console.log('getSchemaFileContent: Error getting form content', e)
+            })
         } catch (e) {
-          console.log("getSchemaFileContent: Error getting schema content", e)
+          console.log('getSchemaFileContent: Error getting schema content', e)
         }
-
       })
       .catch(error => {
         this.onError(error)
@@ -154,7 +154,10 @@ export default class EntityForm extends React.Component<
     }
     let formData: any
     let currentFileEntity: FileEntity
-    SynapseClient.lookupChildEntity(entityLookupRequest, this.context.accessToken)
+    SynapseClient.lookupChildEntity(
+      entityLookupRequest,
+      this.context.accessToken,
+    )
       .then((entityId: EntityId) => {
         // ok, found the existing file
         return SynapseClient.getEntity<FileEntity>(
@@ -168,12 +171,15 @@ export default class EntityForm extends React.Component<
               this.context.accessToken!,
               true,
               true,
-            ).then(async (existingFileData) => {
+            ).then(async existingFileData => {
               try {
-                const fileContent = await getFileHandleContent(existingFileData.fileHandle!, existingFileData.preSignedURL!)
+                const fileContent = await getFileHandleContent(
+                  existingFileData.fileHandle!,
+                  existingFileData.preSignedURL!,
+                )
                 formData = JSON.parse(fileContent)
               } catch (e) {
-                console.log("getExistingFileData: Error setting form data", e)
+                console.log('getExistingFileData: Error setting form data', e)
               }
             })
           }
@@ -253,7 +259,11 @@ export default class EntityForm extends React.Component<
 
   createEntityFile = (fileContentsBlob: Blob) => {
     const fileName = `${this.state.formSchema.title}.json`
-    SynapseClient.uploadFile(this.context.accessToken, fileName, fileContentsBlob)
+    SynapseClient.uploadFile(
+      this.context.accessToken,
+      fileName,
+      fileContentsBlob,
+    )
       .then(fileUploadComplete => {
         // do we need to create a new file entity, or update an existing file entity?
         const newFileHandleId = fileUploadComplete.fileHandleId
@@ -271,7 +281,10 @@ export default class EntityForm extends React.Component<
           concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           dataFileHandleId: newFileHandleId,
         }
-        return SynapseClient.createEntity(newFileEntity, this.context.accessToken)
+        return SynapseClient.createEntity(
+          newFileEntity,
+          this.context.accessToken,
+        )
       })
       .then(fileEntity => {
         // by this point we've either found and updated the existing file entity, or created a new one.

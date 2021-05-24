@@ -18,6 +18,7 @@ import { SynapseHomepage } from './containers/SynapseHomepage'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
 import ErrorPage from './containers/ErrorPage'
+import { SynapseContextProvider } from './utils/SynapseContext'
 
 const SynapseComponents = {
   Login,
@@ -37,6 +38,7 @@ const SynapseComponents = {
   SynapseHomepage,
   EntityFinder,
   ErrorPage,
+  SynapseContextProvider,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient }
