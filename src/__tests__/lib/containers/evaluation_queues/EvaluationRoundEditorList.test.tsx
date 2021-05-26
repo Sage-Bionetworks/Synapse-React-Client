@@ -5,9 +5,12 @@ import { mount } from 'enzyme'
 import { EvaluationRoundEditorList } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorList'
 import React from 'react'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../mocks/MockSynapseContext'
 
 describe('test EvaluationRoundEditorList', () => {
-  const fakeAccessToken = 'asdfasdfasdf'
   const evaluationId = '123123123'
   const nextPageToken = 'firstPage'
 
@@ -86,11 +89,9 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     const wrapper = mount(
-      <EvaluationRoundEditorList
-        accessToken={fakeAccessToken}
-        evaluationId={evaluationId}
-        utc={true}
-      />,
+      <SynapseTestContext>
+        <EvaluationRoundEditorList evaluationId={evaluationId} />
+      </SynapseTestContext>,
     )
 
     expect(wrapper.find('.evaluation-round-editor').exists()).toBe(false)
@@ -99,22 +100,20 @@ describe('test EvaluationRoundEditorList', () => {
 
   it('fetched pages', () => {
     const wrapper = mount(
-      <EvaluationRoundEditorList
-        accessToken={fakeAccessToken}
-        evaluationId={evaluationId}
-        utc={true}
-      />,
+      <SynapseTestContext>
+        <EvaluationRoundEditorList evaluationId={evaluationId} />
+      </SynapseTestContext>,
     )
 
     expect(mockGetEvaulationsList).toBeCalledWith(
       evaluationId,
       { nextPageToken: undefined },
-      fakeAccessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(mockGetEvaulationsList).toBeCalledWith(
       evaluationId,
       { nextPageToken: nextPageToken },
-      fakeAccessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
@@ -123,11 +122,9 @@ describe('test EvaluationRoundEditorList', () => {
 
   it('add round button', () => {
     const wrapper = mount(
-      <EvaluationRoundEditorList
-        accessToken={fakeAccessToken}
-        evaluationId={evaluationId}
-        utc={true}
-      />,
+      <SynapseTestContext>
+        <EvaluationRoundEditorList evaluationId={evaluationId} />
+      </SynapseTestContext>,
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)

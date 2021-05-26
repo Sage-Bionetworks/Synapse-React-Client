@@ -19,11 +19,11 @@ import {
   PaginatedResults,
   Reference,
 } from '../../../../lib/utils/synapseTypes'
-import { MOCK_ACCESS_TOKEN } from '../../../../mocks/SynapseContext'
+import {
+  MOCK_ACCESS_TOKEN,
+  SynapseTestContext,
+} from '../../../../mocks/MockSynapseContext'
 
-jest.mock('../../../../lib/utils/SynapseContext', () =>
-  require('../../../../mocks/SynapseContext'),
-)
 jest.mock('../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 jest.mock('react-reflex', () => {
   return {
@@ -96,7 +96,11 @@ const defaultProps: EntityFinderProps = {
 }
 
 function renderComponent(propOverrides?: Partial<EntityFinderProps>) {
-  return render(<EntityFinder {...defaultProps} {...propOverrides} />)
+  return render(
+    <SynapseTestContext>
+      <EntityFinder {...defaultProps} {...propOverrides} />
+    </SynapseTestContext>,
+  )
 }
 
 describe('EntityFinder tests', () => {

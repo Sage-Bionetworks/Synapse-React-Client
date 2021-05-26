@@ -7,6 +7,8 @@ import WarningModal from '../../../../lib/containers/synapse_form_wrapper/Warnin
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
 import { act } from 'react-dom/test-utils'
+import * as SynapseContext from '../../../../lib/utils/SynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 const mockOnDelete = jest.fn(() => null)
@@ -26,7 +28,6 @@ const activeTokenProps: AccessTokenCardProps = {
     state: 'ACTIVE',
   },
   onDelete: mockOnDelete,
-  token: 'abc123',
 }
 
 const expiredTokenProps: AccessTokenCardProps = {
@@ -40,27 +41,25 @@ const expiredTokenProps: AccessTokenCardProps = {
     state: 'EXPIRED',
   },
   onDelete: mockOnDelete,
-  token: 'abc123',
 }
 
 describe('basic functionality', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
   })
 
   it('correctly styles when expired', async () => {
     const wrapperActive = shallow(<AccessTokenCard {...activeTokenProps} />)
     expect(
-      wrapperActive
-        .find('div.PersonalAccessTokenCard')
-        .hasClass('bg-warning'),
+      wrapperActive.find('div.PersonalAccessTokenCard').hasClass('bg-warning'),
     ).toBe(false)
 
     const wrapperExpired = shallow(<AccessTokenCard {...expiredTokenProps} />)
     expect(
-      wrapperExpired
-        .find('div.PersonalAccessTokenCard')
-        .hasClass('bg-warning'),
+      wrapperExpired.find('div.PersonalAccessTokenCard').hasClass('bg-warning'),
     ).toBe(true)
   })
 

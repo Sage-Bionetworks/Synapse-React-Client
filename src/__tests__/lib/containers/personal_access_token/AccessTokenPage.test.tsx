@@ -1,11 +1,15 @@
 import { act } from '@testing-library/react'
 import { mount } from 'enzyme'
-import { AccessTokenPage } from '../../../../lib/containers/personal_access_token/AccessTokenPage'
+import {
+  AccessTokenPage,
+  AccessTokenPageProps,
+} from '../../../../lib/containers/personal_access_token/AccessTokenPage'
 import { CreateAccessTokenModal } from '../../../../lib/containers/personal_access_token/CreateAccessTokenModal'
 import * as React from 'react'
 import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
 import { AccessTokenRecordList } from '../../../../lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { AccessTokenCard } from '../../../../lib/containers/personal_access_token/AccessTokenCard'
+import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
@@ -55,10 +59,9 @@ const mockResultsSecondPage: AccessTokenRecordList = {
   nextPageToken: undefined,
 }
 describe('basic functionality', () => {
-  const props = {
+  const props: AccessTokenPageProps = {
     title: 'A title',
     body: 'A body',
-    token: 'abc123',
   }
 
   beforeEach(() => {
@@ -66,7 +69,11 @@ describe('basic functionality', () => {
   })
 
   it('shows the create token modal when the button is clicked and hides when onClose is called', async () => {
-    const wrapper = mount(<AccessTokenPage {...props} />)
+    const wrapper = mount(
+      <SynapseTestContext>
+        <AccessTokenPage {...props} />
+      </SynapseTestContext>,
+    )
     await resolveAllPending(wrapper)
 
     expect(wrapper.find(CreateAccessTokenModal).length).toEqual(0)
@@ -95,7 +102,11 @@ describe('basic functionality', () => {
       .fn()
       .mockResolvedValueOnce(mockResultsFirstPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />)
+    const wrapper = mount(
+      <SynapseTestContext>
+        <AccessTokenPage {...props} />
+      </SynapseTestContext>,
+    )
     await resolveAllPending(wrapper)
 
     expect(wrapper.find(AccessTokenCard).length).toEqual(
@@ -112,7 +123,11 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />)
+    const wrapper = mount(
+      <SynapseTestContext>
+        <AccessTokenPage {...props} />
+      </SynapseTestContext>,
+    )
     await resolveAllPending(wrapper)
 
     // Click the button to render the modal
@@ -137,7 +152,11 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />)
+    const wrapper = mount(
+      <SynapseTestContext>
+        <AccessTokenPage {...props} />
+      </SynapseTestContext>,
+    )
     await resolveAllPending(wrapper)
 
     // Trigger onDelete on a card.
@@ -154,7 +173,11 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />)
+    const wrapper = mount(
+      <SynapseTestContext>
+        <AccessTokenPage {...props} />
+      </SynapseTestContext>,
+    )
     await resolveAllPending(wrapper)
 
     // Verify that we have a 'Load More' button

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { shallow } from 'enzyme'
+import { mount, shallow } from 'enzyme'
 import SynapseFormWrapper, {
   SynapseFormWrapperProps,
   UploadToolSearchParams,
@@ -14,9 +14,13 @@ import {
   mockFormSchema as formschemaJson,
 } from '../../../../mocks/mock_drug_tool_data'
 import _ from 'lodash-es'
+import {
+  MOCK_CONTEXT,
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
-const token: string = '123444'
 const formSchemaEntityId = 'syn9988882982'
 const formUiSchemaEntityId = 'syn9988882983'
 const formNavSchemaEntityId = 'syn9988882984'
@@ -30,19 +34,22 @@ const fileNamePath = 'somescreen.somefield'
 const formTitle = 'my submission'
 const formClass = 'someFormClass'
 
-const createShallowComponent = async (
+const createShallowComponent = (
   props: SynapseFormWrapperProps,
   disableLifecycleMethods: boolean = false,
 ) => {
-  const wrapper = await shallow<SynapseFormWrapper>(<SynapseFormWrapper {...props} />, {
-    disableLifecycleMethods,
-  })
+  const wrapper = shallow<SynapseFormWrapper>(
+    <SynapseFormWrapper {...props} />,
+    {
+      context: MOCK_CONTEXT,
+      disableLifecycleMethods,
+    },
+  )
 
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
 const props: SynapseFormWrapperProps = {
-  token,
   formSchemaEntityId,
   formUiSchemaEntityId,
   formNavSchemaEntityId,
@@ -54,9 +61,7 @@ const props: SynapseFormWrapperProps = {
 
 describe('basic tests', () => {
   beforeEach(() => {
-    SynapseClient.getFileResult = jest.fn(() =>
-      Promise.resolve(mockFileHandle),
-    )
+    SynapseClient.getFileResult = jest.fn(() => Promise.resolve(mockFileHandle))
     SynapseClient.getFileHandleContent = jest.fn(() =>
       Promise.resolve(JSON.stringify(formschemaJson)),
     )
@@ -69,29 +74,47 @@ describe('basic tests', () => {
   })
 
   it('gets configuration data calls should be called with correct params', async () => {
-    const { instance } = await createShallowComponent(props)
+    const { instance } = createShallowComponent(props)
     await instance.componentDidMount()
-    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(1, token, 'syn9988882982', undefined)
-    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(2, token, 'syn9988882983', undefined)
-    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(3, token, 'syn9988882984', undefined)
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
+      1,
+      MOCK_CONTEXT_VALUE.accessToken,
+      'syn9988882982',
+      undefined,
+    )
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
+      2,
+      MOCK_CONTEXT_VALUE.accessToken,
+      'syn9988882983',
+      undefined,
+    )
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
+      3,
+      MOCK_CONTEXT_VALUE.accessToken,
+      'syn9988882984',
+      undefined,
+    )
     expect(SynapseClient.getFileResult).toHaveBeenCalledWith(
       mockFileEntity,
-      token,
+      MOCK_CONTEXT_VALUE.accessToken,
       true,
-      true
+      true,
     )
   })
 
-  it('gets configuration data', async() => {
-    const { instance } = await createShallowComponent(props)
+  it('gets configuration data', async () => {
+    const { instance } = createShallowComponent(props)
     await instance.componentDidMount()
-    const result = await instance.getFileEntityData(token, '123444')
+    const result = await instance.getFileEntityData(
+      MOCK_CONTEXT_VALUE.accessToken,
+      '123444',
+    )
     expect(result).toEqual({ content: formschemaJson, version: undefined })
   })
 
   describe('if there is no datafile (no formDataId)', () => {
     it('should make 3 calls to getFileEntityData ', async () => {
-      const { wrapper, instance } = await createShallowComponent(props)
+      const { wrapper, instance } = createShallowComponent(props)
       const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
       const getFileHandleContentFromID = jest.spyOn(
         SynapseClient,
@@ -107,7 +130,7 @@ describe('basic tests', () => {
       SynapseClient.getEntity = jest.fn(() =>
         Promise.resolve(mockFileEntityWithVersion),
       )
-      const { wrapper, instance } = await createShallowComponent(props)
+      const { wrapper, instance } = createShallowComponent(props)
 
       await instance.componentDidMount()
       expect(wrapper).toBeDefined()
@@ -123,7 +146,7 @@ describe('basic tests', () => {
         ...props,
         ...{ searchParams: { formGroupId, formDataId, dataFileHandleId } },
       }
-      const { wrapper, instance } = await createShallowComponent(_props)
+      const { wrapper, instance } = createShallowComponent(_props)
       const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
       SynapseClient.getFileHandleContentFromID = jest.fn(() =>
         Promise.resolve(JSON.stringify(mockFormData)),
@@ -139,12 +162,12 @@ describe('basic tests', () => {
       expect(instance.state.formData).toEqual(mockFormData)
       expect(getFileHandleContentFromID).toHaveBeenCalled()
       expect(getFileEntityData).not.toHaveBeenCalledWith(
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         formSchemaEntityId,
         mockFormData.metadata.formSchemaVersion,
       )
       expect(getFileEntityData).toHaveBeenCalledWith(
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         formSchemaEntityId,
         undefined,
       )
@@ -162,7 +185,7 @@ describe('basic tests', () => {
           },
         },
       }
-      const { wrapper, instance } = await createShallowComponent(_props)
+      const { wrapper, instance } = createShallowComponent(_props)
       const getFileEntityData = jest.spyOn(instance, 'getFileEntityData')
       SynapseClient.getFileHandleContentFromID = jest.fn(() =>
         Promise.resolve(JSON.stringify(mockFormData)),
@@ -174,12 +197,12 @@ describe('basic tests', () => {
       expect(getFileEntityData).toHaveBeenCalledTimes(3)
       expect(instance.state.formData).toEqual(mockFormData)
       expect(getFileEntityData).toHaveBeenCalledWith(
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         formSchemaEntityId,
         mockFormData.metadata.formSchemaVersion,
       )
       expect(getFileEntityData).not.toHaveBeenCalledWith(
-        token,
+        MOCK_CONTEXT_VALUE.accessToken,
         formSchemaEntityId,
         undefined,
       )
@@ -192,13 +215,11 @@ describe('basic tests', () => {
         ...props,
         ...{ searchParams: { formGroupId, formDataId }, isWizardMode: true },
       }
-      const { wrapper, instance } = await createShallowComponent(_props)
+      const { wrapper, instance } = createShallowComponent(_props)
       await instance.componentDidMount()
+
       expect(wrapper).toBeDefined()
-      wrapper
-        .find('div')
-        .first()
-        .hasClass('someFormClass')
+      wrapper.find('div').first().hasClass('someFormClass')
       const formProps: SynapseFormProps = (wrapper
         .find('SynapseForm')
         .props() as any) as SynapseFormProps
@@ -208,14 +229,11 @@ describe('basic tests', () => {
 
     it('should pass parameters correctly', async () => {
       const _props = { ...props, ...{ formTitle: 'Another Title' } }
-      const { wrapper, instance } = await createShallowComponent(_props)
+      const { wrapper, instance } = createShallowComponent(_props)
       await instance.componentDidMount()
 
       expect(wrapper).toBeDefined()
-      wrapper
-        .find('div')
-        .first()
-        .hasClass('someFormClass')
+      wrapper.find('div').first().hasClass('someFormClass')
       const formProps: SynapseFormProps = (wrapper
         .find('SynapseForm')
         .props() as any) as SynapseFormProps
@@ -228,7 +246,7 @@ describe('basic tests', () => {
 
 describe('saving data file', () => {
   it('should CREATE formData if there is not a formDataId', async () => {
-    const { instance } = await createShallowComponent(props)
+    const { instance } = createShallowComponent(props)
     SynapseClient.uploadFile = jest.fn(() =>
       Promise.resolve({ fileHandleId: '123' }),
     )
@@ -250,7 +268,7 @@ describe('saving data file', () => {
       ...props,
       ...{ searchParams: { formGroupId, formDataId } },
     }
-    const { instance } = await createShallowComponent(_props)
+    const { instance } = createShallowComponent(_props)
     SynapseClient.uploadFile = jest.fn(() =>
       Promise.resolve({ fileHandleId: '123' }),
     )
@@ -270,7 +288,7 @@ describe('saving data file', () => {
 
 describe('submitting data file', () => {
   it('should create formData if there is not and ID', async () => {
-    const { instance } = await createShallowComponent(props)
+    const { instance } = createShallowComponent(props)
     SynapseClient.uploadFile = jest.fn(() =>
       Promise.resolve({ fileHandleId: '123' }),
     )

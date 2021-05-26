@@ -32,8 +32,7 @@ import { cloneDeep } from 'lodash-es'
 import HasAccess from '../../../lib/containers/HasAccess'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
 import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
-
-const accessToken = 'abcde'
+import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -41,9 +40,7 @@ const createShallowComponent = (
   const wrapper = mount<SynapseTable>(<SynapseTable {...props} />, {
     wrappingComponent: SynapseContextProvider,
     wrappingComponentProps: {
-      synapseContext: {
-        accessToken: accessToken,
-      },
+      synapseContext: MOCK_CONTEXT_VALUE,
     },
   })
   const instance = wrapper.instance()
@@ -161,7 +158,10 @@ describe('basic functionality', () => {
     instance.getEntityHeadersInData(true)
     instance.getTableConcreteType(props)
 
-    expect(mockEntityCall).toHaveBeenCalledWith(accessToken, newTableId)
+    expect(mockEntityCall).toHaveBeenCalledWith(
+      MOCK_CONTEXT_VALUE.accessToken,
+      newTableId,
+    )
   })
 
   describe('unCamelCase', () => {

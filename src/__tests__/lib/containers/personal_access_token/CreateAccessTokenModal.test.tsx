@@ -1,11 +1,16 @@
 import { shallow } from 'enzyme'
 import CopyToClipboardInput from '../../../../lib/containers/CopyToClipboardInput'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
-import { CreateAccessTokenModal } from '../../../../lib/containers/personal_access_token/CreateAccessTokenModal'
+import {
+  CreateAccessTokenModal,
+  CreateAccessTokenModalProps,
+} from '../../../../lib/containers/personal_access_token/CreateAccessTokenModal'
 import { Checkbox } from '../../../../lib/containers/widgets/Checkbox'
 import * as React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { act } from 'react-dom/test-utils'
+import * as SynapseContext from '../../../../lib/utils/SynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
@@ -22,14 +27,16 @@ SynapseClient.createPersonalAccessToken = jest.fn().mockResolvedValue({
 })
 
 describe('basic functionality', () => {
-  const props = {
+  const props: CreateAccessTokenModalProps = {
     onClose: mockOnClose,
     onCreate: mockOnCreate,
-    token: 'abc123',
   }
 
   beforeEach(() => {
     jest.clearAllMocks()
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
   })
 
   it('displays the token after successful creation', async () => {
