@@ -10,11 +10,7 @@ import React, {
   useState,
 } from 'react'
 import { Button } from 'react-bootstrap'
-import {
-  ErrorBoundary,
-  FallbackProps,
-  useErrorHandler,
-} from 'react-error-boundary'
+import { useErrorHandler } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
@@ -24,7 +20,7 @@ import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
-import { ErrorBanner } from '../ErrorBanner'
+import { SynapseErrorBoundary } from '../ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
   EntityDetailsList,
@@ -39,17 +35,6 @@ library.add(faTimes, faSearch)
 
 const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
 
-const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
-  error,
-  resetErrorBoundary,
-}) => {
-  return (
-    <div role="alert" className="SRC-marginBottomTop">
-      <ErrorBanner error={error}></ErrorBanner>
-      <Button onClick={resetErrorBoundary}>Reload</Button>
-    </div>
-  )
-}
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -226,7 +211,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <SynapseErrorBoundary>
         <div className="bootstrap-4-backport EntityFinder">
           <div className="EntityFinder__Search" data-active={searchActive}>
             <>
@@ -405,7 +390,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             />
           )}
         </div>
-      </ErrorBoundary>
+      </SynapseErrorBoundary>
     </QueryClientProvider>
   )
 }
