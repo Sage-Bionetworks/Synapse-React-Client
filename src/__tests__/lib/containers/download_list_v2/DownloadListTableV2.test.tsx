@@ -70,13 +70,13 @@ describe('DownloadListTableV2 tests', () => {
       data: {
         pages: [
           {
-            reponseDetails: {
+            responseDetails: {
               page: page1,
               nextPageToken: '50a0',
             },
           },
           {
-            reponseDetails: {
+            responseDetails: {
               page: page2,
               nextPageToken: null,
             },
