@@ -60,7 +60,7 @@ export default function DownloadListTableV2(props: DownloadListTableV2Props) {
 
     const allRows = data ? ([] as DownloadListItemResult[]).concat.apply(
         [],
-        data.pages.map(page => (page.reponseDetails as AvailableFilesResponse).page),
+        data.pages.map(page => (page.responseDetails as AvailableFilesResponse).page),
     ) : []
 
     const removeItem = async (item: DownloadListItem) => {

@@ -51,7 +51,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     },
     {
       ...options,
-      getNextPageParam: page => (page.reponseDetails as AvailableFilesResponse).nextPageToken,
+      getNextPageParam: page => (page.responseDetails as AvailableFilesResponse).nextPageToken,
     },
   )
 }
