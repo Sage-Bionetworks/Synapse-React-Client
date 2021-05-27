@@ -224,9 +224,9 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
             el.columnName === columnName
               ? el.values.filter(el => el !== value)
               : el.values,
-          operator: ColumnSingleValueFilterOperator.LIKE,
-          concreteType:
-            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          operator: el.operator,
+          function: el.function,
+          concreteType: el.concreteType
         }
       })
       .filter(el => el.values.length > 0)
