@@ -74,7 +74,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
           <div className="SRC-type">{type}</div>
           <div>
             <h3
-              className="SRC-boldText SRC-blackText"
+              className="SRC-boldText"
               style={{ margin: 'none' }}
             >
               {href ? (

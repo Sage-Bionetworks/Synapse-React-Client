@@ -108,6 +108,7 @@ import {
   DATETIME_UTC_COOKIE_KEY,
   EXPERIMENTAL_MODE_COOKIE,
 } from './SynapseConstants'
+import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 
 const cookies = new UniversalCookies()
 
@@ -1931,6 +1932,20 @@ export const getOAuth2Client = (
   return doGet(
     `/auth/v1/oauth2/client/${clientId}`,
     undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get OAuth2 Client information (available to the public)
+ */
+export const getAuthenticatedOn = async (
+  accessToken: string,
+): Promise<AuthenticatedOn> => {
+  return doGet(
+    `/auth/v1/authenticatedOn`,
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

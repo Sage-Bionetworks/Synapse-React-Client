@@ -3,7 +3,7 @@ import { useErrorHandler } from 'react-error-boundary'
 import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/useProjects'
 import { ProjectHeader } from '../../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
-import { toError } from '../../../ErrorBanner'
+import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 

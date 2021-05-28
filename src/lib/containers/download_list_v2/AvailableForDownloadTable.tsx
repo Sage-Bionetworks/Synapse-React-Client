@@ -1,12 +1,10 @@
-import React, { useContext } from 'react'
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
-import { ErrorBanner } from '../ErrorBanner'
-import * as ReactBootstrap from 'react-bootstrap'
+import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import { SynapseErrorBoundary } from '../ErrorBanner'
 import DownloadListTableV2, {
   DownloadListTableV2Props,
 } from './DownloadListTableV2'
-import { useSynapseContext } from '../../utils/SynapseContext'
 
 export default function AvailableForDownloadTable(
   props: DownloadListTableV2Props,
@@ -20,27 +18,14 @@ export default function AvailableForDownloadTable(
       },
     },
   })
-  const ErrorFallback: React.FunctionComponent<FallbackProps> = ({
-    error,
-    resetErrorBoundary,
-  }) => {
-    return (
-      <div role="alert" className="SRC-marginBottomTop">
-        <ErrorBanner error={error}></ErrorBanner>
-        <ReactBootstrap.Button onClick={resetErrorBoundary}>
-          Reload
-        </ReactBootstrap.Button>
-      </div>
-    )
-  }
-  if (accessToken) {
+  if (!accessToken) {
     return <></>
   }
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <SynapseErrorBoundary>
         <DownloadListTableV2 />
-      </ErrorBoundary>
+      </SynapseErrorBoundary>
     </QueryClientProvider>
   )
 }

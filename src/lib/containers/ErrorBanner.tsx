@@ -1,28 +1,18 @@
-import { SynapseClientError } from '../utils/SynapseClient'
-import SignInButton from './SignInButton'
-import { Alert } from 'react-bootstrap'
-import { useSynapseContext } from '../utils/SynapseContext'
 import React from 'react'
-type ErrorProps = {
+import { Alert, Button } from 'react-bootstrap'
+import {
+  ErrorBoundary,
+  ErrorBoundaryPropsWithComponent,
+  FallbackProps,
+} from 'react-error-boundary'
+import { isError, isSynapseClientError } from '../utils/ErrorUtils'
+import { SynapseClientError } from '../utils/SynapseClient'
+import { useSynapseContext } from '../utils/SynapseContext'
+import { Optional } from '../utils/types/Optional'
+import SignInButton from './SignInButton'
+
+type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
-}
-
-export function toError(clientError: SynapseClientError): Error {
-  return new Error(clientError.reason)
-}
-
-function isSynapseClientError(
-  error: string | Error | SynapseClientError,
-): error is SynapseClientError {
-  return (error as any).status !== undefined
-}
-
-function isError(error: string | Error | SynapseClientError): error is Error {
-  return (error as any).message !== undefined
-}
-
-function isString(error: string | Error | SynapseClientError): error is string {
-  return typeof error === 'string'
 }
 
 export const ClientError = (props: { error: SynapseClientError }) => {
@@ -48,7 +38,7 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   )
 }
 
-export const ErrorBanner = (props: ErrorProps) => {
+export const ErrorBanner = (props: ErrorBannerProps) => {
   const { error } = props
 
   if (!error) {
@@ -62,7 +52,7 @@ export const ErrorBanner = (props: ErrorProps) => {
     synapseClientError = error
   } else if (isError(error)) {
     jsError = error
-  } else if (isString(error)) {
+  } else if (typeof error === 'string') {
     stringError = error
   }
   return (
@@ -82,3 +72,29 @@ export const ErrorBanner = (props: ErrorProps) => {
     </div>
   )
 }
+
+export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => {
+  return (
+    <div role="alert" className="bootstrap-4-backport SRC-marginBottomTop">
+      <ErrorBanner error={error}></ErrorBanner>
+      <Button onClick={resetErrorBoundary}>Reload</Button>
+    </div>
+  )
+}
+
+/**
+ * ErrorBoundary component that uses the default error fallback component, unless overridden.
+ * Internally uses `react-error-boundary`.
+ *
+ * Use with {@link react-error-boundary#handleError | handleError}
+ * @param props
+ * @returns
+ */
+export const SynapseErrorBoundary: React.FC<
+  Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
+> = (props: Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>) => (
+  <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />
+)

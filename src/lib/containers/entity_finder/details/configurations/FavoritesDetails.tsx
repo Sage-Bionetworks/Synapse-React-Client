@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetFavorites } from '../../../../utils/hooks/SynapseAPI/useFavorites'
-import { toError } from '../../../ErrorBanner'
+import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 

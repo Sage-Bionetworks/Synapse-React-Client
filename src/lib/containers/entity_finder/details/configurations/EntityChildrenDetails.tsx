@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/useGetEntityChildren'
 import { Direction, EntityHeader, SortBy } from '../../../../utils/synapseTypes'
-import { toError } from '../../../ErrorBanner'
+import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 

@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import {
   useInfiniteQuery,
   UseInfiniteQueryOptions,
@@ -58,7 +57,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     {
       ...options,
       getNextPageParam: page =>
-        (page.reponseDetails as AvailableFilesResponse).nextPageToken,
+        (page.responseDetails as AvailableFilesResponse).nextPageToken,
     },
   )
 }
