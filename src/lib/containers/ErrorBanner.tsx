@@ -88,8 +88,10 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
 }) => {
   return (
     <div role="alert" className="bootstrap-4-backport SRC-marginBottomTop">
-      <ErrorBanner error={error}></ErrorBanner>
-      <Button onClick={resetErrorBoundary}>Reload</Button>
+      <ErrorBanner
+        error={error}
+        reloadButtonFn={resetErrorBoundary}
+      ></ErrorBanner>
     </div>
   )
 }
