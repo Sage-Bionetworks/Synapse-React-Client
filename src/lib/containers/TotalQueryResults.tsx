@@ -26,7 +26,6 @@ import {
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
 import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
-import { ColumnSingleValueFilterOperator } from '../utils/synapseTypes/Table/QueryFilter'
 import { Button } from 'react-bootstrap'
 
 export type TotalQueryResultsProps = {
@@ -224,9 +223,9 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
             el.columnName === columnName
               ? el.values.filter(el => el !== value)
               : el.values,
-          operator: ColumnSingleValueFilterOperator.LIKE,
-          concreteType:
-            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          operator: el.operator,
+          function: el.function,
+          concreteType: el.concreteType
         }
       })
       .filter(el => el.values.length > 0)
