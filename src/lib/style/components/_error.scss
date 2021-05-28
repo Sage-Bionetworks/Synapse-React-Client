@@ -1,6 +1,9 @@
 .Error {
-  div {
+  div.alert {
     text-align: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
   }
 }
 
@@ -40,7 +43,7 @@
   p {
     padding: 0 0 34px;
     margin-bottom: 34px;
-    border-bottom: 1px solid #DCDCDC;
+    border-bottom: 1px solid #dcdcdc;
     display: inline-block;
   }
   svg {
