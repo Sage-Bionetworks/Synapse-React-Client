@@ -10,6 +10,10 @@ import {
   SortBy,
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
+import {
+  SynapseErrorBoundary,
+  TableRowFallbackComponent,
+} from '../../../ErrorBanner'
 import { HelpButtonPopover } from '../../../HelpButtonPopover'
 import { SynapseSpinner } from '../../../LoadingScreen'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -165,18 +169,22 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         <tbody className="EntityFinderDetailsView__TableBody">
           {entities?.map(entity => {
             return (
-              <DetailsViewRow
+              <SynapseErrorBoundary
+                FallbackComponent={TableRowFallbackComponent}
                 key={entity.id}
-                entityHeader={entity}
-                appearance={determineRowAppearance(entity)}
-                selectedVersion={
-                  selected.find(e => e.targetId === entity.id)
-                    ?.targetVersionNumber
-                }
-                showVersionColumn={showVersionSelection}
-                selectButtonType={selectColumnType}
-                toggleSelection={toggleSelection}
-              ></DetailsViewRow>
+              >
+                <DetailsViewRow
+                  entityHeader={entity}
+                  appearance={determineRowAppearance(entity)}
+                  selectedVersion={
+                    selected.find(e => e.targetId === entity.id)
+                      ?.targetVersionNumber
+                  }
+                  showVersionColumn={showVersionSelection}
+                  selectButtonType={selectColumnType}
+                  toggleSelection={toggleSelection}
+                />
+              </SynapseErrorBoundary>
             )
           })}
           {/* To trigger loading the next page */}

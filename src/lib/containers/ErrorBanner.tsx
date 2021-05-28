@@ -13,6 +13,7 @@ import SignInButton from './SignInButton'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
+  reloadButtonFn?: () => void
 }
 
 export const ClientError = (props: { error: SynapseClientError }) => {
@@ -39,7 +40,7 @@ export const ClientError = (props: { error: SynapseClientError }) => {
 }
 
 export const ErrorBanner = (props: ErrorBannerProps) => {
-  const { error } = props
+  const { error, reloadButtonFn } = props
 
   if (!error) {
     return <></>
@@ -68,6 +69,11 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
           {jsError && jsError.message}
           {stringError && stringError}
         </p>
+        {reloadButtonFn && (
+          <Button variant="default" onClick={reloadButtonFn}>
+            Reload
+          </Button>
+        )}
       </Alert>
     </div>
   )
@@ -79,9 +85,24 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
 }) => {
   return (
     <div role="alert" className="bootstrap-4-backport SRC-marginBottomTop">
-      <ErrorBanner error={error}></ErrorBanner>
-      <Button onClick={resetErrorBoundary}>Reload</Button>
+      <ErrorBanner
+        error={error}
+        reloadButtonFn={resetErrorBoundary}
+      ></ErrorBanner>
     </div>
+  )
+}
+
+export const TableRowFallbackComponent: React.FunctionComponent<FallbackProps> = ({
+  error,
+  resetErrorBoundary,
+}) => {
+  return (
+    <tr>
+      <td colSpan={999}>
+        <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
+      </td>
+    </tr>
   )
 }
 

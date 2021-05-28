@@ -14,6 +14,8 @@ import { ColumnModel, ColumnType } from '../utils/synapseTypes'
 import {
   ColumnSingleValueQueryFilter,
   ColumnSingleValueFilterOperator,
+  ColumnMultiValueFunction,
+  ColumnMultiValueFunctionQueryFilter,
   QueryFilter,
 } from '../utils/synapseTypes/Table/QueryFilter'
 
@@ -104,19 +106,6 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
   }
 
-  public static addEscapeCharacters = (searchText: string) => {
-    // We have to escape the following characters
-    // ' % \
-    let escapedSearchText = searchText
-    // escape ' by adding additional '
-    escapedSearchText = escapedSearchText.split("'").join("''")
-    // escape % by adding \
-    escapedSearchText = escapedSearchText.split('%').join(`\%`)
-    // escape \ by adding \
-    escapedSearchText = escapedSearchText.split('\\').join('\\\\')
-    return escapedSearchText
-  }
-
   public search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     // form completion by default causes the page to reload, so we prevent that
     event.preventDefault()
@@ -151,14 +140,27 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       return false
     })
     if (indexOfColumn === -1) {
-      const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
-        columnName,
-        operator: ColumnSingleValueFilterOperator.LIKE,
-        values: [`%${searchText}%`],
-        concreteType:
-          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      // get the column model to figure out what kind of filter we should apply.
+      const columnModel:ColumnModel|undefined = this.props.data?.columnModels?.filter(el => el.name === columnName)[0]
+      if (columnModel?.columnType.endsWith('_LIST')) {
+        const columnMultiValueQueryFilter: ColumnMultiValueFunctionQueryFilter = {
+          columnName,
+          function: ColumnMultiValueFunction.HAS_LIKE,
+          values: [`%${searchText}%`],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+        }
+        additionalFilters.push(columnMultiValueQueryFilter)
+      } else {
+        const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
+          columnName,
+          operator: ColumnSingleValueFilterOperator.LIKE,
+          values: [`%${searchText}%`],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        }
+        additionalFilters.push(columnSingleValueQueryFilter)
       }
-      additionalFilters.push(columnSingleValueQueryFilter)
     } else {
       additionalFilters[indexOfColumn].values.push(`%${searchText}%`)
     }
@@ -287,7 +289,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                 const isSelected =
                   (columnName === '' && index === 0) || columnName === name
                 return (
-                  <div className="radio">
+                  <div className="radio" key={`search-field-${name}-${index}`}>
                     <label>
                       <span>
                         <input
