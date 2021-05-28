@@ -22,7 +22,7 @@ export function useGetEntityChildren(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<EntityChildrenResponse, SynapseClientError>(
-    ['entitychildren', accessToken, request],
+    [accessToken, 'entitychildren', request],
     () => SynapseClient.getEntityChildren(request, accessToken),
     options,
   )
@@ -38,7 +38,7 @@ export function useGetEntityChildrenInfinite(
 ) {
   const { accessToken } = useSynapseContext()
   return useInfiniteQuery<EntityChildrenResponse, SynapseClientError>(
-    ['entitychildren', request],
+    [accessToken, 'entitychildren', request],
     async context => {
       return await SynapseClient.getEntityChildren(
         { ...request, nextPageToken: context.pageParam },

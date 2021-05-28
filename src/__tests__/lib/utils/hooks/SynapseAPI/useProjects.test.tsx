@@ -9,13 +9,19 @@ import {
   EntityType,
   ProjectHeaderList,
 } from '../../../../../lib/utils/synapseTypes'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { QueryClient } from 'react-query'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+
+const queryClient = new QueryClient()
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <SynapseTestContext>{props.children}</SynapseTestContext>
+  <SynapseContextProvider
+    synapseContext={MOCK_CONTEXT_VALUE}
+    queryClient={queryClient}
+  >
+    {props.children}
+  </SynapseContextProvider>
 )
 
 const request: EntityChildrenRequest = {
@@ -53,6 +59,9 @@ const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 SynapseClient.getMyProjects = jest.fn()
 
 describe('basic functionality', () => {
+  beforeEach(() => {
+    queryClient.clear()
+  })
   it('correctly calls SynapseClient', async () => {
     SynapseClient.getMyProjects.mockResolvedValueOnce(page1)
 

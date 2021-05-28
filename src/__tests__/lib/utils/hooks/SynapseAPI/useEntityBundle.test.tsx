@@ -1,14 +1,20 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
+import { QueryClient } from 'react-query'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import { EntityBundle } from '../../../../../lib/utils/synapseTypes'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+
+const queryClient = new QueryClient()
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <SynapseTestContext>{props.children}</SynapseTestContext>
+  <SynapseContextProvider
+    synapseContext={MOCK_CONTEXT_VALUE}
+    queryClient={queryClient}
+  >
+    {props.children}
+  </SynapseContextProvider>
 )
 
 const expected: EntityBundle = {
@@ -23,6 +29,10 @@ const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 SynapseClient.getEntityBundleV2 = jest.fn().mockResolvedValue(expected)
 
 describe('useEntityBundle functionality', () => {
+  beforeEach(() => {
+    queryClient.clear()
+  })
+
   it('correctly calls SynapseClient', async () => {
     const entityId = 'syn123'
 

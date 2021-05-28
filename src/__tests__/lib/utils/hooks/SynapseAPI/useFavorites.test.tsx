@@ -7,11 +7,19 @@ import {
 } from '../../../../../lib/utils/synapseTypes'
 import {
   MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
 } from '../../../../../mocks/MockSynapseContext'
+import { QueryClient } from 'react-query'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+
+const queryClient = new QueryClient()
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <SynapseTestContext>{props.children}</SynapseTestContext>
+  <SynapseContextProvider
+    synapseContext={MOCK_CONTEXT_VALUE}
+    queryClient={queryClient}
+  >
+    {props.children}
+  </SynapseContextProvider>
 )
 
 const expected: PaginatedResults<EntityHeader> = {
@@ -35,6 +43,10 @@ const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 SynapseClient.getUserFavorites = jest.fn().mockResolvedValue(expected)
 
 describe('useFavorites functionality', () => {
+  beforeEach(() => {
+    queryClient.clear()
+  })
+
   it('correctly calls SynapseClient', async () => {
     const { result, waitFor } = renderHook(() => useGetFavorites(), { wrapper })
 

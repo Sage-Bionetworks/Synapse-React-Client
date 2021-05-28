@@ -9,13 +9,19 @@ import {
   SearchQuery,
   SearchResults,
 } from '../../../../../lib/utils/synapseTypes/Search'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { QueryClient } from 'react-query'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+
+const queryClient = new QueryClient()
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <SynapseTestContext>{props.children}</SynapseTestContext>
+  <SynapseContextProvider
+    synapseContext={MOCK_CONTEXT_VALUE}
+    queryClient={queryClient}
+  >
+    {props.children}
+  </SynapseContextProvider>
 )
 
 const request: SearchQuery = {
@@ -78,6 +84,7 @@ SynapseClient.searchEntities = jest.fn()
 describe('basic functionality', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    queryClient.clear()
   })
 
   it('correctly calls SynapseClient', async () => {
