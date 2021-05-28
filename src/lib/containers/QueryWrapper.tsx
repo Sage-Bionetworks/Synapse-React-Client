@@ -12,12 +12,23 @@ import {
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
-import { SynapseContext } from '../utils/SynapseContext'
+
+/**
+ * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
+ *
+ * This wasn't done because Enzyme's shallow renderer is not currently
+ * compatible with the `contextType` field in the React 16+ context API.
+ *
+ * This can be fixed by rewriting tests to not rely on the shallow renderer.
+ *
+ * See here: https://github.com/enzymejs/enzyme/issues/1553
+ */
 
 export type QueryWrapperProps = {
   visibleColumnCount?: number
   initQueryRequest: QueryBundleRequest
   rgbIndex?: number
+  token?: string
   facet?: string
   unitDescription?: string
   facetAliases?: {}
@@ -89,6 +100,7 @@ export type FacetSelection = {
 export type QueryWrapperChildProps = {
   isAllFilterSelectedForFacet?: {}
   isLoading?: boolean
+  token?: string
   entityId?: string
   isLoadingNewData?: boolean
   executeQueryRequest?: (param: QueryBundleRequest) => void
@@ -130,7 +142,6 @@ export default class QueryWrapper extends React.Component<
   QueryWrapperState
 > {
   private componentIndex: number
-  static contextType = SynapseContext
   constructor(props: QueryWrapperProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -198,6 +209,9 @@ export default class QueryWrapper extends React.Component<
     const { loadNow = true } = this.props
     if (loadNow && !this.state.loadNowStarted) {
       this.executeInitialQueryRequest()
+    } else if (loadNow && this.props.token !== prevProps.token) {
+      // if loadNow is true and they've logged in with a token that is not undefined, null, or an empty string when it was before
+      this.executeQueryRequest(this.getLastQueryRequest())
     } else if (
       prevProps.initQueryRequest.query.sql !==
       this.props.initQueryRequest!.query.sql
@@ -256,7 +270,7 @@ export default class QueryWrapper extends React.Component<
     }
     return SynapseClient.getQueryTableResults(
       clonedQueryRequest,
-      this.context.accessToken,
+      this.props.token,
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
@@ -294,7 +308,7 @@ export default class QueryWrapper extends React.Component<
     await getNextPageOfData(
       queryRequest,
       this.state.data!,
-      this.context.accessToken,
+      this.props.token,
     ).then(newState => {
       this.setState({
         ...newState,
@@ -323,7 +337,7 @@ export default class QueryWrapper extends React.Component<
     })
     SynapseClient.getQueryTableResults(
       initQueryRequest,
-      this.context.accessToken,
+      this.props.token,
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {

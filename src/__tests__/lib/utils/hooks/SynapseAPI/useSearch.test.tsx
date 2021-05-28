@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import {
   useSearch,
   useSearchInfinite,
@@ -10,11 +9,13 @@ import {
   SearchQuery,
   SearchResults,
 } from '../../../../../lib/utils/synapseTypes/Search'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../../mocks/MockSynapseContext'
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <QueryClientProvider client={new QueryClient()}>
-    {props.children}
-  </QueryClientProvider>
+  <SynapseTestContext>{props.children}</SynapseTestContext>
 )
 
 const request: SearchQuery = {
@@ -82,18 +83,18 @@ describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
     SynapseClient.searchEntities.mockResolvedValueOnce(page1)
 
-    const accessToken = 'abcdef'
-
-    const { result, waitFor } = renderHook(
-      () => useSearch(request, accessToken),
-      { wrapper },
-    )
+    const { result, waitFor } = renderHook(() => useSearch(request), {
+      wrapper,
+    })
 
     await waitFor(() => {
       return result.current.isSuccess
     })
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(request, accessToken)
+    expect(SynapseClient.searchEntities).toBeCalledWith(
+      request,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
     expect(result.current.data).toEqual(page1)
   })
 
@@ -102,15 +103,15 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
 
-    const accessToken = 'abcdef'
-
-    const { result, waitFor } = renderHook(
-      () => useSearchInfinite(request, accessToken),
-      { wrapper },
-    )
+    const { result, waitFor } = renderHook(() => useSearchInfinite(request), {
+      wrapper,
+    })
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.searchEntities).toBeCalledWith(request, accessToken)
+    expect(SynapseClient.searchEntities).toBeCalledWith(
+      request,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
 
@@ -124,7 +125,7 @@ describe('basic functionality', () => {
         ...request,
         start: 1,
       },
-      accessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(result.current.data?.pages[1]).toEqual(page2)
     expect(result.current.hasNextPage).toBe(false)

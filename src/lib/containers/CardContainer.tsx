@@ -156,7 +156,7 @@ export const CardContainer = (props: CardContainerProps) => {
   }
 
   return (
-    <div>
+    <div role='list'>
       {title && <h2 className="SRC-card-overview-title">{title}</h2>}
       {!title && unitDescription && showBarChart && (
         <TotalQueryResults

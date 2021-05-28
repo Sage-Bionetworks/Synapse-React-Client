@@ -1,28 +1,77 @@
 import * as React from 'react'
-import { shallow } from 'enzyme'
+import { mount, shallow } from 'enzyme'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from '../../../lib/containers/MarkdownSynapse'
 import Bookmarks from '../../../lib/containers/widgets/Bookmarks'
 import SynapseImage from '../../../lib/containers/widgets/SynapseImage'
 import SynapseVideo from '../../../lib/containers/widgets/SynapseVideo'
-import SynapsePlot from '../../../lib/containers/widgets/SynapsePlot'
 import { delay } from '../../../lib/utils/SynapseClient'
 import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
+import {
+  MOCK_CONTEXT,
+  SynapseTestContext,
+} from '../../../mocks/MockSynapseContext'
+import {
+  SynapseContextProvider,
+  SynapseContextType,
+  withSynapseContextConsumer,
+} from '../../../lib/utils/SynapseContext'
+import { render, screen } from '@testing-library/react'
+
+jest.mock('../../../lib/containers/widgets/SynapsePlot', () => {
+  return {
+    __esModule: true,
+    default: function MockSynapsePlot() {
+      return <div role="figure"></div>
+    },
+  }
+})
+
+jest.mock('../../../lib/containers/widgets/SynapseImage', () => {
+  return {
+    __esModule: true,
+    default: function MockSynapseImage() {
+      return <div role="img"></div>
+    },
+  }
+})
 
 // shallow doesn't await all nested promises resolve inside component...
 
 const createShallowComponent = async (props: MarkdownSynapseProps) => {
-  const wrapper = await shallow<MarkdownSynapse>(
-    <MarkdownSynapse
-      ownerId="mock_owner_id"
-      wikiId="mock_wiki_id"
-      {...props}
-    />,
+  const wrapper = mount<MarkdownSynapse>(
+    <SynapseTestContext>
+      <MarkdownSynapse
+        ownerId="mock_owner_id"
+        wikiId="mock_wiki_id"
+        {...props}
+      />
+    </SynapseTestContext>,
   )
   await delay(_TIME_DELAY)
   const instance = wrapper.instance()
   return { wrapper, instance }
+}
+
+const renderComponent = async (
+  props: MarkdownSynapseProps,
+  synapseContext?: SynapseContextType,
+) => {
+  const componentUnderTest = (
+    <MarkdownSynapse ownerId="mock_owner_id" wikiId="mock_wiki_id" {...props} />
+  )
+
+  const withContext = synapseContext ? (
+    <SynapseContextProvider synapseContext={synapseContext}>
+      {componentUnderTest}
+    </SynapseContextProvider>
+  ) : (
+    <SynapseTestContext>{componentUnderTest}</SynapseTestContext>
+  )
+
+  render(withContext)
+  await delay(_TIME_DELAY)
 }
 
 describe('it performs all functionality', () => {
@@ -57,10 +106,10 @@ describe('it performs all functionality', () => {
       const props: MarkdownSynapseProps = {
         markdown: markdownPlaceholder,
       }
-      const { wrapper } = await createShallowComponent(props)
-      expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
-      expect(wrapper.html().indexOf('h1')).toBeGreaterThan(-1)
-      expect(wrapper.html().indexOf(val)).toBeGreaterThan(-1)
+      await renderComponent(props)
+
+      expect(() => screen.getByRole('heading')).not.toThrow()
+      expect(() => screen.getByText(val)).not.toThrow()
     })
 
     it('mounts correctly with markdown NOT already loaded', async () => {
@@ -69,7 +118,8 @@ describe('it performs all functionality', () => {
         ownerId: 'xxx', // placeholder
       }
 
-      const markdownPlaceholder = '## text'
+      const text = 'text'
+      const markdownPlaceholder = `## ${text}`
       const mockGetEntityWiki = jest
         .fn()
         .mockResolvedValue({ markdown: markdownPlaceholder })
@@ -77,9 +127,10 @@ describe('it performs all functionality', () => {
       // Full functionality will get tested in the specific widget tests
       SynapseClient.getEntityWiki = mockGetEntityWiki
       // mount the component
-      const { wrapper } = await createShallowComponent(props)
+      await renderComponent(props)
       // verify functions were called
-      expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
+      expect(() => screen.getByRole('heading')).not.toThrow()
+      expect(() => screen.getByText(text)).not.toThrow()
       expect(mockGetEntityWiki).toHaveBeenCalledTimes(1)
       expect(mockGetWikiAttachments).toHaveBeenCalledTimes(1)
     })
@@ -90,13 +141,11 @@ describe('it performs all functionality', () => {
         markdown: markdownPlaceholder,
         renderInline: true,
       }
-      const { wrapper } = await createShallowComponent(props)
-      expect(wrapper.state().data.markdown).toEqual(markdownPlaceholder)
-      expect(wrapper.html().includes('<p>')).toBeFalsy()
-      expect(wrapper.html().includes('<a href=')).toBeTruthy()
+      await renderComponent(props)
+      screen.getByRole('link')
     })
 
-    it('runs componentDidUpdate correctly ', async () => {
+    it('runs componentDidUpdate on context change ', async () => {
       const props = {
         wikiId: 'xxx', // placeholder
         ownerId: 'xxx', // placeholder
@@ -106,10 +155,8 @@ describe('it performs all functionality', () => {
         .fn()
         .mockResolvedValue({ markdown: 'text' })
       SynapseClient.getEntityWiki = mockGetEntityWiki
-      const { wrapper } = await createShallowComponent(props)
-      await wrapper.setProps({
-        token: '123',
-      })
+      await renderComponent(props)
+      await renderComponent(props, { accessToken: 'new-token' })
       // await again for componentDidUpdate to run
       await delay(_TIME_DELAY)
       // Note- verifying these API calls were made ensures that
@@ -128,11 +175,10 @@ describe('it performs all functionality', () => {
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
-        token: '_',
       }
 
-      const { wrapper } = await createShallowComponent(props)
-      expect(wrapper.find(SynapseVideo)).toHaveLength(1)
+      await renderComponent(props)
+      screen.getByTitle('video frame')
     })
 
     it('do not render a video widget without token', async () => {
@@ -142,12 +188,9 @@ describe('it performs all functionality', () => {
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
-        token: undefined,
       }
-      const { wrapper } = await createShallowComponent(props)
-      expect(wrapper.find(SynapseVideo).html()).toMatch(
-        '<div><p>You will need to<button class="SRC-SIGN-IN-CLASS sign-in-btn default',
-      )
+      await renderComponent(props, { accessToken: undefined })
+      expect(() => screen.getByTitle('video frame')).toThrowError()
     })
 
     it('renders a video widget with a given height and width', async () => {
@@ -165,13 +208,14 @@ describe('it performs all functionality', () => {
       SynapseClient.getEntityWiki = mockGetEntityWiki
       const props: MarkdownSynapseProps = {
         ownerId: '_',
-        token: '_',
       }
 
-      const { wrapper } = await createShallowComponent(props)
-
-      expect(wrapper.find(SynapseVideo).html()).toMatch(
-        `<div><div><iframe title="video frame" width="${width}" height="${height}"></iframe></div></div>`,
+      await renderComponent(props)
+      expect(screen.getByTitle('video frame').getAttribute('width')).toBe(
+        `${width}`,
+      )
+      expect(screen.getByTitle('video frame').getAttribute('height')).toBe(
+        `${height}`,
       )
     })
   })
@@ -191,8 +235,8 @@ describe('it performs all functionality', () => {
         ownerId: '_',
         wikiId: '_',
       }
-      const { wrapper } = await createShallowComponent(props)
-      expect(wrapper.find(SynapseImage)).toHaveLength(1)
+      await renderComponent(props)
+      screen.getByRole('img')
     })
 
     it('renders an image from a file handleId ', async () => {
@@ -209,8 +253,8 @@ describe('it performs all functionality', () => {
         ownerId: '_',
         wikiId: '_',
       }
-      const { wrapper } = await createShallowComponent(props)
-      expect(wrapper.find(SynapseImage)).toHaveLength(1)
+      await renderComponent(props)
+      screen.getByRole('img')
       expect(spyOnRenderImage).toHaveBeenCalled()
     })
   })
@@ -227,8 +271,12 @@ describe('it performs all functionality', () => {
         MarkdownSynapse.prototype,
         'renderSynapsePlot',
       )
-      const { wrapper } = await createShallowComponent({})
-      expect(wrapper.find(SynapsePlot)).toHaveLength(1)
+      const props: MarkdownSynapseProps = {
+        ownerId: '_',
+        wikiId: '_',
+      }
+      await renderComponent(props)
+      screen.getByRole('figure')
       expect(spyOnRenderPlot).toHaveBeenCalled()
     })
   })
@@ -254,9 +302,13 @@ describe('it performs all functionality', () => {
       SynapseClient.getEntityWiki = jest.fn(() =>
         Promise.resolve({ markdown: '${reference?text=google.com}' }),
       )
-      const { wrapper } = await createShallowComponent({})
-      expect(wrapper.find(Bookmarks)).toHaveLength(1)
-      expect(wrapper.render().find('button#bookmark0')).toHaveLength(1)
+      const props: MarkdownSynapseProps = {
+        ownerId: '_',
+        wikiId: '_',
+      }
+
+      await renderComponent(props)
+      screen.getByRole('button')
     })
   })
 

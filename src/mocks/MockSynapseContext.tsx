@@ -15,7 +15,7 @@ export const MOCK_CONTEXT_VALUE: SynapseContextType = {
 export const MOCK_CONTEXT = React.createContext(MOCK_CONTEXT_VALUE)
 
 /**
- * Full context object using default values for testing.
+ * Full context object with default values for testing.
  */
 export const SynapseTestContext = jest
   .fn()

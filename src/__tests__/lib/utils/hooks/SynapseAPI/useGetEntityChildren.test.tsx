@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import {
   useGetEntityChildren,
   useGetEntityChildrenInfinite,
@@ -10,11 +9,13 @@ import {
   EntityChildrenResponse,
   EntityType,
 } from '../../../../../lib/utils/synapseTypes'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../../mocks/MockSynapseContext'
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <QueryClientProvider client={new QueryClient()}>
-    {props.children}
-  </QueryClientProvider>
+  <SynapseTestContext>{props.children}</SynapseTestContext>
 )
 
 const request: EntityChildrenRequest = {
@@ -27,7 +28,7 @@ const page1: EntityChildrenResponse = {
     {
       id: 'syn123',
       name: 'Child 1',
-      type: EntityType.FILE,
+      type: 'org.sagebionetworks.repo.model.FileEntity',
       versionNumber: 1,
       versionLabel: '1',
       benefactorId: 122,
@@ -45,7 +46,7 @@ const page2: EntityChildrenResponse = {
     {
       id: 'syn124',
       name: 'Child 2',
-      type: EntityType.FILE,
+      type: 'org.sagebionetworks.repo.model.FileEntity',
       versionNumber: 1,
       versionLabel: '1',
       benefactorId: 122,
@@ -65,10 +66,8 @@ describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
     SynapseClient.getEntityChildren.mockResolvedValueOnce(page1)
 
-    const accessToken = 'abcdef'
-
     const { result, waitFor } = renderHook(
-      () => useGetEntityChildren(accessToken, request),
+      () => useGetEntityChildren(request),
       { wrapper },
     )
 
@@ -76,7 +75,7 @@ describe('basic functionality', () => {
 
     expect(SynapseClient.getEntityChildren).toBeCalledWith(
       request,
-      accessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(result.current.data).toEqual(page1)
   })
@@ -86,10 +85,8 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
 
-    const accessToken = 'abcdef'
-
     const { result, waitFor } = renderHook(
-      () => useGetEntityChildrenInfinite(accessToken, request),
+      () => useGetEntityChildrenInfinite(request),
       { wrapper },
     )
 
@@ -97,7 +94,7 @@ describe('basic functionality', () => {
 
     expect(SynapseClient.getEntityChildren).toBeCalledWith(
       request,
-      accessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
@@ -112,7 +109,7 @@ describe('basic functionality', () => {
         ...request,
         nextPageToken: page1.nextPageToken,
       },
-      accessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(result.current.data?.pages[1]).toEqual(page2)
     expect(result.current.hasNextPage).toBe(false)

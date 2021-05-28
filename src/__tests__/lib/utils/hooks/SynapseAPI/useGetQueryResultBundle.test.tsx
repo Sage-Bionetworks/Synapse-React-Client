@@ -1,16 +1,17 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import useGetQueryResultBundle from '../../../../../lib/utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../../../lib/utils/synapseTypes'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../../mocks/MockSynapseContext'
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <QueryClientProvider client={new QueryClient()}>
-    {props.children}
-  </QueryClientProvider>
+  <SynapseTestContext>{props.children}</SynapseTestContext>
 )
 
 const request: QueryBundleRequest = {
@@ -39,10 +40,8 @@ SynapseClient.getQueryTableResults = jest.fn().mockResolvedValue(expected)
 
 describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {
-    const accessToken = 'abcdef'
-
     const { result, waitFor } = renderHook(
-      () => useGetQueryResultBundle(request, accessToken),
+      () => useGetQueryResultBundle(request),
       { wrapper },
     )
 
@@ -50,7 +49,7 @@ describe('basic functionality', () => {
 
     expect(SynapseClient.getQueryTableResults).toBeCalledWith(
       request,
-      accessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(result.current.data).toEqual(expected)
   })

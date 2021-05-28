@@ -9,10 +9,18 @@ import {
   writeHeaderOption,
   includeRowIdAndRowVersionOption,
 } from '../../../lib/containers/ModalDownload.FormSchema'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../mocks/MockSynapseContext'
 
-const createShallowComponent = (props: ModalDownloadProps) => {
-  const wrapper = mount<ModalDownload>(<ModalDownload {...props} />)
-  const instance = wrapper.instance()
+const renderComponent = (props: ModalDownloadProps) => {
+  const wrapper = mount<ModalDownload>(
+    <SynapseTestContext>
+      <ModalDownload {...props} />
+    </SynapseTestContext>,
+  )
+  const instance = wrapper.find(ModalDownload).instance()
   return { wrapper, instance }
 }
 
@@ -39,7 +47,7 @@ describe('it performs the expected functionality', () => {
   }
 
   it('renders without crashing', () => {
-    const { wrapper } = createShallowComponent(props)
+    const { wrapper } = renderComponent(props)
     expect(wrapper).toBeDefined()
   })
 
@@ -48,7 +56,7 @@ describe('it performs the expected functionality', () => {
    * https://github.com/facebook/react/issues/15691
    */
   it.skip('generates a csv file', async () => {
-    const { wrapper } = await createShallowComponent(props)
+    const { wrapper } = await renderComponent(props)
     expect(wrapper).toBeDefined()
     // step 1 - select csv option
     const csvInputElement = wrapper.find(`input[value="${csvOption}"]`)
@@ -62,12 +70,12 @@ describe('it performs the expected functionality', () => {
         writeHeader: true,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
   })
 
   it.skip('generates a tsv file without header', async () => {
-    const { wrapper } = await createShallowComponent(props)
+    const { wrapper } = await renderComponent(props)
     expect(wrapper).toBeDefined()
     // step 1 - select tsv option
     const csvInputElement = wrapper.find(`input[value="${tsvOption}"]`)
@@ -87,12 +95,12 @@ describe('it performs the expected functionality', () => {
         writeHeader: false,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
   })
 
   it('generates a csv file using direct method testing', async () => {
-    const { wrapper, instance } = await createShallowComponent(props)
+    const { wrapper, instance } = await renderComponent(props)
     expect(wrapper).toBeDefined()
     // simulates having clicked csvOption on radio box
     const formData = {
@@ -111,12 +119,12 @@ describe('it performs the expected functionality', () => {
         writeHeader: true,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
   })
 
   it('generates a tsv file without header using direct method testing', async () => {
-    const { wrapper, instance } = await createShallowComponent(props)
+    const { wrapper, instance } = await renderComponent(props)
     expect(wrapper).toBeDefined()
     // this simulates having clicked one checkbox option off and selecting tsv
     const formData = {
@@ -135,7 +143,7 @@ describe('it performs the expected functionality', () => {
         writeHeader: false,
         includeRowIdAndRowVersion: true,
       }),
-      undefined,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
   })
 })

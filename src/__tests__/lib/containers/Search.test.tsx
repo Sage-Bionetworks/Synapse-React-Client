@@ -9,6 +9,7 @@ import { GenericCardSchema } from '../../../lib/containers/GenericCard'
 import { CardConfiguration } from '../../../lib/containers/CardContainerLogic'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import { act } from '@testing-library/react'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const mockGetQueryTableResultsFn = jest.fn(() =>
@@ -39,31 +40,34 @@ const createMountedComponent = () => {
     genericCardSchema,
   }
   const wrapper = mount<QueryWrapper>(
-    <QueryWrapper
-      facetAliases={facetAliases}
-      initQueryRequest={{
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        entityId: '',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-          SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql: 'SELECT * FROM TABLE',
-          limit: 25,
-          offset: 0,
-        },
-      }}
-      showBarChart={false}
-      unitDescription={'studies'}
-    >
-      <Search searchable={searchable} />
-      <CardContainer {...commonCardProps} />
-    </QueryWrapper>,
+    <SynapseTestContext>
+      <QueryWrapper
+        facetAliases={facetAliases}
+        initQueryRequest={{
+          concreteType:
+            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          entityId: '',
+          partMask:
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+            SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+          query: {
+            sql: 'SELECT * FROM TABLE',
+            limit: 25,
+            offset: 0,
+          },
+        }}
+        showBarChart={false}
+        unitDescription={'studies'}
+      >
+        <Search searchable={searchable} />
+        <CardContainer {...commonCardProps} />
+      </QueryWrapper>
+    </SynapseTestContext>,
   )
-  const instance = wrapper.instance()
+  const instance = wrapper.find(QueryWrapper).instance()
   return { wrapper, instance }
 }
 

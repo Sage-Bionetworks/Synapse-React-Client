@@ -22,10 +22,15 @@ import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
 import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserCard from '../../../lib/containers/UserCard'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
-const createShallowComponent = (props: GenericCardProps) => {
-  const wrapper = mount(<GenericCard {...props} />)
-  const instance = wrapper.instance() as GenericCard
+const renderComponent = (props: GenericCardProps) => {
+  const wrapper = mount(
+    <SynapseTestContext>
+      <GenericCard {...props} />
+    </SynapseTestContext>,
+  )
+  const instance = wrapper.find(GenericCard).instance() as GenericCard
   return { wrapper, instance }
 }
 
@@ -106,7 +111,7 @@ describe('it renders the UI correctly', () => {
     data,
     iconOptions,
     schema,
-    genericCardSchema: genericCardSchemaHeader,    
+    genericCardSchema: genericCardSchemaHeader,
     isHeader: true,
     selectColumns: [],
     columnModels: [],
@@ -115,12 +120,12 @@ describe('it renders the UI correctly', () => {
   }
 
   it('renders without crashing in non header mode', () => {
-    const { wrapper } = createShallowComponent(propsForNonHeaderMode)
+    const { wrapper } = renderComponent(propsForNonHeaderMode)
     expect(wrapper).toBeDefined()
   })
 
   it('renders the correct UI in non header mode', () => {
-    const { wrapper } = createShallowComponent(propsForNonHeaderMode)
+    const { wrapper } = renderComponent(propsForNonHeaderMode)
     expect(wrapper.find('img')).toBeDefined()
     expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
     expect(wrapper.find('a.SRC-primary-text-color').text()).toEqual(data[0])
@@ -131,7 +136,7 @@ describe('it renders the UI correctly', () => {
   })
 
   it('renders as a Header without crashing', () => {
-    const { wrapper } = createShallowComponent(propsForHeaderMode)
+    const { wrapper } = renderComponent(propsForHeaderMode)
     expect(wrapper).toBeDefined()
     expect(wrapper.find('img').prop('src')).toEqual(iconOptions['AMP-AD'])
     expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
@@ -142,12 +147,11 @@ describe('it renders the UI correctly', () => {
   })
 
   it.skip('renders the query handles corretly', () => {
-    const { wrapper } = createShallowComponent(propsForHeaderMode)
+    const { wrapper } = renderComponent(propsForHeaderMode)
     expect(wrapper.find(`[data-search-handle]`).text()).toEqual(
       commonProps.title,
     )
   })
-
 
   describe('Renders UserCards when a UserId_List column is present', () => {
     const tableId = 'TABLE_ID_MOCK'
@@ -160,7 +164,7 @@ describe('it renders the UI correctly', () => {
     ]
     it('Renders a UserCard with an EntityView associate type', () => {
       const tableEntityConcreteType = 'EntityView'
-      const { wrapper } = createShallowComponent({
+      const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
@@ -174,7 +178,7 @@ describe('it renders the UI correctly', () => {
       expect(wrapper.find(UserCard)).toHaveLength(1)
       expect(wrapper.find(UserCard).props()).toEqual({
         ownerId: 12345,
-        size: "SMALL USER CARD"
+        size: 'SMALL USER CARD',
       })
     })
   })
@@ -192,7 +196,7 @@ describe('it renders the UI correctly', () => {
 
     it('Renders a FileHandleLink with an EntityView associate type', () => {
       const tableEntityConcreteType = 'EntityView'
-      const { wrapper } = createShallowComponent({
+      const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         tableEntityConcreteType,
         columnModels: columnModelWithFileHandleTitle,
@@ -213,7 +217,7 @@ describe('it renders the UI correctly', () => {
 
     it('Renders a FileHandleLink with a table associate type', () => {
       const tableEntityConcreteType = 'Table'
-      const { wrapper } = createShallowComponent({
+      const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         tableEntityConcreteType,
         columnModels: columnModelWithFileHandleTitle,
@@ -245,7 +249,7 @@ describe('it renders the UI correctly', () => {
     ]
     it('Renders a ImageFileHandle with an EntityView associate type', () => {
       const tableEntityConcreteType = 'EntityView'
-      const { wrapper } = createShallowComponent({
+      const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
@@ -267,7 +271,7 @@ describe('it renders the UI correctly', () => {
     })
     it('Renders a ImageFileHandle with a table associate type', () => {
       const tableEntityConcreteType = 'Table'
-      const { wrapper } = createShallowComponent({
+      const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
@@ -289,73 +293,76 @@ describe('it renders the UI correctly', () => {
     })
   })
 
+  describe('it makes the correct URL for the title', () => {
+    const { instance } = renderComponent(propsForHeaderMode)
+    const SELF = '_self'
+    const BLANK = '_blank'
 
-describe('it makes the correct URL for the title', () => {
-  const { instance } = createShallowComponent(propsForHeaderMode)
-  const SELF = '_self'
-  const BLANK = '_blank'
+    it('creates a link to synapse', () => {
+      const synId = 'syn12345678'
+      const synLink = `https://www.synapse.org/#!Synapse:${synId}`
+      const { href, target } = instance.getLinkParams(
+        synId,
+        undefined,
+        undefined,
+        undefined,
+      )
+      expect(href).toEqual(synLink)
+      expect(target).toEqual(SELF)
+    })
 
-  it('creates a link to synapse', () => {
-    const synId = 'syn12345678'
-    const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-    const { href, target } = instance.getLinkParams(
-      synId,
-      undefined,
-      undefined,
-      undefined,
-    )
-    expect(href).toEqual(synLink)
-    expect(target).toEqual(SELF)
-  })
+    it('creates a DOI link ', () => {
+      const doi = '10.1093/neuonc/noy046'
+      const doiLink = `https://dx.doi.org/${doi}`
+      const { href, target } = instance.getLinkParams(
+        doi,
+        undefined,
+        undefined,
+        undefined,
+      )
+      expect(href).toEqual(doiLink)
+      expect(target).toEqual(BLANK)
+    })
 
-  it('creates a DOI link ', () => {
-    const doi = '10.1093/neuonc/noy046'
-    const doiLink = `https://dx.doi.org/${doi}`
-    const { href, target } = instance.getLinkParams(
-      doi,
-      undefined,
-      undefined,
-      undefined,
-    )
-    expect(href).toEqual(doiLink)
-    expect(target).toEqual(BLANK)
-  })
+    it('creates a DOI link PORTALS-1801', () => {
+      const doi = '10.1007/s00401-020-02230-x '
+      const doiLink = `https://dx.doi.org/${doi.trim()}`
+      const { href, target } = instance.getLinkParams(
+        doi,
+        undefined,
+        undefined,
+        undefined,
+      )
+      expect(href).toEqual(doiLink)
+      expect(target).toEqual(BLANK)
+    })
 
-  it('creates a DOI link PORTALS-1801', () => {
-    const doi = '10.1007/s00401-020-02230-x '
-    const doiLink = `https://dx.doi.org/${doi.trim()}`
-    const { href, target } = instance.getLinkParams(
-      doi,
-      undefined,
-      undefined,
-      undefined,
-    )
-    expect(href).toEqual(doiLink)
-    expect(target).toEqual(BLANK)
-  })
-
-  it('creates an internal parameterized link', () => {
-    const value = '1234'
-    const data = [value]
-    const URLColumnName = 'Grant Number'
-    const matchColumnName = 'Funder'
-    const schema = {
-      [matchColumnName]: 0,
-    }
-    const titleLinkConfig: CardLink = {
-      isMarkdown: false,
-      baseURL: 'Explore/Projects',
-      matchColumnName,
-      URLColumnName,
-    }
-    const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-    const { href, target } = instance.getLinkParams('', titleLinkConfig, data, schema)
-    expect(href).toEqual(expectedLink)
-    expect(target).toEqual(SELF)
+    it('creates an internal parameterized link', () => {
+      const value = '1234'
+      const data = [value]
+      const URLColumnName = 'Grant Number'
+      const matchColumnName = 'Funder'
+      const schema = {
+        [matchColumnName]: 0,
+      }
+      const titleLinkConfig: CardLink = {
+        isMarkdown: false,
+        baseURL: 'Explore/Projects',
+        matchColumnName,
+        URLColumnName,
+      }
+      const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
+      const { href, target } = instance.getLinkParams(
+        '',
+        titleLinkConfig,
+        data,
+        schema,
+      )
+      expect(href).toEqual(expectedLink)
+      expect(target).toEqual(SELF)
+    })
   })
 })
-})
-
 
 describe('it makes the correct URL for the secondary labels', () => {
   const renderLabel = GenericCardPackage.renderLabel
@@ -395,7 +402,7 @@ describe('it makes the correct URL for the secondary labels', () => {
         })}
       </>,
     )
-    
+
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(`/${datasetBaseURL}?${DATASETS}=${value}`)
@@ -553,10 +560,11 @@ describe('it makes the correct URL for the secondary labels', () => {
     )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
-    expect(link.props().href).toEqual(`https://www.synapse.org/#!Synapse:${value}`)    
+    expect(link.props().href).toEqual(
+      `https://www.synapse.org/#!Synapse:${value}`,
+    )
   })
 })
-
 
 describe('It renders markdown for the description', () => {
   const renderShortDescription = GenericCard.prototype.renderShortDescription

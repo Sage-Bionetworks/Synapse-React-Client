@@ -10,12 +10,23 @@ import {
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
+
+/**
+ * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
+ * 
+ * This wasn't done because Enzyme's shallow renderer is not currently
+ * compatible with the `contextType` field in the React 16+ context API.
+ * 
+ * This can be fixed by rewriting tests to not rely on the shallow renderer.
+ * 
+ * See here: https://github.com/enzymejs/enzyme/issues/1553
+ */
+
 // TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
 // will have to find a way to use individual lodash packages instead of the entire thing
 import { cloneDeep, isEqual } from 'lodash-es'
 import { IconSvgOptions } from './IconSvg'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
-import { SynapseContext } from '../utils/SynapseContext'
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -51,8 +62,8 @@ export type LabelLinkConfig = (MarkdownLink | CardLink)[]
 
 export type ColumnIconConfigs = {
   columns: {
-    [index: string]: {
-      [index: string]: IconSvgOptions
+    [index:string]: {
+      [index:string]: IconSvgOptions
     }
   }
 }
@@ -74,13 +85,14 @@ export type CardConfiguration = {
 } & CommonCardProps
 
 export type CardContainerLogicProps = {
+  token?: string
   limit?: number
   title?: string
   unitDescription?: string
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
-  facetAliases?: {}
+  facetAliases?: {}  
   rgbIndex?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
@@ -115,8 +127,6 @@ export default class CardContainerLogic extends React.Component<
     hasMoreData: true,
   }
 
-  static contextType = SynapseContext
-
   constructor(props: CardContainerLogicProps) {
     super(props)
     this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
@@ -149,8 +159,9 @@ export default class CardContainerLogic extends React.Component<
       prevSearchParams,
       currentSearchParams,
     )
+    const hasTokenChanged = this.props.token !== prevProps.token
     const hasSqlChanged = this.props.sql !== prevProps.sql
-    if (hasSqlChanged || hasSearchParamsChanged) {
+    if (hasTokenChanged || hasSqlChanged || hasSearchParamsChanged) {
       this.executeInitialQueryRequest()
     }
   }
@@ -181,7 +192,7 @@ export default class CardContainerLogic extends React.Component<
     await getNextPageOfData(
       queryRequest,
       this.state.data!,
-      this.context.accessToken,
+      this.props.token,
     ).then(newState => {
       this.setState({
         ...newState,
@@ -230,17 +241,16 @@ export default class CardContainerLogic extends React.Component<
       },
     }
 
-    SynapseClient.getQueryTableResults(
-      initQueryRequest,
-      this.context.accessToken,
-    )
+    SynapseClient.getQueryTableResults(initQueryRequest, this.props.token)
       .then((data: QueryResultBundle) => {
         const queryRequestWithoutCount = cloneDeep(initQueryRequest)
         queryRequestWithoutCount.partMask =
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-        const hasMoreData = data.queryResult.queryResults.rows.length === limit
+        const hasMoreData =
+          data.queryResult.queryResults.rows.length ===
+          limit
         const newState = {
           hasMoreData,
           data,
@@ -260,7 +270,7 @@ export default class CardContainerLogic extends React.Component<
    */
   public render() {
     // only forward the necessary props
-    const { sql, searchParams, ...rest } = this.props
+    const { sql, searchParams, token, ...rest } = this.props
     return (
       <CardContainer
         {...rest}

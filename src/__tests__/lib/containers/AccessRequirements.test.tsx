@@ -24,6 +24,7 @@ import SelfSignAccessRequirementComponent from '../../../lib/containers/access_r
 import TermsOfUseAccessRequirementComponent from '../../../lib/containers/access_requirement_list/TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponent from '../../../lib/containers/access_requirement_list/ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from '../../../lib/containers/access_requirement_list/ACTAccessRequirement'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 describe('Access Requirement List works as expect', () => {
   let container: HTMLElement
@@ -31,8 +32,16 @@ describe('Access Requirement List works as expect', () => {
 
   async function init(props: AccessRequirementListProps) {
     await act(async () => {
-      wrapper = await mount(<AccessRequirementList {...props} />)
-      container = await render(<AccessRequirementList {...props} />)
+      wrapper = await mount(
+        <SynapseTestContext>
+          <AccessRequirementList {...props} />
+        </SynapseTestContext>,
+      )
+      container = await render(
+        <SynapseTestContext>
+          <AccessRequirementList {...props} />
+        </SynapseTestContext>,
+      )
     })
   }
 
@@ -92,8 +101,7 @@ describe('Access Requirement List works as expect', () => {
   ]
 
   const props = {
-    entityID: '_',
-    token: '_',
+    entityId: '_',
     accessRequirementFromProps: accessRequirements,
     onHide: jest.fn(),
   }

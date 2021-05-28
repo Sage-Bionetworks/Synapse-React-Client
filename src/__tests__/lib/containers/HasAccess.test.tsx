@@ -5,7 +5,7 @@ import {
   faLock,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import {
   FileHandle,
   RestrictableObjectType,
@@ -26,9 +26,13 @@ import {
 import { mockFileHandle } from '../../../mocks/mock_file_handle'
 import { mockFolderEntity } from '../../../mocks/mock_folder_entity'
 import { mockFileEntity } from '../../../mocks/mock_file_entity'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../mocks/MockSynapseContext'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
-const token: string = '123444'
 const entityId = 'syn9988882982'
 const isInDownloadList: boolean = true
 const externalFileHandle: FileHandle = {
@@ -56,19 +60,17 @@ const tooLargeFileHandle: FileHandle = {
   contentSize: GIGABYTE_SIZE,
 }
 
-const createShallowComponent = async (
-  props: HasAccessProps,
-  disableLifecycleMethods: boolean = false,
-) => {
-  const wrapper = await shallow<HasAccess>(<HasAccess {...props} />, {
-    disableLifecycleMethods,
-  })
+const renderComponent = (props: HasAccessProps) => {
+  const wrapper = mount<HasAccess>(
+    <SynapseTestContext>
+      <HasAccess {...props} />
+    </SynapseTestContext>,
+  )
 
-  const instance = wrapper.instance()
+  const instance = wrapper.find(HasAccess).instance()
   return { wrapper, instance }
 }
 const props: HasAccessProps = {
-  token,
   entityId,
   isInDownloadList,
 }
@@ -80,14 +82,14 @@ describe('basic tests', () => {
 
   it('works with open data no restrictions', async () => {
     SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-    SynapseClient.getFileResult = jest.fn(() =>
-      Promise.resolve(mockFileHandle),
-    )
+    SynapseClient.getFileResult = jest.fn(() => Promise.resolve(mockFileHandle))
 
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
     )
-    const { wrapper, instance } = await createShallowComponent(props)
+    const { wrapper, instance } = renderComponent(props)
+    await resolveAllPending(wrapper)
+
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: entityId,
@@ -96,7 +98,7 @@ describe('basic tests', () => {
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledTimes(1)
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(instance.state.restrictionInformation).toEqual(
       mockOpenRestrictionInformation,
@@ -105,8 +107,10 @@ describe('basic tests', () => {
     expect(SynapseClient.getFileResult).toHaveBeenCalledTimes(1)
     // verify UI
     instance.setState({
-      fileHandleDownloadType: FileHandleDownloadTypeEnum.Accessible
+      fileHandleDownloadType: FileHandleDownloadTypeEnum.Accessible,
     })
+
+    await resolveAllPending(wrapper)
 
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
@@ -122,7 +126,9 @@ describe('basic tests', () => {
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
     )
-    const { wrapper } = await createShallowComponent(props)
+    const { wrapper } = renderComponent(props)
+    await resolveAllPending(wrapper)
+
     const icons = wrapper.find(FontAwesomeIcon)
     expect(icons).toHaveLength(2)
     expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
@@ -131,7 +137,7 @@ describe('basic tests', () => {
   })
 
   it('works when an ExternalFileHandle is passed in - not in download list', async () => {
-    const { wrapper } = await createShallowComponent({
+    const { wrapper } = renderComponent({
       ...props,
       isInDownloadList: false,
       fileHandle: externalFileHandle,
@@ -144,7 +150,7 @@ describe('basic tests', () => {
   })
 
   it('works when an ExternalFileHandle is passed in - in Download List', async () => {
-    const { wrapper } = await createShallowComponent({
+    const { wrapper } = renderComponent({
       ...props,
       fileHandle: externalFileHandle,
     })
@@ -167,7 +173,8 @@ describe('basic tests', () => {
       etag: '',
       createdBy: '',
       createdOn: '',
-      concreteType: CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle,
+      concreteType:
+        CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle,
       contentType: '',
       contentMd5: '',
       fileName: '',
@@ -179,7 +186,7 @@ describe('basic tests', () => {
       Promise.resolve(cloudFileHandle),
     )
 
-    const { wrapper } = await createShallowComponent({
+    const { wrapper } = renderComponent({
       ...props,
       fileHandle: cloudFileHandle,
     })
@@ -197,7 +204,7 @@ describe('basic tests', () => {
   })
 
   it('works when the file is too large in Download List', async () => {
-    const { wrapper } = await createShallowComponent({
+    const { wrapper } = renderComponent({
       ...props,
       fileHandle: tooLargeFileHandle,
     })
@@ -215,7 +222,7 @@ describe('basic tests', () => {
   })
 
   it('works when the file is too large for Download List, but HasAccess is not in the Download List', async () => {
-    const { wrapper } = await createShallowComponent({
+    const { wrapper } = renderComponent({
       ...props,
       isInDownloadList: false,
       fileHandle: tooLargeFileHandle,
@@ -240,7 +247,7 @@ describe('basic tests', () => {
       storageLocationId: 0,
       contentSize: 0,
     }
-    const { wrapper } = await createShallowComponent({
+    const { wrapper } = renderComponent({
       ...props,
       fileHandle: IsOpenNoUnmetAccessRestrictions,
     })
@@ -255,16 +262,18 @@ describe('basic tests', () => {
       Promise.resolve(mockUnmetControlledDataRestrictionInformationACT),
     )
 
-    const { wrapper } = await createShallowComponent(props)
+    const { wrapper, instance } = renderComponent(props)
+    await resolveAllPending(wrapper)
+
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: entityId,
     }
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
-    expect(wrapper.instance().state.restrictionInformation).toEqual(
+    expect(instance.state.restrictionInformation).toEqual(
       mockUnmetControlledDataRestrictionInformationACT,
     )
 
@@ -286,16 +295,18 @@ describe('basic tests', () => {
     SynapseClient.getRestrictionInformation = jest.fn(() =>
       Promise.resolve(mockOpenRestrictionInformation),
     )
-    const { wrapper } = await createShallowComponent(props)
+    const { wrapper, instance } = renderComponent(props)
+    await resolveAllPending(wrapper)
+
     const request: RestrictionInformationRequest = {
       restrictableObjectType: RestrictableObjectType.ENTITY,
       objectId: entityId,
     }
     expect(SynapseClient.getRestrictionInformation).toHaveBeenCalledWith(
       request,
-      token,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
-    expect(wrapper.instance().state.restrictionInformation).toEqual(
+    expect(instance.state.restrictionInformation).toEqual(
       mockOpenRestrictionInformation,
     )
 

@@ -21,6 +21,7 @@ import { act } from 'react-dom/test-utils'
 import { Avatar, AvatarProps } from '../../../lib/containers/Avatar'
 import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
   return {
@@ -45,8 +46,12 @@ const createLargeComponent = (props: UserCardMediumProps) => {
 }
 
 const createMediumComponent = (props: UserCardMediumProps) => {
-  const wrapper = shallow<UserCardMedium>(<UserCardMedium {...props} />)
-  const instance = wrapper.instance()
+  const wrapper = mount<UserCardMedium>(
+    <SynapseTestContext>
+      <UserCardMedium {...props} />
+    </SynapseTestContext>,
+  )
+  const instance = wrapper.find(UserCardMedium).instance()
   return { wrapper, instance }
 }
 
@@ -64,8 +69,12 @@ const createAvatarComponent = (props: AvatarProps) => {
 
 // need mount because of the deep render of the children
 const createMountedComponent = (props: UserCardProps) => {
-  const wrapper = mount(<UserCard {...props} />)
-  const instance = wrapper.instance()
+  const wrapper = mount(
+    <SynapseTestContext>
+      <UserCard {...props} />
+    </SynapseTestContext>,
+  )
+  const instance = wrapper.find(UserCard).instance()
   return { wrapper, instance }
 }
 
@@ -152,7 +161,11 @@ describe('it creates the correct UI for the small card', () => {
   })
 
   it('shows a medium user card when mouse enters', async () => {
-    render(<UserCard {...props} />)
+    render(
+      <SynapseTestContext>
+        <UserCard {...props} />
+      </SynapseTestContext>,
+    )
     expect(screen.getByText(`@${props.userProfile.userName}`)).not.toBeNull()
 
     // There is no medium user card, so we shouldn't be able to find the full name anywhere
@@ -243,8 +256,10 @@ describe('it creates the correct UI for the medium card', () => {
         callback: () => {},
       },
     ] as MenuAction[]
-    const { wrapper } = createMediumComponent({ ...props, menuActions })
-    const instance = wrapper.instance() as UserCardMedium
+    const { wrapper, instance } = createMediumComponent({
+      ...props,
+      menuActions,
+    })
     const _event = {} as any
     instance.toggleContextMenu(_event)
     expect(wrapper.render().find('div.dropdown')).toHaveLength(1)

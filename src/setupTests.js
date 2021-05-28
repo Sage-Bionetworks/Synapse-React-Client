@@ -34,5 +34,3 @@ jest.setTimeout(30000)
 window.URL.createObjectURL = function () {}
 // TODO: Mock synapse api calls possibly, instead of individually
 // in each test file
-
-// jest.mock('./lib/utils/SynapseContext', () => require('./mocks/SynapseContext'))

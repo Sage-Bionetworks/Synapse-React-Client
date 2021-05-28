@@ -8,8 +8,6 @@ import {
   formListDataSubmitted,
   formListDataInProgress,
 } from '../../../../mocks/mock_drug_tool_data'
-import { MOCK_CONTEXT } from '../../../../mocks/MockSynapseContext'
-
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
 const token: string = '123444'
@@ -23,7 +21,6 @@ const createShallowComponent = async (
   disableLifecycleMethods: boolean = false,
 ) => {
   const wrapper = await shallow<UserFileGrid>(<UserFileGrid {...props} />, {
-    context: MOCK_CONTEXT,
     disableLifecycleMethods,
   })
 
@@ -33,6 +30,7 @@ const createShallowComponent = async (
 
 describe('basic tests', () => {
   const props: SynapseFormSubmissionGridProps = {
+    token,
     pathpart,
     formGroupId,
     itemNoun,

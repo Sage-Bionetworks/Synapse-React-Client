@@ -16,9 +16,20 @@ import Modal from 'react-bootstrap/Modal'
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
-import { SynapseContext } from '../../utils/SynapseContext'
+
+/**
+ * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
+ *
+ * This wasn't done because Enzyme's shallow renderer is not currently
+ * compatible with the `contextType` field in the React 16+ context API.
+ *
+ * This can be fixed by rewriting tests to not rely on the shallow renderer.
+ *
+ * See here: https://github.com/enzymejs/enzyme/issues/1553
+ */
 
 export type SynapseFormSubmissionGridProps = {
+  token?: string
   formGroupId: string
   pathpart: string
   formClass?: string
@@ -74,8 +85,6 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     ],
   }
 
-  static contextType = SynapseContext
-
   constructor(props: SynapseFormSubmissionGridProps) {
     super(props)
     this.state = {
@@ -91,7 +100,14 @@ export default class SynapseFormSubmissionGrid extends React.Component<
   }
 
   async componentDidMount() {
-    await this.refresh(this.context.accessToken)
+    await this.refresh(this.props.token)
+  }
+
+  async componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
+    const shouldUpdate = this.props.token !== prevProps.token
+    if (shouldUpdate) {
+      await this.refresh(this.props.token)
+    }
   }
 
   async refresh(token?: string) {
@@ -109,7 +125,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     this.setState({
       isLoading: true,
     })
-    const token = this.context.accessToken
+    const token = this.props.token
     const groupId = this.props.formGroupId
     try {
       const cleanUpName = (item: FormData): FormData => {
@@ -339,7 +355,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                           aria-label="delete"
                           onClick={() =>
                             this.setModalConfirmationState(
-                              this.context.accessToken!,
+                              this.props.token!,
                               dataFileRecord.formDataId!,
                             )
                           }
@@ -433,8 +449,8 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     return (
       <div className={`theme-${this.props.formClass}`}>
         <div className="SRC-ReactJsonForm">
-          {this.renderLoading(this.context.accessToken, this.state.isLoading)}
-          {this.renderUnauthenticatedView(this.context.accessToken)}
+          {this.renderLoading(this.props.token, this.state.isLoading)}
+          {this.renderUnauthenticatedView(this.props.token)}
 
           {!this.state.isLoading && (
             <div className="file-grid ">

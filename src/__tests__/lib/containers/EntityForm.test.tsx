@@ -4,9 +4,14 @@ import EntityForm, { EntityFormProps } from '../../../lib/containers/EntityForm'
 import { mockUserProfileData } from '../../../mocks/mock_user_profile'
 import { mockFileEntity } from '../../../mocks/mock_file_entity'
 import reactJsonschemaForm from 'react-jsonschema-form'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const createShallowComponent = (props: EntityFormProps) => {
-  const wrapper = mount(<EntityForm {...props} />)
+  const wrapper = mount(
+    <SynapseTestContext>
+      <EntityForm {...props} />
+    </SynapseTestContext>,
+  )
   const instance = wrapper.instance() as EntityForm
   return { wrapper, instance }
 }
@@ -22,7 +27,6 @@ describe('it basic tests', () => {
     Promise.resolve({ id: targetFolderId }),
   )
   SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
-  const token: string = '123444'
   const parentContainerId: string = 'syn20355732'
   const formSchemaEntityId: string = 'syn20184776'
   const formUiSchemaEntityId: string = 'syn20184771'
@@ -30,7 +34,6 @@ describe('it basic tests', () => {
   const synIdCallback = jest.fn()
   const props: EntityFormProps = {
     parentContainerId,
-    token,
     formSchemaEntityId,
     formUiSchemaEntityId,
     initFormData,
