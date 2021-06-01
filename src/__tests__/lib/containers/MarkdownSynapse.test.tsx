@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { mount, shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
 } from '../../../lib/containers/MarkdownSynapse'
@@ -8,14 +8,10 @@ import SynapseImage from '../../../lib/containers/widgets/SynapseImage'
 import SynapseVideo from '../../../lib/containers/widgets/SynapseVideo'
 import { delay } from '../../../lib/utils/SynapseClient'
 import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
-import {
-  MOCK_CONTEXT,
-  SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 import {
   SynapseContextProvider,
   SynapseContextType,
-  withSynapseContextConsumer,
 } from '../../../lib/utils/SynapseContext'
 import { render, screen } from '@testing-library/react'
 

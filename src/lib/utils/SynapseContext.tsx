@@ -55,26 +55,3 @@ export function useSynapseContext(): SynapseContextType {
   }
   return context
 }
-
-/**
- * This lets us wrap a class component that accepts a synapseContext prop
- * 
- * We need this because we have class components that have tests that rely on the Enzyme shallow
- * renderer, which is not currently compatible with the contextType API. 
- *
- * @see SWC-5612
- */
-export const withSynapseContextConsumer = <
-  P extends { synapseContext: SynapseContextType }
->(
-  Component: React.ComponentType<P>,
-): React.FC<P> =>
-  function _(props: P) {
-    return (
-      <SynapseContextConsumer>
-        {synapseContext => (
-          <Component {...(props as P)} synapseContext={synapseContext} />
-        )}
-      </SynapseContextConsumer>
-    )
-  }
