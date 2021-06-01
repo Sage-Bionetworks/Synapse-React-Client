@@ -134,9 +134,24 @@ Note there are a number of CDNs required to finish this functionality-
 
 ## Usage
 
-Virtually all components require a SynapseContext (exported....)
+See [`index.ts`](./src/index.tsx) for a comprehensive list of components that can be used.
+
+To function properly, all components must be wrapped in a [SynapseContextProvider](./src/lib/utils/SynapseContext.tsx). To make authenticated requests, you must provide the user's access token as a property to the context provider, among other values. You may maintain this in state, or provide it however you like.
+
+The context provider also maintains a shared cache (via `react-query`). It is recommended to place the provider at the highest possible point in your component tree, and to use the same provider across components if possible.
 
 Example: 
+
+```tsx
+const myToken = "example-token" // this value may also be undefined, if a user is not signed in
+const useUtcTime = true
+const inExperimentalMode = false
+
+<SynapseContextProvider synapseContext={{ accessToken: myToken, isInExperimentalMode: inExperimentalMode, utcTime: useUtcTime }} >
+  <EntityFinder {...entityFinderProps} />
+</SynapseContextProvider>
+
+```
 
 ## Setting Endpoints
 
