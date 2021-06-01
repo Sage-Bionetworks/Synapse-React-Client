@@ -92,11 +92,9 @@ describe('test Evaluation Card', () => {
       })
     })
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
     expect(wrapper.find(ErrorBanner).text()).toBe(
       "OOPS! It's a error getting EvaluationPermission",
@@ -104,11 +102,9 @@ describe('test Evaluation Card', () => {
   })
 
   test('test all retrieve calls happy case', () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.contains(<h4>E V A L U A T I O N (1234)</h4>)).toBe(true)
@@ -123,11 +119,9 @@ describe('test Evaluation Card', () => {
   test('test submit button not shown when user does not have permission', () => {
     permissions.canSubmit = false
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('Button.submit-button').exists()).toBe(false)
   })
@@ -137,11 +131,9 @@ describe('test Evaluation Card', () => {
     permissions.canChangePermissions = false
     permissions.canDelete = false
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('Dropdown').exists()).toBe(false)
   })
@@ -149,11 +141,9 @@ describe('test Evaluation Card', () => {
   test('no permissions for edit dropdown option - hide option', () => {
     permissions.canEdit = false
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('Dropdown').exists()).toBe(true)
     // simulate a click
@@ -185,11 +175,9 @@ describe('test Evaluation Card', () => {
   test('no permissions for modify access dropdown option - hide option', () => {
     permissions.canChangePermissions = false
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('Dropdown').exists()).toBe(true)
     // simulate a click
@@ -224,11 +212,9 @@ describe('test Evaluation Card', () => {
   test('no permissions for delete dropdown option - hide option', () => {
     permissions.canDelete = false
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('Dropdown').exists()).toBe(true)
     // simulate a click
@@ -253,11 +239,9 @@ describe('test Evaluation Card', () => {
   })
 
   test('permissions for all dropdown options', () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('Dropdown').exists()).toBe(true)
     // simulate a click
@@ -301,11 +285,9 @@ describe('test Evaluation Card', () => {
       })
     })
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationCard {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationCard {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('Dropdown').exists()).toBe(true)
     // simulate a click

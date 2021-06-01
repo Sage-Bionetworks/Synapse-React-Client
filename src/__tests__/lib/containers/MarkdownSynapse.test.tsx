@@ -39,15 +39,16 @@ jest.mock('../../../lib/containers/widgets/SynapseImage', () => {
 
 // shallow doesn't await all nested promises resolve inside component...
 
-const createShallowComponent = async (props: MarkdownSynapseProps) => {
+const createMountedComponent = async (props: MarkdownSynapseProps) => {
   const wrapper = mount<MarkdownSynapse>(
-    <SynapseTestContext>
-      <MarkdownSynapse
-        ownerId="mock_owner_id"
-        wikiId="mock_wiki_id"
-        {...props}
-      />
-    </SynapseTestContext>,
+    <MarkdownSynapse
+      ownerId="mock_owner_id"
+      wikiId="mock_wiki_id"
+      {...props}
+    />,
+    {
+      wrappingComponent: SynapseTestContext,
+    },
   )
   await delay(_TIME_DELAY)
   const instance = wrapper.instance()
@@ -96,7 +97,7 @@ describe('it performs all functionality', () => {
     it('renders without crashing', async () => {
       const markdownPlaceholder = 'loremipsum....'
       const props = { markdown: markdownPlaceholder }
-      const { wrapper } = await createShallowComponent(props)
+      const { wrapper } = await createMountedComponent(props)
       expect(wrapper).toBeDefined()
     })
 
@@ -288,7 +289,7 @@ describe('it performs all functionality', () => {
       SynapseClient.getEntityWiki = jest.fn(() =>
         Promise.resolve({ markdown: '${reference?params}' }),
       )
-      const { wrapper } = await createShallowComponent({})
+      const { wrapper } = await createMountedComponent({})
       // its unclear why its necessary to use .render() here, see https://github.com/airbnb/enzyme/issues/1233#issuecomment-406605838
       // the only alternative is to perform equality on .html() which is undesirable
       expect(wrapper.render().find('a#ref1')).toHaveLength(1)
@@ -314,7 +315,7 @@ describe('it performs all functionality', () => {
 
   describe('it renders markdown correctly ', () => {
     it('works with header and a link ', async () => {
-      const { wrapper } = await createShallowComponent({
+      const { wrapper } = await createMountedComponent({
         markdown: '# header [text](https://synapse.org)',
       })
       const expectedValue = `<div class="markdown"><span><h1 id="SRC-header-1" toc="true"> header  <a href="https://synapse.org" target="_blank"> text </a></h1> 
@@ -322,14 +323,14 @@ describe('it performs all functionality', () => {
       expect(wrapper.html()).toEqual(expectedValue)
     })
     it('works with a br statement and loose text', async () => {
-      const { wrapper } = await createShallowComponent({
+      const { wrapper } = await createMountedComponent({
         markdown: 'some more free \n# header\nloose text',
       })
       const expectedValue = `<div class="markdown"><span><p> some more free </p> \n <h1 id="SRC-header-1" toc="true"> header </h1> \n <p> loose text </p> \n </span></div>`
       expect(wrapper.html()).toEqual(expectedValue)
     })
     it('works with two inline widgets', async () => {
-      const { wrapper } = await createShallowComponent({
+      const { wrapper } = await createMountedComponent({
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })

@@ -85,11 +85,9 @@ describe('test EvaluationEditor', () => {
   })
 
   test('retrieve evaluation from API if evaluationId is provided', () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('h4').text()).toBe('Edit Evaluation Queue')
     expect(mockGetEvaluation).toBeCalledWith(
@@ -101,11 +99,9 @@ describe('test EvaluationEditor', () => {
 
   test('do not retrieve evaluation from API if id is not provided', () => {
     props = { ...props, entityId, evaluationId: undefined }
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('h4').text()).toBe('Create Evaluation Queue')
     expect(mockGetEvaluation).not.toBeCalled()
@@ -120,11 +116,9 @@ describe('test EvaluationEditor', () => {
         ),
     )
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(mockGetEvaluation).toBeCalledWith(
       evaluationId,
@@ -139,22 +133,18 @@ describe('test EvaluationEditor', () => {
     jest.spyOn(console, 'error')
 
     expect(() =>
-      mount(
-        <SynapseTestContext>
-          <EvaluationEditor {...props} />
-        </SynapseTestContext>,
-      ),
+      mount(<EvaluationEditor {...props} />, {
+        wrappingComponent: SynapseTestContext,
+      }),
     ).toThrow(Error)
   })
 
   test('save button clicked when using entityId creates new evaluation', () => {
     props = { ...props, entityId, evaluationId: undefined }
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     const nameInputBox = wrapper.find(Form.Control).at(0)
     expect(nameInputBox.prop('value')).toBe('')
@@ -189,11 +179,9 @@ describe('test EvaluationEditor', () => {
   })
 
   test('save button clicked when using evaluationId updates evaluation', () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
@@ -215,11 +203,9 @@ describe('test EvaluationEditor', () => {
         ),
     )
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
@@ -236,11 +222,9 @@ describe('test EvaluationEditor', () => {
   test('dropdown menu evaluation has no id - hide delete option', () => {
     props = { ...props, entityId, evaluationId: undefined }
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     wrapper.find('DropdownToggle').simulate('click')
 
@@ -258,11 +242,9 @@ describe('test EvaluationEditor', () => {
   })
 
   test('dropdown menu evaluation has id - delete successful', () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     wrapper.find('DropdownToggle').simulate('click')
 
@@ -299,11 +281,9 @@ describe('test EvaluationEditor', () => {
         ),
     )
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     wrapper.find('DropdownToggle').simulate('click')
 

@@ -48,28 +48,30 @@ describe('ManagedACTAccessRequirement: basic functionality', () => {
 
   it('render component without crashing', async () => {
     const wrapper = mount(
-      <SynapseTestContext>
-        <ManagedACTAccessRequirementComponent
-          user={undefined}
-          entityId={'1'}
-          accessRequirement={mockAccessRequirement}
-          accessRequirementStatus={mockAccessRequirementStatus}
-        />
-      </SynapseTestContext>,
+      <ManagedACTAccessRequirementComponent
+        user={undefined}
+        entityId={'1'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     expect(wrapper).toBeDefined()
   })
 
   it('should load RequestDataAccess component', async () => {
     const wrapper = mount(
-      <SynapseTestContext>
-        <ManagedACTAccessRequirementComponent
-          user={undefined}
-          entityId={'1'}
-          accessRequirement={mockAccessRequirement}
-          accessRequirementStatus={mockAccessRequirementStatus}
-        />
-      </SynapseTestContext>,
+      <ManagedACTAccessRequirementComponent
+        user={undefined}
+        entityId={'1'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     expect(wrapper.find(RequestDataAccess)).toHaveLength(1)
   })

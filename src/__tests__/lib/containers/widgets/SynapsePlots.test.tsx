@@ -7,13 +7,14 @@ import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 describe('renders without crashing', () => {
   it('renders', async () => {
     const tree = await mount(
-      <SynapseTestContext>
-        <MarkdownSynapse
-          markdown={
-            '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}'
-          }
-        />
-      </SynapseTestContext>,
+      <MarkdownSynapse
+        markdown={
+          '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}'
+        }
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     expect(tree.find(SynapsePlot)).toBeDefined()
   })

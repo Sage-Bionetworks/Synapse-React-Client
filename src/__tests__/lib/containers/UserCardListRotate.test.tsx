@@ -9,12 +9,10 @@ import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const createShallowComponent = async (props: UserCardListRotateProps) => {
-  const wrapper = await mount(
-    <SynapseTestContext>
-      <UserCardListRotate {...props} />
-    </SynapseTestContext>,
-  )
-  const instance = wrapper.find(UserCardListRotate).instance()
+  const wrapper = await mount(<UserCardListRotate {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 

@@ -13,11 +13,9 @@ import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 
 const mountComponent = (props: CardContainerProps) => {
-  const wrapper = mount(
-    <SynapseTestContext>
-      <CardContainer {...props} />
-    </SynapseTestContext>,
-  )
+  const wrapper = mount(<CardContainer {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
   const instance = wrapper.instance()
   return { wrapper, instance }
 }

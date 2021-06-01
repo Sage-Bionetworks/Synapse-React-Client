@@ -110,11 +110,9 @@ describe('test EvaluationRoundEditor', () => {
     ]
 
     // this requires interaction from a child component so we must use mount() to render it
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationRoundEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //enable rendering of the advanced limits list
     wrapper.find('button.advanced-limits-link').simulate('click')
@@ -315,11 +313,9 @@ describe('test EvaluationRoundEditor', () => {
     delete props.evaluationRoundInput.id
     delete props.evaluationRoundInput.etag
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationRoundEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     simulateDeleteClick(wrapper)
 
     expect(mockOnDelete).toBeCalledWith()
@@ -332,11 +328,9 @@ describe('test EvaluationRoundEditor', () => {
     props.evaluationRoundInput.id = id
     props.evaluationRoundInput.etag = etag
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationRoundEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //Simulate a deletion
     simulateDeleteClick(wrapper)
@@ -362,11 +356,9 @@ describe('test EvaluationRoundEditor', () => {
         ),
     )
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationRoundEditor {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //Simulate a deletion
     simulateDeleteClick(wrapper)

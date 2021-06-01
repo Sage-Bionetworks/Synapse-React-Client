@@ -7,11 +7,9 @@ import reactJsonschemaForm from 'react-jsonschema-form'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const createShallowComponent = (props: EntityFormProps) => {
-  const wrapper = mount(
-    <SynapseTestContext>
-      <EntityForm {...props} />
-    </SynapseTestContext>,
-  )
+  const wrapper = mount(<EntityForm {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
   const instance = wrapper.instance() as EntityForm
   return { wrapper, instance }
 }

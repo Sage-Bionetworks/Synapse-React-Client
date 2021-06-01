@@ -47,16 +47,17 @@ describe('RequestDataAccess: basic functionality', () => {
 
   it('render component without crashing', async () => {
     const wrapper = mount(
-      <SynapseTestContext>
-        <RequestDataAccess
-          user={undefined}
-          wikiPage={undefined}
-          entityId={'123'}
-          accessRequirement={mockAccessRequirement}
-          accessRequirementStatus={mockAccessRequirementStatus}
-          showButton={true}
-        />
-      </SynapseTestContext>,
+      <RequestDataAccess
+        user={undefined}
+        wikiPage={undefined}
+        entityId={'123'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+        showButton={true}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     expect(wrapper).toBeDefined()
   })
@@ -64,17 +65,17 @@ describe('RequestDataAccess: basic functionality', () => {
   it('should show request access button regardless logged in or not', async () => {
     delete mockAccessRequirementStatus.currentSubmissionStatus.state
     const wrapper = mount(
-      <SynapseTestContext>
-        <RequestDataAccess
-          user={undefined}
-          token={undefined}
-          wikiPage={undefined}
-          entityId={'123'}
-          accessRequirement={mockAccessRequirement}
-          accessRequirementStatus={mockAccessRequirementStatus}
-          showButton={true}
-        />
-      </SynapseTestContext>,
+      <RequestDataAccess
+        user={undefined}
+        wikiPage={undefined}
+        entityId={'123'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+        showButton={true}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     expect(wrapper.find('button.accept-button').text()).toEqual(
       'Request access',

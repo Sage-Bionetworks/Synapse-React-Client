@@ -14,22 +14,18 @@ describe('DirectDownload: basic functionality', () => {
   }
 
   it('render direct download component without crashing', async () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <DirectDownload {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<DirectDownload {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     mockAllIsIntersecting(true)
     expect(wrapper).toBeDefined()
   })
 
   it('file handle fetch failure should display nothing', async () => {
     await act(async () => {
-      const wrapper = await mount(
-        <SynapseTestContext>
-          <DirectDownload {...props} />
-        </SynapseTestContext>,
-      )
+      const wrapper = await mount(<DirectDownload {...props} />, {
+        wrappingComponent: SynapseTestContext,
+      })
       mockAllIsIntersecting(true)
       expect(wrapper.children()).toEqual({})
     })

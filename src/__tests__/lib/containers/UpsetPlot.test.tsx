@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { mount, shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import UpsetPlot, { UpsetPlotProps } from '../../../lib/containers/UpsetPlot'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/syn16787123.json'
@@ -9,12 +9,10 @@ const SynapseClient = require('../../../lib/utils/SynapseClient')
 const data = syn16787123Json as QueryResultBundle
 
 const createShallowComponent = async (props: UpsetPlotProps) => {
-  const wrapper = mount(
-    <SynapseTestContext>
-      <UpsetPlot {...props} />
-    </SynapseTestContext>,
-  )
-  const instance = wrapper.find(UpsetPlot).instance()
+  const wrapper = mount(<UpsetPlot {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 

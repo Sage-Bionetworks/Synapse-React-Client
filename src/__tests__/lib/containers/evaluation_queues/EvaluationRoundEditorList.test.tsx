@@ -89,9 +89,10 @@ describe('test EvaluationRoundEditorList', () => {
     )
 
     const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationRoundEditorList evaluationId={evaluationId} />
-      </SynapseTestContext>,
+      <EvaluationRoundEditorList evaluationId={evaluationId} />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
 
     expect(wrapper.find('.evaluation-round-editor').exists()).toBe(false)
@@ -100,9 +101,10 @@ describe('test EvaluationRoundEditorList', () => {
 
   it('fetched pages', () => {
     const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationRoundEditorList evaluationId={evaluationId} />
-      </SynapseTestContext>,
+      <EvaluationRoundEditorList evaluationId={evaluationId} />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
 
     expect(mockGetEvaulationsList).toBeCalledWith(
@@ -122,9 +124,10 @@ describe('test EvaluationRoundEditorList', () => {
 
   it('add round button', () => {
     const wrapper = mount(
-      <SynapseTestContext>
-        <EvaluationRoundEditorList evaluationId={evaluationId} />
-      </SynapseTestContext>,
+      <EvaluationRoundEditorList evaluationId={evaluationId} />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
 
     expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)

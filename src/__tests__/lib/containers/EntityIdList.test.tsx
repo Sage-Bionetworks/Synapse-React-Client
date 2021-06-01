@@ -13,11 +13,9 @@ describe('EntityIdList: basic functionality', () => {
   }
 
   it('render direct download component without crashing', async () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <EntityIdList {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<EntityIdList {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     mockAllIsIntersecting(true)
     expect(wrapper).toBeDefined()
   })
@@ -30,11 +28,9 @@ describe('EntityIdList: basic functionality', () => {
       setEntityNameList,
     ])
     act(() => {
-      mount(
-        <SynapseTestContext>
-          <EntityIdList {...props} />
-        </SynapseTestContext>,
-      )
+      mount(<EntityIdList {...props} />, {
+        wrappingComponent: SynapseTestContext,
+      })
       mockAllIsIntersecting(true)
     })
     expect(handleStateChange).toBeCalled()

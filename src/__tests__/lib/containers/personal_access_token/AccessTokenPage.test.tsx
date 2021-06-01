@@ -69,11 +69,9 @@ describe('basic functionality', () => {
   })
 
   it('shows the create token modal when the button is clicked and hides when onClose is called', async () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <AccessTokenPage {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<AccessTokenPage {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     await resolveAllPending(wrapper)
 
     expect(wrapper.find(CreateAccessTokenModal).length).toEqual(0)
@@ -102,11 +100,9 @@ describe('basic functionality', () => {
       .fn()
       .mockResolvedValueOnce(mockResultsFirstPage)
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <AccessTokenPage {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<AccessTokenPage {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     await resolveAllPending(wrapper)
 
     expect(wrapper.find(AccessTokenCard).length).toEqual(
@@ -123,11 +119,9 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <AccessTokenPage {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<AccessTokenPage {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     await resolveAllPending(wrapper)
 
     // Click the button to render the modal
@@ -152,11 +146,9 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <AccessTokenPage {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<AccessTokenPage {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     await resolveAllPending(wrapper)
 
     // Trigger onDelete on a card.
@@ -173,11 +165,9 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(
-      <SynapseTestContext>
-        <AccessTokenPage {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<AccessTokenPage {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     await resolveAllPending(wrapper)
 
     // Verify that we have a 'Load More' button

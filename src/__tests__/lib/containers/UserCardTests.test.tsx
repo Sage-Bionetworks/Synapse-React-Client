@@ -46,11 +46,9 @@ const createLargeComponent = (props: UserCardMediumProps) => {
 }
 
 const createMediumComponent = (props: UserCardMediumProps) => {
-  const wrapper = mount<UserCardMedium>(
-    <SynapseTestContext>
-      <UserCardMedium {...props} />
-    </SynapseTestContext>,
-  )
+  const wrapper = mount<UserCardMedium>(<UserCardMedium {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
   const instance = wrapper.find(UserCardMedium).instance()
   return { wrapper, instance }
 }
@@ -69,12 +67,10 @@ const createAvatarComponent = (props: AvatarProps) => {
 
 // need mount because of the deep render of the children
 const createMountedComponent = (props: UserCardProps) => {
-  const wrapper = mount(
-    <SynapseTestContext>
-      <UserCard {...props} />
-    </SynapseTestContext>,
-  )
-  const instance = wrapper.find(UserCard).instance()
+  const wrapper = mount(<UserCard {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 

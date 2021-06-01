@@ -1,7 +1,9 @@
 import { mount } from 'enzyme'
 import Carousel from '../../../../lib/containers/Carousel'
 import { ProjectViewCard } from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCard'
-import ProjectViewCarousel, { ProjectViewCarouselProps } from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
+import ProjectViewCarousel, {
+  ProjectViewCarouselProps,
+} from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
 import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
 import React from 'react'
 import { mockQueryResult } from '../../../../mocks/mockProjectViewQueryResults'
@@ -33,11 +35,9 @@ describe('basic functionality', () => {
   })
 
   it('retrieves project data and images and inserts cards into carousel', async () => {
-    const wrapper = mount(
-      <SynapseTestContext>
-        <ProjectViewCarousel {...props} />
-      </SynapseTestContext>,
-    )
+    const wrapper = mount(<ProjectViewCarousel {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     await resolveAllPending(wrapper)
 
     expect(SynapseClient.getQueryTableResults).toHaveBeenCalledTimes(1)

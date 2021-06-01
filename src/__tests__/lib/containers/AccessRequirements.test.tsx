@@ -32,11 +32,9 @@ describe('Access Requirement List works as expect', () => {
 
   async function init(props: AccessRequirementListProps) {
     await act(async () => {
-      wrapper = await mount(
-        <SynapseTestContext>
-          <AccessRequirementList {...props} />
-        </SynapseTestContext>,
-      )
+      wrapper = await mount(<AccessRequirementList {...props} />, {
+        wrappingComponent: SynapseTestContext,
+      })
       container = await render(
         <SynapseTestContext>
           <AccessRequirementList {...props} />

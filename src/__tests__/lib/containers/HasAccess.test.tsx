@@ -61,13 +61,11 @@ const tooLargeFileHandle: FileHandle = {
 }
 
 const renderComponent = (props: HasAccessProps) => {
-  const wrapper = mount<HasAccess>(
-    <SynapseTestContext>
-      <HasAccess {...props} />
-    </SynapseTestContext>,
-  )
+  const wrapper = mount<HasAccess>(<HasAccess {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
 
-  const instance = wrapper.find(HasAccess).instance()
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 const props: HasAccessProps = {

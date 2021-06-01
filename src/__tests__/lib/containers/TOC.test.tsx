@@ -20,9 +20,10 @@ describe('renders without crashing', () => {
       Promise.resolve({ markdown: '${toc}\n#Heading1' }),
     )
     const tree = await mount(
-      <SynapseTestContext>
-        <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />
-      </SynapseTestContext>,
+      <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)
@@ -36,9 +37,10 @@ describe('renders without crashing', () => {
       Promise.resolve({ markdown: "${toc}\n#Heading1\n##! Don't show me!" }),
     )
     const tree = await mount(
-      <SynapseTestContext>
-        <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />
-      </SynapseTestContext>,
+      <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)

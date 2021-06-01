@@ -15,12 +15,10 @@ import {
 } from '../../../mocks/MockSynapseContext'
 
 const renderComponent = (props: ModalDownloadProps) => {
-  const wrapper = mount<ModalDownload>(
-    <SynapseTestContext>
-      <ModalDownload {...props} />
-    </SynapseTestContext>,
-  )
-  const instance = wrapper.find(ModalDownload).instance()
+  const wrapper = mount<ModalDownload>(<ModalDownload {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
+  const instance = wrapper.instance()
   return { wrapper, instance }
 }
 

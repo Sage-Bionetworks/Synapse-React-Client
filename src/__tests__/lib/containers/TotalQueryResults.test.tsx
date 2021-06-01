@@ -17,11 +17,9 @@ import {
 } from '../../../mocks/MockSynapseContext'
 
 const createMountedComponent = async (props: TotalQueryResultsProps) => {
-  const wrapper = await mount(
-    <SynapseTestContext>
-      <TotalQueryResults {...props} />
-    </SynapseTestContext>,
-  )
+  const wrapper = await mount(<TotalQueryResults {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
   return { wrapper }
 }
 

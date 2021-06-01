@@ -25,12 +25,10 @@ import UserCard from '../../../lib/containers/UserCard'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const renderComponent = (props: GenericCardProps) => {
-  const wrapper = mount(
-    <SynapseTestContext>
-      <GenericCard {...props} />
-    </SynapseTestContext>,
-  )
-  const instance = wrapper.find(GenericCard).instance() as GenericCard
+  const wrapper = mount(<GenericCard {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
+  const instance = wrapper.instance() as GenericCard
   return { wrapper, instance }
 }
 
