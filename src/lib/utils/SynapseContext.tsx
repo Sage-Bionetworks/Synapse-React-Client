@@ -16,6 +16,9 @@ export type SynapseContextType = {
   utcTime: boolean
 }
 
+/**
+ * This must be exported to use the context in class components.
+ */
 export const SynapseContext = React.createContext<
   SynapseContextType | undefined
 >(undefined)
