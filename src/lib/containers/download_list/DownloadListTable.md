@@ -1,3 +1,3 @@
 ```jsx
-accessToken && <DownloadListTable />
+accessToken ? <DownloadListTable /> : <>Sign in to view this component</>
 ```

@@ -1,6 +1,6 @@
 ```jsx
-accessToken && <AccessTokenPage
+accessToken ? <AccessTokenPage
     title={'Personal Access Tokens'}
     body={'Create and manage tokens that can be used to access your Synapse account programmatically.'}
-  ></AccessTokenPage>
+  /> : <>Sign in to view this component</>
 ```

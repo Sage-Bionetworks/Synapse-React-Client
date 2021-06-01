@@ -1,11 +1,13 @@
 ```jsx
-      <PageProgress
-        barColor={ "green" }
-        barPercent={ 75 }
-        backBtnLabel={ "Back"}
-        backBtnCallback={ ()=>{ console.log("you just clicked back button") } }
-        forwardBtnLabel={ "Next" }
-        forwardBtnCallback={ ()=>{ console.log("When forwardBtnActive is set to true, you will see this message") } }
-        forwardBtnActive={ false }
-      />
+const [percent, setPercent] = React.useState(50);
+
+<PageProgress
+  barColor={ "green" }
+  barPercent={ percent }
+  backBtnLabel={ "Back"}
+  backBtnCallback={ ()=>{ setPercent(percent-25) } }
+  forwardBtnLabel={ "Next" }
+  forwardBtnCallback={ ()=>{ setPercent(percent+25) } }
+  forwardBtnActive={ percent < 100 }
+/>
 ```

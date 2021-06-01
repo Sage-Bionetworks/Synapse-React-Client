@@ -1,3 +1,3 @@
 ```jsx
-<AvailableForDownloadTable />
+accessToken ? <AvailableForDownloadTable /> : <>Sign in to view this component</>
 ```

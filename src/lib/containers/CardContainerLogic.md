@@ -1,7 +1,6 @@
 Standard generic card renderer:
 ```jsx
-<SynapseContextConsumer>
-(synapseContext) => {
+<SynapseContextConsumer>{(synapseContext) => {
   return (
   <CardContainerLogic
     accessToken={synapseContext.accessToken}
@@ -17,7 +16,7 @@ Standard generic card renderer:
       subTitle: 'authors',
       secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
     }}
-  />)}
+  />)}}
 </SynapseContextConsumer>
 ```
 
