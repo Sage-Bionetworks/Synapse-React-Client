@@ -5,6 +5,7 @@ import { SynapseConstants } from '../../../utils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ErrorBanner } from '../../ErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
+import { SynapseContextConsumer } from '../../../utils/SynapseContext'
 
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
@@ -34,18 +35,26 @@ const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsC
   const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
   return (
     <div className="SingleQueryFacetPlotsCards">
-      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <ErrorBanner />
-        {facetsToPlot?.map(facetName => {
-          return (
-            <FacetPlotsCard
-              key={`FacetPlotCard-${facetName}`}
-              facetsToPlot={[facetName]}
-              rgbIndex={rgbIndex}
-            />
-          )
-        })}
-      </QueryWrapper>
+      <SynapseContextConsumer>
+        {context => (
+          <QueryWrapper
+            {...rest}
+            token={context?.accessToken}
+            initQueryRequest={initQueryRequest}
+          >
+            <ErrorBanner />
+            {facetsToPlot?.map(facetName => {
+              return (
+                <FacetPlotsCard
+                  key={`FacetPlotCard-${facetName}`}
+                  facetsToPlot={[facetName]}
+                  rgbIndex={rgbIndex}
+                />
+              )
+            })}
+          </QueryWrapper>
+        )}
+      </SynapseContextConsumer>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { SynapseConstants } from '../../../utils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ErrorBanner } from '../../ErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
+import { SynapseContextConsumer } from '../../../utils/SynapseContext'
 
 export type QueryPerFacetPlotsCardProps = {
   title?: string
@@ -65,16 +66,24 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProp
   )
   return (
     <div className="QueryPerFacetPlotsCard">
-      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <ErrorBanner />
-        <FacetPlotsCard
-          title={title}
-          description={description}
-          facetsToPlot={facetsToPlot}
-          rgbIndex={rgbIndex}
-          detailsPagePath={detailsPagePath}
-        />
-      </QueryWrapper>
+      <SynapseContextConsumer>
+        {context => (
+          <QueryWrapper
+            {...rest}
+            token={context?.accessToken}
+            initQueryRequest={initQueryRequest}
+          >
+            <ErrorBanner />
+            <FacetPlotsCard
+              title={title}
+              description={description}
+              facetsToPlot={facetsToPlot}
+              rgbIndex={rgbIndex}
+              detailsPagePath={detailsPagePath}
+            />
+          </QueryWrapper>
+        )}
+      </SynapseContextConsumer>
     </div>
   )
 }
