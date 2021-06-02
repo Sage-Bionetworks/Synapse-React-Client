@@ -124,13 +124,13 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/WidgetDemo`}
-        component={() => <WidgetDemo token={token} />}
+        component={() => <WidgetDemo />}
       />
 
       <Route
         exact={true}
         path={`${match.url}/AccessRequirementDemo`}
-        component={() => <AccessRequirementDemo token={token} />}
+        component={() => <AccessRequirementDemo />}
       />
 
       <Route
@@ -142,13 +142,13 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/ShowDownloadDemo`}
-        component={() => <ShowDownloadDemo token={token} />}
+        component={() => <ShowDownloadDemo />}
       />
 
       <Route
         exact={true}
         path={`${match.url}/SynapsePlotDemo`}
-        component={() => <SynapsePlotDemo token={token} />}
+        component={() => <SynapsePlotDemo />}
       />
 
       <Route
@@ -165,9 +165,7 @@ const App = ({
       <Route
         exact={true}
         path={`${match.url}/ExternalFileHandleLink`}
-        component={() => (
-          <ExternalFileHandleLink synId={'syn22276050'} />
-        )}
+        component={() => <ExternalFileHandleLink synId={'syn22276050'} />}
       />
 
       <Route

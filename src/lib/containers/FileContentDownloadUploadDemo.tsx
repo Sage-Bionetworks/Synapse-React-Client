@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { getEntity, updateEntity, uploadFile } from '../utils/SynapseClient'
-import { useSynapseContext } from '../utils/SynapseContext'
+import { SynapseContext } from '../utils/SynapseContext'
 import { Entity, FileEntity, FileUploadComplete } from '../utils/synapseTypes/'
 
 type FileContentDownloadUploadDemoState = {

@@ -6,6 +6,7 @@ import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownl
 import StatisticsPlot from '../../lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
 import HasAccess from '../../lib/containers/HasAccess'
+import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
 
 type DemoState = {
   token: string | null
@@ -105,118 +106,115 @@ class Demo extends React.Component<DemoProps, DemoState> {
     const { forceSamePage = false } = this.props
     const { token, estimatedDownloadBytesPerSecond } = this.state
     return (
-      <div>
-        <p className="App-intro text-center">
-          Synapse production version: {this.state.version}
-        </p>
-        {token && (
-          <div className="container">
-            <button
-              className="btn btn-default"
-              onClick={this.onRunDownloadSpeedTest}
-            >
-              Run Download Speed Test
-            </button>
-            <hr />
-          </div>
-        )}
-        {estimatedDownloadBytesPerSecond && (
-          <div className="container">
-            <h5>
-              Estimated Download Speed:{' '}
-              {(estimatedDownloadBytesPerSecond / 1000000).toFixed(2)} MBps
-            </h5>
-            <hr />
-          </div>
-        )}
-        {token && (
-          <div className="container">
-            <h5>Upload File(s) Demo</h5>
-            <Uploader token={token} parentContainerId="syn18987891" />
-            <hr />
-          </div>
-        )}
-        {token && (
-          <div className="container">
-            <h5>Download File Content Demo (syn12196718)</h5>
-            <FileContentDownloadUploadDemo
-              token={token}
-              targetEntityId="syn12196718"
-            />
-            <hr />
-          </div>
-        )}
-        {
-          <div className="container">
-            <h5>Public Folder - HasAccess widget</h5>
-            <HasAccess
-              token={token ? token : undefined}
-              entityId={'syn7122428'}
-              isInDownloadList={false}
-              forceSamePage={forceSamePage}
-            />
-            <h5>A Controlled Access Folder - HasAccess widget</h5>
-            <HasAccess
-              token={token ? token : undefined}
-              entityId={'syn7383419'}
-              isInDownloadList={false}
-              forceSamePage={forceSamePage}
-            />
-            <h5>Open Data</h5>
-            <HasAccess
-              token={token ? token : undefined}
-              entityId={'syn5481758'}
-              isInDownloadList={false}
-              forceSamePage={forceSamePage}
-            />
-            <h5>Acces Requirements required Data</h5>
-            <HasAccess
-              token={token ? token : undefined}
-              entityId={'syn2426398'}
-              isInDownloadList={false}
-              forceSamePage={forceSamePage}
-            />
-            <h5>
-              Acces Requirements required Data without unsupported requirement
-            </h5>
-            <HasAccess
-              token={token ? token : undefined}
-              entityId={'syn4993293'}
-              isInDownloadList={false}
-              forceSamePage={forceSamePage}
-            />
+      <SynapseContextProvider
+        synapseContext={{
+          accessToken: this.state.token ?? undefined,
+          isInExperimentalMode: SynapseClient.getIsInExperimentalModeFromCookie(),
+          utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+        }}
+      >
+        <div>
+          <p className="App-intro text-center">
+            Synapse production version: {this.state.version}
+          </p>
+          {token && (
+            <div className="container">
+              <button
+                className="btn btn-default"
+                onClick={this.onRunDownloadSpeedTest}
+              >
+                Run Download Speed Test
+              </button>
+              <hr />
+            </div>
+          )}
+          {estimatedDownloadBytesPerSecond && (
+            <div className="container">
+              <h5>
+                Estimated Download Speed:{' '}
+                {(estimatedDownloadBytesPerSecond / 1000000).toFixed(2)} MBps
+              </h5>
+              <hr />
+            </div>
+          )}
+          {token && (
+            <div className="container">
+              <h5>Upload File(s) Demo</h5>
+              <Uploader parentContainerId="syn18987891" />
+              <hr />
+            </div>
+          )}
+          {token && (
+            <div className="container">
+              <h5>Download File Content Demo (syn12196718)</h5>
+              <FileContentDownloadUploadDemo targetEntityId="syn12196718" />
+              <hr />
+            </div>
+          )}
+          {
+            <div className="container">
+              <h5>Public Folder - HasAccess widget</h5>
+              <HasAccess
+                entityId={'syn7122428'}
+                isInDownloadList={false}
+                forceSamePage={forceSamePage}
+              />
+              <h5>A Controlled Access Folder - HasAccess widget</h5>
+              <HasAccess
+                entityId={'syn7383419'}
+                isInDownloadList={false}
+                forceSamePage={forceSamePage}
+              />
+              <h5>Open Data</h5>
+              <HasAccess
+                entityId={'syn5481758'}
+                isInDownloadList={false}
+                forceSamePage={forceSamePage}
+              />
+              <h5>Acces Requirements required Data</h5>
+              <HasAccess
+                entityId={'syn2426398'}
+                isInDownloadList={false}
+                forceSamePage={forceSamePage}
+              />
+              <h5>
+                Acces Requirements required Data without unsupported requirement
+              </h5>
+              <HasAccess
+                entityId={'syn4993293'}
+                isInDownloadList={false}
+                forceSamePage={forceSamePage}
+              />
 
-            <hr />
-          </div>
-        }
-        {token && (
-          <div className="container">
-            <h5>Project Statistics Demo</h5>
-            <StatisticsPlot
-              token={token}
-              request={{
-                concreteType:
-                  'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
-                objectId: 'syn2580853',
-                fileDownloads: true,
-                fileUploads: true,
-              }}
-            />
-            <StatisticsPlot
-              token={token}
-              request={{
-                concreteType:
-                  'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
-                objectId: 'syn5585645',
-                fileDownloads: true,
-                fileUploads: true,
-              }}
-            />
-            <hr />
-          </div>
-        )}
-
-      </div>
+              <hr />
+            </div>
+          }
+          {token && (
+            <div className="container">
+              <h5>Project Statistics Demo</h5>
+              <StatisticsPlot
+                request={{
+                  concreteType:
+                    'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+                  objectId: 'syn2580853',
+                  fileDownloads: true,
+                  fileUploads: true,
+                }}
+              />
+              <StatisticsPlot
+                request={{
+                  concreteType:
+                    'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
+                  objectId: 'syn5585645',
+                  fileDownloads: true,
+                  fileUploads: true,
+                }}
+              />
+              <hr />
+            </div>
+          )}
+        </div>
+      </SynapseContextProvider>
     )
   }
 }
