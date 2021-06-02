@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/Synapse-React-Client/static/css/main.46650b8d.chunk.css",
-    "main.js": "/Synapse-React-Client/build/main.463b905d.js",
+    "main.css": "/Synapse-React-Client/static/css/main.30e364fb.chunk.css",
+    "main.js": "/Synapse-React-Client/build/main.69b71943.js",
     "runtime-main.js": "/Synapse-React-Client/build/bundle.7fc64edc.js",
     "static/css/2.c6e5aa12.chunk.css": "/Synapse-React-Client/static/css/2.c6e5aa12.chunk.css",
-    "build/2.3acb327d.js": "/Synapse-React-Client/build/2.3acb327d.js",
-    "build/2.3acb327d.js.LICENSE.txt": "/Synapse-React-Client/build/2.3acb327d.js.LICENSE.txt",
+    "build/2.423f6cc0.js": "/Synapse-React-Client/build/2.423f6cc0.js",
+    "build/2.423f6cc0.js.LICENSE.txt": "/Synapse-React-Client/build/2.423f6cc0.js.LICENSE.txt",
     "index.html": "/Synapse-React-Client/index.html",
-    "precache-manifest.1d623909babba0366def440e28a45f75.js": "/Synapse-React-Client/precache-manifest.1d623909babba0366def440e28a45f75.js",
+    "precache-manifest.8e38e0ca519658aeba140b4c015d31c5.js": "/Synapse-React-Client/precache-manifest.8e38e0ca519658aeba140b4c015d31c5.js",
     "service-worker.js": "/Synapse-React-Client/service-worker.js",
     "static/css/2.c6e5aa12.chunk.css.map": "/Synapse-React-Client/static/css/2.c6e5aa12.chunk.css.map",
-    "static/css/main.46650b8d.chunk.css.map": "/Synapse-React-Client/static/css/main.46650b8d.chunk.css.map",
+    "static/css/main.30e364fb.chunk.css.map": "/Synapse-React-Client/static/css/main.30e364fb.chunk.css.map",
     "static/media/DNA_Two.svg": "/Synapse-React-Client/static/media/DNA_Two.d8f80972.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.1104e430.svg",
     "static/media/NoSearchResults.svg": "/Synapse-React-Client/static/media/NoSearchResults.d77e13cd.svg",
-    "static/media/account-certified.77d5a352.svg": "/Synapse-React-Client/static/media/account-certified.77d5a352.svg",
-    "static/media/account-registered.d8350d08.svg": "/Synapse-React-Client/static/media/account-registered.d8350d08.svg",
-    "static/media/account-validated.db2e0572.svg": "/Synapse-React-Client/static/media/account-validated.db2e0572.svg",
+    "static/media/account-certified.svg": "/Synapse-React-Client/static/media/account-certified.77d5a352.svg",
+    "static/media/account-registered.svg": "/Synapse-React-Client/static/media/account-registered.d8350d08.svg",
+    "static/media/account-validated.svg": "/Synapse-React-Client/static/media/account-validated.db2e0572.svg",
     "static/media/brain.svg": "/Synapse-React-Client/static/media/brain.c6301611.svg",
     "static/media/calendar-clock.1440a207.svg": "/Synapse-React-Client/static/media/calendar-clock.1440a207.svg",
     "static/media/chart2.svg": "/Synapse-React-Client/static/media/chart2.570e6894.svg",
@@ -50,8 +50,8 @@
   "entrypoints": [
     "build/bundle.7fc64edc.js",
     "static/css/2.c6e5aa12.chunk.css",
-    "build/2.3acb327d.js",
-    "static/css/main.46650b8d.chunk.css",
-    "build/main.463b905d.js"
+    "build/2.423f6cc0.js",
+    "static/css/main.30e364fb.chunk.css",
+    "build/main.69b71943.js"
   ]
 }
