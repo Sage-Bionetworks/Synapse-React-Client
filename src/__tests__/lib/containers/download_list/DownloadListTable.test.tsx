@@ -13,6 +13,10 @@ import {
 import * as React from 'react'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../mocks/MockSynapseContext'
 
 describe('it performs all functionality ', () => {
   let container: HTMLDivElement
@@ -103,20 +107,27 @@ describe('it performs all functionality ', () => {
   const mockClearDownloadListFn = jest.fn().mockResolvedValue('')
   SynapseClient.deleteDownloadList = mockClearDownloadListFn
 
-  const tokenMock = 'token'
-  const props: DownloadListTableProps = {
-    token: tokenMock,
-  }
+  const props: DownloadListTableProps = {}
   it('renders without crashing', async () => {
     await act(async () => {
-      ReactDOM.render(<DownloadListTable {...props} />, container)
+      ReactDOM.render(
+        <SynapseTestContext>
+          <DownloadListTable {...props} />
+        </SynapseTestContext>,
+        container,
+      )
     })
     const wrapper = container.querySelector<HTMLDivElement>('div')
     expect(wrapper).toBeDefined()
   })
   it('renders each row correctly', async () => {
     await act(async () => {
-      ReactDOM.render(<DownloadListTable {...props} />, container)
+      ReactDOM.render(
+        <SynapseTestContext>
+          <DownloadListTable {...props} />
+        </SynapseTestContext>,
+        container,
+      )
     })
     const rows = container.querySelectorAll<HTMLTableRowElement>('tbody tr')
     expect(rows).toHaveLength(2)
@@ -132,7 +143,12 @@ describe('it performs all functionality ', () => {
   })
   it('deletes a specific row', async () => {
     await act(async () => {
-      ReactDOM.render(<DownloadListTable {...props} />, container)
+      ReactDOM.render(
+        <SynapseTestContext>
+          <DownloadListTable {...props} />
+        </SynapseTestContext>,
+        container,
+      )
     })
     mockGetDownloadListFn.mockClear()
     mockGetEntityHeadersFn.mockClear()
@@ -150,7 +166,7 @@ describe('it performs all functionality ', () => {
           fileHandleId: fileOneId,
         }),
       ]),
-      tokenMock,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(mockGetDownloadListFn).not.toHaveBeenCalled()
     expect(mockGetEntityHeadersFn).not.toHaveBeenCalled()
@@ -158,7 +174,12 @@ describe('it performs all functionality ', () => {
   })
   it('Clears all rows', async () => {
     await act(async () => {
-      ReactDOM.render(<DownloadListTable {...props} />, container)
+      ReactDOM.render(
+        <SynapseTestContext>
+          <DownloadListTable {...props} />
+        </SynapseTestContext>,
+        container,
+      )
     })
     mockGetDownloadListFn.mockClear()
     mockGetEntityHeadersFn.mockClear()

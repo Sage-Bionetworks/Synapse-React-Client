@@ -11,6 +11,7 @@ import {
 import { render, fireEvent } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import { SynapseConstants } from '../../../../lib'
+import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 
@@ -78,7 +79,6 @@ function createTestProps(
   return {
     facetValues: stringFacetValues,
     columnModel: columnModel,
-    token: '12345',
     onChange: mockCallback,
     onClear: mockOnClear,
     ...overrides,
@@ -92,7 +92,11 @@ let props: EnumFacetFilterProps
 
 function init(overrides?: Partial<EnumFacetFilterProps>) {
   props = createTestProps(overrides)
-  container = render(<EnumFacetFilter {...props} />).container
+  container = render(
+    <SynapseTestContext>
+      <EnumFacetFilter {...props} />
+    </SynapseTestContext>,
+  ).container
 }
 
 beforeEach(() => init())
@@ -133,25 +137,37 @@ describe('initialization', () => {
 
   describe('collapsible behavior', () => {
     it('should hide content when toggled', () => {
-      init({...props, collapsed: false})
-      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'block')
+      init({ ...props, collapsed: false })
+      expect(
+        container.getElementsByClassName('EnumFacetFilter')[0].style,
+      ).toHaveProperty('display', 'block')
 
       // toggle collapse via button
-      const button = container.querySelector("button.FacetFilterHeader__collapseToggleBtn");
-      fireEvent.click(button);
+      const button = container.querySelector(
+        'button.FacetFilterHeader__collapseToggleBtn',
+      )
+      fireEvent.click(button)
 
-      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'none')
+      expect(
+        container.getElementsByClassName('EnumFacetFilter')[0].style,
+      ).toHaveProperty('display', 'none')
     })
-    
+
     it('should start collapsed when specified via prop', () => {
-      init({...props, collapsed: true})
-      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'none')
+      init({ ...props, collapsed: true })
+      expect(
+        container.getElementsByClassName('EnumFacetFilter')[0].style,
+      ).toHaveProperty('display', 'none')
 
       // toggle collapse via button
-      const button = container.querySelector("button.FacetFilterHeader__collapseToggleBtn");
-      fireEvent.click(button);
+      const button = container.querySelector(
+        'button.FacetFilterHeader__collapseToggleBtn',
+      )
+      fireEvent.click(button)
 
-      expect(container.getElementsByClassName('EnumFacetFilter')[0].style).toHaveProperty('display', 'block')
+      expect(
+        container.getElementsByClassName('EnumFacetFilter')[0].style,
+      ).toHaveProperty('display', 'block')
     })
   })
 

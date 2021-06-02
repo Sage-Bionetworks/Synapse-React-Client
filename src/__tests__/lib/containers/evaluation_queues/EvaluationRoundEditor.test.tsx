@@ -16,6 +16,12 @@ import { SynapseClient } from '../../../../lib/utils/'
 import JestMockPromise from 'jest-mock-promise'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
+import * as SynapseContext from '../../../../lib/utils/SynapseContext'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+  mockUseSynapseContext,
+} from '../../../../mocks/MockSynapseContext'
 
 describe('test EvaluationRoundEditor', () => {
   let props: EvaluationRoundEditorProps
@@ -34,8 +40,6 @@ describe('test EvaluationRoundEditor', () => {
     roundStart: '123123',
     roundEnd: '1231232',
   }
-
-  const fakeAccessToken = 'fakeToken'
 
   beforeEach(() => {
     mockOnDelete = jest.fn()
@@ -63,7 +67,6 @@ describe('test EvaluationRoundEditor', () => {
       .mockImplementation(mockDeleteEvaluationRound)
 
     props = {
-      accessToken: fakeAccessToken,
       evaluationRoundInput: {
         reactListKey: 'SOME FAKE KEY',
         evaluationId: '123',
@@ -72,7 +75,6 @@ describe('test EvaluationRoundEditor', () => {
         totalSubmissionLimit: '',
         otherLimits: [],
       },
-      utc: true,
       onDelete: mockOnDelete,
       onSave: mockOnSave,
     }
@@ -83,6 +85,10 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test clicking advanced limits link', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const wrapper = shallow(<EvaluationRoundEditor {...props} />)
 
     //initially not shown
@@ -104,7 +110,9 @@ describe('test EvaluationRoundEditor', () => {
     ]
 
     // this requires interaction from a child component so we must use mount() to render it
-    const wrapper = mount(<EvaluationRoundEditor {...props} />)
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //enable rendering of the advanced limits list
     wrapper.find('button.advanced-limits-link').simulate('click')
@@ -128,6 +136,10 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test start date input: disabled when current time past start', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const roundStartInPast = moment().subtract(1, 'day')
     const roundEnd = moment().add(1, 'day')
     props.evaluationRoundInput.roundStart = roundStartInPast.toJSON()
@@ -143,6 +155,10 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test start date input: enabled when current time not past start', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const roundStartInFuture = moment().add(1, 'day')
     const roundEnd = moment().add(2, 'day')
     props.evaluationRoundInput.roundStart = roundStartInFuture.toJSON()
@@ -158,6 +174,10 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test save: no id in props => create new EvaluationRound', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     // remove the id
     delete props.evaluationRoundInput.id
 
@@ -176,7 +196,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockCreateEvaluationRound).toBeCalledWith(
       expectedConvertedEvaulationRound,
-      fakeAccessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(mockUpdateEvaluationRound).not.toBeCalled()
 
@@ -189,6 +209,10 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test save: existing id in props => update EvaluationRound', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const id = '1234'
     const etag = 'eeeeeeeee'
     props.evaluationRoundInput.id = id
@@ -209,7 +233,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockUpdateEvaluationRound).toBeCalledWith(
       expectedConvertedEvaulationRound,
-      fakeAccessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(mockCreateEvaluationRound).not.toBeCalled()
 
@@ -222,6 +246,10 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test save: Error occur', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     //make the SynapseClient call throw an error
     mockUpdateEvaluationRound.mockImplementation(
       () =>
@@ -250,7 +278,7 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockUpdateEvaluationRound).toBeCalledWith(
       expectedConvertedEvaulationRound,
-      fakeAccessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(mockCreateEvaluationRound).not.toBeCalled()
 
@@ -285,7 +313,9 @@ describe('test EvaluationRoundEditor', () => {
     delete props.evaluationRoundInput.id
     delete props.evaluationRoundInput.etag
 
-    const wrapper = mount(<EvaluationRoundEditor {...props} />)
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     simulateDeleteClick(wrapper)
 
     expect(mockOnDelete).toBeCalledWith()
@@ -298,7 +328,9 @@ describe('test EvaluationRoundEditor', () => {
     props.evaluationRoundInput.id = id
     props.evaluationRoundInput.etag = etag
 
-    const wrapper = mount(<EvaluationRoundEditor {...props} />)
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //Simulate a deletion
     simulateDeleteClick(wrapper)
@@ -307,7 +339,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockDeleteEvaluationRound).toBeCalledWith(
       props.evaluationRoundInput.evaluationId,
       id,
-      fakeAccessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
   })
 
@@ -324,7 +356,9 @@ describe('test EvaluationRoundEditor', () => {
         ),
     )
 
-    const wrapper = mount(<EvaluationRoundEditor {...props} />)
+    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //Simulate a deletion
     simulateDeleteClick(wrapper)
@@ -332,7 +366,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockDeleteEvaluationRound).toBeCalledWith(
       props.evaluationRoundInput.evaluationId,
       id,
-      fakeAccessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
 
     //error occurred so we never used the passed in callback from props
@@ -346,6 +380,10 @@ describe('test EvaluationRoundEditor', () => {
 
 describe('test determineRoundStatus helper', () => {
   it('status: in progress', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const roundStart = moment().subtract(1, 'day')
     const roundEnd = moment().add(1, 'day')
     expect(
@@ -356,6 +394,10 @@ describe('test determineRoundStatus helper', () => {
   })
 
   it('status: completed', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const roundStart = moment().subtract(2, 'day')
     const roundEnd = moment().subtract(1, 'day')
     expect(
@@ -366,6 +408,10 @@ describe('test determineRoundStatus helper', () => {
   })
 
   it('status: not yet started', () => {
+    jest
+      .spyOn(SynapseContext, 'useSynapseContext')
+      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+
     const roundStart = moment().add(1, 'day')
     const roundEnd = moment().add(2, 'day')
     expect(

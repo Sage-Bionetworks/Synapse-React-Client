@@ -4,13 +4,9 @@ import MarkdownSynapse from '../../MarkdownSynapse'
 
 export type ResourcesDesktopProps = {
   data: Data
-  token?: string
 }
 
-export default function ResourcesDesktop({
-  data,
-  token,
-}: ResourcesDesktopProps) {
+export default function ResourcesDesktop({ data }: ResourcesDesktopProps) {
   const [index, setIndex] = useState(0)
   return (
     <div className="control-container">
@@ -37,11 +33,7 @@ export default function ResourcesDesktop({
           const { ownerId, wikiId } = el
           return (
             <span key={ownerId} className={index === curIndex ? '' : 'hide'}>
-              <MarkdownSynapse
-                token={token}
-                ownerId={ownerId}
-                wikiId={wikiId}
-              />
+              <MarkdownSynapse ownerId={ownerId} wikiId={wikiId} />
             </span>
           )
         })}

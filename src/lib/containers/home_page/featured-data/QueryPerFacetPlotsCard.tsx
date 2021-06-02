@@ -7,7 +7,6 @@ import { ErrorBanner } from '../../ErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
 
 export type QueryPerFacetPlotsCardProps = {
-  token?: string
   title?: string
   description?: string
   rgbIndex?: number
@@ -57,7 +56,6 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProp
     selectFacetColumnName,
     selectFacetColumnValue,
     detailsPagePath,
-    token,
     ...rest
   } = props
   const initQueryRequest: QueryBundleRequest = getQueryRequest(
@@ -67,7 +65,7 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProp
   )
   return (
     <div className="QueryPerFacetPlotsCard">
-      <QueryWrapper {...rest} token={token} initQueryRequest={initQueryRequest}>
+      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
         <ErrorBanner />
         <FacetPlotsCard
           title={title}

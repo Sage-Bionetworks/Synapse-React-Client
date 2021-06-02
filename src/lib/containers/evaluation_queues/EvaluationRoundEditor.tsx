@@ -30,12 +30,10 @@ import {
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationRoundEditorProps = {
-  accessToken: string
   evaluationRoundInput: EvaluationRoundInput
-  //If true, dates for start/end are displayed in UTC instead of local time
-  utc: boolean
   onDelete: () => void
   onSave: (evaluationRound: EvaluationRoundInput) => void
 }
@@ -123,12 +121,11 @@ const convertInputsToEvaluationRound = (
 }
 
 export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
-  accessToken,
   evaluationRoundInput,
   onSave,
   onDelete,
-  utc,
 }) => {
+  const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
 
@@ -269,7 +266,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
                   value={startDate}
                   setterCallback={setStartDate}
                   label="Round Start"
-                  utc={utc}
                   isValidDate={disallowDatesBeforeNow}
                   disabled={moment().isSameOrAfter(
                     evaluationRoundInput.roundStart,
@@ -281,7 +277,6 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
                   value={endDate}
                   label="Round End"
                   setterCallback={setEndDate}
-                  utc={utc}
                   isValidDate={disallowDatesBeforeNow}
                 />
               </Col>
@@ -335,7 +330,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEdito
             {error && (
               <Row className="my-3">
                 <Col>
-                  <ErrorBanner error={error} token={accessToken} />
+                  <ErrorBanner error={error} />
                 </Col>
               </Row>
             )}

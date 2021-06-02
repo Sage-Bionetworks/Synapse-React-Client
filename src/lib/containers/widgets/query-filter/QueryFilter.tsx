@@ -16,14 +16,17 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../utils/synapseTypes'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from '../../QueryWrapper'
+import {
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from '../../QueryWrapper'
 
 export type QueryFilterProps = {
   isLoading?: boolean
   data?: QueryResultBundle
   getLastQueryRequest?: Function
   executeQueryRequest?: Function
-  token?: string
   facetAliases?: {}
   facetsToFilter?: string[]
 }
@@ -139,12 +142,13 @@ export const applyChangesToRangeColumn = (
   onChangeFn(result)
 }
 
-export const QueryFilter: React.FunctionComponent<QueryWrapperChildProps & QueryFilterProps> = ({
+export const QueryFilter: React.FunctionComponent<
+  QueryWrapperChildProps & QueryFilterProps
+> = ({
   data,
   isLoading = false,
   getLastQueryRequest,
   executeQueryRequest,
-  token,
   facetAliases,
   facetsToFilter,
   topLevelControlsState,
@@ -156,7 +160,7 @@ export const QueryFilter: React.FunctionComponent<QueryWrapperChildProps & Query
   const columnModels = data.columnModels
   let facets = data.facets as FacetColumnResult[]
   if (facetsToFilter) {
-    facets = facets.filter( facet => {
+    facets = facets.filter(facet => {
       return facetsToFilter.includes(facet.columnName)
     })
   }
@@ -170,7 +174,13 @@ export const QueryFilter: React.FunctionComponent<QueryWrapperChildProps & Query
   }
 
   return (
-    <div className={`QueryFilter ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
+    <div
+      className={`QueryFilter ${
+        showFacetFilter
+          ? QUERY_FILTERS_EXPANDED_CSS
+          : QUERY_FILTERS_COLLAPSED_CSS
+      }`}
+    >
       <h4 className="QueryFilter__title">Filter Data By</h4>
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
@@ -189,7 +199,6 @@ export const QueryFilter: React.FunctionComponent<QueryWrapperChildProps & Query
                   collapsed={shouldStartCollapsed}
                   facetValues={(facet as FacetColumnResultValues).facetValues}
                   columnModel={columnModel!}
-                  token={token}
                   facetAliases={facetAliases}
                   onChange={(facetNamesMap: {}) =>
                     applyMultipleChangesToValuesColumn(

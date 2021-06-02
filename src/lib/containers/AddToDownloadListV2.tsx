@@ -1,24 +1,21 @@
 import React from 'react'
-import {
-  AddBatchOfFilesToDownloadListResponse,
-} from '../utils/synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
-import {
-  addFileToDownloadListV2,
-} from '../utils/SynapseClient'
+import { AddBatchOfFilesToDownloadListResponse } from '../utils/synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
+import { addFileToDownloadListV2 } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type AddToDownloadListV2Props = {
-  token?: string
   entityId: string
   entityVersionNumber?: number
 }
 
 const AddToDownloadListV2: React.FunctionComponent<AddToDownloadListV2Props> = (props) => {
 
-  const {token, entityId, entityVersionNumber} = props
+  const {entityId, entityVersionNumber} = props
+  const { accessToken } = useSynapseContext()
   const addToDownloadListV2 = async () => {
     try {
-      const result:AddBatchOfFilesToDownloadListResponse = await addFileToDownloadListV2(entityId, entityVersionNumber, token)
+      const result:AddBatchOfFilesToDownloadListResponse = await addFileToDownloadListV2(entityId, entityVersionNumber, accessToken)
       if (result.numberOfFilesAdded === 1)
         console.log(`Successfully added ${entityId} (version=${entityVersionNumber}) to the Download List v2`)
       else

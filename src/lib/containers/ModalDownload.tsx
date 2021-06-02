@@ -19,6 +19,7 @@ import {
   writeHeaderOption,
 } from './ModalDownload.FormSchema'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
+import { SynapseContext } from '../utils/SynapseContext'
 
 library.add(faTimes)
 
@@ -31,9 +32,8 @@ export type ModalDownloadState = {
 
 export type ModalDownloadProps = {
   onClose: (...args: any[]) => void
-  token?: string
   includeEntityEtag?: boolean
-  queryBundleRequest?: QueryBundleRequest  // either the query bundle request needs to be provided, or getLastQueryRequest
+  queryBundleRequest?: QueryBundleRequest // either the query bundle request needs to be provided, or getLastQueryRequest
   getLastQueryRequest?: () => QueryBundleRequest
   offset?: number
   limit?: number
@@ -44,6 +44,8 @@ export default class ModalDownload extends React.Component<
   ModalDownloadProps,
   ModalDownloadState
 > {
+  static contextType = SynapseContext
+
   constructor(props: ModalDownloadProps) {
     super(props)
     this.state = {
@@ -71,7 +73,7 @@ export default class ModalDownload extends React.Component<
     const { formData } = event
     const fileType = formData['File Type']
     const contents = formData.Contents as string[]
-    const { token, queryBundleRequest, getLastQueryRequest } = this.props
+    const { queryBundleRequest, getLastQueryRequest } = this.props
     const separator = fileType === csvOption ? ',' : '\t'
     const writeHeader = contents.includes(writeHeaderOption)
     const includeRowIdAndRowVersion = contents.includes(
@@ -89,7 +91,10 @@ export default class ModalDownload extends React.Component<
       includeRowIdAndRowVersion,
       csvTableDescriptor: { separator },
     }
-    SynapseClient.getDownloadFromTableRequest(downloadFromTableRequest, token)
+    SynapseClient.getDownloadFromTableRequest(
+      downloadFromTableRequest,
+      this.context.accessToken,
+    )
       .then(data => {
         this.setState({
           isLoading: false,
@@ -104,14 +109,14 @@ export default class ModalDownload extends React.Component<
 
   onDownload = () => {
     const { data } = this.state
-    const { token } = this.props
     // data will always be defined if calling this function
-    SynapseClient.getFileHandleByIdURL(data!.resultsFileHandleId, token).then(
-      url => {
-        window.location.href = url
-        this.props.onClose()
-      },
-    )
+    SynapseClient.getFileHandleByIdURL(
+      data!.resultsFileHandleId,
+      this.context.accessToken,
+    ).then(url => {
+      window.location.href = url
+      this.props.onClose()
+    })
   }
 
   handleChange = (event: IChangeEvent) => {

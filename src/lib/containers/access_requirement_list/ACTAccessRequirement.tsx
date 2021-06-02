@@ -3,22 +3,23 @@ import { ACTAccessRequirement, WikiPageKey } from '../../utils/synapseTypes'
 import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
 import { AccessRequirementProps } from './AccessRequirementProps'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export default function ACTAccessRequirementComponent({
   accessRequirement,
-  token,
   user,
   onHide,
   accessRequirementStatus,
   entityId,
 }: AccessRequirementProps<ACTAccessRequirement>) {
+  const { accessToken } = useSynapseContext()
   const [wikiPage, setWikiPage] = useState<WikiPageKey>()
 
   useEffect(() => {
     const getACTAccessData = async () => {
       try {
         const wikipageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          token,
+          accessToken,
           accessRequirement.id,
         )
         setWikiPage(wikipageRequirement)
@@ -28,13 +29,12 @@ export default function ACTAccessRequirementComponent({
     }
 
     getACTAccessData()
-  }, [token, accessRequirement])
+  }, [accessToken, accessRequirement])
 
   return (
     <AcceptedRequirements
       accessRequirement={accessRequirement}
       accessRequirementStatus={accessRequirementStatus}
-      token={token}
       user={user}
       wikiPage={wikiPage}
       onHide={onHide}

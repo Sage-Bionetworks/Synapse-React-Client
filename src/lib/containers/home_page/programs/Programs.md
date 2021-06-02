@@ -13,6 +13,5 @@
     URLColumnName: 'Program',
     matchColumnName: 'Program',
   }}
-  token={accessToken}
 />
 ```

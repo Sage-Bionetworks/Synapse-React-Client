@@ -7,6 +7,7 @@ import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   EntityHeader,
   EntityPath,
@@ -51,7 +52,6 @@ function getScopeOptionNodeName(scope: FinderScope): string {
 }
 // if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
 export type TreeViewProps = {
-  accessToken: string
   initialScope?: FinderScope
   /** To show the current project, projectId must be defined */
   projectId?: string
@@ -77,7 +77,6 @@ export type TreeViewProps = {
  * The tree view currently can only be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
  */
 export const TreeView: React.FunctionComponent<TreeViewProps> = ({
-  accessToken,
   initialScope = FinderScope.CURRENT_PROJECT,
   projectId,
   initialContainer = null,
@@ -93,6 +92,8 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
+
+  const { accessToken } = useSynapseContext()
 
   const [isLoading, setIsLoading] = useState(false)
   const [topLevelEntities, setTopLevelEntities] = useState<
@@ -144,7 +145,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     hasNextPage: hasNextPageProjects,
     isLoading: isLoadingProjects,
   } = useGetProjectsInfinite(
-    accessToken,
     scope === FinderScope.CREATED_BY_ME ? { filter: 'CREATED' } : {},
     {
       enabled: useProjectData,
@@ -154,15 +154,9 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   const {
     data: currentContainerBundle,
     isSuccess: isSuccessBundle,
-  } = useGetEntityBundle(
-    accessToken,
-    currentContainer!,
-    BUNDLE_REQUEST_OBJECT,
-    undefined,
-    {
-      enabled: !!currentContainer && currentContainer !== 'root',
-    },
-  )
+  } = useGetEntityBundle(currentContainer!, BUNDLE_REQUEST_OBJECT, undefined, {
+    enabled: !!currentContainer && currentContainer !== 'root',
+  })
 
   const { ref, inView } = useInView({ rootMargin: '500px' })
 
@@ -215,7 +209,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       case FinderScope.CURRENT_PROJECT:
         if (projectId) {
           if (initialContainer?.match(SYNAPSE_ENTITY_ID_REGEX)) {
-            SynapseClient.getEntityPath(accessToken, initialContainer)
+            SynapseClient.getEntityPath(initialContainer, accessToken)
               .then(path => {
                 if (!path.path.map(entity => entity.id).includes(projectId)) {
                   handleError(
@@ -414,7 +408,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           {showScopeAsRootNode ? (
             <TreeNode
               level={0}
-              accessToken={accessToken}
               selected={selected}
               setSelectedId={setSelectedId}
               visibleTypes={visibleTypes}
@@ -428,7 +421,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               <TreeNode
                 key={entity.id}
                 level={0}
-                accessToken={accessToken}
                 selected={selected}
                 setSelectedId={setSelectedId}
                 visibleTypes={visibleTypes}

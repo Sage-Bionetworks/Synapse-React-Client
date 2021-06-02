@@ -10,6 +10,17 @@ import { FileEntity, FormData } from '../../utils/synapseTypes/'
 import SynapseForm from './SynapseForm'
 import { StatusEnum } from './types'
 
+/**
+ * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
+ * 
+ * This wasn't done because Enzyme's shallow renderer is not currently
+ * compatible with the `contextType` field in the React 16+ context API.
+ * 
+ * This can be fixed by rewriting tests to not rely on the shallow renderer.
+ * 
+ * See here: https://github.com/enzymejs/enzyme/issues/1553
+ */
+
 export type UploadToolSearchParams = {
   formDataId?: string //formDataId for user data form data
   dataFileHandleId?: string //fileHandle to get userData
@@ -92,7 +103,10 @@ class SynapseFormWrapper extends React.Component<
         true,
         true,
       )
-      const fileContent = await SynapseClient.getFileHandleContent(fileHandleContent.fileHandle!, fileHandleContent.preSignedURL!)
+      const fileContent = await SynapseClient.getFileHandleContent(
+        fileHandleContent.fileHandle!,
+        fileHandleContent.preSignedURL!,
+      )
       const content = JSON.parse(fileContent)
       return {
         version: entity.versionNumber,

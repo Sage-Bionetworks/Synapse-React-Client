@@ -5,6 +5,7 @@ import circleSvg from './src/demo/containers/playground/icons/circle.svg'
 import mouseSvg from './src/demo/containers/playground/icons/mouse.svg'
 import resilienceadSvg from './src/demo/containers/playground/icons/resiliencead.svg'
 import moment from 'moment'
+import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
 
 global.currentUserProfile = false
 global.accessToken = false
@@ -42,7 +43,7 @@ global.iconOptions = {
   'Resilience-AD': resilienceadSvg,
 }
 
-
+global.SynapseContextConsumer = SynapseContextConsumer
 global.AVATAR = AVATAR
 global.SMALL_USER_CARD = SMALL_USER_CARD
 global.MEDIUM_USER_CARD = MEDIUM_USER_CARD

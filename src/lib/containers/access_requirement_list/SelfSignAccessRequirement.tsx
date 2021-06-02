@@ -9,15 +9,16 @@ import { SynapseClient, SynapseConstants } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import AcceptedRequirements from './AcceptedRequirements'
 import { AccessRequirementProps } from './AccessRequirementProps'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export default function SelfSignAccessRequirementComponent({
   accessRequirement,
-  token,
   user,
   onHide,
   accessRequirementStatus,
   entityId,
 }: AccessRequirementProps<SelfSignAccessRequirement>) {
+  const { accessToken } = useSynapseContext()
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>(
     undefined,
@@ -29,7 +30,7 @@ export default function SelfSignAccessRequirementComponent({
       try {
         setIsLoading(true)
         const wikiPageRequirment = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          token,
+          accessToken,
           accessRequirement.id,
         )
 
@@ -43,7 +44,7 @@ export default function SelfSignAccessRequirementComponent({
           const bundle = await SynapseClient.getUserBundle(
             user.ownerId,
             certificationOrVerification,
-            token,
+            accessToken,
           )
           setUserBundle(bundle)
         }
@@ -55,7 +56,7 @@ export default function SelfSignAccessRequirementComponent({
     }
 
     getSelfSignAccessData()
-  }, [accessRequirement, token, user])
+  }, [accessRequirement, accessToken, user])
 
   return (
     <>
@@ -111,7 +112,6 @@ export default function SelfSignAccessRequirementComponent({
       )}
       <AcceptedRequirements
         user={user}
-        token={token}
         wikiPage={wikiPage}
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}

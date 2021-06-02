@@ -18,6 +18,7 @@ import { SizeMe } from 'react-sizeme'
 import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { SynapseErrorBoundary } from '../ErrorBanner'
@@ -46,7 +47,6 @@ const queryClient = new QueryClient({
 })
 
 export type EntityFinderProps = {
-  accessToken: string
   /** Whether or not it is possible to select multiple entities */
   selectMultiple: boolean
   /** Callback invoked when the selection changes */
@@ -72,7 +72,6 @@ export type EntityFinderProps = {
 }
 
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
-  accessToken,
   initialScope,
   projectId,
   initialContainer,
@@ -85,6 +84,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectedCopy = 'Selected',
   treeOnly = false,
 }: EntityFinderProps) => {
+  const { accessToken } = useSynapseContext()
+
   const [searchActive, setSearchActive] = useState(false)
   // The raw value of the search input box:
   const [searchInput, setSearchInput] = useState<string>()
@@ -245,6 +246,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 icon={faSearch}
                 className="SearchIcon"
               />
+              {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
               <input
                 role="textbox"
                 ref={searchInputRef}
@@ -285,7 +287,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
             {searchActive && (
               <EntityDetailsList
-                accessToken={accessToken}
                 configuration={
                   searchByIdResults && searchByIdResults.length > 0
                     ? {
@@ -314,7 +315,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 {treeOnly ? (
                   <div>
                     <TreeView
-                      accessToken={accessToken}
                       toggleSelection={toggleSelection}
                       showDropdown={true}
                       visibleTypes={selectableAndVisibleTypesInTree}
@@ -341,7 +341,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             flex={0.18}
                           >
                             <TreeView
-                              accessToken={accessToken}
                               selectedEntities={selectedEntities}
                               setDetailsViewConfiguration={
                                 setConfigFromTreeView
@@ -359,7 +358,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                           <ReflexSplitter></ReflexSplitter>
                           <ReflexElement className="DetailsViewReflexElement">
                             <EntityDetailsList
-                              accessToken={accessToken}
                               configuration={configFromTreeView}
                               showVersionSelection={showVersionSelection}
                               selected={selectedEntities}
@@ -383,7 +381,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
 
           {selectedEntities.length > 0 && (
             <SelectionPane
-              accessToken={accessToken}
               title={selectedCopy}
               selectedEntities={selectedEntities}
               toggleSelection={toggleSelection}

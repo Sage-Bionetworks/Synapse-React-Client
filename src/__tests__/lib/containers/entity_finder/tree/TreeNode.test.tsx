@@ -16,6 +16,7 @@ import {
   EntityHeader,
   EntityType,
 } from '../../../../../lib/utils/synapseTypes'
+import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 jest.mock(
@@ -31,7 +32,6 @@ const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockUseGetEntityChildren = useGetEntityChildrenInfinite as jest.Mock
 
 const defaultProps: TreeNodeProps = {
-  accessToken: 'abcd',
   entityHeader: {
     id: 'syn123',
     name: 'My File',
@@ -109,12 +109,16 @@ const bundleResult: EntityBundle = {
 }
 
 function renderComponent(propOverrides?: Partial<TreeNodeProps>) {
-  return render(<TreeNode {...defaultProps} {...propOverrides} />)
+  return render(
+    <SynapseTestContext>
+      <TreeNode {...defaultProps} {...propOverrides} />
+    </SynapseTestContext>,
+  )
 }
 
 const mockFetchNextPageOfChildren = jest.fn()
 
-describe('TreeViewNode tests', () => {
+describe('TreeNode tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockAllIsIntersecting(false)
@@ -123,7 +127,6 @@ describe('TreeViewNode tests', () => {
     }))
     when(mockUseGetEntityChildren)
       .calledWith(
-        expect.anything(),
         expect.objectContaining({
           parentId: expect.stringContaining(defaultProps.entityHeader!.id),
         }),
@@ -148,7 +151,6 @@ describe('TreeViewNode tests', () => {
         isSuccess: true,
       })
       .calledWith(
-        expect.anything(),
         expect.objectContaining({
           parentId: expect.not.stringContaining(defaultProps.entityHeader!.id),
         }),
@@ -172,7 +174,6 @@ describe('TreeViewNode tests', () => {
     renderComponent()
     await waitFor(() =>
       expect(mockUseGetEntityChildren).toBeCalledWith(
-        expect.anything(),
         expect.objectContaining({
           parentId: expect.stringContaining(defaultProps.entityHeader!.id),
         }),
@@ -195,7 +196,6 @@ describe('TreeViewNode tests', () => {
     renderComponent({ autoExpand: () => true })
     await waitFor(() =>
       expect(mockUseGetEntityChildren).toBeCalledWith(
-        expect.anything(),
         expect.objectContaining({
           parentId: expect.stringContaining(defaultProps.entityHeader!.id),
         }),
@@ -210,7 +210,6 @@ describe('TreeViewNode tests', () => {
     // Not in view
     mockAllIsIntersecting(false)
     expect(useGetEntityBundle).toBeCalledWith(
-      defaultProps.accessToken,
       defaultProps.entityHeader!.id,
       expect.anything(),
       undefined,
@@ -222,7 +221,6 @@ describe('TreeViewNode tests', () => {
     // Comes into view, call under test:
     mockAllIsIntersecting(true)
     expect(useGetEntityBundle).toBeCalledWith(
-      defaultProps.accessToken,
       defaultProps.entityHeader!.id,
       expect.anything(),
       undefined,
@@ -251,7 +249,6 @@ describe('TreeViewNode tests', () => {
     })
     await waitFor(() =>
       expect(mockUseGetEntityChildren).toBeCalledWith(
-        expect.anything(),
         expect.objectContaining({
           parentId: expect.stringContaining(defaultProps.entityHeader!.id),
         }),
@@ -281,7 +278,6 @@ describe('TreeViewNode tests', () => {
       screen.getByLabelText(`Select ${entityName}`)
     await waitFor(() =>
       expect(mockUseGetEntityChildren).toBeCalledWith(
-        expect.anything(),
         expect.objectContaining({
           parentId: expect.stringContaining(defaultProps.entityHeader!.id),
         }),
@@ -332,14 +328,12 @@ describe('TreeViewNode tests', () => {
         },
       })
       expect(mockUseGetEntityChildren).toBeCalledWith(
-        defaultProps.accessToken,
         expect.anything(),
         expect.objectContaining({
           enabled: false, // !
         }),
       )
       expect(mockUseGetEntityBundle).toBeCalledWith(
-        defaultProps.accessToken,
         expect.anything(),
         expect.anything(),
         undefined,

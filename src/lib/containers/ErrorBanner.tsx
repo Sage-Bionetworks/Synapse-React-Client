@@ -7,22 +7,21 @@ import {
 } from 'react-error-boundary'
 import { isError, isSynapseClientError } from '../utils/ErrorUtils'
 import { SynapseClientError } from '../utils/SynapseClient'
+import { useSynapseContext } from '../utils/SynapseContext'
 import { Optional } from '../utils/types/Optional'
 import SignInButton from './SignInButton'
 
 type ErrorBannerProps = {
-  token?: string
   error?: string | Error | SynapseClientError | null
   reloadButtonFn?: () => void
 }
 
-export const ClientError = (props: {
-  error: SynapseClientError
-  token?: string
-}) => {
-  const { error, token } = props
-  const loginError = (error.status === 403 || error.status === 401) && !token
-  const accessDenied = error.status === 403 && token
+export const ClientError = (props: { error: SynapseClientError }) => {
+  const { accessToken } = useSynapseContext()
+  const { error } = props
+  const loginError =
+    (error.status === 403 || error.status === 401) && !accessToken
+  const accessDenied = error.status === 403 && accessToken
 
   return (
     <>
@@ -41,7 +40,7 @@ export const ClientError = (props: {
 }
 
 export const ErrorBanner = (props: ErrorBannerProps) => {
-  const { error, token, reloadButtonFn } = props
+  const { error, reloadButtonFn } = props
 
   if (!error) {
     return <></>
@@ -66,9 +65,7 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
         transition={false}
       >
         <p>
-          {synapseClientError && (
-            <ClientError error={synapseClientError} token={token} />
-          )}
+          {synapseClientError && <ClientError error={synapseClientError} />}
           {jsError && jsError.message}
           {stringError && stringError}
         </p>

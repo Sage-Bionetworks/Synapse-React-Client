@@ -27,12 +27,12 @@ import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import { useState, FunctionComponent } from 'react'
 import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
 import { Button } from 'react-bootstrap'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
   style?: React.CSSProperties
   lastQueryRequest: QueryBundleRequest
-  token: string | undefined
   unitDescription: string
   frontText: string
   applyChanges?: Function
@@ -47,7 +47,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   unitDescription,
   frontText,
   lastQueryRequest,
-  token,
   isLoading: parentLoading,
   executeQueryRequest,
   getInitQueryRequest,
@@ -55,6 +54,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   topLevelControlsState,
   error,
 }) => {
+  const { accessToken } = useSynapseContext()
   const [total, setTotal] = useState<number | undefined>(undefined) // undefined to start
   const [isLoading, setIsLoading] = useState(false)
   const [facetsWithSelection, setFacetsWithSelection] = useState<
@@ -155,7 +155,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
       if (parentLoading || total === undefined) {
         setIsLoading(true)
-        SynapseClient.getQueryTableResults(cloneLastQueryRequest, token)
+        SynapseClient.getQueryTableResults(cloneLastQueryRequest, accessToken)
           .then(data => {
             setTotal(data.queryCount!)
             const rangeFacetsWithSelections = getRangeFacetsWithSelections(
@@ -186,7 +186,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       }
     }
     calculateTotal()
-  }, [parentLoading, token, lastQueryRequest])
+  }, [parentLoading, accessToken, lastQueryRequest])
 
   const removeFacetSelection = ({
     facet,
@@ -262,7 +262,11 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   }
   return (
     <div
-      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''} ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}
+      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''} ${
+        showFacetFilter
+          ? QUERY_FILTERS_EXPANDED_CSS
+          : QUERY_FILTERS_COLLAPSED_CSS
+      }`}
       style={style}
     >
       <span className="SRC-boldText SRC-text-title SRC-centerContent">
@@ -285,7 +289,11 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         ))}
       </div>
       {facetsWithSelection.length > 0 && (
-        <Button onClick={clearAll} variant="light" className="TotalQueryResults__clearall">
+        <Button
+          onClick={clearAll}
+          variant="light"
+          className="TotalQueryResults__clearall"
+        >
           Clear All
         </Button>
       )}

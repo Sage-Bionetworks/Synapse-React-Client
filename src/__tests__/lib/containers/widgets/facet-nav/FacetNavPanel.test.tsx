@@ -7,6 +7,7 @@ import { render } from '@testing-library/react'
 import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
 import { SynapseConstants } from '../../../../../lib'
+import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -54,7 +55,11 @@ let props: FacetNavPanelOwnProps
 
 function init(overrides?: FacetNavPanelOwnProps) {
   props = createTestProps(overrides)
-  container = render(<FacetNavPanel {...props} />).container
+  container = render(
+    <SynapseTestContext>
+      <FacetNavPanel {...props} />
+    </SynapseTestContext>,
+  ).container
 }
 
 describe('initialization', () => {

@@ -23,6 +23,7 @@ import {
   FacetPlotLegend,
 } from '../../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../../widgets/facet-nav/FacetNav'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -60,8 +61,8 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   data,
   isLoading,
   facetAliases,
-  token,
 }: FacetPlotsCardProps): JSX.Element => {
+  const { accessToken } = useSynapseContext()
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
@@ -87,7 +88,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
             getColumnType(item),
             index + 1, //individual plot rgbIndex
             'PIE',
-            token,
+            accessToken,
           )
           return plotData
         }),

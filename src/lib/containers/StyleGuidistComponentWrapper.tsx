@@ -1,9 +1,23 @@
-import * as React from 'react';
-import { MemoryRouter } from 'react-router';
-import RenderIfInView from './RenderIfInView';
+import React from 'react'
+import { MemoryRouter } from 'react-router'
+import { SynapseContextProvider } from '../utils/SynapseContext'
+import RenderIfInView from './RenderIfInView'
+import { SynapseClient } from '../utils'
 
-export default class StyleGuidistComponentWrapper extends React.Component {
-  public render() {
-    return <MemoryRouter><RenderIfInView>{this.props.children}</RenderIfInView></MemoryRouter>
-  }
+export const StyleGuidistComponentWrapper: React.FC = props => {
+  return (
+    <SynapseContextProvider
+      synapseContext={{
+        accessToken: (global as any).accessToken,
+        isInExperimentalMode: SynapseClient.getIsInExperimentalModeFromCookie(),
+        utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+      }}
+    >
+      <MemoryRouter>
+        <RenderIfInView>{props.children}</RenderIfInView>
+      </MemoryRouter>
+    </SynapseContextProvider>
+  )
 }
+
+export default StyleGuidistComponentWrapper

@@ -112,7 +112,6 @@ const App = ({
           <div className="container download-list-demo">
             <div className="col-xs-10">
               <DownloadListTable
-                token={token}
                 listUpdatedCallback={() => {
                   console.log('DownloadList updated')
                 }}
@@ -158,7 +157,7 @@ const App = ({
         component={() => (
           <div className="container">
             {' '}
-            <Resources entityId="syn22311127" token={token} />{' '}
+            <Resources entityId="syn22311127" />{' '}
           </div>
         )}
       />
@@ -167,7 +166,7 @@ const App = ({
         exact={true}
         path={`${match.url}/ExternalFileHandleLink`}
         component={() => (
-          <ExternalFileHandleLink synId={'syn22276050'} token={token} />
+          <ExternalFileHandleLink synId={'syn22276050'} />
         )}
       />
 

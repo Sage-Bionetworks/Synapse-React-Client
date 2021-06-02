@@ -1,13 +1,9 @@
 import * as React from 'react'
-import {
-  getEntity,
-  updateEntity,
-  uploadFile,
-} from '../utils/SynapseClient'
+import { getEntity, updateEntity, uploadFile } from '../utils/SynapseClient'
+import { useSynapseContext } from '../utils/SynapseContext'
 import { Entity, FileEntity, FileUploadComplete } from '../utils/synapseTypes/'
 
 type FileContentDownloadUploadDemoState = {
-  token?: string
   error?: any
   isLoading?: boolean
   fileContent?: string
@@ -15,7 +11,6 @@ type FileContentDownloadUploadDemoState = {
 }
 
 export type FileContentDownloadUploadDemoProps = {
-  token?: string
   targetEntityId: string
 }
 
@@ -26,17 +21,18 @@ export default class FileContentDownloadUploadDemo extends React.Component<
   constructor(props: FileContentDownloadUploadDemoProps) {
     super(props)
     this.state = {
-      token: '',
       isLoading: false,
     }
   }
 
+  static contextType = SynapseContext
+
   public componentDidMount() {
-    const { token, targetEntityId } = this.props
+    const { targetEntityId } = this.props
     // must be logged in to download content
-    if (token) {
+    if (this.context.accessToken) {
       this.setState({ isLoading: true })
-      getEntity(token, targetEntityId)
+      getEntity(this.context.accessToken, targetEntityId)
         .then((entity: Entity) => {
           // if file entity
           if (
@@ -59,18 +55,26 @@ export default class FileContentDownloadUploadDemo extends React.Component<
 
   updateFileContent = (event: React.MouseEvent<HTMLButtonElement>) => {
     // create a new FileHandle, and update the FileEntity
-    if (this.props.token && this.state.targetEntity && this.state.fileContent) {
+    if (
+      this.context.accessToken &&
+      this.state.targetEntity &&
+      this.state.fileContent
+    ) {
       this.setState({ isLoading: true })
       const newFileContent = new Blob([this.state.fileContent], {
         type: 'text/plain',
       })
-      uploadFile(this.props.token, this.state.targetEntity.name, newFileContent)
+      uploadFile(
+        this.context.accessToken,
+        this.state.targetEntity.name,
+        newFileContent,
+      )
         .then((fileUploadComplete: FileUploadComplete) => {
           // now update the entity!
           if (this.state.targetEntity) {
             this.state.targetEntity.dataFileHandleId =
               fileUploadComplete.fileHandleId
-            updateEntity(this.state.targetEntity, this.props.token)
+            updateEntity(this.state.targetEntity, this.context.accessToken)
               .then((entity: Entity) => {
                 const fileEntity = entity as FileEntity
                 // updated the target entity, force it to get the updated entity

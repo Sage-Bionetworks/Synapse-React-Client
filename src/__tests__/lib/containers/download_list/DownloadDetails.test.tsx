@@ -4,6 +4,7 @@ import DownloadDetails, {
 } from '../../../../lib/containers/download_list/DownloadDetails'
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
+import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 describe('it performs all functionality ', () => {
   let container: HTMLDivElement
@@ -22,18 +23,27 @@ describe('it performs all functionality ', () => {
   const props: DownloadDetailsProps = {
     numFiles: 3,
     numBytes: 10,
-    token: 'token',
   }
   it('renders without crashing', async () => {
     await act(async () => {
-      ReactDOM.render(<DownloadDetails {...props} />, container)
+      ReactDOM.render(
+        <SynapseTestContext>
+          <DownloadDetails {...props} />
+        </SynapseTestContext>,
+        container,
+      )
     })
     const wrapper = container.querySelector<HTMLDivElement>('span')
     expect(wrapper).toBeDefined()
   })
   it('renders with all the values set', async () => {
     await act(async () => {
-      ReactDOM.render(<DownloadDetails {...props} />, container)
+      ReactDOM.render(
+        <SynapseTestContext>
+          <DownloadDetails {...props} />
+        </SynapseTestContext>,
+        container,
+      )
     })
     expect(
       container.querySelectorAll('svg.SRC-primary-text-color'),
@@ -42,7 +52,9 @@ describe('it performs all functionality ', () => {
   it('renders with all the fields nulled out', async () => {
     await act(async () => {
       ReactDOM.render(
-        <DownloadDetails {...{ ...props, numFiles: 0 }} />,
+        <SynapseTestContext>
+          <DownloadDetails {...{ ...props, numFiles: 0 }} />
+        </SynapseTestContext>,
         container,
       )
     })

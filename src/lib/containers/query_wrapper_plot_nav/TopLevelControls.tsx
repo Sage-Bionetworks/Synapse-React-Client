@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import QueryCount from '../QueryCount'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS, TopLevelControlsState } from '../QueryWrapper'
+import {
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+  TopLevelControlsState,
+} from '../QueryWrapper'
 import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
@@ -9,12 +14,12 @@ import { cloneDeep } from 'lodash-es'
 import { QueryResultBundle } from '../../utils/synapseTypes/'
 import { DownloadOptions } from '../table/table-top'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type TopLevelControlsProps = {
   name: string
   entityId: string
   sql: string
-  token?: string
   hideDownload?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
@@ -66,7 +71,6 @@ const TopLevelControls = (
   props: QueryWrapperChildProps & TopLevelControlsProps,
 ) => {
   const {
-    token,
     name,
     sql,
     updateParentState,
@@ -81,6 +85,7 @@ const TopLevelControls = (
     getLastQueryRequest,
     facetAliases,
   } = props
+  const { accessToken } = useSynapseContext()
   const entityId = parseEntityIdFromSqlStatement(sql)
   const [isFileView, setIsFileView] = useState(false)
 
@@ -102,11 +107,11 @@ const TopLevelControls = (
 
   useEffect(() => {
     const getIsFileView = async () => {
-      const entityData = await SynapseClient.getEntity(token, entityId)
+      const entityData = await SynapseClient.getEntity(accessToken, entityId)
       setIsFileView(entityData.concreteType.includes('EntityView'))
     }
     getIsFileView()
-  }, [entityId, token])
+  }, [entityId, accessToken])
 
   const refresh = () => {
     executeQueryRequest!(getLastQueryRequest!())
@@ -130,10 +135,16 @@ const TopLevelControls = (
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
-    <div className={`TopLevelControls ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
-      <h3>        
+    <div
+      className={`TopLevelControls ${
+        showFacetFilter
+          ? QUERY_FILTERS_EXPANDED_CSS
+          : QUERY_FILTERS_COLLAPSED_CSS
+      }`}
+    >
+      <h3>
         <div className="QueryWrapperPlotNav__querycount">
-          <QueryCount token={token} name={name} sql={sql} parens={true} />
+          <QueryCount name={name} sql={sql} parens={true} />
         </div>
         <div className="QueryWrapperPlotNav__actions">
           {customControls &&
@@ -165,10 +176,7 @@ const TopLevelControls = (
               return (
                 <DownloadOptions
                   darkTheme={true}
-                  onDownloadFiles={() =>
-                    setControlState(key)
-                  }
-                  token={token}
+                  onDownloadFiles={() => setControlState(key)}
                   queryResultBundle={data}
                   queryBundleRequest={getLastQueryRequest!()}
                   isFileView={isFileView && !hideDownload}

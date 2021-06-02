@@ -11,6 +11,7 @@ import loadingScreen from './LoadingScreen'
 import { UserCardSize } from './UserCard'
 import { LARGE_USER_CARD } from '../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -18,7 +19,6 @@ const DEFAULT_DISPLAY_COUNT = 3
 export type UserCardListRotateProps = {
   sql: string
   count: number
-  token?: string
   useQueryResultUserData?: boolean
   size?: UserCardSize
   summaryLink?: string
@@ -64,14 +64,13 @@ export const getDisplayIds = (
 const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   sql,
   count,
-  token,
   useQueryResultUserData = false,
   size = LARGE_USER_CARD,
   summaryLink,
   summaryLinkText,
   selectedFacets,
 }) => {
-  // const [isLoading, setIsLoading] = useState<boolean>()
+  const { accessToken } = useSynapseContext()
   const [userIds, setUserIds] = useState<string[]>([])
   const [queryData, setQueryData] = useState<QueryResultBundle>()
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -96,7 +95,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
 
       const queryResultBundle = await SynapseClient.getFullQueryTableResults(
         request,
-        token,
+        accessToken,
       )
       const { queryResult } = queryResultBundle
       if (queryResult.queryResults.rows) {
@@ -124,7 +123,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     return () => {
       mounted = false
     }
-  }, [sql, selectedFacets, count, token])
+  }, [sql, selectedFacets, count, accessToken])
 
   return (
     <div className="UserCardListRotate bootstrap-4-backport">

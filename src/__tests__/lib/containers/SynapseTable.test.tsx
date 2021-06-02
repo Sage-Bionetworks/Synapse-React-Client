@@ -31,11 +31,18 @@ import syn16787123Json from '../../../mocks/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
 import HasAccess from '../../../lib/containers/HasAccess'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
+import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
 ) => {
-  const wrapper = mount<SynapseTable>(<SynapseTable {...props} />)
+  const wrapper = mount<SynapseTable>(<SynapseTable {...props} />, {
+    wrappingComponent: SynapseContextProvider,
+    wrappingComponentProps: {
+      synapseContext: MOCK_CONTEXT_VALUE,
+    },
+  })
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -98,7 +105,7 @@ describe('basic functionality', () => {
     chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
     data: castData,
-    topLevelControlsState : {
+    topLevelControlsState: {
       showColumnFilter: true,
       showFacetFilter: true,
       showFacetVisualization: true,
@@ -151,7 +158,10 @@ describe('basic functionality', () => {
     instance.getEntityHeadersInData(true)
     instance.getTableConcreteType(props)
 
-    expect(mockEntityCall).toHaveBeenCalledWith(undefined, newTableId)
+    expect(mockEntityCall).toHaveBeenCalledWith(
+      MOCK_CONTEXT_VALUE.accessToken,
+      newTableId,
+    )
   })
 
   describe('unCamelCase', () => {
@@ -545,7 +555,6 @@ describe('basic functionality', () => {
         EntityColumnType.FILEHANDLEID,
       )
       expect(fileHandleId).toEqual([FILEHANDLEID_INDEX])
-
     })
 
     it('gets unique entities', () => {
@@ -595,9 +604,9 @@ describe('basic functionality', () => {
       const mapEntityIdToHeader = {
         [mockEntityLinkValue]: {} as EntityHeader,
       }
-      const mapUserIdToHeader: Dictionary<Partial<
-        UserGroupHeader & UserProfile
-      >> = {
+      const mapUserIdToHeader: Dictionary<
+        Partial<UserGroupHeader & UserProfile>
+      > = {
         [mockAllAuthenticatedUsersValue]: {
           isIndividual: false,
           userName: AUTHENTICATED_USERS,
@@ -797,7 +806,9 @@ describe('basic functionality', () => {
             })}
           </div>,
         )
-        expect(tableCell.find('p').first().text().trim()).toEqual(NOT_SET_DISPLAY_VALUE)
+        expect(tableCell.find('p').first().text().trim()).toEqual(
+          NOT_SET_DISPLAY_VALUE,
+        )
       })
     })
   })

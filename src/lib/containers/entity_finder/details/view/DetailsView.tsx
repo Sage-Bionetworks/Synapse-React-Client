@@ -47,7 +47,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   queryIsFetching,
   hasNextPage,
   fetchNextPage,
-  accessToken,
   showVersionSelection,
   selectColumnType,
   selected,
@@ -175,7 +174,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 key={entity.id}
               >
                 <DetailsViewRow
-                  accessToken={accessToken}
                   entityHeader={entity}
                   appearance={determineRowAppearance(entity)}
                   selectedVersion={

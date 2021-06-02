@@ -1,3 +1,3 @@
 ```jsx
-<Goals entityId={'syn22315959'} token={accessToken} />
+<Goals entityId={'syn22315959'} />
 ```

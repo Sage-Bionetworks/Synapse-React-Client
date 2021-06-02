@@ -9,15 +9,16 @@ import { DOWNLOAD_LIST_CHANGE_EVENT } from '../../utils/functions/dispatchDownlo
 import DownloadListTable from './DownloadListTable'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 library.add(faDownload)
 
 export type ShowDownloadProps = {
-  token?: string
   to?: string
 }
 
-function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
+function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
+  const { accessToken } = useSynapseContext()
   const [downloadList, setDownloadList] = useState<DownloadList | undefined>(
     undefined,
   )
@@ -25,7 +26,7 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
   const tooltipText = 'Click to view items in your download list.'
   useEffect(() => {
-    if (!token) {
+    if (!accessToken) {
       return
     }
     const updateDownloadList = async (
@@ -35,7 +36,7 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
         setDownloadList(event.detail)
       } else {
         // for initialization
-        SynapseClient.getDownloadList(token).then((downloadList) => {
+        SynapseClient.getDownloadList(accessToken).then(downloadList => {
           setDownloadList(downloadList)
         })
       }
@@ -48,9 +49,9 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
         updateDownloadList,
       )
     }
-  }, [token])
+  }, [accessToken])
 
-  if (!token) {
+  if (!accessToken) {
     return <></>
   }
   const size = downloadList?.filesToDownload.length ?? 0
@@ -92,7 +93,6 @@ function ShowDownload({ token, to }: ShowDownloadProps & RouteComponentProps) {
       </button>
       {showDownloadModal && (
         <DownloadListTable
-          token={token}
           renderAsModal={true}
           onHide={() => setShowDownloadModal(false)}
         />

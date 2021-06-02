@@ -14,7 +14,11 @@ This project helps you integrate your app with the Synapse API backend.
 
 Interested in contributing to this project? See [contributing](./CONTRIBUTING.md).
 
-## Installation with npm
+## Installation
+
+We provide multiple ways to add Synapse React Client to your project
+
+### NPM
 
 Run the following command:<br>
 `npm install synapse-react-client`
@@ -28,7 +32,7 @@ If using Typescript then you'll need to create a file called "synapse-react-clie
  declare module "synapse-react-client"
 ```
 
-## Installation without npm or yarn
+### Installation without npm or yarn
 
 To see an example index.html page with all the necessary imports view [here](./src/demo/SingleFileBuild/index.html)
 
@@ -126,6 +130,27 @@ Note there are a number of CDNs required to finish this functionality-
 <script src="https://unpkg.com/markdown-it-sub-alt@1.0.0/dist/markdown-it-sub.min.js"></script>
 <script src="https://unpkg.com/markdown-it-inline-comments@1.0.1/dist/markdown-it-inline-comments.min.js"></script>
 <script src="https://unpkg.com/markdown-it-br@1.0.0/dist/markdown-it-br.min.js"></script>
+```
+
+## Usage
+
+See [`index.ts`](./src/index.tsx) for a comprehensive list of components that can be used.
+
+To function properly, all components must be wrapped in a [SynapseContextProvider](./src/lib/utils/SynapseContext.tsx). To make authenticated requests, you must provide the user's access token as a property to the context provider, among other values. You may maintain this in state, or provide it however you like.
+
+The context provider also maintains a shared cache (via `react-query`). It is recommended to place the provider at the highest possible point in your component tree, and to use the same provider across components if possible.
+
+Example: 
+
+```tsx
+const myToken = "example-token" // this value may also be undefined, if a user is not signed in
+const useUtcTime = true
+const inExperimentalMode = false
+
+<SynapseContextProvider synapseContext={{ accessToken: myToken, isInExperimentalMode: inExperimentalMode, utcTime: useUtcTime }} >
+  <EntityFinder {...entityFinderProps} />
+</SynapseContextProvider>
+
 ```
 
 ## Setting Endpoints

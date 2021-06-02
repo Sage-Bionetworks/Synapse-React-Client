@@ -19,6 +19,10 @@ import {
   PaginatedResults,
   Reference,
 } from '../../../../lib/utils/synapseTypes'
+import {
+  MOCK_ACCESS_TOKEN,
+  SynapseTestContext,
+} from '../../../../mocks/MockSynapseContext'
 
 jest.mock('../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 jest.mock('react-reflex', () => {
@@ -78,7 +82,6 @@ const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockOnSelectionChange = jest.fn()
 
 const defaultProps: EntityFinderProps = {
-  accessToken: 'abcd',
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: 'syn456',
   initialContainer: 'syn123',
@@ -93,7 +96,11 @@ const defaultProps: EntityFinderProps = {
 }
 
 function renderComponent(propOverrides?: Partial<EntityFinderProps>) {
-  return render(<EntityFinder {...defaultProps} {...propOverrides} />)
+  return render(
+    <SynapseTestContext>
+      <EntityFinder {...defaultProps} {...propOverrides} />
+    </SynapseTestContext>,
+  )
 }
 
 describe('EntityFinder tests', () => {
@@ -315,7 +322,6 @@ describe('EntityFinder tests', () => {
       expect(mockDetailsList).toHaveBeenLastCalledWith(
         expect.objectContaining({
           configuration: configuration, // !
-          accessToken: defaultProps.accessToken,
           selectableTypes: defaultProps.selectableTypes,
           visibleTypes: [
             ...defaultProps.visibleTypesInList!,
@@ -430,13 +436,13 @@ describe('EntityFinder tests', () => {
     }
 
     when(mockGetEntityHeaders)
-      .calledWith([{ targetId: entityId }], defaultProps.accessToken)
+      .calledWith([{ targetId: entityId }], MOCK_ACCESS_TOKEN)
       .mockResolvedValue(entityHeaderResult)
 
     when(mockGetEntityHeaders)
       .calledWith(
         [{ targetId: entityId, targetVersionNumber: version }],
-        defaultProps.accessToken,
+        MOCK_ACCESS_TOKEN,
       )
       .mockResolvedValue(entityHeaderResultWithVersion)
 

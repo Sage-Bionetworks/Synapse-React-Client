@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { getEntity, getFiles } from '../../utils/SynapseClient'
+import { SynapseContext } from '../../utils/SynapseContext'
 import {
   BatchFileRequest,
   BatchFileResult,
@@ -12,7 +13,6 @@ import {
 type SynapseImageProps = {
   wikiId?: string
   synapseId?: string
-  token?: string
   fileName?: string
   fileResults?: FileHandle[]
   params: {
@@ -42,10 +42,12 @@ class SynapseImage extends React.Component<
     }
   }
 
+  static contextType = SynapseContext
+
   public getEntity() {
-    const { token, synapseId } = this.props
+    const { synapseId } = this.props
     if (synapseId) {
-      getEntity<FileEntity>(token, synapseId).then(
+      getEntity<FileEntity>(this.context.accessToken, synapseId).then(
         // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
         (data: FileEntity) => {
           const fileHandleAssociationList = [
@@ -73,7 +75,7 @@ class SynapseImage extends React.Component<
       includePreviewPreSignedURLs: false,
       requestedFiles: fileHandleAssociationList,
     }
-    getFiles(request, this.props.token)
+    getFiles(request, this.context.accessToken)
       .then((data: BatchFileResult) => {
         const { preSignedURL } = data.requestedFiles.filter(
           el => el.fileHandleId === id,
@@ -113,7 +115,7 @@ class SynapseImage extends React.Component<
     if (params.scale && params.scale !== '100') {
       scale = `${Number(params.scale)}%`
     }
-    
+
     const alignLowerCase = align.toLowerCase()
     let className = ''
     if (alignLowerCase === 'left') {

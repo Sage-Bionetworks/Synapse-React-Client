@@ -7,6 +7,7 @@ import {
   ProjectFilesStatisticsResponse,
   FilesCountStatistics,
 } from '../utils/synapseTypes/'
+import { SynapseContext } from '../utils/SynapseContext'
 const Plot = createPlotlyComponent(Plotly)
 
 const months = [
@@ -26,7 +27,6 @@ const months = [
 
 export type StatisticsPlotProps = {
   request: ProjectFilesStatisticsRequest
-  token?: string
   title?: string
   xtitle?: string
   ytitle?: string
@@ -44,6 +44,7 @@ class StatisticsPlot extends React.Component<
   StatisticsPlotProps,
   StatisticsPlotState
 > {
+  static contextType = SynapseContext
   constructor(props: StatisticsPlotProps) {
     super(props)
     this.state = {
@@ -61,8 +62,8 @@ class StatisticsPlot extends React.Component<
    * @returns data corresponding to plotly widget
    */
   fetchPlotlyData = async () => {
-    const { request, token } = this.props
-    return SynapseClient.getProjectStatistics(request, token)
+    const { request } = this.props
+    return SynapseClient.getProjectStatistics(request, this.context.accessToken)
       .then((data: ProjectFilesStatisticsResponse) => {
         this.setState({
           isLoaded: true,

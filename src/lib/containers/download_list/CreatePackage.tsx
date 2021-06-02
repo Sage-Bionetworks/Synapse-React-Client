@@ -12,6 +12,7 @@ import {
   getDownloadOrder,
   getFileHandleByIdURL,
 } from '../../utils/SynapseClient'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import {
   BulkFileDownloadRequest,
   BulkFileDownloadResponse,
@@ -24,7 +25,6 @@ library.add(faDownload)
 library.add(faFolder)
 
 export type CreatePackageProps = {
-  token?: string
   children?: JSX.Element
   updateDownloadList: Function
 }
@@ -41,6 +41,7 @@ export const TEMPLATE_ERROR_FILE_NAME =
   'Please provide a package file name and try again.'
 
 export const CreatePackage = (props: CreatePackageProps) => {
+  const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
   const [alert, setAlert] = useState<Alert>({
@@ -51,7 +52,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
     BulkFileDownloadResponse | undefined
   >(undefined)
-  const { token, children, updateDownloadList } = props
+  const { children, updateDownloadList } = props
 
   const createPackageHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault()
@@ -69,7 +70,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
       const fileNameWithZipExtension = `${fileName}.zip`
       const downloadOrder = await getDownloadOrder(
         fileNameWithZipExtension,
-        token,
+        accessToken,
       )
       const bulkFileDownloadRequest: BulkFileDownloadRequest = {
         concreteType:
@@ -80,7 +81,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
       }
       const currentBulkFileDownloadResponse: BulkFileDownloadResponse = await getBulkFiles(
         bulkFileDownloadRequest,
-        token,
+        accessToken,
       )
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
     } catch (err) {
@@ -105,7 +106,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
         className: 'SRC-primary-background-color SRC-whiteText',
         variant: undefined,
       })
-      const url = await getFileHandleByIdURL(resultZipFileHandleId, token)
+      const url = await getFileHandleByIdURL(resultZipFileHandleId, accessToken)
       window.location.href = url
       updateDownloadList()
       setBulkFileDownloadResponse(undefined)

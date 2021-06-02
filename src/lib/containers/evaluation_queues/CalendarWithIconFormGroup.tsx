@@ -5,13 +5,13 @@ import { Form, InputGroup } from 'react-bootstrap'
 import { ReactComponent as CalendarClockIcon } from '../../assets/icons/calendar-clock.svg'
 import Datetime from 'react-datetime'
 import 'react-datetime/css/react-datetime.css'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type CalendarWithIconFormGroupProps = {
   value: string | Moment
   setterCallback: (value: string | Moment) => void
   label?: string
   disabled?: boolean
-  utc: boolean
   isValidDate?: (currentDate: any) => boolean
 }
 
@@ -20,9 +20,9 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
   setterCallback,
   label,
   disabled = false,
-  utc,
   isValidDate,
 }) => {
+  const { utcTime } = useSynapseContext()
   return (
     <Form.Group className="calendar-with-icon-form-group">
       {label && <label>{label}</label>}
@@ -34,7 +34,7 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
         </InputGroup.Prepend>
         <Datetime
           value={value}
-          utc={utc}
+          utc={utcTime}
           // using 24-hour time format
           timeFormat={'HH:mm z'}
           displayTimeZone={moment.tz.guess()}

@@ -8,25 +8,29 @@ import DownloadListTableV2, {
 } from '../../../../lib/containers/download_list_v2/DownloadListTableV2'
 import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { DownloadListItemResult } from '../../../../lib/utils/synapseTypes/DownloadListV2/DownloadListItemResult'
+import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 jest.mock('../../../../lib/utils/SynapseClient', () => {
   return {
     removeItemFromDownloadListV2: jest.fn(),
-    getUserProfileById: jest.fn().mockImplementation(() => Promise.resolve(mockUserProfileData)),
+    getUserProfileById: jest
+      .fn()
+      .mockImplementation(() => Promise.resolve(mockUserProfileData)),
   }
 })
-jest.mock('../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload', () => {
-  return {
-    useGetAvailableFilesToDownloadInfinite: jest.fn(),
-  }
-})
+jest.mock(
+  '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload',
+  () => {
+    return {
+      useGetAvailableFilesToDownloadInfinite: jest.fn(),
+    }
+  },
+)
 
 const mockFetchNextPage = jest.fn()
 const mockUseGetAvailableFilesToDownloadInfinite = useGetAvailableFilesToDownloadInfinite as jest.Mock
 
-const defaultProps: DownloadListTableV2Props = {
-  token: 'abcd',
-}
+const defaultProps: DownloadListTableV2Props = {}
 
 const page1: Partial<DownloadListItemResult>[] = [
   {
@@ -57,7 +61,11 @@ const page2: Partial<DownloadListItemResult>[] = [
 ]
 
 function renderComponent(propOverrides?: Partial<DownloadListTableV2Props>) {
-  return render(<DownloadListTableV2 {...defaultProps} {...propOverrides} />)
+  return render(
+    <SynapseTestContext>
+      <DownloadListTableV2 {...defaultProps} {...propOverrides} />
+    </SynapseTestContext>,
+  )
 }
 
 describe('DownloadListTableV2 tests', () => {

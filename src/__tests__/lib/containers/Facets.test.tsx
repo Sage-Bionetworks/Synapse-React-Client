@@ -14,9 +14,20 @@ import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import { SELECT_ALL } from '../../../lib/containers/table/SynapseTableConstants'
 import { cloneDeep } from 'lodash-es'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 
 const createMountedComponent = (props: QueryWrapperChildProps) => {
-  const wrapper = mount(<Facets {...props} />)
+  const wrapper = mount(
+    React.createElement(
+      componentProps => (
+        <SynapseTestContext>
+          <Facets {...componentProps} />
+        </SynapseTestContext>
+      ),
+      props,
+    ),
+  )
   const instance = wrapper.instance() as Facets
   return { wrapper, instance }
 }
@@ -149,7 +160,7 @@ describe('it performs basic functionality', () => {
       Ideally, this wouldn't be necessary, however its a tricky scenario because its an async process
       that has to get mocked, we essentially freeze the state during which the backend is fetching data.
     */
-    await wrapper.setProps({
+    wrapper.setProps({
       isLoading: true,
       lastFacetSelection: {
         columnName: facet,
@@ -157,6 +168,8 @@ describe('it performs basic functionality', () => {
         selector: SELECT_SINGLE_FACET,
       },
     })
+
+    await resolveAllPending(wrapper)
     // end mocking QueryWrapper behvaior
     expect(wrapper.find(`input.${FACET_NOT_SELECTED_CLASS}`)).toHaveLength(10)
     expect(wrapper.find(`input.${FACET_SELECTED_CLASS}`)).toHaveLength(1)
