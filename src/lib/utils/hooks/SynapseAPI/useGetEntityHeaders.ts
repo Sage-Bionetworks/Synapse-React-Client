@@ -7,7 +7,6 @@ import {
   PaginatedResults,
   ReferenceList,
 } from '../../synapseTypes'
-import { useContext } from 'react'
 
 export function useGetEntityHeaders(
   references: ReferenceList,

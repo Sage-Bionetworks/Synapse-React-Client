@@ -12,6 +12,7 @@ import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrappe
 import { SynapseClient } from '../../lib/utils/'
 import { RouteChildrenProps } from 'react-router'
 import { Alert } from 'react-bootstrap'
+import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
@@ -138,7 +139,13 @@ export default class App extends React.Component<{}, AppState> {
       )
     }
     return (
-      <TokenContext.Provider value={token}>
+      <SynapseContextProvider
+        synapseContext={{
+          accessToken: token,
+          isInExperimentalMode: SynapseClient.getIsInExperimentalModeFromCookie(),
+          utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+        }}
+      >
         <Router basename={process.env.PUBLIC_URL}>
           <div>
             <div className="App-header text-center">
@@ -241,7 +248,7 @@ export default class App extends React.Component<{}, AppState> {
             />
           </div>
         </Router>
-      </TokenContext.Provider>
+      </SynapseContextProvider>
     )
   }
 }
