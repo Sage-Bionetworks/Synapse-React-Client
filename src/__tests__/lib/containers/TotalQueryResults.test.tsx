@@ -11,9 +11,15 @@ import {
 } from '../../../lib/utils/synapseTypes/'
 import { SynapseConstants } from '../../../lib'
 import { act } from 'react-dom/test-utils'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../mocks/MockSynapseContext'
 
 const createMountedComponent = async (props: TotalQueryResultsProps) => {
-  const wrapper = await mount(<TotalQueryResults {...props} />)
+  const wrapper = await mount(<TotalQueryResults {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
   return { wrapper }
 }
 
@@ -127,7 +133,7 @@ describe('it works', () => {
             SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
             SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS,
         }),
-        '',
+        MOCK_CONTEXT_VALUE.accessToken,
       )
     })
   })

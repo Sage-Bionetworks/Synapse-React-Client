@@ -1,6 +1,6 @@
 Configured to show cards:
 ```jsx
-<QueryWrapperPlotNav token={accessToken}  
+<QueryWrapperPlotNav
   rgbIndex={1}
   name='Initiatives'
   sql='SELECT * from syn24189696'
@@ -42,7 +42,7 @@ Configured to show cards:
 
 Configured to show a table:
 ```jsx
-<QueryWrapperPlotNav token={accessToken}
+<QueryWrapperPlotNav 
   tableConfiguration={{
       showAccessColumn: true,
       showDownloadColumn: true,

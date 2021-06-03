@@ -10,9 +10,12 @@ import React from 'react'
 import { Form } from 'react-bootstrap'
 import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
 import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../mocks/MockSynapseContext'
 
 describe('test EvaluationEditor', () => {
-  const accessToken = 'sssssssssssssssssssssss'
   const evaluationId = '1234'
   const entityId = 'syn1111111'
   let evaluation: Evaluation
@@ -43,9 +46,7 @@ describe('test EvaluationEditor', () => {
     mockOnSaveSuccess = jest.fn()
 
     props = {
-      accessToken: accessToken,
       evaluationId: evaluationId,
-      utc: true,
       onDeleteSuccess: mockOnDeleteSuccess,
       onSaveSuccess: mockOnSaveSuccess,
     }
@@ -84,16 +85,23 @@ describe('test EvaluationEditor', () => {
   })
 
   test('retrieve evaluation from API if evaluationId is provided', () => {
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('h4').text()).toBe('Edit Evaluation Queue')
-    expect(mockGetEvaluation).toBeCalledWith(evaluationId, accessToken)
+    expect(mockGetEvaluation).toBeCalledWith(
+      evaluationId,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
   })
 
   test('do not retrieve evaluation from API if id is not provided', () => {
     props = { ...props, entityId, evaluationId: undefined }
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     expect(wrapper.find('h4').text()).toBe('Create Evaluation Queue')
     expect(mockGetEvaluation).not.toBeCalled()
@@ -108,24 +116,35 @@ describe('test EvaluationEditor', () => {
         ),
     )
 
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
-    expect(mockGetEvaluation).toBeCalledWith(evaluationId, accessToken)
+    expect(mockGetEvaluation).toBeCalledWith(
+      evaluationId,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
   })
 
   test('error thrown when using both evaluationId and entityId', () => {
     props = { ...props, entityId, evaluationId }
 
-    spyOn(console, 'error')
+    jest.spyOn(console, 'error')
 
-    expect(() => mount(<EvaluationEditor {...props} />)).toThrow(Error)
+    expect(() =>
+      mount(<EvaluationEditor {...props} />, {
+        wrappingComponent: SynapseTestContext,
+      }),
+    ).toThrow(Error)
   })
 
   test('save button clicked when using entityId creates new evaluation', () => {
     props = { ...props, entityId, evaluationId: undefined }
 
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     const nameInputBox = wrapper.find(Form.Control).at(0)
     expect(nameInputBox.prop('value')).toBe('')
@@ -143,25 +162,33 @@ describe('test EvaluationEditor', () => {
         submissionInstructionsMessage: '',
         submissionReceiptMessage: '',
       },
-      accessToken,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(mockUpdateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(evaluation, accessToken)
+    expect(mockUpdateEvaluation).toBeCalledWith(
+      evaluation,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
     expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
   })
 
   test('save button clicked when using evaluationId updates evaluation', () => {
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(evaluation, accessToken)
+    expect(mockUpdateEvaluation).toBeCalledWith(
+      evaluation,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
     expect(mockCreateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
     expect(wrapper.find(ErrorBanner).exists()).toBe(false)
@@ -176,11 +203,16 @@ describe('test EvaluationEditor', () => {
         ),
     )
 
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     //clicking save button again after the first time should call update instead
     wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(evaluation, accessToken)
+    expect(mockUpdateEvaluation).toBeCalledWith(
+      evaluation,
+      MOCK_CONTEXT_VALUE.accessToken,
+    )
     expect(mockCreateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).not.toBeCalled()
     expect(wrapper.find(ErrorBanner).exists()).toBe(true)
@@ -190,7 +222,9 @@ describe('test EvaluationEditor', () => {
   test('dropdown menu evaluation has no id - hide delete option', () => {
     props = { ...props, entityId, evaluationId: undefined }
 
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     wrapper.find('DropdownToggle').simulate('click')
 
@@ -208,7 +242,9 @@ describe('test EvaluationEditor', () => {
   })
 
   test('dropdown menu evaluation has id - delete successful', () => {
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     wrapper.find('DropdownToggle').simulate('click')
 
@@ -245,7 +281,9 @@ describe('test EvaluationEditor', () => {
         ),
     )
 
-    const wrapper = mount(<EvaluationEditor {...props} />)
+    const wrapper = mount(<EvaluationEditor {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
 
     wrapper.find('DropdownToggle').simulate('click')
 

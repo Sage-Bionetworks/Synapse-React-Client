@@ -12,7 +12,7 @@ export type UserCardContextMenuProps = {
   menuActions: MenuAction[]
 }
 
-const UserCardContextMenu: React.SFC<UserCardContextMenuProps> = (
+const UserCardContextMenu: React.FC<UserCardContextMenuProps> = (
   props: UserCardContextMenuProps,
 ) => {
   const { menuActions = [], userProfile } = props

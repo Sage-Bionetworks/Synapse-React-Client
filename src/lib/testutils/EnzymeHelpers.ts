@@ -6,11 +6,7 @@ import { ReactWrapper, ShallowWrapper } from 'enzyme'
  * something depending on useEffect (which requires the mount API, see https://github.com/enzymejs/enzyme/issues/2086)
  */
 export async function resolveAllPending(
-  wrapper: ReactWrapper|ShallowWrapper<
-    React.FunctionComponent,
-    any,
-    React.Component<{}, {}, any>
-  >,
+  wrapper: ReactWrapper<any> | ShallowWrapper<any>,
 ) {
   await act(
     async (): Promise<any> => {

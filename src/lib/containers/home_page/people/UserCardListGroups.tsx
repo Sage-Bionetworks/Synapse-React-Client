@@ -14,7 +14,6 @@ export type UserCardListGroupsProps = {
   summaryLinkText?: string
   count: number
   useQueryResultUserData?: boolean
-  token?: string
 }
 
 export default function UserCardListGroups(props: UserCardListGroupsProps) {

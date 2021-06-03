@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import {
   useGetProjects,
   useGetProjectsInfinite,
@@ -10,11 +9,19 @@ import {
   EntityType,
   ProjectHeaderList,
 } from '../../../../../lib/utils/synapseTypes'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { QueryClient } from 'react-query'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+
+const queryClient = new QueryClient()
 
 const wrapper = (props: { children: React.ReactChildren }) => (
-  <QueryClientProvider client={new QueryClient()}>
+  <SynapseContextProvider
+    synapseContext={MOCK_CONTEXT_VALUE}
+    queryClient={queryClient}
+  >
     {props.children}
-  </QueryClientProvider>
+  </SynapseContextProvider>
 )
 
 const request: EntityChildrenRequest = {
@@ -52,19 +59,22 @@ const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 SynapseClient.getMyProjects = jest.fn()
 
 describe('basic functionality', () => {
+  beforeEach(() => {
+    queryClient.clear()
+  })
   it('correctly calls SynapseClient', async () => {
     SynapseClient.getMyProjects.mockResolvedValueOnce(page1)
 
-    const accessToken = 'abcdef'
-
-    const { result, waitFor } = renderHook(
-      () => useGetProjects(accessToken, request),
-      { wrapper },
-    )
+    const { result, waitFor } = renderHook(() => useGetProjects(request), {
+      wrapper,
+    })
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(accessToken, request)
+    expect(SynapseClient.getMyProjects).toBeCalledWith(
+      MOCK_CONTEXT_VALUE.accessToken,
+      request,
+    )
     expect(result.current.data).toEqual(page1)
   })
 
@@ -73,16 +83,17 @@ describe('basic functionality', () => {
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
 
-    const accessToken = 'abcdef'
-
     const { result, waitFor } = renderHook(
-      () => useGetProjectsInfinite(accessToken, request),
+      () => useGetProjectsInfinite(request),
       { wrapper },
     )
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(accessToken, request)
+    expect(SynapseClient.getMyProjects).toBeCalledWith(
+      MOCK_CONTEXT_VALUE.accessToken,
+      request,
+    )
     expect(result.current.data?.pages[0]).toEqual(page1)
     expect(result.current.hasNextPage).toBe(true)
 
@@ -91,10 +102,13 @@ describe('basic functionality', () => {
     await waitFor(() => result.current.isFetching)
     await waitFor(() => !result.current.isFetching)
 
-    expect(SynapseClient.getMyProjects).toBeCalledWith(accessToken, {
-      ...request,
-      nextPageToken: page1.nextPageToken,
-    })
+    expect(SynapseClient.getMyProjects).toBeCalledWith(
+      MOCK_CONTEXT_VALUE.accessToken,
+      {
+        ...request,
+        nextPageToken: page1.nextPageToken,
+      },
+    )
     expect(result.current.data?.pages[1]).toEqual(page2)
     expect(result.current.hasNextPage).toBe(false)
   })

@@ -8,10 +8,10 @@ import {
   QueryBundleRequest,
 } from '../../utils/synapseTypes/'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
+import { SynapseContext } from '../../utils/SynapseContext'
 const Plot = createPlotlyComponent(Plotly)
 
 export type SynapsePlotProps = {
-  token?: string
   ownerId?: string
   wikiId?: string
   widgetparamsMapped?: any
@@ -33,6 +33,8 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
     this.showPlot = this.showPlot.bind(this)
   }
 
+  static contextType = SynapseContext
+
   public componentDidMount() {
     this.fetchPlotlyData()
   }
@@ -42,7 +44,6 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
    * @returns data corresponding to plotly widget
    */
   public fetchPlotlyData() {
-    const { token } = this.props
     const { query } = this.props.widgetparamsMapped
     const queryRequest: QueryBundleRequest = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -53,7 +54,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
       },
     }
 
-    getFullQueryTableResults(queryRequest, token)
+    getFullQueryTableResults(queryRequest, this.context.accessToken)
       .then((data: QueryResultBundle) => {
         this.setState({
           isLoaded: true,

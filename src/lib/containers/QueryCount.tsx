@@ -5,13 +5,13 @@ import {
   FacetColumnValuesRequest,
 } from '../utils/synapseTypes/'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type QueryCountProps = {
   sql: string
   selectedFacets?: FacetColumnValuesRequest[]
   parens?: boolean
   name: string
-  token?: string
 }
 
 const QueryCount: React.FunctionComponent<QueryCountProps> = ({
@@ -19,12 +19,15 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
   selectedFacets,
   parens,
   name,
-  token,
 }) => {
+  const { accessToken } = useSynapseContext()
   const [storedSqlQueryCount, setStoredSqlQueryCount] = useState<{}>({})
   // maps sql string to true/false, true if already made a request for this sql's query count
   // false or undefined if not
-  const [isCalculatingQueryCountForSql, setIsCalculatingQueryCountForSql] = useState<{}>({})
+  const [
+    isCalculatingQueryCountForSql,
+    setIsCalculatingQueryCountForSql,
+  ] = useState<{}>({})
   let mounted = true
 
   useEffect(() => {
@@ -32,14 +35,15 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
       if (mounted) {
         const entityId = parseEntityIdFromSqlStatement(sql)
         if (
-          isCalculatingQueryCountForSql[`${sql}-${token}`] ||
-          storedSqlQueryCount[`${sql}-${token}`]
+          isCalculatingQueryCountForSql[`${sql}-${accessToken}`] ||
+          storedSqlQueryCount[`${sql}-${accessToken}`]
         ) {
           // its either in progress or its already been calculated
           return
         }
         const request: QueryBundleRequest = {
-          concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
           query: {
             sql,
             selectedFacets,
@@ -48,15 +52,15 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
           partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
         }
         const newIsCalculatingQueryCountForSql = {
-          ...isCalculatingQueryCountForSql,  
+          ...isCalculatingQueryCountForSql,
         }
-        newIsCalculatingQueryCountForSql[`${sql}-${token}`] = true
+        newIsCalculatingQueryCountForSql[`${sql}-${accessToken}`] = true
         setIsCalculatingQueryCountForSql(newIsCalculatingQueryCountForSql)
-        SynapseClient.getQueryTableResults(request, token).then(data => {
+        SynapseClient.getQueryTableResults(request, accessToken).then(data => {
           const newStoredSqlQueryCount = {
-            ...storedSqlQueryCount
+            ...storedSqlQueryCount,
           }
-          newStoredSqlQueryCount[`${sql}-${token}`] = data!.queryCount
+          newStoredSqlQueryCount[`${sql}-${accessToken}`] = data!.queryCount
           setStoredSqlQueryCount(newStoredSqlQueryCount)
         })
       }
@@ -67,10 +71,9 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
     return () => {
       mounted = false
     }
+  }, [sql, selectedFacets, accessToken])
 
-  }, [sql, selectedFacets, token])
-
-  const count = storedSqlQueryCount[`${sql}-${token}`]
+  const count = storedSqlQueryCount[`${sql}-${accessToken}`]
   const localCount = count?.toLocaleString()
   /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
   return (

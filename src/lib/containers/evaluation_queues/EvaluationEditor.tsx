@@ -13,16 +13,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationEditorProps = {
-  /** access token to make authenticated API calls */
-  readonly accessToken: string
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
   readonly evaluationId?: string
   /** Use if CREATING a new Evaluation. Id of the Entity that will be associated with the Evaluation */
   readonly entityId?: string
-  /** If true, the "Created on" date will be displayed in UTC time */
-  readonly utc: boolean
   /** Callback after successful deletion of the Evaluation */
   readonly onDeleteSuccess: () => void
   /** Callback after successful save of the Evaluation */
@@ -33,17 +30,15 @@ export type EvaluationEditorProps = {
  * Edits basic properties of an Evaluation
  */
 export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = ({
-  accessToken,
   evaluationId,
   entityId,
-  utc,
   onDeleteSuccess,
   onSaveSuccess,
 }: EvaluationEditorProps) => {
   if (evaluationId && entityId) {
     throw new Error('please use either evaluationId or entityId but not both')
   }
-
+  const { accessToken } = useSynapseContext()
   const [error, setError] = useState<SynapseClientError>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
 
@@ -182,11 +177,9 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
             <CreatedOnByUserDiv
               userId={evaluation.ownerId!}
               date={new Date(evaluation.createdOn)}
-              accessToken={accessToken}
-              utc={utc}
             />
           )}
-          {error && <ErrorBanner error={error} token={accessToken} />}
+          {error && <ErrorBanner error={error} />}
           {showSaveSuccess && (
             <Alert
               className="save-success-alert"

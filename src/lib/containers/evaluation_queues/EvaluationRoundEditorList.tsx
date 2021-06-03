@@ -13,14 +13,11 @@ import {
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
 import { ErrorBanner } from '../ErrorBanner'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type EvaluationRoundEditorListProps = {
-  /** access token to make authenticated API calls */
-  accessToken: string
   /** id of the Evaluation containing EvaluationRounds to edit*/
   evaluationId: string
-  /** If true, dates for start/end are displayed in UTC instead of local time*/
-  utc: boolean
 }
 
 const fetchEvaluationList = (
@@ -65,10 +62,9 @@ const fetchEvaluationList = (
  * Edits EvaluationsRounds for an Evaluation.
  */
 export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
-  accessToken,
   evaluationId,
-  utc,
 }: EvaluationRoundEditorListProps) => {
+  const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
 
   const {
@@ -84,7 +80,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
     () => {
       fetchEvaluationList(
         evaluationId,
-        accessToken,
+        accessToken!,
         setEvaluationRoundInputList,
         setError,
       )
@@ -96,7 +92,7 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
   )
 
   if (error) {
-    return <ErrorBanner error={error} token={accessToken} />
+    return <ErrorBanner error={error} />
   }
 
   return (
@@ -105,12 +101,10 @@ export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundE
         {evaluationRoundInputList.map((evaluationRoundInput, index) => {
           return (
             <EvaluationRoundEditor
-              accessToken={accessToken}
               key={evaluationRoundInput.reactListKey}
               evaluationRoundInput={evaluationRoundInput}
               onSave={handleEvaluationRoundInputListChange(index)}
               onDelete={handleEvaluationRoundInputListRemove(index)}
-              utc={utc}
             />
           )
         })}

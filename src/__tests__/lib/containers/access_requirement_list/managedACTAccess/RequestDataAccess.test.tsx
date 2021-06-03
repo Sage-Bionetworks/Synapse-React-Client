@@ -6,10 +6,10 @@ import {
   ManagedACTAccessRequirement,
   SUBMISSION_STATE,
 } from '../../../../../lib/utils/synapseTypes'
+import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
 describe('RequestDataAccess: basic functionality', () => {
-
-  const mockAccessRequirement:ManagedACTAccessRequirement = {
+  const mockAccessRequirement: ManagedACTAccessRequirement = {
     concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
     isCertifiedUserRequired: true,
     isValidatedProfileRequired: true,
@@ -28,7 +28,7 @@ describe('RequestDataAccess: basic functionality', () => {
     modifiedOn: '',
     modifiedBy: '',
     subjectIds: [],
-    accessType: ACCESS_TYPE.UPDATE
+    accessType: ACCESS_TYPE.UPDATE,
   }
 
   const mockAccessRequirementStatus = {
@@ -41,35 +41,44 @@ describe('RequestDataAccess: basic functionality', () => {
     },
     accessRequirementId: 'string',
     concreteType: 'string',
-    isApproved:	true,
-    expiredOn: 'string'
+    isApproved: true,
+    expiredOn: 'string',
   }
 
   it('render component without crashing', async () => {
-    const wrapper = mount(<RequestDataAccess
-      user={undefined}
-      token={undefined}
-      wikiPage={undefined}
-      entityId={'123'}
-      accessRequirement={mockAccessRequirement}
-      accessRequirementStatus={mockAccessRequirementStatus}
-      showButton={true}
-    />)
+    const wrapper = mount(
+      <RequestDataAccess
+        user={undefined}
+        wikiPage={undefined}
+        entityId={'123'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+        showButton={true}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
+    )
     expect(wrapper).toBeDefined()
   })
 
   it('should show request access button regardless logged in or not', async () => {
     delete mockAccessRequirementStatus.currentSubmissionStatus.state
-    const wrapper = mount(<RequestDataAccess
-      user={undefined}
-      token={undefined}
-      wikiPage={undefined}
-      entityId={'123'}
-      accessRequirement={mockAccessRequirement}
-      accessRequirementStatus={mockAccessRequirementStatus}
-      showButton={true}
-    />)
-    expect(wrapper.find('button.accept-button').text()).toEqual('Request access')
+    const wrapper = mount(
+      <RequestDataAccess
+        user={undefined}
+        wikiPage={undefined}
+        entityId={'123'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+        showButton={true}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
+    )
+    expect(wrapper.find('button.accept-button').text()).toEqual(
+      'Request access',
+    )
   })
-
 })

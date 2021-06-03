@@ -10,6 +10,18 @@ import {
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
+
+/**
+ * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
+ * 
+ * This wasn't done because Enzyme's shallow renderer is not currently
+ * compatible with the `contextType` field in the React 16+ context API.
+ * 
+ * This can be fixed by rewriting tests to not rely on the shallow renderer.
+ * 
+ * See here: https://github.com/enzymejs/enzyme/issues/1553
+ */
+
 // TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
 // will have to find a way to use individual lodash packages instead of the entire thing
 import { cloneDeep, isEqual } from 'lodash-es'
@@ -263,7 +275,6 @@ export default class CardContainerLogic extends React.Component<
       <CardContainer
         {...rest}
         data={this.state.data}
-        token={token}
         getLastQueryRequest={this.getLastQueryRequest}
         getNextPageOfData={this.getNextPageOfData}
         hasMoreData={this.state.hasMoreData}

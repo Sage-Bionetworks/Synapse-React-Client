@@ -12,6 +12,10 @@ import {
 } from '../../../lib/containers/download_list/DownloadConfirmation'
 import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 import { Alert } from 'react-bootstrap'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../mocks/MockSynapseContext'
 
 let getQueryTableResultsFn: Function
 let addFilesToDownloadRequestFn: Function
@@ -75,7 +79,9 @@ const addFilesToDownloadListResponse: AddFilesToDownloadListResponse = {
 
 const createMountedComponent = (props: DownloadConfirmationProps) => {
   const wrapper = mount<React.FunctionComponent<DownloadConfirmationProps>>(
-    <DownloadConfirmation {...props} />,
+    <SynapseTestContext>
+      <DownloadConfirmation {...props} />
+    </SynapseTestContext>,
   )
 
   return { wrapper }
@@ -93,7 +99,6 @@ describe('it performs the expected functionality', () => {
 
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
-    token: '12345',
     getLastQueryRequest: () => queryBundleRequest,
   }
 
@@ -122,7 +127,7 @@ describe('it performs the expected functionality', () => {
     await resolveAllPending(wrapper)
     expect(getQueryTableResultsFn).toHaveBeenCalledWith(
       mockGetQueryTableRequest,
-      props.token,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
     expect(wrapper.find('button')).toHaveLength(2)
@@ -137,7 +142,7 @@ describe('it performs the expected functionality', () => {
     wrapper.find('button.btn-primary').simulate('click')
     expect(addFilesToDownloadRequestFn).toHaveBeenCalledWith(
       addFilesToDownloadListRequest,
-      props.token,
+      MOCK_CONTEXT_VALUE.accessToken,
     )
     expect(wrapper.text()).toBe('Adding Files To List')
     expect(wrapper.find('button')).toHaveLength(0)

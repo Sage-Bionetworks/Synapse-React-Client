@@ -1,13 +1,16 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import ManagedACTAccessRequirementComponent
-  from '../../../../../lib/containers/access_requirement_list/managedACTAccess/ManagedACTAccessRequirement'
-import { ACCESS_TYPE, ManagedACTAccessRequirement, SUBMISSION_STATE } from '../../../../../lib/utils/synapseTypes'
+import ManagedACTAccessRequirementComponent from '../../../../../lib/containers/access_requirement_list/managedACTAccess/ManagedACTAccessRequirement'
+import {
+  ACCESS_TYPE,
+  ManagedACTAccessRequirement,
+  SUBMISSION_STATE,
+} from '../../../../../lib/utils/synapseTypes'
 import RequestDataAccess from '../../../../../lib/containers/access_requirement_list/managedACTAccess/RequestDataAccess'
+import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
 describe('ManagedACTAccessRequirement: basic functionality', () => {
-
-  const mockAccessRequirement:ManagedACTAccessRequirement = {
+  const mockAccessRequirement: ManagedACTAccessRequirement = {
     concreteType: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
     isCertifiedUserRequired: true,
     isValidatedProfileRequired: true,
@@ -26,7 +29,7 @@ describe('ManagedACTAccessRequirement: basic functionality', () => {
     modifiedOn: '',
     modifiedBy: '',
     subjectIds: [],
-    accessType: ACCESS_TYPE.UPDATE
+    accessType: ACCESS_TYPE.UPDATE,
   }
 
   const mockAccessRequirementStatus = {
@@ -39,30 +42,37 @@ describe('ManagedACTAccessRequirement: basic functionality', () => {
     },
     accessRequirementId: 'string',
     concreteType: 'string',
-    isApproved:	true,
-    expiredOn: 'string'
+    isApproved: true,
+    expiredOn: 'string',
   }
 
   it('render component without crashing', async () => {
-    const wrapper = mount(<ManagedACTAccessRequirementComponent
-      token={''}
-      user={undefined}
-      entityId={'1'}
-      accessRequirement={mockAccessRequirement}
-      accessRequirementStatus={mockAccessRequirementStatus}
-    />)
+    const wrapper = mount(
+      <ManagedACTAccessRequirementComponent
+        user={undefined}
+        entityId={'1'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
+    )
     expect(wrapper).toBeDefined()
   })
 
-  it('should load RequestDataAccess component', async() => {
-    const wrapper = mount(<ManagedACTAccessRequirementComponent
-      token={''}
-      user={undefined}
-      entityId={'1'}
-      accessRequirement={mockAccessRequirement}
-      accessRequirementStatus={mockAccessRequirementStatus}
-    />)
+  it('should load RequestDataAccess component', async () => {
+    const wrapper = mount(
+      <ManagedACTAccessRequirementComponent
+        user={undefined}
+        entityId={'1'}
+        accessRequirement={mockAccessRequirement}
+        accessRequirementStatus={mockAccessRequirementStatus}
+      />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
+    )
     expect(wrapper.find(RequestDataAccess)).toHaveLength(1)
   })
-
 })

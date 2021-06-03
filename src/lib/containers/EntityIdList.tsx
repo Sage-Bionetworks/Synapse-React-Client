@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import {
-  getEntityHeadersByIds
-} from '../utils/SynapseClient'
+import { getEntityHeadersByIds } from '../utils/SynapseClient'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type EntityIdListProps = {
-  entityIdList: string[],
-  token: string | undefined
+  entityIdList: string[]
 }
 
 const EntityIdList: React.FC<EntityIdListProps> = props => {
-  const { entityIdList, token } = props
-  const [entityNameList, setEntityNameList] = useState<string>("")
+  const { accessToken } = useSynapseContext()
+  const { entityIdList } = props
+  const [entityNameList, setEntityNameList] = useState<string>('')
   const { ref, inView } = useInView()
-  let mounted:boolean = true
+  let mounted: boolean = true
 
-  useEffect( () => {
+  useEffect(() => {
     if (mounted && inView) {
       getEntityTypes()
     }
@@ -27,19 +26,17 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
   const getEntityTypes = async () => {
     if (!entityIdList.length) return
 
-    getEntityHeadersByIds(entityIdList, token).then((entity) =>{
-      const list = entity.results.map(el => el.name).join(", ")
-      setEntityNameList(list)
-    }).catch(e => {
-      console.log("EntityIdList: Error getting entity header names", e)
-    })
+    getEntityHeadersByIds(entityIdList, accessToken)
+      .then(entity => {
+        const list = entity.results.map(el => el.name).join(', ')
+        setEntityNameList(list)
+      })
+      .catch(e => {
+        console.log('EntityIdList: Error getting entity header names', e)
+      })
   }
 
-  return (
-    <span ref={ref}>
-      {entityNameList}
-    </span>
-  )
+  return <span ref={ref}>{entityNameList}</span>
 }
 
 export default EntityIdList

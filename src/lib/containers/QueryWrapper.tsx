@@ -12,6 +12,18 @@ import {
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+
+/**
+ * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
+ *
+ * This wasn't done because Enzyme's shallow renderer is not currently
+ * compatible with the `contextType` field in the React 16+ context API.
+ *
+ * This can be fixed by rewriting tests to not rely on the shallow renderer.
+ *
+ * See here: https://github.com/enzymejs/enzyme/issues/1553
+ */
+
 export type QueryWrapperProps = {
   visibleColumnCount?: number
   initQueryRequest: QueryBundleRequest
@@ -74,7 +86,7 @@ export type QueryWrapperState = {
   in SRC won't generate type errors.
  */
 export type LockedFacet = {
-  facet?: string,
+  facet?: string
   value?: string
 }
 
@@ -112,7 +124,7 @@ export type QueryWrapperChildProps = {
   topLevelControlsState?: TopLevelControlsState
   isColumnSelected?: string[]
   selectedRowIndices?: number[]
-  error?: SynapseClientError | undefined,
+  error?: SynapseClientError | undefined
   lockedFacet?: LockedFacet
 }
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
@@ -153,7 +165,7 @@ export default class QueryWrapper extends React.Component<
       isAllFilterSelectedForFacet: {},
       loadNowStarted: false,
       lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
-      topLevelControlsState : {
+      topLevelControlsState: {
         showColumnFilter: true,
         showFacetFilter: true,
         showFacetVisualization,
@@ -331,7 +343,7 @@ export default class QueryWrapper extends React.Component<
       .then((data: QueryResultBundle) => {
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
-          initQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+            initQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
         const isAllFilterSelectedForFacet = cloneDeep(
           this.state.isAllFilterSelectedForFacet,
         )
@@ -398,14 +410,18 @@ export default class QueryWrapper extends React.Component<
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  public removeLockedFacetData (){
+  public removeLockedFacetData() {
     const lockedFacet = this.props.lockedFacet?.facet
-    if (lockedFacet && this.state.data) {  // for details page, return data without the "locked" facet
+    if (lockedFacet && this.state.data) {
+      // for details page, return data without the "locked" facet
       const data = cloneDeep(this.state.data)
-      const facets = data.facets?.filter( item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase())
+      const facets = data.facets?.filter(
+        item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase(),
+      )
       data.facets = facets
       return data
-    } else {  // for other pages, just return the data
+    } else {
+      // for other pages, just return the data
       return this.state.data
     }
   }

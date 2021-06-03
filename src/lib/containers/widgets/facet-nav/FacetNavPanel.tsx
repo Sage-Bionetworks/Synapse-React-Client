@@ -11,6 +11,7 @@ import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseClient, SynapseConstants } from '../../../utils'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   ColumnType,
   FacetColumnResultValueCount,
@@ -344,11 +345,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     data,
     isLoading,
     facetAliases,
-    token,
     lastQueryRequest,
     plotType,
     onSetPlotType,
   } = props
+  const { accessToken } = useSynapseContext()
   const [plotData, setPlotData] = useState<GraphData>()
   const [showModal, setShowModal] = useState(false)
 
@@ -373,10 +374,10 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         getColumnType(),
         index,
         plotType,
-        token,
+        accessToken,
       ).then(plotData => setPlotData(plotData))
     }
-  }, [facetToPlot, data, index, plotType, token, getColumnType])
+  }, [facetToPlot, data, index, plotType, accessToken, getColumnType])
 
   /* rendering functions */
   const ChartSelectionToggle = (): JSX.Element => (
@@ -447,7 +448,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  token={token}
                   facetAliases={facetAliases}
                   onChange={(facetNamesMap: {}) => {
                     applyMultipleChangesToValuesColumn(
@@ -500,7 +500,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                       el => el.name === facetToPlot.columnName,
                     )!
                   }
-                  token={token}
                   facetAliases={facetAliases}
                   onChange={(facetNamesMap: {}) => {
                     applyMultipleChangesToValuesColumn(

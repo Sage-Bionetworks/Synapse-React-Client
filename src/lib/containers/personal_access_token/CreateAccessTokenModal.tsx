@@ -8,6 +8,7 @@ import {
   ModalBody,
 } from 'react-bootstrap'
 import { SynapseClient } from '../../utils'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenGenerationRequest } from '../../utils/synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import { CopyToClipboardInput } from '../CopyToClipboardInput'
@@ -21,14 +22,13 @@ const INVALID_INPUT_MSG =
 export type CreateAccessTokenModalProps = {
   onClose: (...args: any[]) => void
   onCreate: (...args: any[]) => void
-  token: string
 }
 
 export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenModalProps> = ({
   onClose,
   onCreate,
-  token,
 }: CreateAccessTokenModalProps) => {
+  const { accessToken } = useSynapseContext()
   const [tokenName, setTokenName] = React.useState('')
   const [viewAccess, setViewAccess] = React.useState(true)
   const [downloadAccess, setDownloadAccess] = React.useState(false)
@@ -68,7 +68,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
 
         const response = await SynapseClient.createPersonalAccessToken(
           request,
-          token,
+          accessToken,
         )
 
         setIsLoading(false)

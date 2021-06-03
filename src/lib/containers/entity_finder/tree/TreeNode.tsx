@@ -28,7 +28,6 @@ export enum NodeAppearance {
 }
 
 export type TreeNodeProps = {
-  accessToken: string
   entityHeader?: EntityHeader | ProjectHeader
   selected: Reference[]
   setSelectedId: (entityId: string) => void
@@ -42,7 +41,6 @@ export type TreeNodeProps = {
 }
 
 export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
-  accessToken,
   entityHeader,
   selected,
   setSelectedId,
@@ -88,7 +86,6 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
     hasNextPage,
     isSuccess,
   } = useGetEntityChildrenInfinite(
-    accessToken,
     {
       parentId: nodeId,
       includeTypes: visibleTypes,
@@ -102,7 +99,6 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   )
 
   const { data: bundle } = useGetEntityBundle(
-    accessToken,
     nodeId,
     BUNDLE_REQUEST_OBJECT,
     undefined,
@@ -200,7 +196,6 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
             return (
               <TreeNode
                 key={child.id}
-                accessToken={accessToken}
                 entityHeader={child}
                 selected={selected}
                 setSelectedId={setSelectedId}

@@ -9,21 +9,22 @@ import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../../utils/'
+import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type AccessTokenCardProps = {
+  /** Record referring to an access token, not a token itself */
   accessToken: AccessTokenRecord
-  token?: string
   onDelete: (...args: any[]) => void
 }
 
 export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
   accessToken,
-  token,
   onDelete,
 }: AccessTokenCardProps) => {
+  const { accessToken: authToken } = useSynapseContext()
   const [showModal, setShowModal] = useState(false)
   const handleError = useErrorHandler()
 
@@ -58,7 +59,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         confirmButtonText={'Delete Token'}
         onCancel={() => setShowModal(false)}
         onConfirm={(id: string) => {
-          SynapseClient.deletePersonalAccessToken(id, token)
+          SynapseClient.deletePersonalAccessToken(id, authToken)
             .then(() => {
               onDelete()
               setShowModal(false)
@@ -69,7 +70,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
         }}
         confirmButtonVariant="danger"
         show={showModal}
-        onConfirmCallbackArgs={[accessToken.id, token]}
+        onConfirmCallbackArgs={[accessToken.id, authToken]}
       ></WarningModal>
 
       <div className="SRC-cardContent">
@@ -117,7 +118,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
           onClick={() => {
             if (isExpired) {
               // token no longer works, no need for warning/confirmation
-              SynapseClient.deletePersonalAccessToken(accessToken.id, token)
+              SynapseClient.deletePersonalAccessToken(accessToken.id, authToken)
                 .then(() => {
                   onDelete()
                 })

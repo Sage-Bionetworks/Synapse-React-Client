@@ -2,9 +2,9 @@ import { FileHandleAssociateType } from '../../utils/synapseTypes'
 import React from 'react'
 import { SynapseConstants, SynapseClient } from '../../utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 type FileHandleLinkProps = {
-  token: string | undefined
   fileHandleId: string
   redirect?: boolean
   showDownloadIcon: boolean
@@ -15,7 +15,6 @@ type FileHandleLinkProps = {
 }
 export const FileHandleLink = (props: FileHandleLinkProps) => {
   const {
-    token,
     fileHandleId,
     showDownloadIcon,
     tableEntityConcreteType,
@@ -24,7 +23,7 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
     redirect = false,
     displayValue,
   } = props
-
+  const { accessToken } = useSynapseContext()
   if (!tableEntityConcreteType) {
     // still loading
     return <></>
@@ -38,19 +37,20 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
     <button
       // @ts-ignore
       onClick={() => {
-        if (token && fileAssociateId) {
+        if (accessToken && fileAssociateId) {
           SynapseClient.getActualFileHandleByIdURL(
             fileHandleId,
-            token,
+            accessToken,
             fileAssociateType,
             fileAssociateId,
             redirect,
-          ).then(url => {
-            window.open(url, '_blank')
-          })
-          .catch(err => {
-            console.error('Error on retrieving file handle url ', err)
-          })
+          )
+            .then(url => {
+              window.open(url, '_blank')
+            })
+            .catch(err => {
+              console.error('Error on retrieving file handle url ', err)
+            })
         }
       }}
       className={`SRC-primary-text-color ${SynapseConstants.SRC_SIGN_IN_CLASS}`}

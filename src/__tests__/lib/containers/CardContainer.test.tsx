@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme'
+import { mount, shallow } from 'enzyme'
 import * as React from 'react'
 import { SynapseConstants } from '../../../lib'
 import CardContainer, {
@@ -9,10 +9,13 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 import syn16787123Json from '../../../mocks/syn16787123.json'
 
-const createShallowComponent = (props: CardContainerProps) => {
-  const wrapper = shallow(<CardContainer {...props} />)
+const mountComponent = (props: CardContainerProps) => {
+  const wrapper = mount(<CardContainer {...props} />, {
+    wrappingComponent: SynapseTestContext,
+  })
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
@@ -52,13 +55,13 @@ describe('it performs all functionality', () => {
   }
 
   it('renders without crashing', () => {
-    const tree = createShallowComponent(props)
+    const tree = mountComponent(props)
     expect(tree).toBeDefined()
   })
 
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
-    const { wrapper } = createShallowComponent({
+    const { wrapper } = mountComponent({
       ...props,
       facet: 'projectStatus',
     })
@@ -69,12 +72,12 @@ describe('it performs all functionality', () => {
 
   it('Renders with a title', () => {
     const title = 'HelloWorld'
-    const { wrapper } = createShallowComponent({ ...props, title })
+    const { wrapper } = mountComponent({ ...props, title })
     expect(wrapper.find('h2.SRC-card-overview-title').text()).toEqual(title)
   })
 
   it('handleViewMore works', () => {
-    const { wrapper } = createShallowComponent(props)
+    const { wrapper } = mountComponent(props)
     // go through calling handle view more
     wrapper.find('Button').simulate('click')
     expect(getLastQueryRequest).toHaveBeenCalled()
@@ -86,7 +89,7 @@ describe('it performs all functionality', () => {
       ...props,
       hasMoreData: false,
     }
-    const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
+    const { wrapper } = mountComponent(propsWithHasMoreDataFalse)
     expect(wrapper.find('Button')).toHaveLength(0)
   })
 
@@ -95,8 +98,7 @@ describe('it performs all functionality', () => {
       ...props,
       limit: 3,
     }
-    const { wrapper } = createShallowComponent(propsWithHasMoreDataFalse)
+    const { wrapper } = mountComponent(propsWithHasMoreDataFalse)
     expect(wrapper.find('Button')).toHaveLength(1)
   })
-
 })

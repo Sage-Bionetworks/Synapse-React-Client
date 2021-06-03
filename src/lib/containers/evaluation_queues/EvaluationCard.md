@@ -12,8 +12,7 @@
 }}
 
 <EvaluationCard 
-  accessToken={accessToken} 
-  evaluation={evaluation} utc={true} 
+  evaluation={evaluation} 
   onEdit={() => alert("Edit clicked")} 
   onModifyAccess={() => alert("Modify Access clicked")} 
   onDelete={() => alert("Delete clicked")} 

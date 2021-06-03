@@ -9,13 +9,12 @@ export default function GoalsMobile({
   summary,
   countSql,
   title,
-  token,
 }: GoalsDataProps) {
   const titleElement = (
     <div className="Goals__Mobile__Header">
       {countSql && (
         <span className="Goals__Mobile__Header__Count">
-          <QueryCount parens={false} sql={countSql} token={token} name="" />
+          <QueryCount parens={false} sql={countSql} name="" />
         </span>
       )}
       <span className="Goals__Mobile__Header__Title"> {title} </span>

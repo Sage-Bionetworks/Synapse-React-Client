@@ -6,8 +6,8 @@ import useCompare from '../../utils/hooks/useCompare'
 import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponentNew  from './managedACTAccess/ManagedACTAccessRequirement'
-import ManagedACTAccessRequirementComponent  from './ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponentNew from './managedACTAccess/ManagedACTAccessRequirement'
+import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import {
   UserProfile,
@@ -32,6 +32,7 @@ import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 import Login from '../Login'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 library.add(faFile)
 
@@ -42,16 +43,15 @@ type AccessRequirementAndStatus = {
 
 export type AccessRequirementListProps = {
   entityId: string
-  token?: string
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
 }
 
 export type requestDataStepCallbackProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement,
-  step: number,
-  researchProjectId: string,
+  managedACTAccessRequirement: ManagedACTAccessRequirement
+  step: number
+  researchProjectId: string
   formSubmitRequestObject: RequestInterface
 }
 
@@ -82,35 +82,41 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
 
 export default function AccessRequirementList({
   entityId,
-  token,
   onHide,
   accessRequirementFromProps,
   renderAsModal,
 }: AccessRequirementListProps) {
+  const { accessToken } = useSynapseContext()
+
   const [accessRequirements, setAccessRequirements] = useState<
     Array<AccessRequirementAndStatus> | undefined
   >(undefined)
 
   const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
-  const [managedACTAccessRequirement, setManagedACTAccessRequirement] = useState<ManagedACTAccessRequirement>()
-  const [researchProjectId, setresearchProjectId] = useState<string>("")
-  const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<RequestInterface>()
+  const [
+    managedACTAccessRequirement,
+    setManagedACTAccessRequirement,
+  ] = useState<ManagedACTAccessRequirement>()
+  const [researchProjectId, setresearchProjectId] = useState<string>('')
+  const [
+    formSubmitRequestObject,
+    setFormSubmitRequestObject,
+  ] = useState<RequestInterface>()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
-    token: token,
     type: 'ENTITY_HEADER',
   }
 
-  const hasTokenChanged = useCompare(token)
+  const hasTokenChanged = useCompare(accessToken)
   const shouldUpdateData = hasTokenChanged || !accessRequirements
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
-
-    if (!SynapseClient.isInSynapseExperimentalMode()) { // TODO to be deleted when out of alpha mode
+    if (!SynapseClient.isInSynapseExperimentalMode()) {
+      // TODO to be deleted when out of alpha mode
       setRequestDataStep(-1)
     }
 
@@ -118,7 +124,7 @@ export default function AccessRequirementList({
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {
       const statuses = requirements.map(req => {
-        return SynapseClient.getAccessRequirementStatus(token, req.id)
+        return SynapseClient.getAccessRequirementStatus(accessToken, req.id)
       })
       const accessRequirementStatuses = await Promise.all(statuses)
 
@@ -149,7 +155,10 @@ export default function AccessRequirementList({
           return
         }
         if (!accessRequirementFromProps) {
-          const requirements = await getAllAccessRequirements(token, entityId)
+          const requirements = await getAllAccessRequirements(
+            accessToken,
+            entityId,
+          )
           const sortedAccessRequirements = await sortAccessRequirementByCompletion(
             requirements,
           )
@@ -161,7 +170,7 @@ export default function AccessRequirementList({
           setAccessRequirements(sortedAccessRequirements)
         }
 
-        const userProfile = await SynapseClient.getUserProfile(token)
+        const userProfile = await SynapseClient.getUserProfile(accessToken)
         setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
@@ -172,12 +181,12 @@ export default function AccessRequirementList({
     }
 
     getAccessRequirements()
-  }, [token, entityId, accessRequirementFromProps, shouldUpdateData])
+  }, [accessToken, entityId, accessRequirementFromProps, shouldUpdateData])
 
   // Using Boolean(value) converts undefined,null, 0,'',false -> false
   // one alternative to using Boolean(value) is the double bang operator !!value,
   // but doesn't ready well
-  const isSignedIn: boolean = Boolean(token)
+  const isSignedIn: boolean = Boolean(accessToken)
 
   /**
    * Returns rendering for the access requirement.
@@ -196,7 +205,6 @@ export default function AccessRequirementList({
           <SelfSignAccessRequirementComponent
             accessRequirement={accessRequirement as SelfSignAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -207,19 +215,22 @@ export default function AccessRequirementList({
           <TermsOfUseAccessRequirementComponent
             accessRequirement={accessRequirement as TermsOfUseAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
-        if (SynapseClient.isInSynapseExperimentalMode()) {  // TODO to be deleted when out of alpha mode
+        if (SynapseClient.isInSynapseExperimentalMode()) {
+          // TODO to be deleted when out of alpha mode
           return (
             <ManagedACTAccessRequirementComponentNew
-              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
-              token={token}
+              accessRequirement={
+                accessRequirement as ManagedACTAccessRequirement
+              }
+              accessRequirementStatus={
+                accessRequirementStatus as ManagedACTAccessRequirementStatus
+              }
               user={user}
               onHide={onHide}
               entityId={entityId}
@@ -229,9 +240,12 @@ export default function AccessRequirementList({
         } else {
           return (
             <ManagedACTAccessRequirementComponent
-              accessRequirement={accessRequirement as ManagedACTAccessRequirement}
-              accessRequirementStatus={accessRequirementStatus as ManagedACTAccessRequirementStatus}
-              token={token}
+              accessRequirement={
+                accessRequirement as ManagedACTAccessRequirement
+              }
+              accessRequirementStatus={
+                accessRequirementStatus as ManagedACTAccessRequirementStatus
+              }
               user={user}
               onHide={onHide}
               entityId={entityId}
@@ -243,7 +257,6 @@ export default function AccessRequirementList({
           <ACTAccessRequirementComponent
             accessRequirement={accessRequirement as ACTAccessRequirement}
             accessRequirementStatus={accessRequirementStatus}
-            token={token}
             user={user}
             onHide={onHide}
             entityId={entityId}
@@ -255,8 +268,13 @@ export default function AccessRequirementList({
     }
   }
 
-  const requestDataStepCallback = (props:requestDataStepCallbackProps) => {
-    const {managedACTAccessRequirement, step, researchProjectId, formSubmitRequestObject} = props
+  const requestDataStepCallback = (props: requestDataStepCallbackProps) => {
+    const {
+      managedACTAccessRequirement,
+      step,
+      researchProjectId,
+      formSubmitRequestObject,
+    } = props
     if (managedACTAccessRequirement) {
       // required for step 1, 2 form
       setManagedACTAccessRequirement(managedACTAccessRequirement)
@@ -293,7 +311,10 @@ export default function AccessRequirementList({
             />
             &nbsp;{entityInformation[0]?.name}
           </a>
-          <h4 className="AccessRequirementList__instruction" style={{marginTop: "3rem"}}>
+          <h4
+            className="AccessRequirementList__instruction"
+            style={{ marginTop: '3rem' }}
+          >
             What do I need to do?
           </h4>
           <div className="requirement-container">
@@ -351,49 +372,64 @@ export default function AccessRequirementList({
   if (renderAsModal) {
     switch (requestDataStep) {
       case 1:
-        renderContent = <RequestDataAccessStep1
-          token={token!}
-          managedACTAccessRequirement={managedACTAccessRequirement!}
-          requestDataStepCallback={requestDataStepCallback}
-          onHide={() => onHide?.()}
-        />
+        renderContent = (
+          <RequestDataAccessStep1
+            managedACTAccessRequirement={managedACTAccessRequirement!}
+            requestDataStepCallback={requestDataStepCallback}
+            onHide={() => onHide?.()}
+          />
+        )
         break
       case 2:
-        renderContent = <RequestDataAccessStep2
-          token={token!}
-          user={user!}
-          researchProjectId={researchProjectId}
-          managedACTAccessRequirement={managedACTAccessRequirement!}
-          entityId={entityId}  // for form submission after save
-          requestDataStepCallback={requestDataStepCallback}
-          onHide={() => onHide?.()}
-        />
+        renderContent = (
+          <RequestDataAccessStep2
+            user={user!}
+            researchProjectId={researchProjectId}
+            managedACTAccessRequirement={managedACTAccessRequirement!}
+            entityId={entityId} // for form submission after save
+            requestDataStepCallback={requestDataStepCallback}
+            onHide={() => onHide?.()}
+          />
+        )
         break
       case 3:
-        renderContent = <CancelRequestDataAccess
-          token={token!}
-          formSubmitRequestObject={formSubmitRequestObject}
-          onHide={() => onHide?.()}  // for closing dialogs
-        />
+        renderContent = (
+          <CancelRequestDataAccess
+            formSubmitRequestObject={formSubmitRequestObject}
+            onHide={() => onHide?.()} // for closing dialogs
+          />
+        )
         break
       case 4:
-        renderContent = <>
+        renderContent = (
+          <>
             <ReactBootstrap.Modal.Header closeButton={false}>
               <ReactBootstrap.Modal.Title className="AccessRequirementList__title">
                 Please Log In
               </ReactBootstrap.Modal.Title>
             </ReactBootstrap.Modal.Header>
-            <ReactBootstrap.Modal.Body className={"AccessRequirementList login-modal "}>
-              <Login sessionCallback={()=>{window.location.reload()}}/>
+            <ReactBootstrap.Modal.Body
+              className={'AccessRequirementList login-modal '}
+            >
+              <Login
+                sessionCallback={() => {
+                  window.location.reload()
+                }}
+              />
             </ReactBootstrap.Modal.Body>
           </>
+        )
         break
       default:
         renderContent = content
     }
     return (
       <ReactBootstrap.Modal
-        className={!requestDataStep ? "bootstrap-4-backport AccessRequirementList": 'bootstrap-4-backport AccessRequirementList modal-auto-height'}
+        className={
+          !requestDataStep
+            ? 'bootstrap-4-backport AccessRequirementList'
+            : 'bootstrap-4-backport AccessRequirementList modal-auto-height'
+        }
         onHide={() => onHide?.()}
         show={true}
         animation={false}

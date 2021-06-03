@@ -17,6 +17,17 @@ import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
 
+/**
+ * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
+ *
+ * This wasn't done because Enzyme's shallow renderer is not currently
+ * compatible with the `contextType` field in the React 16+ context API.
+ *
+ * This can be fixed by rewriting tests to not rely on the shallow renderer.
+ *
+ * See here: https://github.com/enzymejs/enzyme/issues/1553
+ */
+
 export type SynapseFormSubmissionGridProps = {
   token?: string
   formGroupId: string

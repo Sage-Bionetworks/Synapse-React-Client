@@ -20,6 +20,7 @@ import { DownloadConfirmation } from '../download_list'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import QueryFilterToggleButton from './QueryFilterToggleButton'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
+import { SynapseContextConsumer } from '../../utils/SynapseContext'
 
 type OwnProps = {
   sql: string
@@ -28,7 +29,6 @@ type OwnProps = {
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
   searchConfiguration?: SearchV2Props
-  token?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   facetsToFilter?: string[]
@@ -95,36 +95,40 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
   }
   return (
     <div className="QueryWrapperPlotNav">
-      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-        <SearchV2 {...searchConfiguration} />
-        <ErrorBanner />
-        <DownloadConfirmation
-          onExportTable={() => setShowExportMetadata(true)}
-        />
-        <TopLevelControls
-          showColumnSelection={tableConfiguration !== undefined}
-          name={name}
-          entityId={entityId}
-          sql={sqlUsed}
-          hideDownload={hideDownload}
-        />
-        <QueryFilter {...rest} />
-        <QueryFilterToggleButton />
-        <FacetNav
-          facetsToPlot={facetsToPlot}
-          showNotch={false}
-          token={props.token}
-        />
-        <FilterAndView
-          facetsToFilter={facetsToFilter}
-          tableConfiguration={tableConfiguration}
-          hideDownload={hideDownload}
-          cardConfiguration={cardConfiguration}
-        />
-        {showExportMetadata && (
-          <ModalDownload onClose={() => setShowExportMetadata(false)} />
+      <SynapseContextConsumer>
+        {context => (
+          <QueryWrapper
+            {...rest}
+            token={context?.accessToken}
+            initQueryRequest={initQueryRequest}
+          >
+            <SearchV2 {...searchConfiguration} />
+            <ErrorBanner />
+            <DownloadConfirmation
+              onExportTable={() => setShowExportMetadata(true)}
+            />
+            <TopLevelControls
+              showColumnSelection={tableConfiguration !== undefined}
+              name={name}
+              entityId={entityId}
+              sql={sqlUsed}
+              hideDownload={hideDownload}
+            />
+            <QueryFilter {...rest} />
+            <QueryFilterToggleButton />
+            <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
+            <FilterAndView
+              facetsToFilter={facetsToFilter}
+              tableConfiguration={tableConfiguration}
+              hideDownload={hideDownload}
+              cardConfiguration={cardConfiguration}
+            />
+            {showExportMetadata && (
+              <ModalDownload onClose={() => setShowExportMetadata(false)} />
+            )}
+          </QueryWrapper>
         )}
-      </QueryWrapper>
+      </SynapseContextConsumer>
     </div>
   )
 }

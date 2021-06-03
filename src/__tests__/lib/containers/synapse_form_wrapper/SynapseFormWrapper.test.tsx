@@ -34,9 +34,12 @@ const createShallowComponent = async (
   props: SynapseFormWrapperProps,
   disableLifecycleMethods: boolean = false,
 ) => {
-  const wrapper = await shallow<SynapseFormWrapper>(<SynapseFormWrapper {...props} />, {
-    disableLifecycleMethods,
-  })
+  const wrapper = await shallow<SynapseFormWrapper>(
+    <SynapseFormWrapper {...props} />,
+    {
+      disableLifecycleMethods,
+    },
+  )
 
   const instance = wrapper.instance()
   return { wrapper, instance }
@@ -54,9 +57,7 @@ const props: SynapseFormWrapperProps = {
 
 describe('basic tests', () => {
   beforeEach(() => {
-    SynapseClient.getFileResult = jest.fn(() =>
-      Promise.resolve(mockFileHandle),
-    )
+    SynapseClient.getFileResult = jest.fn(() => Promise.resolve(mockFileHandle))
     SynapseClient.getFileHandleContent = jest.fn(() =>
       Promise.resolve(JSON.stringify(formschemaJson)),
     )
@@ -71,18 +72,33 @@ describe('basic tests', () => {
   it('gets configuration data calls should be called with correct params', async () => {
     const { instance } = await createShallowComponent(props)
     await instance.componentDidMount()
-    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(1, token, 'syn9988882982', undefined)
-    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(2, token, 'syn9988882983', undefined)
-    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(3, token, 'syn9988882984', undefined)
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
+      1,
+      token,
+      'syn9988882982',
+      undefined,
+    )
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
+      2,
+      token,
+      'syn9988882983',
+      undefined,
+    )
+    expect(SynapseClient.getEntity).toHaveBeenNthCalledWith(
+      3,
+      token,
+      'syn9988882984',
+      undefined,
+    )
     expect(SynapseClient.getFileResult).toHaveBeenCalledWith(
       mockFileEntity,
       token,
       true,
-      true
+      true,
     )
   })
 
-  it('gets configuration data', async() => {
+  it('gets configuration data', async () => {
     const { instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     const result = await instance.getFileEntityData(token, '123444')
@@ -195,10 +211,7 @@ describe('basic tests', () => {
       const { wrapper, instance } = await createShallowComponent(_props)
       await instance.componentDidMount()
       expect(wrapper).toBeDefined()
-      wrapper
-        .find('div')
-        .first()
-        .hasClass('someFormClass')
+      wrapper.find('div').first().hasClass('someFormClass')
       const formProps: SynapseFormProps = (wrapper
         .find('SynapseForm')
         .props() as any) as SynapseFormProps
@@ -212,10 +225,7 @@ describe('basic tests', () => {
       await instance.componentDidMount()
 
       expect(wrapper).toBeDefined()
-      wrapper
-        .find('div')
-        .first()
-        .hasClass('someFormClass')
+      wrapper.find('div').first().hasClass('someFormClass')
       const formProps: SynapseFormProps = (wrapper
         .find('SynapseForm')
         .props() as any) as SynapseFormProps

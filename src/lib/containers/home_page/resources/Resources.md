@@ -1,3 +1,3 @@
 ```jsx
-<Resources entityId="syn22311127" token={accessToken} />
+<Resources entityId="syn22311127" />
 ```

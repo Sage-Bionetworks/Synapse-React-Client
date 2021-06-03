@@ -7,6 +7,7 @@ import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriend
 import ReactTooltip from 'react-tooltip'
 import moment from 'moment'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 library.add(faFile)
 library.add(faDatabase)
@@ -15,7 +16,6 @@ library.add(faClock)
 export type DownloadDetailsProps = {
   numFiles: number
   numBytes: number
-  token: string | undefined
 }
 
 type State = {
@@ -28,19 +28,20 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
     isLoading: true,
     downloadSpeed: 0,
   })
+  const { accessToken } = useSynapseContext()
   const { isLoading, downloadSpeed } = state
-  const { token, numFiles, numBytes } = props
+  const { numFiles, numBytes } = props
 
   useEffect(() => {
-    if (token) {
-      testDownloadSpeed(token).then(speed => {
+    if (accessToken) {
+      testDownloadSpeed(accessToken).then(speed => {
         setState({
           isLoading: false,
           downloadSpeed: speed,
         })
       })
     }
-  }, [token])
+  }, [accessToken])
 
   const timeEstimateInSeconds =
     isLoading || downloadSpeed === 0 ? 0 : numBytes / downloadSpeed

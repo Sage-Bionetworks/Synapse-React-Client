@@ -7,15 +7,16 @@ import {
 import { SynapseClient } from '../../utils'
 import AcceptedRequirements from './AcceptedRequirements'
 import { AccessRequirementProps } from './AccessRequirementProps'
+import { useSynapseContext } from '../../utils/SynapseContext'
 
 export default function TermsOfUseAccessRequirementComponent({
   accessRequirement,
-  token,
   user,
   onHide,
   accessRequirementStatus,
   entityId,
 }: AccessRequirementProps<TermsOfUseAccessRequirement>) {
+  const { accessToken } = useSynapseContext()
   const [wikiPage, setWikiPage] = useState<WikiPageKey | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -25,7 +26,7 @@ export default function TermsOfUseAccessRequirementComponent({
 
       try {
         const wikiPageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          token,
+          accessToken,
           accessRequirement.id,
         )
         setWikiPage(wikiPageRequirement)
@@ -37,14 +38,13 @@ export default function TermsOfUseAccessRequirementComponent({
     }
 
     getTermsOfUseData()
-  }, [token, accessRequirement])
+  }, [accessToken, accessRequirement])
 
   return (
     <>
       {isLoading && <span className="spinner" />}
       <AcceptedRequirements
         user={user}
-        token={token}
         wikiPage={wikiPage}
         accessRequirement={accessRequirement}
         accessRequirementStatus={accessRequirementStatus}

@@ -38,6 +38,11 @@ import PageProgress from './containers/PageProgress'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import EntityFinder from './containers/entity_finder/EntityFinder'
 import ExperimentalMode from './containers/ExperimentalMode'
+import {
+  SynapseContextProvider,
+  SynapseContextConsumer,
+  useSynapseContext,
+} from './utils/SynapseContext'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -45,6 +50,12 @@ import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
+
+const SynapseContext = {
+  SynapseContextProvider,
+  SynapseContextConsumer,
+  useSynapseContext,
+}
 
 const SynapseComponents = {
   Facets,
@@ -88,4 +99,4 @@ const SynapseComponents = {
   ExperimentalMode,
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents }
+export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }

@@ -8,6 +8,7 @@ import {
 } from '../../../utils/synapseTypes'
 import ProgrammaticOptions from './ProgrammaticOptions'
 import ModalDownload from '../../../containers/ModalDownload'
+import { useSynapseContext } from '../../../utils/SynapseContext'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
@@ -16,7 +17,6 @@ type DownloadOptionsProps = {
   isUnauthenticated?: boolean
   isFileView?: boolean
   darkTheme?: boolean
-  token: string | undefined
   queryResultBundle?: QueryResultBundle
   queryBundleRequest: QueryBundleRequest
 }
@@ -25,6 +25,7 @@ export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download List'
 const tooltipDownloadId = 'download'
 
 export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = props => {
+  const { accessToken } = useSynapseContext()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] = React.useState(
@@ -34,7 +35,6 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
     onDownloadFiles,
     queryResultBundle,
     queryBundleRequest,
-    token,
     darkTheme = true,
   } = props
 
@@ -46,7 +46,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           tooltipText={'Download Options'}
           size="lg"
           darkTheme={darkTheme}
-          icon={"download"}
+          icon={'download'}
         ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
@@ -62,7 +62,7 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           {props.isFileView && (
             <Dropdown.Item
               onClick={() =>
-                props.token ? onDownloadFiles() : setShowLoginModal(true)
+                accessToken ? onDownloadFiles() : setShowLoginModal(true)
               }
             >
               {DOWNLOAD_FILES_MENU_TEXT}
@@ -88,7 +88,6 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
           <ModalDownload
             onClose={() => setShowExportMetadata(false)}
             queryBundleRequest={queryBundleRequest}
-            token={token}
           />
         )
       }

@@ -13,7 +13,6 @@ export type FeatureDataTabProps = {
 }
 
 export type FeaturedDataTabsProps = {
-  token?: string
   configs: FeatureDataTabProps[]
   rgbIndex: number
   sql: string
@@ -21,7 +20,7 @@ export type FeaturedDataTabsProps = {
 
 const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
-  const { configs, rgbIndex, sql, token } = props
+  const { configs, rgbIndex, sql } = props
   // explore all data button
   const selectedTabProps: FeatureDataTabProps = configs[selectedTabIndex]
   return (
@@ -56,7 +55,6 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
             rgbIndex={rgbIndex}
             sql={sql}
             explorePagePath={selectedTabProps.explorePagePath}
-            token={token}
           />
           {selectedTabProps.explorePagePath && (
             <div className="bootstrap-4-backport FeaturedDataTabs__explore-all">

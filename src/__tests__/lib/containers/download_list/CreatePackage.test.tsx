@@ -13,6 +13,12 @@ import {
 import * as React from 'react'
 import { Alert } from 'react-bootstrap'
 import { act } from 'react-dom/test-utils'
+import * as SynapseContext from '../../../../lib/utils/SynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
+
+jest
+  .spyOn(SynapseContext, 'useSynapseContext')
+  .mockImplementation(() => MOCK_CONTEXT_VALUE)
 
 describe('it performs all functionality ', () => {
   const SynapseClient = require('../../../../lib/utils/SynapseClient')

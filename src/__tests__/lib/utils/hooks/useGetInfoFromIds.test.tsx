@@ -5,6 +5,7 @@ import useGetInfoFromIds, {
 import { act } from 'react-dom/test-utils'
 import ReactDOM from 'react-dom'
 import { UserProfile } from '../../../../lib/utils/synapseTypes'
+import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 const HookWrapper = (props: UseGetInfoFromIdsProps) => {
   const useHookGetProfilesHook = useGetInfoFromIds(props) as UserProfile[]
@@ -40,7 +41,12 @@ describe('useGetInfoFromIds hook works', () => {
       type: 'USER_PROFILE',
     }
     await act(async () => {
-      ReactDOM.render(<HookWrapper {...props} />, container)
+      ReactDOM.render(
+        <SynapseTestContext>
+          <HookWrapper {...props} />
+        </SynapseTestContext>,
+        container,
+      )
     })
     const component = container.querySelector<HTMLDivElement>('ul')!
     expect(component).toBeDefined()

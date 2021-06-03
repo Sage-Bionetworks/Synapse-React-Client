@@ -20,6 +20,8 @@ import {
 } from '../../../../../lib/utils/synapseTypes'
 import { NodeAppearance } from '../../../../../lib/containers/entity_finder/tree/TreeNode'
 import userEvent from '@testing-library/user-event'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 
 const TreeNode = require('../../../../../lib/containers/entity_finder/tree/TreeNode')
 
@@ -67,7 +69,6 @@ const mockSetBreadcrumbItems = jest.fn()
 const mockToggleSelection = jest.fn()
 
 const defaultProps: TreeViewProps = {
-  accessToken: 'abcd',
   selectedEntities: [],
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: 'syn5',
@@ -171,7 +172,11 @@ const entityPath: EntityPath = {
 }
 
 function renderComponent(propOverrides?: Partial<TreeViewProps>) {
-  return render(<TreeView {...defaultProps} {...propOverrides} />)
+  return render(
+    <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+      <TreeView {...defaultProps} {...propOverrides} />
+    </SynapseContextProvider>,
+  )
 }
 
 describe('TreeView tests', () => {
@@ -370,7 +375,6 @@ describe('TreeView tests', () => {
 
     expect(mockTreeNode).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        accessToken: defaultProps.accessToken,
         level: 0,
         rootNodeConfiguration: {
           nodeText: 'Projects',
@@ -399,7 +403,6 @@ describe('TreeView tests', () => {
 
     expect(mockTreeNode).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        accessToken: defaultProps.accessToken,
         level: 0,
         rootNodeConfiguration: {
           nodeText: 'Projects',

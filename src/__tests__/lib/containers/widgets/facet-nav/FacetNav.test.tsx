@@ -11,6 +11,7 @@ import {
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
 import { SynapseConstants } from '../../../../../lib'
 import userEvent from '@testing-library/user-event'
+import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -59,7 +60,11 @@ function getButtonOnFacet(
 
 function init(overrides?: FacetNavProps) {
   const props = createTestProps(overrides)
-  render(<FacetNav {...props} />)
+  render(
+    <SynapseTestContext>
+      <FacetNav {...props} />
+    </SynapseTestContext>,
+  )
 }
 
 describe('facets display hide/show', () => {

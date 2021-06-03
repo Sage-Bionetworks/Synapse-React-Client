@@ -9,6 +9,7 @@ import { GenericCardSchema } from '../../../lib/containers/GenericCard'
 import { CardConfiguration } from '../../../lib/containers/CardContainerLogic'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import { act } from '@testing-library/react'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const mockGetQueryTableResultsFn = jest.fn(() =>
@@ -62,6 +63,9 @@ const createMountedComponent = () => {
       <Search searchable={searchable} />
       <CardContainer {...commonCardProps} />
     </QueryWrapper>,
+    {
+      wrappingComponent: SynapseTestContext,
+    },
   )
   const instance = wrapper.instance()
   return { wrapper, instance }

@@ -9,16 +9,16 @@ import {
 import MarkdownSynapse from './MarkdownSynapse'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 export type TableFeedCardsProps = {
   tableEntityId: string
-  token?: string
 }
 
 const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
   tableEntityId,
-  token,
 }) => {
+  const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
   const [itemCountShowing, setItemCountShowing] = useState<number>(3)
 
@@ -38,7 +38,7 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
           entityId: tableEntityId,
           partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
         }
-        SynapseClient.getQueryTableResults(request, token).then(data => {
+        SynapseClient.getQueryTableResults(request, accessToken).then(data => {
           setRowSet(data.queryResult.queryResults)
         })
       }
@@ -47,7 +47,7 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
     return () => {
       mounted = false
     }
-  }, [tableEntityId, token])
+  }, [tableEntityId, accessToken])
 
   if (!rowSet) {
     return loadingScreen

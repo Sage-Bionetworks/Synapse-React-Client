@@ -15,6 +15,10 @@ import {
   Reference,
 } from '../../../../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 
@@ -29,7 +33,6 @@ const mockToggleSelection = jest.fn()
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 
 const defaultProps: DetailsViewRowProps = {
-  accessToken: 'abcd',
   entityHeader: {
     id: 'syn123',
     name: 'My File',
@@ -82,9 +85,14 @@ const versionResult: PaginatedResults<VersionInfo> = {
 
 function renderComponent(propOverrides?: Partial<DetailsViewRowProps>) {
   const tbody = document.createElement('tbody')
-  return render(<DetailsViewRow {...defaultProps} {...propOverrides} />, {
-    container: document.body.appendChild(tbody),
-  })
+  return render(
+    <SynapseTestContext>
+      <DetailsViewRow {...defaultProps} {...propOverrides} />
+    </SynapseTestContext>,
+    {
+      container: document.body.appendChild(tbody),
+    },
+  )
 }
 
 describe('DetailsViewRow tests', () => {
@@ -145,7 +153,6 @@ describe('DetailsViewRow tests', () => {
     renderComponent()
 
     expect(mockUseGetEntityBundle).toBeCalledWith(
-      defaultProps.accessToken,
       defaultProps.entityHeader.id,
       expect.anything(),
       undefined,
@@ -158,7 +165,6 @@ describe('DetailsViewRow tests', () => {
     mockAllIsIntersecting(true)
 
     expect(mockUseGetEntityBundle).toBeCalledWith(
-      defaultProps.accessToken,
       defaultProps.entityHeader.id,
       expect.anything(),
       undefined,
@@ -223,8 +229,8 @@ describe('DetailsViewRow tests', () => {
       expect(await screen.findByRole('listbox')).toBeDefined()
 
       expect(SynapseClient.getEntityVersions).toBeCalledWith(
-        defaultProps.accessToken,
         defaultProps.entityHeader.id,
+        MOCK_CONTEXT_VALUE.accessToken,
       )
     })
 

@@ -6,13 +6,13 @@ import {
 } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
+import { useSynapseContext } from '../../SynapseContext'
 import {
   EntityChildrenRequest,
   EntityChildrenResponse,
 } from '../../synapseTypes'
 
 export function useGetEntityChildren(
-  accessToken: string,
   request: EntityChildrenRequest,
   options?: UseQueryOptions<
     EntityChildrenResponse,
@@ -20,15 +20,15 @@ export function useGetEntityChildren(
     EntityChildrenResponse
   >,
 ) {
+  const { accessToken } = useSynapseContext()
   return useQuery<EntityChildrenResponse, SynapseClientError>(
-    ['entitychildren', accessToken, request],
+    [accessToken, 'entitychildren', request],
     () => SynapseClient.getEntityChildren(request, accessToken),
     options,
   )
 }
 
 export function useGetEntityChildrenInfinite(
-  accessToken: string,
   request: EntityChildrenRequest,
   options?: UseInfiniteQueryOptions<
     EntityChildrenResponse,
@@ -36,8 +36,9 @@ export function useGetEntityChildrenInfinite(
     EntityChildrenResponse
   >,
 ) {
+  const { accessToken } = useSynapseContext()
   return useInfiniteQuery<EntityChildrenResponse, SynapseClientError>(
-    ['entitychildren', request],
+    [accessToken, 'entitychildren', request],
     async context => {
       return await SynapseClient.getEntityChildren(
         { ...request, nextPageToken: context.pageParam },

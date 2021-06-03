@@ -9,6 +9,7 @@ import SynapseVideo from './widgets/SynapseVideo'
 import { ErrorBanner } from './ErrorBanner'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { Button } from 'react-bootstrap'
+import { SynapseContext } from '../utils/SynapseContext'
 
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -38,7 +39,6 @@ declare var sanitizeHtml: any
 declare var markdownitMath: any
 
 export type MarkdownSynapseProps = {
-  token?: string
   ownerId?: string
   wikiId?: string
   markdown?: string
@@ -65,7 +65,7 @@ export default class MarkdownSynapse extends React.Component<
   MarkdownSynapseState
 > {
   public markupRef: React.RefObject<HTMLInputElement>
-
+  static contextType = SynapseContext
   /**
    * Creates an instance of Markdown.
    * @param {*} props
@@ -295,13 +295,13 @@ export default class MarkdownSynapse extends React.Component<
    * Get wiki page markdown and file attachment handles
    */
   public async getWikiPageMarkdown() {
-    const { ownerId, wikiId, token, objectType } = this.props
+    const { ownerId, wikiId, objectType } = this.props
     if (!ownerId && !wikiId) {
       return
     }
     try {
       const wikiPage = await SynapseClient.getEntityWiki(
-        token,
+        this.context.accessToken,
         ownerId,
         wikiId,
         objectType,
@@ -326,7 +326,7 @@ export default class MarkdownSynapse extends React.Component<
     }
   }
   public async getWikiAttachments(wikiId: string) {
-    const { token, ownerId, objectType } = this.props
+    const { ownerId, objectType } = this.props
     if (!ownerId) {
       console.error(
         'Cannot get wiki attachments without ownerId on Markdown Component',
@@ -334,7 +334,7 @@ export default class MarkdownSynapse extends React.Component<
       return undefined
     }
     return await SynapseClient.getWikiAttachmentsFromEntity(
-      token,
+      this.context.accessToken,
       ownerId,
       wikiId,
       objectType,
@@ -580,8 +580,7 @@ export default class MarkdownSynapse extends React.Component<
     if (alignLowerCase === 'right') {
       buttonClasses += 'floatright '
     }
-    const buttonVariant =
-      highlight === 'true' ? 'secondary' : 'light-secondary'
+    const buttonVariant = highlight === 'true' ? 'secondary' : 'light-secondary'
     if (alignLowerCase === 'center') {
       return (
         <div
@@ -615,7 +614,6 @@ export default class MarkdownSynapse extends React.Component<
     return (
       <SynapsePlot
         key={widgetparamsMapped.reactKey}
-        token={this.props.token}
         ownerId={this.props.ownerId}
         wikiId={this.props.wikiId || this.state.data.id}
         widgetparamsMapped={widgetparamsMapped}
@@ -624,9 +622,7 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public renderVideo(widgetparamsMapped: any) {
-    const { token } = this.props
-
-    return <SynapseVideo token={token} params={widgetparamsMapped} />
+    return <SynapseVideo params={widgetparamsMapped} />
   }
 
   public renderSynapseImage(widgetparamsMapped: any) {
@@ -642,7 +638,6 @@ export default class MarkdownSynapse extends React.Component<
         <SynapseImage
           params={widgetparamsMapped}
           key={reactKey}
-          token={this.props.token}
           fileName={widgetparamsMapped.fileName}
           wikiId={this.props.wikiId || this.state.data.id}
           fileResults={this.state.fileHandles.list}
@@ -656,7 +651,6 @@ export default class MarkdownSynapse extends React.Component<
         <SynapseImage
           params={widgetparamsMapped}
           key={reactKey}
-          token={this.props.token}
           synapseId={widgetparamsMapped.synapseId}
         />
       )
@@ -710,8 +704,7 @@ export default class MarkdownSynapse extends React.Component<
 
   // on component update find and re-render the math/widget items accordingly
   public async componentDidUpdate(prevProps: MarkdownSynapseProps) {
-    let shouldUpdate = this.props.token !== prevProps.token
-    shouldUpdate = shouldUpdate || this.props.ownerId !== prevProps.ownerId
+    let shouldUpdate = this.props.ownerId !== prevProps.ownerId
     shouldUpdate = shouldUpdate || this.props.wikiId !== prevProps.wikiId
 
     // we have to carefully update the component so it doesn't encounter an infinite loop
@@ -722,11 +715,11 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public render() {
-    const { renderInline, token } = this.props
+    const { renderInline } = this.props
     const { isLoading, error } = this.state
 
     if (error) {
-      return <ErrorBanner token={token} error={error} />
+      return <ErrorBanner error={error} />
     }
     const bookmarks = this.addBookmarks()
     const content = (

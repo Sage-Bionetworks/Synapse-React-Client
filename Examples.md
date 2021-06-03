@@ -52,7 +52,6 @@ To use the synapse markdown-it component you must pass it a wiki page id and an 
 | wikiId: String                             | wikiId for the synapse page                             |
 | markdown: String                           | markdown that is to be rendered                         |
 | errorMessageView?: React.FunctionComponent | Should accept and render an error message to the string |
-| token?: string                             | auth token from synapse                                 |
 
 Example 1: Rendering a Synapse Wiki page without any markdown pre-loaded
 
@@ -234,7 +233,6 @@ This card can be used in two ways - as a standard row renderer or as a 'Header' 
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | sql: string                           | The sql to be run against Synapse                                                                                                                                                                                                                                                                      |
 | unitDescription: string               | Fills in 'Displaying 50 <unitDescription>', NOTE: If not specified then no label will render                                                                                                                                                                                                           |
-| token?: string                        | Authentication token                                                                                                                                                                                                                                                                                   |
 | limit?: number                        | Used to constrain the number of cards shown, defaults to Infinity                                                                                                                                                                                                                                      |
 | secondaryLabelLimit?: number          | Used to constraint the number of secondary labels shown, defaults to three                                                                                                                                                                                                                             |
 | type: string                          | Type of card to be rendered.                                                                                                                                                                                                                                                                           |

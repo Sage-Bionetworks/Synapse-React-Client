@@ -5,7 +5,6 @@ import SingleQueryFacetPlotsCards, { SingleQueryFacetPlotsCardsProps } from './S
 export type QueryFacetPlotsCardsProps = QueryPerFacetPlotsCardProps | SingleQueryFacetPlotsCardsProps
 
 export type FeaturedDataPlotsProps = {
-  token?: string
   configs: QueryFacetPlotsCardsProps[]
   rgbIndex?: number
   sql?: string,
@@ -17,7 +16,6 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
     configs,
     rgbIndex,
     sql,
-    token,
   } = props
   // What mode are we in?  Either every card has a different selected facet (requiring a different query),
   // or we're showing the facet counts for a single query.  This controls the layout, and how the cards are populated.
@@ -30,15 +28,13 @@ const FeaturedDataPlots: React.FunctionComponent<FeaturedDataPlotsProps> = props
             <QueryPerFacetPlotsCard
               {...config}
               rgbIndex={rgbIndex}
-              sql={sql}
-              token={token} />
+              sql={sql} />
           }
           {!isQueryPerCard && 
             <SingleQueryFacetPlotsCards
               {...config}
               rgbIndex={rgbIndex}
-              sql={sql}
-              token={token} />
+              sql={sql} />
           }
         </>
       })}

@@ -11,17 +11,18 @@ import { SynapseClient } from '../utils/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useSynapseContext } from '../utils/SynapseContext'
 
 library.add(faExternalLinkAlt)
 
 export type ExternalFileHandleLinkProps = {
   synId: string
-  token?: string
   className?: string
 }
 
 export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
-  const { synId, token, className } = props
+  const { accessToken } = useSynapseContext()
+  const { synId, className } = props
   const [data, setData] = useState<
     | { fileEntity: FileEntity; externalFileHandle: ExternalFileHandle }
     | undefined
@@ -30,7 +31,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
     const getEntity = async () => {
       try {
         const fileEntity = await SynapseClient.getEntity<FileEntity>(
-          token,
+          accessToken,
           synId,
         )
         assertIsFileEntity(fileEntity)
@@ -46,7 +47,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
           includePreSignedURLs: false,
           includePreviewPreSignedURLs: false,
         }
-        const file = await SynapseClient.getFiles(batchFileRequest, token)
+        const file = await SynapseClient.getFiles(batchFileRequest, accessToken)
         const externalFileHandle = file.requestedFiles[0].fileHandle
         assertIsExternalFileHandle(externalFileHandle)
         setData({
@@ -58,7 +59,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
       }
     }
     getEntity()
-  }, [synId, token])
+  }, [synId, accessToken])
 
   const externalFileHandle = data?.externalFileHandle
   const fileEntity = data?.fileEntity

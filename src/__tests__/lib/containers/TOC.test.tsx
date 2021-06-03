@@ -3,6 +3,7 @@ import { mount } from 'enzyme'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 import { delay } from '../../../lib/utils/SynapseClient'
 import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
+import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 describe('renders without crashing', () => {
   let SynapseClient: any
   beforeAll(() => {
@@ -19,7 +20,10 @@ describe('renders without crashing', () => {
       Promise.resolve({ markdown: '${toc}\n#Heading1' }),
     )
     const tree = await mount(
-      <MarkdownSynapse token="" ownerId={mockOwnerId} wikiId={mockWikiId} />,
+      <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)
@@ -33,7 +37,10 @@ describe('renders without crashing', () => {
       Promise.resolve({ markdown: "${toc}\n#Heading1\n##! Don't show me!" }),
     )
     const tree = await mount(
-      <MarkdownSynapse token="" ownerId={mockOwnerId} wikiId={mockWikiId} />,
+      <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />,
+      {
+        wrappingComponent: SynapseTestContext,
+      },
     )
     await delay(_TIME_DELAY)
     expect(tree.find('div.markdown')).toHaveLength(1)

@@ -1,11 +1,14 @@
 import { mount } from 'enzyme'
 import Carousel from '../../../../lib/containers/Carousel'
 import { ProjectViewCard } from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCard'
-import ProjectViewCarousel from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
+import ProjectViewCarousel, {
+  ProjectViewCarouselProps,
+} from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
 import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
 import React from 'react'
 import { mockQueryResult } from '../../../../mocks/mockProjectViewQueryResults'
 import SizeMe from 'react-sizeme'
+import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 SizeMe.noPlaceholders = true
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
@@ -23,9 +26,8 @@ SynapseClient.getPresignedUrlForWikiAttachment = jest
   .mockResolvedValue(PRESIGNED_URL)
 
 describe('basic functionality', () => {
-  const props = {
+  const props: ProjectViewCarouselProps = {
     entityId: 'syn123',
-    token: 'abc123',
   }
 
   beforeEach(() => {
@@ -33,7 +35,9 @@ describe('basic functionality', () => {
   })
 
   it('retrieves project data and images and inserts cards into carousel', async () => {
-    const wrapper = mount(<ProjectViewCarousel {...props} />)
+    const wrapper = mount(<ProjectViewCarousel {...props} />, {
+      wrappingComponent: SynapseTestContext,
+    })
     await resolveAllPending(wrapper)
 
     expect(SynapseClient.getQueryTableResults).toHaveBeenCalledTimes(1)
