@@ -4,6 +4,10 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import DownloadListStats from './DownloadListStats'
 
+/**
+ * Show the number, and size, or files that the user added to the Download Cart that are currently available for download.
+ * "Wrapped" by a query client provider (for caching) and an error boundary.
+ */
 export default function DownloadListStatsWrapper() {
   const { accessToken } = useSynapseContext()
   const queryClient = new QueryClient({

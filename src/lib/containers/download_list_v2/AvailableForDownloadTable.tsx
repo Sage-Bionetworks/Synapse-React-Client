@@ -6,6 +6,9 @@ import DownloadListTable, {
   DownloadListTableProps,
 } from './DownloadListTable'
 
+/**
+ * Table of the files added to the Download Cart that are currently available for download.
+ */
 export default function AvailableForDownloadTable(
   props: DownloadListTableProps,
 ) {

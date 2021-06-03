@@ -28,7 +28,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
       </span>
       <span
         data-for={numBytesTooltipId}
-        data-tip="This is the total size of all files."
+        data-tip="This is the total size of all files in the Download Cart that are available to download."
         className="item"
       >
         <ReactTooltip

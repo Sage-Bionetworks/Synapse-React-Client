@@ -17,6 +17,11 @@ export type ShowDownloadProps = {
   to?: string
 }
 
+/**
+ * Nav toolbar UI to show how many files are in the Web-based Download List.
+ * 
+ * @deprecated Moving to using the new Download List Services instead.  http://rest-docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.DownloadListController
+ */
 function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
   const { accessToken } = useSynapseContext()
   const [downloadList, setDownloadList] = useState<DownloadList | undefined>(
