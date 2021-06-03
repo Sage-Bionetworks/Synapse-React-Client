@@ -15,7 +15,7 @@ Together with ExternalObjectStorageLocationSetting, this object provides the inf
 */
 export type ExternalObjectStoreFileHandle = ExternalFileHandleInterface & {
   concreteType: ExternalFileHandleConcreteTypeEnum.ExternalObjectStoreFileHandle // This is used to indicate the implementation of this interface. For example, an S3FileHandle should be set to: org.sagebionetworks.repo.model.file.S3FileHandle
-  filePath: string //	STRING	The relative path of this file within the proxy.
+  readonly bucket: string // The bucket to use. Do NOT set this value when creating a ExternalObjectStoreFileHandle since it will be it will be overwritten with the value defined in the ExternalObjectStorageLocationSetting it references.
 }
 
 export function assertIsExternalFileHandle(
