@@ -63,7 +63,8 @@ export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 /**
  * Web-based download list.
  * 
- * @deprecated Moving to using the new Download List Services instead.  http://rest-docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.DownloadListController
+ * @deprecated Use the new Download List Services instead (that support the Download Cart).  
+ * http://rest-docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.DownloadListController
  */
 export default function DownloadListTable(props: DownloadListTableProps) {
   const { accessToken } = useSynapseContext()

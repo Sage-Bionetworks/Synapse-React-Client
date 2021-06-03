@@ -14,8 +14,8 @@ export type ShowDownloadProps = {
 }
 
 /**
- * Nav bar item, displayed when items have been added to the Download Cart.
- * Should be configured with the URL of a page dedicated to showing the Download Cart.
+ * Nav bar item, displayed when files have been added to the Download Cart.
+ * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
 function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
   const { accessToken } = useSynapseContext()
