@@ -109,6 +109,7 @@ import {
   EXPERIMENTAL_MODE_COOKIE,
 } from './SynapseConstants'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
+import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
 
 const cookies = new UniversalCookies()
 
@@ -2637,7 +2638,7 @@ export const getDataAccessRequestForUpdate = (
   requirementId: string,
   accessToken: string,
 ) => {
-  return doGet<RequestInterface>(
+  return doGet<RequestInterface | RenewalInterface>(
     `/repo/v1/accessRequirement/${requirementId}/dataAccessRequestForUpdate`,
     accessToken,
     undefined,
