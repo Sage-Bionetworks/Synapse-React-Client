@@ -19,3 +19,12 @@
 .sort {
   padding-left: 5px;
 }
+.DownloadDetailsV2 {
+  font-weight: bold;
+  .item {
+    margin-right: 15px;
+    svg {
+      margin-right: 5px;
+    }
+  }
+}

@@ -21,12 +21,12 @@ import { Direction } from '../../utils/synapseTypes'
 import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
-export type DownloadListTableV2Props = {}
+export type DownloadListTableProps = {}
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
-export default function DownloadListTableV2(props: DownloadListTableV2Props) {
+export default function DownloadListTable(props: DownloadListTableProps) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.

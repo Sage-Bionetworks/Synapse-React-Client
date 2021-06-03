@@ -2,12 +2,12 @@ import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseErrorBoundary } from '../ErrorBanner'
-import DownloadListTableV2, {
-  DownloadListTableV2Props,
-} from './DownloadListTableV2'
+import DownloadListTable, {
+  DownloadListTableProps,
+} from './DownloadListTable'
 
 export default function AvailableForDownloadTable(
-  props: DownloadListTableV2Props,
+  props: DownloadListTableProps,
 ) {
   const { accessToken } = useSynapseContext()
   const queryClient = new QueryClient({
@@ -24,7 +24,7 @@ export default function AvailableForDownloadTable(
   return (
     <QueryClientProvider client={queryClient}>
       <SynapseErrorBoundary>
-        <DownloadListTableV2 />
+        <DownloadListTable />
       </SynapseErrorBoundary>
     </QueryClientProvider>
   )

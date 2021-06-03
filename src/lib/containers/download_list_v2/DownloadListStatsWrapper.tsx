@@ -2,16 +2,14 @@ import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseErrorBoundary } from '../ErrorBanner'
-import DownloadListV2Stats, { DownloadListV2StatsProps } from './DownloadListV2Stats'
+import DownloadListStats from './DownloadListStats'
 
-export default function DownloadListV2StatsWrapper(
-  props: DownloadListV2StatsProps,
-) {
+export default function DownloadListStatsWrapper() {
   const { accessToken } = useSynapseContext()
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 50 * 1000, // 5s
+        staleTime: 60 * 1000, // 1m
         retry: false, // SynapseClient knows which queries to retry
       },
     },
@@ -22,7 +20,7 @@ export default function DownloadListV2StatsWrapper(
   return (
     <QueryClientProvider client={queryClient}>
       <SynapseErrorBoundary>
-        <DownloadListV2Stats />
+        <DownloadListStats />
       </SynapseErrorBoundary>
     </QueryClientProvider>
   )
