@@ -60,7 +60,7 @@ const page2: Partial<DownloadListItemResult>[] = [
   },
 ]
 
-function renderComponent(propOverrides?: Partial<DownloadListTableV2Props>) {
+function renderComponent(propOverrides?: Partial<DownloadListTableProps>) {
   return render(
     <SynapseTestContext>
       <DownloadListTableV2 {...defaultProps} {...propOverrides} />
