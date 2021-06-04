@@ -1,4 +1,4 @@
-// http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/DownloadListItemResult.html
+// http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/ActionRequiredCount.html
 
 export type Action = RequestDownload | MeetAccessRequirement
 
