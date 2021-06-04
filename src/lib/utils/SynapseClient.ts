@@ -95,12 +95,16 @@ import {
   ManagedACTAccessRequirementStatus,
   RequestInterface,
   CreateSubmissionRequest,
+  ACCESS_TYPE,
 } from './synapseTypes/AccessRequirement'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import { AvailableFilesRequest, FilesStatisticsRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import {
+  AvailableFilesRequest,
+  FilesStatisticsRequest,
+} from './synapseTypes/DownloadListV2/QueryRequestDetails'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
@@ -110,6 +114,11 @@ import {
 } from './SynapseConstants'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
+import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
+import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
+import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
+import { JSONSchema7 } from 'json-schema'
+import $RefParser from 'json-schema-ref-parser'
 
 const cookies = new UniversalCookies()
 
@@ -893,11 +902,10 @@ export const getEntityHeaders = (
       const entityTokens = reference.targetId.split('.')
       return {
         targetId: entityTokens[0],
-        version: entityTokens[1]
+        version: entityTokens[1],
       }
-    }
-    else return reference
-})
+    } else return reference
+  })
 
   return doPost(
     'repo/v1/entity/header',
@@ -2609,7 +2617,7 @@ export const getAvailableFilesToDownload = (
  * Get Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
- export const getDownloadListStatistics = (
+export const getDownloadListStatistics = (
   accessToken: string | undefined = undefined,
 ): Promise<DownloadListQueryResponse> => {
   const filesStatsRequest: FilesStatisticsRequest = {
@@ -2738,6 +2746,126 @@ export const cancelDataAccessRequest = (
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the schema bound to an entity.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+//
+export const getSchemaBinding = (entityId: string, accessToken?: string) => {
+  return doGet<JsonSchemaObjectBinding>(
+    `/repo/v1/entity/${entityId}/schema/binding`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the schema bound to an entity.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const getSchemaValidationResults = (
+  entityId: string,
+  accessToken?: string,
+) => {
+  return doGet<ValidationResults>(
+    `/repo/v1/entity/${entityId}/schema/validation`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get a schema by its $id.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @returns
+ */
+export const getSchema = (schema$id: string) => {
+  return doGet<JSONSchema7>(
+    `/repo/v1/schema/type/registered/${schema$id}`,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Use json-schema-ref-parser to retrieve a Synapse JSON Schema and resolve all references within the schema.
+ * @param schema$id
+ * @returns
+ */
+export const getSchemaRecursive = async (schema$id: string) => {
+  return $RefParser.dereference(
+    `${getEndpoint(
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )}repo/v1/schema/type/registered/${schema$id}`,
+  ) as Promise<JSONSchema7>
+}
+
+/**
+ * Determine if the caller has a particular access type on an entity
+ * https://docs.synapse.org/rest/GET/entity/id/access.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const hasAccessToEntity = (
+  entityId: string,
+  accessType: ACCESS_TYPE,
+  accessToken?: string,
+) => {
+  return doGet<HasAccessResponse>(
+    `/repo/v1/entity/${entityId}/access?accessType=${accessType}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the entity and its annotations as a JSON object
+ * https://docs.synapse.org/rest/GET/entity/id/json.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const getEntityJson = (entityId: string, accessToken?: string) => {
+  return doGet<unknown>(
+    `/repo/v1/entity/${entityId}/json`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update an entity and its annotations using a JSON object
+ * https://docs.synapse.org/rest/PUT/entity/id/json.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const updateEntityJson = (
+  entityId: string,
+  json: unknown,
+  accessToken?: string,
+) => {
+  return doPut<unknown>(
+    `/repo/v1/entity/${entityId}/json`,
+    json,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
