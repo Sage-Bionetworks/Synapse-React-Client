@@ -29,6 +29,7 @@ import UserSearchBox from '../../UserSearchBox'
 import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
 import { useSynapseContext } from '../../../utils/SynapseContext'
+import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
 
 export type RequestDataAccessStep2Props = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -82,8 +83,9 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [
     formSubmitRequestObject,
     setFormSubmitRequestObject,
-  ] = useState<RequestInterface>()
+  ] = useState<RequestInterface|RenewalInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
+  const [isRenewal, setIsRenewal] = useState<boolean>(false)
   const requestedFileTypes = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
@@ -117,6 +119,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     getAccessorsData(dataAccessRequestData)
     // get data access required docs data to display file names
     getFilesData(dataAccessRequestData)
+
+    if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
+      setIsRenewal(true)
+    }
   }
 
   const getAccessorsData = (dataAccessRequestData: RequestInterface) => {
@@ -357,7 +363,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }
 
   const getSubmissionMsg = (submission_resp: ACTSubmissionStatus) => {
-    const msgStart = 'The information you submitted has been '
+    const msgStart = 'The information has been '
     switch (submission_resp.state) {
       case SUBMISSION_STATE.SUBMITTED:
         return <strong>{msgStart} submitted.</strong>
@@ -480,6 +486,27 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         accessorChanges: accessorsArr,
       })
     })
+  }
+
+  const handleTextAreaInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
+    const value = e.target.value
+    switch(id) {
+      case 'publications':
+        setFormSubmitRequestObject(prevState => {
+          return Object.assign({}, prevState, {
+            publication: value
+          })
+        })
+        break
+      case 'summaryOfUse':
+        setFormSubmitRequestObject(prevState => {
+          return Object.assign({}, prevState, {
+            summaryOfUse: value
+          })
+        })
+        break
+      default:
+    }
   }
 
   return (
@@ -680,6 +707,39 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   context={'attachments'}
                 />
               </Form.Group>
+            )
+          }
+
+          { // Publications & Summary of Use
+            isRenewal && (
+            <>
+              <Form.Group>
+                <Form.Label htmlFor={'publications'} className={'SRC-noMargin'}>
+                  Publication(s)
+                </Form.Label>
+                <Form.Control
+                  id={"publications"}
+                  as="textarea"
+                  rows={3}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleTextAreaInputChange(e, 'publications')
+                  }
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label htmlFor={'summaryOfUse'} className={'SRC-noMargin'}>
+                  Summary of use
+                </Form.Label>
+                <Form.Control
+                  id={"summaryOfUse"}
+                  as="textarea"
+                  rows={3}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    handleTextAreaInputChange(e, 'summaryOfUse')
+                  }
+                />
+              </Form.Group>
+            </>
             )
           }
 
