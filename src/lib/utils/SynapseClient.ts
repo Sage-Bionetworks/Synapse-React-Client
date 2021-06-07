@@ -836,15 +836,21 @@ export const getBulkFiles = (
  */
 type GetEntity = <T extends Entity>(
   accessToken: string | undefined,
-  entityId: string | number,
+  entityId: string,
   versionNumber?: string,
 ) => Promise<T>
 
 export const getEntity: GetEntity = <T>(
   accessToken: string | undefined = undefined,
-  entityId: string | number,
+  entityId: string,
   versionNumber?: string,
 ) => {
+  if (entityId.indexOf('.') > -1) {
+    // PORTALS-1943: we were given an entity Id with a version!
+    const entityTokens = entityId.split('.')
+    entityId = entityTokens[0]
+    versionNumber = entityTokens[1]
+  }
   const url = versionNumber
     ? `/repo/v1/entity/${entityId}/version/${versionNumber}`
     : `/repo/v1/entity/${entityId}`

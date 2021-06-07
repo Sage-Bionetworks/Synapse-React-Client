@@ -64,6 +64,6 @@ Configured to show a table:
     rgbIndex={1}
     name='Table Demo'
     sqlOperator='='
-    sql='SELECT * FROM syn11346063'
+    sql='SELECT * FROM syn11346063.14'
   />
 ```
