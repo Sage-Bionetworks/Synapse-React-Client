@@ -2,21 +2,18 @@ import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseErrorBoundary } from '../ErrorBanner'
-import DownloadListTable, {
-  DownloadListTableProps,
-} from './DownloadListTable'
+import DownloadListStats from './DownloadListStats'
 
 /**
- * Table of the files added to the Download Cart that are currently available for download.
+ * Show the count, and total size, of the files that the user has added to their Download Cart (only includes files are currently available for download).
+ * "Wrapped" by a query client provider (for caching) and an error boundary.
  */
-export default function AvailableForDownloadTable(
-  props: DownloadListTableProps,
-) {
+export default function DownloadListStatsWrapper() {
   const { accessToken } = useSynapseContext()
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 50 * 1000, // 5s
+        staleTime: 60 * 1000, // 1m
         retry: false, // SynapseClient knows which queries to retry
       },
     },
@@ -27,7 +24,7 @@ export default function AvailableForDownloadTable(
   return (
     <QueryClientProvider client={queryClient}>
       <SynapseErrorBoundary>
-        <DownloadListTable />
+        <DownloadListStats />
       </SynapseErrorBoundary>
     </QueryClientProvider>
   )

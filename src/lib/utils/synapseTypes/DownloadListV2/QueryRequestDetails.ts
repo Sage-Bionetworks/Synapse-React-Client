@@ -1,4 +1,4 @@
-export type QueryRequestDetails = AvailableFilesRequest | FilesStatisticsRequest
+export type QueryRequestDetails = AvailableFilesRequest | FilesStatisticsRequest | ActionRequiredRequest
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/AvailableFilesRequest.html
 export type AvailableFilesRequest = {
@@ -11,6 +11,13 @@ export type AvailableFilesRequest = {
 export type FilesStatisticsRequest = {
   concreteType: 'org.sagebionetworks.repo.model.download.FilesStatisticsRequest'
 }
+
+// http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/ActionRequiredRequest.html
+export type ActionRequiredRequest = {
+  concreteType: 'org.sagebionetworks.repo.model.download.ActionRequiredRequest'
+  nextPageToken?: string // Forward the resulting nextPageToken from a previous request to get the next page of results.
+}
+
 export type SortField = 'fileName' | // The name of the file entity.
   'projectName' | //	The name of the file's project.
   'synId' | // The synId of the file
@@ -26,3 +33,4 @@ export type Sort = {
   // Enumeration of the fields of a user's download list that can be used for sorting.
   direction: SortDirection
 }
+

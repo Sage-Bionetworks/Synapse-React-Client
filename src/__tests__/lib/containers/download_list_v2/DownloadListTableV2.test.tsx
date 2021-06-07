@@ -4,8 +4,8 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockUserProfileData } from '../../../../mocks/mock_user_profile'
 import DownloadListTableV2, {
-  DownloadListTableV2Props,
-} from '../../../../lib/containers/download_list_v2/DownloadListTableV2'
+  DownloadListTableProps,
+} from '../../../../lib/containers/download_list_v2/DownloadListTable'
 import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { DownloadListItemResult } from '../../../../lib/utils/synapseTypes/DownloadListV2/DownloadListItemResult'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
@@ -30,7 +30,7 @@ jest.mock(
 const mockFetchNextPage = jest.fn()
 const mockUseGetAvailableFilesToDownloadInfinite = useGetAvailableFilesToDownloadInfinite as jest.Mock
 
-const defaultProps: DownloadListTableV2Props = {}
+const defaultProps: DownloadListTableProps = {}
 
 const page1: Partial<DownloadListItemResult>[] = [
   {
@@ -60,7 +60,7 @@ const page2: Partial<DownloadListItemResult>[] = [
   },
 ]
 
-function renderComponent(propOverrides?: Partial<DownloadListTableV2Props>) {
+function renderComponent(propOverrides?: Partial<DownloadListTableProps>) {
   return render(
     <SynapseTestContext>
       <DownloadListTableV2 {...defaultProps} {...propOverrides} />
