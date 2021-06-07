@@ -187,11 +187,10 @@ export default class SynapseTable extends React.Component<
   ) {
     const token = this.context.accessToken
     const { data } = this.props
-    if (!data) {
-      return
-    } else if (this.state.isFetchingEntityVersion) {
+    if (!data || this.state.isFetchingEntityVersion) {
       return
     }
+    
     const currentTableId = data?.queryResult.queryResults.tableId
     const previousTableId = prevProps.data?.queryResult.queryResults.tableId
     if (currentTableId && previousTableId !== currentTableId) {
