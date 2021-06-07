@@ -40,6 +40,10 @@ import {
   faSortAmountUp,
 } from '@fortawesome/free-solid-svg-icons'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../utils/functions/getEndpoint'
 
 library.add(faTrash)
 
@@ -507,7 +511,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
-                      href={`https://www.synapse.org/#!Synapse:${synId}`}
+                      href={`${getEndpoint(
+                        BackendDestinationEnum.PORTAL_ENDPOINT,
+                      )}#!Synapse:${synId}`}
                     >
                       {fileName}
                     </a>

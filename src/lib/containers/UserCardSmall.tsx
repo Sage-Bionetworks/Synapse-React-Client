@@ -7,6 +7,10 @@ import { SynapseClient, SynapseConstants } from '../utils'
 import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
 import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
 import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../utils/functions/getEndpoint'
 
 export type UserCardSmallProps = {
   userProfile: UserProfile
@@ -35,9 +39,10 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   imageURL,
   ...rest
 }) => {
-
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
-  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(<Registered />)
+  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(
+    <Registered />,
+  )
   const target = useRef(null)
 
   let mounted = true
@@ -52,8 +57,8 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       mounted = false
     }
   }, [])
-  
-  const getUserAccountLevelIcon = async() => {
+
+  const getUserAccountLevelIcon = async () => {
     try {
       const certificationOrVerification =
         SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
@@ -72,7 +77,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       }
       setUserBundle(bundle)
     } catch (err) {
-      console.log("getUserAccountLevelIcon", err)
+      console.log('getUserAccountLevelIcon', err)
     }
   }
 
@@ -81,7 +86,9 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   )
 
   if (link == null) {
-    link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+    link = `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!Profile:${
+      userProfile.ownerId
+    }`
   }
 
   const { OverlayComponent, toggleShow, toggleHide } = useOverlay(
@@ -125,7 +132,9 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
-        {showAccountLevelIcon && <span className={"account-level-icon"}>{accountLevelIcon}</span>}
+        {showAccountLevelIcon && (
+          <span className={'account-level-icon'}>{accountLevelIcon}</span>
+        )}
       </span>
     </>
   ) : disableLink ? (

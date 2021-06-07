@@ -1,5 +1,9 @@
 import React from 'react'
 import { getEntityTypeFromHeader } from '../utils/functions/EntityTypeUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../utils/functions/getEndpoint'
 import { EntityHeader } from '../utils/synapseTypes/'
 import { EntityTypeIcon } from './EntityIcon'
 
@@ -20,7 +24,9 @@ export const EntityLink: React.FC<EntityLinkProps> = ({
         className={className}
         target="_blank"
         rel="noopener noreferrer"
-        href={`https://www.synapse.org/#!Synapse:${id}`}
+        href={`${getEndpoint(
+          BackendDestinationEnum.PORTAL_ENDPOINT,
+        )}#!Synapse:${id}`}
       >
         <EntityTypeIcon type={type} style={{ marginRight: '5px' }} />
         {name}
