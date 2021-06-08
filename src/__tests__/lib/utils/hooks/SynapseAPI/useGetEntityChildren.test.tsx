@@ -12,6 +12,7 @@ import {
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+import { server } from '../../../../../mocks/msw/server'
 
 const queryClient = new QueryClient()
 
@@ -69,6 +70,14 @@ const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 SynapseClient.getEntityChildren = jest.fn()
 
 describe('basic functionality', () => {
+  beforeAll(() => {
+    server.listen()
+  })
+
+  afterAll(() => {
+    server.close()
+  })
+
   beforeEach(() => {
     queryClient.clear()
   })
