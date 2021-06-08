@@ -178,6 +178,7 @@ export default class SynapseTable extends React.Component<
       : true
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
+    this.getEntityHeadersInData(false)
     this.getTableConcreteType(prevProps)
     this.enableResize()
   }
