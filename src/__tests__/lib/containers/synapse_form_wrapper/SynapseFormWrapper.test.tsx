@@ -6,7 +6,7 @@ import SynapseFormWrapper, {
 } from '../../../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
 
 import { SynapseFormProps } from '../../../../lib/containers/synapse_form_wrapper/SynapseForm'
-import { mockFileEntity } from '../../../../mocks/mock_file_entity'
+import { mockFileEntity } from '../../../../mocks/entity/mockEntity'
 import { mockFileHandle } from '../../../../mocks/mock_file_handle'
 import {
   mockFileEntityWithVersion,

@@ -1,4 +1,4 @@
-import { EntityColumnType, QueryResultBundle } from '../lib/utils/synapseTypes'
+import { EntityColumnType, QueryResultBundle } from '../../lib/utils/synapseTypes'
 
 export const mockQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
