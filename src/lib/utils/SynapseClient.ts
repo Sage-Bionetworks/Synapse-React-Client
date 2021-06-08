@@ -887,9 +887,21 @@ export const getEntityHeaders = (
   references: ReferenceList,
   accessToken?: string,
 ) => {
+  // if references contains entity IDs with dot notation, fix the reference object
+  const fixedReferences = references.map(reference => {
+    if (reference.targetId.indexOf('.') > -1) {
+      const entityTokens = reference.targetId.split('.')
+      return {
+        targetId: entityTokens[0],
+        version: entityTokens[1]
+      }
+    }
+    else return reference
+})
+
   return doPost(
     'repo/v1/entity/header',
-    { references: references },
+    { references: fixedReferences },
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
