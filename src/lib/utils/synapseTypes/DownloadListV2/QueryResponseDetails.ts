@@ -1,6 +1,7 @@
+import { ActionRequiredCount } from "./ActionRequiredCount";
 import { DownloadListItemResult } from "./DownloadListItemResult";
 
-export type QueryResponseDetails = AvailableFilesResponse | FilesStatisticsResponse
+export type QueryResponseDetails = AvailableFilesResponse | FilesStatisticsResponse | ActionRequiredResponse
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/AvailableFilesResponse.html
 export type AvailableFilesResponse = {
@@ -16,4 +17,11 @@ export type FilesStatisticsResponse = {
   numberOfFilesAvailableForDownload: number // The number of files that are currently available for download.
   numberOfFilesRequiringAction: number // The number of files that are currently unavailable for download. These are files that require some action on the user's part in order gain download access.
   sumOfFileSizesAvailableForDownload: number // The sum of all of the files sizes on the user's download list that are currently available for download.
+}
+
+//http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/ActionRequiredResponse.html
+export type ActionRequiredResponse = {
+  concreteType: string // Will indicate the full package name of the response type.
+  page: ActionRequiredCount[] //The page of ActionRequiredCount
+  nextPageToken?: string	// When provided, the nextPageToken indicates that there are more results. Forward this token to the next request to get the next page.
 }

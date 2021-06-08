@@ -100,7 +100,7 @@ import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadLis
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import { AvailableFilesRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import { AvailableFilesRequest, FilesStatisticsRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
@@ -836,15 +836,21 @@ export const getBulkFiles = (
  */
 type GetEntity = <T extends Entity>(
   accessToken: string | undefined,
-  entityId: string | number,
+  entityId: string,
   versionNumber?: string,
 ) => Promise<T>
 
 export const getEntity: GetEntity = <T>(
   accessToken: string | undefined = undefined,
-  entityId: string | number,
+  entityId: string,
   versionNumber?: string,
 ) => {
+  if (entityId.indexOf('.') > -1) {
+    // PORTALS-1943: we were given an entity Id with a version!
+    const entityTokens = entityId.split('.')
+    entityId = entityTokens[0]
+    versionNumber = entityTokens[1]
+  }
   const url = versionNumber
     ? `/repo/v1/entity/${entityId}/version/${versionNumber}`
     : `/repo/v1/entity/${entityId}`
@@ -881,9 +887,21 @@ export const getEntityHeaders = (
   references: ReferenceList,
   accessToken?: string,
 ) => {
+  // if references contains entity IDs with dot notation, fix the reference object
+  const fixedReferences = references.map(reference => {
+    if (reference.targetId.indexOf('.') > -1) {
+      const entityTokens = reference.targetId.split('.')
+      return {
+        targetId: entityTokens[0],
+        version: entityTokens[1]
+      }
+    }
+    else return reference
+})
+
   return doPost(
     'repo/v1/entity/header',
-    { references: references },
+    { references: fixedReferences },
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2567,6 +2585,43 @@ export const getAvailableFilesToDownload = (
       'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
     requestDetails: request,
   }
+  return doPost<AsyncJobId>(
+    '/repo/v1/download/list/query/async/start',
+    downloadListQueryRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((asyncJobId: AsyncJobId) => {
+      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
+      return getAsyncResultFromJobId<DownloadListQueryResponse>(
+        urlRequest,
+        accessToken,
+      )
+    })
+    .catch(err => {
+      console.error('Error on getDownloadListV2 ', err)
+      throw err
+    })
+}
+
+/**
+ * Get Download List v2
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+ export const getDownloadListStatistics = (
+  accessToken: string | undefined = undefined,
+): Promise<DownloadListQueryResponse> => {
+  const filesStatsRequest: FilesStatisticsRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.FilesStatisticsRequest',
+  }
+  const downloadListQueryRequest: DownloadListQueryRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+    requestDetails: filesStatsRequest,
+  }
+
   return doPost<AsyncJobId>(
     '/repo/v1/download/list/query/async/start',
     downloadListQueryRequest,
