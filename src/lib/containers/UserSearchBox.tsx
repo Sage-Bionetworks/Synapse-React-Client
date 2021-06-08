@@ -62,7 +62,8 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
             className: 'form-control',
             id: id,
             type: 'search',
-            role: 'searchbox'
+            role: 'searchbox',
+            placeholder: 'Enter the name of the Synapse user...'
           })} style={{marginBottom: '0'}} />
           <ul {...getMenuProps()} className={isOpen ? "users-visible" : ""} role='list'>
             { isOpen ? users.filter((user:FormattedUserHeader) => !inputValue
