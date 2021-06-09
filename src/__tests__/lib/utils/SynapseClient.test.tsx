@@ -5,68 +5,48 @@ import {
   FileHandleAssociateType,
   PaginatedResults,
 } from '../../../lib/utils/synapseTypes/'
-import { SynapseClient, SynapseConstants } from '../../../lib/utils/'
+import { SynapseClient } from '../../../lib/utils/'
 import { FunctionReturningPaginatedResults } from '../../../lib/utils/SynapseClient'
 
 describe('it works at integration level testing', () => {
-  it('invalid call', () => {
-    return SynapseClient.doGet(
-      '/repo/v1/invalid',
-      undefined,
-      undefined,
-      BackendDestinationEnum.REPO_ENDPOINT,
-    ).catch((error) => {
-      expect(error.status).toEqual(404)
-      expect(error.reason).toContain(
-        'GET was not found.',
+  it('Call to invalid rest endpoint results in error', async () => {
+    try {
+      await SynapseClient.doGet(
+        'repo/v1/invalid',
+        undefined,
+        undefined,
+        BackendDestinationEnum.REPO_ENDPOINT,
       )
-    })
+    } catch (error) {
+      expect(error.status).toEqual(404)
+      expect(error.reason).toContain('GET was not found.')
+    }
   })
 
   it('version call', () => {
-    return SynapseClient.getVersion()
-      .then((data) => {
-        expect(data.version).toBeDefined()
-      })
-      .catch((err) => {
-        fail(err.reason)
-      })
-  })
-
-  it('delete entity', () => {
-    return SynapseClient.deleteEntity(
-      'invalid_session_token',
-      'invalid_entity_id',
-    )
-      .then((data) => {
-        fail(
-          'should not be able to delete an entity with an invalid access token',
-        )
-      })
-      .catch((resp) => {
-        // invalid access token
-        expect(resp['status']).toBe(401)
-      })
+    return SynapseClient.getVersion().then(data => {
+      expect(data.version).toBeDefined()
+    })
   })
 
   it('get entity with version', async () => {
     return SynapseClient.getEntity('', 'syn20692910', '53')
-      .then((data) => {
+      .then(data => {
         expect(data).toBeDefined()
         expect(data['versionNumber']).toBe(53)
       })
-      .catch((err) => {
+      .catch(err => {
         fail(err.reason)
       })
   })
 
   it('get user profiles', () => {
     return SynapseClient.getUserProfiles(['345424', '273978', '273991'])
-      .then((data) => {
+      .then(data => {
         expect(data.list).toBeDefined()
         expect(data.list.length).toEqual(3)
       })
-      .catch((err) => {
+      .catch(err => {
         fail(err.reason)
       })
   })
@@ -79,10 +59,10 @@ describe('it works at integration level testing', () => {
       sortDirection: 'ASC',
     }
     return SynapseClient.getEntityChildren(request)
-      .then((data) => {
+      .then(data => {
         expect(data.page).toBeDefined()
       })
-      .catch((err) => {
+      .catch(err => {
         fail(err.reason)
       })
   })
@@ -106,30 +86,10 @@ describe('it works at integration level testing', () => {
       ],
     }
     return SynapseClient.getFiles(request)
-      .then((data) => {
+      .then(data => {
         expect(data.requestedFiles).toBeDefined()
       })
-      .catch((err) => {
-        fail(err.reason)
-      })
-  })
-
-  it('get entity bundle latest version', () => {
-    const partsMask =
-      SynapseConstants.ENTITY_BUNDLE_MASK_ENTITY |
-      SynapseConstants.ENTITY_BUNDLE_MASK_RESTRICTION_INFORMATION |
-      SynapseConstants.ENTITY_BUNDLE_MASK_FILE_HANDLES
-    return SynapseClient.getEntityBundleForVersion(
-      'syn1725696',
-      undefined,
-      partsMask,
-    )
-      .then((data) => {
-        expect(data.entity).toBeDefined()
-        expect(data.restrictionInformation).toBeDefined()
-        expect(data.fileHandles).toBeDefined()
-      })
-      .catch((err) => {
+      .catch(err => {
         fail(err.reason)
       })
   })
@@ -138,36 +98,36 @@ describe('it works at integration level testing', () => {
     const ownerId = 'syn2580853'
     const wikiId = '409840'
     return SynapseClient.getEntityWiki('', ownerId, wikiId)
-      .then((data) => {
+      .then(data => {
         expect(data.markdown).toBeDefined()
       })
-      .catch((err) => {
+      .catch(err => {
         fail(err.reason)
       })
   })
 
   it('get user favorites', () => {
     return SynapseClient.getUserFavorites('')
-      .then((data) => {
+      .then(data => {
         expect(data.results).toBeDefined()
       })
-      .catch((err) => {
+      .catch(err => {
         fail(err)
       })
   })
 
   it('get user teams', () => {
     return SynapseClient.getUserProfile('')
-      .then((data) => {
+      .then(data => {
         return SynapseClient.getUserTeamList('', data.ownerId)
-          .then((data) => {
+          .then(data => {
             expect(data).toBeDefined()
           })
-          .catch((err) => {
+          .catch(err => {
             fail(err)
           })
       })
-      .catch((err) => {
+      .catch(err => {
         fail(err)
       })
   })
@@ -178,10 +138,10 @@ describe('it works at integration level testing', () => {
 
   it('delete entity', () => {
     return SynapseClient.deleteEntity('', '123')
-      .then((data) => {
+      .then(data => {
         expect(data).toBeDefined()
       })
-      .catch((err) => {
+      .catch(err => {
         fail(err.reason)
       })
   })

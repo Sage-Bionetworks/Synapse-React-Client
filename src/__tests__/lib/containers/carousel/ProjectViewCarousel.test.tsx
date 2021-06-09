@@ -6,7 +6,7 @@ import ProjectViewCarousel, {
 } from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCarousel'
 import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
 import React from 'react'
-import { mockQueryResult } from '../../../../mocks/mockProjectViewQueryResults'
+import { mockQueryResult } from '../../../../mocks/query/mockProjectViewQueryResults'
 import SizeMe from 'react-sizeme'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 SizeMe.noPlaceholders = true

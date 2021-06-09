@@ -10,26 +10,17 @@ import {
   FileHandleAssociateType,
   PaginatedResults,
 } from '../../../../lib/utils/synapseTypes/'
-import * as React from 'react'
-import ReactDOM from 'react-dom'
-import { act } from 'react-dom/test-utils'
+import React from 'react'
+import { mount } from 'enzyme'
 import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,
 } from '../../../../mocks/MockSynapseContext'
+import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
 
 describe('it performs all functionality ', () => {
-  let container: HTMLDivElement
   beforeEach(() => {
-    container = document.createElement('div')
-    document.body.appendChild(container)
     jest.clearAllMocks()
-  })
-
-  afterEach(() => {
-    document.body.removeChild(container!)
-    // @ts-ignore
-    container = null
   })
 
   const SynapseClient = require('../../../../lib/utils/SynapseClient')
@@ -108,58 +99,41 @@ describe('it performs all functionality ', () => {
   SynapseClient.deleteDownloadList = mockClearDownloadListFn
 
   const props: DownloadListTableProps = {}
-  it('renders without crashing', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadListTable {...props} />
-        </SynapseTestContext>,
-        container,
-      )
+
+  async function mountComponent() {
+    const wrapper = mount(<DownloadListTable {...props} />, {
+      wrappingComponent: SynapseTestContext,
     })
-    const wrapper = container.querySelector<HTMLDivElement>('div')
+
+    await resolveAllPending(wrapper)
+    return wrapper
+  }
+
+  it('renders without crashing', async () => {
+    const wrapper = await mountComponent()
     expect(wrapper).toBeDefined()
   })
   it('renders each row correctly', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadListTable {...props} />
-        </SynapseTestContext>,
-        container,
-      )
-    })
-    const rows = container.querySelectorAll<HTMLTableRowElement>('tbody tr')
+    const wrapper = await mountComponent()
+    const rows = wrapper.find('tbody tr')
     expect(rows).toHaveLength(2)
-    expect(
-      rows.item(0).querySelector<HTMLAnchorElement>('td a')!.innerHTML,
-    ).toEqual(fileOneName)
-    expect(
-      rows.item(1).querySelector<HTMLAnchorElement>('td a')!.innerHTML,
-    ).toEqual(fileTwoName)
+    expect(rows.find('td a').at(0).text()).toEqual(fileOneName)
+    expect(rows.find('td a').at(1).text()).toEqual(fileTwoName)
     expect(mockGetDownloadListFn).toHaveBeenCalledTimes(1)
     expect(mockGetEntityHeadersFn).toHaveBeenCalledTimes(1)
     expect(mockGetFilesFn).toHaveBeenCalledTimes(1)
   })
   it('deletes a specific row', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadListTable {...props} />
-        </SynapseTestContext>,
-        container,
-      )
-    })
+    const wrapper = await mountComponent()
     mockGetDownloadListFn.mockClear()
     mockGetEntityHeadersFn.mockClear()
     mockGetFilesFn.mockClear()
-    const trashBtn = container
-      .querySelectorAll<HTMLTableRowElement>('tbody tr')
-      .item(0)
-      .querySelector<HTMLButtonElement>(`.${TESTING_TRASH_BTN_CLASS}`)!
-    await act(async () => {
-      trashBtn.click()
-    })
+    wrapper
+      .find('tbody tr')
+      .at(0)
+      .find(`.${TESTING_TRASH_BTN_CLASS}`)
+      .simulate('click')
+    await resolveAllPending(wrapper)
     expect(mockDeleteDownloadListFn).toHaveBeenCalledWith(
       expect.arrayContaining([
         expect.objectContaining({
@@ -173,22 +147,13 @@ describe('it performs all functionality ', () => {
     expect(mockGetFilesFn).not.toHaveBeenCalled()
   })
   it('Clears all rows', async () => {
-    await act(async () => {
-      ReactDOM.render(
-        <SynapseTestContext>
-          <DownloadListTable {...props} />
-        </SynapseTestContext>,
-        container,
-      )
-    })
+    const wrapper = await mountComponent()
+
     mockGetDownloadListFn.mockClear()
     mockGetEntityHeadersFn.mockClear()
     mockGetFilesFn.mockClear()
-    await act(async () => {
-      container
-        .querySelector<HTMLButtonElement>(`#${TESTING_CLEAR_BTN_CLASS}`)!
-        .click()
-    })
+    wrapper.find(`#${TESTING_CLEAR_BTN_CLASS}`).simulate('click')
+    await resolveAllPending(wrapper)
     expect(mockGetDownloadListFn).not.toHaveBeenCalled()
     expect(mockGetEntityHeadersFn).not.toHaveBeenCalled()
     expect(mockGetFilesFn).not.toHaveBeenCalled()

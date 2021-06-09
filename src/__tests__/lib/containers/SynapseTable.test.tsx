@@ -27,7 +27,7 @@ import SynapseTable, {
   SynapseTableProps,
   Dictionary,
 } from '../../../lib/containers/table/SynapseTable'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { cloneDeep } from 'lodash-es'
 import HasAccess from '../../../lib/containers/HasAccess'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
