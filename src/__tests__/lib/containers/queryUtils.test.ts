@@ -1,6 +1,6 @@
 import { getNextPageOfData } from '../../../lib/utils/functions'
 import { SynapseConstants } from '../../../lib/utils'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { QueryResultBundle } from 'src/lib/utils/synapseTypes/Table/QueryResultBundle.js'
 import { cloneDeep } from 'lodash-es'
 

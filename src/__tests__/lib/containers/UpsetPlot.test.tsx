@@ -2,7 +2,7 @@ import * as React from 'react'
 import { mount } from 'enzyme'
 import UpsetPlot, { UpsetPlotProps } from '../../../lib/containers/UpsetPlot'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')

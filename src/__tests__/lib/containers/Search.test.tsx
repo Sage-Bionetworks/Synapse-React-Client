@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { mount } from 'enzyme'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import Search from '../../../lib/containers/Search'
 import QueryWrapper from '../../../lib/containers/QueryWrapper'
 import { SynapseConstants } from '../../../lib'

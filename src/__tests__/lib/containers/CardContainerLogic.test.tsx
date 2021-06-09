@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { shallow } from 'enzyme'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import CardContainerLogic, {
   CardContainerLogicProps,
 } from '../../../lib/containers/CardContainerLogic'

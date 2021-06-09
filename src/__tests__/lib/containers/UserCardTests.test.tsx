@@ -10,7 +10,7 @@ import UserCardMedium, {
   UserCardMediumProps,
 } from '../../../lib/containers/UserCardMedium'
 import { UserCardLarge } from '../../../lib/containers/UserCardLarge'
-import { mockUserProfileData } from '../../../mocks/mock_user_profile'
+import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 import UserCardContextMenu, {
   UserCardContextMenuProps,
   MenuAction,

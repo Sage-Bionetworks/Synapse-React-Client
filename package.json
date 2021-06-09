@@ -66,7 +66,7 @@
     "react-query": "^3.9.8",
     "react-reflex": "^4.0.0",
     "react-router-dom": "5.1.2",
-    "react-scripts": "^3.4.3",
+    "react-scripts": "^4.0.3",
     "react-sizeme": "^2.6.12",
     "react-spinners": "^0.9.0",
     "react-switch": "^5.0.1",
@@ -136,7 +136,7 @@
     "core-js": "^3.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
-    "eslint": "6.6.0",
+    "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-jest-dom": "^3.6.5",
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "^2.5.0",
@@ -144,6 +144,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest-mock-promise": "^1.1.10",
     "jest-when": "^3.2.1",
+    "msw": "^0.29.0",
     "npm": "^6.9.0",
     "npm-run-all": "^4.1.3",
     "prettier": "^2.1.2",
@@ -179,7 +180,7 @@
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css serve:docs",
     "start-deprecated-demo": "npm-run-all -p watch-css start-js",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom-fourteen --setupFiles ./src/setupTests.js",
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom --setupFiles ./src/setupTests.js --resetMocks false",
     "test:coverage": "yarn test --coverage",
     "test:noPrompt": "CI=true yarn test",
     "eject": "react-scripts eject",
@@ -189,7 +190,7 @@
     "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
-    "serve:docs": "npx styleguidist server --open",
+    "serve:docs": "DISABLE_ESLINT_PLUGIN=true npx styleguidist server --open",
     "build:docs": "yarn run build-css && npx styleguidist build"
   },
   "resolutions": {
@@ -202,8 +203,7 @@
     "@types/react": "16.9.34",
     "@types/react-tooltip": "^3.11.0",
     "**/@typescript-eslint/eslint-plugin": "^4.1.1",
-    "**/@typescript-eslint/parser": "^4.1.1",
-    "eslint": "6.6.0"
+    "**/@typescript-eslint/parser": "^4.1.1"
   },
   "browserslist": {
     "production": [
