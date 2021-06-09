@@ -6,9 +6,12 @@
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "target": "es5",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "sourceMap": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "moduleResolution": "node",
     "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
@@ -22,7 +25,8 @@
     "skipLibCheck": true,
     "strict": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true
   },
   "exclude": [
     "rollup.config.js",
@@ -36,5 +40,7 @@
     "jest",
     "setupTests.js"
   ],
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

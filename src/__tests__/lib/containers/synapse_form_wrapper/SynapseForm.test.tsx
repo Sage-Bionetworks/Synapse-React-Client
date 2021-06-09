@@ -111,7 +111,7 @@ describe('action tests', () => {
     await instance.performAction(NavActionEnum.NEXT, false)
 
     expect(getNextStepFn).toHaveBeenCalledWith(
-      jasmine.objectContaining({ id: oldStepId }),
+      expect.objectContaining({ id: oldStepId }),
       instance.state.formData,
       undefined,
     )
@@ -136,7 +136,7 @@ describe('action tests', () => {
     await instance.performAction(NavActionEnum.GO_TO_STEP, false)
 
     expect(getNextStepFn).toHaveBeenCalledWith(
-      jasmine.objectContaining({ id: oldStepId }),
+      expect.objectContaining({ id: oldStepId }),
       instance.state.formData,
       instance.state.steps[3].id,
     )

@@ -12,7 +12,6 @@ import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFace
 import { SynapseConstants } from '../../../../../lib'
 import userEvent from '@testing-library/user-event'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
-import { server } from '../../../../../mocks/msw/server'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -61,23 +60,12 @@ function getButtonOnFacet(
 
 function init(overrides?: FacetNavProps) {
   const props = createTestProps(overrides)
-  render(
-    <SynapseTestContext>
-      <FacetNav {...props} />
-    </SynapseTestContext>,
-  )
-  waitFor(() => expect(mockGetLastQueryRequest).toBeCalled())
+  render(<FacetNav {...props} />, {
+    wrapper: SynapseTestContext,
+  })
 }
 
 describe('facets display hide/show', () => {
-  beforeAll(() => {
-    server.listen()
-  })
-
-  afterAll(() => {
-    server.close()
-  })
-
   it("should display 2 facets with 'show more' button", async () => {
     init()
     expect(screen.getAllByRole('graphics-document').length).toBe(2)
@@ -87,18 +75,19 @@ describe('facets display hide/show', () => {
   it('shows all facet plots when show more is clicked', async () => {
     init()
 
-    const showMoreButton = screen.getByText('View All Charts')
-    userEvent.click(showMoreButton!)
+    const showMoreButton = screen.getByRole('button', {
+      name: 'View All Charts',
+    })
+
+    userEvent.click(showMoreButton)
 
     const expectedLength = defaultProps.data?.facets?.filter(
       facet => facet.facetType === 'enumeration',
     ).length
 
-    await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document').length).toBe(
-        expectedLength,
-      )
-    })
+    expect((await screen.findAllByRole('graphics-document')).length).toBe(
+      expectedLength,
+    )
 
     expect(() => screen.getByText('View All Charts')).toThrowError()
   })
