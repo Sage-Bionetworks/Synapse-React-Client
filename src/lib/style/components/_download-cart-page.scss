@@ -17,15 +17,18 @@
     height: 70px;
     align-items: center;
     .active {
-      font-weight: bold;
+      padding-top: 5px;
       border-bottom: 5px solid;
       border-bottom-color: SRC.$secondary-action-color;
-      button {color: #515359;}
+      button {
+        color: #515359;
+      }
       .iconImg {
         filter: invert(1)
       }
     }
     .nav-item {
+      font-weight: bold;
       height: 50px;
       width: 250px;
       text-transform: uppercase;
@@ -38,22 +41,26 @@
         width: 100%;
         height: 100%;
         padding-bottom: 10px;
+        .fileCount {
+          font-weight: 300;
+          margin-left: 5px;
+        }
       }
     }
   }
   .availableForDownloadTableContainer {
     padding-top: 20px;
   }
-  .completeYourDownloadContainer {
+  .subSectionContainer {
     display:flex;
     padding-bottom: 10px;
-    .completeYourDownload {
+    .subSectionTitle {
       font-size: 18px;
       font-weight: bold;
       padding-right: 20px;
     }
   }
-  .availableForDownloadOverview {
+  .subSectionOverview {
     padding: 30px 0px;
     background-color: SRC.$background-color-gray;
   }
