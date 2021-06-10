@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { QueryClient } from 'react-query'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
