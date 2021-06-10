@@ -683,7 +683,7 @@ export const getUserProfileById = (
   ownerId: string,
 ) => {
   return doGet<UserProfile>(
-    `/repo/v1/userProfile/${ownerId}`,
+    `repo/v1/userProfile/${ownerId}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -989,9 +989,7 @@ export const getEntityBundleV2 = (
   accessToken?: string,
 ): Promise<EntityBundle> => {
   return doPost<EntityBundle>(
-    `repo/v1/entity/${entityId}/${
-      version ? `version/${version}/` : ''
-    }/bundle2`,
+    `repo/v1/entity/${entityId}/${version ? `version/${version}/` : ''}bundle2`,
     requestObject,
     accessToken,
     undefined,
@@ -1243,7 +1241,7 @@ export const getPrincipalAliasRequest = (
   accessToken: string | undefined,
   alias: string,
   type: string,
-) => {
+): Promise<{ principalId: number }> => {
   const url = 'repo/v1/principal/alias'
   return doPost(
     url,

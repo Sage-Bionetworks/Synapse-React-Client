@@ -12,9 +12,4 @@ export type AnnotationsValue = {
   value: string[] | number[]
 }
 
-export enum AnnotationsValueType {
-  'STRING',
-  'DOUBLE',
-  'LONG',
-  'TIMESTAMP_MS',
-}
+export type AnnotationsValueType = 'STRING' | 'DOUBLE' | 'LONG' | 'TIMESTAMP_MS'

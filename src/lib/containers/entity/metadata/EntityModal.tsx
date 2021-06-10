@@ -8,7 +8,7 @@ import {
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AnnotationsTable } from './AnnotationsTable'
-import { MetadataSummaryBody } from './MetadataSummary'
+import { MetadataTable } from './MetadataTable'
 
 enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -67,10 +67,10 @@ export const EntityModal: React.FC<EntityModalProps> = ({
               })}
             </div>
             {!isLoadingBundle && currentTab === EntityModalTabs.ANNOTATIONS && (
-              <AnnotationsTable entityBundle={entityBundle!} />
+              <AnnotationsTable entityId={entityId} />
             )}
             {!isLoadingBundle && currentTab === EntityModalTabs.METADATA && (
-              <MetadataSummaryBody entityBundle={entityBundle!} />
+              <MetadataTable entityId={entityId} />
             )}
           </Modal.Body>
           <Modal.Footer>

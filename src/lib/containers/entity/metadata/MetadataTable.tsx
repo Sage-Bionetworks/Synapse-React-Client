@@ -3,24 +3,21 @@ import React, { useEffect, useState } from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
 import { getLocationName } from '../../../utils/functions/FileHandleUtils'
-import {
-  EntityBundle,
-  EntityType,
-  FileEntity,
-} from '../../../utils/synapseTypes'
+import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
+import { EntityType, FileEntity } from '../../../utils/synapseTypes'
 import UserCard from '../../UserCard'
 
-export type MetadataSummaryProps = {
-  entityBundle: EntityBundle
+export type MetadataTableProps = {
+  entityId: string
 }
 
-export const MetadataSummaryBody: React.FC<MetadataSummaryProps> = ({
-  entityBundle,
-}) => {
+export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
+  const { data: entityBundle } = useGetEntityBundle(entityId)
+
   const [fileLocationName, setFileLocationName] = useState<string>()
 
   useEffect(() => {
-    if (entityBundle.entityType === EntityType.FILE) {
+    if (entityBundle?.entityType === EntityType.FILE) {
       const dataFileHandle = entityBundle.fileHandles?.filter(
         fh => fh.id === (entityBundle.entity as FileEntity).dataFileHandleId,
       )[0]
@@ -31,7 +28,7 @@ export const MetadataSummaryBody: React.FC<MetadataSummaryProps> = ({
     }
   }, [entityBundle])
 
-  return (
+  return entityBundle ? (
     <table className="MetadataTable">
       <tbody>
         <tr className="MetadataTable__Row">
@@ -90,5 +87,5 @@ export const MetadataSummaryBody: React.FC<MetadataSummaryProps> = ({
         </tr>
       </tbody>
     </table>
-  )
+  ) : null
 }
