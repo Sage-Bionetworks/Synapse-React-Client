@@ -7,6 +7,7 @@ import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
+import DownloadListActionsRequired from './DownloadListActionsRequired'
 
 /**
  * Show the Download Cart page.
@@ -73,11 +74,11 @@ export default function DownloadCartPage() {
               <span className="subSectionTitle">You Have Files Which Require Actions Before Downloading</span>
             </div>
             <p className="description">The items in this category require different actions in order 
-            to download them. Select Start to complete the action, or View List to view or edit the files in your list.</p>
+            to download them. Select Start to complete the action.</p>
           </div>
         </div>
         <div className="actionsRequiredContainer container">
-          ActionsRequired.ts goes here
+          <DownloadListActionsRequired />
         </div>
       </div>
         }

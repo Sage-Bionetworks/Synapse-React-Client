@@ -8,14 +8,10 @@ import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
 import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import {
-  AvailableFilesRequest,
-  Sort,
-} from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
-import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
+import { ActionRequiredRequest } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
+import { ActionRequiredResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
-export function useGetAvailableFilesToDownload(
-  request: AvailableFilesRequest,
+export function useGetDownloadListActionsRequired(
   options?: UseQueryOptions<
     DownloadListQueryResponse,
     SynapseClientError,
@@ -23,15 +19,19 @@ export function useGetAvailableFilesToDownload(
   >,
 ) {
   const { accessToken } = useSynapseContext()
+  const request: ActionRequiredRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
+  }
+
   return useQuery<DownloadListQueryResponse, SynapseClientError>(
-    ['downloadlistv2availablefiles', accessToken, request],
-    () => SynapseClient.getAvailableFilesToDownload(request, accessToken),
+    ['downloadlistv2actionsrequired', accessToken],
+    () => SynapseClient.getDownloadListActionsRequired(request, accessToken),
     options,
   )
 }
 
-export function useGetAvailableFilesToDownloadInfinite(
-  sort?: Sort,
+export function useGetDownloadListActionsRequiredInfinite(
   options?: UseInfiniteQueryOptions<
     DownloadListQueryResponse,
     SynapseClientError,
@@ -39,17 +39,14 @@ export function useGetAvailableFilesToDownloadInfinite(
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  const request: AvailableFilesRequest = {
+  const request: ActionRequiredRequest = {
     concreteType:
-      'org.sagebionetworks.repo.model.download.AvailableFilesRequest',
-  }
-  if (sort) {
-    request.sort = [sort]
+      'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
   }
   return useInfiniteQuery<DownloadListQueryResponse, SynapseClientError>(
     ['downloadlistv2availablefiles', request],
     async context => {
-      return await SynapseClient.getAvailableFilesToDownload(
+      return await SynapseClient.getDownloadListActionsRequired(
         { ...request, nextPageToken: context.pageParam },
         accessToken,
       )
@@ -57,7 +54,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     {
       ...options,
       getNextPageParam: page =>
-        (page.responseDetails as AvailableFilesResponse).nextPageToken,
+        (page.responseDetails as ActionRequiredResponse).nextPageToken,
     },
   )
 }
