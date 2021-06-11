@@ -26,20 +26,12 @@
         width: 100%;
         align-items: center;
         display: inline-grid;
-        grid-template-columns: 15px 27px auto auto;
+        // grid-template-columns are defined in `tree-node-browse` and `tree-node-select` files
         .ExpandButton {
-          grid-column-start: 1;
-          grid-column-end: 2;
+          grid-column: toggle / span 1;
           text-align: center;
           color: SRC.$primary-action-color-active;
           cursor: pointer;
-        }
-
-        .EntityIcon {
-          text-align: center;
-          grid-column-start: 2;
-          grid-column-end: 3;
-          margin-bottom: 3px;
         }
 
         .EntityName {
@@ -59,10 +51,6 @@
       > .NodeContent {
         cursor: default;
       }
-    }
-
-    .NodeContent.NodeRootContent {
-      grid-template-columns: 15px 5px auto;
     }
   }
 

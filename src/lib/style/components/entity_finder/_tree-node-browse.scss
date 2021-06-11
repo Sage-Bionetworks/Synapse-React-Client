@@ -5,6 +5,7 @@
 .TreeView.BrowseTree {
   .Node.BrowseNode {
     .NodeContent {
+      grid-template-columns: [toggle] 20px [name] auto;
       font-size: small;
       padding: 5px 10px 5px 20px;
       .ExpandButton {
