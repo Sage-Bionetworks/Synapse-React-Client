@@ -19,7 +19,7 @@ import { BUNDLE_REQUEST_OBJECT } from '../EntityFinderUtils'
 
 export type RootNodeConfiguration = {
   nodeText: string
-  children: (EntityHeader | ProjectHeader)[]
+  children: (Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader)[]
 }
 
 export enum NodeAppearance {
@@ -28,7 +28,7 @@ export enum NodeAppearance {
 }
 
 export type TreeNodeProps = {
-  entityHeader?: EntityHeader | ProjectHeader
+  entityHeader?: Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader
   selected: Reference[]
   setSelectedId: (entityId: string) => void
   level?: number
@@ -67,7 +67,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
 
   const [isExpanded, setIsExpanded] = useState(isRootNode || autoExpand(nodeId))
   const [entityChildren, setEntityChildren] = useState<
-    (EntityHeader | ProjectHeader)[]
+    (Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader)[]
   >([])
 
   // For retrieving the entity bundle and children
