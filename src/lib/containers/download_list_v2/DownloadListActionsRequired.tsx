@@ -8,6 +8,7 @@ import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { ActionRequiredCount, MeetAccessRequirement, RequestDownload } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
 import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
+import { RequestDownloadCard } from './RequestDownloadCard'
 
 export type DownloadListActionsRequiredProps = {}
 
@@ -71,7 +72,7 @@ export default function DownloadListActionsRequired(props: DownloadListActionsRe
       case 'org.sagebionetworks.repo.model.download.RequestDownload':
         const requestDownloadAction:RequestDownload = actionRequiredCount.action as RequestDownload
         return (
-          <div>Must be granted access.  Benefactor entity ID = {requestDownloadAction.benefactorId}.  Count = {actionRequiredCount.count}</div>
+          <RequestDownloadCard entityId={`syn${requestDownloadAction.benefactorId}`} count={actionRequiredCount.count} />
         )
       // case not supported yet
       default:
