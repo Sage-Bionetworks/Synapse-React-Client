@@ -1,3 +1,5 @@
+import React from 'react'
+
 export const Active = () => (
   <svg
     width="30"

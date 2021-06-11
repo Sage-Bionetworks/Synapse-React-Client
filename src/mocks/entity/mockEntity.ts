@@ -1,9 +1,4 @@
-import {
-  Entity,
-  EntityHeader,
-  EntityType,
-  FileEntity,
-} from '../../lib/utils/synapseTypes'
+import { Entity, EntityHeader, FileEntity } from '../../lib/utils/synapseTypes'
 
 export const MOCK_FILE_HANDLE_ID = 'syn123'
 export const MOCK_FOLDER_ID = 'syn1234'
