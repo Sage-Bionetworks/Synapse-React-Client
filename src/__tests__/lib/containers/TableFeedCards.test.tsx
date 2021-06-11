@@ -3,7 +3,7 @@ import TableFeedCards, {
   TableFeedCardsProps,
 } from '../../../lib/containers/TableFeedCards'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
-import syn23519444Json from '../../../mocks/syn23519444.json'
+import syn23519444Json from '../../../mocks/query/syn23519444.json'
 import { act } from 'react-dom/test-utils'
 import { render, fireEvent } from '@testing-library/react'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'

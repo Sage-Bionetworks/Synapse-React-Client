@@ -3,7 +3,7 @@ import { shallow } from 'enzyme'
 import QueryWrapper, {
   QueryWrapperState,
 } from '../../../lib/containers/QueryWrapper'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
 import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
@@ -180,40 +180,39 @@ describe('deep linking', () => {
 })
 
 describe('locked facet', () => {
-
   const newProps = {
     lockedFacet: {
       facet: 'abc',
-      value: '123'
-    }
+      value: '123',
+    },
   }
   const newProps2 = {
-    lockedFacet: {}
+    lockedFacet: {},
   }
   const newState = {
     data: {
       facets: [
-        {columnName: 'abc', facetType: "enumeration", concreteType: "blah"},
-        {columnName: 'def', facetType: "enumeration", concreteType: "blah"}
-      ]
-    }
+        { columnName: 'abc', facetType: 'enumeration', concreteType: 'blah' },
+        { columnName: 'def', facetType: 'enumeration', concreteType: 'blah' },
+      ],
+    },
   }
 
-  it('removeLockedFacetData should remove locked facet data', async() => {
+  it('removeLockedFacetData should remove locked facet data', async () => {
     const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
     wrapper.setProps(newProps)
     wrapper.setState(newState)
     expect(instance.removeLockedFacetData()).toEqual({
-        facets: [{columnName: 'def', facetType: "enumeration", concreteType: "blah"}]
-      }
-    )
+      facets: [
+        { columnName: 'def', facetType: 'enumeration', concreteType: 'blah' },
+      ],
+    })
   })
 
-  it('removeLockedFacetData should not remove any data if locked facet value is not set', async() => {
+  it('removeLockedFacetData should not remove any data if locked facet value is not set', async () => {
     const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
     wrapper.setProps(newProps2)
     wrapper.setState(newState)
     expect(instance.removeLockedFacetData()?.facets).toHaveLength(2)
   })
-
 })

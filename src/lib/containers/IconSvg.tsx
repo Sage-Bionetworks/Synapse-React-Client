@@ -11,6 +11,7 @@ import {
   GetApp,
   InfoOutlined,
   AddShoppingCart,
+  ShoppingCartOutlined
 } from '@material-ui/icons'
 
 import Chromatin from '../assets/mui_components/Chromatin'
@@ -70,6 +71,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <Clear style={muiSvgStyle}></Clear>
     case 'download':
       return <GetApp style={muiSvgStyle}></GetApp>
+    case 'cart':
+      return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
     case 'addToCart':
       return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
     case 'reload':

@@ -9,14 +9,22 @@ export enum CloudProviderFileHandleConcreteTypeEnum {
   GoogleCloudFileHandle = 'org.sagebionetworks.repo.model.file.GoogleCloudFileHandle',
 }
 
+interface CloudProviderFileHandleInterface extends FileHandle {
+  readonly bucketName: string
+  readonly key: string
+  readonly previewId: string
+  readonly isPreview: boolean
+}
+
 /*
   https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/S3FileHandle.html
   An S3FileHandle represents a file stored in AWS S3.
  */
-export type S3FileHandle = FileHandle & {
-  concreteType: CloudProviderFileHandleConcreteTypeEnum.S3FileHandle
-  bucketName: string
-  key: string
-  previewId: string
-  isPreview: boolean
+export interface S3FileHandle extends CloudProviderFileHandleInterface {
+  readonly concreteType: CloudProviderFileHandleConcreteTypeEnum.S3FileHandle
+}
+
+export interface GoogleCloudFileHandle
+  extends CloudProviderFileHandleInterface {
+  readonly concreteType: CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle
 }

@@ -1,4 +1,4 @@
-import { ColumnType } from '../lib/utils/synapseTypes/'
+import { ColumnType } from '../../lib/utils/synapseTypes'
 const mockData = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   columnModels: [

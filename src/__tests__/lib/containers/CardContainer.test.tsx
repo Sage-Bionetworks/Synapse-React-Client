@@ -1,4 +1,4 @@
-import { mount, shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import * as React from 'react'
 import { SynapseConstants } from '../../../lib'
 import CardContainer, {
@@ -10,7 +10,7 @@ import {
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 
 const mountComponent = (props: CardContainerProps) => {
   const wrapper = mount(<CardContainer {...props} />, {

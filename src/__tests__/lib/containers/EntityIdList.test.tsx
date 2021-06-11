@@ -3,36 +3,39 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIdList, {
   EntityIdListProps,
 } from '../../../lib/containers/EntityIdList'
-import { mount } from 'enzyme'
 import { act } from 'react-dom/test-utils'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../mocks/MockSynapseContext'
+import { render, screen, waitFor } from '@testing-library/react'
+import { mockFileEntityHeader } from '../../../mocks/entity/mockEntity'
+import { getEntityHeadersByIds } from '../../../lib/utils/SynapseClient'
+
+const SynapseClient = require('../../../lib/utils/SynapseClient')
+
+SynapseClient.getEntityHeadersByIds = jest
+  .fn()
+  .mockResolvedValue({ results: [mockFileEntityHeader] })
 
 describe('EntityIdList: basic functionality', () => {
   const props: EntityIdListProps = {
     entityIdList: ['syn123', 'syn345'],
   }
 
-  it('render direct download component without crashing', async () => {
-    const wrapper = mount(<EntityIdList {...props} />, {
-      wrappingComponent: SynapseTestContext,
+  it('renders and retrieves data without crashing', async () => {
+    render(<EntityIdList {...props} />, {
+      wrapper: SynapseTestContext,
     })
-    mockAllIsIntersecting(true)
-    expect(wrapper).toBeDefined()
-  })
-
-  it('test', async () => {
-    const setEntityNameList = jest.fn()
-    const handleStateChange = jest.spyOn(React, 'useState')
-    handleStateChange.mockImplementation(entityNameList => [
-      entityNameList,
-      setEntityNameList,
-    ])
     act(() => {
-      mount(<EntityIdList {...props} />, {
-        wrappingComponent: SynapseTestContext,
-      })
       mockAllIsIntersecting(true)
     })
-    expect(handleStateChange).toBeCalled()
+    await waitFor(() =>
+      expect(getEntityHeadersByIds).toBeCalledWith(
+        props.entityIdList,
+        MOCK_CONTEXT_VALUE.accessToken,
+      ),
+    )
+    screen.getByText(mockFileEntityHeader.name)
   })
 })
