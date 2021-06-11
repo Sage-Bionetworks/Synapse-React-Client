@@ -40,7 +40,7 @@ export type UserCardMediumProps = {
  * @returns
  */
 const copyToClipboard = (
-  htmlDivRef: React.MutableRefObject<HTMLElement | undefined>,
+  htmlDivRef: React.MutableRefObject<HTMLElement | null>,
   value: string,
   showModal: (show: boolean) => void,
 ) => (event: React.SyntheticEvent) => {
@@ -80,7 +80,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
   const [ORCIDHref, setORCIDHref] = useState<string | undefined>(undefined)
 
-  const copyToClipboardRef = useRef<HTMLElement>()
+  const copyToClipboardRef = useRef<HTMLParagraphElement>(null)
 
   const {
     displayName,
