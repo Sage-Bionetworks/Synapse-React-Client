@@ -7,6 +7,7 @@ import { ActionRequiredResponse } from '../../utils/synapseTypes/DownloadListV2/
 import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { ActionRequiredCount, MeetAccessRequirement, RequestDownload } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
+import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 
 export type DownloadListActionsRequiredProps = {}
 
@@ -65,7 +66,7 @@ export default function DownloadListActionsRequired(props: DownloadListActionsRe
       case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement':
         const meetARAction:MeetAccessRequirement = actionRequiredCount.action as MeetAccessRequirement
         return (
-          <div>Must meet AR.  AR ID = {meetARAction.accessRequirementId}.  Count = {actionRequiredCount.count}</div>
+          <MeetAccessRequirementCard accessRequirementId={meetARAction.accessRequirementId} count={actionRequiredCount.count} />
         )
       case 'org.sagebionetworks.repo.model.download.RequestDownload':
         const requestDownloadAction:RequestDownload = actionRequiredCount.action as RequestDownload

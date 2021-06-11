@@ -2235,6 +2235,7 @@ export const getRestrictionInformation = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
 /**
  * Returns a paginated result of access requirements associated for an entity
  *
@@ -2254,6 +2255,28 @@ export const getAccessRequirement = (
 ): Promise<PaginatedResults<AccessRequirement>> => {
   const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
   return doGet<PaginatedResults<AccessRequirement>>(
+    url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns the Access Requirement with the given AR_ID
+ *
+ * See http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId.html
+ *
+ * @param {(string | undefined)} accessToken token of user
+ * @param {number} id id of the access requirement
+ * @returns {Promise<AccessRequirement>}
+ */
+ export const getAccessRequirementById = (
+  accessToken: string | undefined,
+  id: number
+): Promise<AccessRequirement> => {
+  const url = `/repo/v1/accessRequirement/${id}`
+  return doGet<AccessRequirement>(
     url,
     accessToken,
     undefined,
