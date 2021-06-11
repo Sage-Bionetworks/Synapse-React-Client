@@ -40,9 +40,9 @@ export type UserCardMediumProps = {
  * @returns
  */
 const copyToClipboard = (
-  htmlDivRef: React.MutableRefObject<HTMLElement | null>,
+  ref: React.MutableRefObject<HTMLElement | null>,
   value: string,
-  showModal: (show: boolean) => void,
+  onCopy: () => void,
 ) => (event: React.SyntheticEvent) => {
   event.preventDefault()
   // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
@@ -52,16 +52,11 @@ const copyToClipboard = (
   el.setAttribute('readonly', '')
   el.style.position = 'absolute'
   el.style.left = '-9999px'
-  htmlDivRef.current!.appendChild(el)
+  ref.current!.appendChild(el)
   el.select()
   document.execCommand('copy')
-  htmlDivRef.current!.removeChild(el)
-  // show modal and hide after 4 seconds, the timing is per Material Design
-  showModal(true)
-  // hide after 4 seconds
-  setTimeout(() => {
-    showModal(false)
-  }, 4000)
+  ref.current!.removeChild(el)
+  onCopy()
 }
 
 export const UserCardMedium: React.FC<UserCardMediumProps> = ({
@@ -81,6 +76,15 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   const [ORCIDHref, setORCIDHref] = useState<string | undefined>(undefined)
 
   const copyToClipboardRef = useRef<HTMLParagraphElement>(null)
+
+  const onCopyToClipboard = () => {
+    // show modal and hide after 4 seconds, the timing is per Material Design
+    setShowModal(true)
+    // hide after 4 seconds
+    setTimeout(() => {
+      setShowModal(false)
+    }, 4000)
+  }
 
   const {
     displayName,
@@ -124,7 +128,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
       }
     }
     updateOrcID()
-  }, [])
+  }, [userProfile])
 
   const toggleContextMenu = (_event: any) => {
     setIsContextMenuOpen(isOpen => !isOpen)
@@ -228,11 +232,15 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
                 : 'SRC-primary-text-color SRC-primary-color-hover'
             }
               SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
-            onClick={copyToClipboard(copyToClipboardRef, email, setShowModal)}
+            onClick={copyToClipboard(
+              copyToClipboardRef,
+              email,
+              onCopyToClipboard,
+            )}
             onKeyPress={copyToClipboard(
               copyToClipboardRef,
               email,
-              setShowModal,
+              onCopyToClipboard,
             )}
             tabIndex={0}
           >
