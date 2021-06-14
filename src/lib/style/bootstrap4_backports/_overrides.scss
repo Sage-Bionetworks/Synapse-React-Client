@@ -87,5 +87,15 @@ body:not(#body) {
         font-size: 28px;
       }
     }
+    .modal-body {
+      padding: 10px 0px;
+    }
+
+    .modal-footer {
+      padding: 10px 0px;
+      & > * {
+        margin: 0;
+      }
+    }
   }
 }
