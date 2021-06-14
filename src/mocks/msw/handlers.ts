@@ -10,7 +10,17 @@ import {
   MOCK_FILE_ENTITY_ID,
   MOCK_PROJECT_ID,
 } from '../entity/mockEntity'
-import { mockUserBundle, mockUserProfileData, MOCK_USER_ID } from '../user/mock_user_profile'
+import {
+  mockUserBundle,
+  mockUserProfileData,
+  MOCK_USER_ID,
+} from '../user/mock_user_profile'
+import {
+  ENTITY_BUNDLE_V2,
+  ENTITY_SCHEMA_BINDING,
+  USER_ID_BUNDLE,
+  USER_PROFILE_ID,
+} from '../../lib/utils/APIConstants'
 
 const handlers = [
   rest.options('*', async (req, res, ctx) => {
@@ -18,9 +28,9 @@ const handlers = [
   }),
 
   rest.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}repo/v1/userProfile/:id`,
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_PROFILE_ID(
+      ':id',
+    )}`,
     async (req, res, ctx) => {
       let response
       if (req.params.id === MOCK_USER_ID.toString()) {
@@ -31,9 +41,9 @@ const handlers = [
   ),
 
   rest.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}repo/v1/user/:id/bundle`,
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_ID_BUNDLE(
+      ':id',
+    )}`,
     async (req, res, ctx) => {
       let response
       if (req.params.id === MOCK_USER_ID.toString()) {
@@ -44,9 +54,9 @@ const handlers = [
   ),
 
   rest.post(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}repo/v1/entity/:entityId/bundle2`,
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+      ':entityId',
+    )}`,
     async (req, res, ctx) => {
       let response
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
@@ -61,7 +71,7 @@ const handlers = [
   rest.get(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
-    )}/repo/v1/entity/:entityId/schema/binding`,
+    )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
     async (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(mockSchemaBinding))
     },

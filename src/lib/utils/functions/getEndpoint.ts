@@ -10,7 +10,7 @@ type EndpointObject = {
 }
 
 export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
-  REPO: 'https://repo-prod.prod.sagebase.org/',
+  REPO: 'https://repo-prod.prod.sagebase.org',
   PORTAL: 'https://www.synapse.org/',
 }
 
