@@ -32,11 +32,13 @@ const handlers = [
       ':id',
     )}`,
     async (req, res, ctx) => {
-      let response
+      let response = {}
+      let status = 404
       if (req.params.id === MOCK_USER_ID.toString()) {
         response = mockUserProfileData
+        status = 200
       }
-      return res(ctx.status(200), ctx.json(response))
+      return res(ctx.status(status), ctx.json(response))
     },
   ),
 
@@ -45,11 +47,13 @@ const handlers = [
       ':id',
     )}`,
     async (req, res, ctx) => {
-      let response
+      let response = {}
+      let status = 404
       if (req.params.id === MOCK_USER_ID.toString()) {
         response = mockUserBundle
+        status = 200
       }
-      return res(ctx.status(200), ctx.json(response))
+      return res(ctx.status(status), ctx.json(response))
     },
   ),
 
@@ -58,13 +62,16 @@ const handlers = [
       ':entityId',
     )}`,
     async (req, res, ctx) => {
-      let response
+      let response = {}
+      let status = 404
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
         response = mockFileEntityBundle
+        status = 200
       } else if (req.params.entityId === MOCK_PROJECT_ID) {
         response = mockProjectEntityBundle
+        status = 200
       }
-      return res(ctx.status(200), ctx.json(response))
+      return res(ctx.status(status), ctx.json(response))
     },
   ),
 
