@@ -4,6 +4,10 @@ import { toError } from '../../utils/ErrorUtils'
 import { SynapseSpinner } from '../LoadingScreen'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI/useGetEntityHeaders'
 import { EntityHeader } from '../../utils/synapseTypes'
+import { Icon } from '../row_renderers/utils'
+import { VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
+import { Button } from 'react-bootstrap'
+
 
 export type RequestDownloadCardProps = {
   entityId: string
@@ -33,8 +37,18 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
   return (
     <>
       {!isError && !isFetching && (
-        <div>
-          Entity Type={entityHeader?.type}, Entity Name= {entityHeader?.name}, count = {count}
+        <div className="RequestDownloadCart">
+          <Icon type={VARIABLE_DIFFICULTY} />
+          <div>
+            <div className="actionRequiredTitle">Requires Download Permission</div>
+            <div className="actionRequiredFileCount">{count} File(s)</div>
+            <div className="actionRequiredDescription">
+              You must be granted the download permission on <strong>{entityHeader?.name}</strong> in order to download this set of files.
+            </div>
+          </div>
+          <a href={`https://www.synapse.org/#!Synapse:${entityHeader?.id}`} target='_blank' rel='noreferrer'>
+            <Button>Start</Button>
+          </a>
         </div>
       )}
       {isFetching && (
