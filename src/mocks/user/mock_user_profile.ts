@@ -4,24 +4,26 @@ import {
   UserProfile,
 } from '../../lib/utils/synapseTypes'
 
+export const MOCK_USER_ID = 999
+
 export const mockUserProfileData: UserProfile = {
-  summary: 'my summary data',
+  summary: 'My summary bio',
   firstName: 'First',
   lastName: 'Last',
   location: 'Seattle,WA,USA',
   industry: '',
   company: 'Researcher',
   position: '',
-  ownerId: '1',
+  ownerId: `${MOCK_USER_ID}`,
   userName: 'myUserName',
   createdOn: '2018-06-18T21:42:48.000Z',
   url: '',
 }
 
 export const mockUserBundle: UserBundle = {
-  userId: '1',
+  userId: `${MOCK_USER_ID}`,
   userProfile: {
-    ownerId: '123456789',
+    ownerId: `${MOCK_USER_ID}`,
     firstName: 'First',
     lastName: 'Last',
     userName: 'myUserName',
@@ -41,7 +43,7 @@ export const mockUserBundle: UserBundle = {
 }
 
 export const mockUserGroupHeader: UserGroupHeader = {
-  ownerId: '123456789',
+  ownerId: `${MOCK_USER_ID}`,
   firstName: 'First',
   lastName: 'Last',
   userName: 'myUserName',

@@ -95,12 +95,16 @@ import {
   ManagedACTAccessRequirementStatus,
   RequestInterface,
   CreateSubmissionRequest,
+  ACCESS_TYPE,
 } from './synapseTypes/AccessRequirement'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import { AvailableFilesRequest, FilesStatisticsRequest } from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import {
+  AvailableFilesRequest,
+  FilesStatisticsRequest,
+} from './synapseTypes/DownloadListV2/QueryRequestDetails'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
@@ -110,6 +114,22 @@ import {
 } from './SynapseConstants'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
+import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
+import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
+import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
+import { JSONSchema7 } from 'json-schema'
+import $RefParser from 'json-schema-ref-parser'
+import {
+  ENTITY_ACCESS,
+  ENTITY_BUNDLE_V2,
+  ENTITY_JSON,
+  ENTITY_SCHEMA_BINDING,
+  ENTITY_SCHEMA_VALIDATION,
+  REGISTERED_SCHEMA_ID,
+  USER_ID_BUNDLE,
+  USER_PROFILE,
+  USER_PROFILE_ID,
+} from './APIConstants'
 
 const cookies = new UniversalCookies()
 
@@ -332,14 +352,14 @@ export const addFilesToDownloadList = (
   updateParentState?: any,
 ) => {
   return doPost<AsyncJobId>(
-    `file/v1/download/list/add/async/start`,
+    `/file/v1/download/list/add/async/start`,
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then((resp: AsyncJobId) => {
-      const requestUrl = `file/v1/download/list/add/async/get/${resp.token}`
+      const requestUrl = `/file/v1/download/list/add/async/get/${resp.token}`
       return getAsyncResultFromJobId<AddFilesToDownloadListResponse>(
         requestUrl,
         accessToken,
@@ -393,7 +413,7 @@ export const getFileHandleById = (
   accessToken: string | undefined = undefined,
 ): Promise<FileHandle> => {
   return doGet<FileHandle>(
-    `file/v1/fileHandle/${handleId}`,
+    `/file/v1/fileHandle/${handleId}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -432,7 +452,7 @@ export const getFileHandleByIdURL = (
 ) => {
   // get the presigned URL for this file handle
   return doGet<string>(
-    `file/v1/fileHandle/${handleId}/url?redirect=false`,
+    `/file/v1/fileHandle/${handleId}/url?redirect=false`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -658,7 +678,7 @@ export const createProject = (
  */
 export const getUserProfile = (accessToken: string | undefined) => {
   return doGet<UserProfile>(
-    '/repo/v1/userProfile',
+    USER_PROFILE,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -666,7 +686,7 @@ export const getUserProfile = (accessToken: string | undefined) => {
 }
 
 /**
- * Return this user's UserProfile
+ * Return any user's UserProfile
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
 export const getUserProfileById = (
@@ -674,7 +694,7 @@ export const getUserProfileById = (
   ownerId: string,
 ) => {
   return doGet<UserProfile>(
-    `/repo/v1/userProfile/${ownerId}`,
+    USER_PROFILE_ID(ownerId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -691,7 +711,7 @@ export const getUserBundle = (
   accessToken: string | undefined,
 ): Promise<UserBundle> => {
   return doGet<UserBundle>(
-    `repo/v1/user/${id}/bundle?mask=${mask}`,
+    `${USER_ID_BUNDLE(id)}?mask=${mask}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -709,7 +729,7 @@ export const getUserGroupHeaders = (
   limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    `repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
+    `/repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -725,7 +745,7 @@ export const getGroupHeadersBatch = (
   accessToken: string | undefined,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    `repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`,
+    `/repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -742,7 +762,7 @@ export const getUserProfiles = (
   accessToken: string | undefined = undefined,
 ): Promise<UserProfileList> => {
   return doPost(
-    '/repo/v1/userProfile',
+    USER_PROFILE,
     { list },
     accessToken,
     undefined,
@@ -809,7 +829,7 @@ export const getBulkFiles = (
   accessToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
   return doPost<AsyncJobId>(
-    'file/v1/file/bulk/async/start',
+    '/file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     accessToken,
     undefined,
@@ -893,14 +913,13 @@ export const getEntityHeaders = (
       const entityTokens = reference.targetId.split('.')
       return {
         targetId: entityTokens[0],
-        version: entityTokens[1]
+        version: entityTokens[1],
       }
-    }
-    else return reference
-})
+    } else return reference
+  })
 
   return doPost(
-    'repo/v1/entity/header',
+    '/repo/v1/entity/header',
     { references: fixedReferences },
     accessToken,
     undefined,
@@ -914,7 +933,7 @@ export const getEntityHeaders = (
  */
 export const getEntityHeader = (entityId: string, accessToken?: string) => {
   return doGet(
-    `repo/v1/entity/${entityId}/type`,
+    `/repo/v1/entity/${entityId}/type`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -948,32 +967,6 @@ export const deleteEntity = (
   )
 }
 
-/**
- * Bundled access to Entity and related data components.
- * An EntityBundle can be used to create, fetch, or update an Entity and
- * associated objects with a single web service request.
- * See SynapseClient.test.js for an example partsMask.
- * https://rest-docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
- */
-export const getEntityBundleForVersion = (
-  entityId: string | number,
-  version: string | number | undefined,
-  partsMask: string | number,
-  accessToken: string | undefined = undefined,
-) => {
-  let url = `/repo/v1/entity/${entityId}`
-  if (version) {
-    url += `/version/ + ${version}`
-  }
-  url += `/bundle?mask= ${partsMask}`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<any>
-}
-
 export const getEntityBundleV2 = (
   entityId: string | number,
   requestObject: EntityBundleRequest,
@@ -981,9 +974,7 @@ export const getEntityBundleV2 = (
   accessToken?: string,
 ): Promise<EntityBundle> => {
   return doPost<EntityBundle>(
-    `repo/v1/entity/${entityId}/${
-      version ? `version/${version}/` : ''
-    }/bundle2`,
+    ENTITY_BUNDLE_V2(entityId, version),
     requestObject,
     accessToken,
     undefined,
@@ -1025,7 +1016,7 @@ export const getEntityWiki = (
  */
 export const getUserFavorites = (accessToken: string | undefined) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
-  const url = 'repo/v1/favorite?offset=0&limit=200'
+  const url = '/repo/v1/favorite?offset=0&limit=200'
   return doGet<PaginatedResults<EntityHeader>>(
     url,
     accessToken,
@@ -1043,7 +1034,7 @@ export const getUserTeamList = (
   accessToken: string | undefined,
   id: string | number,
 ) => {
-  const url = `repo/v1/user/${id}/team?offset=0&limit=200`
+  const url = `/repo/v1/user/${id}/team?offset=0&limit=200`
   return doGet(
     url,
     accessToken,
@@ -1067,7 +1058,7 @@ export const getTeamList = (
   limit: number = 10,
   offset: number = 0,
 ) => {
-  const url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
+  const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(
@@ -1088,7 +1079,7 @@ export const getWikiPageKeyForEntity = (
   accessToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
-  const url = `repo/v1/entity/${ownerId}/wikikey`
+  const url = `/repo/v1/entity/${ownerId}/wikikey`
   return doGet<WikiPageKey>(
     url,
     accessToken,
@@ -1107,7 +1098,7 @@ export const getWikiPageKeyForAccessRequirement = (
   accessToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
-  const url = `repo/v1/access_requirement/${ownerId}/wikikey`
+  const url = `/repo/v1/access_requirement/${ownerId}/wikikey`
   return doGet<WikiPageKey>(
     url,
     accessToken,
@@ -1123,7 +1114,7 @@ export const getWikiAttachmentsFromEntity = (
   objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<FileHandleResults> => {
   const objectTypeString = getObjectTypeToString(objectType!)
-  const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
+  const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
   return doGet(
     url,
     accessToken,
@@ -1136,7 +1127,7 @@ export const getWikiAttachmentsFromEvaluation = (
   id: string | number,
   wikiId: string | number,
 ) => {
-  const url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
+  const url = `/repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
   return doGet(
     url,
     accessToken,
@@ -1153,7 +1144,7 @@ export const getPresignedUrlForWikiAttachment = (
   objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<string> => {
   const objectTypeString = getObjectTypeToString(objectType!)
-  const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
+  const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
   return doGet(
     url,
     accessToken,
@@ -1174,7 +1165,7 @@ export const isInSynapseExperimentalMode = (): boolean => {
  */
 export const setAccessTokenCookie = async (
   token: string | undefined,
-  sessionCallback: Function,
+  sessionCallback: () => void,
 ) => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
@@ -1235,8 +1226,8 @@ export const getPrincipalAliasRequest = (
   accessToken: string | undefined,
   alias: string,
   type: string,
-) => {
-  const url = 'repo/v1/principal/alias'
+): Promise<{ principalId: number }> => {
+  const url = '/repo/v1/principal/alias'
   return doPost(
     url,
     { alias, type },
@@ -1290,7 +1281,7 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = (sessionCallback: Function) => {
+export const signOut = (sessionCallback: () => void) => {
   setAccessTokenCookie(undefined, sessionCallback)
 }
 
@@ -1514,7 +1505,7 @@ export const startMultipartUpload = (
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
 ) => {
-  const url = 'file/v1/file/multipart'
+  const url = '/file/v1/file/multipart'
   doPost<MultipartUploadStatus>(
     url,
     request,
@@ -1675,7 +1666,7 @@ export const addFileToDownloadListV2 = (
     batchToAdd: [{ fileEntityId, versionNumber }],
   }
   return doPost(
-    'repo/v1/download/list/add',
+    '/repo/v1/download/list/add',
     request,
     accessToken,
     undefined,
@@ -2272,7 +2263,7 @@ export const getAccessRequirementStatus = (
   accessToken: string | undefined,
   requirementId: string | number,
 ): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
-  const url = `repo/v1/accessRequirement/${requirementId}/status`
+  const url = `/repo/v1/accessRequirement/${requirementId}/status`
   return doGet(
     url,
     accessToken,
@@ -2317,7 +2308,7 @@ export const getAccessApproval = async (
   accessToken: string | undefined,
   approvalId: number | undefined,
 ): Promise<AccessApproval> => {
-  const url = `repo/v1/accessApproval/${approvalId}`
+  const url = `/repo/v1/accessApproval/${approvalId}`
   return doGet<AccessApproval>(
     url,
     accessToken,
@@ -2338,7 +2329,7 @@ export const postAccessApproval = async (
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
   return doPost<AccessApproval>(
-    'repo/v1/accessApproval',
+    '/repo/v1/accessApproval',
     accessApproval,
     accessToken,
     undefined,
@@ -2609,7 +2600,7 @@ export const getAvailableFilesToDownload = (
  * Get Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
- export const getDownloadListStatistics = (
+export const getDownloadListStatistics = (
   accessToken: string | undefined = undefined,
 ): Promise<DownloadListQueryResponse> => {
   const filesStatsRequest: FilesStatisticsRequest = {
@@ -2738,6 +2729,126 @@ export const cancelDataAccessRequest = (
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the schema bound to an entity.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+//
+export const getSchemaBinding = (entityId: string, accessToken?: string) => {
+  return doGet<JsonSchemaObjectBinding>(
+    ENTITY_SCHEMA_BINDING(entityId),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the schema bound to an entity.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const getSchemaValidationResults = (
+  entityId: string,
+  accessToken?: string,
+) => {
+  return doGet<ValidationResults>(
+    ENTITY_SCHEMA_VALIDATION(entityId),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get a schema by its $id.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @returns
+ */
+export const getSchema = (schema$id: string) => {
+  return doGet<JSONSchema7>(
+    `${REGISTERED_SCHEMA_ID(schema$id)}`,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Use json-schema-ref-parser to retrieve a Synapse JSON Schema and resolve all references within the schema.
+ * @param schema$id
+ * @returns
+ */
+export const getSchemaRecursive = async (schema$id: string) => {
+  return $RefParser.dereference(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${REGISTERED_SCHEMA_ID(
+      schema$id,
+    )}`,
+  ) as Promise<JSONSchema7>
+}
+
+/**
+ * Determine if the caller has a particular access type on an entity
+ * https://docs.synapse.org/rest/GET/entity/id/access.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const hasAccessToEntity = (
+  entityId: string,
+  accessType: ACCESS_TYPE,
+  accessToken?: string,
+) => {
+  return doGet<HasAccessResponse>(
+    `${ENTITY_ACCESS(entityId)}?accessType=${accessType}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the entity and its annotations as a JSON object
+ * https://docs.synapse.org/rest/GET/entity/id/json.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const getEntityJson = (entityId: string, accessToken?: string) => {
+  return doGet<unknown>(
+    ENTITY_JSON(entityId),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update an entity and its annotations using a JSON object
+ * https://docs.synapse.org/rest/PUT/entity/id/json.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const updateEntityJson = (
+  entityId: string,
+  json: unknown,
+  accessToken?: string,
+) => {
+  return doPut<unknown>(
+    ENTITY_JSON(entityId),
+    json,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
