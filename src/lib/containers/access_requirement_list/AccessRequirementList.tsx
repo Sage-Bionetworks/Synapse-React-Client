@@ -42,10 +42,11 @@ type AccessRequirementAndStatus = {
 }
 
 export type AccessRequirementListProps = {
-  entityId: string
+  entityId: string  // will show this entity info
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
+  numberOfFilesEffected?: number // if provided, will show this instead of the entity information
 }
 
 export type requestDataStepCallbackProps = {
@@ -85,6 +86,7 @@ export default function AccessRequirementList({
   onHide,
   accessRequirementFromProps,
   renderAsModal,
+  numberOfFilesEffected,
 }: AccessRequirementListProps) {
   const { accessToken } = useSynapseContext()
 
@@ -300,17 +302,23 @@ export default function AccessRequirementList({
           <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
             Access For:
           </h4>
-          <a
-            className="AccessRequirementList__register-text-link"
-            href={`https://www.synapse.org/#!Synapse:${entityId}`}
-          >
+          <span className="AccessRequirementList__file-icon-container">
             <FontAwesomeIcon
               size="lg"
               icon="file"
               className="AccessRequirementList__file"
             />
-            &nbsp;{entityInformation[0]?.name}
-          </a>
+          </span>
+          &nbsp;
+          {numberOfFilesEffected && <span>
+            {numberOfFilesEffected} File(s)
+          </span>}
+          {!numberOfFilesEffected && <a
+            className="AccessRequirementList__register-text-link"
+            href={`https://www.synapse.org/#!Synapse:${entityId}`}
+          >
+              {entityInformation[0]?.name}
+          </a>}
           <h4
             className="AccessRequirementList__instruction"
             style={{ marginTop: '3rem' }}
