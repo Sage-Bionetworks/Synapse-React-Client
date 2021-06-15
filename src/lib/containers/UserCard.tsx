@@ -63,7 +63,9 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
   const [userProfile, setUserProfile] = useState(initialProfile)
   const [principalId, setPrincipalId] = useState(ownerId)
   const [isLoading, setIsLoading] = useState(true)
-  const [preSignedURL, setPresignedUrl] = useState(initialPreSignedURL ?? '')
+  const [preSignedURL, setPresignedUrl] = useState<string | undefined>(
+    initialPreSignedURL,
+  )
   // We fetch the image right away in case it is an expiring presigned URL
   const imageURL = usePreFetchResource(preSignedURL)
 

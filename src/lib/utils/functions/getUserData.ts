@@ -9,7 +9,7 @@ function getUserProfileWithProfilePicAttached(
   principalIds: string[],
   token?: string,
 ) {
-  return SynapseClient.getUserProfiles(principalIds).then((data) => {
+  return SynapseClient.getUserProfiles(principalIds).then(data => {
     // people will either have a profile pic file handle id
     // or they won't. Have to break this down into two groups.
     const withProfilePic = data.list.filter((value: any) => {
@@ -18,7 +18,7 @@ function getUserProfileWithProfilePicAttached(
     if (withProfilePic.length === 0) {
       return data
     }
-    const fileHandleAssociationList = withProfilePic.map((value) => {
+    const fileHandleAssociationList = withProfilePic.map(value => {
       return {
         associateObjectId: value.ownerId,
         associateObjectType: 'UserProfileAttachment',
@@ -32,12 +32,12 @@ function getUserProfileWithProfilePicAttached(
       requestedFiles: fileHandleAssociationList,
     }
     return SynapseClient.getFiles(request, token)
-      .then((fileHandleList) => {
+      .then(fileHandleList => {
         // we retrieve all the persons with profile pic file handles
         // so we next loop through them, find the original person in the data.list
         // and add a field with their pre-signed url
-        fileHandleList.requestedFiles.forEach((fileHandle) => {
-          const matchingPersonIndex = data.list.findIndex((el) => {
+        fileHandleList.requestedFiles.forEach(fileHandle => {
+          const matchingPersonIndex = data.list.findIndex(el => {
             return fileHandle.fileHandleId === el.profilePicureFileHandleId
           })
           data.list[matchingPersonIndex].clientPreSignedURL =
@@ -45,7 +45,7 @@ function getUserProfileWithProfilePicAttached(
         })
         return Promise.resolve(data)
       })
-      .catch((err) => {
+      .catch(err => {
         throw Error(`Err on getting user data ${err}`)
       })
   })
@@ -53,7 +53,7 @@ function getUserProfileWithProfilePicAttached(
 
 export type UserProfileAndImg = {
   userProfile: UserProfile
-  preSignedURL: string
+  preSignedURL?: string
 }
 function getUserProfileWithProfilePic(
   ownerId: string,
@@ -83,7 +83,7 @@ function getUserProfileWithProfilePic(
       }
 
       return SynapseClient.getFiles(request, token)
-        .then((fileHandleList) => {
+        .then(fileHandleList => {
           // we retrieve all the persons with profile pic file handles
           // so we next loop through them, find the original person in the data.list
           // and add a field with their pre-signed url
@@ -93,7 +93,7 @@ function getUserProfileWithProfilePic(
             preSignedURL: firstElement.preSignedURL,
           })
         })
-        .catch((err) => {
+        .catch(err => {
           console.log({ err })
         })
     },
