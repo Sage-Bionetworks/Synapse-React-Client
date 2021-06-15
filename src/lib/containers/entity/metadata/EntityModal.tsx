@@ -44,66 +44,62 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       animation={false}
       onClose={onClose}
     >
-      {isLoadingBundle ? (
-        <SynapseSpinner />
-      ) : (
-        <>
-          <Modal.Header closeButton onHide={onClose}>
-            <Modal.Title>{entityBundle?.entity?.name}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="Tabs">
-              {Object.keys(EntityModalTabs).map((tabName: string) => {
-                return (
-                  <div
-                    className="Tab"
-                    key={tabName}
-                    onClick={() => setCurrentTab(EntityModalTabs[tabName])}
-                    aria-selected={tabName === currentTab}
-                  >
-                    {tabName}
-                  </div>
-                )
-              })}
-            </div>
-            {!isLoadingBundle && currentTab === EntityModalTabs.ANNOTATIONS && (
+      <Modal.Header closeButton onHide={onClose}>
+        <Modal.Title>
+          {isLoadingBundle ? <SynapseSpinner /> : entityBundle?.entity?.name}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="Tabs">
+          {Object.keys(EntityModalTabs).map((tabName: string) => {
+            return (
+              <div
+                className="Tab"
+                role="tab"
+                key={tabName}
+                onClick={() => setCurrentTab(EntityModalTabs[tabName])}
+                aria-selected={tabName === currentTab}
+              >
+                {tabName}
+              </div>
+            )
+          })}
+        </div>
+        {isLoadingBundle ? (
+          <SynapseSpinner />
+        ) : (
+          <>
+            {currentTab === EntityModalTabs.ANNOTATIONS && (
               <AnnotationsTable entityId={entityId} />
             )}
-            {!isLoadingBundle && currentTab === EntityModalTabs.METADATA && (
+            {currentTab === EntityModalTabs.METADATA && (
               <MetadataTable entityId={entityId} />
             )}
-          </Modal.Body>
-          <Modal.Footer>
-            <div style={{ display: 'flex', width: '100%' }}>
-              <div style={{ flexGrow: 1 }}></div>
-              {/* {!isLoadingBundle &&
-                currentTab === EntityModalTabs.ANNOTATIONS && (
-                  <AnnotationsSummaryFooter
-                    entityBundle={entityBundle!}
-                    onClose={onClose}
-                  />
-                )}
-              {!isLoadingBundle &&
-                currentTab === EntityModalTabs.METADATA && ( */}
-              <Button
-                variant="primary"
-                onClick={() =>
-                  window.open(
-                    `${getEndpoint(
-                      BackendDestinationEnum.PORTAL_ENDPOINT,
-                    )}#!Synapse:${entityBundle!.entity!.id}`,
-                    '_blank',
-                    'noopener',
-                  )
-                }
-              >
-                Open {entityTypeToFriendlyName(entityBundle!.entityType!)}
-              </Button>
-              {/* )} */}
-            </div>
-          </Modal.Footer>
-        </>
-      )}
+          </>
+        )}
+      </Modal.Body>
+      <Modal.Footer>
+        <div className="ButtonContainer">
+          <div className="Spacer" />
+          <Button
+            variant="primary"
+            onClick={() =>
+              window.open(
+                `${getEndpoint(
+                  BackendDestinationEnum.PORTAL_ENDPOINT,
+                )}#!Synapse:${entityId}`,
+                '_blank',
+                'noopener',
+              )
+            }
+          >
+            Open{' '}
+            {!isLoadingBundle
+              ? entityTypeToFriendlyName(entityBundle!.entityType!)
+              : ''}
+          </Button>
+        </div>
+      </Modal.Footer>
     </Modal>
   )
 }

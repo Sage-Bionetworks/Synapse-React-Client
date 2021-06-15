@@ -25,6 +25,14 @@
     margin: 30px 0px;
     text-align: center;
   }
+
+  .ButtonContainer {
+    display: flex;
+    width: 100%;
+    .Spacer {
+      flex-grow: 1;
+    }
+  }
 }
 
 .AnnotationsTable {

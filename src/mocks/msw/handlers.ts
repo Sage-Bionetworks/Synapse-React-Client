@@ -32,7 +32,9 @@ const handlers = [
       ':id',
     )}`,
     async (req, res, ctx) => {
-      let response = {}
+      let response: any = {
+        reason: `Mock Service worker could not find a user profile with ID ${req.params.id}`,
+      }
       let status = 404
       if (req.params.id === MOCK_USER_ID.toString()) {
         response = mockUserProfileData
@@ -47,7 +49,9 @@ const handlers = [
       ':id',
     )}`,
     async (req, res, ctx) => {
-      let response = {}
+      let response: any = {
+        reason: `Mock Service worker could not find a user bundle with ID ${req.params.id}`,
+      }
       let status = 404
       if (req.params.id === MOCK_USER_ID.toString()) {
         response = mockUserBundle
@@ -62,7 +66,9 @@ const handlers = [
       ':entityId',
     )}`,
     async (req, res, ctx) => {
-      let response = {}
+      let response: any = {
+        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+      }
       let status = 404
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
         response = mockFileEntityBundle
