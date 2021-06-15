@@ -24,8 +24,10 @@ import {
   mockUnmetControlledDataRestrictionInformationACT,
 } from '../../../mocks/mock_has_access_data'
 import { mockFileHandle } from '../../../mocks/mock_file_handle'
-import { mockFolderEntity } from '../../../mocks/mock_folder_entity'
-import { mockFileEntity } from '../../../mocks/mock_file_entity'
+import {
+  mockFileEntity,
+  mockFolderEntity,
+} from '../../../mocks/entity/mockEntity'
 import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,

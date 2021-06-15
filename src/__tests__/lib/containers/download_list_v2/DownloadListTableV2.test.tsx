@@ -2,7 +2,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { mockUserProfileData } from '../../../../mocks/mock_user_profile'
+import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
 import DownloadListTableV2, {
   DownloadListTableProps,
 } from '../../../../lib/containers/download_list_v2/DownloadListTable'

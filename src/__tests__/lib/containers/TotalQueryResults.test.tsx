@@ -16,8 +16,8 @@ import {
   SynapseTestContext,
 } from '../../../mocks/MockSynapseContext'
 
-const createMountedComponent = async (props: TotalQueryResultsProps) => {
-  const wrapper = await mount(<TotalQueryResults {...props} />, {
+const createMountedComponent = (props: TotalQueryResultsProps) => {
+  const wrapper = mount(<TotalQueryResults {...props} />, {
     wrappingComponent: SynapseTestContext,
   })
   return { wrapper }
@@ -113,7 +113,7 @@ describe('it works', () => {
     frontText: 'Displaying',
   }
   it('renders without crashing', async () => {
-    const { wrapper } = await createMountedComponent(props)
+    const { wrapper } = createMountedComponent(props)
     await actions(wrapper, () => {
       expect(wrapper).toBeDefined()
     })
@@ -121,7 +121,7 @@ describe('it works', () => {
 
   it('calls synapse with query count part mask', async () => {
     mockGetQueryTableResultsFn.mockClear()
-    const { wrapper } = await createMountedComponent(props)
+    const { wrapper } = createMountedComponent(props)
     await actions(wrapper, () => {
       expect(wrapper.find('.SRC-boldText').text()).toContain(
         `${displayText} ${mockQueryReturn.queryCount} ${unitDescription}`,

@@ -1,3 +1,3 @@
-import mockData from './mock_query_data'
+import mockData from './query/mock_query_data'
 
 export { mockData }

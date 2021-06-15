@@ -60,11 +60,9 @@ function getButtonOnFacet(
 
 function init(overrides?: FacetNavProps) {
   const props = createTestProps(overrides)
-  render(
-    <SynapseTestContext>
-      <FacetNav {...props} />
-    </SynapseTestContext>,
-  )
+  render(<FacetNav {...props} />, {
+    wrapper: SynapseTestContext,
+  })
 }
 
 describe('facets display hide/show', () => {
@@ -76,18 +74,20 @@ describe('facets display hide/show', () => {
 
   it('shows all facet plots when show more is clicked', async () => {
     init()
-    const showMoreButton = screen.getByText('View All Charts')
-    userEvent.click(showMoreButton!)
+
+    const showMoreButton = screen.getByRole('button', {
+      name: 'View All Charts',
+    })
+
+    userEvent.click(showMoreButton)
 
     const expectedLength = defaultProps.data?.facets?.filter(
       facet => facet.facetType === 'enumeration',
     ).length
 
-    await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document').length).toBe(
-        expectedLength,
-      )
-    })
+    expect((await screen.findAllByRole('graphics-document')).length).toBe(
+      expectedLength,
+    )
 
     expect(() => screen.getByText('View All Charts')).toThrowError()
   })

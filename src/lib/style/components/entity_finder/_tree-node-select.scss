@@ -14,10 +14,17 @@
     .Node.SelectNode {
       border-top: 1px solid white;
       .NodeContent {
+        grid-template-columns: [toggle] 15px [icon] 27px [name] auto [badge] auto;
         padding: 16px 20px;
         .ExpandButton {
           font-size: large;
           color: unset;
+        }
+
+        .EntityIcon {
+          text-align: center;
+          grid-column: icon / span 1;
+          margin-bottom: 3px;
         }
       }
     }

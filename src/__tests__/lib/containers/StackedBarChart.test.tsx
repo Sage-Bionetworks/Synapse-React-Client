@@ -5,7 +5,7 @@ import StackedBarChart, {
   NEXT_CLICK,
   PREVIOUS_ITEM_CLICK,
 } from '../../../lib/containers/StackedBarChart'
-import syn16787123Json from '../../../mocks/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import { SynapseConstants } from '../../../lib'
