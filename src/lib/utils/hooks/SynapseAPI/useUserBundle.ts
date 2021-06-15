@@ -1,49 +1,55 @@
-import {
-  QueryObserverOptions,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from 'react-query'
-import {
-  getUserProfileWithProfilePic,
-  UserProfileAndImg,
-} from '../../functions/getUserData'
+import { useQuery, UseQueryOptions } from 'react-query'
+import { SynapseClient } from '../..'
+import { getProfilePic, UserProfileAndImg } from '../../functions/getUserData'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
 import { UserProfile } from '../../synapseTypes'
+
+export function useGetUserProfile(
+  principalId: string,
+  options?: UseQueryOptions<UserProfile, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  const queryKey = [accessToken, 'user', principalId, 'profile']
+  // We store the profile in a session storage cache used by SWC
+  const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
+  const cachedValue = sessionStorage.getItem(sessionStorageCacheKey)
+
+  return useQuery<UserProfile, SynapseClientError>(
+    queryKey,
+    () => SynapseClient.getUserProfileById(accessToken, principalId),
+    {
+      ...options,
+
+      // Use the sessionStorage cache to pre-populate profile data.
+      initialData: cachedValue
+        ? (JSON.parse(cachedValue) as UserProfile)
+        : undefined,
+
+      // If the profile is re-fetched, save it to sessionStorage
+      onSuccess: profile => {
+        sessionStorage.setItem(sessionStorageCacheKey, JSON.stringify(profile))
+      },
+    },
+  )
+}
 
 export function useGetUserProfileWithProfilePic(
   principalId: string,
   options?: UseQueryOptions<UserProfileAndImg, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const queryClient = useQueryClient()
-  const queryKey = [accessToken, 'user', principalId, 'profile', 'withPic']
+  const queryKey = [accessToken, 'user', principalId, 'profile and pic']
 
-  // We store the profile in a session storage cache used by SWC
-  const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
-  const cachedValue = sessionStorage.getItem(sessionStorageCacheKey)
+  const { data: userProfile } = useGetUserProfile(principalId)
 
-  const defaultOptions: QueryObserverOptions<
-    UserProfileAndImg,
-    SynapseClientError
-  > = {
-    // Use the sessionStorage cache to pre-populate profile data before the request succeeds.
-    placeholderData: cachedValue
-      ? { userProfile: JSON.parse(cachedValue) as UserProfile }
-      : undefined,
-    // When the request succeeds, put the profile in the sessionStorage cache
-    onSuccess: profileAndImage => {
-      sessionStorage.setItem(
-        sessionStorageCacheKey,
-        JSON.stringify(profileAndImage.userProfile),
-      )
-    },
-  }
-  queryClient.setQueryDefaults(queryKey, defaultOptions)
+  // TODO: create useGetFile hook with careful configuration to prevent serving expired pre-signed URLs without re-fetching every 5 seconds
   return useQuery<UserProfileAndImg, SynapseClientError>(
     queryKey,
-    () => getUserProfileWithProfilePic(principalId, accessToken),
-    options,
+    () => getProfilePic(userProfile!, accessToken),
+    {
+      ...options,
+      enabled: !!userProfile,
+    },
   )
 }
