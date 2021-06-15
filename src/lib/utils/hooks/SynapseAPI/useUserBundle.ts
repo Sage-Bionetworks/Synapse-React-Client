@@ -39,7 +39,7 @@ export function useGetUserProfileWithProfilePic(
   options?: UseQueryOptions<UserProfileAndImg, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const queryKey = [accessToken, 'user', principalId, 'profile and pic']
+  const queryKey = [accessToken, 'user', principalId, 'profile', 'withPic']
 
   const { data: userProfile } = useGetUserProfile(principalId)
 
