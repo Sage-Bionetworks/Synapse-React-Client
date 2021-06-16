@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { MenuAction } from './UserCardContextMenu'
 import { UserProfile } from '../utils/synapseTypes/'
-import { SynapseClient, SynapseConstants } from '../utils/'
+import { SynapseConstants } from '../utils/'
 import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
 import usePreFetchResource from '../utils/hooks/usePreFetchImage'
 import { Avatar, AvatarProps, AvatarSize } from './Avatar'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { useGetUserProfileWithProfilePic } from '../utils/hooks/SynapseAPI/useUserBundle'
 
 export type UserCardSize =
   | 'AVATAR'
@@ -62,9 +63,29 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
   const [userProfile, setUserProfile] = useState(initialProfile)
   const [principalId, setPrincipalId] = useState(ownerId)
   const [isLoading, setIsLoading] = useState(true)
-  const [preSignedURL, setPresignedUrl] = useState(initialPreSignedURL ?? '')
+  const [preSignedURL, setPresignedUrl] = useState<string | undefined>(
+    initialPreSignedURL,
+  )
   // We fetch the image right away in case it is an expiring presigned URL
   const imageURL = usePreFetchResource(preSignedURL)
+
+  const { data: profileAndImage } = useGetUserProfileWithProfilePic(
+    principalId!,
+    {
+      enabled: !!principalId,
+    },
+  )
+
+  useEffect(() => {
+    if (profileAndImage) {
+      if (!initialProfile) {
+        setUserProfile(profileAndImage.userProfile)
+      }
+      if (!initialPreSignedURL) {
+        setPresignedUrl(profileAndImage.preSignedURL)
+      }
+    }
+  }, [profileAndImage, initialPreSignedURL, initialProfile])
 
   useEffect(() => {
     if (userProfile) {
@@ -72,67 +93,12 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
     } else if (alias) {
       // Before we can get the profile, we must get the principal ID using the alias
       getPrincipalAliasRequest(accessToken, alias, 'USER_NAME').then(
-        (aliasData: any) => {
-          setPrincipalId(aliasData.principalId)
+        aliasData => {
+          setPrincipalId(aliasData.principalId.toString())
         },
       )
     }
   }, [userProfile, alias, accessToken])
-
-  useEffect(() => {
-    const getProfilePicture = (
-      profileOwnerId: string,
-      fileHandleId?: string,
-    ) => {
-      if (fileHandleId) {
-        const fha = {
-          associateObjectId: profileOwnerId,
-          associateObjectType: 'UserProfileAttachment',
-          fileHandleId: fileHandleId,
-        }
-        const request: any = {
-          includeFileHandles: false,
-          includePreSignedURLs: true,
-          includePreviewPreSignedURLs: false,
-          requestedFiles: [fha],
-        }
-        SynapseClient.getFiles(request, accessToken)
-          .then(fileHandleList => {
-            setPresignedUrl(fileHandleList.requestedFiles[0].preSignedURL!)
-            setIsLoading(false)
-          })
-          .catch(err => {
-            console.warn('failed to get user profile picture ', err)
-          })
-      } else {
-        setIsLoading(false)
-      }
-    }
-
-    if (!userProfile && principalId) {
-      const cachedProfileString = sessionStorage.getItem(
-        `${principalId}_USER_PROFILE`,
-      )
-      if (cachedProfileString) {
-        const cachedProfile = JSON.parse(cachedProfileString) as UserProfile
-        setUserProfile(cachedProfile)
-        getProfilePicture(principalId, cachedProfile.profilePicureFileHandleId)
-      } else {
-        SynapseClient.getUserProfileById(accessToken, principalId)
-          .then((profile: UserProfile) => {
-            sessionStorage.setItem(
-              `${principalId}_USER_PROFILE`,
-              JSON.stringify(profile),
-            )
-            setUserProfile(profile)
-            getProfilePicture(principalId, profile.profilePicureFileHandleId)
-          })
-          .catch(err => {
-            console.warn('failed to get user bundle ', err)
-          })
-      }
-    }
-  }, [userProfile, principalId, accessToken])
 
   function getCard(
     cardSize: UserCardSize,

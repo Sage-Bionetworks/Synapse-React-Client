@@ -8,7 +8,7 @@ export type DoiAssociation = {
   doiUrl: string
   objectId: string
   objectType: ObjectType
-  objectVersion: number
+  objectVersion?: number
   associatedBy: string
   associatedOn: string
   updatedBy: string

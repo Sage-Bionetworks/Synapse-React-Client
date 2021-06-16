@@ -16,12 +16,12 @@ import UserCardContextMenu, {
   MenuAction,
 } from '../../../lib/containers/UserCardContextMenu'
 import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
-import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
-import { act } from 'react-dom/test-utils'
 import { Avatar, AvatarProps } from '../../../lib/containers/Avatar'
 import { render, waitFor, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { server } from '../../../mocks/msw/server'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
 jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
   return {
@@ -74,6 +74,11 @@ const createMountedComponent = (props: UserCardProps) => {
   return { wrapper, instance }
 }
 
+// Handle the msw lifecycle:
+beforeAll(() => server.listen())
+afterEach(() => server.restoreHandlers())
+afterAll(() => server.close())
+
 describe('it renders the different sized cards without failing', () => {
   const props = {
     userProfile: mockUserProfileData,
@@ -93,18 +98,20 @@ describe('it renders the different sized cards without failing', () => {
     expect(wrapper.find(UserCardSmall)).toHaveLength(1)
   })
 
-  it('renders a medium card', () => {
+  it('renders a medium card', async () => {
     const size = SynapseConstants.MEDIUM_USER_CARD
-    const { wrapper } = createMountedComponent({ ...props, size })
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(UserCardMedium)).toHaveLength(1)
+    render(<UserCard {...props} size={size} />, { wrapper: createWrapper() })
+    // This is the final uncancellable async request that gets sent in the medium and large cards
+    // We wait for this explicitly to prevent the "not wrapped in act(...)" warning
+    await waitFor(() => screen.getByText('ORCID', { exact: false }))
   })
 
-  it('renders a large card', () => {
+  it('renders a large card', async () => {
     const size = SynapseConstants.LARGE_USER_CARD
-    const { wrapper } = createMountedComponent({ ...props, size })
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(UserCardLarge)).toHaveLength(1)
+    render(<UserCard {...props} size={size} />, { wrapper: createWrapper() })
+    // This is the final uncancellable async request that gets sent in the medium and large cards
+    // We wait for this explicitly to prevent the "not wrapped in act(...)" warning
+    await waitFor(() => screen.getByText('ORCID', { exact: false }))
   })
 })
 describe('it creates the correct UI for the avatar', () => {
@@ -157,12 +164,8 @@ describe('it creates the correct UI for the small card', () => {
   })
 
   it('shows a medium user card when mouse enters', async () => {
-    render(
-      <SynapseTestContext>
-        <UserCard {...props} />
-      </SynapseTestContext>,
-    )
-    expect(screen.getByText(`@${props.userProfile.userName}`)).not.toBeNull()
+    render(<UserCard {...props} />, { wrapper: createWrapper() })
+    await waitFor(() => screen.getByText(`@${props.userProfile.userName}`))
 
     // There is no medium user card, so we shouldn't be able to find the full name anywhere
     expect(() =>
@@ -172,29 +175,26 @@ describe('it creates the correct UI for the small card', () => {
     ).toThrowError()
 
     // Hover over the username
-    await act(async () => {
-      userEvent.hover(screen.getByText(`@${props.userProfile.userName}`))
+    userEvent.hover(screen.getByText(`@${props.userProfile.userName}`))
 
-      // The card should appear, which would let us see first/last name
-      // we have to wrap in a waitFor because of the delay
-      await waitFor(() =>
-        expect(() =>
-          screen.getAllByText(
-            `${props.userProfile.firstName} ${props.userProfile.lastName}`,
-          ),
-        ).not.toThrowError(),
-      )
+    // The card should appear, which would let us see first/last name
+    // we have to wrap in a waitFor because of the delay
+    await waitFor(() =>
+      screen.getAllByText(
+        `${props.userProfile.firstName} ${props.userProfile.lastName}`,
+      ),
+    )
+    await waitFor(() => screen.getByText('ORCID', { exact: false }))
 
-      // Unhover and confirm that the card disappears (we will no longer see a full name anywhere)
-      userEvent.unhover(screen.getByText(`@${props.userProfile.userName}`))
-      await waitFor(() =>
-        expect(() =>
-          screen.getAllByText(
-            `${props.userProfile.firstName} ${props.userProfile.lastName}`,
-          ),
-        ).toThrowError(),
-      )
-    })
+    // Unhover and confirm that the card disappears (we will no longer see a full name anywhere)
+    userEvent.unhover(screen.getByText(`@${props.userProfile.userName}`))
+    await waitFor(() =>
+      expect(() =>
+        screen.getAllByText(
+          `${props.userProfile.firstName} ${props.userProfile.lastName}`,
+        ),
+      ).toThrowError(),
+    )
   })
 
   it('creates an anchor link when showCardOnHover is false', () => {
@@ -240,7 +240,7 @@ describe('it creates the correct UI for the medium card', () => {
     expect(wrapper.render().find('p.SRC-emailText')).toHaveLength(1)
   })
 
-  it("hide's user email by when hideEmail set ", () => {
+  it("hide's user email by when hideEmail set", () => {
     const { wrapper } = createMediumComponent({ ...props, hideEmail: true })
     expect(wrapper.render().find('p.SRC-emailText')).toHaveLength(0)
   })
@@ -252,13 +252,12 @@ describe('it creates the correct UI for the medium card', () => {
         callback: () => {},
       },
     ] as MenuAction[]
-    const { wrapper, instance } = createMediumComponent({
-      ...props,
-      menuActions,
+    render(<UserCardMedium {...props} menuActions={menuActions} />, {
+      wrapper: createWrapper(),
     })
-    const _event = {} as any
-    instance.toggleContextMenu(_event)
-    expect(wrapper.render().find('div.dropdown')).toHaveLength(1)
+    await waitFor(() => screen.getByText('ORCID', { exact: false }))
+    userEvent.click(screen.getByRole('menu'))
+    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
   })
 })
 
