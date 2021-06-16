@@ -17,6 +17,7 @@ import {
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import { ENTITY_BUNDLE_V2 } from '../../../../../lib/utils/APIConstants'
 
 const defaultProps: AnnotationsTableProps = {
   entityId: MOCK_FILE_ENTITY_ID,
@@ -60,9 +61,9 @@ describe('AnnotationsTable tests', () => {
   it('Displays a placeholder when annotations is undefined', async () => {
     server.use(
       rest.post(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}repo/v1/entity/:entityId/bundle2`,
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ':entityId',
+        )}`,
 
         async (req, res, ctx) => {
           return res(
@@ -79,9 +80,9 @@ describe('AnnotationsTable tests', () => {
   it('Displays a placeholder when annotations is empty', async () => {
     server.use(
       rest.post(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}repo/v1/entity/:entityId/bundle2`,
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ':entityId',
+        )}`,
 
         async (req, res, ctx) => {
           return res(
