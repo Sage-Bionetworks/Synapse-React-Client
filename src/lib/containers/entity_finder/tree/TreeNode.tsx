@@ -13,7 +13,7 @@ import {
   Reference,
 } from '../../../utils/synapseTypes'
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
-import { EntityBadge } from '../../EntityBadge'
+import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { BUNDLE_REQUEST_OBJECT } from '../EntityFinderUtils'
 
@@ -183,7 +183,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         </div>
         {appearance === NodeAppearance.SELECT && (
           <div>
-            {bundle && <EntityBadge entityId={nodeId} bundle={bundle} />}
+            {bundle && <EntityBadgeIcons entityId={nodeId} bundle={bundle} />}
           </div>
         )}
       </div>

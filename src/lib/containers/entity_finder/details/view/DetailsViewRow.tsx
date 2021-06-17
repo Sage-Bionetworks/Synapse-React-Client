@@ -11,7 +11,10 @@ import {
 } from '../../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetUserProfileWithProfilePic } from '../../../../utils/hooks/SynapseAPI/useUserBundle'
-import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  SMALL_USER_CARD,
+} from '../../../../utils/SynapseConstants'
 import { useSynapseContext } from '../../../../utils/SynapseContext'
 import {
   EntityHeader,
@@ -20,7 +23,7 @@ import {
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
 import { VersionInfo } from '../../../../utils/synapseTypes/VersionInfo'
-import { EntityBadge } from '../../../EntityBadge'
+import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { toError } from '../../../../utils/ErrorUtils'
 import UserCard from '../../../UserCard'
@@ -82,7 +85,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   )
 
   const { data: modifiedByUserProfile } = useGetUserProfileWithProfilePic(
-    bundle?.entity?.modifiedBy ?? '273950',
+    bundle?.entity?.modifiedBy ?? ANONYMOUS_PRINCIPAL_ID.toString(),
     {
       enabled: !!bundle,
       staleTime: 60 * 1000, // 60 seconds
@@ -158,7 +161,9 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         <div>{entityHeader.name}</div>
       </td>
       <td className="AccessColumn">
-        {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
+        {bundle && (
+          <EntityBadgeIcons entityId={entityHeader.id} bundle={bundle} />
+        )}
       </td>
       <td className="IdColumn">
         <div>{entityHeader.id} </div>

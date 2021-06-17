@@ -1,3 +1,5 @@
+@use '../abstracts/variables' as SRC;
+
 .EntityBadge {
   display: flex;
   flex-direction: row-reverse;
@@ -5,5 +7,36 @@
     margin: 2px;
     max-width: 10px;
     max-height: 10px;
+
+    &.Unlink {
+      color: SRC.$red-delete;
+      cursor: pointer;
+    }
+
+    &.Valid {
+      color: SRC.$green-affrimative;
+    }
+    &.Invalid {
+      color: SRC.$red-delete;
+    }
+    &.Incomplete {
+      color: SRC.$gray-deemphasized;
+    }
+  }
+
+  .EntityBadgeTooltip {
+    table {
+      table-layout: auto;
+      word-break: break-all;
+      white-space: normal;
+      max-width: 350px;
+      td {
+        padding: 4px;
+      }
+    }
+    p {
+      margin-top: 8px;
+      text-align: center;
+    }
   }
 }
