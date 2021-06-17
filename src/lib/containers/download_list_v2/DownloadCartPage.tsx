@@ -23,6 +23,7 @@ export default function DownloadCartPage() {
     isFetching,
     isError,
     error: newError,
+    refetch,
   } = useGetDownloadListStatistics()
   const fileStats:FilesStatisticsResponse = data?.responseDetails as FilesStatisticsResponse
   useEffect(() => {
@@ -30,14 +31,17 @@ export default function DownloadCartPage() {
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
-
-
+  const clearDownloadList = async (
+  ) => {
+    await SynapseClient.clearDownloadListV2(accessToken)
+    refetch()
+  }
   return (
     <div className="DownloadCartPage bootstrap-4-backport">
       <div className="container">
         <div className="titleContainer">
           <h3 className="title">Your Download Cart</h3>
-          <a onClick={() => {SynapseClient.clearDownloadListV2(accessToken)}}>
+          <a onClick={clearDownloadList}>
             <span className="SRC-primary-text-color">
               <IconSvg options={{
                 icon: 'delete',
@@ -73,42 +77,51 @@ export default function DownloadCartPage() {
           </ul>
         </div>
       </div>
-      { selectedTabIndex == 0 && <div>
-        {!isError && !isFetching && fileStats && fileStats.numberOfFilesRequiringAction > 0 &&
-          <div className="subSectionOverview">
-            <div className="container">
-              <div className="subSectionContainer">
-                <span className="subSectionTitle">You Have Files Which Require Actions Before Downloading</span>
+      {selectedTabIndex == 0 && !isError && !isFetching && fileStats &&
+        <div>
+          {fileStats.numberOfFilesRequiringAction > 0 && 
+            <div>
+              <div className="subSectionOverview">
+                <div className="container">
+                  <div className="subSectionContainer">
+                    <span className="subSectionTitle">You Have Files Which Require Actions Before Downloading</span>
+                  </div>
+                  <p className="description">The items in this category require different actions in order 
+                  to download them. Select Start to complete the action.</p>
+                </div>
               </div>
-              <p className="description">The items in this category require different actions in order 
-              to download them. Select Start to complete the action.</p>
-            </div>
-          </div>
-        }
-        <div className="actionsRequiredContainer container">
-          <DownloadListActionsRequired />
-        </div>
-      </div>
-        }
-      { selectedTabIndex == 1 && <div>
-        {!isError && !isFetching && fileStats && fileStats.numberOfFilesAvailableForDownload > 0 &&
-          <div className="subSectionOverview">
-            <div className="container">
-              <div className="subSectionContainer">
-                <span className="subSectionTitle">Complete Your Download</span>
-                <DownloadListStats />
+              <div className="actionsRequiredContainer container">
+                <DownloadListActionsRequired />
               </div>
-              <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
-              both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 
-              If you choose to download as .zip files, you can download external files individually at any time.</p>
-            </div>
-          </div>
-        }
-        <div className="availableForDownloadTableContainer container">
-          <AvailableForDownloadTable /> 
+            </div>}
+            {fileStats.numberOfFilesRequiringAction === 0 && <div className="placeholder">
+                <div>No actions are currently required.</div>
+              </div>}
         </div>
-      </div>
       }
+      {selectedTabIndex == 1 && !isError && !isFetching && fileStats &&
+        <div>
+          {fileStats.numberOfFilesAvailableForDownload > 0 && 
+            <div>
+              <div className="subSectionOverview">
+                <div className="container">
+                  <div className="subSectionContainer">
+                    <span className="subSectionTitle">Complete Your Download</span>
+                    <DownloadListStats />
+                  </div>
+                  <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
+                  both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 
+                  If you choose to download as .zip files, you can download external files individually at any time.</p>
+                </div>
+              </div>
+              <div className="availableForDownloadTableContainer container">
+                <AvailableForDownloadTable /> 
+              </div>
+            </div>}
+            {fileStats.numberOfFilesAvailableForDownload === 0 && <div className="placeholder">
+                <div>Your Download List is currently empty.</div>
+              </div>}
+      </div>}
     </div>
   )
 }

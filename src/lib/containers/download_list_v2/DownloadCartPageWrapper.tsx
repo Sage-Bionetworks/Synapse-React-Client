@@ -13,7 +13,7 @@ export default function DownloadCartPageWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000, // 1m
+        staleTime: 20 * 1000, // 1m
         retry: false, // SynapseClient knows which queries to retry
       },
     },

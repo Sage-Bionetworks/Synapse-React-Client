@@ -2,16 +2,12 @@ import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseErrorBoundary } from '../ErrorBanner'
-import DownloadListTable, {
-  DownloadListTableProps,
-} from './DownloadListTable'
+import DownloadListTable from './DownloadListTable'
 
 /**
  * Table of the files added to the Download Cart that are currently available for download.
  */
-export default function AvailableForDownloadTable(
-  props: DownloadListTableProps,
-) {
+export default function AvailableForDownloadTable() {
   const { accessToken } = useSynapseContext()
   const queryClient = new QueryClient({
     defaultOptions: {

@@ -208,11 +208,6 @@ export default function DownloadListTable() {
           <SynapseSpinner size={30} />
         </div>
       )}
-      {!isFetching && allRows.length === 0 && (
-        <div className="placeholder">
-          <div>Your Download List is currently empty.</div>
-        </div>
-      )}
     </>
   )
 }
