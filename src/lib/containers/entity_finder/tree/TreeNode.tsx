@@ -5,7 +5,6 @@ import {
   getEntityTypeFromHeader,
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
-import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
 import {
   EntityHeader,
@@ -15,7 +14,6 @@ import {
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
-import { BUNDLE_REQUEST_OBJECT } from '../EntityFinderUtils'
 
 export type RootNodeConfiguration = {
   nodeText: string
@@ -98,21 +96,6 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
     },
   )
 
-  const { data: bundle } = useGetEntityBundle(
-    nodeId,
-    BUNDLE_REQUEST_OBJECT,
-    undefined,
-    {
-      enabled:
-        appearance === NodeAppearance.SELECT && // We don't need the entity bundle for the browse appearance
-        nodeInView &&
-        !isRootNode,
-      // We'll make the stale time longer because these requests are expensive + we make a lot of them
-      // They also aren't likely to change meaningfully while in the entity finder
-      staleTime: 60 * 1000, // 60 seconds
-    },
-  )
-
   useEffect(() => {
     if (isSuccess && endInView && hasNextPage) {
       fetchNextPage()
@@ -183,7 +166,14 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         </div>
         {appearance === NodeAppearance.SELECT && (
           <div>
-            {bundle && <EntityBadgeIcons entityId={nodeId} bundle={bundle} />}
+            {nodeInView && (
+              <EntityBadgeIcons
+                entityId={nodeId}
+                showHasDiscussionThread={false}
+                showHasWiki={false}
+                showUnlink={false}
+              />
+            )}
           </div>
         )}
       </div>
