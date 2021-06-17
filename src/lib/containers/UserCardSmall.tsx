@@ -4,9 +4,7 @@ import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../utils/hooks/useOverlay'
 import { UserBundle, UserProfile } from '../utils/synapseTypes/'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
-import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
-import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
+import IconSvg from './IconSvg'
 
 export type UserCardSmallProps = {
   userProfile: UserProfile
@@ -37,7 +35,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
 }) => {
 
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
-  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(<Registered />)
+  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(<IconSvg options={{icon: 'accountRegistered'}} />)
   const target = useRef(null)
 
   let mounted = true
@@ -65,10 +63,10 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         undefined,
       )
       if (userBundle?.isCertified) {
-        setAccountLevelIcon(<Certified />)
+        setAccountLevelIcon(<IconSvg options={{icon: 'accountCertified'}} />)
       }
       if (userBundle?.isVerified) {
-        setAccountLevelIcon(<Validated />)
+        setAccountLevelIcon(<IconSvg options={{icon: 'accountValidated'}} />)
       }
       setUserBundle(bundle)
     } catch (err) {
@@ -125,7 +123,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
-        {showAccountLevelIcon && <span className={"account-level-icon"}>{accountLevelIcon}</span>}
+        {showAccountLevelIcon && <span className={"account-level-icon"}>Hello! {accountLevelIcon}</span>}
       </span>
     </>
   ) : disableLink ? (
