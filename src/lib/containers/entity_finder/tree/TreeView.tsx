@@ -97,7 +97,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
   const [isLoading, setIsLoading] = useState(false)
   const [topLevelEntities, setTopLevelEntities] = useState<
-    (EntityHeader | ProjectHeader)[]
+    (Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader)[]
   >([])
   const [scope, setScope] = useState(initialScope)
   const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()

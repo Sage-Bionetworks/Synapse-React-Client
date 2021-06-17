@@ -42,7 +42,7 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
         content = <div className="MeetAccessRequirementCard actionRequiredCard">
             <Icon type={EASY_DIFFICULTY} />
             <div className="metadata">
-              <div className="title">Requires Terms Of Use</div>
+              <div className="title">Requires Acceptance of Data-Specific Terms of Use</div>
               <div className="fileCount">{count} File(s)</div>
               <div className="description">
                 {ar.description ?? ''}
@@ -60,7 +60,7 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
         content = <div className="MeetAccessRequirementCard actionRequiredCard">
             <Icon type={MEDIUM_DIFFICULTY} />
             <div className="metadata">
-              <div className="title">Requires Access Requirements</div>
+              <div className="title">Requires Approval of Data-Specific Access Requirements</div>
               <div className="fileCount">{count} File(s)</div>
               <div className="description">
                 {ar.description ?? ''}

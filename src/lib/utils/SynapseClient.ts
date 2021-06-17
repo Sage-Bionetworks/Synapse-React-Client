@@ -100,7 +100,12 @@ import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadLis
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
+import {
+  AvailableFilesRequest,
+  FilesStatisticsRequest,
+} from './synapseTypes/DownloadListV2/QueryRequestDetails'
 import { ActionRequiredRequest, AvailableFilesRequest, FilesStatisticsRequest, QueryRequestDetails } from './synapseTypes/DownloadListV2/QueryRequestDetails'
+
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
@@ -2235,7 +2240,6 @@ export const getRestrictionInformation = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
-
 /**
  * Returns a paginated result of access requirements associated for an entity
  *
@@ -2255,28 +2259,6 @@ export const getAccessRequirement = (
 ): Promise<PaginatedResults<AccessRequirement>> => {
   const url = `/repo/v1/entity/${id}/accessRequirement?limit=${limit}&offset=${offset}`
   return doGet<PaginatedResults<AccessRequirement>>(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-}
-
-/**
- * Returns the Access Requirement with the given AR_ID
- *
- * See http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId.html
- *
- * @param {(string | undefined)} accessToken token of user
- * @param {number} id id of the access requirement
- * @returns {Promise<AccessRequirement>}
- */
- export const getAccessRequirementById = (
-  accessToken: string | undefined,
-  id: number
-): Promise<AccessRequirement> => {
-  const url = `/repo/v1/accessRequirement/${id}`
-  return doGet<AccessRequirement>(
     url,
     accessToken,
     undefined,
@@ -2595,16 +2577,19 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
   )
 }
 
-const getDownloadListJobResponse = (
-  accessToken: string | undefined,
-  queryRequestDetails: QueryRequestDetails): Promise<DownloadListQueryResponse> => {
-
-    const downloadListQueryRequest: DownloadListQueryRequest = {
-      concreteType:
-        'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
-      requestDetails: queryRequestDetails,
-    }
-  
+/**
+ * Get Download List v2
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+export const getAvailableFilesToDownload = (
+  request: AvailableFilesRequest,
+  accessToken: string | undefined = undefined,
+): Promise<DownloadListQueryResponse> => {
+  const downloadListQueryRequest: DownloadListQueryRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+    requestDetails: request,
+  }
   return doPost<AsyncJobId>(
     '/repo/v1/download/list/query/async/start',
     downloadListQueryRequest,
@@ -2623,21 +2608,10 @@ const getDownloadListJobResponse = (
       console.error('Error on getDownloadListV2 ', err)
       throw err
     })
-
-}
-/**
- * Get Download List v2 available files to download
- * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
- */
-export const getAvailableFilesToDownload = (
-  request: AvailableFilesRequest,
-  accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
-  return getDownloadListJobResponse(accessToken, request)
 }
 
 /**
- * Get Download List v2 statistics
+ * Get Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
  export const getDownloadListStatistics = (
@@ -2647,20 +2621,31 @@ export const getAvailableFilesToDownload = (
     concreteType:
       'org.sagebionetworks.repo.model.download.FilesStatisticsRequest',
   }
-  return getDownloadListJobResponse(accessToken, filesStatsRequest)
-}
+  const downloadListQueryRequest: DownloadListQueryRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+    requestDetails: filesStatsRequest,
+  }
 
-/**
- * Get Download List v2 actions required
- * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
- */
- export const getDownloadListActionsRequired = (
-  request: ActionRequiredRequest,
-  accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
-  return getDownloadListJobResponse(accessToken, request)
+  return doPost<AsyncJobId>(
+    '/repo/v1/download/list/query/async/start',
+    downloadListQueryRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((asyncJobId: AsyncJobId) => {
+      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
+      return getAsyncResultFromJobId<DownloadListQueryResponse>(
+        urlRequest,
+        accessToken,
+      )
+    })
+    .catch(err => {
+      console.error('Error on getDownloadListV2 ', err)
+      throw err
+    })
 }
-
 /**
  * Remove item from Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/remove.html

@@ -3,7 +3,11 @@ import { ConcreteEntityType } from '../synapseTypes/ConcreteEntityType'
 import { Hit } from '../synapseTypes/Search'
 
 export function getEntityTypeFromHeader(
-  header: EntityHeader | ProjectHeader | Hit,
+  header:
+    | Pick<EntityHeader, 'name' | 'id' | 'type'>
+    | EntityHeader
+    | ProjectHeader
+    | Hit,
 ) {
   // Hit has the `node_type` field which is what we already want.
   if ((header as Hit).node_type) {
