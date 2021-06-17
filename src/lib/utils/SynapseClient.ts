@@ -104,7 +104,6 @@ import {
   AvailableFilesRequest,
   FilesStatisticsRequest,
 } from './synapseTypes/DownloadListV2/QueryRequestDetails'
-import { ActionRequiredRequest, AvailableFilesRequest, FilesStatisticsRequest, QueryRequestDetails } from './synapseTypes/DownloadListV2/QueryRequestDetails'
 
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
