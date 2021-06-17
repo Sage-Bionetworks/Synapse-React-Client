@@ -2623,6 +2623,21 @@ const getDownloadListJobResponse = (
     })
 
 }
+
+/**
+ * Clear all files from the user's Download List v2.
+ * http://rest-docs.synapse.org/rest/DELETE/download/list.html
+ */
+export const clearDownloadListV2 =
+  (accessToken: string | undefined):Promise<void> => {
+  return doDelete(
+    '/repo/v1/download/list',
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Get Download List v2 available files to download
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html

@@ -36,7 +36,7 @@ export default function DownloadListStats() {
         </div>
       )}
       {isFetching && (
-        <div className="EntityFinderDetailsView__Placeholder">
+        <div className="placeholder">
           <SynapseSpinner size={30} />
         </div>
       )}

@@ -93,7 +93,7 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
     <>
       {!isError && !isFetching && content}
       {isFetching && (
-        <div className="EntityFinderDetailsView__Placeholder">
+        <div className="placeholder">
           <SynapseSpinner size={30} />
         </div>
       )}

@@ -93,13 +93,13 @@ export default function DownloadListActionsRequired() {
         </div>
       )}
       {isFetching && (
-        <div className="EntityFinderDetailsView__Placeholder">
+        <div className="placeholder">
           <SynapseSpinner size={30} />
         </div>
       )}
       {!isFetching && allRows.length === 0 && (
-        <div className="EntityFinderDetailsView__Placeholder">
-          <div>No rows</div>
+        <div className="placeholder">
+          <div>No actions are currently required.</div>
         </div>
       )}
     </>

@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SrcMixins;
 
 .DownloadCartPage {
   padding-top: 20px;
@@ -8,6 +9,13 @@
   }
   .tabs-container {
     border-bottom: 4px solid #DCDCDC;
+  }
+  .titleContainer {
+    display: grid;
+    grid-template-columns: auto 195px;
+    * {
+      vertical-align: bottom;
+    }
   }
   .nav-tabs {
     border-bottom: 0px;
@@ -67,6 +75,9 @@
   &__explore-all {
     text-align: center;
     padding-top: 20px;
+  }
+  .placeholder {
+    @include SrcMixins.placeholder;
   }
 }
 

@@ -52,7 +52,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
         </div>
       )}
       {isFetching && (
-        <div className="EntityFinderDetailsView__Placeholder">
+        <div className="placeholder">
           <SynapseSpinner size={30} />
         </div>
       )}
