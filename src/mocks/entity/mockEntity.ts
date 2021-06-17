@@ -25,6 +25,8 @@ export const mockFileEntity: FileEntity = {
   dataFileHandleId: MOCK_FILE_HANDLE_ID,
   name: 'My mock file entity',
   concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+  createdBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
 }
 
 export const mockFileEntityBundle: EntityBundle = {
