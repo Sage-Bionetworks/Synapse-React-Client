@@ -123,7 +123,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
-        {showAccountLevelIcon && <span className={"account-level-icon"}>Hello! {accountLevelIcon}</span>}
+        {showAccountLevelIcon && <span className={"account-level-icon"}>{accountLevelIcon}</span>}
       </span>
     </>
   ) : disableLink ? (
