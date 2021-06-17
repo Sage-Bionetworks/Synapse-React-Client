@@ -7,7 +7,6 @@ import { EntityHeader } from '../../utils/synapseTypes'
 import { Icon } from '../row_renderers/utils'
 import { VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
-import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 
 
 export type RequestDownloadCardProps = {
@@ -44,7 +43,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
             <div className="title">Requires Download Permission</div>
             <div className="fileCount">{count} File(s)</div>
             <div className="description">
-              You must be granted the download permission on the {entityTypeToFriendlyName(entityHeader?.type)} <strong>{entityHeader?.name}</strong> in order to download this set of files.
+              You must be granted the download permission on <strong>{entityHeader?.name}</strong> in order to download this set of files.
             </div>
           </div>
           <a className="startButtonContainer" href={`https://www.synapse.org/#!Synapse:${entityHeader?.id}`} target='_blank' rel='noreferrer'>

@@ -3,7 +3,7 @@ import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { SynapseSpinner } from '../LoadingScreen'
 import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/useGetAccessRequirement'
-import { AccessRequirement } from '../../utils/synapseTypes'
+import { AccessRequirement, SelfSignAccessRequirement } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
 import { EASY_DIFFICULTY, MEDIUM_DIFFICULTY, VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
@@ -36,55 +36,56 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] = useState<boolean>(false)
   let content = <></>
   if (!isError && !isFetching) {
+    let title:string|undefined = undefined
+    let iconType = ''
+    let description = ''
     switch(ar.concreteType) {
       case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
-      case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement:
-        content = <div className="MeetAccessRequirementCard actionRequiredCard">
-            <Icon type={EASY_DIFFICULTY} />
-            <div className="metadata">
-              <div className="title">Requires Acceptance of Data-Specific Terms of Use</div>
-              <div className="fileCount">{count} File(s)</div>
-              <div className="description">
-                {ar.description ?? ''}
-              </div>
-            </div>
-            <div className="startButtonContainer">
-              <Button className="startButton" variant="secondary"
-                onClick={()=>setIsShowingAccessRequirement(true)}
-              >Start</Button>
-            </div>
-          </div>
-          break;
+        title = 'Requires Acceptance of Data-Specific Terms of Use'
+        iconType = EASY_DIFFICULTY
+        description = ar.description ?? ''
+        break;
+      case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement: {
+        title = 'Requires Acceptance of Data-Specific Terms of Use'
+        const selfSignAR:SelfSignAccessRequirement = ar as SelfSignAccessRequirement
+        if (selfSignAR.isValidatedProfileRequired) {
+          iconType = VARIABLE_DIFFICULTY
+        } else if (selfSignAR.isCertifiedUserRequired) {
+          iconType = MEDIUM_DIFFICULTY
+        } else {
+          iconType = EASY_DIFFICULTY
+        }
+        description = ar.description ?? ''
+        break;
+      }
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
-        content = <div className="MeetAccessRequirementCard actionRequiredCard">
-            <Icon type={MEDIUM_DIFFICULTY} />
-            <div className="metadata">
-              <div className="title">Requires Approval of Data-Specific Access Requirements</div>
-              <div className="fileCount">{count} File(s)</div>
-              <div className="description">
-                {ar.description ?? ''}
-              </div>
-            </div>
-            <div className="startButtonContainer">
-              <Button className="startButton" variant="secondary"
-                onClick={()=>setIsShowingAccessRequirement(true)}
-              >Start</Button>
-            </div>
-          </div>
-          break;
-        case 'org.sagebionetworks.repo.model.LockAccessRequirement':
-          content = <div className="MeetAccessRequirementCard actionRequiredCard">
-          <Icon type={VARIABLE_DIFFICULTY} />
-          <div className="metadata">
-            <div className="title">Access Restricted</div>
-            <div className="fileCount">{count} File(s)</div>
-            <div className="description">
-              Access restricted pending review by Synapse Access and Compliance Team.
-            </div>
-          </div>
-        </div>
+        title = 'Requires Approval of Data-Specific Access Requirements'
+        iconType = VARIABLE_DIFFICULTY
+        description = ar.description ?? ''
         break;
+      case 'org.sagebionetworks.repo.model.LockAccessRequirement':
+        title = 'Access Restricted'
+        iconType = VARIABLE_DIFFICULTY
+        description = 'Access restricted pending review by Synapse Access and Compliance Team.'
+        break;
+    }
+    if (title) {
+      content = <div className="MeetAccessRequirementCard actionRequiredCard">
+      <Icon type={iconType} />
+      <div className="metadata">
+        <div className="title">{title}</div>
+        <div className="fileCount">{count} File(s)</div>
+        <div className="description">
+          {description}
+        </div>
+      </div>
+      <div className="startButtonContainer">
+        <Button className="startButton" variant="secondary"
+          onClick={()=>setIsShowingAccessRequirement(true)}
+        >Start</Button>
+      </div>
+    </div>
     }
   }
 

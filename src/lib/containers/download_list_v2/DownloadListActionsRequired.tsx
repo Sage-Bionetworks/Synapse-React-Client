@@ -5,15 +5,11 @@ import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/Syn
 import { useInView } from 'react-intersection-observer'
 import { ActionRequiredResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { SynapseSpinner } from '../LoadingScreen'
-import { useSynapseContext } from '../../utils/SynapseContext'
 import { ActionRequiredCount, MeetAccessRequirement, RequestDownload } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
 import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 
-export type DownloadListActionsRequiredProps = {}
-
-export default function DownloadListActionsRequired(props: DownloadListActionsRequiredProps) {
-  const { accessToken } = useSynapseContext()
+export default function DownloadListActionsRequired() {
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
@@ -64,16 +60,18 @@ export default function DownloadListActionsRequired(props: DownloadListActionsRe
     actionRequiredCount: ActionRequiredCount,
   ) => {
     switch (actionRequiredCount.action.concreteType) {
-      case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement':
+      case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
         const meetARAction:MeetAccessRequirement = actionRequiredCount.action as MeetAccessRequirement
         return (
-          <MeetAccessRequirementCard accessRequirementId={meetARAction.accessRequirementId} count={actionRequiredCount.count} />
+          <MeetAccessRequirementCard key={meetARAction.accessRequirementId} accessRequirementId={meetARAction.accessRequirementId} count={actionRequiredCount.count} />
         )
-      case 'org.sagebionetworks.repo.model.download.RequestDownload':
+      }
+      case 'org.sagebionetworks.repo.model.download.RequestDownload': {
         const requestDownloadAction:RequestDownload = actionRequiredCount.action as RequestDownload
         return (
-          <RequestDownloadCard entityId={`syn${requestDownloadAction.benefactorId}`} count={actionRequiredCount.count} />
+          <RequestDownloadCard key={requestDownloadAction.benefactorId} entityId={`syn${requestDownloadAction.benefactorId}`} count={actionRequiredCount.count} />
         )
+      }
       // case not supported yet
       default:
         return undefined

@@ -100,11 +100,7 @@ import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadLis
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import {
-  AvailableFilesRequest,
-  FilesStatisticsRequest,
-} from './synapseTypes/DownloadListV2/QueryRequestDetails'
-
+import { ActionRequiredRequest, AvailableFilesRequest, FilesStatisticsRequest, QueryRequestDetails } from './synapseTypes/DownloadListV2/QueryRequestDetails'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
@@ -336,14 +332,14 @@ export const addFilesToDownloadList = (
   updateParentState?: any,
 ) => {
   return doPost<AsyncJobId>(
-    `file/v1/download/list/add/async/start`,
+    `/file/v1/download/list/add/async/start`,
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then((resp: AsyncJobId) => {
-      const requestUrl = `file/v1/download/list/add/async/get/${resp.token}`
+      const requestUrl = `/file/v1/download/list/add/async/get/${resp.token}`
       return getAsyncResultFromJobId<AddFilesToDownloadListResponse>(
         requestUrl,
         accessToken,
@@ -397,7 +393,7 @@ export const getFileHandleById = (
   accessToken: string | undefined = undefined,
 ): Promise<FileHandle> => {
   return doGet<FileHandle>(
-    `file/v1/fileHandle/${handleId}`,
+    `/file/v1/fileHandle/${handleId}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -436,7 +432,7 @@ export const getFileHandleByIdURL = (
 ) => {
   // get the presigned URL for this file handle
   return doGet<string>(
-    `file/v1/fileHandle/${handleId}/url?redirect=false`,
+    `/file/v1/fileHandle/${handleId}/url?redirect=false`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -695,7 +691,7 @@ export const getUserBundle = (
   accessToken: string | undefined,
 ): Promise<UserBundle> => {
   return doGet<UserBundle>(
-    `repo/v1/user/${id}/bundle?mask=${mask}`,
+    `/repo/v1/user/${id}/bundle?mask=${mask}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -713,7 +709,7 @@ export const getUserGroupHeaders = (
   limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    `repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
+    `/repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -729,7 +725,7 @@ export const getGroupHeadersBatch = (
   accessToken: string | undefined,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    `repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`,
+    `/repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -813,7 +809,7 @@ export const getBulkFiles = (
   accessToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
   return doPost<AsyncJobId>(
-    'file/v1/file/bulk/async/start',
+    '/file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     accessToken,
     undefined,
@@ -904,7 +900,7 @@ export const getEntityHeaders = (
 })
 
   return doPost(
-    'repo/v1/entity/header',
+    '/repo/v1/entity/header',
     { references: fixedReferences },
     accessToken,
     undefined,
@@ -918,7 +914,7 @@ export const getEntityHeaders = (
  */
 export const getEntityHeader = (entityId: string, accessToken?: string) => {
   return doGet(
-    `repo/v1/entity/${entityId}/type`,
+    `/repo/v1/entity/${entityId}/type`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -985,7 +981,7 @@ export const getEntityBundleV2 = (
   accessToken?: string,
 ): Promise<EntityBundle> => {
   return doPost<EntityBundle>(
-    `repo/v1/entity/${entityId}/${
+    `/repo/v1/entity/${entityId}/${
       version ? `version/${version}/` : ''
     }/bundle2`,
     requestObject,
@@ -1029,7 +1025,7 @@ export const getEntityWiki = (
  */
 export const getUserFavorites = (accessToken: string | undefined) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
-  const url = 'repo/v1/favorite?offset=0&limit=200'
+  const url = '/repo/v1/favorite?offset=0&limit=200'
   return doGet<PaginatedResults<EntityHeader>>(
     url,
     accessToken,
@@ -1047,7 +1043,7 @@ export const getUserTeamList = (
   accessToken: string | undefined,
   id: string | number,
 ) => {
-  const url = `repo/v1/user/${id}/team?offset=0&limit=200`
+  const url = `/repo/v1/user/${id}/team?offset=0&limit=200`
   return doGet(
     url,
     accessToken,
@@ -1071,7 +1067,7 @@ export const getTeamList = (
   limit: number = 10,
   offset: number = 0,
 ) => {
-  const url = `repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
+  const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(
@@ -1092,7 +1088,7 @@ export const getWikiPageKeyForEntity = (
   accessToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
-  const url = `repo/v1/entity/${ownerId}/wikikey`
+  const url = `/repo/v1/entity/${ownerId}/wikikey`
   return doGet<WikiPageKey>(
     url,
     accessToken,
@@ -1111,7 +1107,7 @@ export const getWikiPageKeyForAccessRequirement = (
   accessToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
-  const url = `repo/v1/access_requirement/${ownerId}/wikikey`
+  const url = `/repo/v1/access_requirement/${ownerId}/wikikey`
   return doGet<WikiPageKey>(
     url,
     accessToken,
@@ -1127,7 +1123,7 @@ export const getWikiAttachmentsFromEntity = (
   objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<FileHandleResults> => {
   const objectTypeString = getObjectTypeToString(objectType!)
-  const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
+  const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
   return doGet(
     url,
     accessToken,
@@ -1140,7 +1136,7 @@ export const getWikiAttachmentsFromEvaluation = (
   id: string | number,
   wikiId: string | number,
 ) => {
-  const url = `repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
+  const url = `/repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
   return doGet(
     url,
     accessToken,
@@ -1157,7 +1153,7 @@ export const getPresignedUrlForWikiAttachment = (
   objectType: ObjectType = ObjectType.ENTITY,
 ): Promise<string> => {
   const objectTypeString = getObjectTypeToString(objectType!)
-  const url = `repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
+  const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
   return doGet(
     url,
     accessToken,
@@ -1240,7 +1236,7 @@ export const getPrincipalAliasRequest = (
   alias: string,
   type: string,
 ) => {
-  const url = 'repo/v1/principal/alias'
+  const url = '/repo/v1/principal/alias'
   return doPost(
     url,
     { alias, type },
@@ -1518,7 +1514,7 @@ export const startMultipartUpload = (
   fileUploadResolve: (fileUpload: FileUploadComplete) => void,
   fileUploadReject: (reason: any) => void,
 ) => {
-  const url = 'file/v1/file/multipart'
+  const url = '/file/v1/file/multipart'
   doPost<MultipartUploadStatus>(
     url,
     request,
@@ -1615,7 +1611,7 @@ export const getFileHandleContent = (
         })
       })
     } else {
-      reject('File size exceeds max (5MB)')
+      reject('/file size exceeds max (5MB)')
     }
   })
 }
@@ -1679,7 +1675,7 @@ export const addFileToDownloadListV2 = (
     batchToAdd: [{ fileEntityId, versionNumber }],
   }
   return doPost(
-    'repo/v1/download/list/add',
+    '/repo/v1/download/list/add',
     request,
     accessToken,
     undefined,
@@ -2266,17 +2262,38 @@ export const getAccessRequirement = (
 }
 
 /**
+ * Returns the Access Requirement with the given AR_ID
+ *
+ * See http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId.html
+ *
+ * @param {(string | undefined)} accessToken token of user
+ * @param {number} id id of the access requirement
+ * @returns {Promise<AccessRequirement>}
+ */
+ export const getAccessRequirementById = (
+  accessToken: string | undefined,
+  id: number
+): Promise<AccessRequirement> => {
+  const url = `/repo/v1/accessRequirement/${id}`
+  return doGet<AccessRequirement>(
+    url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Retrieve an access requirement status for a given access requirement ID.
  *
  * @param {string} requirementId id of entity to lookup
  * @returns {AccessRequirementStatus}
  */
-
 export const getAccessRequirementStatus = (
   accessToken: string | undefined,
   requirementId: string | number,
 ): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
-  const url = `repo/v1/accessRequirement/${requirementId}/status`
+  const url = `/repo/v1/accessRequirement/${requirementId}/status`
   return doGet(
     url,
     accessToken,
@@ -2321,7 +2338,7 @@ export const getAccessApproval = async (
   accessToken: string | undefined,
   approvalId: number | undefined,
 ): Promise<AccessApproval> => {
-  const url = `repo/v1/accessApproval/${approvalId}`
+  const url = `/repo/v1/accessApproval/${approvalId}`
   return doGet<AccessApproval>(
     url,
     accessToken,
@@ -2342,7 +2359,7 @@ export const postAccessApproval = async (
   accessApproval: AccessApproval,
 ): Promise<AccessApproval> => {
   return doPost<AccessApproval>(
-    'repo/v1/accessApproval',
+    '/repo/v1/accessApproval',
     accessApproval,
     accessToken,
     undefined,
@@ -2576,19 +2593,16 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
   )
 }
 
-/**
- * Get Download List v2
- * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
- */
-export const getAvailableFilesToDownload = (
-  request: AvailableFilesRequest,
-  accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
-  const downloadListQueryRequest: DownloadListQueryRequest = {
-    concreteType:
-      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
-    requestDetails: request,
-  }
+const getDownloadListJobResponse = (
+  accessToken: string | undefined,
+  queryRequestDetails: QueryRequestDetails): Promise<DownloadListQueryResponse> => {
+
+    const downloadListQueryRequest: DownloadListQueryRequest = {
+      concreteType:
+        'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+      requestDetails: queryRequestDetails,
+    }
+  
   return doPost<AsyncJobId>(
     '/repo/v1/download/list/query/async/start',
     downloadListQueryRequest,
@@ -2607,10 +2621,21 @@ export const getAvailableFilesToDownload = (
       console.error('Error on getDownloadListV2 ', err)
       throw err
     })
+
+}
+/**
+ * Get Download List v2 available files to download
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+export const getAvailableFilesToDownload = (
+  request: AvailableFilesRequest,
+  accessToken: string | undefined = undefined,
+): Promise<DownloadListQueryResponse> => {
+  return getDownloadListJobResponse(accessToken, request)
 }
 
 /**
- * Get Download List v2
+ * Get Download List v2 statistics
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
  export const getDownloadListStatistics = (
@@ -2620,31 +2645,20 @@ export const getAvailableFilesToDownload = (
     concreteType:
       'org.sagebionetworks.repo.model.download.FilesStatisticsRequest',
   }
-  const downloadListQueryRequest: DownloadListQueryRequest = {
-    concreteType:
-      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
-    requestDetails: filesStatsRequest,
-  }
-
-  return doPost<AsyncJobId>(
-    '/repo/v1/download/list/query/async/start',
-    downloadListQueryRequest,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-    .then((asyncJobId: AsyncJobId) => {
-      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
-      return getAsyncResultFromJobId<DownloadListQueryResponse>(
-        urlRequest,
-        accessToken,
-      )
-    })
-    .catch(err => {
-      console.error('Error on getDownloadListV2 ', err)
-      throw err
-    })
+  return getDownloadListJobResponse(accessToken, filesStatsRequest)
 }
+
+/**
+ * Get Download List v2 actions required
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+ export const getDownloadListActionsRequired = (
+  request: ActionRequiredRequest,
+  accessToken: string | undefined = undefined,
+): Promise<DownloadListQueryResponse> => {
+  return getDownloadListJobResponse(accessToken, request)
+}
+
 /**
  * Remove item from Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/remove.html
