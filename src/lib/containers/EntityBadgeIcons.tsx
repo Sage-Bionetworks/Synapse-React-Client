@@ -25,6 +25,7 @@ import {
   useGetValidationResults,
 } from '../utils/hooks/SynapseAPI/useSchema'
 import { useEffect } from 'react'
+import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
 
 const isPublic = (bundle: EntityBundle): boolean => {
   return bundle.benefactorAcl!.resourceAccess.some(ra => {
@@ -84,6 +85,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
     ANNOTATIONS_MISSING = 'Incomplete',
   }
 
+  const [showModal, setShowModal] = useState(false)
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,
   )
@@ -169,14 +171,23 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
   ])
 
   return (
-    <div className="EntityBadge" style={{ flexWrap, justifyContent }}>
+    <div
+      className="EntityBadge"
+      style={{ flexWrap, justifyContent }}
+      onClick={e => e.stopPropagation()}
+    >
       <ReactTooltip
         id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
         className="EntityBadgeTooltip"
         delayShow={100}
         place={'right'}
       />
-
+      <EntityModal
+        entityId={entityId}
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        initialTab={EntityModalTabs.ANNOTATIONS}
+      />
       {bundle.benefactorAcl && (
         <>
           {isPublic(bundle) ? (
@@ -206,7 +217,8 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
       )}
       {!!(annotationsCount || schemaValidationResults) && (
         <FontAwesomeIcon
-          className={`EntityBadge__Badge ${schemaConformance}`}
+          className={`EntityBadge__Badge Annotations ${schemaConformance}`}
+          onClick={() => setShowModal(true)}
           icon={faTag}
           data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
           data-tip={sanitizeHtml(annotationsHtml)}

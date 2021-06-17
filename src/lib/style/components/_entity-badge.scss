@@ -8,6 +8,9 @@
     max-width: 10px;
     max-height: 10px;
 
+    &.Annotations {
+      cursor: pointer;
+    }
     &.Unlink {
       color: SRC.$red-delete;
       cursor: pointer;

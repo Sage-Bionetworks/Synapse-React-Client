@@ -10,7 +10,7 @@ import { SynapseSpinner } from '../../LoadingScreen'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 
-enum EntityModalTabs {
+export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
   ANNOTATIONS = 'ANNOTATIONS', // annotation and schema information
   // TODO: Access -- we haven't yet built a viewer/editor for ACLs in SRC -- consider a redesign before building
@@ -42,9 +42,9 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       className="bootstrap-4-backport EntityMetadata"
       show={show}
       animation={false}
-      onClose={onClose}
+      onHide={onClose}
     >
-      <Modal.Header closeButton onHide={onClose}>
+      <Modal.Header closeButton>
         <Modal.Title>
           {isLoadingBundle ? <SynapseSpinner /> : entityBundle?.entity?.name}
         </Modal.Title>
@@ -57,7 +57,10 @@ export const EntityModal: React.FC<EntityModalProps> = ({
                 className="Tab"
                 role="tab"
                 key={tabName}
-                onClick={() => setCurrentTab(EntityModalTabs[tabName])}
+                onClick={e => {
+                  e.stopPropagation()
+                  setCurrentTab(EntityModalTabs[tabName])
+                }}
                 aria-selected={tabName === currentTab}
               >
                 {tabName}
