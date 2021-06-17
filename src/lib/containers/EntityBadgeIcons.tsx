@@ -64,7 +64,7 @@ type EntityBadgeIconsProps = {
   showUnlink?: boolean
   /* Invoked after the entity is unlinked/deleted in case there is cleanup to do. Returns the entityId */
   onUnlink?: (entityId: string) => void
-  onUnlinkErr?: (error: Error) => void
+  onUnlinkError?: (error: Error) => void
 }
 
 /**
@@ -84,7 +84,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
   onUnlink = () => {
     /* noop */
   },
-  onUnlinkErr = () => {
+  onUnlinkError = () => {
     /* noop */
   },
 }) => {
@@ -267,7 +267,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
             onClick={() => {
               SynapseClient.deleteEntity(accessToken, entityId)
                 .then(() => onUnlink(entityId))
-                .catch(error => onUnlinkErr(error))
+                .catch(error => onUnlinkError(error))
             }}
             className="EntityBadge__Badge Unlink"
             icon={faUnlink}
