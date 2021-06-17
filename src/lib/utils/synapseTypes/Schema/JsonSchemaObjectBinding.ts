@@ -5,7 +5,7 @@ export type JsonSchemaVersionInfo = {
   schemaName: string
   versionId: string
   $id: string
-  semanticVersion: string
+  semanticVersion?: string
   jsonSHA256Hex: string
   createdOn: string
   createdBy: string
