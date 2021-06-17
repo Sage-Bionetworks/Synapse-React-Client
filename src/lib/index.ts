@@ -38,6 +38,7 @@ import PageProgress from './containers/PageProgress'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import EntityFinder from './containers/entity_finder/EntityFinder'
 import ExperimentalMode from './containers/ExperimentalMode'
+import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -97,6 +98,7 @@ const SynapseComponents = {
   ProjectViewCarousel,
   EntityFinder,
   ExperimentalMode,
+  EntityBadgeIcons,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }
