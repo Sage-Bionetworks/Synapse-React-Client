@@ -95,6 +95,7 @@ import {
   ManagedACTAccessRequirementStatus,
   RequestInterface,
   CreateSubmissionRequest,
+  ACCESS_TYPE
 } from './synapseTypes/AccessRequirement'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
@@ -110,7 +111,23 @@ import {
 } from './SynapseConstants'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
-import { ACCESS_REQUIREMENT_BY_ID } from './APIConstants'
+import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
+import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
+import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
+import { JSONSchema7 } from 'json-schema'
+import $RefParser from 'json-schema-ref-parser'
+import {
+  ENTITY_ACCESS,
+  ENTITY_BUNDLE_V2,
+  ENTITY_JSON,
+  ENTITY_SCHEMA_BINDING,
+  ENTITY_SCHEMA_VALIDATION,
+  REGISTERED_SCHEMA_ID,
+  USER_ID_BUNDLE,
+  USER_PROFILE,
+  USER_PROFILE_ID,
+  ACCESS_REQUIREMENT_BY_ID
+} from './APIConstants'
 
 const cookies = new UniversalCookies()
 
@@ -657,9 +674,9 @@ export const createProject = (
  * Return this user's UserProfile
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
-export const getUserProfile = (accessToken: string | undefined) => {
+ export const getUserProfile = (accessToken: string | undefined) => {
   return doGet<UserProfile>(
-    '/repo/v1/userProfile',
+    USER_PROFILE,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -667,15 +684,15 @@ export const getUserProfile = (accessToken: string | undefined) => {
 }
 
 /**
- * Return this user's UserProfile
+ * Return any user's UserProfile
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
-export const getUserProfileById = (
+ export const getUserProfileById = (
   accessToken: string | undefined,
   ownerId: string,
 ) => {
   return doGet<UserProfile>(
-    `/repo/v1/userProfile/${ownerId}`,
+    USER_PROFILE_ID(ownerId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -686,13 +703,13 @@ export const getUserProfileById = (
  * Return this user's profile bundle
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
  */
-export const getUserBundle = (
+ export const getUserBundle = (
   id: string,
   mask: number,
   accessToken: string | undefined,
 ): Promise<UserBundle> => {
   return doGet<UserBundle>(
-    `/repo/v1/user/${id}/bundle?mask=${mask}`,
+    `${USER_ID_BUNDLE(id)}?mask=${mask}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -982,9 +999,7 @@ export const getEntityBundleV2 = (
   accessToken?: string,
 ): Promise<EntityBundle> => {
   return doPost<EntityBundle>(
-    `/repo/v1/entity/${entityId}/${
-      version ? `version/${version}/` : ''
-    }/bundle2`,
+    ENTITY_BUNDLE_V2(entityId, version),
     requestObject,
     accessToken,
     undefined,
@@ -2771,6 +2786,126 @@ export const cancelDataAccessRequest = (
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the schema bound to an entity.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+//
+export const getSchemaBinding = (entityId: string, accessToken?: string) => {
+  return doGet<JsonSchemaObjectBinding>(
+    ENTITY_SCHEMA_BINDING(entityId),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the schema bound to an entity.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const getSchemaValidationResults = (
+  entityId: string,
+  accessToken?: string,
+) => {
+  return doGet<ValidationResults>(
+    ENTITY_SCHEMA_VALIDATION(entityId),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get a schema by its $id.
+ * https://docs.synapse.org/rest/GET/entity/id/schema/binding.html
+ * @returns
+ */
+export const getSchema = (schema$id: string) => {
+  return doGet<JSONSchema7>(
+    `${REGISTERED_SCHEMA_ID(schema$id)}`,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Use json-schema-ref-parser to retrieve a Synapse JSON Schema and resolve all references within the schema.
+ * @param schema$id
+ * @returns
+ */
+export const getSchemaRecursive = async (schema$id: string) => {
+  return $RefParser.dereference(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${REGISTERED_SCHEMA_ID(
+      schema$id,
+    )}`,
+  ) as Promise<JSONSchema7>
+}
+
+/**
+ * Determine if the caller has a particular access type on an entity
+ * https://docs.synapse.org/rest/GET/entity/id/access.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const hasAccessToEntity = (
+  entityId: string,
+  accessType: ACCESS_TYPE,
+  accessToken?: string,
+) => {
+  return doGet<HasAccessResponse>(
+    `${ENTITY_ACCESS(entityId)}?accessType=${accessType}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the entity and its annotations as a JSON object
+ * https://docs.synapse.org/rest/GET/entity/id/json.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const getEntityJson = (entityId: string, accessToken?: string) => {
+  return doGet<unknown>(
+    ENTITY_JSON(entityId),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update an entity and its annotations using a JSON object
+ * https://docs.synapse.org/rest/PUT/entity/id/json.html
+ * @param entityId
+ * @param accessToken
+ * @returns
+ */
+export const updateEntityJson = (
+  entityId: string,
+  json: unknown,
+  accessToken?: string,
+) => {
+  return doPut<unknown>(
+    ENTITY_JSON(entityId),
+    json,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
