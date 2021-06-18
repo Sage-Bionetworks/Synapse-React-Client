@@ -95,7 +95,7 @@ import {
   ManagedACTAccessRequirementStatus,
   RequestInterface,
   CreateSubmissionRequest,
-  ACCESS_TYPE
+  ACCESS_TYPE,
 } from './synapseTypes/AccessRequirement'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
@@ -674,7 +674,7 @@ export const createProject = (
  * Return this user's UserProfile
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
- export const getUserProfile = (accessToken: string | undefined) => {
+export const getUserProfile = (accessToken: string | undefined) => {
   return doGet<UserProfile>(
     USER_PROFILE,
     accessToken,
@@ -687,7 +687,7 @@ export const createProject = (
  * Return any user's UserProfile
  * https://rest-docs.synapse.org/rest/GET/userProfile.html
  */
- export const getUserProfileById = (
+export const getUserProfileById = (
   accessToken: string | undefined,
   ownerId: string,
 ) => {
@@ -703,7 +703,7 @@ export const createProject = (
  * Return this user's profile bundle
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
  */
- export const getUserBundle = (
+export const getUserBundle = (
   id: string,
   mask: number,
   accessToken: string | undefined,
@@ -760,7 +760,7 @@ export const getUserProfiles = (
   accessToken: string | undefined = undefined,
 ): Promise<UserProfileList> => {
   return doPost(
-    '/repo/v1/userProfile',
+    USER_PROFILE,
     { list },
     accessToken,
     undefined,
@@ -913,8 +913,7 @@ export const getEntityHeaders = (
         targetId: entityTokens[0],
         version: entityTokens[1]
       }
-    }
-    else return reference
+    } else return reference
 })
 
   return doPost(
@@ -964,32 +963,6 @@ export const deleteEntity = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-}
-
-/**
- * Bundled access to Entity and related data components.
- * An EntityBundle can be used to create, fetch, or update an Entity and
- * associated objects with a single web service request.
- * See SynapseClient.test.js for an example partsMask.
- * https://rest-docs.synapse.org/rest/GET/entity/id/version/versionNumber/bundle.html
- */
-export const getEntityBundleForVersion = (
-  entityId: string | number,
-  version: string | number | undefined,
-  partsMask: string | number,
-  accessToken: string | undefined = undefined,
-) => {
-  let url = `/repo/v1/entity/${entityId}`
-  if (version) {
-    url += `/version/ + ${version}`
-  }
-  url += `/bundle?mask= ${partsMask}`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<any>
 }
 
 export const getEntityBundleV2 = (
@@ -1190,7 +1163,7 @@ export const isInSynapseExperimentalMode = (): boolean => {
  */
 export const setAccessTokenCookie = async (
   token: string | undefined,
-  sessionCallback: Function,
+  sessionCallback: () => void,
 ) => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
@@ -1251,7 +1224,7 @@ export const getPrincipalAliasRequest = (
   accessToken: string | undefined,
   alias: string,
   type: string,
-) => {
+): Promise<{ principalId: number }> => {
   const url = '/repo/v1/principal/alias'
   return doPost(
     url,
@@ -1306,7 +1279,7 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = (sessionCallback: Function) => {
+export const signOut = (sessionCallback: () => void) => {
   setAccessTokenCookie(undefined, sessionCallback)
 }
 
@@ -1627,7 +1600,7 @@ export const getFileHandleContent = (
         })
       })
     } else {
-      reject('/file size exceeds max (5MB)')
+      reject('File size exceeds max (5MB)')
     }
   })
 }
