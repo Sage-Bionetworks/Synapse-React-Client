@@ -14,6 +14,9 @@ import {
   ShoppingCartOutlined
 } from '@material-ui/icons'
 
+import AccountCertified from '../assets/mui_components/AccountCertified'
+import AccountRegistered from '../assets/mui_components/AccountRegistered'
+import AccountValidated from '../assets/mui_components/AccountValidated'
 import Chromatin from '../assets/mui_components/Chromatin'
 import Data from '../assets/mui_components/Data'
 import DataLocked from '../assets/mui_components/DataLocked'
@@ -107,6 +110,12 @@ const getIcon = (options:IconSvgOptions) => {
       return <Proteomics fill={color ? color : "currentColor"} style={customSvgStyle}></Proteomics>
     case 'other':
       return <Other fill={color} style={customSvgStyle}></Other>
+    case 'accountCertified':
+      return <AccountCertified></AccountCertified>
+    case 'accountRegistered':
+      return <AccountRegistered></AccountRegistered>
+    case 'accountValidated':
+      return <AccountValidated></AccountValidated>
     default:
       return <></>
   }
