@@ -13,6 +13,10 @@ export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
   count: number
 }
+export const TERMS_OF_USE_TITLE = 'Requires Acceptance of Data-Specific Terms of Use'
+export const SELF_SIGN_TITLE = 'Requires Acceptance of Data-Specific Terms of Use'
+export const ACT_TITLE = 'Requires Approval of Data-Specific Access Requirements'
+export const LOCK_TITLE = 'Access Restricted'
 
 export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequirementCardProps> = (
   {
@@ -41,12 +45,12 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
     let description = ''
     switch(ar.concreteType) {
       case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
-        title = 'Requires Acceptance of Data-Specific Terms of Use'
+        title = TERMS_OF_USE_TITLE
         iconType = EASY_DIFFICULTY
         description = ar.description ?? ''
         break;
       case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement: {
-        title = 'Requires Acceptance of Data-Specific Terms of Use'
+        title = SELF_SIGN_TITLE
         const selfSignAR:SelfSignAccessRequirement = ar as SelfSignAccessRequirement
         if (selfSignAR.isValidatedProfileRequired) {
           iconType = VARIABLE_DIFFICULTY
@@ -60,12 +64,12 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
       }
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
-        title = 'Requires Approval of Data-Specific Access Requirements'
+        title = ACT_TITLE
         iconType = VARIABLE_DIFFICULTY
         description = ar.description ?? ''
         break;
       case 'org.sagebionetworks.repo.model.LockAccessRequirement':
-        title = 'Access Restricted'
+        title = LOCK_TITLE
         iconType = VARIABLE_DIFFICULTY
         description = 'Access restricted pending review by Synapse Access and Compliance Team.'
         break;

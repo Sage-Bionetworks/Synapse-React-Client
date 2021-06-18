@@ -110,6 +110,7 @@ import {
 } from './SynapseConstants'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
+import { ACCESS_REQUIREMENT_BY_ID } from './APIConstants'
 
 const cookies = new UniversalCookies()
 
@@ -2274,9 +2275,8 @@ export const getAccessRequirement = (
   accessToken: string | undefined,
   id: number
 ): Promise<AccessRequirement> => {
-  const url = `/repo/v1/accessRequirement/${id}`
   return doGet<AccessRequirement>(
-    url,
+    ACCESS_REQUIREMENT_BY_ID(id),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

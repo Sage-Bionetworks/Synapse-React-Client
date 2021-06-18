@@ -47,3 +47,7 @@ export const USER_ID_BUNDLE = (id: string | number) => `${USER_ID(id)}/bundle`
 
 export const USER_PROFILE = `${REPO}/userProfile`
 export const USER_PROFILE_ID = (id: string | number) => `${USER_PROFILE}/${id}`
+
+export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
+  `${REPO}/accessRequirement/${id}`
+
