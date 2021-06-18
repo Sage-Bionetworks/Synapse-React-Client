@@ -19,7 +19,7 @@ export interface FileHandle {
   /** Must be: http://en.wikipedia.org/wiki/Internet_media_type */
   contentType: string
   /** The file's content MD5. */
-  contentMd5: string
+  contentMd5?: string
   /** The short, user visible name for this file. */
   fileName: string
   /** The optional storage location descriptor */

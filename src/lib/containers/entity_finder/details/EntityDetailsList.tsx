@@ -26,7 +26,7 @@ export enum EntityDetailsListDataConfigurationType {
 export type EntityDetailsListDataConfiguration = {
   type: EntityDetailsListDataConfigurationType
   /** Defined if type is HEADER_LIST */
-  headerList?: (EntityHeader | ProjectHeader)[]
+  headerList?: (Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader)[]
   /** Defined if type is PARENT_CONTAINER */
   parentContainerId?: string
   /** Defined if type is USER_PROJECTS */

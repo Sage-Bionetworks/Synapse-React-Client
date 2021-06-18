@@ -12,7 +12,7 @@ export enum CloudProviderFileHandleConcreteTypeEnum {
 interface CloudProviderFileHandleInterface extends FileHandle {
   readonly bucketName: string
   readonly key: string
-  readonly previewId: string
+  readonly previewId?: string
   readonly isPreview: boolean
 }
 

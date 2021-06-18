@@ -29,7 +29,7 @@ export default function useGetEntityBundle(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<EntityBundle, SynapseClientError>(
-    [accessToken, 'entitybundle', entityId, version, bundleRequest],
+    [accessToken, 'entity', entityId, 'bundle', version, bundleRequest],
     () =>
       SynapseClient.getEntityBundleV2(
         entityId,

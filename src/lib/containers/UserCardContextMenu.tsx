@@ -25,10 +25,13 @@ const UserCardContextMenu: React.FC<UserCardContextMenuProps> = (
         {menuActions.map((menuAction, index) => {
           const callback = () => menuAction.callback!(userProfile)
           if (menuAction.field === SEPERATOR) {
-            return <hr className="SRC-break" key={menuAction.field + index} />
+            return (
+              <hr className="SRC-break" key={`${menuAction.field}_${index}`} />
+            )
           }
           return (
             <li
+              role="menuitem"
               key={menuAction.field}
               style={{ listStyle: 'none' }}
               className="SRC-menu-item SRC-table-dropdown-list SRC-primary-background-color-hover"

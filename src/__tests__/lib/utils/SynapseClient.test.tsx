@@ -12,7 +12,7 @@ describe('it works at integration level testing', () => {
   it('Call to invalid rest endpoint results in error', async () => {
     try {
       await SynapseClient.doGet(
-        'repo/v1/invalid',
+        '/repo/v1/invalid',
         undefined,
         undefined,
         BackendDestinationEnum.REPO_ENDPOINT,
