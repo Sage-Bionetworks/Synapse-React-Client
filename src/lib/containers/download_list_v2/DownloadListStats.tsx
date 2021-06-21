@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
-import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { SynapseSpinner } from '../LoadingScreen'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import DownloadDetails from './DownloadDetails'
@@ -14,7 +13,6 @@ export default function DownloadListStats() {
     isError,
     error: newError,
   } = useGetDownloadListStatistics()
-  const fileStats:FilesStatisticsResponse = data?.responseDetails as FilesStatisticsResponse
   useEffect(() => {
     if (isError && newError) {
       handleError(toError(newError))
@@ -23,11 +21,11 @@ export default function DownloadListStats() {
 
   return (
     <>
-      {!isError && !isFetching && (
+      {!isError && !isFetching && data && (
         <div>
             <DownloadDetails
-              numFiles={fileStats.numberOfFilesAvailableForDownload}
-              numBytes={fileStats.sumOfFileSizesAvailableForDownload}
+              numFiles={data.numberOfFilesAvailableForDownload}
+              numBytes={data.sumOfFileSizesAvailableForDownload}
             ></DownloadDetails>
           {
           // also have access to fileStats.numberOfFilesRequiringAction 
@@ -36,7 +34,7 @@ export default function DownloadListStats() {
         </div>
       )}
       {isFetching && (
-        <div className="EntityFinderDetailsView__Placeholder">
+        <div className="placeholder">
           <SynapseSpinner size={30} />
         </div>
       )}

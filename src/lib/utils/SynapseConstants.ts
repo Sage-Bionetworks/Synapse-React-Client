@@ -63,6 +63,9 @@ export const VERTICAL_DOTS: string = 'verticaldots'
 export const FILE: string = 'file'
 export const CHART2: string = 'chart2'
 export const EXTERNALLINK: string = 'externallink'
+export const EASY_DIFFICULTY: string = 'easy-difficulty'
+export const MEDIUM_DIFFICULTY: string = 'medium-difficulty'
+export const VARIABLE_DIFFICULTY: string = 'variable-difficulty'
 
 export const DEFAULT_PAGE_SIZE: number = 25
 // For User Profile Cards

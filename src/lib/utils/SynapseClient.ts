@@ -101,10 +101,7 @@ import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadLis
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import {
-  AvailableFilesRequest,
-  FilesStatisticsRequest,
-} from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import { ActionRequiredRequest, AvailableFilesRequest, FilesStatisticsRequest, QueryRequestDetails } from './synapseTypes/DownloadListV2/QueryRequestDetails'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
@@ -120,6 +117,7 @@ import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
 import { JSONSchema7 } from 'json-schema'
 import $RefParser from 'json-schema-ref-parser'
 import {
+  ENTITY_HEADERS,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
   ENTITY_JSON,
@@ -129,7 +127,9 @@ import {
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
+  ACCESS_REQUIREMENT_BY_ID
 } from './APIConstants'
+import { ActionRequiredResponse, AvailableFilesResponse, FilesStatisticsResponse, QueryResponseDetails } from './synapseTypes/DownloadListV2/QueryResponseDetails'
 
 const cookies = new UniversalCookies()
 
@@ -906,25 +906,25 @@ export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>>(
 export const getEntityHeaders = (
   references: ReferenceList,
   accessToken?: string,
-) => {
+):Promise<PaginatedResults<EntityHeader>> => {
   // if references contains entity IDs with dot notation, fix the reference object
   const fixedReferences = references.map(reference => {
     if (reference.targetId.indexOf('.') > -1) {
       const entityTokens = reference.targetId.split('.')
       return {
         targetId: entityTokens[0],
-        version: entityTokens[1],
+        version: entityTokens[1]
       }
     } else return reference
-  })
+})
 
   return doPost(
-    '/repo/v1/entity/header',
+    ENTITY_HEADERS,
     { references: fixedReferences },
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<PaginatedResults<EntityHeader>>
+  )
 }
 
 /**
@@ -2253,12 +2253,32 @@ export const getAccessRequirement = (
 }
 
 /**
+ * Returns the Access Requirement with the given AR_ID
+ *
+ * See http://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId.html
+ *
+ * @param {(string | undefined)} accessToken token of user
+ * @param {number} id id of the access requirement
+ * @returns {Promise<AccessRequirement>}
+ */
+ export const getAccessRequirementById = (
+  accessToken: string | undefined,
+  id: number
+): Promise<AccessRequirement> => {
+  return doGet<AccessRequirement>(
+    ACCESS_REQUIREMENT_BY_ID(id),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Retrieve an access requirement status for a given access requirement ID.
  *
  * @param {string} requirementId id of entity to lookup
  * @returns {AccessRequirementStatus}
  */
-
 export const getAccessRequirementStatus = (
   accessToken: string | undefined,
   requirementId: string | number,
@@ -2563,75 +2583,89 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
   )
 }
 
+const getDownloadListJobResponse = (
+  accessToken: string | undefined,
+  queryRequestDetails: QueryRequestDetails): Promise<QueryResponseDetails> => {
+
+    const downloadListQueryRequest: DownloadListQueryRequest = {
+      concreteType:
+        'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+      requestDetails: queryRequestDetails,
+    }
+  
+  return doPost<AsyncJobId>(
+    '/repo/v1/download/list/query/async/start',
+    downloadListQueryRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((asyncJobId: AsyncJobId) => {
+      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
+      return getAsyncResultFromJobId<DownloadListQueryResponse>(
+        urlRequest,
+        accessToken,
+      ).then((queryResponse:DownloadListQueryResponse) => {
+        return queryResponse.responseDetails
+      })
+    })
+    .catch(err => {
+      console.error('Error on getDownloadListV2 ', err)
+      throw err
+    })
+
+}
+
 /**
- * Get Download List v2
+ * Clear all files from the user's Download List v2.
+ * http://rest-docs.synapse.org/rest/DELETE/download/list.html
+ */
+export const clearDownloadListV2 =
+  (accessToken: string | undefined):Promise<void> => {
+  return doDelete(
+    '/repo/v1/download/list',
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get Download List v2 available files to download
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
 export const getAvailableFilesToDownload = (
   request: AvailableFilesRequest,
   accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
-  const downloadListQueryRequest: DownloadListQueryRequest = {
-    concreteType:
-      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
-    requestDetails: request,
-  }
-  return doPost<AsyncJobId>(
-    '/repo/v1/download/list/query/async/start',
-    downloadListQueryRequest,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-    .then((asyncJobId: AsyncJobId) => {
-      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
-      return getAsyncResultFromJobId<DownloadListQueryResponse>(
-        urlRequest,
-        accessToken,
-      )
-    })
-    .catch(err => {
-      console.error('Error on getDownloadListV2 ', err)
-      throw err
-    })
+): Promise<AvailableFilesResponse> => {
+  return getDownloadListJobResponse(accessToken, request) as Promise<AvailableFilesResponse>
 }
 
 /**
- * Get Download List v2
+ * Get Download List v2 statistics
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
-export const getDownloadListStatistics = (
+ export const getDownloadListStatistics = (
   accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
+): Promise<FilesStatisticsResponse> => {
   const filesStatsRequest: FilesStatisticsRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.FilesStatisticsRequest',
   }
-  const downloadListQueryRequest: DownloadListQueryRequest = {
-    concreteType:
-      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
-    requestDetails: filesStatsRequest,
-  }
-
-  return doPost<AsyncJobId>(
-    '/repo/v1/download/list/query/async/start',
-    downloadListQueryRequest,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-    .then((asyncJobId: AsyncJobId) => {
-      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
-      return getAsyncResultFromJobId<DownloadListQueryResponse>(
-        urlRequest,
-        accessToken,
-      )
-    })
-    .catch(err => {
-      console.error('Error on getDownloadListV2 ', err)
-      throw err
-    })
+  return getDownloadListJobResponse(accessToken, filesStatsRequest) as Promise<FilesStatisticsResponse>
 }
+
+/**
+ * Get Download List v2 actions required
+ * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
+ */
+ export const getDownloadListActionsRequired = (
+  request: ActionRequiredRequest,
+  accessToken: string | undefined = undefined,
+): Promise<ActionRequiredResponse> => {
+  return getDownloadListJobResponse(accessToken, request) as Promise<ActionRequiredResponse>
+}
+
 /**
  * Remove item from Download List v2
  * http://rest-docs.synapse.org/rest/POST/download/list/remove.html

@@ -42,10 +42,11 @@ type AccessRequirementAndStatus = {
 }
 
 export type AccessRequirementListProps = {
-  entityId: string
+  entityId: string  // will show this entity info
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
+  numberOfFilesAffected?: number // if provided, will show this instead of the entity information
 }
 
 export type requestDataStepCallbackProps = {
@@ -85,6 +86,7 @@ export default function AccessRequirementList({
   onHide,
   accessRequirementFromProps,
   renderAsModal,
+  numberOfFilesAffected,
 }: AccessRequirementListProps) {
   const { accessToken } = useSynapseContext()
 
@@ -300,17 +302,23 @@ export default function AccessRequirementList({
           <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
             Access For:
           </h4>
-          <a
-            className="AccessRequirementList__register-text-link"
-            href={`https://www.synapse.org/#!Synapse:${entityId}`}
-          >
+          <span className="AccessRequirementList__file-icon-container">
             <FontAwesomeIcon
               size="lg"
               icon="file"
               className="AccessRequirementList__file"
             />
-            &nbsp;{entityInformation[0]?.name}
-          </a>
+          </span>
+          &nbsp;
+          {numberOfFilesAffected && <span>
+            {numberOfFilesAffected} File(s)
+          </span>}
+          {!numberOfFilesAffected && <a
+            className="AccessRequirementList__register-text-link"
+            href={`https://www.synapse.org/#!Synapse:${entityId}`}
+          >
+              {entityInformation[0]?.name}
+          </a>}
           <h4
             className="AccessRequirementList__instruction"
             style={{ marginTop: '3rem' }}
@@ -343,7 +351,7 @@ export default function AccessRequirementList({
               )}
               {isSignedIn && (
                 <p>
-                  You have signed with Sage Platform (Synapse) user account as{' '}
+                  You have signed in with the Sage Platform (Synapse) user account {' '}
                   <b className="SRC-primary-text-color">
                     {user?.userName}@synapse.org
                   </b>

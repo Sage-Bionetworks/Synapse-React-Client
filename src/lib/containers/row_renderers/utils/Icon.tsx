@@ -33,6 +33,9 @@ import {
   CHART2,
   FILE,
   EXTERNALLINK,
+  EASY_DIFFICULTY,
+  MEDIUM_DIFFICULTY,
+  VARIABLE_DIFFICULTY,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -44,6 +47,9 @@ import personSvg from '../../../assets/icons/person.svg'
 import mouseSvg from '../../../assets/icons/mouse.svg'
 import chart2Svg from '../../../assets/icons/chart2.svg'
 import fileSvg from '../../../assets/icons/file.svg'
+import easySvg from '../../../assets/icons/download_list/easy.svg'
+import mediumSvg from '../../../assets/icons/download_list/medium.svg'
+import variableSvg from '../../../assets/icons/download_list/variable.svg'
 
 import {
   Project,
@@ -115,6 +121,9 @@ const defaultIcons = {
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
   [EXTERNALLINK]: ExternalLink,
+  [EASY_DIFFICULTY]: easySvg,
+  [MEDIUM_DIFFICULTY]: mediumSvg,
+  [VARIABLE_DIFFICULTY]: variableSvg,
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
