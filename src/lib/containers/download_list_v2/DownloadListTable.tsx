@@ -6,7 +6,6 @@ import * as ReactBootstrap from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { useInView } from 'react-intersection-observer'
-import { AvailableFilesResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   Sort,
@@ -62,7 +61,7 @@ export default function DownloadListTable() {
     ? ([] as DownloadListItemResult[]).concat.apply(
         [],
         data.pages.map(
-          page => (page.responseDetails as AvailableFilesResponse).page,
+          p => p.page,
         ),
       )
     : []

@@ -5,7 +5,6 @@ import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
-import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import IconSvg from '../IconSvg'
 
@@ -29,7 +28,6 @@ function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
     isError,
     error: newError,
   } = useGetDownloadListStatistics()
-  const fileStats:FilesStatisticsResponse = data?.responseDetails as FilesStatisticsResponse
   
   useEffect(() => {
     if (isError && newError) {
@@ -41,7 +39,7 @@ function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
     return <></>
   }
   
-  const size = fileStats.totalNumberOfFiles ?? 0
+  const size = data?.totalNumberOfFiles ?? 0
   if (size === 0) {
     return <></>
   }

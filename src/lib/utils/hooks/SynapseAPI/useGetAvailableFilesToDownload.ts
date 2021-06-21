@@ -7,7 +7,6 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import {
   AvailableFilesRequest,
   Sort,
@@ -17,13 +16,13 @@ import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryR
 export function useGetAvailableFilesToDownload(
   request: AvailableFilesRequest,
   options?: UseQueryOptions<
-    DownloadListQueryResponse,
+    AvailableFilesResponse,
     SynapseClientError,
-    DownloadListQueryResponse
+    AvailableFilesResponse
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery<DownloadListQueryResponse, SynapseClientError>(
+  return useQuery<AvailableFilesResponse, SynapseClientError>(
     ['downloadlistv2availablefiles', accessToken, request],
     () => SynapseClient.getAvailableFilesToDownload(request, accessToken),
     options,
@@ -33,9 +32,9 @@ export function useGetAvailableFilesToDownload(
 export function useGetAvailableFilesToDownloadInfinite(
   sort?: Sort,
   options?: UseInfiniteQueryOptions<
-    DownloadListQueryResponse,
+    AvailableFilesResponse,
     SynapseClientError,
-    DownloadListQueryResponse
+    AvailableFilesResponse
   >,
 ) {
   const { accessToken } = useSynapseContext()
@@ -46,10 +45,10 @@ export function useGetAvailableFilesToDownloadInfinite(
   if (sort) {
     request.sort = [sort]
   }
-  return useInfiniteQuery<DownloadListQueryResponse, SynapseClientError>(
+  return useInfiniteQuery<AvailableFilesResponse, SynapseClientError>(
     ['downloadlistv2availablefiles', request],
     async context => {
-      return await SynapseClient.getAvailableFilesToDownload(
+      return SynapseClient.getAvailableFilesToDownload(
         { ...request, nextPageToken: context.pageParam },
         accessToken,
       )
@@ -57,7 +56,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     {
       ...options,
       getNextPageParam: page =>
-        (page.responseDetails as AvailableFilesResponse).nextPageToken,
+        page.nextPageToken,
     },
   )
 }

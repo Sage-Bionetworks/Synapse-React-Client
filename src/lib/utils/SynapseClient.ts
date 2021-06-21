@@ -129,6 +129,7 @@ import {
   USER_PROFILE_ID,
   ACCESS_REQUIREMENT_BY_ID
 } from './APIConstants'
+import { ActionRequiredResponse, AvailableFilesResponse, FilesStatisticsResponse, QueryResponseDetails } from './synapseTypes/DownloadListV2/QueryResponseDetails'
 
 const cookies = new UniversalCookies()
 
@@ -2584,7 +2585,7 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
 
 const getDownloadListJobResponse = (
   accessToken: string | undefined,
-  queryRequestDetails: QueryRequestDetails): Promise<DownloadListQueryResponse> => {
+  queryRequestDetails: QueryRequestDetails): Promise<QueryResponseDetails> => {
 
     const downloadListQueryRequest: DownloadListQueryRequest = {
       concreteType:
@@ -2604,7 +2605,9 @@ const getDownloadListJobResponse = (
       return getAsyncResultFromJobId<DownloadListQueryResponse>(
         urlRequest,
         accessToken,
-      )
+      ).then((queryResponse:DownloadListQueryResponse) => {
+        return queryResponse.responseDetails
+      })
     })
     .catch(err => {
       console.error('Error on getDownloadListV2 ', err)
@@ -2634,8 +2637,8 @@ export const clearDownloadListV2 =
 export const getAvailableFilesToDownload = (
   request: AvailableFilesRequest,
   accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
-  return getDownloadListJobResponse(accessToken, request)
+): Promise<AvailableFilesResponse> => {
+  return getDownloadListJobResponse(accessToken, request) as Promise<AvailableFilesResponse>
 }
 
 /**
@@ -2644,12 +2647,12 @@ export const getAvailableFilesToDownload = (
  */
  export const getDownloadListStatistics = (
   accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
+): Promise<FilesStatisticsResponse> => {
   const filesStatsRequest: FilesStatisticsRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.FilesStatisticsRequest',
   }
-  return getDownloadListJobResponse(accessToken, filesStatsRequest)
+  return getDownloadListJobResponse(accessToken, filesStatsRequest) as Promise<FilesStatisticsResponse>
 }
 
 /**
@@ -2659,8 +2662,8 @@ export const getAvailableFilesToDownload = (
  export const getDownloadListActionsRequired = (
   request: ActionRequiredRequest,
   accessToken: string | undefined = undefined,
-): Promise<DownloadListQueryResponse> => {
-  return getDownloadListJobResponse(accessToken, request)
+): Promise<ActionRequiredResponse> => {
+  return getDownloadListJobResponse(accessToken, request) as Promise<ActionRequiredResponse>
 }
 
 /**

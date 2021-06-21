@@ -7,15 +7,14 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import { ActionRequiredRequest } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
 import { ActionRequiredResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetDownloadListActionsRequired(
   options?: UseQueryOptions<
-    DownloadListQueryResponse,
+    ActionRequiredResponse,
     SynapseClientError,
-    DownloadListQueryResponse
+    ActionRequiredResponse
   >,
 ) {
   const { accessToken } = useSynapseContext()
@@ -24,7 +23,7 @@ export function useGetDownloadListActionsRequired(
       'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
   }
 
-  return useQuery<DownloadListQueryResponse, SynapseClientError>(
+  return useQuery<ActionRequiredResponse, SynapseClientError>(
     ['downloadlistv2actionsrequired', accessToken],
     () => SynapseClient.getDownloadListActionsRequired(request, accessToken),
     options,
@@ -33,9 +32,9 @@ export function useGetDownloadListActionsRequired(
 
 export function useGetDownloadListActionsRequiredInfinite(
   options?: UseInfiniteQueryOptions<
-    DownloadListQueryResponse,
+    ActionRequiredResponse,
     SynapseClientError,
-    DownloadListQueryResponse
+    ActionRequiredResponse
   >,
 ) {
   const { accessToken } = useSynapseContext()
@@ -43,7 +42,7 @@ export function useGetDownloadListActionsRequiredInfinite(
     concreteType:
       'org.sagebionetworks.repo.model.download.ActionRequiredRequest',
   }
-  return useInfiniteQuery<DownloadListQueryResponse, SynapseClientError>(
+  return useInfiniteQuery<ActionRequiredResponse, SynapseClientError>(
     ['downloadlistv2availablefiles', request],
     async context => {
       return await SynapseClient.getDownloadListActionsRequired(
@@ -54,7 +53,7 @@ export function useGetDownloadListActionsRequiredInfinite(
     {
       ...options,
       getNextPageParam: page =>
-        (page.responseDetails as ActionRequiredResponse).nextPageToken,
+        page.nextPageToken,
     },
   )
 }

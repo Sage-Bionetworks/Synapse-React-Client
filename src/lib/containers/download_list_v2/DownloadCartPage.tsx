@@ -4,7 +4,6 @@ import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
-import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import DownloadListActionsRequired from './DownloadListActionsRequired'
 import { useSynapseContext } from '../../utils/SynapseContext'
@@ -25,12 +24,12 @@ export default function DownloadCartPage() {
     error: newError,
     refetch,
   } = useGetDownloadListStatistics()
-  const fileStats:FilesStatisticsResponse = data?.responseDetails as FilesStatisticsResponse
   useEffect(() => {
     if (isError && newError) {
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
+  
   const clearDownloadList = async (
   ) => {
     await SynapseClient.clearDownloadListV2(accessToken)
@@ -69,17 +68,17 @@ export default function DownloadCartPage() {
               }`} aria-selected={selectedTabIndex == 1}>
               <button onClick={() => setSelectedTabIndex(1)}>
                 Download List
-                {!isError && !isFetching && fileStats &&
-                  <span className="fileCount">{fileStats.numberOfFilesAvailableForDownload}</span>
+                {!isError && !isFetching && data &&
+                  <span className="fileCount">{data.numberOfFilesAvailableForDownload}</span>
                 }
               </button>
             </li>
           </ul>
         </div>
       </div>
-      {selectedTabIndex == 0 && !isError && !isFetching && fileStats &&
+      {selectedTabIndex == 0 && !isError && !isFetching && data &&
         <div>
-          {fileStats.numberOfFilesRequiringAction > 0 && 
+          {data.numberOfFilesRequiringAction > 0 && 
             <div>
               <div className="subSectionOverview">
                 <div className="container">
@@ -94,14 +93,14 @@ export default function DownloadCartPage() {
                 <DownloadListActionsRequired />
               </div>
             </div>}
-            {fileStats.numberOfFilesRequiringAction === 0 && <div className="placeholder">
+            {data.numberOfFilesRequiringAction === 0 && <div className="placeholder">
                 <div>No actions are currently required.</div>
               </div>}
         </div>
       }
-      {selectedTabIndex == 1 && !isError && !isFetching && fileStats &&
+      {selectedTabIndex == 1 && !isError && !isFetching && data &&
         <div>
-          {fileStats.numberOfFilesAvailableForDownload > 0 && 
+          {data.numberOfFilesAvailableForDownload > 0 && 
             <div>
               <div className="subSectionOverview">
                 <div className="container">
@@ -118,7 +117,7 @@ export default function DownloadCartPage() {
                 <AvailableForDownloadTable /> 
               </div>
             </div>}
-            {fileStats.numberOfFilesAvailableForDownload === 0 && <div className="placeholder">
+            {data.numberOfFilesAvailableForDownload === 0 && <div className="placeholder">
                 <div>Your Download List is currently empty.</div>
               </div>}
       </div>}

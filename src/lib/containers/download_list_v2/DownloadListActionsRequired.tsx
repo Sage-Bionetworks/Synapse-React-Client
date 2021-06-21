@@ -3,7 +3,6 @@ import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/useGetDownloadListActionsRequired'
 import { useInView } from 'react-intersection-observer'
-import { ActionRequiredResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { SynapseSpinner } from '../LoadingScreen'
 import { ActionRequiredCount, MeetAccessRequirement, RequestDownload } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
 import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
@@ -46,7 +45,7 @@ export default function DownloadListActionsRequired() {
     ? ([] as ActionRequiredCount[]).concat.apply(
         [],
         data.pages.map(
-          page => (page.responseDetails as ActionRequiredResponse).page,
+          p => p.page,
         ),
       )
     : []

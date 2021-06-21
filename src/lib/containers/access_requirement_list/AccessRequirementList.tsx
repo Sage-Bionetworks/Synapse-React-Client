@@ -46,7 +46,7 @@ export type AccessRequirementListProps = {
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: Function
   renderAsModal?: boolean
-  numberOfFilesEffected?: number // if provided, will show this instead of the entity information
+  numberOfFilesAffected?: number // if provided, will show this instead of the entity information
 }
 
 export type requestDataStepCallbackProps = {
@@ -86,7 +86,7 @@ export default function AccessRequirementList({
   onHide,
   accessRequirementFromProps,
   renderAsModal,
-  numberOfFilesEffected,
+  numberOfFilesAffected,
 }: AccessRequirementListProps) {
   const { accessToken } = useSynapseContext()
 
@@ -310,10 +310,10 @@ export default function AccessRequirementList({
             />
           </span>
           &nbsp;
-          {numberOfFilesEffected && <span>
-            {numberOfFilesEffected} File(s)
+          {numberOfFilesAffected && <span>
+            {numberOfFilesAffected} File(s)
           </span>}
-          {!numberOfFilesEffected && <a
+          {!numberOfFilesAffected && <a
             className="AccessRequirementList__register-text-link"
             href={`https://www.synapse.org/#!Synapse:${entityId}`}
           >

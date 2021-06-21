@@ -3,7 +3,7 @@ import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { SynapseSpinner } from '../LoadingScreen'
 import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/useGetAccessRequirement'
-import { AccessRequirement, SelfSignAccessRequirement } from '../../utils/synapseTypes'
+import { SelfSignAccessRequirement } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
 import { EASY_DIFFICULTY, MEDIUM_DIFFICULTY, VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
@@ -26,12 +26,11 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
 ) => {
   const handleError = useErrorHandler()
   const {
-    data,
+    data: ar,
     isFetching,
     isError,
     error: newError,
   } = useGetAccessRequirement(accessRequirementId)
-  const ar:AccessRequirement = data as AccessRequirement
   useEffect(() => {
     if (isError && newError) {
       handleError(toError(newError))
@@ -39,7 +38,7 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
   }, [isError, newError, handleError])
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] = useState<boolean>(false)
   let content = <></>
-  if (!isError && !isFetching) {
+  if (!isError && !isFetching && ar) {
     let title:string|undefined = undefined
     let iconType = ''
     let description = ''
@@ -101,11 +100,11 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
           <SynapseSpinner size={30} />
         </div>
       )}
-      {isShowingAccessRequirement && (
+      {isShowingAccessRequirement && ar && (
         <AccessRequirementList entityId={ar.subjectIds[0].id}
           accessRequirementFromProps={[ar]}
           renderAsModal={true}
-          numberOfFilesEffected={count}
+          numberOfFilesAffected={count}
           onHide={()=>setIsShowingAccessRequirement(false)}/>
       )}
     </>

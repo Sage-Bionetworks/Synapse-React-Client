@@ -4,7 +4,6 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
 import DownloadListTableV2, {
-  DownloadListTableProps,
 } from '../../../../lib/containers/download_list_v2/DownloadListTable'
 import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { DownloadListItemResult } from '../../../../lib/utils/synapseTypes/DownloadListV2/DownloadListItemResult'
@@ -29,8 +28,6 @@ jest.mock(
 
 const mockFetchNextPage = jest.fn()
 const mockUseGetAvailableFilesToDownloadInfinite = useGetAvailableFilesToDownloadInfinite as jest.Mock
-
-const defaultProps: DownloadListTableProps = {}
 
 const page1: Partial<DownloadListItemResult>[] = [
   {
@@ -60,10 +57,10 @@ const page2: Partial<DownloadListItemResult>[] = [
   },
 ]
 
-function renderComponent(propOverrides?: Partial<DownloadListTableProps>) {
+function renderComponent() {
   return render(
     <SynapseTestContext>
-      <DownloadListTableV2 {...defaultProps} {...propOverrides} />
+      <DownloadListTableV2 />
     </SynapseTestContext>,
   )
 }
@@ -78,16 +75,12 @@ describe('DownloadListTableV2 tests', () => {
       data: {
         pages: [
           {
-            responseDetails: {
-              page: page1,
-              nextPageToken: '50a0',
-            },
+            page: page1,
+            nextPageToken: '50a0',
           },
           {
-            responseDetails: {
-              page: page2,
-              nextPageToken: null,
-            },
+            page: page2,
+            nextPageToken: null,
           },
         ],
         pageParams: [],
