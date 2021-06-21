@@ -24,6 +24,8 @@ export const ENTITY_BUNDLE_V2 = (id: string | number, version?: number) =>
 export const ENTITY_ACCESS = (id: string | number) =>
   `${REPO}/entity/${id}/access`
 
+export const ENTITY_HEADERS = `${REPO}/entity/header`
+
 export const ENTITY_JSON = (id: string | number) => `${REPO}/entity/${id}/json`
 
 export const ENTITY_SCHEMA = (id: string | number) =>

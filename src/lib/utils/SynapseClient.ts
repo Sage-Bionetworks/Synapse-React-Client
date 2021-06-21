@@ -117,6 +117,7 @@ import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
 import { JSONSchema7 } from 'json-schema'
 import $RefParser from 'json-schema-ref-parser'
 import {
+  ENTITY_HEADERS,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
   ENTITY_JSON,
@@ -904,7 +905,7 @@ export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>>(
 export const getEntityHeaders = (
   references: ReferenceList,
   accessToken?: string,
-) => {
+):Promise<PaginatedResults<EntityHeader>> => {
   // if references contains entity IDs with dot notation, fix the reference object
   const fixedReferences = references.map(reference => {
     if (reference.targetId.indexOf('.') > -1) {
@@ -917,12 +918,12 @@ export const getEntityHeaders = (
 })
 
   return doPost(
-    '/repo/v1/entity/header',
+    ENTITY_HEADERS,
     { references: fixedReferences },
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-  ) as Promise<PaginatedResults<EntityHeader>>
+  )
 }
 
 /**

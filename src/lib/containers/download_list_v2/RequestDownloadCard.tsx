@@ -14,6 +14,7 @@ export type RequestDownloadCardProps = {
   count: number
 }
 
+export const REQUEST_DOWNLOAD_TITLE = 'Requires Download Permission'
 export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProps> = (
   {
     entityId,
@@ -40,7 +41,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
         <div className="RequestDownloadCart actionRequiredCard">
           <Icon type={VARIABLE_DIFFICULTY} />
           <div className="metadata">
-            <div className="title">Requires Download Permission</div>
+            <div className="title">{REQUEST_DOWNLOAD_TITLE}</div>
             <div className="fileCount">{count} File(s)</div>
             <div className="description">
               You must be granted the download permission on <strong>{entityHeader?.name}</strong> in order to download this set of files.
