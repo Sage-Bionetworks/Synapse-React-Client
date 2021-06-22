@@ -17,8 +17,10 @@ import {
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
-import { Alert } from 'react-bootstrap'
+import { Alert, Modal } from 'react-bootstrap'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import DownloadCartPage from '../download_list_v2/DownloadCartPage'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -35,10 +37,9 @@ export type DownloadConfirmationState = {
   downloadEstimate?: string
   status: StatusEnum
   errorMessage?: string
-  ownerId?: string
 }
 export type DownloadConfirmationProps = {
-  fnClose?: Function
+  fnClose?: () => void
   getLastQueryRequest?: () => QueryBundleRequest
   topLevelControlsState?: TopLevelControlsState
   updateParentState?: <K extends keyof QueryWrapperState>(
@@ -52,15 +53,18 @@ async function addToDownload(
   query: Query,
   token: string,
 ): Promise<[StatusEnum, string]> {
-  const req: AddFilesToDownloadListRequest = {
-    concreteType:
-      'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
-    query: query,
-  }
   try {
-    const result = await SynapseClient.addFilesToDownloadList(req, token)
-    const ownerId = result.downloadList.ownerId
-    return [StatusEnum.SUCCESS, ownerId]
+    if (!SynapseClient.isInSynapseExperimentalMode()) {
+      const req: AddFilesToDownloadListRequest = {
+        concreteType:
+          'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
+        query: query,
+      }
+      await SynapseClient.addFilesToDownloadList(req, token)
+    } else {
+      await SynapseClient.addFilesToDownloadListV2(query, token)
+    }
+    return [StatusEnum.SUCCESS, '']
   } catch (error) {
     return [StatusEnum.ERROR, error.reason]
   }
@@ -199,7 +203,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       const status = result[0]
 
       if (status === StatusEnum.SUCCESS) {
-        setState({ ...state, ownerId: result[1], status })
+        setState({ ...state, status })
       } else {
         setState({ ...state, errorMessage: result[1], status })
       }
@@ -208,7 +212,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
 
   const getContent = (
     { status, fileCount, fileSize, errorMessage }: DownloadConfirmationState,
-    token?: string,
   ): JSX.Element => {
     switch (status) {
       case StatusEnum.LOADING_INFO:
@@ -247,7 +250,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             >
               View Download List
             </button>
-
             {onExportTable && (
               <span>
                 or
@@ -284,7 +286,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           }
         `}
       >
-        <div>{getContent(state, accessToken)}</div>
+        <div>{getContent(state)}</div>
         <div className="download-confirmation-action">
           {state.status !== StatusEnum.PROCESSING && (
             <button className="btn btn-link" onClick={onCancel}>
@@ -303,11 +305,23 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           )}
         </div>
       </Alert>
-      {showDownloadList && (
+      {showDownloadList && !SynapseClient.isInSynapseExperimentalMode() && (
         <DownloadListTable
           renderAsModal={true}
           onHide={() => setShowDownloadList(false)}
         />
+      )}
+      {showDownloadList && SynapseClient.isInSynapseExperimentalMode() && (
+        <Modal
+          centered={true}
+          animation={false}
+          dialogClassName={'modal-90w modal-100h modal-no-content-padding'}
+          show={true}
+          onHide={() => setShowDownloadList(false)}
+        >
+          <Modal.Header closeButton style={{paddingRight: '20px'}} />
+          <DownloadCartPage />
+        </Modal>
       )}
     </>
   )

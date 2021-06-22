@@ -68,6 +68,7 @@ import {
   EntityBundleRequest,
   EntityBundle,
   ACTSubmissionStatus,
+  Query,
 } from './synapseTypes/'
 import UniversalCookies from 'universal-cookie'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
@@ -130,6 +131,8 @@ import {
   ACCESS_REQUIREMENT_BY_ID
 } from './APIConstants'
 import { ActionRequiredResponse, AvailableFilesResponse, FilesStatisticsResponse, QueryResponseDetails } from './synapseTypes/DownloadListV2/QueryResponseDetails'
+import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
+import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
 
 const cookies = new UniversalCookies()
 
@@ -1672,6 +1675,39 @@ export const addFileToDownloadListV2 = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+
+/**
+ * http://rest-docs.synapse.org/rest/POST/download/list/add/async/start.html
+ * Start an asynchronous job to add files to a user's download list from either a view query or a folder. Use GET /download/list/add/async/get/{asyncToken} to get both the job status and job results.
+ */
+ export const addFilesToDownloadListV2 = async (
+  query: Query,
+  accessToken: string | undefined = undefined,
+  updateParentState?: any,
+): Promise<AddToDownloadListResponse> => {
+  const req:AddToDownloadListRequest = {
+    query,
+    concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+  }
+  return doPost<AsyncJobId>(
+    '/repo/v1//download/list/add/async/start',
+    req,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then(resp => {
+      return getAsyncResultFromJobId<AddToDownloadListResponse>(
+        `/repo/v1/download/list/add/async/get/${resp.token}`,
+        accessToken,
+        updateParentState,
+      )
+    })
+    .catch((error: any) => {
+      throw error
+    })
 }
 
 /**

@@ -13,7 +13,7 @@ import { useSynapseContext } from '../../../utils/SynapseContext'
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
 type DownloadOptionsProps = {
-  onDownloadFiles: Function
+  onDownloadFiles: () => void
   isUnauthenticated?: boolean
   isFileView?: boolean
   darkTheme?: boolean

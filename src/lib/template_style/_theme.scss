@@ -161,6 +161,14 @@
     }
   }
 }
+.modal-100h {
+  .modal-content {
+    min-height: 97vh;
+  }
+}
+body:not(#unknown) .modal-no-content-padding > .modal-content {
+  padding: 0px;
+}
 
 .dropdown-menu.SRC-primary-color-hover-dropdown {
   a.dropdown-item:hover:not(.disabled) {
