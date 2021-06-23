@@ -1,5 +1,4 @@
 import { JSONSchema7 } from 'json-schema'
-import $RefParser from 'json-schema-ref-parser'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
@@ -13,6 +12,8 @@ import {
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
   REGISTERED_SCHEMA_ID,
+  SCHEMA_VALIDATION_GET,
+  SCHEMA_VALIDATION_START,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
@@ -1726,7 +1727,7 @@ export const createPackageFromDownloadListV2 = (
 /**
  * http://rest-docs.synapse.org/rest/POST/download/list/package/async/start.html
  */
- export const createManifestFromDownloadListV2 = (
+export const createManifestFromDownloadListV2 = (
   accessToken: string | undefined = undefined,
   updateParentState?: any,
 ) => {
@@ -2938,16 +2939,35 @@ export const getSchema = (schema$id: string) => {
 }
 
 /**
- * Use json-schema-ref-parser to retrieve a Synapse JSON Schema and resolve all references within the schema.
+ * Retrieve a "validation" schema--all references are resolved and dereferenced.
  * @param schema$id
  * @returns
  */
-export const getSchemaRecursive = async (schema$id: string) => {
-  return $RefParser.dereference(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${REGISTERED_SCHEMA_ID(
-      schema$id,
-    )}`,
-  ) as Promise<JSONSchema7>
+export const getValidationSchema = async (
+  schema$id: string,
+  accessToken?: string,
+) => {
+  return doPost<AsyncJobId>(
+    SCHEMA_VALIDATION_START,
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.schema.GetValidationSchemaRequest',
+      $id: schema$id,
+    },
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((asyncJobId: AsyncJobId) => {
+      return getAsyncResultFromJobId<{ validationSchema: JSONSchema7 }>(
+        SCHEMA_VALIDATION_GET(asyncJobId.token),
+        accessToken,
+      )
+    })
+    .catch(err => {
+      console.error('Error on getValidationSchema ', err)
+      throw err
+    })
 }
 
 /**
