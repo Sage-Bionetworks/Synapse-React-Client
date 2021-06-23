@@ -127,7 +127,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   updateParentState,
   topLevelControlsState,
   onExportTable,
-  downloadCartPageUrl,
+  downloadCartPageUrl='/DownloadCart',
 }) => {
   const { accessToken } = useSynapseContext()
   const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
