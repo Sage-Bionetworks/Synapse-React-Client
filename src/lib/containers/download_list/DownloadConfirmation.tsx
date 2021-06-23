@@ -268,9 +268,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         return <></>
     }
   }
-  if (showDownloadList && SynapseClient.isInSynapseExperimentalMode() && downloadCartPageUrl) {
+  if (showDownloadList && SynapseClient.isInSynapseExperimentalMode()) {
     // go to the Download Cart Page
-    window.location.href = downloadCartPageUrl
+    if (downloadCartPageUrl)
+      window.location.href = downloadCartPageUrl
+    else
+      console.error('Missing the Download Cart Page URL in the component configuration.')
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
