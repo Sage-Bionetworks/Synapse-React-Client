@@ -41,7 +41,9 @@ export function useGetUserProfileWithProfilePic(
   const { accessToken } = useSynapseContext()
   const queryKey = [accessToken, 'user', principalId, 'profile', 'withPic']
 
-  const { data: userProfile } = useGetUserProfile(principalId)
+  const { data: userProfile } = useGetUserProfile(principalId, {
+    enabled: options?.enabled ?? true,
+  })
 
   // TODO: create useGetFile hook with careful configuration to prevent serving expired pre-signed URLs
   return useQuery<UserProfileAndImg, SynapseClientError>(
