@@ -41,7 +41,10 @@ export function useGetSchema(
 ) {
   return useQuery<JSONSchema7, SynapseClientError>(
     ['schema', schema$id],
-    () => SynapseClient.getSchemaRecursive(schema$id),
+    async () => {
+      const response = await SynapseClient.getValidationSchema(schema$id)
+      return response.validationSchema
+    },
     options,
   )
 }

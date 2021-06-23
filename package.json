@@ -23,6 +23,7 @@
     "@fortawesome/react-fontawesome": "^0.1.3",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "@rjsf/core": "^2.5.1",
     "@upsetjs/react": "^1.6.2",
     "bootstrap": "^4.6.0",
     "column-resizer": "^1.3.5",
@@ -169,7 +170,6 @@
     ]
   },
   "scripts": {
-    "postinstall": "npm rebuild node-sass",
     "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
     "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html && cp favicon.png styleguide/favicon.png",
     "build-gh": "yarn run build:docs",
