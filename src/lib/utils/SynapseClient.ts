@@ -108,7 +108,6 @@ import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/Downl
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
 import {
   DATETIME_UTC_COOKIE_KEY,
-  EXPERIMENTAL_MODE_COOKIE,
 } from './SynapseConstants'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
@@ -1215,10 +1214,6 @@ export const getAccessTokenFromCookie = async () => {
     'include',
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )
-}
-
-export const getIsInExperimentalModeFromCookie = () => {
-  return !!cookies.get(EXPERIMENTAL_MODE_COOKIE)
 }
 
 export const getUseUtcTimeFromCookie = () => {

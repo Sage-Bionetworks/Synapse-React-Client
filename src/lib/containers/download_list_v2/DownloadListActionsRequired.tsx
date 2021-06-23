@@ -20,7 +20,6 @@ export default function DownloadListActionsRequired() {
     fetchNextPage,
     isError,
     error: newError,
-    refetch,
   } = useGetDownloadListActionsRequiredInfinite()
 
   useEffect(() => {
@@ -82,7 +81,7 @@ export default function DownloadListActionsRequired() {
         <div
           className="DownloadListActionsRequired"
         >
-            {allRows.map(item => {
+            {allRows.map((item:ActionRequiredCount) => {
               if (item) {
                 return renderActionRequired(item)
               } else return false

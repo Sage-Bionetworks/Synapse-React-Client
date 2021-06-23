@@ -148,7 +148,7 @@ export default function DownloadListTable() {
             </tr>
           </thead>
           <tbody>
-            {allRows.map(item => {
+            {allRows.map((item:DownloadListItemResult) => {
               if (item) {
                 const addedOn = moment(item.addedOn).format('L LT')
                 const createdOn = moment(item.createdOn).format('L LT')

@@ -17,10 +17,8 @@ import {
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
-import { Alert, Modal } from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import DownloadCartPage from '../download_list_v2/DownloadCartPage'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -46,6 +44,7 @@ export type DownloadConfirmationProps = {
     param: Pick<QueryWrapperState, K>,
   ) => void
   onExportTable?: () => void
+  downloadCartPageUrl?: string
 }
 
 // add files to download list
@@ -128,6 +127,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   updateParentState,
   topLevelControlsState,
   onExportTable,
+  downloadCartPageUrl,
 }) => {
   const { accessToken } = useSynapseContext()
   const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
@@ -268,6 +268,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         return <></>
     }
   }
+  if (showDownloadList && SynapseClient.isInSynapseExperimentalMode() && downloadCartPageUrl) {
+    // go to the Download Cart Page
+    window.location.href = downloadCartPageUrl
+  }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
     <>
@@ -310,18 +314,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           renderAsModal={true}
           onHide={() => setShowDownloadList(false)}
         />
-      )}
-      {showDownloadList && SynapseClient.isInSynapseExperimentalMode() && (
-        <Modal
-          centered={true}
-          animation={false}
-          dialogClassName={'modal-90w modal-100h modal-no-content-padding'}
-          show={true}
-          onHide={() => setShowDownloadList(false)}
-        >
-          <Modal.Header closeButton style={{paddingRight: '20px'}} />
-          <DownloadCartPage />
-        </Modal>
       )}
     </>
   )
