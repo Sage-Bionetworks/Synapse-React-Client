@@ -10,10 +10,12 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
 
+export type DownloadCartPageProps = Record<string, never>
+
 /**
  * Show the Download Cart page.
  */
-export default function DownloadCartPage() {
+export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = () => {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const handleError = useErrorHandler()
