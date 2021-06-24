@@ -47,9 +47,6 @@ import personSvg from '../../../assets/icons/person.svg'
 import mouseSvg from '../../../assets/icons/mouse.svg'
 import chart2Svg from '../../../assets/icons/chart2.svg'
 import fileSvg from '../../../assets/icons/file.svg'
-import easySvg from '../../../assets/icons/download_list/easy.svg'
-import mediumSvg from '../../../assets/icons/download_list/medium.svg'
-import variableSvg from '../../../assets/icons/download_list/variable.svg'
 
 import {
   Project,
@@ -121,9 +118,9 @@ const defaultIcons = {
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
   [EXTERNALLINK]: ExternalLink,
-  [EASY_DIFFICULTY]: easySvg,
-  [MEDIUM_DIFFICULTY]: mediumSvg,
-  [VARIABLE_DIFFICULTY]: variableSvg,
+  [EASY_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/easy.svg',
+  [MEDIUM_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/medium.svg',
+  [VARIABLE_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/variable.svg',
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,

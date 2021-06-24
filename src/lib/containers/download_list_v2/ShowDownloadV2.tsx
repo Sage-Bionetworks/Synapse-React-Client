@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react'
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
@@ -17,7 +16,7 @@ export type ShowDownloadV2Props = {
  * Nav bar item, displayed when files have been added to the Download Cart.
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
-function ShowDownloadV2({ to }: ShowDownloadV2Props & RouteComponentProps) {
+function ShowDownloadV2({ to }: ShowDownloadV2Props) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
@@ -67,11 +66,10 @@ function ShowDownloadV2({ to }: ShowDownloadV2Props & RouteComponentProps) {
       />
     </>
   )
-
-  return <Link className="Download-Link v2" to={to}>
+  return <a className="Download-Link v2" href={to} rel="noopener noreferrer">
       {content}
-    </Link>
+    </a>
   
 }
 
-export default withRouter(ShowDownloadV2)
+export default ShowDownloadV2

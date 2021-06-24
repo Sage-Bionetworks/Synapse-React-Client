@@ -41,6 +41,9 @@ export default function DownloadListTable() {
 
   useEffect(() => {
     if (isError && newError) {
+      console.error('!!! There was an error while getting Available Files to download')
+      console.error(newError)
+      
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
