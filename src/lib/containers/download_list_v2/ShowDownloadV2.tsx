@@ -21,7 +21,7 @@ function ShowDownloadV2({ to }: ShowDownloadV2Props) {
   const handleError = useErrorHandler()
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
   const tooltipText = 'Click to view items in your download cart.'
-
+  
   const {
     data,
     isFetching,
@@ -30,10 +30,10 @@ function ShowDownloadV2({ to }: ShowDownloadV2Props) {
   } = useGetDownloadListStatistics()
   
   useEffect(() => {
-    if (isError && newError) {
+    if (isError && newError && accessToken) {
       handleError(toError(newError))
     }
-  }, [isError, newError, handleError])
+  }, [isError, newError, handleError, accessToken])
 
   const isInExperimentalMode = isInSynapseExperimentalMode()
   if (!accessToken || isFetching || !isInExperimentalMode) {
