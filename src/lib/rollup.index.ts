@@ -20,6 +20,7 @@ import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationE
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
 import ErrorPage from './containers/ErrorPage'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
+import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -52,6 +53,7 @@ const SynapseComponents = {
   ErrorPage,
   DownloadCartPage,
   ShowDownloadV2,
+  DownloadConfirmation
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
