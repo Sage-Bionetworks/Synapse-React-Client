@@ -16,7 +16,7 @@ export enum Direction {
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityChildrenRequest.html
 export type EntityChildrenRequest = {
-  parentId: string
+  parentId?: string
   nextPageToken?: string | null
   includeTypes: Array<EntityType>
   sortBy?: SortBy
