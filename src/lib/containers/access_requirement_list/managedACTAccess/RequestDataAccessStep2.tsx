@@ -144,11 +144,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           })
         })
         setAccessorRadioValue(accessorsArr)
-      } else {
-        setAccessorRadioValue([{
-          userId: user.ownerId,
-          type: AccessType.RENEW_ACCESS,
-        }])
       }
     }
   }
