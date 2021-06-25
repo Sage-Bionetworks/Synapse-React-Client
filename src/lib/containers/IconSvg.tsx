@@ -11,7 +11,8 @@ import {
   GetApp,
   InfoOutlined,
   AddShoppingCart,
-  ShoppingCartOutlined
+  ShoppingCartOutlined,
+  Delete,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -76,6 +77,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <GetApp style={muiSvgStyle}></GetApp>
     case 'cart':
       return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
+    case 'delete':
+      return <Delete style={muiSvgStyle}></Delete>
     case 'addToCart':
       return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
     case 'reload':

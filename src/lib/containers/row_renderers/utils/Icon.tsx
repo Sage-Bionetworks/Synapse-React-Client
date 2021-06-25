@@ -33,6 +33,9 @@ import {
   CHART2,
   FILE,
   EXTERNALLINK,
+  EASY_DIFFICULTY,
+  MEDIUM_DIFFICULTY,
+  VARIABLE_DIFFICULTY,
 } from '../../../utils/SynapseConstants'
 
 import Data2Svg from '../../../assets/icons/Data2.svg'
@@ -115,6 +118,9 @@ const defaultIcons = {
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
   [EXTERNALLINK]: ExternalLink,
+  [EASY_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/easy.svg',
+  [MEDIUM_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/medium.svg',
+  [VARIABLE_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/variable.svg',
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,

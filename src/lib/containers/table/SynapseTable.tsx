@@ -23,7 +23,6 @@ import {
   EntityColumnType,
   ColumnModel,
 } from '../../utils/synapseTypes/'
-import { DownloadConfirmation } from '../download_list/DownloadConfirmation'
 import HasAccess from '../HasAccess'
 import { QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
@@ -86,7 +85,6 @@ export interface Dictionary<T> {
 export type SynapseTableState = {
   sortedColumnSelection: SortItem[]
   columnIconSortState: number[]
-  isDownloadConfirmationOpen: boolean
   isExportTableDownloadOpen: boolean
   isExpanded: boolean
   isFileView: boolean
@@ -135,7 +133,6 @@ export default class SynapseTable extends React.Component<
           2 - show ascending icon selected
       */
       columnIconSortState: [],
-      isDownloadConfirmationOpen: false,
       isExportTableDownloadOpen: false,
       isExpanded: false,
       isColumnSelectionOpen: false,
@@ -502,11 +499,6 @@ export default class SynapseTable extends React.Component<
     const tableEntityId: string = lastQueryRequest?.entityId
     return (
       <div style={{ minHeight: '400px' }} className="SRC-overflowAuto">
-        {this.state.isDownloadConfirmationOpen && (
-          <DownloadConfirmation
-            getLastQueryRequest={this.props.getLastQueryRequest!}
-          />
-        )}
         <table
           ref={node => (this.tableElement = node)}
           className="table table-striped table-condensed"

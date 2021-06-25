@@ -6,7 +6,6 @@ import * as ReactBootstrap from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { useInView } from 'react-intersection-observer'
-import { AvailableFilesResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   Sort,
@@ -20,13 +19,10 @@ import SortIcon from '../../assets/icons/Sort'
 import { Direction } from '../../utils/synapseTypes'
 import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
-
-export type DownloadListTableProps = {}
-
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
-export default function DownloadListTable(props: DownloadListTableProps) {
+export default function DownloadListTable() {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
@@ -45,6 +41,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   useEffect(() => {
     if (isError && newError) {
+      console.error('!!! There was an error while getting Available Files to download')
+      console.error(newError)
+      
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
@@ -65,7 +64,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     ? ([] as DownloadListItemResult[]).concat.apply(
         [],
         data.pages.map(
-          page => (page.responseDetails as AvailableFilesResponse).page,
+          p => p.page,
         ),
       )
     : []
@@ -152,7 +151,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
             </tr>
           </thead>
           <tbody>
-            {allRows.map(item => {
+            {allRows.map((item:DownloadListItemResult) => {
               if (item) {
                 const addedOn = moment(item.addedOn).format('L LT')
                 const createdOn = moment(item.createdOn).format('L LT')
@@ -207,13 +206,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         </ReactBootstrap.Table>
       )}
       {isFetching && (
-        <div className="EntityFinderDetailsView__Placeholder">
+        <div className="placeholder">
           <SynapseSpinner size={30} />
-        </div>
-      )}
-      {!isFetching && allRows.length === 0 && (
-        <div className="EntityFinderDetailsView__Placeholder">
-          <div>No rows</div>
         </div>
       )}
     </>

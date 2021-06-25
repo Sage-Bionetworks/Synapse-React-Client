@@ -4,7 +4,7 @@ import React from 'react'
 
 export type DownloadLoginModalProps = {
   showModal?: boolean
-  onHide: Function
+  onHide: () => void
 }
 
 export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps> = props => {
