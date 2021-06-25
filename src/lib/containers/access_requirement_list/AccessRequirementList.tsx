@@ -44,16 +44,16 @@ type AccessRequirementAndStatus = {
 export type AccessRequirementListProps = {
   entityId: string  // will show this entity info
   accessRequirementFromProps?: Array<AccessRequirement>
-  onHide?: Function
+  onHide?: () => void
   renderAsModal?: boolean
   numberOfFilesAffected?: number // if provided, will show this instead of the entity information
 }
 
 export type requestDataStepCallbackProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement?: ManagedACTAccessRequirement
   step: number
-  researchProjectId: string
-  formSubmitRequestObject: RequestInterface
+  researchProjectId?: string
+  formSubmitRequestObject?: RequestInterface
 }
 
 export enum SUPPORTED_ACCESS_REQUIREMENTS {

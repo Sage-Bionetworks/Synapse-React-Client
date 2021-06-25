@@ -30,14 +30,16 @@ import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
+import { RadioGroup } from '../../widgets/RadioGroup'
+import { requestDataStepCallbackProps } from '../AccessRequirementList'
 
 export type RequestDataAccessStep2Props = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
   entityId: string
-  requestDataStepCallback: Function
+  requestDataStepCallback: (props: requestDataStepCallbackProps) => void
   user: UserProfile
   researchProjectId: string
-  onHide: Function
+  onHide: () => void
 }
 
 export type DataAccessDoc = {
@@ -66,6 +68,10 @@ export type AlertProps = {
   message: string | JSX.Element
 }
 
+type requestedFileTypesMap = {
+  [key: string]: string[]
+}
+
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const {
     requestDataStepCallback,
@@ -83,10 +89,12 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [
     formSubmitRequestObject,
     setFormSubmitRequestObject,
-  ] = useState<RequestInterface|RenewalInterface>()
+  ] = useState<RequestInterface | RenewalInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [isRenewal, setIsRenewal] = useState<boolean>(false)
-  const requestedFileTypes = {}
+  const [accessorRadioValue, setAccessorRadioValue] = useState<AccessorChange[]>([])
+
+  const requestedFileTypes:requestedFileTypesMap = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
     includeFileHandles: true,
@@ -120,8 +128,28 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     // get data access required docs data to display file names
     getFilesData(dataAccessRequestData)
 
+    // renewal case
     if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
       setIsRenewal(true)
+      if (dataAccessRequestData.accessorChanges?.length) {
+        const accessorsArr = dataAccessRequestData.accessorChanges.map(item => {
+          return {
+            userId: item.userId,
+            type: AccessType.RENEW_ACCESS,
+          }
+        })
+        setFormSubmitRequestObject(prevState => {
+          return Object.assign({}, prevState, {
+            accessorChanges: accessorsArr,
+          })
+        })
+        setAccessorRadioValue(accessorsArr)
+      } else {
+        setAccessorRadioValue([{
+          userId: user.ownerId,
+          type: AccessType.RENEW_ACCESS,
+        }])
+      }
     }
   }
 
@@ -241,7 +269,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       getFiles(batchFileRequest, accessToken).then(resp => {
         resp.requestedFiles.forEach(file => {
           const fileName = file.fileHandle!.fileName
-          const fileTypes = requestedFileTypes[file.fileHandleId]
+          const fileTypes:string[] = requestedFileTypes[file.fileHandleId]
 
           fileTypes.forEach((type: string) => {
             switch (type) {
@@ -387,7 +415,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const onClearAccessor = (pid: string) => {
     // Update the view
     const filtered: UserProfile[] = accessorProfiles.filter(
-      item => item.ownerId !== pid,
+      item => item.ownerId !== pid
     )
     setAccessorProfiles(filtered)
 
@@ -403,12 +431,20 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         accessorChanges: newAccessorChanges,
       })
     })
+
+    // Update accessor renewal radio buttons if available
+    if (isRenewal) {
+      const filteredRadio:AccessorChange[] = accessorRadioValue.filter(
+        item => item.userId !== pid
+      )
+      setAccessorRadioValue(filteredRadio)
+    }
   }
 
   const onClearAttachment = (fid: string) => {
     // Update the view
     const filtered: DataAccessDoc[] = attachments.filter(
-      item => item.fileHandleId !== fid,
+      item => item.fileHandleId !== fid
     )
     setAttachments(filtered)
 
@@ -509,6 +545,25 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
   }
 
+  // For renewal only
+  const onAccessorRadioBtnChange = (accessType: AccessType, userId: string) => {
+    // Make the radio button appears selected when clicked.
+    const copy = [...accessorRadioValue]
+    const index = copy.findIndex(item => item.userId === userId)
+    copy[index].type = accessType
+    setAccessorRadioValue(copy)
+
+    // Update formSubmitRequestObject
+    const formCopy = formSubmitRequestObject?.accessorChanges || []
+    const index2 = formCopy.findIndex(item => item.userId === userId)
+    formCopy[index2].type = accessType
+    setFormSubmitRequestObject(prevState => {
+      return Object.assign({}, prevState, {
+        accessorChanges: formCopy
+      })
+    })
+  }
+
   return (
     <>
       <Form
@@ -575,6 +630,29 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       >
                         <IconSvg options={{ icon: 'clear' }} />
                       </Button>
+                    )
+                  }
+                  {
+                    isRenewal && accessorRadioValue[i] && (
+                      <>
+                        <RadioGroup
+                          id="accessor-access"
+                          value={accessorRadioValue[i].type}
+                          options={[
+                            {
+                              label: 'Renew',
+                              value: AccessType.RENEW_ACCESS
+                            },
+                            {
+                              label: 'Revoke',
+                              value: AccessType.REVOKE_ACCESS
+                            },
+                          ]}
+                          onChange={(value: string, checked: boolean) =>
+                            onAccessorRadioBtnChange(value as AccessType, profile.ownerId)
+                          }
+                        ></RadioGroup>
+                      </>
                     )
                   }
                 </div>
