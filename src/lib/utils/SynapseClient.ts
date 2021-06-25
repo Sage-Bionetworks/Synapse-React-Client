@@ -107,7 +107,6 @@ import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/Downl
 import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
 import {
   DATETIME_UTC_COOKIE_KEY,
-  EXPERIMENTAL_MODE_COOKIE,
 } from './SynapseConstants'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
@@ -130,6 +129,8 @@ import {
   ACCESS_REQUIREMENT_BY_ID
 } from './APIConstants'
 import { ActionRequiredResponse, AvailableFilesResponse, FilesStatisticsResponse, QueryResponseDetails } from './synapseTypes/DownloadListV2/QueryResponseDetails'
+import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
+import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
 
 const cookies = new UniversalCookies()
 
@@ -1214,10 +1215,6 @@ export const getAccessTokenFromCookie = async () => {
   )
 }
 
-export const getIsInExperimentalModeFromCookie = () => {
-  return !!cookies.get(EXPERIMENTAL_MODE_COOKIE)
-}
-
 export const getUseUtcTimeFromCookie = () => {
   return cookies.get(DATETIME_UTC_COOKIE_KEY) === 'true'
 }
@@ -1672,6 +1669,35 @@ export const addFileToDownloadListV2 = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+
+/**
+ * http://rest-docs.synapse.org/rest/POST/download/list/add/async/start.html
+ * Start an asynchronous job to add files to a user's download list from either a view query or a folder. Use GET /download/list/add/async/get/{asyncToken} to get both the job status and job results.
+ */
+ export const addFilesToDownloadListV2 = async (
+  request: AddToDownloadListRequest,
+  accessToken: string | undefined = undefined,
+  updateParentState?: any,
+): Promise<AddToDownloadListResponse> => {
+  return doPost<AsyncJobId>(
+    '/repo/v1//download/list/add/async/start',
+    request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then(resp => {
+      return getAsyncResultFromJobId<AddToDownloadListResponse>(
+        `/repo/v1/download/list/add/async/get/${resp.token}`,
+        accessToken,
+        updateParentState,
+      )
+    })
+    .catch((error: any) => {
+      throw error
+    })
 }
 
 /**
