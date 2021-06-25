@@ -1,15 +1,17 @@
 @use '../abstracts/variables' as SRC;
 
 .bootstrap-4-backport {
-
   label {
     color: SRC.$gray-formtext;
     font-weight: bold;
   }
 
-  input[type=text],
-  input[type=password],
-  input[type=search],
+  input[type='text'],
+  input[type='password'],
+  input[type='search'],
+  input[type='number'],
+  input[type='date'],
+  select,
   textarea {
     &.form-control {
       margin-bottom: 1rem;
@@ -19,6 +21,10 @@
       border-radius: 2px;
       box-shadow: none;
     }
+  }
+
+  .input-group-prepend {
+    margin-bottom: 1rem;
   }
 
   // disabled input boxes should be "flat"
@@ -35,6 +41,4 @@
   .form-control:focus-visible {
     text-shadow: none;
   }
-
-
 }
