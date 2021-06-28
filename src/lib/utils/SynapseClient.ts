@@ -118,7 +118,6 @@ import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectB
 import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
 import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
 import { JSONSchema7 } from 'json-schema'
-import $RefParser from 'json-schema-ref-parser'
 import {
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
