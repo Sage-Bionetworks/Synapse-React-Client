@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import { isEmpty } from 'lodash-es'
 import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
@@ -79,4 +80,3 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
     </>
   ) : null
 }
-
