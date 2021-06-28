@@ -6,21 +6,9 @@
     font-weight: bold;
   }
 
-  input[type='text'],
-  input[type='password'],
-  input[type='search'],
-  input[type='number'],
-  input[type='date'],
-  select,
-  textarea {
-    &.form-control {
-      margin-bottom: 1rem;
-      border: 1px solid SRC.$border-color-gray;
-      padding: 12px 13px;
-      height: auto;
-      border-radius: 2px;
-      box-shadow: none;
-    }
+  .form-control {
+    box-shadow: none;
+    margin-bottom: 1rem;
   }
 
   .input-group-prepend {

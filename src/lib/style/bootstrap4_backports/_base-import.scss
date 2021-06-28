@@ -7,7 +7,12 @@
   $secondary: SRC.$secondary-action-color;
   $border-radius: 0.2rem;
   $btn-box-shadow: SRC.$box-shadow-soft;
-
+  $input-height: 50px;
+  $input-padding-x: 0.75rem;
+  $input-padding-y: 0.5rem;
+  $input-border-color: SRC.$border-color-gray;
+  $input-border-width: 1px;
+  $input-border-radius: 2px;
   @import 'node_modules/bootstrap/scss/bootstrap';
 
   .alert-danger {
