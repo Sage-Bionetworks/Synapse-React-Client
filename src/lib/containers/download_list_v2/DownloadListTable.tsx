@@ -41,6 +41,9 @@ export default function DownloadListTable() {
 
   useEffect(() => {
     if (isError && newError) {
+      console.error('!!! There was an error while getting Available Files to download')
+      console.error(newError)
+      
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
@@ -148,7 +151,7 @@ export default function DownloadListTable() {
             </tr>
           </thead>
           <tbody>
-            {allRows.map(item => {
+            {allRows.map((item:DownloadListItemResult) => {
               if (item) {
                 const addedOn = moment(item.addedOn).format('L LT')
                 const createdOn = moment(item.createdOn).format('L LT')

@@ -10,10 +10,12 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
 
+export type DownloadCartPageProps = Record<string, never>
+
 /**
  * Show the Download Cart page.
  */
-export default function DownloadCartPage() {
+export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = () => {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const handleError = useErrorHandler()
@@ -26,6 +28,8 @@ export default function DownloadCartPage() {
   } = useGetDownloadListStatistics()
   useEffect(() => {
     if (isError && newError) {
+      console.error('!!! There was an error while getting the DL stats in DownloadCartPage')
+      console.error(newError)
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
@@ -106,7 +110,7 @@ export default function DownloadCartPage() {
                 <div className="container">
                   <div className="subSectionContainer">
                     <span className="subSectionTitle">Complete Your Download</span>
-                    <DownloadListStats />
+                    <DownloadListStats numBytes={data.sumOfFileSizesAvailableForDownload} numFiles={data.numberOfFilesAvailableForDownload}/>
                   </div>
                   <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
                   both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 

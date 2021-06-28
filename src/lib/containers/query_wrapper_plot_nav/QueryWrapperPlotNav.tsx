@@ -37,6 +37,7 @@ type OwnProps = {
   hideDownload?: boolean
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
+  downloadCartPageUrl?: string
 } & Omit<TopLevelControlsProps, 'entityId'>
 
 type SearchParams = {
@@ -67,6 +68,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     hideDownload,
     searchConfiguration,
     limit = DEFAULT_PAGE_SIZE,
+    downloadCartPageUrl,
     ...rest
   } = props
   let sqlUsed = sql
@@ -106,6 +108,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
             <ErrorBanner />
             <DownloadConfirmation
               onExportTable={() => setShowExportMetadata(true)}
+              downloadCartPageUrl={downloadCartPageUrl}
             />
             <TopLevelControls
               showColumnSelection={tableConfiguration !== undefined}
