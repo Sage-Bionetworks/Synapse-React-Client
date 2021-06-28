@@ -72,6 +72,11 @@ type requestedFileTypesMap = {
   [key: string]: string[]
 }
 
+type Accessor = {
+  profile: UserProfile
+  accessType: AccessType
+}
+
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const {
     requestDataStepCallback,
@@ -85,14 +90,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
   const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
-  const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [
     formSubmitRequestObject,
     setFormSubmitRequestObject,
   ] = useState<RequestInterface | RenewalInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [isRenewal, setIsRenewal] = useState<boolean>(false)
-  const [accessorRadioValue, setAccessorRadioValue] = useState<AccessorChange[]>([])
+  const [accessors, setAccessors] = useState<Accessor[]>([])
 
   const requestedFileTypes:requestedFileTypesMap = {}
   const batchFileRequest: BatchFileRequest = {
@@ -120,6 +124,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       accessToken!,
     )
 
+    // renewal case
+    if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
+      setIsRenewal(true)
+    }
+
     // initialize form submission request object
     dataAccessRequestData.researchProjectId = researchProjectId
     setFormSubmitRequestObject(dataAccessRequestData)
@@ -127,25 +136,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     getAccessorsData(dataAccessRequestData)
     // get data access required docs data to display file names
     getFilesData(dataAccessRequestData)
-
-    // renewal case
-    if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
-      setIsRenewal(true)
-      if (dataAccessRequestData.accessorChanges?.length) {
-        const accessorsArr = dataAccessRequestData.accessorChanges.map(item => {
-          return {
-            userId: item.userId,
-            type: AccessType.RENEW_ACCESS,
-          }
-        })
-        setFormSubmitRequestObject(prevState => {
-          return Object.assign({}, prevState, {
-            accessorChanges: accessorsArr,
-          })
-        })
-        setAccessorRadioValue(accessorsArr)
-      }
-    }
   }
 
   const getAccessorsData = (dataAccessRequestData: RequestInterface) => {
@@ -175,7 +165,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       return getUserProfileById(accessToken, userId)
     })
     Promise.all(promises).then(profiles => {
-      setAccessorProfiles(profiles)
+      const profileAndAccessType:Accessor[] = profiles.map((item, i) => {
+        return {
+          profile: item,
+          accessType: accessorChanges[i].type
+        }
+      })
+      setAccessors(profileAndAccessType)
     })
   }
 
@@ -409,16 +405,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   const onClearAccessor = (pid: string) => {
     // Update the view
-    const filtered: UserProfile[] = accessorProfiles.filter(
-      item => item.ownerId !== pid
+    const filtered:Accessor[]  = accessors.filter(item =>
+      item.profile.ownerId !== pid
     )
-    setAccessorProfiles(filtered)
+    setAccessors(filtered)
 
     // Update form submission request object
     const newAccessorChanges: AccessorChange[] = filtered.map(item => {
       return {
-        userId: item.ownerId,
-        type: AccessType.GAIN_ACCESS,
+        userId: item.profile.ownerId,
+        type: item.accessType
       }
     })
     setFormSubmitRequestObject(prevState => {
@@ -426,14 +422,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         accessorChanges: newAccessorChanges,
       })
     })
-
-    // Update accessor renewal radio buttons if available
-    if (isRenewal) {
-      const filteredRadio:AccessorChange[] = accessorRadioValue.filter(
-        item => item.userId !== pid
-      )
-      setAccessorRadioValue(filteredRadio)
-    }
   }
 
   const onClearAttachment = (fid: string) => {
@@ -497,15 +485,19 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   // User search input event handler
   const onSelectUserCallback = (selected: UserProfile) => {
-    setAccessorProfiles(prev => [
+    setAccessors(prev => [
       ...prev,
       {
-        ownerId: selected.ownerId,
-        firstName: selected.firstName,
-        lastName: selected.lastName,
-        userName: selected.userName,
-      },
+        profile: {
+          ownerId: selected.ownerId,
+          firstName: selected.firstName,
+          lastName: selected.lastName,
+          userName: selected.userName,
+        },
+        accessType: AccessType.GAIN_ACCESS
+      }
     ])
+
     const selectedAccessor: AccessorChange = {
       userId: selected.ownerId,
       type: AccessType.GAIN_ACCESS,
@@ -543,10 +535,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   // For renewal only
   const onAccessorRadioBtnChange = (accessType: AccessType, userId: string) => {
     // Make the radio button appears selected when clicked.
-    const copy = [...accessorRadioValue]
-    const index = copy.findIndex(item => item.userId === userId)
-    copy[index].type = accessType
-    setAccessorRadioValue(copy)
+    const copy = [...accessors]
+    const index = copy.findIndex(item => item.profile.ownerId === userId)
+    copy[index].accessType = accessType
+    setAccessors(copy)
 
     // Update formSubmitRequestObject
     const formCopy = formSubmitRequestObject?.accessorChanges || []
@@ -607,52 +599,55 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
           {/* Accessors Checkboxes */}
           <Form.Group style={{ marginBottom: '4rem' }}>
-            {accessorProfiles.map((profile, i) => {
-              return (
-                <div className={'list-items'} key={`accessors-${i}`}>
-                  <UserCardSmall
-                    userProfile={profile}
-                    showAccountLevelIcon={true}
-                    disableLink={true}
-                  />
-                  {
-                    // only display delete button if the user profile is other users.
-                    user.ownerId !== profile.ownerId && (
-                      <Button
-                        className={'clear-x'}
-                        variant={'link'}
-                        onClick={() => onClearAccessor(profile.ownerId)}
-                      >
-                        <IconSvg options={{ icon: 'clear' }} />
-                      </Button>
-                    )
-                  }
-                  {
-                    isRenewal && accessorRadioValue[i] && (
-                      <>
-                        <RadioGroup
-                          id="accessor-access"
-                          value={accessorRadioValue[i].type}
-                          options={[
-                            {
-                              label: 'Renew',
-                              value: AccessType.RENEW_ACCESS
-                            },
-                            {
-                              label: 'Revoke',
-                              value: AccessType.REVOKE_ACCESS
-                            },
-                          ]}
-                          onChange={(value: string, checked: boolean) =>
-                            onAccessorRadioBtnChange(value as AccessType, profile.ownerId)
-                          }
-                        ></RadioGroup>
-                      </>
-                    )
-                  }
-                </div>
-              )
-            })}
+            {
+              accessors.map((accessor, i ) => {
+                return (
+                  <div className={'list-items'} key={`accessor-${i}`}>
+                    <UserCardSmall
+                      userProfile={accessor.profile}
+                      showAccountLevelIcon={true}
+                      disableLink={true}
+                    />
+                    {
+                      // only display delete button if the user profile is other users and has not access before
+                      (user.ownerId !== accessor.profile.ownerId) && (accessor.accessType === AccessType.GAIN_ACCESS) && (
+                        <Button
+                          className={'clear-x'}
+                          variant={'link'}
+                          onClick={() => onClearAccessor(accessor.profile.ownerId)}
+                        >
+                          <IconSvg options={{ icon: 'clear' }} />
+                        </Button>
+                      )
+                    }
+                    {
+                      // Renewal/Revoke data access, only display if isRenewal is true
+                      isRenewal && (accessor.accessType !== AccessType.GAIN_ACCESS) && (
+                        <>
+                          <RadioGroup
+                            id="accessor-access"
+                            value={accessor.accessType}
+                            options={[
+                              {
+                                label: 'Renew',
+                                value: AccessType.RENEW_ACCESS
+                              },
+                              {
+                                label: 'Revoke',
+                                value: AccessType.REVOKE_ACCESS
+                              },
+                            ]}
+                            onChange={(value: string, checked: boolean) =>
+                              onAccessorRadioBtnChange(value as AccessType, accessor.profile.ownerId)
+                            }
+                          ></RadioGroup>
+                        </>
+                      )
+                    }
+                  </div>
+                )
+              })
+            }
           </Form.Group>
 
           {/* DUC */}
