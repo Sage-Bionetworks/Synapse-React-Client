@@ -131,6 +131,8 @@ import {
 import { ActionRequiredResponse, AvailableFilesResponse, FilesStatisticsResponse, QueryResponseDetails } from './synapseTypes/DownloadListV2/QueryResponseDetails'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
+import { DownloadListPackageRequest } from './synapseTypes/DownloadListV2/DownloadListPackageRequest'
+import { DownloadListPackageResponse } from './synapseTypes/DownloadListV2/DownloadListPackageResponse'
 
 const cookies = new UniversalCookies()
 
@@ -1671,6 +1673,37 @@ export const addFileToDownloadListV2 = (
   )
 }
 
+/**
+ * http://rest-docs.synapse.org/rest/POST/download/list/package/async/start.html
+ */
+ export const createPackageFromDownloadListV2 = (
+  zipFileName?: string,
+  accessToken: string | undefined = undefined,
+  updateParentState?: any,
+) => {
+  const request: DownloadListPackageRequest = {
+    zipFileName,
+    concreteType: 'org.sagebionetworks.repo.model.download.DownloadListPackageRequest',
+  }
+  return doPost<AsyncJobId>(
+    `/repo/v1/download/list/package/async/start`,
+    request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((resp: AsyncJobId) => {
+      const requestUrl = `/repo/v1/download/list/package/async/get/${resp.token}`
+      return getAsyncResultFromJobId<DownloadListPackageResponse>(
+        requestUrl,
+        accessToken,
+        updateParentState,
+      )
+    })
+    .catch((error: any) => {
+      throw error
+    })
+}
 
 /**
  * http://rest-docs.synapse.org/rest/POST/download/list/add/async/start.html
