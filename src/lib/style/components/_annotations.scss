@@ -1,0 +1,33 @@
+.bootstrap-4-backport {
+  .AnnotationEditor {
+    .col-xs-3,
+    .col-xs-6 {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    .row {
+      padding: 0px 10px;
+    }
+    .calendar-with-icon-form-group.form-group {
+      input {
+        margin-bottom: 0;
+      }
+      .input-group-prepend {
+        margin-bottom: 0;
+      }
+      // margin-bottom: 0px;
+    }
+    .AddButton,
+    .RemoveButton {
+      border-radius: 0px;
+      height: 25px;
+      width: 25px;
+      padding: 0px;
+      margin: 0px 5px 1rem;
+      align-self: center;
+    }
+    // input.form-control {
+    //   height: 40px;
+    // }
+  }
+}

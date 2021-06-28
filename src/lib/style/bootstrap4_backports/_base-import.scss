@@ -103,6 +103,18 @@
       background-color: #f9f9f9;
       border-color: #e3e3e3;
     }
+
+    .btn-transparent-primary-#{$color-variant} {
+      @include button-variant(
+        $background: color.change($color, $alpha: 0),
+        $border: color.change($color, $alpha: 0)
+      );
+      color: $color;
+    }
+    .btn-transparent-primary-#{$color-variant}:hover {
+      color: color.adjust($color, $lightness: -10%);
+      box-shadow: unset;
+    }
   }
 
   .btn-secondary,
