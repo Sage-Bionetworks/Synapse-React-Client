@@ -25,7 +25,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
   const handleError = useErrorHandler()
   const {
     data,
-    isFetching,
+    isLoading,
     isError,
     error: newError,
     refetch,
@@ -74,7 +74,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               }`} aria-selected={selectedTabIndex == 1}>
               <button onClick={() => setSelectedTabIndex(1)}>
                 Download List
-                {!isError && !isFetching && data &&
+                {!isError && !isLoading && data &&
                   <span className="fileCount">{data.numberOfFilesAvailableForDownload}</span>
                 }
               </button>
@@ -82,7 +82,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
           </ul>
         </div>
       </div>
-      {selectedTabIndex == 0 && !isError && !isFetching && data &&
+      {selectedTabIndex == 0 && !isError && !isLoading && data &&
         <div>
           {data.numberOfFilesRequiringAction > 0 && 
             <div>
@@ -104,7 +104,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               </div>}
         </div>
       }
-      {selectedTabIndex == 1 && !isError && !isFetching && data &&
+      {selectedTabIndex == 1 && !isError && !isLoading && data &&
         <div>
           {data.numberOfFilesAvailableForDownload > 0 && 
             <div>
@@ -125,8 +125,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               <div className="availableForDownloadTableContainer container">
                 {isShowingCreatePackageUI && <CreatePackageV2 onPackageCreation={(zipFileUrl: string) => {
                   setIsShowingCreatePackageUI(false)
-                  window.open(zipFileUrl, "_blank")
-                  // TODO: set back to false after a delay to auto-hide?
+                  window.location.href = zipFileUrl
                   setIsShowingDownloadSuccessAlert(true)
                   refetch()
                 }} />}
@@ -137,12 +136,14 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 <div>Your Download List is currently empty.</div>
               </div>}
       </div>}
-      {isShowingDownloadSuccessAlert && <GlobalAlert
+      <GlobalAlert
+        show={isShowingDownloadSuccessAlert}
         variant='success'
         title='Package download' 
         description='The files contained in this zip file have been removed from your list.'
+        // autoCloseAfterDelayInSeconds={10}
         onClose={() => { setIsShowingDownloadSuccessAlert(false) }}
-      />}
+      />
     </div>
   )
 }

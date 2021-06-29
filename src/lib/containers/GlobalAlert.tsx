@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Button,
   Alert,
@@ -9,7 +9,7 @@ import {
   ErrorOutlined,
   WarningOutlined,
   CheckCircleOutlined,
-  Clear  
+  Clear
 } from '@material-ui/icons'
 
 export interface GlobalAlertProps extends AlertProps {
@@ -20,18 +20,19 @@ export interface GlobalAlertProps extends AlertProps {
   secondaryButtonText?: string
   onSecondaryButtonClick?: () => void
   onClose?: () => void
+  autoCloseAfterDelayInSeconds?: number
 }
 
 function getIcon(variant?: string) {
   switch (variant) {
     case 'warning':
-      return <WarningOutlined fontSize={'large'}></WarningOutlined>
+      return <WarningOutlined className="text-warning" fontSize={'large'} />
     case 'info':
-      return <InfoOutlined fontSize={'large'}></InfoOutlined>
+      return <InfoOutlined className="text-info" fontSize={'large'} />
     case 'danger':
-      return <ErrorOutlined fontSize={'large'} ></ErrorOutlined>
+      return <ErrorOutlined className="text-danger" fontSize={'large'} />
     case 'success':
-      return <CheckCircleOutlined fontSize={'large'}></CheckCircleOutlined>
+      return <CheckCircleOutlined className="text-success" fontSize={'large'} />
     default: return <></>
   }
 }
@@ -41,12 +42,38 @@ function getIcon(variant?: string) {
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
 function GlobalAlert(props: GlobalAlertProps) {
-  const iconContent = getIcon(props.variant)
+  const {
+    title,
+    description,
+    secondaryButtonText,
+    onSecondaryButtonClick,
+    primaryButtonText,
+    onPrimaryButtonClick,
+    show,
+    onClose,
+    autoCloseAfterDelayInSeconds,
+    variant,
+    transition} = props;
+  const iconContent = getIcon(variant)
+  useEffect(
+    () => {
+      let timer: NodeJS.Timeout
+      if (onClose && autoCloseAfterDelayInSeconds) {
+        timer = setTimeout(onClose, autoCloseAfterDelayInSeconds * 1000)
+      }
+      return () => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+      }
+    },
+    [onClose, autoCloseAfterDelayInSeconds]
+  )
   return <Alert
-    variant={props.variant}
-    show={true}
+    variant={variant}
+    show={show}
     dismissible={false}
-    transition={props.transition}
+    transition={transition}
     className="GlobalAlert bootstrap-4-backport"
   >
     <div className="gridContainer">
@@ -54,25 +81,25 @@ function GlobalAlert(props: GlobalAlertProps) {
         {iconContent}
       </span>
       <span className="messageArea">
-        <div><strong>{props.title}</strong></div>
-        {props.description}
+        <div><strong>{title}</strong></div>
+        {description}
       </span>
-      {props.secondaryButtonText && props.onSecondaryButtonClick && (
+      {secondaryButtonText && onSecondaryButtonClick && (
         <a
           className="secondaryButton"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={props.onSecondaryButtonClick}
+          onClick={onSecondaryButtonClick}
         >
           {' '}
-          <u> {props.secondaryButtonText} </u>
+          <u> {secondaryButtonText} </u>
         </a>
       )}
-      {props.primaryButtonText && props.onPrimaryButtonClick && (
-        <Button className="primaryButton" variant="secondary" onClick={props.onPrimaryButtonClick}>{props.primaryButtonText}</Button>
+      {primaryButtonText && onPrimaryButtonClick && (
+        <Button className="primaryButton" variant="secondary" onClick={onPrimaryButtonClick}>{primaryButtonText}</Button>
       )}
-      {props.onClose && <a className="closeAlert" onClick={props.onClose}>
-        <Clear fontSize={'large'}/>
+      {onClose && <a className="closeAlert" onClick={onClose}>
+        <Clear fontSize={'large'} />
       </a>}
     </div>
   </Alert>
