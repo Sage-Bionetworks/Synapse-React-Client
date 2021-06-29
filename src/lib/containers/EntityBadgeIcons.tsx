@@ -70,7 +70,7 @@ export type EntityBadgeIconsProps = {
 }
 
 /**
- * Stateless component used to show multiple entity badges.
+ * Stateless component used to show icons that show an entity's status.
  * Adapted from https://github.com/Sage-Bionetworks/SynapseWebClient/blob/46b9b717636cda2421926d96365244bbb72a05b6/src/main/java/org/sagebionetworks/web/client/widget/entity/EntityBadge.java
  */
 export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = ({
