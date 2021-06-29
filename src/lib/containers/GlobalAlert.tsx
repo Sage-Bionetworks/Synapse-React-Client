@@ -69,7 +69,7 @@ function GlobalAlert(props: GlobalAlertProps) {
         </a>
       )}
       {props.primaryButtonText && props.onPrimaryButtonClick && (
-        <Button className="primaryButton" onClick={props.onPrimaryButtonClick}>{props.primaryButtonText}</Button>
+        <Button className="primaryButton" variant="secondary" onClick={props.onPrimaryButtonClick}>{props.primaryButtonText}</Button>
       )}
       {props.onClose && <a className="closeAlert" onClick={props.onClose}>
         <Clear fontSize={'large'}/>
