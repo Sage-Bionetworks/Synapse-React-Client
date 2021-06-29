@@ -1,8 +1,32 @@
+import { JSONSchema7 } from 'json-schema'
+import $RefParser from 'json-schema-ref-parser'
 import SparkMD5 from 'spark-md5'
-import { BackendDestinationEnum, getEndpoint } from './functions/getEndpoint'
+import UniversalCookies from 'universal-cookie'
+import { SynapseConstants } from '.'
 import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ENTITY_ACCESS,
+  ENTITY_BUNDLE_V2,
+  ENTITY_HEADERS,
+  ENTITY_ID,
+  ENTITY_JSON,
+  ENTITY_SCHEMA_BINDING,
+  ENTITY_SCHEMA_VALIDATION,
+  REGISTERED_SCHEMA_ID,
+  USER_ID_BUNDLE,
+  USER_PROFILE,
+  USER_PROFILE_ID,
+} from './APIConstants'
+import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
+import { BackendDestinationEnum, getEndpoint } from './functions/getEndpoint'
+import { DATETIME_UTC_COOKIE_KEY } from './SynapseConstants'
+import {
+  AccessApproval,
   AccessCodeResponse,
   AccessControlList,
+  AccessRequirement,
+  AccessRequirementStatus,
+  ACTSubmissionStatus,
   AddFilesToDownloadListRequest,
   AddFilesToDownloadListResponse,
   AddPartResponse,
@@ -18,12 +42,20 @@ import {
   DownloadList,
   DownloadOrder,
   Entity,
+  EntityBundle,
+  EntityBundleRequest,
   EntityHeader,
+  EntityId,
   EntityLookupRequest,
+  EntityPath,
+  Evaluation,
+  EvaluationRound,
   FileEntity,
   FileHandle,
+  FileHandleAssociateType,
   FileHandleAssociation,
   FileHandleResults,
+  FileResult,
   FileUploadComplete,
   FormChangeRequest,
   FormData,
@@ -36,11 +68,13 @@ import {
   MultipartUploadStatus,
   OAuthClientPublic,
   OAuthConsentGrantedResponse,
+  ObjectType,
   OIDCAuthorizationRequest,
   OIDCAuthorizationRequestDescription,
   PaginatedResults,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
+  ProjectHeaderList,
   QueryBundleRequest,
   QueryResultBundle,
   QueryTableResults,
@@ -53,84 +87,59 @@ import {
   UserGroupHeaderResponsePage,
   UserProfile,
   WikiPage,
-  AccessRequirement,
-  AccessApproval,
-  EntityId,
   WikiPageKey,
-  ObjectType,
-  AccessRequirementStatus,
-  FileHandleAssociateType,
-  Evaluation,
-  EvaluationRound,
-  FileResult,
-  ProjectHeaderList,
-  EntityPath,
-  EntityBundleRequest,
-  EntityBundle,
-  ACTSubmissionStatus,
 } from './synapseTypes/'
-import UniversalCookies from 'universal-cookie'
-import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
-import { TableUpdateTransactionRequest } from './synapseTypes/Table/TableUpdate'
 import {
-  TransformSqlWithFacetsRequest,
-  SqlTransformResponse,
-} from './synapseTypes/Table/TransformSqlWithFacetsRequest'
-import { SynapseConstants } from '.'
-import { EvaluationRoundListRequest } from './synapseTypes/Evaluation/EvaluationRoundListRequest'
-import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/EvaluationRoundListResponse'
+  ACCESS_TYPE,
+  CreateSubmissionRequest,
+  ManagedACTAccessRequirementStatus,
+  RequestInterface,
+} from './synapseTypes/AccessRequirement'
+import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
-import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
+import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
+import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
+import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
+import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
+import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
+import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
+import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
+import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
+import {
+  ActionRequiredRequest,
+  AvailableFilesRequest,
+  FilesStatisticsRequest,
+  QueryRequestDetails,
+} from './synapseTypes/DownloadListV2/QueryRequestDetails'
+import {
+  ActionRequiredResponse,
+  AvailableFilesResponse,
+  FilesStatisticsResponse,
+  QueryResponseDetails,
+} from './synapseTypes/DownloadListV2/QueryResponseDetails'
+import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
+import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
 import {
   EntityChildrenRequest,
   EntityChildrenResponse,
 } from './synapseTypes/EntityChildren'
+import { EvaluationRoundListRequest } from './synapseTypes/Evaluation/EvaluationRoundListRequest'
+import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/EvaluationRoundListResponse'
+import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
-import { VersionInfo } from './synapseTypes/VersionInfo'
-import { SearchQuery, SearchResults } from './synapseTypes/Search'
+import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
 import { ResearchProject } from './synapseTypes/ResearchProject'
-import {
-  ManagedACTAccessRequirementStatus,
-  RequestInterface,
-  CreateSubmissionRequest,
-  ACCESS_TYPE,
-} from './synapseTypes/AccessRequirement'
-import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
-import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
-import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
-import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
-import { ActionRequiredRequest, AvailableFilesRequest, FilesStatisticsRequest, QueryRequestDetails } from './synapseTypes/DownloadListV2/QueryRequestDetails'
-import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
-import { RemoveBatchOfFilesFromDownloadListResponse } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListResponse'
-import { RemoveBatchOfFilesFromDownloadListRequest } from './synapseTypes/DownloadListV2/RemoveBatchOfFilesFromDownloadListRequest'
-import {
-  DATETIME_UTC_COOKIE_KEY,
-} from './SynapseConstants'
-import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
-import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
 import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
 import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
-import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
-import { JSONSchema7 } from 'json-schema'
-import $RefParser from 'json-schema-ref-parser'
+import { SearchQuery, SearchResults } from './synapseTypes/Search'
+import { TableUpdateTransactionRequest } from './synapseTypes/Table/TableUpdate'
 import {
-  ENTITY_HEADERS,
-  ENTITY_ACCESS,
-  ENTITY_BUNDLE_V2,
-  ENTITY_JSON,
-  ENTITY_SCHEMA_BINDING,
-  ENTITY_SCHEMA_VALIDATION,
-  REGISTERED_SCHEMA_ID,
-  USER_ID_BUNDLE,
-  USER_PROFILE,
-  USER_PROFILE_ID,
-  ACCESS_REQUIREMENT_BY_ID,
-  ENTITY_ID,
-} from './APIConstants'
-import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
-import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
+  SqlTransformResponse,
+  TransformSqlWithFacetsRequest,
+} from './synapseTypes/Table/TransformSqlWithFacetsRequest'
+import { VersionInfo } from './synapseTypes/VersionInfo'
 
 const cookies = new UniversalCookies()
 
@@ -907,17 +916,17 @@ export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>>(
 export const getEntityHeaders = (
   references: ReferenceList,
   accessToken?: string,
-):Promise<PaginatedResults<EntityHeader>> => {
+): Promise<PaginatedResults<EntityHeader>> => {
   // if references contains entity IDs with dot notation, fix the reference object
   const fixedReferences = references.map(reference => {
     if (reference.targetId.indexOf('.') > -1) {
       const entityTokens = reference.targetId.split('.')
       return {
         targetId: entityTokens[0],
-        version: entityTokens[1]
+        version: entityTokens[1],
       }
     } else return reference
-})
+  })
 
   return doPost(
     ENTITY_HEADERS,
@@ -1670,12 +1679,11 @@ export const addFileToDownloadListV2 = (
   )
 }
 
-
 /**
  * http://rest-docs.synapse.org/rest/POST/download/list/add/async/start.html
  * Start an asynchronous job to add files to a user's download list from either a view query or a folder. Use GET /download/list/add/async/get/{asyncToken} to get both the job status and job results.
  */
- export const addFilesToDownloadListV2 = async (
+export const addFilesToDownloadListV2 = async (
   request: AddToDownloadListRequest,
   accessToken: string | undefined = undefined,
   updateParentState?: any,
@@ -2286,9 +2294,9 @@ export const getAccessRequirement = (
  * @param {number} id id of the access requirement
  * @returns {Promise<AccessRequirement>}
  */
- export const getAccessRequirementById = (
+export const getAccessRequirementById = (
   accessToken: string | undefined,
-  id: number
+  id: number,
 ): Promise<AccessRequirement> => {
   return doGet<AccessRequirement>(
     ACCESS_REQUIREMENT_BY_ID(id),
@@ -2610,14 +2618,14 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
 
 const getDownloadListJobResponse = (
   accessToken: string | undefined,
-  queryRequestDetails: QueryRequestDetails): Promise<QueryResponseDetails> => {
+  queryRequestDetails: QueryRequestDetails,
+): Promise<QueryResponseDetails> => {
+  const downloadListQueryRequest: DownloadListQueryRequest = {
+    concreteType:
+      'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
+    requestDetails: queryRequestDetails,
+  }
 
-    const downloadListQueryRequest: DownloadListQueryRequest = {
-      concreteType:
-        'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
-      requestDetails: queryRequestDetails,
-    }
-  
   return doPost<AsyncJobId>(
     '/repo/v1/download/list/query/async/start',
     downloadListQueryRequest,
@@ -2630,7 +2638,7 @@ const getDownloadListJobResponse = (
       return getAsyncResultFromJobId<DownloadListQueryResponse>(
         urlRequest,
         accessToken,
-      ).then((queryResponse:DownloadListQueryResponse) => {
+      ).then((queryResponse: DownloadListQueryResponse) => {
         return queryResponse.responseDetails
       })
     })
@@ -2638,15 +2646,15 @@ const getDownloadListJobResponse = (
       console.error('Error on getDownloadListV2 ', err)
       throw err
     })
-
 }
 
 /**
  * Clear all files from the user's Download List v2.
  * http://rest-docs.synapse.org/rest/DELETE/download/list.html
  */
-export const clearDownloadListV2 =
-  (accessToken: string | undefined):Promise<void> => {
+export const clearDownloadListV2 = (
+  accessToken: string | undefined,
+): Promise<void> => {
   return doDelete(
     '/repo/v1/download/list',
     accessToken,
@@ -2663,32 +2671,41 @@ export const getAvailableFilesToDownload = (
   request: AvailableFilesRequest,
   accessToken: string | undefined = undefined,
 ): Promise<AvailableFilesResponse> => {
-  return getDownloadListJobResponse(accessToken, request) as Promise<AvailableFilesResponse>
+  return getDownloadListJobResponse(
+    accessToken,
+    request,
+  ) as Promise<AvailableFilesResponse>
 }
 
 /**
  * Get Download List v2 statistics
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
- export const getDownloadListStatistics = (
+export const getDownloadListStatistics = (
   accessToken: string | undefined = undefined,
 ): Promise<FilesStatisticsResponse> => {
   const filesStatsRequest: FilesStatisticsRequest = {
     concreteType:
       'org.sagebionetworks.repo.model.download.FilesStatisticsRequest',
   }
-  return getDownloadListJobResponse(accessToken, filesStatsRequest) as Promise<FilesStatisticsResponse>
+  return getDownloadListJobResponse(
+    accessToken,
+    filesStatsRequest,
+  ) as Promise<FilesStatisticsResponse>
 }
 
 /**
  * Get Download List v2 actions required
  * http://rest-docs.synapse.org/rest/POST/download/list/query/async/start.html
  */
- export const getDownloadListActionsRequired = (
+export const getDownloadListActionsRequired = (
   request: ActionRequiredRequest,
   accessToken: string | undefined = undefined,
 ): Promise<ActionRequiredResponse> => {
-  return getDownloadListJobResponse(accessToken, request) as Promise<ActionRequiredResponse>
+  return getDownloadListJobResponse(
+    accessToken,
+    request,
+  ) as Promise<ActionRequiredResponse>
 }
 
 /**
