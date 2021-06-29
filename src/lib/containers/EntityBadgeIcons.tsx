@@ -152,7 +152,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
    * If there are no annotations, this is the empty string ('')
    */
   const annotationsTableRows = bundle
-    ? `${Object.entries(bundle.annotations!.annotations).reduce(
+    ? `${Object.entries(bundle.annotations?.annotations ?? []).reduce(
         (previous, current, index) => {
           if (
             index < maxAnnosToShow ||
@@ -210,7 +210,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
           initialTab={EntityModalTabs.ANNOTATIONS}
         />
       </div>
-      {showIsPublicPrivate && isPublic(bundle) ? (
+      {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
         <FontAwesomeIcon
           className="EntityBadge__Badge"
           icon={faGlobeAmericas}
@@ -218,7 +218,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
           data-tip={'Public'}
         />
       ) : null}
-      {showIsPublicPrivate && !isPublic(bundle) ? (
+      {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
         <FontAwesomeIcon
           className="EntityBadge__Badge"
           icon={faLock}
@@ -226,7 +226,9 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
           data-tip={'Private'}
         />
       ) : null}
-      {showHasLocalSharingSettings && entityId === bundle.benefactorAcl!.id ? (
+      {showHasLocalSharingSettings &&
+      bundle.benefactorAcl &&
+      entityId === bundle.benefactorAcl!.id ? (
         <FontAwesomeIcon
           className="EntityBadge__Badge"
           icon={faCheck}

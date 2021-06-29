@@ -37,7 +37,7 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
       ) : null}
       <table className="AnnotationsTable">
         <tbody>
-          {Object.keys(entityBundle.annotations!.annotations).map(
+          {Object.keys(entityBundle.annotations?.annotations ?? []).map(
             (key: string) => {
               return (
                 <tr key={key} className="AnnotationsTable__Row">
