@@ -1,10 +1,9 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCheck,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
-import * as ReactBoostrap from 'react-bootstrap'
+import {
+  Button,
+  Alert,
+  AlertProps,
+} from 'react-bootstrap'
 import {
   createPackageFromDownloadListV2,
   getFileHandleByIdURL,
@@ -12,20 +11,16 @@ import {
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
 
-library.add(faCheck)
-
 export type CreatePackageV2Props = {
   updateDownloadList: () => void
 }
 
-type Alert = {
+type AlertConfig = {
   message: string
-  variant: ReactBoostrap.AlertProps['variant']
+  variant: AlertProps['variant']
   className: string | undefined
 }
 
-export const TEMPLATE_DOWNLOAD_MESSAGE =
-  'files were downloaded and removed from the list.'
 export const TEMPLATE_ERROR_FILE_NAME =
   'Please provide a package file name and try again.'
 
@@ -33,7 +28,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
-  const [alert, setAlert] = useState<Alert>({
+  const [alert, setAlert] = useState<AlertConfig>({
     message: '',
     className: undefined,
     variant: undefined,
@@ -65,7 +60,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
     } catch (err) {
       setAlert({
-        message: err.reason,
+        message: err.reason as string,
         variant: 'danger',
         className: undefined,
       })
@@ -97,67 +92,62 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
 
   return (
     <>
+      <div className="CreatePackageV2 bootstrap-4-backport">
+        {isLoading && (
+          <div>
+            <span className="spinner" />
+            <span style={{ marginLeft: 5 }}>
+              Creating your Download Package...
+            </span>
+          </div>
+        )}
+        {!isLoading && !bulkFileDownloadResponse && (
+          <>
+            <span>
+              Create your Download Package
+            </span>
+            <div>
+              <input
+                onChange={onChange}
+                type="text"
+                placeholder="PackageName"
+              ></input>
+              <span className="zip-extension SRC-boldText">.zip</span>
+              <Button
+                variant="primary"
+                onClick={createPackageHandler}
+                type="button"
+                style={{ marginLeft: 20 }}
+              >
+                Create Package
+              </Button>
+            </div>
+          </>
+        )}
+        {bulkFileDownloadResponse && (
+          <>
+            <span>
+              Your package has been created and is ready to download.
+            </span>
+            <Button
+              variant="primary"
+              onClick={downloadPackageHandler}
+            >
+              Download Package
+            </Button>
+          </>
+        )}
+      </div>
       {alert.message && (
-        <ReactBoostrap.Alert
+        <Alert
           transition={false}
           variant={alert.variant}
           show={true}
           className={alert.className}
         >
           {alert.message}
-        </ReactBoostrap.Alert>
+        </Alert>
       )}
-      <div className="create-package-container bootstrap-4-backport">
-        <div>
-          {isLoading && (
-            <span className="SRC-centerContentInline">
-              <span className="spinner" />
-              <span style={{ marginLeft: 5 }}>
-                Creating package...
-              </span>
-            </span>
-          )}
-          <div className="SRC-split">
-            {!isLoading && !bulkFileDownloadResponse && (
-              <>
-                <form onSubmit={createPackageHandler}>
-                  <input
-                    onChange={onChange}
-                    type="text"
-                    placeholder="PackageFileName"
-                  ></input>
-                  <span className="zip-extension SRC-boldText">.zip</span>
-                </form>
-                <ReactBoostrap.Button
-                  variant="primary"
-                  className="pill-xl"
-                  onClick={createPackageHandler}
-                  type="button"
-                >
-                  Create Package
-                </ReactBoostrap.Button>
-              </>
-            )}
-            {bulkFileDownloadResponse && (
-              <>
-                <div className="package-created">
-                  <FontAwesomeIcon icon="check" color="green" />
-                  <span>
-                    Package created! Ready for download.
-                  </span>
-                </div>
-                <ReactBoostrap.Button
-                  variant="primary"
-                  className="pill-xl"
-                  onClick={downloadPackageHandler}
-                >
-                  Download Package
-                </ReactBoostrap.Button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
     </>
   )
 }

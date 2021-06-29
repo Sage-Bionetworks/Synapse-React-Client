@@ -68,6 +68,12 @@
   .subSectionOverview {
     padding: 30px 0px;
     background-color: SRC.$background-color-gray;
+    .createZipPackageContainer {
+      text-decoration: underline;
+      a {
+        font-weight: bold;
+      }
+    }
   }
   &__explore-all {
     text-align: center;
@@ -75,6 +81,13 @@
   }
   .placeholder {
     @include SrcMixins.placeholder;
+  }
+}
+.CreatePackageV2 {
+  display: grid;
+  grid-template-columns: auto 330px;
+  * {
+    align-self: center;
   }
 }
 

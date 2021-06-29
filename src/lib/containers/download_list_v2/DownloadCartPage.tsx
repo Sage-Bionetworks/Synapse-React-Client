@@ -9,7 +9,7 @@ import DownloadListActionsRequired from './DownloadListActionsRequired'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
-import { CreatePackageV2, CreatePackageV2Props } from './CreatePackageV2'
+import { CreatePackageV2 } from './CreatePackageV2'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -30,8 +30,6 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
   } = useGetDownloadListStatistics()
   useEffect(() => {
     if (isError && newError) {
-      console.error('!!! There was an error while getting the DL stats in DownloadCartPage')
-      console.error(newError)
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
@@ -117,7 +115,9 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                   <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
                   both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 
                   If you choose to download as .zip files, you can download external files individually at any time.</p>
-                  <a onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>
+                  <span className="createZipPackageContainer">
+                    <a onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>
+                  </span>
                 </div>
               </div>
               <div className="availableForDownloadTableContainer container">
