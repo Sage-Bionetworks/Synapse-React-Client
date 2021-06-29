@@ -38,7 +38,7 @@ const isPublic = (bundle: EntityBundle): boolean => {
   })
 }
 
-type EntityBadgeIconsProps = {
+export type EntityBadgeIconsProps = {
   entityId: string
   flexWrap?: // possible settings for flex-wrap
   | 'wrap'
@@ -89,7 +89,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
   onUnlinkError = () => {
     /* noop */
   },
-  canOpenModal = true,
+  canOpenModal,
 }) => {
   const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID-' + entityId
 
@@ -212,34 +212,45 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
       </div>
       {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
         <FontAwesomeIcon
+          aria-hidden={false}
+          role="img"
           className="EntityBadge__Badge"
           icon={faGlobeAmericas}
           data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
           data-tip={'Public'}
+          data-testid={'is-public-icon'}
         />
       ) : null}
       {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
         <FontAwesomeIcon
+          aria-hidden={false}
+          role="img"
           className="EntityBadge__Badge"
           icon={faLock}
           data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
           data-tip={'Private'}
+          data-testid={'is-private-icon'}
         />
       ) : null}
       {showHasLocalSharingSettings &&
       bundle.benefactorAcl &&
       entityId === bundle.benefactorAcl!.id ? (
         <FontAwesomeIcon
+          aria-hidden={false}
+          role="img"
           className="EntityBadge__Badge"
           icon={faCheck}
           data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
           data-tip="Sharing Settings have been set"
+          data-testid={'sharing-settings-icon'}
         />
       ) : null}
 
       {showHasAnnotations &&
         !!(annotationsCount || schemaValidationResults) && (
           <FontAwesomeIcon
+            aria-hidden={false}
+            role={canOpenModal ? 'button' : 'img'}
             className={`EntityBadge__Badge ${schemaConformance}`}
             style={canOpenModal ? { cursor: 'pointer' } : undefined}
             onClick={canOpenModal ? () => setShowModal(true) : undefined}
@@ -247,31 +258,40 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
             data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
             data-tip={sanitizeHtml(annotationsHtml)}
             data-html={true}
+            data-testid={'annotations-icon'}
           />
         )}
       {showHasWiki && bundle.rootWikiId && (
         <FontAwesomeIcon
+          aria-hidden={false}
+          role="img"
           //   style={{ maxWidth: '20px', maxHeight: '20px' }}
           className="EntityBadge__Badge"
           icon={faAlignLeft} // faNewspaper is ugly
           data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
           data-tip="Has a wiki"
+          data-testid={'wiki-icon'}
         />
       )}
       {showHasDiscussionThread &&
         !!bundle.threadCount &&
         !!(bundle.threadCount > 0) && (
           <FontAwesomeIcon
+            aria-hidden={false}
+            role="img"
             className="EntityBadge__Badge"
             icon={faComment}
             data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
             data-tip="Has been mentioned in discussion"
+            data-testid={'discussion-icon'}
           />
         )}
       {showUnlink &&
         bundle.entityType === EntityType.LINK &&
         bundle.permissions?.canDelete && (
           <FontAwesomeIcon
+            aria-hidden={false}
+            role="button"
             onClick={() => {
               SynapseClient.deleteEntity(accessToken, entityId)
                 .then(() => onUnlink(entityId))
@@ -281,6 +301,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
             icon={faUnlink}
             data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
             data-tip="Remove this link"
+            data-testid={'unlink-icon'}
           />
         )}
     </div>
