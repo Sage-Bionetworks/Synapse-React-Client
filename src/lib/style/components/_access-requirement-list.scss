@@ -169,6 +169,23 @@
         margin-bottom: 0.5rem;
         display: inline-block;
       }
+      .SRC-userCard {
+        svg {
+          margin-top: 8px;
+        }
+      }
+      .radiogroup {
+        flex: auto;
+        text-align: right;
+        .radio, .radio+.radio {
+          display: inline-block;
+          margin: 0;
+          margin-left: 1rem;
+        }
+        label {
+          margin-bottom: 0;
+        }
+      }
     }
   }
 }
