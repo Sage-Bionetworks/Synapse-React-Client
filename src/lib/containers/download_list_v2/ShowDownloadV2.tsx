@@ -1,15 +1,14 @@
 import React, {useEffect} from 'react'
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { isInSynapseExperimentalMode } from '../../utils/SynapseClient'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
-import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import IconSvg from '../IconSvg'
 
-export type ShowDownloadProps = {
+export type ShowDownloadV2Props = {
   to: string
 }
 
@@ -17,31 +16,31 @@ export type ShowDownloadProps = {
  * Nav bar item, displayed when files have been added to the Download Cart.
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
-function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
+function ShowDownloadV2({ to }: ShowDownloadV2Props) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
   const tooltipText = 'Click to view items in your download cart.'
-
+  
   const {
     data,
     isFetching,
     isError,
     error: newError,
   } = useGetDownloadListStatistics()
-  const fileStats:FilesStatisticsResponse = data?.responseDetails as FilesStatisticsResponse
   
   useEffect(() => {
-    if (isError && newError) {
+    if (isError && newError && accessToken) {
       handleError(toError(newError))
     }
-  }, [isError, newError, handleError])
+  }, [isError, newError, handleError, accessToken])
 
-  if (!accessToken || isFetching) {
+  const isInExperimentalMode = isInSynapseExperimentalMode()
+  if (!accessToken || isFetching || !isInExperimentalMode) {
     return <></>
   }
   
-  const size = fileStats.totalNumberOfFiles ?? 0
+  const size = data?.totalNumberOfFiles ?? 0
   if (size === 0) {
     return <></>
   }
@@ -67,11 +66,10 @@ function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
       />
     </>
   )
-
-  return <Link className="Download-Link SRC-userImgSmall" to={to}>
+  return <a className="Download-Link v2" href={to} rel="noopener noreferrer">
       {content}
-    </Link>
+    </a>
   
 }
 
-export default withRouter(ShowDownload)
+export default ShowDownloadV2

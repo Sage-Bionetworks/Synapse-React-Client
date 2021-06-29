@@ -15,10 +15,13 @@ import TermsAndConditions from './containers/TermsAndConditions'
 import PageProgress from './containers/PageProgress'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import { SynapseHomepage } from './containers/SynapseHomepage'
+import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
 import ErrorPage from './containers/ErrorPage'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
+import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
+import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -50,6 +53,9 @@ const SynapseComponents = {
   EntityFinder,
   ErrorPage,
   EntityBadgeIcons,
+  DownloadCartPage,
+  ShowDownloadV2,
+  DownloadConfirmation,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

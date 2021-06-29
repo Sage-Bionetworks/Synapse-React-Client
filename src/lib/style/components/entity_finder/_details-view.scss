@@ -1,5 +1,6 @@
 @use '../../abstracts/variables' as SRC;
 @use './entity-finder' as EntityFinder;
+@use '../../abstracts/mixins' as SrcMixins;
 
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {
@@ -83,15 +84,7 @@
   }
 
   &__Placeholder {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    height: 80%;
-    font-size: large;
-    margin: 15px;
-
+    @include SrcMixins.placeholder;
     .SearchPlaceholderImage {
       width: 150px;
       margin: 20px;

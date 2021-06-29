@@ -1,24 +1,9 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SRCMixins;
 
 .EntityMetadata {
   .Tabs {
-    display: flex;
-    justify-content: space-between;
-
-    .Tab {
-      cursor: pointer;
-      text-align: center;
-      flex-grow: 1;
-      padding: 5px 0px;
-      transition: border-bottom 300ms ease-in;
-    }
-    .Tab[aria-selected='true'] {
-      border-bottom: 3px solid SRC.$primary-action-color-500;
-    }
-
-    .Tab[aria-selected='false'] {
-      border-bottom: 3px solid lightgray;
-    }
+    @include SRCMixins.underline-tabs;
   }
 
   .placeholder {

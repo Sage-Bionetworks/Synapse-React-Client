@@ -142,7 +142,7 @@ export default class App extends React.Component<{}, AppState> {
       <SynapseContextProvider
         synapseContext={{
           accessToken: token,
-          isInExperimentalMode: SynapseClient.getIsInExperimentalModeFromCookie(),
+          isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
         }}
       >

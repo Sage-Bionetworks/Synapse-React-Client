@@ -534,20 +534,21 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             <br />
             <span className={'requester-label'}>
               All data requesters must have a validated user profile.
-            </span>
-            <a
-              href={
-                'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
-              }
-              target={'_blank'}
-              rel={'noreferrer'}
-            >
+              <a
+                href={
+                  'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
+                }
+                target={'_blank'}
+                rel={'noreferrer'}
+              >
               <IconSvg
                 options={{
                   icon: 'info',
                 }}
               />
-            </a>
+              </a>
+            </span>
+
             <UserSearchBox
               id={'requesters'}
               onSelectCallback={onSelectUserCallback}

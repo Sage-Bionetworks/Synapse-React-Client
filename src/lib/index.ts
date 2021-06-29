@@ -51,6 +51,8 @@ import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
+import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
+import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -99,6 +101,8 @@ const SynapseComponents = {
   EntityFinder,
   ExperimentalMode,
   EntityBadgeIcons,
+  DownloadCartPage,
+  ShowDownloadV2,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }
