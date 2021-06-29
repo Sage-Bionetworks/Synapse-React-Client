@@ -172,6 +172,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
                 showHasDiscussionThread={false}
                 showHasWiki={false}
                 showUnlink={false}
+                canOpenModal={false}
               />
             )}
           </div>

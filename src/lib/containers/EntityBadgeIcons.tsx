@@ -65,6 +65,8 @@ type EntityBadgeIconsProps = {
   /* Invoked after the entity is unlinked/deleted in case there is cleanup to do. Returns the entityId */
   onUnlink?: (entityId: string) => void
   onUnlinkError?: (error: Error) => void
+  /** Whether or not the badges (e.g. Annotations) can trigger opening a modal on click */
+  canOpenModal: boolean
 }
 
 /**
@@ -87,6 +89,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
   onUnlinkError = () => {
     /* noop */
   },
+  canOpenModal = true,
 }) => {
   const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID-' + entityId
 
@@ -94,7 +97,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
     NO_SCHEMA = '', // or not in experimental mode
     VALID = 'Valid',
     INVALID = 'Invalid',
-    ANNOTATIONS_MISSING = 'Incomplete',
+    ANNOTATIONS_MISSING = 'Missing',
   }
 
   const { data: bundle } = useGetEntityBundle(entityId)
@@ -173,8 +176,12 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
       : ''
 
   // Format it all as an html table
-  const annotationsHtml = `<table>
-      ${annotationsTableRows ? annotationsTableRows : 'No annotations'}
+  const annotationsHtml = `
+      ${
+        schemaValidationResults ? `<p>${schemaConformance} Annotations</p>` : ''
+      }
+      <table>
+      ${annotationsTableRows ? annotationsTableRows : ''}
       ${valiationSchemaTableRow}
       </table>${
         annotationsCount > maxAnnosToShow
@@ -187,24 +194,22 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
   }
 
   return (
-    <div
-      className="EntityBadge"
-      style={{ flexWrap, justifyContent }}
-      onClick={e => e.stopPropagation()}
-    >
+    <div className="EntityBadge" style={{ flexWrap, justifyContent }}>
       <ReactTooltip
         id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
         className="EntityBadgeTooltip"
         delayShow={100}
         place={'right'}
       />
-      <EntityModal
-        entityId={entityId}
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        initialTab={EntityModalTabs.ANNOTATIONS}
-      />
-
+      <div onClick={e => e.stopPropagation()}>
+        <EntityModal
+          entityId={entityId}
+          show={showModal}
+          showTabs={false}
+          onClose={() => setShowModal(false)}
+          initialTab={EntityModalTabs.ANNOTATIONS}
+        />
+      </div>
       {showIsPublicPrivate && isPublic(bundle) ? (
         <FontAwesomeIcon
           className="EntityBadge__Badge"
@@ -233,8 +238,9 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
       {showHasAnnotations &&
         !!(annotationsCount || schemaValidationResults) && (
           <FontAwesomeIcon
-            className={`EntityBadge__Badge Annotations ${schemaConformance}`}
-            onClick={() => setShowModal(true)}
+            className={`EntityBadge__Badge ${schemaConformance}`}
+            style={canOpenModal ? { cursor: 'pointer' } : undefined}
+            onClick={canOpenModal ? () => setShowModal(true) : undefined}
             icon={faTag}
             data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
             data-tip={sanitizeHtml(annotationsHtml)}

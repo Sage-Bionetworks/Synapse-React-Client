@@ -24,6 +24,7 @@ export type EntityModalProps = {
   readonly entityId: string
   readonly onClose: () => void
   readonly initialTab?: EntityModalTabs
+  readonly showTabs?: boolean
 }
 
 export const EntityModal: React.FC<EntityModalProps> = ({
@@ -31,6 +32,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   show,
   onClose,
   initialTab = EntityModalTabs.METADATA,
+  showTabs = true,
 }: EntityModalProps) => {
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
   const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
@@ -43,6 +45,9 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       show={show}
       animation={false}
       onHide={onClose}
+      onClick={e => {
+        e.stopPropagation()
+      }}
     >
       <Modal.Header closeButton>
         <Modal.Title>
@@ -50,24 +55,26 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="Tabs">
-          {Object.keys(EntityModalTabs).map((tabName: string) => {
-            return (
-              <div
-                className="Tab"
-                role="tab"
-                key={tabName}
-                onClick={e => {
-                  e.stopPropagation()
-                  setCurrentTab(EntityModalTabs[tabName])
-                }}
-                aria-selected={tabName === currentTab}
-              >
-                {tabName}
-              </div>
-            )
-          })}
-        </div>
+        {showTabs ? (
+          <div className="Tabs">
+            {Object.keys(EntityModalTabs).map((tabName: string) => {
+              return (
+                <div
+                  className="Tab"
+                  role="tab"
+                  key={tabName}
+                  onClick={e => {
+                    e.stopPropagation()
+                    setCurrentTab(EntityModalTabs[tabName])
+                  }}
+                  aria-selected={tabName === currentTab}
+                >
+                  {tabName}
+                </div>
+              )
+            })}
+          </div>
+        ) : null}
         {isLoadingBundle ? (
           <SynapseSpinner />
         ) : (

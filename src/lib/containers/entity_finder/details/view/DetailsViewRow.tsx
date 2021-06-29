@@ -155,6 +155,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
           showHasDiscussionThread={false}
           showHasWiki={false}
           showUnlink={false}
+          canOpenModal={false}
         />
       </td>
       <td className="IdColumn">

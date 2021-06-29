@@ -8,21 +8,18 @@
     max-width: 10px;
     max-height: 10px;
 
-    &.Annotations {
-      cursor: pointer;
-    }
     &.Unlink {
       color: SRC.$red-delete;
       cursor: pointer;
     }
 
     &.Valid {
-      color: SRC.$green-affrimative;
+      color: SRC.$green-affirmative;
     }
     &.Invalid {
-      color: SRC.$red-delete;
+      color: SRC.$yellow-warning;
     }
-    &.Incomplete {
+    &.Missing {
       color: SRC.$gray-deemphasized;
     }
   }
