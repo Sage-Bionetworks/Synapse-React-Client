@@ -126,9 +126,10 @@ import {
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
-  ACCESS_REQUIREMENT_BY_ID
+  ACCESS_REQUIREMENT_BY_ID,
+  ENTITY_ID,
 } from './APIConstants'
-import { ActionRequiredResponse, AvailableFilesResponse, FilesStatisticsResponse, QueryResponseDetails } from './synapseTypes/DownloadListV2/QueryResponseDetails'
+import {
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
 
@@ -959,9 +960,8 @@ export const deleteEntity = (
   accessToken: string | undefined = undefined,
   entityId: string | number,
 ) => {
-  const url = `/repo/v1/entity/${entityId}`
   return doDelete(
-    url,
+    ENTITY_ID(entityId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
