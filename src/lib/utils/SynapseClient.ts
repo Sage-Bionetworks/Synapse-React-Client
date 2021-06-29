@@ -129,7 +129,6 @@ import {
   ACCESS_REQUIREMENT_BY_ID,
   ENTITY_ID,
 } from './APIConstants'
-import {
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
 
