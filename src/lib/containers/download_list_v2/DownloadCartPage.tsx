@@ -141,7 +141,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
         variant='success'
         title='Package download' 
         description='The files contained in this zip file have been removed from your list.'
-        // autoCloseAfterDelayInSeconds={10}
+        autoCloseAfterDelayInSeconds={10}
         onClose={() => { setIsShowingDownloadSuccessAlert(false) }}
       />
     </div>

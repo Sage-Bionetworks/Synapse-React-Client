@@ -1,7 +1,7 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:color';
 
-.GlobalAlert {
+.GlobalAlert[role="alert"] {
 	width: 100%;
 	position: fixed;
 	bottom: 0px;
