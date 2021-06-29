@@ -10,6 +10,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
 import { CreatePackageV2 } from './CreatePackageV2'
+import GlobalAlert from '../GlobalAlert'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -20,6 +21,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] = useState<boolean>(false)
+  const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] = useState(false)
   const handleError = useErrorHandler()
   const {
     data,
@@ -121,8 +123,11 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 </div>
               </div>
               <div className="availableForDownloadTableContainer container">
-                {isShowingCreatePackageUI && <CreatePackageV2 updateDownloadList={() => {
+                {isShowingCreatePackageUI && <CreatePackageV2 onPackageCreation={(zipFileUrl: string) => {
                   setIsShowingCreatePackageUI(false)
+                  window.open(zipFileUrl, "_blank")
+                  // TODO: set back to false after a delay to auto-hide?
+                  setIsShowingDownloadSuccessAlert(true)
                   refetch()
                 }} />}
                 <AvailableForDownloadTable /> 
@@ -132,6 +137,12 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 <div>Your Download List is currently empty.</div>
               </div>}
       </div>}
+      {isShowingDownloadSuccessAlert && <GlobalAlert
+        variant='success'
+        title='Package download' 
+        description='The files contained in this zip file have been removed from your list.'
+        onClose={() => { setIsShowingDownloadSuccessAlert(false) }}
+      />}
     </div>
   )
 }

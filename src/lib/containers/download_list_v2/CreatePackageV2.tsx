@@ -12,7 +12,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
 
 export type CreatePackageV2Props = {
-  updateDownloadList: () => void
+  onPackageCreation: (zipFileUrl: string) => void
 }
 
 type AlertConfig = {
@@ -36,7 +36,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
     DownloadListPackageResponse | undefined
   >(undefined)
-  const { updateDownloadList } = props
+  const { onPackageCreation } = props
 
   const createPackageHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault()
@@ -56,7 +56,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
         fileNameWithZipExtension,
         accessToken,
       )
-      
+
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
     } catch (err) {
       setAlert({
@@ -72,15 +72,8 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   const downloadPackageHandler = async () => {
     const { resultFileHandleId } = bulkFileDownloadResponse!
     try {
-      setAlert({
-        message: 'Downloaded',
-        className: '',
-        variant: 'primary',
-      })
       const url = await getFileHandleByIdURL(resultFileHandleId, accessToken)
-      window.location.href = url
-      updateDownloadList()
-      setBulkFileDownloadResponse(undefined)
+      onPackageCreation(url)
     } catch (err) {
       console.error('Err on getFileHandleByIdURL = ', err)
     }
