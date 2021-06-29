@@ -45,9 +45,6 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       show={show}
       animation={false}
       onHide={onClose}
-      onClick={e => {
-        e.stopPropagation()
-      }}
     >
       <Modal.Header closeButton>
         <Modal.Title>
