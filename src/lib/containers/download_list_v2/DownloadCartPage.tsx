@@ -67,6 +67,9 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               }`} aria-selected={selectedTabIndex == 0}>
               <button onClick={() => setSelectedTabIndex(0)}>
                 Access Actions Required
+                {!isError && !isLoading && data &&
+                  <span className="fileCount">{data.totalNumberOfFiles - data.numberOfFilesAvailableForDownload}</span>
+                }
               </button>
             </li>
             <li className={`nav-item ${
