@@ -24,7 +24,7 @@ function ShowDownloadV2({ to }: ShowDownloadV2Props) {
   
   const {
     data,
-    isFetching,
+    isLoading,
     isError,
     error: newError,
   } = useGetDownloadListStatistics()
@@ -36,7 +36,7 @@ function ShowDownloadV2({ to }: ShowDownloadV2Props) {
   }, [isError, newError, handleError, accessToken])
 
   const isInExperimentalMode = isInSynapseExperimentalMode()
-  if (!accessToken || isFetching || !isInExperimentalMode) {
+  if (!accessToken || isLoading || !isInExperimentalMode) {
     return <></>
   }
   
