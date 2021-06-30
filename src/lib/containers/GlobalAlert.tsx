@@ -18,7 +18,7 @@ export interface GlobalAlertProps extends AlertProps {
   primaryButtonText?: string
   onPrimaryButtonClick?: () => void
   secondaryButtonText?: string
-  onSecondaryButtonClick?: () => void
+  secondaryButtonHref?: string
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
 }
@@ -46,7 +46,7 @@ function GlobalAlert(props: GlobalAlertProps) {
     title,
     description,
     secondaryButtonText,
-    onSecondaryButtonClick,
+    secondaryButtonHref,
     primaryButtonText,
     onPrimaryButtonClick,
     show,
@@ -84,12 +84,12 @@ function GlobalAlert(props: GlobalAlertProps) {
         <div><strong>{title}</strong></div>
         {description}
       </span>
-      {secondaryButtonText && onSecondaryButtonClick && (
+      {secondaryButtonText && secondaryButtonHref && (
         <a
           className="secondaryButton"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={onSecondaryButtonClick}
+          href={secondaryButtonHref}
         >
           {' '}
           <u> {secondaryButtonText} </u>

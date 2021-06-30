@@ -16,7 +16,7 @@ const onSecondaryButtonClick = () => {
     {<GlobalAlert variant='info' show={isOpen} title='Our site uses cookies.' description='This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy.' 
     primaryButtonText="Accept and Continue"
     onPrimaryButtonClick={onPrimaryButtonClick}
-    secondaryButtonText="Learn More" onSecondaryButtonClick={onSecondaryButtonClick}
+    secondaryButtonText="Learn More" secondaryButtonHref="https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf"
     />}
 </div>
 ```
