@@ -12,7 +12,8 @@ import {
   Clear
 } from '@material-ui/icons'
 
-export interface GlobalAlertProps extends AlertProps {
+export interface FullWidthAlertProps extends AlertProps {
+  variant: string
   title?: string
   description?: string
   primaryButtonText?: string
@@ -21,6 +22,7 @@ export interface GlobalAlertProps extends AlertProps {
   secondaryButtonHref?: string
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
+  isGlobal?: boolean
 }
 
 function getIcon(variant?: string) {
@@ -41,7 +43,7 @@ function getIcon(variant?: string) {
  * Nav bar item, displayed when files have been added to the Download Cart.
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
-function GlobalAlert(props: GlobalAlertProps) {
+function FullWidthAlert(props: FullWidthAlertProps) {
   const {
     title,
     description,
@@ -52,8 +54,9 @@ function GlobalAlert(props: GlobalAlertProps) {
     show,
     onClose,
     autoCloseAfterDelayInSeconds,
-    variant,
-    transition} = props;
+    variant = 'info',
+    transition,
+    isGlobal = true} = props;
   const iconContent = getIcon(variant)
   useEffect(
     () => {
@@ -69,12 +72,13 @@ function GlobalAlert(props: GlobalAlertProps) {
     },
     [onClose, autoCloseAfterDelayInSeconds]
   )
+  const additionalAlertVariantClass = variant ? `alert-${variant}` : ''
   return <Alert
     variant={variant}
     show={show}
     dismissible={false}
     transition={transition}
-    className="GlobalAlert bootstrap-4-backport"
+    className={`FullWidthAlert bootstrap-4-backport ${isGlobal ? 'global' : ''} ${additionalAlertVariantClass}`}
   >
     <div className="gridContainer">
       <span className="iconArea">
@@ -105,4 +109,4 @@ function GlobalAlert(props: GlobalAlertProps) {
   </Alert>
 }
 
-export default GlobalAlert
+export default FullWidthAlert

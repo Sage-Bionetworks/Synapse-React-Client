@@ -1,11 +1,13 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:color';
 
-.GlobalAlert[role="alert"] {
-	width: 100%;
-	position: fixed;
-	bottom: 0px;
-	left: 0px;
+.FullWidthAlert[role="alert"] {
+	&.global{
+		width: 100%;
+		position: fixed;
+		bottom: 0px;
+		left: 0px;
+	}
 	padding: 14px;
 	z-index: 500;
 	.gridContainer {

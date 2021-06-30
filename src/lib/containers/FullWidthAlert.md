@@ -13,10 +13,11 @@ const onSecondaryButtonClick = () => {
 }
 <div>
     <button className="btn btn-default" onClick={() => setIsOpen(true)} >Show Cookie Notification</button>
-    {<GlobalAlert variant='info' show={isOpen} title='Our site uses cookies.' description='This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy.' 
+    {<FullWidthAlert variant='info' show={isOpen} title='Our site uses cookies.' description='This website uses cookies to enhance your experience and to analyze our traffic. Using this website means that you agree with our cookie policy.' 
     primaryButtonText="Accept and Continue"
     onPrimaryButtonClick={onPrimaryButtonClick}
     secondaryButtonText="Learn More" secondaryButtonHref="https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf"
+    isGlobal={true}
     />}
 </div>
 ```
@@ -29,7 +30,7 @@ const onClose = () => {
 }
 <div>
     <button className="btn btn-default" onClick={() => setIsOpen(true)} >Show Package Downloaded</button>
-    {<GlobalAlert variant='success' show={isOpen} title='Package has been downloaded' description='The files contained in this zip file have been removed from your list.' onClose={onClose}
+    {<FullWidthAlert variant='success' show={isOpen} title='Package has been downloaded' description='The files contained in this zip file have been removed from your list.' onClose={onClose} isGlobal={true}
     />}
 </div>
 ```

@@ -10,7 +10,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
 import { CreatePackageV2 } from './CreatePackageV2'
-import GlobalAlert from '../GlobalAlert'
+import FullWidthAlert from '../FullWidthAlert'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -135,7 +135,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 <div>Your Download List is currently empty.</div>
               </div>}
       </div>}
-      <GlobalAlert
+      <FullWidthAlert
         show={isShowingDownloadSuccessAlert}
         variant='success'
         title='Package download' 

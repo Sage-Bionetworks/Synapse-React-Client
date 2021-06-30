@@ -20,7 +20,7 @@ import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationE
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
 import ErrorPage from './containers/ErrorPage'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
-import GlobalAlert from './containers/GlobalAlert'
+import FullWidthAlert from './containers/FullWidthAlert'
 import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
 import {
   SynapseContextProvider,
@@ -55,7 +55,7 @@ const SynapseComponents = {
   DownloadCartPage,
   ShowDownloadV2,
   DownloadConfirmation,
-  GlobalAlert
+  FullWidthAlert: FullWidthAlert
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
