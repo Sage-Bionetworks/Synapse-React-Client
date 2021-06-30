@@ -58,6 +58,17 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
       )
 
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
+      const { resultFileHandleId } = currentBulkFileDownloadResponse
+      try {
+        const url = await getFileHandleByIdURL(resultFileHandleId, accessToken)
+        //reset
+        setZipFileName('')
+        setBulkFileDownloadResponse(undefined)
+        onPackageCreation(url)
+      } catch (err) {
+        console.error('Err on getFileHandleByIdURL = ', err)
+      }
+  
     } catch (err) {
       setAlert({
         message: err.reason as string,
@@ -69,16 +80,6 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     }
   }
 
-  const downloadPackageHandler = async () => {
-    const { resultFileHandleId } = bulkFileDownloadResponse!
-    try {
-      const url = await getFileHandleByIdURL(resultFileHandleId, accessToken)
-      onPackageCreation(url)
-    } catch (err) {
-      console.error('Err on getFileHandleByIdURL = ', err)
-    }
-  }
-
   const onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
     setZipFileName(event.currentTarget.value)
   }
@@ -86,49 +87,34 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   return (
     <>
       <div className="CreatePackageV2 bootstrap-4-backport">
+        <span className="createPackageTitle">
+          Create your Download Package
+        </span>
+        {!isLoading && !bulkFileDownloadResponse && <div className="inputAndCreateButton">
+          <input
+            onChange={onChange}
+            type="text"
+            placeholder="PackageName"
+            style={{width:'233px'}}
+          ></input>
+          <span className="zipUI">.zip</span>
+          <Button
+            variant={fileName ? 'primary' : 'dark'}
+            onClick={createPackageHandler}
+            type="button"
+            style={{ marginLeft: 20 }}
+            disabled={ fileName ? false : true}
+          >
+            Create Package
+          </Button>
+        </div>}
         {isLoading && (
-          <div>
+          <div className="creatingPackage">
             <span className="spinner" />
             <span style={{ marginLeft: 5 }}>
-              Creating your Download Package...
+              Creating package...
             </span>
           </div>
-        )}
-        {!isLoading && !bulkFileDownloadResponse && (
-          <>
-            <span>
-              Create your Download Package
-            </span>
-            <div>
-              <input
-                onChange={onChange}
-                type="text"
-                placeholder="PackageName"
-              ></input>
-              <span className="zip-extension SRC-boldText">.zip</span>
-              <Button
-                variant="primary"
-                onClick={createPackageHandler}
-                type="button"
-                style={{ marginLeft: 20 }}
-              >
-                Create Package
-              </Button>
-            </div>
-          </>
-        )}
-        {bulkFileDownloadResponse && (
-          <>
-            <span>
-              Your package has been created and is ready to download.
-            </span>
-            <Button
-              variant="primary"
-              onClick={downloadPackageHandler}
-            >
-              Download Package
-            </Button>
-          </>
         )}
       </div>
       {alert.message && (
