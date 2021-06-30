@@ -9,6 +9,8 @@ import DownloadListActionsRequired from './DownloadListActionsRequired'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
+import { CreatePackageV2 } from './CreatePackageV2'
+import FullWidthAlert from '../FullWidthAlert'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -18,18 +20,18 @@ export type DownloadCartPageProps = Record<string, never>
 export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = () => {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
+  const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] = useState<boolean>(false)
+  const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] = useState(false)
   const handleError = useErrorHandler()
   const {
     data,
-    isFetching,
+    isLoading,
     isError,
     error: newError,
     refetch,
   } = useGetDownloadListStatistics()
   useEffect(() => {
     if (isError && newError) {
-      console.error('!!! There was an error while getting the DL stats in DownloadCartPage')
-      console.error(newError)
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
@@ -72,7 +74,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               }`} aria-selected={selectedTabIndex == 1}>
               <button onClick={() => setSelectedTabIndex(1)}>
                 Download List
-                {!isError && !isFetching && data &&
+                {!isError && !isLoading && data &&
                   <span className="fileCount">{data.numberOfFilesAvailableForDownload}</span>
                 }
               </button>
@@ -80,7 +82,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
           </ul>
         </div>
       </div>
-      {selectedTabIndex == 0 && !isError && !isFetching && data &&
+      {selectedTabIndex == 0 && !isError && !isLoading && data &&
         <div>
           {data.numberOfFilesRequiringAction > 0 && 
             <div>
@@ -102,7 +104,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               </div>}
         </div>
       }
-      {selectedTabIndex == 1 && !isError && !isFetching && data &&
+      {selectedTabIndex == 1 && !isError && !isLoading && data &&
         <div>
           {data.numberOfFilesAvailableForDownload > 0 && 
             <div>
@@ -115,9 +117,17 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                   <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
                   both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 
                   If you choose to download as .zip files, you can download external files individually at any time.</p>
+                  <span className="createZipPackageContainer">
+                    <a onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>
+                  </span>
                 </div>
               </div>
               <div className="availableForDownloadTableContainer container">
+                {isShowingCreatePackageUI && <CreatePackageV2 onPackageCreation={(zipFileUrl: string) => {
+                  window.location.href = zipFileUrl
+                  setIsShowingDownloadSuccessAlert(true)
+                  refetch()
+                }} />}
                 <AvailableForDownloadTable /> 
               </div>
             </div>}
@@ -125,6 +135,14 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 <div>Your Download List is currently empty.</div>
               </div>}
       </div>}
+      <FullWidthAlert
+        show={isShowingDownloadSuccessAlert}
+        variant='success'
+        title='Package download' 
+        description='The files contained in this zip file have been removed from your list.'
+        autoCloseAfterDelayInSeconds={10}
+        onClose={() => { setIsShowingDownloadSuccessAlert(false) }}
+      />
     </div>
   )
 }
