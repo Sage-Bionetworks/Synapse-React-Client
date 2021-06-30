@@ -44,8 +44,12 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
                     <td className="AnnotationsTable__Row__Key">{key}</td>
                     <td className="AnnotationsTable__Row__Value">
                       {entityBundle.annotations?.annotations[key].value
-                        ? entityBundle.annotations?.annotations[key].value
-                            .map((v: string | number) => v?.toString())
+                        ? // Cast string[] | number[] to (string | number)[] because ESLint isn't very smart
+                          (entityBundle.annotations?.annotations[key].value as (
+                            | string
+                            | number
+                          )[])
+                            .map((v: string | number) => String(v))
                             .join(', ')
                         : null}
                     </td>
@@ -79,4 +83,3 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
     </>
   ) : null
 }
-
