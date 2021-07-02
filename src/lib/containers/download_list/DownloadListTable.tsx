@@ -39,6 +39,7 @@ import AccessRequirementList, {
   AccessRequirementListProps,
 } from '../access_requirement_list/AccessRequirementList'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 library.add(faTrash)
 
@@ -512,7 +513,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
-                      href={`https://www.synapse.org/#!Synapse:${synId}`}
+                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synId}`}
                     >
                       {fileName}
                     </a>

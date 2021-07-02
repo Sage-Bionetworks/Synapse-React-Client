@@ -7,6 +7,7 @@ import { EntityHeader } from '../../utils/synapseTypes'
 import { Icon } from '../row_renderers/utils'
 import { VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 
 export type RequestDownloadCardProps = {
@@ -47,7 +48,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
               You must be granted the download permission on <strong>{entityHeader?.name}</strong> in order to download this set of files.
             </div>
           </div>
-          <a className="startButtonContainer" href={`https://www.synapse.org/#!Synapse:${entityHeader?.id}`} target='_blank' rel='noreferrer'>
+          <a className="startButtonContainer" href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityHeader?.id}`} target='_blank' rel='noreferrer'>
             <Button className="startButton" variant="secondary">Start</Button>
           </a>
         </div>

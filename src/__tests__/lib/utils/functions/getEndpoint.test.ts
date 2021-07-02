@@ -2,6 +2,7 @@ import {
   getEndpoint,
   BackendDestinationEnum,
   PRODUCTION_ENDPOINT_CONFIG,
+  getSynapsePortalEndpoint,
 } from '../../../../lib/utils/functions/getEndpoint'
 
 describe('getting endpoints works', () => {
@@ -13,6 +14,23 @@ describe('getting endpoints works', () => {
   it('returns REPO endpoint', () => {
     expect(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)).toEqual(
       PRODUCTION_ENDPOINT_CONFIG.REPO,
+    )
+  })
+
+  it('returns synapse.org portal endpoint', () => {
+    expect(getSynapsePortalEndpoint('nf.synapse.org')).toEqual(
+      'https://www.synapse.org/',
+    )
+    expect(getSynapsePortalEndpoint('localhost')).toEqual(
+      'https://www.synapse.org/',
+    )
+  })
+  it('returns relative portal endpoint', () => {
+    expect(getSynapsePortalEndpoint('www.synapse.org')).toEqual(
+      '/',
+    )
+    expect(getSynapsePortalEndpoint('staging.synapse.org')).toEqual(
+      '/',
     )
   })
   it('uses custom object set in the window', () => {

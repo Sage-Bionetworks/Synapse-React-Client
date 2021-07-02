@@ -1,5 +1,5 @@
 import SparkMD5 from 'spark-md5'
-import { BackendDestinationEnum, getEndpoint } from './functions/getEndpoint'
+import { BackendDestinationEnum, getEndpoint, PRODUCTION_ENDPOINT_CONFIG } from './functions/getEndpoint'
 import {
   AccessCodeResponse,
   AccessControlList,
@@ -1273,7 +1273,7 @@ export const detectSSOCode = () => {
       .catch((err: any) => {
         if (err.status === 404) {
           // Synapse account not found, send to registration page
-          window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
+          window.location.replace(`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`)
         }
         console.error('Error on sso sign in ', err)
       })

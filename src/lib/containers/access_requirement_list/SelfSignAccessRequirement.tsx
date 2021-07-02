@@ -10,6 +10,7 @@ import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import AcceptedRequirements from './AcceptedRequirements'
 import { AccessRequirementProps } from './AccessRequirementProps'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export default function SelfSignAccessRequirementComponent({
   accessRequirement,
@@ -68,7 +69,7 @@ export default function SelfSignAccessRequirementComponent({
               You must first become a
               <a
                 className="self-sign-access-certified bold-text"
-                href="https://www.synapse.org/#!Quiz:"
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Quiz:`}
               >
                 &nbsp;certified user
               </a>
@@ -93,7 +94,7 @@ export default function SelfSignAccessRequirementComponent({
               You must first apply to have your
               <a
                 className="self-sign-access-validated bold-text"
-                href="https://www.synapse.org/#!Profile:v/settings"
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:v/settings`}
               >
                 &nbsp;user profile validated
               </a>
