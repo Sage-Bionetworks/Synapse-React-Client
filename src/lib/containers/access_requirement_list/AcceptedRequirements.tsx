@@ -17,6 +17,7 @@ import { SynapseClient } from '../../utils'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
 import { SUPPORTED_ACCESS_REQUIREMENTS } from './AccessRequirementList'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export type AcceptedRequirementsProps = {
   user: UserProfile | undefined
@@ -73,7 +74,7 @@ export default function AcceptedRequirements({
 
   const gotoSynapseAccessRequirementPage = () => {
     window.open(
-      `https://www.synapse.org/#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
+      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${accessRequirement.id}&TYPE=ENTITY&ID=${entityId}`,
     )
   }
   const onAcceptClicked = () => {
