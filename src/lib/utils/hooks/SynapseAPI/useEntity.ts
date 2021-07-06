@@ -12,13 +12,14 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
+import { EntityJson } from '../../synapseTypes'
 
 export function useGetJson(
   entityId: string,
-  options?: UseQueryOptions<unknown, SynapseClientError>,
+  options?: UseQueryOptions<EntityJson, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery<unknown, SynapseClientError>(
+  return useQuery<EntityJson, SynapseClientError>(
     [accessToken, 'entity', entityId, 'json'],
     () => SynapseClient.getEntityJson(entityId, accessToken),
     options,
@@ -28,12 +29,12 @@ export function useGetJson(
 export function useUpdateViaJson(
   entityId: string,
   json: unknown,
-  options?: UseMutationOptions<unknown, SynapseClientError>,
+  options?: UseMutationOptions<EntityJson, SynapseClientError>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
 
-  return useMutation<unknown, SynapseClientError>(
+  return useMutation<EntityJson, SynapseClientError>(
     [accessToken, 'entity', entityId, 'json'],
     () => SynapseClient.updateEntityJson(entityId, json, accessToken),
     {

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { FieldProps, utils as rjsfUtils } from '@rjsf/core'
 import React, { useEffect, useState } from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
@@ -14,7 +13,11 @@ const ISO_TIMESTAMP_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
  * @param props
  * @returns
  */
-export function AdditionalPropertiesSchemaField<T>(props: FieldProps<T>) {
+export function AdditionalPropertiesSchemaField<T>(
+  props: FieldProps<T> & {
+    onDropPropertyClick: (key: string) => (event: any) => void
+  },
+) {
   /**
    * This component provides these enhancements to the SchemaField:
    *
@@ -36,6 +39,7 @@ export function AdditionalPropertiesSchemaField<T>(props: FieldProps<T>) {
     schema,
     name,
     onDropPropertyClick,
+    uiSchema,
   } = props
   const {
     list,
@@ -49,7 +53,7 @@ export function AdditionalPropertiesSchemaField<T>(props: FieldProps<T>) {
     // After coercing values to a list, we want to propagate the changes
     // If we don't do this, the form may re-order if a user changes a value
 
-    // TODO: Figure out why this doesnt work without a delay
+    // TODO: Figure out why we need a delay
     setTimeout(() => {
       onChange(list)
     }, 500)
@@ -85,6 +89,7 @@ export function AdditionalPropertiesSchemaField<T>(props: FieldProps<T>) {
         setList(
           list.map(item => {
             if (typeof item === 'string' && ISO_TIMESTAMP_REGEX.exec(item)) {
+              // TODO: Maybe see if we can just turn the value into a moment instead of regexing
               return item
             } else {
               return undefined
@@ -109,7 +114,6 @@ export function AdditionalPropertiesSchemaField<T>(props: FieldProps<T>) {
 
   useEffect(() => {
     if (list.length === 0) {
-      console.log(onDropPropertyClick)
       onDropPropertyClick(name)({
         preventDefault: () => {
           //noop
@@ -124,14 +128,27 @@ export function AdditionalPropertiesSchemaField<T>(props: FieldProps<T>) {
     return {
       children: (
         <Widget
-          id={'abcdef'}
+          id={`${name}-${index}`}
           schema={schema}
-          registry={registry}
           value={item}
+          registry={registry}
           onChange={value => {
             handleListChange(index)(value)
             onChange(list)
           }}
+          uiSchema={uiSchema}
+          required={props.required}
+          disabled={props.disabled}
+          readonly={props.readonly}
+          autofocus={props.autofocus}
+          placeholder={props.placeholder ?? ''}
+          options={{}}
+          formContext={props.formContext as T}
+          onBlur={props.onBlur}
+          onFocus={() => {}}
+          label={props.title ?? ''}
+          multiple={true}
+          rawErrors={[]}
         />
       ),
       onDropIndexClick: () => {
@@ -167,6 +184,7 @@ export function AdditionalPropertiesSchemaField<T>(props: FieldProps<T>) {
         title={name}
         schema={schema}
         items={items}
+        registry={registry}
       />
     </>
   )

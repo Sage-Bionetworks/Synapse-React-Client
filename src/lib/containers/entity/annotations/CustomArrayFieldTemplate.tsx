@@ -5,20 +5,16 @@ import { Button, FormGroup, FormLabel } from 'react-bootstrap'
 import { ADDITIONAL_PROPERTY_FLAG } from 'react-jsonschema-form/lib/utils'
 
 export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
-  console.log(props)
   return (
     <FormGroup className={props.className}>
       <FormLabel>{props.title}</FormLabel>
       {props.items && (
         <>
           {props.items.map((element, index) => (
-            <div
-              style={{ display: 'flex' }}
-              key={element.key}
-              className={element.className}
-            >
-              <div style={{ width: '100%' }}>{element.children}</div>
-              {(props.schema[ADDITIONAL_PROPERTY_FLAG] || index !== 0) && (
+            <div key={element.key} className="array-item">
+              {element.children}
+              {(props.schema[ADDITIONAL_PROPERTY_FLAG] ||
+                !(index === 0 && props.items.length === 1)) && (
                 <Button
                   variant="transparent-primary-500"
                   className="RemoveButton"
