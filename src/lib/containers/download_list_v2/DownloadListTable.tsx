@@ -19,6 +19,7 @@ import SortIcon from '../../assets/icons/Sort'
 import { Direction } from '../../utils/synapseTypes'
 import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -41,9 +42,6 @@ export default function DownloadListTable() {
 
   useEffect(() => {
     if (isError && newError) {
-      console.error('!!! There was an error while getting Available Files to download')
-      console.error(newError)
-      
       handleError(toError(newError))
     }
   }, [isError, newError, handleError])
@@ -161,7 +159,7 @@ export default function DownloadListTable() {
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={`https://www.synapse.org/#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
+                        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
                       >
                         {item.fileName}
                       </a>

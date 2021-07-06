@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React, { useState, useEffect } from 'react'
 import UpSetJS, {
   extractSets,
@@ -110,7 +115,12 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         const elems: any[] = Object.values(keyValuesMap)
         // elems looks like [{ name: 'A', sets: ['S1', 'S2'] }, { name: 'B', sets: ['S1'] }, ...]
         const sets = extractSets(elems)
-        const combinations = generateCombinations(sets, {
+        // PORTALS-1673: sort by assay name
+        const sortedSets = (sets as any).sort((a: { name: string }, b: { name: string }) => {
+          return ('' + b.name).localeCompare(a.name)
+        })
+        
+        const combinations = generateCombinations(sortedSets, {
           type: 'intersection',
           min: 1,
           limit: maxBarCount,

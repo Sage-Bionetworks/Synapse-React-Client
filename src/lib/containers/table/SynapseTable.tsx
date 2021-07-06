@@ -48,6 +48,7 @@ import SearchResultsNotFound from './SearchResultsNotFound'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { SynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -433,7 +434,7 @@ export default class SynapseTable extends React.Component<
     const queryJSON = JSON.stringify(queryCopy)
     // encode this copy of the query (json)
     const encodedQuery = btoa(queryJSON)
-    return `https://www.synapse.org/#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`
+    return `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${parsed.synId}/tables/query/${encodedQuery}`
   }
 
   private renderTable = (
@@ -1065,7 +1066,7 @@ export default class SynapseTable extends React.Component<
     const encodedQuery = btoa(JSON.stringify(query))
     const synTable = lastQueryRequest.entityId
     window.open(
-      `https://www.synapse.org/#!Synapse:${synTable}/tables/query/${encodedQuery}`,
+      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synTable}/tables/query/${encodedQuery}`,
       '_blank',
     )
   }

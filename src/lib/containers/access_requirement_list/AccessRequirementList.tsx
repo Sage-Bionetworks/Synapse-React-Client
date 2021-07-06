@@ -33,6 +33,7 @@ import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 import Login from '../Login'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 library.add(faFile)
 
@@ -44,16 +45,16 @@ type AccessRequirementAndStatus = {
 export type AccessRequirementListProps = {
   entityId: string  // will show this entity info
   accessRequirementFromProps?: Array<AccessRequirement>
-  onHide?: Function
+  onHide?: () => void
   renderAsModal?: boolean
   numberOfFilesAffected?: number // if provided, will show this instead of the entity information
 }
 
 export type requestDataStepCallbackProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement?: ManagedACTAccessRequirement
   step: number
-  researchProjectId: string
-  formSubmitRequestObject: RequestInterface
+  researchProjectId?: string
+  formSubmitRequestObject?: RequestInterface
 }
 
 export enum SUPPORTED_ACCESS_REQUIREMENTS {
@@ -315,7 +316,7 @@ export default function AccessRequirementList({
           </span>}
           {!numberOfFilesAffected && <a
             className="AccessRequirementList__register-text-link"
-            href={`https://www.synapse.org/#!Synapse:${entityId}`}
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
           >
               {entityInformation[0]?.name}
           </a>}
@@ -342,7 +343,7 @@ export default function AccessRequirementList({
                     If you do not have a Sage Account, you can
                     <a
                       className="register-text-link bold-text"
-                      href="https://www.synapse.org/#!RegisterAccount:0"
+                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`}
                     >
                       &nbsp;Register for free.
                     </a>

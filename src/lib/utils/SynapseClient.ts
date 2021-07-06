@@ -18,7 +18,11 @@ import {
   USER_PROFILE_ID,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
-import { BackendDestinationEnum, getEndpoint } from './functions/getEndpoint'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+  PRODUCTION_ENDPOINT_CONFIG,
+} from './functions/getEndpoint'
 import { DATETIME_UTC_COOKIE_KEY } from './SynapseConstants'
 import {
   AccessApproval,
@@ -105,6 +109,8 @@ import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadLi
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
+import { DownloadListPackageRequest } from './synapseTypes/DownloadListV2/DownloadListPackageRequest'
+import { DownloadListPackageResponse } from './synapseTypes/DownloadListV2/DownloadListPackageResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
 import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import {
@@ -1279,7 +1285,9 @@ export const detectSSOCode = () => {
       .catch((err: any) => {
         if (err.status === 404) {
           // Synapse account not found, send to registration page
-          window.location.replace('https://www.synapse.org/#!RegisterAccount:0')
+          window.location.replace(
+            `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
+          )
         }
         console.error('Error on sso sign in ', err)
       })
@@ -1677,6 +1685,39 @@ export const addFileToDownloadListV2 = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/POST/download/list/package/async/start.html
+ */
+export const createPackageFromDownloadListV2 = (
+  zipFileName?: string,
+  accessToken: string | undefined = undefined,
+  updateParentState?: any,
+) => {
+  const request: DownloadListPackageRequest = {
+    zipFileName,
+    concreteType:
+      'org.sagebionetworks.repo.model.download.DownloadListPackageRequest',
+  }
+  return doPost<AsyncJobId>(
+    `/repo/v1/download/list/package/async/start`,
+    request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((resp: AsyncJobId) => {
+      const requestUrl = `/repo/v1/download/list/package/async/get/${resp.token}`
+      return getAsyncResultFromJobId<DownloadListPackageResponse>(
+        requestUrl,
+        accessToken,
+        updateParentState,
+      )
+    })
+    .catch((error: any) => {
+      throw error
+    })
 }
 
 /**

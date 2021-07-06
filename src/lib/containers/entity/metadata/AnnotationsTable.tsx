@@ -1,5 +1,5 @@
-import React from 'react'
 import { isEmpty } from 'lodash-es'
+import React from 'react'
 import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
 import {
   BackendDestinationEnum,
