@@ -1,5 +1,9 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { 
+  faTrash, 
+  faSortAmountDown,
+  faSortAmountUp,
+ } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import React, { useEffect, useState, useCallback } from 'react'
@@ -34,12 +38,8 @@ import DownloadDetails from './DownloadDetails'
 import AccessRequirementList, {
   AccessRequirementListProps,
 } from '../access_requirement_list/AccessRequirementList'
-
-import {
-  faSortAmountDown,
-  faSortAmountUp,
-} from '@fortawesome/free-solid-svg-icons'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 library.add(faTrash)
 
@@ -54,7 +54,7 @@ export type DownloadListTableProps = {
   listUpdatedCallback?: VoidFunction
   forceSamePage?: boolean
   renderAsModal?: boolean
-  onHide?: Function
+  onHide?: () => void
 }
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
@@ -513,7 +513,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
-                      href={`https://www.synapse.org/#!Synapse:${synId}`}
+                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synId}`}
                     >
                       {fileName}
                     </a>

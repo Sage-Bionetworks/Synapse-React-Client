@@ -65,5 +65,6 @@ Configured to show a table:
     name='Table Demo'
     sqlOperator='='
     sql='SELECT * FROM syn11346063.14'
+    downloadCartPageUrl='#/Other%20Components?id=downloadcartpage'
   />
 ```

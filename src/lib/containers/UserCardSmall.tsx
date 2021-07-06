@@ -5,6 +5,7 @@ import { useOverlay } from '../utils/hooks/useOverlay'
 import { UserBundle, UserProfile } from '../utils/synapseTypes/'
 import { SynapseClient, SynapseConstants } from '../utils'
 import IconSvg from './IconSvg'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 
 export type UserCardSmallProps = {
   userProfile: UserProfile
@@ -79,7 +80,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   )
 
   if (link == null) {
-    link = `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+    link = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:${userProfile.ownerId}`
   }
 
   const { OverlayComponent, toggleShow, toggleHide } = useOverlay(

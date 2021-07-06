@@ -31,14 +31,20 @@
   }
 }
 
-.download-cart-size {
-  background-color: SRC.$secondary-action-color;
-  text-align: center;
-  position: absolute;
-  width: 30px;
-  height: 18px;
-  color: white;
-  border-radius: 8px;
-  top: 0px;
-  right: -36px;
+.Download-Link {
+  &.v2 {
+    margin: auto;
+    min-width: 55px;
+    .download-cart-size {
+      background-color: SRC.$secondary-action-color;
+      text-align: center;
+      position: absolute;
+      height: 21px;
+      color: white;
+      border-radius: 8px;
+      top: -12px;
+      left: 17px;
+      padding: 0px 3px;
+    }
+  }
 }

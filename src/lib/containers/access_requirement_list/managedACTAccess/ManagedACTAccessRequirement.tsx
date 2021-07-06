@@ -8,14 +8,15 @@ import { SynapseClient } from '../../../utils'
 import RequestDataAccess from './RequestDataAccess'
 import { ManagedACTAccessRequirementStatus } from '../../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import { useSynapseContext } from '../../../utils/SynapseContext'
+import { requestDataStepCallbackProps } from '../AccessRequirementList'
 
 export type ManagedACTAccessRequirementComponentProps = {
   entityId: string
   user: UserProfile | undefined
   accessRequirement: ManagedACTAccessRequirement
   accessRequirementStatus: ManagedACTAccessRequirementStatus
-  onHide?: Function
-  requestDataStepCallback?: Function
+  onHide?: () => void
+  requestDataStepCallback?: (props: requestDataStepCallbackProps) => void
 }
 
 const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirementComponentProps> = props => {

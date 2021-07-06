@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from 'react-bootstrap'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../../utils/functions/getEndpoint'
 
 export type ProjectCardProps = {
   projectName: string
@@ -30,7 +31,7 @@ export const ProjectViewCard: React.FunctionComponent<
         className="ProjectViewCard__ViewProjectButton"
         onClick={() =>
           window.open(
-            `https://www.synapse.org/#!Synapse:${synId}`,
+            `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synId}`,
             '_blank',
             'noopener',
           )

@@ -147,7 +147,7 @@ export default class RssFeedCards extends React.Component<
                             <a
                               href={`${
                                 this.state.rssFeed.link
-                              }/?tag=${categoryName.replace(' ', '-')}`}
+                              }/tag/${categoryName.replace(' ', '-')}`}
                               className="SRC-no-underline-on-hover"
                               key={`${item.guid}_${categoryName}`}
                               target="_blank"

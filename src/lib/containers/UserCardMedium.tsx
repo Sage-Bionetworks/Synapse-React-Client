@@ -15,6 +15,7 @@ import { Avatar } from './Avatar'
 import { ToastMessage } from './ToastMessage'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -138,7 +139,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   let name = ''
   const linkLocation = link
     ? link
-    : `https://www.synapse.org/#!Profile:${userProfile.ownerId}`
+    : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Profile:${userProfile.ownerId}`
   // linkLocation is overriden by custom click handler
   const email = `${userName}@synapse.org`
   if (displayName) {

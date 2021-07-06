@@ -26,6 +26,7 @@ import {
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import UserCard from './UserCard'
 import { SynapseContext } from '../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 
 export type KeyToAlias = {
   key: string
@@ -198,7 +199,7 @@ export const renderLabel = (args: {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://www.synapse.org/#!Synapse:${str}`}
+          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${str}`}
           className={className}
         >
           {str}
@@ -278,7 +279,7 @@ export default class GenericCard extends React.Component<
     let target = '_self'
     if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
       // its a synId
-      href = `https://www.synapse.org/#!Synapse:${link}`
+      href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`
     } else if (link.match(DOI_REGEX)) {
       target = '_blank'
       href = `https://dx.doi.org/${link}`

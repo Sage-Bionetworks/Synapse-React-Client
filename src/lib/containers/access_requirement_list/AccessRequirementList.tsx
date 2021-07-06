@@ -33,6 +33,7 @@ import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 import Login from '../Login'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 library.add(faFile)
 
@@ -42,17 +43,18 @@ type AccessRequirementAndStatus = {
 }
 
 export type AccessRequirementListProps = {
-  entityId: string
+  entityId: string  // will show this entity info
   accessRequirementFromProps?: Array<AccessRequirement>
-  onHide?: Function
+  onHide?: () => void
   renderAsModal?: boolean
+  numberOfFilesAffected?: number // if provided, will show this instead of the entity information
 }
 
 export type requestDataStepCallbackProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement?: ManagedACTAccessRequirement
   step: number
-  researchProjectId: string
-  formSubmitRequestObject: RequestInterface
+  researchProjectId?: string
+  formSubmitRequestObject?: RequestInterface
 }
 
 export enum SUPPORTED_ACCESS_REQUIREMENTS {
@@ -85,6 +87,7 @@ export default function AccessRequirementList({
   onHide,
   accessRequirementFromProps,
   renderAsModal,
+  numberOfFilesAffected,
 }: AccessRequirementListProps) {
   const { accessToken } = useSynapseContext()
 
@@ -300,17 +303,23 @@ export default function AccessRequirementList({
           <h4 className="AccessRequirementList__instruction AccessRequirementList__access">
             Access For:
           </h4>
-          <a
-            className="AccessRequirementList__register-text-link"
-            href={`https://www.synapse.org/#!Synapse:${entityId}`}
-          >
+          <span className="AccessRequirementList__file-icon-container">
             <FontAwesomeIcon
               size="lg"
               icon="file"
               className="AccessRequirementList__file"
             />
-            &nbsp;{entityInformation[0]?.name}
-          </a>
+          </span>
+          &nbsp;
+          {numberOfFilesAffected && <span>
+            {numberOfFilesAffected} File(s)
+          </span>}
+          {!numberOfFilesAffected && <a
+            className="AccessRequirementList__register-text-link"
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
+          >
+              {entityInformation[0]?.name}
+          </a>}
           <h4
             className="AccessRequirementList__instruction"
             style={{ marginTop: '3rem' }}
@@ -334,7 +343,7 @@ export default function AccessRequirementList({
                     If you do not have a Sage Account, you can
                     <a
                       className="register-text-link bold-text"
-                      href="https://www.synapse.org/#!RegisterAccount:0"
+                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`}
                     >
                       &nbsp;Register for free.
                     </a>
@@ -343,7 +352,7 @@ export default function AccessRequirementList({
               )}
               {isSignedIn && (
                 <p>
-                  You have signed with Sage Platform (Synapse) user account as{' '}
+                  You have signed in with the Sage Platform (Synapse) user account {' '}
                   <b className="SRC-primary-text-color">
                     {user?.userName}@synapse.org
                   </b>

@@ -5,17 +5,17 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { DownloadListQueryResponse } from '../../synapseTypes/DownloadListV2/DownloadListQueryResponse'
+import { FilesStatisticsResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetDownloadListStatistics(
   options?: UseQueryOptions<
-    DownloadListQueryResponse,
+    FilesStatisticsResponse,
     SynapseClientError,
-    DownloadListQueryResponse
+    FilesStatisticsResponse
   >,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery<DownloadListQueryResponse, SynapseClientError>(
+  return useQuery<FilesStatisticsResponse, SynapseClientError>(
     ['downloadliststatsv2', accessToken],
     () => SynapseClient.getDownloadListStatistics(accessToken),
     options,

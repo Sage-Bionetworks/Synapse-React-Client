@@ -1,5 +1,12 @@
 import { UserCardSize } from '../containers/UserCard'
 
+/** Bootstrapped principals */
+/** The group representing all users logged-in to Synapse */
+export const AUTHENTICATED_PRINCIPAL_ID = 273948
+/** The group representing all logged-in Synapse users AND anonymous */
+export const PUBLIC_PRINCIPAL_ID = 273949
+/** The single user representing all unauthenticated users */
+export const ANONYMOUS_PRINCIPAL_ID = 273950
 /** QueryBundleRequest constants */
 export const BUNDLE_MASK_QUERY_RESULTS: number = 1
 export const BUNDLE_MASK_QUERY_COUNT: number = 2
@@ -63,6 +70,9 @@ export const VERTICAL_DOTS: string = 'verticaldots'
 export const FILE: string = 'file'
 export const CHART2: string = 'chart2'
 export const EXTERNALLINK: string = 'externallink'
+export const EASY_DIFFICULTY: string = 'easy-difficulty'
+export const MEDIUM_DIFFICULTY: string = 'medium-difficulty'
+export const VARIABLE_DIFFICULTY: string = 'variable-difficulty'
 
 export const DEFAULT_PAGE_SIZE: number = 25
 // For User Profile Cards

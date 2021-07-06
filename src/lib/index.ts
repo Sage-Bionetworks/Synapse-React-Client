@@ -38,6 +38,7 @@ import PageProgress from './containers/PageProgress'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import EntityFinder from './containers/entity_finder/EntityFinder'
 import ExperimentalMode from './containers/ExperimentalMode'
+import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -50,6 +51,9 @@ import './style/components/_spinner.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
+import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
+import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
+import FullWidthAlert from './containers/FullWidthAlert'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -97,6 +101,10 @@ const SynapseComponents = {
   ProjectViewCarousel,
   EntityFinder,
   ExperimentalMode,
+  EntityBadgeIcons,
+  DownloadCartPage,
+  ShowDownloadV2,
+  FullWidthAlert: FullWidthAlert,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }

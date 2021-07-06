@@ -8,6 +8,7 @@
     font-weight: bold;
     text-transform: uppercase;
     padding-left: 15px;
+    padding-bottom: 20px;
   }
 
   &__access {
@@ -31,10 +32,10 @@
   }
 
   &__register-text-link {
-    display: block;
     color: SRC.$primary-action-color;
-    margin-top: 20px;
-    margin-bottom: 20px;
+  }
+
+  &__file-icon-container {
     padding-left: 25px;
   }
 
@@ -167,6 +168,23 @@
       .requester-label {
         margin-bottom: 0.5rem;
         display: inline-block;
+      }
+      .SRC-userCard {
+        svg {
+          margin-top: 8px;
+        }
+      }
+      .radiogroup {
+        flex: auto;
+        text-align: right;
+        .radio, .radio+.radio {
+          display: inline-block;
+          margin: 0;
+          margin-left: 1rem;
+        }
+        label {
+          margin-bottom: 0;
+        }
       }
     }
   }

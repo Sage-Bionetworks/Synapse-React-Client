@@ -5,6 +5,7 @@ import * as Utils from './utils'
 import { getValueOrMultiValue } from '../GenericCard'
 import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 type DatasetProps = {
   data?: any
@@ -24,7 +25,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault()
-    window.open(`https://www.synapse.org/#!Synapse:${link}`, '_blank')
+    window.open(`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`, '_blank')
   }
 
   public render() {
@@ -72,7 +73,7 @@ class Dataset extends React.Component<DatasetProps, {}> {
             <h3>
               <a
                 target="_self"
-                href={`https://www.synapse.org/#!Synapse:${id}`}
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${id}`}
               >
                 {datasetName}
               </a>

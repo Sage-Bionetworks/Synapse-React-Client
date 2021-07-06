@@ -10,7 +10,7 @@ import { SynapseSpinner } from '../../LoadingScreen'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 
-enum EntityModalTabs {
+export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
   ANNOTATIONS = 'ANNOTATIONS', // annotation and schema information
   // TODO: Access -- we haven't yet built a viewer/editor for ACLs in SRC -- consider a redesign before building
@@ -24,6 +24,7 @@ export type EntityModalProps = {
   readonly entityId: string
   readonly onClose: () => void
   readonly initialTab?: EntityModalTabs
+  readonly showTabs?: boolean
 }
 
 export const EntityModal: React.FC<EntityModalProps> = ({
@@ -31,6 +32,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   show,
   onClose,
   initialTab = EntityModalTabs.METADATA,
+  showTabs = true,
 }: EntityModalProps) => {
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
   const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
@@ -42,29 +44,34 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       className="bootstrap-4-backport EntityMetadata"
       show={show}
       animation={false}
-      onClose={onClose}
+      onHide={onClose}
     >
-      <Modal.Header closeButton onHide={onClose}>
+      <Modal.Header closeButton>
         <Modal.Title>
           {isLoadingBundle ? <SynapseSpinner /> : entityBundle?.entity?.name}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="Tabs">
-          {Object.keys(EntityModalTabs).map((tabName: string) => {
-            return (
-              <div
-                className="Tab"
-                role="tab"
-                key={tabName}
-                onClick={() => setCurrentTab(EntityModalTabs[tabName])}
-                aria-selected={tabName === currentTab}
-              >
-                {tabName}
-              </div>
-            )
-          })}
-        </div>
+        {showTabs ? (
+          <div className="Tabs">
+            {Object.keys(EntityModalTabs).map((tabName: string) => {
+              return (
+                <div
+                  className="Tab"
+                  role="tab"
+                  key={tabName}
+                  onClick={e => {
+                    e.stopPropagation()
+                    setCurrentTab(EntityModalTabs[tabName])
+                  }}
+                  aria-selected={tabName === currentTab}
+                >
+                  {tabName}
+                </div>
+              )
+            })}
+          </div>
+        ) : null}
         {isLoadingBundle ? (
           <SynapseSpinner />
         ) : (

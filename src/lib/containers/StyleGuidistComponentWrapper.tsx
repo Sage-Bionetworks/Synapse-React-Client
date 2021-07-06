@@ -9,7 +9,7 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
     <SynapseContextProvider
       synapseContext={{
         accessToken: (global as any).accessToken,
-        isInExperimentalMode: SynapseClient.getIsInExperimentalModeFromCookie(),
+        isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
         utcTime: SynapseClient.getUseUtcTimeFromCookie(),
       }}
     >

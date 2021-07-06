@@ -9,7 +9,7 @@ import { useSynapseContext } from '../../../utils/SynapseContext'
 
 export type CancelRequestDataAccessProps = {
   formSubmitRequestObject: RequestInterface | undefined
-  onHide: Function
+  onHide: () => void
 }
 
 const CancelRequestDataAccess: React.FC<CancelRequestDataAccessProps> = props => {

@@ -19,6 +19,9 @@ export const MOCK_FILE_ENTITY_ID = 'syn123'
 export const MOCK_FOLDER_ID = 'syn1234'
 export const MOCK_PROJECT_ID = 'syn12345'
 
+// TODO: Create a mock wiki
+const MOCK_WIKI_ID = '45745485'
+
 export const mockFileEntity: FileEntity = {
   id: MOCK_FILE_ENTITY_ID,
   parentId: MOCK_PROJECT_ID,
@@ -27,6 +30,7 @@ export const mockFileEntity: FileEntity = {
   concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   createdBy: MOCK_USER_ID.toString(),
   modifiedBy: MOCK_USER_ID.toString(),
+  etag: '00000000-0000-0000-0000-000000000000',
 }
 
 export const mockFileEntityBundle: EntityBundle = {
@@ -51,6 +55,36 @@ export const mockFileEntityBundle: EntityBundle = {
       },
     },
   },
+  rootWikiId: MOCK_WIKI_ID,
+  benefactorAcl: {
+    id: MOCK_PROJECT_ID,
+    creationDate: '2020-11-18T20:05:06.540Z',
+    etag: 'f143bbfd-ba09-4a42-b1e9-f9368777ad9b',
+    resourceAccess: [
+      {
+        principalId: MOCK_USER_ID,
+        accessType: [
+          'DELETE',
+          'CHANGE_SETTINGS',
+          'MODERATE',
+          'CHANGE_PERMISSIONS',
+          'UPDATE',
+          'READ',
+          'DOWNLOAD',
+          'CREATE',
+        ],
+      },
+      {
+        principalId: 273948,
+        accessType: ['READ'],
+      },
+      {
+        principalId: 273949,
+        accessType: ['READ'],
+      },
+    ],
+  },
+  threadCount: 5,
 }
 
 export const mockFileEntityHeader: EntityHeader = {

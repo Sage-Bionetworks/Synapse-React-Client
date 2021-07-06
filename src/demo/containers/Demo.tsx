@@ -109,7 +109,7 @@ class Demo extends React.Component<DemoProps, DemoState> {
       <SynapseContextProvider
         synapseContext={{
           accessToken: this.state.token ?? undefined,
-          isInExperimentalMode: SynapseClient.getIsInExperimentalModeFromCookie(),
+          isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
         }}
       >

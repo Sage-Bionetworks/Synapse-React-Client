@@ -29,5 +29,6 @@ export interface AccessRequirement {
   modifiedBy: string //	The user that last modified this object. Provided by the system, the user may not set this field.
   subjectIds: Array<RestrictableObjectDescriptor> // The IDs of the items controlled by this Access Requirement. Required when creating or updating.
   accessType: ACCESS_TYPE //	The enumeration of possible permission.
+  description?: string // Short optional description for the AR. Limited to 50 characters.
   concreteType: string //	Indicates which type of AccessRequirement this object represents. Provided by the system, the user may not set this field.
 }

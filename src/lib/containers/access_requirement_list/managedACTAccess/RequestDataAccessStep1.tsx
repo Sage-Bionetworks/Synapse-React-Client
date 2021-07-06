@@ -10,11 +10,12 @@ import { ResearchProject } from '../../../utils/synapseTypes/ResearchProject'
 import { ManagedACTAccessRequirement } from '../../../utils/synapseTypes'
 import { AlertProps } from './RequestDataAccessStep2'
 import { useSynapseContext } from '../../../utils/SynapseContext'
+import { requestDataStepCallbackProps } from '../AccessRequirementList'
 
 export type RequestDataAccessStep1Props = {
-  requestDataStepCallback?: Function
+  requestDataStepCallback?: (props: requestDataStepCallbackProps) => void
   managedACTAccessRequirement: ManagedACTAccessRequirement
-  onHide: Function
+  onHide: () => void
 }
 
 const RequestDataAccessStep1: React.FC<RequestDataAccessStep1Props> = props => {
@@ -70,7 +71,7 @@ const RequestDataAccessStep1: React.FC<RequestDataAccessStep1Props> = props => {
     )
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLElement>) => {
     e.preventDefault()
     const requestObj: ResearchProject = Object.assign(
       {},

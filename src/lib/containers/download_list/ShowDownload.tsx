@@ -30,8 +30,9 @@ function ShowDownload({ to }: ShowDownloadProps & RouteComponentProps) {
   const [showDownloadModal, setShowDownloadModal] = useState(false)
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
   const tooltipText = 'Click to view items in your download list.'
+  const isInExperimentalMode = SynapseClient.isInSynapseExperimentalMode()
   useEffect(() => {
-    if (!accessToken) {
+    if (!accessToken || isInExperimentalMode) {
       return
     }
     const updateDownloadList = async (

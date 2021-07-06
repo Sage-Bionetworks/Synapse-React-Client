@@ -16,6 +16,7 @@ import {
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import DirectDownload from '../DirectDownload'
 import EntityIdList from '../EntityIdList'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 // Render table cell, supports Entity's and User Icons
 export const renderTableCell = ({
@@ -168,7 +169,7 @@ export const renderTableCell = ({
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://www.synapse.org/#!Team:${ownerId}`}
+          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${ownerId}`}
         >
           <FontAwesomeIcon icon={icon} /> {userName}
         </a>

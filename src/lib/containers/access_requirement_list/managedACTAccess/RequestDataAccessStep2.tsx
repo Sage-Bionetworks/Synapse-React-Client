@@ -30,14 +30,16 @@ import { UserCardSmall } from '../../UserCardSmall'
 import IconSvg from '../../IconSvg'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { RenewalInterface } from '../../../utils/synapseTypes/AccessRequirement/RenewalInterface'
+import { RadioGroup } from '../../widgets/RadioGroup'
+import { requestDataStepCallbackProps } from '../AccessRequirementList'
 
 export type RequestDataAccessStep2Props = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
   entityId: string
-  requestDataStepCallback: Function
+  requestDataStepCallback: (props: requestDataStepCallbackProps) => void
   user: UserProfile
   researchProjectId: string
-  onHide: Function
+  onHide: () => void
 }
 
 export type DataAccessDoc = {
@@ -66,6 +68,15 @@ export type AlertProps = {
   message: string | JSX.Element
 }
 
+type requestedFileTypesMap = {
+  [key: string]: string[]
+}
+
+type Accessor = {
+  profile: UserProfile
+  accessType: AccessType
+}
+
 const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const {
     requestDataStepCallback,
@@ -79,14 +90,15 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
   const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
-  const [accessorProfiles, setAccessorProfiles] = useState<UserProfile[]>([])
   const [
     formSubmitRequestObject,
     setFormSubmitRequestObject,
-  ] = useState<RequestInterface|RenewalInterface>()
+  ] = useState<RequestInterface | RenewalInterface>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [isRenewal, setIsRenewal] = useState<boolean>(false)
-  const requestedFileTypes = {}
+  const [accessors, setAccessors] = useState<Accessor[]>([])
+
+  const requestedFileTypes:requestedFileTypesMap = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
     includeFileHandles: true,
@@ -112,6 +124,11 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       accessToken!,
     )
 
+    // renewal case
+    if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
+      setIsRenewal(true)
+    }
+
     // initialize form submission request object
     dataAccessRequestData.researchProjectId = researchProjectId
     setFormSubmitRequestObject(dataAccessRequestData)
@@ -119,10 +136,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     getAccessorsData(dataAccessRequestData)
     // get data access required docs data to display file names
     getFilesData(dataAccessRequestData)
-
-    if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
-      setIsRenewal(true)
-    }
   }
 
   const getAccessorsData = (dataAccessRequestData: RequestInterface) => {
@@ -152,7 +165,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       return getUserProfileById(accessToken, userId)
     })
     Promise.all(promises).then(profiles => {
-      setAccessorProfiles(profiles)
+      const profileAndAccessType:Accessor[] = profiles.map((item, i) => {
+        return {
+          profile: item,
+          accessType: accessorChanges[i].type
+        }
+      })
+      setAccessors(profileAndAccessType)
     })
   }
 
@@ -241,7 +260,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       getFiles(batchFileRequest, accessToken).then(resp => {
         resp.requestedFiles.forEach(file => {
           const fileName = file.fileHandle!.fileName
-          const fileTypes = requestedFileTypes[file.fileHandleId]
+          const fileTypes:string[] = requestedFileTypes[file.fileHandleId]
 
           fileTypes.forEach((type: string) => {
             switch (type) {
@@ -386,16 +405,16 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   const onClearAccessor = (pid: string) => {
     // Update the view
-    const filtered: UserProfile[] = accessorProfiles.filter(
-      item => item.ownerId !== pid,
+    const filtered:Accessor[]  = accessors.filter(item =>
+      item.profile.ownerId !== pid
     )
-    setAccessorProfiles(filtered)
+    setAccessors(filtered)
 
     // Update form submission request object
     const newAccessorChanges: AccessorChange[] = filtered.map(item => {
       return {
-        userId: item.ownerId,
-        type: AccessType.GAIN_ACCESS,
+        userId: item.profile.ownerId,
+        type: item.accessType
       }
     })
     setFormSubmitRequestObject(prevState => {
@@ -408,7 +427,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const onClearAttachment = (fid: string) => {
     // Update the view
     const filtered: DataAccessDoc[] = attachments.filter(
-      item => item.fileHandleId !== fid,
+      item => item.fileHandleId !== fid
     )
     setAttachments(filtered)
 
@@ -466,15 +485,19 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   // User search input event handler
   const onSelectUserCallback = (selected: UserProfile) => {
-    setAccessorProfiles(prev => [
+    setAccessors(prev => [
       ...prev,
       {
-        ownerId: selected.ownerId,
-        firstName: selected.firstName,
-        lastName: selected.lastName,
-        userName: selected.userName,
-      },
+        profile: {
+          ownerId: selected.ownerId,
+          firstName: selected.firstName,
+          lastName: selected.lastName,
+          userName: selected.userName,
+        },
+        accessType: AccessType.GAIN_ACCESS
+      }
     ])
+
     const selectedAccessor: AccessorChange = {
       userId: selected.ownerId,
       type: AccessType.GAIN_ACCESS,
@@ -507,6 +530,25 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         break
       default:
     }
+  }
+
+  // For renewal only
+  const onAccessorRadioBtnChange = (accessType: AccessType, userId: string) => {
+    // Make the radio button appears selected when clicked.
+    const copy = [...accessors]
+    const index = copy.findIndex(item => item.profile.ownerId === userId)
+    copy[index].accessType = accessType
+    setAccessors(copy)
+
+    // Update formSubmitRequestObject
+    const formCopy = formSubmitRequestObject?.accessorChanges || []
+    const index2 = formCopy.findIndex(item => item.userId === userId)
+    formCopy[index2].type = accessType
+    setFormSubmitRequestObject(prevState => {
+      return Object.assign({}, prevState, {
+        accessorChanges: formCopy
+      })
+    })
   }
 
   return (
@@ -557,29 +599,55 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
           {/* Accessors Checkboxes */}
           <Form.Group style={{ marginBottom: '4rem' }}>
-            {accessorProfiles.map((profile, i) => {
-              return (
-                <div className={'list-items'} key={`accessors-${i}`}>
-                  <UserCardSmall
-                    userProfile={profile}
-                    showAccountLevelIcon={true}
-                    disableLink={true}
-                  />
-                  {
-                    // only display delete button if the user profile is other users.
-                    user.ownerId !== profile.ownerId && (
-                      <Button
-                        className={'clear-x'}
-                        variant={'link'}
-                        onClick={() => onClearAccessor(profile.ownerId)}
-                      >
-                        <IconSvg options={{ icon: 'clear' }} />
-                      </Button>
-                    )
-                  }
-                </div>
-              )
-            })}
+            {
+              accessors.map((accessor, i ) => {
+                return (
+                  <div className={'list-items'} key={`accessor-${i}`}>
+                    <UserCardSmall
+                      userProfile={accessor.profile}
+                      showAccountLevelIcon={true}
+                      disableLink={true}
+                    />
+                    {
+                      // only display delete button if the user profile is other users and has not access before
+                      (user.ownerId !== accessor.profile.ownerId) && (accessor.accessType === AccessType.GAIN_ACCESS) && (
+                        <Button
+                          className={'clear-x'}
+                          variant={'link'}
+                          onClick={() => onClearAccessor(accessor.profile.ownerId)}
+                        >
+                          <IconSvg options={{ icon: 'clear' }} />
+                        </Button>
+                      )
+                    }
+                    {
+                      // Renewal/Revoke data access, only display if isRenewal is true
+                      isRenewal && (accessor.accessType !== AccessType.GAIN_ACCESS) && (
+                        <>
+                          <RadioGroup
+                            id="accessor-access"
+                            value={accessor.accessType}
+                            options={[
+                              {
+                                label: 'Renew',
+                                value: AccessType.RENEW_ACCESS
+                              },
+                              {
+                                label: 'Revoke',
+                                value: AccessType.REVOKE_ACCESS
+                              },
+                            ]}
+                            onChange={(value: string, checked: boolean) =>
+                              onAccessorRadioBtnChange(value as AccessType, accessor.profile.ownerId)
+                            }
+                          ></RadioGroup>
+                        </>
+                      )
+                    }
+                  </div>
+                )
+              })
+            }
           </Form.Group>
 
           {/* DUC */}
