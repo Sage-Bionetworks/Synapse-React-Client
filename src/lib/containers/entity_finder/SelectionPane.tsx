@@ -4,7 +4,6 @@ import ReactTooltip from 'react-tooltip'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
 import { EntityTypeIcon } from '../EntityIcon'
-import { BUNDLE_REQUEST_OBJECT } from './EntityFinderUtils'
 
 export type SelectionPaneProps = {
   title: string
@@ -46,7 +45,7 @@ const EntityPathDisplay: React.FunctionComponent<{
 
   const { data: bundle } = useGetEntityBundle(
     entity.targetId,
-    BUNDLE_REQUEST_OBJECT,
+    undefined,
     entity.targetVersionNumber,
   )
 

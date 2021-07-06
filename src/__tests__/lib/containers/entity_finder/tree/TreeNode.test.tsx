@@ -9,7 +9,6 @@ import {
   TreeNode,
   TreeNodeProps,
 } from '../../../../../lib/containers/entity_finder/tree/TreeNode'
-import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetEntityChildrenInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityChildren'
 import {
   EntityBundle,
@@ -18,7 +17,6 @@ import {
 } from '../../../../../lib/utils/synapseTypes'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
-jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 jest.mock(
   '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityChildren',
   () => {
@@ -28,7 +26,6 @@ jest.mock(
   },
 )
 const mockSetSelectedId = jest.fn()
-const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockUseGetEntityChildren = useGetEntityChildrenInfinite as jest.Mock
 
 const defaultProps: TreeNodeProps = {
@@ -122,9 +119,6 @@ describe('TreeNode tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockAllIsIntersecting(false)
-    mockUseGetEntityBundle.mockImplementation(() => ({
-      data: bundleResult,
-    }))
     when(mockUseGetEntityChildren)
       .calledWith(
         expect.objectContaining({
@@ -204,31 +198,6 @@ describe('TreeNode tests', () => {
     )
     // No need to click a button since autoexpand should evaluate to `true`
     expect(screen.getAllByRole('treeitem').length).toBe(3)
-  })
-  it('Retrieves the entity bundle when in view', () => {
-    renderComponent()
-    // Not in view
-    mockAllIsIntersecting(false)
-    expect(useGetEntityBundle).toBeCalledWith(
-      defaultProps.entityHeader!.id,
-      expect.anything(),
-      undefined,
-      {
-        enabled: false, // !
-        staleTime: expect.anything(),
-      },
-    )
-    // Comes into view, call under test:
-    mockAllIsIntersecting(true)
-    expect(useGetEntityBundle).toBeCalledWith(
-      defaultProps.entityHeader!.id,
-      expect.anything(),
-      undefined,
-      {
-        enabled: true, // !
-        staleTime: expect.anything(),
-      },
-    )
   })
 
   it('Retrieves the next page of children when in view', async () => {
@@ -318,7 +287,7 @@ describe('TreeNode tests', () => {
         screen.getByLabelText('Select ' + childrenFromAPI[1].name),
       ).toThrow()
     })
-    it('disables useGetEntityBundle or useGetEntityChildrenInfinite', async () => {
+    it('disables useGetEntityChildrenInfinite', async () => {
       const rootNodeName = 'All of My Entities'
       renderComponent({
         rootNodeConfiguration: {
@@ -329,14 +298,6 @@ describe('TreeNode tests', () => {
       })
       expect(mockUseGetEntityChildren).toBeCalledWith(
         expect.anything(),
-        expect.objectContaining({
-          enabled: false, // !
-        }),
-      )
-      expect(mockUseGetEntityBundle).toBeCalledWith(
-        expect.anything(),
-        expect.anything(),
-        undefined,
         expect.objectContaining({
           enabled: false, // !
         }),

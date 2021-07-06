@@ -75,6 +75,10 @@
     opacity: 0.5;
   }
 
+  &__Row[aria-disabled='false'] {
+    cursor: pointer;
+  }
+
   &__Row[aria-hidden='true'] {
     display: none;
   }

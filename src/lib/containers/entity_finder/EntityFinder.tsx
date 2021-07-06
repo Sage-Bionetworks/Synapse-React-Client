@@ -11,7 +11,6 @@ import React, {
 } from 'react'
 import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
@@ -35,16 +34,6 @@ import { FinderScope, TreeView } from './tree/TreeView'
 library.add(faTimes, faSearch)
 
 const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
-
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 30 * 1000, // 30s
-      retry: false, // SynapseClient knows which queries to retry
-    },
-  },
-})
 
 export type EntityFinderProps = {
   /** Whether or not it is possible to select multiple entities */
@@ -211,184 +200,179 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     : 'MainPanelDualPane'
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SynapseErrorBoundary>
-        <div className="bootstrap-4-backport EntityFinder">
-          <div className="EntityFinder__Search" data-active={searchActive}>
-            <>
-              {searchActive ? (
-                <Button
-                  variant="gray-primary-500"
-                  onClick={() => {
-                    setSearchActive(false)
-                    setSearchInput('')
+    <SynapseErrorBoundary>
+      <div className="bootstrap-4-backport EntityFinder">
+        <div className="EntityFinder__Search" data-active={searchActive}>
+          <>
+            {searchActive ? (
+              <Button
+                variant="gray-primary-500"
+                onClick={() => {
+                  setSearchActive(false)
+                  setSearchInput('')
+                  setSearchTerms(undefined)
+                }}
+              >
+                <Arrow arrowDirection="left" style={{ height: '18px' }} />
+                Back to Browse
+              </Button>
+            ) : (
+              <Button
+                variant="gray-primary-500"
+                className="EntityFinder__Search__SearchButton"
+                onClick={() => {
+                  setSearchActive(true)
+                  searchInputRef!.current!.focus()
+                }}
+              >
+                <FontAwesomeIcon size={'sm'} icon={faSearch} />
+                Search all of Synapse
+              </Button>
+            )}
+            <FontAwesomeIcon
+              size={'sm'}
+              icon={faSearch}
+              className="SearchIcon"
+            />
+            {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
+            <input
+              role="textbox"
+              ref={searchInputRef}
+              aria-hidden={!searchActive}
+              className="EntityFinder__Search__Input"
+              type="search"
+              placeholder="Search by name, Wiki contents, or Synapse ID"
+              value={searchInput}
+              onChange={event => {
+                setSearchInput(event.target.value)
+              }}
+              onKeyDown={(event: any) => {
+                if (event.key === 'Enter') {
+                  if (event.target.value === '') {
                     setSearchTerms(undefined)
-                  }}
-                >
-                  <Arrow arrowDirection="left" style={{ height: '18px' }} />
-                  Back to Browse
-                </Button>
-              ) : (
-                <Button
-                  variant="gray-primary-500"
-                  className="EntityFinder__Search__SearchButton"
-                  onClick={() => {
-                    setSearchActive(true)
-                    searchInputRef!.current!.focus()
-                  }}
-                >
-                  <FontAwesomeIcon size={'sm'} icon={faSearch} />
-                  Search all of Synapse
-                </Button>
-              )}
+                  } else {
+                    setSearchTerms(event.target.value.trim().split(' '))
+                  }
+                }
+              }}
+            />
+            {searchInput && (
               <FontAwesomeIcon
                 size={'sm'}
-                icon={faSearch}
-                className="SearchIcon"
-              />
-              {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
-              <input
-                role="textbox"
-                ref={searchInputRef}
-                aria-hidden={!searchActive}
-                className="EntityFinder__Search__Input"
-                type="search"
-                placeholder="Search by name, Wiki contents, or Synapse ID"
-                value={searchInput}
-                onChange={event => {
-                  setSearchInput(event.target.value)
+                icon={faTimes}
+                role="button"
+                title="Clear Search"
+                className="ClearSearchIcon"
+                onClick={() => {
+                  setSearchInput('')
+                  setSearchTerms(undefined)
                 }}
-                onKeyDown={(event: any) => {
-                  if (event.key === 'Enter') {
-                    if (event.target.value === '') {
-                      setSearchTerms(undefined)
-                    } else {
-                      setSearchTerms(event.target.value.trim().split(' '))
-                    }
-                  }
-                }}
-              />
-              {searchInput && (
-                <FontAwesomeIcon
-                  size={'sm'}
-                  icon={faTimes}
-                  role="button"
-                  title="Clear Search"
-                  className="ClearSearchIcon"
-                  onClick={() => {
-                    setSearchInput('')
-                    setSearchTerms(undefined)
-                  }}
-                />
-              )}
-            </>
-          </div>
-          <div className={`EntityFinder__MainPanel ${mainPanelClass}`}>
-            {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
-            {searchActive && (
-              <EntityDetailsList
-                configuration={
-                  searchByIdResults && searchByIdResults.length > 0
-                    ? {
-                        type:
-                          EntityDetailsListDataConfigurationType.HEADER_LIST,
-                        headerList: searchByIdResults,
-                      }
-                    : {
-                        type:
-                          EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
-                        query: {
-                          queryTerm: searchTerms,
-                        },
-                      }
-                }
-                showVersionSelection={showVersionSelection}
-                selectColumnType={selectMultiple ? 'checkbox' : 'none'}
-                selected={selectedEntities}
-                visibleTypes={selectableTypes}
-                selectableTypes={selectableTypes}
-                toggleSelection={toggleSelection}
               />
             )}
-            {
-              <div style={searchActive ? { display: 'none' } : {}}>
-                {treeOnly ? (
-                  <div>
-                    <TreeView
-                      toggleSelection={toggleSelection}
-                      showDropdown={true}
-                      visibleTypes={selectableAndVisibleTypesInTree}
-                      initialScope={initialScope}
-                      selectedEntities={selectedEntities}
-                      projectId={projectId}
-                      initialContainer={initialContainer}
-                      showScopeAsRootNode={false}
-                      nodeAppearance={NodeAppearance.SELECT}
-                      selectableTypes={selectableTypes}
-                    />
-                  </div>
-                ) : (
-                  <div className="EntityFinderReflexContainer">
-                    <SizeMe>
-                      {({ size }) => (
-                        <ReflexContainer
-                          key={(!!size.width).toString()}
-                          orientation="vertical"
-                          windowResizeAware
-                        >
-                          <ReflexElement
-                            className="TreeViewReflexElement"
-                            flex={0.18}
-                          >
-                            <TreeView
-                              selectedEntities={selectedEntities}
-                              setDetailsViewConfiguration={
-                                setConfigFromTreeView
-                              }
-                              showDropdown={true}
-                              visibleTypes={visibleTypesInTree}
-                              initialScope={initialScope}
-                              projectId={projectId}
-                              initialContainer={initialContainer}
-                              nodeAppearance={NodeAppearance.BROWSE}
-                              setBreadcrumbItems={setBreadcrumbs}
-                              selectableTypes={visibleTypesInTree}
-                            />
-                          </ReflexElement>
-                          <ReflexSplitter></ReflexSplitter>
-                          <ReflexElement className="DetailsViewReflexElement">
-                            <EntityDetailsList
-                              configuration={configFromTreeView}
-                              showVersionSelection={showVersionSelection}
-                              selected={selectedEntities}
-                              visibleTypes={selectableAndVisibleTypesInList}
-                              selectableTypes={selectableTypes}
-                              selectColumnType={
-                                selectMultiple ? 'checkbox' : 'none'
-                              }
-                              toggleSelection={toggleSelection}
-                            />
-                            <Breadcrumbs {...breadcrumbsProps} />
-                          </ReflexElement>
-                        </ReflexContainer>
-                      )}
-                    </SizeMe>
-                  </div>
-                )}
-              </div>
-            }
-          </div>
-
-          {selectedEntities.length > 0 && (
-            <SelectionPane
-              title={selectedCopy}
-              selectedEntities={selectedEntities}
+          </>
+        </div>
+        <div className={`EntityFinder__MainPanel ${mainPanelClass}`}>
+          {/* We have a separate Details component for search in order to preserve state in the other component between searches */}
+          {searchActive && (
+            <EntityDetailsList
+              configuration={
+                searchByIdResults && searchByIdResults.length > 0
+                  ? {
+                      type: EntityDetailsListDataConfigurationType.HEADER_LIST,
+                      headerList: searchByIdResults,
+                    }
+                  : {
+                      type:
+                        EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+                      query: {
+                        queryTerm: searchTerms,
+                      },
+                    }
+              }
+              showVersionSelection={showVersionSelection}
+              selectColumnType={selectMultiple ? 'checkbox' : 'none'}
+              selected={selectedEntities}
+              visibleTypes={selectableTypes}
+              selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
             />
           )}
+          {
+            <div style={searchActive ? { display: 'none' } : {}}>
+              {treeOnly ? (
+                <div>
+                  <TreeView
+                    toggleSelection={toggleSelection}
+                    showDropdown={true}
+                    visibleTypes={selectableAndVisibleTypesInTree}
+                    initialScope={initialScope}
+                    selectedEntities={selectedEntities}
+                    projectId={projectId}
+                    initialContainer={initialContainer}
+                    showScopeAsRootNode={false}
+                    nodeAppearance={NodeAppearance.SELECT}
+                    selectableTypes={selectableTypes}
+                  />
+                </div>
+              ) : (
+                <div className="EntityFinderReflexContainer">
+                  <SizeMe>
+                    {({ size }) => (
+                      <ReflexContainer
+                        key={(!!size.width).toString()}
+                        orientation="vertical"
+                        windowResizeAware
+                      >
+                        <ReflexElement
+                          className="TreeViewReflexElement"
+                          flex={0.18}
+                        >
+                          <TreeView
+                            selectedEntities={selectedEntities}
+                            setDetailsViewConfiguration={setConfigFromTreeView}
+                            showDropdown={true}
+                            visibleTypes={visibleTypesInTree}
+                            initialScope={initialScope}
+                            projectId={projectId}
+                            initialContainer={initialContainer}
+                            nodeAppearance={NodeAppearance.BROWSE}
+                            setBreadcrumbItems={setBreadcrumbs}
+                            selectableTypes={visibleTypesInTree}
+                          />
+                        </ReflexElement>
+                        <ReflexSplitter></ReflexSplitter>
+                        <ReflexElement className="DetailsViewReflexElement">
+                          <EntityDetailsList
+                            configuration={configFromTreeView}
+                            showVersionSelection={showVersionSelection}
+                            selected={selectedEntities}
+                            visibleTypes={selectableAndVisibleTypesInList}
+                            selectableTypes={selectableTypes}
+                            selectColumnType={
+                              selectMultiple ? 'checkbox' : 'none'
+                            }
+                            toggleSelection={toggleSelection}
+                          />
+                          <Breadcrumbs {...breadcrumbsProps} />
+                        </ReflexElement>
+                      </ReflexContainer>
+                    )}
+                  </SizeMe>
+                </div>
+              )}
+            </div>
+          }
         </div>
-      </SynapseErrorBoundary>
-    </QueryClientProvider>
+
+        {selectedEntities.length > 0 && (
+          <SelectionPane
+            title={selectedCopy}
+            selectedEntities={selectedEntities}
+            toggleSelection={toggleSelection}
+          />
+        )}
+      </div>
+    </SynapseErrorBoundary>
   )
 }
 

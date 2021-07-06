@@ -8,9 +8,9 @@ import {
   DetailsViewRowProps,
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsViewRow'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
-import { useGetUserProfileWithProfilePic } from '../../../../../lib/utils/hooks/SynapseAPI/useUserBundle'
 import {
   EntityBundle,
+  EntityType,
   PaginatedResults,
   Reference,
 } from '../../../../../lib/utils/synapseTypes'
@@ -53,6 +53,7 @@ const bundleResult: EntityBundle = {
     name: defaultProps.entityHeader.name,
     concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   },
+  entityType: EntityType.FILE,
 }
 
 const versionResult: PaginatedResults<VersionInfo> = {
@@ -154,7 +155,7 @@ describe('DetailsViewRow tests', () => {
 
     expect(mockUseGetEntityBundle).toBeCalledWith(
       defaultProps.entityHeader.id,
-      expect.anything(),
+      undefined,
       undefined,
       {
         enabled: false,
@@ -166,7 +167,7 @@ describe('DetailsViewRow tests', () => {
 
     expect(mockUseGetEntityBundle).toBeCalledWith(
       defaultProps.entityHeader.id,
-      expect.anything(),
+      undefined,
       undefined,
       {
         enabled: true,
