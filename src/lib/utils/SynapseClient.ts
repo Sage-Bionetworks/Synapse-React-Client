@@ -51,6 +51,7 @@ import {
   EntityBundleRequest,
   EntityHeader,
   EntityId,
+  EntityJson,
   EntityLookupRequest,
   EntityPath,
   Evaluation,
@@ -206,7 +207,7 @@ const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
 const fetchWithExponentialTimeout = <T>(
   url: RequestInfo,
   options: RequestInit,
-  delayMs: number = 1000,
+  delayMs = 1000,
 ): Promise<T> => {
   return fetch(url, options)
     .then(resp => {
@@ -2998,7 +2999,7 @@ export const hasAccessToEntity = (
  * @returns
  */
 export const getEntityJson = (entityId: string, accessToken?: string) => {
-  return doGet<unknown>(
+  return doGet<EntityJson>(
     ENTITY_JSON(entityId),
     accessToken,
     undefined,

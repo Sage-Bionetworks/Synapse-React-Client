@@ -1,7 +1,8 @@
 // -@ts-nocheck
-import Form, { AjvError, Field } from '@rjsf/core'
+import Form, { AjvError, ErrorListProps, Field } from '@rjsf/core'
 import { JSONSchema7 } from 'json-schema'
-import React from 'react'
+import { omit, pick } from 'lodash-es'
+import React, { useRef } from 'react'
 import {
   Alert,
   Button,
@@ -10,7 +11,6 @@ import {
   FormLabel,
   Modal,
 } from 'react-bootstrap'
-import { useErrorHandler } from 'react-error-boundary'
 import { FieldProps, FieldTemplateProps } from 'react-jsonschema-form'
 import {
   useGetJson,
@@ -22,9 +22,13 @@ import {
 } from '../../../utils/hooks/SynapseAPI/useSchema'
 import { useListState } from '../../../utils/hooks/useListState'
 import { SynapseClientError } from '../../../utils/SynapseClient'
+import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
+import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 import { CustomDateTimeWidget } from './CustomDateTimeWidget'
+import { CustomFieldTemplate } from './CustomFieldTemplate'
+import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
 
 export type SchemaDrivenAnnotationEditorProps = {
   entityId: string
@@ -38,74 +42,65 @@ export type SchemaDrivenAnnotationEditorModalProps = {
   onHide: () => void
 }
 
-const entityFields = [
-  'name',
-  'id',
-  'etag',
-  'createdOn',
-  'modifiedOn',
-  'createdBy',
-  'modifiedBy',
-  'parentId',
-  'concreteType',
-  'versionNumber',
-  'versionLabel',
-  'isLatestVersion',
-  'dataFileHandleId',
-]
-function getStandardEntityFields(
-  json: Record<string, unknown>,
-): Record<string, unknown> {
-  return Object.keys(json)
-    .filter(key => entityFields.includes(key))
-    .reduce((obj, key) => {
-      obj[key] = json[key]
-      return obj
-    }, {})
+function getStandardEntityFields(json: EntityJson): EntityJson {
+  return pick(json, entityJsonKeys) as EntityJson
 }
-function removeStandardEntityFields(
-  json: Record<string, unknown>,
-): Record<string, unknown> {
-  return Object.keys(json)
-    .filter(key => !entityFields.includes(key))
-    .reduce((obj, key) => {
-      obj[key] = json[key]
-      return obj
-    }, {})
+
+function removeStandardEntityFields(json: EntityJson): Record<string, unknown> {
+  return omit(json, entityJsonKeys)
 }
 
 export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenAnnotationEditorProps> = ({
   entityId,
 }: SchemaDrivenAnnotationEditorProps) => {
-  const handleError = useErrorHandler()
+  const formRef = useRef(null)
   const [entityJson, setEntityJson] = React.useState<
     Record<string, unknown> | undefined
   >(undefined)
-  const [formData, setFormData] = React.useState<any>(undefined)
+  const [formData, setFormData] = React.useState<
+    Record<string, unknown> | undefined
+  >(undefined)
   const [showSuccess, setShowSuccess] = React.useState(false)
-  const [etag, setEtag] = React.useState('')
   const [showConfirmation, setShowConfirmation] = React.useState(false)
-  const [showError, setShowError] = React.useState(false)
-  const [error, setError] = React.useState<SynapseClientError | undefined>(
-    undefined,
-  )
+  const [submissionError, setSubmissionError] = React.useState<
+    SynapseClientError | undefined
+  >(undefined)
 
-  // TODO: Disallow keys that are in the standard entity JSON
+  const [showSubmissionError, setShowSubmissionError] = React.useState(false)
+  const [validationError, setValidationError] = React.useState<
+    AjvError[] | undefined
+  >(undefined)
 
   const { refetch: refetchJson } = useGetJson(entityId, {
     onSuccess: json => {
+      /**
+       * To only show annotations in the form, we must remove non-annotation fields.
+       * We will need to submit these values when we create the entity, so we set them aside
+       * and will merge objects later.
+       */
       setEntityJson(getStandardEntityFields(json))
-      setEtag(json.etag)
-      // maybe set the json aside and attach on submit rather than remove? see what API likes
       setFormData(removeStandardEntityFields(json))
     },
-    enabled: !formData,
+    enabled: !formData, // once we have data, don't refetch automatically.
   })
-  const { data: schema } = useGetSchemaBinding(entityId, { retry: false })
-  const { data: validationSchema } = useGetSchema(
-    schema?.jsonSchemaVersionInfo.$id,
-    { enabled: !!schema },
+
+  const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
+    entityId,
   )
+
+  const { data: validationSchema, isLoading: isLoadingSchema } = useGetSchema(
+    schema?.jsonSchemaVersionInfo.$id ?? '',
+    {
+      enabled: !!schema,
+      select: schema => {
+        // TODO: Why do we need to do this, issue with how the forked RJSF uses AJV
+        delete schema.$id
+        return schema
+      },
+    },
+  )
+
+  const isLoading = isLoadingBinding || isLoadingSchema
 
   const mutation = useUpdateViaJson(
     entityId,
@@ -115,8 +110,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
         setShowSuccess(true), refetchJson()
       },
       onError: error => {
-        setError(error)
-        setShowError(true)
+        setSubmissionError(error)
+        setShowSubmissionError(true)
       },
     },
   )
@@ -125,84 +120,111 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   return (
     <div className="bootstrap-4-backport">
-      <Form
-        className="AnnotationEditor"
-        liveValidate
-        // ObjectFieldTemplate={CustomObjectFieldTemplate}
-        ArrayFieldTemplate={CustomArrayFieldTemplate}
-        // ErrorList={({ errors }: ErrorListProps) => (
-        //   <Alert
-        //     dismissible={false}
-        //     show={true}
-        //     variant={'danger'}
-        //     transition={false}
-        //   >
-        //     Validation Errors:{' '}
-        //     <ul>
-        //       {errors.map((e: AjvError) => (
-        //         <li key={e.stack}>{`${e.property} ${e.message}`}</li>
-        //       ))}
-        //     </ul>
-        //   </Alert>
-        // )}
-        schema={{
-          ...(validationSchema ?? {}),
-          additionalProperties: true,
-        }}
-        uiSchema={{
-          additionalProperties: {
-            'ui:field': AdditionalPropertiesSchemaField,
-            'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
-            // 'ui:widget': AdditionalPropertyWidget,
-          },
-        }}
-        formData={formData}
-        onChange={e => {
-          setShowError(false)
-          setShowSuccess(false)
-          setFormData(e.formData)
-        }}
-        onSubmit={() => {
-          mutation.mutate()
-        }}
-        onError={e => {
-          setError(e)
-          setShowConfirmation(true)
-        }}
-        fields={{
-          AdditionalPropertiesSchemaField: AdditionalPropertiesSchemaField,
-        }}
-        widgets={{ DateTimeWidget: CustomDateTimeWidget }}
-      ></Form>
-      {showConfirmation && (
-        <ConfirmationModal
-          show={true}
-          onSave={() => {
-            mutation.mutate()
-            setShowConfirmation(false)
-          }}
-          onCancel={() => {
-            setShowConfirmation(false)
-          }}
-          errors={error}
-        />
+      {isLoading ? (
+        <SynapseSpinner />
+      ) : (
+        <>
+          <Form
+            className="AnnotationEditor"
+            liveValidate={false}
+            noHtml5Validate={true}
+            // FieldTemplate={CustomFieldTemplate}
+            ArrayFieldTemplate={CustomArrayFieldTemplate}
+            ObjectFieldTemplate={CustomObjectFieldTemplate}
+            ref={formRef}
+            ErrorList={({ errors }: ErrorListProps) => (
+              <Alert
+                dismissible={false}
+                show={true}
+                variant={'danger'}
+                transition={false}
+              >
+                Validation Errors:{' '}
+                <ul>
+                  {errors.map((e: AjvError) => (
+                    <li key={e.stack}>{`${e.property} ${e.message}`}</li>
+                  ))}
+                </ul>
+              </Alert>
+            )}
+            schema={{
+              ...(validationSchema ?? {}),
+              additionalProperties: true,
+            }}
+            uiSchema={{
+              additionalProperties: {
+                'ui:field': AdditionalPropertiesSchemaField,
+                'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
+              },
+            }}
+            formData={formData}
+            onChange={({ formData, errors }) => {
+              setValidationError(errors)
+              setShowSubmissionError(false)
+              setShowSuccess(false)
+              setFormData(formData)
+            }}
+            onSubmit={({ formData, errors }) => {
+              console.log(errors)
+              setValidationError(errors)
+              setShowSubmissionError(false)
+              setShowSuccess(false)
+              setFormData(formData)
+
+              mutation.mutate()
+            }}
+            onError={(errors: AjvError[]) => {
+              // invoked when submit is clicked when there are errors
+              setValidationError(errors)
+              setShowConfirmation(true)
+            }}
+            fields={
+              {
+                // AdditionalPropertiesSchemaField: AdditionalPropertiesSchemaField,
+              }
+            }
+            widgets={{ DateTimeWidget: CustomDateTimeWidget }}
+          >
+            <Button
+              variant="primary-500"
+              onClick={() => {
+                formRef.current.submit()
+              }}
+            >
+              Save
+            </Button>
+          </Form>
+          {showConfirmation && (
+            <ConfirmationModal
+              show={true}
+              onSave={() => {
+                mutation.mutate()
+                setShowConfirmation(false)
+              }}
+              onCancel={() => {
+                setShowConfirmation(false)
+              }}
+              errors={validationError}
+            />
+          )}
+          <Alert
+            dismissible={false}
+            show={showSuccess}
+            variant={'success'}
+            transition={false}
+          >
+            Annotations successfully updated
+          </Alert>
+          <Alert
+            dismissible={false}
+            show={showSubmissionError}
+            variant={'danger'}
+            transition={false}
+          >
+            Annotations could not be updated: {validationError?.reason}
+          </Alert>
+        </>
       )}
-      <Alert
-        dismissible={false}
-        show={showSuccess}
-        variant={'success'}
-        transition={false}
-      >
-        Annotations successfully updated
-      </Alert>
-      <Alert
-        dismissible={false}
-        show={showError}
-        variant={'danger'}
-        transition={false}
-      >
-        Annotations could not be updated: {error?.reason}
-      </Alert>
     </div>
   )
 }
@@ -211,7 +233,7 @@ type ConfirmationModalProps = {
   show: boolean
   onCancel: () => void
   onSave: () => void
-  errors: AjvError[]
+  errors: AjvError[] | undefined
 }
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   show,
@@ -220,7 +242,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   errors,
 }: ConfirmationModalProps) => {
   return (
-    <Modal animation={false} show={show}>
+    <Modal animation={false} show={show} onHide={onCancel}>
       <Modal.Header closeButton>
         <Modal.Title>Update Annotations</Modal.Title>
       </Modal.Header>
@@ -228,7 +250,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <div>The following errors exist with the annotations you entered:</div>
         <div>
           <ul>
-            {errors.map((e: AjvError) => (
+            {(errors ?? []).map((e: AjvError) => (
               <li key={e.stack}>{`${e.property} ${e.message}`}</li>
             ))}
           </ul>
@@ -244,87 +266,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </Button>
       </Modal.Footer>
     </Modal>
-  )
-}
-
-const CustomArrayField: Field = ({
-  schema,
-  uiSchema,
-  idSchema,
-  formData,
-  errorSchema,
-  onChange,
-  onBlur,
-  registry,
-  formContext,
-  autofocus,
-  disabled,
-  readonly,
-  required,
-  name,
-  ...rest
-}: FieldProps) => {
-  const {
-    list,
-    handleListChange,
-    handleListRemove,
-    appendToList,
-  } = useListState(Array.isArray(formData) ? formData : [formData ?? ''])
-
-  const type = schema.items?.type ?? 'string'
-
-  let formType = 'text'
-
-  if (!Array.isArray(type)) {
-    switch (type) {
-      case 'number':
-      case 'integer':
-        formType = 'number'
-        break
-      case 'boolean':
-        formType = 'checkbox'
-        break
-    }
-  }
-
-  return (
-    <FormGroup>
-      <FormLabel>{name}</FormLabel>
-      {list.map((item, index) => {
-        return (
-          <div key={index} style={{ display: 'flex', margin: '5px 0px' }}>
-            <FormControl
-              required={required}
-              onBlur={onBlur}
-              readOnly={readonly}
-              disabled={disabled}
-              value={item}
-              type={formType}
-              onChange={e => {
-                handleListChange(index)(e.target.value)
-                onChange(list)
-              }}
-            ></FormControl>
-            <Button
-              onClick={() => {
-                handleListRemove(index)()
-                onChange(list)
-              }}
-            >
-              -
-            </Button>
-            <Button
-              onClick={() => {
-                appendToList('')
-                onChange(list)
-              }}
-            >
-              +
-            </Button>
-          </div>
-        )
-      })}
-    </FormGroup>
   )
 }
 
