@@ -113,7 +113,7 @@ describe('it performs the expected functionality', () => {
     expect(mainDiv.find('Alert')).toHaveLength(1)
     expect(wrapper.find('button')).toHaveLength(1)
     expect(wrapper.find('button').text()).toBe('Cancel')
-    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
+    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(2)
   })
 
   it("should call the 'close' function on cancel", () => {
@@ -129,7 +129,7 @@ describe('it performs the expected functionality', () => {
       mockGetQueryTableRequest,
       MOCK_CONTEXT_VALUE.accessToken,
     )
-    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
+    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(2)
     expect(wrapper.find('button')).toHaveLength(2)
     expect(wrapper.find('button.btn-link').text()).toBe('Cancel')
     expect(wrapper.find('button.btn-primary').text()).toBe('Add')
