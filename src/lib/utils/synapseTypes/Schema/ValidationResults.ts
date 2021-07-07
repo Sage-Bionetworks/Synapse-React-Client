@@ -22,7 +22,7 @@ export type ValidationResults = {
   schema$id: string
   isValid: boolean
   validatedOn: string
-  validationErrorMessage: string
-  allValidationMessages: Array<string>
-  validationException: ValidationException
+  validationErrorMessage?: string
+  allValidationMessages?: Array<string>
+  validationException?: ValidationException
 }

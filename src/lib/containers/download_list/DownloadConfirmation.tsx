@@ -153,13 +153,21 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     fileCount: 0,
     fileSize: 0
   })
-  const [queryOrFolder] = useState<QueryOrFolder>({
-    queryBundleRequest: getLastQueryRequest!(),
+  const lastQueryRequest = getLastQueryRequest!()
+  const [queryOrFolder, setQueryOrFolder] = useState<QueryOrFolder>({
+    queryBundleRequest: lastQueryRequest,
     folderId: folderId
   }) // useDeepCompareEffect() throws an error if you only pass primitives, which is the case when queryBundleRequest 
      // is not defined (configured for a container)
   const [showDownloadList, setShowDownloadList] = useState(false)
   
+  useDeepCompareEffect(() => {
+    setQueryOrFolder({
+      queryBundleRequest: lastQueryRequest,
+      folderId: folderId
+    })
+  }, [folderId, lastQueryRequest])
+
   const updateStats = useCallback(async (count?: number, bytes?: number) => {
     if (accessToken) {
       const estimatedDownloadBytesPerSecond = await testDownloadSpeed(accessToken)

@@ -10,7 +10,6 @@ import {
   isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
-import { useGetUserProfileWithProfilePic } from '../../../../utils/hooks/SynapseAPI/useUserBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import { useSynapseContext } from '../../../../utils/SynapseContext'
 import {
@@ -20,12 +19,11 @@ import {
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
 import { VersionInfo } from '../../../../utils/synapseTypes/VersionInfo'
-import { EntityBadge } from '../../../EntityBadge'
+import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { toError } from '../../../../utils/ErrorUtils'
 import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
-import { BUNDLE_REQUEST_OBJECT } from '../../EntityFinderUtils'
 
 export type DetailsViewRowAppearance =
   | 'default'
@@ -71,20 +69,12 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
 
   const { data: bundle, isError, error } = useGetEntityBundle(
     entityHeader.id,
-    BUNDLE_REQUEST_OBJECT,
+    undefined,
     undefined,
     {
       enabled: inView,
       // We'll make the stale time longer because these requests are expensive + we make a lot of them
       // They also aren't likely to change meaningfully while in the entity finder
-      staleTime: 60 * 1000, // 60 seconds
-    },
-  )
-
-  const { data: modifiedByUserProfile } = useGetUserProfileWithProfilePic(
-    bundle?.entity?.modifiedBy ?? '273950',
-    {
-      enabled: !!bundle,
       staleTime: 60 * 1000, // 60 seconds
     },
   )
@@ -136,7 +126,9 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
                 id=""
                 className="SRC-pointer-events-none"
                 checked={isSelected}
-                onChange={() => {}}
+                onChange={() => {
+                  // no-op
+                }}
               />
             )}
           </div>
@@ -158,7 +150,13 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
         <div>{entityHeader.name}</div>
       </td>
       <td className="AccessColumn">
-        {bundle && <EntityBadge entityId={entityHeader.id} bundle={bundle} />}
+        <EntityBadgeIcons
+          entityId={entityHeader.id}
+          showHasDiscussionThread={false}
+          showHasWiki={false}
+          showUnlink={false}
+          canOpenModal={false}
+        />
       </td>
       <td className="IdColumn">
         <div>{entityHeader.id} </div>
@@ -212,12 +210,11 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
       </td>
       <td className="ModifiedByColumn">
         <div>
-          {modifiedByUserProfile && (
+          {bundle?.entity?.modifiedBy && (
             <UserCard
+              ownerId={bundle?.entity?.modifiedBy}
               size={SMALL_USER_CARD}
               openLinkInNewTab={true}
-              userProfile={modifiedByUserProfile.userProfile}
-              preSignedURL={modifiedByUserProfile.preSignedURL}
             />
           )}
         </div>

@@ -1,5 +1,12 @@
 import { UserCardSize } from '../containers/UserCard'
 
+/** Bootstrapped principals */
+/** The group representing all users logged-in to Synapse */
+export const AUTHENTICATED_PRINCIPAL_ID = 273948
+/** The group representing all logged-in Synapse users AND anonymous */
+export const PUBLIC_PRINCIPAL_ID = 273949
+/** The single user representing all unauthenticated users */
+export const ANONYMOUS_PRINCIPAL_ID = 273950
 /** QueryBundleRequest constants */
 export const BUNDLE_MASK_QUERY_RESULTS: number = 1
 export const BUNDLE_MASK_QUERY_COUNT: number = 2
