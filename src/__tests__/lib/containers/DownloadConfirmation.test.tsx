@@ -113,7 +113,7 @@ describe('it performs the expected functionality', () => {
     expect(mainDiv.find('Alert')).toHaveLength(1)
     expect(wrapper.find('button')).toHaveLength(1)
     expect(wrapper.find('button').text()).toBe('Cancel')
-    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
+    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(2)
   })
 
   it("should call the 'close' function on cancel", () => {
