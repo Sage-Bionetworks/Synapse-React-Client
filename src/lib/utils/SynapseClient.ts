@@ -109,6 +109,8 @@ import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadLi
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
+import { DownloadListManifestRequest } from './synapseTypes/DownloadListV2/DownloadListManifestRequest'
+import { DownloadListManifestResponse } from './synapseTypes/DownloadListV2/DownloadListManifestResponse'
 import { DownloadListPackageRequest } from './synapseTypes/DownloadListV2/DownloadListPackageRequest'
 import { DownloadListPackageResponse } from './synapseTypes/DownloadListV2/DownloadListPackageResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
@@ -1169,7 +1171,8 @@ export const getPresignedUrlForWikiAttachment = (
 }
 
 export const isInSynapseExperimentalMode = (): boolean => {
-  return cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
+  // bang bang, you're a boolean!
+  return !!cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
 }
 
 /**
@@ -1710,6 +1713,38 @@ export const createPackageFromDownloadListV2 = (
     .then((resp: AsyncJobId) => {
       const requestUrl = `/repo/v1/download/list/package/async/get/${resp.token}`
       return getAsyncResultFromJobId<DownloadListPackageResponse>(
+        requestUrl,
+        accessToken,
+        updateParentState,
+      )
+    })
+    .catch((error: any) => {
+      throw error
+    })
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/POST/download/list/package/async/start.html
+ */
+ export const createManifestFromDownloadListV2 = (
+  accessToken: string | undefined = undefined,
+  updateParentState?: any,
+) => {
+  const request: DownloadListManifestRequest = {
+    csvTableDescriptor: {},
+    concreteType:
+      'org.sagebionetworks.repo.model.download.DownloadListManifestRequest',
+  }
+  return doPost<AsyncJobId>(
+    `/repo/v1/download/list/package/async/start`,
+    request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+    .then((resp: AsyncJobId) => {
+      const requestUrl = `/repo/v1/download/list/package/async/get/${resp.token}`
+      return getAsyncResultFromJobId<DownloadListManifestResponse>(
         requestUrl,
         accessToken,
         updateParentState,
