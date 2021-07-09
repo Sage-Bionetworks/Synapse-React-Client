@@ -350,9 +350,9 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               message: alertMsg,
             })
           } else {
-            setAlert({
-              key: 'success',
-              message: alertMsg,
+            // Navigate to the submission success dialog
+            requestDataStepCallback?.({
+              step: 5
             })
           }
         } else {
