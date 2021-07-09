@@ -7,13 +7,14 @@ import {
 import {
   createPackageFromDownloadListV2,
   getFileHandleByIdURL,
+  createManifestFromDownloadListV2
 } from '../../utils/SynapseClient'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
 import { Checkbox } from '../widgets/Checkbox'
 
 export type CreatePackageV2Props = {
-  onPackageCreation: (zipFileUrl: string) => void
+  onPackageCreation: () => void
 }
 
 type AlertConfig = {
@@ -56,6 +57,10 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     setIsLoading(true)
     setProgressPercent(80)
     try {
+      if (isIncludingManifest) {
+        const manifestResponse = await createManifestFromDownloadListV2(accessToken)
+        window.location.href = await getFileHandleByIdURL(manifestResponse.resultFileHandleId, accessToken)
+      }
       const fileNameWithZipExtension = `${fileName}.zip`
       const currentBulkFileDownloadResponse = await createPackageFromDownloadListV2(
         fileNameWithZipExtension,
@@ -65,11 +70,12 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
       const { resultFileHandleId } = currentBulkFileDownloadResponse
       try {
-        const url = await getFileHandleByIdURL(resultFileHandleId, accessToken)
         //reset
+        window.location.href = await getFileHandleByIdURL(resultFileHandleId, accessToken)
         setZipFileName('')
         setBulkFileDownloadResponse(undefined)
-        onPackageCreation(url)
+        onPackageCreation()
+        setIsIncludingManifest(false)
         setProgressPercent(20)
       } catch (err) {
         console.error('Err on getFileHandleByIdURL = ', err)

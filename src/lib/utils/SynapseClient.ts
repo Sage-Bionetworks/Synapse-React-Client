@@ -1736,14 +1736,14 @@ export const createPackageFromDownloadListV2 = (
       'org.sagebionetworks.repo.model.download.DownloadListManifestRequest',
   }
   return doPost<AsyncJobId>(
-    `/repo/v1/download/list/package/async/start`,
+    `/repo/v1/download/list/manifest/async/start`,
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then((resp: AsyncJobId) => {
-      const requestUrl = `/repo/v1/download/list/package/async/get/${resp.token}`
+      const requestUrl = `/repo/v1/download/list/manifest/async/get/${resp.token}`
       return getAsyncResultFromJobId<DownloadListManifestResponse>(
         requestUrl,
         accessToken,
