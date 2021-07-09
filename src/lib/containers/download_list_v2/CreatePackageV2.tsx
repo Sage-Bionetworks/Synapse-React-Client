@@ -121,7 +121,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
               variant='primary'
               onClick={() => {
                 setIsOnCreatePackagePage(true)
-                setProgressPercent(50)
+                setProgressPercent(40)
               }}
               type="button"
             >
