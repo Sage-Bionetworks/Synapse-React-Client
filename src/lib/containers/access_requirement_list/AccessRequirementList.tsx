@@ -31,6 +31,7 @@ import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/Acce
 import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
 import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
+import RequestDataAccessSuccess from './managedACTAccess/RequestDataAccessSuccess'
 import Login from '../Login'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
@@ -427,6 +428,13 @@ export default function AccessRequirementList({
               />
             </ReactBootstrap.Modal.Body>
           </>
+        )
+        break
+      case 5:
+        renderContent = (
+          <RequestDataAccessSuccess
+            onHide={() => onHide?.()}
+            />
         )
         break
       default:
