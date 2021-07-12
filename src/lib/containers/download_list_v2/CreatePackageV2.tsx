@@ -7,12 +7,14 @@ import {
 import {
   createPackageFromDownloadListV2,
   getFileHandleByIdURL,
+  createManifestFromDownloadListV2
 } from '../../utils/SynapseClient'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
+import { Checkbox } from '../widgets/Checkbox'
 
 export type CreatePackageV2Props = {
-  onPackageCreation: (zipFileUrl: string) => void
+  onPackageCreation: () => void
 }
 
 type AlertConfig = {
@@ -28,6 +30,9 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
+  const [isIncludingManifest, setIsIncludingManifest] = useState(true)
+  const [progressPercent, setProgressPercent] = useState<number>(20)
+  const [isOnCreatePackagePage, setIsOnCreatePackagePage] = useState(false)
   const [alert, setAlert] = useState<AlertConfig>({
     message: '',
     className: undefined,
@@ -50,7 +55,12 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     }
     setAlert({ message: '', variant: undefined, className: undefined })
     setIsLoading(true)
+    setProgressPercent(80)
     try {
+      if (isIncludingManifest) {
+        const manifestResponse = await createManifestFromDownloadListV2(accessToken)
+        window.location.href = await getFileHandleByIdURL(manifestResponse.resultFileHandleId, accessToken)
+      }
       const fileNameWithZipExtension = `${fileName}.zip`
       const currentBulkFileDownloadResponse = await createPackageFromDownloadListV2(
         fileNameWithZipExtension,
@@ -60,15 +70,16 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
       const { resultFileHandleId } = currentBulkFileDownloadResponse
       try {
-        const url = await getFileHandleByIdURL(resultFileHandleId, accessToken)
         //reset
+        window.location.href = await getFileHandleByIdURL(resultFileHandleId, accessToken)
         setZipFileName('')
         setBulkFileDownloadResponse(undefined)
-        onPackageCreation(url)
+        onPackageCreation()
+        setIsIncludingManifest(false)
+        setProgressPercent(20)
       } catch (err) {
         console.error('Err on getFileHandleByIdURL = ', err)
       }
-  
     } catch (err) {
       setAlert({
         message: err.reason as string,
@@ -82,40 +93,75 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
 
   const onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
     setZipFileName(event.currentTarget.value)
+    setProgressPercent(event.currentTarget.value ? 60: 40)
   }
 
   return (
     <>
       <div className="CreatePackageV2 bootstrap-4-backport">
-        <span className="createPackageTitle">
-          Create your Download Package
-        </span>
-        {!isLoading && !bulkFileDownloadResponse && <div className="inputAndCreateButton">
-          <input
-            onChange={onChange}
-            type="text"
-            placeholder="PackageName"
-            style={{width:'233px'}}
-          ></input>
-          <span className="zipUI">.zip</span>
-          <Button
-            variant={fileName ? 'primary' : 'dark'}
-            onClick={createPackageHandler}
-            type="button"
-            style={{ marginLeft: 20 }}
-            disabled={ fileName ? false : true}
+        <div
+          className="page-progress-percent SRC-primary-background-color"
+          style={{
+            width: `${progressPercent}%`,
+          }}
+        />
+        {!isOnCreatePackagePage && <div className="createManifestStep">
+          <span className="createManifestTitle">
+            Would you like to include file metadata in your download?
+          </span>
+          <Checkbox
+            label="Include the metadata for all files on your Download List"
+            id="includeMetadata"
+            checked={isIncludingManifest}
+            onChange={() => setIsIncludingManifest(!isIncludingManifest)}
           >
-            Create Package
-          </Button>
+            <div />
+          </Checkbox>
+          <Button
+              variant='primary'
+              onClick={() => {
+                setIsOnCreatePackagePage(true)
+                setProgressPercent(40)
+              }}
+              type="button"
+            >
+              Next
+            </Button>
         </div>}
-        {isLoading && (
-          <div className="creatingPackage">
-            <span className="spinner" />
-            <span style={{ marginLeft: 5 }}>
-              Creating package...
-            </span>
-          </div>
-        )}
+        {isOnCreatePackagePage && <div className="createPackageStep">
+          <span className="createPackageTitle">
+            Create your Download Package
+          </span>
+          <span className="createPackageDescription">
+            Name your download package and select Download Package to get started.
+          </span>
+          {!isLoading && !bulkFileDownloadResponse && <div className="inputAndCreateButton">
+            <input
+              onChange={onChange}
+              type="text"
+              placeholder="PackageName"
+              style={{width:'233px'}}
+            ></input>
+            <span className="zipUI">.zip</span>
+            <Button
+              variant={fileName ? 'primary' : 'dark'}
+              onClick={createPackageHandler}
+              type="button"
+              style={{ marginLeft: 20 }}
+              disabled={ fileName ? false : true}
+            >
+              Download Package
+            </Button>
+          </div>}
+          {isLoading && (
+            <div className="creatingPackage">
+              <span className="spinner" />
+              <span style={{ marginLeft: 5 }}>
+                Creating package...
+              </span>
+            </div>
+          )}
+        </div>}
       </div>
       {alert.message && (
         <Alert

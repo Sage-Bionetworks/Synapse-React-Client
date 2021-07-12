@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import {
@@ -21,6 +21,7 @@ import { Alert } from 'react-bootstrap'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
+import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -185,7 +186,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   }, [accessToken])
 
   const {
-    data,
+    data: entityChildrenData,
     isSuccess
   } = useGetEntityChildren (
     {
@@ -195,38 +196,30 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       includeTypes: [EntityType.FILE]
     }
   )
-  useEffect(() => {
-    if (isSuccess && data) {
-      updateStats(data.totalChildCount, data.sumFileSizesBytes)
-    }
-  }, [updateStats, queryOrFolder, isSuccess, data])
-
-  const getFilesInformation = useCallback(async (
-    token: string,
-  ) => {
-    setStatus(StatusEnum.LOADING_INFO)
-
-    const partMask =
-    SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-    SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
-
-    const queryBundleRequestSizeInformation: QueryBundleRequest = {
-      ...queryOrFolder.queryBundleRequest!,
-      partMask,
-    }
-    const {queryCount, sumFileSizes} = await SynapseClient.getQueryTableResults(
-      queryBundleRequestSizeInformation,
-      token,
-    )
-    updateStats(queryCount, sumFileSizes?.sumFileSizesBytes)
-  }, [queryOrFolder, setStatus, updateStats])
-
-  // UseEffect memoization only works for arguments where a direct === comparison can be made
-  // This fails drastically with the queryBundleRequest object which is a complex object of many fields that
-  // change, we could use a custom comparitor but this also introduces risk
   useDeepCompareEffect(() => {
-    accessToken && queryOrFolder.queryBundleRequest && getFilesInformation(accessToken)
-  }, [getFilesInformation, queryOrFolder, accessToken])
+    if (isSuccess && entityChildrenData) {
+      updateStats(entityChildrenData.totalChildCount, entityChildrenData.sumFileSizesBytes)
+    }
+  }, [updateStats, queryOrFolder, isSuccess, entityChildrenData])
+
+  const partMask =
+  SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+  SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
+
+  const queryBundleRequestSizeInformation: QueryBundleRequest = {
+    ...queryOrFolder.queryBundleRequest!,
+    partMask,
+  }
+
+  const { data: queryResultBundle } = useGetQueryResultBundle(
+    queryBundleRequestSizeInformation,
+  )
+
+  useDeepCompareEffect(() => {
+    if (queryResultBundle) {
+      updateStats(queryResultBundle.queryCount, queryResultBundle.sumFileSizes?.sumFileSizesBytes)
+    }
+  }, [updateStats, queryOrFolder, queryResultBundle])
 
   const onCancel = fnClose
     ? () => fnClose()
