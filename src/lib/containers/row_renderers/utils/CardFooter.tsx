@@ -142,10 +142,10 @@ class CardFooter extends React.Component<CardFooterProps, State> {
             {this.renderRows(valuesFiltered, limit, isDesktop)}
             {hasMoreValuesThanLimit && (
               <tr className="SRC-cardRow">
-                <td className="SRC-primary-color-border-bottom">
+                <td>
                   <button
                     style={{ textAlign: 'left', margin: 0, padding: 0 }}
-                    className="SRC-primary-text-color SRC-basicButton"
+                    className="SRC-primary-text-color SRC-basicButton primary-underlined-button"
                     onClick={this.toggleShowMore}
                   >
                     Show {isShowMoreOn ? 'Less' : 'More'}
