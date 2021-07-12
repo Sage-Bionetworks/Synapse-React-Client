@@ -13,6 +13,8 @@ import {
   AddShoppingCart,
   ShoppingCartOutlined,
   Delete,
+  ExpandMore,
+  ExpandLess,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -87,6 +89,10 @@ const getIcon = (options:IconSvgOptions) => {
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
     case 'info':
       return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
+    case 'expandLess': 
+      return <ExpandLess fontSize={'small'} style={muiSvgStyle}></ExpandLess>
+    case 'expandMore': 
+      return <ExpandMore fontSize={'small'} style={muiSvgStyle}></ExpandMore>
     case 'rat':
       return <Rat fill={color} style={customSvgStyle}></Rat>
     case 'chromatin':
