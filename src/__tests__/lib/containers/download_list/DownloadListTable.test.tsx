@@ -18,7 +18,8 @@ import {
 } from '../../../../mocks/MockSynapseContext'
 import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
 
-describe('it performs all functionality ', () => {
+// TODO: This test will be deleted soon since we have download list table v2
+describe.skip('it performs all functionality ', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
