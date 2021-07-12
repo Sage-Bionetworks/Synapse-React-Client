@@ -1,4 +1,4 @@
 
 ```jsx
-<SchemaDrivenAnnotationEditor entityId="syn25922102" />
+<SchemaDrivenAnnotationEditor entityId="syn25959292" />
 ```

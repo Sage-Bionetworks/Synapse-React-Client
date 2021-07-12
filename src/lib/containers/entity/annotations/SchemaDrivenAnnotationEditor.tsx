@@ -1,17 +1,13 @@
-// -@ts-nocheck
-import Form, { AjvError, ErrorListProps, Field } from '@rjsf/core'
+import Form, { AjvError, ErrorListProps } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
 import { omit, pick } from 'lodash-es'
 import React, { useRef } from 'react'
+import { Alert, Button, Modal } from 'react-bootstrap'
+import ReactTooltip from 'react-tooltip'
 import {
-  Alert,
-  Button,
-  FormControl,
-  FormGroup,
-  FormLabel,
-  Modal,
-} from 'react-bootstrap'
-import { FieldProps, FieldTemplateProps } from 'react-jsonschema-form'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../utils/functions/getEndpoint'
 import {
   useGetJson,
   useUpdateViaJson,
@@ -20,14 +16,14 @@ import {
   useGetSchema,
   useGetSchemaBinding,
 } from '../../../utils/hooks/SynapseAPI/useSchema'
-import { useListState } from '../../../utils/hooks/useListState'
 import { SynapseClientError } from '../../../utils/SynapseClient'
 import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
+import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 import { CustomDateTimeWidget } from './CustomDateTimeWidget'
-import { CustomFieldTemplate } from './CustomFieldTemplate'
+import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
 
 export type SchemaDrivenAnnotationEditorProps = {
@@ -53,7 +49,7 @@ function removeStandardEntityFields(json: EntityJson): Record<string, unknown> {
 export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenAnnotationEditorProps> = ({
   entityId,
 }: SchemaDrivenAnnotationEditorProps) => {
-  const formRef = useRef(null)
+  const formRef = useRef<Form<Record<string, unknown>>>(null)
   const [entityJson, setEntityJson] = React.useState<
     Record<string, unknown> | undefined
   >(undefined)
@@ -70,6 +66,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   const [validationError, setValidationError] = React.useState<
     AjvError[] | undefined
   >(undefined)
+
+  const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
   const { refetch: refetchJson } = useGetJson(entityId, {
     onSuccess: json => {
@@ -92,11 +90,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
     schema?.jsonSchemaVersionInfo.$id ?? '',
     {
       enabled: !!schema,
-      select: schema => {
-        // TODO: Why do we need to do this, issue with how the forked RJSF uses AJV
-        delete schema.$id
-        return schema
-      },
     },
   )
 
@@ -124,25 +117,56 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
         <SynapseSpinner />
       ) : (
         <>
+          <ReactTooltip id={ANNOTATION_EDITOR_TOOLTIP_ID} />
+          {entityJson && schema && (
+            <Alert
+              dismissible={false}
+              show={true}
+              variant="info"
+              transition={false}
+            >
+              <b>{entityJson.name as string}</b> requires scientific annotations
+              specified by{' '}
+              <b>
+                {schema.jsonSchemaVersionInfo.$id}
+                {'. '}
+                <a
+                  href={`${getEndpoint(
+                    BackendDestinationEnum.REPO_ENDPOINT,
+                  )}/repo/v1/schema/type/registered/${
+                    schema.jsonSchemaVersionInfo.$id
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View required schema
+                </a>
+              </b>
+            </Alert>
+          )}
           <Form
             className="AnnotationEditor"
-            liveValidate={false}
+            liveValidate={true}
+            // liveValidate={false}
             noHtml5Validate={true}
-            // FieldTemplate={CustomFieldTemplate}
+            FieldTemplate={CustomDefaultTemplate as unknown}
             ArrayFieldTemplate={CustomArrayFieldTemplate}
             ObjectFieldTemplate={CustomObjectFieldTemplate}
             ref={formRef}
             ErrorList={({ errors }: ErrorListProps) => (
               <Alert
+                className="ErrorList"
                 dismissible={false}
                 show={true}
-                variant={'danger'}
+                variant="danger"
                 transition={false}
               >
-                Validation Errors:{' '}
+                <b>Validation errors found:</b>
                 <ul>
                   {errors.map((e: AjvError) => (
-                    <li key={e.stack}>{`${e.property} ${e.message}`}</li>
+                    <li key={e.stack}>{`${e.property.substring(1)} ${
+                      e.message
+                    }`}</li>
                   ))}
                 </ul>
               </Alert>
@@ -152,6 +176,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               additionalProperties: true,
             }}
             uiSchema={{
+              'ui:DuplicateKeySuffixSeparator': '_',
               additionalProperties: {
                 'ui:field': AdditionalPropertiesSchemaField,
                 'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
@@ -165,7 +190,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               setFormData(formData)
             }}
             onSubmit={({ formData, errors }) => {
-              console.log(errors)
               setValidationError(errors)
               setShowSubmissionError(false)
               setShowSuccess(false)
@@ -174,25 +198,33 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               mutation.mutate()
             }}
             onError={(errors: AjvError[]) => {
-              // invoked when submit is clicked when there are errors
+              // invoked when submit is clicked and there are client-side validation errors
               setValidationError(errors)
-              setShowConfirmation(true)
-            }}
-            fields={
-              {
-                // AdditionalPropertiesSchemaField: AdditionalPropertiesSchemaField,
+              if (validationError) {
+                setShowConfirmation(true)
               }
-            }
-            widgets={{ DateTimeWidget: CustomDateTimeWidget }}
+            }}
+            widgets={{
+              DateTimeWidget: CustomDateTimeWidget,
+            }}
           >
-            <Button
-              variant="primary-500"
-              onClick={() => {
-                formRef.current.submit()
+            <hr />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row-reverse',
+                gridRowStart: 4,
               }}
             >
-              Save
-            </Button>
+              <Button
+                variant="primary-500"
+                onClick={() => {
+                  formRef.current!.submit()
+                }}
+              >
+                Save
+              </Button>
+            </div>
           </Form>
           {showConfirmation && (
             <ConfirmationModal
@@ -215,16 +247,35 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
           >
             Annotations successfully updated
           </Alert>
-          <Alert
-            dismissible={false}
-            show={showSubmissionError}
-            variant={'danger'}
-            transition={false}
-          >
-            Annotations could not be updated: {validationError?.reason}
-          </Alert>
+          {submissionError && (
+            <Alert
+              dismissible={false}
+              show={showSubmissionError}
+              variant={'danger'}
+              transition={false}
+            >
+              Annotations could not be updated: {submissionError.reason}
+            </Alert>
+          )}
         </>
       )}
+      <div style={{ display: 'flex' }}>
+        <pre style={{ width: '50%' }}>
+          <code>
+            {JSON.stringify(
+              {
+                ...(validationSchema ?? {}),
+                additionalProperties: true,
+              },
+              null,
+              2,
+            )}
+          </code>
+        </pre>
+        <pre style={{ width: '50%' }}>
+          <code>{JSON.stringify(formData, null, 2)}</code>
+        </pre>
+      </div>
     </div>
   )
 }
@@ -251,7 +302,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <div>
           <ul>
             {(errors ?? []).map((e: AjvError) => (
-              <li key={e.stack}>{`${e.property} ${e.message}`}</li>
+              <li key={e.stack}>{`${e.property.substring(1)} ${e.message}`}</li>
             ))}
           </ul>
         </div>
@@ -266,63 +317,5 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </Button>
       </Modal.Footer>
     </Modal>
-  )
-}
-
-const CustomAdditionalPropertiesFieldTemplate = (
-  props: FieldTemplateProps & {
-    onKeyChange: (newKey: string) => void
-  },
-) => {
-  const {
-    id,
-    label,
-    children,
-    errors,
-    help,
-    description,
-    hidden,
-    required,
-    displayLabel,
-    classNames,
-    disabled,
-    onKeyChange,
-    readonly,
-  } = props
-
-  const keyLabel = `Key` // i18n ?
-  if (hidden) {
-    return <div className="hidden">{children}</div>
-  }
-  return (
-    <div className={classNames}>
-      <div className="row">
-        <div className="col-xs-3">
-          <FormGroup className="form-additional">
-            <FormLabel id={`${id}-key`}>{keyLabel}</FormLabel>
-            <FormControl
-              type="text"
-              disabled={disabled}
-              readOnly={readonly}
-              defaultValue={label}
-              required={required}
-              id={`${id}-key`}
-              onBlur={(event: {
-                preventDefault: () => void
-                target: { value: string }
-              }) => {
-                event.preventDefault()
-                onKeyChange(event.target.value)
-              }}
-            />
-          </FormGroup>
-        </div>
-        {displayLabel && <FormLabel id={id}>{label}</FormLabel>}
-        {displayLabel && description ? description : null}
-        {children}
-        {errors}
-        {help}
-      </div>
-    </div>
   )
 }

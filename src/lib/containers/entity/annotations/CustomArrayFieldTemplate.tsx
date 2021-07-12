@@ -1,5 +1,5 @@
 import { Close, Add } from '@material-ui/icons'
-import { ArrayFieldTemplateProps } from '@rjsf/core'
+import { ArrayFieldTemplateProps } from '@sage-bionetworks/rjsf-core'
 import React from 'react'
 import { Button, FormGroup, FormLabel } from 'react-bootstrap'
 import { ADDITIONAL_PROPERTY_FLAG } from 'react-jsonschema-form/lib/utils'

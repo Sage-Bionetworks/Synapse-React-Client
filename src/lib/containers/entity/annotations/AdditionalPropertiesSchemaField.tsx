@@ -4,7 +4,7 @@ import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { useListState } from '../../../utils/hooks/useListState'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 
-// Matches ####-##-##T##:##:##.###Z
+// Matches ####-##-##T##:##:##.###Z, e.g. 1970-01-01T12:00:000Z
 const ISO_TIMESTAMP_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
 
 /**
@@ -41,26 +41,32 @@ export function AdditionalPropertiesSchemaField<T>(
     onDropPropertyClick,
     uiSchema,
   } = props
+
   const {
     list,
     handleListChange,
     handleListRemove,
     appendToList,
     setList,
-  } = useListState(Array.isArray(formData) ? formData : [formData])
+  } = useListState(
+    Array.isArray(formData)
+      ? formData
+      : // Coerce individual value to an array
+        [formData],
+  )
 
   useEffect(() => {
-    // After coercing values to a list, we want to propagate the changes
-    // If we don't do this, the form may re-order if a user changes a value
-
+    // If we had to coerce to an array, we want to propagate the changes
+    // If we don't do this, the form may re-order when a user changes a value
     // TODO: Figure out why we need a delay
     setTimeout(() => {
       onChange(list)
-    }, 500)
+    }, 50)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    // When we first mount, determine the type of existing fields
+    // When we first mount, use the existing data to determine the type
     if (list.every(item => typeof item === 'number')) {
       if (list.every(item => Number.isInteger(item))) {
         setPropertyType('integer')
@@ -75,14 +81,20 @@ export function AdditionalPropertiesSchemaField<T>(
     ) {
       setPropertyType('date-time')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
+    console.log('changing type')
     // When the selected type changes, switch to the appropriate widget for accepting input
     switch (propertyType) {
       case 'integer':
       case 'float':
-        setList(list.map(item => Number(item)))
+        setList(
+          list.map(item =>
+            Number.isNaN(Number(item)) ? undefined : Number(item),
+          ),
+        )
         setWidget('UpDownWidget')
         break
       case 'date-time':
@@ -108,6 +120,9 @@ export function AdditionalPropertiesSchemaField<T>(
         setWidget('TextWidget')
         break
     }
+
+    onChange(list)
+
     // Don't add other properties to dependency array because we don't want to automatically coerce input
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyType])
@@ -120,21 +135,23 @@ export function AdditionalPropertiesSchemaField<T>(
         },
       })
     }
-  }, [list])
+  }, [list, name, onDropPropertyClick])
+
+  useEffect(() => {
+    onChange(list)
+  }, [onChange, list])
 
   const Widget = rjsfUtils.getWidget(schema, widget, registry.widgets)
 
-  const items = list.map((item, index) => {
+  const items = list.map((item: unknown, index: number) => {
     return {
       children: (
         <Widget
           id={`${name}-${index}`}
           schema={schema}
           value={item}
-          registry={registry}
           onChange={value => {
             handleListChange(index)(value)
-            onChange(list)
           }}
           uiSchema={uiSchema}
           required={props.required}
@@ -145,15 +162,36 @@ export function AdditionalPropertiesSchemaField<T>(
           options={{}}
           formContext={props.formContext as T}
           onBlur={props.onBlur}
-          onFocus={() => {}}
           label={props.title ?? ''}
           multiple={true}
           rawErrors={[]}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore - The Widget needs the registry prop even though it's not in the type signature
+          registry={registry}
         />
       ),
       onDropIndexClick: () => {
         return handleListRemove(index)
       },
+      className: props.className ?? '',
+      disabled: props.disabled,
+      hasMoveDown: false,
+      hasMoveUp: false,
+      hasRemove: false,
+      hasToolbar: false,
+      index: index,
+      onAddIndexClick: () => {
+        return () => {
+          // no-op
+        }
+      },
+      onReorderClick: () => {
+        return () => {
+          //no-op
+        }
+      },
+      readonly: props.readonly,
+      key: `${index}`,
     }
   })
 
@@ -185,6 +223,15 @@ export function AdditionalPropertiesSchemaField<T>(
         schema={schema}
         items={items}
         registry={registry}
+        DescriptionField={() => null}
+        TitleField={() => null}
+        disabled={props.disabled}
+        idSchema={props.idSchema}
+        readonly={props.readonly}
+        required={props.required}
+        uiSchema={props.uiSchema}
+        formContext={props.formContext as unknown}
+        formData={props.formData}
       />
     </>
   )
