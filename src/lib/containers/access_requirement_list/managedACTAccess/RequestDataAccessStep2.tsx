@@ -551,6 +551,34 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     })
   }
 
+  const getAccessorRequirementHelpText = () => {
+    let link:string = ''
+    let msg: string = ''
+
+    if (managedACTAccessRequirement.isCertifiedUserRequired && !managedACTAccessRequirement.isValidatedProfileRequired) {
+      link = 'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
+      msg = 'All data requesters must be a certified user.'
+    }
+    if (managedACTAccessRequirement.isValidatedProfileRequired) {
+      link = 'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
+      msg = 'All data requesters must have a validated user profile.'
+    }
+    return link && msg ? <>
+      {msg}
+      <a
+        href={link}
+        target={'_blank'}
+        rel={'noreferrer'}
+      >
+        <IconSvg
+          options={{
+            icon: 'info',
+          }}
+        />
+      </a>
+    </> : <></>
+  }
+
   return (
     <>
       <Form
@@ -572,25 +600,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               Data Requesters
             </Form.Label>
             <br />
-            <span>This list should match those listed on your DUC.</span>
+            <span className={'requester-label'}>This list should match those listed on your DUC.
             <br />
-            <span className={'requester-label'}>
-              All data requesters must have a validated user profile.
-              <a
-                href={
-                  'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
-                }
-                target={'_blank'}
-                rel={'noreferrer'}
-              >
-              <IconSvg
-                options={{
-                  icon: 'info',
-                }}
-              />
-              </a>
+            { getAccessorRequirementHelpText() }
             </span>
-
             <UserSearchBox
               id={'requesters'}
               onSelectCallback={onSelectUserCallback}
