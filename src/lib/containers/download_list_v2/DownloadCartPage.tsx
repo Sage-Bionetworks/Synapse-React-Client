@@ -126,8 +126,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 </div>
               </div>
               <div className="availableForDownloadTableContainer container">
-                {isShowingCreatePackageUI && <CreatePackageV2 onPackageCreation={(zipFileUrl: string) => {
-                  window.location.href = zipFileUrl
+                {isShowingCreatePackageUI && <CreatePackageV2 onPackageCreation={() => {
                   setIsShowingDownloadSuccessAlert(true)
                   refetch()
                 }} />}
