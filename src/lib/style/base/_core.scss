@@ -361,6 +361,10 @@ button.SRC-roundBorder {
   border-bottom: 1px solid SRC.$border-color-gray;
 }
 
+.SRC-primary-color-border-bottom {
+  border-bottom: 1px solid SRC.$primary-action-color;
+}
+
 .SRC-border-top-only {
   border-top: 1px solid SRC.$border-color-gray;
 }

@@ -1,15 +1,7 @@
 import * as React from 'react'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faLongArrowAltUp,
-  faLongArrowAltDown,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import IconSVG from '../../IconSvg'
 import { ColumnIconConfigs } from '../../CardContainerLogic'
 import { DOI_REGEX } from '../../../utils/functions/RegularExpressions'
-library.add(faLongArrowAltUp)
-library.add(faLongArrowAltDown)
 
 type State = {
   isShowMoreOn: boolean
@@ -150,21 +142,20 @@ class CardFooter extends React.Component<CardFooterProps, State> {
             {this.renderRows(valuesFiltered, limit, isDesktop)}
             {hasMoreValuesThanLimit && (
               <tr className="SRC-cardRow">
-                <td>
+                <td className="SRC-primary-color-border-bottom">
                   <button
                     style={{ textAlign: 'left', margin: 0, padding: 0 }}
                     className="SRC-primary-text-color SRC-basicButton"
                     onClick={this.toggleShowMore}
                   >
                     Show {isShowMoreOn ? 'Less' : 'More'}
-                    <FontAwesomeIcon
-                      style={{ marginLeft: '5px' }}
-                      icon={
+                    <IconSVG options={{
+                      icon:
                         isShowMoreOn
-                          ? 'long-arrow-alt-up'
-                          : 'long-arrow-alt-down'
-                      }
-                    />
+                          ? 'expandLess'
+                          : 'expandMore'
+                      
+                    }}></IconSVG>
                   </button>
                 </td>
               </tr>
