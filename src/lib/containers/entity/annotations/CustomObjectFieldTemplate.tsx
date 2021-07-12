@@ -1,6 +1,7 @@
 import { ObjectFieldTemplateProps, utils } from '@rjsf/core'
 import React from 'react'
 import { Button } from 'react-bootstrap'
+import ReactTooltip from 'react-tooltip'
 import AddToList from '../../../assets/icons/AddToList'
 
 /**
@@ -12,8 +13,14 @@ import AddToList from '../../../assets/icons/AddToList'
  */
 export function CustomObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   const { TitleField, DescriptionField } = props
+  const CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID = `CustomObjectFieldTooltip-${props.idSchema.$id}`
   return (
     <fieldset id={props.idSchema.$id}>
+      <ReactTooltip
+        id={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
+        place="top"
+        effect="solid"
+      />
       {(props.uiSchema['ui:title'] || props.title) && (
         <TitleField
           id={`${props.idSchema.$id}__title`}
@@ -27,13 +34,17 @@ export function CustomObjectFieldTemplate(props: ObjectFieldTemplateProps) {
           description={props.description}
         />
       )}
-      {props.properties.map(prop => prop.content)}
+      {props.properties.map(prop => {
+        return <div key={prop.name}>{prop.content}</div>
+      })}
       {utils.canExpand(props.schema, props.uiSchema, props.formData) && (
         <Button
           variant="gray"
           className="object-property-expand"
           onClick={props.onAddClick(props.schema)}
           disabled={props.disabled || props.readonly}
+          data-for={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
+          data-tip={`Add a new custom field`}
         >
           <AddToList />
         </Button>
