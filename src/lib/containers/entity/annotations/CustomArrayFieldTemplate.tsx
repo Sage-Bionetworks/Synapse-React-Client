@@ -16,17 +16,17 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
               {(props.schema[ADDITIONAL_PROPERTY_FLAG] ||
                 !(index === 0 && props.items.length === 1)) && (
                 <Button
+                  aria-label={`Remove ${props.title}-${index}`}
                   variant="transparent-primary-500"
                   className="RemoveButton"
-                  onClick={() => {
-                    element.onDropIndexClick(element.index)()
-                  }}
+                  onClick={element.onDropIndexClick(element.index)}
                 >
                   <Close />
                 </Button>
               )}
               {props.canAdd && index === props.items.length - 1 && (
                 <Button
+                  aria-label={`Add new ${props.title}`}
                   variant="primary-500"
                   className="AddButton"
                   onClick={props.onAddClick}
