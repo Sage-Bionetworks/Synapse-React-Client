@@ -1,9 +1,9 @@
 import Form, { AjvError, ErrorListProps } from '@sage-bionetworks/rjsf-core'
-import { JSONSchema7 } from 'json-schema'
-import { omit, pick } from 'lodash-es'
+import { isEmpty, omit, pick } from 'lodash-es'
 import React, { useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
+import AddToList from '../../../assets/icons/AddToList'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -28,12 +28,10 @@ import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
 
 export type SchemaDrivenAnnotationEditorProps = {
   entityId: string
-  schema: JSONSchema7
 }
 
 export type SchemaDrivenAnnotationEditorModalProps = {
   entityId: string
-  schema: JSONSchema7
   show: boolean
   onHide: () => void
 }
@@ -126,10 +124,9 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               transition={false}
             >
               <b>{entityJson.name as string}</b> requires scientific annotations
-              specified by{' '}
+              specified by <b>{schema.jsonSchemaVersionInfo.$id}</b>
+              {'. '}
               <b>
-                {schema.jsonSchemaVersionInfo.$id}
-                {'. '}
                 <a
                   href={`${getEndpoint(
                     BackendDestinationEnum.REPO_ENDPOINT,
@@ -144,6 +141,17 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               </b>
             </Alert>
           )}
+          {entityJson && (!formData || isEmpty(formData)) && !schema && (
+            <Alert
+              dismissible={false}
+              show={true}
+              variant="info"
+              transition={false}
+            >
+              <b>{entityJson.name as string}</b> has no annotations. Click the{' '}
+              <AddToList /> button to annotate.
+            </Alert>
+          )}
           <Form
             className="AnnotationEditor"
             liveValidate={true}
@@ -153,6 +161,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             ArrayFieldTemplate={CustomArrayFieldTemplate}
             ObjectFieldTemplate={CustomObjectFieldTemplate}
             ref={formRef}
+            disabled={mutation.isLoading}
             ErrorList={({ errors }: ErrorListProps) => (
               <Alert
                 className="ErrorList"
@@ -245,7 +254,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             variant={'success'}
             transition={false}
           >
-            Annotations successfully updated
+            Annotations successfully updated.
           </Alert>
           {submissionError && (
             <Alert

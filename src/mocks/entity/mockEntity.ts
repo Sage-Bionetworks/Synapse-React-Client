@@ -3,6 +3,7 @@ import {
   Entity,
   EntityBundle,
   EntityHeader,
+  EntityJson,
   EntityType,
   FileEntity,
   ObjectType,
@@ -87,9 +88,24 @@ export const mockFileEntityBundle: EntityBundle = {
   threadCount: 5,
 }
 
+export const mockFileEntityJson: EntityJson = {
+  id: mockFileEntity.id!,
+  name: mockFileEntity.name,
+  etag: mockFileEntity.etag!,
+  createdOn: mockFileEntity.createdOn!,
+  modifiedOn: mockFileEntity.modifiedOn!,
+  createdBy: mockFileEntity.createdBy!,
+  modifiedBy: mockFileEntity.modifiedBy!,
+  parentId: 'syn4489',
+  concreteType: 'org.sagebionetworks.repo.model.Project',
+  myStringKey: 'myValue',
+  myIntegerKey: [4325435345213, 4321],
+  myFloatKey: [1.5, 17 / 13],
+}
+
 export const mockFileEntityHeader: EntityHeader = {
   id: mockFileEntity.id!,
-  name: mockFileEntity.name!,
+  name: mockFileEntity.name,
   type: mockFileEntity.concreteType,
   versionNumber: 1,
   versionLabel: 'Version label',

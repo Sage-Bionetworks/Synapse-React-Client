@@ -85,7 +85,6 @@ export function AdditionalPropertiesSchemaField<T>(
   }, [])
 
   useEffect(() => {
-    console.log('changing type')
     // When the selected type changes, switch to the appropriate widget for accepting input
     switch (propertyType) {
       case 'integer':
@@ -128,6 +127,10 @@ export function AdditionalPropertiesSchemaField<T>(
   }, [propertyType])
 
   useEffect(() => {
+    onChange(list)
+  }, [onChange, list])
+
+  useEffect(() => {
     if (list.length === 0) {
       onDropPropertyClick(name)({
         preventDefault: () => {
@@ -137,10 +140,6 @@ export function AdditionalPropertiesSchemaField<T>(
     }
   }, [list, name, onDropPropertyClick])
 
-  useEffect(() => {
-    onChange(list)
-  }, [onChange, list])
-
   const Widget = rjsfUtils.getWidget(schema, widget, registry.widgets)
 
   const items = list.map((item: unknown, index: number) => {
@@ -148,6 +147,7 @@ export function AdditionalPropertiesSchemaField<T>(
       children: (
         <Widget
           id={`${name}-${index}`}
+          aria-label={`${name}-${index}`}
           schema={schema}
           value={item}
           onChange={value => {
