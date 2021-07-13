@@ -166,14 +166,13 @@ export default class ModalDownload extends React.Component<
             )}
             <hr />
             <div style={{ textAlign: 'right' }}>
-              <button
+              <a
                 id="cancelBtn"
                 onClick={this.props.onClose}
-                className="SRC-primary-text-color SRC-roundBorder SRC-underline-on-hover "
                 type="button"
               >
                 Cancel
-              </button>
+              </a>
               <button
                 id="submitBtn"
                 style={submitBtn}

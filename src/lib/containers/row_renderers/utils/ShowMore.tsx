@@ -54,7 +54,6 @@ export default class ShowMore extends React.Component<
     const showMoreButton = meetsCharRequirements && (
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
-        className="SRC-primary-text-color"
         onClick={this.toggleShowMore}
       >
         ...Show More

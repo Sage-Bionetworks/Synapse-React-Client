@@ -404,17 +404,16 @@ export default class HasAccess extends React.Component<
     }
     return (
       <>
-        <button
+        <a
           style={{
             fontSize: '14px',
             cursor: 'pointer',
             marginLeft: '10px',
           }}
           onClick={this.handleGetAccess}
-          className="SRC-primary-text-color"
         >
           {linkText}
-        </button>
+        </a>
         {displayAccessRequirement && (
           <AccessRequirementList
             entityId={entityId}

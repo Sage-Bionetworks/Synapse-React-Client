@@ -172,8 +172,6 @@ export const renderLabel = (args: {
   const style: React.CSSProperties = {}
   if (isHeader) {
     className = 'SRC-lightLink'
-  } else {
-    className = 'SRC-primary-text-color'
   }
   // PORTALS-1913: special rendering for user ID lists
   if (columnModelType === 'USERID_LIST' && strList) {
@@ -348,7 +346,6 @@ export default class GenericCard extends React.Component<
       return (
         <a
           data-search-handle={titleSearchHandle}
-          className="SRC-primary-text-color"
           target={target}
           href={href}
         >
@@ -656,17 +653,16 @@ export default class GenericCard extends React.Component<
           {getCutoff(description).previewText}
         </span>
         {description.length >= CHAR_COUNT_CUTOFF && (
-          <button
+          <a
             style={{
               fontSize: '14px',
               cursor: 'pointer',
               marginLeft: '-2px',
             }}
-            className="SRC-primary-text-color"
             onClick={this.toggleShowMore}
           >
             ...Show More
-          </button>
+          </a>
         )}
       </div>
     )

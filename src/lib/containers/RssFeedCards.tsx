@@ -93,7 +93,7 @@ export default class RssFeedCards extends React.Component<
           <div className="FeedSubscribe text-center">
             {!this.state.isShowingSubscribeUI && (
               <a
-                className="FeedSubscribeToNewsLink"
+                className="FeedSubscribeToNewsLink SRC-no-border-bottom-imp"
                 onClick={this.onClickSubscribe}
               >
                 <img src={subscribePlus} alt="Subscribe to News" />
@@ -148,7 +148,7 @@ export default class RssFeedCards extends React.Component<
                               href={`${
                                 this.state.rssFeed.link
                               }/tag/${categoryName.replace(' ', '-')}`}
-                              className="SRC-no-underline-on-hover"
+                              className="SRC-no-border-bottom-imp"
                               key={`${item.guid}_${categoryName}`}
                               target="_blank"
                               rel="noopener noreferrer"

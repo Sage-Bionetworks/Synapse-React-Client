@@ -126,7 +126,7 @@ describe('it renders the UI correctly', () => {
     const { wrapper } = renderComponent(propsForNonHeaderMode)
     expect(wrapper.find('img')).toBeDefined()
     expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
-    expect(wrapper.find('a.SRC-primary-text-color').text()).toEqual(data[0])
+    expect(wrapper.find('a').text()).toEqual(data[0])
     expect(wrapper.find(`.${CARD_SHORT_DESCRIPTION_CSS}`).text()).toEqual(
       MOCKED_DESCRIPTION,
     )
@@ -404,8 +404,6 @@ describe('it makes the correct URL for the secondary labels', () => {
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
     expect(link.props().href).toEqual(`/${datasetBaseURL}?${DATASETS}=${value}`)
-    // double check the style
-    expect(link.hasClass(`SRC-primary-text-color`)).toBeTruthy()
   })
 
   it('works with a header', () => {

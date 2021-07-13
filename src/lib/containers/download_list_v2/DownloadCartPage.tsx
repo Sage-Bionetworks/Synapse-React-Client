@@ -47,7 +47,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
         <div className="titleContainer">
           <h3 className="title">Your Download Cart</h3>
           <a onClick={clearDownloadList}>
-            <span className="SRC-primary-text-color">
+            <span>
               <IconSvg options={{
                 icon: 'delete',
                 padding: 'right',

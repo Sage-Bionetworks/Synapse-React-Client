@@ -361,12 +361,12 @@ button.SRC-roundBorder {
   border-bottom: 1px solid SRC.$border-color-gray;
 }
 
-button.primary-underlined-button {
-  border-bottom: 1px solid SRC.$primary-action-color;
-}
-
 .SRC-border-top-only {
   border-top: 1px solid SRC.$border-color-gray;
+}
+
+.SRC-no-border-bottom-imp {
+  border-bottom: none !important;
 }
 
 .SRC-bar-border-bottom {
@@ -677,7 +677,7 @@ div.SRC-userImg {
 }
 
 .SRC-eqHeightRow {
-  height: 20px;
+  height: 22px;
 }
 
 .SRC-cardContent {
@@ -977,10 +977,6 @@ button {
   &:hover {
     text-decoration: underline;
   }
-}
-
-.SRC-block {
-  display: block;
 }
 
 .highlight {

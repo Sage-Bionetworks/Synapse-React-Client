@@ -140,9 +140,6 @@
 }
 
 .SRC-portalCard {
-  a {
-    color: SRC.$primary-action-color;
-  }
   .SRC-downloadData {
     background-color: SRC.$primary-action-color;
   }
@@ -187,12 +184,19 @@
     fill: white;
   }
 }
-a,
-a:link,
-a:visited,
-a:hover,
-a:active {
-  color: SRC.$primary-action-color;
+a:not(.btn),
+a:link:not(.btn),
+a:visited:not(.btn),
+a:hover:not(.btn),
+a:active:not(.btn), 
+.bootstrap-4-backport a:not(.btn),
+.bootstrap-4-backport a:link:not(.btn),
+.bootstrap-4-backport a:visited:not(.btn),
+.bootstrap-4-backport a:hover:not(.btn),
+.bootstrap-4-backport a:active:not(.btn) {
+  color: black;
+  text-decoration: none;
+  border-bottom: 3px solid SRC.$secondary-action-color;
 }
 
 .homepage-color-background {

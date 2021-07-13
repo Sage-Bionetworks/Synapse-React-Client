@@ -172,7 +172,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
           href={linkLocation}
           target={openLinkInNewTab ? '_blank' : ''}
           rel={openLinkInNewTab ? 'noreferrer' : ''}
-          className={`SRC-no-underline-on-hover ${
+          className={`SRC-no-border-bottom-imp ${
             isLarge ? 'SRC-isLargeCard' : ''
           }`}
         >
@@ -198,7 +198,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
               target={openLinkInNewTab ? '_blank' : ''}
               rel={openLinkInNewTab ? 'noreferrer' : ''}
               tabIndex={0}
-              className={'SRC-hand-cursor SRC-primary-text-color'}
+              className={'SRC-hand-cursor'}
             >
               {name}
             </a>
@@ -230,7 +230,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             className={`${
               isLarge
                 ? 'SRC-whiteText'
-                : 'SRC-primary-text-color SRC-primary-color-hover'
+                : ''
             }
               SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
             onClick={copyToClipboard(
@@ -256,17 +256,18 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             href={ORCIDHref}
             target="_blank"
             rel="noopener noreferrer"
+            style={{width: 'fit-content'}}
             tabIndex={0}
           >
-            <p
+            <span
               className={
                 isLarge
                   ? 'SRC-whiteText'
-                  : 'SRC-primary-text-color SRC-primary-color-hover'
+                  : ''
               }
             >
               View ORCID
-            </p>
+            </span>
           </a>
         )}
       </div>
