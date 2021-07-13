@@ -53,7 +53,7 @@ export default class ShowMore extends React.Component<
     let { previewText, hiddenText } = this.getCutoff(summary)
     const showMoreButton = meetsCharRequirements && (
       <a
-        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
+        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px' }}
         onClick={this.toggleShowMore}
       >
         ...Show More

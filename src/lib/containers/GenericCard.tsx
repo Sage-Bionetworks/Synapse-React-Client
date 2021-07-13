@@ -144,6 +144,7 @@ export const renderLabel = (args: {
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   isHeader: boolean
+  className?: string
 }) => {
   const {
     value,
@@ -152,6 +153,7 @@ export const renderLabel = (args: {
     selectColumns,
     columnModels,
     isHeader,
+    className,
   } = args
   if (!value) {
     return value
@@ -168,17 +170,17 @@ export const renderLabel = (args: {
     return str
   }
 
-  let className = ''
+  let newClassName = className
   const style: React.CSSProperties = {}
   if (isHeader) {
-    className = 'SRC-lightLink'
+    newClassName += 'SRC-lightLink'
   }
   // PORTALS-1913: special rendering for user ID lists
   if (columnModelType === 'USERID_LIST' && strList) {
     return strList.map((val: string, index: number) => {
       return (
         <span key={val}>
-          <UserCard ownerId={val} size={SMALL_USER_CARD} />
+          <UserCard ownerId={val} size={SMALL_USER_CARD} className={newClassName}/>
           {/* \u00a0 is a nbsp; */}
           {index < strList.length - 1 && ',\u00a0\u00a0'}
         </span>
@@ -186,7 +188,7 @@ export const renderLabel = (args: {
     })
   }
   if (columnModelType === 'USERID' && str) {
-    return <UserCard ownerId={str} size={SMALL_USER_CARD} />
+    return <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName}/>
   }
 
   if (!labelLink) {
@@ -198,7 +200,7 @@ export const renderLabel = (args: {
           target="_blank"
           rel="noopener noreferrer"
           href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${str}`}
-          className={className}
+          className={newClassName}
         >
           {str}
         </a>
@@ -231,7 +233,7 @@ export const renderLabel = (args: {
     const href = `/${baseURL}?${URLColumnName}=${value}`
     return (
       <React.Fragment key={el}>
-        <a href={href} key={el} className={className} style={style}>
+        <a href={href} key={el} className={newClassName} style={style}>
           {el}
         </a>
         {index < split.length - 1 && <span style={{ marginRight: 4 }}>, </span>}
@@ -657,7 +659,7 @@ export default class GenericCard extends React.Component<
             style={{
               fontSize: '14px',
               cursor: 'pointer',
-              marginLeft: '-2px',
+              marginLeft: '5px',
             }}
             onClick={this.toggleShowMore}
           >

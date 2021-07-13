@@ -77,6 +77,7 @@ export const renderTableCell = ({
       columnModels,
       isHeader: false,
       labelLink: columnLinkConfig,
+      className: 'secondaryLink'
     })
   }
   if (
@@ -86,7 +87,7 @@ export const renderTableCell = ({
     return (
       <EntityLink
         entityHeader={mapEntityIdToHeader[columnValue]}
-        className={isBold}
+        className={`secondaryLink ${isBold}`}
       />
     )
   }
@@ -169,6 +170,7 @@ export const renderTableCell = ({
         <a
           target="_blank"
           rel="noopener noreferrer"
+          className="secondaryLink"
           href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${ownerId}`}
         >
           <FontAwesomeIcon icon={icon} /> {userName}

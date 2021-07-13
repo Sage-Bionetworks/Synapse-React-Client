@@ -1016,6 +1016,7 @@ a.dropdown-item {
   white-space: nowrap;
   background-color: transparent;
   border: 0;
+  border-bottom: none;
 
   &.disabled {
     text-decoration: none;

@@ -354,7 +354,7 @@ export default function AccessRequirementList({
               {isSignedIn && (
                 <p>
                   You have signed in with the Sage Platform (Synapse) user account {' '}
-                  <b className="SRC-primary-text-color">
+                  <b>
                     {user?.userName}@synapse.org
                   </b>
                 </p>

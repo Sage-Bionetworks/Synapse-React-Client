@@ -798,6 +798,7 @@ export default class SynapseTable extends React.Component<
                     href={this.showGroupRowData(row)}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="secondaryLink"
                   >
                     <p className={isBold}>{columnValue}</p>
                   </a>
@@ -840,6 +841,7 @@ export default class SynapseTable extends React.Component<
               key={rowSynapseId}
               entityId={rowSynapseId}
               entityVersionNumber={entityVersionNumber}
+              className="secondaryLink"
             ></HasAccess>
           </td>,
         )

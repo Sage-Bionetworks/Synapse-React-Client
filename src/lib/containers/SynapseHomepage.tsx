@@ -376,6 +376,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 href="http://www.nhlbi.nih.gov/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="secondaryLink"
               >
                 <img
                   alt="National Heart, Lung, and Blood Institute; NIH"
@@ -389,6 +390,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 href="http://www.nimh.nih.gov/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="secondaryLink"
               >
                 <img
                   alt="National Institute of Mental Health; NIH"
@@ -402,6 +404,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 href="http://www.sloan.org/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="secondaryLink"
               >
                 <img
                   alt="Alfred P. Sloan Foundation"
@@ -415,6 +418,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 href="http://www.nia.nih.gov/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="secondaryLink"
               >
                 <img
                   alt="National Institute on Aging; NIH"
@@ -428,6 +432,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 href="http://www.lsdfa.org/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="secondaryLink"
               >
                 <img
                   alt="Life Sciences Discovery Fund"
@@ -441,6 +446,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 href="http://www.ctf.org/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="secondaryLink"
               >
                 <img
                   alt="Children's Tumor Foundation"
@@ -454,6 +460,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
                 href="http://www.n-tap.org/"
                 target="_blank"
                 rel="noopener noreferrer"
+                className="secondaryLink"
               >
                 <img
                   alt="Neurofibromatosis Therapeutic Acceleration Program"

@@ -513,6 +513,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="secondaryLink"
                       href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synId}`}
                     >
                       {fileName}
@@ -526,6 +527,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                       entityId={synId}
                       isInDownloadList={true}
                       forceSamePage={forceSamePage}
+                      className="secondaryLink"
                     />
                   </td>
                   <td>
@@ -534,6 +536,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         size={'SMALL USER CARD'}
                         userProfile={userProfile}
                         preSignedURL={userProfile.clientPreSignedURL}
+                        className="secondaryLink"
                       />
                     )}
                     {canDownload && !userProfile && (

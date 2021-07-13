@@ -199,6 +199,20 @@ a:active:not(.btn),
   border-bottom: 3px solid SRC.$secondary-action-color;
 }
 
+a[role=button]:link:not(.btn),
+a:not(.btn).secondaryLink,
+a:link:not(.btn).secondaryLink,
+a:visited:not(.btn).secondaryLink,
+a:hover:not(.btn).secondaryLink,
+a:active:not(.btn).secondaryLink {
+  color: SRC.$primary-action-color;
+  border-bottom: none;
+}
+a:hover:not(.btn).secondaryLink {
+  border-bottom: 1px solid SRC.$primary-action-color;
+}
+
+
 .homepage-color-background {
   background-color: SRC.$primary-bgcolor-rgba;
   padding: 40px 0;

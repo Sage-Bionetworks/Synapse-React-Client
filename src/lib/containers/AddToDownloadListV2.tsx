@@ -26,7 +26,7 @@ const AddToDownloadListV2: React.FunctionComponent<AddToDownloadListV2Props> = (
   }
 
   return (
-    <a onClick={addToDownloadListV2}>
+    <a onClick={addToDownloadListV2} className="secondaryLink">
       <IconSvg options={{icon: "addToCart"}} />
     </a>
   )

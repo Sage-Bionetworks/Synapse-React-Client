@@ -96,15 +96,15 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           href={secondaryButtonHref}
         >
           {' '}
-          <u> {secondaryButtonText} </u>
+          {secondaryButtonText}
         </a>
       )}
       {primaryButtonText && onPrimaryButtonClick && (
         <Button className="primaryButton" variant="secondary" onClick={onPrimaryButtonClick}>{primaryButtonText}</Button>
       )}
-      {onClose && <a className="closeAlert" onClick={onClose}>
+      {onClose && <button className="closeAlert" onClick={onClose}>
         <Clear fontSize={'large'} />
-      </a>}
+      </button>}
     </div>
   </Alert>
 }

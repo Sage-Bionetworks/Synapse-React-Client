@@ -159,6 +159,7 @@ export default function DownloadListTable() {
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="secondaryLink"
                         href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
                       >
                         {item.fileName}

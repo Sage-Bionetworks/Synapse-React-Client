@@ -155,23 +155,23 @@ export default function AcceptedRequirements({
               <p>
                 {approvedText}
                 {isManagedActAr && (
-                  <button
-                    className="update-request-button bold-text"
+                  <a
+                    className="update-request-button"
                     onClick={() => {
                       gotoSynapseAccessRequirementPage()
                     }}
                   >
                     Update Request
-                  </button>
+                  </a>
                 )}
-                <button
-                  className="view-terms-button bold-text"
+                <a
+                  className="view-terms-button"
                   onClick={() => {
                     setIsHide(!isHide)
                   }}
                 >
                   View Terms
-                </button>
+                </a>
               </p>
               <div className={`view-terms ${isHide ? 'hidden' : 'show'}`}>
                 {markdown}

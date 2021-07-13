@@ -56,13 +56,14 @@ library.add(faDatabase)
 library.add(faCircle)
 
 export type HasAccessProps = {
-  onHide?: Function
+  onHide?: () => void
   fileHandle?: FileHandle
   entityId: string
   isInDownloadList?: boolean // set to show errors in UI about package creation
   entityVersionNumber?: string
   forceSamePage?: boolean
   set_arPropsFromHasAccess?: (props: AccessRequirementListProps) => void
+  className?: string
 }
 
 type HasAccessState = {
@@ -410,6 +411,7 @@ export default class HasAccess extends React.Component<
             cursor: 'pointer',
             marginLeft: '10px',
           }}
+          className={this.props.className}
           onClick={this.handleGetAccess}
         >
           {linkText}

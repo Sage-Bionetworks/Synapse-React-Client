@@ -275,6 +275,9 @@
       margin: 0 auto;
       justify-content: space-around;
       align-self: center;
+      a:hover:not(.btn).secondaryLink {
+        border-bottom: none;
+      }
       img {
         max-height: 100px;
         max-width: 200px;
