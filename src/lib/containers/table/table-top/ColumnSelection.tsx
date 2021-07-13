@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
-import { useState } from 'react'
 
 type ColumnSelectionProps = {
   headers?: SelectColumn[]
@@ -14,10 +13,14 @@ type ColumnSelectionProps = {
       an option to open the dropdown, 'show columns'
     */
   show?: boolean
-  onChange?: Function
+  onChange?: () => void
   toggleColumnSelection: (name: string) => void
   darkTheme?: boolean
   facetAliases?: {}
+}
+
+type MetadataEvent = {
+  source: "select" | "click" | "rootClose" | "keydown";
 }
 
 const tooltipColumnSelectionId = 'addAndRemoveColumns'
@@ -30,34 +33,24 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
     isColumnSelected,
     toggleColumnSelection,
     darkTheme,
-    facetAliases,
-    show: showFromProps,
-    onChange,
+    facetAliases
   } = props
 
-  let [show, setShow] = useState(false)
-
-  let [usedShow, usedSetShow] =
-    showFromProps !== undefined ? [showFromProps, onChange!] : [show, setShow]
-
-  const onDropdownClick = (_show: boolean, _event: any, metadata: any) => {
-    // Any click event for the Dropdown will close the dropdown (assuming its open), so we have
-    // to handle the onToggle event and manually manage the dropdown open state. If metadata
-    // is defined the event occuring is inside the dropdown which we then want to keep open, otherwise
-    // we close it.
-    if (metadata.source) {
-      usedSetShow(true)
+  const [show, setShow] = useState(false)
+  const onDropdownClick = (_show: boolean, _event: React.SyntheticEvent<Dropdown, Event>, metadata: MetadataEvent) => {
+    if (metadata.source === "rootClose") {
+      setShow(false)
     } else {
-      usedSetShow(false)
+      setShow(true)
     }
   }
   return (
     <Dropdown
       as="span"
-      onToggle={(show: boolean, event: any, metadata: any) =>
+      onToggle={(show: boolean, event: React.SyntheticEvent<Dropdown, Event>, metadata: MetadataEvent) =>
         onDropdownClick(show, event, metadata)
       }
-      show={usedShow}
+      show={show}
       drop="down"
     >
       <ElementWithTooltip
