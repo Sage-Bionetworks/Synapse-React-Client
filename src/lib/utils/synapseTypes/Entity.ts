@@ -35,3 +35,41 @@ export interface Entity {
   /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
   uri?: string
 }
+
+// Entity data returned as in https://docs.synapse.org/rest/GET/entity/id/json.html
+export interface EntityJson extends Record<string, unknown> {
+  name: string
+  id: string
+  etag: string
+  createdOn: string
+  modifiedOn: string
+  createdBy: string
+  modifiedBy: string
+  parentId: string
+  concreteType: ConcreteEntityType
+  versionNumber?: number
+  versionLabel?: string
+  isLatestVersion?: boolean
+  dataFileHandleId?: string
+}
+
+/**
+ * A string array of the keys in the EntityJson object above.
+ * This object is used to determine which fields are standard and which are annotations,
+ * so it's important that this array contains all of the keys in the object above.
+ */
+export const entityJsonKeys = [
+  'name',
+  'id',
+  'etag',
+  'createdOn',
+  'modifiedOn',
+  'createdBy',
+  'modifiedBy',
+  'parentId',
+  'concreteType',
+  'versionNumber',
+  'versionLabel',
+  'isLatestVersion',
+  'dataFileHandleId',
+]

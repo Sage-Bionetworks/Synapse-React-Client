@@ -1,0 +1,78 @@
+@use '../abstracts/variables' as SRC;
+
+.bootstrap-4-backport {
+  .AnnotationEditor {
+    display: grid;
+    grid-template-rows: auto auto auto auto;
+
+    .ErrorList {
+      grid-row-start: 2;
+    }
+
+    > .form-group {
+      grid-row-start: 1;
+    }
+
+    > hr {
+      grid-row-start: 3;
+      width: 100%;
+    }
+
+    .col-xs-3,
+    .col-xs-6 {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    .row {
+      padding: 0px 10px;
+    }
+    .calendar-with-icon-form-group.form-group {
+      input {
+        margin-bottom: 0;
+      }
+      .input-group-prepend {
+        margin-bottom: 0;
+      }
+      // margin-bottom: 0px;
+    }
+    .AddButton,
+    .RemoveButton {
+      border-radius: 0px;
+      height: 25px;
+      width: 25px;
+      padding: 0px;
+      margin: 12px 5px 1rem;
+      justify-self: center;
+      align-self: start;
+    }
+
+    .AddButton {
+      grid-column-start: add;
+    }
+
+    .RemoveButton {
+      grid-column-start: remove;
+    }
+
+    .array-item {
+      display: grid;
+      grid-template-columns: [input] auto [remove] 30px [add] 30px;
+    }
+
+    label {
+      color: SRC.$gray-deemphasized;
+      font-weight: normal;
+      span.required {
+        color: SRC.$red-required;
+        margin-left: 2px;
+      }
+    }
+
+    select {
+      background-color: SRC.$gray-light;
+    }
+    // input.form-control {
+    //   height: 40px;
+    // }
+  }
+}

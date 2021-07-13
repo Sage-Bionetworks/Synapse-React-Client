@@ -7,7 +7,12 @@
   $secondary: SRC.$secondary-action-color;
   $border-radius: 0.2rem;
   $btn-box-shadow: SRC.$box-shadow-soft;
-
+  $input-height: 50px;
+  $input-padding-x: 0.75rem;
+  $input-padding-y: 0.5rem;
+  $input-border-color: SRC.$border-color-gray;
+  $input-border-width: 1px;
+  $input-border-radius: 2px;
   @import 'node_modules/bootstrap/scss/bootstrap';
 
   .alert-danger {
@@ -62,6 +67,10 @@
     );
   }
 
+  .btn-gray {
+    @include button-variant($background: #ececec, $border: #ececec);
+  }
+
   // Override built-in btn-white with this
   .btn-white {
     @include button-variant(#fff, #fff);
@@ -97,6 +106,25 @@
       @include button-outline-variant($color: $color);
       background-color: #f9f9f9;
       border-color: #e3e3e3;
+    }
+
+    .btn-transparent-primary-#{$color-variant} {
+      @include button-variant(
+        $background: color.change(white, $alpha: 0),
+        $border: color.change(white, $alpha: 0),
+        // $active-background: color.change(white, $alpha: 0),
+        $active-border: color.change($color)
+      );
+      color: $color;
+
+      &:hover {
+        color: color.adjust($color, $lightness: -10%);
+        box-shadow: unset;
+      }
+      &:active {
+        color: color.adjust($color, $lightness: -15%);
+        box-shadow: unset;
+      }
     }
   }
 

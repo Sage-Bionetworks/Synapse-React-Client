@@ -5,15 +5,16 @@ import {
 import { ObjectType } from '../lib/utils/synapseTypes/Schema/ObjectType'
 import { ValidationResults } from '../lib/utils/synapseTypes/Schema/ValidationResults'
 import { mockFileEntity } from './entity/mockEntity'
+import { JSONSchema7 } from 'json-schema'
 
 export const mockSchemaBinding: JsonSchemaObjectBinding = {
   jsonSchemaVersionInfo: {
     organizationId: '1',
     organizationName: 'org.sagebionetworks',
     schemaId: '1',
-    schemaName: 'Mock schema',
+    schemaName: 'Mock Schema',
     versionId: '555',
-    $id: 'org.sagebionetworks-mock-schema',
+    $id: 'org.sagebionetworks-MockSchema',
     jsonSHA256Hex:
       '5f2cd73c0fe25b30cbee2f213b6d633951f1873ca1911f494d4654f702a69e95',
     createdOn: '2021-04-01T08:00:00.000Z',
@@ -32,4 +33,40 @@ export const mockSchemaValidationResults: ValidationResults = {
   schema$id: `https://repo-prod.prod.sagebase.org/repo/v1/schema/type/registered/${mockSchemaBinding.jsonSchemaVersionInfo.$id}`,
   isValid: true,
   validatedOn: '2021-06-28T20:08:44.046Z',
+}
+
+export const mockValidationSchema: JSONSchema7 = {
+  $schema: 'http://json-schema.org/draft-07/schema#',
+  $id: `https://repo-prod.prod.sagebase.org/repo/v1/schema/type/registered/${mockSchemaBinding.jsonSchemaVersionInfo.$id}`,
+  type: 'object',
+  properties: {
+    country: {
+      enum: ['USA', 'CA'],
+    },
+  },
+  required: ['country'],
+  if: {
+    properties: {
+      country: {
+        const: 'USA',
+      },
+    },
+    required: ['country'],
+  },
+  then: {
+    properties: {
+      state: {
+        type: 'string',
+      },
+    },
+    required: ['state'],
+  },
+  else: {
+    properties: {
+      province: {
+        type: 'string',
+      },
+    },
+    required: ['province'],
+  },
 }
