@@ -1229,9 +1229,6 @@ hr ~ .SRC-wrapper {
 @mixin normalLink() {
   color: SRC.$primary-action-color;
   border-bottom: none;
-  &:hover {
-    text-decoration: underline;
-  }
 }
 // core link styles across the portal main area
 main, #rootPanel {
@@ -1242,9 +1239,19 @@ main, #rootPanel {
     }
   }
 
-  td>a, a[role=button], a.secondaryLink, a.subpage-link, a.textDecorationNone {
+  td>a, a[role=button], a.secondaryLink, a.subpage-link {
     &:not(.btn) {
       @include normalLink;
+      &:visited, &:active, &:link {
+        @include normalLink;
+      }
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  a.textDecorationNone {
+    &:not(.btn) {
       &:visited, &:active, &:link {
         @include normalLink;
       }
