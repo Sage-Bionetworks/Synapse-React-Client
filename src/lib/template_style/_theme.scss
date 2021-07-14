@@ -184,34 +184,6 @@
     fill: white;
   }
 }
-a:not(.btn),
-a:link:not(.btn),
-a:visited:not(.btn),
-a:hover:not(.btn),
-a:active:not(.btn), 
-.bootstrap-4-backport a:not(.btn),
-.bootstrap-4-backport a:link:not(.btn),
-.bootstrap-4-backport a:visited:not(.btn),
-.bootstrap-4-backport a:hover:not(.btn),
-.bootstrap-4-backport a:active:not(.btn) {
-  color: black;
-  text-decoration: none;
-  border-bottom: 3px solid SRC.$secondary-action-color;
-}
-
-a[role=button]:link:not(.btn),
-a:not(.btn).secondaryLink,
-a:link:not(.btn).secondaryLink,
-a:visited:not(.btn).secondaryLink,
-a:hover:not(.btn).secondaryLink,
-a:active:not(.btn).secondaryLink {
-  color: SRC.$primary-action-color;
-  border-bottom: none;
-}
-a:hover:not(.btn).secondaryLink {
-  border-bottom: 1px solid SRC.$primary-action-color;
-}
-
 
 .homepage-color-background {
   background-color: SRC.$primary-bgcolor-rgba;

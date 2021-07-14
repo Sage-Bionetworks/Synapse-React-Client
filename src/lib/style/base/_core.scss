@@ -1220,3 +1220,43 @@ hr ~ .SRC-wrapper {
     margin-right: 5px;
   }
 }
+
+@mixin fancyLink() {
+  color: black;
+  text-decoration: none;
+  border-bottom: 3px solid SRC.$secondary-action-color;
+}
+@mixin normalLink() {
+  color: SRC.$primary-action-color;
+  border-bottom: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+// core link styles across the portal main area
+main, #rootPanel {
+  a:not(.btn), details>summary, .bootstrap-4-backport a:not(.btn) {
+    @include fancyLink;
+    &:visited, &:hover, &:active, &:link {
+      @include fancyLink;
+    }
+  }
+
+  td>a, a[role=button], a.secondaryLink, a.subpage-link, a.textDecorationNone {
+    &:not(.btn) {
+      @include normalLink;
+      &:visited, &:active, &:link {
+        @include normalLink;
+      }
+    }
+  }
+  
+  a.no-border-bottom,
+  ul.dropdown-menu>li>a:not(.btn),
+  .dropdown>a:not(.btn),
+  a.nav-button {
+    &:visited, &:hover, &:active, &:link {
+      border-bottom: none;
+    }
+  }
+}
