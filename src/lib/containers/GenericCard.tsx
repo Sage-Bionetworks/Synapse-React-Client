@@ -350,6 +350,7 @@ export default class GenericCard extends React.Component<
           data-search-handle={titleSearchHandle}
           target={target}
           href={href}
+          className="highlight-link"
         >
           {title}
         </a>
@@ -661,6 +662,7 @@ export default class GenericCard extends React.Component<
               cursor: 'pointer',
               marginLeft: '5px',
             }}
+            className="highlight-link"
             onClick={this.toggleShowMore}
           >
             ...Show More

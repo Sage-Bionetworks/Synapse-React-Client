@@ -55,6 +55,7 @@ export default class ShowMore extends React.Component<
       <a
         style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px' }}
         onClick={this.toggleShowMore}
+        className="highlight-link"
       >
         ...Show More
       </a>

@@ -1221,49 +1221,39 @@ hr ~ .SRC-wrapper {
   }
 }
 
-@mixin fancyLink() {
-  color: black;
-  text-decoration: none;
-  border-bottom: 3px solid SRC.$secondary-action-color;
+@mixin highlightLink() {
+  border-bottom: 1px solid SRC.$primary-action-color-300;
+  &:hover {
+    border-bottom: 2px solid SRC.$primary-action-color-700;
+  }
 }
+
 @mixin normalLink() {
   color: SRC.$primary-action-color;
-  border-bottom: none;
+  text-decoration: none;
+  font-weight: 900;
+  border-bottom: 1px solid transparent;
+  letter-spacing: 1px;
+  &:hover {
+    border-bottom-color: SRC.$primary-action-color-300;
+  }
 }
 // core link styles across the portal main area
 main, #rootPanel {
-  a:not(.btn), details>summary, .bootstrap-4-backport a:not(.btn) {
-    @include fancyLink;
-    &:visited, &:hover, &:active, &:link {
-      @include fancyLink;
+  a:not(.btn), details>summary, .bootstrap-4-backport a:not(.btn), 
+  .markdown td a:not(.btn), .markdown .SRC-userCard a:not(.btn) {
+    @include normalLink;
+    &:visited, &:active, &:link {
+      @include normalLink;
     }
   }
 
-  td>a, a[role=button], a.secondaryLink, a.subpage-link {
+  .markdown a, .SRC-userCardName a, .highlight-link {
     &:not(.btn) {
-      @include normalLink;
+      @include highlightLink;
       &:visited, &:active, &:link {
-        @include normalLink;
+        @include highlightLink;
       }
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-  a.textDecorationNone {
-    &:not(.btn) {
-      &:visited, &:active, &:link {
-        @include normalLink;
-      }
-    }
-  }
-  
-  a.no-border-bottom,
-  ul.dropdown-menu>li>a:not(.btn),
-  .dropdown>a:not(.btn),
-  a.nav-button {
-    &:visited, &:hover, &:active, &:link {
-      border-bottom: none;
     }
   }
 }
