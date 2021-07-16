@@ -1254,7 +1254,7 @@ main, #rootPanel {
     }
   }
 
-  .markdown a, .SRC-userCardName a, .highlight-link,
+  .markdown a, .SRC-userCardName a, a.highlight-link,
   details>summary {
     &:not(.btn) {
       @include highlightLink;

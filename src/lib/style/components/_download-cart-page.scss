@@ -12,9 +12,10 @@
   }
   .titleContainer {
     display: grid;
-    grid-template-columns: auto 195px;
+    grid-template-columns: auto 210px;
     * {
       vertical-align: bottom;
+      align-self: center;
     }
   }
   .nav-tabs {
