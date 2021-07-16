@@ -1217,8 +1217,14 @@ hr ~ .SRC-wrapper {
   }
 }
 
+$link-underline-color-default: adjust-color(
+  SRC.$primary-action-color,
+  $saturation: -50%,
+  $lightness: 40%
+) !default;
+
 @mixin highlightLink() {
-  border-bottom: 1px solid SRC.$primary-action-color-300;
+  border-bottom: 1px solid $link-underline-color-default;
   &:hover {
     border-bottom: 2px solid SRC.$primary-action-color-700;
   }
@@ -1231,7 +1237,7 @@ hr ~ .SRC-wrapper {
   border-bottom: 1px solid transparent;
   letter-spacing: .5px;
   &:hover {
-    border-bottom: 1px solid SRC.$primary-action-color-300;
+    border-bottom: 1px solid $link-underline-color-default;
   }
 }
 
