@@ -232,7 +232,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
                 ? 'SRC-whiteText'
                 : ''
             }
-              SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
+              SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-cardSvg`}
             onClick={copyToClipboard(
               copyToClipboardRef,
               email,
@@ -245,8 +245,10 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             )}
             tabIndex={0}
           >
-            <span style={{ paddingRight: '5px' }}>
-              {`${userName}@synapse.org`}
+            <span style={{ paddingRight: '5px', paddingBottom: '1px' }}>
+              <a className="link">
+                {`${userName}@synapse.org`}
+              </a>
             </span>
             {IconCopy}
           </p>

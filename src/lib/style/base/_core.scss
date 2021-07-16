@@ -840,10 +840,6 @@ div.SRC-userImg {
   background-color: #fff;
 }
 
-.SRC-emailText:hover {
-  text-decoration: underline;
-}
-
 .SRC-cardSvg.SRC-whiteText > svg {
   opacity: 0.5;
 }
@@ -1238,8 +1234,22 @@ hr ~ .SRC-wrapper {
     border-bottom: 1px solid SRC.$primary-action-color-300;
   }
 }
+
+@mixin ignoreLink() {
+  color: unset;
+  text-decoration: unset;
+  font-weight: unset;
+  border-bottom: unset;
+  letter-spacing: unset;
+  &:hover {
+    border-bottom: unset;
+  }
+}
+
 // Core link styles across the portal main area.
-// Also, you can force normal link style by adding the "secondary-links" css class a container of your anchor.
+// Design would like "body text" to have the special primary link style.
+// Other links should have the normal secondary link style.
+// You can force normal link style by adding the "secondary-links" css class a container of your anchor.
 // Or force the highlighted primary link by adding "highlight-link" css class name to an anchor.
 main, #rootPanel {
   a:not(.btn), .bootstrap-4-backport a:not(.btn), 
@@ -1261,6 +1271,13 @@ main, #rootPanel {
       &:visited, &:active, &:link {
         @include highlightLink;
       }
+    }
+  }
+
+  // do not apply special styling to dropdown links or anchors in tabs
+  .dropdown, .nav-tabs {
+    a:not(.btn) {
+      @include ignoreLink;
     }
   }
 }
