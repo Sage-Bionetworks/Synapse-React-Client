@@ -8,8 +8,13 @@ export type CreatedOnByUserDivProps = {
   date: Date
 }
 
-const dateFormatOptionLocal = { timeZoneName: 'short' }
-const dateFormatOptionUTC = { timeZone: 'UTC', timeZoneName: 'short' }
+const dateFormatOptionLocal: Intl.DateTimeFormatOptions = {
+  timeZoneName: 'short',
+}
+const dateFormatOptionUTC: Intl.DateTimeFormatOptions = {
+  timeZone: 'UTC',
+  timeZoneName: 'short',
+}
 
 export const CreatedOnByUserDiv: React.FunctionComponent<CreatedOnByUserDivProps> = ({
   userId,
