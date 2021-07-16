@@ -1231,24 +1231,31 @@ hr ~ .SRC-wrapper {
 @mixin normalLink() {
   color: SRC.$primary-action-color;
   text-decoration: none;
-  font-weight: 900;
+  font-weight: 700;
   border-bottom: 1px solid transparent;
-  letter-spacing: 1px;
+  letter-spacing: .5px;
   &:hover {
-    border-bottom-color: SRC.$primary-action-color-300;
+    border-bottom: 1px solid SRC.$primary-action-color-300;
   }
 }
-// core link styles across the portal main area
+// Core link styles across the portal main area.
+// Also, you can force normal link style by adding the "secondary-links" css class a container of your anchor.
+// Or force the highlighted primary link by adding "highlight-link" css class name to an anchor.
 main, #rootPanel {
-  a:not(.btn), details>summary, .bootstrap-4-backport a:not(.btn), 
-  .markdown td a:not(.btn), .markdown .SRC-userCard a:not(.btn) {
+  a:not(.btn), .bootstrap-4-backport a:not(.btn), 
+  .markdown td a:not(.btn),
+  .markdown a.SRC-userCard:not(.btn),
+  .secondary-links a:not(.btn),
+  .markdown .secondary-links a:not(.btn)
+   {
     @include normalLink;
     &:visited, &:active, &:link {
       @include normalLink;
     }
   }
 
-  .markdown a, .SRC-userCardName a, .highlight-link {
+  .markdown a, .SRC-userCardName a, .highlight-link,
+  details>summary {
     &:not(.btn) {
       @include highlightLink;
       &:visited, &:active, &:link {

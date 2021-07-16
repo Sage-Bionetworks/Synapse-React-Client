@@ -275,6 +275,10 @@
       margin: 0 auto;
       justify-content: space-around;
       align-self: center;
+      a {
+        // respect height of content
+        display: inline-block;
+      }
       img {
         max-height: 100px;
         max-width: 200px;
