@@ -238,7 +238,7 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
     this.props.executeQueryRequest!(newQueryRequest)
   }
 
-  public showAllFacets(event: React.MouseEvent<HTMLButtonElement>) {
+  public showAllFacets(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
     event.preventDefault()
     this.setState({
       showAllFacets: true,
@@ -253,22 +253,21 @@ class Facets extends React.Component<QueryWrapperChildProps, FacetsState> {
       // this is hidden if there are > 5 facets, wait for user to make
       // an action for this to appear
       return (
-        <button
-          className="SRC-primary-text-color SRC-facet-select-all SRC-no-text-decor"
+        <a
+          className="SRC-facet-select-all"
           onClick={this.applyChanges(ref, '', SELECT_ALL, 0)}
         >
           Select All
-        </button>
+        </a>
       )
     }
     return (
-      <button
+      <a
         id="showAllFacetsButton"
-        className="SRC-primary-text-color SRC-no-text-decor"
         onClick={this.showAllFacets}
       >
         Show All ({curFacetsLength})
-      </button>
+      </a>
     )
   }
 

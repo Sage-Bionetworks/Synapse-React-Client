@@ -53,9 +53,9 @@ export default class ShowMore extends React.Component<
     let { previewText, hiddenText } = this.getCutoff(summary)
     const showMoreButton = meetsCharRequirements && (
       <a
-        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '1px' }}
-        className="SRC-primary-text-color"
+        style={{ fontSize: '14px', cursor: 'pointer', marginLeft: '5px' }}
         onClick={this.toggleShowMore}
+        className="highlight-link"
       >
         ...Show More
       </a>

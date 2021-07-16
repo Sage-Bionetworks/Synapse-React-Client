@@ -9,13 +9,13 @@ export type SignInProps = {
 // modal
 const SignInButton = ({ className, style }: SignInProps) => {
   return (
-    <button
+    <a
       type="button"
       style={style}
-      className={`SignInButton ${SRC_SIGN_IN_CLASS} SRC-primary-text-color ${className}`}
+      className={`SignInButton ${SRC_SIGN_IN_CLASS} ${className}`}
     >
       Sign In
-    </button>
+    </a>
   )
 }
 

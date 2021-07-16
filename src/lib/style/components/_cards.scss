@@ -49,7 +49,6 @@ $text-color-lighter: #898989;
     margin-top: 0px;
     margin-bottom: 0px;
     background: SRC.$primary-action-color;
-    
     @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
       padding-top: 40px;
     }
@@ -62,8 +61,11 @@ $text-color-lighter: #898989;
     }  
     a,
     .SRC-userCard {
-      text-decoration: underline;
       color: white !important;
+      border-bottom: 1px solid white !important;
+      &:hover {
+        border-bottom: 1px solid white !important;
+      }  
     }
     .SRC-cardMetadata .SRC-row-label {
       text-transform: uppercase;

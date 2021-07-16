@@ -46,6 +46,7 @@ export type UserCardProps = {
   avatarSize?: AvatarSize
   /** Whether to show the avatar with the name for the small user card */
   withAvatar?: boolean
+  className?:string
 }
 
 export const UserCard: React.FunctionComponent<UserCardProps> = (

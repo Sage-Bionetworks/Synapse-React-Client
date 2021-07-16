@@ -26,11 +26,9 @@ const AddToDownloadListV2: React.FunctionComponent<AddToDownloadListV2Props> = (
   }
 
   return (
-    <span className="SRC-primary-text-color">
-      <button className={"btn-download-icon"} onClick={addToDownloadListV2}>
-        <IconSvg options={{icon: "addToCart"}} />
-      </button>
-    </span>
+    <a onClick={addToDownloadListV2}>
+      <IconSvg options={{icon: "addToCart"}} />
+    </a>
   )
 }
 

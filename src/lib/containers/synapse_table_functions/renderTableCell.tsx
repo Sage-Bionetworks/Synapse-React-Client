@@ -86,7 +86,7 @@ export const renderTableCell = ({
     return (
       <EntityLink
         entityHeader={mapEntityIdToHeader[columnValue]}
-        className={isBold}
+        className={`${isBold}`}
       />
     )
   }

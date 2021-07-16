@@ -287,14 +287,13 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
                     {getAcceptButtonText()}
                   </button>
                 )}
-                <button
-                  className="view-terms-button"
+                <a
                   onClick={() => {
                     setIsHide(!isHide)
                   }}
                 >
                   View Terms
-                </button>
+                </a>
               </p>
               <div className={`view-terms ${isHide ? 'hidden' : 'show'}`}>
                 {markdown}

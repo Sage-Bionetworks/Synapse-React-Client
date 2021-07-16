@@ -333,11 +333,11 @@ export default function AccessRequirementList({
               {!isSignedIn && (
                 <>
                   <p className="AccessRequirementList__signin">
-                    <button
-                      className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-primary-text-color SRC-boldText `}
+                    <a
+                      className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-boldText `}
                     >
                       Sign in
-                    </button>
+                    </a>
                     with a Sage Platform (Synapse) user account.
                   </p>
                   <p>
@@ -354,7 +354,7 @@ export default function AccessRequirementList({
               {isSignedIn && (
                 <p>
                   You have signed in with the Sage Platform (Synapse) user account {' '}
-                  <b className="SRC-primary-text-color">
+                  <b>
                     {user?.userName}@synapse.org
                   </b>
                 </p>

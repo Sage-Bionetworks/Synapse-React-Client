@@ -140,9 +140,6 @@
 }
 
 .SRC-portalCard {
-  a {
-    color: SRC.$primary-action-color;
-  }
   .SRC-downloadData {
     background-color: SRC.$primary-action-color;
   }
@@ -186,13 +183,6 @@
   .SRC-icon-fill {
     fill: white;
   }
-}
-a,
-a:link,
-a:visited,
-a:hover,
-a:active {
-  color: SRC.$primary-action-color;
 }
 
 .homepage-color-background {
