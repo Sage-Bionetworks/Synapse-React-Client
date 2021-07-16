@@ -1,6 +1,6 @@
 
 ```jsx
-const [entityId, setEntityId] = React.useState(null)
+const [entityId, setEntityId] = React.useState("syn25959271")
 
 return (<div>
     <label>Enter entity ID to open editor</label>

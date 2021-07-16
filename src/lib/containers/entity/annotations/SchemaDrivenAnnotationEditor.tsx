@@ -1,4 +1,4 @@
-import Form, { AjvError, ErrorListProps } from '@sage-bionetworks/rjsf-core'
+import Form, { AjvError, ErrorListProps, Widget } from '@rjsf/core'
 import { isEmpty, omit, pick } from 'lodash-es'
 import React, { useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
@@ -25,6 +25,7 @@ import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 import { CustomDateTimeWidget } from './CustomDateTimeWidget'
 import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
+import TestSchema from './TestSchema.json'
 
 export type SchemaDrivenAnnotationEditorProps = {
   entityId: string
@@ -35,6 +36,13 @@ export type SchemaDrivenAnnotationEditorModalProps = {
   show: boolean
   onHide: () => void
 }
+
+// patternProperties lets us define how to treat additionalProperties in a JSON schema by property name
+// here we can ban properties that collide with entity properties by making their schema "not: {}"
+const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
+  current[`^${item}$`] = { not: {} }
+  return current
+}, {})
 
 function getStandardEntityFields(json: EntityJson): EntityJson {
   return pick(json, entityJsonKeys) as EntityJson
@@ -77,19 +85,27 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
       setEntityJson(getStandardEntityFields(json))
       setFormData(removeStandardEntityFields(json))
     },
-    enabled: !formData, // once we have data, don't refetch automatically.
+    enabled: !formData, // once we have data, don't refetch. it would overwrite the user's entries
   })
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId,
   )
 
-  const { data: validationSchema, isLoading: isLoadingSchema } = useGetSchema(
+  const { data: _validationSchema, isLoading: isLoadingSchema } = useGetSchema(
     schema?.jsonSchemaVersionInfo.$id ?? '',
     {
       enabled: !!schema,
+      select: schema => {
+        // Have to remove the ID because of a bug in RJSF
+        // https://github.com/rjsf-team/react-jsonschema-form/issues/2471
+        delete schema.$id
+        return schema
+      },
     },
   )
+
+  const validationSchema = TestSchema
 
   const isLoading = isLoadingBinding || isLoadingSchema
 
@@ -106,8 +122,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
       },
     },
   )
-
-  // if additional properties is false, don't add it. if not specified, add it
 
   return (
     <div className="bootstrap-4-backport">
@@ -157,7 +171,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             liveValidate={true}
             // liveValidate={false}
             noHtml5Validate={true}
-            FieldTemplate={CustomDefaultTemplate as unknown}
+            FieldTemplate={CustomDefaultTemplate as any}
             ArrayFieldTemplate={CustomArrayFieldTemplate}
             ObjectFieldTemplate={CustomObjectFieldTemplate}
             ref={formRef}
@@ -172,8 +186,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               >
                 <b>Validation errors found:</b>
                 <ul>
-                  {errors.map((e: AjvError) => (
-                    <li key={e.stack}>{`${e.property.substring(1)} ${
+                  {errors.map((e: AjvError, index: number) => (
+                    <li key={index}>{`${e.property.substring(1)} ${
                       e.message
                     }`}</li>
                   ))}
@@ -182,7 +196,12 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             )}
             schema={{
               ...(validationSchema ?? {}),
-              additionalProperties: true,
+              patternProperties: {
+                ...(validationSchema?.patternProperties ?? {}),
+                ...patternPropertiesBannedKeys,
+              },
+              additionalProperties:
+                validationSchema?.additionalProperties ?? true,
             }}
             uiSchema={{
               'ui:DuplicateKeySuffixSeparator': '_',
@@ -193,6 +212,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             }}
             formData={formData}
             onChange={({ formData, errors }) => {
+              console.log('onchange gives errors', errors)
               setValidationError(errors)
               setShowSubmissionError(false)
               setShowSuccess(false)
@@ -214,8 +234,9 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               }
             }}
             widgets={{
-              DateTimeWidget: CustomDateTimeWidget,
+              DateTimeWidget: CustomDateTimeWidget as Widget,
             }}
+            // customFormats={customFormats}
           >
             <hr />
             <div
@@ -268,23 +289,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
           )}
         </>
       )}
-      <div style={{ display: 'flex' }}>
-        <pre style={{ width: '50%' }}>
-          <code>
-            {JSON.stringify(
-              {
-                ...(validationSchema ?? {}),
-                additionalProperties: true,
-              },
-              null,
-              2,
-            )}
-          </code>
-        </pre>
-        <pre style={{ width: '50%' }}>
-          <code>{JSON.stringify(formData, null, 2)}</code>
-        </pre>
-      </div>
     </div>
   )
 }
@@ -310,8 +314,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <div>The following errors exist with the annotations you entered:</div>
         <div>
           <ul>
-            {(errors ?? []).map((e: AjvError) => (
-              <li key={e.stack}>{`${e.property.substring(1)} ${e.message}`}</li>
+            {(errors ?? []).map((e: AjvError, index: number) => (
+              <li key={index}>{`${e.property.substring(1)} ${e.message}`}</li>
             ))}
           </ul>
         </div>
