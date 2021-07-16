@@ -143,10 +143,10 @@ class CardFooter extends React.Component<CardFooterProps, State> {
             {hasMoreValuesThanLimit && (
               <tr className="SRC-cardRow">
                 <td>
-                  <button
+                  <a
                     style={{ textAlign: 'left', margin: 0, padding: 0 }}
-                    className="SRC-primary-text-color SRC-basicButton primary-underlined-button"
                     onClick={this.toggleShowMore}
+                    className="highlight-link"
                   >
                     Show {isShowMoreOn ? 'Less' : 'More'}
                     <IconSVG options={{
@@ -156,7 +156,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
                           : 'expandMore'
                       
                     }}></IconSVG>
-                  </button>
+                  </a>
                 </td>
               </tr>
             )}

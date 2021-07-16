@@ -78,7 +78,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
               style={{ margin: 'none' }}
             >
               {href ? (
-                <a target={target} href={href}>
+                <a target={target} href={href} className="highlight-link">
                   {title}
                 </a>
               ) : (

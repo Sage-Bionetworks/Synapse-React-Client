@@ -17,6 +17,7 @@ export type UserCardSmallProps = {
   withAvatar?: boolean
   avatarSize?: AvatarSize
   imageURL?: string
+  className?: string
 }
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
@@ -32,6 +33,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   withAvatar = false,
   avatarSize = 'SMALL',
   imageURL,
+  className,
   ...rest
 }) => {
 
@@ -106,7 +108,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
     <>
       {OverlayComponent}
 
-      <span
+      <a
         ref={target}
         onMouseEnter={() => toggleShow()}
         onMouseLeave={() => toggleHide()}
@@ -119,13 +121,13 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
           }
           window.open(link, '_blank')
         }}
-        className="SRC-userCard UserCardSmall SRC-underline-on-hover"
+        className={`SRC-userCard UserCardSmall ${className}`}
         style={{ whiteSpace: 'nowrap' }}
       >
         {avatar}
         {`@${userProfile.userName}`}
         {showAccountLevelIcon && <span className={"account-level-icon"}>{accountLevelIcon}</span>}
-      </span>
+      </a>
     </>
   ) : disableLink ? (
     <span
@@ -136,7 +138,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       {`@${userProfile.userName}`}
     </span>
   ) : (
-    <span>
+    <a>
       {avatar}
       {/* eslint-disable-next-line react/jsx-no-target-blank*/}
       <a
@@ -147,6 +149,6 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {`@${userProfile.userName}`}
       </a>
-    </span>
+    </a>
   )
 }

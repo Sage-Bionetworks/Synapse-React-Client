@@ -361,12 +361,12 @@ button.SRC-roundBorder {
   border-bottom: 1px solid SRC.$border-color-gray;
 }
 
-button.primary-underlined-button {
-  border-bottom: 1px solid SRC.$primary-action-color;
-}
-
 .SRC-border-top-only {
   border-top: 1px solid SRC.$border-color-gray;
+}
+
+.SRC-no-border-bottom-imp {
+  border-bottom: none !important;
 }
 
 .SRC-bar-border-bottom {
@@ -677,7 +677,7 @@ div.SRC-userImg {
 }
 
 .SRC-eqHeightRow {
-  height: 20px;
+  height: 22px;
 }
 
 .SRC-cardContent {
@@ -840,10 +840,6 @@ div.SRC-userImg {
   background-color: #fff;
 }
 
-.SRC-emailText:hover {
-  text-decoration: underline;
-}
-
 .SRC-cardSvg.SRC-whiteText > svg {
   opacity: 0.5;
 }
@@ -979,10 +975,6 @@ button {
   }
 }
 
-.SRC-block {
-  display: block;
-}
-
 .highlight {
   font-weight: bold;
   padding: 2px;
@@ -1020,6 +1012,7 @@ a.dropdown-item {
   white-space: nowrap;
   background-color: transparent;
   border: 0;
+  border-bottom: none;
 
   &.disabled {
     text-decoration: none;
@@ -1137,7 +1130,10 @@ hr ~ .SRC-wrapper {
   button {
     color: white !important;
     font-weight: bold;
-    text-decoration: underline !important;
+    border-bottom: 1px solid white;
+    &:hover {
+      border-bottom: 1px solid white;
+    }
   }
 }
 
@@ -1221,5 +1217,83 @@ hr ~ .SRC-wrapper {
   &__label {
     color: SRC.$text-color-dark;
     margin-right: 5px;
+  }
+}
+
+$link-underline-color-default: adjust-color(
+  SRC.$primary-action-color,
+  $saturation: -50%,
+  $lightness: 40%
+) !default;
+
+@mixin highlightLink() {
+  color: SRC.$primary-action-color;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: .5px;
+  border-bottom: 1px solid $link-underline-color-default;
+  &:hover {
+    border-bottom: 2px solid SRC.$primary-action-color-700;
+    margin-bottom: -1px;
+  }
+}
+
+@mixin normalLink() {
+  color: SRC.$primary-action-color;
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+  letter-spacing: .5px;
+  &:hover {
+    border-bottom: 2px solid SRC.$primary-action-color-700;
+    margin-bottom: 0px;
+  }
+}
+
+@mixin ignoreLink() {
+  color: unset;
+  text-decoration: unset;
+  font-weight: unset;
+  border-bottom: unset;
+  letter-spacing: unset;
+  &:hover {
+    border-bottom: unset;
+    margin-bottom: unset;
+  }
+}
+
+// Core link styles across the portal main area.
+// Design would like "body text" to have the special primary link style.
+// Other links should have the normal secondary link style.
+// You can force normal link style by adding the "secondary-links" css class a container of your anchor.
+// Or force the highlighted primary link by adding "highlight-link" css class name to an anchor.
+main, #rootPanel {
+  a:not(.btn), .bootstrap-4-backport a:not(.btn), 
+  .markdown td a:not(.btn),
+  .markdown a.SRC-userCard:not(.btn),
+  .secondary-links a:not(.btn),
+  .markdown .secondary-links a:not(.btn)
+   {
+    @include normalLink;
+    &:visited, &:active, &:link {
+      @include normalLink;
+    }
+  }
+
+  .markdown a, .SRC-userCardName a, a.highlight-link,
+  details>summary {
+    &:not(.btn) {
+      @include highlightLink;
+      &:visited, &:active, &:link {
+        @include highlightLink;
+      }
+    }
+  }
+
+  // do not apply special styling to dropdown links or anchors in tabs
+  .dropdown, .nav-tabs, .dropdown-menu {
+    a:not(.btn) {
+      @include ignoreLink;
+    }
   }
 }

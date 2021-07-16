@@ -47,7 +47,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
         <div className="titleContainer">
           <h3 className="title">Your Download Cart</h3>
           <a onClick={clearDownloadList}>
-            <span className="SRC-primary-text-color">
+            <span>
               <IconSvg options={{
                 icon: 'delete',
                 padding: 'right',
@@ -120,8 +120,8 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                   <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
                   both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 
                   If you choose to download as .zip files, you can download external files individually at any time.</p>
-                  <span className="createZipPackageContainer">
-                    <a onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>
+                  <span>
+                    <a className="highlight-link" onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>
                   </span>
                 </div>
               </div>

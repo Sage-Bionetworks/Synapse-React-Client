@@ -190,7 +190,6 @@ class Login extends React.Component<Props, State> {
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
             )}#!PasswordReset:0`}
-            className="SRC-block SRC-primary-text-color"
           >
             Forgot password?
           </a>
@@ -208,7 +207,6 @@ class Login extends React.Component<Props, State> {
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
             )}#!RegisterAccount:0`}
-            className="SRC-primary-text-color"
           >
             Don&apos;t have an account? Register now
           </a>
