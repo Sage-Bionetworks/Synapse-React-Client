@@ -1,5 +1,5 @@
 import { UiSchema } from '@rjsf/core'
-import { JSONSchema6 } from 'json-schema'
+import { JSONSchema7 } from 'json-schema'
 
 export const writeHeaderOption = 'First line is the columns names.'
 export const includeRowIdAndRowVersionOption =
@@ -8,7 +8,7 @@ export const csvOption = 'Comma Separated Values (CSV)'
 export const tsvOption = 'Tab Separated Values (TSV)'
 
 // Step 1
-const stepOneFormSchema: JSONSchema6 = {
+const stepOneFormSchema: JSONSchema7 = {
   title: 'Download query results',
   type: 'object',
   properties: {
@@ -47,7 +47,7 @@ const stepOneFormUISchema: UiSchema = {
 }
 
 // Step 2
-const stepTwoFormSchema: JSONSchema6 = {
+const stepTwoFormSchema: JSONSchema7 = {
   title: 'Download query results',
   description:
     'File is ready for download. Select the download button to download the file.',
