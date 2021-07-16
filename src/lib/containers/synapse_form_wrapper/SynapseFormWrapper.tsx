@@ -3,7 +3,7 @@ import { get, includes } from 'lodash-es'
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
 import Alert from 'react-bootstrap/Alert'
-import { UiSchema } from 'react-jsonschema-form'
+import { UiSchema } from '@rjsf/core'
 import { SynapseClient } from '../../utils'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import { FileEntity, FormData } from '../../utils/synapseTypes/'
@@ -12,12 +12,12 @@ import { StatusEnum } from './types'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
- * 
+ *
  * This wasn't done because Enzyme's shallow renderer is not currently
  * compatible with the `contextType` field in the React 16+ context API.
- * 
+ *
  * This can be fixed by rewriting tests to not rely on the shallow renderer.
- * 
+ *
  * See here: https://github.com/enzymejs/enzyme/issues/1553
  */
 
