@@ -232,7 +232,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
                 ? 'SRC-whiteText'
                 : ''
             }
-              SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-cardSvg`}
+              SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
             onClick={copyToClipboard(
               copyToClipboardRef,
               email,

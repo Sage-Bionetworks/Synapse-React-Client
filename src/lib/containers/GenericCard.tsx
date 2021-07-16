@@ -173,7 +173,7 @@ export const renderLabel = (args: {
   let newClassName = className
   const style: React.CSSProperties = {}
   if (isHeader) {
-    newClassName += 'SRC-lightLink'
+    newClassName = className?.concat(' ', 'SRC-lightLink')
   }
   // PORTALS-1913: special rendering for user ID lists
   if (columnModelType === 'USERID_LIST' && strList) {

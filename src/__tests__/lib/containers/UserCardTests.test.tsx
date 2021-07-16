@@ -155,10 +155,10 @@ describe('it creates the correct UI for the small card', () => {
     showCardOnHover: true,
   }
 
-  it('displays a span with text for a user without an img', () => {
+  it('displays a anchor with text for a user without an img', () => {
     const { wrapper } = createSmallComponent({ ...props })
-    expect(wrapper.find('span.UserCardSmall')).not.toBeNull()
-    expect(wrapper.find('span.UserCardSmall').text()).toEqual(
+    expect(wrapper.find('a.UserCardSmall')).not.toBeNull()
+    expect(wrapper.find('a.UserCardSmall').text()).toEqual(
       `@${mockUserProfileData.userName}`,
     )
   })

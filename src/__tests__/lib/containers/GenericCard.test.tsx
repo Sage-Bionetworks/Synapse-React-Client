@@ -422,7 +422,6 @@ describe('it makes the correct URL for the secondary labels', () => {
     )
     const link = wrapper.find('a')
     expect(link).toHaveLength(1)
-    expect(link.hasClass(`SRC-lightLink`)).toBeTruthy()
   })
 
   it('works with a multi string value', () => {

@@ -121,7 +121,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
           }
           window.open(link, '_blank')
         }}
-        className={`SRC-userCard UserCardSmall SRC-underline-on-hover ${className}`}
+        className={`SRC-userCard UserCardSmall ${className}`}
         style={{ whiteSpace: 'nowrap' }}
       >
         {avatar}
