@@ -3,7 +3,7 @@
 // Gathers user input (including files)
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import * as React from 'react'
-import Form from 'react-jsonschema-form'
+import Form from '@rjsf/core'
 import { SynapseClient } from '../utils'
 import {
   EntityId,

@@ -3,7 +3,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
-import Form, { IChangeEvent } from 'react-jsonschema-form'
+import Form, { IChangeEvent } from '@rjsf/core'
 import { SynapseClient } from '../utils'
 import {
   DownloadFromTableRequest,
