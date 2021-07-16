@@ -1275,7 +1275,7 @@ main, #rootPanel {
   }
 
   // do not apply special styling to dropdown links or anchors in tabs
-  .dropdown, .nav-tabs {
+  .dropdown, .nav-tabs, .dropdown-menu {
     a:not(.btn) {
       @include ignoreLink;
     }
