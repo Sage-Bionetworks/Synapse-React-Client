@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import EntityForm, { EntityFormProps } from '../../../lib/containers/EntityForm'
 import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 import { mockFileEntity } from '../../../mocks/entity/mockEntity'
-import reactJsonschemaForm from 'react-jsonschema-form'
+import reactJsonschemaForm from '@rjsf/core'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const createShallowComponent = (props: EntityFormProps) => {
