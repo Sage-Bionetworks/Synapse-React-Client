@@ -1,6 +1,7 @@
 import Form, { AjvError, ErrorListProps } from '@sage-bionetworks/rjsf-core'
+import { JSONSchema7 } from 'json-schema'
 import { isEmpty, omit, pick } from 'lodash-es'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
 import AddToList from '../../../assets/icons/AddToList'
@@ -25,7 +26,6 @@ import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 import { CustomDateTimeWidget } from './CustomDateTimeWidget'
 import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
-import { JSONSchema7 } from 'json-schema'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -93,23 +93,31 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
-  const { refetch: refetchJson } = useGetJson(entityId!, {
-    onSuccess: json => {
+  const { data: json, refetch: refetchJson } = useGetJson(entityId!, {
+    enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
+  })
+
+  useEffect(() => {
+    if (json) {
       /**
        * To only show annotations in the form, we must remove non-annotation fields.
        * We will need to submit these values when we create the entity, so we set them aside
        * and will merge objects later.
        */
+
       setEntityJson(getStandardEntityFields(json))
       setFormData(removeStandardEntityFields(json))
-    },
-    enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
-  })
+    }
+  }, [json])
 
-  const {
-    data: schema,
-    isLoading: isLoadingBinding,
-  } = useGetSchemaBinding(entityId!, { enabled: !!entityId })
+  const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
+    entityId!,
+    {
+      enabled: !!entityId,
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  )
 
   const { data: validationSchema, isLoading: isLoadingSchema } = useGetSchema(
     schemaId ?? schema?.jsonSchemaVersionInfo.$id ?? '',
@@ -233,8 +241,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             onChange={({ formData, errors }) => {
               console.log('onchange gives errors', errors)
               setValidationError(errors)
-              setShowSubmissionError(false)
-              setShowSuccess(false)
+
               setFormData(formData)
             }}
             onSubmit={({ formData, errors }) => {
@@ -248,7 +255,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             onError={(errors: AjvError[]) => {
               // invoked when submit is clicked and there are client-side validation errors
               setValidationError(errors)
-              if (validationError) {
+              if (validationError && entityId) {
                 setShowConfirmation(true)
               }
             }}
@@ -256,22 +263,33 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               DateTimeWidget: CustomDateTimeWidget,
             }}
           >
-            <hr />
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row-reverse',
-                gridRowStart: 4,
-              }}
+            <Alert
+              dismissible={false}
+              show={showSuccess}
+              variant={'success'}
+              transition={false}
             >
+              Annotations successfully updated.
+            </Alert>
+            {submissionError && (
+              <Alert
+                dismissible={false}
+                show={showSubmissionError}
+                variant={'danger'}
+                transition={false}
+              >
+                Annotations could not be updated: {submissionError.reason}
+              </Alert>
+            )}
+            <hr />
+            <div className="SaveButtonContainer">
               <Button
-                disabled={!entityId}
                 variant="primary-500"
                 onClick={() => {
                   formRef.current!.submit()
                 }}
               >
-                Save
+                {entityId ? 'Save' : 'Validate'}
               </Button>
             </div>
           </Form>
@@ -287,24 +305,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               }}
               errors={validationError}
             />
-          )}
-          <Alert
-            dismissible={false}
-            show={showSuccess}
-            variant={'success'}
-            transition={false}
-          >
-            Annotations successfully updated.
-          </Alert>
-          {submissionError && (
-            <Alert
-              dismissible={false}
-              show={showSubmissionError}
-              variant={'danger'}
-              transition={false}
-            >
-              Annotations could not be updated: {submissionError.reason}
-            </Alert>
           )}
         </>
       )}
