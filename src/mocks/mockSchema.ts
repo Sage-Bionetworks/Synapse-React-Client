@@ -45,28 +45,42 @@ export const mockValidationSchema: JSONSchema7 = {
     },
   },
   required: ['country'],
-  if: {
-    properties: {
-      country: {
-        const: 'USA',
+  allOf: [
+    {
+      if: {
+        properties: {
+          country: {
+            const: 'USA',
+          },
+        },
+        required: ['country'],
+      },
+      then: {
+        properties: {
+          state: {
+            type: 'string',
+          },
+        },
+        required: ['state'],
       },
     },
-    required: ['country'],
-  },
-  then: {
-    properties: {
-      state: {
-        type: 'string',
+    {
+      if: {
+        properties: {
+          country: {
+            const: 'CA',
+          },
+        },
+        required: ['country'],
+      },
+      then: {
+        properties: {
+          province: {
+            type: 'string',
+          },
+        },
+        required: ['province'],
       },
     },
-    required: ['state'],
-  },
-  else: {
-    properties: {
-      province: {
-        type: 'string',
-      },
-    },
-    required: ['province'],
-  },
+  ],
 }
