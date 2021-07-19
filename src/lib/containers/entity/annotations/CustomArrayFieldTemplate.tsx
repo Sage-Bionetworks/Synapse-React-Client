@@ -1,5 +1,8 @@
 import { Add, Close } from '@material-ui/icons'
-import { ArrayFieldTemplateProps, utils as rsjfUtils } from '@rjsf/core'
+import {
+  ArrayFieldTemplateProps,
+  utils as rsjfUtils,
+} from '@sage-bionetworks/rjsf-core'
 import React from 'react'
 import { Button, FormGroup, FormLabel } from 'react-bootstrap'
 

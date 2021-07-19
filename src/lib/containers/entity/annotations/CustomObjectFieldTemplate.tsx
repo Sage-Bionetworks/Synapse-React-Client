@@ -1,4 +1,4 @@
-import { ObjectFieldTemplateProps, utils } from '@rjsf/core'
+import { ObjectFieldTemplateProps, utils } from '@sage-bionetworks/rjsf-core'
 import React from 'react'
 import { Button } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'

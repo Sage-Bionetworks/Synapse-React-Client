@@ -1,4 +1,4 @@
-import { FieldTemplateProps } from '@rjsf/core'
+import { FieldTemplateProps } from '@sage-bionetworks/rjsf-core'
 import React from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 

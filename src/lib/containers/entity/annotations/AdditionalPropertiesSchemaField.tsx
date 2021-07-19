@@ -1,4 +1,4 @@
-import { FieldProps, utils as rjsfUtils } from '@rjsf/core'
+import { FieldProps, utils as rjsfUtils } from '@sage-bionetworks/rjsf-core'
 import React, { useEffect, useState } from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { useListState } from '../../../utils/hooks/useListState'

@@ -1,4 +1,4 @@
-import Form, { AjvError, ErrorListProps, Widget } from '@rjsf/core'
+import Form, { AjvError, ErrorListProps } from '@sage-bionetworks/rjsf-core'
 import { isEmpty, omit, pick } from 'lodash-es'
 import React, { useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'

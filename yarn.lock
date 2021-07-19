@@ -2877,10 +2877,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@sage-bionetworks/rjsf-core@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@sage-bionetworks/rjsf-core/-/rjsf-core-3.1.1.tgz#07fc8344a4253b93ab184f6ec9cf298a76181e3b"
-  integrity sha512-SAUBnpyeXAECGN25F5JNDlGGwyFF8tRxdV7kmK/IbQ87Kns1yfQTdMp5REhtwrU6rS3nCJKMpBMXOFfSKJmkCw==
+"@sage-bionetworks/rjsf-core@^3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@sage-bionetworks/rjsf-core/-/rjsf-core-3.1.2.tgz#60cb546d9f0a6c8b21a1b1a99d360b2369393f3c"
+  integrity sha512-SVT/Ooaco19489jp6omd6mgM6KgP9YEe+Hfon+vLQ2VH5hYoM9kmITds9HtcbTZgmuNqMV+VEyY0jC42Qw+WDg==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"
@@ -6222,7 +6222,7 @@ core-js-pure@^3.6.5:
   resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.15.2.tgz#c8e0874822705f3385d3197af9348f7c9ae2e3ce"
   integrity sha512-D42L7RYh1J2grW8ttxoY1+17Y4wXZeKe7uyplAI3FkNQyI5OgBIAjUfFiTPfL1rs0qLpxaabITNbjKl1Sp82tA==
 
-core-js@^2.4.0, core-js@^2.5.7, core-js@^2.6.5:
+core-js@^2.4.0:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==

@@ -1,4 +1,4 @@
-import { Widget, WidgetProps } from '@rjsf/core'
+import { Widget, WidgetProps } from '@sage-bionetworks/rjsf-core'
 import moment, { Moment } from 'moment'
 import React from 'react'
 import { CalendarWithIconFormGroup } from '../../evaluation_queues/CalendarWithIconFormGroup'

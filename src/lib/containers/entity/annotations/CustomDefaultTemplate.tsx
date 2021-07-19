@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect } from 'react'
 import { FormLabel } from 'react-bootstrap'
-import { FieldTemplateProps } from '@rjsf/core'
+import { FieldTemplateProps } from '@sage-bionetworks/rjsf-core'
 
 export function CustomDefaultTemplate<T>(
   props: FieldTemplateProps<T> & {
