@@ -1,0 +1,13 @@
+@use '../abstracts/variables' as SRC;
+
+.SynapseNavDrawer {
+  background-color: SRC.$primary-action-color;
+  color: white;
+  .MuiPaper-root {
+    background-color: SRC.$primary-action-color;
+    color: white;
+  }
+  .MuiDrawer-paperAnchorDockedLeft {
+    border-right: none;
+  }
+}
