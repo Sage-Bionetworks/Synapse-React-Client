@@ -25,10 +25,14 @@ import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 import { CustomDateTimeWidget } from './CustomDateTimeWidget'
 import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
-import TestSchema from './TestSchema.json'
+import { JSONSchema7 } from 'json-schema'
 
 export type SchemaDrivenAnnotationEditorProps = {
-  entityId: string
+  /** The entity whose annotations should be edited with the form */
+  entityId?: string
+  /** If no entity ID is supplied, the schema to use for the form */
+  schemaId?: string
+  liveValidate?: boolean
 }
 
 export type SchemaDrivenAnnotationEditorModalProps = {
@@ -52,30 +56,44 @@ function removeStandardEntityFields(json: EntityJson): Record<string, unknown> {
   return omit(json, entityJsonKeys)
 }
 
+/**
+ * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
+ * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
+ */
 export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenAnnotationEditorProps> = ({
   entityId,
+  schemaId,
+  liveValidate = false,
 }: SchemaDrivenAnnotationEditorProps) => {
   const formRef = useRef<Form<Record<string, unknown>>>(null)
+
+  // If fetching an entity, store the non-annotation fields in this object
   const [entityJson, setEntityJson] = React.useState<
     Record<string, unknown> | undefined
   >(undefined)
+
+  // Annotation fields fetched and modified via the form
   const [formData, setFormData] = React.useState<
     Record<string, unknown> | undefined
   >(undefined)
-  const [showSuccess, setShowSuccess] = React.useState(false)
-  const [showConfirmation, setShowConfirmation] = React.useState(false)
-  const [submissionError, setSubmissionError] = React.useState<
-    SynapseClientError | undefined
-  >(undefined)
 
-  const [showSubmissionError, setShowSubmissionError] = React.useState(false)
+  // Client-side validation errors
   const [validationError, setValidationError] = React.useState<
     AjvError[] | undefined
   >(undefined)
 
+  // Errors from the backend response
+  const [submissionError, setSubmissionError] = React.useState<
+    SynapseClientError | undefined
+  >(undefined)
+  const [showSubmissionError, setShowSubmissionError] = React.useState(false)
+
+  const [showConfirmation, setShowConfirmation] = React.useState(false)
+  const [showSuccess, setShowSuccess] = React.useState(false)
+
   const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
-  const { refetch: refetchJson } = useGetJson(entityId, {
+  const { refetch: refetchJson } = useGetJson(entityId!, {
     onSuccess: json => {
       /**
        * To only show annotations in the form, we must remove non-annotation fields.
@@ -85,17 +103,18 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
       setEntityJson(getStandardEntityFields(json))
       setFormData(removeStandardEntityFields(json))
     },
-    enabled: !formData, // once we have data, don't refetch. it would overwrite the user's entries
+    enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
   })
 
-  const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
-    entityId,
-  )
+  const {
+    data: schema,
+    isLoading: isLoadingBinding,
+  } = useGetSchemaBinding(entityId!, { enabled: !!entityId })
 
-  const { data: _validationSchema, isLoading: isLoadingSchema } = useGetSchema(
-    schema?.jsonSchemaVersionInfo.$id ?? '',
+  const { data: validationSchema, isLoading: isLoadingSchema } = useGetSchema(
+    schemaId ?? schema?.jsonSchemaVersionInfo.$id ?? '',
     {
-      enabled: !!schema,
+      enabled: !!schemaId || !!schema,
       select: schema => {
         // Have to remove the ID because of a bug in RJSF
         // https://github.com/rjsf-team/react-jsonschema-form/issues/2471
@@ -105,12 +124,10 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
     },
   )
 
-  const validationSchema = TestSchema
-
   const isLoading = isLoadingBinding || isLoadingSchema
 
   const mutation = useUpdateViaJson(
-    entityId,
+    entityId!,
     { ...formData, ...entityJson },
     {
       onSuccess: () => {
@@ -168,10 +185,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
           )}
           <Form
             className="AnnotationEditor"
-            liveValidate={true}
-            // liveValidate={false}
+            liveValidate={liveValidate}
             noHtml5Validate={true}
-            FieldTemplate={CustomDefaultTemplate as any}
             ArrayFieldTemplate={CustomArrayFieldTemplate}
             ObjectFieldTemplate={CustomObjectFieldTemplate}
             ref={formRef}
@@ -194,16 +209,20 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
                 </ul>
               </Alert>
             )}
-            schema={{
-              ...(validationSchema ?? {}),
-              patternProperties: {
-                ...(validationSchema?.patternProperties ?? {}),
-                ...patternPropertiesBannedKeys,
-              },
-              additionalProperties:
-                validationSchema?.additionalProperties ?? true,
-            }}
+            schema={
+              {
+                ...(validationSchema ?? {}),
+                patternProperties: {
+                  ...(validationSchema?.patternProperties ?? {}),
+                  ...patternPropertiesBannedKeys,
+                },
+                additionalProperties:
+                  validationSchema?.additionalProperties ?? true,
+              } as JSONSchema7
+            }
             uiSchema={{
+              'ui:FieldTemplate': CustomDefaultTemplate,
+              'ui:ArrayFieldTemplate': CustomArrayFieldTemplate,
               'ui:DuplicateKeySuffixSeparator': '_',
               additionalProperties: {
                 'ui:field': AdditionalPropertiesSchemaField,
@@ -234,9 +253,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               }
             }}
             widgets={{
-              DateTimeWidget: CustomDateTimeWidget as Widget,
+              DateTimeWidget: CustomDateTimeWidget,
             }}
-            // customFormats={customFormats}
           >
             <hr />
             <div
@@ -247,6 +265,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               }}
             >
               <Button
+                disabled={!entityId}
                 variant="primary-500"
                 onClick={() => {
                   formRef.current!.submit()

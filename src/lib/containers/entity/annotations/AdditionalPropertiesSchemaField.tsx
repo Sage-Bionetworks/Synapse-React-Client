@@ -8,8 +8,9 @@ import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 const ISO_TIMESTAMP_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
 
 /**
- * react-jsonschema-form SchemaField override for "additionalProperties" only
- * to provide full compatibility with Synapse annotations features.
+ * react-jsonschema-form SchemaField override for "additionalProperties" only.
+ * Modifies the data to provide full compatibility with Synapse annotations features.
+ *
  * @param props
  * @returns
  */
@@ -56,9 +57,10 @@ export function AdditionalPropertiesSchemaField<T>(
   )
 
   useEffect(() => {
-    // If we had to coerce to an array, we want to propagate the changes
-    // If we don't do this, the form may re-order when a user changes a value
-    // TODO: Figure out why we need a delay
+    // The item may not be an array when we get it, and we need to convert it right away because the order of items is not stable, and seems to depend on if the item is an array or not.
+    // Otherwise, the order of the properties will change when the user modifies the data. We may be able to fix this by modifying react-jsonschema-form to stabilize the item order.
+
+    // TODO: This also doesn't work without a delay.
     setTimeout(() => {
       onChange(list)
     }, 50)

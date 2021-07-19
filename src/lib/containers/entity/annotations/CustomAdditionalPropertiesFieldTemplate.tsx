@@ -3,7 +3,9 @@ import React from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 
 /**
- * Replacement for 'WrapIfAdditional' to customize the form appearance.
+ * FieldTemplate override for "additionalProperties" fields to customize the form appearance.
+ *
+ * Adapted from 'WrapIfAdditional' in @rsjf/core.
  * @param props
  * @returns
  */
@@ -34,9 +36,9 @@ export const CustomAdditionalPropertiesFieldTemplate = (
   }
   return (
     <div className={classNames}>
-      <div className="row">
+      <div className="row form-additional">
         <div className="col-xs-3">
-          <FormGroup className="form-additional">
+          <FormGroup>
             <FormLabel id={`${id}-key`}>{keyLabel}</FormLabel>
             <FormControl
               type="text"

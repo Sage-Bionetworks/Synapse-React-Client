@@ -6,6 +6,7 @@ import mouseSvg from './src/demo/containers/playground/icons/mouse.svg'
 import resilienceadSvg from './src/demo/containers/playground/icons/resiliencead.svg'
 import moment from 'moment'
 import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
+import { Checkbox } from './src/lib/containers/widgets/Checkbox'
 
 global.currentUserProfile = false
 global.accessToken = false
@@ -51,3 +52,4 @@ global.LARGE_USER_CARD = LARGE_USER_CARD
 global.GENERIC_CARD = GENERIC_CARD
 global.COMPUTATIONAL = COMPUTATIONAL
 global.PUBLICATION = PUBLICATION
+global.Checkbox = Checkbox

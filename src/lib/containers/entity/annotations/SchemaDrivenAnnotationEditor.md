@@ -1,11 +1,32 @@
 
 ```jsx
-const [entityId, setEntityId] = React.useState("syn25959271")
+const [entityOrSchemaId, setEntityOrSchemaId] = React.useState("")
+const [liveValidate, setLiveValidate] = React.useState(false)
+const [useLargeTestSchema, setUseLargeTestSchema] = React.useState(false)
+
+let isEntityId;
+let entityId = undefined;
+let schemaId = undefined;
+
+if (entityOrSchemaId.startsWith('syn')) {
+    entityId = entityOrSchemaId;
+    schemaId = undefined;
+} else {
+    entityId = undefined;
+    schemaId = entityOrSchemaId;
+}
+
 
 return (<div>
-    <label>Enter entity ID to open editor</label>
-    <input className="form-control" value={entityId} onChange={e => setEntityId(e.target.value)} style={{ width: '500px', marginBottom: '5px'}} />
+    <label>Enter entity ID or schema ID</label>
+    <input className="form-control" value={entityOrSchemaId} onChange={e => setEntityOrSchemaId(e.target.value)} style={{ width: '500px', marginBottom: '5px'}} />
+    <Checkbox
+    label="Live Validation?"
+    checked={liveValidate}
+    onChange={(checked) => setLiveValidate(checked)}
+    ></Checkbox>
+
     <hr />
-    {entityId && <SchemaDrivenAnnotationEditor key={entityId} entityId={entityId} />}
+    {entityOrSchemaId && <SchemaDrivenAnnotationEditor key={`${entityOrSchemaId}-${liveValidate}-${useLargeTestSchema}`} entityId={entityId} schemaId={schemaId} liveValidate={liveValidate} useTestSchema={useLargeTestSchema} />}
 </div>)
 ```
