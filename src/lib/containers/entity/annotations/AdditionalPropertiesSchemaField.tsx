@@ -7,6 +7,85 @@ import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 // Matches ####-##-##T##:##:##.###Z, e.g. 1970-01-01T12:00:000Z
 const ISO_TIMESTAMP_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
 
+// Types that correspond to the different input fields that the annotation editor supports
+export enum PropertyType {
+  STRING = 'String',
+  INTEGER = 'Integer',
+  FLOAT = 'Float',
+  BOOLEAN = 'Boolean',
+  DATETIME = 'Datetime',
+}
+
+// Selection of react-jsonschema-form Widget types that we can use for the supported property fields
+export enum AdditionalPropertyWidget {
+  TextWidget = 'TextWidget',
+  UpDownWidget = 'UpDownWidget',
+  DateTimeWidget = 'DateTimeWidget',
+  CheckboxWidget = 'CheckboxWidget',
+}
+
+export function guessPropertyType(list: Array<any>): PropertyType {
+  if (list.every(item => typeof item === 'number')) {
+    if (list.every(item => Number.isInteger(item))) {
+      return PropertyType.INTEGER
+    } else {
+      return PropertyType.FLOAT
+    }
+  } else if (list.every(item => typeof item === 'boolean')) {
+    return PropertyType.BOOLEAN
+  } else if (
+    list.every(item => typeof item === 'string') &&
+    list.every((item: string) => !!ISO_TIMESTAMP_REGEX.exec(item))
+  ) {
+    return PropertyType.DATETIME
+  }
+  // otherwise, default type is 'string'
+  return PropertyType.STRING
+}
+
+export function transformDataFromPropertyType(
+  list: Array<any>,
+  propertyType: PropertyType,
+) {
+  switch (propertyType) {
+    case PropertyType.INTEGER:
+    case PropertyType.FLOAT:
+      return list.map(item =>
+        Number.isNaN(Number(item)) ? undefined : Number(item),
+      )
+    case PropertyType.DATETIME:
+      return list.map(item => {
+        if (typeof item === 'string' && ISO_TIMESTAMP_REGEX.exec(item)) {
+          return item
+        } else {
+          return undefined
+        }
+      })
+    case PropertyType.BOOLEAN:
+      return list.map(item => !!item)
+    case PropertyType.STRING:
+    default:
+      return list.map(item => String(item))
+  }
+}
+
+export function getWidgetFromPropertyType(
+  propertyType: PropertyType,
+): AdditionalPropertyWidget {
+  switch (propertyType) {
+    case PropertyType.INTEGER:
+    case PropertyType.FLOAT:
+      return AdditionalPropertyWidget.UpDownWidget
+    case PropertyType.DATETIME:
+      return AdditionalPropertyWidget.DateTimeWidget
+    case PropertyType.BOOLEAN:
+      return AdditionalPropertyWidget.CheckboxWidget
+    case PropertyType.STRING:
+    default:
+      return AdditionalPropertyWidget.TextWidget
+  }
+}
+
 /**
  * react-jsonschema-form SchemaField override for "additionalProperties" only.
  * Modifies the data to provide full compatibility with Synapse annotations features.
@@ -28,10 +107,14 @@ export function AdditionalPropertiesSchemaField<T>(
    * - When the last array value is removed, remove the entire key from the form.
    */
 
-  const [propertyType, setPropertyType] = useState('string')
-  const [widget, setWidget] = useState<
-    'TextWidget' | 'UpDownWidget' | 'DateTimeWidget' | 'CheckboxWidget'
-  >('TextWidget')
+  // The type determines which widget we show.
+  const [propertyType, setPropertyType] = useState<PropertyType>(
+    PropertyType.STRING,
+  )
+  const [widget, setWidget] = useState<AdditionalPropertyWidget>(
+    AdditionalPropertyWidget.TextWidget,
+  )
+
   const {
     id,
     formData,
@@ -60,7 +143,7 @@ export function AdditionalPropertiesSchemaField<T>(
     // The item may not be an array when we get it, and we need to convert it right away because the order of items is not stable, and seems to depend on if the item is an array or not.
     // Otherwise, the order of the properties will change when the user modifies the data. We may be able to fix this by modifying react-jsonschema-form to stabilize the item order.
 
-    // TODO: This also doesn't work without a delay.
+    // TODO: This doesn't work without a delay.
     setTimeout(() => {
       onChange(list)
     }, 50)
@@ -69,62 +152,21 @@ export function AdditionalPropertiesSchemaField<T>(
 
   useEffect(() => {
     // When we first mount, use the existing data to determine the type
-    if (list.every(item => typeof item === 'number')) {
-      if (list.every(item => Number.isInteger(item))) {
-        setPropertyType('integer')
-      } else {
-        setPropertyType('float')
-      }
-    } else if (list.every(item => typeof item === 'boolean')) {
-      setPropertyType('checkbox')
-    } else if (
-      list.every(item => typeof item === 'string') &&
-      list.every((item: string) => !!ISO_TIMESTAMP_REGEX.exec(item))
-    ) {
-      setPropertyType('date-time')
-    }
+    setPropertyType(guessPropertyType(list))
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     // When the selected type changes, switch to the appropriate widget for accepting input
-    switch (propertyType) {
-      case 'integer':
-      case 'float':
-        setList(
-          list.map(item =>
-            Number.isNaN(Number(item)) ? undefined : Number(item),
-          ),
-        )
-        setWidget('UpDownWidget')
-        break
-      case 'date-time':
-        setList(
-          list.map(item => {
-            if (typeof item === 'string' && ISO_TIMESTAMP_REGEX.exec(item)) {
-              // TODO: Maybe see if we can just turn the value into a moment instead of regexing
-              return item
-            } else {
-              return undefined
-            }
-          }),
-        )
-        setWidget('DateTimeWidget')
-        break
-      case 'checkbox':
-        setList(list.map(item => !!item))
-        setWidget('CheckboxWidget')
-        break
-      case 'string':
-      default:
-        setList(list.map(item => String(item)))
-        setWidget('TextWidget')
-        break
-    }
+    setWidget(getWidgetFromPropertyType(propertyType))
 
+    // Coerce the data to match the new type
+    setList(transformDataFromPropertyType(list, propertyType))
     onChange(list)
 
     // Don't add other properties to dependency array because we don't want to automatically coerce input
+    // i.e. Only coerce data when the type changes, which should only be on mount or when the user explicitly chooses a new type.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyType])
 
@@ -132,17 +174,11 @@ export function AdditionalPropertiesSchemaField<T>(
     onChange(list)
   }, [onChange, list])
 
-  useEffect(() => {
-    if (list.length === 0) {
-      onDropPropertyClick(name)({
-        preventDefault: () => {
-          //noop
-        },
-      })
-    }
-  }, [list, name, onDropPropertyClick])
-
-  const Widget = rjsfUtils.getWidget(schema, widget, registry.widgets)
+  const Widget = rjsfUtils.getWidget(
+    schema,
+    AdditionalPropertyWidget[widget],
+    registry.widgets,
+  )
 
   const items = list.map((item: unknown, index: number) => {
     return {
@@ -173,7 +209,13 @@ export function AdditionalPropertiesSchemaField<T>(
         />
       ),
       onDropIndexClick: () => {
-        return handleListRemove(index)
+        if (list.length === 1) {
+          // If this is the only item, then remove the property from the field
+          return onDropPropertyClick(name)
+        } else {
+          // Otherwise, remove the item from the list
+          return handleListRemove(index)
+        }
       },
       className: props.className ?? '',
       disabled: props.disabled,
@@ -207,14 +249,14 @@ export function AdditionalPropertiesSchemaField<T>(
           required={true}
           id={`${id}-type`}
           onChange={e => {
-            setPropertyType(e.target.value)
+            setPropertyType(e.target.value as PropertyType)
           }}
         >
-          <option value="string">String</option>
-          <option value="integer">Integer</option>
-          <option value="float">Float</option>
-          <option value="date-time">Datetime</option>
-          <option value="checkbox">Boolean</option>
+          {Object.keys(PropertyType).map(type => (
+            <option key={type} value={PropertyType[type] as string}>
+              {PropertyType[type]}
+            </option>
+          ))}
         </FormControl>
       </FormGroup>
       <CustomArrayFieldTemplate
