@@ -34,7 +34,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   }
   return (
     <div className="SynapseNavDrawer">
-      <Drawer variant="permanent" className={`SynapseNavDrawerMenu ${isOpen ? 'drawerOpen' : 'drawerClosed'}`} onClose={handleDrawerClose} >
+      <Drawer variant="permanent" className={`SynapseNavDrawerMenu 'drawerClosed`} >
           <List>
             <ListItem button key='synapse' onClick={() => {handleDrawerOpen(undefined)}}>
               <IconSvg options={{ icon: 'download' }} />
@@ -47,7 +47,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             </ListItem>
           </List>
       </Drawer>
-      <div className="SynapseNavDrawerSelectedContent">
+      <Drawer variant="permanent" open={isOpen} className={`SynapseNavContentDrawer`} onClose={handleDrawerClose} >
         {selectedItem == NavItem.PROJECTS && <>
             <div>
               SYNAPSE
@@ -57,7 +57,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
           {selectedItem == NavItem.FAVORITES && <>
             <div>FAVORITES UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
           </>}
-      </div>
+      </Drawer>
     </div>
   )
 }
