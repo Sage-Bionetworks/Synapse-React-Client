@@ -3,20 +3,32 @@
 .bootstrap-4-backport {
   .AnnotationEditor {
     display: grid;
-    grid-template-rows: auto auto auto auto;
+    // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
+    grid-template-rows: auto auto auto auto auto;
 
+    > .form-group {
+      grid-row-start: 1;
+    }
     .ErrorList {
       grid-row-start: 2;
       margin-top: 1rem;
     }
 
-    > .form-group {
-      grid-row-start: 1;
+    .alert {
+      grid-row-start: 3;
+      margin-top: 5px;
+      margin-bottom: 5px;
     }
 
     > hr {
-      grid-row-start: 3;
+      grid-row-start: 4;
       width: 100%;
+    }
+
+    .SaveButtonContainer {
+      display: flex;
+      flex-direction: row-reverse;
+      grid-row-start: 5;
     }
 
     .col-xs-3,
@@ -34,8 +46,8 @@
       .input-group-prepend {
         margin-bottom: 0;
       }
-      // margin-bottom: 0px;
     }
+
     .AddButton,
     .RemoveButton {
       border-radius: 0px;
@@ -47,17 +59,17 @@
       align-self: start;
     }
 
-    .AddButton {
-      grid-column-start: add;
-    }
-
-    .RemoveButton {
-      grid-column-start: remove;
-    }
-
     .array-item {
       display: grid;
       grid-template-columns: [input] auto [remove] 30px [add] 30px;
+
+      .AddButton {
+        grid-column-start: add;
+      }
+
+      .RemoveButton {
+        grid-column-start: remove;
+      }
     }
 
     label {
@@ -72,8 +84,5 @@
     select {
       background-color: SRC.$gray-light;
     }
-    // input.form-control {
-    //   height: 40px;
-    // }
   }
 }
