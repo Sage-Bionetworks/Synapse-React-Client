@@ -7,6 +7,7 @@ import resilienceadSvg from './src/demo/containers/playground/icons/resiliencead
 import moment from 'moment'
 import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
 import { Checkbox } from './src/lib/containers/widgets/Checkbox'
+import * as ReactBootstrap from 'react-bootstrap'
 
 global.currentUserProfile = false
 global.accessToken = false
@@ -53,3 +54,4 @@ global.GENERIC_CARD = GENERIC_CARD
 global.COMPUTATIONAL = COMPUTATIONAL
 global.PUBLICATION = PUBLICATION
 global.Checkbox = Checkbox
+global.ReactBootstrap = ReactBootstrap

@@ -20,12 +20,13 @@ export function CustomDefaultTemplate<T>(
     displayLabel,
     formData,
     onChange,
+    schema,
   } = props
 
   // The formData that we get may be an array (for example, if it was an additionalProperty, but then the key was added to the schema)
   // If the object passes through this template, then it should no longer be an array, so we coerce it to a string.
   useEffect(() => {
-    if (Array.isArray(formData)) {
+    if (schema.type !== 'array' && Array.isArray(formData)) {
       const newValue = formData.map(v => `${v}`).join(', ')
       // TODO: This only works when we have a short delay
       setTimeout(() => {
@@ -40,13 +41,16 @@ export function CustomDefaultTemplate<T>(
 
   return (
     <>
-      {displayLabel && (
+      {/* RJSF hides labels for boolean checkboxes, but since we replaced checkboxes with a custom component, we want to show them */}
+      {(displayLabel || schema.type === 'boolean') && (
         <FormLabel htmlFor={id}>
           {label}
           {required && <span className="required">*</span>}
         </FormLabel>
       )}
-      {displayLabel && description ? description : null}
+      {(displayLabel || schema.type === 'boolean') && description
+        ? description
+        : null}
       {children}
       {errors}
       {help}

@@ -3,6 +3,7 @@ import 'react-app-polyfill/stable'
 import 'raf/polyfill' // polyfill for requestAnimationFrame
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
+import '@testing-library/jest-dom/extend-expect'
 
 // MarkdownSynapse dependencies below --
 // When using the component in production it relies on these imports being globals,

@@ -43,6 +43,9 @@ export const mockValidationSchema: JSONSchema7 = {
     country: {
       enum: ['USA', 'CA'],
     },
+    showStringArray: {
+      type: 'boolean',
+    },
   },
   required: ['country'],
   allOf: [
@@ -80,6 +83,26 @@ export const mockValidationSchema: JSONSchema7 = {
           },
         },
         required: ['province'],
+      },
+    },
+    {
+      if: {
+        properties: {
+          showStringArray: {
+            const: true,
+          },
+        },
+        required: ['showStringArray'],
+      },
+      then: {
+        properties: {
+          stringArray: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
       },
     },
   ],

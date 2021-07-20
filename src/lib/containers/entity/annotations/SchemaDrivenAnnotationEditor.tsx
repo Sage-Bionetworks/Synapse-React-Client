@@ -1,4 +1,4 @@
-import Form, { AjvError, ErrorListProps } from '@sage-bionetworks/rjsf-core'
+import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
 import { isEmpty, omit, pick } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
@@ -23,6 +23,7 @@ import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
+import { CustomBooleanWidget } from './CustomBooleanWidget'
 import { CustomDateTimeWidget } from './CustomDateTimeWidget'
 import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
@@ -33,6 +34,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   /** If no entity ID is supplied, the schema to use for the form */
   schemaId?: string
   liveValidate?: boolean
+  onSuccess?: () => void
 }
 
 export type SchemaDrivenAnnotationEditorModalProps = {
@@ -64,6 +66,9 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   entityId,
   schemaId,
   liveValidate = false,
+  onSuccess = () => {
+    /* no-op */
+  },
 }: SchemaDrivenAnnotationEditorProps) => {
   const formRef = useRef<Form<Record<string, unknown>>>(null)
 
@@ -89,7 +94,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   const [showSubmissionError, setShowSubmissionError] = React.useState(false)
 
   const [showConfirmation, setShowConfirmation] = React.useState(false)
-  const [showSuccess, setShowSuccess] = React.useState(false)
 
   const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
@@ -139,7 +143,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
     { ...formData, ...entityJson },
     {
       onSuccess: () => {
-        setShowSuccess(true), refetchJson()
+        onSuccess()
+        refetchJson()
       },
       onError: error => {
         setSubmissionError(error)
@@ -197,26 +202,11 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             noHtml5Validate={true}
             ArrayFieldTemplate={CustomArrayFieldTemplate}
             ObjectFieldTemplate={CustomObjectFieldTemplate}
+            FieldTemplate={CustomDefaultTemplate}
             ref={formRef}
             disabled={mutation.isLoading}
-            ErrorList={({ errors }: ErrorListProps) => (
-              <Alert
-                className="ErrorList"
-                dismissible={false}
-                show={true}
-                variant="danger"
-                transition={false}
-              >
-                <b>Validation errors found:</b>
-                <ul>
-                  {errors.map((e: AjvError, index: number) => (
-                    <li key={index}>{`${e.property.substring(1)} ${
-                      e.message
-                    }`}</li>
-                  ))}
-                </ul>
-              </Alert>
-            )}
+            /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
+            ErrorList={() => null}
             schema={
               {
                 ...(validationSchema ?? {}),
@@ -229,8 +219,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               } as JSONSchema7
             }
             uiSchema={{
-              'ui:FieldTemplate': CustomDefaultTemplate,
-              'ui:ArrayFieldTemplate': CustomArrayFieldTemplate,
               'ui:DuplicateKeySuffixSeparator': '_',
               additionalProperties: {
                 'ui:field': AdditionalPropertiesSchemaField,
@@ -238,16 +226,15 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               },
             }}
             formData={formData}
-            onChange={({ formData, errors }) => {
-              console.log('onchange gives errors', errors)
-              setValidationError(errors)
-
+            onChange={({ formData }) => {
               setFormData(formData)
+              setValidationError(undefined)
             }}
             onSubmit={({ formData, errors }) => {
-              setValidationError(errors)
+              if (errors && errors.length > 0) {
+                setValidationError(errors)
+              }
               setShowSubmissionError(false)
-              setShowSuccess(false)
               setFormData(formData)
 
               mutation.mutate()
@@ -261,16 +248,28 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             }}
             widgets={{
               DateTimeWidget: CustomDateTimeWidget,
+              CheckboxWidget: CustomBooleanWidget,
             }}
           >
-            <Alert
-              dismissible={false}
-              show={showSuccess}
-              variant={'success'}
-              transition={false}
-            >
-              Annotations successfully updated.
-            </Alert>
+            {validationError && (
+              <Alert
+                className="ErrorList"
+                dismissible={false}
+                show={true}
+                variant="danger"
+                transition={false}
+              >
+                <b>Validation errors found:</b>
+                <ul>
+                  {validationError.map((e: AjvError, index: number) => (
+                    <li key={index}>{`${e.property.substring(1)} ${
+                      e.message
+                    }`}</li>
+                  ))}
+                </ul>
+              </Alert>
+            )}
+
             {submissionError && (
               <Alert
                 dismissible={false}

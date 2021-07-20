@@ -362,7 +362,7 @@ There are open issues in the microsoft vscode repository that block the ability 
     "--transformIgnorePatterns",
     // https://github.com/microsoft/vscode/issues/81944
     "node_modules/(?!(lodash-es|jest*)/)",
-    "--setupFiles",
+    "--setupFilesAfterEnv",
     "./src/setupTests.js",
     "--resetMocks=false"
   ],
