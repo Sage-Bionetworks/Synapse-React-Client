@@ -1,8 +1,13 @@
 @use '../abstracts/variables' as SRC;
 
 .SynapseNavDrawer {
-  background-color: SRC.$primary-action-color;
   color: white;
+  .SynapseNavDrawerMenu {
+    .MuiListItem-button:hover {
+      border-left: 7px solid SRC.$secondary-action-color;
+      padding-left: 9px;
+    }
+  }
   .MuiPaper-root {
     background-color: SRC.$primary-action-color;
     color: white;

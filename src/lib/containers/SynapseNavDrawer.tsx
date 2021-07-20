@@ -40,7 +40,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
               <IconSvg options={{ icon: 'download' }} />
             </ListItem>
             <ListItem button key='projects' onClick={() => {handleDrawerOpen(NavItem.PROJECTS)}}>
-              <IconSvg options={{ icon: 'download' }} />
+              <IconSvg options={{ icon: 'dashboard' }} />
             </ListItem>
             <ListItem button key='favorites' onClick={() => {handleDrawerOpen(NavItem.FAVORITES)}}>
               <IconSvg options={{ icon: 'download' }} />
