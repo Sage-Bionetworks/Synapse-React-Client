@@ -97,7 +97,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
-  const { data: json, refetch: refetchJson } = useGetJson(entityId!, {
+  const { data: json } = useGetJson(entityId!, {
     enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
   })
 
@@ -144,7 +144,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
     {
       onSuccess: () => {
         onSuccess()
-        refetchJson()
       },
       onError: error => {
         setSubmissionError(error)
