@@ -322,19 +322,8 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    const saveButton = await screen.findByRole('button', { name: 'Save' })
+    await clickSaveAndConfirm()
 
-    // The first click triggers validation and will show errors (if they exist)
-    userEvent.click(saveButton)
-
-    // The second click will trigger the confirmation dialogue.
-    userEvent.click(saveButton)
-
-    await screen.findByText('Are you sure you want to save them?')
-    const confirmSaveButton = await screen.findByRole('button', {
-      name: 'Save',
-    })
-    userEvent.click(confirmSaveButton)
     await waitFor(() => expect(mockOnSuccessFn).toBeCalled())
   })
 
@@ -399,9 +388,8 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     userEvent.selectOptions(countryField, 'USA')
 
     await screen.findByLabelText('state*')
-    const saveButton = await screen.findByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
-    await waitFor(() => expect(mockOnSuccessFn).toBeCalled())
+
+    await clickSave()
 
     await waitFor(() => expect(updatedJsonCaptor).toBeCalled())
     // Since it's back in the schema, it should be a string
