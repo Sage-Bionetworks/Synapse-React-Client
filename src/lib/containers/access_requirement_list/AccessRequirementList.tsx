@@ -7,7 +7,6 @@ import * as ReactBootstrap from 'react-bootstrap'
 import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
 import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 import ManagedACTAccessRequirementComponentNew from './managedACTAccess/ManagedACTAccessRequirement'
-import ManagedACTAccessRequirementComponent from './ManagedACTAccessRequirement'
 import ACTAccessRequirementComponent from './ACTAccessRequirement'
 import {
   UserProfile,
@@ -225,37 +224,20 @@ export default function AccessRequirementList({
           />
         )
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
-        if (SynapseClient.isInSynapseExperimentalMode()) {
-          // TODO to be deleted when out of alpha mode
-          return (
-            <ManagedACTAccessRequirementComponentNew
-              accessRequirement={
-                accessRequirement as ManagedACTAccessRequirement
-              }
-              accessRequirementStatus={
-                accessRequirementStatus as ManagedACTAccessRequirementStatus
-              }
-              user={user}
-              onHide={onHide}
-              entityId={entityId}
-              requestDataStepCallback={requestDataStepCallback}
-            />
-          )
-        } else {
-          return (
-            <ManagedACTAccessRequirementComponent
-              accessRequirement={
-                accessRequirement as ManagedACTAccessRequirement
-              }
-              accessRequirementStatus={
-                accessRequirementStatus as ManagedACTAccessRequirementStatus
-              }
-              user={user}
-              onHide={onHide}
-              entityId={entityId}
-            />
-          )
-        }
+        return (
+          <ManagedACTAccessRequirementComponentNew
+            accessRequirement={
+              accessRequirement as ManagedACTAccessRequirement
+            }
+            accessRequirementStatus={
+              accessRequirementStatus as ManagedACTAccessRequirementStatus
+            }
+            user={user}
+            onHide={onHide}
+            entityId={entityId}
+            requestDataStepCallback={requestDataStepCallback}
+          />
+        )
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
         return (
           <ACTAccessRequirementComponent
