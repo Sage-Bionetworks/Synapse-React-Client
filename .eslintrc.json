@@ -18,10 +18,7 @@
   ],
   "parserOptions": {
     "tsconfigRootDir": ".",
-    "project": ["./tsconfig.json", "./tsconfig.test.json"],
-    "ecmaFeatures": {
-      "jsx": true
-    }
+    "project": ["./tsconfig.json", "./tsconfig.test.json"]
   },
   "rules": {
     "react/prop-types": [0],
@@ -45,6 +42,11 @@
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   },
   "globals": {
     "JSX": true

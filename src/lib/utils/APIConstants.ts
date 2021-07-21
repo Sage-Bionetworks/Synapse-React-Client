@@ -12,6 +12,9 @@ export const REPO = `/repo/v1`
 export const AUTH = `/auth/v1`
 export const FILE = `/file/v1`
 
+const ASYNC_START = '/async/start'
+const ASYNC_GET = '/async/get'
+
 export const ENTITY = `${REPO}/entity`
 export const ENTITY_ID = (id: string | number) => `${REPO}/entity/${id}`
 /**
@@ -41,6 +44,9 @@ export const SCHEMA = `${REPO}/schema`
 export const REGISTERED_SCHEMA = `${REPO}/schema/type/registered`
 export const REGISTERED_SCHEMA_ID = (schema$id: string | number) =>
   `${REPO}/schema/type/registered/${schema$id}`
+export const SCHEMA_VALIDATION_START = `${SCHEMA}/type/validation${ASYNC_START}`
+export const SCHEMA_VALIDATION_GET = (asyncJobId: string | number) =>
+  `${SCHEMA}/type/validation${ASYNC_GET}/${asyncJobId}`
 
 export const USER = `${REPO}/user`
 export const USER_BUNDLE = `${USER}/bundle`
