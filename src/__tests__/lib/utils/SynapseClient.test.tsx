@@ -23,7 +23,7 @@ describe('it works at integration level testing', () => {
     }
   })
 
-  it('version call', () => {
+  it.skip('version call', () => {
     return SynapseClient.getVersion().then(data => {
       expect(data.version).toBeDefined()
     })
