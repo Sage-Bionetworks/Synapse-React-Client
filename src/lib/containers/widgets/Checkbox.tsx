@@ -9,14 +9,18 @@ export type CheckboxProps = {
   isSelectAll?: boolean
   children?: React.ReactChild
   onClick?: (event: React.SyntheticEvent<HTMLDivElement>) => void
+  disabled?: boolean
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   props: CheckboxProps,
 ) => {
-  const { checked: propsChecked = false, isSelectAll = false } = props
+  const {
+    checked: propsChecked = false,
+    isSelectAll = false,
+    disabled = false,
+  } = props
   const [checked, setChecked] = useState<boolean>(propsChecked)
-  const [focused, setFocused] = useState<boolean>(false)
 
   useEffect(() => {
     setChecked(propsChecked)
@@ -36,29 +40,21 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   }
 
   let className = 'checkbox'
-  if (focused) {
-    className += ' checkbox-focused'
-  }
   if (props.className) {
     className += ` ${props.className}`
   }
 
   return (
     <div className={className} onClick={props.onClick}>
-      <label>
-        <span>
-          <input
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            type="checkbox"
-            checked={checked}
-            id={props.id}
-            onChange={handleCheckboxChange}
-          />
-          <span>{props.label}</span>
-          {props.children ?? <></>}
-        </span>
-      </label>
+      <input
+        type="checkbox"
+        checked={checked}
+        id={props.id}
+        onChange={handleCheckboxChange}
+        disabled={disabled}
+      />
+      <label htmlFor={props.id}>{props.label}</label>
+      {props.children ?? <></>}
     </div>
   )
 }
