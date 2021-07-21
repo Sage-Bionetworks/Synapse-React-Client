@@ -46,7 +46,7 @@
   }
 
   .btn-action {
-    background-color: SrcVariables.$primary-action-color;    
+    background-color: SrcVariables.$primary-action-color;
     color: #fff;
   }
   .btn-action:hover,
@@ -64,7 +64,7 @@
   .btn-success:active,
   .btn-success:focus {
     background-color: SrcVariables.$primary-action-color;
-    border-color: SrcVariables.$primary-action-color;  
+    border-color: SrcVariables.$primary-action-color;
   }
 
   /* padding */
@@ -97,7 +97,7 @@
         '#{SrcVariables.$space-unit} * #{3}'
       );
       button.btn {
-        color: SrcVariables.$primary-action-color;        
+        color: SrcVariables.$primary-action-color;
       }
       .view-more {
         text-align: right;
@@ -127,7 +127,7 @@
           vertical-align: middle;
         }
         a {
-          color: SrcVariables.$primary-action-color;          
+          color: SrcVariables.$primary-action-color;
         }
       }
     }
@@ -330,22 +330,9 @@
 
   .radio input[type='radio']:checked + label,
   .radio input[type='radio']:checked + span {
-    padding-left: 23px;
+    padding-left: 24px;
   }
 
-  .radio input[type='radio']:checked + label::before,
-  .radio input[type='radio']:checked + span::before,
-  .radio-inline input[type='radio']:checked + label::before,
-  .radio-inline input[type='radio']:checked + span::before {
-    background: SrcVariables.$primary-action-color;
-    vertical-align: middle;
-    width: 0.7rem;
-    height: 0.7rem;
-    border-radius: 50%;
-
-    margin-left: -1.6rem;
-    margin-right: 1rem;
-  }
   .array-item {
     border: 1px solid SrcVariables.$gray-dark;
     padding: 2rem 1rem;
@@ -450,7 +437,7 @@
     vertical-align: middle;
     margin: 0 5px;
     .react-switch-bg {
-      background-color: SrcVariables.$primary-action-color;      
+      background-color: SrcVariables.$primary-action-color;
     }
   }
 
