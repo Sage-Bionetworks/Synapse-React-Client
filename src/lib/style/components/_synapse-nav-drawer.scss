@@ -2,6 +2,9 @@
 
 .SynapseNavDrawer {
   color: white;
+  .synapseIcon {
+    padding: 16px 9px;
+  }
   .SynapseNavDrawerMenu {
     .MuiListItem-button:hover {
       border-left: 7px solid SRC.$secondary-action-color;

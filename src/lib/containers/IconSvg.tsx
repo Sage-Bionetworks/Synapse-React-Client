@@ -15,7 +15,13 @@ import {
   Delete,
   ExpandMore,
   ExpandLess,
-  DashboardOutlined
+  DashboardOutlined,
+  StarOutlined,
+  PeopleOutline,
+  AssessmentOutlined,
+  GetAppOutlined,
+  SearchOutlined,
+  HelpOutlined
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -92,6 +98,18 @@ const getIcon = (options:IconSvgOptions) => {
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
     case 'info':
       return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
+    case 'favOutlined':
+      return <StarOutlined fontSize={'small'} style={muiSvgStyle}></StarOutlined>
+    case 'peopleOutlined':
+      return <PeopleOutline fontSize={'small'} style={muiSvgStyle}></PeopleOutline>
+    case 'challengesOutlined':
+      return <AssessmentOutlined fontSize={'small'} style={muiSvgStyle}></AssessmentOutlined>
+    case 'downloadOutlined':
+      return <GetAppOutlined fontSize={'small'} style={muiSvgStyle}></GetAppOutlined>
+    case 'searchOutlined':
+      return <SearchOutlined fontSize={'small'} style={muiSvgStyle}></SearchOutlined>
+    case 'helpOutlined':
+      return <HelpOutlined fontSize={'small'} style={muiSvgStyle}></HelpOutlined>
     case 'expandLess': 
       return <ExpandLess fontSize={'small'} style={muiSvgStyle}></ExpandLess>
     case 'expandMore': 

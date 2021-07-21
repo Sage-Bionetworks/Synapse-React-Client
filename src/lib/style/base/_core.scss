@@ -1291,7 +1291,7 @@ main, #rootPanel {
   }
 
   // do not apply special styling to dropdown links or anchors in tabs
-  .dropdown, .nav-tabs, .dropdown-menu {
+  .dropdown, .nav-tabs, .dropdown-menu, .MuiDrawer-root {
     a:not(.btn) {
       @include ignoreLink;
     }
