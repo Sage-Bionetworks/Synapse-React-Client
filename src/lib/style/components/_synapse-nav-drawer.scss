@@ -10,6 +10,12 @@
       border-left: 7px solid SRC.$secondary-action-color;
       padding-left: 9px;
     }
+    >*{
+      z-index: 1500;
+    }
+    .filler {
+      flex-grow: 1;
+    }
   }
   .MuiListItem-root {
     padding-top: 14px;
@@ -22,9 +28,12 @@
   .MuiDrawer-paperAnchorDockedLeft {
     border-right: none;
   }
-  .SynapseNavContentDrawer {
-    .MuiDrawer-paperAnchorDockedLeft {
-      left: 53px;
-    }
+}
+.SynapseNavContentDrawer {
+  .MuiPaper-root {
+    left: 53px;
+    background-color: SRC.$primary-action-color;
+    color: white;
   }
 }
+
