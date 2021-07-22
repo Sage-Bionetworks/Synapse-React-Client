@@ -22,6 +22,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
 import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -37,11 +38,6 @@ export type DownloadConfirmationState = {
   fileSize: number
   downloadEstimate?: string
   errorMessage?: string
-}
-
-type QueryOrFolder = {
-  queryBundleRequest?:QueryBundleRequest
-  folderId?: string
 }
 
 export type DownloadConfirmationProps = {
@@ -83,7 +79,6 @@ async function addToDownload(
   } catch (error) {
     return [StatusEnum.ERROR, error.reason]
   }
-  
 }
 
 type UiStateDictionary = {
@@ -154,21 +149,14 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     fileCount: 0,
     fileSize: 0
   })
+  const {
+    refetch,
+  } = useGetDownloadListStatistics()
+  
   const lastQueryRequest = getLastQueryRequest!()
-  const [queryOrFolder, setQueryOrFolder] = useState<QueryOrFolder>({
-    queryBundleRequest: lastQueryRequest,
-    folderId: folderId
-  }) // useDeepCompareEffect() throws an error if you only pass primitives, which is the case when queryBundleRequest 
      // is not defined (configured for a container)
   const [showDownloadList, setShowDownloadList] = useState(false)
   
-  useDeepCompareEffect(() => {
-    setQueryOrFolder({
-      queryBundleRequest: lastQueryRequest,
-      folderId: folderId
-    })
-  }, [folderId, lastQueryRequest])
-
   const updateStats = useCallback(async (count?: number, bytes?: number) => {
     if (accessToken) {
       const estimatedDownloadBytesPerSecond = await testDownloadSpeed(accessToken)
@@ -190,7 +178,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     isSuccess
   } = useGetEntityChildren (
     {
-      parentId: queryOrFolder.folderId,
+      parentId: folderId,
       includeSumFileSizes: true,
       includeTotalChildCount: true,
       includeTypes: [EntityType.FILE]
@@ -200,14 +188,14 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     if (isSuccess && entityChildrenData) {
       updateStats(entityChildrenData.totalChildCount, entityChildrenData.sumFileSizesBytes)
     }
-  }, [updateStats, queryOrFolder, isSuccess, entityChildrenData])
+  }, [updateStats, folderId, isSuccess, entityChildrenData])
 
   const partMask =
   SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
   SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
 
   const queryBundleRequestSizeInformation: QueryBundleRequest = {
-    ...queryOrFolder.queryBundleRequest!,
+    ...lastQueryRequest,
     partMask,
   }
 
@@ -219,7 +207,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     if (queryResultBundle) {
       updateStats(queryResultBundle.queryCount, queryResultBundle.sumFileSizes?.sumFileSizesBytes)
     }
-  }, [updateStats, queryOrFolder, queryResultBundle])
+  }, [updateStats, lastQueryRequest, queryResultBundle])
 
   const onCancel = fnClose
     ? () => fnClose()
@@ -237,9 +225,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       setStatus(StatusEnum.SIGNED_OUT)
     } else {
       setStatus(StatusEnum.PROCESSING)
-      const result = await addToDownload(accessToken, queryOrFolder.queryBundleRequest, queryOrFolder.folderId)
+      const result = await addToDownload(accessToken, lastQueryRequest, folderId)
       const newStatus = result[0]
       setStatus(newStatus)
+      refetch()
       if (newStatus !== StatusEnum.SUCCESS) {
         setState({ ...state, errorMessage: result[1] })
       }
