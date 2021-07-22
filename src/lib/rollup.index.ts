@@ -23,6 +23,7 @@ import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
 import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
+import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -58,6 +59,7 @@ const SynapseComponents = {
   ShowDownloadV2,
   DownloadConfirmation,
   FullWidthAlert: FullWidthAlert,
+  SchemaDrivenAnnotationEditor,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
