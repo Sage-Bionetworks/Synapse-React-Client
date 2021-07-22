@@ -8,6 +8,7 @@ import { SynapseClient } from '../utils'
 import { UserProfile } from '../utils/synapseTypes'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Avatar } from './Avatar'
+import { Form } from 'react-bootstrap'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -40,6 +41,8 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   const [isOpen, setOpen] = useState(initIsOpen)
   const [selectedItem, setSelectedItem] = useState<NavItem>()
   const [currentUserProfile, setUserProfile] = useState<UserProfile>()
+  const [projectSearchText, setProjectSearchText] = useState<string>('')
+  const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
 
   useEffect(() => {
     async function getUserProfile() {
@@ -114,31 +117,91 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
         </div>
         <div className="navContentContainer">
           {selectedItem == NavItem.PROJECTS && <>
-            <div>
-              PROJECTS UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            <div className="header">
+              Projects
+            </div>
+            <div className="searchContainer">
+              <IconSvg options={{ icon: 'searchOutlined' }} />
+              <Form.Control type="search" placeholder="Search All Projects" 
+                value={projectSearchText}
+                onChange={event => {
+                  setProjectSearchText(event.target.value)
+                }}
+                onKeyDown={(event: any) => {
+                  if (event.key === 'Enter') {
+                    if (event.target.value !== '') {
+                      setProjectSearchText('')
+                      window.location.href = `#!Search:${encodeURI(event.target.value)}`
+                    }
+                  }
+                }}/>
+            </div>
+            <div className="linkList">
+              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/all`} rel="noopener noreferrer">
+                All
+              </a>
+              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/created_by_me`} rel="noopener noreferrer">
+                Created By Me
+              </a>
+              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/shared_directly_with_me`} rel="noopener noreferrer">
+                Shared With Me
+              </a>
+              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/all_my_team_projects`} rel="noopener noreferrer">
+                Team Projects
+              </a>
             </div>
           </>}
           {selectedItem == NavItem.PROFILE && <>
-            <div>
-              <div className="header">
-                Welcome Back,<br />
-                {currentUserProfile?.userName}!
-              </div>
-              <div className="linkList">
-                <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/profile`} rel="noopener noreferrer">
-                  View Profile
-                </a>
-                <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/settings`} rel="noopener noreferrer">
-                  Account Settings
-                </a>
-                <a className="SRC-whiteText" onClick={() => {SynapseClient.signOut(window.location.reload)}} rel="noopener noreferrer">
-                  Sign Out
-                </a>
-              </div>
+            <div className="header">
+              Welcome Back,<br />
+              {currentUserProfile?.userName}!
+            </div>
+            <div className="linkList">
+              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/profile`} rel="noopener noreferrer">
+                View Profile
+              </a>
+              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/settings`} rel="noopener noreferrer">
+                Account Settings
+              </a>
+              <a className="SRC-whiteText" onClick={() => {SynapseClient.signOut(window.location.reload)}} rel="noopener noreferrer">
+                Sign Out
+              </a>
             </div>
           </>}
           {selectedItem == NavItem.HELP && <>
-            <div>HELP UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+            <div className="header">
+              Help
+            </div>
+            <div className="searchContainer">
+              <IconSvg options={{ icon: 'searchOutlined' }} />
+              <Form.Control type="search" placeholder="Search Synapse Documentation" 
+                value={docSiteSearchText}
+                onChange={event => {
+                  setDocSiteSearchText(event.target.value)
+                }}
+                onKeyDown={(event: any) => {
+                  if (event.key === 'Enter') {
+                    if (event.target.value !== '') {
+                      window.open(`https://help.synapse.org/search.html?max=10&s=docs&q=${encodeURI(event.target.value)}`)
+                      setDocSiteSearchText('')
+                    }
+                  }
+              }}/>
+            </div>
+            <div className="linkList">
+              <a className="SRC-whiteText" href='https://help.synapse.org/docs/Getting-Started.2055471150.html' rel="noopener noreferrer" target='_blank'>
+                Getting Started
+              </a>
+              <a className="SRC-whiteText" href='https://help.synapse.org/docs/' rel="noopener noreferrer" target='_blank'>
+                Synapse Documentation
+              </a>
+              <a className="SRC-whiteText" href='#!SynapseForum:default' rel="noopener noreferrer">
+                Help Forum
+              </a>
+              <a className="SRC-whiteText" href='mailto:synapseinfo@sagebionetworks.org' rel="noopener noreferrer">
+                Contact Us
+              </a>
+            </div>
           </>}
         </div>
       </Drawer>
