@@ -2877,10 +2877,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@sage-bionetworks/rjsf-core@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@sage-bionetworks/rjsf-core/-/rjsf-core-3.1.2.tgz#60cb546d9f0a6c8b21a1b1a99d360b2369393f3c"
-  integrity sha512-SVT/Ooaco19489jp6omd6mgM6KgP9YEe+Hfon+vLQ2VH5hYoM9kmITds9HtcbTZgmuNqMV+VEyY0jC42Qw+WDg==
+"@sage-bionetworks/rjsf-core@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@sage-bionetworks/rjsf-core/-/rjsf-core-3.1.3.tgz#d061656dead7997e7322e0f62ca9588321f9d396"
+  integrity sha512-sNR8HIMJG69jyDVKQkqa6AEMxEUTkxZe8JBt569i315ig3ZXKk6eJTErS+/HhiUEPeohChG4sc/BI6176bfSGg==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"

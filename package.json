@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "2.0.19",
+  "version": "2.0.20",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -24,7 +24,7 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@rjsf/core": "^3.0.0",
-    "@sage-bionetworks/rjsf-core": "^3.1.2",
+    "@sage-bionetworks/rjsf-core": "^3.1.3",
     "@upsetjs/react": "^1.6.2",
     "bootstrap": "^4.6.0",
     "column-resizer": "^1.3.5",

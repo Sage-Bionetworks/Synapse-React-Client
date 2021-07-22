@@ -4,8 +4,6 @@ import {
   RadioGroup,
   RadioGroupProps,
 } from '../../../../lib/containers/widgets/RadioGroup'
-import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
-import { act } from 'react-dom/test-utils'
 
 const mockCallback = jest.fn()
 
@@ -37,10 +35,9 @@ beforeEach(() => init())
 
 describe('basic function', () => {
   it('should render with correct properties', () => {
-    expect(wrapper.find('.radio')).toHaveLength(props.options.length)
     expect(wrapper.find('input')).toHaveLength(props.options.length)
     expect(wrapper.find('div').at(0).hasClass('radioGroupClass')).toBe(true)
-    expect(wrapper.find('label').at(0).find('span span').text()).toBe(
+    expect(wrapper.find('label').at(0).find('label').text()).toBe(
       props.options[0].label,
     )
 
@@ -67,30 +64,7 @@ describe('basic function', () => {
 
     expect(radio.props().checked).toBe(true)
 
-    let event = {
-      target: {
-        checked: false,
-        value: props.options[1].value,
-      },
-    }
-
-    wrapper.find('input').at(1).simulate('change', event)
-    expect(mockCallback).toHaveBeenCalledWith(props.options[1].value, false)
-  })
-
-  it('should append focused class when focused', async () => {
-    init({ ...props, value: undefined })
-
-    expect(wrapper.find('.radio-focused').length).toEqual(0)
-    act(() => {
-      wrapper.find('input').at(0).props().onFocus!({} as any)
-    })
-    await resolveAllPending(wrapper)
-    expect(wrapper.find('.radio-focused').length).toEqual(1)
-    act(() => {
-      wrapper.find('input').at(0).props().onBlur!({} as any)
-    })
-    await resolveAllPending(wrapper)
-    expect(wrapper.find('.radio-focused').length).toEqual(0)
+    wrapper.find('input').at(1).simulate('click')
+    expect(mockCallback).toHaveBeenCalledWith(props.options[1].value)
   })
 })

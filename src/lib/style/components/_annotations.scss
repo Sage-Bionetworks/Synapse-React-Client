@@ -5,6 +5,7 @@
     display: grid;
     // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
     grid-template-rows: auto auto auto auto auto;
+    margin-bottom: 15px;
 
     > .form-group {
       grid-row-start: 1;

@@ -650,7 +650,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                                 value: AccessType.REVOKE_ACCESS
                               },
                             ]}
-                            onChange={(value: string, checked: boolean) =>
+                            onChange={(value: string) =>
                               onAccessorRadioBtnChange(value as AccessType, accessor.profile.ownerId)
                             }
                           ></RadioGroup>
