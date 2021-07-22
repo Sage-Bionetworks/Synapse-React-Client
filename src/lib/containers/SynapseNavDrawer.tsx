@@ -1,7 +1,6 @@
 import { Drawer, List, ListItem } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import IconSvg from './IconSvg'
-import SynapseIcon from '../assets/icons/SynapseIcon'
 import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../utils'
@@ -9,6 +8,7 @@ import { UserProfile } from '../utils/synapseTypes'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Avatar } from './Avatar'
 import { Form } from 'react-bootstrap'
+import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -92,7 +92,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
     <div className="SynapseNavDrawer">
       <Drawer variant="permanent" className='SynapseNavDrawerMenu' >
         <a href='#!Home:0' className='synapseIcon' rel="noopener noreferrer">
-          <SynapseIcon />
+          <SynapseIconWhite />
         </a>
         <List>
           {currentUserProfile && <>

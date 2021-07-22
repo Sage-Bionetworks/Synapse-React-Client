@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-const SynapseIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const SynapseIconWhite = (props: React.SVGProps<SVGSVGElement>) => (
   <svg {...props} width="30" height="33" viewBox="0 0 30 33" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M7.80432 14.0604L20.8862 6.64159" stroke="#F8F9FA"/>
     <path d="M25.2369 8.80366L25.2369 23.9155" stroke="#F8F9FA"/>
@@ -11,4 +11,4 @@ const SynapseIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 )
 
-export default SynapseIcon
+export default SynapseIconWhite
