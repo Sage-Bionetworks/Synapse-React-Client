@@ -30,6 +30,12 @@
   }
 }
 .SynapseNavContentDrawer {
+  .synapseLogoNameContainer {
+    padding: 25px 0px 20px 0px;
+  }
+  .navContentContainer {
+    padding: 25px 46px;
+  }
   .MuiPaper-root {
     left: 53px;
     background-color: SRC.$primary-action-color;

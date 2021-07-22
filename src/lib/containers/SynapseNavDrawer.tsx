@@ -2,6 +2,7 @@ import { Drawer, List, ListItem } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import IconSvg from './IconSvg'
 import SynapseIcon from '../assets/icons/SynapseIcon'
+import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../utils'
 import { UserProfile } from '../utils/synapseTypes'
@@ -10,6 +11,14 @@ import { Avatar } from './Avatar'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
+}
+
+type MenuItemParams = {
+  tooltip: string,
+  iconName?: string,
+  onClickOpenNavMenu?: NavItem,
+  onClickGoToUrl?: string,
+  additionalChildren?: JSX.Element
 }
 
 export enum NavItem {
@@ -54,7 +63,28 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
     setOpen(false)
     setSelectedItem(undefined)
   }
+  const getListItem = (params: MenuItemParams) => {
+    const { tooltip, iconName, onClickOpenNavMenu, onClickGoToUrl, additionalChildren } = params
+    const handler = selectedItem == onClickOpenNavMenu ? handleDrawerClose : () => { handleDrawerOpen(onClickOpenNavMenu) }
+    const item = iconName ? <><IconSvg options={{ icon: iconName }} /> {additionalChildren} </> : additionalChildren
 
+    return <ListItem button key={iconName} data-tip={tooltip} data-for={`${tooltip}Link`} onClick={handler}>
+      <ReactTooltip
+        delayShow={300}
+        place="right"
+        type="dark"
+        effect="solid"
+        id={`${tooltip}Link`}
+      />
+      {onClickGoToUrl && 
+        <a href={onClickGoToUrl} rel="noopener noreferrer">
+          {item}
+        </a>
+      }
+      {!onClickGoToUrl && item}
+    </ListItem>
+  }
+  
   return (
     <div className="SynapseNavDrawer">
       <Drawer variant="permanent" className='SynapseNavDrawerMenu' >
@@ -62,111 +92,38 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
           <SynapseIcon />
         </a>
         <List>
-          {currentUserProfile && <ListItem button key='projects' data-tip="Projects" data-for="projectLink" onClick={selectedItem == NavItem.PROJECTS ? handleDrawerClose : () => { handleDrawerOpen(NavItem.PROJECTS) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="projectLink"
-            />
-            <IconSvg options={{ icon: 'dashboard' }} />
-          </ListItem>}
-          {currentUserProfile && <ListItem button key='favorites' data-tip="Favorites" data-for="favsLink" onClick={selectedItem == NavItem.FAVORITES ? handleDrawerClose : () => { handleDrawerOpen(NavItem.FAVORITES) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="favsLink"
-            />
-            <a href={`#!Profile:${currentUserProfile.ownerId}/favorites`} rel="noopener noreferrer">
-              <IconSvg options={{ icon: 'favOutlined' }} />
-            </a>
-          </ListItem>}
-          {currentUserProfile && <ListItem button key='teams' data-tip="Teams" data-for="teamsLink" onClick={selectedItem == NavItem.TEAMS ? handleDrawerClose : () => { handleDrawerOpen(NavItem.TEAMS) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="teamsLink"
-            />
-            <a href={`#!Profile:${currentUserProfile.ownerId}/teams`} rel="noopener noreferrer">
-              <IconSvg options={{ icon: 'peopleOutlined' }} />
-            </a>
-          </ListItem>}
-          {currentUserProfile && <ListItem button key='challenges' data-tip="Challenges" data-for="challengeLink" onClick={selectedItem == NavItem.TEAMS ? handleDrawerClose : () => { handleDrawerOpen(NavItem.TEAMS) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="challengeLink"
-            />
-            <a href={`#!Profile:${currentUserProfile.ownerId}/challenges`} rel="noopener noreferrer">
-              <IconSvg options={{ icon: 'challengesOutlined' }} />
-            </a>
-          </ListItem>}
-          {currentUserProfile && <ListItem button key='download' data-tip="Download Cart" data-for="downloadLink" onClick={selectedItem == NavItem.TEAMS ? handleDrawerClose : () => { handleDrawerOpen(NavItem.TEAMS) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="downloadLink"
-            />
-            <a href={`#!Profile:${currentUserProfile.ownerId}/downloads`} rel="noopener noreferrer">
-              <IconSvg options={{ icon: 'downloadOutlined' }} />
-            </a>
-          </ListItem>}
-          <ListItem button key='search' data-tip="Search" data-for="searchLink" onClick={selectedItem == NavItem.TEAMS ? handleDrawerClose : () => { handleDrawerOpen(NavItem.TEAMS) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="searchLink"
-            />
-            <a href='#!Search:' rel="noopener noreferrer">
-              <IconSvg options={{ icon: 'searchOutlined' }} />
-            </a>
-          </ListItem>
+          {currentUserProfile && <>
+            {getListItem({tooltip: 'Projects', iconName: 'dashboard', onClickOpenNavMenu: NavItem.PROJECTS})}
+            {getListItem({tooltip: 'Favorites', iconName: 'favOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/favorites`})}
+            {getListItem({tooltip: 'Teams', iconName: 'peopleOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/teams`})}
+            {getListItem({tooltip: 'Challenges', iconName: 'challengesOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/challenges`})}
+            {getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/downloads`})}
+          </>}
+          {getListItem({tooltip: 'Search', iconName: 'searchOutlined', onClickGoToUrl: '#!Search:'})}
         </List>
         <div className="filler"/>
         <List>
-          {currentUserProfile && <ListItem button key='profile' data-tip="Your Account" data-for="profileLink" onClick={selectedItem == NavItem.PROFILE ? handleDrawerClose : () => { handleDrawerOpen(NavItem.PROFILE) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="profileLink"
-            />
-            <Avatar userProfile={currentUserProfile} avatarSize='SMALL' />
-          </ListItem>}
-          <ListItem button key='help' data-tip="Help" data-for="helpLink" onClick={selectedItem == NavItem.PROFILE ? handleDrawerClose : () => { handleDrawerOpen(NavItem.PROFILE) }}>
-            <ReactTooltip
-              delayShow={300}
-              place="right"
-              type="dark"
-              effect="solid"
-              id="helpLink"
-            />
-            <IconSvg options={{ icon: 'helpOutlined' }} />
-          </ListItem>
+          {currentUserProfile && getListItem({tooltip: 'Your Account', onClickOpenNavMenu: NavItem.PROFILE, additionalChildren: <Avatar userProfile={currentUserProfile} avatarSize='SMALL' />})}
+          {getListItem({tooltip: 'Help', iconName: 'helpOutlined', onClickOpenNavMenu: NavItem.HELP})}
         </List>
       </Drawer>
       <Drawer variant="temporary" open={isOpen} className={`SynapseNavContentDrawer`} onClose={handleDrawerClose} >
-        {selectedItem == NavItem.PROJECTS && <>
-          <div>
-            SYNAPSE
-            PROJECTS UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          </div>
-        </>}
-        {selectedItem == NavItem.FAVORITES && <>
-          <div>FAVORITES UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
-        </>}
+        <div className="synapseLogoNameContainer">
+          <SynapseLogoName />
+        </div>
+        <div className="navContentContainer">
+          {selectedItem == NavItem.PROJECTS && <>
+            <div>
+              PROJECTS UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+            </div>
+          </>}
+          {selectedItem == NavItem.PROFILE && <>
+            <div>PROFILE UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+          </>}
+          {selectedItem == NavItem.HELP && <>
+            <div>HELP UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+          </>}
+        </div>
       </Drawer>
     </div>
   )
