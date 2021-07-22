@@ -9,7 +9,7 @@ import { SynapseClient } from '../../../lib/utils/'
 import { FunctionReturningPaginatedResults } from '../../../lib/utils/SynapseClient'
 
 describe('it works at integration level testing', () => {
-  it('Call to invalid rest endpoint results in error', async () => {
+  it.skip('Call to invalid rest endpoint results in error', async () => {
     try {
       await SynapseClient.doGet(
         '/repo/v1/invalid',
@@ -23,7 +23,7 @@ describe('it works at integration level testing', () => {
     }
   })
 
-  it('version call', () => {
+  it.skip('version call', () => {
     return SynapseClient.getVersion().then(data => {
       expect(data.version).toBeDefined()
     })

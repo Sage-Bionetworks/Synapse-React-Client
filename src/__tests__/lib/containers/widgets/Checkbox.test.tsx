@@ -6,8 +6,6 @@ import {
 } from '../../../../lib/containers/widgets/Checkbox'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
-import { act } from 'react-dom/test-utils'
 
 const mockCallback = jest.fn()
 
@@ -36,7 +34,7 @@ beforeEach(() => init())
 describe('basic function', () => {
   it('should render with correct properties', () => {
     expect(wrapper).toBeDefined()
-    expect(wrapper.find('span span').text()).toBe(props.label)
+    expect(wrapper.find('label').text()).toBe(props.label)
     expect(checkboxProps.checked).toBe(true)
     expect(checkboxProps.id).toBe(props.id)
     expect(wrapper.find('div').at(0).hasClass('checkboxClass')).toBe(true)
@@ -68,21 +66,5 @@ describe('basic function', () => {
 
     userEvent.click(screen.getByRole('checkbox'))
     expect(mockCallback).toHaveBeenCalledWith(true)
-  })
-
-  it('should append focused class when focused', async () => {
-    init({ ...props, checked: false })
-
-    expect(wrapper.find('.checkbox-focused').length).toEqual(0)
-    act(() => {
-      wrapper.find('input').props().onFocus!({} as any)
-    })
-    await resolveAllPending(wrapper)
-    expect(wrapper.find('.checkbox-focused').length).toEqual(1)
-    act(() => {
-      wrapper.find('input').props().onBlur!({} as any)
-    })
-    await resolveAllPending(wrapper)
-    expect(wrapper.find('.checkbox-focused').length).toEqual(0)
   })
 })

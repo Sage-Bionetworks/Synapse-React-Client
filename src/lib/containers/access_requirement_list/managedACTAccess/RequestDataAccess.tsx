@@ -104,7 +104,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
             const resp:
               | ACTSubmissionStatus
               | any = await cancelDataAccessRequest(
-              accessRequirementStatus?.currentSubmissionStatus!.submissionId,
+              accessRequirementStatus?.currentSubmissionStatus!.submissionId!,
               accessToken!,
             )
             if (resp.state === SUBMISSION_STATE.CANCELLED) {

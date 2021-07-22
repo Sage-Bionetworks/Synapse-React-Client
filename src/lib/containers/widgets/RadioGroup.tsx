@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 export type RadioGroupProps = {
   options: { label: string; value: string }[]
   id: string
   className?: string
   value?: string
-  onChange: (value: string, checked: boolean) => void
+  onChange: (value: string) => void
 }
 
 export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
@@ -34,30 +34,21 @@ type RadioOptionProps = {
   label: string
   value: string
   currentValue?: string
-  onChange: (value: string, checked: boolean) => void
+  onChange: (value: string) => void
 }
 
 const RadioOption: React.FunctionComponent<RadioOptionProps> = (
   props: RadioOptionProps,
 ) => {
-  const [focused, setFocused] = useState(false)
   return (
-    <div className={`radio ${focused ? 'radio-focused' : ''}`}>
-      <label>
-        <span>
-          <input
-            type="radio"
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            checked={props.currentValue === props.value}
-            value={props.value}
-            onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
-              props.onChange(target.value, target.checked)
-            }
-          />
-          <span>{props.label}</span>
-        </span>
-      </label>
+    <div onClick={() => props.onChange(props.value)}>
+      <input
+        id={props.label}
+        type="radio"
+        checked={props.currentValue === props.value}
+        value={props.value}
+      />
+      <label htmlFor={props.label}>{props.label}</label>
     </div>
   )
 }

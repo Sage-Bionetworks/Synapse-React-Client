@@ -69,22 +69,30 @@ describe('basic function', () => {
       const radios = wrapper.find('input[type="radio"]')
       expect(radios).toHaveLength(3)
       expect(radios.at(1).props().checked).toBe(true)
-      expect(radios.at(1).parents('span').text()).toBe('Any')
+
+      const radioLabels = wrapper.find('input[type="radio"] + label')
+      expect(radioLabels).toHaveLength(3)
+      expect(radioLabels.at(1).text()).toBe('Any')
     })
 
     it('should set for Unannotated', () => {
       init({ ...props, facetResult: notSetFacetResult })
       const radios = wrapper.find('input[type="radio"]')
       expect(radios.at(0).props().checked).toBe(true)
-      expect(radios.at(0).parents('span').text()).toBe('Not Assigned')
+
+      const radioLabels = wrapper.find('input[type="radio"] + label')
+      expect(radioLabels).toHaveLength(3)
+      expect(radioLabels.at(0).text()).toBe('Not Assigned')
     })
 
     it('interval', () => {
       init({ ...props, facetResult: rangeFacetResult })
       const radios = wrapper.find('input[type="radio"]')
-
       expect(radios.at(2).props().checked).toBe(true)
-      expect(radios.at(2).parents('span').text()).toBe('Range')
+
+      const radioLabels = wrapper.find('input[type="radio"] + label')
+      expect(radioLabels).toHaveLength(3)
+      expect(radioLabels.at(2).text()).toBe('Range')
     })
   })
 
@@ -168,7 +176,7 @@ describe('basic function', () => {
       expect(radios.at(1).props().checked).toBe(true)
       mockCallback.mockClear()
       // click first radio
-      radios.at(0).simulate('change')
+      radios.at(0).simulate('click')
       expect(mockCallback).toHaveBeenCalledWith([VALUE_NOT_SET, VALUE_NOT_SET])
       expect(mockCallback).toBeCalledTimes(1)
       //get updated wrapper and clear mocks
@@ -178,7 +186,7 @@ describe('basic function', () => {
       expect(radios.at(1).props().checked).toBe(false)
       expect(radios.at(0).props().checked).toBe(true)
       //click the third radio
-      radios.at(2).simulate('change')
+      radios.at(2).simulate('click')
       expect(mockCallback).not.toHaveBeenCalled()
       expect(wrapper.find('.RangeSlider')).toHaveLength(1)
       //get updated wrapper and clear mocks
@@ -188,7 +196,7 @@ describe('basic function', () => {
       expect(radios.at(0).props().checked).toBe(false)
       expect(radios.at(2).props().checked).toBe(true)
       //click the third radio
-      radios.at(1).simulate('change')
+      radios.at(1).simulate('click')
       expect(mockCallback).toHaveBeenCalledWith(['', ''])
       expect(wrapper.find('.RangeSlider')).toHaveLength(0)
       wrapper = wrapper.update()
