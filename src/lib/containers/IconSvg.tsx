@@ -21,7 +21,7 @@ import {
   AssessmentOutlined,
   GetAppOutlined,
   SearchOutlined,
-  HelpOutlined
+  HelpOutlined,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -37,6 +37,7 @@ import Imaging from '../assets/mui_components/Imaging'
 import LineGraph from '../assets/mui_components/LineGraph'
 import Rat from '../assets/mui_components/Rat'
 import Kinomics from '../assets/mui_components/Kinomics'
+import Login from '../assets/mui_components/Login'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
 
@@ -99,17 +100,19 @@ const getIcon = (options:IconSvgOptions) => {
     case 'info':
       return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
     case 'favOutlined':
-      return <StarOutlined fontSize={'small'} style={muiSvgStyle}></StarOutlined>
+      return <StarOutlined style={muiSvgStyle}></StarOutlined>
     case 'peopleOutlined':
-      return <PeopleOutline fontSize={'small'} style={muiSvgStyle}></PeopleOutline>
+      return <PeopleOutline style={muiSvgStyle}></PeopleOutline>
     case 'challengesOutlined':
-      return <AssessmentOutlined fontSize={'small'} style={muiSvgStyle}></AssessmentOutlined>
+      return <AssessmentOutlined style={muiSvgStyle}></AssessmentOutlined>
     case 'downloadOutlined':
-      return <GetAppOutlined fontSize={'small'} style={muiSvgStyle}></GetAppOutlined>
+      return <GetAppOutlined style={muiSvgStyle}></GetAppOutlined>
     case 'searchOutlined':
-      return <SearchOutlined fontSize={'small'} style={muiSvgStyle}></SearchOutlined>
+      return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
+    case 'login':
+      return <Login fill={color} style={customSvgStyle}></Login>
     case 'helpOutlined':
-      return <HelpOutlined fontSize={'small'} style={muiSvgStyle}></HelpOutlined>
+      return <HelpOutlined style={muiSvgStyle}></HelpOutlined>
     case 'expandLess': 
       return <ExpandLess fontSize={'small'} style={muiSvgStyle}></ExpandLess>
     case 'expandMore': 

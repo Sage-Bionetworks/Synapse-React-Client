@@ -104,6 +104,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
         <div className="filler"/>
         <List>
           {currentUserProfile && getListItem({tooltip: 'Your Account', onClickOpenNavMenu: NavItem.PROFILE, additionalChildren: <Avatar userProfile={currentUserProfile} avatarSize='SMALL' />})}
+          {!currentUserProfile && getListItem({tooltip: 'Sign in', iconName: 'login', onClickGoToUrl: '#!LoginPlace:0'})}
           {getListItem({tooltip: 'Help', iconName: 'helpOutlined', onClickOpenNavMenu: NavItem.HELP})}
         </List>
       </Drawer>
@@ -118,7 +119,23 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             </div>
           </>}
           {selectedItem == NavItem.PROFILE && <>
-            <div>PROFILE UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
+            <div>
+              <div className="header">
+                Welcome Back,<br />
+                {currentUserProfile?.userName}!
+              </div>
+              <div className="linkList">
+                <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/profile`} rel="noopener noreferrer">
+                  View Profile
+                </a>
+                <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/settings`} rel="noopener noreferrer">
+                  Account Settings
+                </a>
+                <a className="SRC-whiteText" onClick={() => {SynapseClient.signOut(window.location.reload)}} rel="noopener noreferrer">
+                  Sign Out
+                </a>
+              </div>
+            </div>
           </>}
           {selectedItem == NavItem.HELP && <>
             <div>HELP UI<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p></div>
