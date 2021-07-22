@@ -174,7 +174,7 @@ describe('initialization', () => {
   describe('label initialization', () => {
     it('should set labels correctly for STRING type', async () => {
       const labels = container.querySelectorAll<HTMLSpanElement>(
-        'input[type="checkbox"]:not(#select_all) ~ span',
+        'input[type="checkbox"]:not(#select_all) ~ label',
       )
       const counts = container.querySelectorAll<HTMLDivElement>(
         '.EnumFacetFilter__count',
@@ -216,7 +216,7 @@ describe('initialization', () => {
       })
 
       const labels = container.querySelectorAll(
-        'input[type="checkbox"]:not(#select_all) ~ span',
+        'input[type="checkbox"]:not(#select_all) ~ label',
       )
       expect(labels).toHaveLength(20)
     })
@@ -236,7 +236,7 @@ describe('initialization', () => {
 
       await act(async () => await init(updatedProps))
       const labels = container.querySelectorAll<HTMLInputElement>(
-        'input:not(#select_all) ~ span',
+        'input:not(#select_all) ~ label',
       )
       const counts = container.querySelectorAll<HTMLDivElement>(
         '.EnumFacetFilter__count',
@@ -271,7 +271,7 @@ describe('initialization', () => {
 
     await act(async () => await init(updatedProps))
     const labels = container.querySelectorAll<HTMLSpanElement>(
-      'input[type="checkbox"]:not(#select_all) ~ span',
+      'input[type="checkbox"]:not(#select_all) ~ label',
     )
     const counts = container.querySelectorAll<HTMLDivElement>(
       '.EnumFacetFilter__count',
