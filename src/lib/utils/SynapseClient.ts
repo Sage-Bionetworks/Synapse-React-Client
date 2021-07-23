@@ -1299,8 +1299,8 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = (sessionCallback: () => void) => {
-  setAccessTokenCookie(undefined, sessionCallback)
+export const signOut = async (sessionCallback: () => void) => {
+  await setAccessTokenCookie(undefined, sessionCallback)
 }
 
 /**

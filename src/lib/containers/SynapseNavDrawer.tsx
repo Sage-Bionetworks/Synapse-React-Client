@@ -58,6 +58,10 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
     accessToken
   ])
 
+  const signOut = async () => {
+    await SynapseClient.signOut(()=>{})
+    window.location.reload()
+  }
   const handleDrawerOpen = (navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
@@ -106,7 +110,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             {getListItem({tooltip: 'Favorites', iconName: 'favOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/favorites`})}
             {getListItem({tooltip: 'Teams', iconName: 'peopleOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/teams`})}
             {getListItem({tooltip: 'Challenges', iconName: 'challengesOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/challenges`})}
-            {getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/downloads`})}
+            {getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'})}
           </>}
           {getListItem({tooltip: 'Search', iconName: 'searchOutlined', onClickGoToUrl: '/#!Search:'})}
         </List>
@@ -169,7 +173,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
               <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/settings`} rel="noopener noreferrer">
                 Account Settings
               </a>
-              <a className="SRC-whiteText" onClick={() => {SynapseClient.signOut(window.location.reload)}} rel="noopener noreferrer">
+              <a className="SRC-whiteText" onClick={signOut} rel="noopener noreferrer">
                 Sign Out
               </a>
             </div>
