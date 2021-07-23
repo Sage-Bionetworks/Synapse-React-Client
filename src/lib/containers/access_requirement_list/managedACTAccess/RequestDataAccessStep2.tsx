@@ -555,7 +555,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     let link:string = ''
     let msg: string = ''
 
-    if (managedACTAccessRequirement.isCertifiedUserRequired && !managedACTAccessRequirement.isValidatedProfileRequired) {
+    if (managedACTAccessRequirement.isCertifiedUserRequired) {
       link = 'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
       msg = 'All data requesters must be a certified user.'
     }
