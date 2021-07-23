@@ -15,6 +15,7 @@ import TermsAndConditions from './containers/TermsAndConditions'
 import PageProgress from './containers/PageProgress'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import { SynapseHomepage } from './containers/SynapseHomepage'
+import { SynapseNavDrawer } from './containers/SynapseNavDrawer'
 import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
@@ -60,6 +61,7 @@ const SynapseComponents = {
   DownloadConfirmation,
   FullWidthAlert: FullWidthAlert,
   SchemaDrivenAnnotationEditor,
+  SynapseNavDrawer
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

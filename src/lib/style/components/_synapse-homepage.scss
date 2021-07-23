@@ -35,8 +35,13 @@
     background: rgb(64, 118, 154);
     padding-top: 15px;
     padding-bottom: 15px;
-    a:not(.btn):link:hover {
-      border-bottom: none;
+    a {
+      >.styled-svg-wrapper {
+        margin-right: 10px;
+      }
+      &:not(.btn):link:hover {
+        border-bottom: none;
+      }
     }
   }
   .SignUpButtonContainer {

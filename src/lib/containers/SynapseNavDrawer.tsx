@@ -57,6 +57,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   }, [
     accessToken
   ])
+
   const handleDrawerOpen = (navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
@@ -71,7 +72,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
     const handler = selectedItem == onClickOpenNavMenu ? handleDrawerClose : () => { handleDrawerOpen(onClickOpenNavMenu) }
     const item = iconName ? <><IconSvg options={{ icon: iconName }} /> {additionalChildren} </> : additionalChildren
 
-    return <ListItem button key={iconName} data-tip={tooltip} data-for={`${tooltip}Link`} onClick={handler}>
+    return <ListItem button key={iconName} data-tip={tooltip} data-for={`${tooltip}Link`} onClick={handler} className="SRC-whiteText">
       <ReactTooltip
         delayShow={300}
         place="right"
@@ -80,7 +81,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
         id={`${tooltip}Link`}
       />
       {onClickGoToUrl && 
-        <a href={onClickGoToUrl} rel="noopener noreferrer">
+        <a href={onClickGoToUrl} rel="noopener noreferrer" className="SRC-whiteText">
           {item}
         </a>
       }
@@ -91,23 +92,28 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   return (
     <div className="SynapseNavDrawer">
       <Drawer variant="permanent" className='SynapseNavDrawerMenu' >
-        <a href='#!Home:0' className='synapseIcon' rel="noopener noreferrer">
+        <a className='synapseIcon' rel="noopener noreferrer" 
+          onClick={()=>
+            {
+              handleDrawerClose()
+              window.open('/#!Home:0','_self')
+            }} >
           <SynapseIconWhite />
         </a>
         <List>
           {currentUserProfile && <>
             {getListItem({tooltip: 'Projects', iconName: 'dashboard', onClickOpenNavMenu: NavItem.PROJECTS})}
-            {getListItem({tooltip: 'Favorites', iconName: 'favOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/favorites`})}
-            {getListItem({tooltip: 'Teams', iconName: 'peopleOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/teams`})}
-            {getListItem({tooltip: 'Challenges', iconName: 'challengesOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/challenges`})}
-            {getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: `#!Profile:${currentUserProfile.ownerId}/downloads`})}
+            {getListItem({tooltip: 'Favorites', iconName: 'favOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/favorites`})}
+            {getListItem({tooltip: 'Teams', iconName: 'peopleOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/teams`})}
+            {getListItem({tooltip: 'Challenges', iconName: 'challengesOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/challenges`})}
+            {getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/downloads`})}
           </>}
-          {getListItem({tooltip: 'Search', iconName: 'searchOutlined', onClickGoToUrl: '#!Search:'})}
+          {getListItem({tooltip: 'Search', iconName: 'searchOutlined', onClickGoToUrl: '/#!Search:'})}
         </List>
         <div className="filler"/>
         <List>
           {currentUserProfile && getListItem({tooltip: 'Your Account', onClickOpenNavMenu: NavItem.PROFILE, additionalChildren: <Avatar userProfile={currentUserProfile} avatarSize='SMALL' />})}
-          {!currentUserProfile && getListItem({tooltip: 'Sign in', iconName: 'login', onClickGoToUrl: '#!LoginPlace:0'})}
+          {!currentUserProfile && getListItem({tooltip: 'Sign in', iconName: 'login', onClickGoToUrl: '/#!LoginPlace:0'})}
           {getListItem({tooltip: 'Help', iconName: 'helpOutlined', onClickOpenNavMenu: NavItem.HELP})}
         </List>
       </Drawer>
@@ -131,22 +137,22 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
                   if (event.key === 'Enter') {
                     if (event.target.value !== '') {
                       setProjectSearchText('')
-                      window.location.href = `#!Search:${encodeURI(event.target.value)}`
+                      window.location.href = `/#!Search:${encodeURI(event.target.value)}`
                     }
                   }
                 }}/>
             </div>
-            <div className="linkList">
-              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/all`} rel="noopener noreferrer">
+            <div className="linkList" onClick={handleDrawerClose}>
+              <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/projects/all`} rel="noopener noreferrer">
                 All
               </a>
-              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/created_by_me`} rel="noopener noreferrer">
+              <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/projects/created_by_me`} rel="noopener noreferrer">
                 Created By Me
               </a>
-              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/shared_directly_with_me`} rel="noopener noreferrer">
+              <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/projects/shared_directly_with_me`} rel="noopener noreferrer">
                 Shared With Me
               </a>
-              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/projects/all_my_team_projects`} rel="noopener noreferrer">
+              <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/projects/all_my_team_projects`} rel="noopener noreferrer">
                 Team Projects
               </a>
             </div>
@@ -156,11 +162,11 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
               Welcome Back,<br />
               {currentUserProfile?.userName}!
             </div>
-            <div className="linkList">
-              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/profile`} rel="noopener noreferrer">
+            <div className="linkList" onClick={handleDrawerClose}>
+              <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/profile`} rel="noopener noreferrer">
                 View Profile
               </a>
-              <a className="SRC-whiteText" href={`#!Profile:${currentUserProfile?.ownerId}/settings`} rel="noopener noreferrer">
+              <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/settings`} rel="noopener noreferrer">
                 Account Settings
               </a>
               <a className="SRC-whiteText" onClick={() => {SynapseClient.signOut(window.location.reload)}} rel="noopener noreferrer">
@@ -188,7 +194,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
                   }
               }}/>
             </div>
-            <div className="linkList">
+            <div className="linkList"> onClick={handleDrawerClose}
               <a className="SRC-whiteText" href='https://help.synapse.org/docs/Getting-Started.2055471150.html' rel="noopener noreferrer" target='_blank'>
                 Getting Started
               </a>
