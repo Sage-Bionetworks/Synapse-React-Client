@@ -194,7 +194,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
                   }
               }}/>
             </div>
-            <div className="linkList"> onClick={handleDrawerClose}
+            <div className="linkList" onClick={handleDrawerClose}>
               <a className="SRC-whiteText" href='https://help.synapse.org/docs/Getting-Started.2055471150.html' rel="noopener noreferrer" target='_blank'>
                 Getting Started
               </a>
