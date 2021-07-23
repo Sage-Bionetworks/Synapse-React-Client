@@ -333,6 +333,11 @@
     padding-left: 24px;
   }
 
+  .checkbox > label,
+  .radio > label {
+    margin-bottom: 8px;
+  }
+
   .array-item {
     border: 1px solid SrcVariables.$gray-dark;
     padding: 2rem 1rem;
