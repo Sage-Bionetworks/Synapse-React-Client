@@ -59,7 +59,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   ])
 
   const signOut = async () => {
-    await SynapseClient.signOut(()=>{})
+    await SynapseClient.signOut(()=>{ console.log('Signed out') })
     window.location.reload()
   }
   const handleDrawerOpen = (navItem?: NavItem) => {
@@ -73,37 +73,35 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   }
   const getListItem = (params: MenuItemParams) => {
     const { tooltip, iconName, onClickOpenNavMenu, onClickGoToUrl, additionalChildren } = params
-    const handler = selectedItem == onClickOpenNavMenu ? handleDrawerClose : () => { handleDrawerOpen(onClickOpenNavMenu) }
+    const handler = selectedItem == onClickOpenNavMenu || onClickGoToUrl ? handleDrawerClose : () => { handleDrawerOpen(onClickOpenNavMenu) }
     const item = iconName ? <><IconSvg options={{ icon: iconName }} /> {additionalChildren} </> : additionalChildren
 
-    return <ListItem button key={iconName} data-tip={tooltip} data-for={`${tooltip}Link`} onClick={handler} className="SRC-whiteText">
-      <ReactTooltip
-        delayShow={300}
-        place="right"
-        type="dark"
-        effect="solid"
-        id={`${tooltip}Link`}
-      />
-      {onClickGoToUrl && 
-        <a href={onClickGoToUrl} rel="noopener noreferrer" className="SRC-whiteText">
-          {item}
-        </a>
-      }
-      {!onClickGoToUrl && item}
+    const listItem = <ListItem button key={iconName} data-tip={tooltip} data-for={`${tooltip}Link`} onClick={handler} className="SRC-whiteText">
+    <ReactTooltip
+      delayShow={300}
+      place="right"
+      type="dark"
+      effect="solid"
+      id={`${tooltip}Link`}
+    />
+        {item}
     </ListItem>
+
+    return onClickGoToUrl ? 
+      <a href={onClickGoToUrl} rel="noopener noreferrer" className="SRC-whiteText">
+        {listItem}
+      </a> : listItem
   }
   
+
   return (
     <div className="SynapseNavDrawer">
-      <Drawer variant="permanent" className='SynapseNavDrawerMenu' >
-        <a className='synapseIcon' rel="noopener noreferrer" 
-          onClick={()=>
-            {
-              handleDrawerClose()
-              window.open('/#!Home:0','_self')
-            }} >
-          <SynapseIconWhite />
-        </a>
+      <Drawer variant="permanent" className='SynapseNavDrawerMenu'>
+        <div onClick={handleDrawerClose}>
+          <a className='synapseIcon' rel="noopener noreferrer" href='/#!Home:0'>
+            <SynapseIconWhite />
+          </a>
+        </div>
         <List>
           {currentUserProfile && <>
             {getListItem({tooltip: 'Projects', iconName: 'dashboard', onClickOpenNavMenu: NavItem.PROJECTS})}
@@ -141,6 +139,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
                   if (event.key === 'Enter') {
                     if (event.target.value !== '') {
                       setProjectSearchText('')
+                      handleDrawerClose()
                       window.location.href = `/#!Search:${encodeURI(event.target.value)}`
                     }
                   }
@@ -194,6 +193,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
                     if (event.target.value !== '') {
                       window.open(`https://help.synapse.org/search.html?max=10&s=docs&q=${encodeURI(event.target.value)}`)
                       setDocSiteSearchText('')
+                      handleDrawerClose()
                     }
                   }
               }}/>
