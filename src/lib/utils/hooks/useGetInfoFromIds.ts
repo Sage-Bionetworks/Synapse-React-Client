@@ -55,9 +55,8 @@ const getEntityHeaderItems = async (
 
 const getUserProfileItems = async (
   lookupList: string[],
-  token: string | undefined,
 ): Promise<UserProfile[]> => {
-  const newData = await getUserProfileWithProfilePicAttached(lookupList, token)
+  const newData = await getUserProfileWithProfilePicAttached(lookupList)
   const notFound = lookupList.filter(
     item => newData.list.map(item => item.ownerId).indexOf(item) === -1,
   )
@@ -141,7 +140,6 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
               type === 'USER_PROFILE'
                 ? await getUserProfileItems(
                     newReferences as string[],
-                    accessToken,
                   )
                 : await getEntityHeaderItems(
                     newReferences as ReferenceList,

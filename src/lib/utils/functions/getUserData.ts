@@ -1,54 +1,26 @@
 import { SynapseClient } from '..'
 import { UserProfile, FileHandleAssociateType } from '../synapseTypes/'
+import { BackendDestinationEnum, getEndpoint } from './getEndpoint'
 
 /*
   Utility functions for UserCards
 */
 
-function getUserProfileWithProfilePicAttached(
+async function getUserProfileWithProfilePicAttached(
   principalIds: string[],
-  token?: string,
 ) {
-  return SynapseClient.getUserProfiles(principalIds).then(data => {
-    // people will either have a profile pic file handle id
-    // or they won't. Have to break this down into two groups.
-    const withProfilePic = data.list.filter((value: any) => {
-      return value.profilePicureFileHandleId !== undefined
-    })
-    if (withProfilePic.length === 0) {
-      return data
-    }
-    const fileHandleAssociationList = withProfilePic.map(value => {
+  const userProfiles = await SynapseClient.getUserProfiles(principalIds)
+  const profilesWithPictures = userProfiles.list.map(profile => {
+    if (profile.profilePicureFileHandleId) {
       return {
-        associateObjectId: value.ownerId,
-        associateObjectType: 'UserProfileAttachment',
-        fileHandleId: value.profilePicureFileHandleId,
+        ...profile,
+        clientPreSignedURL: `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/userProfile/${profile.ownerId}/image/preview?redirect=true`
       }
-    })
-    const request: any = {
-      includeFileHandles: false,
-      includePreSignedURLs: true,
-      includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList,
+    } else {
+      return profile
     }
-    return SynapseClient.getFiles(request, token)
-      .then(fileHandleList => {
-        // we retrieve all the persons with profile pic file handles
-        // so we next loop through them, find the original person in the data.list
-        // and add a field with their pre-signed url
-        fileHandleList.requestedFiles.forEach(fileHandle => {
-          const matchingPersonIndex = data.list.findIndex(el => {
-            return fileHandle.fileHandleId === el.profilePicureFileHandleId
-          })
-          data.list[matchingPersonIndex].clientPreSignedURL =
-            fileHandle.preSignedURL
-        })
-        return Promise.resolve(data)
-      })
-      .catch(err => {
-        throw Error(`Err on getting user data ${err}`)
-      })
   })
+  return { list: profilesWithPictures }
 }
 
 export type UserProfileAndImg = {

@@ -5,7 +5,6 @@ import { UserProfile } from '../utils/synapseTypes/'
 import { SynapseConstants } from '../utils/'
 import { UserCardSmall, UserCardSmallProps } from './UserCardSmall'
 import UserCardMedium, { UserCardMediumProps } from './UserCardMedium'
-import usePreFetchResource from '../utils/hooks/usePreFetchImage'
 import { Avatar, AvatarProps, AvatarSize } from './Avatar'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { useGetUserProfileWithProfilePic } from '../utils/hooks/SynapseAPI/useUserBundle'
@@ -67,8 +66,6 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
   const [preSignedURL, setPresignedUrl] = useState<string | undefined>(
     initialPreSignedURL,
   )
-  // We fetch the image right away in case it is an expiring presigned URL
-  const imageURL = usePreFetchResource(preSignedURL)
 
   const { data: profileAndImage } = useGetUserProfileWithProfilePic(
     principalId!,
@@ -122,7 +119,7 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
   return isLoading || userProfile == null ? (
     <></>
   ) : (
-    getCard(props.size, { userProfile, imageURL, ...rest })
+    getCard(props.size, { userProfile, imageURL: preSignedURL, ...rest })
   )
 }
 export default UserCard
