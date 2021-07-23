@@ -302,7 +302,6 @@ export default class SynapseTable extends React.Component<
       try {
         const data = await getUserProfileWithProfilePicAttached(
           userPorfileIds,
-          this.context.accessToken,
         )
         data.list.forEach((el: UserProfile) => {
           mapUserIdToHeader[el.ownerId] = el

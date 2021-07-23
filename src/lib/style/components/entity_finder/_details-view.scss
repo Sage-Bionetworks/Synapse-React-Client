@@ -112,7 +112,6 @@
     text-align: center;
     .radio,
     .checkbox {
-      margin: 7px 0px 2px 5px;
       min-width: 20px;
     }
   }
@@ -141,5 +140,8 @@
   }
   .VersionColumn {
     width: 200px;
+    select {
+      margin-bottom: 0px;
+    }
   }
 }
