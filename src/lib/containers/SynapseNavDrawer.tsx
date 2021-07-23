@@ -73,10 +73,16 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   }
   const getListItem = (params: MenuItemParams) => {
     const { tooltip, iconName, onClickOpenNavMenu, onClickGoToUrl, additionalChildren } = params
-    const handler = selectedItem == onClickOpenNavMenu || onClickGoToUrl ? handleDrawerClose : () => { handleDrawerOpen(onClickOpenNavMenu) }
+    const isCurrentlySelectedItem = (typeof selectedItem === 'undefined') ? false : selectedItem == onClickOpenNavMenu
+    const handler = isCurrentlySelectedItem || onClickGoToUrl ? handleDrawerClose : () => { handleDrawerOpen(onClickOpenNavMenu) }
     const item = iconName ? <><IconSvg options={{ icon: iconName }} /> {additionalChildren} </> : additionalChildren
 
-    const listItem = <ListItem button key={iconName} data-tip={tooltip} data-for={`${tooltip}Link`} onClick={handler} className="SRC-whiteText">
+    const listItem = <ListItem button key={iconName}
+      data-tip={tooltip}
+      data-for={`${tooltip}Link`}
+      onClick={handler}
+      className="SRC-whiteText"
+      selected={isCurrentlySelectedItem}>
     <ReactTooltip
       delayShow={300}
       place="right"

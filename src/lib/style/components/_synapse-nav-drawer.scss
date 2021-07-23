@@ -7,7 +7,7 @@
     display: block;
   }
   .SynapseNavDrawerMenu {
-    .MuiListItem-button:hover {
+    .MuiListItem-button:hover, .Mui-selected {
       border-left: 7px solid SRC.$secondary-action-color;
       padding-left: 9px;
     }
