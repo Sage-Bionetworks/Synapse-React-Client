@@ -202,7 +202,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
           message: (
             <>
               <strong>Your data access request has been rejected.</strong>
-              <br />${submissionStatus.rejectedReason || ''}
+              <br />{submissionStatus.rejectedReason || ''}
             </>
           ),
         })
