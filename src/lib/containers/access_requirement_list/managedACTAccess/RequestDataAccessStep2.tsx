@@ -600,9 +600,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               Data Requesters
             </Form.Label>
             <br />
-            <span className={'requester-label'}>This list should match those listed on your DUC.
-            <br />
-            { getAccessorRequirementHelpText() }
+            <span className={'requester-label'}>
+              {
+                managedACTAccessRequirement.isDUCRequired && (
+                  <>This list should match those listed on your DUC.<br /></>
+                )
+              }
+              { getAccessorRequirementHelpText() }
             </span>
             <UserSearchBox
               id={'requesters'}
