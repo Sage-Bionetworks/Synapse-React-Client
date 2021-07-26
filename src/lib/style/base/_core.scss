@@ -1300,3 +1300,16 @@ main, #rootPanel {
     @include ignoreLink;
   }
 }
+
+.searchInputWithIcon {
+  padding-top: 20px;
+  svg {
+    position: relative;
+    top: 27px;
+    left: 6px;
+    color: #878E95;
+  }
+  input {
+    padding-left: 32px;
+  }
+}

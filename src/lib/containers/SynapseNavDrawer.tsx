@@ -134,7 +134,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             <div className="header">
               Projects
             </div>
-            <div className="searchContainer">
+            <div className="searchInputWithIcon">
               <IconSvg options={{ icon: 'searchOutlined' }} />
               <Form.Control type="search" placeholder="Search All Projects" 
                 value={projectSearchText}
@@ -187,7 +187,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             <div className="header">
               Help
             </div>
-            <div className="searchContainer">
+            <div className="searchInputWithIcon">
               <IconSvg options={{ icon: 'searchOutlined' }} />
               <Form.Control type="search" placeholder="Search Synapse Documentation" 
                 value={docSiteSearchText}

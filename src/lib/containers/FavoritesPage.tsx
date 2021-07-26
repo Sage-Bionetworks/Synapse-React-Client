@@ -23,7 +23,7 @@ export type Sort = {
   direction: SortDirection
 }
 
-export default function FavoritesTable() {
+export default function FavoritesPage() {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const [sort, setSort] = useState<Sort | undefined>(undefined)
@@ -109,85 +109,93 @@ export default function FavoritesTable() {
   }
   
   return (
-    <>
-      {sortedData && sortedData.length > 0 && (
-        <div className="bootstrap-4-backport">
-          <div className="searchContainer">
-            <IconSvg options={{ icon: 'searchOutlined' }} />
-            <Form.Control type="search" placeholder="Favorite Name" 
-              value={searchText}
-              onChange={event => {
-                setSearchText(event.target.value)
-              }}
-            />
-          </div>
-          <ReactBootstrap.Table
-            striped={true}
-            responsive={true}
-            className="FavoritesTable"
-          >
-            <thead>
-              <tr>
-                {/* first column for the favorite icon */}
-                <th />
-                <th>
-                  Name
-                  <span>{showInteractiveSortIcon('name')}</span>
-                </th>
-                <th>
-                  Type
-                  <span>{showInteractiveSortIcon('type')}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedData.map((item:EntityHeader) => {
-                if (item) {
-                  const entityType = convertToEntityType(item.type)
-                  return (
-                    <tr key={item.id}>
-                      <td>
+    <div className="FavoritesPage">
+      <div className="pageHeader">
+        <div className="container">
+            <h3 className="pageHeaderTitle">Your Favorites</h3>
+        </div>
+      </div>
+      <div className="container">
+        <div className="searchInputWithIcon">
+          <IconSvg options={{ icon: 'searchOutlined' }} />
+          <Form.Control type="search" placeholder="Favorite Name" 
+            value={searchText}
+            onChange={event => {
+              setSearchText(event.target.value)
+            }}
+          />
+        </div>
+
+        {sortedData && sortedData.length > 0 && (
+          <div className="bootstrap-4-backport">
+            <ReactBootstrap.Table
+              striped={true}
+              responsive={true}
+              className="FavoritesTable"
+            >
+              <thead>
+                <tr>
+                  {/* first column for the favorite icon */}
+                  <th />
+                  <th>
+                    Name
+                    <span>{showInteractiveSortIcon('name')}</span>
+                  </th>
+                  <th>
+                    Type
+                    <span>{showInteractiveSortIcon('type')}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedData.map((item:EntityHeader) => {
+                  if (item) {
+                    const entityType = convertToEntityType(item.type)
+                    return (
+                      <tr key={item.id}>
+                        <td>
+                            <a
+                              data-tip="Click the star to remove this item from your favorites"
+                              data-for={`${item.id}-Tooltip`}
+                              onClick={()=>{removeFavorite(item)}}
+                              className="ignoreLink"
+                            >
+                            <ReactTooltip
+                              delayShow={300}
+                              place="right"
+                              type="dark"
+                              effect="solid"
+                              id={`${item.id}-Tooltip`}
+                            />
+                            <IconSvg options={{icon:'fav', color: '#EDC766'}} />
+                          </a>
+                        </td>
+                        <td>
                           <a
-                            data-tip="Click the star to remove this item from your favorites"
-                            data-for={`${item.id}-Tooltip`}
-                            onClick={()=>{removeFavorite(item)}}
-                            className="ignoreLink"
+                            rel="noopener noreferrer"
+                            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
                           >
-                          <ReactTooltip
-                            delayShow={300}
-                            place="right"
-                            type="dark"
-                            effect="solid"
-                            id={`${item.id}-Tooltip`}
-                          />
-                          <IconSvg options={{icon:'fav', color: '#EDC766'}} />
-                        </a>
-                      </td>
-                      <td>
-                        <a
-                          rel="noopener noreferrer"
-                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
-                        >
-                          {item.name}
-                        </a>
-                      </td>
-                      <td>
-                        <EntityTypeIcon type={entityType} style={{ marginRight: '5px' }} />
-                        {entityTypeToFriendlyName(entityType)}
-                      </td>
-                    </tr>
-                  )
-                } else return false
-              })}
-            </tbody>
-          </ReactBootstrap.Table>
-        </div>
-      )}
-      {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
-      )}
-    </>
+                            {item.name}
+                          </a>
+                        </td>
+                        <td>
+                          <EntityTypeIcon type={entityType} style={{ marginRight: '5px' }} />
+                          {entityTypeToFriendlyName(entityType)}
+                        </td>
+                      </tr>
+                    )
+                  } else return false
+                })}
+              </tbody>
+            </ReactBootstrap.Table>
+          </div>
+        )}
+        {isFetching && (
+          <div className="placeholder">
+            <SynapseSpinner size={30} />
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
