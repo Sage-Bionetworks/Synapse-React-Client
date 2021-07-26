@@ -36,6 +36,7 @@ const updatedJsonCaptor = jest.fn()
 
 const defaultProps: SchemaDrivenAnnotationEditorProps = {
   entityId: MOCK_FILE_ENTITY_ID,
+  liveValidate: false,
   onSuccess: mockOnSuccessFn,
 }
 
@@ -74,7 +75,6 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
   afterEach(() => {
     server.restoreHandlers()
     jest.resetAllMocks()
-    // jest.clearAllMocks()
   })
   afterAll(() => server.close())
 
@@ -454,6 +454,30 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // Since it's back in the schema, it should be a string
     expect(updatedJsonCaptor).toBeCalledWith(
       expect.objectContaining({ stringArray: ['one', 'two', 'three'] }),
+    )
+  })
+
+  it('Disallows keys that collide with the Entity JSON definition and throws a custom error message', async () => {
+    server.use(annotationsHandler, noSchemaHandler)
+
+    renderComponent()
+
+    const addAnnotationButton = await screen.findByRole('button', {
+      name: 'Add Custom Field',
+    })
+
+    userEvent.click(addAnnotationButton)
+
+    const keyField = await screen.findByLabelText('Key')
+
+    userEvent.type(keyField, '{selectall}{del}id')
+
+    const saveButton = await screen.findByRole('button', { name: 'Save' })
+    userEvent.click(saveButton)
+
+    await screen.findByText(
+      '"id" is a reserved internal key and cannot be used',
+      { exact: false },
     )
   })
 })

@@ -37,6 +37,7 @@ export interface Entity {
 }
 
 // Entity data returned as in https://docs.synapse.org/rest/GET/entity/id/json.html
+// Not comprehensive, but we don't need it to be, since we currently only use JSON for annotations.
 export interface EntityJson extends Record<string, unknown> {
   name: string
   id: string
@@ -54,9 +55,9 @@ export interface EntityJson extends Record<string, unknown> {
 }
 
 /**
- * A string array of the keys in the EntityJson object above.
+ * A string array of all possible keys used by Synapse in Entity objects (objects that inherit this interface: https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html).
  * This object is used to determine which fields are standard and which are annotations,
- * so it's important that this array contains all of the keys in the object above.
+ * so it's important that this array contains all keys in the objects that implement the linked interface above.
  */
 export const entityJsonKeys = [
   'name',
@@ -70,6 +71,17 @@ export const entityJsonKeys = [
   'concreteType',
   'versionNumber',
   'versionLabel',
+  'versionComment',
   'isLatestVersion',
   'dataFileHandleId',
+  'fileNameOverride',
+  'columnIds',
+  'scopeIds',
+  'linksTo',
+  'linksToClassName',
+  'repositoryName',
+  'isManaged',
+  'viewTypeMask',
+  'type',
+  'alias',
 ]

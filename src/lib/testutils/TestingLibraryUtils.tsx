@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { QueryClient } from 'react-query'
+import { QueryClient, setLogger } from 'react-query'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
   SynapseContextProvider,
@@ -18,6 +18,7 @@ export const createWrapper = (props?: SynapseContextType) => {
   // Creating a new query client for each rendering is important isolating tests, otherwise the
   // cache could be shared across tests.
   // This is also easier/more reliable than clearing the queryCache after each test.
+  // See https://github.com/tannerlinsley/react-query/discussions/1441
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
