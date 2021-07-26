@@ -1045,6 +1045,22 @@ export const getUserFavorites = (accessToken: string | undefined) => {
 }
 
 /**
+ * Remove a favorite
+ * http://rest-docs.synapse.org/rest/DELETE/favorite/id.html
+ */
+ export const removeUserFavorite = (
+  entityId: string,
+  accessToken: string | undefined,
+): Promise<void> => {
+  return doDelete(
+    `/repo/v1/favorite/${entityId}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get the user's list of teams they are on
  *
  * @param {*} id ownerID of the synapse user see - https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html

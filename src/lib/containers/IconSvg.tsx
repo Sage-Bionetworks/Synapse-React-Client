@@ -17,6 +17,7 @@ import {
   ExpandLess,
   DashboardOutlined,
   StarOutlined,
+  Star,
   PeopleOutline,
   AssessmentOutlined,
   GetAppOutlined,
@@ -101,6 +102,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
     case 'favOutlined':
       return <StarOutlined style={muiSvgStyle}></StarOutlined>
+    case 'fav':
+      return <Star style={muiSvgStyle}></Star>
     case 'peopleOutlined':
       return <PeopleOutline style={muiSvgStyle}></PeopleOutline>
     case 'challengesOutlined':
