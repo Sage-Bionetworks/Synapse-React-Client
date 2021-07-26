@@ -47,6 +47,20 @@
   }
 }
 
+@mixin sortable-table() {
+  thead>tr>th, thead:first-child>tr:first-child>th {
+    padding: 10px 6px 5px 7px;
+    border: 1px solid #DDDDDF;
+    color: #515359;
+    span {
+      float: right;
+    }
+  }
+  td {
+    vertical-align: middle !important;
+  }
+}
+
 @mixin underline-tabs(
   $active-color: SRC.$primary-action-color-500,
   $inactive-color: lightgray

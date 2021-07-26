@@ -10,6 +10,7 @@ import { SynapseSpinner } from './LoadingScreen'
 import { useGetFavorites } from '../utils/hooks/SynapseAPI/useFavorites'
 import IconSvg from './IconSvg'
 import { convertToEntityType, entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
+import ReactTooltip from 'react-tooltip'
 
 // Local types used for client-side sorting
 export type SortField = 'name' | 'type'
@@ -101,45 +102,57 @@ export default function FavoritesTable() {
   return (
     <>
       {sortedData && sortedData.length > 0 && (
-        <ReactBootstrap.Table
-          striped={true}
-          responsive={true}
-          className="FavoritesTable"
-        >
-          <thead>
-            <tr>
-              {/* first column for the favorite icon */}
-              <th />
-              <th>
-                Name
-                <span>{showInteractiveSortIcon('name')}</span>
-              </th>
-              <th>
-                Type
-                <span>{showInteractiveSortIcon('type')}</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedData.map((item:EntityHeader) => {
-              if (item) {
-                return (
-                  <tr key={item.id}>
-                    <td>
-                      <a
-                          onClick={()=>{removeFavorite(item)}}
-                      >
-                        <IconSvg options={{icon:'star'}} />
-                      </a>
-                    </td>
-                    <td>{item.name}</td>
-                    <td>{entityTypeToFriendlyName(convertToEntityType(item.type))}</td>
-                  </tr>
-                )
-              } else return false
-            })}
-          </tbody>
-        </ReactBootstrap.Table>
+        <div className="bootstrap-4-backport">
+          <ReactBootstrap.Table
+            striped={true}
+            responsive={true}
+            className="FavoritesTable"
+          >
+            <thead>
+              <tr>
+                {/* first column for the favorite icon */}
+                <th />
+                <th>
+                  Name
+                  <span>{showInteractiveSortIcon('name')}</span>
+                </th>
+                <th>
+                  Type
+                  <span>{showInteractiveSortIcon('type')}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedData.map((item:EntityHeader) => {
+                if (item) {
+                  return (
+                    <tr key={item.id}>
+                      <td>
+                          <a
+                            data-tip="Click the star to remove this item from your favorites"
+                            data-for={`${item.id}-Tooltip`}
+                            onClick={()=>{removeFavorite(item)}}
+                            className="ignoreLink"
+                          >
+                          <ReactTooltip
+                            delayShow={300}
+                            place="right"
+                            type="dark"
+                            effect="solid"
+                            id={`${item.id}-Tooltip`}
+                          />
+                          <IconSvg options={{icon:'fav', color: '#EDC766'}} />
+                        </a>
+                      </td>
+                      <td>{item.name}</td>
+                      <td>{entityTypeToFriendlyName(convertToEntityType(item.type))}</td>
+                    </tr>
+                  )
+                } else return false
+              })}
+            </tbody>
+          </ReactBootstrap.Table>
+        </div>
       )}
       {isFetching && (
         <div className="placeholder">

@@ -1,0 +1,14 @@
+@use '../abstracts/mixins' as SRCMixins;
+
+.FavoritesTable {
+  @include SRCMixins.sortable-table();
+
+  thead:first-child > tr:first-child {
+     > th:first-child { // favorite star header
+      border-right: none;
+    }
+    > th:nth-child(2) { // column header to the right of fav
+      border-left: none;
+    }
+  }
+}

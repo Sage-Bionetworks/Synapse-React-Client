@@ -1296,4 +1296,7 @@ main, #rootPanel {
       @include ignoreLink;
     }
   }
+  a.ignoreLink:not(.btn) {
+    @include ignoreLink;
+  }
 }
