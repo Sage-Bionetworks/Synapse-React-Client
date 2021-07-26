@@ -11,6 +11,9 @@ import { useGetFavorites } from '../utils/hooks/SynapseAPI/useFavorites'
 import IconSvg from './IconSvg'
 import { convertToEntityType, entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
 import ReactTooltip from 'react-tooltip'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { EntityTypeIcon } from './EntityIcon'
+import { Form } from 'react-bootstrap'
 
 // Local types used for client-side sorting
 export type SortField = 'name' | 'type'
@@ -24,6 +27,7 @@ export default function FavoritesTable() {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const [sort, setSort] = useState<Sort | undefined>(undefined)
+  const [searchText, setSearchText] = useState<string>('')
   const [sortedData, setSortedData] = useState<EntityHeader[] | undefined>(undefined)
   const {
     data,
@@ -39,11 +43,16 @@ export default function FavoritesTable() {
     }
   }, [isError, newError, handleError])
 
+  const filterEntityHeaders = (searchTerm:string, array:EntityHeader[]) => {
+    const searchTermLowercase = searchTerm.toLowerCase()
+    return array.filter(item => item.name.toLowerCase().indexOf(searchTermLowercase) >= 0)
+  }
+
   useEffect(() => {
     if (data) {
+      let newData = [...data.results]
       if (sort) {
-        const newSortedData = [...data.results]
-        newSortedData.sort((a, b) => {
+        newData.sort((a, b) => {
           if (sort.direction == 'DESC') {
             return (a[sort.field] > b[sort.field]) ? 1 : -1
           }
@@ -51,13 +60,13 @@ export default function FavoritesTable() {
             return (a[sort.field] < b[sort.field]) ? 1 : -1
           }
         })
-        setSortedData(newSortedData)
-      } else {
-        // no sort
-        setSortedData(data.results)
+      } 
+      if (searchText) {
+        newData = filterEntityHeaders(searchText, newData)
       }
+      setSortedData(newData)
     }
-  }, [data, sort])
+  }, [data, searchText, sort])
 
   const removeFavorite = async (item: EntityHeader) => {
     try {
@@ -103,6 +112,15 @@ export default function FavoritesTable() {
     <>
       {sortedData && sortedData.length > 0 && (
         <div className="bootstrap-4-backport">
+          <div className="searchContainer">
+            <IconSvg options={{ icon: 'searchOutlined' }} />
+            <Form.Control type="search" placeholder="Favorite Name" 
+              value={searchText}
+              onChange={event => {
+                setSearchText(event.target.value)
+              }}
+            />
+          </div>
           <ReactBootstrap.Table
             striped={true}
             responsive={true}
@@ -125,6 +143,7 @@ export default function FavoritesTable() {
             <tbody>
               {sortedData.map((item:EntityHeader) => {
                 if (item) {
+                  const entityType = convertToEntityType(item.type)
                   return (
                     <tr key={item.id}>
                       <td>
@@ -144,8 +163,18 @@ export default function FavoritesTable() {
                           <IconSvg options={{icon:'fav', color: '#EDC766'}} />
                         </a>
                       </td>
-                      <td>{item.name}</td>
-                      <td>{entityTypeToFriendlyName(convertToEntityType(item.type))}</td>
+                      <td>
+                        <a
+                          rel="noopener noreferrer"
+                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
+                        >
+                          {item.name}
+                        </a>
+                      </td>
+                      <td>
+                        <EntityTypeIcon type={entityType} style={{ marginRight: '5px' }} />
+                        {entityTypeToFriendlyName(entityType)}
+                      </td>
                     </tr>
                   )
                 } else return false

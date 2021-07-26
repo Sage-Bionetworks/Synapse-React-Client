@@ -53,7 +53,8 @@
     border: 1px solid #DDDDDF;
     color: #515359;
     span {
-      float: right;
+      display: inline-block;
+      margin-left: 20px;
     }
   }
   td {
