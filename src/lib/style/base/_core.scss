@@ -1302,10 +1302,13 @@ main, #rootPanel {
 }
 
 .searchInputWithIcon {
-  padding-top: 20px;
+  span {
+    display: block;
+    height: 0px;
+  }
   svg {
     position: relative;
-    top: 27px;
+    top: 8px;
     left: 6px;
     color: #878E95;
   }

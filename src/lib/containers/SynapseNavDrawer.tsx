@@ -158,6 +158,9 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
               <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/projects/created_by_me`} rel="noopener noreferrer">
                 Created By Me
               </a>
+              <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/projects/favorites`} rel="noopener noreferrer">
+                Favorite Projects
+              </a>
               <a className="SRC-whiteText" href={`/#!Profile:${currentUserProfile?.ownerId}/projects/shared_directly_with_me`} rel="noopener noreferrer">
                 Shared With Me
               </a>

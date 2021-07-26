@@ -17,6 +17,7 @@ import ProjectViewCarousel from './containers/home_page/project_view_carousel/Pr
 import { SynapseHomepage } from './containers/SynapseHomepage'
 import { SynapseNavDrawer } from './containers/SynapseNavDrawer'
 import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
+import FavoritesPage from './containers/FavoritesPage'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
 import ErrorPage from './containers/ErrorPage'
@@ -61,7 +62,8 @@ const SynapseComponents = {
   DownloadConfirmation,
   FullWidthAlert: FullWidthAlert,
   SchemaDrivenAnnotationEditor,
-  SynapseNavDrawer
+  SynapseNavDrawer,
+  FavoritesPage
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
