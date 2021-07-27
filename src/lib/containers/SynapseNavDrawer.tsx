@@ -36,6 +36,57 @@ export enum NavItem {
   HELP
 }
 
+// To support project search, we send this json object in the url.
+// We update the queryTerm array based on user input.
+const projectSearchJson = {
+  "queryTerm": [],
+  "booleanQuery": [
+    {
+      "key": "node_type",
+      "value": "project"
+    }
+  ],
+  "facetOptions": [
+    {
+      "name": "EntityType",
+      "maxResultCount": 300,
+      "sortType": "COUNT"
+    },
+    {
+      "name": "Consortium",
+      "maxResultCount": 300,
+      "sortType": "COUNT"
+    },
+    {
+      "name": "ModifiedOn",
+      "maxResultCount": 300,
+      "sortType": "COUNT"
+    },
+    {
+      "name": "ModifiedBy",
+      "maxResultCount": 300,
+      "sortType": "COUNT"
+    },
+    {
+      "name": "CreatedOn",
+      "maxResultCount": 300,
+      "sortType": "COUNT"
+    },
+    {
+      "name": "Tissue",
+      "maxResultCount": 300,
+      "sortType": "COUNT"
+    },
+    {
+      "name": "CreatedBy",
+      "maxResultCount": 300,
+      "sortType": "COUNT"
+    }
+  ],
+  "start": 0,
+  "size": 30
+}
+
 /**
  * Displays the Synapse navigational drawer on the left side of the page.  Has links to various areas if logged in.
  */
@@ -112,6 +163,11 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
       </a> : listItem
   }
   
+  const onProjectSearch = (searchTerm: string) => {
+    projectSearchJson.queryTerm = searchTerm.split(/[ ,]+/) as any
+    window.location.href = `/#!Search:${encodeURI(JSON.stringify(projectSearchJson))}`
+  }
+
   const downloadListItem = isInSynapseExperimentalMode() ? 
     getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'}) :
     getListItem({tooltip: 'Download List', iconName: 'downloadOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile?.ownerId}/downloads`})
@@ -169,7 +225,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
                     if (event.target.value !== '') {
                       setProjectSearchText('')
                       handleDrawerClose()
-                      window.location.href = `/#!Search:${encodeURI(event.target.value)}`
+                      onProjectSearch(event.target.value)
                     }
                   }
                 }}/>
