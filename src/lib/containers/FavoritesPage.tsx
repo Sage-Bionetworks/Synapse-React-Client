@@ -54,10 +54,10 @@ export default function FavoritesPage() {
       if (sort) {
         newData.sort((a, b) => {
           if (sort.direction == 'DESC') {
-            return (a[sort.field] > b[sort.field]) ? 1 : -1
+            return (a[sort.field].toLowerCase() > b[sort.field].toLowerCase()) ? 1 : -1
           }
           else {
-            return (a[sort.field] < b[sort.field]) ? 1 : -1
+            return (a[sort.field].toLowerCase() < b[sort.field].toLowerCase()) ? 1 : -1
           }
         })
       } 
