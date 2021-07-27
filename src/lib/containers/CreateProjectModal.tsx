@@ -47,19 +47,25 @@ export const CreateProjectModal: React.FunctionComponent<CreateProjectModalProps
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="search" placeholder="Project Name" 
-              value={projectName}
-              onChange={event => {
-                setProjectName(event.target.value)
-              }}
-              onKeyDown={(event: any) => {
-                if (event.key === 'Enter') {
-                  if (event.target.value !== '') {
-                    onCreateProject()
+          <Form.Group>
+            <Form.Label htmlFor={'projectInput'}>
+              Project Name
+            </Form.Label>
+            <Form.Control
+                id={"projectInput"}
+                value={projectName}
+                onChange={event => {
+                  setProjectName(event.target.value)
+                }}
+                onKeyDown={(event: any) => {
+                  if (event.key === 'Enter') {
+                    if (event.target.value !== '') {
+                      onCreateProject()
+                    }
                   }
-                }
-              }}
-            />
+                }}
+              />
+          </Form.Group>
           {
             errorMessage && <Alert variant='danger'>{errorMessage}</Alert>
           }
