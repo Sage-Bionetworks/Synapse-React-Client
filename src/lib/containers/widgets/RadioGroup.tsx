@@ -19,6 +19,7 @@ export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
     <div className={className}>
       {props.options.map(option => (
         <RadioOption
+          groupId={props.id}
           key={option.value}
           label={option.label}
           value={option.value}
@@ -31,6 +32,7 @@ export const RadioGroup: React.FunctionComponent<RadioGroupProps> = (
 }
 
 type RadioOptionProps = {
+  groupId: string
   label: string
   value: string
   currentValue?: string
@@ -43,7 +45,7 @@ const RadioOption: React.FunctionComponent<RadioOptionProps> = (
   return (
     <div onClick={() => props.onChange(props.value)}>
       <input
-        id={props.label}
+        id={`${props.groupId}-${props.label}`}
         type="radio"
         checked={props.currentValue === props.value}
         value={props.value}
