@@ -9,7 +9,7 @@ type EndpointObject = {
   PORTAL: string
 }
 
-const KNOWN_SYNAPSE_ORG_URLS = ['www.synapse.org', 'staging.synapse.org', 'tst.synapse.org']
+const KNOWN_SYNAPSE_ORG_URLS = ['www.synapse.org', 'staging.synapse.org', 'tst.synapse.org', '127.0.0.1']
 export const getSynapsePortalEndpoint = (hostname:string):string => {
   return KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase()) ? '/' : 'https://www.synapse.org/'
 }

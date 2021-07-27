@@ -1255,8 +1255,13 @@ main, #rootPanel {
       @include SRC_Mixins.ignoreLink;
     }
   }
-  a.ignoreLink:not(.btn) {
-    @include SRC_Mixins.ignoreLink;
+   *, .bootstrap-4-backport {
+    a.ignoreLink:not(.btn) {
+      @include SRC_Mixins.ignoreLink;
+      &:visited, &:active, &:link {
+        @include SRC_Mixins.ignoreLink;
+      }
+    }
   }
 }
 

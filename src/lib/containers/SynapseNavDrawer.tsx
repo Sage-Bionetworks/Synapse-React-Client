@@ -112,6 +112,9 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
       </a> : listItem
   }
   
+  const downloadListItem = isInSynapseExperimentalMode() ? 
+    getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'}) :
+    getListItem({tooltip: 'Download List', iconName: 'downloadOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile?.ownerId}/downloads`})
 
   return (
     <div className="SynapseNavDrawer">
@@ -127,7 +130,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             {getListItem({tooltip: 'Favorites', iconName: 'favOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/favorites`})}
             {getListItem({tooltip: 'Teams', iconName: 'peopleOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/teams`})}
             {getListItem({tooltip: 'Challenges', iconName: 'challengesOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/challenges`})}
-            {getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'})}
+            {downloadListItem}
             {isInSynapseExperimentalMode() && getListItem({tooltip: 'Trash Can', iconName: 'delete', onClickGoToUrl: '/#!Trash:0'})}
           </>}
           {getListItem({tooltip: 'Search', iconName: 'searchOutlined', onClickGoToUrl: '/#!Search:'})}

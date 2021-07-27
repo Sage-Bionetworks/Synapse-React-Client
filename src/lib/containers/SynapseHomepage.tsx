@@ -100,7 +100,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
         <a
           href="#!Search:"
           rel="noopener noreferrer"
-          className="SRC-whiteText"
+          className="SRC-whiteText ignoreLink"
         >
           <IconSvg options={{icon: 'searchOutlined'}} />
           Search Synapse Projects
