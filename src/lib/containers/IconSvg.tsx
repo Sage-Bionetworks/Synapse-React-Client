@@ -23,6 +23,7 @@ import {
   GetAppOutlined,
   SearchOutlined,
   HelpOutlined,
+  AddCircleOutline
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -94,6 +95,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <Delete style={muiSvgStyle}></Delete>
     case 'addToCart':
       return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
+    case 'addCircleOutline':
+      return <AddCircleOutline style={muiSvgStyle}></AddCircleOutline>
     case 'reload':
       return <Cached style={muiSvgStyle}></Cached>
     case 'photoCamera':

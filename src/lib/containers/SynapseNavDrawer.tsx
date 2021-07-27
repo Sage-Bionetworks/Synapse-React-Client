@@ -9,9 +9,12 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import { Avatar } from './Avatar'
 import { Form } from 'react-bootstrap'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
+import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
+import { CreateProjectModal } from './CreateProjectModal'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
+  signoutCallback?: () => void
 }
 
 type MenuItemParams = {
@@ -36,13 +39,18 @@ export enum NavItem {
 /**
  * Displays the Synapse navigational drawer on the left side of the page.  Has links to various areas if logged in.
  */
-export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = ({ initIsOpen = false }) => {
+export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = (
+  {
+    initIsOpen = false,
+    signoutCallback
+  }) => {
   const { accessToken } = useSynapseContext()
   const [isOpen, setOpen] = useState(initIsOpen)
   const [selectedItem, setSelectedItem] = useState<NavItem>()
   const [currentUserProfile, setUserProfile] = useState<UserProfile>()
   const [projectSearchText, setProjectSearchText] = useState<string>('')
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
+  const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] = useState<boolean>(false)
 
   useEffect(() => {
     async function getUserProfile() {
@@ -59,9 +67,14 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   ])
 
   const signOut = async () => {
-    await SynapseClient.signOut(()=>{ console.log('Signed out') })
-    window.location.reload()
+    if (signoutCallback) {
+      signoutCallback()
+    } else {
+      await SynapseClient.signOut(()=>{ console.log('Signed out') })
+      window.location.reload()
+    }
   }
+
   const handleDrawerOpen = (navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
@@ -115,6 +128,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             {getListItem({tooltip: 'Teams', iconName: 'peopleOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/teams`})}
             {getListItem({tooltip: 'Challenges', iconName: 'challengesOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/challenges`})}
             {getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'})}
+            {isInSynapseExperimentalMode() && getListItem({tooltip: 'Trash Can', iconName: 'delete', onClickGoToUrl: '/#!Trash:0'})}
           </>}
           {getListItem({tooltip: 'Search', iconName: 'searchOutlined', onClickGoToUrl: '/#!Search:'})}
         </List>
@@ -131,9 +145,15 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
         </div>
         <div className="navContentContainer">
           {selectedItem == NavItem.PROJECTS && <>
-            <div className="header">
+            <div className="header projectHeader">
               Projects
             </div>
+            <a className="createProjectLink ignoreLink" onClick={() => {
+              setIsShowingCreateProjectModal(true)
+              handleDrawerClose()
+            }}>
+              <IconSvg options={{icon:'addCircleOutline'}} />
+            </a>
             <div className="searchInputWithIcon">
               <IconSvg options={{ icon: 'searchOutlined' }} />
               <Form.Control type="search" placeholder="Search All Projects" 
@@ -224,6 +244,10 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
           </>}
         </div>
       </Drawer>
+      <CreateProjectModal 
+        onClose={() => setIsShowingCreateProjectModal(false)}
+        isShowingModal={isShowingCreateProjectModal}
+      />
     </div>
   )
 }

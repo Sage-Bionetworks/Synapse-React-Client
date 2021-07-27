@@ -45,22 +45,20 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
     <div className="DownloadCartPage bootstrap-4-backport">
       <div>
         <div className="pageHeader">
-          <div className="container">
-            <div className="grid">
-              <h3 className="pageHeaderTitle">Your Download Cart</h3>
-              <a className="clearDownloadListLink" onClick={clearDownloadList}>
-                <span>
-                  <IconSvg options={{
-                    icon: 'delete',
-                    padding: 'right',
-                  }} />
-                </span>
-                Clear Your Download Cart
-              </a>
-            </div>
-            <p className="description">You may find your added files in the tabs below. Any files which require actions before download can be found in the Access Actions Required tab,
-          while any that can be downloaded now can be found in the Download List tab.</p>
+          <div className="grid">
+            <h3 className="pageHeaderTitle">Your Download Cart</h3>
+            <a className="clearDownloadListLink" onClick={clearDownloadList}>
+              <span>
+                <IconSvg options={{
+                  icon: 'delete',
+                  padding: 'right',
+                }} />
+              </span>
+              Clear Your Download Cart
+            </a>
           </div>
+          <p className="description">You may find your added files in the tabs below. Any files which require actions before download can be found in the Access Actions Required tab,
+        while any that can be downloaded now can be found in the Download List tab.</p>
         </div>
       </div>
       <div className="tabs-container">

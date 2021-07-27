@@ -109,7 +109,7 @@ export default function FavoritesPage() {
   }
   
   return (
-    <div className="FavoritesPage container">
+    <div className="FavoritesPage">
       <div className="searchInputWithIcon">
         <IconSvg options={{ icon: 'searchOutlined' }} />
         <Form.Control type="search" placeholder="Favorite Name" 
