@@ -42,15 +42,16 @@ type RadioOptionProps = {
 const RadioOption: React.FunctionComponent<RadioOptionProps> = (
   props: RadioOptionProps,
 ) => {
+  const id = `${props.groupId}-${props.label}`
   return (
     <div onClick={() => props.onChange(props.value)}>
       <input
-        id={`${props.groupId}-${props.label}`}
+        id={id}
         type="radio"
         checked={props.currentValue === props.value}
         value={props.value}
       />
-      <label htmlFor={props.label}>{props.label}</label>
+      <label htmlFor={id}>{props.label}</label>
     </div>
   )
 }
