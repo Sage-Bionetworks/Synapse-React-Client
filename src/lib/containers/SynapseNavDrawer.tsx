@@ -148,7 +148,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             <div className="header projectHeader">
               Projects
             </div>
-            <a className="createProjectLink ignoreLink" onClick={() => {
+            <a className="createProjectLink" onClick={() => {
               setIsShowingCreateProjectModal(true)
               handleDrawerClose()
             }}>

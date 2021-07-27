@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////
 // from // from SWC.scss and core.scss
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SRC_Mixins;
 
 // Fix scrollbar not showing for some people when css set to scroll: auto
 // Ref: https://stackoverflow.com/questions/7492062/css-overflow-scroll-always-show-vertical-scroll-bar
@@ -1220,48 +1221,6 @@ hr ~ .SRC-wrapper {
   }
 }
 
-$link-underline-color-default: adjust-color(
-  SRC.$primary-action-color,
-  $saturation: -50%,
-  $lightness: 40%
-) !default;
-
-@mixin highlightLink() {
-  color: SRC.$primary-action-color;
-  text-decoration: none;
-  font-weight: 700;
-  letter-spacing: .5px;
-  border-bottom: 1px solid $link-underline-color-default;
-  &:hover {
-    border-bottom: 2px solid SRC.$primary-action-color-700;
-    margin-bottom: -1px;
-  }
-}
-
-@mixin normalLink() {
-  color: SRC.$primary-action-color;
-  text-decoration: none;
-  font-weight: 700;
-  border-bottom: 2px solid transparent;
-  letter-spacing: .5px;
-  &:hover {
-    border-bottom: 2px solid SRC.$primary-action-color-700;
-    margin-bottom: 0px;
-  }
-}
-
-@mixin ignoreLink() {
-  color: unset;
-  text-decoration: unset;
-  font-weight: unset;
-  border-bottom: unset;
-  letter-spacing: unset;
-  &:hover {
-    border-bottom: unset;
-    margin-bottom: unset;
-  }
-}
-
 // Core link styles across the portal main area.
 // Design would like "body text" to have the special primary link style.
 // Other links should have the normal secondary link style.
@@ -1274,18 +1233,18 @@ main, #rootPanel {
   .secondary-links a:not(.btn),
   .markdown .secondary-links a:not(.btn)
    {
-    @include normalLink;
+    @include SRC_Mixins.normalLink;
     &:visited, &:active, &:link {
-      @include normalLink;
+      @include SRC_Mixins.normalLink;
     }
   }
 
   .markdown a, .SRC-userCardName a, a.highlight-link,
   details>summary {
     &:not(.btn) {
-      @include highlightLink;
+      @include SRC_Mixins.highlightLink;
       &:visited, &:active, &:link {
-        @include highlightLink;
+        @include SRC_Mixins.highlightLink;
       }
     }
   }
@@ -1293,11 +1252,11 @@ main, #rootPanel {
   // do not apply special styling to dropdown links or anchors in tabs
   .dropdown, .nav-tabs, .dropdown-menu, .MuiDrawer-root {
     a:not(.btn) {
-      @include ignoreLink;
+      @include SRC_Mixins.ignoreLink;
     }
   }
   a.ignoreLink:not(.btn) {
-    @include ignoreLink;
+    @include SRC_Mixins.ignoreLink;
   }
 }
 

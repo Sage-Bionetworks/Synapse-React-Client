@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SRC_Mixins;
 
 .SynapseNavDrawer {
   color: white;
@@ -68,6 +69,7 @@
   }
   .createProjectLink {
     float: right;
+    @include SRC_Mixins.ignoreLink;
   }
 }
 
