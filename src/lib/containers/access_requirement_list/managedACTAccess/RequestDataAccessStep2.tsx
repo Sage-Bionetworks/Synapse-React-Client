@@ -614,7 +614,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             />
           </Form.Group>
 
-          {/* Accessors Checkboxes */}
+          {/* Accessors List */}
           <Form.Group style={{ marginBottom: '4rem' }}>
             {
               accessors.map((accessor, i ) => {
@@ -642,7 +642,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       isRenewal && (accessor.accessType !== AccessType.GAIN_ACCESS) && (
                         <>
                           <RadioGroup
-                            id="accessor-access"
+                            id={`accessor-renewal-${accessor.profile.ownerId}`}
                             value={accessor.accessType}
                             options={[
                               {

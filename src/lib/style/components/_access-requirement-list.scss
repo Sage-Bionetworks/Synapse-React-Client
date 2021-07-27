@@ -177,7 +177,7 @@
       .radiogroup {
         flex: auto;
         text-align: right;
-        .radio, .radio+.radio {
+        > div {
           display: inline-block;
           margin: 0;
           margin-left: 1rem;
