@@ -61,14 +61,6 @@ const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
   return current
 }, {})
 
-function getStandardEntityFields(json: EntityJson): EntityJson {
-  return pick(json, entityJsonKeys) as EntityJson
-}
-
-function removeStandardEntityFields(json: EntityJson): Record<string, unknown> {
-  return omit(json, entityJsonKeys)
-}
-
 /**
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
@@ -82,11 +74,6 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   },
 }: SchemaDrivenAnnotationEditorProps) => {
   const formRef = useRef<Form<Record<string, unknown>>>(null)
-
-  // If fetching an entity, store the non-annotation fields in this object
-  const [entityJson, setEntityJson] = React.useState<
-    Record<string, unknown> | undefined
-  >(undefined)
 
   // Annotation fields fetched and modified via the form
   const [formData, setFormData] = React.useState<
@@ -108,22 +95,16 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
-  const { data: json } = useGetJson(entityId!, {
+  const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
     enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
   })
 
   useEffect(() => {
-    if (json) {
-      /**
-       * To only show annotations in the form, we must remove non-annotation fields.
-       * We will need to submit these values when we create the entity, so we set them aside
-       * and will merge objects later.
-       */
-
-      setEntityJson(getStandardEntityFields(json))
-      setFormData(removeStandardEntityFields(json))
+    if (annotations) {
+      // Put the annotations into a state variable so it can be modified by the form.
+      setFormData(annotations)
     }
-  }, [json])
+  }, [annotations])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
