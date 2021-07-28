@@ -17,7 +17,6 @@ import {
   MOCK_PROJECT_NAME,
 } from '../entity/mockEntity'
 import {
-  INVALID_ACCESS_TOKEN_CAUSES_GET_PROFILE_ERROR,
   mockUserBundle,
   mockUserProfileData,
   MOCK_USER_ID,
@@ -58,17 +57,8 @@ const handlers = [
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_PROFILE}`,
     async (req, res, ctx) => {
       // default return a mock UserProfile.
-      // only fail if explicitly asking for a failure
       let response: any = mockUserProfileData
       let status = 200
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const requestHeaders = req.headers as any
-      if (requestHeaders.authorization.contains(INVALID_ACCESS_TOKEN_CAUSES_GET_PROFILE_ERROR) ) {
-        response = {
-          reason: `Mock Service worker was asked for a user profile without an giving an access token`,
-        }
-        status = 400
-      }
       return res(ctx.status(status), ctx.json(response))
     },
   ),
