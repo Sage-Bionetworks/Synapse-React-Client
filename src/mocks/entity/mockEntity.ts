@@ -17,9 +17,11 @@ import {
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 
 export const MOCK_FILE_ENTITY_ID = 'syn123'
+export const MOCK_FILE_NAME = 'My mock file entity'
 export const MOCK_FOLDER_ID = 'syn1234'
 export const MOCK_PROJECT_ID = 'syn12345'
-
+export const MOCK_PROJECT_NAME = 'A Mock Project'
+export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'
 // TODO: Create a mock wiki
 const MOCK_WIKI_ID = '45745485'
 
@@ -27,7 +29,7 @@ export const mockFileEntity: FileEntity = {
   id: MOCK_FILE_ENTITY_ID,
   parentId: MOCK_PROJECT_ID,
   dataFileHandleId: MOCK_FILE_HANDLE_ID,
-  name: 'My mock file entity',
+  name: MOCK_FILE_NAME,
   concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   createdBy: MOCK_USER_ID.toString(),
   modifiedBy: MOCK_USER_ID.toString(),
@@ -136,18 +138,20 @@ export const mockFolderEntityHeader: EntityHeader = {
   modifiedBy: '',
 }
 
+export const mockProjectEntity:Entity = {
+  name: MOCK_PROJECT_NAME,
+  id: MOCK_PROJECT_ID,
+  etag: '7849ff2c-1c93-4104-adcf-9e6d6b0c50b5',
+  createdOn: '2020-11-18T20:05:06.519Z',
+  modifiedOn: '2021-05-19T12:44:35.457Z',
+  createdBy: `${MOCK_USER_ID}`,
+  modifiedBy: `${MOCK_USER_ID}`,
+  parentId: 'syn4489',
+  concreteType: 'org.sagebionetworks.repo.model.Project',
+}
+
 export const mockProjectEntityBundle: EntityBundle = {
-  entity: {
-    name: 'A Mock Project',
-    id: MOCK_PROJECT_ID,
-    etag: '7849ff2c-1c93-4104-adcf-9e6d6b0c50b5',
-    createdOn: '2020-11-18T20:05:06.519Z',
-    modifiedOn: '2021-05-19T12:44:35.457Z',
-    createdBy: `${MOCK_USER_ID}`,
-    modifiedBy: `${MOCK_USER_ID}`,
-    parentId: 'syn4489',
-    concreteType: 'org.sagebionetworks.repo.model.Project',
-  },
+  entity: mockProjectEntity,
   entityType: EntityType.PROJECT,
   annotations: {
     id: MOCK_PROJECT_ID,

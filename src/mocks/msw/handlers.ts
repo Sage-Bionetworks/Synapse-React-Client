@@ -5,10 +5,15 @@ import {
 import { mockSchemaBinding } from '../mockSchema'
 import { rest } from 'msw'
 import {
+  mockFileEntity,
   mockFileEntityBundle,
+  mockProjectEntity,
   mockProjectEntityBundle,
   MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_NAME,
+  MOCK_INVALID_PROJECT_NAME,
   MOCK_PROJECT_ID,
+  MOCK_PROJECT_NAME,
 } from '../entity/mockEntity'
 import {
   mockUserBundle,
@@ -16,6 +21,7 @@ import {
   MOCK_USER_ID,
 } from '../user/mock_user_profile'
 import {
+  ENTITY,
   ENTITY_BUNDLE_V2,
   ENTITY_SCHEMA_BINDING,
   USER_ID_BUNDLE,
@@ -61,6 +67,28 @@ const handlers = [
     },
   ),
 
+  // create entity
+  rest.post(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY}`,
+    async (req, res, ctx) => {
+      let response: any = {
+        reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(req.body)}`,
+      }
+      let status = 404
+      if (req.body.name === MOCK_FILE_NAME) {
+        response = mockFileEntity
+        status = 200
+      } else if (req.body.name === MOCK_PROJECT_NAME) {
+        response = mockProjectEntity
+        status = 200
+      } else if (req.body.name === MOCK_INVALID_PROJECT_NAME) {
+        response.reason = 'Invalid project name'
+        status = 403
+      }
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+  
   rest.post(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
       ':entityId',

@@ -7,6 +7,7 @@ import {
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
   ENTITY_HEADERS,
+  ENTITY,
   ENTITY_ID,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
@@ -668,7 +669,7 @@ export const createEntity = <T extends Entity>(
   accessToken: string | undefined,
 ) => {
   return doPost<T>(
-    '/repo/v1/entity',
+    ENTITY,
     entity,
     accessToken,
     undefined,

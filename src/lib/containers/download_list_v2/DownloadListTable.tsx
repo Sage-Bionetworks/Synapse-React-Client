@@ -112,7 +112,7 @@ export default function DownloadListTable() {
         <ReactBootstrap.Table
           striped={true}
           responsive={true}
-          className="DownloadListTableV2 sortabletable"
+          className="DownloadListTableV2"
         >
           <thead>
             <tr>

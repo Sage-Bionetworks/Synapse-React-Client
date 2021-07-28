@@ -52,14 +52,15 @@ export const CreateProjectModal: React.FunctionComponent<CreateProjectModalProps
               Project Name
             </Form.Label>
             <Form.Control
-                id={"projectInput"}
+                id="projectInput"
+                data-testid="projectInput"
                 value={projectName}
                 onChange={event => {
                   setProjectName(event.target.value)
                 }}
                 onKeyDown={(event: any) => {
                   if (event.key === 'Enter') {
-                    if (event.target.value !== '') {
+                    if (projectName !== '') {
                       onCreateProject()
                     }
                   }
