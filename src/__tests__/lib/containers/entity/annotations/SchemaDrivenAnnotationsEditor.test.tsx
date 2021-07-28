@@ -41,7 +41,7 @@ const defaultProps: SchemaDrivenAnnotationEditorProps = {
 }
 
 function renderComponent(wrapperProps?: SynapseContextType) {
-  render(<SchemaDrivenAnnotationEditor {...defaultProps} />, {
+  return render(<SchemaDrivenAnnotationEditor {...defaultProps} />, {
     wrapper: createWrapper(wrapperProps),
   })
 }
@@ -50,7 +50,7 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 async function clickSave() {
   const saveButton = await screen.findByRole('button', { name: 'Save' })
   userEvent.click(saveButton)
-  await waitFor(() => expect(mockOnSuccessFn).toBeCalled())
+  return waitFor(() => expect(mockOnSuccessFn).toHaveBeenCalled())
 }
 
 // Handles saving when the data is invalid for the schema
@@ -66,7 +66,7 @@ async function clickSaveAndConfirm() {
   })
   userEvent.click(confirmSaveButton)
 
-  await waitFor(() => expect(mockOnSuccessFn).toBeCalled())
+  return waitFor(() => expect(mockOnSuccessFn).toHaveBeenCalled())
 }
 
 describe('SchemaDrivenAnnotationEditor tests', () => {
@@ -75,6 +75,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
   afterEach(() => {
     server.restoreHandlers()
     jest.resetAllMocks()
+    updatedJsonCaptor.mockClear()
   })
   afterAll(() => server.close())
 
@@ -178,7 +179,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
     async (req, res, ctx) => {
       updatedJsonCaptor(req.body)
-      return res(ctx.status(200), ctx.json(req))
+      return res(ctx.status(200), ctx.json(req.body))
     },
   )
 
@@ -296,22 +297,29 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
-  // TODO: This test is unstable, unclear why
-  it.skip('Sends a request to update annotations (with schema)', async () => {
+  it('Sends a request to update annotations (with schema)', async () => {
     // The annotations are predefined to match the schema
     server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
+
     renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
     // We need the individual schema field components to render because in some cases they convert data
     // to the appropriate format (e.g. flattening arrays of one item)
-    await screen.findByLabelText('country*')
-    await screen.findByLabelText('state*')
+    // await screen.findByLabelText('country*')
+    const stateField = (await screen.findByLabelText(
+      'state*',
+    )) as HTMLInputElement
+
+    await waitFor(() => expect(stateField.value).toBe('Washington'))
+
+    userEvent.clear(stateField)
+    userEvent.type(stateField, 'Ohio{enter}') // For some reason, keying "enter" here makes the test stable
 
     await clickSave()
 
     expect(updatedJsonCaptor).toBeCalledWith(
-      expect.objectContaining({ country: 'USA', state: 'Washington' }),
+      expect.objectContaining({ country: 'USA', state: 'Ohio' }),
     )
   })
 
@@ -366,8 +374,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
-  // TODO: This test is unstable, unclear why
-  it.skip('Converts an additionalProperty array back to a single value when added back to the schema', async () => {
+  it('Converts an additionalProperty array back to a single value when added back to the schema', async () => {
     // If we select "USA", then "Washington", then change "USA" to "CA", "Washington" will become ["Washington"] (see previous test)
     // Here we verify that if we then select "USA" again, ["Washington"] will be converted back to "Washington"
     server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
@@ -376,7 +383,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     const countryField = (await screen.findByLabelText(
       'country*',
     )) as HTMLInputElement
-    const stateField = (await screen.findByLabelText(
+    let stateField = (await screen.findByLabelText(
       'state*',
     )) as HTMLInputElement
     expect(countryField.value).toBe('USA')
@@ -387,14 +394,17 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // State is now an array ["Washington"], but if we pick "USA" again, it should be converted back to "Washington" (not an array)
     userEvent.selectOptions(countryField, 'USA')
 
-    await screen.findByLabelText('state*')
+    stateField = (await screen.findByLabelText('state*')) as HTMLInputElement
+    expect(stateField.value).toBe('Washington')
+    // For some reason, adding this tab action makes this test stable.
+    userEvent.tab()
 
     await clickSave()
-
-    await waitFor(() => expect(updatedJsonCaptor).toBeCalled())
     // Since it's back in the schema, it should be a string
-    expect(updatedJsonCaptor).toBeCalledWith(
-      expect.objectContaining({ state: 'Washington' }),
+    await waitFor(() =>
+      expect(updatedJsonCaptor).toBeCalledWith(
+        expect.objectContaining({ state: 'Washington' }),
+      ),
     )
   })
 
