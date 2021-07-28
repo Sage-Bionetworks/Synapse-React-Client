@@ -19,13 +19,16 @@ export const CreateProjectModal: React.FunctionComponent<CreateProjectModalProps
     const [projectName, setProjectName] = useState<string>('')
     const [isShowingSuccessAlert, setIsShowingSuccessAlert] = useState<boolean>(false)
     const [errorMessage, setErrorMessage] = useState<string>()
+    const hide = () => {
+      setProjectName('')
+      setErrorMessage(undefined)
+      onClose()
+    }
     const onCreateProject = async () => {
       try {
         await SynapseClient.createProject(projectName, accessToken)
         setIsShowingSuccessAlert(true)
-        setProjectName('')
-        setErrorMessage(undefined)
-        onClose()
+        hide()
       } catch(err) {
         if (err.reason) {
           setErrorMessage(err.reason)
@@ -39,7 +42,7 @@ export const CreateProjectModal: React.FunctionComponent<CreateProjectModalProps
         className="CreateProjectModal bootstrap-4-backport"
         show={isShowingModal}
         animation={false}
-        onHide={onClose}
+        onHide={hide}
       >
         <Modal.Header closeButton>
           <Modal.Title>
