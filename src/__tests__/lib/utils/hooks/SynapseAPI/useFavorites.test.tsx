@@ -9,7 +9,7 @@ import {
   MOCK_CONTEXT_VALUE,
 } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
-import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+import { SynapseContextProvider, useSynapseContext } from '../../../../../lib/utils/SynapseContext'
 
 const queryClient = new QueryClient()
 
@@ -48,6 +48,9 @@ describe('useFavorites functionality', () => {
   })
 
   it('correctly calls SynapseClient', async () => {
+    const { result: contextResult, waitFor: waitForContext } = renderHook(() => useSynapseContext(), { wrapper })
+    await waitForContext(() => contextResult.current.accessToken !== undefined)
+    
     const { result, waitFor } = renderHook(() => useGetFavorites(), { wrapper })
 
     await waitFor(() => result.current.isSuccess)
