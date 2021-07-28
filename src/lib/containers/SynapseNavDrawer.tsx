@@ -144,6 +144,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
     const listItem = <ListItem button key={iconName}
       data-tip={tooltip}
       data-for={`${tooltip}Link`}
+      data-testid={`${tooltip}`}
       onClick={handler}
       className="SRC-whiteText"
       selected={isCurrentlySelectedItem}>
@@ -164,6 +165,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
   }
   
   const onProjectSearch = (searchTerm: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     projectSearchJson.queryTerm = searchTerm.split(/[ ,]+/) as any
     window.location.href = `/#!Search:${encodeURI(JSON.stringify(projectSearchJson))}`
   }

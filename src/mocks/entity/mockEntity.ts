@@ -7,6 +7,7 @@ import {
   EntityType,
   FileEntity,
   ObjectType,
+  PaginatedResults,
   RestrictionLevel,
 } from '../../lib/utils/synapseTypes'
 import {
@@ -136,6 +137,11 @@ export const mockFolderEntityHeader: EntityHeader = {
   modifiedOn: '',
   createdBy: '', // TODO: Replace with a valid mock user ID
   modifiedBy: '',
+}
+
+export const mockPaginatedEntityHeaders: PaginatedResults<EntityHeader> = {
+  totalNumberOfResults: 2,
+  results: [mockFileEntityHeader, mockFolderEntityHeader]
 }
 
 export const mockProjectEntity:Entity = {

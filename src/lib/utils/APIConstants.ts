@@ -59,3 +59,5 @@ export const USER_PROFILE_ID = (id: string | number) => `${USER_PROFILE}/${id}`
 export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
   `${REPO}/accessRequirement/${id}`
 
+export const FAVORITES = `${REPO}/favorite`
+

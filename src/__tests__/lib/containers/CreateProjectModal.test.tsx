@@ -1,5 +1,4 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
   CreateProjectModal,
@@ -8,7 +7,6 @@ import {
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 import {
-  mockProjectEntity,
   MOCK_INVALID_PROJECT_NAME,
   MOCK_PROJECT_NAME,
 } from '../../../mocks/entity/mockEntity'

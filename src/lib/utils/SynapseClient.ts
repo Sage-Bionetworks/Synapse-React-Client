@@ -18,6 +18,7 @@ import {
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
+  FAVORITES,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -1036,7 +1037,7 @@ export const getEntityWiki = (
  */
 export const getUserFavorites = (accessToken: string | undefined) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
-  const url = '/repo/v1/favorite?offset=0&limit=200'
+  const url = `${FAVORITES}?offset=0&limit=200`
   return doGet<PaginatedResults<EntityHeader>>(
     url,
     accessToken,
