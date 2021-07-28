@@ -4,6 +4,7 @@ import { SynapseNavDrawer, SynapseNavDrawerProps } from '../../../lib/containers
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 import { server } from '../../../mocks/msw/server'
+import { INVALID_ACCESS_TOKEN_CAUSES_GET_PROFILE_ERROR } from '../../../mocks/user/mock_user_profile'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,
@@ -33,11 +34,5 @@ describe('SynapseNavDrawer tests', () => {
     screen.findByTestId('Search')
     screen.findByTestId('Help')
     screen.findByTestId('Your Account', undefined, { timeout: 1000 })
-  })
-
-  it('Show Synapse Nav Drawer anonymous items', () => {
-    renderComponent({accessToken: undefined, isInExperimentalMode: false, utcTime: false})
-    screen.findByTestId('Search')
-    screen.findByTestId('Help')
   })
 })

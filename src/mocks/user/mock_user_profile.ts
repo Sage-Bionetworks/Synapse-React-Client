@@ -4,6 +4,7 @@ import {
   UserProfile,
 } from '../../lib/utils/synapseTypes'
 
+export const INVALID_ACCESS_TOKEN_CAUSES_GET_PROFILE_ERROR = 'This will cause a failure'
 export const MOCK_USER_ID = 999
 
 export const mockUserProfileData: UserProfile = {
