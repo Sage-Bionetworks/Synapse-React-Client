@@ -555,7 +555,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     let link:string = ''
     let msg: string = ''
 
-    if (managedACTAccessRequirement.isCertifiedUserRequired && !managedACTAccessRequirement.isValidatedProfileRequired) {
+    if (managedACTAccessRequirement.isCertifiedUserRequired) {
       link = 'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
       msg = 'All data requesters must be a certified user.'
     }
@@ -600,9 +600,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
               Data Requesters
             </Form.Label>
             <br />
-            <span className={'requester-label'}>This list should match those listed on your DUC.
-            <br />
-            { getAccessorRequirementHelpText() }
+            <span className={'requester-label'}>
+              {
+                managedACTAccessRequirement.isDUCRequired && (
+                  <>This list should match those listed on your DUC.<br /></>
+                )
+              }
+              { getAccessorRequirementHelpText() }
             </span>
             <UserSearchBox
               id={'requesters'}
@@ -610,7 +614,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             />
           </Form.Group>
 
-          {/* Accessors Checkboxes */}
+          {/* Accessors List */}
           <Form.Group style={{ marginBottom: '4rem' }}>
             {
               accessors.map((accessor, i ) => {
@@ -638,7 +642,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       isRenewal && (accessor.accessType !== AccessType.GAIN_ACCESS) && (
                         <>
                           <RadioGroup
-                            id="accessor-access"
+                            id={`accessor-renewal-${accessor.profile.ownerId}`}
                             value={accessor.accessType}
                             options={[
                               {
