@@ -36,9 +36,10 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   className,
   ...rest
 }) => {
-
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
-  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(<IconSvg options={{icon: 'accountRegistered'}} />)
+  const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(
+    <IconSvg options={{ icon: 'accountRegistered' }} />,
+  )
   const target = useRef(null)
 
   let mounted = true
@@ -53,8 +54,8 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       mounted = false
     }
   }, [])
-  
-  const getUserAccountLevelIcon = async() => {
+
+  const getUserAccountLevelIcon = async () => {
     try {
       const certificationOrVerification =
         SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
@@ -66,14 +67,14 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         undefined,
       )
       if (userBundle?.isCertified) {
-        setAccountLevelIcon(<IconSvg options={{icon: 'accountCertified'}} />)
+        setAccountLevelIcon(<IconSvg options={{ icon: 'accountCertified' }} />)
       }
       if (userBundle?.isVerified) {
-        setAccountLevelIcon(<IconSvg options={{icon: 'accountValidated'}} />)
+        setAccountLevelIcon(<IconSvg options={{ icon: 'accountValidated' }} />)
       }
       setUserBundle(bundle)
     } catch (err) {
-      console.log("getUserAccountLevelIcon", err)
+      console.log('getUserAccountLevelIcon', err)
     }
   }
 
@@ -110,6 +111,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
 
       <a
         ref={target}
+        href={disableLink ? undefined : link}
         onMouseEnter={() => toggleShow()}
         onMouseLeave={() => toggleHide()}
         onClick={event => {
@@ -126,7 +128,9 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
-        {showAccountLevelIcon && <span className={"account-level-icon"}>{accountLevelIcon}</span>}
+        {showAccountLevelIcon && (
+          <span className={'account-level-icon'}>{accountLevelIcon}</span>
+        )}
       </a>
     </>
   ) : disableLink ? (
