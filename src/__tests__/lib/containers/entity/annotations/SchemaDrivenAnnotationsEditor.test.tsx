@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
@@ -396,9 +396,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     stateField = (await screen.findByLabelText('state*')) as HTMLInputElement
     expect(stateField.value).toBe('Washington')
-    // For some reason, adding this tab action makes this test stable.
     userEvent.tab()
-
     await clickSave()
     // Since it's back in the schema, it should be a string
     await waitFor(() =>
@@ -480,7 +478,8 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     const keyField = await screen.findByLabelText('Key')
 
-    userEvent.type(keyField, '{selectall}{del}id')
+    userEvent.clear(keyField)
+    userEvent.type(keyField, 'id{enter}')
 
     const saveButton = await screen.findByRole('button', { name: 'Save' })
     userEvent.click(saveButton)
