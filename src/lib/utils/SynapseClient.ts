@@ -1720,6 +1720,7 @@ export const createPackageFromDownloadListV2 = (
 ) => {
   const request: DownloadListPackageRequest = {
     zipFileName,
+    includeManifest: true,
     concreteType:
       'org.sagebionetworks.repo.model.download.DownloadListPackageRequest',
   }

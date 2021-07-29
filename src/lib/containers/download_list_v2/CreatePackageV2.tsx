@@ -30,9 +30,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
-  const [isIncludingManifest, setIsIncludingManifest] = useState(true)
   const [progressPercent, setProgressPercent] = useState<number>(20)
-  const [isOnCreatePackagePage, setIsOnCreatePackagePage] = useState(false)
   const [alert, setAlert] = useState<AlertConfig>({
     message: '',
     className: undefined,
@@ -57,10 +55,6 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     setIsLoading(true)
     setProgressPercent(80)
     try {
-      if (isIncludingManifest) {
-        const manifestResponse = await createManifestFromDownloadListV2(accessToken)
-        window.location.href = await getFileHandleByIdURL(manifestResponse.resultFileHandleId, accessToken)
-      }
       const fileNameWithZipExtension = `${fileName}.zip`
       const currentBulkFileDownloadResponse = await createPackageFromDownloadListV2(
         fileNameWithZipExtension,
@@ -75,7 +69,6 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
         setZipFileName('')
         setBulkFileDownloadResponse(undefined)
         onPackageCreation()
-        setIsIncludingManifest(false)
         setProgressPercent(20)
       } catch (err) {
         console.error('Err on getFileHandleByIdURL = ', err)
@@ -105,30 +98,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
             width: `${progressPercent}%`,
           }}
         />
-        {!isOnCreatePackagePage && <div className="createManifestStep">
-          <span className="createManifestTitle">
-            Would you like to include file metadata in your download?
-          </span>
-          <Checkbox
-            label="Include the metadata for all files on your Download List"
-            id="includeMetadata"
-            checked={isIncludingManifest}
-            onChange={() => setIsIncludingManifest(!isIncludingManifest)}
-          >
-            <div />
-          </Checkbox>
-          <Button
-              variant='primary'
-              onClick={() => {
-                setIsOnCreatePackagePage(true)
-                setProgressPercent(40)
-              }}
-              type="button"
-            >
-              Next
-            </Button>
-        </div>}
-        {isOnCreatePackagePage && <div className="createPackageStep">
+        <div className="createPackageStep">
           <span className="createPackageTitle">
             Create your Download Package
           </span>
@@ -161,7 +131,7 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
               </span>
             </div>
           )}
-        </div>}
+        </div>
       </div>
       {alert.message && (
         <Alert
