@@ -11,12 +11,19 @@ import { Button, FormGroup, FormLabel } from 'react-bootstrap'
  * Used just to apply custom styling.
  */
 export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
+  const { DescriptionField } = props
   return (
     <FormGroup className={props.className}>
       <FormLabel>
         {props.title}
         {props.required && <span className="required">*</span>}
       </FormLabel>
+      {props.schema.description && (
+        <DescriptionField
+          id={`${props.idSchema.$id}__description`}
+          description={props.schema.description}
+        />
+      )}
       {props.items && (
         <>
           {props.items.map((element, index) => (
