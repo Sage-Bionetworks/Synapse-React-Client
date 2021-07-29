@@ -43,6 +43,17 @@ export type SchemaDrivenAnnotationEditorModalProps = {
   onHide: () => void
 }
 
+function getFriendlyPropertyName(error: AjvError) {
+  if (error.property.startsWith('[')) {
+    // Additional properties are surrounded by brackets and quotations, so let's remove them
+    return error.property.substring(2, error.property.length - 2)
+  } else if (error.property.startsWith('.')) {
+    return error.property.substring(1)
+  } else {
+    return error.property
+  }
+}
+
 // patternProperties lets us define how to treat additionalProperties in a JSON schema by property name
 // here we can ban properties that collide with entity properties by making their schema "not: {}"
 const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
@@ -224,6 +235,15 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
                 'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
               },
             }}
+            transformErrors={(errors: AjvError[]): AjvError[] => {
+              return errors.map(error => {
+                const propertyName = getFriendlyPropertyName(error)
+                if (entityJsonKeys.includes(propertyName)) {
+                  error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
+                }
+                return error
+              })
+            }}
             formData={formData}
             onChange={({ formData }) => {
               setFormData(formData)
@@ -260,11 +280,14 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               >
                 <b>Validation errors found:</b>
                 <ul>
-                  {validationError.map((e: AjvError, index: number) => (
-                    <li key={index}>{`${e.property.substring(1)} ${
-                      e.message
-                    }`}</li>
-                  ))}
+                  {validationError.map((e: AjvError, index: number) => {
+                    return (
+                      <li key={index}>
+                        <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
+                        {`${e.message}`}
+                      </li>
+                    )
+                  })}
                 </ul>
               </Alert>
             )}
@@ -332,7 +355,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <div>
           <ul>
             {(errors ?? []).map((e: AjvError, index: number) => (
-              <li key={index}>{`${e.property.substring(1)} ${e.message}`}</li>
+              <li key={index}>
+                <b>{`${getFriendlyPropertyName(e)}: `}</b> {`${e.message}`}
+              </li>
             ))}
           </ul>
         </div>

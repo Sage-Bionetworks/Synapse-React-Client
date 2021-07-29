@@ -146,7 +146,7 @@ export function AdditionalPropertiesSchemaField<T>(
     // TODO: This doesn't work without a delay.
     setTimeout(() => {
       onChange(list)
-    }, 50)
+    }, 100)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

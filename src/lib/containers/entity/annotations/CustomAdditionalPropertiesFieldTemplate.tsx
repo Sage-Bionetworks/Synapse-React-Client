@@ -39,7 +39,9 @@ export const CustomAdditionalPropertiesFieldTemplate = (
       <div className="row form-additional">
         <div className="col-xs-3">
           <FormGroup>
-            <FormLabel id={`${id}-key`}>{keyLabel}</FormLabel>
+            <FormLabel id={`${id}-key-label`} htmlFor={`${id}-key`}>
+              {keyLabel}
+            </FormLabel>
             <FormControl
               type="text"
               disabled={disabled}

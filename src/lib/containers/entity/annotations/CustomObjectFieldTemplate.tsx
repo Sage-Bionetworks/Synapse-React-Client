@@ -45,6 +45,7 @@ export function CustomObjectFieldTemplate(props: ObjectFieldTemplateProps) {
           disabled={props.disabled || props.readonly}
           data-for={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
           data-tip={`Add a new custom field`}
+          aria-label={'Add Custom Field'}
         >
           <AddToList />
         </Button>
