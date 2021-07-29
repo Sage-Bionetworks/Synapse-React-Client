@@ -107,7 +107,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
             <SearchV2 {...searchConfiguration} />
             <ErrorBanner />
             <DownloadConfirmation
-              onExportTable={() => setShowExportMetadata(true)}
               downloadCartPageUrl={downloadCartPageUrl}
             />
             <TopLevelControls
