@@ -13,7 +13,9 @@
       }
     }
   }
-
+  .SynapseLogoContainer {
+    margin-bottom: 35px;
+  }
   .WhiteText {
     color: #ffffff;
   }
@@ -29,7 +31,19 @@
   .OffWhiteBackground {
     background: rgba(22, 75, 110, 0.05);
   }
-
+  .SearchLinkBar {
+    background: rgb(64, 118, 154);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    a {
+      >.styled-svg-wrapper {
+        margin-right: 10px;
+      }
+      &:not(.btn):link:hover {
+        border-bottom: none;
+      }
+    }
+  }
   .SignUpButtonContainer {
     display: flex;
     flex-direction: column;
@@ -173,6 +187,7 @@
 
         display: flex;
         flex-direction: column;
+        margin-bottom: 30px;
       }
 
       .ButtonContainer {

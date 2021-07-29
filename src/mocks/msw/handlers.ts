@@ -5,10 +5,16 @@ import {
 import { mockSchemaBinding } from '../mockSchema'
 import { rest } from 'msw'
 import {
+  mockFileEntity,
   mockFileEntityBundle,
+  mockProjectEntity,
   mockProjectEntityBundle,
+  mockPaginatedEntityHeaders,
   MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_NAME,
+  MOCK_INVALID_PROJECT_NAME,
   MOCK_PROJECT_ID,
+  MOCK_PROJECT_NAME,
 } from '../entity/mockEntity'
 import {
   mockUserBundle,
@@ -16,10 +22,13 @@ import {
   MOCK_USER_ID,
 } from '../user/mock_user_profile'
 import {
+  ENTITY,
   ENTITY_BUNDLE_V2,
   ENTITY_SCHEMA_BINDING,
+  FAVORITES,
   USER_ID_BUNDLE,
   USER_PROFILE_ID,
+  USER_PROFILE,
 } from '../../lib/utils/APIConstants'
 
 const handlers = [
@@ -45,6 +54,16 @@ const handlers = [
   ),
 
   rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_PROFILE}`,
+    async (req, res, ctx) => {
+      // default return a mock UserProfile.
+      let response: any = mockUserProfileData
+      let status = 200
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_ID_BUNDLE(
       ':id',
     )}`,
@@ -61,6 +80,33 @@ const handlers = [
     },
   ),
 
+  // create entity
+  rest.post(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY}`,
+    async (req, res, ctx) => {
+      let response: any = {
+        reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(req.body)}`,
+      }
+      let status = 404
+      if (req.body) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const requestBody = req.body as any
+        if (requestBody.name === MOCK_FILE_NAME) {
+          response = mockFileEntity
+          status = 200
+        } else if (requestBody.name === MOCK_PROJECT_NAME) {
+          response = mockProjectEntity
+          status = 200
+        } else if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
+          response.reason = 'Invalid project name'
+          status = 403
+        }
+      }
+      
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+  
   rest.post(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
       ':entityId',
@@ -89,6 +135,16 @@ const handlers = [
       return res(ctx.status(200), ctx.json(mockSchemaBinding))
     },
   ),
+
+  rest.get(
+    `${getEndpoint(
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )}${FAVORITES}`,
+    async (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(mockPaginatedEntityHeaders))
+    },
+  ),
+
 ]
 
 export { handlers }

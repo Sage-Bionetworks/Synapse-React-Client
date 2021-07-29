@@ -1,22 +1,13 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SRCMixins;
 
 .DownloadListTableV2 {
-  thead>tr>th, thead:first-child>tr:first-child>th {
-    padding: 10px 6px 5px 7px;
-    border: 1px solid #DDDDDF;
-    color: #515359;
-    span {
-      float: right;
-    }
-  }
-  td {
-    vertical-align: middle !important;
-  }
   tbody>tr>td:first-child { // file name column
     overflow-x: hidden;
     max-width: 310px;
     text-overflow: ellipsis;
   }
+  @include SRCMixins.sortable-table()
 }
 .sort {
   padding-left: 5px;

@@ -60,7 +60,9 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           onMouseEnter={() => toggleShow()}
           onMouseLeave={() => toggleHide()}
           onClick={event => {
-            event.stopPropagation()
+            if (showCardOnHover){
+              event.stopPropagation()
+            }
             isShowingOverlay ? toggleHide(false) : toggleShow(false)
           }}
           style={{ backgroundImage: `url(${imageURL})`, cursor: cursorStyle }}
@@ -72,7 +74,9 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           onMouseEnter={() => toggleShow()}
           onMouseLeave={() => toggleHide()}
           onClick={event => {
-            event.stopPropagation()
+            if (showCardOnHover){
+              event.stopPropagation()
+            }
             isShowingOverlay ? toggleHide(false) : toggleShow(false)
           }}
           style={{
