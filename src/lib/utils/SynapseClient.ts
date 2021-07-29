@@ -7,6 +7,7 @@ import {
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
   ENTITY_HEADERS,
+  ENTITY,
   ENTITY_ID,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
@@ -17,6 +18,7 @@ import {
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
+  FAVORITES,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -668,7 +670,7 @@ export const createEntity = <T extends Entity>(
   accessToken: string | undefined,
 ) => {
   return doPost<T>(
-    '/repo/v1/entity',
+    ENTITY,
     entity,
     accessToken,
     undefined,
@@ -1035,9 +1037,25 @@ export const getEntityWiki = (
  */
 export const getUserFavorites = (accessToken: string | undefined) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
-  const url = '/repo/v1/favorite?offset=0&limit=200'
+  const url = `${FAVORITES}?offset=0&limit=200`
   return doGet<PaginatedResults<EntityHeader>>(
     url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Remove a favorite
+ * http://rest-docs.synapse.org/rest/DELETE/favorite/id.html
+ */
+ export const removeUserFavorite = (
+  entityId: string,
+  accessToken: string | undefined,
+): Promise<void> => {
+  return doDelete(
+    `/repo/v1/favorite/${entityId}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1299,8 +1317,8 @@ export const detectSSOCode = () => {
   }
 }
 
-export const signOut = (sessionCallback: () => void) => {
-  setAccessTokenCookie(undefined, sessionCallback)
+export const signOut = async (sessionCallback: () => void) => {
+  await setAccessTokenCookie(undefined, sessionCallback)
 }
 
 /**

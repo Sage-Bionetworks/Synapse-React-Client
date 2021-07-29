@@ -1,0 +1,27 @@
+@use '../abstracts/mixins' as SRCMixins;
+
+.FavoritesPage {
+  .searchInputWithIcon {
+    padding-bottom: 30px;
+    max-width: 800px;
+  }
+}
+
+.FavoritesTable {
+  @include SRCMixins.sortable-table();
+
+  thead:first-child > tr:first-child {
+     > th:first-child { // favorite star header
+      border-right: none;
+    }
+    > th:nth-child(2) { // column header to the right of fav
+      border-left: none;
+    }
+  }
+
+  tbody > tr {
+    > td:first-child { // favorite star header
+     width: 50px;
+   }
+ }
+}

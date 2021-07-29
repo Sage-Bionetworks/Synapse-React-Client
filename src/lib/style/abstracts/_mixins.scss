@@ -47,6 +47,21 @@
   }
 }
 
+@mixin sortable-table() {
+  thead>tr>th, thead:first-child>tr:first-child>th {
+    padding: 10px 6px 5px 7px;
+    border: 1px solid #DDDDDF;
+    color: #515359;
+    span {
+      display: inline-block;
+      float: right;
+    }
+  }
+  td {
+    vertical-align: middle !important;
+  }
+}
+
 @mixin underline-tabs(
   $active-color: SRC.$primary-action-color-500,
   $inactive-color: lightgray
@@ -78,4 +93,47 @@
   height: 80%;
   font-size: large;
   margin: 15px;
+}
+
+$link-underline-color-default: adjust-color(
+  SRC.$primary-action-color,
+  $saturation: -50%,
+  $lightness: 40%
+) !default;
+
+// Core link styles across the portal main area.
+@mixin highlightLink() {
+  color: SRC.$primary-action-color;
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: .5px;
+  border-bottom: 1px solid $link-underline-color-default;
+  &:hover {
+    border-bottom: 2px solid SRC.$primary-action-color-700;
+    margin-bottom: -1px;
+  }
+}
+
+@mixin normalLink() {
+  color: SRC.$primary-action-color;
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 2px solid transparent;
+  letter-spacing: .5px;
+  &:hover {
+    border-bottom: 2px solid SRC.$primary-action-color-700;
+    margin-bottom: 0px;
+  }
+}
+
+@mixin ignoreLink() {
+  color: unset;
+  text-decoration: unset;
+  font-weight: unset;
+  border-bottom: unset;
+  letter-spacing: unset;
+  &:hover {
+    border-bottom: unset;
+    margin-bottom: unset;
+  }
 }

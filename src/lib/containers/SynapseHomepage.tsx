@@ -11,6 +11,8 @@ import {
 } from '../utils/functions/getEndpoint'
 import { SynapsePoweredPortal } from './SynapsePoweredPortal'
 import { useSynapseContext } from '../utils/SynapseContext'
+import SynapseFullLogo from '../assets/icons/SynapseFullLogo'
+import IconSvg from './IconSvg'
 
 export type SynapseHomepageProps = {
   projectViewId: string
@@ -37,6 +39,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       <div className="SynapseHomepage__Section PrimaryBackground">
         <div className="HeroContainer">
           <div className="Headline WhiteText">
+            <div className="SynapseLogoContainer"><SynapseFullLogo/></div>
             <div className="HeadlineSentence">
               <span className="Headline-Strong">Organize</span>
               <span className="Headline-Light">
@@ -92,6 +95,16 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             )}
           </div>
         </div>
+      </div>
+      <div className="SearchLinkBar SynapseHomepage__Section">
+        <a
+          href="#!Search:"
+          rel="noopener noreferrer"
+          className="SRC-whiteText ignoreLink"
+        >
+          <IconSvg options={{icon: 'searchOutlined'}} />
+          Search Synapse Projects
+        </a>
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="FlexContainerReverse">

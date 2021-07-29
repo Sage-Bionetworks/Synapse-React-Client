@@ -15,6 +15,15 @@ import {
   Delete,
   ExpandMore,
   ExpandLess,
+  DashboardOutlined,
+  StarOutlined,
+  Star,
+  PeopleOutline,
+  AssessmentOutlined,
+  GetAppOutlined,
+  SearchOutlined,
+  HelpOutlined,
+  AddCircleOutline
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -30,6 +39,7 @@ import Imaging from '../assets/mui_components/Imaging'
 import LineGraph from '../assets/mui_components/LineGraph'
 import Rat from '../assets/mui_components/Rat'
 import Kinomics from '../assets/mui_components/Kinomics'
+import Login from '../assets/mui_components/Login'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
 
@@ -79,16 +89,36 @@ const getIcon = (options:IconSvgOptions) => {
       return <GetApp style={muiSvgStyle}></GetApp>
     case 'cart':
       return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
+    case 'dashboard':
+      return <DashboardOutlined style={muiSvgStyle}></DashboardOutlined>
     case 'delete':
       return <Delete style={muiSvgStyle}></Delete>
     case 'addToCart':
       return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
+    case 'addCircleOutline':
+      return <AddCircleOutline style={muiSvgStyle}></AddCircleOutline>
     case 'reload':
       return <Cached style={muiSvgStyle}></Cached>
     case 'photoCamera':
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
     case 'info':
       return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
+    case 'favOutlined':
+      return <StarOutlined style={muiSvgStyle}></StarOutlined>
+    case 'fav':
+      return <Star style={muiSvgStyle}></Star>
+    case 'peopleOutlined':
+      return <PeopleOutline style={muiSvgStyle}></PeopleOutline>
+    case 'challengesOutlined':
+      return <AssessmentOutlined style={muiSvgStyle}></AssessmentOutlined>
+    case 'downloadOutlined':
+      return <GetAppOutlined style={muiSvgStyle}></GetAppOutlined>
+    case 'searchOutlined':
+      return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
+    case 'login':
+      return <Login fill={color} style={customSvgStyle}></Login>
+    case 'helpOutlined':
+      return <HelpOutlined style={muiSvgStyle}></HelpOutlined>
     case 'expandLess': 
       return <ExpandLess fontSize={'small'} style={muiSvgStyle}></ExpandLess>
     case 'expandMore': 

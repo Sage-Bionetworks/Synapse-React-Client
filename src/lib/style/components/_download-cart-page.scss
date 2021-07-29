@@ -2,7 +2,6 @@
 @use '../abstracts/mixins' as SrcMixins;
 
 .DownloadCartPage {
-  padding: 60px 0px;
   .description {
     max-width: 700px;
     padding-top: 10px;
@@ -10,7 +9,7 @@
   .tabs-container {
     border-bottom: 4px solid #DCDCDC;
   }
-  .titleContainer {
+  .pageHeader .grid{
     display: grid;
     grid-template-columns: auto 210px;
     * {
@@ -130,7 +129,7 @@
   .metadata, .startButtonContainer { 
     align-self: center;
   }
-  .title {
+  .pageHeaderTitle {
     font-weight: bold;
     font-size: 16px;
     line-height: 40px;
