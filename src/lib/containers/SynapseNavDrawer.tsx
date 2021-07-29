@@ -209,10 +209,17 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             <div className="header projectHeader">
               Projects
             </div>
-            <a className="createProjectLink" onClick={() => {
+            <a className="createProjectLink" data-for="createProjectTooltipId" data-tip="Create a new Project" onClick={() => {
               setIsShowingCreateProjectModal(true)
               handleDrawerClose()
             }}>
+              <ReactTooltip
+                delayShow={300}
+                place="right"
+                type="dark"
+                effect="solid"
+                id="createProjectTooltipId"
+              />
               <IconSvg options={{icon:'addCircleOutline'}} />
             </a>
             <div className="searchInputWithIcon">

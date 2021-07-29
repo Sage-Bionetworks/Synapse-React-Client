@@ -26,9 +26,10 @@ export const CreateProjectModal: React.FunctionComponent<CreateProjectModalProps
     }
     const onCreateProject = async () => {
       try {
-        await SynapseClient.createProject(projectName, accessToken)
+        const newProject = await SynapseClient.createProject(projectName, accessToken)
         setIsShowingSuccessAlert(true)
         hide()
+        window.location.href = `/#!Synapse:${newProject.id}`
       } catch(err) {
         if (err.reason) {
           setErrorMessage(err.reason)
