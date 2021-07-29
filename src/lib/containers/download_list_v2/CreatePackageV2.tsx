@@ -6,12 +6,10 @@ import {
 } from 'react-bootstrap'
 import {
   createPackageFromDownloadListV2,
-  getFileHandleByIdURL,
-  createManifestFromDownloadListV2
+  getFileHandleByIdURL
 } from '../../utils/SynapseClient'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
-import { Checkbox } from '../widgets/Checkbox'
 
 export type CreatePackageV2Props = {
   onPackageCreation: () => void
