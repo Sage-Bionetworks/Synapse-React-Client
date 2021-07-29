@@ -6,9 +6,9 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
-import { SynapseSpinner } from '../../LoadingScreen'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
+import Skeleton from '@material-ui/lab/Skeleton'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -34,10 +34,9 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   initialTab = EntityModalTabs.METADATA,
   showTabs = true,
 }: EntityModalProps) => {
+
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
-  const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
-    entityId,
-  )
+  const { data: entityBundle, isLoading } = useGetEntityBundle(entityId)
 
   return (
     <Modal
@@ -47,9 +46,13 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       onHide={onClose}
     >
       <Modal.Header closeButton>
-        <Modal.Title>
-          {isLoadingBundle ? <SynapseSpinner /> : entityBundle?.entity?.name}
-        </Modal.Title>
+        {entityBundle ? (
+          <Modal.Title>{entityBundle.entity!.name}</Modal.Title>
+        ) : (
+          <Skeleton>
+            <Modal.Title>Placeholder</Modal.Title>
+          </Skeleton>
+        )}
       </Modal.Header>
       <Modal.Body>
         {showTabs ? (
@@ -72,39 +75,38 @@ export const EntityModal: React.FC<EntityModalProps> = ({
             })}
           </div>
         ) : null}
-        {isLoadingBundle ? (
-          <SynapseSpinner />
-        ) : (
-          <>
-            {currentTab === EntityModalTabs.ANNOTATIONS && (
-              <AnnotationsTable entityId={entityId} />
-            )}
-            {currentTab === EntityModalTabs.METADATA && (
-              <MetadataTable entityId={entityId} />
-            )}
-          </>
-        )}
+        <>
+          {currentTab === EntityModalTabs.ANNOTATIONS && (
+            <AnnotationsTable entityId={entityId} />
+          )}
+          {currentTab === EntityModalTabs.METADATA && (
+            <MetadataTable entityId={entityId} />
+          )}
+        </>
       </Modal.Body>
       <Modal.Footer>
         <div className="ButtonContainer">
           <div className="Spacer" />
-          <Button
-            variant="primary"
-            onClick={() =>
-              window.open(
-                `${getEndpoint(
-                  BackendDestinationEnum.PORTAL_ENDPOINT,
-                )}#!Synapse:${entityId}`,
-                '_blank',
-                'noopener',
-              )
-            }
-          >
-            Open{' '}
-            {!isLoadingBundle
-              ? entityTypeToFriendlyName(entityBundle!.entityType!)
-              : ''}
-          </Button>
+          {entityBundle ? (
+            <Button
+              variant="primary"
+              onClick={() =>
+                window.open(
+                  `${getEndpoint(
+                    BackendDestinationEnum.PORTAL_ENDPOINT,
+                  )}#!Synapse:${entityId}`,
+                  '_blank',
+                  'noopener',
+                )
+              }
+            >
+              Open {entityTypeToFriendlyName(entityBundle.entityType!)}
+            </Button>
+          ) : (
+            <Skeleton>
+              <Button>Open</Button>
+            </Skeleton>
+          )}
         </div>
       </Modal.Footer>
     </Modal>
