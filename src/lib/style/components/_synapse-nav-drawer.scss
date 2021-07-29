@@ -15,6 +15,10 @@
     &.tempDrawerOpen .MuiPaper-root {
       z-index: 1500;
     }
+    // default z-index for drawer is 1200, but we need this to be behind other modals in the app.
+    .MuiPaper-root {
+      z-index: 100;
+    }
     .filler {
       flex-grow: 1;
     }
