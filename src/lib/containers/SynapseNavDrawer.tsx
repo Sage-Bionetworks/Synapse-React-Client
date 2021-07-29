@@ -176,7 +176,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
 
   return (
     <div className="SynapseNavDrawer">
-      <Drawer variant="permanent" className='SynapseNavDrawerMenu'>
+      <Drawer variant="permanent" className={`SynapseNavDrawerMenu ${isOpen ? 'tempDrawerOpen' : ''}`}>
         <div onClick={handleDrawerClose}>
           <a className='synapseIcon' rel="noopener noreferrer" href='/#!Home:0'>
             <SynapseIconWhite />
@@ -209,7 +209,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
             <div className="header projectHeader">
               Projects
             </div>
-            <a className="createProjectLink" data-for="createProjectTooltipId" data-tip="Create a new Project" onClick={() => {
+            <a className="createProjectLink" data-for="createProjectTooltipId" data-tip="Create a New Project" onClick={() => {
               setIsShowingCreateProjectModal(true)
               handleDrawerClose()
             }}>

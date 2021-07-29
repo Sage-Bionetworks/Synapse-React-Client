@@ -1,3 +1,4 @@
+@use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SRCMixins;
 
 .FavoritesPage {
@@ -9,7 +10,10 @@
 
 .FavoritesTable {
   @include SRCMixins.sortable-table();
+  table {
+    color: SRC.$text-color-dark;
 
+  }
   thead:first-child > tr:first-child {
      > th:first-child { // favorite star header
       border-right: none;
@@ -22,6 +26,9 @@
   tbody > tr {
     > td:first-child { // favorite star header
      width: 50px;
+   }
+   > td:nth-child(3) svg {
+     color: #909090; // SWC-5709: entity type icon color
    }
  }
 }

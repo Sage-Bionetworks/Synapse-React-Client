@@ -97,14 +97,16 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
         </div>
       </div>
       <div className="SearchLinkBar SynapseHomepage__Section">
-        <a
-          href="#!Search:"
-          rel="noopener noreferrer"
-          className="SRC-whiteText ignoreLink"
-        >
-          <IconSvg options={{icon: 'searchOutlined'}} />
-          Search Synapse Projects
-        </a>
+        <div className="FlexContainer">
+          <a
+            href="#!Search:"
+            rel="noopener noreferrer"
+            className="SRC-whiteText ignoreLink"
+          >
+            <IconSvg options={{icon: 'searchOutlined'}} />
+            Search Synapse Projects
+          </a>
+        </div>
       </div>
       <div className="SynapseHomepage__Section WhiteBackground">
         <div className="FlexContainerReverse">
