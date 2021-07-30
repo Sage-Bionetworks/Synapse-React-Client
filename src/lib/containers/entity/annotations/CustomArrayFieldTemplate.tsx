@@ -54,7 +54,6 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
             <div style={{ display: 'flex' }}>
               <Button
                 variant="primary-500"
-                // className="AddButton"
                 onClick={props.onAddClick}
                 type="button"
               >
