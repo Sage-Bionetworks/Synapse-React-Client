@@ -1,21 +1,22 @@
 import React from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faFile, faDatabase } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
+import IconSvg from '../IconSvg'
 
 library.add(faFile)
 library.add(faDatabase)
 
 export type DownloadDetailsProps = {
   numFiles: number
+  numPackagableFiles: number
   numBytes: number
 }
 
 export default function DownloadDetails(props: DownloadDetailsProps) {
-  const { numFiles, numBytes } = props
+  const { numFiles, numPackagableFiles, numBytes } = props
 
   const numBytesTooltipId = 'num_bytes_id'
   const isInactive = numFiles === 0
@@ -23,8 +24,16 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   return (
     <span className="DownloadDetailsV2">
       <span className="item">
-        <FontAwesomeIcon className={iconClassName} icon="file" />
+        <span className={iconClassName}>
+          <IconSvg options={{ icon: 'file' }} />
+        </span>
         {!isInactive && <> {numFiles} files </>}
+      </span>
+      <span className="item">
+        <span className={iconClassName}>
+          <IconSvg options={{ icon: 'packagableFile' }} />
+        </span>
+        {!isInactive && <> {numPackagableFiles} files eligible for packaging </>}
       </span>
       <span
         data-for={numBytesTooltipId}
@@ -38,7 +47,9 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           effect="solid"
           id={numBytesTooltipId}
         />
-        <FontAwesomeIcon className={iconClassName} icon="database" />
+        <span className={iconClassName}>
+          <IconSvg options={{ icon: 'data' }} />
+        </span>
         {calculateFriendlyFileSize(numBytes)}
       </span>
     </span>

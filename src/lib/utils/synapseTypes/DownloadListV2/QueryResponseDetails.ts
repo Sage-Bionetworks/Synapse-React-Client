@@ -15,6 +15,7 @@ export type FilesStatisticsResponse = {
   concreteType: string // Will indicate the full package name of the response type.
   totalNumberOfFiles: number // The total number of files on the user's download list.
   numberOfFilesAvailableForDownload: number // The number of files that are currently available for download.
+  numberOfFilesAvailableForDownloadAndEligibleForPackaging: number //The number of files that are currently available for download and eligible for packaging.
   numberOfFilesRequiringAction: number // The number of files that are currently unavailable for download. These are files that require some action on the user's part in order gain download access.
   sumOfFileSizesAvailableForDownload: number // The sum of all of the files sizes on the user's download list that are currently available for download.
 }

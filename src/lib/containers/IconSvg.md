@@ -46,13 +46,16 @@
       'dataLocked',
       'geneExpression',
       'geneVariants',
+      'imaging',
+      'kinomics',
+      'lineGraph',
+      'login',
+      'other',
+      'packagableFile',
+      'photoCamera',
+      'proteomics',
       'rat',
       'reload',
-      'lineGraph',
-      'photoCamera',
-      'kinomics',
-      'proteomics',
-      'other'
     ].map(el => {
       return <tr><td>{el}</td> <td> <IconSvg options={{ icon: el, color: '#ff7700', padding: 'left' }}/></td></tr>
     })

@@ -117,7 +117,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 <div className="container">
                   <div className="subSectionContainer">
                     <span className="subSectionTitle">Complete Your Download</span>
-                    <DownloadListStats numBytes={data.sumOfFileSizesAvailableForDownload} numFiles={data.numberOfFilesAvailableForDownload}/>
+                    <DownloadListStats numBytes={data.sumOfFileSizesAvailableForDownload} numPackagableFiles={data.numberOfFilesAvailableForDownloadAndEligibleForPackaging} numFiles={data.numberOfFilesAvailableForDownload}/>
                   </div>
                   <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
                   both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 
