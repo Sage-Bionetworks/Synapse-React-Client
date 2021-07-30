@@ -5,6 +5,7 @@ export type AvailableFilesRequest = {
   concreteType: 'org.sagebionetworks.repo.model.download.AvailableFilesRequest'
   nextPageToken?: string // Forward the resulting nextPageToken from a previous request to get the next page of results.
   sort?:Sort[] // Optional. Defines how the query results should be sorted. If excluded a default sort will be used.
+  filter?: AvailableFilter //Optional. Defines how the query results should be filtered. If excluded all available files will be returned.
 }
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/FilesStatisticsRequest.html
@@ -34,3 +35,4 @@ export type Sort = {
   direction: SortDirection
 }
 
+export type AvailableFilter = 'eligibleForPackaging' | 'ineligibleForPackaging' | undefined

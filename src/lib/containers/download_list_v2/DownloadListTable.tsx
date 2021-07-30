@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult'
 import { toError } from '../../utils/ErrorUtils'
-import * as ReactBootstrap from 'react-bootstrap'
+import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { useInView } from 'react-intersection-observer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  AvailableFilter,
   Sort,
   SortField,
 } from '../../utils/synapseTypes/DownloadListV2/QueryRequestDetails'
@@ -32,6 +33,7 @@ export default function DownloadListTable() {
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
   const [sort, setSort] = useState<Sort | undefined>(undefined)
+  const [filter, setFilter] = useState<AvailableFilter | undefined>(undefined)
   const {
     data,
     status,
@@ -41,7 +43,7 @@ export default function DownloadListTable() {
     isError,
     error: newError,
     refetch,
-  } = useGetAvailableFilesToDownloadInfinite(sort)
+  } = useGetAvailableFilesToDownloadInfinite(sort, filter)
 
   useEffect(() => {
     if (isError && newError) {
@@ -70,6 +72,15 @@ export default function DownloadListTable() {
       )
     : []
 
+  const getFilterDisplayText = (f: AvailableFilter) => {
+    if (!f) {
+      return 'All'
+    } else if (f == 'eligibleForPackaging') {
+      return 'Only Eligible'
+    } else {
+      return 'Only Ineligible'
+    }
+  }
   const removeItem = async (item: DownloadListItem) => {
     try {
       await SynapseClient.removeItemFromDownloadListV2(item, accessToken)
@@ -109,117 +120,139 @@ export default function DownloadListTable() {
       )
     )
   }
+  const availableFiltersArray: AvailableFilter[] = [undefined, 'eligibleForPackaging', 'ineligibleForPackaging']
   return (
     <>
       {allRows.length > 0 && (
-        <ReactBootstrap.Table
-          striped={true}
-          responsive={true}
-          className="DownloadListTableV2"
-        >
-          <thead>
-            <tr>
-              <th>
-                File Name
-                <span>{showInteractiveSortIcon('fileName')}</span>
-              </th>
-              <th>
-                Project
-                <span>{showInteractiveSortIcon('projectName')}</span>
-              </th>
-              <th>
-                SynID
-                <span>{showInteractiveSortIcon('synId')}</span>
-              </th>
-              <th>
-                Added On
-                <span>{showInteractiveSortIcon('addedOn')}</span>
-              </th>
-              <th>
-                Created By
-                <span>{showInteractiveSortIcon('createdBy')}</span>
-              </th>
-              <th>
-                Created On
-                <span>{showInteractiveSortIcon('createdOn')}</span>
-              </th>
-              <th>
-                Size
-                <span>{showInteractiveSortIcon('fileSize')}</span>
-              </th>
-              {/* th below is made for trash can icon but holds no content */}
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {allRows.map((item:DownloadListItemResult) => {
-              if (item) {
-                const addedOn = moment(item.addedOn).format('L LT')
-                const createdOn = moment(item.createdOn).format('L LT')
-                return (
-                  <tr key={item.fileEntityId}>
-                    <td>
-                        {item.isEligibleForPackaging && <span
-                          data-for={`${item.fileEntityId}-eligible-tooltip`}
-                          data-tip="Eligible for packaging"
-                          className="item"
+        <>
+          Filter Files By
+          <Dropdown>
+            <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
+              {getFilterDisplayText(filter)}
+            </Dropdown.Toggle>
+            <Dropdown.Menu role="menu">
+            {availableFiltersArray.map(
+              (availableFilter) => (
+              <Dropdown.Item
+                  role="menuitem"
+                  key={`${getFilterDisplayText(availableFilter)}-filter-option`}
+                  onClick={() => {
+                    setFilter(availableFilter)
+                  }}
+                >
+                  {getFilterDisplayText(availableFilter)}
+                </Dropdown.Item>),)}
+            </Dropdown.Menu>
+          </Dropdown>
+          <Table
+            striped={true}
+            responsive={true}
+            className="DownloadListTableV2"
+          >
+            <thead>
+              <tr>
+                <th>
+                  File Name
+                  <span>{showInteractiveSortIcon('fileName')}</span>
+                </th>
+                <th>
+                  Project
+                  <span>{showInteractiveSortIcon('projectName')}</span>
+                </th>
+                <th>
+                  SynID
+                  <span>{showInteractiveSortIcon('synId')}</span>
+                </th>
+                <th>
+                  Added On
+                  <span>{showInteractiveSortIcon('addedOn')}</span>
+                </th>
+                <th>
+                  Created By
+                  <span>{showInteractiveSortIcon('createdBy')}</span>
+                </th>
+                <th>
+                  Created On
+                  <span>{showInteractiveSortIcon('createdOn')}</span>
+                </th>
+                <th>
+                  Size
+                  <span>{showInteractiveSortIcon('fileSize')}</span>
+                </th>
+                {/* th below is made for trash can icon but holds no content */}
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {allRows.map((item:DownloadListItemResult) => {
+                if (item) {
+                  const addedOn = moment(item.addedOn).format('L LT')
+                  const createdOn = moment(item.createdOn).format('L LT')
+                  return (
+                    <tr key={item.fileEntityId}>
+                      <td>
+                          {item.isEligibleForPackaging && <span
+                            data-for={`${item.fileEntityId}-eligible-tooltip`}
+                            data-tip="Eligible for packaging"
+                            className="item"
+                          >
+                            <ReactTooltip
+                              delayShow={TOOLTIP_DELAY_SHOW}
+                              place="top"
+                              type="dark"
+                              effect="solid"
+                              id={`${item.fileEntityId}-eligible-tooltip`}
+                            />
+                            <IconSvg options={{icon: 'packagableFile', color: '#878E95'}} />
+                            {' '}
+                        </span>}
+                        <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
                         >
-                          <ReactTooltip
-                            delayShow={TOOLTIP_DELAY_SHOW}
-                            place="top"
-                            type="dark"
-                            effect="solid"
-                            id={`${item.fileEntityId}-eligible-tooltip`}
-                          />
-                          <IconSvg options={{icon: 'packagableFile', color: '#878E95'}} />
-                          {' '}
-                      </span>}
-                      <a
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.fileEntityId}.${item.versionNumber}`}
-                      >
-                        {item.fileName}
-                      </a>
-                    </td>
-                    <td>{item.projectName}</td>
-                    <td>{item.projectId}</td>
-                    <td>{addedOn}</td>
-                    <td>
-                      <UserCard
-                        size={'SMALL USER CARD'}
-                        ownerId={item.createdBy}
-                      />
-                    </td>
-                    <td>{createdOn}</td>
-                    <td>
-                      {item.fileSizeBytes &&
-                        calculateFriendlyFileSize(item.fileSizeBytes)}
-                    </td>
-                    <td>
-                      <button
-                        className={TESTING_TRASH_BTN_CLASS}
-                        onClick={() => {
-                          removeItem({
-                            fileEntityId: item.fileEntityId,
-                            versionNumber: item.versionNumber,
-                          })
-                        }}
-                      >
-                        <FontAwesomeIcon
-                          className="SRC-primary-text-color"
-                          icon="trash"
+                          {item.fileName}
+                        </a>
+                      </td>
+                      <td>{item.projectName}</td>
+                      <td>{item.projectId}</td>
+                      <td>{addedOn}</td>
+                      <td>
+                        <UserCard
+                          size={'SMALL USER CARD'}
+                          ownerId={item.createdBy}
                         />
-                      </button>
-                    </td>
-                  </tr>
-                )
-              } else return false
-            })}
-            {/* To trigger loading the next page */}
-            <tr ref={ref} />
-          </tbody>
-        </ReactBootstrap.Table>
+                      </td>
+                      <td>{createdOn}</td>
+                      <td>
+                        {item.fileSizeBytes &&
+                          calculateFriendlyFileSize(item.fileSizeBytes)}
+                      </td>
+                      <td>
+                        <button
+                          className={TESTING_TRASH_BTN_CLASS}
+                          onClick={() => {
+                            removeItem({
+                              fileEntityId: item.fileEntityId,
+                              versionNumber: item.versionNumber,
+                            })
+                          }}
+                        >
+                          <FontAwesomeIcon
+                            className="SRC-primary-text-color"
+                            icon="trash"
+                          />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                } else return false
+              })}
+              {/* To trigger loading the next page */}
+              <tr ref={ref} />
+            </tbody>
+          </Table>
+        </>
       )}
       {isFetching && (
         <div className="placeholder">

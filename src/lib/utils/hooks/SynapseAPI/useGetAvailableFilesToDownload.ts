@@ -9,6 +9,7 @@ import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
 import {
   AvailableFilesRequest,
+  AvailableFilter,
   Sort,
 } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
 import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
@@ -31,6 +32,7 @@ export function useGetAvailableFilesToDownload(
 
 export function useGetAvailableFilesToDownloadInfinite(
   sort?: Sort,
+  filter?: AvailableFilter,
   options?: UseInfiniteQueryOptions<
     AvailableFilesResponse,
     SynapseClientError,
@@ -44,6 +46,9 @@ export function useGetAvailableFilesToDownloadInfinite(
   }
   if (sort) {
     request.sort = [sort]
+  }
+  if (filter) {
+    request.filter = filter
   }
   return useInfiniteQuery<AvailableFilesResponse, SynapseClientError>(
     ['downloadlistv2availablefiles', request],
