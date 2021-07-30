@@ -63,12 +63,27 @@
     .array-item {
       display: grid;
       grid-template-columns: [input] auto [remove] 30px [add] 30px;
+      grid-template-rows: [description] auto [widget] auto [errors] auto;
+
+      .field-description {
+        grid-row-start: description;
+      }
+
+      .form-control {
+        grid-row-start: widget;
+      }
+
+      div {
+        grid-row-start: errors;
+      }
 
       .AddButton {
+        grid-row-start: widget;
         grid-column-start: add;
       }
 
       .RemoveButton {
+        grid-row-start: widget;
         grid-column-start: remove;
       }
     }
