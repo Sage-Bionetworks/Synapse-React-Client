@@ -20,6 +20,9 @@ import { Direction } from '../../utils/synapseTypes'
 import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import IconSvg from '../IconSvg'
+import ReactTooltip from 'react-tooltip'
+import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -156,6 +159,21 @@ export default function DownloadListTable() {
                 return (
                   <tr key={item.fileEntityId}>
                     <td>
+                        {item.isEligibleForPackaging && <span
+                          data-for={`${item.fileEntityId}-eligible-tooltip`}
+                          data-tip="Eligible for packaging"
+                          className="item"
+                        >
+                          <ReactTooltip
+                            delayShow={TOOLTIP_DELAY_SHOW}
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                            id={`${item.fileEntityId}-eligible-tooltip`}
+                          />
+                          <IconSvg options={{icon: 'packagableFile', color: '#878E95'}} />
+                          {' '}
+                      </span>}
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
