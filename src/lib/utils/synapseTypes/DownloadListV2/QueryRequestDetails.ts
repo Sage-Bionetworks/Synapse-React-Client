@@ -35,4 +35,5 @@ export type Sort = {
   direction: SortDirection
 }
 
+// http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/AvailableFilter.html
 export type AvailableFilter = 'eligibleForPackaging' | 'ineligibleForPackaging' | undefined
