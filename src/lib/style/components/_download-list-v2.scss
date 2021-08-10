@@ -2,6 +2,17 @@
 @use '../abstracts/mixins' as SRCMixins;
 
 .DownloadListTableV2 {
+  white-space: pre;
+  .ineligibileIcon {
+    padding-left: 15px;
+    padding-right: 5px;
+  }
+  .eligibileIcon {
+    padding-right: 5px;
+    svg {
+      width: 15px;
+    }
+  }
   tbody>tr>td:first-child { // file name column
     overflow-x: hidden;
     max-width: 310px;
@@ -18,6 +29,9 @@
     margin-right: 15px;
     svg {
       margin-right: 5px;
+    }
+    #icon-packagableFile svg {
+      margin-bottom: -5px;
     }
   }
 }
