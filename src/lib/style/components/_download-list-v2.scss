@@ -3,6 +3,16 @@
 
 .DownloadListTableV2 {
   white-space: pre;
+  .ineligibileIcon {
+    padding-left: 15px;
+    padding-right: 5px;
+  }
+  .eligibileIcon {
+    padding-right: 5px;
+    svg {
+      width: 15px;
+    }
+  }
   tbody>tr>td:first-child { // file name column
     overflow-x: hidden;
     max-width: 310px;

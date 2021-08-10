@@ -123,9 +123,8 @@ export default function DownloadListTable() {
   const availableFiltersArray: AvailableFilter[] = [undefined, 'eligibleForPackaging', 'ineligibleForPackaging']
   return (
     <>
-      {allRows.length > 0 && (
-        <>
-          Filter Files By
+      <div className="filterFilesContainer">
+          <span className="filterFilesByText">Filter Files By</span>
           <Dropdown>
             <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
               {getFilterDisplayText(filter)}
@@ -144,6 +143,9 @@ export default function DownloadListTable() {
                 </Dropdown.Item>),)}
             </Dropdown.Menu>
           </Dropdown>
+      </div>
+      {allRows.length > 0 && (
+        <>
           <Table
             striped={true}
             responsive={true}
@@ -194,7 +196,7 @@ export default function DownloadListTable() {
                           {item.isEligibleForPackaging && <span
                             data-for={`${item.fileEntityId}-eligible-tooltip`}
                             data-tip="Eligible for packaging"
-                            className="item"
+                            className="eligibileIcon"
                           >
                             <ReactTooltip
                               delayShow={TOOLTIP_DELAY_SHOW}
@@ -203,9 +205,10 @@ export default function DownloadListTable() {
                               effect="solid"
                               id={`${item.fileEntityId}-eligible-tooltip`}
                             />
-                            <IconSvg options={{icon: 'packagableFile', color: '#878E95'}} />
-                            {' '}
+                            <IconSvg options={{icon: 'packagableFile', color: '#878E95' }} />
                         </span>}
+                        {!item.isEligibleForPackaging && <span className="ineligibileIcon" />
+                        }
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
