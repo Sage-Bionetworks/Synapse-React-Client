@@ -8,15 +8,11 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getTransformSqlWithFacetsRequest } from '../../../utils/SynapseClient'
 import { Modal, ModalBody } from 'react-bootstrap'
 import ModalHeader from 'react-bootstrap/ModalHeader'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faQuestionCircle)
 
 type ProgrammaticOptionsProps = {
   queryBundleRequest: QueryBundleRequest
   queryResultBundle: QueryResultBundle
-  onHide: Function
+  onHide: () => void
 }
 
 function ProgrammaticOptions({
@@ -48,7 +44,11 @@ function ProgrammaticOptions({
         const res = await getTransformSqlWithFacetsRequest(
           transformSqlWithFacetsRequest,
         )
-        setGeneratedSql(res.transformedSql.replace(/"/g, '\\"'))
+        // SWC-5686: The ID column is required by the client, and this column may not have been selected!
+        // Change the SQL to "SELECT * ..."
+        const indexOfFrom = res.transformedSql.toUpperCase().indexOf('FROM SYN')
+        const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(indexOfFrom)}`
+        setGeneratedSql(selectStarTransformedSql.replace(/"/g, '\\"'))
       } catch (e) {
         console.error('Error on getTransformSqlWithFacetsRequest ', e)
       }
