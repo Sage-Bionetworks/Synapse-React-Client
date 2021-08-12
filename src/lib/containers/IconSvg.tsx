@@ -18,12 +18,13 @@ import {
   DashboardOutlined,
   StarOutlined,
   Star,
+  InsertDriveFile,
   PeopleOutline,
   AssessmentOutlined,
   GetAppOutlined,
   SearchOutlined,
   HelpOutlined,
-  AddCircleOutline
+  AddCircleOutline,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -42,6 +43,7 @@ import Kinomics from '../assets/mui_components/Kinomics'
 import Login from '../assets/mui_components/Login'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
+import PackagableFile from '../assets/mui_components/PackagableFile'
 
 export type IconSvgOptions = {
   icon: string
@@ -107,6 +109,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <StarOutlined style={muiSvgStyle}></StarOutlined>
     case 'fav':
       return <Star style={muiSvgStyle}></Star>
+    case 'file':
+      return <InsertDriveFile style={muiSvgStyle}></InsertDriveFile>
     case 'peopleOutlined':
       return <PeopleOutline style={muiSvgStyle}></PeopleOutline>
     case 'challengesOutlined':
@@ -147,6 +151,9 @@ const getIcon = (options:IconSvgOptions) => {
     case 'proteomics':
       customSvgStyle.fill = "none"
       return <Proteomics fill={color ? color : "currentColor"} style={customSvgStyle}></Proteomics>
+    case 'packagableFile':
+      customSvgStyle.fill = "none"
+      return <PackagableFile fill={color ? color : "currentColor"} style={customSvgStyle}></PackagableFile>
     case 'other':
       return <Other fill={color} style={customSvgStyle}></Other>
     case 'accountCertified':
