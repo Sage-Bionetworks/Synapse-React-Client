@@ -6,8 +6,15 @@ import {
 import { TransformSqlWithFacetsRequest } from '../../../utils/synapseTypes/Table/TransformSqlWithFacetsRequest'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getTransformSqlWithFacetsRequest } from '../../../utils/SynapseClient'
-import { Modal, ModalBody } from 'react-bootstrap'
+import { Modal, ModalBody, Button } from 'react-bootstrap'
 import ModalHeader from 'react-bootstrap/ModalHeader'
+
+export enum ProgrammaticOptionsTabs {
+  COMMAND_LINE = "Command Line",
+  R = "R",
+  PYTHON = "Python",
+}
+
 
 type ProgrammaticOptionsProps = {
   queryBundleRequest: QueryBundleRequest
@@ -21,7 +28,7 @@ function ProgrammaticOptions({
   onHide,
 }: ProgrammaticOptionsProps) {
   const [generatedSql, setGeneratedSql] = useState('')
-
+  const [currentTab, setCurrentTab] = useState<ProgrammaticOptionsTabs>(ProgrammaticOptionsTabs.COMMAND_LINE)
   useDeepCompareEffect(() => {
     const getData = async () => {
       const { query } = queryBundleRequest
@@ -56,39 +63,91 @@ function ProgrammaticOptions({
     getData()
   }, [queryBundleRequest, queryResultBundle])
 
+  const installationInstructions = <p>Installation instructions are available at our
+    <a
+      className="ProgrammaticOptions__docslink"
+      href="https://help.synapse.org/docs/Installing-Synapse-API-Clients.1985249668.html"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {' '}
+      Synapse API Documentation Site
+    </a>.</p>
+
   return (
     <Modal
       animation={false}
       show={true}
       onHide={() => onHide()}
-      className="ProgrammaticOptions"
+      className="bootstrap-4-backport ProgrammaticOptions"
+      size="lg"
     >
       <ModalHeader closeButton>
-        <span style={{ color: '#515359', fontSize: '1.5em' }}>
-          Download Options
-        </span>
+        <Modal.Title>Download Programmatically</Modal.Title>
       </ModalHeader>
       <ModalBody>
-        <p className="ProgrammaticOptions__commandline">
-          Command Line Instructions
-        </p>
-        <p>
-          Use the Synapse command line client to download data. Installation
-          instructions are available
-          <a
-            className="ProgrammaticOptions__docslink"
-            href="https://help.synapse.org/docs/Download-Data-Programmatically-from-a-Portal.1982693983.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {' '}
-            here.
-          </a>
-        </p>
-        <div className="ProgrammaticOptions__cli">
-          <p> synapse get -q "{generatedSql}" </p>
+        <div className="Tabs">
+          {Object.keys(ProgrammaticOptionsTabs).map((keyName: string) => {
+            return (
+              <div
+                className="Tab"
+                role="tab"
+                key={keyName}
+                onClick={e => {
+                  e.stopPropagation()
+                  setCurrentTab(ProgrammaticOptionsTabs[keyName])
+                }}
+                aria-selected={ProgrammaticOptionsTabs[keyName] === currentTab}
+              >
+                {ProgrammaticOptionsTabs[keyName]}
+              </div>
+            )
+          })}
+        </div>
+        <div className="TabContent">
+          {currentTab === ProgrammaticOptionsTabs.COMMAND_LINE && (
+            <>
+              <p>
+                This command line code will download Synapse files AND file annotations to your working directory.
+              </p>
+              {installationInstructions}
+              <pre> synapse get -q "{generatedSql}" </pre>
+            </>)}
+          {currentTab === ProgrammaticOptionsTabs.R && (
+            <>
+              <p>
+                This R code will download file annotations only. Use synGet{'()'} to loop over the list of Synapse IDs from the file annotations to download files.
+              </p>
+              {installationInstructions}
+              <pre>
+                query {'<-'} synTableQuery("{generatedSql}"){'\n'}
+                read.table(query$filepath, sep = ",")
+              </pre>
+            </>)}
+          {currentTab === ProgrammaticOptionsTabs.PYTHON && (
+            <>
+              <p>
+                This Python code will download file annotations only. Use syn.get to loop over the list of Synapse IDs from the file annotations to download files.
+              </p>
+              {installationInstructions}
+              <pre>
+                  query = syn.tableQuery("{generatedSql}"){'\n'}
+                  query.asDataFrame()
+              </pre>
+            </>)}
         </div>
       </ModalBody>
+      <Modal.Footer>
+        <div className="ButtonContainer">
+          <div className="Spacer" />
+          <Button
+            variant="primary"
+            onClick={() => onHide()}
+          >
+            Got it
+          </Button>
+        </div>
+      </Modal.Footer>
     </Modal>
   )
 }
