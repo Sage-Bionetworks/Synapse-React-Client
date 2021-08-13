@@ -64,13 +64,13 @@ function ProgrammaticOptions({
   }, [queryBundleRequest, queryResultBundle])
 
   const installationInstructions = <p>Installation instructions are available at our
+    {' '}
     <a
       className="ProgrammaticOptions__docslink"
       href="https://help.synapse.org/docs/Installing-Synapse-API-Clients.1985249668.html"
       target="_blank"
       rel="noopener noreferrer"
     >
-      {' '}
       Synapse API Documentation Site
     </a>.</p>
 
