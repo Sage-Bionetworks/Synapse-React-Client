@@ -26,6 +26,7 @@ import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
 import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
 import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
+import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -63,7 +64,8 @@ const SynapseComponents = {
   FullWidthAlert: FullWidthAlert,
   SchemaDrivenAnnotationEditor,
   SynapseNavDrawer,
-  FavoritesPage
+  FavoritesPage,
+  ProgrammaticOptions
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

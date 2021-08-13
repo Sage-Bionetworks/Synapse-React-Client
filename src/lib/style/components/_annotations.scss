@@ -69,7 +69,8 @@
         grid-row-start: description;
       }
 
-      .form-control {
+      .form-control,
+      .calendar-with-icon-form-group {
         grid-row-start: widget;
       }
 
