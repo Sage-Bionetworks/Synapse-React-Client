@@ -245,6 +245,8 @@ export function AdditionalPropertiesSchemaField<T>(
         <FormLabel id={`${id}-type`}>Type</FormLabel>
         <FormControl
           as="select"
+          disabled={props.disabled}
+          readOnly={props.readonly}
           value={propertyType}
           required={true}
           id={`${id}-type`}
