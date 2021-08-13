@@ -39,6 +39,7 @@ import ProjectViewCarousel from './containers/home_page/project_view_carousel/Pr
 import EntityFinder from './containers/entity_finder/EntityFinder'
 import ExperimentalMode from './containers/ExperimentalMode'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
+import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -105,6 +106,7 @@ const SynapseComponents = {
   DownloadCartPage,
   ShowDownloadV2,
   FullWidthAlert: FullWidthAlert,
+  ProgrammaticOptions,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }
