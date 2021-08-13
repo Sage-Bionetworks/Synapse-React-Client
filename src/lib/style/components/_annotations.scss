@@ -2,108 +2,119 @@
 
 .bootstrap-4-backport {
   .AnnotationEditor {
-    display: grid;
-    // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
-    grid-template-rows: auto auto auto auto auto;
-    margin-bottom: 15px;
-
-    > .form-group {
-      grid-row-start: 1;
-    }
-    .ErrorList {
-      grid-row-start: 2;
-      margin-top: 1rem;
-    }
-
-    .alert {
-      grid-row-start: 3;
-      margin-top: 5px;
-      margin-bottom: 5px;
-    }
-
-    > hr {
-      grid-row-start: 4;
-      width: 100%;
-    }
-
-    .SaveButtonContainer {
+    .LoadingPlaceholder {
       display: flex;
-      flex-direction: row-reverse;
-      grid-row-start: 5;
+      margin: 60px auto;
     }
 
-    .col-xs-3,
-    .col-xs-6 {
-      padding-left: 5px;
-      padding-right: 5px;
-    }
-    .row {
-      padding: 0px 10px;
-    }
-    .calendar-with-icon-form-group.form-group {
-      input {
-        margin-bottom: 0;
-      }
-      .input-group-prepend {
-        margin-bottom: 0;
-      }
-    }
-
-    .AddButton,
-    .RemoveButton {
-      border-radius: 0px;
-      height: 25px;
-      width: 25px;
-      padding: 0px;
-      margin: 12px 5px 1rem;
-      justify-self: center;
-      align-self: start;
-    }
-
-    .array-item {
+    .AnnotationEditorForm {
       display: grid;
-      grid-template-columns: [input] auto [remove] 30px [add] 30px;
-      grid-template-rows: [description] auto [widget] auto [errors] auto;
+      // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
+      grid-template-rows: auto auto auto auto auto;
+      margin-bottom: 15px;
 
-      .field-description {
-        grid-row-start: description;
+      > .form-group {
+        grid-row-start: 1;
+      }
+      .ErrorList {
+        grid-row-start: 2;
+        margin-top: 1rem;
       }
 
-      .form-control,
-      .calendar-with-icon-form-group {
-        grid-row-start: widget;
+      .alert {
+        grid-row-start: 3;
+        margin-top: 5px;
+        margin-bottom: 5px;
       }
 
-      div {
-        grid-row-start: errors;
+      > hr {
+        grid-row-start: 4;
+        width: 100%;
       }
 
-      .AddButton {
-        grid-row-start: widget;
-        grid-column-start: add;
+      .SaveButtonContainer {
+        display: flex;
+        flex-direction: row-reverse;
+        grid-row-start: 5;
+
+        .Spacer {
+          flex-grow: 1;
+        }
       }
 
+      .col-xs-3,
+      .col-xs-6 {
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .row {
+        padding: 0px 10px;
+      }
+      .calendar-with-icon-form-group.form-group {
+        input {
+          margin-bottom: 0;
+        }
+        .input-group-prepend {
+          margin-bottom: 0;
+        }
+      }
+
+      .AddButton,
       .RemoveButton {
-        grid-row-start: widget;
-        grid-column-start: remove;
+        border-radius: 0px;
+        height: 25px;
+        width: 25px;
+        padding: 0px;
+        margin: 12px 5px 1rem;
+        justify-self: center;
+        align-self: start;
       }
-    }
 
-    label {
-      color: SRC.$gray-deemphasized;
-      font-weight: normal;
-      span.required {
-        color: SRC.$red-required;
-        margin-left: 2px;
+      .array-item {
+        display: grid;
+        grid-template-columns: [input] auto [remove] 30px [add] 30px;
+        grid-template-rows: [description] auto [widget] auto [errors] auto;
+
+        .field-description {
+          grid-row-start: description;
+        }
+
+        .form-control,
+        .calendar-with-icon-form-group {
+          grid-row-start: widget;
+        }
+
+        div {
+          grid-row-start: errors;
+        }
+
+        .AddButton {
+          grid-row-start: widget;
+          grid-column-start: add;
+        }
+
+        .RemoveButton {
+          grid-row-start: widget;
+          grid-column-start: remove;
+        }
       }
-    }
 
-    select {
-      background-color: SRC.$gray-light;
-    }
+      label {
+        color: SRC.$gray-deemphasized;
+        font-weight: normal;
+        span.required {
+          color: SRC.$red-required;
+          margin-left: 2px;
+        }
+      }
 
-    .field-array > .array-item > label.form-label {
-      display: none;
+      select {
+        background-color: SRC.$gray-light;
+      }
+
+      .field-array > .array-item > label.form-label {
+        display: none;
+      }
     }
   }
 }

@@ -9,6 +9,7 @@ import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 import Skeleton from '@material-ui/lab/Skeleton'
+import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -34,13 +35,15 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   initialTab = EntityModalTabs.METADATA,
   showTabs = true,
 }: EntityModalProps) => {
-
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
-  const { data: entityBundle, isLoading } = useGetEntityBundle(entityId)
+  const [isInEditMode, setIsInEditMode] = useState(false)
+  const { data: entityBundle } = useGetEntityBundle(entityId)
 
   return (
     <Modal
       className="bootstrap-4-backport EntityMetadata"
+      backdrop={'static'}
+      size={isInEditMode ? 'lg' : undefined}
       show={show}
       animation={false}
       onHide={onClose}
@@ -77,38 +80,63 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         ) : null}
         <>
           {currentTab === EntityModalTabs.ANNOTATIONS && (
-            <AnnotationsTable entityId={entityId} />
+            <>
+              {isInEditMode ? (
+                <SchemaDrivenAnnotationEditor
+                  entityId={entityId}
+                  onCancel={() => setIsInEditMode(false)}
+                />
+              ) : (
+                <AnnotationsTable entityId={entityId} />
+              )}
+            </>
           )}
           {currentTab === EntityModalTabs.METADATA && (
             <MetadataTable entityId={entityId} />
           )}
         </>
       </Modal.Body>
-      <Modal.Footer>
-        <div className="ButtonContainer">
-          <div className="Spacer" />
-          {entityBundle ? (
-            <Button
-              variant="primary"
-              onClick={() =>
-                window.open(
-                  `${getEndpoint(
-                    BackendDestinationEnum.PORTAL_ENDPOINT,
-                  )}#!Synapse:${entityId}`,
-                  '_blank',
-                  'noopener',
-                )
-              }
-            >
-              Open {entityTypeToFriendlyName(entityBundle.entityType!)}
-            </Button>
-          ) : (
-            <Skeleton>
-              <Button>Open</Button>
-            </Skeleton>
-          )}
-        </div>
-      </Modal.Footer>
+      {!isInEditMode && ( // in edit mode, an editor manages its own footer
+        <Modal.Footer>
+          <div className="ButtonContainer">
+            {entityBundle && entityBundle.permissions?.canEdit ? (
+              <>
+                <Button
+                  variant="primary-500"
+                  onClick={() => {
+                    setIsInEditMode(true)
+                  }}
+                >
+                  Edit
+                </Button>
+                <div className="Spacer" />
+              </>
+            ) : (
+              <div className="Spacer" />
+            )}
+            {entityBundle ? (
+              <Button
+                variant="primary-500"
+                onClick={() =>
+                  window.open(
+                    `${getEndpoint(
+                      BackendDestinationEnum.PORTAL_ENDPOINT,
+                    )}#!Synapse:${entityId}`,
+                    '_blank',
+                    'noopener',
+                  )
+                }
+              >
+                Open {entityTypeToFriendlyName(entityBundle.entityType!)}
+              </Button>
+            ) : (
+              <Skeleton>
+                <Button>Open</Button>
+              </Skeleton>
+            )}
+          </div>
+        </Modal.Footer>
+      )}
     </Modal>
   )
 }

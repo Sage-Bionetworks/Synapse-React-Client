@@ -35,6 +35,8 @@ export type SchemaDrivenAnnotationEditorProps = {
   schemaId?: string
   liveValidate?: boolean
   onSuccess?: () => void
+  /** If defined, shows a 'Cancel' button and runs this effect on click */
+  onCancel?: () => void
 }
 
 export type SchemaDrivenAnnotationEditorModalProps = {
@@ -72,6 +74,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   onSuccess = () => {
     /* no-op */
   },
+  onCancel,
 }: SchemaDrivenAnnotationEditorProps) => {
   const formRef = useRef<Form<Record<string, unknown>>>(null)
 
@@ -145,9 +148,11 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   )
 
   return (
-    <div className="bootstrap-4-backport">
+    <div className="bootstrap-4-backport AnnotationEditor">
       {isLoading ? (
-        <SynapseSpinner />
+        <div className="LoadingPlaceholder">
+          <SynapseSpinner size={30} />
+        </div>
       ) : (
         <>
           <ReactTooltip id={ANNOTATION_EDITOR_TOOLTIP_ID} />
@@ -188,7 +193,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             </Alert>
           )}
           <Form
-            className="AnnotationEditor"
+            className="AnnotationEditorForm"
             liveValidate={liveValidate}
             noHtml5Validate={true}
             ArrayFieldTemplate={CustomArrayFieldTemplate}
@@ -293,6 +298,14 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               >
                 {entityId ? 'Save' : 'Validate'}
               </Button>
+              {onCancel && (
+                <>
+                  <div className="Spacer" />
+                  <Button variant="primary-500" onClick={onCancel}>
+                    Cancel
+                  </Button>
+                </>
+              )}
             </div>
           </Form>
           {showConfirmation && (
