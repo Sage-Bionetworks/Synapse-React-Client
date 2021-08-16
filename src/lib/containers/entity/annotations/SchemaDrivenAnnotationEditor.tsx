@@ -1,6 +1,6 @@
 import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
-import { isEmpty, omit, pick } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
@@ -18,7 +18,7 @@ import {
   useGetSchemaBinding,
 } from '../../../utils/hooks/SynapseAPI/useSchema'
 import { SynapseClientError } from '../../../utils/SynapseClient'
-import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
+import { entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
