@@ -611,6 +611,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             <UserSearchBox
               id={'requesters'}
               onSelectCallback={onSelectUserCallback}
+              filterUserIds={accessors.map(user => user.profile.ownerId)}
             />
           </Form.Group>
 

@@ -2,12 +2,13 @@ import * as React from 'react'
 import Downshift from 'downshift'
 import { useState } from 'react'
 import { getUserGroupHeaders } from '../utils/SynapseClient'
-import { UserGroupHeader } from '../utils/synapseTypes'
+import { UserGroupHeader, UserGroupHeaderResponsePage } from '../utils/synapseTypes'
 import { UserCardSmall } from './UserCardSmall'
 
 export type UserSearchBoxProps = {
   id?: string  // id for the input tag
-  onSelectCallback?: Function
+  onSelectCallback?: (selected:FormattedUserHeader) => void,
+  filterUserIds?: string[]
 }
 
 export type FormattedUserHeader = {
@@ -18,19 +19,24 @@ export type FormattedUserHeader = {
 }
 
 const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
-  const { id, onSelectCallback } = props
+  const { id, onSelectCallback, filterUserIds } = props
   const [users, setUsers] = useState<FormattedUserHeader[]>([])
 
   const onInputValueChange = async (inputValue:string) => {
     try {
-      const headers = await getUserGroupHeaders(inputValue)
-      const formattedList:FormattedUserHeader[] = headers.children.map((user:UserGroupHeader) => {
-        return {
-          ownerId: user.ownerId,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          userName: user.userName,
-        }
+      const headers:UserGroupHeaderResponsePage = await getUserGroupHeaders(inputValue)
+      const filtered:UserGroupHeader[] = filterUserIds?.length ? headers.children
+        .filter((user:UserGroupHeader) => {
+          return !filterUserIds.includes(user.ownerId)
+        }) : headers.children
+      const formattedList:FormattedUserHeader[] = filtered
+        .map((user:UserGroupHeader) => {
+          return {
+            ownerId: user.ownerId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            userName: user.userName,
+          }
       })
       setUsers(formattedList)
     } catch (e) {
