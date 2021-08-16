@@ -25,7 +25,7 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
   const onInputValueChange = async (inputValue:string) => {
     try {
       const headers:UserGroupHeaderResponsePage = await getUserGroupHeaders(inputValue)
-      const filtered:UserGroupHeader[] = filterUserIds ? headers.children
+      const filtered:UserGroupHeader[] = filterUserIds?.length ? headers.children
         .filter((user:UserGroupHeader) => {
           return !filterUserIds.includes(user.ownerId)
         }) : headers.children
