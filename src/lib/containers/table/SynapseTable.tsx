@@ -197,8 +197,13 @@ export default class SynapseTable extends React.Component<
         isFetchingEntityVersion: true,
       })
       const entityData = await SynapseClient.getEntity(token, currentTableId)
+      const isEntityView = entityData.concreteType.includes('EntityView')
+      // PORTALS-1973:  To simplify logic, only show special file view columns (like direct
+      // download, or adding a file to the download cart) if the View selects Files _only_.
+      // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityView.html
+      const isFileView = isEntityView ? (entityData as any).viewTypeMask === 1 : false
       this.setState({
-        isFileView: entityData.concreteType.includes('EntityView'),
+        isFileView: isFileView,
         isFetchingEntityVersion: false,
       })
     }
