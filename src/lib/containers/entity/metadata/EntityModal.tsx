@@ -99,7 +99,9 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       {!isInEditMode && ( // in edit mode, an editor manages its own footer
         <Modal.Footer>
           <div className="ButtonContainer">
-            {entityBundle && entityBundle.permissions?.canEdit ? (
+            {entityBundle &&
+            entityBundle.permissions?.canEdit &&
+            currentTab === EntityModalTabs.ANNOTATIONS ? ( // Currently only have an editor for annotations
               <>
                 <Button
                   variant="primary-500"

@@ -1,23 +1,23 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
+import React from 'react'
 import {
   AnnotationsTable,
   AnnotationsTableProps,
 } from '../../../../../lib/containers/entity/metadata/AnnotationsTable'
-import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
-import {
-  mockFileEntityBundle,
-  MOCK_FILE_ENTITY_ID,
-} from '../../../../../mocks/entity/mockEntity'
-import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
-import { rest, server } from '../../../../../mocks/msw/server'
-import { mockSchemaBinding } from '../../../../../mocks/mockSchema'
+import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import { ENTITY_JSON } from '../../../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
-import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
-import { ENTITY_BUNDLE_V2 } from '../../../../../lib/utils/APIConstants'
+import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
+import {
+  mockFileEntityJson,
+  MOCK_FILE_ENTITY_ID,
+} from '../../../../../mocks/entity/mockEntity'
+import { mockSchemaBinding } from '../../../../../mocks/mockSchema'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { rest, server } from '../../../../../mocks/msw/server'
 
 const defaultProps: AnnotationsTableProps = {
   entityId: MOCK_FILE_ENTITY_ID,
@@ -38,14 +38,15 @@ describe('AnnotationsTable tests', () => {
   it('Renders the annotations on an entity', async () => {
     renderComponent()
     await screen.findByText('myStringKey')
-    for (const key of Object.keys(
-      mockFileEntityBundle.annotations!.annotations,
-    )) {
-      expect(() => screen.getByText(key)).not.toThrowError()
-      screen.getByText(
-        mockFileEntityBundle.annotations!.annotations[key].value.join(', '),
-      )
-    }
+    screen.getByText(mockFileEntityJson['myStringKey']! as string)
+
+    expect(() => screen.getByText('myIntegerKey')).not.toThrowError()
+    screen.getByText(
+      (mockFileEntityJson['myIntegerKey'] as number[]).join(', '),
+    )
+
+    expect(() => screen.getByText('myFloatKey')).not.toThrowError()
+    screen.getByText((mockFileEntityJson['myFloatKey'] as number[]).join(', '))
   })
 
   it('Displays the validation schema if there is one (in experimental mode)', async () => {
@@ -58,44 +59,24 @@ describe('AnnotationsTable tests', () => {
     await screen.findByText(mockSchemaBinding.jsonSchemaVersionInfo.schemaName)
   })
 
-  it('Displays a placeholder when annotations is undefined', async () => {
+  it('Displays a placeholder when there are no annotations', async () => {
     server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
           ':entityId',
         )}`,
 
         async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({ ...mockFileEntityBundle, annotations: undefined }),
-          )
+          const response = mockFileEntityJson
+          // Delete the annotation keys
+          delete response.myStringKey
+          delete response.myIntegerKey
+          delete response.myFloatKey
+          return res(ctx.status(200), ctx.json(response))
         },
       ),
     )
     renderComponent()
-    await screen.findByText('This File has no annotations.')
-  })
-
-  it('Displays a placeholder when annotations is empty', async () => {
-    server.use(
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
-
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockFileEntityBundle,
-              annotations: { id: 'myId', etag: 'etag', annotations: {} },
-            }),
-          )
-        },
-      ),
-    )
-    renderComponent()
-    await screen.findByText('This File has no annotations.')
+    await screen.findByText('This Project has no annotations.')
   })
 })

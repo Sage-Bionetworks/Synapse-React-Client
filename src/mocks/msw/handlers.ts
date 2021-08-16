@@ -15,6 +15,7 @@ import {
   MOCK_INVALID_PROJECT_NAME,
   MOCK_PROJECT_ID,
   MOCK_PROJECT_NAME,
+  mockFileEntityJson,
 } from '../entity/mockEntity'
 import {
   mockUserBundle,
@@ -29,6 +30,7 @@ import {
   USER_ID_BUNDLE,
   USER_PROFILE_ID,
   USER_PROFILE,
+  ENTITY_JSON,
 } from '../../lib/utils/APIConstants'
 
 const handlers = [
@@ -85,7 +87,9 @@ const handlers = [
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY}`,
     async (req, res, ctx) => {
       let response: any = {
-        reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(req.body)}`,
+        reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(
+          req.body,
+        )}`,
       }
       let status = 404
       if (req.body) {
@@ -102,11 +106,11 @@ const handlers = [
           status = 403
         }
       }
-      
+
       return res(ctx.status(status), ctx.json(response))
     },
   ),
-  
+
   rest.post(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
       ':entityId',
@@ -137,14 +141,22 @@ const handlers = [
   ),
 
   rest.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}${FAVORITES}`,
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
     async (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(mockPaginatedEntityHeaders))
     },
   ),
 
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
+      ':entityId',
+    )}`,
+
+    async (req, res, ctx) => {
+      const response = mockFileEntityJson
+      return res(ctx.status(200), ctx.json(response))
+    },
+  ),
 ]
 
 export { handlers }
