@@ -1,0 +1,7 @@
+.SkeletonTable {
+  width: 100%;
+  table-layout: fixed;
+  .MuiSkeleton-root {
+    display: table-cell;
+  }
+}

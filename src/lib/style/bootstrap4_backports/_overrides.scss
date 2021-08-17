@@ -93,8 +93,24 @@ body:not(#body) {
 
     .modal-footer {
       padding: 10px 0px;
+    }
+  }
+}
+
+body#body {
+  // These styles should be applied to Synapse.org only
+  // these would typically go in the SWC codebase, but we only use bootstrap-4-backport in SRC
+  .bootstrap-4-backport {
+    .modal-header {
+      button.close {
+        padding-top: 5px;
+        padding-bottom: 0px;
+      }
+    }
+    .modal-footer {
       & > * {
-        margin: 0;
+        margin-left: 0px;
+        margin-right: 0px;
       }
     }
   }
