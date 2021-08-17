@@ -4,15 +4,21 @@ import React from 'react'
 import {
   EntityModal,
   EntityModalProps,
+  EntityModalTabs,
 } from '../../../../../lib/containers/entity/metadata/EntityModal'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import { ENTITY_BUNDLE_V2 } from '../../../../../lib/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
 import {
   mockFileEntity,
   mockFileEntityBundle,
   MOCK_FILE_ENTITY_ID,
 } from '../../../../../mocks/entity/mockEntity'
-import { server } from '../../../../../mocks/msw/server'
+import { rest, server } from '../../../../../mocks/msw/server'
 
 const defaultProps: EntityModalProps = {
   show: true,
@@ -20,8 +26,11 @@ const defaultProps: EntityModalProps = {
   entityId: MOCK_FILE_ENTITY_ID,
 }
 
-function renderComponent(wrapperProps?: SynapseContextType) {
-  render(<EntityModal {...defaultProps} />, {
+function renderComponent(
+  propOverrides?: Partial<EntityModalProps>,
+  wrapperProps?: SynapseContextType,
+) {
+  render(<EntityModal {...defaultProps} {...propOverrides} />, {
     wrapper: createWrapper(wrapperProps),
   })
 }
@@ -48,5 +57,66 @@ describe('EntityModal tests', () => {
       Object.keys(mockFileEntityBundle.annotations!.annotations)[0],
     )
     // tests for specific data are in AnnotationsTable.test.tsx
+  })
+
+  it('Shows the edit button when the user has edit permissions', async () => {
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ':entityId',
+        )}`,
+        async (req, res, ctx) => {
+          const response = mockFileEntityBundle
+          mockFileEntityBundle.permissions = { canEdit: true }
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+    )
+
+    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    await screen.findByRole('button', { name: 'Edit' })
+  })
+
+  it('Does not show the edit button when the user does not have edit permissions', async () => {
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ':entityId',
+        )}`,
+        async (req, res, ctx) => {
+          const response = mockFileEntityBundle
+          mockFileEntityBundle.permissions = { canEdit: false }
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+    )
+
+    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    expect(
+      screen.queryByRole('button', { name: 'Edit' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('Opens the annotation editor when edit is clicked', async () => {
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ':entityId',
+        )}`,
+        async (req, res, ctx) => {
+          const response = mockFileEntityBundle
+          mockFileEntityBundle.permissions = { canEdit: true }
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+    )
+
+    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+
+    const editButton = await screen.findByRole('button', { name: 'Edit' })
+    userEvent.click(editButton)
+
+    // Text that appears in the editor component if there's a schema
+    await screen.findByText('requires scientific annotations', { exact: false })
   })
 })

@@ -54,7 +54,7 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
                 onClick={props.onAddClick}
                 type="button"
               >
-                Add Item <Add />
+                Add Value
               </Button>
             </div>
           )}
