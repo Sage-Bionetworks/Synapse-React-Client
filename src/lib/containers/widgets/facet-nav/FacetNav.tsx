@@ -49,7 +49,7 @@ export function getFacets(
       item => {
         const isFacetToPlot = item.facetType === 'enumeration' &&
           (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
-        // SWC-5688: only plot if the facet has count data
+        // PORTALS-1993: only plot if the facet has count data
         return isFacetToPlot && (item as FacetColumnResultValues).facetValues.length > 0
       }
     ) ?? []
