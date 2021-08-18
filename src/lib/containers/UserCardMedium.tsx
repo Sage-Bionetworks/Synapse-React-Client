@@ -246,7 +246,11 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             tabIndex={0}
           >
             <span style={{ paddingRight: '5px', paddingBottom: '1px' }}>
-              <a className="link">
+              <a className={`link ${
+                isLarge
+                  ? 'SRC-whiteText'
+                  : ''
+                }`}>
                 {`${userName}@synapse.org`}
               </a>
             </span>
