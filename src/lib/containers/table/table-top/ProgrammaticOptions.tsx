@@ -116,7 +116,11 @@ function ProgrammaticOptions({
           {currentTab === ProgrammaticOptionsTabs.R && (
             <>
               <p>
-                This R code will download file annotations only. Use synGet{'()'} to loop over the list of Synapse IDs from the file annotations to download files.
+                This R code will download file annotations only. Use <a target='_blank'
+                  rel='noopener noreferrer'
+                  href='https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles'>
+                  synGet{'()'}
+                </a> to loop over the list of Synapse IDs from the file annotations to download files.
               </p>
               {installationInstructions}
               <pre>
@@ -127,7 +131,11 @@ function ProgrammaticOptions({
           {currentTab === ProgrammaticOptionsTabs.PYTHON && (
             <>
               <p>
-                This Python code will download file annotations only. Use syn.get to loop over the list of Synapse IDs from the file annotations to download files.
+                This Python code will download file annotations only. Use <a target='_blank'
+                  rel='noopener noreferrer'
+                  href='https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles'>
+                  syn.get
+                </a> to loop over the list of Synapse IDs from the file annotations to download files.
               </p>
               {installationInstructions}
               <pre>
