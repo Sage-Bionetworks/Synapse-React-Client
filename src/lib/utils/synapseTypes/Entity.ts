@@ -36,9 +36,19 @@ export interface Entity {
   uri?: string
 }
 
+// Possible value types in an entity JSON object.
+export type EntityJsonValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | number[]
+  | boolean[]
+  | undefined
+
 // Entity data returned as in https://docs.synapse.org/rest/GET/entity/id/json.html
 // Not comprehensive, but we don't need it to be, since we currently only use JSON for annotations.
-export interface EntityJson extends Record<string, unknown> {
+export interface EntityJson extends Record<string, EntityJsonValue> {
   name: string
   id: string
   etag: string

@@ -1,6 +1,6 @@
 import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
-import { isEmpty, omit, pick } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
@@ -18,7 +18,7 @@ import {
   useGetSchemaBinding,
 } from '../../../utils/hooks/SynapseAPI/useSchema'
 import { SynapseClientError } from '../../../utils/SynapseClient'
-import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
+import { entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
@@ -35,6 +35,8 @@ export type SchemaDrivenAnnotationEditorProps = {
   schemaId?: string
   liveValidate?: boolean
   onSuccess?: () => void
+  /** If defined, shows a 'Cancel' button and runs this effect on click */
+  onCancel?: () => void
 }
 
 export type SchemaDrivenAnnotationEditorModalProps = {
@@ -61,14 +63,6 @@ const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
   return current
 }, {})
 
-function getStandardEntityFields(json: EntityJson): EntityJson {
-  return pick(json, entityJsonKeys) as EntityJson
-}
-
-function removeStandardEntityFields(json: EntityJson): Record<string, unknown> {
-  return omit(json, entityJsonKeys)
-}
-
 /**
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
@@ -80,13 +74,9 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   onSuccess = () => {
     /* no-op */
   },
+  onCancel,
 }: SchemaDrivenAnnotationEditorProps) => {
   const formRef = useRef<Form<Record<string, unknown>>>(null)
-
-  // If fetching an entity, store the non-annotation fields in this object
-  const [entityJson, setEntityJson] = React.useState<
-    Record<string, unknown> | undefined
-  >(undefined)
 
   // Annotation fields fetched and modified via the form
   const [formData, setFormData] = React.useState<
@@ -108,22 +98,16 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
-  const { data: json } = useGetJson(entityId!, {
+  const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
     enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
   })
 
   useEffect(() => {
-    if (json) {
-      /**
-       * To only show annotations in the form, we must remove non-annotation fields.
-       * We will need to submit these values when we create the entity, so we set them aside
-       * and will merge objects later.
-       */
-
-      setEntityJson(getStandardEntityFields(json))
-      setFormData(removeStandardEntityFields(json))
+    if (annotations) {
+      // Put the annotations into a state variable so it can be modified by the form.
+      setFormData(annotations)
     }
-  }, [json])
+  }, [annotations])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -164,9 +148,11 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   )
 
   return (
-    <div className="bootstrap-4-backport">
+    <div className="bootstrap-4-backport AnnotationEditor">
       {isLoading ? (
-        <SynapseSpinner />
+        <div className="LoadingPlaceholder">
+          <SynapseSpinner size={30} />
+        </div>
       ) : (
         <>
           <ReactTooltip id={ANNOTATION_EDITOR_TOOLTIP_ID} />
@@ -207,7 +193,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             </Alert>
           )}
           <Form
-            className="AnnotationEditor"
+            className="AnnotationEditorForm"
             liveValidate={liveValidate}
             noHtml5Validate={true}
             ArrayFieldTemplate={CustomArrayFieldTemplate}
@@ -312,6 +298,14 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               >
                 {entityId ? 'Save' : 'Validate'}
               </Button>
+              {onCancel && (
+                <>
+                  <div className="Spacer" />
+                  <Button variant="primary-500" onClick={onCancel}>
+                    Cancel
+                  </Button>
+                </>
+              )}
             </div>
           </Form>
           {showConfirmation && (

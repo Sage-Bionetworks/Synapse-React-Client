@@ -46,9 +46,12 @@ export function getFacets(
 ): FacetColumnResult[] {
   const result =
     data?.facets?.filter(
-      item =>
-        item.facetType === 'enumeration' &&
-        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1),
+      item => {
+        const isFacetToPlot = item.facetType === 'enumeration' &&
+          (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
+        // PORTALS-1993: only plot if the facet has count data
+        return isFacetToPlot && (item as FacetColumnResultValues).facetValues.length > 0
+      }
     ) ?? []
   return result
 }
@@ -201,78 +204,78 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           showNotch={showNotch}
           topLevelControlsState={topLevelControlsState}
         />
-
-        <div
-          className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${
-            showFacetFilter
-              ? QUERY_FILTERS_EXPANDED_CSS
-              : QUERY_FILTERS_COLLAPSED_CSS
-          } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
-        >
-          <div className="FacetNav__row" role="list">
-            {facets.map(facet => (
-              <div
-                className="col-sm-12 col-md-4"
-                style={{
-                  display: isFacetHiddenInGrid(facet.columnName)
-                    ? 'none'
-                    : 'block',
-                }}
-                key={facet.columnName}
-              >
-                <FacetNavPanel
-                  isLoading={isLoading}
-                  index={
-                    colorTracker.find(el => el.columnName === facet.columnName)
-                      ?.colorIndex!
-                  }
-                  data={data}
-                  onHide={() => hideFacetInGrid(facet.columnName)}
-                  plotType={getPlotType(facet.columnName)}
-                  onSetPlotType={(plotType: PlotType) =>
-                    setPlotType(facet.columnName, plotType)
-                  }
-                  facetToPlot={facet as FacetColumnResultValues}
-                  lastQueryRequest={lastQueryRequest}
-                  /*
-                    TODO: Simplify the nested functions below, all the logic should be contained
-                    in the EnumFacetFilter component.
-                  */
-                  applyChangesToFacetFilter={applyChangesFromQueryFilter}
-                  applyChangesToGraphSlice={(
-                    facet: FacetColumnResultValues,
-                    value: FacetColumnResultValueCount | undefined,
-                    isSelected: boolean,
-                  ) =>
-                    applyChangesToValuesColumn(
-                      lastQueryRequest,
-                      facet,
-                      applyChangesFromQueryFilter,
-                      value?.value,
-                      isSelected,
-                    )
-                  }
-                  isModalView={false}
-                  facetAliases={facetAliases}
-                />
-              </div>
-            ))}
-          </div>
-          {showMoreButtonState !== 'NONE' && (
-            <div className="FacetNav__showMoreContainer bootstrap-4-backport">
-              <Button
-                variant="secondary"
-                className="pill-xl FacetNav__showMore"
-                onClick={() => onShowMoreClick(showMoreButtonState === 'MORE')}
-                style={{ zIndex: 500 }}
-              >
-                {showMoreButtonState === 'LESS'
-                  ? 'Hide Charts'
-                  : 'View All Charts'}
-              </Button>
+        {facets.length > 0 &&
+          <div
+            className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${
+              showFacetFilter
+                ? QUERY_FILTERS_EXPANDED_CSS
+                : QUERY_FILTERS_COLLAPSED_CSS
+            } ${showMoreButtonState === 'LESS' ? 'less' : ''}`}
+          >
+            <div className="FacetNav__row" role="list">
+              {facets.map(facet => (
+                <div
+                  className="col-sm-12 col-md-4"
+                  style={{
+                    display: isFacetHiddenInGrid(facet.columnName)
+                      ? 'none'
+                      : 'block',
+                  }}
+                  key={facet.columnName}
+                >
+                  <FacetNavPanel
+                    isLoading={isLoading}
+                    index={
+                      colorTracker.find(el => el.columnName === facet.columnName)
+                        ?.colorIndex!
+                    }
+                    data={data}
+                    onHide={() => hideFacetInGrid(facet.columnName)}
+                    plotType={getPlotType(facet.columnName)}
+                    onSetPlotType={(plotType: PlotType) =>
+                      setPlotType(facet.columnName, plotType)
+                    }
+                    facetToPlot={facet as FacetColumnResultValues}
+                    lastQueryRequest={lastQueryRequest}
+                    /*
+                      TODO: Simplify the nested functions below, all the logic should be contained
+                      in the EnumFacetFilter component.
+                    */
+                    applyChangesToFacetFilter={applyChangesFromQueryFilter}
+                    applyChangesToGraphSlice={(
+                      facet: FacetColumnResultValues,
+                      value: FacetColumnResultValueCount | undefined,
+                      isSelected: boolean,
+                    ) =>
+                      applyChangesToValuesColumn(
+                        lastQueryRequest,
+                        facet,
+                        applyChangesFromQueryFilter,
+                        value?.value,
+                        isSelected,
+                      )
+                    }
+                    isModalView={false}
+                    facetAliases={facetAliases}
+                  />
+                </div>
+              ))}
             </div>
-          )}
-        </div>
+            {showMoreButtonState !== 'NONE' && (
+              <div className="FacetNav__showMoreContainer bootstrap-4-backport">
+                <Button
+                  variant="secondary"
+                  className="pill-xl FacetNav__showMore"
+                  onClick={() => onShowMoreClick(showMoreButtonState === 'MORE')}
+                  style={{ zIndex: 500 }}
+                >
+                  {showMoreButtonState === 'LESS'
+                    ? 'Hide Charts'
+                    : 'View All Charts'}
+                </Button>
+              </div>
+            )}
+          </div>}
       </>
     )
   }

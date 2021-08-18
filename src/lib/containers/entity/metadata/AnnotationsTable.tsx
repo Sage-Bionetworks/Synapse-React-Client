@@ -1,13 +1,17 @@
 import React from 'react'
 import { isEmpty } from 'lodash-es'
-import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+} from '../../../utils/functions/EntityTypeUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI/useSchema'
 import { useSynapseContext } from '../../../utils/SynapseContext'
+import { useGetJson } from '../../../utils/hooks/SynapseAPI/useEntity'
+import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 
 export type AnnotationsTableProps = {
   entityId: string
@@ -21,38 +25,43 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
    */
   const { isInExperimentalMode } = useSynapseContext()
 
-  const { data: entityBundle } = useGetEntityBundle(entityId)
+  const { entityMetadata, annotations, isLoading } = useGetJson(entityId)
 
   const { data: boundSchema } = useGetSchemaBinding(entityId, {
     enabled: isInExperimentalMode,
   })
 
-  return entityBundle ? (
+  return isLoading ? (
+    <SkeletonTable numRows={3} numCols={2} />
+  ) : (
     <>
-      {isEmpty(entityBundle.annotations?.annotations) ? (
+      {entityMetadata && annotations && isEmpty(annotations) ? (
         <div className="placeholder">
-          This {entityTypeToFriendlyName(entityBundle.entityType!)} has no
-          annotations.
+          This{' '}
+          {entityTypeToFriendlyName(
+            convertToEntityType(entityMetadata.concreteType),
+          )}{' '}
+          has no annotations.
         </div>
       ) : null}
       <table className="AnnotationsTable">
         <tbody>
-          {Object.keys(entityBundle.annotations?.annotations ?? []).map(
-            (key: string) => {
+          {annotations &&
+            Object.keys(annotations).map((key: string) => {
               return (
                 <tr key={key} className="AnnotationsTable__Row">
                   <td className="AnnotationsTable__Row__Key">{key}</td>
                   <td className="AnnotationsTable__Row__Value">
-                    {entityBundle.annotations?.annotations[key].value
-                      ? entityBundle.annotations?.annotations[key].value.join(
-                          ', ',
-                        )
-                      : null}
+                    {Array.isArray(annotations[key])
+                      ? (annotations[key] as
+                          | string[]
+                          | number[]
+                          | boolean[]).join(', ')
+                      : annotations[key]!.toString()}
                   </td>
                 </tr>
               )
-            },
-          )}
+            })}
           {boundSchema && isInExperimentalMode ? (
             <tr className="AnnotationsTable__Row">
               <td className="AnnotationsTable__Row__Key Schema">
@@ -76,5 +85,5 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
         </tbody>
       </table>
     </>
-  ) : null
+  )
 }
