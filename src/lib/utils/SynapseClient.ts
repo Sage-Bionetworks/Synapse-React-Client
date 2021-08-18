@@ -4,21 +4,21 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import {
   ACCESS_REQUIREMENT_BY_ID,
+  ENTITY,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
   ENTITY_HEADERS,
-  ENTITY,
   ENTITY_ID,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
+  FAVORITES,
   REGISTERED_SCHEMA_ID,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
-  FAVORITES,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -26,6 +26,7 @@ import {
   getEndpoint,
   PRODUCTION_ENDPOINT_CONFIG,
 } from './functions/getEndpoint'
+import { removeUndefined } from './functions/ObjectUtils'
 import { DATETIME_UTC_COOKIE_KEY } from './SynapseConstants'
 import {
   AccessApproval,
@@ -1050,7 +1051,7 @@ export const getUserFavorites = (accessToken: string | undefined) => {
  * Remove a favorite
  * http://rest-docs.synapse.org/rest/DELETE/favorite/id.html
  */
- export const removeUserFavorite = (
+export const removeUserFavorite = (
   entityId: string,
   accessToken: string | undefined,
 ): Promise<void> => {
@@ -2661,20 +2662,13 @@ export const deletePersonalAccessToken = (
 // https://rest-docs.synapse.org/rest/GET/projects.html
 export const getMyProjects = (
   accessToken: string,
-  params?: GetProjectsParameters,
+  params: GetProjectsParameters = {},
 ) => {
-  const { nextPageToken, teamId, filter, sort, sortDirection } = params || {}
+  const urlParams = new URLSearchParams(
+    removeUndefined(params) as Record<string, string>,
+  )
   return doGet<ProjectHeaderList>(
-    `/repo/v1/projects${
-      [nextPageToken, teamId, filter, sort, sortDirection].some(x => !!x)
-        ? '?'
-        : ''
-    }${nextPageToken ? 'nextPageToken=' + nextPageToken + '&' : ''}${
-      teamId ? 'teamId=' + teamId + '&' : ''
-    }${filter ? 'filter=' + filter + '&' : ''}
-    ${sort ? 'sort=' + sort + '&' : ''}${
-      sortDirection ? 'sortDirection=' + sortDirection + '&' : ''
-    }`,
+    `/repo/v1/projects?${urlParams.toString()}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

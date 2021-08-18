@@ -144,7 +144,9 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     hasNextPage: hasNextPageProjects,
     isLoading: isLoadingProjects,
   } = useGetProjectsInfinite(
-    scope === FinderScope.CREATED_BY_ME ? { filter: 'CREATED' } : {},
+    scope === FinderScope.CREATED_BY_ME
+      ? { filter: 'CREATED', sort: 'PROJECT_NAME', sortDirection: 'ASC' }
+      : { sort: 'PROJECT_NAME', sortDirection: 'ASC' },
     {
       enabled: useProjectData,
     },
