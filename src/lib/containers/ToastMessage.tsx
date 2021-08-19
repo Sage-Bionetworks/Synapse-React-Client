@@ -74,6 +74,10 @@ export const displayToast = (
   title: string,
   description: string,
   autoCloseInMs = 15000,
+  primaryButtonText?: string,
+  onPrimaryButtonClick?: () => void,
+  secondaryButtonText?: string,
+  secondaryButtonHref?: string,
 ) => {
   // Some toast libraries use 0 to prevent autoclose
   // react-hot-toast doesn't, but we can convert it for better compatibility as we try to migrate to use just one library
@@ -92,6 +96,10 @@ export const displayToast = (
       show={true}
       title={title}
       description={description}
+      primaryButtonText={primaryButtonText}
+      onPrimaryButtonClick={onPrimaryButtonClick}
+      secondaryButtonText={secondaryButtonText}
+      secondaryButtonHref={secondaryButtonHref}
     />,
     {
       id: id,
