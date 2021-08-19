@@ -41,6 +41,7 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
                   className="AddButton"
                   onClick={props.onAddClick}
                   type="button"
+                  disabled={props.disabled}
                 >
                   <Add />
                 </Button>
@@ -53,6 +54,7 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
                 variant="primary-500"
                 onClick={props.onAddClick}
                 type="button"
+                disabled={props.disabled}
               >
                 Add Value
               </Button>

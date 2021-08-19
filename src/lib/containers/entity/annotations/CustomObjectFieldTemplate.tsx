@@ -1,8 +1,10 @@
 import { ObjectFieldTemplateProps, utils } from '@sage-bionetworks/rjsf-core'
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import AddToList from '../../../assets/icons/AddToList'
+import { displayToast } from '../../ToastMessage'
 
 /**
  * Basically identical to the default object field template, with a custom button.
@@ -11,9 +13,62 @@ import AddToList from '../../../assets/icons/AddToList'
  * @param props
  * @returns
  */
-export function CustomObjectFieldTemplate(props: ObjectFieldTemplateProps) {
+export function CustomObjectFieldTemplate(
+  props: ObjectFieldTemplateProps<Record<string, unknown>>,
+) {
   const { TitleField, DescriptionField } = props
   const CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID = `CustomObjectFieldTooltip-${props.idSchema.$id}`
+
+  const [
+    previousSchemaDefinedProperties,
+    setPreviousSchemaDefinedProperties,
+  ] = useState<Set<string>>(new Set())
+
+  /**
+   * We track how the schema changes as the user enters data, causing conditional subschemas to be evaluated.
+   *
+   * If a property exists in the previous version of the schema and has user data, and then is dropped from the schema due to a data update, then
+   * we need to prompt the user whether they want to undo the change, or continue and keep/remove those fields
+   *
+   * In this component, we can identify when one or more fields with user data are dropped (the field gains the additional property flag in the schema prop).
+   * We then use a function provided by the context to report which fields were lost.
+   */
+  useDeepCompareEffectNoCheck(() => {
+    if (props.schema.properties) {
+      const propertyKeys = Object.keys(props.schema.properties)
+      // Schema-defined properties are those properties in the schema without the additional property flag.
+      const schemaDefinedProperties = new Set<string>(
+        propertyKeys.filter(key => {
+          const propertyObject = props.schema.properties![key]
+          return !propertyObject[utils.ADDITIONAL_PROPERTY_FLAG]
+        }),
+      )
+
+      if (previousSchemaDefinedProperties != null) {
+        // Compare the schema defined properties with the previous version to see if any were lost.
+
+        const lostProperties = Array.from(
+          previousSchemaDefinedProperties,
+        ).filter(
+          schemaDefinedProperty =>
+            !schemaDefinedProperties.has(schemaDefinedProperty) &&
+            props.formData[schemaDefinedProperty] != null, // if the data is null, then we don't need to worry about it; user data isn't lost
+        )
+        if (lostProperties.length > 0) {
+          // Report the converted fields in a toast message
+          displayToast(
+            'warning',
+            'title',
+            `The following annotations are no longer specified by the schema and have been converted to Custom Fields: ${lostProperties.join(
+              ', ',
+            )}.`,
+          )
+        }
+      }
+      setPreviousSchemaDefinedProperties(schemaDefinedProperties)
+    }
+  }, [props.schema.properties])
+
   return (
     <fieldset id={props.idSchema.$id}>
       <ReactTooltip
