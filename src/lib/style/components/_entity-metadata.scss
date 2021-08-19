@@ -4,6 +4,7 @@
 .EntityMetadata {
   .Tabs {
     @include SRCMixins.underline-tabs;
+    margin-bottom: 10px;
   }
 
   .placeholder {
@@ -22,7 +23,7 @@
 
 .AnnotationsTable {
   width: 100%;
-  margin: 10px 0px;
+  margin: 0px;
   table-layout: fixed;
   word-break: break-all;
   &__Row {
@@ -43,7 +44,7 @@
 
 .MetadataTable {
   width: 100%;
-  margin: 10px 0px;
+  margin: 0px;
   &__Row {
     &__Key {
       font-weight: bold;

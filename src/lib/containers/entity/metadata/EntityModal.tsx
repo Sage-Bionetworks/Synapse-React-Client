@@ -10,6 +10,7 @@ import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
+import { SkeletonButton } from '../../../assets/skeletons/SkeletonButton'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -52,9 +53,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         {entityBundle ? (
           <Modal.Title>{entityBundle.entity!.name}</Modal.Title>
         ) : (
-          <Skeleton>
-            <Modal.Title>Placeholder</Modal.Title>
-          </Skeleton>
+          <Skeleton width={'40%'} />
         )}
       </Modal.Header>
       <Modal.Body>
@@ -132,9 +131,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
                 Open {entityTypeToFriendlyName(entityBundle.entityType!)}
               </Button>
             ) : (
-              <Skeleton>
-                <Button>Open</Button>
-              </Skeleton>
+              <SkeletonButton placeholderText="Open entity" />
             )}
           </div>
         </Modal.Footer>
