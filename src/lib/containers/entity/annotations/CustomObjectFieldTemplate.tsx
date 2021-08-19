@@ -58,7 +58,7 @@ export function CustomObjectFieldTemplate(
           // Report the converted fields in a toast message
           displayToast(
             'warning',
-            'title',
+            'Fields No Longer Specified By Schema',
             `The following annotations are no longer specified by the schema and have been converted to Custom Fields: ${lostProperties.join(
               ', ',
             )}.`,
