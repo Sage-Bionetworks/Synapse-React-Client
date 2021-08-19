@@ -28,6 +28,7 @@ import { DownloadConfirmation } from './containers/download_list/DownloadConfirm
 import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
 import { EntityModal } from './containers/entity/metadata/EntityModal'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
+import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -68,6 +69,8 @@ const SynapseComponents = {
   FavoritesPage,
   EntityModal,
   ProgrammaticOptions,
+  SynapseToastContainer,
+  displayToast,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

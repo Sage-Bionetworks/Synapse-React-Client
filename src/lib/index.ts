@@ -55,6 +55,7 @@ import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationE
 import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
+import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -107,6 +108,8 @@ const SynapseComponents = {
   ShowDownloadV2,
   FullWidthAlert: FullWidthAlert,
   ProgrammaticOptions,
+  SynapseToastContainer,
+  displayToast,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }

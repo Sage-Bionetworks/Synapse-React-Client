@@ -1,5 +1,20 @@
-import {detectSSOCode, getAccessTokenFromCookie, signOut, getUserProfile, isInSynapseExperimentalMode, getAuthenticatedOn} from './src/lib/utils/SynapseClient'
-import {AVATAR, SMALL_USER_CARD, MEDIUM_USER_CARD, LARGE_USER_CARD,GENERIC_CARD,COMPUTATIONAL, PUBLICATION} from './src/lib/utils/SynapseConstants'
+import {
+  detectSSOCode,
+  getAccessTokenFromCookie,
+  signOut,
+  getUserProfile,
+  isInSynapseExperimentalMode,
+  getAuthenticatedOn,
+} from './src/lib/utils/SynapseClient'
+import {
+  AVATAR,
+  SMALL_USER_CARD,
+  MEDIUM_USER_CARD,
+  LARGE_USER_CARD,
+  GENERIC_CARD,
+  COMPUTATIONAL,
+  PUBLICATION,
+} from './src/lib/utils/SynapseConstants'
 import brainSvg from './src/demo/containers/playground/icons/brain.svg'
 import circleSvg from './src/demo/containers/playground/icons/circle.svg'
 import mouseSvg from './src/demo/containers/playground/icons/mouse.svg'
@@ -8,29 +23,35 @@ import moment from 'moment'
 import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
 import { Checkbox } from './src/lib/containers/widgets/Checkbox'
 import * as ReactBootstrap from 'react-bootstrap'
+import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
+import { SynapseToastContainer } from './src/lib/containers/ToastMessage'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 global.currentUserProfile = false
 global.accessToken = false
 global.sessionChangeHandler = async () => {
-    detectSSOCode()
-    getAccessTokenFromCookie()
-      .then(accessToken => {
-          global.accessToken = accessToken
-          getUserProfile(accessToken).then(profile => {
-            global.currentUserProfile = profile
-            if (accessToken) {
-              getAuthenticatedOn(accessToken).then(authenticatedOn => {
-                const date = moment(authenticatedOn.authenticatedOn).format('L LT')
-                alert(`You are currently logged in as ${profile.userName} (last authenticated at ${date})`)
-              })
-            }
+  detectSSOCode()
+  getAccessTokenFromCookie()
+    .then(accessToken => {
+      global.accessToken = accessToken
+      getUserProfile(accessToken).then(profile => {
+        global.currentUserProfile = profile
+        if (accessToken) {
+          getAuthenticatedOn(accessToken).then(authenticatedOn => {
+            const date = moment(authenticatedOn.authenticatedOn).format('L LT')
+            alert(
+              `You are currently logged in as ${profile.userName} (last authenticated at ${date})`,
+            )
           })
-          console.log('Session has successfully been changed' + accessToken)
+        }
       })
-      .catch((error) => {
-        console.error(error)
-      })
-  }
+      console.log('Session has successfully been changed ' + accessToken)
+    })
+    .catch(error => {
+      console.error(error)
+    })
+}
 
 global.signOut = signOut
 global.sessionChangeHandler()
@@ -45,6 +66,11 @@ global.iconOptions = {
   'Resilience-AD': resilienceadSvg,
 }
 
+// Inject the ToastContainer so we can push toast notifications
+let toastContainerDiv = document.createElement('div')
+document.getElementsByTagName('body')[0].append(toastContainerDiv)
+ReactDOM.render(React.createElement(SynapseToastContainer), toastContainerDiv)
+
 global.SynapseContextConsumer = SynapseContextConsumer
 global.AVATAR = AVATAR
 global.SMALL_USER_CARD = SMALL_USER_CARD
@@ -55,3 +81,4 @@ global.COMPUTATIONAL = COMPUTATIONAL
 global.PUBLICATION = PUBLICATION
 global.Checkbox = Checkbox
 global.ReactBootstrap = ReactBootstrap
+global.ReactQueryDevtoolsPanel = ReactQueryDevtoolsPanel
