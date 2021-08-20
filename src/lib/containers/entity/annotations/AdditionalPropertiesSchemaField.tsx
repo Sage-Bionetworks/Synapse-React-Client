@@ -163,7 +163,6 @@ export function AdditionalPropertiesSchemaField<T>(
 
     // Coerce the data to match the new type
     setList(transformDataFromPropertyType(list, propertyType))
-    onChange(list)
 
     // Don't add other properties to dependency array because we don't want to automatically coerce input
     // i.e. Only coerce data when the type changes, which should only be on mount or when the user explicitly chooses a new type.

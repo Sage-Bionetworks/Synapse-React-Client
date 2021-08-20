@@ -26,6 +26,13 @@ import {
   mockValidationSchema,
 } from '../../../../../mocks/mockSchema'
 import { rest, server } from '../../../../../mocks/msw/server'
+import { displayToast } from '../../../../../lib/containers/ToastMessage'
+
+jest.mock('../../../../../lib/containers/ToastMessage', () => {
+  return { displayToast: jest.fn() }
+})
+
+const mockToastFn = displayToast
 
 const mockAsyncTokenId = 888888
 
@@ -425,8 +432,15 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     // This will remove the data from the schema.
     userEvent.selectOptions(showStringArrayField, 'false')
-
     await clickSaveAndConfirm()
+
+    expect(mockToastFn).toBeCalledWith(
+      'warning',
+      'Fields No Longer Specified By Schema',
+      expect.stringContaining(
+        'The following annotations are no longer specified by the schema and have been converted to Custom Fields: stringArray.',
+      ),
+    )
 
     await waitFor(() => expect(updatedJsonCaptor).toBeCalled())
     // Since it's back in the schema, it should be a string

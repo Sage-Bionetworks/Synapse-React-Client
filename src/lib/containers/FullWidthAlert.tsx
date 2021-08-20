@@ -1,15 +1,11 @@
 import React, { useEffect } from 'react'
-import {
-  Button,
-  Alert,
-  AlertProps,
-} from 'react-bootstrap'
+import { Button, Alert, AlertProps } from 'react-bootstrap'
 import {
   InfoOutlined,
   ErrorOutlined,
   WarningOutlined,
   CheckCircleOutlined,
-  Clear
+  Clear,
 } from '@material-ui/icons'
 
 export interface FullWidthAlertProps extends AlertProps {
@@ -35,7 +31,8 @@ function getIcon(variant?: string) {
       return <ErrorOutlined className="text-danger" fontSize={'large'} />
     case 'success':
       return <CheckCircleOutlined className="text-success" fontSize={'large'} />
-    default: return <></>
+    default:
+      return <></>
   }
 }
 
@@ -56,57 +53,72 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     autoCloseAfterDelayInSeconds,
     variant = 'info',
     transition,
-    isGlobal = true} = props;
+    isGlobal = true,
+  } = props
   const iconContent = getIcon(variant)
-  useEffect(
-    () => {
-      let timer: NodeJS.Timeout
-      if (onClose && autoCloseAfterDelayInSeconds) {
-        timer = setTimeout(onClose, autoCloseAfterDelayInSeconds * 1000)
+
+  const hasActions =
+    (primaryButtonText && onPrimaryButtonClick) ||
+    (secondaryButtonText && secondaryButtonHref)
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (onClose && autoCloseAfterDelayInSeconds) {
+      timer = setTimeout(onClose, autoCloseAfterDelayInSeconds * 1000)
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer)
       }
-      return () => {
-        if (timer) {
-          clearTimeout(timer);
-        }
-      }
-    },
-    [onClose, autoCloseAfterDelayInSeconds]
-  )
+    }
+  }, [onClose, autoCloseAfterDelayInSeconds])
   const additionalAlertVariantClass = variant ? `alert-${variant}` : ''
-  return <Alert
-    variant={variant}
-    show={show}
-    dismissible={false}
-    transition={transition}
-    className={`FullWidthAlert bootstrap-4-backport ${isGlobal ? 'global' : ''} ${additionalAlertVariantClass}`}
-  >
-    <div className="gridContainer">
-      <span className="iconArea">
-        {iconContent}
-      </span>
-      <span className="messageArea">
-        <div><strong>{title}</strong></div>
-        {description}
-      </span>
-      {secondaryButtonText && secondaryButtonHref && (
-        <a
-          className="secondaryButton"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={secondaryButtonHref}
-        >
-          {' '}
-          {secondaryButtonText}
-        </a>
-      )}
-      {primaryButtonText && onPrimaryButtonClick && (
-        <Button className="primaryButton" variant="secondary" onClick={onPrimaryButtonClick}>{primaryButtonText}</Button>
-      )}
-      {onClose && <button className="closeAlert" onClick={onClose}>
-        <Clear fontSize={'large'} />
-      </button>}
-    </div>
-  </Alert>
+  return (
+    <Alert
+      variant={variant}
+      show={show}
+      dismissible={false}
+      transition={transition}
+      className={`FullWidthAlert bootstrap-4-backport ${
+        isGlobal ? 'global' : ''
+      } ${additionalAlertVariantClass}`}
+    >
+      <div className={`gridContainer ${hasActions ? '' : 'noActions'}`}>
+        <span className="iconArea">{iconContent}</span>
+        <span className="messageArea">
+          <div>
+            <strong>{title}</strong>
+          </div>
+          {description}
+        </span>
+        {secondaryButtonText && secondaryButtonHref && (
+          <a
+            className="secondaryButton"
+            target="_blank"
+            rel="noopener noreferrer"
+            href={secondaryButtonHref}
+          >
+            {' '}
+            {secondaryButtonText}
+          </a>
+        )}
+        {primaryButtonText && onPrimaryButtonClick && (
+          <Button
+            className="primaryButton"
+            variant="secondary"
+            onClick={onPrimaryButtonClick}
+          >
+            {primaryButtonText}
+          </Button>
+        )}
+        {onClose && (
+          <button className="closeAlert" onClick={onClose}>
+            <Clear fontSize={'large'} />
+          </button>
+        )}
+      </div>
+    </Alert>
+  )
 }
 
 export default FullWidthAlert
