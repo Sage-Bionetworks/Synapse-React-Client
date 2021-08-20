@@ -194,7 +194,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       {entities.length === 0 && (
         <div className="EntityFinderDetailsView__Placeholder">
           {queryStatus !== 'loading' &&
-            (noResultsPlaceholder || <div>No results</div>)}
+            (noResultsPlaceholder || <div>Empty</div>)}
           {queryStatus === 'loading' && <SynapseSpinner size={30} />}
         </div>
       )}
