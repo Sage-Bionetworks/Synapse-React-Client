@@ -353,6 +353,7 @@ export default class SynapseTable extends React.Component<
       className = 'SRC-marginBottomTop'
     }
     const hasResults = data.queryResult.queryResults.rows.length > 0
+    // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
     if (!hasResults && queryRequest.query.offset === 0) {
       if (queryRequest.query.additionalFilters) {
         return <SearchResultsNotFound />
