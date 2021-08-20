@@ -69,6 +69,15 @@
     }
   }
 
+  .gridContainer.hasCloseButton {
+    @media (min-width: 992px) {
+      grid-template-columns: 50px auto 150px 200px 50px;
+      .closeAlert {
+        grid-column: 5 / span 1;
+      }
+    }
+  }
+
   .gridContainer.noActions {
     grid-template-rows: auto;
     grid-template-columns: 50px auto 50px;
