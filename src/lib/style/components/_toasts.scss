@@ -1,0 +1,21 @@
+.SynapseToastContainer {
+  inset: unset !important;
+  bottom: 20px !important;
+  width: 100%;
+  .SynapseToastMessage {
+    display: unset;
+    line-height: unset;
+    width: 100%;
+    max-width: unset;
+    padding: 0px;
+    border-radius: 0px;
+    & > * {
+      display: unset;
+      padding: 0;
+      margin: 0;
+      .FullWidthAlert {
+        margin: 0px !important;
+      }
+    }
+  }
+}
