@@ -22,9 +22,13 @@ import resilienceadSvg from './src/demo/containers/playground/icons/resiliencead
 import moment from 'moment'
 import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
 import { Checkbox } from './src/lib/containers/widgets/Checkbox'
+import { RadioGroup } from './src/lib/containers/widgets/RadioGroup'
 import * as ReactBootstrap from 'react-bootstrap'
 import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
-import { SynapseToastContainer } from './src/lib/containers/ToastMessage'
+import {
+  SynapseToastContainer,
+  displayToast,
+} from './src/lib/containers/ToastMessage'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -80,5 +84,7 @@ global.GENERIC_CARD = GENERIC_CARD
 global.COMPUTATIONAL = COMPUTATIONAL
 global.PUBLICATION = PUBLICATION
 global.Checkbox = Checkbox
+global.RadioGroup = RadioGroup
 global.ReactBootstrap = ReactBootstrap
 global.ReactQueryDevtoolsPanel = ReactQueryDevtoolsPanel
+global.displayToast = displayToast

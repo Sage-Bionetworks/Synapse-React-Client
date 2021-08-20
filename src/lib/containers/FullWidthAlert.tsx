@@ -83,7 +83,11 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         isGlobal ? 'global' : ''
       } ${additionalAlertVariantClass}`}
     >
-      <div className={`gridContainer ${hasActions ? '' : 'noActions'}`}>
+      <div
+        className={`gridContainer ${hasActions ? '' : 'noActions'} ${
+          onClose ? 'hasCloseButton' : ''
+        }`}
+      >
         <span className="iconArea">{iconContent}</span>
         <span className="messageArea">
           <div>

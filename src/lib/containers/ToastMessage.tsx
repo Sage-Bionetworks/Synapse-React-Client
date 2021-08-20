@@ -51,9 +51,7 @@ export const SynapseToastContainer: React.FunctionComponent = () => {
           toast={t}
           style={{
             ...t.style,
-            animation: t.visible
-              ? 'fadeInUp 0.5s ease'
-              : 'fadeOutDown 0.5s ease',
+            animation: t.visible ? 'fadeInUp 0.5s ease' : 'fadeOutDown 1s ease', // The exit animation needs to be long enough for the element to be removed, or else it will pop back in
           }}
         ></ToastBar>
       )}
@@ -71,8 +69,8 @@ export const SynapseToastContainer: React.FunctionComponent = () => {
  */
 export const displayToast = (
   variant: 'info' | 'success' | 'warning' | 'danger',
-  title: string,
-  description: string,
+  title?: string,
+  description?: string,
   autoCloseInMs = 15000,
   primaryButtonText?: string,
   onPrimaryButtonClick?: () => void,
