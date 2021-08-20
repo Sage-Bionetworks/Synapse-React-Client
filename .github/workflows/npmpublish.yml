@@ -32,3 +32,5 @@ jobs:
               ref: "refs/tags/v${{ env.PACKAGE_VERSION }}",
               sha: context.sha
             })
+      - name: Update GitHub Pages
+        run: yarn deploy
