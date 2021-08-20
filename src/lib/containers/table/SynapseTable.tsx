@@ -353,7 +353,7 @@ export default class SynapseTable extends React.Component<
       className = 'SRC-marginBottomTop'
     }
     const hasResults = data.queryResult.queryResults.rows.length > 0
-    if (!hasResults) {
+    if (!hasResults && queryRequest.query.offset === 0) {
       if (queryRequest.query.additionalFilters) {
         return <SearchResultsNotFound />
       } else {
