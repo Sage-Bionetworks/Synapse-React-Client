@@ -29,6 +29,7 @@ import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/Sc
 import { EntityModal } from './containers/entity/metadata/EntityModal'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
+import IconSvg from './containers/IconSvg'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -71,6 +72,7 @@ const SynapseComponents = {
   ProgrammaticOptions,
   SynapseToastContainer,
   displayToast,
+  IconSvg,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

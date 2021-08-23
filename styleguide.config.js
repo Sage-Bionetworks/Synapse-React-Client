@@ -42,7 +42,7 @@ module.exports = {
         {
             name: 'Demos and non-components',
             description: 'Demos or examples that are useful to display here that are not components.',
-            components: 'src/demo/containers/**/[A-Z]*.tsx',
+            components: ['src/demo/containers/**/[A-Z]*.tsx', 'src/demo/containers/playground/ToastDemo.md']
         },
       ],
 

@@ -18,13 +18,17 @@ import {
   DashboardOutlined,
   StarOutlined,
   Star,
-  InsertDriveFile,
   PeopleOutline,
   AssessmentOutlined,
   GetAppOutlined,
   SearchOutlined,
   HelpOutlined,
   AddCircleOutline,
+  LanguageTwoTone,
+  InsertDriveFileTwoTone,
+  TableChartTwoTone,
+  QuestionAnswerTwoTone,
+  AssessmentTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -44,6 +48,7 @@ import Login from '../assets/mui_components/Login'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
+import Docker from '../assets/mui_components/Docker'
 
 export type IconSvgOptions = {
   icon: string
@@ -109,8 +114,6 @@ const getIcon = (options:IconSvgOptions) => {
       return <StarOutlined style={muiSvgStyle}></StarOutlined>
     case 'fav':
       return <Star style={muiSvgStyle}></Star>
-    case 'file':
-      return <InsertDriveFile style={muiSvgStyle}></InsertDriveFile>
     case 'peopleOutlined':
       return <PeopleOutline style={muiSvgStyle}></PeopleOutline>
     case 'challengesOutlined':
@@ -156,6 +159,18 @@ const getIcon = (options:IconSvgOptions) => {
       return <PackagableFile fill={color ? color : "currentColor"} style={customSvgStyle}></PackagableFile>
     case 'other':
       return <Other fill={color} style={customSvgStyle}></Other>
+    case 'wiki':
+      return <LanguageTwoTone style={muiSvgStyle} />
+    case 'file':
+      return <InsertDriveFileTwoTone style={muiSvgStyle} />
+    case 'table':
+      return <TableChartTwoTone style={muiSvgStyle} />
+    case 'challenge':
+      return <AssessmentTwoTone style={muiSvgStyle} />
+    case 'discussion':
+      return <QuestionAnswerTwoTone style={muiSvgStyle} />
+    case 'docker':
+      return <Docker fill={color ? color : "currentColor"} style={customSvgStyle} />
     case 'accountCertified':
       return <AccountCertified></AccountCertified>
     case 'accountRegistered':
