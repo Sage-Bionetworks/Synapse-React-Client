@@ -9344,17 +9344,7 @@ htmlparser2@^4.1.0:
     domutils "^2.0.0"
     entities "^2.0.0"
 
-htmlparser2@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/htmlparser2/-/htmlparser2-6.0.0.tgz"
-  integrity sha512-numTQtDZMoh78zJpaNdJ9MXb2cv5G3jwUoe3dMQODubZvLoGvTE/Ofp6sHvH8OGKcN/8A47pGLi/k58xHP/Tfw==
-  dependencies:
-    domelementtype "^2.0.1"
-    domhandler "^4.0.0"
-    domutils "^2.4.4"
-    entities "^2.0.0"
-
-htmlparser2@^6.1.0:
+htmlparser2@^6.0.0, htmlparser2@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/htmlparser2/-/htmlparser2-6.1.0.tgz#c4d762b6c3371a05dbe65e94ae43a9f845fb8fb7"
   integrity sha512-gyyPk6rgonLFEDGoeRgQNaEUvdJ4ktTmmUh/h2t7s+M8oPpIPxgNACWa+6ESR57kXstwqPiCut0V8NRpcwgU7A==
@@ -10137,6 +10127,11 @@ is-plain-object@^2.0.3, is-plain-object@^2.0.4:
   integrity sha512-h5PpgXkWitc38BBMYawTYMWJHFZJVnBquFE57xFpjB8pJFiF6gZ+bU+WyI/yqXiFR5mdLsgYNaPe8uao6Uv9Og==
   dependencies:
     isobject "^3.0.1"
+
+is-plain-object@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/is-plain-object/-/is-plain-object-5.0.0.tgz#4427f50ab3429e9025ea7d52e9043a9ef4159344"
+  integrity sha512-VRSzKkbMm5jMDoKLbltAkFQ5Qr7VDiTFGXxYFXXowVj387GeGNOCsOH6Msy00SGZ3Fp84b1Naa1psqgcCIEP5Q==
 
 is-potential-custom-element-name@^1.0.1:
   version "1.0.1"
@@ -11211,7 +11206,7 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-klona@^2.0.4:
+klona@^2.0.3, klona@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.4.tgz#7bb1e3affb0cb8624547ef7e8f6708ea2e39dfc0"
   integrity sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==
@@ -14429,10 +14424,10 @@ postcss@^7, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.17, po
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-postcss@^8.1.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.3.0.tgz#b1a713f6172ca427e3f05ef1303de8b65683325f"
-  integrity sha512-+ogXpdAjWGa+fdYY5BQ96V/6tAo+TdSSIMP5huJBIygdWwKtVoB5JWZ7yUd4xZ8r+8Kvvx4nyg/PQ071H4UtcQ==
+postcss@^8.0.2, postcss@^8.1.0:
+  version "8.3.6"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.3.6.tgz#2730dd76a97969f37f53b9a6096197be311cc4ea"
+  integrity sha512-wG1cc/JhRgdqB6WHEuyLTedf3KIRuD0hG6ldkFEZNCjRxiC+3i6kkWUUbiJQayP28iwG35cEmAbe98585BYV0A==
   dependencies:
     colorette "^1.2.2"
     nanoid "^3.1.23"
@@ -16233,15 +16228,18 @@ sane@^4.0.3:
     minimist "^1.1.1"
     walker "~1.0.5"
 
-sanitize-html@^1.18.4:
-  version "1.27.5"
-  resolved "https://registry.yarnpkg.com/sanitize-html/-/sanitize-html-1.27.5.tgz"
-  integrity sha512-M4M5iXDAUEcZKLXkmk90zSYWEtk5NH3JmojQxKxV371fnMh+x9t1rqdmXaGoyEHw3z/X/8vnFhKjGL5xFGOJ3A==
+sanitize-html@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/sanitize-html/-/sanitize-html-2.3.2.tgz#a1954aea877a096c408aca7b0c260bef6e4fc402"
+  integrity sha512-p7neuskvC8pSurUjdVmbWPXmc9A4+QpOXIL+4gwFC+av5h+lYCXFT8uEneqsFQg/wEA1IH+cKQA60AaQI6p3cg==
   dependencies:
-    htmlparser2 "^4.1.0"
-    lodash "^4.17.15"
+    deepmerge "^4.2.2"
+    escape-string-regexp "^4.0.0"
+    htmlparser2 "^6.0.0"
+    is-plain-object "^5.0.0"
+    klona "^2.0.3"
     parse-srcset "^1.0.2"
-    postcss "^7.0.27"
+    postcss "^8.0.2"
 
 sanitize.css@^10.0.0:
   version "10.0.0"
