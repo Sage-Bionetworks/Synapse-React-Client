@@ -30,6 +30,7 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
                 aria-label={`Remove ${props.title}-${index}`}
                 variant="transparent-primary-500"
                 className="RemoveButton"
+                disabled={props.disabled}
                 onClick={element.onDropIndexClick(element.index)}
               >
                 <Close />
