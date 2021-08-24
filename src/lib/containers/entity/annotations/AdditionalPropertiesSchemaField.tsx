@@ -99,6 +99,22 @@ export function AdditionalPropertiesSchemaField<T>(
   },
 ) {
   /**
+   * Custom annotations in Synapse are always arrays. This function converts initial data to be an array type.
+   * If the initial data is an array, return the data itself.
+   * If the intitial data is a string, returns an array of substrings separated by commas.
+   * Otherwise, wrap the data in an array.
+   */
+  function convertToArray(value: T): Array<any> {
+    if (Array.isArray(value)) {
+      return value
+    } else if (typeof value === 'string') {
+      return value.split(',').map(s => s.trim()) // split a string of comma-separated values, then trim whitespace
+    } else {
+      return [value]
+    }
+  }
+
+  /**
    * This component provides these enhancements to the SchemaField:
    *
    * - Supports selecting a type, and changing the input widget appropriately
@@ -132,13 +148,7 @@ export function AdditionalPropertiesSchemaField<T>(
     handleListRemove,
     appendToList,
     setList,
-  } = useListState(
-    Array.isArray(formData)
-      ? formData
-      : typeof formData === 'string'
-      ? formData.split(',').map(s => s.trim()) // split a string of comma-separated values, then trim whitespace
-      : [formData], // Coerce individual value to an array
-  )
+  } = useListState(convertToArray(formData))
 
   useEffect(() => {
     // The item may not be an array when we get it, and we need to convert it right away because the order of items is not stable, and seems to depend on if the item is an array or not.
