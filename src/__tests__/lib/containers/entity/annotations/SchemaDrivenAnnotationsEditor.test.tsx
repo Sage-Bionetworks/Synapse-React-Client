@@ -1,10 +1,12 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import selectEvent from 'react-select-event'
 import {
   SchemaDrivenAnnotationEditor,
   SchemaDrivenAnnotationEditorProps,
 } from '../../../../../lib/containers/entity/annotations/SchemaDrivenAnnotationEditor'
+import { displayToast } from '../../../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import {
   ENTITY_JSON,
@@ -26,7 +28,6 @@ import {
   mockValidationSchema,
 } from '../../../../../mocks/mockSchema'
 import { rest, server } from '../../../../../mocks/msw/server'
-import { displayToast } from '../../../../../lib/containers/ToastMessage'
 
 jest.mock('../../../../../lib/containers/ToastMessage', () => {
   return { displayToast: jest.fn() }
@@ -232,7 +233,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     expect(screen.queryByLabelText('state*')).not.toBeInTheDocument()
 
     // Behavior under test: select "USA" and "state" field appears
-    userEvent.selectOptions(countryField, 'USA')
+    await selectEvent.select(countryField, 'USA')
     await screen.findByLabelText('state*')
   })
 
@@ -260,17 +261,17 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
   })
 
   it('Fetches existing annotations and schema and loads them into the form', async () => {
-    server.use(annotationsHandler, ...schemaHandlers)
+    server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
     renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
-    const countryField = (await screen.findByLabelText(
-      'country*',
-    )) as HTMLInputElement
-    const stateField = (await screen.findByLabelText(
-      'state*',
-    )) as HTMLInputElement
-    expect(countryField.value).toBe('USA')
-    expect(stateField.value).toBe('Washington')
+
+    // Saving the form should maintain the existing annotations
+    await clickSaveAndConfirm()
+    await waitFor(() =>
+      expect(updatedJsonCaptor).toBeCalledWith(
+        expect.objectContaining({ country: 'USA', state: 'Washington' }),
+      ),
+    )
   })
 
   it('Removes a custom annotation field when the last value is removed', async () => {
@@ -313,13 +314,16 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     // We need the individual schema field components to render because in some cases they convert data
     // to the appropriate format (e.g. flattening arrays of one item)
-    // await screen.findByLabelText('country*')
+    const countryField = (await screen.findByLabelText(
+      'country*',
+    )) as HTMLInputElement
     const stateField = (await screen.findByLabelText(
       'state*',
     )) as HTMLInputElement
 
     await waitFor(() => expect(stateField.value).toBe('Washington'))
 
+    await selectEvent.select(countryField, 'USA')
     userEvent.clear(stateField)
     userEvent.type(stateField, 'Ohio{enter}') // For some reason, keying "enter" here makes the test stable
 
@@ -360,16 +364,15 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
     renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
-    const countryField = (await screen.findByLabelText(
-      'country*',
-    )) as HTMLInputElement
-    const stateField = (await screen.findByLabelText(
-      'state*',
-    )) as HTMLInputElement
-    expect(countryField.value).toBe('USA')
-    expect(stateField.value).toBe('Washington')
+    const countryField = await screen.findByLabelText('country*')
 
-    userEvent.selectOptions(countryField, 'CA')
+    // This is unstable if we only call it once 🙃 🤷
+    await selectEvent.select(countryField, 'CA')
+    await selectEvent.select(countryField, 'CA')
+
+    await waitFor(() =>
+      expect(screen.queryByLabelText('state*')).not.toBeInTheDocument(),
+    )
 
     await clickSaveAndConfirm()
 
@@ -381,8 +384,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
-  // Currently unstable
-  it.skip('Converts an additionalProperty array back to a single value when added back to the schema', async () => {
+  it('Converts an additionalProperty array back to a single value when added back to the schema', async () => {
     // If we select "USA", then "Washington", then change "USA" to "CA", "Washington" will become ["Washington"] (see previous test)
     // Here we verify that if we then select "USA" again, ["Washington"] will be converted back to "Washington"
     server.use(annotationsHandler, ...schemaHandlers, successfulUpdateHandler)
@@ -391,20 +393,13 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     const countryField = (await screen.findByLabelText(
       'country*',
     )) as HTMLInputElement
-    let stateField = (await screen.findByLabelText(
-      'state*',
-    )) as HTMLInputElement
-    expect(countryField.value).toBe('USA')
-    expect(stateField.value).toBe('Washington')
 
-    userEvent.selectOptions(countryField, 'CA')
+    await selectEvent.select(countryField, 'CA')
 
-    // State is now an array ["Washington"], but if we pick "USA" again, it should be converted back to "Washington" (not an array)
-    userEvent.selectOptions(countryField, 'USA')
+    // State is now an array ["Washington"] (previous test confirms this)
+    // If we pick "USA" again, it should be converted back to "Washington" (not an array)
+    await selectEvent.select(countryField, 'USA')
 
-    stateField = (await screen.findByLabelText('state*')) as HTMLInputElement
-    expect(stateField.value).toBe('Washington')
-    userEvent.tab()
     await clickSave()
     // Since it's back in the schema, it should be a string
     await waitFor(() =>
@@ -480,8 +475,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
-  // Currently unstable.
-  it.skip('Disallows keys that collide with the Entity JSON definition and throws a custom error message', async () => {
+  it('Disallows keys that collide with the Entity JSON definition and throws a custom error message', async () => {
     server.use(annotationsHandler, noSchemaHandler)
 
     renderComponent()
