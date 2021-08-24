@@ -1,8 +1,9 @@
 import React from 'react'
-import { AddBatchOfFilesToDownloadListResponse } from '../utils/synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
-import { addFileToDownloadListV2 } from '../utils/SynapseClient'
+import { addFileToDownloadListV2, getEntity } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { displayToast } from './ToastMessage'
+import ReactTooltip from 'react-tooltip'
 
 export type AddToDownloadListV2Props = {
   entityId: string
@@ -13,22 +14,47 @@ const AddToDownloadListV2: React.FunctionComponent<AddToDownloadListV2Props> = (
 
   const {entityId, entityVersionNumber} = props
   const { accessToken } = useSynapseContext()
+  if (!accessToken) {
+    return <></>
+  }
   const addToDownloadListV2 = async () => {
     try {
-      const result:AddBatchOfFilesToDownloadListResponse = await addFileToDownloadListV2(entityId, entityVersionNumber, accessToken)
-      if (result.numberOfFilesAdded === 1)
-        console.log(`Successfully added ${entityId} (version=${entityVersionNumber}) to the Download List v2`)
-      else
-        console.log(`Adding to the Download List v2 resulted in ${result.numberOfFilesAdded} files being added.`)
+      await addFileToDownloadListV2(entityId, entityVersionNumber, accessToken)
+      const entity = await getEntity(accessToken, entityId, entityVersionNumber ? entityVersionNumber?.toString() : undefined)
+      displayToast(
+        'success',
+        undefined,
+        `${entity.name} was successfully added to your Download Cart.`,
+        10000
+      )
     } catch (e) {
-      console.log("Failed to add to the Download List v2: ", e)
+      displayToast(
+        'danger',
+        undefined,
+        `Unable to add the file to your Download Cart. ${e}`,
+        10000
+      )
     }
   }
 
   return (
-    <a onClick={addToDownloadListV2}>
-      <IconSvg options={{icon: "addToCart"}} />
-    </a>
+    <>
+        <a
+          data-tip="Add this file to your Download Cart"
+          data-for={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
+          onClick={addToDownloadListV2}
+          className="ignoreLink"
+        >
+          <ReactTooltip
+            delayShow={300}
+            place="right"
+            type="dark"
+            effect="solid"
+            id={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
+          />
+          <IconSvg options={{icon: "addToCart"}} />
+        </a>
+    </>
   )
 }
 
