@@ -135,8 +135,9 @@ export function AdditionalPropertiesSchemaField<T>(
   } = useListState(
     Array.isArray(formData)
       ? formData
-      : // Coerce individual value to an array
-        [formData],
+      : typeof formData === 'string'
+      ? formData.split(',').map(s => s.trim()) // split a string of comma-separated values, then trim whitespace
+      : [formData], // Coerce individual value to an array
   )
 
   useEffect(() => {
