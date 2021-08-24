@@ -11,6 +11,9 @@ import {
 // Some types for rjsf and react-select don't seem to be accurate or useful, so we cast to this object when we're dealing with enumeration options
 type EnumOption = { value: string; label: string }
 
+/**
+ * We want to apply the 'form-control' bootstrap class to react-select's Control component, and the easiest way to do that is to make a custom version
+ */
 const Control = ({
   children,
   ...rest
