@@ -27,15 +27,11 @@ const AddToDownloadListV2: React.FunctionComponent<AddToDownloadListV2Props> = p
       displayToast(
         `${entity.name} was successfully added to your Download Cart.`,
         'success',
-        { autoCloseInMs: 10000 },
       )
     } catch (e) {
       displayToast(
         `Unable to add the file to your Download Cart. ${e}`,
         'danger',
-        {
-          autoCloseInMs: 10000,
-        },
       )
     }
   }
