@@ -9,7 +9,7 @@ export const ToastDemo = () => {
   >('info')
 
   const [title, setTitle] = React.useState('')
-  const [message, setDescription] = React.useState('')
+  const [message, setMessage] = React.useState('')
   const [autoClose, setAutoClose] = React.useState(0)
   const [buttonText, setButtonText] = React.useState('')
   const [linkText, setLinkText] = React.useState('')
@@ -43,10 +43,7 @@ export const ToastDemo = () => {
         }
       />
       <FormLabel>Message</FormLabel>
-      <FormControl
-        value={message}
-        onChange={e => setDescription(e.target.value)}
-      />
+      <FormControl value={message} onChange={e => setMessage(e.target.value)} />
       <FormLabel>Title</FormLabel>
       <FormControl value={title} onChange={e => setTitle(e.target.value)} />
       <FormLabel>Auto-close (ms)</FormLabel>
