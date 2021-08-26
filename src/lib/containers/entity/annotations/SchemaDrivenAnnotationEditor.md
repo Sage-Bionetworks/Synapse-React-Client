@@ -39,16 +39,7 @@ return (
         schemaId={schemaId}
         liveValidate={liveValidate}
         onSuccess={() => {
-          displayToast(
-            'success',
-            null,
-            'Annotations successfully updated.',
-            10000,
-            null,
-            null,
-            null,
-            null,
-          )
+          displayToast('Annotations successfully updated.', 'success')
         }}
       />
     )}

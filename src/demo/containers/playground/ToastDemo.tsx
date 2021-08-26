@@ -9,24 +9,22 @@ export const ToastDemo = () => {
   >('info')
 
   const [title, setTitle] = React.useState('')
-  const [description, setDescription] = React.useState('')
+  const [message, setMessage] = React.useState('')
   const [autoClose, setAutoClose] = React.useState(0)
   const [buttonText, setButtonText] = React.useState('')
   const [linkText, setLinkText] = React.useState('')
 
   function fireToast() {
-    displayToast(
-      variant,
-      title,
-      description,
-      autoClose,
-      buttonText ? buttonText : undefined,
-      () => {
+    displayToast(message, variant, {
+      title: title,
+      autoCloseInMs: autoClose,
+      primaryButtonText: buttonText ? buttonText : undefined,
+      onPrimaryButtonClick: () => {
         console.log('Primary button clicked!')
       },
-      linkText ? linkText : undefined,
-      '#',
-    )
+      secondaryButtonText: linkText ? linkText : undefined,
+      secondaryButtonHref: '#',
+    })
   }
   return (
     <div className="bootstrap-4-backport">
@@ -44,13 +42,10 @@ export const ToastDemo = () => {
           setVariant(value as 'info' | 'success' | 'warning' | 'danger')
         }
       />
+      <FormLabel>Message</FormLabel>
+      <FormControl value={message} onChange={e => setMessage(e.target.value)} />
       <FormLabel>Title</FormLabel>
       <FormControl value={title} onChange={e => setTitle(e.target.value)} />
-      <FormLabel>Description</FormLabel>
-      <FormControl
-        value={description}
-        onChange={e => setDescription(e.target.value)}
-      />
       <FormLabel>Auto-close (ms)</FormLabel>
       <FormControl
         type="number"
