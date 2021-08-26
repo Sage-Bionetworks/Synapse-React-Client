@@ -433,10 +433,10 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       expect.stringContaining(
         'The following annotations are no longer specified by the schema and have been converted to Custom Fields: stringArray.',
       ),
+      'warning',
       expect.objectContaining({
-        variant: 'warning',
         title: 'Fields No Longer Specified By Schema',
-      })
+      }),
     )
 
     await waitFor(() => expect(updatedJsonCaptor).toBeCalled())
