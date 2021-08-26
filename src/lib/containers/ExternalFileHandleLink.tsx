@@ -69,6 +69,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
       href={externalFileHandle.externalURL}
       className={className}
       target="_blank"
+      rel="noopener noreferrer"
     >
       <span>
         {fileEntity?.name}
