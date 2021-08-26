@@ -245,7 +245,11 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             )}
             tabIndex={0}
           >
-            <span style={{ paddingRight: '5px', paddingBottom: '1px' }}>
+            <span className={
+                isLarge
+                  ? 'SRC-whiteBorderBottom'
+                  : ''
+              } style={{ paddingRight: '5px', paddingBottom: '1px' }}>
               <a className={`link ${
                 isLarge
                   ? 'SRC-whiteText'
