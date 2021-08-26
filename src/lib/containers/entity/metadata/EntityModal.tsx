@@ -83,6 +83,9 @@ export const EntityModal: React.FC<EntityModalProps> = ({
               {isInEditMode ? (
                 <SchemaDrivenAnnotationEditor
                   entityId={entityId}
+                  onSuccess={() => {
+                    setIsInEditMode(false)
+                  }}
                   onCancel={() => setIsInEditMode(false)}
                 />
               ) : (
