@@ -264,16 +264,13 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             rel="noopener noreferrer"
             style={{width: 'fit-content'}}
             tabIndex={0}
+            className={
+              isLarge
+                ? 'SRC-whiteText'
+                : ''
+            }
           >
-            <span
-              className={
-                isLarge
-                  ? 'SRC-whiteText'
-                  : ''
-              }
-            >
-              View ORCID
-            </span>
+            View ORCID
           </a>
         )}
       </div>
