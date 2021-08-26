@@ -245,11 +245,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             )}
             tabIndex={0}
           >
-            <span className={
-                isLarge
-                  ? 'SRC-whiteBorderBottom'
-                  : ''
-              } style={{ paddingRight: '5px', paddingBottom: '1px' }}>
+            <span style={{ paddingRight: '5px', paddingBottom: '1px' }}>
               <a className={`link ${
                 isLarge
                   ? 'SRC-whiteText'
@@ -268,16 +264,13 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             rel="noopener noreferrer"
             style={{width: 'fit-content'}}
             tabIndex={0}
+            className={
+              isLarge
+                ? 'SRC-whiteText'
+                : ''
+            }
           >
-            <span
-              className={
-                isLarge
-                  ? 'SRC-whiteText'
-                  : ''
-              }
-            >
-              View ORCID
-            </span>
+            View ORCID
           </a>
         )}
       </div>
