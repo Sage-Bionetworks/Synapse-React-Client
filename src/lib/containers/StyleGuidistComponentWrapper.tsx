@@ -3,7 +3,6 @@ import { MemoryRouter } from 'react-router'
 import { SynapseContextProvider } from '../utils/SynapseContext'
 import RenderIfInView from './RenderIfInView'
 import { SynapseClient } from '../utils'
-import { SynapseErrorBoundary } from './ErrorBanner'
 
 export const StyleGuidistComponentWrapper: React.FC = props => {
   return (
@@ -15,9 +14,7 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
       }}
     >
       <MemoryRouter>
-        <RenderIfInView>
-          <SynapseErrorBoundary>{props.children}</SynapseErrorBoundary>
-        </RenderIfInView>
+        <RenderIfInView>{props.children}</RenderIfInView>
       </MemoryRouter>
     </SynapseContextProvider>
   )
