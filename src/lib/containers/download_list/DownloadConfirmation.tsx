@@ -29,8 +29,7 @@ enum StatusEnum {
   LOADING_INFO,
   PROCESSING,
   INFO,
-  SIGNED_OUT,
-  DONE
+  SIGNED_OUT
 }
 
 export type DownloadConfirmationState = {
@@ -54,6 +53,7 @@ export type DownloadConfirmationProps = {
 // add files to download list
 async function addToDownload(
   token: string,
+  closeConfirmationFn: () => void,
   queryBundleRequest?: QueryBundleRequest,
   folderId?: string,
   goToDownloadListFn?: () => void,
@@ -83,15 +83,16 @@ async function addToDownload(
         onPrimaryButtonClick: goToDownloadListFn,
       }
     )
-    return [StatusEnum.DONE, '']
+    closeConfirmationFn()
+    return [StatusEnum.LOADING_INFO, '']
   } catch (error) {
     displayToast(
       'danger',
       undefined,
       error.reason
     )
-
-    return [StatusEnum.DONE, '']
+    closeConfirmationFn()
+    return [StatusEnum.LOADING_INFO, '']
   }
 }
 
@@ -158,7 +159,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
   const lastQueryRequest = getLastQueryRequest!()
      // is not defined (configured for a container)
   const [showDownloadList, setShowDownloadList] = useState(false)
-  
   const updateStats = useCallback(async (count?: number, bytes?: number) => {
     if (accessToken) {
       const estimatedDownloadBytesPerSecond = await testDownloadSpeed(accessToken)
@@ -228,13 +228,11 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     } else {
       setStatus(StatusEnum.PROCESSING)
       const goToDownloadListFn = () => setShowDownloadList(true)
-      const result = await addToDownload(accessToken, lastQueryRequest, folderId, goToDownloadListFn)
+      const result = await addToDownload(accessToken, onCancel, lastQueryRequest, folderId, goToDownloadListFn)
       const newStatus = result[0]
       setStatus(newStatus)
       refetch()
-      if (newStatus !== StatusEnum.DONE) {
-        setState({ ...state, errorMessage: result[1] })
-      }
+      setState({ ...state, errorMessage: result[1] })
     }
   }
 
