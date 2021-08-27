@@ -23,14 +23,14 @@ import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV
 import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
 import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
+import { displayToast } from '../ToastMessage'
 
 enum StatusEnum {
   LOADING_INFO,
   PROCESSING,
   INFO,
-  SUCCESS,
-  ERROR,
   SIGNED_OUT,
+  DONE
 }
 
 export type DownloadConfirmationState = {
@@ -56,6 +56,7 @@ async function addToDownload(
   token: string,
   queryBundleRequest?: QueryBundleRequest,
   folderId?: string,
+  goToDownloadListFn?: () => void,
 ): Promise<[StatusEnum, string]> {
   try {
     if (!SynapseClient.isInSynapseExperimentalMode()) {
@@ -74,9 +75,23 @@ async function addToDownload(
       }
       await SynapseClient.addFilesToDownloadListV2(req, token)
     }
-    return [StatusEnum.SUCCESS, '']
+    displayToast(
+      'File(s) were successfully added to your Download List.',
+      'success',
+      {
+        primaryButtonText: 'View Download List',
+        onPrimaryButtonClick: goToDownloadListFn,
+      }
+    )
+    return [StatusEnum.DONE, '']
   } catch (error) {
-    return [StatusEnum.ERROR, error.reason]
+    displayToast(
+      'danger',
+      undefined,
+      error.reason
+    )
+
+    return [StatusEnum.DONE, '']
   }
 }
 
@@ -107,12 +122,6 @@ const StatusConstruct: UiStateDictionary = {
     infoText: 'Calculating File Size',
     closeText: 'Cancel',
   },
-
-  [StatusEnum.ERROR]: {
-    className: 'alert-danger',
-    closeText: 'Close',
-    infoText: '',
-  },
   [StatusEnum.SIGNED_OUT]: {
     className: 'alert-danger',
     closeText: 'Close',
@@ -122,11 +131,6 @@ const StatusConstruct: UiStateDictionary = {
         your download list.
       </>
     ),
-  },
-  [StatusEnum.SUCCESS]: {
-    className: 'alert-info',
-    closeText: 'Close',
-    infoText: '',
   },
 }
 
@@ -223,11 +227,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       setStatus(StatusEnum.SIGNED_OUT)
     } else {
       setStatus(StatusEnum.PROCESSING)
-      const result = await addToDownload(accessToken, lastQueryRequest, folderId)
+      const goToDownloadListFn = () => setShowDownloadList(true)
+      const result = await addToDownload(accessToken, lastQueryRequest, folderId, goToDownloadListFn)
       const newStatus = result[0]
       setStatus(newStatus)
       refetch()
-      if (newStatus !== StatusEnum.SUCCESS) {
+      if (newStatus !== StatusEnum.DONE) {
         setState({ ...state, errorMessage: result[1] })
       }
     }
@@ -250,9 +255,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
 
       case StatusEnum.SIGNED_OUT:
         return <>{StatusConstruct[status].infoText}</>
-      case StatusEnum.ERROR:
-        return <>{errorMessage}</>
-
       case StatusEnum.INFO:
         return (
           <>
@@ -262,18 +264,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
             ></DownloadDetails>
             <span>{StatusConstruct[status].infoText}</span>
           </>
-        )
-
-      case StatusEnum.SUCCESS:
-        return (
-          <span>
-            <button
-              className="test-view-downloadlist btn-link"
-              onClick={() => setShowDownloadList(true)}
-            >
-              View Download List
-            </button>
-          </span>
         )
 
       default:
