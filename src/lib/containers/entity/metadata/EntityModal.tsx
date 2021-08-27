@@ -11,6 +11,7 @@ import { MetadataTable } from './MetadataTable'
 import Skeleton from '@material-ui/lab/Skeleton'
 import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
 import { SkeletonButton } from '../../../assets/skeletons/SkeletonButton'
+import { SynapseErrorBoundary } from '../../ErrorBanner'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -81,13 +82,15 @@ export const EntityModal: React.FC<EntityModalProps> = ({
           {currentTab === EntityModalTabs.ANNOTATIONS && (
             <>
               {isInEditMode ? (
-                <SchemaDrivenAnnotationEditor
-                  entityId={entityId}
-                  onSuccess={() => {
-                    setIsInEditMode(false)
-                  }}
-                  onCancel={() => setIsInEditMode(false)}
-                />
+                <SynapseErrorBoundary>
+                  <SchemaDrivenAnnotationEditor
+                    entityId={entityId}
+                    onSuccess={() => {
+                      setIsInEditMode(false)
+                    }}
+                    onCancel={() => setIsInEditMode(false)}
+                  />
+                </SynapseErrorBoundary>
               ) : (
                 <AnnotationsTable entityId={entityId} />
               )}

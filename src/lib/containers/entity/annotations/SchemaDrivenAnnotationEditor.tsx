@@ -3,8 +3,10 @@ import { JSONSchema7 } from 'json-schema'
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
+import { useErrorHandler } from 'react-error-boundary'
 import ReactTooltip from 'react-tooltip'
 import AddToList from '../../../assets/icons/AddToList'
+import { toError } from '../../../utils/ErrorUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -77,6 +79,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
   },
   onCancel,
 }: SchemaDrivenAnnotationEditorProps) => {
+  const handleError = useErrorHandler()
   const formRef = useRef<Form<Record<string, unknown>>>(null)
 
   // Annotation fields fetched and modified via the form
@@ -101,6 +104,11 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
     enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
+    onError: e => {
+      if (e.status >= 500) {
+        handleError(toError(e))
+      }
+    },
   })
 
   useEffect(() => {
@@ -116,6 +124,11 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
       enabled: !!entityId,
       retry: false,
       refetchOnWindowFocus: false,
+      onError: e => {
+        if (e.status >= 500) {
+          handleError(toError(e))
+        }
+      },
     },
   )
 
@@ -128,6 +141,11 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
         // https://github.com/rjsf-team/react-jsonschema-form/issues/2471
         delete schema.$id
         return schema
+      },
+      onError: e => {
+        if (e.status >= 500) {
+          handleError(toError(e))
+        }
       },
     },
   )
