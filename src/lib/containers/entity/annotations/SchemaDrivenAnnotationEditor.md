@@ -24,21 +24,6 @@ return (
       onChange={e => setEntityOrSchemaId(e.target.value)}
       style={{ width: '500px', marginBottom: '5px' }}
     />
-    <ReactBootstrap.Toast
-      onClose={() => setShowToast(false)}
-      style={{
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-      }}
-      show={showToast}
-      delay={10000}
-      autohide
-    >
-      <ReactBootstrap.Toast.Body>
-        Annotations successfully updated.
-      </ReactBootstrap.Toast.Body>
-    </ReactBootstrap.Toast>
     <Checkbox
       id="liveValidation"
       label="Live Validation?"
@@ -54,7 +39,7 @@ return (
         schemaId={schemaId}
         liveValidate={liveValidate}
         onSuccess={() => {
-          setShowToast(true)
+          displayToast('Annotations successfully updated.', 'success')
         }}
       />
     )}

@@ -59,24 +59,42 @@ export const SynapseToastContainer: React.FunctionComponent = () => {
   )
 }
 
+type ToastMessageOptions = {
+  title?: string
+  /* autoCloseInMs default: 15000 */
+  autoCloseInMs?: number
+  primaryButtonText?: string
+  onPrimaryButtonClick?: () => void
+  secondaryButtonText?: string
+  secondaryButtonHref?: string
+}
+
 /**
  * Displays a toast message. Requires one 'SynapseToastContainer' to be somewhere in the page.
  *
- * @param variant - The type of toast message to display.
- * @param title - The title of the toast message.
- * @param description - The description of the toast message.
- * @param autoCloseInMs - The amount of time in milliseconds to wait before automatically closing the toast. To prevent autoclose, set to 0 or Infinity.
+ * @param message - The description of the toast message.
+ * @param variant - The type of toast message to display. Default 'info'.
+
+ * In ToastMessageOptions:
+ *
+ * @param autoCloseInMs - The amount of time in milliseconds to wait before automatically closing the toast. To prevent autoclose, set to 0 or Infinity. Default 15000.
+ *
+ * The rest of the options params are undefined by default.
  */
 export const displayToast = (
-  variant: 'info' | 'success' | 'warning' | 'danger',
-  title?: string,
-  description?: string,
-  autoCloseInMs = 15000,
-  primaryButtonText?: string,
-  onPrimaryButtonClick?: () => void,
-  secondaryButtonText?: string,
-  secondaryButtonHref?: string,
+  message: string,
+  variant?: 'info' | 'success' | 'warning' | 'danger',
+  toastMessageOptions?: ToastMessageOptions,
 ) => {
+  const {
+    title = undefined,
+    primaryButtonText = undefined,
+    onPrimaryButtonClick = undefined,
+    secondaryButtonText = undefined,
+    secondaryButtonHref = undefined,
+  } = toastMessageOptions ?? {}
+
+  let { autoCloseInMs = 15000 } = toastMessageOptions ?? {}
   // Some toast libraries use 0 to prevent autoclose
   // react-hot-toast doesn't, but we can convert it for better compatibility as we try to migrate to use just one library
   if (autoCloseInMs === 0) {
@@ -90,10 +108,10 @@ export const displayToast = (
       onClose={() => {
         toast.dismiss(id)
       }}
-      variant={variant}
+      variant={variant ?? 'info'}
       show={true}
       title={title}
-      description={description}
+      description={message}
       primaryButtonText={primaryButtonText}
       onPrimaryButtonClick={onPrimaryButtonClick}
       secondaryButtonText={secondaryButtonText}

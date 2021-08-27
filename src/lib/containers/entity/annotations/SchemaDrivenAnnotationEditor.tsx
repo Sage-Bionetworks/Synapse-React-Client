@@ -27,6 +27,7 @@ import { CustomBooleanWidget } from './CustomBooleanWidget'
 import { CustomDateTimeWidget } from './CustomDateTimeWidget'
 import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
+import { CustomSelectWidget } from './CustomSelectWidget'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -253,6 +254,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             }}
             widgets={{
               DateTimeWidget: CustomDateTimeWidget,
+              SelectWidget: CustomSelectWidget,
               CheckboxWidget: CustomBooleanWidget,
             }}
           >

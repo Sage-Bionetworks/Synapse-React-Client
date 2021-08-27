@@ -30,3 +30,15 @@
     text-shadow: none;
   }
 }
+
+.react-select-container {
+  .form-control {
+    display: flex;
+  }
+
+  // Almost a direct copy of the form-control-focus mixin in bootstrap 4
+  .form-control:focus-within {
+    border-color: lighten(SRC.$primary-action-color, 25%);
+    box-shadow: 0 0 0 0.2rem rgba(SRC.$primary-action-color, 0.25);
+  }
+}
