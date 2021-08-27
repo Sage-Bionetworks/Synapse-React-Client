@@ -15,12 +15,18 @@ import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,
 } from '../../../mocks/MockSynapseContext'
+import { displayToast } from '../../../lib/containers/ToastMessage'
 
 let getQueryTableResultsFn: () => void
 let addFilesToDownloadRequestFn: () => void
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const TestDownloadSpeed = require('../../../lib/utils/functions/testDownloadSpeed')
 const mockClose = jest.fn()
+jest.mock('../../../lib/containers/ToastMessage', () => {
+  return { displayToast: jest.fn() }
+})
+
+const mockToastFn = displayToast
 
 const query = {
   sql: 'SELECT * FROM syn123456789',
@@ -153,8 +159,11 @@ describe('it performs the expected functionality', () => {
     await resolveAllPending(wrapper)
     wrapper.find('button.btn-primary').simulate('click')
     await resolveAllPending(wrapper)
-    expect(wrapper.find('button.btn-primary')).toHaveLength(0)
-    const link = wrapper.find('button.test-view-downloadlist')
-    expect(link.text()).toBe('View Download List')
+
+    expect(mockToastFn).toBeCalledWith(
+      'File(s) were successfully added to your Download List.',
+      'success',
+      expect.objectContaining({ primaryButtonText: 'View Download List' }),
+    )
   })
 })
