@@ -84,7 +84,9 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
                           lastName: item.lastName || '',
                           userName: item.userName
                         }}
-                        disableLink={true} />
+                        disableLink={true}
+                        showFullName={true}
+                      />
                     </li>
                   ))
                 : null
