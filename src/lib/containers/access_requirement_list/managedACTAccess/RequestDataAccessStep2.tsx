@@ -625,6 +625,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       userProfile={accessor.profile}
                       showAccountLevelIcon={true}
                       disableLink={true}
+                      showFullName={true}
                     />
                     {
                       // only display delete button if the user profile is other users and has not access before

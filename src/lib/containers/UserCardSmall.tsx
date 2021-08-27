@@ -18,6 +18,7 @@ export type UserCardSmallProps = {
   avatarSize?: AvatarSize
   imageURL?: string
   className?: string
+  showFullName?: boolean
 }
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
@@ -34,6 +35,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
   avatarSize = 'SMALL',
   imageURL,
   className,
+  showFullName = false,
   ...rest
 }) => {
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
@@ -128,6 +130,11 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
+        {showFullName && (
+          <span className={'user-fullname'}>
+            &nbsp;{`${userProfile.firstName} ${userProfile.lastName}`}
+          </span>
+        )}
         {showAccountLevelIcon && (
           <span className={'account-level-icon'}>{accountLevelIcon}</span>
         )}
@@ -140,6 +147,11 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
     >
       {avatar}
       {`@${userProfile.userName}`}
+      {showFullName && (
+        <span className={'user-fullname'}>
+            &nbsp;{`${userProfile.firstName} ${userProfile.lastName}`}
+          </span>
+      )}
     </span>
   ) : (
     <a>
