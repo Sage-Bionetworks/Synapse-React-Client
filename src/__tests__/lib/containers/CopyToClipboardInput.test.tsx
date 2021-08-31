@@ -11,20 +11,26 @@ describe('basic functionality', () => {
   }
 
   it('copies to clipboard when icon is clicked', async () => {
-    document.execCommand = jest.fn()
+    Object.assign(navigator, {
+      clipboard: {writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+      }
+    })
     const wrapper = mount(<CopyToClipboardInput {...props} />)
     await act(async () => {
       await wrapper.find(Button).simulate('click')
     })
-    expect(document.execCommand).toHaveBeenCalledWith('copy')
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('some value to be copied')
   })
-
+  
   it('copies to clipboard when input field is clicked', async () => {
-    document.execCommand = jest.fn()
+    Object.assign(navigator, {
+      clipboard: {writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+      }
+    })
     const wrapper = mount(<CopyToClipboardInput {...props} />)
     await act(async () => {
       await wrapper.find(FormControl).simulate('click')
     })
-    expect(document.execCommand).toHaveBeenCalledWith('copy')
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('some value to be copied')
   })
 })
