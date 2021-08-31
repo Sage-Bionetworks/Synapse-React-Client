@@ -1,0 +1,19 @@
+@use '../abstracts/mixins' as SRCMixins;
+@use '../abstracts/variables' as SRC;
+
+.UserProfileLinks {
+  .Tabs {
+    @include SRCMixins.underline-tabs;
+    [aria-selected="true"] svg {
+      color: SRC.$primary-action-color-500;
+    }
+  }
+
+  .TabContent {
+    padding-top: 20px;
+    min-height: 300px;
+    p {
+      padding-bottom: 10px;
+    }
+  }
+}
