@@ -499,8 +499,7 @@ export default class SynapseTable extends React.Component<
 
     const isShowingAccessColumn: boolean | undefined =
       showAccessColumn && this.state.isEntityView
-    const isShowDownloadColumn: boolean | undefined =
-      showDownloadColumn && this.state.isFileView
+    const isShowDownloadColumn: boolean | undefined = showDownloadColumn
     const isShowingAddToV2DownloadListColumn: boolean = this.state.isFileView
 
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
