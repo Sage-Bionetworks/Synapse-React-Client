@@ -170,9 +170,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
     window.location.href = `/#!Search:${encodeURI(JSON.stringify(projectSearchJson))}`
   }
 
-  const downloadListItem = isInSynapseExperimentalMode() ? 
-    getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'}) :
-    getListItem({tooltip: 'Download List', iconName: 'downloadOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile?.ownerId}/downloads`})
+  const downloadListItem = getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'})
 
   return (
     <div className="SynapseNavDrawer">

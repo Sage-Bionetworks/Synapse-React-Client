@@ -2,7 +2,6 @@ import React, {useEffect} from 'react'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import { isInSynapseExperimentalMode } from '../../utils/SynapseClient'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
@@ -35,8 +34,7 @@ function ShowDownloadV2({ to }: ShowDownloadV2Props) {
     }
   }, [isError, newError, handleError, accessToken])
 
-  const isInExperimentalMode = isInSynapseExperimentalMode()
-  if (!accessToken || isLoading || !isInExperimentalMode) {
+  if (!accessToken || isLoading ) {
     return <></>
   }
   
