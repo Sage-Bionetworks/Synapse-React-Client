@@ -1,4 +1,4 @@
-import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
+import Form, { AjvError, utils } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
@@ -28,6 +28,7 @@ import { CustomDateTimeWidget } from './CustomDateTimeWidget'
 import { CustomDefaultTemplate } from './CustomDefaultTemplate'
 import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
 import { CustomSelectWidget } from './CustomSelectWidget'
+import CustomTextWidget from './CustomTextWidget'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -253,6 +254,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               }
             }}
             widgets={{
+              TextWidget: CustomTextWidget,
               DateTimeWidget: CustomDateTimeWidget,
               SelectWidget: CustomSelectWidget,
               CheckboxWidget: CustomBooleanWidget,

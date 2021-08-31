@@ -19,7 +19,6 @@ export enum PropertyType {
 // Selection of react-jsonschema-form Widget types that we can use for the supported property fields
 export enum AdditionalPropertyWidget {
   TextWidget = 'TextWidget',
-  UpDownWidget = 'TextWidget',
   DateTimeWidget = 'DateTimeWidget',
   CheckboxWidget = 'CheckboxWidget',
 }
@@ -88,14 +87,13 @@ export function getWidgetFromPropertyType(
   propertyType: PropertyType,
 ): AdditionalPropertyWidget {
   switch (propertyType) {
-    case PropertyType.INTEGER:
-    case PropertyType.FLOAT:
-      return AdditionalPropertyWidget.UpDownWidget
     case PropertyType.DATETIME:
       return AdditionalPropertyWidget.DateTimeWidget
     case PropertyType.BOOLEAN:
       return AdditionalPropertyWidget.CheckboxWidget
     case PropertyType.STRING:
+    case PropertyType.INTEGER:
+    case PropertyType.FLOAT:
     default:
       return AdditionalPropertyWidget.TextWidget
   }
