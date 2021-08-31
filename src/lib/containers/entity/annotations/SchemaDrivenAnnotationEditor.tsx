@@ -1,4 +1,4 @@
-import Form, { AjvError, utils } from '@sage-bionetworks/rjsf-core'
+import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useRef } from 'react'
