@@ -4,9 +4,6 @@
 .UserProfileLinks {
   .Tabs {
     @include SRCMixins.underline-tabs;
-    [aria-selected="true"] svg {
-      color: SRC.$primary-action-color-500;
-    }
   }
 
   .TabContent {

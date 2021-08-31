@@ -66,6 +66,7 @@
   $active-color: SRC.$primary-action-color-500,
   $inactive-color: lightgray
 ) {
+  font-weight: 900;
   display: flex;
   justify-content: space-between;
 
@@ -77,10 +78,15 @@
     transition: border-bottom 300ms ease-in;
   }
   > *[aria-selected='true'] {
-    border-bottom: 3px solid SRC.$primary-action-color-500;
+    border-bottom: 3px solid $active-color;
+    color: #22252A;
+    svg {
+      color: SRC.$primary-action-color-500;
+    }
   }
   > *[aria-selected='false'] {
-    border-bottom: 3px solid lightgray;
+    color: #878E95;
+    border-bottom: 3px solid $inactive-color;
   }
 }
 
