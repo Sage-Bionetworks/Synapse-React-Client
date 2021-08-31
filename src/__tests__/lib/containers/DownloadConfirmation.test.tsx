@@ -1,8 +1,5 @@
 import { mount } from 'enzyme'
 import {
-  AddFilesToDownloadListRequest,
-  AddFilesToDownloadListResponse,
-  FileHandleAssociateType,
   QueryBundleRequest,
 } from '../../../lib/utils/synapseTypes/'
 import * as React from 'react'
@@ -16,6 +13,8 @@ import {
   SynapseTestContext,
 } from '../../../mocks/MockSynapseContext'
 import { displayToast } from '../../../lib/containers/ToastMessage'
+import { AddToDownloadListRequest } from '../../../lib/utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
+import { AddToDownloadListResponse } from '../../../lib/utils/synapseTypes/DownloadListV2/AddToDownloadListResponse'
 
 let getQueryTableResultsFn: () => void
 let addFilesToDownloadRequestFn: () => void
@@ -53,33 +52,15 @@ const queryBundleResponse: any = {
   sumFileSizesBytes: 40128868,
 }
 
-const addFilesToDownloadListRequest: AddFilesToDownloadListRequest = {
-  concreteType:
-    'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
-  query,
+const addFilesToDownloadListRequest:AddToDownloadListRequest = {
+  query: query,
+  concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
 }
 
-const addFilesToDownloadListResponse: AddFilesToDownloadListResponse = {
+const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:
-    'org.sagebionetworks.repo.model.file.AddFileToDownloadListResponse',
-
-  downloadList: {
-    etag: 'c57433e3-65b5-4aa8-888b-215da8585351',
-    filesToDownload: [
-      {
-        fileHandleId: '000',
-        associateObjectId: '000',
-        associateObjectType: FileHandleAssociateType.FileEntity,
-      },
-      {
-        fileHandleId: '111',
-        associateObjectId: '111',
-        associateObjectType: FileHandleAssociateType.FileEntity,
-      },
-    ],
-    ownerId: '123',
-    updatedOn: Date().toString(),
-  },
+    'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
+  numberOfFilesAdded: 1
 }
 
 const createMountedComponent = (props: DownloadConfirmationProps) => {
@@ -93,7 +74,7 @@ const createMountedComponent = (props: DownloadConfirmationProps) => {
 }
 
 describe('it performs the expected functionality', () => {
-  addFilesToDownloadRequestFn = SynapseClient.addFilesToDownloadList = jest
+  addFilesToDownloadRequestFn = SynapseClient.addFilesToDownloadListV2 = jest
     .fn()
     .mockResolvedValue(addFilesToDownloadListResponse)
 
