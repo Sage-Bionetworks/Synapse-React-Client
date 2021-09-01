@@ -60,6 +60,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
 
     it('converts strings to floats', () => {
       const data = ['abc', '3.4', '4', 'NaN']
+      expect(4.0).toEqual(4)
       expect(transformDataFromPropertyType(data, PropertyType.FLOAT)).toEqual([
         'NaN',
         3.4,

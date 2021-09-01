@@ -62,7 +62,7 @@ export function transformDataFromPropertyType(
         if (Number.isNaN(asFloat)) {
           return 'NaN'
         } else if (Number.isInteger(asFloat)) {
-          return `${asFloat}.0`
+          return asFloat.toFixed(1)
         } else {
           return asFloat
         }
