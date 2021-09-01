@@ -19,13 +19,16 @@ export enum PropertyType {
 // Selection of react-jsonschema-form Widget types that we can use for the supported property fields
 export enum AdditionalPropertyWidget {
   TextWidget = 'TextWidget',
-  UpDownWidget = 'UpDownWidget',
   DateTimeWidget = 'DateTimeWidget',
   CheckboxWidget = 'CheckboxWidget',
 }
 
 export function guessPropertyType(list: Array<any>): PropertyType {
-  if (list.every(item => typeof item === 'number')) {
+  if (
+    list.every(
+      item => typeof item === 'number' || item === 'NaN', // "NaN" is technically a float value
+    )
+  ) {
     if (list.every(item => Number.isInteger(item))) {
       return PropertyType.INTEGER
     } else {
@@ -49,10 +52,21 @@ export function transformDataFromPropertyType(
 ) {
   switch (propertyType) {
     case PropertyType.INTEGER:
-    case PropertyType.FLOAT:
       return list.map(item =>
-        Number.isNaN(Number(item)) ? undefined : Number(item),
+        Number.isNaN(Number(item)) ? undefined : Math.floor(Number(item)),
       )
+
+    case PropertyType.FLOAT:
+      return list.map(item => {
+        const asFloat = parseFloat(item)
+        if (Number.isNaN(asFloat)) {
+          return 'NaN'
+        } else if (Number.isInteger(asFloat)) {
+          return asFloat.toFixed(1)
+        } else {
+          return asFloat
+        }
+      })
     case PropertyType.DATETIME:
       return list.map(item => {
         if (typeof item === 'string' && ISO_TIMESTAMP_REGEX.exec(item)) {
@@ -73,14 +87,13 @@ export function getWidgetFromPropertyType(
   propertyType: PropertyType,
 ): AdditionalPropertyWidget {
   switch (propertyType) {
-    case PropertyType.INTEGER:
-    case PropertyType.FLOAT:
-      return AdditionalPropertyWidget.UpDownWidget
     case PropertyType.DATETIME:
       return AdditionalPropertyWidget.DateTimeWidget
     case PropertyType.BOOLEAN:
       return AdditionalPropertyWidget.CheckboxWidget
     case PropertyType.STRING:
+    case PropertyType.INTEGER:
+    case PropertyType.FLOAT:
     default:
       return AdditionalPropertyWidget.TextWidget
   }
@@ -209,7 +222,10 @@ export function AdditionalPropertiesSchemaField<T>(
           placeholder={props.placeholder ?? ''}
           options={{}}
           formContext={props.formContext as T}
-          onBlur={props.onBlur}
+          onBlur={(id, value) => {
+            setList(transformDataFromPropertyType(list, propertyType))
+            props.onBlur(id, value)
+          }}
           label={props.title ?? ''}
           multiple={true}
           rawErrors={[]}
