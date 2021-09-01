@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import IconSvg from './IconSvg'
+import IconSvg from '../IconSvg'
 
 export enum UserProfileLinksTabs {
   PROJECTS = "Projects",
