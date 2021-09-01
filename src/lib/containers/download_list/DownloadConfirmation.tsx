@@ -3,12 +3,10 @@ import React, { useState, useCallback } from 'react'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import {
-  AddFilesToDownloadListRequest,
   EntityType,
   QueryBundleRequest,
 } from '../../utils/synapseTypes/'
 import DownloadDetails from './DownloadDetails'
-import DownloadListTable from './DownloadListTable'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   TopLevelControlsState,
@@ -59,22 +57,13 @@ async function addToDownload(
   goToDownloadListFn?: () => void,
 ): Promise<[StatusEnum, string]> {
   try {
-    if (!SynapseClient.isInSynapseExperimentalMode()) {
-      const req: AddFilesToDownloadListRequest = {
-        concreteType:
-          'org.sagebionetworks.repo.model.file.AddFileToDownloadListRequest',
-        query: queryBundleRequest?.query,
-        folderId: folderId,
-      }
-      await SynapseClient.addFilesToDownloadList(req, token)
-    } else {
-      const req:AddToDownloadListRequest = {
-        query: queryBundleRequest?.query,
-        concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-        parentId: folderId,
-      }
-      await SynapseClient.addFilesToDownloadListV2(req, token)
+
+    const req:AddToDownloadListRequest = {
+      query: queryBundleRequest?.query,
+      concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+      parentId: folderId,
     }
+    await SynapseClient.addFilesToDownloadListV2(req, token)
     displayToast(
       'File(s) were successfully added to your Download List.',
       'success',
@@ -268,7 +257,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         return <></>
     }
   }
-  if (showDownloadList && SynapseClient.isInSynapseExperimentalMode()) {
+  if (showDownloadList) {
     // go to the Download Cart Page
     if (downloadCartPageUrl)
       window.location.href = downloadCartPageUrl
@@ -312,12 +301,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           )}
         </div>
       </Alert>
-      {showDownloadList && !SynapseClient.isInSynapseExperimentalMode() && (
-        <DownloadListTable
-          renderAsModal={true}
-          onHide={() => setShowDownloadList(false)}
-        />
-      )}
     </>
   )
 }

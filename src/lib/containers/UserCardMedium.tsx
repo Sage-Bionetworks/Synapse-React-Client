@@ -46,18 +46,10 @@ const copyToClipboard = (
   onCopy: () => void,
 ) => (event: React.SyntheticEvent) => {
   event.preventDefault()
-  // https://hackernoon.com/copying-text-to-clipboard-with-javascript-df4d4988697f
-  // this copies the email to the clipoard
-  const el = document.createElement('textarea')
-  el.value = value
-  el.setAttribute('readonly', '')
-  el.style.position = 'absolute'
-  el.style.left = '-9999px'
-  ref.current!.appendChild(el)
-  el.select()
-  document.execCommand('copy')
-  ref.current!.removeChild(el)
-  onCopy()
+
+  // use the Clipboard API
+  // https://caniuse.com/mdn-api_clipboard_writetext
+  navigator.clipboard.writeText(value).then(() => { onCopy() })
 }
 
 export const UserCardMedium: React.FC<UserCardMediumProps> = ({

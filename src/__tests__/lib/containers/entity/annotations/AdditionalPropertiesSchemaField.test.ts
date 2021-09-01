@@ -19,6 +19,10 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       const data = [1.1, 2.2, 3.3, 4.4, 5] // not all have to be float
       expect(guessPropertyType(data)).toBe(PropertyType.FLOAT)
     })
+    it('should return "float" for float properties with NaN', () => {
+      const data = [4.4, 'NaN', 53]
+      expect(guessPropertyType(data)).toBe(PropertyType.FLOAT)
+    })
     it('should return "boolean" for boolean properties', () => {
       const data = [true, false]
       expect(guessPropertyType(data)).toBe(PropertyType.BOOLEAN)
@@ -45,6 +49,26 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ])
     })
 
+    it('converts integers to floats', () => {
+      const data = [1, 2, 3]
+      expect(transformDataFromPropertyType(data, PropertyType.FLOAT)).toEqual([
+        '1.0',
+        '2.0',
+        '3.0',
+      ])
+    })
+
+    it('converts strings to floats', () => {
+      const data = ['abc', '3.4', '4', 'NaN']
+      expect(4.0).toEqual(4)
+      expect(transformDataFromPropertyType(data, PropertyType.FLOAT)).toEqual([
+        'NaN',
+        3.4,
+        '4.0',
+        'NaN',
+      ])
+    })
+
     it('converts booleans to strings', () => {
       const data = [true, false]
       expect(transformDataFromPropertyType(data, PropertyType.STRING)).toEqual([
@@ -63,14 +87,12 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
   })
 
   describe('getWidgetFromPropertyType tests', () => {
-    it('gets UpDownWidget for integer', () => {
-      expect(getWidgetFromPropertyType(PropertyType.INTEGER)).toBe(
-        'UpDownWidget',
-      )
+    it('gets TextWidget for integer', () => {
+      expect(getWidgetFromPropertyType(PropertyType.INTEGER)).toBe('TextWidget')
     })
 
-    it('gets UpDownWidget for float', () => {
-      expect(getWidgetFromPropertyType(PropertyType.FLOAT)).toBe('UpDownWidget')
+    it('gets TextWidget for float', () => {
+      expect(getWidgetFromPropertyType(PropertyType.FLOAT)).toBe('TextWidget')
     })
 
     it('gets DateTimeWidget for datetime', () => {

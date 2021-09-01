@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { Link, Route } from 'react-router-dom'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
-import SearchDemo from './SearchDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import ShowDownloadDemo from './ShowDownloadDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
@@ -21,7 +20,6 @@ import ColorPaletteInspector from './ColorPaletteInspector'
  */
 const App = ({
   match,
-  token,
 }: {
   match?: RouteChildrenProps['match']
   token: string
@@ -35,9 +33,6 @@ const App = ({
       <ul>
         <li>
           <Link to={`${match.url}/ColorPalette`}>Inspect Color Palette</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/SearchDemo`}>SearchDemo</Link>
         </li>
         <li>
           <Link to={`${match.url}/CardContainerLogicDemo`}>
@@ -82,11 +77,6 @@ const App = ({
           </Link>
         </li>
       </ul>
-      <Route
-        exact={true}
-        path={`${match.url}/SearchDemo`}
-        render={() => <SearchDemo />}
-      />
 
       <Route
         exact={true}

@@ -7,7 +7,7 @@ let isEntityId
 let entityId = undefined
 let schemaId = undefined
 
-if (entityOrSchemaId.startsWith('syn')) {
+if (entityOrSchemaId.match(/^(syn\d+)(?:\.(\d+))?$/)) {
   entityId = entityOrSchemaId
   schemaId = undefined
 } else {
