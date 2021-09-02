@@ -1,5 +1,5 @@
 import { Add, Close, HelpOutline } from '@material-ui/icons'
-import { ArrayFieldTemplateProps } from '@sage-bionetworks/rjsf-core'
+import { ArrayFieldTemplateProps, utils } from '@sage-bionetworks/rjsf-core'
 import React, { useEffect, useState } from 'react'
 import { Button, FormGroup, FormLabel } from 'react-bootstrap'
 import FieldDescriptionTable from './FieldDescriptionTable'
@@ -10,6 +10,8 @@ import FieldDescriptionTable from './FieldDescriptionTable'
  */
 export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
   const { DescriptionField } = props
+
+  const isAdditionalProperty = props.schema[utils.ADDITIONAL_PROPERTY_FLAG]
 
   useEffect(() => {
     if (props.items.length === 0) {
@@ -26,12 +28,14 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
           {props.title}
           {props.required && <span className="required">*</span>}
         </FormLabel>
-        <HelpOutline
-          className="HelpButton SRC-primary-text-color"
-          onClick={() => {
-            setShowDetails(!showDetails)
-          }}
-        />
+        {!isAdditionalProperty && (
+          <HelpOutline
+            className="HelpButton SRC-primary-text-color"
+            onClick={() => {
+              setShowDetails(!showDetails)
+            }}
+          />
+        )}
       </div>
       {props.items && (
         <>
@@ -83,7 +87,7 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
         description={
           <DescriptionField
             id={`${props.idSchema.$id}__description`}
-            description={props.schema.description}
+            description={props.schema.description ?? ''}
           />
         }
         show={showDetails}
