@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import IconSvg from '../IconSvg'
+import UserChallenges from './UserChallenges'
 import UserProjects from './UserProjects'
 import UserTeams from './UserTeams'
 
@@ -61,7 +62,7 @@ function UserProfileLinks({
             </>)}
           {currentTab === UserProfileLinksTabs.CHALLENGES && (
             <>
-              <p>User challenges go here</p>
+              <UserChallenges userId={userId} />
             </>)}
         </div>
       </div>

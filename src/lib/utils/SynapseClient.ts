@@ -109,6 +109,7 @@ import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessT
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
+import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
@@ -1073,7 +1074,7 @@ export const removeUserFavorite = (
   userId: string | number,
   offset: string | number = 0,
   limit: string | number = 200
-) => {
+): Promise<ChallengePagedResults> => {
   const url = `/repo/v1/challenge?participantId=${userId}&offset=${offset}&limit=${limit}`
   return doGet(
     url,
