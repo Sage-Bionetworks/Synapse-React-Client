@@ -1064,15 +1064,16 @@ export const removeUserFavorite = (
 }
 
 /**
- * Get the user's list of teams they are on
- *
- * @param {*} id ownerID of the synapse user see - https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
+ * Get a list of challenges for which the given user is registered.
+ * see http://rest-docs.synapse.org/rest/GET/challenge.html
  */
-export const getUserTeamList = (
+ export const getUserChallenges = (
   accessToken: string | undefined,
-  id: string | number,
+  userId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200
 ) => {
-  const url = `/repo/v1/user/${id}/team?offset=0&limit=200`
+  const url = `/repo/v1/challenge?participantId=${userId}&offset=${offset}&limit=${limit}`
   return doGet(
     url,
     accessToken,
@@ -1080,6 +1081,27 @@ export const getUserTeamList = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+/**
+ * Get the user's list of teams they are on
+ *
+ * @param {*} id ownerID of the synapse user see - https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
+ */
+export const getUserTeamList = (
+  accessToken: string | undefined,
+  id: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200
+) => {
+  const url = `/repo/v1/user/${id}/team?offset=${offset}&limit=${limit}`
+  return doGet(
+    url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Get the user's list of teams they are on
  *
@@ -2669,6 +2691,24 @@ export const getMyProjects = (
   )
   return doGet<ProjectHeaderList>(
     `/repo/v1/projects?${urlParams.toString()}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+
+// http://rest-docs.synapse.org/rest/GET/projects/user/principalId.html
+export const getUserProjects = (
+  userId: string,
+  params: GetProjectsParameters = {},
+  accessToken?: string,
+) => {
+  const urlParams = new URLSearchParams(
+    removeUndefined(params) as Record<string, string>,
+  )
+  return doGet<ProjectHeaderList>(
+    `/repo/v1/projects/user/${userId}?${urlParams.toString()}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
