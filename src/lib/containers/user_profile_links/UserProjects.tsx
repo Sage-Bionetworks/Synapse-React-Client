@@ -1,73 +1,91 @@
-import React, {useEffect} from 'react'
-import ReactTooltip from 'react-tooltip'
-import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
-import { useSynapseContext } from '../../utils/SynapseContext'
+import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
-import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
-import IconSvg from '../IconSvg'
+import { useInView } from 'react-intersection-observer'
+import { ProjectHeader } from '../../utils/synapseTypes'
+import { SynapseSpinner } from '../LoadingScreen'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { useGetUserProjectsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserProjects'
+import { GetProjectsParameters } from '../../utils/synapseTypes/GetProjectsParams'
 
-export type ShowDownloadV2Props = {
-  to: string
+export type UserProjectsProps = {
+  userId: string
 }
 
-/**
- * Nav bar item, displayed when files have been added to the Download Cart.
- * This must be configured with the URL of a page dedicated to showing the Download Cart.
- */
-function ShowDownloadV2({ to }: ShowDownloadV2Props) {
+export default function UserProjects({userId}:UserProjectsProps) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
-  const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
-  const tooltipText = 'Click to view items in your download cart.'
-  
+  // Load the next page when this ref comes into view.
+  const { ref, inView } = useInView()
+  const getProjectsParameters: GetProjectsParameters = {}
   const {
     data,
-    isLoading,
+    status,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
     isError,
     error: newError,
-  } = useGetDownloadListStatistics()
-  
+    refetch,
+  } = useGetUserProjectsInfinite(userId, getProjectsParameters)
+
   useEffect(() => {
-    if (isError && newError && accessToken) {
+    if (isError && newError) {
       handleError(toError(newError))
     }
-  }, [isError, newError, handleError, accessToken])
+  }, [isError, newError, handleError])
 
-  if (!accessToken || isLoading ) {
-    return <></>
-  }
-  
-  const size = data?.totalNumberOfFiles ?? 0
-  if (size === 0) {
-    return <></>
-  }
-  const content = (
+  useEffect(() => {
+    if (
+      status === 'success' &&
+      !isFetching &&
+      hasNextPage &&
+      fetchNextPage &&
+      inView
+    ) {
+      fetchNextPage()
+    }
+  }, [status, isFetching, hasNextPage, fetchNextPage, inView])
+
+  const allRows = data
+    ? ([] as ProjectHeader[]).concat.apply(
+        [],
+        data.pages.map(
+          p => p.results,
+        ),
+      )
+    : []
+
+  return (
     <>
-      <span id={idForToolTip} data-for={idForToolTip} data-tip={tooltipText}>
-        <span className="SRC-primary-text-color">
-          <IconSvg
-            options={{
-              icon: 'cart'
-            }}
-          />
-        </span>
-        <span className={`download-cart-size`}>{size}</span>
-      </span>
-      <ReactTooltip
-        delayShow={TOOLTIP_DELAY_SHOW}
-        place={'bottom'}
-        type={'dark'}
-        effect={'solid'}
-        border={true}
-        id={idForToolTip}
-      />
+      {allRows.length > 0 && (
+        <>
+          {allRows.map((item:ProjectHeader) => {
+            if (item) {
+              // another option would be to use an EntityLink
+              return (
+                <p>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
+                  >
+                    {item.name}
+                  </a>
+                </p>
+              )
+            } else return false
+          })}
+          {/* To trigger loading the next page */}
+          <tr ref={ref} />
+        </>
+      )}
+      {isFetching && (
+        <div className="placeholder">
+          <SynapseSpinner size={30} />
+        </div>
+      )}
     </>
   )
-  return <a className="Download-Link v2" href={to} rel="noopener noreferrer">
-      {content}
-    </a>
-  
 }
-
-export default ShowDownloadV2

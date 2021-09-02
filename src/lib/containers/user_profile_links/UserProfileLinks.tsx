@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import IconSvg from '../IconSvg'
+import UserProjects from './UserProjects'
 
 export enum UserProfileLinksTabs {
   PROJECTS = "Projects",
@@ -51,7 +52,7 @@ function UserProfileLinks({
         <div className="TabContent">
           {currentTab === UserProfileLinksTabs.PROJECTS && (
             <>
-              <p>User projects go here</p>
+              <UserProjects userId={userId} />
             </>)}
           {currentTab === UserProfileLinksTabs.TEAMS && (
             <>
