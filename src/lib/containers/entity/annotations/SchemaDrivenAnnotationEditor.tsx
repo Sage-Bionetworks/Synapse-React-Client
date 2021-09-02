@@ -1,6 +1,6 @@
 import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
@@ -26,6 +26,7 @@ import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaFie
 import {
   dropNullishArrayValues,
   getFriendlyPropertyName,
+  transformErrors,
 } from './AnnotationEditorUtils'
 import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
@@ -234,15 +235,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
                 'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
               },
             }}
-            transformErrors={(errors: AjvError[]): AjvError[] => {
-              return errors.map(error => {
-                const propertyName = getFriendlyPropertyName(error)
-                if (entityJsonKeys.includes(propertyName)) {
-                  error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
-                }
-                return error
-              })
-            }}
+            transformErrors={transformErrors}
             formData={formData}
             onChange={({ formData }) => {
               setFormData(formData)
