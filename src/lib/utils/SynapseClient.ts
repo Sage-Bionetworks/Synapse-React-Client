@@ -152,6 +152,7 @@ import {
   SqlTransformResponse,
   TransformSqlWithFacetsRequest,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
+import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 
 const cookies = new UniversalCookies()
@@ -1089,11 +1090,11 @@ export const removeUserFavorite = (
  */
 export const getUserTeamList = (
   accessToken: string | undefined,
-  id: string | number,
+  userId: string | number,
   offset: string | number = 0,
   limit: string | number = 200
-) => {
-  const url = `/repo/v1/user/${id}/team?offset=${offset}&limit=${limit}`
+):Promise<PaginatedResults<Team>> => {
+  const url = `/repo/v1/user/${userId}/team?offset=${offset}&limit=${limit}`
   return doGet(
     url,
     accessToken,

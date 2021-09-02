@@ -2,21 +2,19 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { useInView } from 'react-intersection-observer'
-import { ProjectHeader } from '../../utils/synapseTypes'
 import { SynapseSpinner } from '../LoadingScreen'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetUserProjectsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserProjects'
-import { GetProjectsParameters } from '../../utils/synapseTypes/GetProjectsParams'
+import { useGetUserTeamsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserTeams'
+import { Team } from '../../utils/synapseTypes/Team'
 
-export type UserProjectsProps = {
+export type UserTeamsProps = {
   userId: string
 }
 
-export default function UserProjects({userId}:UserProjectsProps) {
+export default function UserTeams({userId}:UserTeamsProps) {
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
-  const getProjectsParameters: GetProjectsParameters = {}
   const {
     data,
     status,
@@ -25,7 +23,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
     fetchNextPage,
     isError,
     error: newError,
-  } = useGetUserProjectsInfinite(userId, getProjectsParameters)
+  } = useGetUserTeamsInfinite(userId)
 
   useEffect(() => {
     if (isError && newError) {
@@ -46,7 +44,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
   }, [status, isFetching, hasNextPage, fetchNextPage, inView])
 
   const allRows = data
-    ? ([] as ProjectHeader[]).concat.apply(
+    ? ([] as Team[]).concat.apply(
         [],
         data.pages.map(
           p => p.results,
@@ -58,7 +56,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
     <>
       {allRows.length > 0 && (
         <>
-          {allRows.map((item:ProjectHeader) => {
+          {allRows.map((item:Team) => {
             if (item) {
               // another option would be to use an EntityLink
               return (
@@ -66,7 +64,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${item.id}`}
                   >
                     {item.name}
                   </a>
