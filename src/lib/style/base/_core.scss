@@ -226,6 +226,8 @@ a.SRC-whiteText {
 
 .SRC-cardContent a.SRC-whiteText {
   border-bottom: 1px solid white !important;
+  // PORTALS-1994: anchor on FF was using the full width
+  width: max-content;
 }
 
 .SRC-marginFive {
