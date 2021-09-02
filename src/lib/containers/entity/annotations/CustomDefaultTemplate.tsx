@@ -1,7 +1,8 @@
-import React from 'react'
-import { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FormLabel } from 'react-bootstrap'
 import { FieldTemplateProps } from '@sage-bionetworks/rjsf-core'
+import { HelpOutline } from '@material-ui/icons'
+import FieldDescriptionTable from './FieldDescriptionTable'
 
 export function CustomDefaultTemplate<T>(
   props: FieldTemplateProps<T> & {
@@ -14,7 +15,6 @@ export function CustomDefaultTemplate<T>(
     children,
     errors,
     help,
-    description,
     hidden,
     required,
     displayLabel,
@@ -22,6 +22,9 @@ export function CustomDefaultTemplate<T>(
     onChange,
     schema,
   } = props
+
+  let description = props.description ?? props.schema.description
+  const [showDetails, setShowDetails] = useState(false)
 
   // The formData that we get may be an array (for example, if it was an additionalProperty, but then the key was added to the schema)
   // If the object passes through this template, then it should no longer be an array, so we coerce it to a string.
@@ -42,16 +45,27 @@ export function CustomDefaultTemplate<T>(
   return (
     <>
       {/* RJSF hides labels for boolean checkboxes, but since we replaced checkboxes with a custom component, we want to show them */}
-      {(displayLabel || schema.type === 'boolean') && (
-        <FormLabel htmlFor={id}>
-          {label}
-          {required && <span className="required">*</span>}
-        </FormLabel>
+      {label && (displayLabel || schema.type === 'boolean') && (
+        <div className="LabelContainer">
+          <FormLabel htmlFor={id}>
+            {label}
+            {required && <span className="required">*</span>}
+          </FormLabel>
+          <HelpOutline
+            className="HelpButton SRC-primary-text-color"
+            onClick={() => {
+              setShowDetails(!showDetails)
+            }}
+          />
+        </div>
       )}
-      {(displayLabel || schema.type === 'boolean') && description
-        ? description
-        : null}
       {children}
+      <FieldDescriptionTable
+        required={required}
+        type={schema.type as string}
+        description={description}
+        show={showDetails}
+      />
       {errors}
       {help}
     </>
