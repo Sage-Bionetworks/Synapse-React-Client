@@ -42,7 +42,7 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
           {props.items.map((element, index) => (
             <div key={element.key} className="array-item">
               {element.children}
-              {props.items.length > 1 && (
+              {(isAdditionalProperty || props.items.length > 1) && (
                 <Button
                   aria-label={`Remove ${props.title}-${index}`}
                   variant="transparent-primary-500"
