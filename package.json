@@ -100,6 +100,7 @@
     "@babel/preset-typescript": "^7.14.5",
     "@babel/runtime": "^7.14.6",
     "@babel/types": "^7.14.5",
+    "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-image": "^2.0.5",
@@ -141,6 +142,12 @@
     "core-js": "^3.1.4",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.2",
+    "esbuild": "^0.12.25",
+    "esbuild-plugin-globals": "^0.1.1",
+    "esbuild-plugin-node-polyfills": "^1.0.2",
+    "esbuild-plugin-svg": "^0.1.0",
+    "esbuild-plugin-svgr": "^0.0.3",
+    "esbuild-sass-plugin": "^1.5.2",
     "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-jest-dom": "^3.6.5",
     "eslint-plugin-react": "latest",
@@ -163,6 +170,7 @@
     "rollup-plugin-svg": "^2.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "sinon": "^7.2.2",
+    "timers-browserify": "^2.0.12",
     "typescript": "4.3.5",
     "yarn": "^1.22.4"
   },
@@ -180,8 +188,8 @@
     "build-gh": "yarn run build:docs",
     "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o upstream",
     "deploy:origin": "yarn install && yarn run predeploy && gh-pages -d styleguide && gh-pages -d styleguide -o origin",
-    "build-css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=. && sass src/demo/style:src/demo/style --load-path=.",
-    "watch-css": "yarn run build-css && sass src --watch -I .",
+    "build-css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=. --load-path=node_modules && sass src/demo/style:src/demo/style --load-path=. --load-path=node_modules",
+    "watch-css": "yarn run build-css && sass src --watch --load-path=. --load-path=node_modules",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css serve:docs",
     "start-deprecated-demo": "npm-run-all -p watch-css start-js",
@@ -191,10 +199,12 @@
     "eject": "react-scripts eject",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn run type-check --watch",
-    "build": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:rollup",
+    "build:deprecated": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:rollup",
+    "build": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:esbuild",
     "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
+    "build:esbuild": "node esbuild.config.mjs && cp -r src/umd dist/",
     "serve:docs": "DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist server --open",
     "build:docs": "yarn run build-css && DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist build"
   },
@@ -209,6 +219,9 @@
     "@types/react-tooltip": "^3.11.0",
     "**/@typescript-eslint/eslint-plugin": "^4.1.1",
     "**/@typescript-eslint/parser": "^4.1.1"
+  },
+  "browser": {
+    "timers": "timers-browserify"
   },
   "browserslist": {
     "production": [
