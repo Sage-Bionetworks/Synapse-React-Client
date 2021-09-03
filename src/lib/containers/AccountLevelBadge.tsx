@@ -2,9 +2,9 @@ import { UserBundle } from '../utils/synapseTypes'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { SynapseClient, SynapseConstants } from '../utils'
-import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
-import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
-import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
+import Registered from '../assets/icons/account-registered.svg'
+import Certified from '../assets/icons/account-certified.svg'
+import Validated from '../assets/icons/account-validated.svg'
 import { ErrorBanner } from './ErrorBanner'
 
 export type AccountLevelBadgeProps = {

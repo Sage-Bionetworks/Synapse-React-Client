@@ -13,7 +13,7 @@
   $input-border-color: SRC.$border-color-gray;
   $input-border-width: 1px;
   $input-border-radius: 2px;
-  @import 'node_modules/bootstrap/scss/bootstrap';
+  @import 'bootstrap/scss/bootstrap';
 
   .alert-danger {
     @include alert-variant(

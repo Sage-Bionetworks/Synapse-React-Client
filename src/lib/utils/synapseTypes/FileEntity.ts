@@ -1,5 +1,5 @@
 import { Entity } from './Entity'
-import { AssertionError } from 'assert'
+import assert from 'assert'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
 export interface FileEntity extends Entity {
@@ -15,7 +15,7 @@ export interface FileEntity extends Entity {
 
 export function assertIsFileEntity(val: Entity): asserts val is FileEntity {
   if (val.concreteType !== 'org.sagebionetworks.repo.model.FileEntity') {
-    throw new AssertionError({
+    throw new assert.AssertionError({
       message: `File Entity exepcted but found ${val}`,
     })
   }
