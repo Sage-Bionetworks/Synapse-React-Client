@@ -5,12 +5,12 @@ $textLight: #b7b7b7;
 .RangeSlider {
   $rail-height: 6px;
   height: 60px;
-  $handleLeftOffset: 1- ($rail-height + 10)/2;
+  $handleLeftOffset: 1- ($rail-height + 10) * 0.5;
   &__rail {
     position: absolute;
     width: 100%;
     height: $rail-height;
-    border-radius: $rail-height/2;
+    border-radius: $rail-height * 0.5;
     cursor: pointer;
     background-color: $textLight;
   }
@@ -63,13 +63,13 @@ $textLight: #b7b7b7;
     height: $rail-height;
     z-index: 1;
     background-color: SRC.$primary-action-color;
-    border-radius: $rail-height/2;
+    border-radius: $rail-height * 0.5;
     cursor: pointer;
   }
 
   &__tick {
     position: absolute;
-    margin-top: $rail-height/2;
+    margin-top: $rail-height * 0.5;
     width: 1px;
     height: 5px;
     background-color: $textLight;
