@@ -1,15 +1,28 @@
 @use '../abstracts/mixins' as SRCMixins;
+@use '../abstracts/typography' as SRCTypography;
 @use '../abstracts/variables' as SRC;
 
 .UserProfileLinks {
+  // box shadow on the left hand side only.
+  // horizontal offset -12px, vertical offset 0px, and reduce the shadow spread with -15px
+  box-shadow: -12px 0px 20px -15px rgb(74 80 86 / 15%);
+  width: 365px;
+  .title {
+    @include SRCTypography.Headline2();
+    padding: 30px 0px 20px 30px;
+  }
   .Tabs {
     @include SRCMixins.underline-tabs;
+    .Tab {
+      padding-left: 10px;
+    }
   }
 
   .TabContent {
-    padding-top: 20px;
-    padding-left: 15px;
-    min-height: 300px;
+    min-height: calc(100vh - 100px);
+    max-height: calc(100vh - 100px);;
+    overflow-y: scroll;
+    padding: 30px 0px 0px 30px;
     p {
       padding-bottom: 10px;
     }

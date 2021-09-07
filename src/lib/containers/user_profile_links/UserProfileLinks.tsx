@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useGetUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
 import IconSvg from '../IconSvg'
 import UserChallenges from './UserChallenges'
 import UserProjects from './UserProjects'
@@ -18,6 +19,7 @@ function UserProfileLinks({
   userId,
 }: UserProfileLinksProps) {
   const [currentTab, setCurrentTab] = useState<UserProfileLinksTabs>(UserProfileLinksTabs.PROJECTS)
+  const { data: userProfile } = useGetUserProfile(userId)
 
   function getIconName(
     currentTab: UserProfileLinksTabs,
@@ -33,6 +35,9 @@ function UserProfileLinks({
   }
   return (
       <div className="UserProfileLinks">
+        <p className="title">
+          {userProfile?.userName}&apos;s Items
+        </p>
         <div className="Tabs">
           {Object.keys(UserProfileLinksTabs).map((keyName: string) => {
             return (
