@@ -76,6 +76,9 @@ export default function UserTeams({userId}:UserTeamsProps) {
           <tr ref={ref} />
         </>
       )}
+      {!isFetching && allRows.length == 0 && (
+        <div>Empty</div>
+      )}
       {isFetching && (
         <div className="placeholder">
           <SynapseSpinner size={30} />
