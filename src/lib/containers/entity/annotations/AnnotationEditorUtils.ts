@@ -75,7 +75,7 @@ export function transformErrors(errors: AjvError[]): AjvError[] {
 
     // If it's an anyOf enum error, we just modify the first message and drop the rest
     if (isEnumError && errorGroup.length > 0) {
-      errorGroup[0].message = 'should match one of the enumerated values'
+      errorGroup[0].message = 'should be equal to one of the allowed values'
       grouped[property] = [errorGroup[0]]
     }
   })
