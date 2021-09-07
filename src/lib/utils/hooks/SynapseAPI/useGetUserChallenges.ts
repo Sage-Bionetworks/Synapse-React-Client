@@ -5,19 +5,19 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { ChallengePagedResults } from '../../synapseTypes/ChallengePagedResults'
+import { ChallengeWithProjectHeaderPagedResults } from '../../synapseTypes/ChallengePagedResults'
 
 export function useGetUserChallengesInfinite(
   userId: string,
   options?: UseInfiniteQueryOptions<
-    ChallengePagedResults,
+    ChallengeWithProjectHeaderPagedResults,
     SynapseClientError,
-    ChallengePagedResults
+    ChallengeWithProjectHeaderPagedResults
   >,
 ) {
   const { accessToken } = useSynapseContext()
 
-  return useInfiniteQuery<ChallengePagedResults, SynapseClientError>(
+  return useInfiniteQuery<ChallengeWithProjectHeaderPagedResults, SynapseClientError>(
     ['getuserchallenges', userId],
     async context => {
       const challenges = await SynapseClient.getUserChallenges(accessToken,
@@ -29,7 +29,10 @@ export function useGetUserChallengesInfinite(
       if (challenges.results.length > 0) {
         const challengeProjectIds = Array.from(challenges.results, challenge => challenge.projectId)
         const challengeProjects = await SynapseClient.getEntityHeadersByIds(challengeProjectIds)
-        challengeProjects.results.forEach((entityHeader, index) => { challenges.results[index].projectName = entityHeader.name} )
+        return {
+          results: Array.from(challenges.results, (challenge, index) => { return {challenge, projectHeader: challengeProjects.results[index]}}),
+          totalNumberOfResults: challenges.totalNumberOfResults
+        }
       }
       return challenges
     },

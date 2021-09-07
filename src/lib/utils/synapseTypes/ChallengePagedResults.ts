@@ -1,3 +1,5 @@
+import { EntityHeader } from "./EntityHeader"
+
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/ChallengePagedResults.html
 export type ChallengePagedResults = {
   results: Challenge[]
@@ -10,5 +12,15 @@ export type Challenge = {
   projectId: string //The ID of the Project the challenge is used with.
   participantTeamId: string //The ID of the Team which users join to participate in the Challenge
   etag: string
-  projectName: string //client-side addition to the object
 }
+
+export type ChallengeWithProjectHeaderPagedResults = {
+  results: ChallengeWithProjectHeader[]
+  totalNumberOfResults: number
+}
+
+export type ChallengeWithProjectHeader = {
+  challenge: Challenge // The Challenge
+  projectHeader: EntityHeader // to optimize, include the EntityHeader for the associated Project
+}
+

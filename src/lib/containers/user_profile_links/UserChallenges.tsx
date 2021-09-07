@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer'
 import { SynapseSpinner } from '../LoadingScreen'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/useGetUserChallenges'
-import { Challenge } from '../../utils/synapseTypes/ChallengePagedResults'
+import { Challenge, ChallengeWithProjectHeader } from '../../utils/synapseTypes/ChallengePagedResults'
 
 export type UserChallengesProps = {
   userId: string
@@ -44,7 +44,7 @@ export default function UserChallenges({userId}:UserChallengesProps) {
   }, [status, isFetching, hasNextPage, fetchNextPage, inView])
 
   const allRows = data
-    ? ([] as Challenge[]).concat.apply(
+    ? ([] as ChallengeWithProjectHeader[]).concat.apply(
         [],
         data.pages.map(
           p => p.results,
@@ -56,7 +56,7 @@ export default function UserChallenges({userId}:UserChallengesProps) {
     <>
       {allRows.length > 0 && (
         <>
-          {allRows.map((item:Challenge) => {
+          {allRows.map((item:ChallengeWithProjectHeader) => {
             if (item) {
               // another option would be to use an EntityLink
               return (
@@ -64,9 +64,9 @@ export default function UserChallenges({userId}:UserChallengesProps) {
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.projectId}/challenge`}
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.challenge.projectId}/challenge`}
                   >
-                    {item.projectName}
+                    {item.projectHeader.name}
                   </a>
                 </p>
               )
