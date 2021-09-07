@@ -51,12 +51,16 @@ export function CustomDefaultTemplate<T>(
             {label}
             {required && <span className="required">*</span>}
           </FormLabel>
-          <HelpOutline
-            className="HelpButton SRC-primary-text-color"
-            onClick={() => {
+          <button
+            aria-label="More Info"
+            aria-expanded={showDetails}
+            onClick={e => {
+              e.preventDefault()
               setShowDetails(!showDetails)
             }}
-          />
+          >
+            <HelpOutline className="HelpButton SRC-primary-text-color" />
+          </button>
         </div>
       )}
       {children}

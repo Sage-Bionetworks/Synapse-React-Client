@@ -29,12 +29,16 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
           {props.required && <span className="required">*</span>}
         </FormLabel>
         {!isAdditionalProperty && (
-          <HelpOutline
-            className="HelpButton SRC-primary-text-color"
-            onClick={() => {
+          <button
+            aria-label="More Info"
+            aria-expanded={showDetails}
+            onClick={e => {
+              e.preventDefault()
               setShowDetails(!showDetails)
             }}
-          />
+          >
+            <HelpOutline className="HelpButton SRC-primary-text-color" />
+          </button>
         )}
       </div>
       {props.items && (
@@ -44,7 +48,7 @@ export function CustomArrayFieldTemplate<T>(props: ArrayFieldTemplateProps<T>) {
               {element.children}
               {(isAdditionalProperty || props.items.length > 1) && (
                 <Button
-                  aria-label={`Remove ${props.title}-${index}`}
+                  aria-label={`Remove ${props.title}[${index}]`}
                   variant="transparent-primary-500"
                   className="RemoveButton"
                   disabled={props.disabled}
