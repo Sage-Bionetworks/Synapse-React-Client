@@ -1,5 +1,4 @@
 @use './variables' as SRC;
-@use './typography' as SRCTypography;
 // -----------------------------------------------------------------------------
 // This file contains all application-wide Sass mixins.
 // -----------------------------------------------------------------------------
@@ -67,7 +66,6 @@
   $active-color: SRC.$primary-action-color-500,
   $inactive-color: lightgray
 ) {
-  @include SRCTypography.ButtonLink();
   display: flex;
   justify-content: space-between;
 
