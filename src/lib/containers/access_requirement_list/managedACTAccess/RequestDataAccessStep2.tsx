@@ -159,7 +159,6 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       // Filter out duplicate accessors coming from existing ARs
       const uniqueAccessorChanges = accessorChanges.filter((user, i, arr) =>
         arr.findIndex(accArr => (accArr.userId === user.userId)) === i)
-      console.log()
       uniqueAccessorChanges.forEach(item => {
         ids.push(item.userId)
       })
