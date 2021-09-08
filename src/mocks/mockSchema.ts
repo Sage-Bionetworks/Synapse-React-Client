@@ -42,6 +42,7 @@ export const mockValidationSchema: JSONSchema7 = {
   properties: {
     country: {
       enum: ['USA', 'CA'],
+      description: 'Test description for country property',
     },
     showStringArray: {
       type: 'boolean',

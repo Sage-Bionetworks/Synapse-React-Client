@@ -1,4 +1,9 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  queryByAttribute,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import selectEvent from 'react-select-event'
@@ -138,6 +143,25 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       response.showStringArray = true
       response.stringArray = ['one', 'two', 'three']
 
+      return res(ctx.status(200), ctx.json(response))
+    },
+  )
+
+  const emptyArrayAnnotationsHandler = rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
+      ':entityId',
+    )}`,
+
+    async (req, res, ctx) => {
+      const response = mockFileEntityJson
+      // Delete the other annotation keys
+      delete response.myStringKey
+      delete response.myIntegerKey
+      delete response.myFloatKey
+
+      // Fill in annotations that match the schema in this test suite
+      response.showStringArray = true
+      delete response.stringArray
       return res(ctx.status(200), ctx.json(response))
     },
   )
@@ -284,7 +308,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     })
 
     // Remove the last element
-    userEvent.click(await screen.findByLabelText('Remove country-0'))
+    userEvent.click(await screen.findByLabelText('Remove country[0]'))
 
     expect(
       screen.queryByRole('textbox', {
@@ -466,7 +490,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     userEvent.selectOptions(showStringArrayField, 'false')
 
     // Add it back to the schema.
-    userEvent.selectOptions(showStringArrayField, 'false')
+    userEvent.selectOptions(showStringArrayField, 'true')
 
     await clickSaveAndConfirm()
 
@@ -500,5 +524,61 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       '"id" is a reserved internal key and cannot be used',
       { exact: false },
     )
+  })
+
+  it('Shows a schema description and type when help is clicked', async () => {
+    server.use(noAnnotationsHandler, ...schemaHandlers)
+    renderComponent()
+    await screen.findByText('requires scientific annotations', { exact: false })
+    await screen.findByLabelText('country*')
+
+    const moreInfoButton = screen.getAllByRole('button', {
+      name: 'More Info',
+    })[0]
+
+    // Call under test -- show the description table
+    userEvent.click(moreInfoButton)
+
+    expect(
+      screen.getByText('Test description for country property'),
+    ).toBeVisible()
+
+    // Now hide the description table
+    userEvent.click(moreInfoButton)
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText('Test description for country property'),
+      ).not.toBeVisible(),
+    )
+  })
+
+  it('Initializes an empty array but does not submit null data', async () => {
+    server.use(
+      emptyArrayAnnotationsHandler, // showStringArray will be true but stringArray will have no data
+      ...schemaHandlers,
+      successfulUpdateHandler,
+    )
+    const component = renderComponent()
+    await screen.findByText('requires scientific annotations', { exact: false })
+
+    const showStringArrayField = (await screen.findByLabelText(
+      'showStringArray',
+    )) as HTMLInputElement
+    expect(showStringArrayField.value).toBe('true')
+
+    // Verify that the field for the first value in the array is visible
+    expect(
+      queryByAttribute('id', component.container, 'root_stringArray_0'),
+    ).not.toBeNull()
+
+    // Save the form
+    await clickSaveAndConfirm()
+
+    await waitFor(() => expect(updatedJsonCaptor).toBeCalled())
+    // Because we never entered any data, the string array should not exist in the payload
+    expect(
+      updatedJsonCaptor.mock.calls[0][0].hasOwnProperty('stringArray'),
+    ).toBe(false)
   })
 })

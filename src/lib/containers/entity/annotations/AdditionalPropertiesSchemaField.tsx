@@ -222,6 +222,7 @@ export function AdditionalPropertiesSchemaField<T>(
           placeholder={props.placeholder ?? ''}
           options={{}}
           formContext={props.formContext as T}
+          onFocus={props.onFocus}
           onBlur={(id, value) => {
             setList(transformDataFromPropertyType(list, propertyType))
             props.onBlur(id, value)
