@@ -166,9 +166,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     })
     Promise.all(promises).then(profiles => {
       const profileAndAccessType:Accessor[] = profiles.map((item, i) => {
+        const accessType = accessorChanges && accessorChanges[i]?.type ? accessorChanges[i].type : AccessType.GAIN_ACCESS
         return {
           profile: item,
-          accessType: accessorChanges[i].type
+          accessType: accessType
         }
       })
       setAccessors(profileAndAccessType)
@@ -485,30 +486,36 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   // User search input event handler
   const onSelectUserCallback = (selected: UserProfile) => {
-    setAccessors(prev => [
-      ...prev,
-      {
-        profile: {
-          ownerId: selected.ownerId,
-          firstName: selected.firstName,
-          lastName: selected.lastName,
-          userName: selected.userName,
-        },
-        accessType: AccessType.GAIN_ACCESS
-      }
-    ])
 
-    const selectedAccessor: AccessorChange = {
-      userId: selected.ownerId,
-      type: AccessType.GAIN_ACCESS,
-    }
-    const accessorsArr = formSubmitRequestObject?.accessorChanges || []
-    accessorsArr.push(selectedAccessor)
-    setFormSubmitRequestObject(prevState => {
-      return Object.assign({}, prevState, {
-        accessorChanges: accessorsArr,
+    const currentAccessorIds = accessors.map(accessor => accessor.profile.ownerId)
+
+    // if user is not already in the accessor list (prevent duplicates in accessor list)
+    if (!currentAccessorIds.includes(selected.ownerId)) {
+      setAccessors(prev => [
+        ...prev,
+        {
+          profile: {
+            ownerId: selected.ownerId,
+            firstName: selected.firstName,
+            lastName: selected.lastName,
+            userName: selected.userName,
+          },
+          accessType: AccessType.GAIN_ACCESS
+        }
+      ])
+
+      const selectedAccessor: AccessorChange = {
+        userId: selected.ownerId,
+        type: AccessType.GAIN_ACCESS,
+      }
+      const accessorsArr = formSubmitRequestObject?.accessorChanges || []
+      accessorsArr.push(selectedAccessor)
+      setFormSubmitRequestObject(prevState => {
+        return Object.assign({}, prevState, {
+          accessorChanges: accessorsArr,
+        })
       })
-    })
+    }
   }
 
   const handleTextAreaInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
