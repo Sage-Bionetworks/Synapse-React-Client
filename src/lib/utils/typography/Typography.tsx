@@ -1,9 +1,9 @@
-import { TypographyProps, Typography } from '@material-ui/core'
+import { TypographyProps, Typography as MUITypography } from '@material-ui/core'
 import classNames from 'classnames'
 import React, { ElementType, FC } from 'react'
-import useSRCTypographyStyle from './SRCTypography.styles'
+import useTypographyStyle from './Typography.styles'
 
-interface ISRCTypography extends Omit<TypographyProps, 'variant'> {
+interface ITypography extends Omit<TypographyProps, 'variant'> {
   variant:
   | 'headline1'
   | 'headline2'
@@ -21,11 +21,11 @@ interface ISRCTypography extends Omit<TypographyProps, 'variant'> {
   component?: ElementType
 }
 
-const SRCTypography: FC<ISRCTypography> = (props) => {
-  const classes = useSRCTypographyStyle()
+const Typography: FC<ITypography> = (props) => {
+  const classes = useTypographyStyle()
   const isCustom = Object.keys(classes).indexOf(props.variant) > -1
   return (
-    <Typography
+    <MUITypography
       {...props}
       variant={isCustom ? undefined : (props.variant as any)}
       className={
@@ -35,8 +35,8 @@ const SRCTypography: FC<ISRCTypography> = (props) => {
       }
     >
       {props.children}
-    </Typography>
+    </MUITypography>
   )
 }
 
-export default SRCTypography
+export default Typography

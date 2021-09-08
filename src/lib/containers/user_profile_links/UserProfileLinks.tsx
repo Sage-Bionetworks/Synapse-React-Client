@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useGetUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
-import SRCTypography from '../../utils/typography/SRCTypography'
+import Typography from '../../utils/typography/Typography'
 import IconSvg from '../IconSvg'
 import UserChallenges from './UserChallenges'
 import UserProjects from './UserProjects'
@@ -36,7 +36,7 @@ function UserProfileLinks({
   }
   return (
     <div className="UserProfileLinks">
-      <SRCTypography variant="headline2" className="title">{userProfile?.userName}&apos;s Items</SRCTypography>
+      <Typography variant="headline2" className="title">{userProfile?.userName}&apos;s Items</Typography>
       <div className="Tabs">
         {Object.keys(UserProfileLinksTabs).map((keyName: string) => {
           return (
@@ -50,9 +50,9 @@ function UserProfileLinks({
               }}
               aria-selected={UserProfileLinksTabs[keyName] === currentTab}
             >
-              <SRCTypography variant="buttonLink">
+              <Typography variant="buttonLink">
                 <IconSvg options={{ icon: getIconName(UserProfileLinksTabs[keyName]) }} /> {UserProfileLinksTabs[keyName]}
-              </SRCTypography>
+              </Typography>
             </div>
           )
         })}

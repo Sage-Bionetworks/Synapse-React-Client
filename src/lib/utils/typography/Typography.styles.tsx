@@ -6,7 +6,7 @@ const basicFontStyle = {
   letterSpacing: "0px",
 }
 
-const useSRCTypographyStyle = makeStyles(
+const useTypographyStyle = makeStyles(
   () => ({
     headline1: {
       ...basicFontStyle,
@@ -93,4 +93,4 @@ const useSRCTypographyStyle = makeStyles(
   { name: 'myTypography' },
 )
 
-export default useSRCTypographyStyle
+export default useTypographyStyle
