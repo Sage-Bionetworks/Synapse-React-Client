@@ -1,6 +1,6 @@
 import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
@@ -23,6 +23,11 @@ import { SynapseClientError } from '../../../utils/SynapseClient'
 import { entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
+import {
+  dropNullishArrayValues,
+  getFriendlyPropertyName,
+  transformErrors,
+} from './AnnotationEditorUtils'
 import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 import { CustomBooleanWidget } from './CustomBooleanWidget'
@@ -47,17 +52,6 @@ export type SchemaDrivenAnnotationEditorModalProps = {
   entityId: string
   show: boolean
   onHide: () => void
-}
-
-function getFriendlyPropertyName(error: AjvError) {
-  if (error.property.startsWith('[')) {
-    // Additional properties are surrounded by brackets and quotations, so let's remove them
-    return error.property.substring(2, error.property.length - 2)
-  } else if (error.property.startsWith('.')) {
-    return error.property.substring(1)
-  } else {
-    return error.property
-  }
 }
 
 // patternProperties lets us define how to treat additionalProperties in a JSON schema by property name
@@ -155,7 +149,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const mutation = useUpdateViaJson(
     entityId!,
-    { ...formData, ...entityJson },
+    { ...dropNullishArrayValues(formData ?? {}), ...entityJson },
     {
       onSuccess: () => {
         onSuccess()
@@ -183,8 +177,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               variant="info"
               transition={false}
             >
-              <b>{entityJson.name as string}</b> requires scientific annotations
-              specified by <b>{schema.jsonSchemaVersionInfo.$id}</b>
+              <b>{entityJson.name}</b> requires scientific annotations specified
+              by <b>{schema.jsonSchemaVersionInfo.$id}</b>
               {'. '}
               <b>
                 <a
@@ -208,7 +202,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               variant="info"
               transition={false}
             >
-              <b>{entityJson.name as string}</b> has no annotations. Click the{' '}
+              <b>{entityJson.name}</b> has no annotations. Click the{' '}
               <AddToList /> button to annotate.
             </Alert>
           )}
@@ -241,15 +235,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
                 'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
               },
             }}
-            transformErrors={(errors: AjvError[]): AjvError[] => {
-              return errors.map(error => {
-                const propertyName = getFriendlyPropertyName(error)
-                if (entityJsonKeys.includes(propertyName)) {
-                  error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
-                }
-                return error
-              })
-            }}
+            transformErrors={transformErrors}
             formData={formData}
             onChange={({ formData }) => {
               setFormData(formData)
