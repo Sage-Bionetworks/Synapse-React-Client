@@ -124,6 +124,14 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       accessToken!,
     )
 
+    // SWC-5765: Filter out duplicate accessors that are in an existing Access Requirement data access request
+    if (dataAccessRequestData.accessorChanges) {
+      const seen = new Set()
+      dataAccessRequestData.accessorChanges =  dataAccessRequestData.accessorChanges.filter(accessorChange => {
+          return seen.has(accessorChange.userId) ? false : seen.add(accessorChange.userId)
+      })
+    }
+  
     // renewal case
     if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
       setIsRenewal(true)
@@ -156,10 +164,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         })
       })
     } else {
-      // Filter out duplicate accessors coming from existing ARs
-      const uniqueAccessorChanges = accessorChanges.filter((user, i, arr) =>
-        arr.findIndex(accArr => (accArr.userId === user.userId)) === i)
-      uniqueAccessorChanges.forEach(item => {
+      accessorChanges.forEach(item => {
         ids.push(item.userId)
       })
     }
