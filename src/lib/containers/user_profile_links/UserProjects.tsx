@@ -62,7 +62,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
             if (item) {
               // another option would be to use an EntityLink
               return (
-                <p>
+                <p key={`user-project-list-item-${item.id}`}>
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
@@ -75,7 +75,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
             } else return false
           })}
           {/* To trigger loading the next page */}
-          <tr ref={ref} />
+          <div ref={ref} />
         </>
       )}
       {!isFetching && allRows.length == 0 && (

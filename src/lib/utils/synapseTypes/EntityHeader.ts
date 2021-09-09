@@ -11,9 +11,9 @@ export type EntityHeader = {
   /**	The type of the entity */
   type: ConcreteEntityType
   /** The version number of the entity */
-  versionNumber: number
+  versionNumber?: number
   /**	The user defined version label of the entity */
-  versionLabel: string
+  versionLabel?: string
   /**	The ID of the entity that this Entity's ACL is inherited from. */
   benefactorId: number
   /**	The date this entity was created. */

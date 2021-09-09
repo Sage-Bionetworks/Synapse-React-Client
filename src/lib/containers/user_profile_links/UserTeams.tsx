@@ -60,7 +60,7 @@ export default function UserTeams({userId}:UserTeamsProps) {
             if (item) {
               // another option would be to use an EntityLink
               return (
-                <p>
+                <p key={`user-team-list-item-${item.id}`}>
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
@@ -73,7 +73,7 @@ export default function UserTeams({userId}:UserTeamsProps) {
             } else return false
           })}
           {/* To trigger loading the next page */}
-          <tr ref={ref} />
+          <div ref={ref} />
         </>
       )}
       {!isFetching && allRows.length == 0 && (

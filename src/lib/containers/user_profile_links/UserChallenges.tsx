@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer'
 import { SynapseSpinner } from '../LoadingScreen'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/useGetUserChallenges'
-import { Challenge, ChallengeWithProjectHeader } from '../../utils/synapseTypes/ChallengePagedResults'
+import { ChallengeWithProjectHeader } from '../../utils/synapseTypes/ChallengePagedResults'
 
 export type UserChallengesProps = {
   userId: string
@@ -60,7 +60,7 @@ export default function UserChallenges({userId}:UserChallengesProps) {
             if (item) {
               // another option would be to use an EntityLink
               return (
-                <p>
+                <p key={`user-challenge-list-item-${item.challenge.projectId}`}>
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
@@ -73,7 +73,7 @@ export default function UserChallenges({userId}:UserChallengesProps) {
             } else return false
           })}
           {/* To trigger loading the next page */}
-          <tr ref={ref} />
+          <div ref={ref} />
         </>
       )}
       {!isFetching && allRows.length == 0 && (
