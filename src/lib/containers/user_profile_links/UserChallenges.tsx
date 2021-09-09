@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { useInView } from 'react-intersection-observer'
-import { SynapseSpinner } from '../LoadingScreen'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/useGetUserChallenges'
 import { ChallengeWithProjectHeader } from '../../utils/synapseTypes/ChallengePagedResults'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type UserChallengesProps = {
   userId: string
@@ -62,7 +62,7 @@ export default function UserChallenges({userId}:UserChallengesProps) {
               return (
                 <p key={`user-challenge-list-item-${item.challenge.projectId}`}>
                   <a
-                    target="_blank"
+                    target="_self"
                     rel="noopener noreferrer"
                     href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.challenge.projectId}/challenge`}
                   >
@@ -80,9 +80,7 @@ export default function UserChallenges({userId}:UserChallengesProps) {
         <div>Empty</div>
       )}
       {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+        <SkeletonTable numRows={5} numCols={1} />
       )}
     </>
   )

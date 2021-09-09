@@ -1,6 +1,8 @@
+import Skeleton from '@material-ui/lab/Skeleton'
 import React, { useState } from 'react'
 import { useGetUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
 import Typography from '../../utils/typography/Typography'
+import { SynapseErrorBoundary } from '../ErrorBanner'
 import IconSvg from '../IconSvg'
 import UserChallenges from './UserChallenges'
 import UserProjects from './UserProjects'
@@ -36,7 +38,11 @@ function UserProfileLinks({
   }
   return (
     <div className="UserProfileLinks">
-      <Typography variant="headline2" className="title">{userProfile?.userName}&apos;s Items</Typography>
+    
+      <Typography variant="headline2" className="title">
+        {userProfile && <>{userProfile?.userName}&apos;s Items</>}
+        {!userProfile && <Skeleton width='75%' />}
+      </Typography>
       <div className="Tabs">
         {Object.keys(UserProfileLinksTabs).map((keyName: string) => {
           return (
@@ -58,18 +64,20 @@ function UserProfileLinks({
         })}
       </div>
       <div className="TabContent">
-        {currentTab === UserProfileLinksTabs.PROJECTS && (
-          <>
-            <UserProjects userId={userId} />
-          </>)}
-        {currentTab === UserProfileLinksTabs.TEAMS && (
-          <>
-            <UserTeams userId={userId} />
-          </>)}
-        {currentTab === UserProfileLinksTabs.CHALLENGES && (
-          <>
-            <UserChallenges userId={userId} />
-          </>)}
+        <SynapseErrorBoundary>
+          {currentTab === UserProfileLinksTabs.PROJECTS && (
+            <>
+              <UserProjects userId={userId} />
+            </>)}
+          {currentTab === UserProfileLinksTabs.TEAMS && (
+            <>
+              <UserTeams userId={userId} />
+            </>)}
+          {currentTab === UserProfileLinksTabs.CHALLENGES && (
+            <>
+              <UserChallenges userId={userId} />
+            </>)}
+        </SynapseErrorBoundary>
       </div>
     </div>
   )

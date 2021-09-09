@@ -3,10 +3,10 @@ import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { useInView } from 'react-intersection-observer'
 import { ProjectHeader } from '../../utils/synapseTypes'
-import { SynapseSpinner } from '../LoadingScreen'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserProjectsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserProjects'
 import { GetProjectsParameters } from '../../utils/synapseTypes/GetProjectsParams'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type UserProjectsProps = {
   userId: string
@@ -64,7 +64,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
               return (
                 <p key={`user-project-list-item-${item.id}`}>
                   <a
-                    target="_blank"
+                    target="_self"
                     rel="noopener noreferrer"
                     href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${item.id}`}
                   >
@@ -82,9 +82,7 @@ export default function UserProjects({userId}:UserProjectsProps) {
         <div>Empty</div>
       )}
       {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+        <SkeletonTable numRows={5} numCols={1} />
       )}
     </>
   )

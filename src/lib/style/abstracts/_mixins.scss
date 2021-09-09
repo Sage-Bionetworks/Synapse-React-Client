@@ -78,13 +78,13 @@
   }
   > *[aria-selected='true'] {
     border-bottom: 3px solid $active-color;
-    color: #22252A;
+    color: SRC.$active-tab-text;
     svg {
       color: SRC.$primary-action-color-500;
     }
   }
   > *[aria-selected='false'] {
-    color: #878E95;
+    color: SRC.$inactive-tab-text;
     border-bottom: 3px solid $inactive-color;
   }
 }

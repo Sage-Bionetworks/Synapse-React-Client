@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { useInView } from 'react-intersection-observer'
-import { SynapseSpinner } from '../LoadingScreen'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserTeamsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserTeams'
 import { Team } from '../../utils/synapseTypes/Team'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type UserTeamsProps = {
   userId: string
@@ -62,7 +62,7 @@ export default function UserTeams({userId}:UserTeamsProps) {
               return (
                 <p key={`user-team-list-item-${item.id}`}>
                   <a
-                    target="_blank"
+                    target="_self"
                     rel="noopener noreferrer"
                     href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${item.id}`}
                   >
@@ -80,9 +80,7 @@ export default function UserTeams({userId}:UserTeamsProps) {
         <div>Empty</div>
       )}
       {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+        <SkeletonTable numRows={5} numCols={1} />
       )}
     </>
   )
