@@ -40,6 +40,7 @@ import EntityFinder from './containers/entity_finder/EntityFinder'
 import ExperimentalMode from './containers/ExperimentalMode'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
+import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -110,6 +111,7 @@ const SynapseComponents = {
   ProgrammaticOptions,
   SynapseToastContainer,
   displayToast,
+  UserProfileLinks
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }

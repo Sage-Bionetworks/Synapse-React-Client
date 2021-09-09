@@ -25,6 +25,7 @@ import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
 import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
+import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
 import { EntityModal } from './containers/entity/metadata/EntityModal'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
@@ -73,6 +74,7 @@ const SynapseComponents = {
   SynapseToastContainer,
   displayToast,
   IconSvg,
+  UserProfileLinks
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
