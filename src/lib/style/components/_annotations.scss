@@ -73,10 +73,14 @@
       .array-item {
         display: grid;
         grid-template-columns: [input] auto [remove] 30px [add] 30px;
-        grid-template-rows: [description] auto [widget] auto [errors] auto;
+        grid-template-rows: [widget] auto [description] auto [errors] auto;
 
         .field-description {
           grid-row-start: description;
+        }
+
+        .HelpButton {
+          display: none;
         }
 
         .form-control,
@@ -99,22 +103,50 @@
           grid-column-start: remove;
         }
       }
-
-      label {
-        color: SRC.$gray-deemphasized;
-        font-weight: normal;
-        span.required {
-          color: SRC.$red-required;
-          margin-left: 2px;
+      .LabelContainer {
+        display: flex;
+        label {
+          color: SRC.$gray-deemphasized;
+          font-weight: normal;
+          flex-grow: 1;
+          span.required {
+            color: SRC.$red-required;
+            margin-left: 2px;
+          }
         }
       }
-
       select {
         background-color: SRC.$gray-light;
       }
 
       .field-array > .array-item > label.form-label {
         display: none;
+      }
+
+      .HelpButton {
+        float: right;
+        margin: 0 0 0.5rem;
+        cursor: pointer;
+      }
+
+      table.FieldDescriptionTable {
+        margin: 10px 0px 15px 10px;
+        tr {
+          th,
+          td {
+            padding: 3px 0px;
+            vertical-align: middle;
+
+            .field-description {
+              margin-bottom: 0;
+            }
+          }
+          th {
+            padding-right: 25px;
+            font-weight: 400;
+            color: SRC.$text-color-disabled;
+          }
+        }
       }
     }
   }
