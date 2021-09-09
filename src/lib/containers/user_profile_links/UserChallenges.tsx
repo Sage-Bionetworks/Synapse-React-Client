@@ -57,8 +57,8 @@ export default function UserChallenges({userId}:UserChallengesProps) {
       {allRows.length > 0 && (
         <>
           {allRows.map((item:ChallengeWithProjectHeader) => {
-            if (item) {
-              // another option would be to use an EntityLink
+            if (item && item.challenge && item.projectHeader) {
+              // another option may be to use an EntityLink
               return (
                 <p key={`user-challenge-list-item-${item.challenge.projectId}`}>
                   <a

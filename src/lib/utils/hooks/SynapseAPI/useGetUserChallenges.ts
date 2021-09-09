@@ -37,7 +37,7 @@ export function useGetUserChallengesInfinite(
       }
       return {
         results: [],
-        totalNumberOfResults: 0
+        totalNumberOfResults: challenges.totalNumberOfResults
       }
     },
     {
