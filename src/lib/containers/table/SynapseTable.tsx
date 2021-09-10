@@ -878,7 +878,6 @@ export default class SynapseTable extends React.Component<
           <td key={`(${rowIndex},rowSelectColumn)`} className="SRC_noBorderTop">
             <Checkbox
               label=""
-              id={`(${rowIndex},rowSelectColumnCheckbox)`}
               checked={selectedRowIndices.includes(rowIndex)}
               onChange={(checked: boolean) => {
                 const cloneSelectedRowIndices = [...selectedRowIndices]

@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { uniqueId as _uniqueId } from 'lodash-es'
 
 export type RadioGroupProps = {
   options: { label: string; value: string }[]
@@ -42,16 +43,16 @@ type RadioOptionProps = {
 const RadioOption: React.FunctionComponent<RadioOptionProps> = (
   props: RadioOptionProps,
 ) => {
-  const id = `${props.groupId}-${props.label}`
+  const [uniqueId] = useState(_uniqueId('src-radio-'))
   return (
     <div onClick={() => props.onChange(props.value)}>
       <input
-        id={id}
+        id={uniqueId}
         type="radio"
         checked={props.currentValue === props.value}
         value={props.value}
       />
-      <label htmlFor={id}>{props.label}</label>
+      <label htmlFor={uniqueId}>{props.label}</label>
     </div>
   )
 }
