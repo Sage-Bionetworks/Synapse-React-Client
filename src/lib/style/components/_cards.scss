@@ -16,7 +16,7 @@ $text-color-lighter: #898989;
 }
 
 .SRC-portalCard {
-  display: block;  
+  display: block;
   font-family: 'Lato', sans-serif;
   font-size: $text-size-base;
   line-height: $baseline-grid;
@@ -24,7 +24,7 @@ $text-color-lighter: #898989;
   border: 1px solid $color-divider;
   margin-top: 30px;
   margin-bottom: 30px;
-  
+
   // default (non-header styles)
   color: $text-color-base;
   .SRC-type,
@@ -38,10 +38,10 @@ $text-color-lighter: #898989;
       &.iconImg {
         max-width: 75px;
       }
-    }  
+    }
   }
   .SRC-cardMetadata {
-    background-color: $color-gray-background;    
+    background-color: $color-gray-background;
   }
 
   &.SRC-portalCardHeader {
@@ -58,14 +58,14 @@ $text-color-lighter: #898989;
     .SRC-type,
     .SRC-cardThumbnail {
       color: inherit;
-    }  
+    }
     a,
     .SRC-userCard {
       color: white !important;
       border-bottom: 1px solid white !important;
       &:hover {
         border-bottom: 1px solid white !important;
-      }  
+      }
     }
     .SRC-cardMetadata .SRC-row-label {
       text-transform: uppercase;
@@ -74,7 +74,7 @@ $text-color-lighter: #898989;
     .SRC-cardThumbnail {
       width: 25%;
       img {
-        width: 50%;        
+        width: 50%;
       }
     }
     .SRC-cardMetadata {
@@ -83,7 +83,8 @@ $text-color-lighter: #898989;
     @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
       &.isAlignToLeftNav {
         .SRC-cardThumbnail {
-          svg, img {          
+          svg,
+          img {
             margin-right: 15px;
           }
         }
@@ -116,7 +117,7 @@ $text-color-lighter: #898989;
   }
 
   h3 {
-    margin: $baseline-grid, 0, $baseline-grid/2, 0 !important;
+    margin: $baseline-grid, 0, $baseline-grid * 0.5, 0 !important;
     padding: 0;
     font-size: $text-size-title !important;
     line-height: 125%;
@@ -128,11 +129,11 @@ $text-color-lighter: #898989;
 
   .SRC-type,
   .SRC-cardThumbnail {
-    text-transform: uppercase;    
+    text-transform: uppercase;
   }
 
   .SRC-cardThumbnail {
-    display: inline-block;    
+    display: inline-block;
     vertical-align: top;
     padding-top: $baseline-grid;
     max-width: 215px;
@@ -147,7 +148,7 @@ $text-color-lighter: #898989;
     }
     > div {
       // icon label
-      margin-top: $baseline-grid/2;
+      margin-top: $baseline-grid * 0.5;
       text-align: center;
     }
   }
@@ -165,7 +166,7 @@ $text-color-lighter: #898989;
       width: auto;
       margin: auto;
       display: block;
-    }    
+    }
   }
 
   .SRC-cardContent {
@@ -181,11 +182,11 @@ $text-color-lighter: #898989;
 
     .SRC-author {
       font-style: italic;
-      padding-bottom: $baseline-grid / 2;
+      padding-bottom: $baseline-grid * 0.5;
     }
 
     .SRC-cardAnnotations {
-      margin: ($baseline-grid / 2) 0;
+      margin: ($baseline-grid * 0.5) 0;
       span {
         background: color.change(SRC.$secondary-action-color, $alpha: 0.05);
         display: inline-block;
@@ -210,7 +211,7 @@ $text-color-lighter: #898989;
   }
 
   .SRC-cardMetadata {
-    display: block;    
+    display: block;
     padding: $baseline-grid;
     &.hasIcon {
       padding-left: 15%;
@@ -266,7 +267,7 @@ $text-color-lighter: #898989;
       .SRC-website a {
         display: inline-block;
         font-size: $text-size-base;
-        padding-bottom: $baseline-grid / 2;
+        padding-bottom: $baseline-grid * 0.5;
       }
     }
     .SRC-cardAction {
