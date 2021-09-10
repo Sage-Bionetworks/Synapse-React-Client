@@ -1,7 +1,5 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
@@ -11,6 +9,8 @@ import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
 import { CreatePackageV2 } from './CreatePackageV2'
 import FullWidthAlert from '../FullWidthAlert'
+import { ErrorBanner } from '../ErrorBanner'
+import { toError } from '../../utils/ErrorUtils'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -22,7 +22,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] = useState<boolean>(false)
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] = useState(false)
-  const handleError = useErrorHandler()
+  const [error, setError] = useState<Error>()
   const {
     data,
     isLoading,
@@ -32,10 +32,13 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
   } = useGetDownloadListStatistics()
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      setError(toError(newError))
     }
-  }, [isError, newError, handleError])
+  }, [isError, newError])
   
+  if (error) {
+    return <ErrorBanner error={error} />
+  }
   const clearDownloadList = async (
   ) => {
     await SynapseClient.clearDownloadListV2(accessToken)
