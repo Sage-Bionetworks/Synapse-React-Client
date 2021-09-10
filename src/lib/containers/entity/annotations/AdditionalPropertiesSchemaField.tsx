@@ -103,6 +103,11 @@ export function getWidgetFromPropertyType(
  * react-jsonschema-form SchemaField override for "additionalProperties" only.
  * Modifies the data to provide full compatibility with Synapse annotations features.
  *
+ * This component provides these enhancements to the SchemaField:
+ * - Supports selecting a type, and changing the input widget appropriately
+ * - Identifying the type on mount
+ * - Treat all field values as arrays
+ * - When the last array value is removed, remove the entire key from the form.
  * @param props
  * @returns
  */
@@ -145,15 +150,6 @@ export function AdditionalPropertiesSchemaField<T>(
     appendToList,
     setList,
   } = useListState(convertToArray(formData))
-
-  /**
-   * This component provides these enhancements to the SchemaField:
-   *
-   * - Supports selecting a type, and changing the input widget appropriately
-   * - Identifying the type on mount
-   * - Treat all field values as arrays
-   * - When the last array value is removed, remove the entire key from the form.
-   */
 
   // The type determines which widget we show.
   const [propertyType, setPropertyType] = useState<PropertyType>(
