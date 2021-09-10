@@ -12,7 +12,7 @@ export type UserProjectsProps = {
   userId: string
 }
 
-export default function UserProjects({userId}:UserProjectsProps) {
+export default function UserProjects({ userId }: UserProjectsProps) {
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
@@ -45,20 +45,13 @@ export default function UserProjects({userId}:UserProjectsProps) {
     }
   }, [status, isFetching, hasNextPage, fetchNextPage, inView])
 
-  const allRows = data
-    ? ([] as ProjectHeader[]).concat.apply(
-        [],
-        data.pages.map(
-          p => p.results,
-        ),
-      )
-    : []
+  const allRows = data?.pages.flatMap(page => page.results) ?? []
 
   return (
     <>
       {allRows.length > 0 && (
         <>
-          {allRows.map((item:ProjectHeader) => {
+          {allRows.map((item: ProjectHeader) => {
             if (item) {
               // another option would be to use an EntityLink
               return (
@@ -78,12 +71,8 @@ export default function UserProjects({userId}:UserProjectsProps) {
           <div ref={ref} />
         </>
       )}
-      {!isFetching && allRows.length == 0 && (
-        <div>Empty</div>
-      )}
-      {isFetching && (
-        <SkeletonTable numRows={5} numCols={1} />
-      )}
+      {!isFetching && allRows.length == 0 && <div>Empty</div>}
+      {isFetching && <SkeletonTable numRows={5} numCols={1} />}
     </>
   )
 }
