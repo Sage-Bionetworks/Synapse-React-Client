@@ -170,7 +170,7 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
     window.location.href = `/#!Search:${encodeURI(JSON.stringify(projectSearchJson))}`
   }
 
-  const downloadListItem = getListItem({tooltip: 'Download Cart', iconName: 'downloadOutlined', onClickGoToUrl: '/#!DownloadCart:0'})
+  const downloadListItem = getListItem({tooltip: 'Download Cart', iconName: 'download', onClickGoToUrl: '/#!DownloadCart:0'})
 
   return (
     <div className="SynapseNavDrawer">
@@ -183,13 +183,13 @@ export const SynapseNavDrawer: React.FunctionComponent<SynapseNavDrawerProps> = 
         <List>
           {currentUserProfile && <>
             {getListItem({tooltip: 'Projects', iconName: 'dashboard', onClickOpenNavMenu: NavItem.PROJECTS})}
-            {getListItem({tooltip: 'Favorites', iconName: 'favOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/favorites`})}
-            {getListItem({tooltip: 'Teams', iconName: 'peopleOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/teams`})}
-            {getListItem({tooltip: 'Challenges', iconName: 'challengesOutlined', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/challenges`})}
+            {getListItem({tooltip: 'Favorites', iconName: 'favTwoTone', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/favorites`})}
+            {getListItem({tooltip: 'Teams', iconName: 'peopleTwoTone', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/teams`})}
+            {getListItem({tooltip: 'Challenges', iconName: 'challengesTwoTone', onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/challenges`})}
             {downloadListItem}
             {isInSynapseExperimentalMode() && getListItem({tooltip: 'Trash Can', iconName: 'delete', onClickGoToUrl: '/#!Trash:0'})}
           </>}
-          {getListItem({tooltip: 'Search', iconName: 'searchOutlined', onClickGoToUrl: '/#!Search:'})}
+          {getListItem({tooltip: 'Search', iconName: 'searchTwoTone', onClickGoToUrl: '/#!Search:'})}
         </List>
         <div className="filler"/>
         <List>

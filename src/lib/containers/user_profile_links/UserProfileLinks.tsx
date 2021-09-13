@@ -31,9 +31,9 @@ function UserProfileLinks({
       case UserProfileLinksTabs.PROJECTS:
         return 'dashboard'
       case UserProfileLinksTabs.TEAMS:
-        return 'peopleOutlined'
+        return 'peopleTwoTone'
       case UserProfileLinksTabs.CHALLENGES:
-        return 'challengesOutlined'
+        return 'challengesTwoTone'
     }
   }
   return (
