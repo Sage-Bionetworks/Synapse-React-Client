@@ -106,12 +106,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
     if (isRootNode) {
       setEntityChildren(rootNodeConfiguration!.children)
     } else {
-      setEntityChildren(
-        ([] as EntityHeader[]).concat.apply(
-          [],
-          children?.pages.map(page => page.page) ?? [],
-        ),
-      )
+      setEntityChildren(children?.pages.flatMap(page => page.page) ?? [])
     }
   }, [isRootNode, children, rootNodeConfiguration])
 

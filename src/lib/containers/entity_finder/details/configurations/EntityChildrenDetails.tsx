@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import { Direction, EntityHeader, SortBy } from '../../../../utils/synapseTypes'
+import { Direction, SortBy } from '../../../../utils/synapseTypes'
 import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
@@ -46,14 +46,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 
   return (
     <DetailsView
-      entities={
-        data
-          ? ([] as EntityHeader[]).concat.apply(
-              [],
-              data.pages.map(page => page.page),
-            )
-          : []
-      }
+      entities={data?.pages.flatMap(page => page.page) ?? []}
       queryStatus={status}
       queryIsFetching={isFetching}
       hasNextPage={hasNextPage}

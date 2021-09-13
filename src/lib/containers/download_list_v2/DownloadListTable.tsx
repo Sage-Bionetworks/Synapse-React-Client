@@ -63,14 +63,7 @@ export default function DownloadListTable() {
     }
   }, [status, isFetching, hasNextPage, fetchNextPage, inView])
 
-  const allRows = data
-    ? ([] as DownloadListItemResult[]).concat.apply(
-        [],
-        data.pages.map(
-          p => p.page,
-        ),
-      )
-    : []
+  const allRows = data?.pages.flatMap(page => page.page) ?? []
 
   const getFilterDisplayText = (f: AvailableFilter) => {
     if (!f) {
@@ -120,29 +113,33 @@ export default function DownloadListTable() {
       )
     )
   }
-  const availableFiltersArray: AvailableFilter[] = [undefined, 'eligibleForPackaging', 'ineligibleForPackaging']
+  const availableFiltersArray: AvailableFilter[] = [
+    undefined,
+    'eligibleForPackaging',
+    'ineligibleForPackaging',
+  ]
   return (
     <>
       <div className="filterFilesContainer">
-          <span className="filterFilesByText">Filter Files By</span>
-          <Dropdown>
-            <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
-              {getFilterDisplayText(filter)}
-            </Dropdown.Toggle>
-            <Dropdown.Menu role="menu">
-            {availableFiltersArray.map(
-              (availableFilter) => (
+        <span className="filterFilesByText">Filter Files By</span>
+        <Dropdown>
+          <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
+            {getFilterDisplayText(filter)}
+          </Dropdown.Toggle>
+          <Dropdown.Menu role="menu">
+            {availableFiltersArray.map(availableFilter => (
               <Dropdown.Item
-                  role="menuitem"
-                  key={`${getFilterDisplayText(availableFilter)}-filter-option`}
-                  onClick={() => {
-                    setFilter(availableFilter)
-                  }}
-                >
-                  {getFilterDisplayText(availableFilter)}
-                </Dropdown.Item>),)}
-            </Dropdown.Menu>
-          </Dropdown>
+                role="menuitem"
+                key={`${getFilterDisplayText(availableFilter)}-filter-option`}
+                onClick={() => {
+                  setFilter(availableFilter)
+                }}
+              >
+                {getFilterDisplayText(availableFilter)}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
       {allRows.length > 0 && (
         <>
@@ -186,14 +183,15 @@ export default function DownloadListTable() {
               </tr>
             </thead>
             <tbody>
-              {allRows.map((item:DownloadListItemResult) => {
+              {allRows.map((item: DownloadListItemResult) => {
                 if (item) {
                   const addedOn = moment(item.addedOn).format('L LT')
                   const createdOn = moment(item.createdOn).format('L LT')
                   return (
                     <tr key={item.fileEntityId}>
                       <td>
-                          {item.isEligibleForPackaging && <span
+                        {item.isEligibleForPackaging && (
+                          <span
                             data-for={`${item.fileEntityId}-eligible-tooltip`}
                             data-tip="Eligible for packaging"
                             className="eligibileIcon"
@@ -205,10 +203,17 @@ export default function DownloadListTable() {
                               effect="solid"
                               id={`${item.fileEntityId}-eligible-tooltip`}
                             />
-                            <IconSvg options={{icon: 'packagableFile', color: '#878E95' }} />
-                        </span>}
-                        {!item.isEligibleForPackaging && <span className="ineligibileIcon" />
-                        }
+                            <IconSvg
+                              options={{
+                                icon: 'packagableFile',
+                                color: '#878E95',
+                              }}
+                            />
+                          </span>
+                        )}
+                        {!item.isEligibleForPackaging && (
+                          <span className="ineligibileIcon" />
+                        )}
                         <a
                           target="_blank"
                           rel="noopener noreferrer"

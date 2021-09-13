@@ -8,19 +8,15 @@ import {
   Clear,
   PhotoCameraOutlined,
   Cached,
-  GetApp,
   InfoOutlined,
   AddShoppingCart,
   ShoppingCartOutlined,
   Delete,
   ExpandMore,
   ExpandLess,
-  DashboardOutlined,
-  StarOutlined,
+  DashboardTwoTone,
   Star,
-  PeopleOutline,
-  AssessmentOutlined,
-  GetAppOutlined,
+  PeopleTwoTone,
   SearchOutlined,
   HelpOutlined,
   AddCircleOutline,
@@ -29,6 +25,9 @@ import {
   TableChartTwoTone,
   QuestionAnswerTwoTone,
   AssessmentTwoTone,
+  GetAppTwoTone,
+  StarTwoTone,
+  SearchTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -92,12 +91,10 @@ const getIcon = (options:IconSvgOptions) => {
       return <Check style={muiSvgStyle}></Check>
     case 'clear':
       return <Clear style={muiSvgStyle}></Clear>
-    case 'download':
-      return <GetApp style={muiSvgStyle}></GetApp>
     case 'cart':
       return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
     case 'dashboard':
-      return <DashboardOutlined style={muiSvgStyle}></DashboardOutlined>
+      return <DashboardTwoTone style={muiSvgStyle}></DashboardTwoTone>
     case 'delete':
       return <Delete style={muiSvgStyle}></Delete>
     case 'addToCart':
@@ -110,18 +107,20 @@ const getIcon = (options:IconSvgOptions) => {
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
     case 'info':
       return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
-    case 'favOutlined':
-      return <StarOutlined style={muiSvgStyle}></StarOutlined>
+    case 'favTwoTone':
+      return <StarTwoTone style={muiSvgStyle}></StarTwoTone>
     case 'fav':
       return <Star style={muiSvgStyle}></Star>
-    case 'peopleOutlined':
-      return <PeopleOutline style={muiSvgStyle}></PeopleOutline>
-    case 'challengesOutlined':
-      return <AssessmentOutlined style={muiSvgStyle}></AssessmentOutlined>
-    case 'downloadOutlined':
-      return <GetAppOutlined style={muiSvgStyle}></GetAppOutlined>
+    case 'peopleTwoTone':
+      return <PeopleTwoTone style={muiSvgStyle}></PeopleTwoTone>
+    case 'challengesTwoTone':
+      return <AssessmentTwoTone style={muiSvgStyle}></AssessmentTwoTone>
+    case 'download':
+      return <GetAppTwoTone style={muiSvgStyle}></GetAppTwoTone>
     case 'searchOutlined':
       return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
+    case 'searchTwoTone':
+      return <SearchTwoTone style={muiSvgStyle}></SearchTwoTone>
     case 'login':
       return <Login fill={color} style={customSvgStyle}></Login>
     case 'helpOutlined':

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
 import * as ReactBootstrap from 'react-bootstrap'
 import { SynapseClient } from '../utils'
 import SortIcon from '../assets/icons/Sort'
@@ -14,6 +13,7 @@ import ReactTooltip from 'react-tooltip'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { EntityTypeIcon } from './EntityIcon'
 import { Form } from 'react-bootstrap'
+import { ErrorBanner } from './ErrorBanner'
 
 // Local types used for client-side sorting
 export type SortField = 'name' | 'type'
@@ -25,10 +25,10 @@ export type Sort = {
 
 export default function FavoritesPage() {
   const { accessToken } = useSynapseContext()
-  const handleError = useErrorHandler()
   const [sort, setSort] = useState<Sort | undefined>(undefined)
   const [searchText, setSearchText] = useState<string>('')
   const [sortedData, setSortedData] = useState<EntityHeader[] | undefined>(undefined)
+  const [error, setError] = useState<Error>()
   const {
     data,
     isFetching,
@@ -39,9 +39,15 @@ export default function FavoritesPage() {
 
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      setError(toError(newError))
     }
-  }, [isError, newError, handleError])
+  }, [isError, newError])
+
+  useEffect(() => {
+    if (!accessToken) {
+      setError(new Error('Please sign in to access your favorites.'))
+    }
+  }, [accessToken])
 
   const filterEntityHeaders = (searchTerm:string, array:EntityHeader[]) => {
     const searchTermLowercase = searchTerm.toLowerCase()
@@ -107,7 +113,11 @@ export default function FavoritesPage() {
       )
     )
   }
-  
+
+  if (error) {
+    return <ErrorBanner error={error} />
+  }
+
   return (
     <div className="FavoritesPage">
       <div className="searchInputWithIcon">

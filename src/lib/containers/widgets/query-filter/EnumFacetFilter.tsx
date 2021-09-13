@@ -1,21 +1,20 @@
-import * as React from 'react'
-import { Dropdown } from 'react-bootstrap'
-import {
-  FacetColumnResultValueCount,
-  ColumnModel,
-} from '../../../utils/synapseTypes/Table'
-import { Checkbox } from '../Checkbox'
-import { SynapseConstants } from '../../../utils'
-import { useState } from 'react'
-import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
-import { UserProfile } from '../../../utils/synapseTypes'
-import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
+import React, { useState } from 'react'
+import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FacetFilterHeader } from './FacetFilterHeader'
-import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
+import { SynapseConstants } from '../../../utils'
+import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
+import { UserProfile } from '../../../utils/synapseTypes'
+import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
+import {
+  ColumnModel,
+  FacetColumnResultValueCount,
+} from '../../../utils/synapseTypes/Table'
+import { Checkbox } from '../Checkbox'
+import { FacetFilterHeader } from './FacetFilterHeader'
 
 library.add(faArrowLeft)
 
@@ -213,7 +212,6 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               key="select_all"
               checked={allIsSelected}
               label="All"
-              id="select_all"
               isSelectAll={true}
             ></Checkbox>
             <button
@@ -400,7 +398,6 @@ function EnumFacetFilterOption({
         key={id + index}
         checked={isSelected}
         label={label}
-        id={id}
       ></Checkbox>
       {isDropdown && <span className="EnumFacetFilter__count">({count})</span>}
       {!isDropdown && <div className="EnumFacetFilter__count">{count}</div>}

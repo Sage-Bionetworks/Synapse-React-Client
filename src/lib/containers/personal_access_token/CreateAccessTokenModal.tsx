@@ -139,7 +139,6 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                 </FormLabel>
                 <Checkbox
                   label={scopeDescriptions.view.displayName}
-                  id="view"
                   checked={viewAccess}
                   onChange={() => setViewAccess(!viewAccess)}
                 >
@@ -150,7 +149,6 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                 </Checkbox>
                 <Checkbox
                   label={scopeDescriptions.download.displayName}
-                  id="download"
                   checked={downloadAccess}
                   onChange={() => setDownloadAccess(!downloadAccess)}
                 >
@@ -160,7 +158,6 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
                 </Checkbox>
                 <Checkbox
                   label={scopeDescriptions.modify.displayName}
-                  id="modify"
                   checked={modifyAccess}
                   onChange={() => setModifyAccess(!modifyAccess)}
                 >

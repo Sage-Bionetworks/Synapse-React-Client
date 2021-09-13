@@ -123,7 +123,6 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
             {!isDisabled && selectButtonType === 'checkbox' && (
               <Checkbox
                 label=""
-                id=""
                 className="SRC-pointer-events-none"
                 checked={isSelected}
                 onChange={() => {
