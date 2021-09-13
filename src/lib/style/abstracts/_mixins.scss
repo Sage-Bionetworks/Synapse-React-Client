@@ -63,7 +63,7 @@
 }
 
 @mixin underline-tabs(
-  $active-color: SRC.$primary-action-color-500,
+  $active-color: SRC.$secondary-action-color,
   $inactive-color: lightgray
 ) {
   display: flex;
@@ -80,7 +80,7 @@
     border-bottom: 3px solid $active-color;
     color: SRC.$active-tab-text;
     svg {
-      color: SRC.$primary-action-color-500;
+      color: SRC.$secondary-action-color;
     }
   }
   > *[aria-selected='false'] {
