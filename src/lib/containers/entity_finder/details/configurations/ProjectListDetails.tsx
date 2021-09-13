@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/useProjects'
-import { ProjectHeader } from '../../../../utils/synapseTypes'
-import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { toError } from '../../../../utils/ErrorUtils'
+import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/useProjects'
+import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 
@@ -39,14 +38,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
 
   return (
     <DetailsView
-      entities={
-        data
-          ? ([] as ProjectHeader[]).concat.apply(
-              [],
-              data.pages.map(page => page.results),
-            )
-          : []
-      }
+      entities={data?.pages.flatMap(page => page.results) ?? []}
       queryStatus={status}
       queryIsFetching={isFetching}
       hasNextPage={hasNextPage}

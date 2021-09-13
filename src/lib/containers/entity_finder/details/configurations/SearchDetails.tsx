@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/useSearch'
-import { Hit, SearchQuery } from '../../../../utils/synapseTypes/Search'
+import { SearchQuery } from '../../../../utils/synapseTypes/Search'
 import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
@@ -41,14 +41,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   if (searchQuery.queryTerm) {
     return (
       <DetailsView
-        entities={
-          data
-            ? ([] as Hit[]).concat.apply(
-                [],
-                data.pages.map(page => page.hits),
-              )
-            : []
-        }
+        entities={data?.pages.flatMap(page => page.hits) ?? []}
         queryStatus={status}
         queryIsFetching={isFetching}
         hasNextPage={hasNextPage}

@@ -164,12 +164,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   useEffect(() => {
     if (useProjectData && isSuccessProjects) {
       if (projectData?.pages) {
-        setTopLevelEntities(
-          ([] as ProjectHeader[]).concat.apply(
-            [],
-            projectData.pages.map(page => page.results),
-          ),
-        )
+        setTopLevelEntities(projectData.pages.flatMap(page => page.results))
       }
     }
   }, [useProjectData, isSuccessProjects, projectData])
