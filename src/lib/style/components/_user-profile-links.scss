@@ -2,9 +2,6 @@
 @use '../abstracts/variables' as SRC;
 
 .UserProfileLinks {
-  // box shadow on the left hand side only.
-  // horizontal offset -12px, vertical offset 0px, and reduce the shadow spread with -15px
-  box-shadow: -12px 0px 20px -15px rgb(74 80 86 / 15%);
   width: 365px;
   .title {
     padding: 30px 0px 20px 30px;
@@ -17,8 +14,6 @@
   }
 
   .TabContent {
-    min-height: calc(100vh - 100px);
-    max-height: calc(100vh - 100px);;
     overflow-y: scroll;
     padding: 30px 0px 0px 30px;
     p {
