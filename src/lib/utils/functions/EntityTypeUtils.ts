@@ -93,6 +93,11 @@ export function convertToEntityType(
   }
 }
 
+/**
+ * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
+ * @param type
+ * @returns
+ */
 export function isVersionableEntityType(type: EntityType): boolean {
   switch (type) {
     case EntityType.PROJECT:
