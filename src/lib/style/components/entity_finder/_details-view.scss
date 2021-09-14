@@ -67,7 +67,8 @@
     color: $-selected-color;
     background-color: $-selected-background-color;
     .UserCardSmall {
-      color: $-selected-color;
+      color: $-selected-color !important;
+      border-color: $-selected-color !important;
     }
   }
 
