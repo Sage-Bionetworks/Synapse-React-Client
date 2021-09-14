@@ -81,7 +81,7 @@ export const DetailsViewRow: React.FunctionComponent<DetailsViewRowProps> = ({
   // We can't use IntersectionObserver via ref on a div within a <select> input
   // It might make more sense to use react-select here
   const { data: versionData } = useGetVersionsInfinite(entityHeader.id, {
-    enabled: inView && isVersionableEntity,
+    enabled: inView && isVersionableEntity && showVersionColumn,
     staleTime: 60 * 1000, // 60 seconds
   })
 
