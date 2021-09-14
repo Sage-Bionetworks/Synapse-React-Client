@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
@@ -15,10 +15,9 @@ import {
   Reference,
 } from '../../../../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../../../mocks/MockSynapseContext'
+import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
+
+const mockToggleSelection = jest.fn()
 
 const SynapseClient = require('../../../../../lib/utils/SynapseClient')
 
@@ -28,8 +27,16 @@ jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useUserBundle', () => {
     useGetUserProfileWithProfilePic: jest.fn().mockReturnValue({}),
   }
 })
+const mockUseEntity = jest.mock(
+  '../../../../../lib/utils/hooks/SynapseAPI/useEntity',
+  () => {
+    return {
+      useGetVersionsInfinite: jest.fn().mockReturnValue({}),
+    }
+  },
+)
+
 jest.mock('../../../../../lib/containers/UserCard')
-const mockToggleSelection = jest.fn()
 const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 
 const defaultProps: DetailsViewRowProps = {
@@ -41,6 +48,7 @@ const defaultProps: DetailsViewRowProps = {
     modifiedBy: 100000,
     type: 'org.sagebionetworks.repo.model.FileEntity',
   },
+  mustSelectVersionNumber: false,
   appearance: 'default',
   showVersionColumn: true,
   selectButtonType: 'checkbox',
@@ -61,17 +69,6 @@ const versionResult: PaginatedResults<VersionInfo> = {
   results: [
     {
       id: defaultProps.entityHeader.id,
-      versionNumber: 1,
-      versionLabel: '1',
-      versionComment: 'comment',
-      modifiedBy: 'user',
-      contentSize: '100000',
-      contentMd5: 'abcde0123456789',
-      modifiedByPrincipalId: '1',
-      modifiedOn: 'yesterday',
-    },
-    {
-      id: defaultProps.entityHeader.id,
       versionNumber: 5,
       versionLabel: 'version 5 label',
       versionComment: 'comment 2',
@@ -80,6 +77,20 @@ const versionResult: PaginatedResults<VersionInfo> = {
       contentMd5: 'deadbeef',
       modifiedByPrincipalId: '1',
       modifiedOn: 'today',
+      isLatestVersion: true,
+    },
+
+    {
+      id: defaultProps.entityHeader.id,
+      versionNumber: 1,
+      versionLabel: '1',
+      versionComment: 'comment',
+      modifiedBy: 'user',
+      contentSize: '100000',
+      contentMd5: 'abcde0123456789',
+      modifiedByPrincipalId: '1',
+      modifiedOn: 'yesterday',
+      isLatestVersion: false,
     },
   ],
 }
@@ -103,6 +114,10 @@ describe('DetailsViewRow tests', () => {
     mockUseGetEntityBundle.mockImplementation(() => ({
       data: bundleResult,
     }))
+
+    mockUseEntity.useGetVersionsInfinite = jest.fn().mockReturnValue({
+      data: { pages: [versionResult] },
+    })
 
     SynapseClient.getEntityVersions = jest.fn().mockResolvedValue(versionResult)
   })
@@ -177,7 +192,7 @@ describe('DetailsViewRow tests', () => {
   })
 
   describe('correct aria labels based on state', () => {
-    it('default appearance', async () => {
+    it('default appearance', () => {
       renderComponent({ appearance: 'default' })
       const row = screen.getByRole('row')
       expect(row).toHaveAttribute('aria-selected', 'false')
@@ -185,19 +200,15 @@ describe('DetailsViewRow tests', () => {
       expect(row).toHaveAttribute('aria-hidden', 'false')
     })
 
-    it('selected appearance', async () => {
+    it('selected appearance', () => {
       renderComponent({ appearance: 'selected' })
       const row = screen.getByRole('row')
-
-      // This just removes the act(...) warning, we test this elsewhere
-      await waitFor(() => expect(SynapseClient.getEntityVersions).toBeCalled())
-
       expect(row).toHaveAttribute('aria-selected', 'true')
       expect(row).toHaveAttribute('aria-disabled', 'false')
       expect(row).toHaveAttribute('aria-hidden', 'false')
     })
 
-    it('disabled appearance', async () => {
+    it('disabled appearance', () => {
       renderComponent({ appearance: 'disabled' })
       const row = screen.getByRole('row')
       expect(row).toHaveAttribute('aria-selected', 'false')
@@ -205,7 +216,7 @@ describe('DetailsViewRow tests', () => {
       expect(row).toHaveAttribute('aria-hidden', 'false')
     })
 
-    it('hidden appearance', async () => {
+    it('hidden appearance', () => {
       renderComponent({ appearance: 'hidden' })
       const row = screen.getByRole('row', { hidden: true })
       expect(row).toHaveAttribute('aria-selected', 'false')
@@ -225,14 +236,12 @@ describe('DetailsViewRow tests', () => {
       expect(() => hideColumnWrapper.getByLabelText('version')).toThrowError()
     })
 
-    it('retrieves the versions when selected', async () => {
+    it('displays the versions when selected', async () => {
       renderComponent({ appearance: 'selected' })
       expect(await screen.findByRole('listbox')).toBeDefined()
 
-      expect(SynapseClient.getEntityVersions).toBeCalledWith(
-        defaultProps.entityHeader.id,
-        MOCK_CONTEXT_VALUE.accessToken,
-      )
+      // We should have two versions and 'Always Latest Version' as options
+      expect(screen.getAllByRole('option').length).toBe(3)
     })
 
     it('calls toggle selection when a version is picked', async () => {
@@ -304,6 +313,25 @@ describe('DetailsViewRow tests', () => {
       expect(
         (screen.getAllByRole('option')[2] as HTMLOptionElement).selected,
       ).toBe(true)
+    })
+
+    it('automatically selects the first version if mustSelectVersionNumber is true', async () => {
+      renderComponent({
+        appearance: 'selected',
+        selectedVersion: undefined,
+        mustSelectVersionNumber: true,
+      })
+      expect(await screen.findByRole('listbox')).toBeDefined()
+
+      // Always Latest Version is not an option
+      expect(screen.getAllByRole('option').length).toBe(2)
+
+      expect(
+        (screen.getAllByRole('option')[0] as HTMLOptionElement).selected,
+      ).toBe(true)
+      expect(
+        (screen.getAllByRole('option')[1] as HTMLOptionElement).selected,
+      ).toBe(false)
     })
   })
 })
