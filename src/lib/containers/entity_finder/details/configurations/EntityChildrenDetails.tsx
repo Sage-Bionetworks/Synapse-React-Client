@@ -12,12 +12,7 @@ type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
 
 export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetailsProps> = ({
   parentContainerId,
-  visibleTypes: includeTypes,
-  showVersionSelection,
-  selectColumnType,
-  selected,
-  selectableTypes,
-  toggleSelection,
+  ...sharedProps
 }) => {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
@@ -33,7 +28,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     error,
   } = useGetEntityChildrenInfinite({
     parentId: parentContainerId,
-    includeTypes: includeTypes,
+    includeTypes: sharedProps.visibleTypes,
     sortBy: sortBy,
     sortDirection: sortDirection,
   })
@@ -56,12 +51,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
         setSortBy(newSortBy)
         setSortDirection(newSortDirection)
       }}
-      showVersionSelection={showVersionSelection}
-      selectColumnType={selectColumnType}
-      selected={selected}
-      visibleTypes={includeTypes}
-      selectableTypes={selectableTypes}
-      toggleSelection={toggleSelection}
+      {...sharedProps}
     />
   )
 }

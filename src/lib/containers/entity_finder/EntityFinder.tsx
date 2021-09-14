@@ -48,6 +48,8 @@ export type EntityFinderProps = {
   initialContainer: string | 'root' | null
   /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
+  /** For versionable entities, require the user to select a numbered version of an entity. This disallows selecting 'Always Latest Version'. Note that the latest version may still be mutable. Default true. */
+  mustSelectVersionNumber?: boolean
   /** The entity types to show in the details view (right pane). Any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInList?: EntityType[]
   /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
@@ -67,6 +69,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
+  mustSelectVersionNumber = false,
   selectableTypes = Object.values(EntityType),
   visibleTypesInList = Object.values(EntityType),
   visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
@@ -170,7 +173,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
 
   useEffect(() => {
     if (searchTerms?.length === 1) {
-      const synIdMatch = searchTerms[0].match(SYNAPSE_ENTITY_ID_REGEX)
+      const synIdMatch = SYNAPSE_ENTITY_ID_REGEX.exec(searchTerms[0])
       if (synIdMatch) {
         SynapseClient.getEntityHeaders(
           [
@@ -290,6 +293,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     }
               }
               showVersionSelection={showVersionSelection}
+              mustSelectVersionNumber={mustSelectVersionNumber}
               selectColumnType={selectMultiple ? 'checkbox' : 'none'}
               selected={selectedEntities}
               visibleTypes={selectableTypes}
@@ -344,6 +348,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         <ReflexElement className="DetailsViewReflexElement">
                           <EntityDetailsList
                             configuration={configFromTreeView}
+                            mustSelectVersionNumber={mustSelectVersionNumber}
                             showVersionSelection={showVersionSelection}
                             selected={selectedEntities}
                             visibleTypes={selectableAndVisibleTypesInList}
