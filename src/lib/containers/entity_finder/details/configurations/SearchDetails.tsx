@@ -12,12 +12,7 @@ type SearchDetailsProps = EntityDetailsListSharedProps & {
 
 export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   searchQuery,
-  showVersionSelection,
-  selectColumnType,
-  selected,
-  visibleTypes: includeTypes,
-  selectableTypes,
-  toggleSelection,
+  ...sharedProps
 }) => {
   const {
     data,
@@ -46,12 +41,6 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         queryIsFetching={isFetching}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
-        showVersionSelection={showVersionSelection}
-        selectColumnType={selectColumnType}
-        selected={selected}
-        visibleTypes={includeTypes}
-        selectableTypes={selectableTypes}
-        toggleSelection={toggleSelection}
         noResultsPlaceholder={
           <>
             <img
@@ -64,6 +53,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
             </p>
           </>
         }
+        {...sharedProps}
       />
     )
   } else {
@@ -73,12 +63,6 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
         queryStatus={'success'}
         queryIsFetching={false}
         hasNextPage={false}
-        showVersionSelection={showVersionSelection}
-        selectColumnType={selectColumnType}
-        selected={selected}
-        visibleTypes={includeTypes}
-        selectableTypes={selectableTypes}
-        toggleSelection={toggleSelection}
         noResultsPlaceholder={
           <>
             <img
@@ -89,6 +73,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
             <p>Enter a term or Synapse ID to start searching</p>
           </>
         }
+        {...sharedProps}
       />
     )
   }

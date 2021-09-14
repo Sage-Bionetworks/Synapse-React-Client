@@ -12,12 +12,7 @@ type ProjectListDetailsProps = EntityDetailsListSharedProps & {
 
 export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps> = ({
   projectsParams,
-  showVersionSelection,
-  selectColumnType,
-  selected,
-  visibleTypes: includeTypes,
-  selectableTypes,
-  toggleSelection,
+  ...sharedProps
 }) => {
   const {
     data,
@@ -43,12 +38,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
       queryIsFetching={isFetching}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
-      showVersionSelection={showVersionSelection}
-      selectColumnType={selectColumnType}
-      selected={selected}
-      visibleTypes={includeTypes}
-      selectableTypes={selectableTypes}
-      toggleSelection={toggleSelection}
+      {...sharedProps}
     />
   )
 }
