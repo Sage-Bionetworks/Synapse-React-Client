@@ -160,17 +160,13 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
           <span>{nodeName}</span>
         </div>
         {appearance === NodeAppearance.SELECT && (
-          <div>
-            {nodeInView && (
-              <EntityBadgeIcons
-                entityId={nodeId}
-                showHasDiscussionThread={false}
-                showHasWiki={false}
-                showUnlink={false}
-                canOpenModal={false}
-              />
-            )}
-          </div>
+          <EntityBadgeIcons
+            entityId={nodeId}
+            showHasDiscussionThread={false}
+            showHasWiki={false}
+            showUnlink={false}
+            canOpenModal={false}
+          />
         )}
       </div>
       <div className={'NodeChildren'} aria-hidden={!isExpanded}>

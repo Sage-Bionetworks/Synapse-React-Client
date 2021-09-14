@@ -48,6 +48,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   hasNextPage,
   fetchNextPage,
   showVersionSelection,
+  mustSelectVersionNumber,
   selectColumnType,
   selected,
   visibleTypes,
@@ -181,6 +182,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                       ?.targetVersionNumber
                   }
                   showVersionColumn={showVersionSelection}
+                  mustSelectVersionNumber={mustSelectVersionNumber}
                   selectButtonType={selectColumnType}
                   toggleSelection={toggleSelection}
                 />

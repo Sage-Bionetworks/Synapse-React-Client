@@ -41,6 +41,7 @@ export type EntityDetailsListDataConfiguration = {
  */
 export type EntityDetailsListSharedProps = {
   showVersionSelection: boolean
+  mustSelectVersionNumber: boolean
   selectColumnType: 'checkbox' | 'none'
   visibleTypes: EntityType[]
   selected: Reference[]

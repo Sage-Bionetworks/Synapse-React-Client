@@ -5,6 +5,8 @@
 import { omit, pick } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
   useQuery,
@@ -14,7 +16,55 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { EntityJson, entityJsonKeys, EntityJsonValue } from '../../synapseTypes'
+import {
+  EntityJson,
+  entityJsonKeys,
+  EntityJsonValue,
+  PaginatedResults,
+} from '../../synapseTypes'
+import { VersionInfo } from '../../synapseTypes/VersionInfo'
+
+export function useGetVersions(
+  entityId: string,
+  options?: UseQueryOptions<PaginatedResults<VersionInfo>, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
+    [accessToken, 'entity', entityId, 'versions'],
+    () => SynapseClient.getEntityVersions(entityId, accessToken),
+    options,
+  )
+}
+
+export function useGetVersionsInfinite(
+  entityId: string,
+  options: UseInfiniteQueryOptions<
+    PaginatedResults<VersionInfo>,
+    SynapseClientError
+  >,
+) {
+  const LIMIT = 200
+  const { accessToken } = useSynapseContext()
+  return useInfiniteQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
+    [accessToken, 'entity', entityId, 'versions', 'infinite'],
+    async context => {
+      return await SynapseClient.getEntityVersions(
+        entityId,
+        accessToken,
+        context.pageParam,
+        LIMIT,
+      )
+    },
+    {
+      ...options,
+      getNextPageParam: (lastPage, pages) => {
+        if (lastPage.results.length > 0) return pages.length * LIMIT
+        //set the new offset to (page * limit)
+        else return undefined
+      },
+    },
+  )
+}
 
 export function getStandardEntityFields(json: EntityJson): EntityJson {
   return pick(json, entityJsonKeys) as EntityJson
