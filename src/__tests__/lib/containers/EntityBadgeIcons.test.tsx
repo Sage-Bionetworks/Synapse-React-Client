@@ -27,6 +27,7 @@ import {
 } from '../../../lib/utils/SynapseConstants'
 import { EntityType } from '../../../lib/utils/synapseTypes'
 import { mockSchemaValidationResults } from '../../../mocks/mockSchema'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 const defaultProps: EntityBadgeIconsProps = {
   entityId: MOCK_FILE_ENTITY_ID,
@@ -39,6 +40,7 @@ function renderComponent(wrapperProps?: SynapseContextType) {
   render(<EntityBadgeIcons {...defaultProps} />, {
     wrapper: createWrapper(wrapperProps),
   })
+  mockAllIsIntersecting(true)
 }
 
 describe('EntityBadgeIcons tests', () => {

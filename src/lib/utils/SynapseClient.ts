@@ -1069,11 +1069,11 @@ export const removeUserFavorite = (
  * Get a list of challenges for which the given user is registered.
  * see http://rest-docs.synapse.org/rest/GET/challenge.html
  */
- export const getUserChallenges = (
+export const getUserChallenges = (
   accessToken: string | undefined,
   userId: string | number,
   offset: string | number = 0,
-  limit: string | number = 200
+  limit: string | number = 200,
 ): Promise<ChallengePagedResults> => {
   const url = `/repo/v1/challenge?participantId=${userId}&offset=${offset}&limit=${limit}`
   return doGet(
@@ -1093,8 +1093,8 @@ export const getUserTeamList = (
   accessToken: string | undefined,
   userId: string | number,
   offset: string | number = 0,
-  limit: string | number = 200
-):Promise<PaginatedResults<Team>> => {
+  limit: string | number = 200,
+): Promise<PaginatedResults<Team>> => {
   const url = `/repo/v1/user/${userId}/team?offset=${offset}&limit=${limit}`
   return doGet(
     url,
@@ -2699,7 +2699,6 @@ export const getMyProjects = (
   )
 }
 
-
 // http://rest-docs.synapse.org/rest/GET/projects/user/principalId.html
 export const getUserProjects = (
   userId: string,
@@ -2728,10 +2727,14 @@ export const getEntityPath = (entityId: string, accessToken?: string) => {
 }
 
 // https://rest-docs.synapse.org/rest/GET/entity/id/version.html
-// TODO: Pagination
-export const getEntityVersions = (entityId: string, accessToken?: string) => {
+export const getEntityVersions = (
+  entityId: string,
+  accessToken?: string,
+  offset: number = 0,
+  limit: number = 200,
+) => {
   return doGet<PaginatedResults<VersionInfo>>(
-    `/repo/v1/entity/${entityId}/version?offset=0&limit=200`,
+    `/repo/v1/entity/${entityId}/version?offset=${offset}&limit=${limit}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

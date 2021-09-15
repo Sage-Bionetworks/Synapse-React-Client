@@ -36,6 +36,21 @@ export interface Entity {
   uri?: string
 }
 
+export interface Versionable {
+  /* The version number issued to this version on the object */
+  versionNumber?: number
+}
+
+export interface VersionableEntity extends Entity, Versionable {
+  /* The version label for this entity */
+  versionLabel?: string
+  /* The version comment for this entity */
+  versionComment?: string
+  /* If this is the latest version of the object */
+  isLatestVersion?: boolean
+}
+
+
 // Possible value types in an entity JSON object.
 export type EntityJsonValue =
   | string
