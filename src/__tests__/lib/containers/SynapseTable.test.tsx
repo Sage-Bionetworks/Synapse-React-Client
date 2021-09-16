@@ -20,7 +20,7 @@ import { SynapseConstants } from '../../../lib'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
 import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
-import { renderTableCell } from '../../../lib/containers/synapse_table_functions/renderTableCell'
+import { SynapseTableCell } from '../../../lib/containers/synapse_table_functions/SynapseTableCell'
 
 import SynapseTable, {
   SORT_STATE,
@@ -639,7 +639,7 @@ describe('basic functionality', () => {
       it('renders an entity link', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: ENTITYID_INDEX,
               columnValue: mockEntityLinkValue,
@@ -652,7 +652,7 @@ describe('basic functionality', () => {
       it('renders a link for all authenticated users', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: USERID_INDEX,
               columnValue: mockAllAuthenticatedUsersValue,
@@ -670,7 +670,7 @@ describe('basic functionality', () => {
       it('renders a link for a team', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               mapUserIdToHeader,
               colIndex: USERID_INDEX,
@@ -686,7 +686,7 @@ describe('basic functionality', () => {
       it('renders a user card link', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               mapUserIdToHeader,
               colIndex: USERID_INDEX,
@@ -700,7 +700,7 @@ describe('basic functionality', () => {
         const mockMarkdownColumnValue = '# column markdown'
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: USERID_INDEX,
               columnValue: mockMarkdownColumnValue,
@@ -723,7 +723,7 @@ describe('basic functionality', () => {
       it('renders a standard value', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: USERID_INDEX,
               columnValue: mockColumnValue,
@@ -737,7 +737,7 @@ describe('basic functionality', () => {
       it('renders a date value', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: DATE_INDEX,
               columnValue: mockDateValue,
@@ -753,7 +753,7 @@ describe('basic functionality', () => {
       it('renders a date list value', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: DATE_LIST_INDEX,
               columnValue: MOCKED_DATE_LIST,
@@ -769,7 +769,7 @@ describe('basic functionality', () => {
       it('renders a integer list value', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: INTEGER_LIST_INDEX,
               columnValue: MOCKED_INTEGER_LIST,
@@ -784,7 +784,7 @@ describe('basic functionality', () => {
       it('renders a boolean list value', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: BOOLEAN_LIST_INDEX,
               columnValue: MOCKED_BOOLEAN_LIST,
@@ -799,7 +799,7 @@ describe('basic functionality', () => {
       it('renders an empty cell for null date', () => {
         const tableCell = shallow(
           <div>
-            {renderTableCell({
+            {SynapseTableCell({
               ...tableCellProps,
               colIndex: DATE_INDEX,
               isMarkdownColumn: false,

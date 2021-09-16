@@ -33,7 +33,7 @@ type OwnProps = {
   facetsToPlot?: string[]
   facetsToFilter?: string[]
   visibleColumnCount?: number
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   hideDownload?: boolean
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
@@ -106,9 +106,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
           >
             <SearchV2 {...searchConfiguration} />
             <ErrorBanner />
-            <DownloadConfirmation
-              downloadCartPageUrl={downloadCartPageUrl}
-            />
+            <DownloadConfirmation downloadCartPageUrl={downloadCartPageUrl} />
             <TopLevelControls
               showColumnSelection={tableConfiguration !== undefined}
               name={name}

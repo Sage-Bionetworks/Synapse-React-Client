@@ -8,38 +8,18 @@ import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { noop } from 'lodash-es'
 import { MarkdownLink, CardLink } from '../CardContainerLogic'
-import { renderLabel } from '../GenericCard'
+import { SynapseCardLabel } from '../GenericCard'
 import {
   SelectColumn,
-  ColumnModel, FileHandleAssociateType,
+  ColumnModel,
+  FileHandleAssociateType,
 } from '../../utils/synapseTypes'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import DirectDownload from '../DirectDownload'
 import EntityIdList from '../EntityIdList'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
-// Render table cell, supports Entity's and User Icons
-export const renderTableCell = ({
-  entityColumnIndicies,
-  userColumnIndicies,
-  dateColumnIndicies,
-  dateListColumnIndicies,
-  booleanListColumnIndicies,
-  fileHandleIdColumnIndicies,
-  entityIdListColumnIndicies,
-  otherListColumnIndicies,
-  colIndex,
-  columnValue,
-  isBold,
-  mapEntityIdToHeader,
-  mapUserIdToHeader,
-  columnLinkConfig,
-  rowIndex,
-  columnName,
-  selectColumns,
-  columnModels,
-  tableEntityId,
-}: {
+type SynapseTableCellProps = {
   entityColumnIndicies: number[]
   userColumnIndicies: number[]
   dateColumnIndicies: number[]
@@ -59,25 +39,49 @@ export const renderTableCell = ({
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   tableEntityId?: string
-}): React.ReactNode => {
-  const isShortString = (
-    s: string,
-    maxCharCount = 20,
-  ): boolean => {
-    return (!s || s.length <= maxCharCount)
+}
+
+// Render table cell, supports Entity's and User Icons
+export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
+  entityColumnIndicies,
+  userColumnIndicies,
+  dateColumnIndicies,
+  dateListColumnIndicies,
+  booleanListColumnIndicies,
+  fileHandleIdColumnIndicies,
+  entityIdListColumnIndicies,
+  otherListColumnIndicies,
+  colIndex,
+  columnValue,
+  isBold,
+  mapEntityIdToHeader,
+  mapUserIdToHeader,
+  columnLinkConfig,
+  rowIndex,
+  columnName,
+  selectColumns,
+  columnModels,
+  tableEntityId,
+}) => {
+  const isShortString = (s: string, maxCharCount = 20): boolean => {
+    return !s || s.length <= maxCharCount
   }
   if (!columnValue) {
-    return <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
+    return (
+      <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
+    )
   }
   if (columnLinkConfig) {
-    return renderLabel({
-      value: columnValue,
-      columnName,
-      selectColumns,
-      columnModels,
-      isHeader: false,
-      labelLink: columnLinkConfig,
-    })
+    return (
+      <SynapseCardLabel
+        value={columnValue}
+        columnName={columnName}
+        selectColumns={selectColumns}
+        columnModels={columnModels}
+        isHeader={false}
+        labelLink={columnLinkConfig}
+      />
+    )
   }
   if (
     entityColumnIndicies.includes(colIndex) &&
@@ -92,59 +96,69 @@ export const renderTableCell = ({
   }
   if (dateListColumnIndicies.includes(colIndex)) {
     const jsonData: number[] = JSON.parse(columnValue)
-    return <p>{jsonData.map((val: number, index: number) => {
-      return (
-        <span key={index} className={isBold}>
-          {new Date(val).toLocaleString()}
-          {index !== jsonData.length - 1 ? ', ' : ''}
-        </span>
-      )
-    })} </p>
+    return (
+      <p>
+        {jsonData.map((val: number, index: number) => {
+          return (
+            <span key={index} className={isBold}>
+              {new Date(val).toLocaleString()}
+              {index !== jsonData.length - 1 ? ', ' : ''}
+            </span>
+          )
+        })}{' '}
+      </p>
+    )
   }
   if (booleanListColumnIndicies.includes(colIndex)) {
     const jsonData: boolean[] = JSON.parse(columnValue)
-    return <p>{jsonData.map((val: boolean, index: number) => {
-      return (
-        <span key={index} className={isBold}>
-          {val ? 'true' : 'false'}
-          {index !== jsonData.length - 1 ? ', ' : ''}
-        </span>
-      )
-    })}</p>
+    return (
+      <p>
+        {jsonData.map((val: boolean, index: number) => {
+          return (
+            <span key={index} className={isBold}>
+              {val ? 'true' : 'false'}
+              {index !== jsonData.length - 1 ? ', ' : ''}
+            </span>
+          )
+        })}
+      </p>
+    )
   }
 
   // If it's a file from a table view
-  if (fileHandleIdColumnIndicies.includes(colIndex)){
-    return <>
-      <DirectDownload
-        associatedObjectId={tableEntityId!}
-        associatedObjectType={FileHandleAssociateType.TableEntity}
-        fileHandleId={columnValue}
-        displayFileName={true}
-      />
-    </>
+  if (fileHandleIdColumnIndicies.includes(colIndex)) {
+    return (
+      <>
+        <DirectDownload
+          associatedObjectId={tableEntityId!}
+          associatedObjectType={FileHandleAssociateType.TableEntity}
+          fileHandleId={columnValue}
+          displayFileName={true}
+        />
+      </>
+    )
   }
 
   // If it's a list of entity ids
-  if (entityIdListColumnIndicies.includes(colIndex)){
+  if (entityIdListColumnIndicies.includes(colIndex)) {
     const jsonData: string[] = JSON.parse(columnValue)
-    return(
-      <EntityIdList
-        entityIdList={jsonData}
-      />
-    )
+    return <EntityIdList entityIdList={jsonData} />
   }
 
   if (otherListColumnIndicies.includes(colIndex)) {
     const jsonData: string[] = JSON.parse(columnValue)
-    return <p>{jsonData.map((val: string, index: number) => {
-      return (
-        <span key={val} className={isBold}>
-          {val}
-          {index !== jsonData.length - 1 ? ', ' : ''}
-        </span>
-      )
-    })}</p>
+    return (
+      <p>
+        {jsonData.map((val: string, index: number) => {
+          return (
+            <span key={val} className={isBold}>
+              {val}
+              {index !== jsonData.length - 1 ? ', ' : ''}
+            </span>
+          )
+        })}
+      </p>
+    )
   }
   if (dateColumnIndicies.includes(colIndex)) {
     return (

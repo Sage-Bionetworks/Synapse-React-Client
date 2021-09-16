@@ -137,7 +137,7 @@ export const getValueOrMultiValue = ({
   return { str: value, columnModelType: selectedColumnOrUndefined?.columnType }
 }
 
-export const renderLabel = (args: {
+type SynapseCardLabelProps = {
   value: string
   columnName: string
   labelLink: CardLink | MarkdownLink | undefined
@@ -145,7 +145,9 @@ export const renderLabel = (args: {
   columnModels: ColumnModel[] | undefined
   isHeader: boolean
   className?: string
-}) => {
+}
+
+export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   const {
     value,
     columnName,
@@ -154,9 +156,9 @@ export const renderLabel = (args: {
     columnModels,
     isHeader,
     className,
-  } = args
+  } = props
   if (!value) {
-    return value
+    return <>{value}</>
   }
   const { strList, str, columnModelType } = getValueOrMultiValue({
     columnName,
@@ -167,7 +169,7 @@ export const renderLabel = (args: {
 
   if (!str) {
     // the array came back empty
-    return str
+    return <>{str}</>
   }
 
   let newClassName = className
@@ -177,18 +179,28 @@ export const renderLabel = (args: {
   }
   // PORTALS-1913: special rendering for user ID lists
   if (columnModelType === 'USERID_LIST' && strList) {
-    return strList.map((val: string, index: number) => {
-      return (
-        <span key={val}>
-          <UserCard ownerId={val} size={SMALL_USER_CARD} className={newClassName}/>
-          {/* \u00a0 is a nbsp; */}
-          {index < strList.length - 1 && ',\u00a0\u00a0'}
-        </span>
-      )
-    })
+    return (
+      <>
+        {strList.map((val: string, index: number) => {
+          return (
+            <span key={val}>
+              <UserCard
+                ownerId={val}
+                size={SMALL_USER_CARD}
+                className={newClassName}
+              />
+              {/* \u00a0 is a nbsp; */}
+              {index < strList.length - 1 && ',\u00a0\u00a0'}
+            </span>
+          )
+        })}
+      </>
+    )
   }
   if (columnModelType === 'USERID' && str) {
-    return <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName}/>
+    return (
+      <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName} />
+    )
   }
 
   if (!labelLink) {
@@ -207,39 +219,49 @@ export const renderLabel = (args: {
       )
     } else {
       // they don't need a link
-      return str
+      return <>{str}</>
     }
   }
 
   if (labelLink.isMarkdown) {
     if (strList) {
-      return strList.map((el, index) => {
-        return (
-          <span key={el}>
-            <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-            {/* \u00a0 is a nbsp; */}
-            {index < strList.length - 1 && ',\u00a0\u00a0'}
-          </span>
-        )
-      })
+      return (
+        <>
+          {strList.map((el, index) => {
+            return (
+              <span key={el}>
+                <MarkdownSynapse key={el} renderInline={true} markdown={el} />
+                {/* \u00a0 is a nbsp; */}
+                {index < strList.length - 1 && ',\u00a0\u00a0'}
+              </span>
+            )
+          })}
+        </>
+      )
     } else {
       return <MarkdownSynapse renderInline={true} markdown={value} />
     }
   }
   const split = strList ? strList : str.split(',')
-  return split.map((el, index) => {
-    const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-    const value = wrapValueWithParens ? `(${el})` : el
-    const href = `/${baseURL}?${URLColumnName}=${value}`
-    return (
-      <React.Fragment key={el}>
-        <a href={href} key={el} className={newClassName} style={style}>
-          {el}
-        </a>
-        {index < split.length - 1 && <span style={{ marginRight: 4 }}>, </span>}
-      </React.Fragment>
-    )
-  })
+  return (
+    <>
+      {split.map((el, index) => {
+        const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
+        const value = wrapValueWithParens ? `(${el})` : el
+        const href = `/${baseURL}?${URLColumnName}=${value}`
+        return (
+          <React.Fragment key={el}>
+            <a href={href} key={el} className={newClassName} style={style}>
+              {el}
+            </a>
+            {index < split.length - 1 && (
+              <span style={{ marginRight: 4 }}>, </span>
+            )}
+          </React.Fragment>
+        )
+      })}
+    </>
+  )
 }
 
 type ValueOrMultiValue = {
@@ -426,7 +448,7 @@ export default class GenericCard extends React.Component<
         const labelLink = labelLinkConfig?.find(
           el => el.matchColumnName === columnName,
         )
-        value = renderLabel({
+        value = SynapseCardLabel({
           value,
           columnName,
           labelLink,
