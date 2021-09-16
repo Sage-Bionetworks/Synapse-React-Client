@@ -29,6 +29,7 @@ import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import UserCard from './UserCard'
 import { SynapseContext } from '../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { isEmpty } from 'lodash-es'
 
 export type KeyToAlias = {
   key: string
@@ -264,6 +265,11 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       return <>{value}</>
     } else {
       const href = row.values[linkIndex]
+
+      if (isEmpty(href)) {
+        return <>{value}</>
+      }
+
       return (
         <>
           {split.map((el, index) => {
