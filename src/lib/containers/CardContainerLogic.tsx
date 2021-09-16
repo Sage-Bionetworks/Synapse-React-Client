@@ -25,6 +25,18 @@ import { IconSvgOptions } from './IconSvg'
  * See here: https://github.com/enzymejs/enzyme/issues/1553
  */
 
+/**
+ *  Used when a column value should link to an external URL defined by a value in another column.
+ *  Currently only works in SynapseTable (not cards!)
+ */
+export interface ColumnSpecifiedLink {
+  isMarkdown: false
+  /* The column which should have the displayed value */
+  matchColumnName: string
+  /* The column which has the link. If the link is empty, the value will be displayed without a link. */
+  linkColumnName: string
+}
+
 export interface CardLink {
   baseURL: string
   // the key that will go into the url

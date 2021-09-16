@@ -6,6 +6,7 @@ import {
   CommonCardProps,
   MarkdownLink,
   DescriptionConfig,
+  ColumnSpecifiedLink,
 } from './CardContainerLogic'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -14,6 +15,7 @@ import {
   ColumnModel,
   ColumnType,
   EntityColumnType,
+  Row,
 } from '../utils/synapseTypes'
 import { SynapseConstants } from '../utils'
 import { FileHandleLink } from './widgets/FileHandleLink'
@@ -140,11 +142,12 @@ export const getValueOrMultiValue = ({
 type SynapseCardLabelProps = {
   value: string
   columnName: string
-  labelLink: CardLink | MarkdownLink | undefined
+  labelLink: CardLink | MarkdownLink | ColumnSpecifiedLink | undefined
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   isHeader: boolean
   className?: string
+  row?: Row // TODO: ColumnSpecifiedLink will not work if row is not supplied
 }
 
 export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
@@ -156,6 +159,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     columnModels,
     isHeader,
     className,
+    row,
   } = props
   if (!value) {
     return <>{value}</>
@@ -243,25 +247,62 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     }
   }
   const split = strList ? strList : str.split(',')
-  return (
-    <>
-      {split.map((el, index) => {
-        const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-        const value = wrapValueWithParens ? `(${el})` : el
-        const href = `/${baseURL}?${URLColumnName}=${value}`
-        return (
-          <React.Fragment key={el}>
-            <a href={href} key={el} className={newClassName} style={style}>
-              {el}
-            </a>
-            {index < split.length - 1 && (
-              <span style={{ marginRight: 4 }}>, </span>
-            )}
-          </React.Fragment>
-        )
-      })}
-    </>
-  )
+  if ('linkColumnName' in labelLink) {
+    const linkIndex =
+      selectColumns?.findIndex(el => el.name === labelLink.linkColumnName) ||
+      columnModels?.findIndex(el => el.name === labelLink.linkColumnName)
+    if (linkIndex == null) {
+      console.warn(
+        `Could not determine column index of ${labelLink.linkColumnName}`,
+      )
+      return <>{value}</>
+    } else if (row == null) {
+      // Sorry future dev, I couldn't figure out how to pass the row down from GenericCard because it's not fully typed
+      console.warn(
+        `Couldn't create link because row had value ${row}. Specifying a link via column is not currently possible in cards`,
+      )
+      return <>{value}</>
+    } else {
+      const href = row.values[linkIndex]
+      return (
+        <>
+          {split.map((el, index) => {
+            return (
+              <React.Fragment key={el}>
+                <a href={href} key={el} className={newClassName} style={style}>
+                  {el}
+                </a>
+                {index < split.length - 1 && (
+                  <span style={{ marginRight: 4 }}>, </span>
+                )}
+              </React.Fragment>
+            )
+          })}
+        </>
+      )
+    }
+  } else {
+    return (
+      <>
+        {split.map((el, index) => {
+          const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
+          const value = wrapValueWithParens ? `(${el})` : el
+          const href = `/${baseURL}?${URLColumnName}=${value}`
+
+          return (
+            <React.Fragment key={el}>
+              <a href={href} key={el} className={newClassName} style={style}>
+                {el}
+              </a>
+              {index < split.length - 1 && (
+                <span style={{ marginRight: 4 }}>, </span>
+              )}
+            </React.Fragment>
+          )
+        })}
+      </>
+    )
+  }
 }
 
 type ValueOrMultiValue = {
@@ -455,6 +496,7 @@ export default class GenericCard extends React.Component<
           isHeader,
           selectColumns,
           columnModels,
+          // TODO: Pass the row
         })
         const columnDisplayName = unCamelCase(columnName, facetAliases)
         const keyValue = [columnDisplayName, value, columnName]

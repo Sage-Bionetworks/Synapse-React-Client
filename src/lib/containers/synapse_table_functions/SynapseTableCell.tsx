@@ -7,12 +7,17 @@ import UserCard from '../UserCard'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { noop } from 'lodash-es'
-import { MarkdownLink, CardLink } from '../CardContainerLogic'
+import {
+  MarkdownLink,
+  CardLink,
+  ColumnSpecifiedLink,
+} from '../CardContainerLogic'
 import { SynapseCardLabel } from '../GenericCard'
 import {
   SelectColumn,
   ColumnModel,
   FileHandleAssociateType,
+  Row,
 } from '../../utils/synapseTypes'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import DirectDownload from '../DirectDownload'
@@ -33,12 +38,13 @@ type SynapseTableCellProps = {
   isBold: string
   mapEntityIdToHeader: Dictionary<EntityHeader>
   mapUserIdToHeader: Dictionary<any>
-  columnLinkConfig?: MarkdownLink | CardLink
+  columnLinkConfig?: MarkdownLink | CardLink | ColumnSpecifiedLink
   rowIndex?: number
   columnName: string
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   tableEntityId?: string
+  row: Row
 }
 
 // Render table cell, supports Entity's and User Icons
@@ -62,6 +68,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   selectColumns,
   columnModels,
   tableEntityId,
+  row,
 }) => {
   const isShortString = (s: string, maxCharCount = 20): boolean => {
     return !s || s.length <= maxCharCount
@@ -80,6 +87,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         columnModels={columnModels}
         isHeader={false}
         labelLink={columnLinkConfig}
+        row={row}
       />
     )
   }
