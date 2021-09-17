@@ -6,7 +6,6 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserTeamsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserTeams'
 import { Team } from '../../utils/synapseTypes/Team'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
-import { SynapseSpinner } from '../LoadingScreen'
 
 export type UserTeamsProps = {
   userId: string
@@ -73,9 +72,6 @@ export default function UserTeams({ userId }: UserTeamsProps) {
       )}
       {!isFetching && allRows.length == 0 && <div>Empty</div>}
       {isLoading && <SkeletonTable numRows={5} numCols={1} />}
-      {isFetching && !isLoading && <div className="placeholder">
-        <SynapseSpinner size={30} />
-      </div>}
     </>
   )
 }
