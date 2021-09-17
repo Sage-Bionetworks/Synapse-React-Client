@@ -6,6 +6,7 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/useGetUserChallenges'
 import { ChallengeWithProjectHeader } from '../../utils/synapseTypes/ChallengePagedResults'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
+import { SynapseSpinner } from '../LoadingScreen'
 
 export type UserChallengesProps = {
   userId: string
@@ -19,6 +20,7 @@ export default function UserChallenges({ userId }: UserChallengesProps) {
     data,
     status,
     isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -70,7 +72,10 @@ export default function UserChallenges({ userId }: UserChallengesProps) {
         </>
       )}
       {!isFetching && allRows.length == 0 && <div>Empty</div>}
-      {isFetching && <SkeletonTable numRows={5} numCols={1} />}
+      {isLoading && <SkeletonTable numRows={5} numCols={1} />}
+      {isFetching && !isLoading && <div className="placeholder">
+        <SynapseSpinner size={30} />
+      </div>}
     </>
   )
 }

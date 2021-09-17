@@ -7,6 +7,7 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserProjectsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserProjects'
 import { GetProjectsParameters } from '../../utils/synapseTypes/GetProjectsParams'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
+import { SynapseSpinner } from '../LoadingScreen'
 
 export type UserProjectsProps = {
   userId: string
@@ -21,6 +22,7 @@ export default function UserProjects({ userId }: UserProjectsProps) {
     data,
     status,
     isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -72,7 +74,10 @@ export default function UserProjects({ userId }: UserProjectsProps) {
         </>
       )}
       {!isFetching && allRows.length == 0 && <div>Empty</div>}
-      {isFetching && <SkeletonTable numRows={5} numCols={1} />}
+      {isLoading && <SkeletonTable numRows={5} numCols={1} />}
+      {isFetching && !isLoading && <div className="placeholder">
+        <SynapseSpinner size={30} />
+      </div>}
     </>
   )
 }
