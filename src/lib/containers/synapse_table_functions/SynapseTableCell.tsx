@@ -1,28 +1,27 @@
-import * as React from 'react'
-import { Dictionary } from '../table/SynapseTable'
-import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
-import { EntityLink } from '../EntityLink'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import UserCard from '../UserCard'
-import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
-import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import { noop } from 'lodash-es'
+import React from 'react'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import {
-  MarkdownLink,
-  CardLink,
-  ColumnSpecifiedLink,
-} from '../CardContainerLogic'
-import { SynapseCardLabel } from '../GenericCard'
-import {
-  SelectColumn,
   ColumnModel,
   FileHandleAssociateType,
-  Row,
+  SelectColumn,
 } from '../../utils/synapseTypes'
-import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
+import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
+import {
+  CardLink,
+  ColumnSpecifiedLink,
+  MarkdownLink,
+} from '../CardContainerLogic'
 import DirectDownload from '../DirectDownload'
 import EntityIdList from '../EntityIdList'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { EntityLink } from '../EntityLink'
+import { SynapseCardLabel } from '../GenericCard'
+import { Dictionary } from '../table/SynapseTable'
+import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
+import UserCard from '../UserCard'
+import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 
 type SynapseTableCellProps = {
   entityColumnIndicies: number[]
