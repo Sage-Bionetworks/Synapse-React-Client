@@ -1,35 +1,34 @@
-import * as React from 'react'
-import HeaderCard from './HeaderCard'
-import { CardFooter, Icon } from './row_renderers/utils'
-import {
-  CardLink,
-  CommonCardProps,
-  MarkdownLink,
-  DescriptionConfig,
-  ColumnSpecifiedLink,
-} from './CardContainerLogic'
-import { unCamelCase } from '../utils/functions/unCamelCase'
-import MarkdownSynapse from './MarkdownSynapse'
-import {
-  SelectColumn,
-  ColumnModel,
-  ColumnType,
-  EntityColumnType,
-  Row,
-} from '../utils/synapseTypes'
+import { isEmpty } from 'lodash-es'
+import React from 'react'
 import { SynapseConstants } from '../utils'
-import { FileHandleLink } from './widgets/FileHandleLink'
-import IconList from './IconList'
-import { ImageFileHandle } from './widgets/ImageFileHandle'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import {
   DOI_REGEX,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '../utils/functions/RegularExpressions'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
-import UserCard from './UserCard'
 import { SynapseContext } from '../utils/SynapseContext'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { isEmpty } from 'lodash-es'
+import {
+  ColumnModel,
+  ColumnType,
+  EntityColumnType,
+  SelectColumn,
+} from '../utils/synapseTypes'
+import {
+  CardLink,
+  ColumnSpecifiedLink,
+  CommonCardProps,
+  DescriptionConfig,
+  MarkdownLink,
+} from './CardContainerLogic'
+import HeaderCard from './HeaderCard'
+import IconList from './IconList'
+import MarkdownSynapse from './MarkdownSynapse'
+import { CardFooter, Icon } from './row_renderers/utils'
+import UserCard from './UserCard'
+import { FileHandleLink } from './widgets/FileHandleLink'
+import { ImageFileHandle } from './widgets/ImageFileHandle'
 
 export type KeyToAlias = {
   key: string
@@ -61,12 +60,14 @@ export type IconOptions = {
 export type GenericCardProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   iconOptions?: IconOptions
   isHeader?: boolean
   isAlignToLeftNav?: boolean
-  schema: any
-  data: any
+  // Maps columnName to index
+  schema: Record<string, number>
+  // Row values
+  data: string[]
   tableEntityConcreteType: string | undefined
   tableId: string | undefined
   columnIconOptions?: {}
@@ -83,7 +84,7 @@ export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
 // This function isn't in the class only for ease of testing with renderShortDescription
 export const getCutoff = (summary: string) => {
   let previewText = ''
-  const summarySplit = summary!.split(' ')
+  const summarySplit = summary.split(' ')
   // find num words to join such that its >= char_count_cutoff
   let i = 0
   while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
@@ -100,8 +101,8 @@ export const getValueOrMultiValue = ({
   selectColumns,
   columnModels,
 }: {
-  columnName: string | undefined
-  value: string
+  columnName?: string
+  value?: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
 }): ValueOrMultiValue => {
@@ -148,7 +149,7 @@ type SynapseCardLabelProps = {
   columnModels: ColumnModel[] | undefined
   isHeader: boolean
   className?: string
-  row?: Row // TODO: ColumnSpecifiedLink will not work if row is not supplied
+  rowData: string[]
 }
 
 export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
@@ -160,7 +161,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     columnModels,
     isHeader,
     className,
-    row,
+    rowData,
   } = props
   if (!value) {
     return <>{value}</>
@@ -257,14 +258,8 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         `Could not determine column index of ${labelLink.linkColumnName}`,
       )
       return <>{value}</>
-    } else if (row == null) {
-      // Sorry future dev, I couldn't figure out how to pass the row down from GenericCard because it's not fully typed
-      console.warn(
-        `Couldn't create link because row had value ${row}. Specifying a link via column is not currently possible in cards`,
-      )
-      return <>{value}</>
     } else {
-      const href = row.values[linkIndex]
+      const href = rowData[linkIndex]
 
       if (isEmpty(href)) {
         return <>{value}</>
@@ -363,7 +358,7 @@ export default class GenericCard extends React.Component<
   public getCardLinkHref(
     cardLink: CardLink | undefined,
     data: string[] | undefined,
-    schema: any | undefined,
+    schema: Record<string, number> | undefined,
   ): string | undefined {
     if (cardLink) {
       if (!data || !schema) {
@@ -449,6 +444,7 @@ export default class GenericCard extends React.Component<
       tableEntityConcreteType,
       columnIconOptions,
     } = this.props
+
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
@@ -490,7 +486,7 @@ export default class GenericCard extends React.Component<
     const { secondaryLabels = [] } = genericCardSchemaDefined
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
-      let value = data[schema[columnName]]
+      let value: any = data[schema[columnName]]
       if (value) {
         const labelLink = labelLinkConfig?.find(
           el => el.matchColumnName === columnName,
@@ -502,7 +498,7 @@ export default class GenericCard extends React.Component<
           isHeader,
           selectColumns,
           columnModels,
-          // TODO: Pass the row
+          rowData: data,
         })
         const columnDisplayName = unCamelCase(columnName, facetAliases)
         const keyValue = [columnDisplayName, value, columnName]
@@ -532,7 +528,7 @@ export default class GenericCard extends React.Component<
             <ImageFileHandle
               fileHandleId={imageFileHandleIdValue}
               tableEntityConcreteType={tableEntityConcreteType}
-              rowId={data![schema.id]}
+              rowId={data[schema.id]}
               tableId={tableId}
             />
           </div>

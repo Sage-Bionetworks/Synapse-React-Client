@@ -87,7 +87,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         columnModels={columnModels}
         isHeader={false}
         labelLink={columnLinkConfig}
-        row={row}
+        rowData={row.values}
       />
     )
   }
