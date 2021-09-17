@@ -19,6 +19,7 @@ export default function UserTeams({ userId }: UserTeamsProps) {
     data,
     status,
     isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -70,7 +71,7 @@ export default function UserTeams({ userId }: UserTeamsProps) {
         </>
       )}
       {!isFetching && allRows.length == 0 && <div>Empty</div>}
-      {isFetching && <SkeletonTable numRows={5} numCols={1} />}
+      {isLoading && <SkeletonTable numRows={5} numCols={1} />}
     </>
   )
 }

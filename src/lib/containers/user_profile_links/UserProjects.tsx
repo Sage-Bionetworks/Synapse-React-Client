@@ -21,6 +21,7 @@ export default function UserProjects({ userId }: UserProjectsProps) {
     data,
     status,
     isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -72,7 +73,7 @@ export default function UserProjects({ userId }: UserProjectsProps) {
         </>
       )}
       {!isFetching && allRows.length == 0 && <div>Empty</div>}
-      {isFetching && <SkeletonTable numRows={5} numCols={1} />}
+      {isLoading && <SkeletonTable numRows={5} numCols={1} />}
     </>
   )
 }
