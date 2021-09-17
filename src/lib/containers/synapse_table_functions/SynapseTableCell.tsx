@@ -44,7 +44,7 @@ type SynapseTableCellProps = {
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   tableEntityId?: string
-  row: Row
+  rowData: string[]
 }
 
 // Render table cell, supports Entity's and User Icons
@@ -68,7 +68,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   selectColumns,
   columnModels,
   tableEntityId,
-  row,
+  rowData,
 }) => {
   const isShortString = (s: string, maxCharCount = 20): boolean => {
     return !s || s.length <= maxCharCount
@@ -87,7 +87,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         columnModels={columnModels}
         isHeader={false}
         labelLink={columnLinkConfig}
-        rowData={row.values}
+        rowData={rowData}
       />
     )
   }

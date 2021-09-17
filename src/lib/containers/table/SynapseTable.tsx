@@ -829,7 +829,7 @@ export default class SynapseTable extends React.Component<
                     columnModels={columnModels}
                     columnName={columnName}
                     tableEntityId={tableEntityId}
-                    row={row}
+                    rowData={row.values}
                   />
                 )}
               </td>
