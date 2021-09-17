@@ -29,7 +29,7 @@ import TotalQueryResults from '../TotalQueryResults'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
 import { ICON_STATE } from './SynapseTableConstants'
 import NoData from '../../assets/icons/file-dotted.svg'
-import { renderTableCell } from '../synapse_table_functions/renderTableCell'
+import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
 import { Checkbox } from '../widgets/Checkbox'
@@ -191,7 +191,7 @@ export default class SynapseTable extends React.Component<
     if (!data || this.state.isFetchingEntityVersion) {
       return
     }
-    
+
     const currentTableId = data?.queryResult.queryResults.tableId
     const previousTableId = prevProps.data?.queryResult.queryResults.tableId
     if (currentTableId && previousTableId !== currentTableId) {
@@ -203,7 +203,9 @@ export default class SynapseTable extends React.Component<
       // PORTALS-1973:  To simplify logic, only show special file view columns (like direct
       // download, or adding a file to the download cart) if the View selects Files _only_.
       // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityView.html
-      const isFileView = isEntityView ? (entityData as any).viewTypeMask === 1 : false
+      const isFileView = isEntityView
+        ? (entityData as any).viewTypeMask === 1
+        : false
       this.setState({
         isEntityView: isEntityView,
         isFileView: isFileView,
@@ -308,9 +310,7 @@ export default class SynapseTable extends React.Component<
     }
     if (userPorfileIds.length > 0) {
       try {
-        const data = await getUserProfileWithProfilePicAttached(
-          userPorfileIds,
-        )
+        const data = await getUserProfileWithProfilePicAttached(userPorfileIds)
         data.list.forEach((el: UserProfile) => {
           mapUserIdToHeader[el.ownerId] = el
         })
@@ -808,28 +808,30 @@ export default class SynapseTable extends React.Component<
                   </a>
                 )}
 
-                {!isCountColumn &&
-                  renderTableCell({
-                    entityColumnIndicies,
-                    userColumnIndicies,
-                    dateColumnIndicies,
-                    dateListColumnIndicies,
-                    booleanListColumnIndicies,
-                    fileHandleIdColumnIndicies,
-                    entityIdListColumnIndicies,
-                    otherListColumnIndicies,
-                    colIndex,
-                    columnValue,
-                    isBold,
-                    mapEntityIdToHeader,
-                    mapUserIdToHeader,
-                    columnLinkConfig,
-                    rowIndex,
-                    selectColumns,
-                    columnModels,
-                    columnName,
-                    tableEntityId,
-                  })}
+                {!isCountColumn && (
+                  <SynapseTableCell
+                    entityColumnIndicies={entityColumnIndicies}
+                    userColumnIndicies={userColumnIndicies}
+                    dateColumnIndicies={dateColumnIndicies}
+                    dateListColumnIndicies={dateListColumnIndicies}
+                    booleanListColumnIndicies={booleanListColumnIndicies}
+                    fileHandleIdColumnIndicies={fileHandleIdColumnIndicies}
+                    entityIdListColumnIndicies={entityIdListColumnIndicies}
+                    otherListColumnIndicies={otherListColumnIndicies}
+                    colIndex={colIndex}
+                    columnValue={columnValue}
+                    isBold={isBold}
+                    mapEntityIdToHeader={mapEntityIdToHeader}
+                    mapUserIdToHeader={mapUserIdToHeader}
+                    columnLinkConfig={columnLinkConfig}
+                    rowIndex={rowIndex}
+                    selectColumns={selectColumns}
+                    columnModels={columnModels}
+                    columnName={columnName}
+                    tableEntityId={tableEntityId}
+                    rowData={row.values}
+                  />
+                )}
               </td>
             )
           }

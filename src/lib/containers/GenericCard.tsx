@@ -1,32 +1,34 @@
-import * as React from 'react'
-import HeaderCard from './HeaderCard'
-import { CardFooter, Icon } from './row_renderers/utils'
-import {
-  CardLink,
-  CommonCardProps,
-  MarkdownLink,
-  DescriptionConfig,
-} from './CardContainerLogic'
-import { unCamelCase } from '../utils/functions/unCamelCase'
-import MarkdownSynapse from './MarkdownSynapse'
-import {
-  SelectColumn,
-  ColumnModel,
-  ColumnType,
-  EntityColumnType,
-} from '../utils/synapseTypes'
+import { isEmpty } from 'lodash-es'
+import React from 'react'
 import { SynapseConstants } from '../utils'
-import { FileHandleLink } from './widgets/FileHandleLink'
-import IconList from './IconList'
-import { ImageFileHandle } from './widgets/ImageFileHandle'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import {
   DOI_REGEX,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '../utils/functions/RegularExpressions'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
-import UserCard from './UserCard'
 import { SynapseContext } from '../utils/SynapseContext'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import {
+  ColumnModel,
+  ColumnType,
+  EntityColumnType,
+  SelectColumn,
+} from '../utils/synapseTypes'
+import {
+  CardLink,
+  ColumnSpecifiedLink,
+  CommonCardProps,
+  DescriptionConfig,
+  MarkdownLink,
+} from './CardContainerLogic'
+import HeaderCard from './HeaderCard'
+import IconList from './IconList'
+import MarkdownSynapse from './MarkdownSynapse'
+import { CardFooter, Icon } from './row_renderers/utils'
+import UserCard from './UserCard'
+import { FileHandleLink } from './widgets/FileHandleLink'
+import { ImageFileHandle } from './widgets/ImageFileHandle'
 
 export type KeyToAlias = {
   key: string
@@ -58,12 +60,14 @@ export type IconOptions = {
 export type GenericCardProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   iconOptions?: IconOptions
   isHeader?: boolean
   isAlignToLeftNav?: boolean
-  schema: any
-  data: any
+  // Maps columnName to index
+  schema: Record<string, number>
+  // Row values
+  data: string[]
   tableEntityConcreteType: string | undefined
   tableId: string | undefined
   columnIconOptions?: {}
@@ -80,7 +84,7 @@ export const CARD_LONG_DESCRIPTION_CSS = 'SRC-long-description'
 // This function isn't in the class only for ease of testing with renderShortDescription
 export const getCutoff = (summary: string) => {
   let previewText = ''
-  const summarySplit = summary!.split(' ')
+  const summarySplit = summary.split(' ')
   // find num words to join such that its >= char_count_cutoff
   let i = 0
   while (previewText.length < CHAR_COUNT_CUTOFF && i < summarySplit.length) {
@@ -97,8 +101,8 @@ export const getValueOrMultiValue = ({
   selectColumns,
   columnModels,
 }: {
-  columnName: string | undefined
-  value: string
+  columnName?: string
+  value?: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
 }): ValueOrMultiValue => {
@@ -137,15 +141,18 @@ export const getValueOrMultiValue = ({
   return { str: value, columnModelType: selectedColumnOrUndefined?.columnType }
 }
 
-export const renderLabel = (args: {
+type SynapseCardLabelProps = {
   value: string
   columnName: string
-  labelLink: CardLink | MarkdownLink | undefined
+  labelLink: CardLink | MarkdownLink | ColumnSpecifiedLink | undefined
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
   isHeader: boolean
   className?: string
-}) => {
+  rowData: string[]
+}
+
+export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   const {
     value,
     columnName,
@@ -154,9 +161,10 @@ export const renderLabel = (args: {
     columnModels,
     isHeader,
     className,
-  } = args
+    rowData,
+  } = props
   if (!value) {
-    return value
+    return <>{value}</>
   }
   const { strList, str, columnModelType } = getValueOrMultiValue({
     columnName,
@@ -167,7 +175,7 @@ export const renderLabel = (args: {
 
   if (!str) {
     // the array came back empty
-    return str
+    return <>{str}</>
   }
 
   let newClassName = className
@@ -177,18 +185,28 @@ export const renderLabel = (args: {
   }
   // PORTALS-1913: special rendering for user ID lists
   if (columnModelType === 'USERID_LIST' && strList) {
-    return strList.map((val: string, index: number) => {
-      return (
-        <span key={val}>
-          <UserCard ownerId={val} size={SMALL_USER_CARD} className={newClassName}/>
-          {/* \u00a0 is a nbsp; */}
-          {index < strList.length - 1 && ',\u00a0\u00a0'}
-        </span>
-      )
-    })
+    return (
+      <>
+        {strList.map((val: string, index: number) => {
+          return (
+            <span key={val}>
+              <UserCard
+                ownerId={val}
+                size={SMALL_USER_CARD}
+                className={newClassName}
+              />
+              {/* \u00a0 is a nbsp; */}
+              {index < strList.length - 1 && ',\u00a0\u00a0'}
+            </span>
+          )
+        })}
+      </>
+    )
   }
   if (columnModelType === 'USERID' && str) {
-    return <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName}/>
+    return (
+      <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName} />
+    )
   }
 
   if (!labelLink) {
@@ -207,39 +225,92 @@ export const renderLabel = (args: {
       )
     } else {
       // they don't need a link
-      return str
+      return <>{str}</>
     }
   }
 
   if (labelLink.isMarkdown) {
     if (strList) {
-      return strList.map((el, index) => {
-        return (
-          <span key={el}>
-            <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-            {/* \u00a0 is a nbsp; */}
-            {index < strList.length - 1 && ',\u00a0\u00a0'}
-          </span>
-        )
-      })
+      return (
+        <>
+          {strList.map((el, index) => {
+            return (
+              <span key={el}>
+                <MarkdownSynapse key={el} renderInline={true} markdown={el} />
+                {/* \u00a0 is a nbsp; */}
+                {index < strList.length - 1 && ',\u00a0\u00a0'}
+              </span>
+            )
+          })}
+        </>
+      )
     } else {
       return <MarkdownSynapse renderInline={true} markdown={value} />
     }
   }
   const split = strList ? strList : str.split(',')
-  return split.map((el, index) => {
-    const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-    const value = wrapValueWithParens ? `(${el})` : el
-    const href = `/${baseURL}?${URLColumnName}=${value}`
+  if ('linkColumnName' in labelLink) {
+    const linkIndex =
+      selectColumns?.findIndex(el => el.name === labelLink.linkColumnName) ||
+      columnModels?.findIndex(el => el.name === labelLink.linkColumnName)
+    if (linkIndex == null) {
+      console.warn(
+        `Could not determine column index of ${labelLink.linkColumnName}`,
+      )
+      return <>{value}</>
+    } else {
+      const href = rowData[linkIndex]
+
+      if (isEmpty(href)) {
+        return <>{value}</>
+      }
+
+      return (
+        <>
+          {split.map((el, index) => {
+            return (
+              <React.Fragment key={el}>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  key={el}
+                  className={newClassName}
+                  style={style}
+                >
+                  {el}
+                </a>
+                {index < split.length - 1 && (
+                  <span style={{ marginRight: 4 }}>, </span>
+                )}
+              </React.Fragment>
+            )
+          })}
+        </>
+      )
+    }
+  } else {
     return (
-      <React.Fragment key={el}>
-        <a href={href} key={el} className={newClassName} style={style}>
-          {el}
-        </a>
-        {index < split.length - 1 && <span style={{ marginRight: 4 }}>, </span>}
-      </React.Fragment>
+      <>
+        {split.map((el, index) => {
+          const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
+          const value = wrapValueWithParens ? `(${el})` : el
+          const href = `/${baseURL}?${URLColumnName}=${value}`
+
+          return (
+            <React.Fragment key={el}>
+              <a href={href} key={el} className={newClassName} style={style}>
+                {el}
+              </a>
+              {index < split.length - 1 && (
+                <span style={{ marginRight: 4 }}>, </span>
+              )}
+            </React.Fragment>
+          )
+        })}
+      </>
     )
-  })
+  }
 }
 
 type ValueOrMultiValue = {
@@ -294,7 +365,7 @@ export default class GenericCard extends React.Component<
   public getCardLinkHref(
     cardLink: CardLink | undefined,
     data: string[] | undefined,
-    schema: any | undefined,
+    schema: Record<string, number> | undefined,
   ): string | undefined {
     if (cardLink) {
       if (!data || !schema) {
@@ -380,6 +451,7 @@ export default class GenericCard extends React.Component<
       tableEntityConcreteType,
       columnIconOptions,
     } = this.props
+
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
@@ -421,18 +493,19 @@ export default class GenericCard extends React.Component<
     const { secondaryLabels = [] } = genericCardSchemaDefined
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
-      let value = data[schema[columnName]]
+      let value: any = data[schema[columnName]]
       if (value) {
         const labelLink = labelLinkConfig?.find(
           el => el.matchColumnName === columnName,
         )
-        value = renderLabel({
+        value = SynapseCardLabel({
           value,
           columnName,
           labelLink,
           isHeader,
           selectColumns,
           columnModels,
+          rowData: data,
         })
         const columnDisplayName = unCamelCase(columnName, facetAliases)
         const keyValue = [columnDisplayName, value, columnName]
@@ -462,7 +535,7 @@ export default class GenericCard extends React.Component<
             <ImageFileHandle
               fileHandleId={imageFileHandleIdValue}
               tableEntityConcreteType={tableEntityConcreteType}
-              rowId={data![schema.id]}
+              rowId={data[schema.id]}
               tableId={tableId}
             />
           </div>
