@@ -76,7 +76,7 @@
 }
 
 // Modals
-body:not(#body) {
+html:not(#synapse\.org) {
   // We don't want these styles in Synapse.org, it has its own modal styling
   .modal-content {
     padding: 5px 30px;
@@ -97,7 +97,7 @@ body:not(#body) {
   }
 }
 
-body#body {
+html#synapse\.org {
   // These styles should be applied to Synapse.org only
   // these would typically go in the SWC codebase, but we only use bootstrap-4-backport in SRC
   .bootstrap-4-backport {
