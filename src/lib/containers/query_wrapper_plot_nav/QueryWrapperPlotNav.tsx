@@ -69,7 +69,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     searchConfiguration,
     limit = DEFAULT_PAGE_SIZE,
     downloadCartPageUrl,
-    ...rest
   } = props
   let sqlUsed = sql
   if (searchParams) {
@@ -100,7 +99,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
       <SynapseContextConsumer>
         {context => (
           <QueryWrapper
-            {...rest}
+            {...props}
             token={context?.accessToken}
             initQueryRequest={initQueryRequest}
           >
@@ -114,7 +113,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
               sql={sqlUsed}
               hideDownload={hideDownload}
             />
-            <QueryFilter {...rest} />
+            <QueryFilter {...props} />
             <QueryFilterToggleButton />
             <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
             <FilterAndView
