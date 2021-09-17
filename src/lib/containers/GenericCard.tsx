@@ -270,7 +270,14 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
           {split.map((el, index) => {
             return (
               <React.Fragment key={el}>
-                <a href={href} key={el} className={newClassName} style={style}>
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  key={el}
+                  className={newClassName}
+                  style={style}
+                >
                   {el}
                 </a>
                 {index < split.length - 1 && (
