@@ -33,7 +33,7 @@ type OwnProps = {
   facetsToPlot?: string[]
   facetsToFilter?: string[]
   visibleColumnCount?: number
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   hideDownload?: boolean
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
@@ -69,7 +69,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     searchConfiguration,
     limit = DEFAULT_PAGE_SIZE,
     downloadCartPageUrl,
-    ...rest
   } = props
   let sqlUsed = sql
   if (searchParams) {
@@ -100,15 +99,13 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
       <SynapseContextConsumer>
         {context => (
           <QueryWrapper
-            {...rest}
+            {...props}
             token={context?.accessToken}
             initQueryRequest={initQueryRequest}
           >
             <SearchV2 {...searchConfiguration} />
             <ErrorBanner />
-            <DownloadConfirmation
-              downloadCartPageUrl={downloadCartPageUrl}
-            />
+            <DownloadConfirmation downloadCartPageUrl={downloadCartPageUrl} />
             <TopLevelControls
               showColumnSelection={tableConfiguration !== undefined}
               name={name}
@@ -116,7 +113,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
               sql={sqlUsed}
               hideDownload={hideDownload}
             />
-            <QueryFilter {...rest} />
+            <QueryFilter {...props} />
             <QueryFilterToggleButton />
             <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
             <FilterAndView

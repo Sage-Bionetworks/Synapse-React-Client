@@ -32,5 +32,10 @@ jobs:
               ref: "refs/tags/v${{ env.PACKAGE_VERSION }}",
               sha: context.sha
             })
-      - name: Update GitHub Pages
-        run: yarn deploy
+      - name: Build docs
+        run: yarn build:docs
+      - name: Deploy docs to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: styleguide

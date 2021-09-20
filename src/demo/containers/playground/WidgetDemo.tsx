@@ -100,13 +100,11 @@ export const WidgetDemo: React.FunctionComponent = () => {
       <br />
       <Checkbox
         label="Initially Checked Checkbox"
-        id="ch1"
         checked={true}
         onChange={(checked: boolean) => setCheck1(checked)}
       ></Checkbox>
       <Checkbox
         label="Initially Unchecked Checkbox"
-        id="ch2"
         onChange={(checked: boolean) => setCheck2(checked)}
       ></Checkbox>
       <hr></hr>

@@ -6,11 +6,11 @@ import React, { useState, useEffect } from 'react'
 export type IconOptions = {
   [index: string]: string
 }
-export type HeaderCardProps = {  
+export type HeaderCardProps = {
   rgbIndex?: number
   type: string
   title: string
-  subTitle: string
+  subTitle?: string
   description: string
   secondaryLabelLimit?: number
   values?: string[][]
@@ -24,7 +24,7 @@ export type HeaderCardProps = {
 const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   type,
   title,
-  subTitle,
+  subTitle = '',
   description,
   values,
   secondaryLabelLimit,
@@ -63,7 +63,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
   })
 
   return (
-    <div      
+    <div
       className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
@@ -73,10 +73,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
         <div className="SRC-cardContent">
           <div className="SRC-type">{type}</div>
           <div>
-            <h3
-              className="SRC-boldText"
-              style={{ margin: 'none' }}
-            >
+            <h3 className="SRC-boldText" style={{ margin: 'none' }}>
               {href ? (
                 <a target={target} href={href} className="highlight-link">
                   {title}
@@ -113,7 +110,7 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   )
 }
 
