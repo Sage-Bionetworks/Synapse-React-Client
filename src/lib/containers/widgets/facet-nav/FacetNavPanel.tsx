@@ -381,7 +381,12 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
 
   /* rendering functions */
   const ChartSelectionToggle = (): JSX.Element => (
-    <div className="bootstrap-4-backport SRC-labeled-dropdown">
+    <div
+      onClick={event => {
+        event.stopPropagation()
+      }}
+      className="bootstrap-4-backport SRC-labeled-dropdown"
+    >
       <span className="SRC-labeled-dropdown__label">Chart Type</span>
       <Dropdown>
         <Dropdown.Toggle className="secondary-caret" variant="gray-select">
