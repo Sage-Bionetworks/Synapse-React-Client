@@ -56,7 +56,7 @@ export type TreeViewProps = {
   projectId?: string
   initialContainer: string | 'root' | null
   showDropdown: boolean
-  selectedEntities: Reference[]
+  selectedEntities: Map<string, number>
   visibleTypes?: EntityType[]
   toggleSelection?: (entity: Reference) => void
   setDetailsViewConfiguration?: (
@@ -108,11 +108,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       ? initialContainer
       : initialContainer,
   )
-
-  const selected =
-    nodeAppearance === NodeAppearance.SELECT
-      ? selectedEntities
-      : [{ targetId: currentContainer } as Reference]
 
   const handleError = useErrorHandler()
 
@@ -404,7 +399,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           {showScopeAsRootNode ? (
             <TreeNode
               level={0}
-              selected={selected}
+              selected={selectedEntities}
               setSelectedId={setSelectedId}
               visibleTypes={visibleTypes}
               autoExpand={shouldAutoExpand}
@@ -417,7 +412,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               <TreeNode
                 key={entity.id}
                 level={0}
-                selected={selected}
+                selected={selectedEntities}
                 setSelectedId={setSelectedId}
                 visibleTypes={visibleTypes}
                 autoExpand={shouldAutoExpand}

@@ -1,6 +1,10 @@
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { QueryStatus } from 'react-query'
+import {
+  FetchNextPageOptions,
+  InfiniteQueryObserverResult,
+  QueryStatus,
+} from 'react-query'
 import SortIcon from '../../../../assets/icons/Sort'
 import { getEntityTypeFromHeader } from '../../../../utils/functions/EntityTypeUtils'
 import {
@@ -16,6 +20,7 @@ import {
 } from '../../../ErrorBanner'
 import { HelpButtonPopover } from '../../../HelpButtonPopover'
 import { SynapseSpinner } from '../../../LoadingScreen'
+import { Checkbox } from '../../../widgets/Checkbox'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsViewRow, DetailsViewRowAppearance } from './DetailsViewRow'
 
@@ -24,12 +29,16 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   queryStatus: QueryStatus
   queryIsFetching: boolean
   hasNextPage?: boolean
-  fetchNextPage?: () => void
+  fetchNextPage?: <TData, TError>(
+    options?: FetchNextPageOptions,
+  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
   /** The current sort of the view. If the view cannot be sorted, set this to `undefined` */
   sort?: { sortBy: SortBy; sortDirection: Direction }
   /** If sortable, `setSort` will be invoked when the user tries to change the sort */
   setSort?: (soryBy: SortBy, sortDirection: Direction) => void
   noResultsPlaceholder?: React.ReactElement
+  /** We defer to the configuration component to determine this */
+  selectAllCheckboxStatus?: boolean
 }
 
 /**
@@ -57,6 +66,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   sort,
   setSort,
   noResultsPlaceholder,
+  enableSelectAll,
+  selectAllCheckboxStatus = false,
 }) => {
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
@@ -70,7 +81,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       return 'hidden'
     } else if (!selectableTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'disabled'
-    } else if (selected.map(e => e.targetId).includes(entity.id)) {
+    } else if (selected.has(entity.id)) {
       return 'selected'
     } else {
       return 'default'
@@ -122,7 +133,54 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       <table>
         <thead className={entities.length === 0 ? 'Inactive' : ''}>
           <tr>
-            {showSelectColumn && <th className="IsSelectedColumn" />}
+            {showSelectColumn && (
+              <th
+                className="IsSelectedColumn"
+                onClick={async () => {
+                  // First we must fetch all of the entity children
+                  while (hasNextPage && fetchNextPage) {
+                    await fetchNextPage()
+                  }
+
+                  if (selectAllCheckboxStatus) {
+                    // deselect all
+                    toggleSelection(
+                      entities
+                        .filter(e => {
+                          const type = getEntityTypeFromHeader(e)
+                          return selectableTypes.includes(type)
+                        })
+                        .map(e => ({ targetId: e.id })),
+                    )
+                  } else {
+                    // select all
+                    toggleSelection(
+                      entities
+                        .filter(e => {
+                          // assumption is that we have far more child entities than selected entities
+                          const type = getEntityTypeFromHeader(e)
+                          return (
+                            !selected.has(e.id) &&
+                            selectableTypes.includes(type)
+                          )
+                        })
+                        .map(e => ({ targetId: e.id })),
+                    )
+                  }
+                }}
+              >
+                {enableSelectAll && (
+                  <Checkbox
+                    label=""
+                    className="SRC-pointer-events-none"
+                    checked={selectAllCheckboxStatus}
+                    onChange={() => {
+                      // no-op
+                    }}
+                  />
+                )}
+              </th>
+            )}
             <th className="EntityIconColumn" />
             <th className="NameColumn">
               <div>
@@ -177,10 +235,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 <DetailsViewRow
                   entityHeader={entity}
                   appearance={determineRowAppearance(entity)}
-                  selectedVersion={
-                    selected.find(e => e.targetId === entity.id)
-                      ?.targetVersionNumber
-                  }
+                  selectedVersion={selected.get(entity.id)}
                   showVersionColumn={showVersionSelection}
                   mustSelectVersionNumber={mustSelectVersionNumber}
                   selectButtonType={selectColumnType}

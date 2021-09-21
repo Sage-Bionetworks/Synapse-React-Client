@@ -43,10 +43,11 @@ export type EntityDetailsListSharedProps = {
   showVersionSelection: boolean
   mustSelectVersionNumber: boolean
   selectColumnType: 'checkbox' | 'none'
+  enableSelectAll: boolean
   visibleTypes: EntityType[]
-  selected: Reference[]
+  selected: Map<string, number>
   selectableTypes: EntityType[]
-  toggleSelection: (entity: Reference) => void
+  toggleSelection: (entity: Reference | Reference[]) => void
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {

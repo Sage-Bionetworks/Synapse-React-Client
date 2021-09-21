@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
+import Typography from '../../utils/typography/Typography'
 import { EntityTypeIcon } from '../EntityIcon'
+import { NO_VERSION_NUMBER } from './EntityFinder'
 
 export type SelectionPaneProps = {
   title: string
-  selectedEntities: Reference[]
+  selectedEntities: Map<string, number>
   toggleSelection: (entity: Reference) => void
 }
 
@@ -18,20 +20,33 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
 }: SelectionPaneProps) => {
   return (
     <div className="EntityFinderSelectionPane alert alert-warning">
-      <h5>{title}</h5>
+      <Typography variant={'headline2'} display={'inline'}>
+        {title}
+      </Typography>
+      {selectedEntities.size > 1 && (
+        <Typography variant={'smallText1'} display={'inline'}>
+          {' '}
+          ({selectedEntities.size} items)
+        </Typography>
+      )}
       <div className={'EntityFinderSelectionPane__Items'}>
-        {selectedEntities.map(e => (
-          <div
-            key={`${e.targetId}${
-              e.targetVersionNumber ? `.${e.targetVersionNumber}` : ''
-            }`}
-          >
-            <EntityPathDisplay
-              entity={e}
-              toggleSelection={toggleSelection}
-            ></EntityPathDisplay>
-          </div>
-        ))}
+        {Array.from(selectedEntities.keys()).map(id => {
+          const version = selectedEntities.get(id)
+          return (
+            <div
+              key={`${id}${version !== NO_VERSION_NUMBER ? `.${version}` : ''}`}
+            >
+              <EntityPathDisplay
+                entity={{
+                  targetId: id,
+                  targetVersionNumber:
+                    version !== NO_VERSION_NUMBER ? version : undefined,
+                }}
+                toggleSelection={toggleSelection}
+              ></EntityPathDisplay>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

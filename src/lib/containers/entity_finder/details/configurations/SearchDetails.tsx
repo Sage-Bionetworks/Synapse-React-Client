@@ -54,6 +54,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
           </>
         }
         {...sharedProps}
+        enableSelectAll={false} // Disable select all for search
       />
     )
   } else {
@@ -74,6 +75,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
           </>
         }
         {...sharedProps}
+        enableSelectAll={false} // Disable select all for search
       />
     )
   }

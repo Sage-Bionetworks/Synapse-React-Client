@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import { Direction, SortBy } from '../../../../utils/synapseTypes'
 import { toError } from '../../../../utils/ErrorUtils'
+import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/useGetEntityChildren'
+import {
+  Direction, SortBy
+} from '../../../../utils/synapseTypes'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
+import useGetCheckboxStateFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
 
 type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
@@ -33,6 +36,16 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     sortDirection: sortDirection,
   })
 
+  const entities = data?.pages.flatMap(page => page.page) ?? []
+
+  const selectAllCheckboxState = useGetCheckboxStateFromInfiniteList(
+    entities,
+    sharedProps.selected,
+    hasNextPage,
+    fetchNextPage,
+    sharedProps.selectableTypes,
+  )
+
   useEffect(() => {
     if (isError && error) {
       handleError(toError(error))
@@ -41,7 +54,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 
   return (
     <DetailsView
-      entities={data?.pages.flatMap(page => page.page) ?? []}
+      entities={entities}
       queryStatus={status}
       queryIsFetching={isFetching}
       hasNextPage={hasNextPage}
@@ -51,6 +64,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
         setSortBy(newSortBy)
         setSortDirection(newSortDirection)
       }}
+      selectAllCheckboxStatus={selectAllCheckboxState}
       {...sharedProps}
     />
   )

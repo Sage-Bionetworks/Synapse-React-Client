@@ -27,7 +27,7 @@ export enum NodeAppearance {
 
 export type TreeNodeProps = {
   entityHeader?: Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader
-  selected: Reference[]
+  selected: Map<string, number>
   setSelectedId: (entityId: string) => void
   level?: number
   autoExpand?: (entityId: string) => boolean
@@ -116,7 +116,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         appearance === NodeAppearance.SELECT ? 'SelectNode' : 'BrowseNode'
       }`}
       role="treeitem"
-      aria-selected={selected.map(e => e.targetId).includes(nodeId)}
+      aria-selected={selected.has(nodeId)}
       aria-disabled={isDisabled}
     >
       <div

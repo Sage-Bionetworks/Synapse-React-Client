@@ -1,17 +1,36 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetFavorites } from '../../../../utils/hooks/SynapseAPI/useFavorites'
 import { toError } from '../../../../utils/ErrorUtils'
+import { useGetFavoritesInfinite } from '../../../../utils/hooks/SynapseAPI/useFavorites'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
+import useGetCheckboxStateFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
 
 type FavoritesDetailsProps = EntityDetailsListSharedProps
 
 export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = ({
   ...sharedProps
 }) => {
-  const { data, status, isFetching, isError, error } = useGetFavorites()
+  const {
+    data,
+    status,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    isError,
+    error,
+  } = useGetFavoritesInfinite()
   const handleError = useErrorHandler()
+
+  const entities = data?.pages.flatMap(page => page.results) ?? []
+
+  const selectAllCheckboxState = useGetCheckboxStateFromInfiniteList(
+    entities,
+    sharedProps.selected,
+    hasNextPage,
+    fetchNextPage,
+    sharedProps.selectableTypes,
+  )
 
   useEffect(() => {
     if (isError && error) {
@@ -21,10 +40,12 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
 
   return (
     <DetailsView
-      entities={data ? data.results : []}
+      entities={entities}
       queryStatus={status}
       queryIsFetching={isFetching}
-      hasNextPage={false}
+      hasNextPage={hasNextPage}
+      fetchNextPage={fetchNextPage}
+      selectAllCheckboxStatus={selectAllCheckboxState}
       {...sharedProps}
     />
   )
