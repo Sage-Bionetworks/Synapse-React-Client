@@ -1038,9 +1038,13 @@ export const getEntityWiki = (
  * Returns synapse user favorites list given their access token
  * https://rest-docs.synapse.org/rest/GET/favorite.html
  */
-export const getUserFavorites = (accessToken: string | undefined) => {
+export const getUserFavorites = (
+  accessToken: string | undefined,
+  offset: number = 0,
+  limit: number = 200,
+) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
-  const url = `${FAVORITES}?offset=0&limit=200`
+  const url = `${FAVORITES}?offset=${offset}&limit=${limit}`
   return doGet<PaginatedResults<EntityHeader>>(
     url,
     accessToken,
