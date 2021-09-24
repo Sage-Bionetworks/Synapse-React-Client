@@ -99,9 +99,9 @@ describe('basic function', () => {
   describe('collapsible', () => {
     it('should hide content when toggled', () => {
       init({ ...props, collapsed: false })
-      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
-        'display',
-        'block',
+      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
+        'in',
+        true,
       )
 
       // toggle collapse via button
@@ -109,17 +109,17 @@ describe('basic function', () => {
         .find('button.FacetFilterHeader__collapseToggleBtn')
         .simulate('click')
 
-      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
-        'display',
-        'none',
+      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
+        'in',
+        false,
       )
     })
 
     it('should start collapsed when specified via prop', () => {
       init({ ...props, collapsed: true })
-      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
-        'display',
-        'none',
+      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
+        'in',
+        false,
       )
 
       // toggle collapse via button
@@ -127,9 +127,9 @@ describe('basic function', () => {
         .find('button.FacetFilterHeader__collapseToggleBtn')
         .simulate('click')
 
-      expect(wrapper.childAt(0).childAt(1).get(0).props.style).toHaveProperty(
-        'display',
-        'block',
+      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
+        'in',
+        true,
       )
     })
   })

@@ -15,6 +15,7 @@ import {
 } from '../../../utils/synapseTypes/Table'
 import { Checkbox } from '../Checkbox'
 import { FacetFilterHeader } from './FacetFilterHeader'
+import { Collapse } from '@material-ui/core'
 
 library.add(faArrowLeft)
 
@@ -342,12 +343,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
           label={columnModel.name}
           onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
         />
-        <div
-          className="EnumFacetFilter"
-          style={{ display: isCollapsed ? 'none' : 'block' }}
-        >
+        <Collapse className="EnumFacetFilter" in={!isCollapsed}>
           {content}
-        </div>
+        </Collapse>
       </>
     )
   }
