@@ -32,6 +32,11 @@ import {
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+// Inject the ToastContainer so we can push toast notifications
+let toastContainerDiv = document.createElement('div')
+document.getElementsByTagName('body')[0].append(toastContainerDiv)
+ReactDOM.render(React.createElement(SynapseToastContainer), toastContainerDiv)
+
 global.currentUserProfile = false
 global.accessToken = false
 global.sessionChangeHandler = async () => {
@@ -44,8 +49,10 @@ global.sessionChangeHandler = async () => {
         if (accessToken) {
           getAuthenticatedOn(accessToken).then(authenticatedOn => {
             const date = moment(authenticatedOn.authenticatedOn).format('L LT')
-            alert(
+            displayToast(
               `You are currently logged in as ${profile.userName} (last authenticated at ${date})`,
+              'info',
+              { autoCloseInMs: 5000 },
             )
           })
         }
@@ -69,11 +76,6 @@ global.iconOptions = {
   'MODEL-AD': mouseSvg,
   'Resilience-AD': resilienceadSvg,
 }
-
-// Inject the ToastContainer so we can push toast notifications
-let toastContainerDiv = document.createElement('div')
-document.getElementsByTagName('body')[0].append(toastContainerDiv)
-ReactDOM.render(React.createElement(SynapseToastContainer), toastContainerDiv)
 
 global.SynapseContextConsumer = SynapseContextConsumer
 global.AVATAR = AVATAR
