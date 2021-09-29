@@ -1,77 +1,5 @@
 ```jsx
 import rawData from '../../mocks/distribution_data.json'
-import PlotlyWrapper from './PlotlyWrapper'
-
-console.log(rawData)
-
-const x1 = [];
-for (let i = 0; i < 400; i++) {
-  const k = Math.random();
-  x1.push(k * 4);
-}
-
-const x2 = x1.filter(x => x > 2.1 && x < 2.40)
-
-const histData = [
-  {
-    x: x1,
-    name: "All Genetics Scores",
-    autobinx: false,
-    histnorm: "Number of Genes",
-    marker: {
-      color: "rgba(166, 132, 238, 0.25)",
-    },
-    opacity: 0.5,
-    type: "histogram",
-    xbins: {
-      end: 3,
-      size: 0.3,
-      start: 0
-    },
-    // hoverinfo: 'none',
-  },
-  {
-    x: x2,
-    name: "Score: 2.3",
-    autobinx: false,
-    histnorm: "Number of Genes",
-    marker: {
-      color: "rgba(166, 132, 238, 1)"
-    },
-    opacity: 0.5,
-    type: "histogram",
-    xbins: {
-      end: 2.40,
-      size: 0.3,
-      start: 2.1
-    },
-    hoverinfo: 'Score: 2.3',
-  }
-]
-
-const histLayout = {
-  bargap: 0.1,
-  bargroupgap: 0.2,
-  barmode: "overlay",
-  xaxis: {
-    title: "Gene Score".toUpperCase(),
-    titlefont: {
-      size: 18
-    }
-  },
-  yaxis: {
-    title: "Number of Genes".toUpperCase(),
-    titlefont: {
-      size: 18
-    }
-  },
-  legend: {
-    x: 0,
-    y: 1.2,
-  },
-  width: 300
-};
-
 
 const boxPlotData = [
   {
@@ -134,32 +62,6 @@ const geneticsscoreData = [{
   ...sharedBarData,
 }];
 
-const logsdonData = [{
-  x: Object.keys(rawData.logsdon.distribution),
-  y: Object.values(rawData.logsdon.distribution),
-  ...sharedBarData
-}];
-
-const omicsscoreData = [{
-  x: Object.keys(rawData.omicsscore.distribution),
-  y: Object.values(rawData.omicsscore.distribution),
-  ...sharedBarData
-}];
-
-const literaturescoreData = [{
-  x: Object.keys(rawData.literaturescore.distribution),
-  y: Object.values(rawData.literaturescore.distribution),
-  ...sharedBarData
-}];
-
-const flyneuropathscoreData = [{
-  x: Object.keys(rawData.flyneuropathscore.distribution),
-  y: Object.values(rawData.flyneuropathscore.distribution),
-  ...sharedBarData
-}];
-
-
-
 const barLayout = {
   width: 300,
   xaxis: {
@@ -190,7 +92,7 @@ const specialBarLayout = {
 
 <div>
 
-  <h2>geneticsscore</h2>
+  <h2>Bar chart using genetics score data</h2>
   
   <PlotlyWrapper
     data={geneticsscoreData}
@@ -199,44 +101,10 @@ const specialBarLayout = {
     config={boxPlotConfigs}
   />
 
-  <h2>logsdon</h2>
-
-  <PlotlyWrapper
-    data={logsdonData}
-    layout={barLayout}
-    containerWidth={300}
-    config={boxPlotConfigs}
-  />
-
-  <h2>omicsscore</h2>
-
-  <PlotlyWrapper
-    data={omicsscoreData}
-    layout={barLayout}
-    containerWidth={300}
-    config={boxPlotConfigs}
-  />
-
-  <h2>literaturescore</h2>
-  
-  <PlotlyWrapper
-    data={literaturescoreData}
-    layout={barLayout}
-    containerWidth={300}
-    config={boxPlotConfigs}
-  />
-  
-  <h2>flyneuropathscore</h2>
-
-  <PlotlyWrapper
-    data={flyneuropathscoreData}
-    layout={barLayout}
-    containerWidth={300}
-    config={boxPlotConfigs}
-  />
-  
   <hr />
 
+  <h2>Box plot</h2>
+  
   <PlotlyWrapper
     data={boxPlotData}
     layout={boxPlotLayout}
@@ -245,11 +113,17 @@ const specialBarLayout = {
     className={"chart-boxplot"}
   />
 
+  <hr />
+
+  <h2>No data</h2>
+
   <PlotlyWrapper
-    data={histData}
-    layout={histLayout}
+    data={[]}
+    layout={specialBarLayout}
     containerWidth={300}
+    config={boxPlotConfigs}
   />
+  
 </div>
 
 ```

@@ -22,12 +22,6 @@ const PlotlyWrapper: React.FC<PlotlyWrapperProps> = props => {
           style={{width: containerWidth}}>
           <span>Data Unavailable</span>
         </div>
-        <Plot
-          data={data}
-          layout={layout}
-          config={config}
-          style={{opacity: "0.5"}}
-        />
       </>
     }
     {
