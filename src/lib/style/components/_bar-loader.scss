@@ -3,4 +3,14 @@
   justify-content: center;
   margin-top: 50px;
   height: 30px;
+  width: 100%;
+  .bar-background-color {
+    background-color: rgba(49, 95, 124, 0.05);
+  }
+  .bar-color {
+    background-color: #878787;
+  }
+  > div {
+    width: 30%;
+  }
 }

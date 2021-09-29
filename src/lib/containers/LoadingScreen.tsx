@@ -1,9 +1,9 @@
+import { LinearProgress } from '@material-ui/core'
 import React from 'react'
-import { BarLoader } from 'react-spinners'
 
 const loadingScreen = (
   <div className="bar-loader">
-    <BarLoader color="#878787" loading={true} height={5} />
+    <LinearProgress classes={{colorPrimary: 'bar-background-color', barColorPrimary: 'bar-color'}} />
   </div>
 )
 
