@@ -363,7 +363,7 @@ describe('it renders the UI correctly', () => {
 })
 
 describe('it makes the correct URL for the secondary labels', () => {
-  const renderLabel = GenericCardPackage.renderLabel
+  const renderLabel = GenericCardPackage.SynapseCardLabel
   const DATASETS = 'datasets'
   const datasetBaseURL = 'Explore/Datasets'
   const labelLinkConfig: LabelLinkConfig = [

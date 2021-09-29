@@ -7,7 +7,7 @@ import { SelectColumn, ColumnModel } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
-type DatasetProps = {
+export type DatasetProps = {
   data?: any
   schema?: any
   secondaryLabelLimit?: number
@@ -25,7 +25,10 @@ class Dataset extends React.Component<DatasetProps, {}> {
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault()
-    window.open(`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`, '_blank')
+    window.open(
+      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`,
+      '_blank',
+    )
   }
 
   public render() {
