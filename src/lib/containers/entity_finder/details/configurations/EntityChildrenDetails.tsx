@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../../../utils/ErrorUtils'
 import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import {
-  Direction, SortBy
-} from '../../../../utils/synapseTypes'
+import { Direction, SortBy } from '../../../../utils/synapseTypes'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
-import useGetCheckboxStateFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
+import useGetIsAllSelectedFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
 
 type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
@@ -24,13 +22,14 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
   const {
     data,
     status,
-    isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
     error,
   } = useGetEntityChildrenInfinite({
     parentId: parentContainerId,
+    includeTotalChildCount: false,
     includeTypes: sharedProps.visibleTypes,
     sortBy: sortBy,
     sortDirection: sortDirection,
@@ -38,7 +37,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 
   const entities = data?.pages.flatMap(page => page.page) ?? []
 
-  const selectAllCheckboxState = useGetCheckboxStateFromInfiniteList(
+  const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     entities,
     sharedProps.selected,
     hasNextPage,
@@ -56,7 +55,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     <DetailsView
       entities={entities}
       queryStatus={status}
-      queryIsFetching={isFetching}
+      queryIsFetching={isLoading}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
       sort={{ sortBy, sortDirection }}
@@ -64,7 +63,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
         setSortBy(newSortBy)
         setSortDirection(newSortDirection)
       }}
-      selectAllCheckboxStatus={selectAllCheckboxState}
+      selectAllIsChecked={selectAllCheckboxState}
       {...sharedProps}
     />
   )

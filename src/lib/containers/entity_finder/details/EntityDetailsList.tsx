@@ -13,6 +13,9 @@ import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
 import { DetailsView } from './view/DetailsView'
+import { Map } from 'immutable'
+import { getEntityTypeFromHeader } from '../../../utils/functions/EntityTypeUtils'
+import { isEmpty } from 'lodash-es'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
@@ -48,6 +51,7 @@ export type EntityDetailsListSharedProps = {
   selected: Map<string, number>
   selectableTypes: EntityType[]
   toggleSelection: (entity: Reference | Reference[]) => void
+  autoSizeWidth: boolean
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {
@@ -83,7 +87,12 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
             />
           )
 
-        case EntityDetailsListDataConfigurationType.HEADER_LIST:
+        case EntityDetailsListDataConfigurationType.HEADER_LIST: {
+          const selectableEntities = config.headerList?.filter(entity =>
+            sharedProps.selectableTypes.includes(
+              getEntityTypeFromHeader(entity),
+            ),
+          )
           return (
             <DetailsView
               entities={config.headerList as (EntityHeader | ProjectHeader)[]}
@@ -91,8 +100,17 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
               queryIsFetching={false}
               hasNextPage={false}
               {...sharedProps}
+              enableSelectAll={sharedProps.enableSelectAll}
+              // Select All should be checked if there are selectable entities, and all of them are selected
+              // selectAllCheckboxStatus={
+              //   !isEmpty(selectableEntities) &&
+              //   selectableEntities?.every(entity =>
+              //     sharedProps.selected.has(entity.id),
+              //   )
+              // }
             />
           )
+        }
         case EntityDetailsListDataConfigurationType.USER_FAVORITES:
           return <FavoritesDetails {...sharedProps} />
         case EntityDetailsListDataConfigurationType.ENTITY_SEARCH:
@@ -119,6 +137,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
                 </div>
               }
               {...sharedProps}
+              enableSelectAll={false}
             />
           )
 

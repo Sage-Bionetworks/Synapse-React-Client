@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { Modal } from 'react-bootstrap'
 import { BarLoader } from 'react-spinners'
+import Typography from '../utils/typography/Typography'
 
 const loadingScreen = (
   <div className="bar-loader">
@@ -23,6 +25,34 @@ export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
         backgroundSize: `${size}px`,
       }}
     />
+  )
+}
+
+type BlockingLoaderProps = {
+  show: boolean
+}
+export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show }) => {
+  useEffect(() => {
+    document.body.style.cursor = 'wait'
+    return () => {
+      document.body.style.cursor = 'default'
+    }
+  }, [])
+
+  return (
+    <Modal
+      className="bootstrap-4-backport BlockingLoader"
+      animation={false}
+      show={show}
+      size="sm"
+      centered={true}
+      onHide={() => {}}
+    >
+      <div className="SpinnerContainer">
+        <SynapseSpinner size={40}></SynapseSpinner>
+        <Typography variant="headline3">Loading...</Typography>
+      </div>
+    </Modal>
   )
 }
 

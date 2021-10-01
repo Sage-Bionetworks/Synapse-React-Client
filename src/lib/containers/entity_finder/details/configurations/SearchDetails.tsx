@@ -17,7 +17,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   const {
     data,
     status,
-    isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     error,
@@ -38,7 +38,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
       <DetailsView
         entities={data?.pages.flatMap(page => page.hits) ?? []}
         queryStatus={status}
-        queryIsFetching={isFetching}
+        queryIsFetching={isLoading}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
         noResultsPlaceholder={

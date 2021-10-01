@@ -6,14 +6,11 @@ import {
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import {
-  EntityHeader,
-  ProjectHeader,
-  Reference,
-} from '../../../utils/synapseTypes'
+import { EntityHeader, ProjectHeader } from '../../../utils/synapseTypes'
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
+import { Map } from 'immutable'
 
 export type RootNodeConfiguration = {
   nodeText: string
@@ -166,6 +163,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
             showHasWiki={false}
             showUnlink={false}
             canOpenModal={false}
+            renderTooltipComponent={true}
           />
         )}
       </div>

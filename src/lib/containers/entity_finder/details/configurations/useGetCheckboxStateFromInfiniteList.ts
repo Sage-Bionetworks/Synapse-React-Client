@@ -1,11 +1,17 @@
+import { Map } from 'immutable'
 import { useEffect, useState } from 'react'
 import { FetchNextPageOptions, InfiniteQueryObserverResult } from 'react-query'
-import { convertToEntityType } from '../../../../utils/functions/EntityTypeUtils'
+import { getEntityTypeFromHeader } from '../../../../utils/functions/EntityTypeUtils'
 import { SynapseClientError } from '../../../../utils/SynapseClient'
-import { EntityHeader, EntityType } from '../../../../utils/synapseTypes'
+import {
+  EntityHeader,
+  EntityType,
+  ProjectHeader,
+} from '../../../../utils/synapseTypes'
+import { Hit } from '../../../../utils/synapseTypes/Search'
 
-function getCheckboxStateFromInfiniteList<T>(
-  entities: EntityHeader[],
+export function getIsAllSelectedFromInfiniteList<T>(
+  entities: (EntityHeader | ProjectHeader | Hit)[],
   selected: Map<string, number>,
   hasNextPage: boolean | undefined,
   fetchNextPage: (
@@ -19,7 +25,7 @@ function getCheckboxStateFromInfiniteList<T>(
     const allFetchedChildrenAreSelected = entities.every(
       e =>
         selected.has(e.id) ||
-        !selectableTypes.includes(convertToEntityType(e.type)),
+        !selectableTypes.includes(getEntityTypeFromHeader(e)),
     )
     if (allFetchedChildrenAreSelected && hasNextPage) {
       fetchNextPage()
@@ -32,8 +38,8 @@ function getCheckboxStateFromInfiniteList<T>(
   }
 }
 
-export default function useGetCheckboxStateFromInfiniteList(
-  entities: EntityHeader[],
+export default function useGetIsAllSelectedFromInfiniteList<T>(
+  entities: (EntityHeader | ProjectHeader | Hit)[],
   selected: Map<string, number>,
   hasNextPage: boolean | undefined,
   fetchNextPage: (
@@ -41,10 +47,10 @@ export default function useGetCheckboxStateFromInfiniteList(
   ) => Promise<InfiniteQueryObserverResult<T, SynapseClientError>>,
   selectableTypes: EntityType[],
 ) {
-  const [checkboxState, setCheckboxState] = useState(false)
+  const [isSelectAll, setIsSelectAll] = useState(false)
   useEffect(() => {
-    setCheckboxState(
-      getCheckboxStateFromInfiniteList(
+    setIsSelectAll(
+      getIsAllSelectedFromInfiniteList(
         entities,
         selected,
         hasNextPage,
@@ -54,5 +60,5 @@ export default function useGetCheckboxStateFromInfiniteList(
     )
   }, [entities, fetchNextPage, hasNextPage, selected, selectableTypes])
 
-  return checkboxState
+  return isSelectAll
 }

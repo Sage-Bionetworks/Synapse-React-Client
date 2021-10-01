@@ -5,6 +5,7 @@ import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/usePr
 import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
+import useGetIsAllSelectedFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
 
 type ProjectListDetailsProps = EntityDetailsListSharedProps & {
   projectsParams: GetProjectsParameters
@@ -17,13 +18,23 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
   const {
     data,
     status,
-    isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
     error,
   } = useGetProjectsInfinite(projectsParams)
   const handleError = useErrorHandler()
+
+  const projects = data?.pages.flatMap(page => page.results) ?? []
+
+  const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
+    projects,
+    sharedProps.selected,
+    hasNextPage,
+    fetchNextPage,
+    sharedProps.selectableTypes,
+  )
 
   useEffect(() => {
     if (isError && error) {
@@ -33,11 +44,12 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
 
   return (
     <DetailsView
-      entities={data?.pages.flatMap(page => page.results) ?? []}
+      entities={projects}
       queryStatus={status}
-      queryIsFetching={isFetching}
+      queryIsFetching={isLoading}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
+      selectAllIsChecked={selectAllCheckboxState}
       {...sharedProps}
     />
   )

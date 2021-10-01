@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Map } from 'immutable'
 import React, {
   useCallback,
   useEffect,
@@ -40,10 +41,6 @@ export const NO_VERSION_NUMBER = -1 // this is a little easier to follow than us
 export type EntityFinderProps = {
   /** Whether or not it is possible to select multiple entities */
   selectMultiple: boolean
-  /** Whether or not it is possible to 'select all'. selectMultiple must be true and treeOnly must be false. */
-  enableSelectAll: boolean
-  /** The maximum number of objects that can be selected */
-  maximumSelectCount?: number
   /** Callback invoked when the selection changes */
   onSelectedChange: (selected: Reference[]) => void
   /** The initial appearance of the entity finder. Possible values include "Current Project", "All Projects", "Projects Created By Me", "My Favorites" */
@@ -81,8 +78,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
   selectedCopy = 'Selected',
   treeOnly = false,
-  enableSelectAll,
-  maximumSelectCount,
 }: EntityFinderProps) => {
   const { accessToken } = useSynapseContext()
 
@@ -145,20 +140,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     return match === entity.targetVersionNumber
   }
 
-  function otherVersionSelected(
-    entity: Reference,
-    selected: Map<string, number>,
-  ): boolean {
-    const match = selected.get(entity.targetId)
-    if (match == null) {
-      return false
-    }
-    if (match === NO_VERSION_NUMBER) {
-      return entity.targetVersionNumber !== undefined
-    }
-    return match !== entity.targetVersionNumber
-  }
-
   // TODO: Allow toggling multiple at one time. This would reduce the algorithmic complexity of select all
   // TODO: If mustSelectVersionNumber is true, consider correcting an unversioned reference here to the latest numbered version.
 
@@ -172,43 +153,43 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     selected: Map<string, number>,
     toggledReferences: Reference | Reference[],
   ): Map<string, number> {
-    // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
-    // Due to how react manages updates, we have to create a new object :(
-    selected = new Map(selected)
-    if (!Array.isArray(toggledReferences)) {
-      toggledReferences = [toggledReferences]
-    }
-    toggledReferences.forEach(toggledReference => {
-      if (isSelected(toggledReference, selected)) {
-        // remove from selection
-        selected.delete(toggledReference.targetId)
-      } else {
-        // add to selection
-        if (!selectMultiple) {
-          selected.clear()
-        }
-        selected.set(
-          toggledReference.targetId,
-          toggledReference.targetVersionNumber ?? NO_VERSION_NUMBER,
-        )
+    const newSelected = selected.withMutations(map => {
+      // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
+      if (!Array.isArray(toggledReferences)) {
+        toggledReferences = [toggledReferences]
       }
-    })
-
-    const asArray: Reference[] = []
-    selected.forEach((version, id) => {
-      asArray.push({
-        targetId: id,
-        targetVersionNumber:
-          version === NO_VERSION_NUMBER ? undefined : version,
+      toggledReferences.forEach(toggledReference => {
+        if (isSelected(toggledReference, selected)) {
+          // remove from selection
+          map.delete(toggledReference.targetId)
+        } else {
+          // add to selection
+          if (!selectMultiple) {
+            map.clear()
+          }
+          map.set(
+            toggledReference.targetId,
+            toggledReference.targetVersionNumber ?? NO_VERSION_NUMBER,
+          )
+        }
       })
     })
-    onSelectedChange(asArray)
-    return selected
+
+    onSelectedChange(
+      newSelected.toArray().map(([id, version]) => {
+        return {
+          targetId: id,
+          targetVersionNumber:
+            version === NO_VERSION_NUMBER ? undefined : version,
+        }
+      }),
+    )
+    return newSelected
   }
 
   const [selectedEntities, toggleSelection] = useReducer(
     entitySelectionReducer,
-    new Map<string, number>(),
+    Map<string, number>(),
   )
 
   useEffect(() => {
@@ -339,7 +320,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
-              enableSelectAll={enableSelectAll}
+              enableSelectAll={selectMultiple}
+              autoSizeWidth={true}
             />
           )}
           {
@@ -398,7 +380,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                               selectMultiple ? 'checkbox' : 'none'
                             }
                             toggleSelection={toggleSelection}
-                            enableSelectAll={enableSelectAll}
+                            enableSelectAll={selectMultiple}
+                            autoSizeWidth={false}
                           />
                           <Breadcrumbs {...breadcrumbsProps} />
                         </ReflexElement>

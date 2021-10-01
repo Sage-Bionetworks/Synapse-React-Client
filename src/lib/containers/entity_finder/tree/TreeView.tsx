@@ -22,6 +22,7 @@ import {
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
 import { NodeAppearance, TreeNode } from './TreeNode'
+import { Map } from 'immutable'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
