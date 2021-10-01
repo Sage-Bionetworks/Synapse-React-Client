@@ -31,6 +31,7 @@ import { EntityModal } from './containers/entity/metadata/EntityModal'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
 import IconSvg from './containers/IconSvg'
+import MuiSuperTable from './containers/supertable/MuiSuperTable'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -74,6 +75,7 @@ const SynapseComponents = {
   SynapseToastContainer,
   displayToast,
   IconSvg,
+  MuiSuperTable,
   UserProfileLinks
 }
 

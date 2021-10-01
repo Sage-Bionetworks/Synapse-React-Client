@@ -1,0 +1,129 @@
+label + .MuiInput-formControl {
+  margin-bottom: 16px;
+}
+
+.MuiDataGrid-root.super-table {
+
+  .metric-circle {
+
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      left: 50%;
+      top: 0;
+      border-left: 1px solid #f1f1f1;
+      height: 100%;
+    }
+
+
+  }
+
+  .MuiDataGrid-cell {
+    border-bottom: 0
+  }
+
+  .cell-lines {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+  }
+
+  .cell-horz-line {
+    width: 100%;
+    height: 1px;
+    background-color: #eee;
+    position: absolute;
+  }
+
+  .cell-vert-line {
+    width: 1px;
+    height: 100%;
+    background-color: #eee;
+    position: absolute;
+  }
+
+
+  .MuiDataGrid-columnHeader,
+  .MuiDataGrid-cell {
+    padding: 0
+  }
+
+  .MuiDataGrid-row:hover {
+    background-color: #CFDCF5;
+  }
+
+  input[type=checkbox], input[type=radio] {
+    height: 100%;
+    width: 100%;
+    clip: unset;
+  }
+
+  .MuiDataGrid-menuIcon {
+    margin-right: 0;
+  }
+
+  .MuiDataGrid-iconSeparator {
+    display: none;
+  }
+
+  .hist-bar-container {
+    height: 20px;
+    align-items: flex-end;
+    justify-content: flex-start;
+
+    .hist-bar {
+      width: 25px;
+      display: inline-block;
+      background-color: #B9F1E4;
+      border-top: 2px solid #44B5A0;
+    }
+  }
+
+
+
+}
+
+.super-table {
+  .MuiTooltip-tooltip {
+    background-color: #fff;
+    color: #3F5EAB;
+    font-weight: bold;
+    box-shadow: 0px 0px 4px 1px rgb(99 104 105 / 10%);
+    font-size: 1rem;
+  }
+}
+
+.drawer-content {
+  width: 360px;
+  padding: 32px 24px;
+
+  .drawer-close-btn {
+    text-align: right;
+    svg {
+      font-size: 3rem;
+      cursor: pointer;
+    }
+  }
+
+  .drawer-title {
+    display: flex;
+    h1 {
+      margin: 0;
+      flex: 1 0;
+    }
+  }
+
+  .MuiTabScrollButton-root.Mui-disabled {
+    width: 0
+  }
+  .MuiTab-root {
+    min-width: 100px;
+  }
+
+}
+
+
