@@ -30,6 +30,7 @@ import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/Sc
 import { EntityModal } from './containers/entity/metadata/EntityModal'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
+import PlotlyWrapper from './containers/PlotlyWrapper'
 import IconSvg from './containers/IconSvg'
 import {
   SynapseContextProvider,
@@ -74,7 +75,8 @@ const SynapseComponents = {
   SynapseToastContainer,
   displayToast,
   IconSvg,
-  UserProfileLinks
+  UserProfileLinks,
+  PlotlyWrapper
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
