@@ -16,6 +16,8 @@ import { Hit } from '../../../../utils/synapseTypes/Search'
  *
  * This function is compatible with react-query's useInfiniteQuery pagination, in which case it's recommended to use the hook version
  * of this function to get updates as pages are fetched and updated.
+ * 
+ * We don't currently support an indeterminate checkbox state because that would require always fetching all pages of a given query, which does not scale.
  * @param entities An arbitrary list of entities that are displayed
  * @param selected A map where keys are selected entity IDs
  * @param selectableTypes A list of entity types which can be selected. Will be used to filter the list of entities

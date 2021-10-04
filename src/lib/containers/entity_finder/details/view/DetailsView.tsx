@@ -130,19 +130,21 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   useEffect(() => {
     async function handleSelectAll() {
       if (shouldSelectAll) {
-        if (hasNextPage && fetchNextPage && !isFetchingNextPage) {
+        if (hasNextPage && fetchNextPage) {
           // Show the loading screen since we must fetch data (potentially a lot) to finish the task
           setShowLoadingScreen(true)
-          fetchNextPage()
+          if (!isFetchingNextPage) {
+            fetchNextPage()
+          }
         } else {
           if (selectAllIsChecked) {
             // All of the items are selected, so we will deselect all
             toggleSelection(
               entities
                 .filter(e => {
-                  // must filter just selectable types or else any 'disabled' types will get un/selected
-                  const type = getEntityTypeFromHeader(e)
-                  return selectableTypes.includes(type)
+                  // Collect just entities that are selected
+                  // An entity may be in the list and unselected because it isn't of a selectable type
+                  return selected.has(e.id)
                 })
                 .map(e => {
                   const selectedVersion = selected.get(e.id)
@@ -161,9 +163,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               await Promise.all(
                 entities
                   .filter(e => {
-                    // must filter just selectable types or else any 'disabled' types will get un/selected
+                    // must filter just selectable types or else any entities of unselectable types will get selected
                     const type = getEntityTypeFromHeader(e)
-                    // also filter out already-selected entities, since we don't want to toggle those
+                    // also exclude already-selected entities, since we don't want to toggle those
                     return !selected.has(e.id) && selectableTypes.includes(type)
                   })
                   .map(async e => {
@@ -180,7 +182,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                         latestVersion = (e as EntityHeader).versionNumber
                       }
                       if (!latestVersion) {
-                        // Failsafe if we didn't get the version in the header
+                        // Failsafe if we didn't get the version in the header. This is rare/unlikely, since the only cases we're sure we don't get versions are:
+                        //  - ProjectHeaders (which are versionless)
+                        //  - Search Results (for which we don't support Select All)
                         // For large lists, there's a good chance for this to trigger throttling.
 
                         // Show the loading screen since we must fetch data (potentially a lot) to finish the task
@@ -380,7 +384,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               title="Name"
               width={800}
               dataKey="name"
-              sortable={true}
+              sortable={sort != null}
               resizable={true}
             />
             <Column<DetailsViewRowData>
@@ -431,12 +435,12 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               title="Modified On"
               width={200}
               minWidth={150}
-              sortable
+              sortable={sort != null}
               cellRenderer={ModifiedOnRenderer}
             />
             <Column<DetailsViewRowData>
               key={SortBy.CREATED_ON}
-              sortable
+              sortable={sort != null}
               title="Created On"
               width={200}
               minWidth={150}

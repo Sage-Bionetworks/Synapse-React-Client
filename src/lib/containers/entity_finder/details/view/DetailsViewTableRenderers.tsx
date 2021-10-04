@@ -76,18 +76,21 @@ export function CreatedOnRenderer(props: DetailsViewRendererProps) {
   return <DateRenderer {...props} cellData={bundle?.entity?.createdOn} />
 }
 
-export function ModifiedByRenderer({ rowData }: DetailsViewRendererProps) {
-  const { data: bundle } = useGetEntityBundle(rowData.id)
-
-  return (
-    (bundle && (
-      <UserCard
-        ownerId={bundle?.entity?.modifiedBy}
-        size={SMALL_USER_CARD}
-        openLinkInNewTab={true}
-      />
-    )) ?? <Skeleton width={200} />
+export function UserCardRenderer({ cellData }: { cellData?: string }) {
+  return cellData ? (
+    <UserCard
+      ownerId={cellData}
+      size={SMALL_USER_CARD}
+      openLinkInNewTab={true}
+    />
+  ) : (
+    <Skeleton width={200} />
   )
+}
+
+export function ModifiedByRenderer(props: DetailsViewRendererProps) {
+  const { data: bundle } = useGetEntityBundle(props.rowData.id)
+  return <UserCardRenderer {...props} cellData={bundle?.entity?.modifiedBy} />
 }
 
 export function LoadingRenderer() {
