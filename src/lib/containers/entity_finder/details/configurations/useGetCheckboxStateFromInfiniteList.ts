@@ -13,11 +13,12 @@ import { Hit } from '../../../../utils/synapseTypes/Search'
 export function getIsAllSelectedFromInfiniteList<T>(
   entities: (EntityHeader | ProjectHeader | Hit)[],
   selected: Map<string, number>,
+  selectableTypes: EntityType[],
   hasNextPage: boolean | undefined,
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined,
   ) => Promise<InfiniteQueryObserverResult<T, SynapseClientError>>,
-  selectableTypes: EntityType[],
+  isFetchingNextPage: boolean,
 ): boolean {
   if (entities.length === 0 || selected.size === 0) {
     return false
@@ -27,7 +28,7 @@ export function getIsAllSelectedFromInfiniteList<T>(
         selected.has(e.id) ||
         !selectableTypes.includes(getEntityTypeFromHeader(e)),
     )
-    if (allFetchedChildrenAreSelected && hasNextPage) {
+    if (allFetchedChildrenAreSelected && hasNextPage && !isFetchingNextPage) {
       fetchNextPage()
       return false
     } else if (allFetchedChildrenAreSelected && !hasNextPage) {
@@ -41,11 +42,12 @@ export function getIsAllSelectedFromInfiniteList<T>(
 export default function useGetIsAllSelectedFromInfiniteList<T>(
   entities: (EntityHeader | ProjectHeader | Hit)[],
   selected: Map<string, number>,
+  selectableTypes: EntityType[],
   hasNextPage: boolean | undefined,
   fetchNextPage: (
     options?: FetchNextPageOptions | undefined,
   ) => Promise<InfiniteQueryObserverResult<T, SynapseClientError>>,
-  selectableTypes: EntityType[],
+  isFetchingNextPage: boolean,
 ) {
   const [isSelectAll, setIsSelectAll] = useState(false)
   useEffect(() => {
@@ -53,12 +55,20 @@ export default function useGetIsAllSelectedFromInfiniteList<T>(
       getIsAllSelectedFromInfiniteList(
         entities,
         selected,
+        selectableTypes,
         hasNextPage,
         fetchNextPage,
-        selectableTypes,
+        isFetchingNextPage,
       ),
     )
-  }, [entities, fetchNextPage, hasNextPage, selected, selectableTypes])
+  }, [
+    entities,
+    fetchNextPage,
+    hasNextPage,
+    selected,
+    selectableTypes,
+    isFetchingNextPage,
+  ])
 
   return isSelectAll
 }

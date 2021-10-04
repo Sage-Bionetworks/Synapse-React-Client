@@ -59,7 +59,7 @@ const defaultProps: DetailsViewProps = {
   toggleSelection: mockToggleSelection,
   entities: entityHeaders,
   queryStatus: 'success',
-  queryIsFetching: false,
+  isLoading: false,
   hasNextPage: false,
   fetchNextPage: mockFetchNextPage,
   sort: undefined,
@@ -177,7 +177,7 @@ describe('DetailsView tests', () => {
   it('must have the ref in view to fetch the next page', () => {
     renderComponent({
       queryStatus: 'success',
-      queryIsFetching: false,
+      isLoading: false,
       hasNextPage: true,
     })
 

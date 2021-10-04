@@ -13,10 +13,10 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
 }) => {
   const {
     data,
-    status,
     isLoading,
     hasNextPage,
     fetchNextPage,
+    isFetchingNextPage,
     isError,
     error,
   } = useGetFavoritesInfinite()
@@ -27,9 +27,10 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
   const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     entities,
     sharedProps.selected,
+    sharedProps.selectableTypes,
     hasNextPage,
     fetchNextPage,
-    sharedProps.selectableTypes,
+    isFetchingNextPage,
   )
 
   useEffect(() => {
@@ -41,10 +42,10 @@ export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = 
   return (
     <DetailsView
       entities={entities}
-      queryStatus={status}
-      queryIsFetching={isLoading}
+      isLoading={isLoading}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
       selectAllIsChecked={selectAllCheckboxState}
       {...sharedProps}
     />

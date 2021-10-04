@@ -36,7 +36,9 @@ library.add(faTimes, faSearch)
 
 const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
 
-export const NO_VERSION_NUMBER = -1 // this is a little easier to follow than using null/undefined
+// In the map used to track selections, we use -1 to denote 'selected without version'
+// This is necessary because undefined is returned by map.get when the item is not in the map
+export const NO_VERSION_NUMBER = -1
 
 export type EntityFinderProps = {
   /** Whether or not it is possible to select multiple entities */
@@ -140,9 +142,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     return match === entity.targetVersionNumber
   }
 
-  // TODO: Allow toggling multiple at one time. This would reduce the algorithmic complexity of select all
-  // TODO: If mustSelectVersionNumber is true, consider correcting an unversioned reference here to the latest numbered version.
-
   /**
    * Given the existing selections and a list of toggled references, return the new list of selections
    * @param selected
@@ -175,15 +174,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
       })
     })
 
-    onSelectedChange(
-      newSelected.toArray().map(([id, version]) => {
-        return {
-          targetId: id,
-          targetVersionNumber:
-            version === NO_VERSION_NUMBER ? undefined : version,
-        }
-      }),
-    )
     return newSelected
   }
 
@@ -191,6 +181,19 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     entitySelectionReducer,
     Map<string, number>(),
   )
+
+  useEffect(() => {
+    // When it changes, convert the map of selected items to a list of references and invoke the callback
+    onSelectedChange(
+      selectedEntities.toArray().map(([id, version]) => {
+        return {
+          targetId: id,
+          targetVersionNumber:
+            version === NO_VERSION_NUMBER ? undefined : version,
+        }
+      }),
+    )
+  }, [selectedEntities, onSelectedChange])
 
   useEffect(() => {
     if (searchTerms?.length === 1) {

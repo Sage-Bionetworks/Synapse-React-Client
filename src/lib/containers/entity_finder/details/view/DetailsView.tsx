@@ -4,7 +4,7 @@ import BaseTable, {
 } from '@sage-bionetworks/react-base-table'
 import { debounce } from 'lodash-es'
 import React, { useEffect, useMemo, useState } from 'react'
-import { QueryStatus, useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import {
   getEntityTypeFromHeader,
@@ -47,10 +47,10 @@ const rebuildTooltip = debounce(() => ReactTooltip.rebuild(), 200, {
 
 export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: (EntityHeader | ProjectHeader | Hit)[]
-  queryStatus: QueryStatus
-  queryIsFetching: boolean
+  isLoading: boolean
   hasNextPage?: boolean
   fetchNextPage?: () => Promise<any>
+  isFetchingNextPage?: boolean
   /** The current sort of the view. If the view cannot be sorted, set this to `undefined` */
   sort?: { sortBy: SortBy; sortDirection: Direction }
   /** If sortable, `setSort` will be invoked when the user tries to change the sort */
@@ -84,10 +84,10 @@ export type DetailsViewRowData = (EntityHeader | ProjectHeader | Hit) & {
  */
 export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   entities,
-  queryStatus,
-  queryIsFetching,
+  isLoading,
   hasNextPage,
   fetchNextPage,
+  isFetchingNextPage,
   showVersionSelection,
   mustSelectVersionNumber,
   selectColumnType,
@@ -130,7 +130,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   useEffect(() => {
     async function handleSelectAll() {
       if (shouldSelectAll) {
-        if (hasNextPage && fetchNextPage && !queryIsFetching) {
+        if (hasNextPage && fetchNextPage && !isFetchingNextPage) {
           // Show the loading screen since we must fetch data (potentially a lot) to finish the task
           setShowLoadingScreen(true)
           fetchNextPage()
@@ -215,7 +215,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     hasNextPage,
     mustSelectVersionNumber,
     queryClient,
-    queryIsFetching,
+    isFetchingNextPage,
     selectAllIsChecked,
     selectableTypes,
     selected,
@@ -313,8 +313,22 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             onScroll={rebuildTooltip}
             rowEventHandlers={{
               onClick: ({ rowData }) => {
-                const { id, currentSelectedVersion, isDisabled } = rowData
+                const { id, isDisabled, isVersionableEntity } = rowData
+                let { currentSelectedVersion } = rowData
                 if (!isDisabled) {
+                  if (
+                    isVersionableEntity &&
+                    mustSelectVersionNumber &&
+                    currentSelectedVersion == null &&
+                    Object.prototype.hasOwnProperty.call(
+                      rowData,
+                      'versionNumber',
+                    )
+                  ) {
+                    currentSelectedVersion = (rowData as EntityHeader)
+                      .versionNumber
+                  }
+
                   toggleSelection({
                     targetId: id,
                     targetVersionNumber:
@@ -326,12 +340,12 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               },
             }}
             onEndReached={() => {
-              if (hasNextPage && fetchNextPage && !queryIsFetching) {
+              if (hasNextPage && fetchNextPage && !isFetchingNextPage) {
                 fetchNextPage()
               }
             }}
             emptyRenderer={
-              queryStatus === 'loading'
+              isLoading
                 ? LoadingRenderer
                 : () => (
                     <EmptyRenderer

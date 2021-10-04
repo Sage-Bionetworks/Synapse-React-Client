@@ -21,8 +21,8 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 
   const {
     data,
-    status,
     isLoading,
+    isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -40,9 +40,10 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
   const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     entities,
     sharedProps.selected,
+    sharedProps.selectableTypes,
     hasNextPage,
     fetchNextPage,
-    sharedProps.selectableTypes,
+    isFetchingNextPage,
   )
 
   useEffect(() => {
@@ -54,10 +55,10 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
   return (
     <DetailsView
       entities={entities}
-      queryStatus={status}
-      queryIsFetching={isLoading}
+      isLoading={isLoading}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
       sort={{ sortBy, sortDirection }}
       setSort={(newSortBy, newSortDirection) => {
         setSortBy(newSortBy)

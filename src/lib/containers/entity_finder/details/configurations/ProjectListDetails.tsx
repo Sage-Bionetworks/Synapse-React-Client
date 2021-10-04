@@ -17,8 +17,8 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
 }) => {
   const {
     data,
-    status,
     isLoading,
+    isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -31,9 +31,10 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
   const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     projects,
     sharedProps.selected,
+    sharedProps.selectableTypes,
     hasNextPage,
     fetchNextPage,
-    sharedProps.selectableTypes,
+    isFetchingNextPage,
   )
 
   useEffect(() => {
@@ -45,10 +46,10 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
   return (
     <DetailsView
       entities={projects}
-      queryStatus={status}
-      queryIsFetching={isLoading}
+      isLoading={isLoading}
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
       selectAllIsChecked={selectAllCheckboxState}
       {...sharedProps}
     />
