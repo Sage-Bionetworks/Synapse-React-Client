@@ -3,10 +3,14 @@ import { Range, RangeValues } from '../Range'
 import { RangeSlider } from '../RangeSlider'
 import { FacetColumnResultRange } from '../../../utils/synapseTypes/Table/FacetColumnResult'
 import { ColumnModel } from '../../../utils/synapseTypes/Table/ColumnModel'
-import { VALUE_NOT_SET, FRIENDLY_VALUE_NOT_SET } from '../../../utils/SynapseConstants'
+import {
+  VALUE_NOT_SET,
+  FRIENDLY_VALUE_NOT_SET,
+} from '../../../utils/SynapseConstants'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { RadioGroup } from '../RadioGroup'
 import { useState } from 'react'
+import { Collapse } from '@material-ui/core'
 
 export enum RadioValuesEnum {
   NOT_SET = 'org.sagebionetworks.UNDEFINED_NULL_NOTSET',
@@ -82,7 +86,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
         onClick={(isCollapsed: boolean) => setIsCollapsed(isCollapsed)}
         facetAliases={facetAliases}
       ></FacetFilterHeader>
-      <div style={{ display: isCollapsed ? 'none' : 'block' }}>
+      <Collapse in={!isCollapsed}>
         <RadioGroup
           value={radioValue}
           id="rangeSelector"
@@ -127,7 +131,7 @@ export const RangeFacetFilter: React.FunctionComponent<RangeFacetFilterProps> = 
               )}
             </>
           ))}
-      </div>
+      </Collapse>
     </div>
   )
   return result

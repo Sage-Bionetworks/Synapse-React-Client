@@ -118,11 +118,6 @@ export default function AccessRequirementList({
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
-    if (!SynapseClient.isInSynapseExperimentalMode()) {
-      // TODO to be deleted when out of alpha mode
-      setRequestDataStep(-1)
-    }
-
     const sortAccessRequirementByCompletion = async (
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {

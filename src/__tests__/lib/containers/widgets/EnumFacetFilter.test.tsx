@@ -136,11 +136,11 @@ describe('initialization', () => {
   })
 
   describe('collapsible behavior', () => {
-    it('should hide content when toggled', () => {
+    it('should hide content when toggled', async () => {
       init({ ...props, collapsed: false })
       expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'block')
+        container.getElementsByClassName('EnumFacetFilter')[0],
+      ).toHaveClass('MuiCollapse-entered')
 
       // toggle collapse via button
       const button = container.querySelector(
@@ -148,16 +148,18 @@ describe('initialization', () => {
       )
       fireEvent.click(button)
 
-      expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'none')
+      await waitFor(() =>
+        expect(
+          container.getElementsByClassName('EnumFacetFilter')[0],
+        ).toHaveClass('MuiCollapse-hidden'),
+      )
     })
 
-    it('should start collapsed when specified via prop', () => {
+    it('should start collapsed when specified via prop', async () => {
       init({ ...props, collapsed: true })
       expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'none')
+        container.getElementsByClassName('EnumFacetFilter')[0],
+      ).toHaveClass('MuiCollapse-hidden')
 
       // toggle collapse via button
       const button = container.querySelector(
@@ -165,9 +167,11 @@ describe('initialization', () => {
       )
       fireEvent.click(button)
 
-      expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'block')
+      await waitFor(() =>
+        expect(
+          container.getElementsByClassName('EnumFacetFilter')[0],
+        ).toHaveClass('MuiCollapse-entered'),
+      )
     })
   })
 

@@ -1,11 +1,16 @@
+import { LinearProgress } from '@material-ui/core'
 import React, { useEffect } from 'react'
 import { Modal } from 'react-bootstrap'
-import { BarLoader } from 'react-spinners'
 import Typography from '../utils/typography/Typography'
 
 const loadingScreen = (
   <div className="bar-loader">
-    <BarLoader color="#878787" loading={true} height={5} />
+    <LinearProgress
+      classes={{
+        colorPrimary: 'bar-background-color',
+        barColorPrimary: 'bar-color',
+      }}
+    />
   </div>
 )
 
