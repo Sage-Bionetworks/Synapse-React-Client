@@ -5,7 +5,7 @@ import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI
 import { Direction, SortBy } from '../../../../utils/synapseTypes'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
-import useGetIsAllSelectedFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
+import useGetIsAllSelectedFromInfiniteList from './useGetIsAllSelectedInfiniteList'
 
 type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string

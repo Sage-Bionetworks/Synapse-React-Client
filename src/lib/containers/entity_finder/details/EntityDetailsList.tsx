@@ -1,3 +1,4 @@
+import { Map } from 'immutable'
 import React, { useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
@@ -12,11 +13,8 @@ import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
+import { getIsAllSelectedFromInfiniteList } from './configurations/useGetIsAllSelectedInfiniteList'
 import { DetailsView } from './view/DetailsView'
-import { Map } from 'immutable'
-import { getEntityTypeFromHeader } from '../../../utils/functions/EntityTypeUtils'
-import { isEmpty } from 'lodash-es'
-import { getIsAllSelectedFromInfiniteList } from './configurations/useGetCheckboxStateFromInfiniteList'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination

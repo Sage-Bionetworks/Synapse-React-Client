@@ -4,7 +4,7 @@ import { toError } from '../../../../utils/ErrorUtils'
 import { useGetFavoritesInfinite } from '../../../../utils/hooks/SynapseAPI/useFavorites'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
-import useGetIsAllSelectedFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
+import useGetIsAllSelectedFromInfiniteList from './useGetIsAllSelectedInfiniteList'
 
 type FavoritesDetailsProps = EntityDetailsListSharedProps
 

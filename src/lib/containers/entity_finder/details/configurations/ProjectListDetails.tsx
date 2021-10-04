@@ -5,7 +5,7 @@ import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/usePr
 import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
-import useGetIsAllSelectedFromInfiniteList from './useGetCheckboxStateFromInfiniteList'
+import useGetIsAllSelectedFromInfiniteList from './useGetIsAllSelectedInfiniteList'
 
 type ProjectListDetailsProps = EntityDetailsListSharedProps & {
   projectsParams: GetProjectsParameters
