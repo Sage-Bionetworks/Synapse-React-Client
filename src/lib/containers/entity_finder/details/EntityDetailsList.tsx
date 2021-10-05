@@ -98,11 +98,6 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
                 (config.headerList as (EntityHeader | ProjectHeader)[]) ?? [],
                 sharedProps.selected,
                 sharedProps.selectableTypes,
-                false,
-                () => {
-                  // no-op, there is no next page
-                },
-                false,
               )}
             />
           )
@@ -123,7 +118,6 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
             <DetailsView
               entities={[]}
               isLoading={false}
-              hasNextPage={false}
               noResultsPlaceholder={
                 <div>
                   Use the left panel to browse Synapse, then make a selection in

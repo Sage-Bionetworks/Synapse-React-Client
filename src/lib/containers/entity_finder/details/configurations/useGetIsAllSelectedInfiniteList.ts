@@ -16,7 +16,7 @@ import { Hit } from '../../../../utils/synapseTypes/Search'
  *
  * This function is compatible with react-query's useInfiniteQuery pagination, in which case it's recommended to use the hook version
  * of this function to get updates as pages are fetched and updated.
- * 
+ *
  * We don't currently support an indeterminate checkbox state because that would require always fetching all pages of a given query, which does not scale.
  * @param entities An arbitrary list of entities that are displayed
  * @param selected A map where keys are selected entity IDs
@@ -30,11 +30,11 @@ export function getIsAllSelectedFromInfiniteList<T>(
   entities: (EntityHeader | ProjectHeader | Hit)[],
   selected: Map<string, number>,
   selectableTypes: EntityType[],
-  hasNextPage: boolean | undefined,
-  fetchNextPage: (
+  hasNextPage?: boolean | undefined,
+  fetchNextPage?: (
     options?: FetchNextPageOptions | undefined,
   ) => Promise<InfiniteQueryObserverResult<T, SynapseClientError>>,
-  isFetchingNextPage: boolean,
+  isFetchingNextPage?: boolean,
 ): boolean {
   if (entities.length === 0 || selected.size === 0) {
     return false
@@ -44,7 +44,12 @@ export function getIsAllSelectedFromInfiniteList<T>(
         selected.has(e.id) ||
         !selectableTypes.includes(getEntityTypeFromHeader(e)),
     )
-    if (allFetchedChildrenAreSelected && hasNextPage && !isFetchingNextPage) {
+    if (
+      allFetchedChildrenAreSelected &&
+      hasNextPage &&
+      fetchNextPage &&
+      !isFetchingNextPage
+    ) {
       fetchNextPage()
       return false
     } else if (
@@ -79,11 +84,11 @@ export default function useGetIsAllSelectedFromInfiniteList<T>(
   entities: (EntityHeader | ProjectHeader | Hit)[],
   selected: Map<string, number>,
   selectableTypes: EntityType[],
-  hasNextPage: boolean | undefined,
-  fetchNextPage: (
+  hasNextPage?: boolean | undefined,
+  fetchNextPage?: (
     options?: FetchNextPageOptions | undefined,
   ) => Promise<InfiniteQueryObserverResult<T, SynapseClientError>>,
-  isFetchingNextPage: boolean,
+  isFetchingNextPage?: boolean,
 ) {
   const [isSelectAll, setIsSelectAll] = useState(false)
   useEffect(() => {
