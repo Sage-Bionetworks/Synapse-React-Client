@@ -47,6 +47,7 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show }) => {
   return (
     <Modal
       className="bootstrap-4-backport BlockingLoader"
+      backdrop={false}
       animation={false}
       show={show}
       size="sm"
