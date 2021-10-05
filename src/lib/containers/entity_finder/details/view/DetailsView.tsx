@@ -166,7 +166,11 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                     // must filter just selectable types or else any entities of unselectable types will get selected
                     const type = getEntityTypeFromHeader(e)
                     // also exclude already-selected entities, since we don't want to toggle those
-                    return !selected.has(e.id) && selectableTypes.includes(type)
+                    return (
+                      !selected.has(e.id) &&
+                      selectableTypes.includes(type) &&
+                      visibleTypes.includes(type)
+                    )
                   })
                   .map(async e => {
                     let latestVersion: number | undefined
@@ -248,6 +252,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     return (
       enableSelectAll && (
         <div
+          data-testid="Select All"
           style={isDisabled ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}
           onClick={() => {
             if (!isDisabled) {
@@ -259,6 +264,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             label=""
             className="SRC-pointer-events-none"
             checked={selectAllIsChecked}
+            disabled={isDisabled}
             onChange={() => {
               // no-op
             }}
@@ -302,6 +308,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 'aria-disabled': rowData.isDisabled,
                 'aria-hidden': rowData.isHidden,
               }
+            }}
+            headerCellProps={{
+              role: 'columnheader',
             }}
             // Sorting:
             sortState={sortState}
@@ -431,20 +440,20 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               />
             )}
             <Column<DetailsViewRowData>
-              key={SortBy.MODIFIED_ON}
-              title="Modified On"
-              width={200}
-              minWidth={150}
-              sortable={sort != null}
-              cellRenderer={ModifiedOnRenderer}
-            />
-            <Column<DetailsViewRowData>
               key={SortBy.CREATED_ON}
               sortable={sort != null}
               title="Created On"
               width={200}
               minWidth={150}
               cellRenderer={CreatedOnRenderer}
+            />
+            <Column<DetailsViewRowData>
+              key={SortBy.MODIFIED_ON}
+              title="Modified On"
+              width={200}
+              minWidth={150}
+              sortable={sort != null}
+              cellRenderer={ModifiedOnRenderer}
             />
             <Column<DetailsViewRowData>
               key="modifiedBy"
