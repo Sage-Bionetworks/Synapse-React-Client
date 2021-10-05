@@ -1,6 +1,10 @@
 ```jsx
 import rawData from '../../mocks/distribution_data.json'
 
+const plotConfigs = {
+  displayModeBar: false
+};
+
 const boxPlotData = [
   {
     x: [1, 2, 3, 4, 4, 4, 8, 9, 10],
@@ -38,37 +42,36 @@ const boxPlotLayout = {
     t: 10,
   },
   xaxis: {
-    visible: false
+    visible: false,
   }
 };
 
 const barColors = rawData.geneticsscore.distribution.map((item, ind) => ind === 1 ? "rgba(166, 132, 238, 1)": "rgba(166, 132, 238, 0.25)")
-
-const boxPlotConfigs = {
-  displayModeBar: false
-};
 
 const sharedBarData = {
   type: 'bar',
   marker: {
     color: barColors,
   },
-  width: 0.6
+  width: 0.2
 };
 
 const geneticsscoreData = [{
-  x: Object.keys(rawData.geneticsscore.distribution),
+  x: Object.values(rawData.geneticsscore.bins).map(num => num.toFixed(2)),
   y: Object.values(rawData.geneticsscore.distribution),
   ...sharedBarData,
 }];
 
+// Additional info to customize axis: https://plotly.com/javascript/axes/
 const barLayout = {
   width: 300,
   xaxis: {
     title: "Gene Score".toUpperCase(),
     titlefont: {
       size: 12,
-    }
+    },
+    tick0: 0,
+    dtick: 0.3,
   },
   yaxis: {
     title: "Number of Genes".toUpperCase(),
@@ -82,7 +85,7 @@ const barLayout = {
 const specialBarLayout = {
   ...barLayout,
   annotations: [{
-    x: 1,
+    x: 0.3,
     y: 5149,
     text: "2.5",
     ax: 0,
@@ -98,7 +101,7 @@ const specialBarLayout = {
     data={geneticsscoreData}
     layout={specialBarLayout}
     containerWidth={300}
-    config={boxPlotConfigs}
+    config={plotConfigs}
   />
 
   <hr />
@@ -109,7 +112,7 @@ const specialBarLayout = {
     data={boxPlotData}
     layout={boxPlotLayout}
     containerWidth={300}
-    config={boxPlotConfigs}
+    config={plotConfigs}
     className={"chart-boxplot"}
   />
 
@@ -121,7 +124,7 @@ const specialBarLayout = {
     data={[]}
     layout={specialBarLayout}
     containerWidth={300}
-    config={boxPlotConfigs}
+    config={plotConfigs}
   />
   
 </div>
