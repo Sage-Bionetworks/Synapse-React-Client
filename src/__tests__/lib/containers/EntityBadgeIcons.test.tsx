@@ -34,6 +34,7 @@ const defaultProps: EntityBadgeIconsProps = {
   onUnlink: jest.fn(),
   onUnlinkError: jest.fn(),
   canOpenModal: true,
+  renderTooltipComponent: true,
 }
 
 function renderComponent(wrapperProps?: SynapseContextType) {
