@@ -14,6 +14,7 @@ import { EntityTypeIcon } from '../../../EntityIcon'
 import { SynapseSpinner } from '../../../LoadingScreen'
 import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
+import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { DetailsViewRowData } from './DetailsView'
 
 /**
@@ -158,7 +159,7 @@ export const VersionRenderer = ({
     if (
       isSelected &&
       mustSelectVersionNumber &&
-      currentSelectedVersion === -1 &&
+      currentSelectedVersion === NO_VERSION_NUMBER &&
       versions.length > 0
     ) {
       toggleSelection({
@@ -191,12 +192,12 @@ export const VersionRenderer = ({
             const version = parseInt(event.target.value)
             toggleSelection({
               targetId: id,
-              targetVersionNumber: version === -1 ? undefined : version,
+              targetVersionNumber: version === NO_VERSION_NUMBER ? undefined : version,
             })
           }}
         >
           {!mustSelectVersionNumber && (
-            <option value={-1}>Always Latest Version</option>
+            <option value={NO_VERSION_NUMBER}>Always Latest Version</option>
           )}
           {versions.map(version => {
             return (

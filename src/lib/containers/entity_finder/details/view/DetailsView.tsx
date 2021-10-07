@@ -229,6 +229,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     selected,
     shouldSelectAll,
     toggleSelection,
+    visibleTypes,
   ])
 
   const tableData = entities.map<DetailsViewRowData>(e => {
@@ -246,16 +247,21 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   })
 
   const SelectAllCheckboxRenderer = useMemo(() => {
-    const isDisabled = !entities.some(e =>
-      selectableTypes.includes(getEntityTypeFromHeader(e)),
-    )
+    // Enabled if there's at least one visble & selectable entity, OR there's a page we haven't fetched
+    const isEnabled =
+      hasNextPage ||
+      entities.filter(
+        e =>
+          selectableTypes.includes(getEntityTypeFromHeader(e)) &&
+          visibleTypes.includes(getEntityTypeFromHeader(e)),
+      ).length > 0
     return (
       enableSelectAll && (
         <div
           data-testid="Select All"
-          style={isDisabled ? { cursor: 'not-allowed' } : { cursor: 'pointer' }}
+          style={isEnabled ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
           onClick={() => {
-            if (!isDisabled) {
+            if (isEnabled) {
               setShouldSelectAll(true)
             }
           }}
@@ -264,7 +270,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             label=""
             className="SRC-pointer-events-none"
             checked={selectAllIsChecked}
-            disabled={isDisabled}
+            disabled={!isEnabled}
             onChange={() => {
               // no-op
             }}
@@ -340,12 +346,14 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   ) {
                     currentSelectedVersion = (rowData as EntityHeader)
                       .versionNumber
+                    // Note that here we aren't handling the case where the header doesn't have a version, e.g. a search result
+                    // That case is actually handled by the VersionRenderer, which has an effect that will toggle the selection after data is fetched.
                   }
 
                   toggleSelection({
                     targetId: id,
                     targetVersionNumber:
-                      currentSelectedVersion === -1
+                      currentSelectedVersion === NO_VERSION_NUMBER
                         ? undefined
                         : currentSelectedVersion,
                   })
