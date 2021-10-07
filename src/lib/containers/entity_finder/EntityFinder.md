@@ -1,14 +1,14 @@
-
 View "Props & Methods" above for full configurability.
 
 Regular two-pane Entity Finder with multi-select
 
 ```jsx
-<EntityFinder 
+<EntityFinder
+  mustSelectVersionNumber
   treeOnly={false}
-  initialScope={"Current Project"}
-  projectId={"syn23567475"}
-  initialContainer={"syn24183903"}
+  initialScope={'Current Project'}
+  projectId={'syn23567475'}
+  initialContainer={'syn24183903'}
   selectMultiple={true}
   visibleTypesInList={[
     'project',
@@ -21,8 +21,10 @@ Regular two-pane Entity Finder with multi-select
     'dockerrepo',
   ]}
   showVersionSelection={true}
-  onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
-  selectableTypes={[ 
+  onSelectedChange={selected => {
+    console.log('Selection changed:', selected)
+  }}
+  selectableTypes={[
     'project',
     'table',
     'folder',
@@ -31,29 +33,28 @@ Regular two-pane Entity Finder with multi-select
     'entityview',
     'submissionview',
     'dockerrepo',
-]}
+  ]}
+  selectedCopy={count => {
+    return `${count} Item${count > 1 ? 's' : ''} Selected`
+  }}
+  enableSelectAll={true}
 />
 ```
 
-One-pane entity finder with single select: 
+One-pane entity finder with single select:
 
 ```jsx
-<EntityFinder 
+<EntityFinder
   treeOnly={true}
-  initialScope={"Current Project"}
-  projectId={"syn23567475"}
-  initialContainer={"syn24183903"}
+  initialScope={'Current Project'}
+  projectId={'syn23567475'}
+  initialContainer={'syn24183903'}
   selectMultiple={false}
-  visibleTypesInTree={[
-    'project',
-    'folder',
-    'table',
-  ]}
+  visibleTypesInTree={['project', 'folder', 'table']}
   showVersionSelection={true}
-  onSelectedChange={(selected) => {console.log("Selection changed:", selected)}}
-  selectableTypes={[ 
-    'project',
-    'folder',
-]}
+  onSelectedChange={selected => {
+    console.log('Selection changed:', selected)
+  }}
+  selectableTypes={['project', 'folder']}
 />
 ```

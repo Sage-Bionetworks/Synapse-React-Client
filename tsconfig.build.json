@@ -20,7 +20,8 @@
     "importHelpers": true,
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "useUnknownInCatchVariables": false
   },
   "include": ["src/lib/**.ts", "src/lib/**.tsx"]
 }

@@ -10,6 +10,7 @@ import {
 } from '../../../../lib/containers/entity_finder/details/EntityDetailsList'
 import EntityFinder, {
   EntityFinderProps,
+  NO_VERSION_NUMBER,
 } from '../../../../lib/containers/entity_finder/EntityFinder'
 import { FinderScope } from '../../../../lib/containers/entity_finder/tree/TreeView'
 import useGetEntityBundle from '../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
@@ -23,6 +24,7 @@ import {
   MOCK_ACCESS_TOKEN,
   SynapseTestContext,
 } from '../../../../mocks/MockSynapseContext'
+import { Map } from 'immutable'
 
 jest.mock('../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
 jest.mock('react-reflex', () => {
@@ -122,8 +124,6 @@ describe('EntityFinder tests', () => {
     it('adds a new entity when it is toggled', async () => {
       renderComponent({ selectMultiple: false })
 
-      expect(mockOnSelectionChange).not.toBeCalled()
-
       const reference: Reference = {
         targetId: 'syn123',
         targetVersionNumber: undefined,
@@ -217,8 +217,6 @@ describe('EntityFinder tests', () => {
     it('allows adding multiple entities', async () => {
       renderComponent({ selectMultiple: true })
 
-      expect(mockOnSelectionChange).not.toBeCalled()
-
       const reference1: Reference = {
         targetId: 'syn123',
         targetVersionNumber: undefined,
@@ -242,8 +240,6 @@ describe('EntityFinder tests', () => {
 
     it('removes only a re-toggled entity', async () => {
       renderComponent({ selectMultiple: true })
-
-      expect(mockOnSelectionChange).not.toBeCalled()
 
       const reference1: Reference = {
         targetId: 'syn123',
@@ -277,8 +273,6 @@ describe('EntityFinder tests', () => {
     it('replaces an entity when a new version is toggled', async () => {
       renderComponent({ selectMultiple: true })
 
-      expect(mockOnSelectionChange).not.toBeCalled()
-
       const reference1: Reference = {
         targetId: 'syn123',
         targetVersionNumber: undefined,
@@ -304,8 +298,8 @@ describe('EntityFinder tests', () => {
   it('renders both the tree and the list when treeOnly is false', async () => {
     renderComponent({ treeOnly: false })
 
-    expect(screen.getByRole('tree')) // Tree has rendered
-    expect(screen.getByRole('table')) // Table/list has rendered
+    screen.getByRole('tree') // Tree has rendered
+    screen.getByRole('table') // Table/list has rendered
 
     const configuration: EntityDetailsListDataConfiguration = {
       type: EntityDetailsListDataConfigurationType.USER_PROJECTS,
@@ -343,7 +337,7 @@ describe('EntityFinder tests', () => {
     await waitFor(() =>
       expect(mockDetailsList).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          selected: [reference],
+          selected: Map([[reference.targetId, NO_VERSION_NUMBER]]),
         }),
         {},
       ),

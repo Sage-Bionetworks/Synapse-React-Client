@@ -26,12 +26,14 @@ import { VersionInfo } from '../../synapseTypes/VersionInfo'
 
 export function useGetVersions(
   entityId: string,
+  offset: number = 0,
+  limit: number = 200,
   options?: UseQueryOptions<PaginatedResults<VersionInfo>, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    [accessToken, 'entity', entityId, 'versions'],
-    () => SynapseClient.getEntityVersions(entityId, accessToken),
+    ['entity', entityId, 'versions', { offset: offset, limit: limit }],
+    () => SynapseClient.getEntityVersions(entityId, accessToken, offset, limit),
     options,
   )
 }
@@ -46,7 +48,7 @@ export function useGetVersionsInfinite(
   const LIMIT = 200
   const { accessToken } = useSynapseContext()
   return useInfiniteQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    [accessToken, 'entity', entityId, 'versions', 'infinite'],
+    ['entity', entityId, 'versions', 'infinite'],
     async context => {
       return await SynapseClient.getEntityVersions(
         entityId,
