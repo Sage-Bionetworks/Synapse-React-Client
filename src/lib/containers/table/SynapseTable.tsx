@@ -21,7 +21,7 @@ import {
   UserProfile,
   FacetColumnRequest,
   EntityColumnType,
-  ColumnModel,
+  ColumnModel
 } from '../../utils/synapseTypes/'
 import HasAccess from '../HasAccess'
 import { QueryWrapperChildProps } from '../QueryWrapper'
@@ -43,12 +43,12 @@ import ColumnResizer from 'column-resizer'
 import ModalDownload from '../ModalDownload'
 import loadingScreen from '../LoadingScreen'
 import { Icon } from '../row_renderers/utils'
-import DirectDownload from '../DirectDownload'
 import SearchResultsNotFound from './SearchResultsNotFound'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { SynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import IconSvg from '../IconSvg'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -200,11 +200,11 @@ export default class SynapseTable extends React.Component<
       })
       const entityData = await SynapseClient.getEntity(token, currentTableId)
       const isEntityView = entityData.concreteType.includes('EntityView')
-      // PORTALS-1973:  To simplify logic, only show special file view columns (like direct
-      // download, or adding a file to the download cart) if the View selects Files _only_.
-      // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityView.html
+      // PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
+      // Set isFileView to true if the Entity could have any Files in it.  Check if bit 1 is set in the viewTypeMask.
+      //  http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityView.html
       const isFileView = isEntityView
-        ? (entityData as any).viewTypeMask === 1
+        ? ((entityData as any).viewTypeMask & 1) != 0
         : false
       this.setState({
         isEntityView: isEntityView,
@@ -517,7 +517,7 @@ export default class SynapseTable extends React.Component<
                 columnModels,
                 facets,
                 isShowingAccessColumn,
-                showDownloadColumn,
+                this.state.isFileView && showDownloadColumn,
                 isShowingAddToV2DownloadListColumn,
                 isRowSelectionVisible,
                 lastQueryRequest,
@@ -529,7 +529,7 @@ export default class SynapseTable extends React.Component<
               rows,
               headers,
               isShowingAccessColumn,
-              showDownloadColumn,
+              this.state.isFileView && showDownloadColumn,
               isShowingAddToV2DownloadListColumn,
               isRowSelectionVisible,
               tableEntityId,
@@ -852,26 +852,34 @@ export default class SynapseTable extends React.Component<
           </td>,
         )
       }
-
+      const isFileEntity:boolean = mapEntityIdToHeader[rowSynapseId]?.type == 'org.sagebionetworks.repo.model.FileEntity'
       if (isShowingDownloadColumn) {
+        // SWC-5790: If this is a FileEntity, the download icon should just go to entity page
         rowContent.unshift(
           <td className="SRC_noBorderTop direct-download">
-            <DirectDownload
-              key={'direct-download-' + rowSynapseId}
-              associatedObjectId={rowSynapseId}
-              entityVersionNumber={entityVersionNumber}
-            ></DirectDownload>
+            {isFileEntity &&
+              <a
+                key={'direct-download-' + rowSynapseId}
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${rowSynapseId}${entityVersionNumber ? `.${entityVersionNumber}` : ''}`}
+                >
+                <IconSvg options={{ icon: 'download' }} />
+              </a>
+            }
           </td>,
         )
       }
       if (isShowingAddToV2DownloadListColumn) {
         rowContent.unshift(
           <td className="SRC_noBorderTop add-to-download-list-v2">
-            <AddToDownloadListV2
-              key={'add-to-download-list-v2-' + rowSynapseId}
-              entityId={rowSynapseId}
-              entityVersionNumber={parseInt(entityVersionNumber)}
-            ></AddToDownloadListV2>
+            {isFileEntity &&
+              <AddToDownloadListV2
+                key={'add-to-download-list-v2-' + rowSynapseId}
+                entityId={rowSynapseId}
+                entityVersionNumber={parseInt(entityVersionNumber)}
+              ></AddToDownloadListV2>
+            }
           </td>,
         )
       }
