@@ -2,68 +2,60 @@
 @use './entity-finder' as EntityFinder;
 @use '../../abstracts/mixins' as SrcMixins;
 
+$table-prefix: DetailsViewTable;
+$table-font-size: 14px;
+$header-background-color: white;
+$row-hovered-background-color: unset;
+@import 'node_modules/@sage-bionetworks/react-base-table/es/BaseTable';
+
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {
     height: $-finder-height - $-breadcrumb-height;
     border-bottom: 1px solid SRC.$border-color-gray;
+    overflow-y: hidden;
   }
+}
+
+.DetailsViewTable__header {
+  box-shadow: 3px 3px 7px -1px rgba(0, 0, 30, 0.2);
 }
 
 .EntityFinderDetailsView {
   height: $-finder-height;
   width: 100%;
-  overflow: auto;
   background-color: SRC.$background-color-gray-light;
-  table {
-    width: 100%;
-    table-layout: fixed;
-    position: relative;
-    border-collapse: collapse;
-    thead {
-      border-bottom: $-border;
-      border-top: 1px solid white;
-      display: contents; // For some reason, this fixes https://sagebionetworks.jira.com/browse/SWC-5566
-      th {
-        height: $-header-height;
-        font-weight: bold;
-        background-color: white;
-        box-shadow: 3px 3px 7px -1px rgba(0, 0, 30, 0.2);
 
-        position: sticky;
-        top: 0;
-        z-index: 2;
-      }
-
-      th > div {
-        display: flex;
-        justify-content: space-between;
-        margin: 5px;
-      }
-    }
-    thead.Inactive {
-      opacity: 50%;
-    }
-    td > div {
-      margin: 5px;
-    }
+  select.form-control {
+    margin-bottom: 0px;
   }
-  &__Row {
-    height: 45px;
-    transition: background-color 200ms ease-in;
-  }
+}
 
-  &__Row:nth-child(even) {
+.EntityFinderDetailsViewPlaceholder {
+  @include SrcMixins.placeholder;
+  .SearchPlaceholderImage {
+    width: 150px;
+    margin: 20px;
+  }
+}
+
+.EntityFinderDetailsViewRow {
+  height: 45px;
+  transition: background-color 200ms ease-in;
+
+  &.isEven {
+    // Don't use nth child because the virtual rows can switch
     background: SRC.$background-color-gray;
   }
 
-  &__Row[aria-disabled='false'][aria-selected='false']:hover {
+  &[aria-disabled='false'][aria-selected='false']:hover {
     @include -hover();
   }
-  &__Row[aria-disabled='false'][aria-selected='true']:hover {
+
+  &[aria-disabled='false'][aria-selected='true']:hover {
     @include -hover($-selected-hover-background-color);
   }
 
-  &__Row[aria-selected='true'] {
+  &[aria-selected='true'] {
     color: $-selected-color;
     background-color: $-selected-background-color;
     .UserCardSmall {
@@ -72,77 +64,15 @@
     }
   }
 
-  &__Row[aria-disabled='true'] {
+  &[aria-disabled='true'] {
     opacity: 0.5;
   }
 
-  &__Row[aria-disabled='false'] {
+  &[aria-disabled='false'] {
     cursor: pointer;
   }
 
-  &__Row[aria-hidden='true'] {
+  &[aria-hidden='true'] {
     display: none;
-  }
-
-  &__Placeholder {
-    @include SrcMixins.placeholder;
-    .SearchPlaceholderImage {
-      width: 150px;
-      margin: 20px;
-    }
-  }
-
-  .IsSelectedColumn,
-  .EntityIconColumn,
-  .NameColumn,
-  .AccessColumn,
-  .IdColumn,
-  .CreatedOnColumn,
-  .ModifiedOnColumn,
-  .VersionColumn,
-  .ModifiedByColumn {
-    div {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
-  .IsSelectedColumn {
-    width: 40px;
-    text-align: center;
-    .radio,
-    .checkbox {
-      min-width: 20px;
-    }
-  }
-
-  .EntityIconColumn {
-    width: 40px;
-    text-align: center;
-    svg {
-      fill: currentColor;
-    }
-  }
-
-  .NameColumn {
-    width: 300px;
-  }
-  .AccessColumn {
-    width: 75px;
-  }
-  .IdColumn {
-    width: 120px;
-  }
-  .CreatedOnColumn,
-  .ModifiedOnColumn,
-  .ModifiedByColumn {
-    width: 150px;
-  }
-  .VersionColumn {
-    width: 200px;
-    select {
-      margin-bottom: 0px;
-    }
   }
 }

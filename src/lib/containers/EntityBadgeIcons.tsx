@@ -39,6 +39,8 @@ const isPublic = (bundle: EntityBundle): boolean => {
   })
 }
 
+export const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID'
+
 export type EntityBadgeIconsProps = {
   entityId: string
   flexWrap?: // possible settings for flex-wrap
@@ -68,6 +70,8 @@ export type EntityBadgeIconsProps = {
   onUnlinkError?: (error: Error) => void
   /** Whether or not the badges (e.g. Annotations) can trigger opening a modal on click */
   canOpenModal: boolean
+  /** Whether this component should render a ReactTooltip or if an external component is managing it */
+  renderTooltipComponent: boolean
 }
 
 /**
@@ -91,8 +95,11 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
     /* noop */
   },
   canOpenModal,
+  renderTooltipComponent,
 }) => {
-  const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID-' + entityId
+  const ownTooltipId =
+    ENTITY_BADGE_ICONS_TOOLTIP_ID +
+    (renderTooltipComponent ? `-${entityId}` : '')
 
   enum SchemaConformanceState {
     NO_SCHEMA = '', // or not in experimental mode
@@ -102,6 +109,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
   }
 
   const { ref, inView } = useInView()
+
   const { data: bundle } = useGetEntityBundle(entityId, undefined, undefined, {
     enabled: inView,
     staleTime: 60 * 1000, // 60 seconds
@@ -197,15 +205,18 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
       }`
 
   return (
-    <div ref={ref} className="EntityBadge" style={{ flexWrap, justifyContent }}>
+    <div className="EntityBadge" ref={ref} style={{ flexWrap, justifyContent }}>
       {bundle && (
         <>
-          <ReactTooltip
-            id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-            className="EntityBadgeTooltip"
-            delayShow={100}
-            place={'right'}
-          />
+          {renderTooltipComponent && (
+            <ReactTooltip
+              id={ownTooltipId}
+              className="EntityBadgeTooltip"
+              delayShow={100}
+              place={'right'}
+              effect={'solid'}
+            />
+          )}
           <div onClick={e => e.stopPropagation()}>
             <EntityModal
               entityId={entityId}
@@ -221,7 +232,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
               role="img"
               className="EntityBadge__Badge"
               icon={faGlobeAmericas}
-              data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+              data-for={ownTooltipId}
               data-tip={'Public'}
               data-testid={'is-public-icon'}
             />
@@ -232,7 +243,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
               role="img"
               className="EntityBadge__Badge"
               icon={faLock}
-              data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+              data-for={ownTooltipId}
               data-tip={'Private'}
               data-testid={'is-private-icon'}
             />
@@ -245,7 +256,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
               role="img"
               className="EntityBadge__Badge"
               icon={faCheck}
-              data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+              data-for={ownTooltipId}
               data-tip="Sharing Settings have been set"
               data-testid={'sharing-settings-icon'}
             />
@@ -260,7 +271,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
                 style={canOpenModal ? { cursor: 'pointer' } : undefined}
                 onClick={canOpenModal ? () => setShowModal(true) : undefined}
                 icon={faTag}
-                data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+                data-for={ownTooltipId}
                 data-tip={sanitizeHtml(annotationsHtml)}
                 data-html={true}
                 data-testid={'annotations-icon'}
@@ -273,7 +284,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
               //   style={{ maxWidth: '20px', maxHeight: '20px' }}
               className="EntityBadge__Badge"
               icon={faAlignLeft} // faNewspaper is ugly
-              data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+              data-for={ownTooltipId}
               data-tip="Has a wiki"
               data-testid={'wiki-icon'}
             />
@@ -286,7 +297,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
                 role="img"
                 className="EntityBadge__Badge"
                 icon={faComment}
-                data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+                data-for={ownTooltipId}
                 data-tip="Has been mentioned in discussion"
                 data-testid={'discussion-icon'}
               />
@@ -304,7 +315,7 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
                 }}
                 className="EntityBadge__Badge Unlink"
                 icon={faUnlink}
-                data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+                data-for={ownTooltipId}
                 data-tip="Remove this link"
                 data-testid={'unlink-icon'}
               />

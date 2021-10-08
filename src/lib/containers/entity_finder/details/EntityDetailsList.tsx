@@ -1,3 +1,4 @@
+import { Map } from 'immutable'
 import React, { useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
@@ -12,6 +13,7 @@ import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
+import { getIsAllSelectedFromInfiniteList } from './configurations/useGetIsAllSelectedInfiniteList'
 import { DetailsView } from './view/DetailsView'
 
 export enum EntityDetailsListDataConfigurationType {
@@ -43,10 +45,12 @@ export type EntityDetailsListSharedProps = {
   showVersionSelection: boolean
   mustSelectVersionNumber: boolean
   selectColumnType: 'checkbox' | 'none'
+  enableSelectAll: boolean
   visibleTypes: EntityType[]
-  selected: Reference[]
+  selected: Map<string, number>
   selectableTypes: EntityType[]
-  toggleSelection: (entity: Reference) => void
+  toggleSelection: (entity: Reference | Reference[]) => void
+  autoSizeWidth: boolean
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {
@@ -86,10 +90,15 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
           return (
             <DetailsView
               entities={config.headerList as (EntityHeader | ProjectHeader)[]}
-              queryStatus={'success'}
-              queryIsFetching={false}
+              isLoading={false}
               hasNextPage={false}
               {...sharedProps}
+              enableSelectAll={sharedProps.enableSelectAll}
+              selectAllIsChecked={getIsAllSelectedFromInfiniteList(
+                (config.headerList as (EntityHeader | ProjectHeader)[]) ?? [],
+                sharedProps.selected,
+                sharedProps.selectableTypes,
+              )}
             />
           )
         case EntityDetailsListDataConfigurationType.USER_FAVORITES:
@@ -108,9 +117,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
           return (
             <DetailsView
               entities={[]}
-              queryStatus={'success'}
-              queryIsFetching={false}
-              hasNextPage={false}
+              isLoading={false}
               noResultsPlaceholder={
                 <div>
                   Use the left panel to browse Synapse, then make a selection in
@@ -118,6 +125,7 @@ export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> 
                 </div>
               }
               {...sharedProps}
+              enableSelectAll={false}
             />
           )
 

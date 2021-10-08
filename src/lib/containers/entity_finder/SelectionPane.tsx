@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
+import Typography from '../../utils/typography/Typography'
 import { EntityTypeIcon } from '../EntityIcon'
+import { NO_VERSION_NUMBER } from './EntityFinder'
+import { Map } from 'immutable'
+import { Skeleton } from '@material-ui/lab'
 
 export type SelectionPaneProps = {
-  title: string
-  selectedEntities: Reference[]
+  title: string | ((count: number) => string)
+  selectedEntities: Map<string, number>
   toggleSelection: (entity: Reference) => void
 }
 
@@ -16,23 +20,41 @@ export const SelectionPane: React.FC<SelectionPaneProps> = ({
   selectedEntities,
   toggleSelection,
 }: SelectionPaneProps) => {
+  if (typeof title === 'function') {
+    title = title(selectedEntities.size)
+  }
   return (
     <div className="EntityFinderSelectionPane alert alert-warning">
-      <h5>{title}</h5>
-      <div className={'EntityFinderSelectionPane__Items'}>
-        {selectedEntities.map(e => (
-          <div
-            key={`${e.targetId}${
-              e.targetVersionNumber ? `.${e.targetVersionNumber}` : ''
-            }`}
-          >
-            <EntityPathDisplay
-              entity={e}
-              toggleSelection={toggleSelection}
-            ></EntityPathDisplay>
-          </div>
-        ))}
-      </div>
+      <Typography variant={'headline3'} display={'inline'}>
+        {title}
+      </Typography>
+      {selectedEntities.size <= 200 ? (
+        <div className={'EntityFinderSelectionPane__Items'}>
+          {Array.from(selectedEntities.keys()).map(id => {
+            const version = selectedEntities.get(id)
+            return (
+              <div
+                key={`${id}${
+                  version !== NO_VERSION_NUMBER ? `.${version}` : ''
+                }`}
+              >
+                <EntityPathDisplay
+                  entity={{
+                    targetId: id,
+                    targetVersionNumber:
+                      version !== NO_VERSION_NUMBER ? version : undefined,
+                  }}
+                  toggleSelection={toggleSelection}
+                ></EntityPathDisplay>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <Typography variant="smallText1">
+          Too many items to show here
+        </Typography>
+      )}
     </div>
   )
 }
@@ -87,9 +109,13 @@ const EntityPathDisplay: React.FunctionComponent<{
       >
         {displayedPath ? displayedPath + '/' : ''}
       </span>
-      <span className="EntityFinderSelectionPane__Row__EntityName">
-        {entityName}
-      </span>
+      {entityName ? (
+        <span className="EntityFinderSelectionPane__Row__EntityName">
+          {entityName}
+        </span>
+      ) : (
+        <Skeleton width={500} />
+      )}
       {entity.targetVersionNumber && (
         <span> (Version {entity.targetVersionNumber})</span>
       )}

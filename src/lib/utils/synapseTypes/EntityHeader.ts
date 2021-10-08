@@ -1,4 +1,4 @@
-import { ConcreteEntityType } from './ConcreteEntityType'
+import { ENTITY_CONCRETE_TYPE } from './Entity'
 
 /**
  * [EntityHeader | Synapse REST Docs](https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/EntityHeader.html)
@@ -9,7 +9,7 @@ export type EntityHeader = {
   /**	The id of the entity */
   id: string
   /**	The type of the entity */
-  type: ConcreteEntityType
+  type: ENTITY_CONCRETE_TYPE
   /** The version number of the entity */
   versionNumber?: number
   /**	The user defined version label of the entity */

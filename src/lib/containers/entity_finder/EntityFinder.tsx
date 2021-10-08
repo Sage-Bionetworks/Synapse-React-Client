@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Map } from 'immutable'
 import React, {
   useCallback,
   useEffect,
@@ -34,6 +35,10 @@ import { FinderScope, TreeView } from './tree/TreeView'
 library.add(faTimes, faSearch)
 
 const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
+
+// In the map used to track selections, we use -1 to denote 'selected without version'
+// This is necessary because undefined is returned by map.get when the item is not in the map
+export const NO_VERSION_NUMBER = -1
 
 export type EntityFinderProps = {
   /** Whether or not it is possible to select multiple entities */
@@ -117,59 +122,78 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     [setBreadcrumbsProps],
   )
 
-  function isSelected(entity: Reference, selected: Reference[]): boolean {
-    return selected.some(
-      s =>
-        s.targetId === entity.targetId &&
-        s.targetVersionNumber === entity.targetVersionNumber,
-    )
-  }
-
-  function otherVersionSelected(
+  /**
+   *
+   * @param entity The entity to check selected status
+   * @param selected the list of selected entities
+   * @returns a boolean array of length equal to entities.length denoting selection status
+   */
+  function isSelected(
     entity: Reference,
-    selected: Reference[],
+    selected: Map<string, number>,
   ): boolean {
-    return selected.some(
-      s =>
-        s.targetId === entity.targetId &&
-        s.targetVersionNumber !== entity.targetVersionNumber,
-    )
+    const match = selected.get(entity.targetId)
+    if (match == null) {
+      return false
+    }
+    if (match === NO_VERSION_NUMBER) {
+      return entity.targetVersionNumber === undefined
+    }
+    return match === entity.targetVersionNumber
   }
 
+  /**
+   * Given the existing selections and a list of toggled references, return the new list of selections
+   * @param selected
+   * @param toggledReference
+   * @returns
+   */
   function entitySelectionReducer(
-    selected: Reference[],
-    toggledReference: Reference,
-  ): Reference[] {
-    let result: Reference[] = []
-    if (isSelected(toggledReference, selected)) {
-      // remove from selection
-      result = selected.filter(e => e.targetId !== toggledReference.targetId)
-    } else if (otherVersionSelected(toggledReference, selected)) {
-      // Currently don't allow selecting two versions of the same entity
-      // replace previous selected version with new selected version
-      result = [
-        ...selected.filter(e => e.targetId !== toggledReference.targetId),
-        toggledReference,
-      ]
-    } else {
-      // add to selection
-      if (!selectMultiple) {
-        result = [toggledReference]
-      } else {
-        result = [
-          ...selected.filter(s => s.targetId !== toggledReference.targetId),
-          toggledReference,
-        ]
+    selected: Map<string, number>,
+    toggledReferences: Reference | Reference[],
+  ): Map<string, number> {
+    const newSelected = selected.withMutations(map => {
+      // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
+      if (!Array.isArray(toggledReferences)) {
+        toggledReferences = [toggledReferences]
       }
-    }
-    onSelectedChange(result)
-    return result
+      toggledReferences.forEach(toggledReference => {
+        if (isSelected(toggledReference, selected)) {
+          // remove from selection
+          map.delete(toggledReference.targetId)
+        } else {
+          // add to selection
+          if (!selectMultiple) {
+            map.clear()
+          }
+          map.set(
+            toggledReference.targetId,
+            toggledReference.targetVersionNumber ?? NO_VERSION_NUMBER,
+          )
+        }
+      })
+    })
+
+    return newSelected
   }
 
   const [selectedEntities, toggleSelection] = useReducer(
     entitySelectionReducer,
-    [] as Reference[],
+    Map<string, number>(),
   )
+
+  useEffect(() => {
+    // When it changes, convert the map of selected items to a list of references and invoke the callback
+    onSelectedChange(
+      selectedEntities.toArray().map(([id, version]) => {
+        return {
+          targetId: id,
+          targetVersionNumber:
+            version === NO_VERSION_NUMBER ? undefined : version,
+        }
+      }),
+    )
+  }, [selectedEntities, onSelectedChange])
 
   useEffect(() => {
     if (searchTerms?.length === 1) {
@@ -299,6 +323,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
+              enableSelectAll={selectMultiple}
+              autoSizeWidth={true}
             />
           )}
           {
@@ -357,6 +383,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                               selectMultiple ? 'checkbox' : 'none'
                             }
                             toggleSelection={toggleSelection}
+                            enableSelectAll={selectMultiple}
+                            autoSizeWidth={false}
                           />
                           <Breadcrumbs {...breadcrumbsProps} />
                         </ReflexElement>
@@ -369,7 +397,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           }
         </div>
 
-        {selectedEntities.length > 0 && (
+        {selectedEntities.size > 0 && (
           <SelectionPane
             title={selectedCopy}
             selectedEntities={selectedEntities}

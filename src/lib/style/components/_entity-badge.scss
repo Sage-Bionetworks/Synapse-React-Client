@@ -2,6 +2,7 @@
 
 .EntityBadge {
   display: flex;
+  width: 100%;
   flex-direction: row-reverse;
   &__Badge {
     margin: 2px;
@@ -23,21 +24,20 @@
       color: SRC.$gray-deemphasized;
     }
   }
-
-  .EntityBadgeTooltip {
-    table {
-      table-layout: auto;
-      word-break: break-all;
-      white-space: normal;
-      max-width: 350px;
-      td {
-        width: unset;
-        padding: 4px;
-      }
+}
+.EntityBadgeTooltip {
+  table {
+    table-layout: auto;
+    word-break: break-all;
+    white-space: normal;
+    max-width: 350px;
+    td {
+      width: unset;
+      padding: 4px;
     }
-    p {
-      margin-top: 8px;
-      text-align: center;
-    }
+  }
+  p {
+    margin-top: 8px;
+    text-align: center;
   }
 }

@@ -27,6 +27,7 @@ const wrapper = (props: { children: React.ReactChildren }) => (
 const request: EntityChildrenRequest = {
   parentId: 'syn123',
   includeTypes: [EntityType.FILE],
+  includeTotalChildCount: true,
 }
 
 const page1: EntityChildrenResponse = {
@@ -44,6 +45,7 @@ const page1: EntityChildrenResponse = {
       modifiedBy: 'you',
     },
   ],
+  totalChildCount: 2,
   nextPageToken: 'token',
 }
 
@@ -116,6 +118,7 @@ describe('basic functionality', () => {
     expect(SynapseClient.getEntityChildren).toBeCalledWith(
       {
         ...request,
+        includeTotalChildCount: false,
         nextPageToken: page1.nextPageToken,
       },
       MOCK_CONTEXT_VALUE.accessToken,

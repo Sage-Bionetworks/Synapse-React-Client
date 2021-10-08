@@ -16,10 +16,10 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
 }) => {
   const {
     data,
-    status,
-    isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
+    isFetchingNextPage,
     error,
     isError,
   } = useSearchInfinite(searchQuery, {
@@ -37,10 +37,10 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
     return (
       <DetailsView
         entities={data?.pages.flatMap(page => page.hits) ?? []}
-        queryStatus={status}
-        queryIsFetching={isFetching}
+        isLoading={isLoading}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
+        isFetchingNextPage={isFetchingNextPage}
         noResultsPlaceholder={
           <>
             <img
@@ -54,14 +54,14 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
           </>
         }
         {...sharedProps}
+        enableSelectAll={false} // Disable select all for search
       />
     )
   } else {
     return (
       <DetailsView
         entities={[]}
-        queryStatus={'success'}
-        queryIsFetching={false}
+        isLoading={false}
         hasNextPage={false}
         noResultsPlaceholder={
           <>
@@ -74,6 +74,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
           </>
         }
         {...sharedProps}
+        enableSelectAll={false} // Disable select all for search
       />
     )
   }
