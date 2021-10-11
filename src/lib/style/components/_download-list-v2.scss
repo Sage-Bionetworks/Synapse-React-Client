@@ -38,6 +38,9 @@
 
 .Download-Link {
   &.v2 {
+    #SHOW_DOWNLOAD_TOOLTIP {
+      text-transform: none;
+    }
     .download-cart-size {
       background-color: SRC.$secondary-action-color;
       color: white;
