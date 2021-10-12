@@ -313,7 +313,7 @@ export default function AccessRequirementList({
                     <a
                       className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-boldText `}
                     >
-                      Sign in
+                      Sign in&nbsp;
                     </a>
                     with a Sage Platform (Synapse) user account.
                   </p>
