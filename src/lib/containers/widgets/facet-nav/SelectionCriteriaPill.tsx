@@ -56,15 +56,16 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     innerText = `"${filterValue}" in ${unCamelCase(filter?.columnName)}`
     tooltipText = `${unCamelCase(filter?.columnName)}: ${filterValue}`
   }
+  const key = btoa(tooltipText)
   return (
     <ElementWithTooltip
-      idForToolTip={`selectionCriteria_${tooltipText}`}
+      idForToolTip={`selectionCriteria_${key}`}
       tooltipText={tooltipText}
       callbackFn={() => {}}
     >
       <label
         className="SelectionCriteriaPill"
-        key={`SelectionCriteriaPill ${tooltipText}`}
+        key={`SelectionCriteriaPill ${key}`}
       >
         <span>{innerText}</span>
         <button
