@@ -48,7 +48,6 @@ import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { SynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import IconSvg from '../IconSvg'
 import DirectDownload from '../DirectDownload'
 
 export const EMPTY_HEADER: EntityHeader = {
