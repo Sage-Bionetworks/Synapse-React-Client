@@ -141,9 +141,11 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   const getIcon = () => {
     if (isExternalFile) {
       return (
-        <a rel="noreferrer" href={externalURL} target="_blank">
-          <Icon type="externallink" />
-        </a>
+        <button className={'btn-download-icon'}>
+          <a rel="noreferrer" href={externalURL} target="_blank">
+            <Icon type="externallink" />
+          </a>
+        </button>
       )
     }
     if (hasFileAccess) {
