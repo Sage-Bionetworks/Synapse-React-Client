@@ -147,7 +147,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   }
 
   useDeepCompareEffect(() => {
-    const calculateTotal = async () => {
+    const calculateTotal = () => {
       const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
       cloneLastQueryRequest.partMask =
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -245,7 +245,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         return (
           <SelectionCriteriaPill
             key={value}
-            index={facetsWithSelection.length + 1}
             filter={{
               columnName,
               value,
@@ -277,13 +276,12 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       </span>
       <div className="TotalQueryResults__selections">
         {searchSelectionCriteriaPill}
-        {facetsWithSelection.map((selectedFacet, index) => (
+        {facetsWithSelection.map((selectedFacet) => (
           <SelectionCriteriaPill
             key={
               selectedFacet.selectedValue?.value ?? selectedFacet.displayValue
             }
             facetWithSelection={selectedFacet}
-            index={index}
             onRemove={removeFacetSelection}
           ></SelectionCriteriaPill>
         ))}
