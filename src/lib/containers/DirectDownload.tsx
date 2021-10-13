@@ -36,7 +36,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   const [fileEntity, setFileEntity] = useState<FileEntity>()
   const [externalURL, setExternalURL] = useState<string>()
   const [fileName, setFileName] = useState<string>('')
-  let mounted: boolean = true
+  let mounted = true
 
   useEffect(() => {
     if (mounted && inView) {
@@ -63,8 +63,9 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
 
     if (!preSignedURL) {
       console.log('Fail to get file download link')
+    } else {
+      window.open(preSignedURL)
     }
-    window.open(preSignedURL)
   }
 
   const hasFileHandle = (fh: FileHandle) => {
