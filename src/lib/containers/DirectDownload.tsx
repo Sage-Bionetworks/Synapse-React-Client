@@ -36,7 +36,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   const [fileEntity, setFileEntity] = useState<FileEntity>()
   const [externalURL, setExternalURL] = useState<string>()
   const [fileName, setFileName] = useState<string>('')
-  let mounted: boolean = true
+  let mounted = true
 
   useEffect(() => {
     if (mounted && inView) {
@@ -63,8 +63,9 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
 
     if (!preSignedURL) {
       console.log('Fail to get file download link')
+    } else {
+      window.open(preSignedURL)
     }
-    window.open(preSignedURL)
   }
 
   const hasFileHandle = (fh: FileHandle) => {
@@ -140,9 +141,11 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   const getIcon = () => {
     if (isExternalFile) {
       return (
-        <a rel="noreferrer" href={externalURL} target="_blank">
-          <Icon type="externallink" />
-        </a>
+        <button className={'btn-download-icon'}>
+          <a rel="noreferrer" href={externalURL} target="_blank">
+            <Icon type="externallink" />
+          </a>
+        </button>
       )
     }
     if (hasFileAccess) {

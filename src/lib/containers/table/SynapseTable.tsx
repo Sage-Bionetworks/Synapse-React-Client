@@ -48,7 +48,7 @@ import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { SynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import IconSvg from '../IconSvg'
+import DirectDownload from '../DirectDownload'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -858,14 +858,11 @@ export default class SynapseTable extends React.Component<
         rowContent.unshift(
           <td className="SRC_noBorderTop direct-download">
             {isFileEntity &&
-              <a
-                key={'direct-download-' + rowSynapseId}
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${rowSynapseId}${entityVersionNumber ? `.${entityVersionNumber}` : ''}`}
-                >
-                <IconSvg options={{ icon: 'download' }} />
-              </a>
+                <DirectDownload
+                  key={'direct-download-' + rowSynapseId}
+                  associatedObjectId={rowSynapseId}
+                  entityVersionNumber={entityVersionNumber}
+              ></DirectDownload>
             }
           </td>,
         )

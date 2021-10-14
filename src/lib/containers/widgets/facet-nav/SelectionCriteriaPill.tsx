@@ -19,7 +19,6 @@ export type FacetWithSelection = {
 
 export type SelectionCriteriaPillProps = {
   facetWithSelection?: FacetWithSelection
-  index: number
   className?: string
   onRemove: Function
   filter?: {
@@ -30,7 +29,6 @@ export type SelectionCriteriaPillProps = {
 
 const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
   facetWithSelection,
-  index,
   onRemove,
   filter,
 }) => {
@@ -43,10 +41,8 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
           ? SynapseConstants.FRIENDLY_VALUE_NOT_SET
           : facetWithSelection.displayValue
     } else {
-      innerText =
-        (facetWithSelection.facet as FacetColumnResultRange).selectedMin +
-        ' - ' +
-        (facetWithSelection.facet as FacetColumnResultRange).selectedMax
+      innerText = `${(facetWithSelection.facet as FacetColumnResultRange).selectedMin} 
+        - ${(facetWithSelection.facet as FacetColumnResultRange).selectedMax}`
     }
     tooltipText = `${unCamelCase(
       facetWithSelection.facet.columnName,
@@ -60,15 +56,16 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> = ({
     innerText = `"${filterValue}" in ${unCamelCase(filter?.columnName)}`
     tooltipText = `${unCamelCase(filter?.columnName)}: ${filterValue}`
   }
+  const key = btoa(tooltipText)
   return (
     <ElementWithTooltip
-      idForToolTip={`selectionCriteria_${+index}`}
+      idForToolTip={`selectionCriteria_${key}`}
       tooltipText={tooltipText}
       callbackFn={() => {}}
     >
       <label
         className="SelectionCriteriaPill"
-        key={index + '__SelectionCriteriaPill'}
+        key={`SelectionCriteriaPill ${key}`}
       >
         <span>{innerText}</span>
         <button
