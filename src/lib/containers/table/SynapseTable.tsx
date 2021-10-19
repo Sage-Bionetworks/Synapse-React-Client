@@ -252,6 +252,16 @@ export default class SynapseTable extends React.Component<
       mapEntityIdToHeader,
       entityIdColumnIndicies,
     )
+    // also include row entity ids if this is a view (it's possible that the ID column was not selected)
+    if (this.state.isEntityView) {
+      const { queryResult } = data
+      const { queryResults } = queryResult
+      const { rows } = queryResults
+      rows.forEach((row) => {
+        const rowSynapseId = `syn${row.rowId}`
+        distinctEntityIds.add(rowSynapseId)
+      })
+    }
     const distinctUserIds = getUniqueEntities(
       data,
       mapUserIdToHeader,
@@ -499,9 +509,10 @@ export default class SynapseTable extends React.Component<
 
     const isShowingAccessColumn: boolean | undefined =
       showAccessColumn && this.state.isEntityView
+    const isLoggedIn = !!this.context.accessToken
     const isShowingAddToV2DownloadListColumn: boolean =
-      this.state.isFileView && !this.props.hideDownload
-
+      this.state.isFileView && !this.props.hideDownload && isLoggedIn
+    const isShowingDirectDownloadColumn = this.state.isFileView && showDownloadColumn && isLoggedIn
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
     return (
@@ -517,7 +528,7 @@ export default class SynapseTable extends React.Component<
                 columnModels,
                 facets,
                 isShowingAccessColumn,
-                this.state.isFileView && showDownloadColumn,
+                isShowingDirectDownloadColumn,
                 isShowingAddToV2DownloadListColumn,
                 isRowSelectionVisible,
                 lastQueryRequest,
@@ -529,7 +540,7 @@ export default class SynapseTable extends React.Component<
               rows,
               headers,
               isShowingAccessColumn,
-              this.state.isFileView && showDownloadColumn,
+              isShowingDirectDownloadColumn,
               isShowingAddToV2DownloadListColumn,
               isRowSelectionVisible,
               tableEntityId,
