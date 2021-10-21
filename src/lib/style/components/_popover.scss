@@ -1,0 +1,46 @@
+@use '../abstracts/variables' as SRC;
+
+#tooltip.SRC-popover {
+  background: white;
+  border-radius: 1px;
+  padding: 20px;
+  box-shadow: SRC.$box-shadow-med;
+  z-index: 1060;
+  min-width: 300px;
+  max-width: 450px;
+  font-weight: unset;
+
+  #arrow,
+  #arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+  }
+
+  #arrow {
+    visibility: hidden;
+  }
+
+  #arrow::before {
+    visibility: visible;
+    content: '';
+    transform: rotate(45deg);
+  }
+
+  &[data-popper-placement^='top'] > #arrow {
+    bottom: -5px;
+  }
+
+  &[data-popper-placement^='bottom'] > #arrow {
+    top: -5px;
+  }
+
+  &[data-popper-placement^='left'] > #arrow {
+    right: -5px;
+  }
+
+  &[data-popper-placement^='right'] > #arrow {
+    left: -5px;
+  }
+}
