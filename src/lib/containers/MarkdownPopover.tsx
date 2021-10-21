@@ -35,12 +35,15 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   placement = placement ?? 'bottom-start'
 
   const [show, setShow] = useState(false)
+
+  // We intentionally use useState instead of useRef, see https://popper.js.org/react-popper/v2/#example
   const [referenceElement, setReferenceElement] =
     useState<HTMLSpanElement | null>(null)
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
     null,
   )
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null)
+
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement,
     strategy: strategy,
