@@ -1,0 +1,51 @@
+import React from 'react'
+import { render, screen, waitFor } from '@testing-library/react'
+import {
+  MarkdownPopover,
+  MarkdownPopoverProps,
+} from '../../../lib/containers/MarkdownPopover'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../../lib/utils/SynapseContext'
+import userEvent from '@testing-library/user-event'
+
+const markdownText = 'This is markdown text.'
+
+const defaultProps: MarkdownPopoverProps = {
+  children: <button>Click Me</button>,
+  contentProps: {
+    markdown: markdownText,
+  },
+}
+
+function renderComponent(wrapperProps?: SynapseContextType) {
+  return render(<MarkdownPopover {...defaultProps} />, {
+    wrapper: createWrapper(wrapperProps),
+  })
+}
+
+describe('MarkdownPopover tests', () => {
+  it('Appears and disappears on click', async () => {
+    const component = renderComponent()
+
+    const showPopoverButton = screen.getByRole('button')
+
+    // Should not be shown initially
+    expect(
+      component.container.querySelector('#tooltip'),
+    ).not.toBeInTheDocument()
+
+    // Click to show
+    userEvent.click(showPopoverButton)
+
+    await screen.findByText(markdownText)
+
+    // Click to hide
+    userEvent.click(showPopoverButton)
+
+    // We hide using SCSS that @testing-library doesn't know about.
+    // Get the DOM node and check for the class that applies "display: none"
+    const tooltip = component.container.querySelector('#tooltip')
+
+    await waitFor(() => expect(tooltip).toHaveClass('fade-in-out-exit-done'))
+  })
+})

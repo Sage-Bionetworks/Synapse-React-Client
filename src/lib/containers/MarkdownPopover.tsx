@@ -7,7 +7,7 @@ import { CSSTransition } from 'react-transition-group'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import { PositioningStrategy } from '@popperjs/core'
 
-type MarkdownPopoverProps = {
+export type MarkdownPopoverProps = {
   children: JSX.Element
   contentProps: MarkdownSynapseProps
   style?: React.CSSProperties
