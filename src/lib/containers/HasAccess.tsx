@@ -166,6 +166,15 @@ export default class HasAccess extends React.Component<
     }
   }
 
+  componentDidUpdate(prevProps: HasAccessProps) {
+    // SWC-5821: If the entity ID prop changes, force refresh
+    if (
+      prevProps.entityId != this.props.entityId
+    ) {
+      this.refresh(true)
+    }
+  }
+
   componentDidMount() {
     this.refresh()
   }
