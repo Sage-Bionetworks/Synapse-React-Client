@@ -21,7 +21,7 @@ import {
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
 import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../../EntityBadgeIcons'
-import { HelpButtonPopover } from '../../../HelpButtonPopover'
+import { MarkdownPopover } from '../../../MarkdownPopover'
 import { BlockingLoader } from '../../../LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
@@ -38,6 +38,7 @@ import {
   TypeIconRenderer,
   VersionRenderer,
 } from './DetailsViewTableRenderers'
+import { HelpOutline } from '@material-ui/icons'
 
 // Borrowed from: https://github.com/wwayne/react-tooltip/issues/300#issuecomment-468042592
 const rebuildTooltip = debounce(() => ReactTooltip.rebuild(), 200, {
@@ -437,11 +438,21 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   return (
                     <>
                       Version
-                      <HelpButtonPopover
-                        contentMarkdown={
-                          'Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”'
-                        }
-                      />
+                      <MarkdownPopover
+                        contentProps={{
+                          markdown:
+                            'Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”',
+                        }}
+                        showCloseButton={false}
+                        placement="right"
+                        strategy="fixed"
+                        style={{ maxWidth: '350px' }}
+                      >
+                        <HelpOutline
+                          className="HelpButton"
+                          style={{ cursor: 'pointer' }}
+                        />
+                      </MarkdownPopover>
                     </>
                   )
                 }}
