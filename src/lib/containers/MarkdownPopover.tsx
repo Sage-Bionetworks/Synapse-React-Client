@@ -1,11 +1,11 @@
-import { Button } from 'react-bootstrap'
+import { PositioningStrategy } from '@popperjs/core'
 import React, { useState } from 'react'
+import { Button } from 'react-bootstrap'
 import { Placement } from 'react-bootstrap/esm/Overlay'
-import { usePopper } from 'react-popper'
 import { ButtonVariant } from 'react-bootstrap/esm/types'
+import { usePopper } from 'react-popper'
 import { CSSTransition } from 'react-transition-group'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
-import { PositioningStrategy } from '@popperjs/core'
 
 export type MarkdownPopoverProps = {
   children: JSX.Element
@@ -66,23 +66,15 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
       mountOnEnter
     >
       <div
-        id="tooltip"
-        className={`SRC-popover bootstrap-4-backport`}
+        className={`Tooltip SRC-popover bootstrap-4-backport`}
         style={{ ...style, ...styles.popper }}
         ref={setPopperElement}
         {...attributes.popper}
       >
-        <MarkdownSynapse {...contentProps}></MarkdownSynapse>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'row-reverse',
-          }}
-        >
+        <MarkdownSynapse {...contentProps} />
+        <div className="TooltipButtonContainer">
           {actionButton && (
             <Button
-              style={{ flexGrow: 1, maxWidth: '45%' }}
               variant={actionButton.variant ?? 'primary-500'}
               className="pill"
               onClick={() => {
@@ -97,7 +89,6 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
           )}
           {showCloseButton && (
             <Button
-              style={{ flexGrow: 1, maxWidth: '45%' }}
               variant="light"
               className="pill"
               onClick={() => setShow(false)}
@@ -107,11 +98,11 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
           )}
         </div>
         <div
-          id="arrow"
+          className="arrow"
           data-popper-arrow
           ref={setArrowElement}
           style={styles.arrow}
-        ></div>
+        />
       </div>
     </CSSTransition>
   )
@@ -119,10 +110,9 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   return (
     <>
       <span
-        className="bootstrap-4-backport"
+        className="PopoverContainer bootstrap-4-backport"
         onClick={() => setShow(val => !val)}
         ref={setReferenceElement}
-        style={{ display: 'inline-block' }}
       >
         {children}
       </span>

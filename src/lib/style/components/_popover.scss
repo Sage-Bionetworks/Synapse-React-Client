@@ -1,6 +1,6 @@
 @use '../abstracts/variables' as SRC;
 
-#tooltip.SRC-popover {
+.Tooltip.SRC-popover {
   background: white;
   border-radius: 1px;
   padding: 20px;
@@ -9,37 +9,51 @@
   min-width: 300px;
   max-width: 450px;
 
-  #arrow,
-  #arrow::before {
+  .arrow,
+  .arrow::before {
     position: absolute;
     width: 8px;
     height: 8px;
     background: inherit;
   }
 
-  #arrow {
+  .arrow {
     visibility: hidden;
   }
 
-  #arrow::before {
+  .arrow::before {
     visibility: visible;
     content: '';
     transform: rotate(45deg);
   }
 
-  &[data-popper-placement^='top'] > #arrow {
+  &[data-popper-placement^='top'] > .arrow {
     bottom: -5px;
   }
 
-  &[data-popper-placement^='bottom'] > #arrow {
+  &[data-popper-placement^='bottom'] > .arrow {
     top: -5px;
   }
 
-  &[data-popper-placement^='left'] > #arrow {
+  &[data-popper-placement^='left'] > .arrow {
     right: -5px;
   }
 
-  &[data-popper-placement^='right'] > #arrow {
+  &[data-popper-placement^='right'] > .arrow {
     left: -5px;
   }
+
+  .TooltipButtonContainer {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    button {
+      flex-grow: 1;
+      max-width: 45%;
+    }
+  }
+}
+
+.PopoverContainer {
+  display: inline-block;
 }

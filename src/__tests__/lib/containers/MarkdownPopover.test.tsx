@@ -1,12 +1,12 @@
-import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
 import {
   MarkdownPopover,
   MarkdownPopoverProps,
 } from '../../../lib/containers/MarkdownPopover'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
-import userEvent from '@testing-library/user-event'
 
 const markdownText = 'This is markdown text.'
 
@@ -31,7 +31,7 @@ describe('MarkdownPopover tests', () => {
 
     // Should not be shown initially
     expect(
-      component.container.querySelector('#tooltip'),
+      component.container.querySelector('.tooltip'),
     ).not.toBeInTheDocument()
 
     // Click to show
@@ -44,7 +44,7 @@ describe('MarkdownPopover tests', () => {
 
     // We hide using SCSS that @testing-library doesn't know about.
     // Get the DOM node and check for the class that applies "display: none"
-    const tooltip = component.container.querySelector('#tooltip')
+    const tooltip = component.container.querySelector('.tooltip')
 
     await waitFor(() => expect(tooltip).toHaveClass('fade-in-out-exit-done'))
   })
