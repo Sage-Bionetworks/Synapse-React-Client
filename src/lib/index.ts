@@ -30,6 +30,7 @@ import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
+import FeaturedToolsList from './containers/home_page/featured_tools/FeaturedToolsList'
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import RenderIfInView from './containers/RenderIfInView'
@@ -111,7 +112,8 @@ const SynapseComponents = {
   ProgrammaticOptions,
   SynapseToastContainer,
   displayToast,
-  UserProfileLinks
+  UserProfileLinks,
+  FeaturedToolsList,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }
