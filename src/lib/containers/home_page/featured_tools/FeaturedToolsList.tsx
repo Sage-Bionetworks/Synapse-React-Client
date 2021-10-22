@@ -10,6 +10,11 @@ import { useSynapseContext } from '../../../utils/SynapseContext'
 export type FeaturedToolsListProps = {
   entityId: string
   toolDetailPageURL: string
+  idColumnName?: string
+  nameColumnName?: string
+  descriptionColumnName?: string
+  typeColumnName?: string
+  dateColumnName?: string
 }
 
 type ToolData = {
@@ -17,23 +22,23 @@ type ToolData = {
   name: string,
   description: string
   type: string
-}
-
-enum ExpectedColumns {
-  ID = 'Resource_id',
-  NAME = 'Resource Name',
-  TYPE = 'Resource Type',
-  DESCRIPTION = 'Description',
+  date: string
 }
 
 /**
  * Display a set of FeaturedToolCards (driven by a Table/View). Driven by the following annotations/column names:
- * 'Resource_id', 'Resource Name', 'Resource Type', and 'Description'. 
+ * 'id', 'name', 'type', and 'description'. 
  */
 export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> = ({
   entityId,
-  toolDetailPageURL
+  toolDetailPageURL,
+  idColumnName = 'id',
+  nameColumnName = 'name',
+  descriptionColumnName = 'description',
+  typeColumnName = 'type',
+  dateColumnName = 'date'
 }) => {
+  const sql = `SELECT '${idColumnName}', '${nameColumnName}', '${descriptionColumnName}', '${typeColumnName}', '${dateColumnName}' FROM ${entityId} ORDER BY ROW_ID DESC LIMIT 3`
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -41,7 +46,7 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
-      sql: `select * from ${entityId} order by ROW_ID desc limit 3`,
+      sql,
     },
   }
 
@@ -57,19 +62,23 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
     const getData = () => {
       try {
         const idIndex = getFieldIndex(
-          ExpectedColumns.ID,
+          idColumnName,
           queryResultBundle,
         )
         const nameColumnIndex = getFieldIndex(
-          ExpectedColumns.NAME,
+          nameColumnName,
           queryResultBundle,
         )
         const typeColumnIndex = getFieldIndex(
-          ExpectedColumns.TYPE,
+          typeColumnName,
           queryResultBundle,
         )
         const descriptionColumnIndex = getFieldIndex(
-          ExpectedColumns.DESCRIPTION,
+          descriptionColumnName,
+          queryResultBundle,
+        )
+        const dateColumnIndex = getFieldIndex(
+          dateColumnName,
           queryResultBundle,
         )
 
@@ -80,6 +89,7 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
               description: row.values[descriptionColumnIndex],
               type: row.values[typeColumnIndex],
               id: row.values[idIndex],
+              date: row.values[dateColumnIndex]
             }
           }) ?? []
         if (queryError) {
@@ -97,7 +107,7 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
       }
     }
     getData()
-  }, [entityId, accessToken, queryResultBundle, queryError])
+  }, [entityId, accessToken, queryResultBundle, queryError, idColumnName, nameColumnName, typeColumnName, descriptionColumnName, dateColumnName])
 
   return error ? (
     <ErrorBanner error={error}></ErrorBanner>
@@ -111,6 +121,7 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
             type={tool.type}
             description={tool.description}
             id={tool.id}
+            date={tool.date}
             toolDetailPageURL={toolDetailPageURL}
           />
         )

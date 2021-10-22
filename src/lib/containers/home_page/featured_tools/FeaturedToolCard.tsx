@@ -1,4 +1,6 @@
+import moment from 'moment'
 import React from 'react'
+import { formatDate } from '../../../utils/functions/DateFormatter'
 
 export type FeaturedToolCardProps = {
   id: string
@@ -6,11 +8,12 @@ export type FeaturedToolCardProps = {
   description: string
   type: string
   toolDetailPageURL: string
+  date: string
 }
 
 export const FeaturedToolCard: React.FunctionComponent<
 FeaturedToolCardProps & React.HTMLAttributes<HTMLDivElement>
-> = ({ id, name, description, type, toolDetailPageURL, ...domProps }) => {
+> = ({ id, name, description, type, toolDetailPageURL, date, ...domProps }) => {
   return (
     <div
       {...domProps}
@@ -18,21 +21,24 @@ FeaturedToolCardProps & React.HTMLAttributes<HTMLDivElement>
         domProps.className ?? ''
       }`}
     >
-      <div>
-        <div className="FeaturedToolCard__Name">{name}</div>
-        <div className="FeaturedToolCard__Description">
-          {description}
-        </div>
-        <div className="FeaturedToolCard__Description">
+      <div className="FeaturedToolCard__Type">
+        <span className="SRC-tag">
           {type}
-        </div>
+        </span>
       </div>
-      <a
-        className="FeaturedToolCard__ViewToolButton"
-        href={`${toolDetailPageURL}${id}`}
-      >
-        View Tool
-      </a>
+      <div className="FeaturedToolCard__Date">{formatDate(moment(parseInt(date)), 'MMMM YYYY')}</div>
+      <div className="FeaturedToolCard__Name">{name}</div>
+      <div className="FeaturedToolCard__Description">
+        {description}
+      </div>
+      <div>
+        <a
+          className="FeaturedToolCard__Link"
+          href={`${toolDetailPageURL}${id}`}
+        >
+          View Tool
+        </a>
+      </div>
     </div>
   )
 }

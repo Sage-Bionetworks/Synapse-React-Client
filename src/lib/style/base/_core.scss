@@ -1286,3 +1286,10 @@ main, #rootPanel {
     padding-left: 32px;
   }
 }
+
+.SRC-tag {
+  border: 1px solid SRC.$primary-action-color;
+  border-radius: 100px;
+  padding: 5px 10px;
+  color: SRC.$primary-action-color;
+}
