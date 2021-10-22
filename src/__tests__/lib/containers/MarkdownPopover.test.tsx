@@ -31,7 +31,7 @@ describe('MarkdownPopover tests', () => {
 
     // Should not be shown initially
     expect(
-      component.container.querySelector('.tooltip'),
+      component.container.querySelector('.Tooltip'),
     ).not.toBeInTheDocument()
 
     // Click to show
@@ -44,7 +44,7 @@ describe('MarkdownPopover tests', () => {
 
     // We hide using SCSS that @testing-library doesn't know about.
     // Get the DOM node and check for the class that applies "display: none"
-    const tooltip = component.container.querySelector('.tooltip')
+    const tooltip = component.container.querySelector('.Tooltip')
 
     await waitFor(() => expect(tooltip).toHaveClass('fade-in-out-exit-done'))
   })
