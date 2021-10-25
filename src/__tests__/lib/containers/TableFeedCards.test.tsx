@@ -10,22 +10,10 @@ import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const data = syn23519444Json as QueryResultBundle
-const token: string = '123444'
-
-function createTestProps(
-  overrides?: Partial<TableFeedCardsProps>,
-): TableFeedCardsProps {
-  return {
-    tableEntityId: '',
-    ...overrides,
-  }
-}
 
 let container: HTMLElement
-let props: TableFeedCardsProps
 
-function init(overrides?: Partial<TableFeedCardsProps>) {
-  props = createTestProps(overrides)
+function init() {
   container = render(
     <SynapseTestContext>
       <TableFeedCards tableEntityId="syn23519444" />
@@ -39,7 +27,7 @@ describe('basic tests', () => {
   })
 
   it('displays news cards from a Synapse Table', async () => {
-    await act(async () => await init({}))
+    await act(async () => await init())
     expect(container.querySelector('.FeedItem')).toBeDefined()
     expect(container.querySelectorAll('.FeedItem')).toHaveLength(3)
 
