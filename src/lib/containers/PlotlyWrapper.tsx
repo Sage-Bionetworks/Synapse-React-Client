@@ -2,12 +2,13 @@ import Plotly from 'plotly.js-basic-dist'
 import * as React from 'react'
 import createPlotlyComponent from 'react-plotly.js/factory'
 
+// We must use the createPlotlyComponent factory method because we use plotly.js-basic-dist and not plotly.js
 const Plot = createPlotlyComponent(Plotly)
 
 export type PlotlyWrapperProps = {
-  data: any,
-  layout?: any,
-  config?: any
+  data: Plotly.Data[]
+  layout?: Partial<Plotly.Layout>
+  config?: Partial<Plotly.Config>
   className?: string
   containerWidth?: number
 }
@@ -31,7 +32,7 @@ const PlotlyWrapper: React.FC<PlotlyWrapperProps> = props => {
       hasData &&
       <Plot
         data={data}
-        layout={layout}
+        layout={layout ?? {}}
         config={config}
       />
     }

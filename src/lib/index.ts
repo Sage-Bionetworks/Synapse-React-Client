@@ -47,6 +47,7 @@ import {
   SynapseContextConsumer,
   useSynapseContext,
 } from './utils/SynapseContext'
+import { MarkdownPopover } from './containers/MarkdownPopover'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -113,6 +114,7 @@ const SynapseComponents = {
   SynapseToastContainer,
   displayToast,
   UserProfileLinks,
+  MarkdownPopover,
   FeaturedToolsList,
 }
 
