@@ -27,8 +27,8 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   moment.relativeTimeThreshold('d', 24)
   moment.relativeTimeThreshold('h', 24)
   return (
-    <div className="SRC-portalCard SRC-typeObservation">
-        <div className="submitter">
+    <div className="SRC-portalCard ObservationCard">
+        <div className="ObservationCard__submitter">
           {!submitterUserId && (
             <div>{submitterName}</div>
           )}
@@ -39,7 +39,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
             />
           )}
         </div>
-        {time && <div className="time">
+        {time && <div className="ObservationCard__time">
           <IconSvg
             options={{
               icon: 'time'
@@ -48,10 +48,10 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
           {/* // bug, still rounds (losing precision!) <span>{moment.duration(time, timeUnits).humanize({s:60, m:60, h:24, d:7, w:4})}</span> */}
           <span>{time} {timeUnits}</span>
         </div>}
-        <div className="text">
+        <div className="ObservationCard__text">
           <ShowMore summary={text} />
         </div>
-        <div className="tags">
+        <div className="ObservationCard__tags">
           {tag && <span className="SRC-tag">{tag}</span>}
         </div>
       </div>
