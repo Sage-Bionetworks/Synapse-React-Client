@@ -28,6 +28,7 @@ import {
   GetAppTwoTone,
   StarTwoTone,
   SearchTwoTone,
+  WatchLater
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -121,6 +122,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
     case 'searchTwoTone':
       return <SearchTwoTone style={muiSvgStyle}></SearchTwoTone>
+    case 'time':
+      return <WatchLater style={muiSvgStyle}></WatchLater>
     case 'login':
       return <Login fill={color} style={customSvgStyle}></Login>
     case 'helpOutlined':

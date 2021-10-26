@@ -3,7 +3,7 @@ Standard generic card renderer:
 <SynapseContextConsumer>{(synapseContext) => {
   return (
   <CardContainerLogic
-    accessToken={synapseContext.accessToken}
+    token={synapseContext.accessToken}
     rgbIndex={1}
     name='Publications'
     sql="SELECT * FROM syn22095937.4 order by authors asc"
@@ -35,4 +35,18 @@ Empty results:
     secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
   }}
 />
+```
+
+Observation_card renderer:
+```jsx
+<SynapseContextConsumer>{(synapseContext) => {
+  return (
+  <CardContainerLogic
+    token={synapseContext.accessToken}
+    rgbIndex={1}
+    name='Publications'
+    sql={`SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NOT NULL and "Resource_id" = '4a0ccbed-abcd-49fa-abd0-5ff7b275a1e1'`}
+    type={OBSERVATION_CARD}
+  />)}}
+</SynapseContextConsumer>
 ```
