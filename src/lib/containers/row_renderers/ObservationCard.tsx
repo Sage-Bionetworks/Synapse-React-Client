@@ -3,9 +3,18 @@ import UserCard from '../UserCard'
 import IconSvg from '../IconSvg'
 import { ShowMore } from './utils'
 
+type ObservationCardSchema = {
+  submitterName: string
+  submitterUserId: string
+  time: string
+  timeUnits: string
+  text: string
+  tag: string
+}
+
 export type ObservationCardProps = {
-  data?: any
-  schema?: any
+  schema: ObservationCardSchema
+  data: Record<ObservationCardSchema[keyof ObservationCardSchema], string>
 }
 
 /**
