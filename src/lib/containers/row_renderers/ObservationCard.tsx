@@ -1,7 +1,6 @@
 import * as React from 'react'
 import UserCard from '../UserCard'
 import IconSvg from '../IconSvg'
-import moment from 'moment'
 import { ShowMore } from './utils'
 
 export type ObservationCardProps = {
@@ -24,8 +23,6 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const timeUnits = data[schema.timeUnits]
   const text = data[schema.text]
   const tag = data[schema.tag]
-  moment.relativeTimeThreshold('d', 24)
-  moment.relativeTimeThreshold('h', 24)
   return (
     <div className="SRC-portalCard ObservationCard">
         <div className="ObservationCard__submitter">
