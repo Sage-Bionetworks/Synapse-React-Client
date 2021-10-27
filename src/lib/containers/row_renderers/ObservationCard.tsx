@@ -2,12 +2,14 @@ import * as React from 'react'
 import UserCard from '../UserCard'
 import IconSvg from '../IconSvg'
 import { ShowMore } from './utils'
+import { getFriendlyPreciseDuration } from '../../utils/functions/getFriendlyPreciseDuration'
+import { unitOfTime } from 'moment'
 
 type ObservationCardSchema = {
   submitterName: string
   submitterUserId: string
   time: string
-  timeUnits: string
+  timeUnits: unitOfTime.Base
   text: string
   tag: string
 }
@@ -29,7 +31,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const submitterName = data[schema.submitterName]
   const submitterUserId = data[schema.submitterUserId]
   const time = data[schema.time]
-  const timeUnits = data[schema.timeUnits]
+  const timeUnits = data[schema.timeUnits] as unitOfTime.Base
   const text = data[schema.text]
   const tag = data[schema.tag]
   return (
@@ -51,8 +53,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
               icon: 'time'
             }}
           />
-          {/* // bug, still rounds (losing precision!) <span>{moment.duration(time, timeUnits).humanize({s:60, m:60, h:24, d:7, w:4})}</span> */}
-          <span>{time} {timeUnits}</span>
+          <span>{getFriendlyPreciseDuration(time, timeUnits)}</span>
         </div>}
         <div className="ObservationCard__text">
           <ShowMore summary={text} />
