@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "2.0.49",
+  "version": "2.0.50",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -201,7 +201,8 @@
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
     "serve:docs": "DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist server --open",
-    "build:docs": "yarn run build-css && DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist build"
+    "build:docs": "yarn run build-css && DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist build",
+    "link-src": "yarn link && cd ./node_modules/react && yarn link && cd ../react-router && yarn link && cd ../react-router-dom && yarn link && cd ../../"
   },
   "resolutions": {
     "fstream": "1.0.12",
