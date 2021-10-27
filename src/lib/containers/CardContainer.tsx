@@ -2,6 +2,7 @@ import React from 'react'
 import { Button } from 'react-bootstrap'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import {
+  OBSERVATION_CARD,
   DATASET,
   DEFAULT_PAGE_SIZE,
   FUNDER,
@@ -18,6 +19,7 @@ import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
 import { Dataset, Funder } from './row_renderers'
+import { ObservationCard } from './row_renderers/ObservationCard'
 import SearchResultsNotFound from './table/SearchResultsNotFound'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
@@ -76,6 +78,8 @@ export const CardContainer = (props: CardContainerProps) => {
         return <Funder {...props} />
       case GENERIC_CARD:
         return <GenericCard {...props} />
+      case OBSERVATION_CARD:
+        return <ObservationCard {...props} />
       default:
         return <div /> // this should never happen
     }
