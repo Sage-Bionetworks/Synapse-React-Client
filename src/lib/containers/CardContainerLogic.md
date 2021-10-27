@@ -45,7 +45,7 @@ Observation_card renderer:
     token={synapseContext.accessToken}
     rgbIndex={1}
     name='Publications'
-    sql={`SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NULL LIMIT 3`}
+    sql={`SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NOT NULL`}
     type={OBSERVATION_CARD}
   />)}}
 </SynapseContextConsumer>
