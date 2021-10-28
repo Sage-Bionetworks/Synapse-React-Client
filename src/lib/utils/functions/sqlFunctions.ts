@@ -83,16 +83,21 @@ export const getWhereInsertIndex = (tokens: string[][]): number => {
   targetIndex = tokens.findIndex(el => el[0] === 'EOF')
   return targetIndex
 }
+
 // This will construct a sql query by adding the conditions in searchParams
-// to the WHERE clause, preserving all other clauses
+// to the WHERE clause, preserving all other clauses.  
+// If the searchParams are not defined, this will simply return the given sql.
 export const insertConditionsFromSearchParams = (
-  searchParams: KeyValue,
   sql: string,
+  searchParams?: KeyValue,
   operator: SQLOperator = 'LIKE',
 ) => {
   // if there are no search params, or if all search params are QueryWrapper queries
+  if (!searchParams) {
+    return sql
+  }
   const isQueryWrapperKey = (key: string) => key.startsWith('QueryWrapper')
-  let searchParamKeys = Object.keys(searchParams)
+  const searchParamKeys = Object.keys(searchParams)
   if (
     searchParamKeys.length === 0 ||
     searchParamKeys.every(isQueryWrapperKey)
