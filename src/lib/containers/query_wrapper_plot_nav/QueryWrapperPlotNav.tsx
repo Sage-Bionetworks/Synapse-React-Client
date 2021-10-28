@@ -70,15 +70,12 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = p
     limit = DEFAULT_PAGE_SIZE,
     downloadCartPageUrl,
   } = props
-  let sqlUsed = sql
-  if (searchParams) {
-    sqlUsed = insertConditionsFromSearchParams(
-      searchParams,
-      sqlUsed,
-      sqlOperator,
-    )
-  }
-
+  const sqlUsed = insertConditionsFromSearchParams(
+    sql,
+    searchParams,
+    sqlOperator,
+  )
+  
   const entityId = parseEntityIdFromSqlStatement(sqlUsed)
   const initQueryRequest: QueryBundleRequest = {
     entityId,

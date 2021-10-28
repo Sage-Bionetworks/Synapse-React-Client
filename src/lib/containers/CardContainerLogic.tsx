@@ -224,14 +224,11 @@ export default class CardContainerLogic extends React.Component<
       isLoading: true,
     })
 
-    let sqlUsed = this.props.sql
-    if (this.props.searchParams) {
-      sqlUsed = insertConditionsFromSearchParams(
-        this.props.searchParams,
-        this.props.sql,
-        this.props.sqlOperator,
-      )
-    }
+    const sqlUsed = insertConditionsFromSearchParams(
+      this.props.sql,
+      this.props.searchParams,
+      this.props.sqlOperator,
+    )
     const entityId = parseEntityIdFromSqlStatement(sqlUsed)
     const limit = this.props.limit ?? DEFAULT_PAGE_SIZE
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
