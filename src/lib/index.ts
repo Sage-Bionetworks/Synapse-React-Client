@@ -29,6 +29,7 @@ import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
+import SubsectionRowRenderer from './containers/SubsectionRowRenderer'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
 import FeaturedToolsList from './containers/home_page/featured_tools/FeaturedToolsList'
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
@@ -116,6 +117,7 @@ const SynapseComponents = {
   UserProfileLinks,
   MarkdownPopover,
   FeaturedToolsList,
+  SubsectionRowRenderer,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }
