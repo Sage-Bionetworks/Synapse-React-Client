@@ -34,7 +34,7 @@ type ElementWithTooltipProps = {
   imageColor?: string
   idForToolTip: string
   tooltipText: string
-  callbackFn?: Function
+  callbackFn?: () => void
   className?: string
   tooltipVisualProps?: TooltipVisualProps
   darkTheme?: boolean
@@ -71,11 +71,13 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   children,
   darkTheme,
   size,
-  icon
+  icon,
 }) => {
   const { place, type, effect, border } = tooltipVisualProps
-  const iconComponent = icon ? (<Icon type={icon}></Icon>) : undefined
-  const tooltipTriggerContents = iconComponent ? iconComponent : image
+  const iconComponent = icon ? <Icon type={icon}></Icon> : undefined
+  const tooltipTriggerContents = iconComponent
+    ? iconComponent
+    : image
     ? getTooltipTriggerContents(image, imageColor, size)
     : children || <></>
 

@@ -31,7 +31,7 @@ export type QueryWrapperProps = {
   token?: string
   facet?: string
   unitDescription?: string
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   loadNow?: boolean
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
@@ -61,7 +61,7 @@ export type QueryWrapperState = {
      facet if the 'All' button has been selected, this tracks the
      click event and syncs Facets.tsx and SynapseTable.tsx
   */
-  isAllFilterSelectedForFacet: {}
+  isAllFilterSelectedForFacet: Record<string, boolean>
   data: QueryResultBundle | undefined
   isLoadingNewData: boolean // occurs when props change
   isLoading: boolean // occurs when state changes
@@ -71,7 +71,7 @@ export type QueryWrapperState = {
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
   asyncJobStatus?: AsynchronousJobStatus
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   loadNowStarted: boolean
   topLevelControlsState?: TopLevelControlsState
   isColumnSelected: string[]
@@ -98,7 +98,7 @@ export type FacetSelection = {
 
 // Since the component is an HOC we export the props passed down
 export type QueryWrapperChildProps = {
-  isAllFilterSelectedForFacet?: {}
+  isAllFilterSelectedForFacet?: Record<string, boolean>
   isLoading?: boolean
   token?: string
   entityId?: string
@@ -115,7 +115,7 @@ export type QueryWrapperChildProps = {
   ) => void
   rgbIndex?: number
   unitDescription?: string
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   lastFacetSelection?: FacetSelection
   chartSelectionIndex?: number
   asyncJobStatus?: AsynchronousJobStatus

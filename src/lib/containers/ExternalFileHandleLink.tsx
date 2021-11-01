@@ -5,13 +5,14 @@ import {
   FileEntity,
   ExternalFileHandle,
   assertIsExternalFileHandle,
-  assertIsFileEntity,
+  isFileEntity,
 } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils/'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { AssertionError } from 'assert'
 
 library.add(faExternalLinkAlt)
 
@@ -34,7 +35,11 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
           accessToken,
           synId,
         )
-        assertIsFileEntity(fileEntity)
+        if (!isFileEntity(fileEntity)) {
+          throw new AssertionError({
+            message: `File Entity expected but found ${fileEntity}`,
+          })
+        }
         const batchFileRequest: BatchFileRequest = {
           requestedFiles: [
             {
