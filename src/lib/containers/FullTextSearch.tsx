@@ -19,7 +19,7 @@ export type FullTextSearchProps = Pick<
   QueryWrapperChildProps,
   'executeQueryRequest' | 'getLastQueryRequest'
 > & {
-  topLevelControlsState: Pick<
+  topLevelControlsState?: Pick<
     TopLevelControlsState,
     'showSearchBar' | 'showFacetFilter'
   >
