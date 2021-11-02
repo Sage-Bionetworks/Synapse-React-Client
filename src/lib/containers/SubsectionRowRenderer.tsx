@@ -11,12 +11,17 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { ColumnSpecifiedLink } from './CardContainerLogic'
 
+export type FriendlyValuesMap = {
+  [index: string]: string
+}
+
 export type SubsectionRowRendererProps = {
   sql: string
   isMarkdown?: boolean
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   columnLink?: ColumnSpecifiedLink
+  friendlyValuesMap?: FriendlyValuesMap
 }
 
 const LIST_COLUMN_TYPES = [EntityColumnType.BOOLEAN_LIST, EntityColumnType.DATE_LIST, EntityColumnType.ENTITYID_LIST, EntityColumnType.INTEGER_LIST, EntityColumnType.STRING_LIST]
@@ -26,7 +31,8 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
   searchParams,
   sqlOperator,
   isMarkdown = false,
-  columnLink
+  columnLink,
+  friendlyValuesMap
 }) => {
   const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
@@ -73,52 +79,66 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
     }
   }, [sql, accessToken, searchParams, sqlOperator])
 
+  const getFriendlyValue = (rawValue:string) => {
+    if (!friendlyValuesMap) {
+      return rawValue
+    }
+    const friendlyValue = friendlyValuesMap[rawValue]
+    return friendlyValue ? friendlyValue : rawValue
+  }
+
   return (
     <div className="SubsectionRowRenderer bootstrap-4-backport">
       {isLoading && <SkeletonTable numRows={2} numCols={1} />}
       {!isLoading && rowSet && rowSet.rows.length > 0 && (
-        rowSet.rows.map((row, rowIndex) => {
-          return rowSet.headers.map((selectColumn, colIndex) => {
-            const cellValue = row.values[colIndex]
-            if (!cellValue || (columnLink && selectColumn.name == columnLink.linkColumnName)) {
-              return <></>
-            }
-            let values
-            if (LIST_COLUMN_TYPES.includes(selectColumn.columnType)) {
-              const jsonData: string[] = JSON.parse(cellValue)
-              values = jsonData.map((val: string, index: number) => {
-                  return (
-                    <div key={index} className="SubsectionRowRenderer__item__value">
-                      {isMarkdown && <MarkdownSynapse markdown={val} />}
-                      {!isMarkdown && <p>{val}</p>}
-                    </div>
+        rowSet.headers.map((selectColumn, colIndex) => {
+          if (columnLink && selectColumn.name == columnLink.linkColumnName) {
+            return <></>
+          }
+          return <div key={`${colIndex}`} className="SubsectionRowRenderer__item">
+            <h4 className="SubsectionRowRenderer__item__label">{selectColumn.name}</h4>
+            {
+              rowSet.rows.map((row, rowIndex) => {
+                const cellValue = row.values[colIndex]
+                if (!cellValue) {
+                  return <></>
+                }
+                let values
+                if (LIST_COLUMN_TYPES.includes(selectColumn.columnType)) {
+                  const jsonData: string[] = JSON.parse(cellValue)
+                  values = jsonData.map((val: string, index: number) => {
+                      return (
+                        <div key={index} className="SubsectionRowRenderer__item__value">
+                          {isMarkdown && <MarkdownSynapse markdown={getFriendlyValue(val)} />}
+                          {!isMarkdown && <p>{getFriendlyValue(val)}</p>}
+                        </div>
+                      )
+                    }
                   )
-                }
-              )
-            } else {
-              let renderedValue
-              if (isMarkdown) {
-                renderedValue = <MarkdownSynapse markdown={cellValue} />
-              } else if (columnLink && columnLink.matchColumnName == selectColumn.name) {
-                // we need to link, where the url is in another column
-                const urlColumnIndex = rowSet.headers.findIndex(col => col.name == columnLink.linkColumnName)
-                if (urlColumnIndex > -1) {
-                  renderedValue = <a rel="noopener noreferrer" target="_blank" href={row.values[urlColumnIndex]}>{cellValue}</a>
                 } else {
-                  renderedValue = <p>{cellValue}</p>
+                  let renderedValue
+                  const friendlyCellValue = getFriendlyValue(cellValue)
+                  if (isMarkdown) {
+                    renderedValue = <MarkdownSynapse markdown={friendlyCellValue} />
+                  } else if (columnLink && columnLink.matchColumnName == selectColumn.name) {
+                    // we need to link, where the url is in another column
+                    const urlColumnIndex = rowSet.headers.findIndex(col => col.name == columnLink.linkColumnName)
+                    if (urlColumnIndex > -1) {
+                      renderedValue = <a rel="noopener noreferrer" target="_blank" href={row.values[urlColumnIndex]}>{friendlyCellValue}</a>
+                    } else {
+                      renderedValue = <p>{friendlyCellValue}</p>
+                    }
+                  } else {
+                    renderedValue = <p>{friendlyCellValue}</p>
+                  }
+                  values = <div key={rowIndex} className="SubsectionRowRenderer__item__value">
+                      {renderedValue}
+                    </div>
                 }
-              } else {
-                renderedValue = <p>{cellValue}</p>
-              }
-              values = <div className="SubsectionRowRenderer__item__value">
-                  {renderedValue}
-                </div>
+                return values
+              })
             }
-            return <div key={`${rowIndex}-${colIndex}`} className="SubsectionRowRenderer__item">
-                <h4 className="SubsectionRowRenderer__item__label">{selectColumn.name}</h4>
-                {values}
-              </div>
-          })
+          </div>
         })
       )}
     </div>
