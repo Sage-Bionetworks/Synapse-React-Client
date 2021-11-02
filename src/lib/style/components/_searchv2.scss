@@ -24,6 +24,7 @@
       flex: 1;
       &:focus {
         outline-width: 0px;
+        outline: none;
       }
       margin-left: 10px;
       width: fit-content;
@@ -62,14 +63,6 @@
     -moz-transition: max-height 0.3s ease-in-out;
     -o-transition: max-height 0.3s ease-in-out;
     transition: max-height 0.3s ease-in-out;
-  }
-
-  &__animate_bar-enter-done {
-    max-height: 50px; // fixed height required for css height animation
-  }
-
-  &__animate_bar-exit-done {
-    max-height: 0;
   }
 
   &__animate_dropdown-enter-done {
