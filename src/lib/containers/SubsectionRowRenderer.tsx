@@ -22,6 +22,8 @@ export type SubsectionRowRendererProps = {
   searchParams?: KeyValue
   columnLink?: ColumnSpecifiedLink
   friendlyValuesMap?: FriendlyValuesMap
+  columnNameIsSectionTitle?: boolean
+  limit?: number
 }
 
 const LIST_COLUMN_TYPES = [EntityColumnType.BOOLEAN_LIST, EntityColumnType.DATE_LIST, EntityColumnType.ENTITYID_LIST, EntityColumnType.INTEGER_LIST, EntityColumnType.STRING_LIST]
@@ -32,7 +34,9 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
   sqlOperator,
   isMarkdown = false,
   columnLink,
-  friendlyValuesMap
+  friendlyValuesMap,
+  columnNameIsSectionTitle = false,
+  limit,
 }) => {
   const { accessToken } = useSynapseContext()
   const [rowSet, setRowSet] = useState<RowSet>()
@@ -54,6 +58,7 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
         entityId,
         query: {
           sql: sqlUsed,
+          limit,
         },
       }
 
@@ -96,7 +101,8 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
             return <></>
           }
           return <div key={`${colIndex}`} className="SubsectionRowRenderer__item">
-            <h4 className="SubsectionRowRenderer__item__label">{selectColumn.name}</h4>
+            {!columnNameIsSectionTitle && <h4 className="SubsectionRowRenderer__item__label">{selectColumn.name}</h4>}
+            {columnNameIsSectionTitle && <><h2>{selectColumn.name}</h2><hr /></>}
             {
               rowSet.rows.map((row, rowIndex) => {
                 const cellValue = row.values[colIndex]
