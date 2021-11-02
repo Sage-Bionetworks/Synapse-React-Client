@@ -17,12 +17,27 @@ import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
 import {
+  Entity,
   EntityJson,
   entityJsonKeys,
   EntityJsonValue,
   PaginatedResults,
 } from '../../synapseTypes'
 import { VersionInfo } from '../../synapseTypes/VersionInfo'
+
+export function useGetEntity(
+  entityId: string,
+  versionNumber?: string | number,
+  options?: UseQueryOptions<Entity, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<Entity, SynapseClientError>(
+    ['entity', entityId, 'entity', versionNumber],
+    () =>
+      SynapseClient.getEntity(accessToken, entityId, versionNumber?.toString()),
+    options,
+  )
+}
 
 export function useGetVersions(
   entityId: string,

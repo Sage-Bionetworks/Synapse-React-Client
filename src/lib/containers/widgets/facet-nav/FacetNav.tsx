@@ -1,21 +1,20 @@
-import * as React from 'react'
-import FacetNavPanel, { PlotType } from './FacetNavPanel'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Button } from 'react-bootstrap'
+import TotalQueryResults from '../../../containers/TotalQueryResults'
+import {
+  FacetColumnRequest,
+  FacetColumnResult,
+  FacetColumnResultValueCount,
+  FacetColumnResultValues,
+  QueryResultBundle,
+} from '../../../utils/synapseTypes'
 import {
   QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../../QueryWrapper'
-import {
-  FacetColumnResultValues,
-  FacetColumnRequest,
-  FacetColumnResult,
-  QueryResultBundle,
-  FacetColumnResultValueCount,
-} from '../../../utils/synapseTypes'
-import { useState, useEffect, useMemo } from 'react'
-import TotalQueryResults from '../../../containers/TotalQueryResults'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
-import { Button } from 'react-bootstrap'
+import FacetNavPanel, { PlotType } from './FacetNavPanel'
 
 export type FacetNavOwnProps = {
   facetsToPlot?: string[]
@@ -45,14 +44,16 @@ export function getFacets(
   facetsToPlot?: string[],
 ): FacetColumnResult[] {
   const result =
-    data?.facets?.filter(
-      item => {
-        const isFacetToPlot = item.facetType === 'enumeration' &&
-          (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
-        // PORTALS-1993: only plot if the facet has count data
-        return isFacetToPlot && (item as FacetColumnResultValues).facetValues.length > 0
-      }
-    ) ?? []
+    data?.facets?.filter(item => {
+      const isFacetToPlot =
+        item.facetType === 'enumeration' &&
+        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
+      // PORTALS-1993: only plot if the facet has count data
+      return (
+        isFacetToPlot &&
+        (item as FacetColumnResultValues).facetValues.length > 0
+      )
+    }) ?? []
   return result
 }
 
@@ -146,8 +147,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   }
 
   const getPlotType = (columnName: string): PlotType => {
-    const plotType = facetUiStateArray.find(item => item.name === columnName)
-      ?.plotType
+    const plotType = facetUiStateArray.find(
+      item => item.name === columnName,
+    )?.plotType
     return plotType ?? 'PIE'
   }
 
@@ -163,9 +165,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     )
   }
 
-  const hasSelectedFacets =
-    lastQueryRequest?.query.selectedFacets !== undefined &&
-    lastQueryRequest.query.selectedFacets.length > 0
+  const hasFacetsOrFilters =
+    (lastQueryRequest?.query.selectedFacets !== undefined &&
+      lastQueryRequest.query.selectedFacets.length > 0) ||
+    (lastQueryRequest?.query.additionalFilters !== undefined &&
+      lastQueryRequest?.query.additionalFilters.length > 0)
 
   const facets = getFacets(data, facetsToPlot)
 
@@ -198,13 +202,13 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
           lastQueryRequest={getLastQueryRequest?.()!}
           getInitQueryRequest={getInitQueryRequest}
           unitDescription={
-            hasSelectedFacets ? 'Results Filtered By' : 'Results'
+            hasFacetsOrFilters ? 'Results Filtered By' : 'Results'
           }
           frontText={''}
           showNotch={showNotch}
           topLevelControlsState={topLevelControlsState}
         />
-        {facets.length > 0 &&
+        {facets.length > 0 && (
           <div
             className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${
               showFacetFilter
@@ -226,8 +230,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   <FacetNavPanel
                     isLoading={isLoading}
                     index={
-                      colorTracker.find(el => el.columnName === facet.columnName)
-                        ?.colorIndex!
+                      colorTracker.find(
+                        el => el.columnName === facet.columnName,
+                      )?.colorIndex!
                     }
                     data={data}
                     onHide={() => hideFacetInGrid(facet.columnName)}
@@ -266,7 +271,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                 <Button
                   variant="secondary"
                   className="pill-xl FacetNav__showMore"
-                  onClick={() => onShowMoreClick(showMoreButtonState === 'MORE')}
+                  onClick={() =>
+                    onShowMoreClick(showMoreButtonState === 'MORE')
+                  }
                   style={{ zIndex: 500 }}
                 >
                   {showMoreButtonState === 'LESS'
@@ -275,7 +282,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                 </Button>
               </div>
             )}
-          </div>}
+          </div>
+        )}
       </>
     )
   }
