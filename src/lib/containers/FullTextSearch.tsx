@@ -8,17 +8,27 @@ import {
   QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
+  TopLevelControlsState,
 } from './QueryWrapper'
 
 library.add(faSearch)
 library.add(faTimes)
 
-type InternalSearchProps = QueryWrapperChildProps
+// Define the minimum set of props needed for this component
+export type FullTextSearchProps = Pick<
+  QueryWrapperChildProps,
+  'executeQueryRequest' | 'getLastQueryRequest'
+> & {
+  topLevelControlsState: Pick<
+    TopLevelControlsState,
+    'showSearchBar' | 'showFacetFilter'
+  >
+}
 
-// See https://sagebionetworks.jira.com/browse/PLFM-7011
+// See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
 
-function FullTextSearch(props: InternalSearchProps) {
+export function FullTextSearch(props: FullTextSearchProps) {
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
   const showSearchBar = props?.topLevelControlsState?.showSearchBar
