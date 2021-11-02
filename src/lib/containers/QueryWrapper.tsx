@@ -39,6 +39,9 @@ export type QueryWrapperProps = {
   hiddenColumns?: string[]
   lockedFacet?: LockedFacet
   defaultShowFacetVisualization?: boolean
+  children?: (
+    queryWrapperChildProps: QueryWrapperChildProps,
+  ) => React.ReactNode | React.ReactNode[]
 }
 
 export type TopLevelControlsState = {
@@ -432,39 +435,31 @@ export default class QueryWrapper extends React.Component<
   public render() {
     const { isLoading } = this.state
     const { children, ...rest } = this.props
-    // inject props in children of this component
-    const childrenWithProps = React.Children.map(children, (child: any) => {
-      if (!child) {
-        return child
-      }
-      const queryWrapperChildProps: QueryWrapperChildProps = {
-        isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
-        data: this.removeLockedFacetData(),
-        hasMoreData: this.state.hasMoreData,
-        lastFacetSelection: this.state.lastFacetSelection,
-        chartSelectionIndex: this.state.chartSelectionIndex,
-        isLoading: this.state.isLoading,
-        isLoadingNewData: this.state.isLoadingNewData,
-        asyncJobStatus: this.state.asyncJobStatus,
-        topLevelControlsState: this.state.topLevelControlsState,
-        isColumnSelected: this.state.isColumnSelected,
-        selectedRowIndices: this.state.selectedRowIndices,
-        error: this.state.error,
-        executeInitialQueryRequest: this.executeInitialQueryRequest,
-        executeQueryRequest: this.executeQueryRequest,
-        getLastQueryRequest: this.getLastQueryRequest,
-        getNextPageOfData: this.getNextPageOfData,
-        updateParentState: this.updateParentState,
-        getInitQueryRequest: this.getInitQueryRequest,
-        ...rest,
-      }
-      return React.cloneElement(child, queryWrapperChildProps)
-    })
-
+    const queryWrapperChildProps: QueryWrapperChildProps = {
+      isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
+      data: this.removeLockedFacetData(),
+      hasMoreData: this.state.hasMoreData,
+      lastFacetSelection: this.state.lastFacetSelection,
+      chartSelectionIndex: this.state.chartSelectionIndex,
+      isLoading: this.state.isLoading,
+      isLoadingNewData: this.state.isLoadingNewData,
+      asyncJobStatus: this.state.asyncJobStatus,
+      topLevelControlsState: this.state.topLevelControlsState,
+      isColumnSelected: this.state.isColumnSelected,
+      selectedRowIndices: this.state.selectedRowIndices,
+      error: this.state.error,
+      executeInitialQueryRequest: this.executeInitialQueryRequest,
+      executeQueryRequest: this.executeQueryRequest,
+      getLastQueryRequest: this.getLastQueryRequest,
+      getNextPageOfData: this.getNextPageOfData,
+      updateParentState: this.updateParentState,
+      getInitQueryRequest: this.getInitQueryRequest,
+      ...rest,
+    }
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     return (
       <div className={`SRC-wrapper ${loadingCusrorClass}`}>
-        {childrenWithProps}
+        {children && children(queryWrapperChildProps)}
       </div>
     )
   }

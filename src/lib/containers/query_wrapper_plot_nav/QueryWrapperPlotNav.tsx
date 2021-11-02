@@ -103,32 +103,55 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
               token={context?.accessToken}
               initQueryRequest={initQueryRequest}
             >
-              {entity && isTableEntity(entity) && entity.isSearchEnabled ? (
-                <FullTextSearch />
-              ) : (
-                <SearchV2 {...searchConfiguration} />
-              )}
-              <ErrorBanner />
-              <DownloadConfirmation downloadCartPageUrl={downloadCartPageUrl} />
-              <TopLevelControls
-                showColumnSelection={tableConfiguration !== undefined}
-                name={name}
-                entityId={entityId}
-                sql={sqlUsed}
-                hideDownload={hideDownload}
-              />
-              <QueryFilter {...props} />
-              <QueryFilterToggleButton />
-              <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
-              <FilterAndView
-                facetsToFilter={facetsToFilter}
-                tableConfiguration={tableConfiguration}
-                hideDownload={hideDownload}
-                cardConfiguration={cardConfiguration}
-              />
-              {showExportMetadata && (
-                <ModalDownload onClose={() => setShowExportMetadata(false)} />
-              )}
+              {queryWrapperChildProps => {
+                return (
+                  <>
+                    {entity &&
+                    isTableEntity(entity) &&
+                    entity.isSearchEnabled ? (
+                      <FullTextSearch {...queryWrapperChildProps} />
+                    ) : (
+                      <SearchV2
+                        {...queryWrapperChildProps}
+                        {...searchConfiguration}
+                      />
+                    )}
+                    <ErrorBanner {...queryWrapperChildProps} />
+                    <DownloadConfirmation
+                      {...queryWrapperChildProps}
+                      downloadCartPageUrl={downloadCartPageUrl}
+                    />
+                    <TopLevelControls
+                      {...queryWrapperChildProps}
+                      showColumnSelection={tableConfiguration !== undefined}
+                      name={name}
+                      entityId={entityId}
+                      sql={sqlUsed}
+                      hideDownload={hideDownload}
+                    />
+                    <QueryFilter {...queryWrapperChildProps} {...props} />
+                    <QueryFilterToggleButton {...queryWrapperChildProps} />
+                    <FacetNav
+                      {...queryWrapperChildProps}
+                      facetsToPlot={facetsToPlot}
+                      showNotch={false}
+                    />
+                    <FilterAndView
+                      {...queryWrapperChildProps}
+                      facetsToFilter={facetsToFilter}
+                      tableConfiguration={tableConfiguration}
+                      hideDownload={hideDownload}
+                      cardConfiguration={cardConfiguration}
+                    />
+                    {showExportMetadata && (
+                      <ModalDownload
+                        {...queryWrapperChildProps}
+                        onClose={() => setShowExportMetadata(false)}
+                      />
+                    )}
+                  </>
+                )
+              }}
             </QueryWrapper>
           )}
         </SynapseContextConsumer>
