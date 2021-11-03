@@ -21,6 +21,7 @@ import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpression
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
+import { KeyValue } from '../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
@@ -39,6 +40,20 @@ const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
 // In the map used to track selections, we use -1 to denote 'selected without version'
 // This is necessary because undefined is returned by map.get when the item is not in the map
 export const NO_VERSION_NUMBER = -1
+
+const searchForOnlyTypesBooleanQuery = (
+  entityTypes: EntityType[],
+): KeyValue[] => {
+  // Boolean query terms will be combined with AND, and there's no way to OR.
+  // So we will negate searching for all omitted types.
+  const allTypes = Object.values(EntityType)
+  const typesToOmit = allTypes.filter(type => !entityTypes.includes(type))
+  return typesToOmit.map(type => ({
+    key: 'node_type',
+    value: type.toString(),
+    not: true,
+  }))
+}
 
 export type EntityFinderProps = {
   /** Whether or not it is possible to select multiple entities */
@@ -92,12 +107,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     items: [],
   })
   const [searchByIdResults, setSearchByIdResults] = useState<EntityHeader[]>([])
-  const [
-    configFromTreeView,
-    setConfigFromTreeView,
-  ] = useState<EntityDetailsListDataConfiguration>({
-    type: EntityDetailsListDataConfigurationType.PROMPT,
-  })
+  const [configFromTreeView, setConfigFromTreeView] =
+    useState<EntityDetailsListDataConfiguration>({
+      type: EntityDetailsListDataConfigurationType.PROMPT,
+    })
 
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -309,10 +322,11 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       headerList: searchByIdResults,
                     }
                   : {
-                      type:
-                        EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+                      type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
                       query: {
                         queryTerm: searchTerms,
+                        booleanQuery:
+                          searchForOnlyTypesBooleanQuery(selectableTypes),
                       },
                     }
               }
@@ -324,7 +338,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
               enableSelectAll={selectMultiple}
-              autoSizeWidth={true}
             />
           )}
           {
@@ -384,7 +397,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             }
                             toggleSelection={toggleSelection}
                             enableSelectAll={selectMultiple}
-                            autoSizeWidth={false}
                           />
                           <Breadcrumbs {...breadcrumbsProps} />
                         </ReflexElement>

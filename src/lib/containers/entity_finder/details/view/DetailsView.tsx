@@ -46,6 +46,9 @@ const rebuildTooltip = debounce(() => ReactTooltip.rebuild(), 200, {
   trailing: true,
 })
 
+const MIN_TABLE_WIDTH = 1200
+const ROW_HEIGHT = 46
+
 export type DetailsViewProps = EntityDetailsListSharedProps & {
   entities: (EntityHeader | ProjectHeader | Hit)[]
   isLoading: boolean
@@ -59,7 +62,6 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   noResultsPlaceholder?: React.ReactElement
   /** We defer to the configuration component to determine this */
   selectAllIsChecked?: boolean
-  autoSizeWidth: boolean
 }
 
 /**
@@ -68,7 +70,6 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
 export type DetailsViewRowData = (EntityHeader | ProjectHeader | Hit) & {
   entityType: EntityType
   isSelected: boolean
-  isHidden: boolean
   isDisabled: boolean
   isVersionableEntity: boolean
   currentSelectedVersion?: number
@@ -101,7 +102,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   noResultsPlaceholder,
   enableSelectAll,
   selectAllIsChecked = false,
-  autoSizeWidth,
 }) => {
   const queryClient = useQueryClient()
 
@@ -233,19 +233,25 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     visibleTypes,
   ])
 
-  const tableData = entities.map<DetailsViewRowData>(e => {
-    const appearance = determineRowAppearance(e)
-    const entityType = getEntityTypeFromHeader(e)
-    return {
-      ...e,
-      entityType,
-      isSelected: appearance === 'selected',
-      isHidden: appearance === 'hidden',
-      isDisabled: appearance === 'disabled',
-      isVersionableEntity: isVersionableEntityType(entityType),
-      currentSelectedVersion: selected.get(e.id),
-    }
-  })
+  const tableData = entities.reduce(
+    (entities: DetailsViewRowData[], entity) => {
+      const appearance = determineRowAppearance(entity)
+      if (appearance !== 'hidden') {
+        // only include entities that should not be hidden
+        const entityType = getEntityTypeFromHeader(entity)
+        entities.push({
+          ...entity,
+          entityType,
+          isSelected: appearance === 'selected',
+          isDisabled: appearance === 'disabled',
+          isVersionableEntity: isVersionableEntityType(entityType),
+          currentSelectedVersion: selected.get(entity.id),
+        })
+      }
+      return entities
+    },
+    [],
+  )
 
   const SelectAllCheckboxRenderer = useMemo(() => {
     // Enabled if there's at least one visble & selectable entity, OR there's a page we haven't fetched
@@ -295,8 +301,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             classPrefix="DetailsViewTable"
             data={tableData}
             height={height}
-            width={autoSizeWidth ? width : 1200}
-            rowHeight={46}
+            width={width > MIN_TABLE_WIDTH ? width : MIN_TABLE_WIDTH}
+            rowHeight={ROW_HEIGHT}
             overscanRowCount={5}
             // Apply classes to the rows for styling
             rowClassName={({ rowIndex }: { rowIndex: number }) => {
@@ -313,7 +319,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               return {
                 'aria-selected': rowData.isSelected,
                 'aria-disabled': rowData.isDisabled,
-                'aria-hidden': rowData.isHidden,
               }
             }}
             headerCellProps={{
