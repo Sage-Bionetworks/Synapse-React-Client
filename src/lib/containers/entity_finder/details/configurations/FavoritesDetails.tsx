@@ -4,7 +4,7 @@ import { toError } from '../../../../utils/ErrorUtils'
 import { useGetFavoritesInfinite } from '../../../../utils/hooks/SynapseAPI/useFavorites'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
-import useGetIsAllSelectedFromInfiniteList from './useGetIsAllSelectedInfiniteList'
+import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 
 type FavoritesDetailsProps = EntityDetailsListSharedProps
 
