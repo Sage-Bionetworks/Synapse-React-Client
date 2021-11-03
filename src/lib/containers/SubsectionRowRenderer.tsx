@@ -101,8 +101,8 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
             return <></>
           }
           return <div key={`${colIndex}`} className="SubsectionRowRenderer__item">
-            {!columnNameIsSectionTitle && <h4 className="SubsectionRowRenderer__item__label">{selectColumn.name}</h4>}
-            {columnNameIsSectionTitle && <><h2>{selectColumn.name}</h2><hr /></>}
+            {!columnNameIsSectionTitle && <h4 className="SubsectionRowRenderer__item__subsection-title">{selectColumn.name}</h4>}
+            {columnNameIsSectionTitle && <><h2 className="SubsectionRowRenderer__item__section-title">{selectColumn.name}</h2><hr /></>}
             {
               rowSet.rows.map((row, rowIndex) => {
                 const cellValue = row.values[colIndex]

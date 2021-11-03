@@ -137,6 +137,11 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   return (
     <div className="UserCardListRotate bootstrap-4-backport">
       {isLoading && loadingScreen}
+      {!isLoading && userIds.length === 0 && (
+        <p className="font-italic">
+          No one was found.
+        </p>
+      )}
       {!isLoading && userIds.length > 0 && (
         <UserCardList list={userIds} size={size} data={queryData} />
       )}
