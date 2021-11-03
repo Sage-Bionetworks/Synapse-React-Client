@@ -6,16 +6,14 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   DetailsView,
-  DetailsViewProps
+  DetailsViewProps,
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsView'
 import { NO_VERSION_NUMBER } from '../../../../../lib/containers/entity_finder/EntityFinder'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
-import {
-  ENTITY_ID_VERSIONS
-} from '../../../../../lib/utils/APIConstants'
+import { ENTITY_ID_VERSIONS } from '../../../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
-  getEndpoint
+  getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
 import {
@@ -23,14 +21,17 @@ import {
   EntityHeader,
   EntityType,
   PaginatedResults,
-  SortBy
+  SortBy,
 } from '../../../../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
 import { rest, server } from '../../../../../mocks/msw/server'
 
 // Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
-jest.mock('react-virtualized-auto-sizer', () => ({ children }) =>
-  children({ height: 600, width: 1200 }),
+jest.mock(
+  'react-virtualized-auto-sizer',
+  () =>
+    ({ children }) =>
+      children({ height: 600, width: 1200 }),
 )
 
 const mockToggleSelection = jest.fn()
@@ -130,7 +131,6 @@ const defaultProps: DetailsViewProps = {
   noResultsPlaceholder: <></>,
   mustSelectVersionNumber: false,
   enableSelectAll: true,
-  autoSizeWidth: true,
 }
 
 function renderComponent(
@@ -195,10 +195,6 @@ describe('DetailsView tests', () => {
         // Nothing is disabled
         expect(rows[FILE_INDEX]).not.toBeDisabled()
         expect(rows[PROJECT_INDEX]).not.toBeDisabled()
-
-        // Nothing is hidden
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-hidden', 'false')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-hidden', 'false')
       })
 
       it('Creates a row with the selected appearance', async () => {
@@ -216,10 +212,6 @@ describe('DetailsView tests', () => {
         // Nothing is disabled
         expect(rows[FILE_INDEX]).toHaveAttribute('aria-disabled', 'false')
         expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-disabled', 'false')
-
-        // Nothing is hidden
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-hidden', 'false')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-hidden', 'false')
       })
 
       it('Creates a row with the disabled appearance', async () => {
@@ -239,32 +231,6 @@ describe('DetailsView tests', () => {
         // One row is disabled (the file)
         expect(rows[FILE_INDEX]).toHaveAttribute('aria-disabled', 'true')
         expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-disabled', 'false')
-
-        // Nothing is hidden
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-hidden', 'false')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-hidden', 'false')
-      })
-
-      it('Creates a row with the hidden appearance', () => {
-        renderComponent({
-          selected: Map(),
-          visibleTypes: [EntityType.FILE], // !
-          selectableTypes: Object.values(EntityType),
-        })
-
-        // Nothing is selected
-        expect(
-          screen.queryByRole('row', { selected: true }),
-        ).not.toBeInTheDocument()
-
-        const rows = screen.getAllByRole('row', { hidden: true })
-        // Nothing is disabled
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-disabled', 'false')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-disabled', 'false')
-
-        // One row is hidden--the project
-        expect(rows[FILE_INDEX]).toHaveAttribute('aria-hidden', 'false')
-        expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-hidden', 'true')
       })
     })
   })
