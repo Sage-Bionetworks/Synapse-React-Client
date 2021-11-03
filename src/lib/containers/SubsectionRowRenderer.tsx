@@ -84,6 +84,12 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
     }
   }, [sql, accessToken, searchParams, sqlOperator])
 
+  /**
+   * If a "friendly values map" was provided, then use the friendly value if any of the raw values match.
+   * Otherwise, just return the raw value.
+   * @param rawValue
+   * @returns 
+   */
   const getFriendlyValue = (rawValue: string) => {
     if (!friendlyValuesMap) {
       return rawValue
@@ -97,20 +103,24 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
       {isLoading && <SkeletonTable numRows={2} numCols={1} />}
       {!isLoading && rowSet && rowSet.rows.length > 0 && (
         rowSet.headers.map((selectColumn, colIndex) => {
+          // If a link column was provided (that contain URLs), do not create a page sub-section for that column.
           if (columnLink && selectColumn.name == columnLink.linkColumnName) {
             return <></>
           }
           return <div key={`${colIndex}`} className="SubsectionRowRenderer__item" role="table">
+            {/* Is this a page subsection (default), or a page section? */}
             {!columnNameIsSectionTitle && <h4 className="SubsectionRowRenderer__item__subsection-title" role='heading'>{selectColumn.name}</h4>}
             {columnNameIsSectionTitle && <><h2 className="SubsectionRowRenderer__item__section-title" role='heading'>{selectColumn.name}</h2><hr /></>}
             <div role="rowgroup">
               {
                 rowSet.rows.map((row, rowIndex) => {
                   const cellValue = row.values[colIndex]
+                  // If the cell value is undefined, then go to the next row.
                   if (!cellValue) {
                     return <></>
                   }
                   let values
+                  // If this cell value represents a multi-value (the select column type is a *_LIST column), then parse it and break it apart
                   if (LIST_COLUMN_TYPES.includes(selectColumn.columnType)) {
                     const jsonData: string[] = JSON.parse(cellValue)
                     values = jsonData.map((val: string, index: number) => {
@@ -123,12 +133,13 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
                     }
                     )
                   } else {
+                    // If this cell value represents a single value
                     let renderedValue
                     const friendlyCellValue = getFriendlyValue(cellValue)
                     if (isMarkdown) {
                       renderedValue = <MarkdownSynapse markdown={friendlyCellValue} />
                     } else if (columnLink && columnLink.matchColumnName == selectColumn.name) {
-                      // we need to link, where the url is in another column
+                      // If a link column was provided, then we need to create links (the url is in this other column)
                       const urlColumnIndex = rowSet.headers.findIndex(col => col.name == columnLink.linkColumnName)
                       if (urlColumnIndex > -1) {
                         renderedValue = <a rel="noopener noreferrer" target="_blank" href={row.values[urlColumnIndex]}>{friendlyCellValue}</a>
