@@ -84,7 +84,7 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
     }
   }, [sql, accessToken, searchParams, sqlOperator])
 
-  const getFriendlyValue = (rawValue:string) => {
+  const getFriendlyValue = (rawValue: string) => {
     if (!friendlyValuesMap) {
       return rawValue
     }
@@ -100,50 +100,52 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
           if (columnLink && selectColumn.name == columnLink.linkColumnName) {
             return <></>
           }
-          return <div key={`${colIndex}`} className="SubsectionRowRenderer__item">
-            {!columnNameIsSectionTitle && <h4 className="SubsectionRowRenderer__item__subsection-title">{selectColumn.name}</h4>}
-            {columnNameIsSectionTitle && <><h2 className="SubsectionRowRenderer__item__section-title">{selectColumn.name}</h2><hr /></>}
-            {
-              rowSet.rows.map((row, rowIndex) => {
-                const cellValue = row.values[colIndex]
-                if (!cellValue) {
-                  return <></>
-                }
-                let values
-                if (LIST_COLUMN_TYPES.includes(selectColumn.columnType)) {
-                  const jsonData: string[] = JSON.parse(cellValue)
-                  values = jsonData.map((val: string, index: number) => {
+          return <div key={`${colIndex}`} className="SubsectionRowRenderer__item" role="table">
+            {!columnNameIsSectionTitle && <h4 className="SubsectionRowRenderer__item__subsection-title" role='heading'>{selectColumn.name}</h4>}
+            {columnNameIsSectionTitle && <><h2 className="SubsectionRowRenderer__item__section-title" role='heading'>{selectColumn.name}</h2><hr /></>}
+            <div role="rowgroup">
+              {
+                rowSet.rows.map((row, rowIndex) => {
+                  const cellValue = row.values[colIndex]
+                  if (!cellValue) {
+                    return <></>
+                  }
+                  let values
+                  if (LIST_COLUMN_TYPES.includes(selectColumn.columnType)) {
+                    const jsonData: string[] = JSON.parse(cellValue)
+                    values = jsonData.map((val: string, index: number) => {
                       return (
-                        <div key={index} className="SubsectionRowRenderer__item__value">
+                        <div key={index} className="SubsectionRowRenderer__item__value" role="row">
                           {isMarkdown && <MarkdownSynapse markdown={getFriendlyValue(val)} />}
                           {!isMarkdown && <p>{getFriendlyValue(val)}</p>}
                         </div>
                       )
                     }
-                  )
-                } else {
-                  let renderedValue
-                  const friendlyCellValue = getFriendlyValue(cellValue)
-                  if (isMarkdown) {
-                    renderedValue = <MarkdownSynapse markdown={friendlyCellValue} />
-                  } else if (columnLink && columnLink.matchColumnName == selectColumn.name) {
-                    // we need to link, where the url is in another column
-                    const urlColumnIndex = rowSet.headers.findIndex(col => col.name == columnLink.linkColumnName)
-                    if (urlColumnIndex > -1) {
-                      renderedValue = <a rel="noopener noreferrer" target="_blank" href={row.values[urlColumnIndex]}>{friendlyCellValue}</a>
+                    )
+                  } else {
+                    let renderedValue
+                    const friendlyCellValue = getFriendlyValue(cellValue)
+                    if (isMarkdown) {
+                      renderedValue = <MarkdownSynapse markdown={friendlyCellValue} />
+                    } else if (columnLink && columnLink.matchColumnName == selectColumn.name) {
+                      // we need to link, where the url is in another column
+                      const urlColumnIndex = rowSet.headers.findIndex(col => col.name == columnLink.linkColumnName)
+                      if (urlColumnIndex > -1) {
+                        renderedValue = <a rel="noopener noreferrer" target="_blank" href={row.values[urlColumnIndex]}>{friendlyCellValue}</a>
+                      } else {
+                        renderedValue = <p>{friendlyCellValue}</p>
+                      }
                     } else {
                       renderedValue = <p>{friendlyCellValue}</p>
                     }
-                  } else {
-                    renderedValue = <p>{friendlyCellValue}</p>
-                  }
-                  values = <div key={rowIndex} className="SubsectionRowRenderer__item__value">
+                    values = <div key={rowIndex} className="SubsectionRowRenderer__item__value" role="row">
                       {renderedValue}
                     </div>
-                }
-                return values
-              })
-            }
+                  }
+                  return values
+                })
+              }
+            </div>
           </div>
         })
       )}
