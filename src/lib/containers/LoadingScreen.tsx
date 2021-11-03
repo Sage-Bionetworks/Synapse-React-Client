@@ -38,11 +38,11 @@ type BlockingLoaderProps = {
 }
 export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show }) => {
   useEffect(() => {
-    document.body.style.cursor = 'wait'
+    document.body.style.cursor = show ? 'wait' : 'default'
     return () => {
       document.body.style.cursor = 'default'
     }
-  }, [])
+  }, [show])
 
   return (
     <Modal
