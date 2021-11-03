@@ -13,7 +13,7 @@ import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
-import { getIsAllSelectedFromInfiniteList } from './configurations/useGetIsAllSelectedInfiniteList'
+import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { DetailsView } from './view/DetailsView'
 
 export enum EntityDetailsListDataConfigurationType {

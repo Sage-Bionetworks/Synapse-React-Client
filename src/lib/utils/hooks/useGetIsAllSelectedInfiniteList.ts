@@ -1,14 +1,10 @@
 import { Map } from 'immutable'
 import { useEffect, useState } from 'react'
 import { FetchNextPageOptions, InfiniteQueryObserverResult } from 'react-query'
-import { getEntityTypeFromHeader } from '../../../../utils/functions/EntityTypeUtils'
-import { SynapseClientError } from '../../../../utils/SynapseClient'
-import {
-  EntityHeader,
-  EntityType,
-  ProjectHeader,
-} from '../../../../utils/synapseTypes'
-import { Hit } from '../../../../utils/synapseTypes/Search'
+import { getEntityTypeFromHeader } from '../functions/EntityTypeUtils'
+import { SynapseClientError } from '../SynapseClient'
+import { EntityHeader, EntityType, ProjectHeader } from '../synapseTypes'
+import { Hit } from '../synapseTypes/Search'
 
 /**
  * Given a list of entities and a map of which are selected, return a boolean indicating if all of the entities that can be selected
@@ -39,27 +35,34 @@ export function getIsAllSelectedFromInfiniteList<T>(
   if (entities.length === 0 || selected.size === 0) {
     return false
   } else {
-    const allFetchedChildrenAreSelected = entities.every(
+    const allSelectableFetchedChildrenAreSelected = entities.every(
       e =>
         selected.has(e.id) ||
         !selectableTypes.includes(getEntityTypeFromHeader(e)),
     )
     if (
-      allFetchedChildrenAreSelected &&
+      allSelectableFetchedChildrenAreSelected &&
       hasNextPage &&
       fetchNextPage &&
       !isFetchingNextPage
     ) {
+      // We don't yet know if the checkbox should be true or false, so get the next page
       fetchNextPage()
       return false
-    } else if (
-      allFetchedChildrenAreSelected &&
-      !hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      return true
     } else {
-      return false
+      if (isFetchingNextPage) {
+        // Wait for the next page to be retrieved
+        return false
+      }
+
+      // At this point, we've fetched all of the pages or encountered an unselected entity
+      // The checkbox should be true if there are no unselected entities, and there's at least one selectable entity
+      const selectableEntitiesArePresent = entities.some(e =>
+        selectableTypes.includes(getEntityTypeFromHeader(e)),
+      )
+      return (
+        allSelectableFetchedChildrenAreSelected && selectableEntitiesArePresent
+      )
     }
   }
 }
