@@ -1,6 +1,3 @@
-import * as React from 'react'
-import { CSSTransition } from 'react-transition-group'
-import { LockedFacet, QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faCaretDown,
@@ -9,15 +6,26 @@ import {
   faTimes,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Collapse } from '@material-ui/core'
+import React from 'react'
+import { CSSTransition } from 'react-transition-group'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { ColumnModel, ColumnType } from '../utils/synapseTypes'
 import {
-  ColumnSingleValueQueryFilter,
-  ColumnSingleValueFilterOperator,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
   QueryFilter,
 } from '../utils/synapseTypes/Table/QueryFilter'
+import {
+  LockedFacet,
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from './QueryWrapper'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -115,12 +123,15 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (columnName === '') {
       if (searchable) {
         // If searchable column names are defined in the config, grab the first one (that is not locked)
-        columnName = searchable.filter(colName => colName !== lockedFacet?.facet)[0]        
+        columnName = searchable.filter(
+          colName => colName !== lockedFacet?.facet,
+        )[0]
       } else {
         // Otherwise, get the first column model that can be searched.
         // And for study details page: if lockedFacet is defined, remove it from the search
-        const searchableColumnModels = this.props.data?.columnModels?.filter(el => el.name !== lockedFacet?.facet)
-            .filter(el => this.isSupportedColumn(el))
+        const searchableColumnModels = this.props.data?.columnModels
+          ?.filter(el => el.name !== lockedFacet?.facet)
+          .filter(el => this.isSupportedColumn(el))
         columnName = searchableColumnModels?.[0].name ?? ''
       }
     }
@@ -134,22 +145,28 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const { additionalFilters = [] } = lastQueryRequestDeepClone.query
 
     const indexOfColumn = additionalFilters.findIndex((el: QueryFilter) => {
-      if (el.columnName === columnName) {
+      if (
+        isColumnSingleValueQueryFilter(el) ||
+        (isColumnMultiValueFunctionQueryFilter(el) &&
+          el.columnName === columnName)
+      ) {
         return true
       }
       return false
     })
     if (indexOfColumn === -1) {
       // get the column model to figure out what kind of filter we should apply.
-      const columnModel:ColumnModel|undefined = this.props.data?.columnModels?.filter(el => el.name === columnName)[0]
+      const columnModel: ColumnModel | undefined =
+        this.props.data?.columnModels?.filter(el => el.name === columnName)[0]
       if (columnModel?.columnType.endsWith('_LIST')) {
-        const columnMultiValueQueryFilter: ColumnMultiValueFunctionQueryFilter = {
-          columnName,
-          function: ColumnMultiValueFunction.HAS_LIKE,
-          values: [`%${searchText}%`],
-          concreteType:
-            'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
-        }
+        const columnMultiValueQueryFilter: ColumnMultiValueFunctionQueryFilter =
+          {
+            columnName,
+            function: ColumnMultiValueFunction.HAS_LIKE,
+            values: [`%${searchText}%`],
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+          }
         additionalFilters.push(columnMultiValueQueryFilter)
       } else {
         const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
@@ -162,7 +179,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         additionalFilters.push(columnSingleValueQueryFilter)
       }
     } else {
-      additionalFilters[indexOfColumn].values.push(`%${searchText}%`)
+      ;(
+        additionalFilters[indexOfColumn] as
+          | ColumnSingleValueQueryFilter
+          | ColumnMultiValueFunctionQueryFilter
+      ).values.push(`%${searchText}%`)
     }
     lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
     executeQueryRequest!(lastQueryRequestDeepClone)
@@ -189,24 +210,28 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   public isSupportedColumnAndInProps = (columnModel?: ColumnModel) => {
     if (this.isSupportedColumn(columnModel)) {
-        // return true if the searchable array contains this column name
-        const { searchable } = this.props
-        return searchable?.some(e => e === columnModel?.name)
+      // return true if the searchable array contains this column name
+      const { searchable } = this.props
+      return searchable?.some(e => e === columnModel?.name)
     }
     return false
   }
 
   render() {
-    const { data, topLevelControlsState, facetAliases, searchable, lockedFacet } = this.props
+    const {
+      data,
+      topLevelControlsState,
+      facetAliases,
+      searchable,
+      lockedFacet,
+    } = this.props
     const { searchText, show, columnName } = this.state
     let searchColumns: string[] = []
 
     // searchable specifies the order of the columns to search
     if (searchable) {
       searchColumns = searchable
-        .map(el =>
-          data?.columnModels?.find(model => model.name === el),
-        )
+        .map(el => data?.columnModels?.find(model => model.name === el))
         .filter(this.isSupportedColumnAndInProps)
         .map(el => el!.name)
     } else if (data?.columnModels) {
@@ -221,56 +246,56 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     }
     const showFacetFilter = topLevelControlsState?.showFacetFilter
     return (
-      <div className={`SearchV2 ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
-        <CSSTransition
-          in={topLevelControlsState?.showSearchBar}
-          classNames="SearchV2__animate_bar"
-          timeout={{ enter: 0, exit: 300 }}
-        >
-          <div className="SearchV2__animate_height">
-            <form
-              className="SearchV2__searchbar"
-              onSubmit={this.search}
+      <div
+        className={`SearchV2 ${
+          showFacetFilter
+            ? QUERY_FILTERS_EXPANDED_CSS
+            : QUERY_FILTERS_COLLAPSED_CSS
+        }`}
+      >
+        <Collapse in={topLevelControlsState?.showSearchBar}>
+          <form
+            className="SearchV2__searchbar"
+            onSubmit={this.search}
+            onClick={() => {
+              this.setState({ show: true })
+            }}
+            ref={this.searchFormRef}
+          >
+            <FontAwesomeIcon
+              className="SearchV2__searchbar__searchicon"
+              size={'sm'}
+              icon={'search'}
+            />
+            <input
+              onChange={this.handleChange}
               onClick={() => {
-                this.setState({ show: true })
+                this.setState({
+                  show: true,
+                })
               }}
-              ref={this.searchFormRef}
-            >
-              <FontAwesomeIcon
-                className="SearchV2__searchbar__searchicon"
-                size={'sm'}
-                icon={'search'}
-              />
-              <input
-                onChange={this.handleChange}
+              placeholder="Enter Search Terms"
+              value={searchText}
+              type="text"
+            />
+            {this.state.searchText.length > 0 && (
+              <button
+                className="SearchV2__searchbar__clearbutton"
+                type="button"
                 onClick={() => {
                   this.setState({
-                    show: true,
+                    searchText: '',
                   })
                 }}
-                placeholder="Enter Search Terms"
-                value={searchText}
-                type="text"
-              />
-              {this.state.searchText.length > 0 && (
-                <button
-                  className="SearchV2__searchbar__clearbutton"
-                  type="button"
-                  onClick={() => {
-                    this.setState({
-                      searchText: '',
-                    })
-                  }}
-                >
-                  <FontAwesomeIcon
-                    className="SRC-primary-text-color"
-                    icon="times"
-                  />
-                </button>
-              )}
-            </form>
-          </div>
-        </CSSTransition>
+              >
+                <FontAwesomeIcon
+                  className="SRC-primary-text-color"
+                  icon="times"
+                />
+              </button>
+            )}
+          </form>
+        </Collapse>
         <div className="SearchV2__dropdown_pos">
           <CSSTransition
             in={show}
@@ -298,7 +323,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                           value={name}
                           checked={isSelected}
                           onClick={() => {
-                            this.searchFormRef?.current?.querySelector('input')?.focus()
+                            this.searchFormRef?.current
+                              ?.querySelector('input')
+                              ?.focus()
                             this.setState({
                               columnName: name,
                             })

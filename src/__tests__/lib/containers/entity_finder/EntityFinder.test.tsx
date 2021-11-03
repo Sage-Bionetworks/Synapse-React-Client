@@ -392,7 +392,7 @@ describe('EntityFinder tests', () => {
   })
 
   it('handles searching for terms', async () => {
-    renderComponent()
+    renderComponent({ selectableTypes: [EntityType.FILE] })
 
     const query = 'my search terms '
     const queryTerms = ['my', 'search', 'terms']
@@ -408,6 +408,35 @@ describe('EntityFinder tests', () => {
             type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
             query: {
               queryTerm: queryTerms,
+              // Verify that at least one of the omitted types is excluded from the search
+              booleanQuery: expect.arrayContaining([
+                {
+                  key: 'node_type',
+                  value: 'project',
+                  not: true,
+                },
+              ]),
+            },
+          },
+        }),
+        {},
+      ),
+    )
+    await waitFor(() =>
+      expect(mockDetailsList).toBeCalledWith(
+        expect.objectContaining({
+          configuration: {
+            type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+            query: {
+              queryTerm: queryTerms,
+              // The lone selectable type should not have been excluded
+              booleanQuery: expect.not.arrayContaining([
+                {
+                  key: 'node_type',
+                  value: 'file',
+                  not: true,
+                },
+              ]),
             },
           },
         }),

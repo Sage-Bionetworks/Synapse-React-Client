@@ -34,9 +34,10 @@ describe('insertConditionsFromSearchParams', () => {
     }
     let operator: SQLOperator = 'LIKE'
     // if no search params are there, then it should return the input sql
-    expect(insertConditionsFromSearchParams({}, sql, operator)).toBe(sql)
+    expect(insertConditionsFromSearchParams(sql, undefined, operator)).toBe(sql)
+    expect(insertConditionsFromSearchParams(sql, {}, operator)).toBe(sql)
     // if the only search params set are from the QueryWrapper, then it should return the input sql
-    expect(insertConditionsFromSearchParams(searchParams, sql, operator)).toBe(
+    expect(insertConditionsFromSearchParams(sql, searchParams, operator)).toBe(
       sql,
     )
   })
@@ -49,7 +50,7 @@ describe('insertConditionsFromSearchParams', () => {
     }
     let operator: SQLOperator = '='
     // if no search params are there, then it should return the input sql
-    const result = insertConditionsFromSearchParams(searchParams, sql, operator)
+    const result = insertConditionsFromSearchParams(sql, searchParams, operator)
     const expectedResult = 'SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = \'syn21754060\')'
     expect(result).toBe(expectedResult)
   })
@@ -62,7 +63,7 @@ describe('insertConditionsFromSearchParams', () => {
     }
     let operator: SQLOperator = '='
     // if no search params are there, then it should return the input sql
-    const result = insertConditionsFromSearchParams(searchParams, sql, operator)
+    const result = insertConditionsFromSearchParams(sql, searchParams, operator)
     const expectedResult = 'SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = \'syn21754060\')\n  GROUP BY `x`'
     expect(result).toBe(expectedResult)
   })
@@ -75,7 +76,7 @@ describe('insertConditionsFromSearchParams', () => {
     }
     let operator: SQLOperator = '='
     // if no search params are there, then it should return the input sql
-    const result = insertConditionsFromSearchParams(searchParams, sql, operator)
+    const result = insertConditionsFromSearchParams(sql, searchParams, operator)
     const expectedResult = 'SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = \'syn21754060\')\n  ORDER BY `study` ASC'
     expect(result).toBe(expectedResult)
   })

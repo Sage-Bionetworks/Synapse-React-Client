@@ -30,33 +30,41 @@ export function getQueryRequest(sql: string): QueryBundleRequest {
     },
   }
 }
-const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsCardsProps> = props => {
-  const { sql, facetsToPlot, rgbIndex, ...rest } = props
-  const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
-  return (
-    <div className="SingleQueryFacetPlotsCards">
-      <SynapseContextConsumer>
-        {context => (
-          <QueryWrapper
-            {...rest}
-            token={context?.accessToken}
-            initQueryRequest={initQueryRequest}
-          >
-            <ErrorBanner />
-            {facetsToPlot?.map(facetName => {
-              return (
-                <FacetPlotsCard
-                  key={`FacetPlotCard-${facetName}`}
-                  facetsToPlot={[facetName]}
-                  rgbIndex={rgbIndex}
-                />
-              )
-            })}
-          </QueryWrapper>
-        )}
-      </SynapseContextConsumer>
-    </div>
-  )
-}
+const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsCardsProps> =
+  props => {
+    const { sql, facetsToPlot, rgbIndex, ...rest } = props
+    const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
+    return (
+      <div className="SingleQueryFacetPlotsCards">
+        <SynapseContextConsumer>
+          {context => (
+            <QueryWrapper
+              {...rest}
+              token={context?.accessToken}
+              initQueryRequest={initQueryRequest}
+            >
+              {queryWrapperChildProps => {
+                return (
+                  <>
+                    <ErrorBanner {...queryWrapperChildProps} />
+                    {facetsToPlot?.map(facetName => {
+                      return (
+                        <FacetPlotsCard
+                          {...queryWrapperChildProps}
+                          key={`FacetPlotCard-${facetName}`}
+                          facetsToPlot={[facetName]}
+                          rgbIndex={rgbIndex}
+                        />
+                      )
+                    })}
+                  </>
+                )
+              }}
+            </QueryWrapper>
+          )}
+        </SynapseContextConsumer>
+      </div>
+    )
+  }
 
 export default SingleQueryFacetPlotsCards
