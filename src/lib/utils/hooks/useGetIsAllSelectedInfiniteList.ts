@@ -50,8 +50,8 @@ export function getIsAllSelectedFromInfiniteList<T>(
       fetchNextPage()
       return false
     } else {
-      if (hasNextPage || isFetchingNextPage) {
-        // We are waiting on the next page to be retrieved
+      if (isFetchingNextPage) {
+        // Wait for the next page to be retrieved
         return false
       }
 
