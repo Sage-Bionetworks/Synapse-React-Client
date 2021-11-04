@@ -4,6 +4,8 @@ import IconSvg from '../IconSvg'
 import { ShowMore } from './utils'
 import { getFriendlyPreciseDuration } from '../../utils/functions/getFriendlyPreciseDuration'
 import { unitOfTime } from 'moment'
+import { Skeleton } from '@material-ui/lab'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 type ObservationCardSchema = {
   submitterName: string
@@ -60,6 +62,29 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
         </div>
         <div className="ObservationCard__tags">
           {tag && <span className="SRC-tag">{tag}</span>}
+        </div>
+      </div>
+  )
+}
+
+export const LoadingObservationCard: React.FunctionComponent = () => {
+  return (
+    <div className="SRC-portalCard ObservationCard">
+        <div className="ObservationCard__submitter">
+          <span><Skeleton width='100px'/></span>
+        </div>
+        <div className="ObservationCard__time">
+          <IconSvg
+            options={{
+              icon: 'time'
+            }}
+          />
+        </div>
+        <div className="ObservationCard__text">
+          <SkeletonTable numCols={1} numRows={4} />
+        </div>
+        <div className="ObservationCard__tags">
+          <Skeleton width='80px'/>
         </div>
       </div>
   )

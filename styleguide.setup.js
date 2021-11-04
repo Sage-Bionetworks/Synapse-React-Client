@@ -24,6 +24,7 @@ import moment from 'moment'
 import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
 import { Checkbox } from './src/lib/containers/widgets/Checkbox'
 import { RadioGroup } from './src/lib/containers/widgets/RadioGroup'
+import Typography from './src/lib/utils/typography/Typography'
 import * as ReactBootstrap from 'react-bootstrap'
 import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
 import {
@@ -92,3 +93,4 @@ global.RadioGroup = RadioGroup
 global.ReactBootstrap = ReactBootstrap
 global.ReactQueryDevtoolsPanel = ReactQueryDevtoolsPanel
 global.displayToast = displayToast
+global.Typography = Typography

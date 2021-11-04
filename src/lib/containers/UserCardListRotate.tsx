@@ -7,11 +7,11 @@ import {
   QueryResultBundle,
 } from '../utils/synapseTypes/Table'
 import UserCardList from './UserCardList'
-import loadingScreen from './LoadingScreen'
 import { UserCardSize } from './UserCard'
 import { LARGE_USER_CARD } from '../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { LoadingUserCardMedium } from './UserCardMedium'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -136,7 +136,12 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
 
   return (
     <div className="UserCardListRotate bootstrap-4-backport">
-      {isLoading && loadingScreen}
+      {isLoading && <LoadingUserCardMedium />}
+      {!isLoading && userIds.length === 0 && (
+        <p className="font-italic">
+          No one was found.
+        </p>
+      )}
       {!isLoading && userIds.length > 0 && (
         <UserCardList list={userIds} size={size} data={queryData} />
       )}
