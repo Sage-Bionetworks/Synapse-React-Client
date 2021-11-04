@@ -60,6 +60,7 @@ import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
+import Typography from './utils/typography/Typography'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -117,7 +118,7 @@ const SynapseComponents = {
   UserProfileLinks,
   MarkdownPopover,
   FeaturedToolsList,
-  SubsectionRowRenderer,
+  SubsectionRowRenderer
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }
+export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext, Typography }

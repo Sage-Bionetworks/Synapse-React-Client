@@ -10,6 +10,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import MarkdownSynapse from './MarkdownSynapse'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { ColumnSpecifiedLink } from './CardContainerLogic'
+import Typography from '../utils/typography/Typography'
 
 export type FriendlyValuesMap = {
   [index: string]: string
@@ -62,7 +63,7 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
         },
       }
 
-      const queryResultBundle = await SynapseClient.getFullQueryTableResults(
+      const queryResultBundle = await SynapseClient.getQueryTableResults(
         request,
         accessToken,
       )
@@ -108,9 +109,8 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
             return <></>
           }
           return <div key={`${colIndex}`} className="SubsectionRowRenderer__item" role="table">
-            {/* Is this a page subsection (default), or a page section? */}
-            {!columnNameIsSectionTitle && <h4 className="SubsectionRowRenderer__item__subsection-title" role='heading'>{selectColumn.name}</h4>}
-            {columnNameIsSectionTitle && <><h2 className="SubsectionRowRenderer__item__section-title" role='heading'>{selectColumn.name}</h2><hr /></>}
+            <Typography variant={columnNameIsSectionTitle ? 'sectionTitle' : 'subsectionHeader'} role='heading'>{selectColumn.name}</Typography>
+            {columnNameIsSectionTitle && <hr />}
             <div role="rowgroup">
               {
                 rowSet.rows.map((row, rowIndex) => {

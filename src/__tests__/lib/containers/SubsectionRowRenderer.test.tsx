@@ -25,7 +25,7 @@ function renderComponent(
 describe('SubsectionRowRenderer rendering tests', () => {
   it('renders multi-row response, using a link column and a friendly values map', async () => {
     const data = syn26433429CatalogNumberJson as QueryResultBundle
-    SynapseClient.getFullQueryTableResults = jest.fn(() =>
+    SynapseClient.getQueryTableResults = jest.fn(() =>
       Promise.resolve(data),
     )
 
@@ -58,7 +58,7 @@ describe('SubsectionRowRenderer rendering tests', () => {
 
   it('renders multi-value column, where the markdown processor has been run on each value', async () => {
     const data = mockMultiValueColumnResultsJson as QueryResultBundle
-    SynapseClient.getFullQueryTableResults = jest.fn(() =>
+    SynapseClient.getQueryTableResults = jest.fn(() =>
       Promise.resolve(data),
     )
 

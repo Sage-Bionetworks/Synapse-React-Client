@@ -16,6 +16,8 @@ import { ToastMessage } from './ToastMessage'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { Skeleton } from '@material-ui/lab'
+import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 
 library.add(faCircle)
 library.add(faEllipsisV)
@@ -340,4 +342,18 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   )
 }
 
+export const LoadingUserCardMedium: React.FunctionComponent = () => {
+  return <div
+    className="cardContainer SRC-userCard SRC-userCardMediumUp"
+    style={{width:'380px'}}
+  >
+    <Skeleton variant='circle' width='80px' height='80px'/>
+    <div style={{width:'250px'}}>
+      <SkeletonTable numCols={1} numRows={2}/>
+    </div>
+  </div>
+}
+
+
 export default UserCardMedium
+
