@@ -19,7 +19,8 @@ import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
 import { Dataset, Funder } from './row_renderers'
-import { ObservationCard } from './row_renderers/ObservationCard'
+import { LoadingObservationCard, ObservationCard } from './row_renderers/ObservationCard'
+import NoContentAvailable from './table/NoContentAvailable'
 import SearchResultsNotFound from './table/SearchResultsNotFound'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
@@ -94,7 +95,10 @@ export const CardContainer = (props: CardContainerProps) => {
   })
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (!data) {
-    return <div>{isLoading && loadingScreen}</div>
+    return <div>
+      {isLoading && type === OBSERVATION_CARD && <LoadingObservationCard />}
+      {isLoading && type !== OBSERVATION_CARD && loadingScreen}
+    </div>
   } else if (data && data.queryResult.queryResults.rows.length === 0) {
     // data was retrieved from the backend but there is none to show.
     if (queryRequest.query.additionalFilters) {
@@ -102,15 +106,7 @@ export const CardContainer = (props: CardContainerProps) => {
     }
     // else show "no results" UI (see PORTALS-1497)
     return (
-      <>
-        <p className="SRC-no-results-title">
-          There is currently no content here.
-        </p>
-        <p className="SRC-no-results-description">
-          Information is always being updated, so check back later to see if
-          content has been added.
-        </p>
-      </>
+      <NoContentAvailable />
     )
   }
   const schema = {}

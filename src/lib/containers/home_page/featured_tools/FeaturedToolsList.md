@@ -1,12 +1,13 @@
 
 ```jsx
+
 <FeaturedToolsList
-  entityId={'syn26344826'}
-  idColumnName={'Resource_id'}
-  nameColumnName={'Resource Name'}
-  descriptionColumnName={'Description'}
-  typeColumnName={'Resource Type'}
-  dateColumnName={'Date Added'}
-  toolDetailPageURL={'/ToolDetailsPage/resourceId='}
+  entityId={'syn26433342'}
+  idColumnName={'resourceId'}
+  nameColumnName={'resourceName'}
+  descriptionColumnName={'description'}
+  typeColumnName={'resourceType'}
+  dateColumnName={'dateAdded'}
+  toolDetailPageURL={'/Explore/Tools/DetailsPage?Resource_id='}
 />
 ```

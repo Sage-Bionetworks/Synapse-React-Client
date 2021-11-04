@@ -18,6 +18,8 @@ interface ITypography extends Omit<TypographyProps, 'variant'> {
   | 'label'
   | 'buttonLink'
   | 'hintText'
+  | 'sectionTitle'
+  | 'subsectionHeader'
   component?: ElementType
 }
 

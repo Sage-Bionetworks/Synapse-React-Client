@@ -89,8 +89,21 @@ const useTypographyStyle = makeStyles(
       fontWeight: 400,
       lineHeight: "24px",
     },
+    sectionTitle: {
+      ...basicFontStyle,
+      fontSize: "21px",
+      fontWeight: 700,
+      lineHeight: "25px",
+      textTransform: "uppercase",
+    },
+    subsectionHeader: {
+      ...basicFontStyle,
+      fontSize: "18px",
+      fontWeight: 700,
+      lineHeight: "21px",
+    }
   }),
-  { name: 'myTypography' },
+  { name: 'SRC-Typography' },
 )
 
 export default useTypographyStyle
