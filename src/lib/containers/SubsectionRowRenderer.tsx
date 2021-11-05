@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { insertConditionsFromSearchParams, KeyValue, parseEntityIdFromSqlStatement, SQLOperator } from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
@@ -11,6 +11,7 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { ColumnSpecifiedLink } from './CardContainerLogic'
 import Typography from '../utils/typography/Typography'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 
 export type FriendlyValuesMap = {
   [index: string]: string
@@ -43,7 +44,7 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
   const [rowSet, setRowSet] = useState<RowSet>()
   const [isLoading, setIsLoading] = useState<boolean>()
   let mounted = true
-  useEffect(() => {
+  useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
       const sqlUsed = insertConditionsFromSearchParams(

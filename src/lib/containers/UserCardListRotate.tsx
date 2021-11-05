@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { insertConditionsFromSearchParams, KeyValue, parseEntityIdFromSqlStatement, SQLOperator } from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
@@ -12,6 +12,7 @@ import { LARGE_USER_CARD } from '../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { LoadingUserCardMedium } from './UserCardMedium'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -82,7 +83,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   const storageUidKey = `${STORED_UID_KEY}-${sql}-${JSON.stringify(
     selectedFacets,
   )}`
-  useEffect(() => {
+  useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
       const sqlUsed = insertConditionsFromSearchParams(
