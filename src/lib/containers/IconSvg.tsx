@@ -28,7 +28,8 @@ import {
   GetAppTwoTone,
   StarTwoTone,
   SearchTwoTone,
-  WatchLater
+  WatchLater,
+  LayersTwoTone
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -171,6 +172,8 @@ const getIcon = (options:IconSvgOptions) => {
       return <AssessmentTwoTone style={muiSvgStyle} />
     case 'discussion':
       return <QuestionAnswerTwoTone style={muiSvgStyle} />
+    case 'dataset':
+      return <LayersTwoTone style={muiSvgStyle} />
     case 'docker':
       return <Docker fill={color ? color : "currentColor"} style={customSvgStyle} />
     case 'accountCertified':
