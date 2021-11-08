@@ -8,6 +8,8 @@ import {
 } from '../utils/functions/getEndpoint'
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
 
+export const GOOGLE_AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
+
 type State = {
   username: string
   password: string
@@ -131,8 +133,8 @@ class Login extends React.Component<Props, State> {
     event.preventDefault()
     const redirectUrl = this.props.googleRedirectUrl
       ? this.props.googleRedirectUrl
-      : `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`
-    SynapseClient.oAuthUrlRequest(SynapseClient.AUTH_PROVIDER, redirectUrl)
+      : `${SynapseClient.getRootURL()}?provider=${GOOGLE_AUTH_PROVIDER}`
+    SynapseClient.oAuthUrlRequest(GOOGLE_AUTH_PROVIDER, redirectUrl)
       .then((data: any) => {
         const authUrl = data.authorizationUrl
         window.location = authUrl // ping the url
