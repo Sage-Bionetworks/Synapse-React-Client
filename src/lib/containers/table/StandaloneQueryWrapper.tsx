@@ -3,9 +3,13 @@ import { cloneDeep } from 'lodash'
 import { insertConditionsFromSearchParams, parseEntityIdFromSqlStatement, SQLOperator } from '../../utils/functions/sqlFunctions'
 import StackedBarChart, { StackedBarChartProps } from '../StackedBarChart'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
-import { QueryBundleRequest } from '../../utils/synapseTypes'
+import { isTableEntity, QueryBundleRequest } from '../../utils/synapseTypes'
 import { SynapseConstants } from '../../utils'
 import QueryWrapper from '../QueryWrapper'
+import TopLevelControls, { TopLevelControlsProps } from '../query_wrapper_plot_nav/TopLevelControls'
+import FullTextSearch from '../FullTextSearch'
+import SearchV2, { SearchV2Props } from '../SearchV2'
+import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
 
 type SearchParams = {
   searchParams?: {
@@ -25,8 +29,10 @@ type OwnProps = {
   rgbIndex: number
   unitDescription?: string
   facetAliases?: Record<string, string>,
-  facet?: string
-}
+  facet?: string,
+  showTopLevelControls?: boolean
+  searchConfiguration?: SearchV2Props
+} & Omit<TopLevelControlsProps, 'entityId'>
 
 export type StandaloneQueryWrapperProps = Partial<StackedBarChartProps> &
   Partial<SynapseTableProps> &
@@ -59,9 +65,13 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
     linkText,
     title,
     searchParams,
-    sqlOperator,    
+    sqlOperator,
     showAccessColumn,
     sql,
+    hideDownload,
+    name,
+    showTopLevelControls = false,
+    searchConfiguration,
     ...rest
   } = props
 
@@ -74,12 +84,19 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
       sqlOperator,
     )
   }
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  const { data: entity } = useGetEntity(entityId)
   return (
     <QueryWrapper
       {...rest}
       initQueryRequest={derivedQueryRequestFromSearchParams}
     >
       {queryWrapperChildProps => {
+        const overrideTopLevelControlState = queryWrapperChildProps.topLevelControlsState ? {
+          ...queryWrapperChildProps.topLevelControlsState,
+          showFacetVisualization: false,
+          showFacetFilter: false,
+        } : undefined
         return (
           <>
             {link && linkText ? (
@@ -92,16 +109,40 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
               <React.Fragment />
             )}
             {title ? (
-              <SynapseTable
-                {...queryWrapperChildProps}
-                showAccessColumn={showAccessColumn}
-                title={title}
-              />
+              <>
+                {showTopLevelControls && <TopLevelControls
+                  {...queryWrapperChildProps}
+                  showColumnSelection={true}
+                  name={name}
+                  entityId={entityId}
+                  sql={derivedQueryRequestFromSearchParams.query.sql}
+                  hideDownload={hideDownload}
+                  hideFacetFilterControl={true}
+                  hideVisualizationsControl={true}
+                  topLevelControlsState={overrideTopLevelControlState}
+                />}
+                {entity &&
+                  isTableEntity(entity) &&
+                  entity.isSearchEnabled ? (
+                    <FullTextSearch {...queryWrapperChildProps} />
+                  ) : (
+                    <SearchV2
+                      {...queryWrapperChildProps}
+                      {...searchConfiguration}
+                    />
+                  )}
+                <SynapseTable
+                  {...queryWrapperChildProps}
+                  showAccessColumn={showAccessColumn}
+                  title={title}
+                />
+              </>
             ) : (
               <React.Fragment />
             )}
           </>
-      )}}
+        )
+      }}
     </QueryWrapper>
   )
 }

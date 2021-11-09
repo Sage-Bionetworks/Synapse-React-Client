@@ -17,10 +17,12 @@ import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunction
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type TopLevelControlsProps = {
-  name: string
+  name?: string
   entityId: string
   sql: string
   hideDownload?: boolean
+  hideVisualizationsControl?: boolean
+  hideFacetFilterControl?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
 }
@@ -79,6 +81,8 @@ const TopLevelControls = (
     showColumnSelection = false,
     isColumnSelected,
     hideDownload = false,
+    hideVisualizationsControl = false,
+    hideFacetFilterControl = false,
     selectedRowIndices,
     customControls,
     executeQueryRequest,
@@ -143,10 +147,10 @@ const TopLevelControls = (
       }`}
     >
       <h3>
-        <div className="QueryWrapperPlotNav__querycount">
-          <QueryCount name={name} sql={sql} parens={true} />
+        <div className="TopLevelControls__querycount">
+          {name && <QueryCount name={name} sql={sql} parens={true} />}
         </div>
-        <div className="QueryWrapperPlotNav__actions">
+        <div className="TopLevelControls__actions">
           {customControls &&
             customControls.map(customControl => {
               return (
@@ -167,8 +171,10 @@ const TopLevelControls = (
           {controls.map(control => {
             const { key, icon, tooltipText } = control
             if (
-              key === 'showDownloadConfirmation' &&
-              (!isFileView || hideDownload)
+              (key === 'showDownloadConfirmation' &&
+                (!isFileView || hideDownload)) ||
+              (key === 'showFacetVisualization' && hideVisualizationsControl) ||
+              (key === 'showFacetFilter' && hideFacetFilterControl)
             ) {
               // needs to be a file view in order for download to make sense
               return <></>
