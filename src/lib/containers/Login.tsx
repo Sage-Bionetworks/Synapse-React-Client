@@ -22,7 +22,7 @@ type State = {
 }
 
 type Props = {
-  googleRedirectUrl?: string // TODO: When we support other providers, we should rename this to something like ssoRedirectUrl (and update Synapse.org)
+  ssoRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: () => void // Callback is invoked after login
 }
@@ -133,8 +133,8 @@ class Login extends React.Component<Props, State> {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
-    const redirectUrl = this.props.googleRedirectUrl
-      ? this.props.googleRedirectUrl
+    const redirectUrl = this.props.ssoRedirectUrl
+      ? this.props.ssoRedirectUrl
       : `${SynapseClient.getRootURL()}?provider=${PROVIDERS.GOOGLE}`
     SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl)
       .then((data: any) => {

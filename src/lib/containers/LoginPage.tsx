@@ -2,13 +2,13 @@ import * as React from 'react'
 import Login from './Login'
 
 export type LoginPageProps = {
-  googleRedirectUrl?: string
+  ssoRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: () => void // Callback is invoked after login
 }
 
 const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
-  const { googleRedirectUrl, redirectUrl, sessionCallback } = props
+  const { ssoRedirectUrl, redirectUrl, sessionCallback } = props
   const thisClass = 'login-panel-wrapper'
 
   return (
@@ -27,7 +27,7 @@ const LoginPage: React.FunctionComponent<LoginPageProps> = props => {
             </p>
           </div>
           <Login
-            googleRedirectUrl={googleRedirectUrl}
+            ssoRedirectUrl={ssoRedirectUrl}
             redirectUrl={redirectUrl}
             sessionCallback={sessionCallback}
           />
