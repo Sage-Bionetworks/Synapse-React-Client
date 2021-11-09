@@ -8,7 +8,9 @@ import {
 } from '../utils/functions/getEndpoint'
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
 
-export const GOOGLE_AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
+export const PROVIDERS = {
+  GOOGLE: 'GOOGLE_OAUTH_2_0',
+}
 
 type State = {
   username: string
@@ -20,7 +22,7 @@ type State = {
 }
 
 type Props = {
-  googleRedirectUrl?: string
+  googleRedirectUrl?: string // TODO: When we support other providers, we should rename this to something like ssoRedirectUrl (and update Synapse.org)
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: () => void // Callback is invoked after login
 }
@@ -133,8 +135,8 @@ class Login extends React.Component<Props, State> {
     event.preventDefault()
     const redirectUrl = this.props.googleRedirectUrl
       ? this.props.googleRedirectUrl
-      : `${SynapseClient.getRootURL()}?provider=${GOOGLE_AUTH_PROVIDER}`
-    SynapseClient.oAuthUrlRequest(GOOGLE_AUTH_PROVIDER, redirectUrl)
+      : `${SynapseClient.getRootURL()}?provider=${PROVIDERS.GOOGLE}`
+    SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl)
       .then((data: any) => {
         const authUrl = data.authorizationUrl
         window.location = authUrl // ping the url
