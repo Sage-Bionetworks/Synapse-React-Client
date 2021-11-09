@@ -8,6 +8,7 @@ import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrappe
 import StackedBarChart from './containers/StackedBarChart'
 import HasAccess from './containers/HasAccess'
 import SynapseTable from './containers/table/SynapseTable'
+import SynapseTableQueryWrapper from './containers/table/SynapseTableQueryWrapper'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
 import QueryCount from './containers/QueryCount'
@@ -74,6 +75,7 @@ const SynapseComponents = {
   CardContainer,
   QueryWrapper,
   StackedBarChart,
+  SynapseTableQueryWrapper,
   SynapseTable,
   CardContainerLogic,
   EntityForm,
