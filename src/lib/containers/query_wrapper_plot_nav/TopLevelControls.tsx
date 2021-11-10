@@ -7,6 +7,7 @@ import {
   QUERY_FILTERS_EXPANDED_CSS,
   TopLevelControlsState,
 } from '../QueryWrapper'
+import Typography from '../../utils/typography/Typography'
 import { ColumnSelection } from '../table/table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
@@ -148,7 +149,9 @@ const TopLevelControls = (
     >
       <h3>
         <div className="TopLevelControls__querycount">
-          {name && <QueryCount name={name} sql={sql} parens={true} />}
+          <Typography variant='sectionTitle' role='heading'>
+            {name && <QueryCount name={name} sql={sql} parens={true} />}
+          </Typography>
         </div>
         <div className="TopLevelControls__actions">
           {customControls &&

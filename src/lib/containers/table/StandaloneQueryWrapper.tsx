@@ -10,6 +10,7 @@ import TopLevelControls, { TopLevelControlsProps } from '../query_wrapper_plot_n
 import FullTextSearch from '../FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
+import TotalQueryResults from '../TotalQueryResults'
 
 type SearchParams = {
   searchParams?: {
@@ -92,11 +93,6 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
       initQueryRequest={derivedQueryRequestFromSearchParams}
     >
       {queryWrapperChildProps => {
-        const overrideTopLevelControlState = queryWrapperChildProps.topLevelControlsState ? {
-          ...queryWrapperChildProps.topLevelControlsState,
-          showFacetVisualization: false,
-          showFacetFilter: false,
-        } : undefined
         return (
           <>
             {link && linkText ? (
@@ -119,7 +115,6 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
                   hideDownload={hideDownload}
                   hideFacetFilterControl={true}
                   hideVisualizationsControl={true}
-                  topLevelControlsState={overrideTopLevelControlState}
                 />}
                 {entity &&
                   isTableEntity(entity) &&
@@ -131,12 +126,22 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
                       {...searchConfiguration}
                     />
                   )}
-                <SynapseTable
-                  {...queryWrapperChildProps}
-                  showAccessColumn={showAccessColumn}
-                  title={title}
-                />
-              </>
+                  { showTopLevelControls && <TotalQueryResults
+                    isLoading={queryWrapperChildProps.isLoading!}
+                    executeQueryRequest={queryWrapperChildProps.executeQueryRequest}
+                    lastQueryRequest={queryWrapperChildProps.getLastQueryRequest?.()!}
+                    getInitQueryRequest={queryWrapperChildProps.getInitQueryRequest}
+                    unitDescription={'Results'}
+                    frontText={''}
+                    showNotch={false}
+                    topLevelControlsState={queryWrapperChildProps.topLevelControlsState}
+                  /> }
+                  <SynapseTable
+                    {...queryWrapperChildProps}
+                    showAccessColumn={showAccessColumn}
+                    title={title}
+                  />
+                </>
             ) : (
               <React.Fragment />
             )}
