@@ -89,7 +89,7 @@ export default class App extends React.Component<{}, AppState> {
           </summary>
           <Login
             sessionCallback={this.getSession}
-            googleRedirectUrl={
+            ssoRedirectUrl={
               'https://staging.synapse.org/Portal/oauth2callback?oauth2provider=GOOGLE_OAUTH_2_0'
             }
           />
