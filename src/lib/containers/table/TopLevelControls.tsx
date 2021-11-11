@@ -8,12 +8,12 @@ import {
   TopLevelControlsState,
 } from '../QueryWrapper'
 import Typography from '../../utils/typography/Typography'
-import { ColumnSelection } from '../table/table-top/ColumnSelection'
+import { ColumnSelection } from './table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { cloneDeep } from 'lodash-es'
-import { QueryResultBundle } from '../../utils/synapseTypes/'
-import { DownloadOptions } from '../table/table-top'
+import { QueryResultBundle } from '../../utils/synapseTypes'
+import { DownloadOptions } from './table-top'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
 import { useSynapseContext } from '../../utils/SynapseContext'
 

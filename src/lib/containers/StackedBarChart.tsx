@@ -200,7 +200,7 @@ export default class StackedBarChart extends React.Component<
     return (
       <React.Fragment>
         {/* TODO: Refactor the chart into its own component */}
-        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top">
+        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top" data-testid='StackedBarChart'>
           <ReactMeasure
             bounds={true}
             onResize={(contentRect: any) => {

@@ -6,7 +6,7 @@ import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import { isTableEntity, QueryBundleRequest } from '../../utils/synapseTypes'
 import { SynapseConstants } from '../../utils'
 import QueryWrapper from '../QueryWrapper'
-import TopLevelControls, { TopLevelControlsProps } from '../query_wrapper_plot_nav/TopLevelControls'
+import TopLevelControls, { TopLevelControlsProps } from './TopLevelControls'
 import FullTextSearch from '../FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
@@ -49,7 +49,7 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    entityId: parseEntityIdFromSqlStatement(sql!),
+    entityId: parseEntityIdFromSqlStatement(sql),
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     query: {
       sql,
@@ -58,6 +58,10 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
     },
   })
 }
+/**
+ * This component was initially implemented on the portal side. It renders a StackedBarChart if link and linkText are provided, and renders a SynapseTable if a title is provided.
+ * If showTopLevelControls is set to true, then the SynapseTable will also include the TopLevelControls (search, export table, column selection).
+ */
 const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProps> = (
   props,
 ) => {
@@ -76,7 +80,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
     ...rest
   } = props
 
-  let derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
+  const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
 
   if (searchParams) {
     derivedQueryRequestFromSearchParams.query.sql = insertConditionsFromSearchParams(
@@ -140,6 +144,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
                   {...queryWrapperChildProps}
                   showAccessColumn={showAccessColumn}
                   title={title}
+                  data-testid='SynapseTable'
                 />
               </>
             ) : (
