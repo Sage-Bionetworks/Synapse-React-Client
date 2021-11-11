@@ -170,7 +170,6 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
-export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export const getRootURL = () => {
@@ -1310,18 +1309,19 @@ This function should be called whenever the root App is initialized
 export const detectSSOCode = () => {
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-  let code: URL | null | string = new URL(window.location.href)
+  let fullUrl: URL | null | string = new URL(window.location.href)
   // in test environment the searchParams isn't defined
-  const { searchParams } = code
+  const { searchParams } = fullUrl
   if (!searchParams) {
     return
   }
-  code = searchParams.get('code')
-  if (code) {
+  const code = searchParams.get('code')
+  const provider = searchParams.get('provider')
+  if (code && provider) {
     oAuthSessionRequest(
-      AUTH_PROVIDER,
+      provider,
       code,
-      `${redirectURL}?provider=${AUTH_PROVIDER}`,
+      `${redirectURL}?provider=${provider}`,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((synToken: any) => {
