@@ -119,29 +119,29 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
                 {entity &&
                   isTableEntity(entity) &&
                   entity.isSearchEnabled ? (
-                    <FullTextSearch {...queryWrapperChildProps} />
-                  ) : (
-                    <SearchV2
-                      {...queryWrapperChildProps}
-                      {...searchConfiguration}
-                    />
-                  )}
-                  { showTopLevelControls && <TotalQueryResults
-                    isLoading={queryWrapperChildProps.isLoading!}
-                    executeQueryRequest={queryWrapperChildProps.executeQueryRequest}
-                    lastQueryRequest={queryWrapperChildProps.getLastQueryRequest?.()!}
-                    getInitQueryRequest={queryWrapperChildProps.getInitQueryRequest}
-                    unitDescription={'Results'}
-                    frontText={''}
-                    showNotch={false}
-                    topLevelControlsState={queryWrapperChildProps.topLevelControlsState}
-                  /> }
-                  <SynapseTable
+                  <FullTextSearch {...queryWrapperChildProps} />
+                ) : (
+                  <SearchV2
                     {...queryWrapperChildProps}
-                    showAccessColumn={showAccessColumn}
-                    title={title}
+                    {...searchConfiguration}
                   />
-                </>
+                )}
+                {showTopLevelControls && <TotalQueryResults
+                  isLoading={queryWrapperChildProps.isLoading!}
+                  executeQueryRequest={queryWrapperChildProps.executeQueryRequest}
+                  lastQueryRequest={queryWrapperChildProps.getLastQueryRequest?.()!}
+                  getInitQueryRequest={queryWrapperChildProps.getInitQueryRequest}
+                  unitDescription={'Results'}
+                  frontText={''}
+                  showNotch={false}
+                  topLevelControlsState={queryWrapperChildProps.topLevelControlsState}
+                />}
+                <SynapseTable
+                  {...queryWrapperChildProps}
+                  showAccessColumn={showAccessColumn}
+                  title={title}
+                />
+              </>
             ) : (
               <React.Fragment />
             )}
