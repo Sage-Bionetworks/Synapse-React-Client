@@ -66,7 +66,7 @@ const controls: Control[] = [
   {
     icon: 'download',
     key: 'showDownloadConfirmation',
-    tooltipText: 'Add files in table to Download List',
+    tooltipText: 'Show options for download',
   },
 ]
 
@@ -174,8 +174,7 @@ const TopLevelControls = (
           {controls.map(control => {
             const { key, icon, tooltipText } = control
             if (
-              (key === 'showDownloadConfirmation' &&
-                (!isFileView || hideDownload)) ||
+              (key === 'showDownloadConfirmation' && hideDownload) ||
               (key === 'showFacetVisualization' && hideVisualizationsControl) ||
               (key === 'showFacetFilter' && hideFacetFilterControl)
             ) {
