@@ -146,6 +146,7 @@ const TopLevelControls = (
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
+      data-testid='TopLevelControls'
     >
       <h3>
         <div className="TopLevelControls__querycount">

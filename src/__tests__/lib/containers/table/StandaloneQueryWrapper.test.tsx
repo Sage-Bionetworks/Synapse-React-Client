@@ -23,7 +23,7 @@ function renderComponent(
 }
 
 describe('StandaloneQueryWrapper rendering tests', () => {
-  it('renders a stacked bar chart', async () => {
+  it('renders our custom stacked bar chart', async () => {
     const data = syn20337467Json as QueryResultBundle
     SynapseClient.getQueryTableResults = jest.fn(() =>
       Promise.resolve(data),
@@ -40,6 +40,44 @@ describe('StandaloneQueryWrapper rendering tests', () => {
 
     await waitFor(() => {
       expect(screen.getAllByTestId('StackedBarChart').length).toBe(1)
+    })
+  })
+  it('renders a Synapse table', async () => {
+    const data = syn20337467Json as QueryResultBundle
+    SynapseClient.getQueryTableResults = jest.fn(() =>
+      Promise.resolve(data),
+    )
+
+    renderComponent({
+      rgbIndex:7,
+      title:'Tools',
+      name: 'Tools',
+      sql:'SELECT * FROM syn20337467',
+    })
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('SynapseTable').length).toBe(1)
+      expect(screen.queryByTestId('TopLevelControls')).toBeNull()
+    })
+  })
+
+  it('renders a Synapse table with top level controls', async () => {
+    const data = syn20337467Json as QueryResultBundle
+    SynapseClient.getQueryTableResults = jest.fn(() =>
+      Promise.resolve(data),
+    )
+
+    renderComponent({
+      rgbIndex:7,
+      title:'Tools',
+      name: 'Tools',
+      sql:'SELECT * FROM syn20337467',
+      showTopLevelControls: true,
+    })
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('SynapseTable').length).toBe(1)
+      expect(screen.getAllByTestId('TopLevelControls').length).toBe(1)
     })
   })
 })
