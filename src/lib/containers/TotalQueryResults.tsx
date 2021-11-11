@@ -25,7 +25,6 @@ import {
   QueryFilter,
   TextMatchesQueryFilter,
 } from '../utils/synapseTypes/Table/QueryFilter'
-import Typography from '../utils/typography/Typography'
 import {
   QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
@@ -347,12 +346,12 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       }`}
       style={style}
     >
-      <Typography variant='sectionTitle' role='heading'>
+      <span className="SRC-boldText SRC-text-title SRC-centerContent">
         {frontText} {total} {unitDescription}
         {isLoading && (
           <span style={{ marginLeft: '2px' }} className={'spinner'} />
         )}
-      </Typography>
+      </span>
       <div className="TotalQueryResults__selections">
         {searchSelectionCriteriaPillProps &&
           searchSelectionCriteriaPillProps.map(props => (
