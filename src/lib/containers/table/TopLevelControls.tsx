@@ -7,20 +7,23 @@ import {
   QUERY_FILTERS_EXPANDED_CSS,
   TopLevelControlsState,
 } from '../QueryWrapper'
-import { ColumnSelection } from '../table/table-top/ColumnSelection'
+import Typography from '../../utils/typography/Typography'
+import { ColumnSelection } from './table-top/ColumnSelection'
 import { SynapseClient } from '../../utils'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { cloneDeep } from 'lodash-es'
-import { QueryResultBundle } from '../../utils/synapseTypes/'
-import { DownloadOptions } from '../table/table-top'
+import { QueryResultBundle } from '../../utils/synapseTypes'
+import { DownloadOptions } from './table-top'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type TopLevelControlsProps = {
-  name: string
+  name?: string
   entityId: string
   sql: string
   hideDownload?: boolean
+  hideVisualizationsControl?: boolean
+  hideFacetFilterControl?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
 }
@@ -63,7 +66,7 @@ const controls: Control[] = [
   {
     icon: 'download',
     key: 'showDownloadConfirmation',
-    tooltipText: 'Add files in table to Download List',
+    tooltipText: 'Show options for download',
   },
 ]
 
@@ -79,6 +82,8 @@ const TopLevelControls = (
     showColumnSelection = false,
     isColumnSelected,
     hideDownload = false,
+    hideVisualizationsControl = false,
+    hideFacetFilterControl = false,
     selectedRowIndices,
     customControls,
     executeQueryRequest,
@@ -141,12 +146,15 @@ const TopLevelControls = (
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
+      data-testid='TopLevelControls'
     >
       <h3>
-        <div className="QueryWrapperPlotNav__querycount">
-          <QueryCount name={name} sql={sql} parens={true} />
+        <div className="TopLevelControls__querycount">
+          <Typography variant='sectionTitle' role='heading'>
+            {name && <QueryCount name={name} sql={sql} parens={true} />}
+          </Typography>
         </div>
-        <div className="QueryWrapperPlotNav__actions">
+        <div className="TopLevelControls__actions">
           {customControls &&
             customControls.map(customControl => {
               return (
@@ -167,8 +175,9 @@ const TopLevelControls = (
           {controls.map(control => {
             const { key, icon, tooltipText } = control
             if (
-              key === 'showDownloadConfirmation' &&
-              (!isFileView || hideDownload)
+              (key === 'showDownloadConfirmation' && hideDownload) ||
+              (key === 'showFacetVisualization' && hideVisualizationsControl) ||
+              (key === 'showFacetFilter' && hideFacetFilterControl)
             ) {
               // needs to be a file view in order for download to make sense
               return <></>

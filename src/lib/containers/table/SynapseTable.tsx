@@ -516,7 +516,7 @@ export default class SynapseTable extends React.Component<
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
     return (
-      <div style={{ minHeight: '400px' }} className="SRC-overflowAuto">
+      <div style={{ minHeight: '400px' }} className="SRC-overflowAuto" data-testid='SynapseTable'>
         <table
           ref={node => (this.tableElement = node)}
           className="table table-striped table-condensed"
