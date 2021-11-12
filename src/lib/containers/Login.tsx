@@ -134,7 +134,7 @@ class Login extends React.Component<Props, State> {
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
     const redirectUrl = this.props.ssoRedirectUrl
-      ? this.props.ssoRedirectUrl
+      ? `${this.props.ssoRedirectUrl}${PROVIDERS.GOOGLE}`
       : `${SynapseClient.getRootURL()}?provider=${PROVIDERS.GOOGLE}`
     SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl)
       .then((data: any) => {
