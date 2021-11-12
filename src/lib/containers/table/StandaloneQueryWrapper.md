@@ -14,7 +14,6 @@ Configured to show a table:
 ```jsx
 <StandaloneQueryWrapper
   title='Data Files'
-  hideDownload={true}
   sql={`SELECT * FROM syn21994970.5 where dhPortalIndex = 'TRUE' LIMIT 10`}
 />
 ```
@@ -24,7 +23,7 @@ Configured to show a table with top level controls:
 <StandaloneQueryWrapper
   title='Data Files'
   name='Top Level Controls demo'
-  hideDownload={true}
+  hideDownload={false}
   sql={`SELECT * FROM syn21994970.5 where dhPortalIndex = 'TRUE' LIMIT 10`}
   showTopLevelControls={true}
 />
