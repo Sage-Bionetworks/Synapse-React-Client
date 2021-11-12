@@ -2,7 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
-import { Modal } from 'react-bootstrap'
+import { Button, Modal } from 'react-bootstrap'
 import Form, { IChangeEvent } from '@rjsf/core'
 import { SynapseClient } from '../utils'
 import {
@@ -133,10 +133,6 @@ export default class ModalDownload extends React.Component<
       right: 10,
       zIndex: 10,
     }
-    const submitBtn: React.CSSProperties = {
-      padding: '6px 10px',
-      borderRadius: 6,
-    }
     const spinnerStyle: React.CSSProperties = {
       height: 50,
       width: 50,
@@ -144,7 +140,7 @@ export default class ModalDownload extends React.Component<
     }
     return (
       <Modal animation={false} show={true} onHide={this.props.onClose}>
-        <Modal.Header>
+        <Modal.Body>
           <button style={closeBtn} onClick={this.props.onClose}>
             <FontAwesomeIcon style={{ fontSize: '21px' }} icon="times" />
           </button>
@@ -164,26 +160,16 @@ export default class ModalDownload extends React.Component<
                 </div>
               </div>
             )}
-            <hr />
             <div style={{ textAlign: 'right' }}>
-              <a
-                id="cancelBtn"
-                onClick={this.props.onClose}
-                type="button"
-              >
+              <Button variant="default" onClick={this.props.onClose} style={{ marginRight: '5px' }}>
                 Cancel
-              </a>
-              <button
-                id="submitBtn"
-                style={submitBtn}
-                className="SRC-primary-background-color SRC-roundBorder SRC-whiteText"
-                type="submit"
-              >
+              </Button>
+              <Button type="submit" variant="primary">
                 {this.state.step === 0 ? 'Next' : 'Download'}
-              </button>
+              </Button>
             </div>
           </Form>
-        </Modal.Header>
+        </Modal.Body>
       </Modal>
     )
   }
