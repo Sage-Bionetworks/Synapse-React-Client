@@ -133,10 +133,6 @@ export default class ModalDownload extends React.Component<
       right: 10,
       zIndex: 10,
     }
-    const submitBtn: React.CSSProperties = {
-      padding: '6px 10px',
-      borderRadius: 6,
-    }
     const spinnerStyle: React.CSSProperties = {
       height: 50,
       width: 50,
