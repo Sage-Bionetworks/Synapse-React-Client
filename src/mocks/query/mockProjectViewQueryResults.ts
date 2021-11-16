@@ -1,4 +1,4 @@
-import { EntityColumnType, QueryResultBundle } from '../../lib/utils/synapseTypes'
+import { ColumnType, QueryResultBundle } from '../../lib/utils/synapseTypes'
 
 export const mockQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -11,52 +11,52 @@ export const mockQueryResult: QueryResultBundle = {
       headers: [
         {
           name: 'id',
-          columnType: EntityColumnType.ENTITYID,
+          columnType: ColumnType.ENTITYID,
           id: '81721',
         },
         {
           name: 'name',
-          columnType: EntityColumnType.STRING,
+          columnType: ColumnType.STRING,
           id: '81722',
         },
         {
           name: 'createdOn',
-          columnType: EntityColumnType.DATE,
+          columnType: ColumnType.DATE,
           id: '81723',
         },
         {
           name: 'createdBy',
-          columnType: EntityColumnType.USERID,
+          columnType: ColumnType.USERID,
           id: '81724',
         },
         {
           name: 'etag',
-          columnType: EntityColumnType.STRING,
+          columnType: ColumnType.STRING,
           id: '81725',
         },
         {
           name: 'modifiedOn',
-          columnType: EntityColumnType.DATE,
+          columnType: ColumnType.DATE,
           id: '81726',
         },
         {
           name: 'modifiedBy',
-          columnType: EntityColumnType.USERID,
+          columnType: ColumnType.USERID,
           id: '81727',
         },
         {
           name: 'projectDescription',
-          columnType: EntityColumnType.STRING,
+          columnType: ColumnType.STRING,
           id: '127153',
         },
         {
           name: 'projectDisplayName',
-          columnType: EntityColumnType.STRING,
+          columnType: ColumnType.STRING,
           id: '127154',
         },
         {
           name: 'projectImageFileName',
-          columnType: EntityColumnType.STRING,
+          columnType: ColumnType.STRING,
           id: '127219',
         },
       ],
@@ -147,52 +147,52 @@ export const mockQueryResult: QueryResultBundle = {
   selectColumns: [
     {
       name: 'id',
-      columnType: EntityColumnType.ENTITYID,
+      columnType: ColumnType.ENTITYID,
       id: '81721',
     },
     {
       name: 'name',
-      columnType: EntityColumnType.STRING,
+      columnType: ColumnType.STRING,
       id: '81722',
     },
     {
       name: 'createdOn',
-      columnType: EntityColumnType.DATE,
+      columnType: ColumnType.DATE,
       id: '81723',
     },
     {
       name: 'createdBy',
-      columnType: EntityColumnType.USERID,
+      columnType: ColumnType.USERID,
       id: '81724',
     },
     {
       name: 'etag',
-      columnType: EntityColumnType.STRING,
+      columnType: ColumnType.STRING,
       id: '81725',
     },
     {
       name: 'modifiedOn',
-      columnType: EntityColumnType.DATE,
+      columnType: ColumnType.DATE,
       id: '81726',
     },
     {
       name: 'modifiedBy',
-      columnType: EntityColumnType.USERID,
+      columnType: ColumnType.USERID,
       id: '81727',
     },
     {
       name: 'projectDescription',
-      columnType: EntityColumnType.STRING,
+      columnType: ColumnType.STRING,
       id: '127153',
     },
     {
       name: 'projectDisplayName',
-      columnType: EntityColumnType.STRING,
+      columnType: ColumnType.STRING,
       id: '127154',
     },
     {
       name: 'projectImageFileName',
-      columnType: EntityColumnType.FILEHANDLEID,
+      columnType: ColumnType.FILEHANDLEID,
       id: '127279',
     },
   ],

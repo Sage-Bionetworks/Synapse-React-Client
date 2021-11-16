@@ -13,11 +13,7 @@ import {
   MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
-import {
-  SelectColumn,
-  EntityColumnType,
-  ColumnType,
-} from '../../../lib/utils/synapseTypes'
+import { SelectColumn, ColumnType } from '../../../lib/utils/synapseTypes'
 import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
 import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
@@ -380,7 +376,7 @@ describe('it makes the correct URL for the secondary labels', () => {
   ]
   const selectColumns: SelectColumn[] = [
     {
-      columnType: EntityColumnType.STRING,
+      columnType: ColumnType.STRING,
       id: 'a',
       name: 'dataset',
     },
@@ -438,7 +434,7 @@ describe('it makes the correct URL for the secondary labels', () => {
           isHeader: false,
           selectColumns: [
             {
-              columnType: EntityColumnType.STRING_LIST,
+              columnType: ColumnType.STRING_LIST,
               id: 'a',
               name: DATASETS,
             },
@@ -517,7 +513,7 @@ describe('it makes the correct URL for the secondary labels', () => {
       {
         name: DATASETS,
         id: 'a',
-        columnType: EntityColumnType.STRING_LIST,
+        columnType: ColumnType.STRING_LIST,
       },
     ]
     // make sure it doesn't parse out the extra commas
