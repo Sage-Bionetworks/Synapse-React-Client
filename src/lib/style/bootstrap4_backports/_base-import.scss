@@ -1,5 +1,6 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:color';
+@use 'sass:map';
 
 .bootstrap-4-backport {
   //initial bootstrap config based on Synapse design
@@ -157,5 +158,50 @@
       $hover-background: SRC.$gray-light,
       $active-background: SRC.$gray-light
     );
+  }
+
+  // Primary button based on Synapse Design System
+  // See https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Synapse-Style-%26-Component-Library?node-id=53%3A1189
+  .btn-sds-primary {
+    @include button-variant(
+      $background: map.get(SRC.$primary-color-palette, 500),
+      $border: map.get(SRC.$primary-color-palette, 500),
+      $hover-background: map.get(SRC.$primary-color-palette, 600),
+      $hover-border: map.get(SRC.$primary-color-palette, 600),
+      $active-background: map.get(SRC.$primary-color-palette, 700),
+      $active-border: map.get(SRC.$primary-color-palette, 700)
+    );
+    border-radius: 0px;
+    font-weight: 900;
+    &:hover {
+      box-shadow: none; // ?
+    }
+
+    &:disabled {
+      color: map.get(SRC.$colors, 'gray-600');
+      background-color: map.get(SRC.$colors, 'gray-400');
+      border-color: map.get(SRC.$colors, 'gray-400');
+    }
+  }
+
+  // Secondary button based on Synapse Design System
+  // See https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Synapse-Style-%26-Component-Library?node-id=53%3A1216
+  .btn-outline {
+    @include button-outline-variant(
+      $color: map.get(SRC.$primary-color-palette, 500),
+      $color-hover: map.get(SRC.$primary-color-palette, 600),
+      $active-background: rgba(255, 255, 255, 0),
+      $active-border: map.get(SRC.$primary-color-palette, 700)
+    );
+    border-radius: 0px;
+    font-weight: 900;
+    &:hover {
+      box-shadow: none; // ?
+    }
+
+    &:disabled {
+      color: map.get(SRC.$colors, 'gray-600');
+      border-color: map.get(SRC.$colors, 'gray-400');
+    }
   }
 }
