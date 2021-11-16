@@ -20,7 +20,7 @@ import {
   UserGroupHeader,
   UserProfile,
   FacetColumnRequest,
-  EntityColumnType,
+  ColumnType,
   ColumnModel
 } from '../../utils/synapseTypes/'
 import HasAccess from '../HasAccess'
@@ -241,11 +241,11 @@ export default class SynapseTable extends React.Component<
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      EntityColumnType.ENTITYID,
+      ColumnType.ENTITYID,
     )
     const userIdColumnIndicies = getColumnIndiciesWithType(
       this.props.data,
-      EntityColumnType.USERID,
+      ColumnType.USERID,
     )
     const distinctEntityIds = getUniqueEntities(
       data,
@@ -751,36 +751,36 @@ export default class SynapseTable extends React.Component<
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
     const entityColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.ENTITYID,
+      ColumnType.ENTITYID,
     )
     const userColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.USERID,
+      ColumnType.USERID,
     )
     const dateColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.DATE,
+      ColumnType.DATE,
     )
     const dateListColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.DATE_LIST,
+      ColumnType.DATE_LIST,
     )
     const booleanListColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.BOOLEAN_LIST,
+      ColumnType.BOOLEAN_LIST,
     )
     const fileHandleIdColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.FILEHANDLEID,
+      ColumnType.FILEHANDLEID,
     )
     const entityIdListColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.ENTITYID_LIST,
+      ColumnType.ENTITYID_LIST,
     )
     const otherListColumnIndicies = getColumnIndiciesWithType(
       data,
-      EntityColumnType.STRING_LIST,
-      EntityColumnType.INTEGER_LIST,
+      ColumnType.STRING_LIST,
+      ColumnType.INTEGER_LIST,
     )
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
@@ -924,11 +924,11 @@ export default class SynapseTable extends React.Component<
     return rowsFormatted
   }
 
-  public isSortableColumn(column: EntityColumnType) {
+  public isSortableColumn(column: ColumnType) {
     switch (column) {
-      case EntityColumnType.USERID:
-      case EntityColumnType.ENTITYID:
-      case EntityColumnType.FILEHANDLEID:
+      case ColumnType.USERID:
+      case ColumnType.ENTITYID:
+      case ColumnType.FILEHANDLEID:
         return false
       default:
         return true

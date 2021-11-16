@@ -22,7 +22,7 @@ import { unCamelCase } from '../../../lib/utils/functions/unCamelCase'
 import { AUTHENTICATED_USERS } from '../../../lib/utils/SynapseConstants'
 import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
 import {
-  EntityColumnType,
+  ColumnType,
   EntityHeader,
   QueryBundleRequest,
   QueryResultBundle,
@@ -377,42 +377,42 @@ describe('basic functionality', () => {
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.ENTITYID,
+          columnType: ColumnType.ENTITYID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.USERID,
+          columnType: ColumnType.USERID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.DATE,
+          columnType: ColumnType.DATE,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.STRING_LIST,
+          columnType: ColumnType.STRING_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.DATE_LIST,
+          columnType: ColumnType.DATE_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.BOOLEAN_LIST,
+          columnType: ColumnType.BOOLEAN_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.INTEGER_LIST,
+          columnType: ColumnType.INTEGER_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.FILEHANDLEID,
+          columnType: ColumnType.FILEHANDLEID,
         },
       ],
       queryResult: {
@@ -423,44 +423,44 @@ describe('basic functionality', () => {
           etag: MOCKED_STRING,
           headers: [
             {
-              columnType: EntityColumnType.ENTITYID,
+              columnType: ColumnType.ENTITYID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: EntityColumnType.USERID,
+              columnType: ColumnType.USERID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: EntityColumnType.DATE,
+              columnType: ColumnType.DATE,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.STRING_LIST,
+              columnType: ColumnType.STRING_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.DATE_LIST,
+              columnType: ColumnType.DATE_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.BOOLEAN_LIST,
+              columnType: ColumnType.BOOLEAN_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.INTEGER_LIST,
+              columnType: ColumnType.INTEGER_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.FILEHANDLEID,
+              columnType: ColumnType.FILEHANDLEID,
             },
           ],
           rows: [
@@ -512,46 +512,46 @@ describe('basic functionality', () => {
     it('gets column indicies correctly ', () => {
       const entities = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.ENTITYID,
+        ColumnType.ENTITYID,
       )
       expect(entities).toEqual([ENTITYID_INDEX])
       const userIds = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.USERID,
+        ColumnType.USERID,
       )
       expect(userIds).toEqual([USERID_INDEX])
-      const dates = getColumnIndiciesWithType(mockData, EntityColumnType.DATE)
+      const dates = getColumnIndiciesWithType(mockData, ColumnType.DATE)
       expect(dates).toEqual([DATE_INDEX])
       const stringLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.STRING_LIST,
+        ColumnType.STRING_LIST,
       )
       expect(stringLists).toEqual([STRING_LIST_INDEX])
       const dateLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.DATE_LIST,
+        ColumnType.DATE_LIST,
       )
       expect(dateLists).toEqual([DATE_LIST_INDEX])
       const booleanLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.BOOLEAN_LIST,
+        ColumnType.BOOLEAN_LIST,
       )
       expect(booleanLists).toEqual([BOOLEAN_LIST_INDEX])
       const integerLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.INTEGER_LIST,
+        ColumnType.INTEGER_LIST,
       )
       expect(integerLists).toEqual([INTEGER_LIST_INDEX])
       const dateOrIntegerLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.DATE_LIST,
-        EntityColumnType.INTEGER_LIST,
+        ColumnType.DATE_LIST,
+        ColumnType.INTEGER_LIST,
       )
       expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
 
       const fileHandleId = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.FILEHANDLEID,
+        ColumnType.FILEHANDLEID,
       )
       expect(fileHandleId).toEqual([FILEHANDLEID_INDEX])
     })
@@ -701,7 +701,7 @@ describe('basic functionality', () => {
             }}
             columnName={'a'}
             selectColumns={[
-              { columnType: EntityColumnType.STRING, name: 'a', id: '' },
+              { columnType: ColumnType.STRING, name: 'a', id: '' },
             ]}
           />,
         )

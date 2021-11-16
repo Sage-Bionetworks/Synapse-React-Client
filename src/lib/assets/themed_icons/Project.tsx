@@ -2,7 +2,7 @@ import * as React from 'react'
 
 export const Project = () => (
   <svg width="60" height="60" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clipPath="url(#clip0)">
+    <g clipPath="url(#ProjectClip0)">
       <path
         d="M30 22a7.99 7.99 0 0 0-5.757 13.54 4.99 4.99 0 0 1 2.355-2.9 5 5 0 1 1 6.8 0 4.99 4.99 0 0 1 2.355 2.9A7.99 7.99 0 0 0 30 22z"
         className="SRC-icon-fill"
@@ -43,7 +43,7 @@ export const Project = () => (
       />
     </g>
     <defs>
-      <clipPath id="clip0">
+      <clipPath id="ProjectClip0">
         <path fill="#fff" d="M0 0h60v60H0z" />
       </clipPath>
     </defs>
