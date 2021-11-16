@@ -9,12 +9,7 @@ import {
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { SynapseContext } from '../utils/SynapseContext'
-import {
-  ColumnModel,
-  ColumnType,
-  EntityColumnType,
-  SelectColumn,
-} from '../utils/synapseTypes'
+import { ColumnModel, ColumnType, SelectColumn } from '../utils/synapseTypes'
 import {
   CardLink,
   ColumnSpecifiedLink,
@@ -316,7 +311,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
 type ValueOrMultiValue = {
   str: string
   strList?: string[]
-  columnModelType?: ColumnType | EntityColumnType
+  columnModelType?: ColumnType
 }
 
 export default class GenericCard extends React.Component<
