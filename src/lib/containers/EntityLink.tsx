@@ -60,6 +60,7 @@ export const EntityLink = (props: EntityLinkProps) => {
     }
   } else {
     // Entity has not been fetched yet
+    // TODO: Handle not found, unauthorized
     return <Skeleton variant="rect" width="100" />
   }
 }
