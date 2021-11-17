@@ -25,16 +25,20 @@ import {
 } from '../../synapseTypes'
 import { VersionInfo } from '../../synapseTypes/VersionInfo'
 
-export function useGetEntity(
+export function useGetEntity<T extends Entity>(
   entityId: string,
   versionNumber?: string | number,
-  options?: UseQueryOptions<Entity, SynapseClientError>,
+  options?: UseQueryOptions<T, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery<Entity, SynapseClientError>(
+  return useQuery<T, SynapseClientError>(
     ['entity', entityId, 'entity', versionNumber],
     () =>
-      SynapseClient.getEntity(accessToken, entityId, versionNumber?.toString()),
+      SynapseClient.getEntity<T>(
+        accessToken,
+        entityId,
+        versionNumber?.toString(),
+      ),
     options,
   )
 }

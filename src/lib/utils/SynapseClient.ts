@@ -337,7 +337,7 @@ export const doPut = <T>(
   accessToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-): Promise<any> => {
+): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -969,7 +969,7 @@ export const updateEntity = <T extends Entity>(
   accessToken: string | undefined = undefined,
 ): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
-  return doPut(
+  return doPut<T>(
     url,
     entity,
     accessToken,
