@@ -2,7 +2,7 @@
 ```jsx
 
 <FeaturedToolsList
-  entityId={'syn26433342'}
+  entityId={'syn26450069'}
   idColumnName={'resourceId'}
   nameColumnName={'resourceName'}
   descriptionColumnName={'description'}
