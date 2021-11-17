@@ -8,7 +8,6 @@ import { Icon } from '../row_renderers/utils'
 import { EASY_DIFFICULTY, MEDIUM_DIFFICULTY, VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
 import AccessRequirementList, { SUPPORTED_ACCESS_REQUIREMENTS } from '../access_requirement_list/AccessRequirementList'
 import { Skeleton } from '@material-ui/lab'
-import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
