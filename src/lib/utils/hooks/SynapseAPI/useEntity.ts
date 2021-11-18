@@ -138,18 +138,20 @@ export function useGetJson(
 }
 
 export function useUpdateViaJson(
-  entityId: string,
-  json: unknown,
-  options?: UseMutationOptions<EntityJson, SynapseClientError>,
+  options?: UseMutationOptions<EntityJson, SynapseClientError, EntityJson>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-
-  return useMutation<EntityJson, SynapseClientError>(
-    () => SynapseClient.updateEntityJson(entityId, json, accessToken),
+  return useMutation<EntityJson, SynapseClientError, EntityJson>(
+    (json: EntityJson) => {
+      const entityId = json.id
+      return SynapseClient.updateEntityJson(entityId, json, accessToken)
+    },
     {
       ...options,
       onSuccess: async (data, variables, ctx) => {
+        const entityId = data.id
+
         await queryClient.invalidateQueries([accessToken, 'entity', entityId], {
           exact: false,
         })

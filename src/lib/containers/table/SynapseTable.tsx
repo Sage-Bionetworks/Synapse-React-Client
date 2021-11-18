@@ -49,7 +49,6 @@ import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { SynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import DirectDownload from '../DirectDownload'
-import { SynapseCardLabel } from '../GenericCard'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',

@@ -3078,10 +3078,10 @@ export const getEntityJson = (entityId: string, accessToken?: string) => {
  */
 export const updateEntityJson = (
   entityId: string,
-  json: unknown,
+  json: EntityJson,
   accessToken?: string,
 ) => {
-  return doPut<unknown>(
+  return doPut<EntityJson>(
     ENTITY_JSON(entityId),
     json,
     accessToken,
