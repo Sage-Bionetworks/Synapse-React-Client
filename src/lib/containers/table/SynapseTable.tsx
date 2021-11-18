@@ -774,7 +774,6 @@ export default class SynapseTable extends React.Component<
           )
           const isCountColumn = countColumnIndexes.includes(colIndex)
           const isBold = index === -1 ? '' : 'SRC-boldText'
-          const showCardLabel = columnLinkConfig && columnValue
           if (isColumnActive) {
             return (
               <td
@@ -791,18 +790,7 @@ export default class SynapseTable extends React.Component<
                   </a>
                 )}
 
-                {!isCountColumn && showCardLabel && (
-                  <SynapseCardLabel
-                    value={columnValue}
-                    columnName={columnName}
-                    selectColumns={selectColumns}
-                    columnModels={columnModels}
-                    isHeader={false}
-                    labelLink={columnLinkConfig}
-                    rowData={row.values}
-                  />
-                )}
-                {!isCountColumn && !showCardLabel && (
+                {!isCountColumn && (
                   <SynapseTableCell
                     columnType={headers[colIndex].columnType}
                     columnValue={columnValue}
@@ -812,6 +800,9 @@ export default class SynapseTable extends React.Component<
                     rowIndex={rowIndex}
                     columnName={columnName}
                     tableEntityId={tableEntityId}
+                    rowData={row.values}
+                    selectColumns={selectColumns}
+                    columnModels={columnModels}
                   />
                 )}
               </td>

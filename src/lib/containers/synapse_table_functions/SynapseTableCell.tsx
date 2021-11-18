@@ -4,15 +4,23 @@ import React from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import {
+  ColumnModel,
   ColumnType,
   FileHandleAssociateType,
+  SelectColumn,
   UserGroupHeader,
   UserProfile,
 } from '../../utils/synapseTypes'
 import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
+import {
+  CardLink,
+  ColumnSpecifiedLink,
+  MarkdownLink,
+} from '../CardContainerLogic'
 import DirectDownload from '../DirectDownload'
 import EntityIdList from '../EntityIdList'
 import { EntityLink } from '../EntityLink'
+import { SynapseCardLabel } from '../GenericCard'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import UserCard from '../UserCard'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
@@ -21,11 +29,15 @@ type SynapseTableCellProps = {
   columnType: ColumnType
   columnValue: string
   isBold: string
+  columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink
   mapEntityIdToHeader: Record<string, EntityHeader>
   mapUserIdToHeader: Partial<UserGroupHeader & UserProfile>
   rowIndex?: number
   columnName: string
+  selectColumns?: SelectColumn[]
+  columnModels?: ColumnModel[]
   tableEntityId?: string
+  rowData: string[]
 }
 
 export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
@@ -34,9 +46,13 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   isBold,
   mapEntityIdToHeader,
   mapUserIdToHeader,
+  columnLinkConfig,
   rowIndex,
   columnName,
+  selectColumns,
+  columnModels,
   tableEntityId,
+  rowData,
 }) => {
   const isShortString = (s: string, maxCharCount = 20): boolean => {
     return !s || s.length <= maxCharCount
@@ -44,6 +60,20 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   if (!columnValue) {
     return (
       <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
+    )
+  }
+
+  if (columnLinkConfig) {
+    return (
+      <SynapseCardLabel
+        value={columnValue}
+        columnName={columnName}
+        selectColumns={selectColumns}
+        columnModels={columnModels}
+        isHeader={false}
+        labelLink={columnLinkConfig}
+        rowData={rowData}
+      />
     )
   }
 
@@ -172,26 +202,29 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnType.INTEGER:
     case ColumnType.BOOLEAN:
     case ColumnType.LINK:
-    case ColumnType.LARGETEXT:
-      {
-        const isShort = isShortString(columnValue)
-        if (isShort) {
-          return <p className={isBold}> {columnValue}</p>
-        } else {
-          return (
-            <div className={isBold}>
-              <ElementWithTooltip
-                tooltipText={columnValue}
-                callbackFn={noop}
-                idForToolTip={`${columnName}_${rowIndex}`}
-              >
-                <p className={isBold}> {columnValue}</p>
-              </ElementWithTooltip>
-            </div>
-          )
-        }
+    case ColumnType.LARGETEXT: {
+      const isShort = isShortString(columnValue)
+      if (isShort) {
+        return <p className={isBold}> {columnValue}</p>
+      } else {
+        return (
+          <div className={isBold}>
+            <ElementWithTooltip
+              tooltipText={columnValue}
+              callbackFn={noop}
+              idForToolTip={`${columnName}_${rowIndex}`}
+            >
+              <p className={isBold}> {columnValue}</p>
+            </ElementWithTooltip>
+          </div>
+        )
       }
-      break
+    }
+    default:
+      console.warn(
+        `ColumnType ${columnType} has unspecified handler. Rendering the column value.`,
+      )
+      return <p className={isBold}>{columnValue}</p>
   }
   return <></>
 }
