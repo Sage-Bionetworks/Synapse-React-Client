@@ -35,7 +35,9 @@ import { FinderScope, TreeView } from './tree/TreeView'
 
 library.add(faTimes, faSearch)
 
-const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
+const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
+const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
+const TREE_DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
 
 // In the map used to track selections, we use -1 to denote 'selected without version'
 // This is necessary because undefined is returned by map.get when the item is not in the map
@@ -90,9 +92,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   onSelectedChange,
   showVersionSelection = true,
   mustSelectVersionNumber = false,
-  selectableTypes = Object.values(EntityType),
-  visibleTypesInList = Object.values(EntityType),
-  visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
+  selectableTypes = DEFAULT_SELECTABLE_TYPES,
+  visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
+  visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   selectedCopy = 'Selected',
   treeOnly = false,
 }: EntityFinderProps) => {

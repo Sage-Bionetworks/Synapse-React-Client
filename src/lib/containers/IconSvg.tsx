@@ -28,7 +28,8 @@ import {
   GetAppTwoTone,
   StarTwoTone,
   SearchTwoTone,
-  WatchLater
+  WatchLater,
+  AddCircleTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -52,10 +53,10 @@ import Docker from '../assets/mui_components/Docker'
 
 export type IconSvgOptions = {
   icon: string
-  color?: string  // If no color is provided, it should inherit current color
+  color?: string // If no color is provided, it should inherit current color
   size?: string
   padding?: 'left' | 'right'
-  label?: string  // If provided, will activate tooltip
+  label?: string // If provided, will activate tooltip
 }
 
 export type IconSvgProps = {
@@ -68,16 +69,16 @@ export type SVGStyleProps = {
   fill?: string
 }
 
-const getIcon = (options:IconSvgOptions) => {
+const getIcon = (options: IconSvgOptions) => {
   const { icon, color } = options
 
   // Styles for svg imported from mui
-  const muiSvgStyle:SVGStyleProps = {
+  const muiSvgStyle: SVGStyleProps = {
     color: color,
     verticalAlign: 'middle',
   }
   // Styles for custom svg missing from mui
-  const customSvgStyle:SVGStyleProps = {
+  const customSvgStyle: SVGStyleProps = {
     fill: color,
     color: color,
     verticalAlign: 'middle',
@@ -87,7 +88,7 @@ const getIcon = (options:IconSvgOptions) => {
     case 'arrowBack':
       return <ArrowBackIos style={muiSvgStyle} />
     case 'arrowForward':
-      return <ArrowForwardIos style={muiSvgStyle} />  
+      return <ArrowForwardIos style={muiSvgStyle} />
     case 'check':
       return <Check style={muiSvgStyle}></Check>
     case 'clear':
@@ -102,12 +103,16 @@ const getIcon = (options:IconSvgOptions) => {
       return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
     case 'addCircleOutline':
       return <AddCircleOutline style={muiSvgStyle}></AddCircleOutline>
+    case 'addCircleTwoTone':
+      return <AddCircleTwoTone style={muiSvgStyle}></AddCircleTwoTone>
     case 'reload':
       return <Cached style={muiSvgStyle}></Cached>
     case 'photoCamera':
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
     case 'info':
-      return <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
+      return (
+        <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
+      )
     case 'favTwoTone':
       return <StarTwoTone style={muiSvgStyle}></StarTwoTone>
     case 'fav':
@@ -128,9 +133,9 @@ const getIcon = (options:IconSvgOptions) => {
       return <Login fill={color} style={customSvgStyle}></Login>
     case 'helpOutlined':
       return <HelpOutlined style={muiSvgStyle}></HelpOutlined>
-    case 'expandLess': 
+    case 'expandLess':
       return <ExpandLess fontSize={'small'} style={muiSvgStyle}></ExpandLess>
-    case 'expandMore': 
+    case 'expandMore':
       return <ExpandMore fontSize={'small'} style={muiSvgStyle}></ExpandMore>
     case 'rat':
       return <Rat fill={color} style={customSvgStyle}></Rat>
@@ -143,7 +148,9 @@ const getIcon = (options:IconSvgOptions) => {
     case 'dataLocked':
       return <DataLocked fill={color} style={customSvgStyle}></DataLocked>
     case 'geneExpression':
-      return <GeneExpression fill={color} style={customSvgStyle}></GeneExpression>
+      return (
+        <GeneExpression fill={color} style={customSvgStyle}></GeneExpression>
+      )
     case 'geneVariants':
       return <GeneVariants fill={color} style={customSvgStyle}></GeneVariants>
     case 'imaging':
@@ -151,14 +158,29 @@ const getIcon = (options:IconSvgOptions) => {
     case 'lineGraph':
       return <LineGraph fill={color} style={customSvgStyle}></LineGraph>
     case 'kinomics':
-      customSvgStyle.fill = "none"
-      return <Kinomics fill={color ? color : "currentColor"} style={customSvgStyle}></Kinomics>
+      customSvgStyle.fill = 'none'
+      return (
+        <Kinomics
+          fill={color ? color : 'currentColor'}
+          style={customSvgStyle}
+        ></Kinomics>
+      )
     case 'proteomics':
-      customSvgStyle.fill = "none"
-      return <Proteomics fill={color ? color : "currentColor"} style={customSvgStyle}></Proteomics>
+      customSvgStyle.fill = 'none'
+      return (
+        <Proteomics
+          fill={color ? color : 'currentColor'}
+          style={customSvgStyle}
+        ></Proteomics>
+      )
     case 'packagableFile':
-      customSvgStyle.fill = "none"
-      return <PackagableFile fill={color ? color : "currentColor"} style={customSvgStyle}></PackagableFile>
+      customSvgStyle.fill = 'none'
+      return (
+        <PackagableFile
+          fill={color ? color : 'currentColor'}
+          style={customSvgStyle}
+        ></PackagableFile>
+      )
     case 'other':
       return <Other fill={color} style={customSvgStyle}></Other>
     case 'wiki':
@@ -172,7 +194,9 @@ const getIcon = (options:IconSvgOptions) => {
     case 'discussion':
       return <QuestionAnswerTwoTone style={muiSvgStyle} />
     case 'docker':
-      return <Docker fill={color ? color : "currentColor"} style={customSvgStyle} />
+      return (
+        <Docker fill={color ? color : 'currentColor'} style={customSvgStyle} />
+      )
     case 'accountCertified':
       return <AccountCertified></AccountCertified>
     case 'accountRegistered':
@@ -190,12 +214,12 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   let mounted = true
 
   // Do not set inline style unless it is specified because it's hard to override
-  const getPadding = (padding:any) => {
+  const getPadding = (padding: any) => {
     if (padding === 'left') {
-      return { paddingLeft: "0.2rem"}
+      return { paddingLeft: '0.2rem' }
     }
     if (padding === 'right') {
-      return { paddingRight: "0.2rem"}
+      return { paddingRight: '0.2rem' }
     }
     return {}
   }
@@ -220,16 +244,16 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         data-for={`icon-${icon}`}
         data-tip={label}
       >
-      { getIcon(options) }
+        {getIcon(options)}
       </span>
-      { label &&
-          <ReactTooltip
-            className={"icon-svg-tooltip"}
-            delayShow={TOOLTIP_DELAY_SHOW}
-            id={`icon-${icon}`}
-            place={'top'}
-      />
-      }
+      {label && (
+        <ReactTooltip
+          className={'icon-svg-tooltip'}
+          delayShow={TOOLTIP_DELAY_SHOW}
+          id={`icon-${icon}`}
+          place={'top'}
+        />
+      )}
     </>
   )
 }
