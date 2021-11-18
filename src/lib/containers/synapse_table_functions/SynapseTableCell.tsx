@@ -226,5 +226,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
       )
       return <p className={isBold}>{columnValue}</p>
   }
-  return <></>
+  // We can reach this if we don't get a mapping of IDs to entities or principals.
+  // TODO: If we don't have a id:data mapping, we should render a component that can fetch the required data, rather than breaking from the case.
+  return <p className={isBold}>{columnValue}</p>
 }
