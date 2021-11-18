@@ -146,7 +146,6 @@ export function useUpdateViaJson(
   const { accessToken } = useSynapseContext()
 
   return useMutation<EntityJson, SynapseClientError>(
-    [accessToken, 'entity', entityId, 'json'],
     () => SynapseClient.updateEntityJson(entityId, json, accessToken),
     {
       ...options,
