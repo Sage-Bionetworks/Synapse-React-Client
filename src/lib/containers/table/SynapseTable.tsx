@@ -798,6 +798,7 @@ export default class SynapseTable extends React.Component<
                     mapEntityIdToHeader={mapEntityIdToHeader}
                     mapUserIdToHeader={mapUserIdToHeader}
                     rowIndex={rowIndex}
+                    columnLinkConfig={columnLinkConfig}
                     columnName={columnName}
                     tableEntityId={tableEntityId}
                     rowData={row.values}
