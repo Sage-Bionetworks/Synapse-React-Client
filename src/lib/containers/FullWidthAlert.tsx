@@ -7,6 +7,7 @@ import {
   CheckCircleOutlined,
   Clear,
 } from '@material-ui/icons'
+import Typography from '../utils/typography/Typography'
 
 export interface FullWidthAlertProps extends AlertProps {
   variant: string
@@ -90,10 +91,8 @@ function FullWidthAlert(props: FullWidthAlertProps) {
       >
         <span className="iconArea">{iconContent}</span>
         <span className="messageArea">
-          <div>
-            <strong>{title}</strong>
-          </div>
-          {description}
+          <Typography variant="headline3">{title}</Typography>
+          <Typography variant="body1">{description}</Typography>
         </span>
         {secondaryButtonText && secondaryButtonHref && (
           <a
