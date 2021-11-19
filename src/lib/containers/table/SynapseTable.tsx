@@ -21,7 +21,7 @@ import {
   UserProfile,
   FacetColumnRequest,
   ColumnType,
-  ColumnModel
+  ColumnModel,
 } from '../../utils/synapseTypes/'
 import HasAccess from '../HasAccess'
 import { QueryWrapperChildProps } from '../QueryWrapper'
@@ -80,9 +80,7 @@ type Info = {
   index: number
   name: string
 }
-export interface Dictionary<T> {
-  [key: string]: T
-}
+
 export type SynapseTableState = {
   sortedColumnSelection: SortItem[]
   columnIconSortState: number[]
@@ -90,8 +88,8 @@ export type SynapseTableState = {
   isExpanded: boolean
   isEntityView: boolean
   isFileView: boolean
-  mapEntityIdToHeader: Dictionary<EntityHeader>
-  mapUserIdToHeader: Dictionary<Partial<UserGroupHeader & UserProfile>>
+  mapEntityIdToHeader: Record<string, EntityHeader>
+  mapUserIdToHeader: Record<string, Partial<UserGroupHeader & UserProfile>>
   isColumnSelectionOpen: boolean
   isFetchingEntityHeaders: boolean
   isFetchingEntityVersion: boolean
@@ -257,7 +255,7 @@ export default class SynapseTable extends React.Component<
       const { queryResult } = data
       const { queryResults } = queryResult
       const { rows } = queryResults
-      rows.forEach((row) => {
+      rows.forEach(row => {
         const rowSynapseId = `syn${row.rowId}`
         distinctEntityIds.add(rowSynapseId)
       })
@@ -512,11 +510,16 @@ export default class SynapseTable extends React.Component<
     const isLoggedIn = !!this.context.accessToken
     const isShowingAddToV2DownloadListColumn: boolean =
       this.state.isFileView && !this.props.hideDownload && isLoggedIn
-    const isShowingDirectDownloadColumn = this.state.isFileView && showDownloadColumn && isLoggedIn
+    const isShowingDirectDownloadColumn =
+      this.state.isFileView && showDownloadColumn && isLoggedIn
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
     return (
-      <div style={{ minHeight: '400px' }} className="SRC-overflowAuto" data-testid='SynapseTable'>
+      <div
+        style={{ minHeight: '400px' }}
+        className="SRC-overflowAuto"
+        data-testid="SynapseTable"
+      >
         <table
           ref={node => (this.tableElement = node)}
           className="table table-striped table-condensed"
@@ -678,22 +681,21 @@ export default class SynapseTable extends React.Component<
    *
    * @memberof SynapseTable
    */
-  private handlePaginationClick = (eventType: string) => (
-    _event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    const queryRequest = this.props.getLastQueryRequest!()
-    let currentOffset = queryRequest.query.offset!
-    // if its a "previous" click subtract from the offset
-    // otherwise its next and we paginate forward
-    if (eventType === PREVIOUS) {
-      currentOffset -= queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+  private handlePaginationClick =
+    (eventType: string) => (_event: React.MouseEvent<HTMLButtonElement>) => {
+      const queryRequest = this.props.getLastQueryRequest!()
+      let currentOffset = queryRequest.query.offset!
+      // if its a "previous" click subtract from the offset
+      // otherwise its next and we paginate forward
+      if (eventType === PREVIOUS) {
+        currentOffset -= queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+      }
+      if (eventType === NEXT) {
+        currentOffset += queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+      }
+      queryRequest.query.offset = currentOffset
+      this.props.executeQueryRequest!(queryRequest)
     }
-    if (eventType === NEXT) {
-      currentOffset += queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
-    }
-    queryRequest.query.offset = currentOffset
-    this.props.executeQueryRequest!(queryRequest)
-  }
   /**
    * Handle a column having been selected
    *
@@ -749,39 +751,6 @@ export default class SynapseTable extends React.Component<
     } = this.props
     const { selectColumns = [], columnModels = [] } = data!
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
-    const entityColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.ENTITYID,
-    )
-    const userColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.USERID,
-    )
-    const dateColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.DATE,
-    )
-    const dateListColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.DATE_LIST,
-    )
-    const booleanListColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.BOOLEAN_LIST,
-    )
-    const fileHandleIdColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.FILEHANDLEID,
-    )
-    const entityIdListColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.ENTITYID_LIST,
-    )
-    const otherListColumnIndicies = getColumnIndiciesWithType(
-      data,
-      ColumnType.STRING_LIST,
-      ColumnType.INTEGER_LIST,
-    )
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
       this.props.getLastQueryRequest!().query.sql,
@@ -822,26 +791,18 @@ export default class SynapseTable extends React.Component<
 
                 {!isCountColumn && (
                   <SynapseTableCell
-                    entityColumnIndicies={entityColumnIndicies}
-                    userColumnIndicies={userColumnIndicies}
-                    dateColumnIndicies={dateColumnIndicies}
-                    dateListColumnIndicies={dateListColumnIndicies}
-                    booleanListColumnIndicies={booleanListColumnIndicies}
-                    fileHandleIdColumnIndicies={fileHandleIdColumnIndicies}
-                    entityIdListColumnIndicies={entityIdListColumnIndicies}
-                    otherListColumnIndicies={otherListColumnIndicies}
-                    colIndex={colIndex}
+                    columnType={headers[colIndex].columnType}
                     columnValue={columnValue}
                     isBold={isBold}
                     mapEntityIdToHeader={mapEntityIdToHeader}
                     mapUserIdToHeader={mapUserIdToHeader}
-                    columnLinkConfig={columnLinkConfig}
                     rowIndex={rowIndex}
-                    selectColumns={selectColumns}
-                    columnModels={columnModels}
+                    columnLinkConfig={columnLinkConfig}
                     columnName={columnName}
                     tableEntityId={tableEntityId}
                     rowData={row.values}
+                    selectColumns={selectColumns}
+                    columnModels={columnModels}
                   />
                 )}
               </td>
@@ -863,31 +824,33 @@ export default class SynapseTable extends React.Component<
           </td>,
         )
       }
-      const isFileEntity:boolean = mapEntityIdToHeader[rowSynapseId]?.type == 'org.sagebionetworks.repo.model.FileEntity'
+      const isFileEntity: boolean =
+        mapEntityIdToHeader[rowSynapseId]?.type ==
+        'org.sagebionetworks.repo.model.FileEntity'
       if (isShowingDownloadColumn) {
         // SWC-5790: If this is a FileEntity, the download icon should just go to entity page
         rowContent.unshift(
           <td className="SRC_noBorderTop direct-download">
-            {isFileEntity &&
-                <DirectDownload
-                  key={'direct-download-' + rowSynapseId}
-                  associatedObjectId={rowSynapseId}
-                  entityVersionNumber={entityVersionNumber}
+            {isFileEntity && (
+              <DirectDownload
+                key={'direct-download-' + rowSynapseId}
+                associatedObjectId={rowSynapseId}
+                entityVersionNumber={entityVersionNumber}
               ></DirectDownload>
-            }
+            )}
           </td>,
         )
       }
       if (isShowingAddToV2DownloadListColumn) {
         rowContent.unshift(
           <td className="SRC_noBorderTop add-to-download-list-v2">
-            {isFileEntity &&
+            {isFileEntity && (
               <AddToDownloadListV2
                 key={'add-to-download-list-v2-' + rowSynapseId}
                 entityId={rowSynapseId}
                 entityVersionNumber={parseInt(entityVersionNumber)}
               ></AddToDownloadListV2>
-            }
+            )}
           </td>,
         )
       }

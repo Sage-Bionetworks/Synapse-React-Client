@@ -1,11 +1,12 @@
 @use '../abstracts/variables' as SRC;
+@use 'sass:map';
 
 .QueryFilter {
   &__title {
     font-weight: bold;
   }
   padding: 2rem;
-  background-color: rgba(SRC.$primary-action-color-500, 0.05);
+  background-color: rgba(map.get(SRC.$primary-color-palette, 500), 0.05);
   &__facet {
     margin: 2rem 0;
     &:first-child {

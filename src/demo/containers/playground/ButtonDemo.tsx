@@ -6,32 +6,24 @@ import {
   DropdownButton,
   Table,
 } from 'react-bootstrap'
+import { Checkbox } from '../../../lib/containers/widgets/Checkbox'
 
 /**
  * A simple component that displays all of our reusable button styles
  */
 export const ButtonDemo: React.FunctionComponent = () => {
   const [buttonClass, setButtonClass] = useState('')
-  const [buttonVariant, setButtonVariant] = useState('primary-base')
+  const [buttonVariant, setButtonVariant] = useState('sds-primary')
+  const [isDisabled, setIsDisabled] = useState(false)
   const [buttonSize, setButtonSize] = useState<'sm' | 'lg' | undefined>(
     undefined,
   )
 
   const shapeClasses: string[] = ['', 'pill', 'pill-xl']
   const colorVariants: string[] = [
-    'primary-base',
-    'primary-active',
-    'primary-300',
-    'primary-500',
-    'primary-700',
-    'primary-900',
-    'light-primary-base',
-    'light-primary-active',
-    'light-primary-300',
-    'light-primary-500',
-    'light-primary-700',
-    'light-primary-900',
-    'gray-primary-500',
+    'sds-primary',
+    'outline',
+    'primary',
     'secondary',
     'light-secondary',
     'default',
@@ -88,12 +80,18 @@ export const ButtonDemo: React.FunctionComponent = () => {
             Large
           </Dropdown.Item>
         </DropdownButton>
+        <Checkbox
+          label="Is Disabled"
+          checked={isDisabled}
+          onChange={value => setIsDisabled(value)}
+        ></Checkbox>
       </>
 
       <Button
         className={buttonClass}
         size={buttonSize}
         variant={buttonVariant}
+        disabled={isDisabled}
         style={{ display: 'block', margin: '30px auto' }}
       >
         Custom Button

@@ -20,7 +20,7 @@ import {
   useGetSchemaBinding,
 } from '../../../utils/hooks/SynapseAPI/useSchema'
 import { SynapseClientError } from '../../../utils/SynapseClient'
-import { entityJsonKeys } from '../../../utils/synapseTypes'
+import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
 import {
@@ -65,15 +65,18 @@ const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
-export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenAnnotationEditorProps> = ({
-  entityId,
-  schemaId,
-  liveValidate = false,
-  onSuccess = () => {
-    /* no-op */
-  },
-  onCancel,
-}: SchemaDrivenAnnotationEditorProps) => {
+export const SchemaDrivenAnnotationEditor = (
+  props: SchemaDrivenAnnotationEditorProps,
+) => {
+  const {
+    entityId,
+    schemaId,
+    liveValidate = false,
+    onSuccess = () => {
+      /* no-op */
+    },
+    onCancel,
+  } = props
   const handleError = useErrorHandler()
   const formRef = useRef<Form<Record<string, unknown>>>(null)
 
@@ -147,19 +150,22 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const isLoading = isLoadingBinding || isLoadingSchema
 
-  const mutation = useUpdateViaJson(
-    entityId!,
-    { ...dropNullishArrayValues(formData ?? {}), ...entityJson },
-    {
-      onSuccess: () => {
-        onSuccess()
-      },
-      onError: error => {
-        setSubmissionError(error)
-        setShowSubmissionError(true)
-      },
+  const mutation = useUpdateViaJson({
+    onSuccess: () => {
+      onSuccess()
     },
-  )
+    onError: error => {
+      setSubmissionError(error)
+      setShowSubmissionError(true)
+    },
+  })
+
+  function submitChangedEntity() {
+    mutation.mutate({
+      ...dropNullishArrayValues(formData ?? {}),
+      ...entityJson,
+    } as EntityJson)
+  }
 
   return (
     <div className="bootstrap-4-backport AnnotationEditor">
@@ -247,8 +253,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               }
               setShowSubmissionError(false)
               setFormData(formData)
-
-              mutation.mutate()
+              submitChangedEntity()
             }}
             onError={(errors: AjvError[]) => {
               // invoked when submit is clicked and there are client-side validation errors
@@ -320,7 +325,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             <ConfirmationModal
               show={true}
               onSave={() => {
-                mutation.mutate()
+                submitChangedEntity()
                 setShowConfirmation(false)
               }}
               onCancel={() => {
