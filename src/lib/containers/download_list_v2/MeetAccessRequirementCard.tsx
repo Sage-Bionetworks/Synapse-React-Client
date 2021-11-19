@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
-import { SynapseSpinner } from '../LoadingScreen'
 import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/useGetAccessRequirement'
 import { SelfSignAccessRequirement } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
 import { EASY_DIFFICULTY, MEDIUM_DIFFICULTY, VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
 import AccessRequirementList, { SUPPORTED_ACCESS_REQUIREMENTS } from '../access_requirement_list/AccessRequirementList'
+import { Skeleton } from '@material-ui/lab'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
@@ -96,9 +96,7 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
     <>
       {!isError && !isFetching && content}
       {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+        <LoadingMeetAccessRequirementCard />
       )}
       {isShowingAccessRequirement && ar && (
         <AccessRequirementList entityId={ar.subjectIds[0].id}
@@ -109,4 +107,17 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
       )}
     </>
   )
+}
+
+export const LoadingMeetAccessRequirementCard:React.FunctionComponent = () => {
+  return <div className="MeetAccessRequirementCard actionRequiredCard">
+  <Skeleton variant="rect" width={136} height={74}/>
+  <div className="metadata">
+    <div className="title"><Skeleton width={320}/></div>
+    <div className="fileCount"><Skeleton width={100}/></div>
+  </div>
+  <div className="startButtonContainer">
+    <Skeleton variant="rect" width={160} height={33}/>
+  </div>
+</div>
 }
