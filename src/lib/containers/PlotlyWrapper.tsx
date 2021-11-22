@@ -12,11 +12,19 @@ export type PlotlyWrapperProps = {
   useResizeHandler?: boolean
   className?: string
   containerWidth?: number
+  plotStyle?: React.CSSProperties
 }
 
 const PlotlyWrapper: React.FC<PlotlyWrapperProps> = props => {
-  const { data, layout, config, className, containerWidth, useResizeHandler } =
-    props
+  const {
+    data,
+    layout,
+    config,
+    className,
+    containerWidth,
+    useResizeHandler,
+    plotStyle,
+  } = props
   const hasData = !!(data && data.length)
 
   return (
@@ -34,6 +42,7 @@ const PlotlyWrapper: React.FC<PlotlyWrapperProps> = props => {
           layout={layout ?? {}}
           config={config}
           useResizeHandler={useResizeHandler}
+          style={plotStyle}
         />
       )}
     </div>
