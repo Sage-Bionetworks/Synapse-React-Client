@@ -26,7 +26,7 @@ import {
   CreatedOnRenderer,
   DatasetEditorVersionRenderer,
   EntityErrorRenderer,
-  EntityNameRenderer as EntityNameWithIconRenderer,
+  EntityNameRenderer,
   ModifiedByRenderer,
   ModifiedOnRenderer,
   ProjectRenderer,
@@ -40,7 +40,8 @@ import { Checkbox } from '../../widgets/Checkbox'
 
 type DatasetItemsEditorProps = {
   entityId: string
-  onClose: () => void
+  onSave?: () => void
+  onClose?: () => void
 }
 
 export type DatasetItemsEditorTableData = DatasetItem & {
@@ -53,7 +54,7 @@ const ROW_HEIGHT = 42
 const TABLE_HEIGHT = 350
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
-  const { entityId, onClose } = props
+  const { entityId, onSave, onClose } = props
 
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
@@ -94,6 +95,9 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         'success',
         { title: 'Dataset Saved' },
       )
+      if (onSave) {
+        onSave()
+      }
     },
     onError: error => {
       if (error.status === 412) {
@@ -215,7 +219,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         onClick={() => {
           if (isChecked) {
             clearSelectedIds()
-          } else if (datasetToUpdate) {
+          } else {
             addSelectedId(...datasetToUpdate.items.map(item => item.entityId))
           }
         }}
@@ -266,15 +270,13 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       dataKey: 'entityId',
       title: 'Name',
       resizable: true,
-      style: { textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
-      cellRenderer: EntityNameWithIconRenderer,
+      cellRenderer: EntityNameRenderer,
     },
     {
       key: 'status',
       width: 80,
       dataKey: 'entityId',
       resizable: true,
-
       cellRenderer: BadgeIconsRenderer,
     },
     {
@@ -371,7 +373,11 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         title="Unsaved Changes"
         modalBody="Any unsaved changes will be lost. Are you sure you want to close the editor?"
         confirmButtonText="OK"
-        onConfirm={onClose}
+        onConfirm={() => {
+          if (onClose) {
+            onClose()
+          }
+        }}
         show={showWarningModal}
         onConfirmCallbackArgs={[]}
         onCancel={() => setShowWarningModal(false)}
@@ -457,7 +463,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           onClick={() => {
             if (hasChangedSinceLastSave) {
               setShowWarningModal(true)
-            } else {
+            } else if (onClose) {
               onClose()
             }
           }}

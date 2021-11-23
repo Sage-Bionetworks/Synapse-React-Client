@@ -109,11 +109,7 @@ export function BadgeIconsRenderer(props: EntityIdAndVersionRendererProps) {
 }
 
 export function DateRenderer({ cellData }: { cellData?: string }) {
-  return (
-    <>
-      {(cellData && formatDate(moment(cellData))) ?? <Skeleton width={200} />}
-    </>
-  )
+  return <>{(cellData && formatDate(moment(cellData))) ?? <></>}</>
 }
 
 /**
@@ -122,11 +118,16 @@ export function DateRenderer({ cellData }: { cellData?: string }) {
  * @returns
  */
 export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
-  const { data: bundle } = useGetEntityBundle(
+  const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     undefined,
     props.rowData.versionNumber,
   )
+
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
   return <DateRenderer {...props} cellData={bundle?.entity?.modifiedOn} />
 }
 
@@ -136,50 +137,66 @@ export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
  * @returns
  */
 export function CreatedOnRenderer(props: EntityIdAndVersionRendererProps) {
-  const { data: bundle } = useGetEntityBundle(
+  const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     undefined,
     props.rowData.versionNumber,
   )
+
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
   return <DateRenderer {...props} cellData={bundle?.entity?.createdOn} />
 }
 
 export function EntityNameRenderer(props: EntityIdAndVersionRendererProps) {
-  const { data: bundle } = useGetEntityBundle(
+  const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     undefined,
     props.rowData.versionNumber,
   )
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
   return bundle ? (
-    <EntityLink entity={bundle.entity!} link={false} />
+    <EntityLink
+      className="EntityNameWithIconRenderer"
+      entity={bundle.entity!}
+      link={false}
+    />
   ) : (
-    <Skeleton width={200} />
+    <></>
   )
 }
 
 export function ProjectRenderer(props: EntityIdAndVersionRendererProps) {
-  const { data: entityBundle } = useGetEntityBundle(
+  const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
     props.rowData.entityId,
     undefined,
     props.rowData.versionNumber,
   )
-  const { data: project } = useGetEntity(
+  const { data: project, isLoading: isLoadingProjectEntity } = useGetEntity(
     entityBundle?.path!.path[1].id ?? '',
     undefined,
     { enabled: !!entityBundle },
   )
-  return project ? <EntityLink entity={project} /> : <Skeleton width={200} />
+
+  if (isLoadingBundle || isLoadingProjectEntity) {
+    return <Skeleton width={200} />
+  }
+
+  return project ? <EntityLink entity={project} /> : <></>
 }
 
 export function UserCardRenderer({ cellData }: { cellData?: string }) {
-  return cellData ? (
+  return (
     <UserCard
       ownerId={cellData}
       size={SMALL_USER_CARD}
       openLinkInNewTab={true}
     />
-  ) : (
-    <Skeleton width={200} />
   )
 }
 
@@ -189,11 +206,16 @@ export function UserCardRenderer({ cellData }: { cellData?: string }) {
  * @returns
  */
 export function ModifiedByRenderer(props: EntityIdAndVersionRendererProps) {
-  const { data: bundle } = useGetEntityBundle(
+  const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
     undefined,
     props.rowData.versionNumber,
   )
+
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
   return <UserCardRenderer {...props} cellData={bundle?.entity?.modifiedBy} />
 }
 

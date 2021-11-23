@@ -55,6 +55,11 @@
   }
 }
 
+.EntityNameWithIconRenderer {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .EntityErrorRenderer {
   color: map.get(SRC.$colors, 'warning');
   svg {
