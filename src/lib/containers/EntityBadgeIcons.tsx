@@ -43,6 +43,7 @@ export const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID'
 
 export type EntityBadgeIconsProps = {
   entityId: string
+  versionNumber?: number
   flexWrap?: // possible settings for flex-wrap
   | 'wrap'
     | 'nowrap'
@@ -78,25 +79,27 @@ export type EntityBadgeIconsProps = {
  * Stateless component used to show icons that show an entity's status.
  * Adapted from https://github.com/Sage-Bionetworks/SynapseWebClient/blob/46b9b717636cda2421926d96365244bbb72a05b6/src/main/java/org/sagebionetworks/web/client/widget/entity/EntityBadge.java
  */
-export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = ({
-  entityId,
-  flexWrap = 'nowrap',
-  justifyContent = 'flex-start',
-  showIsPublicPrivate = true,
-  showHasLocalSharingSettings = true,
-  showHasAnnotations = true,
-  showHasWiki = true,
-  showHasDiscussionThread = true,
-  showUnlink = true,
-  onUnlink = () => {
-    /* noop */
-  },
-  onUnlinkError = () => {
-    /* noop */
-  },
-  canOpenModal,
-  renderTooltipComponent,
-}) => {
+export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
+  const {
+    entityId,
+    versionNumber,
+    flexWrap = 'nowrap',
+    justifyContent = 'flex-start',
+    showIsPublicPrivate = true,
+    showHasLocalSharingSettings = true,
+    showHasAnnotations = true,
+    showHasWiki = true,
+    showHasDiscussionThread = true,
+    showUnlink = true,
+    onUnlink = () => {
+      /* noop */
+    },
+    onUnlinkError = () => {
+      /* noop */
+    },
+    canOpenModal,
+    renderTooltipComponent,
+  } = props
   const ownTooltipId =
     ENTITY_BADGE_ICONS_TOOLTIP_ID +
     (renderTooltipComponent ? `-${entityId}` : '')
@@ -110,10 +113,15 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
 
   const { ref, inView } = useInView()
 
-  const { data: bundle } = useGetEntityBundle(entityId, undefined, undefined, {
-    enabled: inView,
-    staleTime: 60 * 1000, // 60 seconds
-  })
+  const { data: bundle } = useGetEntityBundle(
+    entityId,
+    undefined,
+    versionNumber,
+    {
+      enabled: inView,
+      staleTime: 60 * 1000, // 60 seconds
+    },
+  )
   const [showModal, setShowModal] = useState(false)
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,

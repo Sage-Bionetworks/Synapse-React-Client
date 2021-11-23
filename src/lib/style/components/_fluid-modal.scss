@@ -1,0 +1,43 @@
+// See SWC-5801
+
+.FluidModal {
+  .modal-dialog {
+    width: auto;
+    max-width: 90vw;
+    @media (max-height: 500px) {
+      margin: 3vh auto;
+      margin-bottom: 0px;
+    }
+    .modal-content {
+      border-radius: 0px;
+      // grid-template-rows: 60px 75vh 60px;
+      min-height: 300px;
+      .modal-header {
+        min-height: 50px;
+        max-height: 65px;
+        height: 8vh;
+        margin: 15px 0px 5px;
+      }
+
+      .modal-body {
+        max-height: 70vh;
+
+        @media (max-height: 600px) {
+          max-height: 65vh;
+        }
+
+        overflow-y: auto;
+      }
+      .modal-footer {
+        min-height: 45px;
+        max-height: 60px;
+        height: 6vh;
+        margin-bottom: 15px;
+
+        .btn {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
