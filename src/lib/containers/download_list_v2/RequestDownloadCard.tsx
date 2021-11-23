@@ -25,7 +25,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
   const handleError = useErrorHandler()
   const {
     data,
-    isFetching,
+    isLoading,
     isError,
     error: newError,
   } = useGetEntityHeaders([{targetId: entityId}])
@@ -38,7 +38,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
 
   return (
     <>
-      {!isError && !isFetching && (
+      {!isError && !isLoading && (
         <div className="RequestDownloadCart actionRequiredCard">
           <Icon type={VARIABLE_DIFFICULTY} />
           <div className="metadata">
@@ -53,7 +53,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
           </a>
         </div>
       )}
-      {isFetching && (
+      {isLoading && (
         <LoadingAccessRequirementCard />
       )}
     </>

@@ -37,7 +37,7 @@ export default function DownloadListTable() {
   const {
     data,
     status,
-    isFetching,
+    isFetchingNextPage,
     isLoading,
     hasNextPage,
     fetchNextPage,
@@ -55,14 +55,14 @@ export default function DownloadListTable() {
   useEffect(() => {
     if (
       status === 'success' &&
-      !isFetching &&
+      !isFetchingNextPage &&
       hasNextPage &&
       fetchNextPage &&
       inView
     ) {
       fetchNextPage()
     }
-  }, [status, isFetching, hasNextPage, fetchNextPage, inView])
+  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView])
 
   const allRows = data?.pages.flatMap(page => page.page) ?? []
 

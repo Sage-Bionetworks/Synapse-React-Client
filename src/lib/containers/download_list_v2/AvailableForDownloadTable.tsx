@@ -31,6 +31,7 @@ export default function AvailableForDownloadTable(props: AvailableForDownloadTab
       <SynapseErrorBoundary>
         {
           props.filesStatistics && (
+            //SWC-5858: Update the Download List files table when the statistics change
             <DownloadListTable key={props.filesStatistics.totalNumberOfFiles} />
           )
         }

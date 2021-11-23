@@ -133,6 +133,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               <div className="availableForDownloadTableContainer container">
                 {isShowingCreatePackageUI && <CreatePackageV2 onPackageCreation={() => {
                   setIsShowingDownloadSuccessAlert(true)
+                  // we refetch the data because the backend will instantly remove the downloadable files from the download list after a package has been created
                   refetch()
                 }} />}
                 <AvailableForDownloadTable filesStatistics={data}/> 
