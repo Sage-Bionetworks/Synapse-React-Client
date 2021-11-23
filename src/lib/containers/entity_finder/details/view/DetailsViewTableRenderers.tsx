@@ -249,9 +249,6 @@ export const DatasetEditorVersionRenderer = ({
 }) => {
   const { entityId, versionNumber } = rowData
 
-  // Fetch the entity/version to make sure it exists/caller has READ access
-  // const { isError } = useGetEntity(entityId, versionNumber)
-
   const {
     data: versionData,
     isError,
