@@ -79,7 +79,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     datasetToUpdate && datasetToUpdate.items.length === selectedIds.size
   )
 
-  useGetEntity<Dataset>(entityId, undefined, {
+  const { refetch } = useGetEntity<Dataset>(entityId, undefined, {
     enabled: !datasetToUpdate,
     onSuccess: dataset => {
       setDatasetToUpdate(dataset)
@@ -97,7 +97,19 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     },
     onError: error => {
       if (error.status === 412) {
-        displayToast('Dataset was updated since last fetched. Reload the m')
+        displayToast(
+          'Re-retrieve the dataset to get the latest changes. Your current changes will be lost.',
+          'warning',
+          {
+            title: 'Dataset Updated since Last Fetched',
+            primaryButtonText: 'Retrieve Dataset',
+            onPrimaryButtonClick: refetch,
+          },
+        )
+      } else {
+        displayToast(error.reason, 'danger', {
+          title: 'An Error Occurred',
+        })
       }
     },
   })
