@@ -1477,7 +1477,7 @@ const processFilePart = (
     // uploaded the part.  calculate md5 of the part and add the part to the upload
     calculateMd5(fileSlice).then((md5: string) => {
       const addPartUrl = `/file/v1/file/multipart/${uploadId}/add/${partNumber}?partMD5Hex=${md5}`
-      doPut(
+      doPut<AddPartResponse>(
         addPartUrl,
         undefined,
         accessToken,
@@ -1527,7 +1527,7 @@ export const checkUploadComplete = (
     })
   ) {
     const url = `/file/v1/file/multipart/${status.uploadId}/complete`
-    doPut(
+    doPut<MultipartUploadStatus>(
       url,
       undefined,
       accessToken,
