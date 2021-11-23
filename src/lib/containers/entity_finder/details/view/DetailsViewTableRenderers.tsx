@@ -19,10 +19,8 @@ import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import {
   DatasetItem,
   EntityType,
-  FileHandleAssociateType,
   Reference,
 } from '../../../../utils/synapseTypes'
-import DirectDownload from '../../../DirectDownload'
 import {
   EntityBadgeIcons,
   ENTITY_BADGE_ICONS_TOOLTIP_ID,

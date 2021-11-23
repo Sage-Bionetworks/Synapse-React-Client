@@ -1,6 +1,6 @@
 import { Skeleton } from '@material-ui/lab'
 import BaseTable, { ColumnShape } from '@sage-bionetworks/react-base-table'
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
@@ -204,8 +204,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     allItemsAreSelected: boolean
   }
   const SelectAllCheckboxRenderer = (props: SelectAllCheckboxRendererProps) => {
-    const { datasetToUpdate, selectedIds, clearSelectedIds, addSelectedId } =
-      props
+    const { datasetToUpdate, clearSelectedIds, addSelectedId } = props
     useTraceUpdate(props)
     const isChecked = allItemsAreSelected
 
