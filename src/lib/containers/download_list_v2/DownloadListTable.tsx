@@ -38,6 +38,7 @@ export default function DownloadListTable() {
     data,
     status,
     isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -262,7 +263,7 @@ export default function DownloadListTable() {
           </Table>
         </>
       )}
-      {isFetching && (
+      {isLoading && (
         <SkeletonTable numCols={5} numRows={3} />
       )}
     </>
