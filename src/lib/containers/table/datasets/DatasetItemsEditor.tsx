@@ -209,11 +209,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     useTraceUpdate(props)
     const isChecked = allItemsAreSelected
 
-    console.log('!!datasetToUpdate', !!datasetToUpdate)
-    console.log('datasetToUpdate?.items.length', datasetToUpdate?.items.length)
-    console.log('selectedIds.size', selectedIds)
-    console.log('selectedIds.size', selectedIds.size)
-    // Enabled if there's at least one visble & selectable entity, OR there's a page we haven't fetched
     return datasetToUpdate ? (
       <div
         data-testid="Select All"
@@ -222,7 +217,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           if (isChecked) {
             clearSelectedIds()
           } else if (datasetToUpdate) {
-            console.log('datasetToUpdate items are ', datasetToUpdate.items)
             addSelectedId(...datasetToUpdate.items.map(item => item.entityId))
           }
         }}
@@ -335,9 +329,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       cellRenderer: ProjectRenderer,
     },
   ]
-
-  // TODO: Handle rendering item that the user cannot see (403)
-  // TODO: When adding or changing version, figure out how to render the info columns that may now be out of date
 
   function NoItemsPlaceholder() {
     return (
