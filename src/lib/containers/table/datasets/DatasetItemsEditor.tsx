@@ -172,10 +172,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     clearSelectedIds()
   }
 
-  const changeVersionOnItem = useCallback(function (
-    entityId: string,
-    newVersion: number,
-  ) {
+  function changeVersionOnItem(entityId: string, newVersion: number) {
     setDatasetToUpdate(dataset => ({
       ...dataset!,
       items: dataset!.items.map(datasetItem =>
@@ -184,22 +181,20 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           : datasetItem,
       ),
     }))
-  },
-  [])
+  }
 
-  const DatasetItemVersionRenderer = useCallback(
-    (props: CellRendererProps<DatasetItemsEditorTableData>) => {
-      return (
-        <DatasetEditorVersionRenderer
-          {...props}
-          toggleSelection={datasetItem => {
-            changeVersionOnItem(datasetItem.entityId, datasetItem.versionNumber)
-          }}
-        />
-      )
-    },
-    [changeVersionOnItem],
-  )
+  const DatasetItemVersionRenderer = (
+    props: CellRendererProps<DatasetItemsEditorTableData>,
+  ) => {
+    return (
+      <DatasetEditorVersionRenderer
+        {...props}
+        toggleSelection={datasetItem => {
+          changeVersionOnItem(datasetItem.entityId, datasetItem.versionNumber)
+        }}
+      />
+    )
+  }
 
   type SelectAllCheckboxRendererProps = {
     datasetToUpdate: Dataset
