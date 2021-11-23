@@ -229,17 +229,6 @@ export function TypeIconRenderer({ cellData }: DetailsViewRendererProps) {
   return <EntityTypeIcon type={cellData as EntityType} />
 }
 
-export function EntityIdRenderer<T>(props: CellRendererProps<T>) {
-  const entityId = props.cellData
-  // We get the bundle because we've likely already fetched it for another column
-  const { data: bundle } = useGetEntityBundle(entityId)
-  return bundle ? (
-    <EntityLink className="SRC-noMargin" entity={bundle.entity!} />
-  ) : (
-    <Skeleton width={200} />
-  )
-}
-
 export function EmptyRenderer({
   noResultsPlaceholder,
 }: {
