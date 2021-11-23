@@ -263,10 +263,29 @@ export const DatasetEditorVersionRenderer = ({
   // Fetch the entity/version to make sure it exists/caller has READ access
   // const { isError } = useGetEntity(entityId, versionNumber)
 
-  const { data: versionData, isError } = useGetVersionsInfinite(entityId, {
+  const {
+    data: versionData,
+    isError,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGetVersionsInfinite(entityId, {
     staleTime: 60 * 1000, // 60 seconds
   })
   const versions = versionData?.pages.flatMap(page => page.results) ?? []
+  const currentVersionHasBeenRetrieved = !!versions.find(
+    version => version.versionNumber === versionNumber,
+  )
+  useEffect(() => {
+    if (!currentVersionHasBeenRetrieved && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [
+    currentVersionHasBeenRetrieved,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  ])
 
   if (isError) {
     return <>{versionNumber}</>
@@ -292,13 +311,16 @@ export const DatasetEditorVersionRenderer = ({
             })
           }}
         >
-          {!versions.find(
-            version => version.versionNumber === versionNumber,
-          ) && (
-            <option disabled key={versionNumber} value={versionNumber}>
-              {versionNumber} (Not Found)
-            </option>
-          )}
+          {
+            /* The selected version number doesn't exist */
+            !currentVersionHasBeenRetrieved &&
+              !hasNextPage &&
+              !isFetchingNextPage && (
+                <option disabled key={versionNumber} value={versionNumber}>
+                  {versionNumber} (Not Found)
+                </option>
+              )
+          }
           {versions.map(version => {
             return (
               <option key={version.versionNumber} value={version.versionNumber}>
