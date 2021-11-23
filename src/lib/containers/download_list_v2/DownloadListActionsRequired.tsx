@@ -8,7 +8,7 @@ import {
   MeetAccessRequirement,
   RequestDownload,
 } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
-import { LoadingMeetAccessRequirementCard, MeetAccessRequirementCard } from './MeetAccessRequirementCard'
+import { LoadingAccessRequirementCard, MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 
 export default function DownloadListActionsRequired() {
@@ -92,7 +92,7 @@ export default function DownloadListActionsRequired() {
         </div>
       )}
       {isLoading && (
-        <LoadingMeetAccessRequirementCard />
+        <LoadingAccessRequirementCard />
       )}
     </>
   )

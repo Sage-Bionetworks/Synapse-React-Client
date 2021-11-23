@@ -18,12 +18,12 @@ import moment from 'moment'
 import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
 import { Direction } from '../../utils/synapseTypes'
-import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -263,9 +263,7 @@ export default function DownloadListTable() {
         </>
       )}
       {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+        <SkeletonTable numCols={5} numRows={3} />
       )}
     </>
   )

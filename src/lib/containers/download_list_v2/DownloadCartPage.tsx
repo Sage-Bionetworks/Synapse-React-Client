@@ -135,7 +135,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                   setIsShowingDownloadSuccessAlert(true)
                   refetch()
                 }} />}
-                <AvailableForDownloadTable /> 
+                <AvailableForDownloadTable filesStatistics={data}/> 
               </div>
             </div>}
             {data.numberOfFilesAvailableForDownload === 0 && <div className="placeholder">
