@@ -1,30 +1,73 @@
 import { Skeleton } from '@material-ui/lab'
-import { ColumnShape, SortOrder } from '@sage-bionetworks/react-base-table'
+import BaseTable, {
+  CallOrReturn,
+  ColumnShape,
+  SortOrder,
+} from '@sage-bionetworks/react-base-table'
 import moment from 'moment'
 import React, { SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
-import { useGetVersionsInfinite } from '../../../../utils/hooks/SynapseAPI/useEntity'
+import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
+import {
+  useGetEntity,
+  useGetVersionsInfinite,
+} from '../../../../utils/hooks/SynapseAPI/useEntity'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
-import { EntityType, Reference } from '../../../../utils/synapseTypes'
-import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
+import {
+  DatasetItem,
+  EntityType,
+  Reference,
+} from '../../../../utils/synapseTypes'
+import {
+  EntityBadgeIcons,
+  ENTITY_BADGE_ICONS_TOOLTIP_ID,
+} from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
+import { EntityLink } from '../../../EntityLink'
+import IconSvg from '../../../IconSvg'
 import { SynapseSpinner } from '../../../LoadingScreen'
+import { DatasetItemsEditorTableData } from '../../../table/datasets/DatasetItemsEditor'
 import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { DetailsViewRowData } from './DetailsView'
 
+// TODO: Consider sharing logic with SynapseTableCell.tsx
+
+export type CellRendererProps<T> = {
+  cellData: any
+  columns: ColumnShape<T>[]
+  column: ColumnShape<T>
+  columnIndex: number
+  rowData: T
+  rowIndex: number
+  container: BaseTable<T>
+  isScrolling?: boolean
+}
+
+export type CellRenderer<T> = CallOrReturn<
+  React.ReactNode,
+  CellRendererProps<T>
+>
+
+/**
+ * The data across tables may differ, but it has entity ID and version, then it can use many of these renderers
+ */
+export type EntityIdAndVersionNumber = {
+  entityId: string
+  versionNumber?: number
+}
+
+export type EntityIdAndVersionRendererProps =
+  CellRendererProps<EntityIdAndVersionNumber>
+
 /**
  * Props for cellRenderer components within the BaseTable
  */
-export type DetailsViewRendererProps = {
-  rowData: DetailsViewRowData
-  cellData: any
-  columns: ColumnShape<DetailsViewRowData>[]
-}
+export type DetailsViewRendererProps = CellRendererProps<DetailsViewRowData>
 
 export const CustomSortIndicator = ({
   className,
@@ -44,10 +87,16 @@ export const CustomSortIndicator = ({
   )
 }
 
-export function BadgeIconsRenderer({ rowData }: DetailsViewRendererProps) {
+/**
+ * Renders Entity Badges using the entity bundle.
+ * @param props
+ * @returns
+ */
+export function BadgeIconsRenderer(props: EntityIdAndVersionRendererProps) {
   return (
     <EntityBadgeIcons
-      entityId={rowData.id}
+      entityId={props.rowData.entityId}
+      versionNumber={props.rowData.versionNumber}
       showHasDiscussionThread={false}
       showHasWiki={false}
       showUnlink={false}
@@ -60,37 +109,113 @@ export function BadgeIconsRenderer({ rowData }: DetailsViewRendererProps) {
 }
 
 export function DateRenderer({ cellData }: { cellData?: string }) {
-  return (
-    <>
-      {(cellData && formatDate(moment(cellData))) ?? <Skeleton width={200} />}
-    </>
-  )
+  return <>{(cellData && formatDate(moment(cellData))) ?? <></>}</>
 }
 
-export function ModifiedOnRenderer(props: DetailsViewRendererProps) {
-  const { data: bundle } = useGetEntityBundle(props.rowData.id)
+/**
+ * Renders 'modifiedOn' from the entity bundle.
+ * @param props
+ * @returns
+ */
+export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
+  const { data: bundle, isLoading } = useGetEntityBundle(
+    props.rowData.entityId,
+    undefined,
+    props.rowData.versionNumber,
+  )
+
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
   return <DateRenderer {...props} cellData={bundle?.entity?.modifiedOn} />
 }
 
-export function CreatedOnRenderer(props: DetailsViewRendererProps) {
-  const { data: bundle } = useGetEntityBundle(props.rowData.id)
+/**
+ * Renders 'createdOn' from the entity bundle.
+ * @param props
+ * @returns
+ */
+export function CreatedOnRenderer(props: EntityIdAndVersionRendererProps) {
+  const { data: bundle, isLoading } = useGetEntityBundle(
+    props.rowData.entityId,
+    undefined,
+    props.rowData.versionNumber,
+  )
+
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
   return <DateRenderer {...props} cellData={bundle?.entity?.createdOn} />
 }
 
+export function EntityNameRenderer(props: EntityIdAndVersionRendererProps) {
+  const { data: bundle, isLoading } = useGetEntityBundle(
+    props.rowData.entityId,
+    undefined,
+    props.rowData.versionNumber,
+  )
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
+  return bundle ? (
+    <EntityLink
+      className="EntityNameWithIconRenderer"
+      entity={bundle.entity!}
+      link={false}
+    />
+  ) : (
+    <></>
+  )
+}
+
+export function ProjectRenderer(props: EntityIdAndVersionRendererProps) {
+  const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
+    props.rowData.entityId,
+    undefined,
+    props.rowData.versionNumber,
+  )
+  const { data: project, isLoading: isLoadingProjectEntity } = useGetEntity(
+    entityBundle?.path!.path[1].id ?? '',
+    undefined,
+    { enabled: !!entityBundle },
+  )
+
+  if (isLoadingBundle || isLoadingProjectEntity) {
+    return <Skeleton width={200} />
+  }
+
+  return project ? <EntityLink entity={project} /> : <></>
+}
+
 export function UserCardRenderer({ cellData }: { cellData?: string }) {
-  return cellData ? (
+  return (
     <UserCard
       ownerId={cellData}
       size={SMALL_USER_CARD}
       openLinkInNewTab={true}
     />
-  ) : (
-    <Skeleton width={200} />
   )
 }
 
-export function ModifiedByRenderer(props: DetailsViewRendererProps) {
-  const { data: bundle } = useGetEntityBundle(props.rowData.id)
+/**
+ * Renders 'modifiedBy' from the entity bundle.
+ * @param props
+ * @returns
+ */
+export function ModifiedByRenderer(props: EntityIdAndVersionRendererProps) {
+  const { data: bundle, isLoading } = useGetEntityBundle(
+    props.rowData.entityId,
+    undefined,
+    props.rowData.versionNumber,
+  )
+
+  if (isLoading) {
+    return <Skeleton width={200} />
+  }
+
   return <UserCardRenderer {...props} cellData={bundle?.entity?.modifiedBy} />
 }
 
@@ -102,7 +227,9 @@ export function LoadingRenderer() {
   )
 }
 
-export function CheckboxRenderer({ rowData }: DetailsViewRendererProps) {
+export function DetailsViewCheckboxRenderer({
+  rowData,
+}: DetailsViewRendererProps) {
   const { isSelected, isDisabled } = rowData
   return (
     !isDisabled && (
@@ -134,7 +261,87 @@ export function EmptyRenderer({
   )
 }
 
-export const VersionRenderer = ({
+export const DatasetEditorVersionRenderer = ({
+  rowData,
+  toggleSelection,
+}: CellRendererProps<DatasetItemsEditorTableData> & {
+  toggleSelection: (entity: DatasetItem) => void
+}) => {
+  const { entityId, versionNumber } = rowData
+
+  const {
+    data: versionData,
+    isError,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useGetVersionsInfinite(entityId, {
+    staleTime: 60 * 1000, // 60 seconds
+  })
+  const versions = versionData?.pages.flatMap(page => page.results) ?? []
+  const currentVersionHasBeenRetrieved = !!versions.find(
+    version => version.versionNumber === versionNumber,
+  )
+  useEffect(() => {
+    if (!currentVersionHasBeenRetrieved && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [
+    currentVersionHasBeenRetrieved,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  ])
+
+  if (isError) {
+    return <>{versionNumber}</>
+  }
+
+  return (
+    <div>
+      {versions && versions.length > 0 && (
+        <Form.Control
+          role="listbox"
+          size="sm"
+          as="select"
+          value={versionNumber}
+          onClick={(event: SyntheticEvent<HTMLSelectElement>) => {
+            event.stopPropagation()
+          }}
+          onChange={event => {
+            event.stopPropagation()
+            const version = parseInt(event.target.value)
+            toggleSelection({
+              entityId: entityId,
+              versionNumber: version,
+            })
+          }}
+        >
+          {
+            /* The selected version number doesn't exist */
+            !currentVersionHasBeenRetrieved &&
+              !hasNextPage &&
+              !isFetchingNextPage && (
+                <option disabled key={versionNumber} value={versionNumber}>
+                  {versionNumber} (Not Found)
+                </option>
+              )
+          }
+          {versions.map(version => {
+            return (
+              <option key={version.versionNumber} value={version.versionNumber}>
+                {version.versionNumber}
+                {version.isLatestVersion && ' (Latest)'}
+              </option>
+            )
+          })}
+        </Form.Control>
+      )}
+    </div>
+  )
+}
+
+export const DetailsViewVersionRenderer = ({
   rowData,
   mustSelectVersionNumber,
   toggleSelection,
@@ -142,12 +349,8 @@ export const VersionRenderer = ({
   mustSelectVersionNumber: boolean
   toggleSelection: (entity: Reference | Reference[]) => void
 }) => {
-  const {
-    id,
-    isVersionableEntity,
-    isSelected,
-    currentSelectedVersion,
-  } = rowData
+  const { id, isVersionableEntity, isSelected, currentSelectedVersion } =
+    rowData
   const { data: versionData } = useGetVersionsInfinite(id, {
     enabled: isVersionableEntity,
     staleTime: 60 * 1000, // 60 seconds
@@ -192,7 +395,8 @@ export const VersionRenderer = ({
             const version = parseInt(event.target.value)
             toggleSelection({
               targetId: id,
-              targetVersionNumber: version === NO_VERSION_NUMBER ? undefined : version,
+              targetVersionNumber:
+                version === NO_VERSION_NUMBER ? undefined : version,
             })
           }}
         >
@@ -210,4 +414,57 @@ export const VersionRenderer = ({
       )}
     </div>
   )
+}
+
+export function CheckboxRenderer<
+  T extends {
+    isSelected: boolean
+    isDisabled?: boolean
+    setSelected: (newValue: boolean) => void
+  },
+>(props: CellRendererProps<T>) {
+  const { isSelected, isDisabled, setSelected } = props.rowData
+  return (
+    !isDisabled && (
+      <Checkbox
+        disabled={isDisabled}
+        label=""
+        checked={isSelected}
+        onChange={value => {
+          setSelected(value)
+        }}
+      />
+    )
+  )
+}
+
+export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
+  const { entityId, versionNumber } = props.rowData
+  const { error, isError } = useGetEntity(entityId, versionNumber, {
+    onError: () => {
+      rebuildTooltip()
+    },
+  })
+
+  let message = error?.reason
+
+  if (error?.status === 403) {
+    message = "You don't have permission to view this entity."
+  } else if (error?.status === 404) {
+    message = 'The entity or version does not exist. It may have been deleted.'
+  }
+
+  if (!isError) {
+    return <></>
+  } else {
+    return (
+      <div
+        className="EntityErrorRenderer"
+        data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+        data-tip={message}
+      >
+        <IconSvg options={{ icon: 'warningOutlined' }} />
+      </div>
+    )
+  }
 }

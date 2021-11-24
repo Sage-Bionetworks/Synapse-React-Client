@@ -30,6 +30,7 @@ import {
   SearchTwoTone,
   WatchLater,
   AddCircleTwoTone,
+  ReportProblemOutlined,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -203,6 +204,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <AccountRegistered></AccountRegistered>
     case 'accountValidated':
       return <AccountValidated></AccountValidated>
+    case 'warningOutlined':
+      return <ReportProblemOutlined style={muiSvgStyle}></ReportProblemOutlined>
     default:
       return <></>
   }

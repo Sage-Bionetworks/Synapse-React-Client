@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
-import { SynapseSpinner } from '../LoadingScreen'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI/useGetEntityHeaders'
 import { EntityHeader } from '../../utils/synapseTypes'
 import { Icon } from '../row_renderers/utils'
 import { VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { LoadingAccessRequirementCard } from './MeetAccessRequirementCard'
 
 
 export type RequestDownloadCardProps = {
@@ -25,7 +25,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
   const handleError = useErrorHandler()
   const {
     data,
-    isFetching,
+    isLoading,
     isError,
     error: newError,
   } = useGetEntityHeaders([{targetId: entityId}])
@@ -38,7 +38,7 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
 
   return (
     <>
-      {!isError && !isFetching && (
+      {!isError && !isLoading && (
         <div className="RequestDownloadCart actionRequiredCard">
           <Icon type={VARIABLE_DIFFICULTY} />
           <div className="metadata">
@@ -53,10 +53,8 @@ export const RequestDownloadCard:React.FunctionComponent<RequestDownloadCardProp
           </a>
         </div>
       )}
-      {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+      {isLoading && (
+        <LoadingAccessRequirementCard />
       )}
     </>
   )

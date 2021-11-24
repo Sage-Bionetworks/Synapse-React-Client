@@ -43,6 +43,36 @@ export function useGetEntity<T extends Entity>(
   )
 }
 
+export function useUpdateEntity<T extends Entity>(
+  options?: UseMutationOptions<T, SynapseClientError, T>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<T, SynapseClientError, T>(
+    (entity: T) => SynapseClient.updateEntity<T>(entity, accessToken),
+    {
+      ...options,
+      onSuccess: async (updatedEntity, variables, ctx) => {
+        await queryClient.invalidateQueries(
+          ['entity', updatedEntity.id, 'entity', undefined],
+          {
+            exact: false,
+          },
+        )
+        queryClient.setQueryData(
+          ['entity', updatedEntity.id, 'entity', undefined],
+          updatedEntity,
+        )
+
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedEntity, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
 export function useGetVersions(
   entityId: string,
   offset: number = 0,

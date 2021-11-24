@@ -2,7 +2,6 @@ import BaseTable, {
   AutoResizer,
   Column,
 } from '@sage-bionetworks/react-base-table'
-import { debounce } from 'lodash-es'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import ReactTooltip from 'react-tooltip'
@@ -28,7 +27,7 @@ import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import {
   BadgeIconsRenderer,
-  CheckboxRenderer,
+  DetailsViewCheckboxRenderer,
   CreatedOnRenderer,
   CustomSortIndicator,
   EmptyRenderer,
@@ -36,15 +35,10 @@ import {
   ModifiedByRenderer,
   ModifiedOnRenderer,
   TypeIconRenderer,
-  VersionRenderer,
+  DetailsViewVersionRenderer,
 } from './DetailsViewTableRenderers'
 import { HelpOutline } from '@material-ui/icons'
-
-// Borrowed from: https://github.com/wwayne/react-tooltip/issues/300#issuecomment-468042592
-const rebuildTooltip = debounce(() => ReactTooltip.rebuild(), 200, {
-  leading: false,
-  trailing: true,
-})
+import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -68,6 +62,8 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
  * Describes the shape of the data passed to the BaseTable
  */
 export type DetailsViewRowData = (EntityHeader | ProjectHeader | Hit) & {
+  entityId: string
+  versionNumber?: number
   entityType: EntityType
   isSelected: boolean
   isDisabled: boolean
@@ -241,7 +237,10 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         const entityType = getEntityTypeFromHeader(entity)
         entities.push({
           ...entity,
-          entityType,
+          entityId: entity.id,
+          versionNumber:
+            'versionNumber' in entity ? entity.versionNumber : undefined,
+          entityType: entityType,
           isSelected: appearance === 'selected',
           isDisabled: appearance === 'disabled',
           isVersionableEntity: isVersionableEntityType(entityType),
@@ -285,7 +284,14 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         </div>
       )
     )
-  }, [enableSelectAll, entities, selectAllIsChecked, selectableTypes])
+  }, [
+    enableSelectAll,
+    entities,
+    hasNextPage,
+    selectAllIsChecked,
+    selectableTypes,
+    visibleTypes,
+  ])
 
   const sortState = {}
   if (sort) {
@@ -335,6 +341,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 )
               }
             }}
+            onRowsRendered={rebuildTooltip}
             onScroll={rebuildTooltip}
             rowEventHandlers={{
               onClick: ({ rowData }) => {
@@ -390,7 +397,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 width={50}
                 dataKey="isSelected"
                 headerRenderer={SelectAllCheckboxRenderer}
-                cellRenderer={CheckboxRenderer}
+                cellRenderer={DetailsViewCheckboxRenderer}
               />
             )}
             <Column<DetailsViewRowData>
@@ -433,7 +440,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 width={500}
                 title="Version"
                 cellRenderer={props => (
-                  <VersionRenderer
+                  <DetailsViewVersionRenderer
                     mustSelectVersionNumber={mustSelectVersionNumber}
                     toggleSelection={toggleSelection}
                     {...props}

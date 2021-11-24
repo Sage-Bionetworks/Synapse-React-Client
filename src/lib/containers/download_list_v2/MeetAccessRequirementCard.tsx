@@ -96,7 +96,7 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
     <>
       {!isError && !isFetching && content}
       {isFetching && (
-        <LoadingMeetAccessRequirementCard />
+        <LoadingAccessRequirementCard />
       )}
       {isShowingAccessRequirement && ar && (
         <AccessRequirementList entityId={ar.subjectIds[0].id}
@@ -109,7 +109,7 @@ export const MeetAccessRequirementCard:React.FunctionComponent<MeetAccessRequire
   )
 }
 
-export const LoadingMeetAccessRequirementCard:React.FunctionComponent = () => {
+export const LoadingAccessRequirementCard:React.FunctionComponent = () => {
   return <div className="MeetAccessRequirementCard actionRequiredCard">
   <Skeleton variant="rect" width={136} height={74}/>
   <div className="metadata">
