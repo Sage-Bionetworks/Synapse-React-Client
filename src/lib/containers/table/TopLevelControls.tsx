@@ -24,6 +24,7 @@ export type TopLevelControlsProps = {
   hideDownload?: boolean
   hideVisualizationsControl?: boolean
   hideFacetFilterControl?: boolean
+  hideQueryCount?: boolean,
   showColumnSelection?: boolean
   customControls?: CustomControl[]
 }
@@ -84,6 +85,7 @@ const TopLevelControls = (
     hideDownload = false,
     hideVisualizationsControl = false,
     hideFacetFilterControl = false,
+    hideQueryCount = false,
     selectedRowIndices,
     customControls,
     executeQueryRequest,
@@ -150,9 +152,9 @@ const TopLevelControls = (
     >
       <h3>
         <div className="TopLevelControls__querycount">
-          <Typography variant='sectionTitle' role='heading'>
-            {name && <QueryCount name={name} sql={sql} parens={true} />}
-          </Typography>
+          {name && <Typography variant='sectionTitle' role='heading'>
+            {name} {(!hideQueryCount && <QueryCount sql={sql} parens={true} />)}
+          </Typography>}
         </div>
         <div className="TopLevelControls__actions">
           {customControls &&

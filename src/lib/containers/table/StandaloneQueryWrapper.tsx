@@ -74,6 +74,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
     showAccessColumn,
     sql,
     hideDownload,
+    hideQueryCount,
     name,
     showTopLevelControls = false,
     searchConfiguration,
@@ -117,6 +118,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
                   entityId={entityId}
                   sql={derivedQueryRequestFromSearchParams.query.sql}
                   hideDownload={hideDownload}
+                  hideQueryCount={hideQueryCount}
                   hideFacetFilterControl={true}
                   hideVisualizationsControl={true}
                 />}
