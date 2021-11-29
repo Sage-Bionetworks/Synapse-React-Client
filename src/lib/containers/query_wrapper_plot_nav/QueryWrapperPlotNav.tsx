@@ -36,6 +36,7 @@ type OwnProps = {
   visibleColumnCount?: number
   facetAliases?: Record<string, string>
   hideDownload?: boolean
+  hideQueryCount?: boolean
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
   downloadCartPageUrl?: string
@@ -68,6 +69,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
       facetsToPlot,
       facetsToFilter,
       hideDownload,
+      hideQueryCount,
       searchConfiguration,
       limit = DEFAULT_PAGE_SIZE,
       downloadCartPageUrl,
@@ -128,6 +130,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                       entityId={entityId}
                       sql={sqlUsed}
                       hideDownload={hideDownload}
+                      hideQueryCount={hideQueryCount}
                     />
                     <QueryFilter {...queryWrapperChildProps} {...props} />
                     <QueryFilterToggleButton {...queryWrapperChildProps} />

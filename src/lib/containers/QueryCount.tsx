@@ -11,14 +11,12 @@ export type QueryCountProps = {
   sql: string
   selectedFacets?: FacetColumnValuesRequest[]
   parens?: boolean
-  name: string
 }
 
 const QueryCount: React.FunctionComponent<QueryCountProps> = ({
   sql,
   selectedFacets,
   parens,
-  name,
 }) => {
   const { accessToken } = useSynapseContext()
   const [storedSqlQueryCount, setStoredSqlQueryCount] = useState<{}>({})
@@ -78,7 +76,7 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
   /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
   return (
     <React.Fragment>
-      {name} {count && (parens ? `(${localCount})` : localCount)}
+      {count && (parens ? `(${localCount})` : localCount)}
     </React.Fragment>
   )
 }
