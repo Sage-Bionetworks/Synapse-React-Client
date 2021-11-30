@@ -5,8 +5,6 @@ import UniversalCookies from 'universal-cookie'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '../utils/SynapseConstants'
 import { InfoOutlined } from '@material-ui/icons'
-import IconSvg from './IconSvg'
-
 
 const ExperimentalMode: React.FC = () => {
   const [isExperimentalModeOn, setIsExperimentalModeOn] = useState<boolean>(false)
