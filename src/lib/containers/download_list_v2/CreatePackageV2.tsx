@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Button,
 } from 'react-bootstrap'
@@ -8,7 +8,7 @@ import {
 } from '../../utils/SynapseClient'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
-import { displayToast } from '../ToastMessage'
+import FullWidthAlert from '../FullWidthAlert'
 
 export type CreatePackageV2Props = {
   onPackageCreation: () => void
@@ -16,7 +16,7 @@ export type CreatePackageV2Props = {
 
 type AlertConfig = {
   message: string
-  variant?: 'info' | 'success' | 'warning' | 'danger'
+  variant?: string
 }
 
 export const TEMPLATE_ERROR_FILE_NAME =
@@ -26,22 +26,11 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
-  const [alert, setAlert] = useState<AlertConfig>({
-    message: '',
-    variant: undefined,
-  })
+  const [alert, setAlert] = useState<AlertConfig>()
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
     DownloadListPackageResponse | undefined
   >(undefined)
   const { onPackageCreation } = props
-
-  useEffect(() => {
-    displayToast(
-      alert.message,
-      alert.variant,
-    )  
-  }, [alert])
-  
   const createPackageHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!fileName) {
@@ -122,6 +111,14 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
           )}
         </div>
       </div>
+      <FullWidthAlert
+        show={!!alert}
+        variant={alert?.variant ? alert.variant : 'success'}
+        description={alert?.message}
+        autoCloseAfterDelayInSeconds={10}
+        onClose={() => { setAlert(undefined) }}
+      />
     </>
+    
   )
 }

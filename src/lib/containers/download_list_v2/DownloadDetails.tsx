@@ -21,6 +21,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const numBytesTooltipId = 'num_bytes_id'
   const isInactive = numFiles === 0
   const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
+  console.log(numBytes)
   return (
     <span className="DownloadDetailsV2">
       <span className="item">
@@ -35,7 +36,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         </span>
         {!isInactive && <> {numPackagableFiles} files eligible for packaging </>}
       </span>
-      <span
+      {numBytes > 0 && <span
         data-for={numBytesTooltipId}
         data-tip="This is the total size of all files in the Download Cart that are available to download."
         className="item"
@@ -51,7 +52,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           <IconSvg options={{ icon: 'data' }} />
         </span>
         {calculateFriendlyFileSize(numBytes)}
-      </span>
+      </span>}
     </span>
   )
 }

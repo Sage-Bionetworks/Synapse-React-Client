@@ -31,6 +31,7 @@ import {
   WatchLater,
   AddCircleTwoTone,
   ReportProblemOutlined,
+  Code
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -96,6 +97,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <Clear style={muiSvgStyle}></Clear>
     case 'cart':
       return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
+    case 'code':
+      return <Code style={muiSvgStyle}></Code>
     case 'dashboard':
       return <DashboardTwoTone style={muiSvgStyle}></DashboardTwoTone>
     case 'delete':
