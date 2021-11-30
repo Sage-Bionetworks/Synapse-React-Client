@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Button,
-  Alert,
-  AlertProps,
 } from 'react-bootstrap'
 import {
   createPackageFromDownloadListV2,
@@ -10,6 +8,7 @@ import {
 } from '../../utils/SynapseClient'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
+import { displayToast } from '../ToastMessage'
 
 export type CreatePackageV2Props = {
   onPackageCreation: () => void
@@ -17,8 +16,7 @@ export type CreatePackageV2Props = {
 
 type AlertConfig = {
   message: string
-  variant: AlertProps['variant']
-  className: string | undefined
+  variant?: 'info' | 'success' | 'warning' | 'danger'
 }
 
 export const TEMPLATE_ERROR_FILE_NAME =
@@ -28,10 +26,8 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
-  const [progressPercent, setProgressPercent] = useState<number>(20)
   const [alert, setAlert] = useState<AlertConfig>({
     message: '',
-    className: undefined,
     variant: undefined,
   })
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
@@ -39,19 +35,23 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
   >(undefined)
   const { onPackageCreation } = props
 
+  useEffect(() => {
+    displayToast(
+      alert.message,
+      alert.variant,
+    )  
+  }, [alert])
+  
   const createPackageHandler = async (event: React.SyntheticEvent) => {
     event.preventDefault()
     if (!fileName) {
       setAlert({
         message: TEMPLATE_ERROR_FILE_NAME,
         variant: 'danger',
-        className: undefined,
       })
       return
     }
-    setAlert({ message: '', variant: undefined, className: undefined })
     setIsLoading(true)
-    setProgressPercent(80)
     try {
       const fileNameWithZipExtension = `${fileName}.zip`
       const currentBulkFileDownloadResponse = await createPackageFromDownloadListV2(
@@ -67,7 +67,6 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
         setZipFileName('')
         setBulkFileDownloadResponse(undefined)
         onPackageCreation()
-        setProgressPercent(20)
       } catch (err) {
         console.error('Err on getFileHandleByIdURL = ', err)
       }
@@ -75,7 +74,6 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
       setAlert({
         message: err.reason as string,
         variant: 'danger',
-        className: undefined,
       })
     } finally {
       setIsLoading(false)
@@ -84,18 +82,11 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
 
   const onChange = (event: React.SyntheticEvent<HTMLInputElement>) => {
     setZipFileName(event.currentTarget.value)
-    setProgressPercent(event.currentTarget.value ? 60: 40)
   }
 
   return (
     <>
       <div className="CreatePackageV2 bootstrap-4-backport">
-        <div
-          className="page-progress-percent SRC-primary-background-color"
-          style={{
-            width: `${progressPercent}%`,
-          }}
-        />
         <div className="createPackageStep">
           <span className="createPackageTitle">
             Create your Download Package
@@ -131,16 +122,6 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
           )}
         </div>
       </div>
-      {alert.message && (
-        <Alert
-          transition={false}
-          variant={alert.variant}
-          show={true}
-          className={alert.className}
-        >
-          {alert.message}
-        </Alert>
-      )}
     </>
   )
 }
