@@ -21,7 +21,6 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const numBytesTooltipId = 'num_bytes_id'
   const isInactive = numFiles === 0
   const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
-  console.log(numBytes)
   return (
     <span className="DownloadDetailsV2">
       <span className="item">
