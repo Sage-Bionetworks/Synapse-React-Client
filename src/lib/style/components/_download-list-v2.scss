@@ -1,16 +1,29 @@
 @use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SRCMixins;
+@use 'sass:map';
 
 .DownloadListTableV2 {
   white-space: pre;
-  .ineligibileIcon {
-    padding-left: 15px;
-    padding-right: 5px;
-  }
   .eligibileIcon {
-    padding-right: 5px;
     svg {
       width: 15px;
+    }
+  }
+  .ineligibileIcon {
+    color: map.get(SRC.$colors, 'warning');
+    svg {
+      width: 18px;
+    }
+  }
+  .ineligibleForPackagingTd {
+    background-color: #F9F5E7;
+  }
+  thead:first-child > tr:first-child {
+    > th:first-child {
+      border-right: none;
+    }
+    > th:nth-child(2) {
+      border-left: none;
     }
   }
   tbody>tr>td:first-child { // file name column
@@ -26,12 +39,13 @@
 .DownloadDetailsV2 {
   font-weight: bold;
   .item {
-    margin-right: 15px;
+    margin-right: 35px;
     svg {
       margin-right: 5px;
+      margin-top: -4px;
     }
     #icon-packagableFile svg {
-      margin-bottom: -5px;
+      margin-top: 0px;
     }
   }
 }
