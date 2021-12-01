@@ -4,6 +4,7 @@
 // from // from SWC.scss and core.scss
 @use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SRC_Mixins;
+@use 'sass:map';
 
 // Fix scrollbar not showing for some people when css set to scroll: auto
 // Ref: https://stackoverflow.com/questions/7492062/css-overflow-scroll-always-show-vertical-scroll-bar
@@ -1057,22 +1058,22 @@ a.dropdown-item {
   }
 }
 .SRC-success-color {
-  color: #28a745;
+  color: map.get(SRC.$colors, 'success');
 }
 .SRC-success-color-bg {
-  background-color: #28a745;
+  background-color: map.get(SRC.$colors, 'success');
 }
 .SRC-warning-color {
-  color: #e0b603;
+  color: map.get(SRC.$colors, 'warning');
 }
 .SRC-warning-color-bg {
-  background-color: #e0b603;
+  background-color: map.get(SRC.$colors, 'warning');
 }
 .SRC-danger-color {
-  color: #eb5757;
+  color: map.get(SRC.$colors, 'error');
 }
 .SRC-danger-color-bg {
-  background-color: #eb5757;
+  background-color: map.get(SRC.$colors, 'error');
 }
 
 // PORTALS-965: add a max-width to the bootstrap container-fluid class
