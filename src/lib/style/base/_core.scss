@@ -1067,7 +1067,7 @@ a.dropdown-item {
   color: map.get(SRC.$colors, 'warning');
 }
 .SRC-warning-color-bg {
-  background-color: SRC.$yellow-warning;
+  background-color: map.get(SRC.$colors, 'warning');
 }
 .SRC-danger-color {
   color: map.get(SRC.$colors, 'error');
