@@ -108,6 +108,14 @@ $link-underline-color-default: adjust-color(
   $lightness: 40%
 ) !default;
 
+@mixin disabled() {
+  color: map.get(SRC.$colors, 'gray-600');
+  &:hover {
+    border-bottom: 1px solid $link-underline-color-default;
+    cursor: default;
+  }
+}
+
 // Core link styles across the portal main area.
 @mixin highlightLink() {
   color: SRC.$primary-action-color;
@@ -118,6 +126,9 @@ $link-underline-color-default: adjust-color(
   &:hover {
     border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
     margin-bottom: -1px;
+  }
+  &.disabled {
+    @include disabled;
   }
 }
 
@@ -131,6 +142,9 @@ $link-underline-color-default: adjust-color(
     border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
     margin-bottom: 0px;
   }
+  &.disabled {
+    @include disabled;
+  }
 }
 
 @mixin ignoreLink() {
@@ -142,5 +156,8 @@ $link-underline-color-default: adjust-color(
   &:hover {
     border-bottom: unset;
     margin-bottom: unset;
+  }
+  &.disabled {
+    @include disabled;
   }
 }

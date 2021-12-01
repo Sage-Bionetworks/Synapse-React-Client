@@ -35,7 +35,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         </span>
         {!isInactive && <> {numPackagableFiles} files eligible for packaging </>}
       </span>
-      <span
+      {numBytes > 0 && <span
         data-for={numBytesTooltipId}
         data-tip="This is the total size of all files in the Download Cart that are available to download."
         className="item"
@@ -51,7 +51,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           <IconSvg options={{ icon: 'data' }} />
         </span>
         {calculateFriendlyFileSize(numBytes)}
-      </span>
+      </span>}
     </span>
   )
 }
