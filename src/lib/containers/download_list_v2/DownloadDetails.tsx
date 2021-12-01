@@ -50,7 +50,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         <span className={`SRC-warning-color`}>
           <IconSvg options={{ icon: 'warningOutlined' }} />
         </span>
-        {!isInactive && <> {numFiles - numPackagableFiles} Files ineligible for packaging </>}
+        {!isInactive && <> {numIneligibleFiles} Files ineligible for packaging </>}
       </span>}
     </span>
   )
