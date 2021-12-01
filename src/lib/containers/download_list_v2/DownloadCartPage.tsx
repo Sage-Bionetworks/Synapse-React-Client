@@ -229,7 +229,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
         show={isShowingDownloadSuccessAlert}
         variant='success'
         title='Package Created' 
-        description='A package has been created with eligible files. The items contained in this .zip file have been removed from your list. If your package is over 1GB you will need to create multiple packages.'
+        description='A package has been created with eligible files. The items contained in this .zip file have been removed from your list. If your package is over 1GB, you will need to create multiple packages.'
         autoCloseAfterDelayInSeconds={10}
         onClose={() => { setIsShowingDownloadSuccessAlert(false) }}
       />
