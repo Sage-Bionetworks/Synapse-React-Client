@@ -112,7 +112,7 @@ $link-underline-color-default: adjust-color(
   color: map.get(SRC.$colors, 'gray-600');
   &:hover {
     border-bottom: 1px solid $link-underline-color-default;
-    cursor: unset;
+    cursor: default;
   }
 }
 

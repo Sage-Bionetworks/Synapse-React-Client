@@ -172,7 +172,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                       <IconSvg options={{ icon: 'code' }} /> Programmatic Packages
                     </Typography>
                     <MarkdownPopover
-                      contentProps={{ markdown: 'This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (eg. in a special AWS S3 bucket or Google Cloud.  External links will require navigation to an external site, which may require a seperate login process.' }}
+                      contentProps={{ markdown: 'This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.' }}
                       placement="bottom"
                     >
                       <IconSvg options={{icon:'info'}} />
