@@ -160,6 +160,10 @@ export default function DownloadListTable() {
                   <span>{showInteractiveSortIcon('fileName')}</span>
                 </th>
                 <th>
+                  Size
+                  <span>{showInteractiveSortIcon('fileSize')}</span>
+                </th>
+                <th>
                   Project
                   <span>{showInteractiveSortIcon('projectName')}</span>
                 </th>
@@ -179,11 +183,7 @@ export default function DownloadListTable() {
                   Created On
                   <span>{showInteractiveSortIcon('createdOn')}</span>
                 </th>
-                <th>
-                  Size
-                  <span>{showInteractiveSortIcon('fileSize')}</span>
-                </th>
-                <th className="actionsColumn">
+                <th className="stickyColumn">
                   Actions
                 </th>
               </tr>
@@ -247,6 +247,10 @@ export default function DownloadListTable() {
                           {item.fileName}
                         </a>
                       </td>
+                      <td>
+                        {item.fileSizeBytes &&
+                          calculateFriendlyFileSize(item.fileSizeBytes)}
+                      </td>
                       <td>{item.projectName}</td>
                       <td>{item.projectId}</td>
                       <td>{addedOn}</td>
@@ -257,11 +261,7 @@ export default function DownloadListTable() {
                         />
                       </td>
                       <td>{createdOn}</td>
-                      <td>
-                        {item.fileSizeBytes &&
-                          calculateFriendlyFileSize(item.fileSizeBytes)}
-                      </td>
-                      <td className="actionsColumn">
+                      <td className="stickyColumn">
                         <span className="downloadItem">
                           <DirectDownload
                             associatedObjectId={item.fileEntityId}
@@ -276,7 +276,7 @@ export default function DownloadListTable() {
                             }}
                           />
                         </span>
-                        <span className="programmaticAccessItem"
+                        {/* <span className="programmaticAccessItem"
                           data-for={`${item.fileEntityId}-programmatic-instructions-tooltip`}
                           data-tip="Programmatic download options">
                             <ReactTooltip
@@ -286,8 +286,9 @@ export default function DownloadListTable() {
                               effect="solid"
                               id={`${item.fileEntityId}-programmatic-instructions-tooltip`}
                           />
-                          {/* TODO */}
-                        </span>
+                          TODO
+                          </span>
+                         */}
                         <span className="removeItem"
                           data-for={`${item.fileEntityId}-removeitem-tooltip`}
                           data-tip="Remove from Download List"

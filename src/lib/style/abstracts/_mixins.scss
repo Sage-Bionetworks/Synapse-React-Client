@@ -65,6 +65,25 @@
   }
 }
 
+@mixin sticky-column() {
+  .stickyColumn {
+    right: 0;
+    position: sticky;
+    z-index: 1500;
+    box-shadow: -4px 0px 10px rgba(187, 187, 188, 0.25);
+  }
+  // fix colors (icons, and set the cell background color to be opaque).
+  thead .stickyColumn {
+    text-align: center;
+  }
+  tbody tr:nth-of-type(even) > .stickyColumn {
+    background-color: white;
+  }
+  tbody tr:nth-of-type(odd) > .stickyColumn {
+    background-color: #FBFBFC;
+  }
+}
+
 @mixin underline-tabs(
   $active-color: SRC.$secondary-action-color,
   $inactive-color: lightgray
