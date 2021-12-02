@@ -2,9 +2,10 @@
 @use '../abstracts/mixins' as SRCMixins;
 @use 'sass:map';
 
-.DownloadListTableV2 {
+table.DownloadListTableV2 {
   white-space: pre;
   .eligibileIcon {
+    color: map.get(SRC.$colors, 'grey-700');
     svg {
       width: 15px;
     }
@@ -19,17 +20,53 @@
     background-color: #F9F5E7;
   }
   thead:first-child > tr:first-child {
-    > th:first-child {
-      border-right: none;
-    }
-    > th:nth-child(2) {
-      border-left: none;
+    > th {
+      min-width: 120px;
+      &:first-child {
+        border-right: none;  
+        min-width: unset;
+      }
+      &:nth-child(2) {
+        border-left: none;
+      }
     }
   }
   tbody>tr>td:first-child { // file name column
     overflow-x: hidden;
     max-width: 310px;
     text-overflow: ellipsis;
+  }
+
+  // Floating (sticky) Action column
+  thead .actionsColumn {
+    background-color: white;
+    text-align: center;
+  }
+  tbody tr:nth-of-type(even) > .actionsColumn {
+    background-color: white;
+  }
+  tbody tr:nth-of-type(odd) > .actionsColumn {
+    background-color: #FBFBFC;
+  }
+  .actionsColumn {
+    right: 0;
+    position: sticky;
+    z-index: 1500;
+    box-shadow: -4px 0px 10px rgba(187, 187, 188, 0.25);
+  }
+  tbody .actionsColumn {
+    color: map.get(SRC.$colors, 'grey-700');
+    display: grid;
+    grid-template-columns: repeat(3, 40px);
+    .downloadItem {
+      grid-column: 1 / span 1;
+    }
+    .programmaticAccessItem {
+      grid-column: 2 / span 1;
+    }
+    .removeItem {
+      grid-column: 3 / span 1;
+    }
   }
   @include SRCMixins.sortable-table()
 }

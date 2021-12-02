@@ -160,7 +160,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   }
 
   return (
-    <span ref={ref} className="SRC-primary-text-color">
+    <span ref={ref}>
       {getIcon()}
     </span>
   )

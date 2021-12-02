@@ -17,13 +17,14 @@ import { SynapseClient } from '../../utils'
 import moment from 'moment'
 import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
-import { Direction } from '../../utils/synapseTypes'
+import { Direction, FileHandleAssociateType } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
+import DirectDownload from '../DirectDownload'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -182,8 +183,9 @@ export default function DownloadListTable() {
                   Size
                   <span>{showInteractiveSortIcon('fileSize')}</span>
                 </th>
-                {/* th below is made for trash can icon but holds no content */}
-                <th />
+                <th className="actionsColumn">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -210,7 +212,6 @@ export default function DownloadListTable() {
                             <IconSvg
                               options={{
                                 icon: 'packagableFile',
-                                color: '#878E95',
                               }}
                             />
                           </span>
@@ -260,21 +261,35 @@ export default function DownloadListTable() {
                         {item.fileSizeBytes &&
                           calculateFriendlyFileSize(item.fileSizeBytes)}
                       </td>
-                      <td>
-                        <button
-                          className={TESTING_TRASH_BTN_CLASS}
-                          onClick={() => {
-                            removeItem({
-                              fileEntityId: item.fileEntityId,
-                              versionNumber: item.versionNumber,
-                            })
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            className="SRC-primary-text-color"
-                            icon="trash"
+                      <td className="actionsColumn">
+                        <span className="downloadItem">
+                          <DirectDownload
+                            associatedObjectId={item.fileEntityId}
+                            associatedObjectType={FileHandleAssociateType.FileEntity}
+                            entityVersionNumber={item.versionNumber.toString()}
+                            displayFileName={false}
                           />
-                        </button>
+                        </span>
+                        <span className="programmaticAccessItem">
+                          {/* TODO */}
+                        </span>
+                        <span className="removeItem">
+                          <button
+                            className={TESTING_TRASH_BTN_CLASS}
+                            onClick={() => {
+                              removeItem({
+                                fileEntityId: item.fileEntityId,
+                                versionNumber: item.versionNumber,
+                              })
+                            }}
+                          >
+                            <IconSvg
+                                options={{
+                                  icon: 'removeCircle',
+                                }}
+                              />
+                          </button>
+                        </span>
                       </td>
                     </tr>
                   )
