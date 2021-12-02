@@ -6,7 +6,6 @@ import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { useInView } from 'react-intersection-observer'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   AvailableFilter,
   Sort,
