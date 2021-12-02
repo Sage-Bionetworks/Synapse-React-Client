@@ -12,6 +12,8 @@ import { getFiles, getFileResult, getEntity } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
 import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../utils/SynapseContext'
+import ReactTooltip from 'react-tooltip'
+import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string
@@ -19,6 +21,7 @@ export type DirectFileDownloadProps = {
   associatedObjectType?: FileHandleAssociateType
   fileHandleId?: string
   displayFileName?: boolean
+  onClickCallback?: () => void // callback if you want to know when the link was clicked
 }
 
 const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props => {
@@ -29,6 +32,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
     associatedObjectType,
     fileHandleId,
     displayFileName,
+    onClickCallback,
   } = props
   const { ref, inView } = useInView()
   const [isExternalFile, setIsExternalFile] = useState<boolean>(false)
@@ -65,6 +69,9 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
       console.log('Fail to get file download link')
     } else {
       window.open(preSignedURL)
+      if (onClickCallback) {
+        onClickCallback()
+      }
     }
   }
 
@@ -141,8 +148,8 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   const getIcon = () => {
     if (isExternalFile) {
       return (
-        <button className={'btn-download-icon'}>
-          <a rel="noreferrer" href={externalURL} target="_blank">
+        <button className={'btn-download-icon'} onClick={onClickCallback}>
+          <a className="ignoreLink" rel="noreferrer" href={externalURL} target="_blank">
             <Icon type="externallink" />
           </a>
         </button>
@@ -160,7 +167,16 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   }
 
   return (
-    <span ref={ref}>
+    <span ref={ref}
+      data-for={`${associatedObjectId}-direct-download-tooltip`}
+      data-tip="Download this file individually">
+      <ReactTooltip
+        delayShow={TOOLTIP_DELAY_SHOW}
+        place="left"
+        type="dark"
+        effect="solid"
+        id={`${associatedObjectId}-direct-download-tooltip`}
+      />
       {getIcon()}
     </span>
   )

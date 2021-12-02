@@ -268,12 +268,37 @@ export default function DownloadListTable() {
                             associatedObjectType={FileHandleAssociateType.FileEntity}
                             entityVersionNumber={item.versionNumber.toString()}
                             displayFileName={false}
+                            onClickCallback={() => {
+                              removeItem({
+                                fileEntityId: item.fileEntityId,
+                                versionNumber: item.versionNumber,
+                              })
+                            }}
                           />
                         </span>
-                        <span className="programmaticAccessItem">
+                        <span className="programmaticAccessItem"
+                          data-for={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                          data-tip="Programmatic download options">
+                            <ReactTooltip
+                              delayShow={TOOLTIP_DELAY_SHOW}
+                              place="left"
+                              type="dark"
+                              effect="solid"
+                              id={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                          />
                           {/* TODO */}
                         </span>
-                        <span className="removeItem">
+                        <span className="removeItem"
+                          data-for={`${item.fileEntityId}-removeitem-tooltip`}
+                          data-tip="Remove from Download List"
+                        >
+                          <ReactTooltip
+                            delayShow={TOOLTIP_DELAY_SHOW}
+                            place="left"
+                            type="dark"
+                            effect="solid"
+                            id={`${item.fileEntityId}-removeitem-tooltip`}
+                          />
                           <button
                             className={TESTING_TRASH_BTN_CLASS}
                             onClick={() => {
