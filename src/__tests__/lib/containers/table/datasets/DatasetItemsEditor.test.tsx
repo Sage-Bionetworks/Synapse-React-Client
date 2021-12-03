@@ -42,8 +42,6 @@ function referenceToDatasetItem(reference: Reference): DatasetItem {
   }
 }
 // The Entity Finder is complicated to use and would require setting up a lot of API mocks, so we'll just mock the component.
-// const EntityFinderModal = require('../../../../../lib/containers/entity_finder/EntityFinderModal')
-// EntityFinderModal.EntityFinderModal = jest.fn(() => 'null')
 jest.mock(
   '../../../../../lib/containers/entity_finder/EntityFinderModal',
   () => {
@@ -55,7 +53,7 @@ jest.mock(
 const mockEntityFinder = EntityFinderModal as unknown as jest.Mock<
   (props: Partial<EntityFinderModalProps>) => JSX.Element
 >
-
+const mockEntityFinderButtonText = 'Add Items From Entity Finder'
 function mockEntityFinderToAddItems(items: Array<Reference>) {
   mockEntityFinder.mockImplementation(({ show, onConfirm }) => {
     return (
@@ -100,7 +98,6 @@ async function selectIndividualItem(id: string) {
 
 async function removeItem(id: string) {
   await selectIndividualItem(id)
-
   clickRemove()
 }
 
@@ -117,8 +114,6 @@ const mockToastFn = displayToast
 
 const mockOnSaveFn = jest.fn()
 const mockOnCloseFn = jest.fn()
-
-const mockEntityFinderButtonText = 'Add Items From Entity Finder'
 
 // Captures the JSON passed to the server via msw.
 const updatedEntityCaptor = jest.fn()
@@ -276,11 +271,9 @@ describe('Dataset Items Editor tests', () => {
       ).not.toBeDisabled(),
     )
 
-    // Add items via entity finder
     addItemsViaEntityFinder()
 
     // Click "Save"
-    await clickSave()
 
     // Verify that items were added to the dataset passed to the update API
     const expectedDatasetItems = [mockFileReference].map(referenceToDatasetItem)
@@ -329,8 +322,10 @@ describe('Dataset Items Editor tests', () => {
       // Select one item
       await selectIndividualItem(mockFileReference.targetId)
 
+      // Clicking select all should select all items, since not all items are selected
       await clickSelectAll()
 
+      // Verify all were selected by removing the items
       clickRemove()
 
       await clickSave()
