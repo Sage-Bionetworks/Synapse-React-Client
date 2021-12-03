@@ -6,7 +6,6 @@ import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { useInView } from 'react-intersection-observer'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   AvailableFilter,
   Sort,
@@ -17,13 +16,15 @@ import { SynapseClient } from '../../utils'
 import moment from 'moment'
 import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
-import { Direction } from '../../utils/synapseTypes'
+import { Direction, FileHandleAssociateType } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
+import DirectDownload from '../DirectDownload'
+import { displayToast } from '../ToastMessage'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -159,6 +160,10 @@ export default function DownloadListTable() {
                   <span>{showInteractiveSortIcon('fileName')}</span>
                 </th>
                 <th>
+                  Size
+                  <span>{showInteractiveSortIcon('fileSize')}</span>
+                </th>
+                <th>
                   Project
                   <span>{showInteractiveSortIcon('projectName')}</span>
                 </th>
@@ -178,12 +183,9 @@ export default function DownloadListTable() {
                   Created On
                   <span>{showInteractiveSortIcon('createdOn')}</span>
                 </th>
-                <th>
-                  Size
-                  <span>{showInteractiveSortIcon('fileSize')}</span>
+                <th className="stickyColumn">
+                  Actions
                 </th>
-                {/* th below is made for trash can icon but holds no content */}
-                <th />
               </tr>
             </thead>
             <tbody>
@@ -210,7 +212,6 @@ export default function DownloadListTable() {
                             <IconSvg
                               options={{
                                 icon: 'packagableFile',
-                                color: '#878E95',
                               }}
                             />
                           </span>
@@ -246,6 +247,10 @@ export default function DownloadListTable() {
                           {item.fileName}
                         </a>
                       </td>
+                      <td>
+                        {item.fileSizeBytes &&
+                          calculateFriendlyFileSize(item.fileSizeBytes)}
+                      </td>
                       <td>{item.projectName}</td>
                       <td>{item.projectId}</td>
                       <td>{addedOn}</td>
@@ -256,25 +261,68 @@ export default function DownloadListTable() {
                         />
                       </td>
                       <td>{createdOn}</td>
-                      <td>
-                        {item.fileSizeBytes &&
-                          calculateFriendlyFileSize(item.fileSizeBytes)}
-                      </td>
-                      <td>
-                        <button
-                          className={TESTING_TRASH_BTN_CLASS}
-                          onClick={() => {
-                            removeItem({
-                              fileEntityId: item.fileEntityId,
-                              versionNumber: item.versionNumber,
-                            })
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            className="SRC-primary-text-color"
-                            icon="trash"
-                          />
-                        </button>
+                      <td className="stickyColumn">
+                        <div className="actionsContainer">
+                          <span className="downloadItem">
+                            <DirectDownload
+                              associatedObjectId={item.fileEntityId}
+                              associatedObjectType={FileHandleAssociateType.FileEntity}
+                              entityVersionNumber={item.versionNumber.toString()}
+                              displayFileName={false}
+                              onClickCallback={() => {
+                                removeItem({
+                                  fileEntityId: item.fileEntityId,
+                                  versionNumber: item.versionNumber,
+                                })
+                                displayToast(
+                                  `${item.fileName} has been removed from your list.`,
+                                  'success',
+                                  {title: 'File Download'}
+                                )
+                              }}
+                            />
+                          </span>
+                          {/* <span className="programmaticAccessItem"
+                            data-for={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                            data-tip="Programmatic download options">
+                              <ReactTooltip
+                                delayShow={TOOLTIP_DELAY_SHOW}
+                                place="left"
+                                type="dark"
+                                effect="solid"
+                                id={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                            />
+                            TODO
+                            </span>
+                          */}
+                          <span className="removeItem"
+                            data-for={`${item.fileEntityId}-removeitem-tooltip`}
+                            data-tip="Remove from Download List"
+                          >
+                            <ReactTooltip
+                              delayShow={TOOLTIP_DELAY_SHOW}
+                              place="left"
+                              type="dark"
+                              effect="solid"
+                              id={`${item.fileEntityId}-removeitem-tooltip`}
+                            />
+                            <button
+                              className={TESTING_TRASH_BTN_CLASS}
+                              onClick={() => {
+                                removeItem({
+                                  fileEntityId: item.fileEntityId,
+                                  versionNumber: item.versionNumber,
+                                })
+                              }}
+                            >
+                              <IconSvg
+                                  options={{
+                                    icon: 'removeCircle',
+                                  }}
+                                />
+                            </button>
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   )
