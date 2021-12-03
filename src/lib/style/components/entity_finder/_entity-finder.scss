@@ -1,5 +1,6 @@
 @use '../../abstracts/variables' as SRC;
 @use 'sass:color';
+@use 'sass:map';
 
 $-border-size: 1px;
 $-header-height: 45px;
@@ -51,7 +52,7 @@ $-splitter-width: 12px;
       top: 1px;
     }
     .ClearSearchIcon {
-      color: SRC.$primary-action-color-500;
+      color: map.get(SRC.$primary-color-palette, 500);
       cursor: pointer;
       position: relative;
       left: -20px;

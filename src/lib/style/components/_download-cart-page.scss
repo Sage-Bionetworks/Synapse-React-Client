@@ -86,6 +86,23 @@
     padding: 30px 0px;
     background-color: SRC.$background-color-gray;
   }
+
+  .DownloadListTabContent {
+    .subSectionOverview {
+      display: flex;
+      column-gap: 10px;
+      >* {
+        padding: 0px 50px;
+      }
+      >*:first-child {
+        border-right: 1px solid #D0D4D9; 
+      }
+      .headlineWithHelp {
+        display: flex;
+        column-gap: 10px;
+      }
+    }
+  }
   &__explore-all {
     text-align: center;
     padding-top: 20px;

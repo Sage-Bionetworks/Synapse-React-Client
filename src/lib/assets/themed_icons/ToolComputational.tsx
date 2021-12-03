@@ -2,7 +2,7 @@ import * as React from 'react'
 
 export const ToolComputational = () => (
   <svg width="61" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clipPath="url(#clip0)">
+    <g clipPath="url(#ToolComputationalClip0)">
       <path
         d="M55.513 13H4.537A2.518 2.518 0 0 0 2 15.537V51.94c0 1.357 1.121 2.537 2.537 2.537h20.532v4.602h-4.543c-.708 0-1.239.59-1.239 1.239v2.36c0 .708.59 1.239 1.239 1.239h19.057c.708 0 1.239-.59 1.239-1.239v-2.36c0-.708-.59-1.239-1.239-1.239H35.04v-4.602h20.532a2.518 2.518 0 0 0 2.537-2.537V15.537C58.05 14.121 56.929 13 55.513 13zM30.025 51.704c-.944 0-1.77-.767-1.77-1.77 0-.944.767-1.77 1.77-1.77.944 0 1.77.767 1.77 1.77 0 1.003-.826 1.77-1.77 1.77zm23.482-6.077H6.543V17.543h46.964v28.084z"
         fill="#DCDCDC"
@@ -19,7 +19,7 @@ export const ToolComputational = () => (
       />
     </g>
     <defs>
-      <clipPath id="clip0">
+      <clipPath id="ToolComputationalClip0">
         <path
           fill="#fff"
           transform="matrix(.69 0 0 .69 2 13)"

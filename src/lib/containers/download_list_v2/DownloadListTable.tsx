@@ -18,12 +18,12 @@ import moment from 'moment'
 import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
 import { Direction } from '../../utils/synapseTypes'
-import { SynapseSpinner } from '../LoadingScreen'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -37,7 +37,8 @@ export default function DownloadListTable() {
   const {
     data,
     status,
-    isFetching,
+    isFetchingNextPage,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
@@ -54,14 +55,14 @@ export default function DownloadListTable() {
   useEffect(() => {
     if (
       status === 'success' &&
-      !isFetching &&
+      !isFetchingNextPage &&
       hasNextPage &&
       fetchNextPage &&
       inView
     ) {
       fetchNextPage()
     }
-  }, [status, isFetching, hasNextPage, fetchNextPage, inView])
+  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView])
 
   const allRows = data?.pages.flatMap(page => page.page) ?? []
 
@@ -151,7 +152,10 @@ export default function DownloadListTable() {
             <thead>
               <tr>
                 <th>
-                  File Name
+                  {/* Eligible/Ineligible icon */}
+                </th>
+                <th>
+                  Name
                   <span>{showInteractiveSortIcon('fileName')}</span>
                 </th>
                 <th>
@@ -189,7 +193,7 @@ export default function DownloadListTable() {
                   const createdOn = moment(item.createdOn).format('L LT')
                   return (
                     <tr key={item.fileEntityId}>
-                      <td>
+                      <td className={item.isEligibleForPackaging ? '' : 'ineligibleForPackagingTd'}>
                         {item.isEligibleForPackaging && (
                           <span
                             data-for={`${item.fileEntityId}-eligible-tooltip`}
@@ -198,7 +202,7 @@ export default function DownloadListTable() {
                           >
                             <ReactTooltip
                               delayShow={TOOLTIP_DELAY_SHOW}
-                              place="top"
+                              place="right"
                               type="dark"
                               effect="solid"
                               id={`${item.fileEntityId}-eligible-tooltip`}
@@ -212,8 +216,28 @@ export default function DownloadListTable() {
                           </span>
                         )}
                         {!item.isEligibleForPackaging && (
-                          <span className="ineligibileIcon" />
+                          <span
+                            data-for={`${item.fileEntityId}-ineligible-tooltip`}
+                            data-tip="This file is ineligible for Web packaging <br />because it is >100MB, or it is an external link,<br />or it is not stored on Synapse native storage"
+                            className="ineligibileIcon"
+                          >
+                            <ReactTooltip
+                              delayShow={TOOLTIP_DELAY_SHOW}
+                              place="right"
+                              type="dark"
+                              effect="solid"
+                              multiline={true}
+                              id={`${item.fileEntityId}-ineligible-tooltip`}
+                            />
+                            <IconSvg
+                              options={{
+                                icon: 'warningOutlined',
+                              }}
+                            />
+                          </span>
                         )}
+                      </td>
+                      <td>
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
@@ -262,10 +286,8 @@ export default function DownloadListTable() {
           </Table>
         </>
       )}
-      {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+      {isLoading && (
+        <SkeletonTable numCols={5} numRows={3} />
       )}
     </>
   )

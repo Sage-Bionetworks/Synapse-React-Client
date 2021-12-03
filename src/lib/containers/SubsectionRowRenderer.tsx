@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { insertConditionsFromSearchParams, KeyValue, parseEntityIdFromSqlStatement, SQLOperator } from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
-  EntityColumnType,
+  ColumnType,
   QueryBundleRequest,
   RowSet,
 } from '../utils/synapseTypes/Table'
@@ -11,6 +11,7 @@ import MarkdownSynapse from './MarkdownSynapse'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { ColumnSpecifiedLink } from './CardContainerLogic'
 import Typography from '../utils/typography/Typography'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 
 export type FriendlyValuesMap = {
   [index: string]: string
@@ -27,7 +28,7 @@ export type SubsectionRowRendererProps = {
   limit?: number
 }
 
-const LIST_COLUMN_TYPES = [EntityColumnType.BOOLEAN_LIST, EntityColumnType.DATE_LIST, EntityColumnType.ENTITYID_LIST, EntityColumnType.INTEGER_LIST, EntityColumnType.STRING_LIST]
+const LIST_COLUMN_TYPES = [ColumnType.BOOLEAN_LIST, ColumnType.DATE_LIST, ColumnType.ENTITYID_LIST, ColumnType.INTEGER_LIST, ColumnType.STRING_LIST]
 
 const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps> = ({
   sql,
@@ -43,7 +44,7 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
   const [rowSet, setRowSet] = useState<RowSet>()
   const [isLoading, setIsLoading] = useState<boolean>()
   let mounted = true
-  useEffect(() => {
+  useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
       const sqlUsed = insertConditionsFromSearchParams(

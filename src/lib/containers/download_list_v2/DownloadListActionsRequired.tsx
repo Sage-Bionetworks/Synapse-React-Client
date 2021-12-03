@@ -3,13 +3,12 @@ import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/useGetDownloadListActionsRequired'
 import { useInView } from 'react-intersection-observer'
-import { SynapseSpinner } from '../LoadingScreen'
 import {
   ActionRequiredCount,
   MeetAccessRequirement,
   RequestDownload,
 } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
-import { MeetAccessRequirementCard } from './MeetAccessRequirementCard'
+import { LoadingAccessRequirementCard, MeetAccessRequirementCard } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 
 export default function DownloadListActionsRequired() {
@@ -19,8 +18,9 @@ export default function DownloadListActionsRequired() {
   const {
     data,
     status,
-    isFetching,
+    isLoading,
     hasNextPage,
+    isFetchingNextPage,
     fetchNextPage,
     isError,
     error: newError,
@@ -35,14 +35,14 @@ export default function DownloadListActionsRequired() {
   useEffect(() => {
     if (
       status === 'success' &&
-      !isFetching &&
+      !isFetchingNextPage &&
       hasNextPage &&
       fetchNextPage &&
       inView
     ) {
       fetchNextPage()
     }
-  }, [status, isFetching, hasNextPage, fetchNextPage, inView])
+  }, [status, hasNextPage, isFetchingNextPage, fetchNextPage, inView])
 
   const allRows = data?.pages.flatMap(page => page.page) ?? []
 
@@ -91,10 +91,8 @@ export default function DownloadListActionsRequired() {
           <div ref={ref} />
         </div>
       )}
-      {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+      {isLoading && (
+        <LoadingAccessRequirementCard />
       )}
     </>
   )

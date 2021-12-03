@@ -122,46 +122,6 @@
     margin-bottom: 10px;
   }
 
-  .TopLevelControls {
-    h3 {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      margin-top: 0px;
-    }
-    padding-top: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-    &__showhidefacetfilters {
-      display: none;
-    }
-    .QueryWrapperPlotNav__querycount {
-      display: inline-flex;
-      align-items: center;
-    }
-    .QueryWrapperPlotNav__actions {
-      display: inline-flex;
-      align-items: center;
-      .ElementWithTooltip {
-        padding: 5px;
-        margin: 0 1px;
-        border: 0;
-        border-radius: 0;
-
-        &:active:focus,
-        &:focus {
-          outline: none;
-        }
-
-        // icons on the top level control bar should have total area 36x36 (26px dim + 10px padding)
-        svg {
-          width: 26px;
-          height: 26px;
-        }
-      }
-    }
-  }
   .SRC-portalCard:first-child {
     margin-top: 0px;
   }
@@ -172,6 +132,47 @@
     }
     .direct-download {
       text-align: center;
+    }
+  }
+}
+
+.TopLevelControls {
+  h3 {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-top: 0px;
+  }
+  padding-top: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  &__showhidefacetfilters {
+    display: none;
+  }
+  &__querycount {
+    display: inline-flex;
+    align-items: center;
+  }
+  &__actions {
+    display: inline-flex;
+    align-items: center;
+    .ElementWithTooltip {
+      padding: 5px;
+      margin: 0 1px;
+      border: 0;
+      border-radius: 0;
+
+      &:active:focus,
+      &:focus {
+        outline: none;
+      }
+
+      // icons on the top level control bar should have total area 36x36 (26px dim + 10px padding)
+      svg {
+        width: 26px;
+        height: 26px;
+      }
     }
   }
 }

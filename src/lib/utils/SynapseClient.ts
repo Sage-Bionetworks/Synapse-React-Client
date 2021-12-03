@@ -170,7 +170,6 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
-export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export const getRootURL = () => {
@@ -338,7 +337,7 @@ export const doPut = <T>(
   accessToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-): Promise<any> => {
+): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -970,7 +969,7 @@ export const updateEntity = <T extends Entity>(
   accessToken: string | undefined = undefined,
 ): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
-  return doPut(
+  return doPut<T>(
     url,
     entity,
     accessToken,
@@ -1310,18 +1309,19 @@ This function should be called whenever the root App is initialized
 export const detectSSOCode = () => {
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-  let code: URL | null | string = new URL(window.location.href)
+  let fullUrl: URL | null | string = new URL(window.location.href)
   // in test environment the searchParams isn't defined
-  const { searchParams } = code
+  const { searchParams } = fullUrl
   if (!searchParams) {
     return
   }
-  code = searchParams.get('code')
-  if (code) {
+  const code = searchParams.get('code')
+  const provider = searchParams.get('provider')
+  if (code && provider) {
     oAuthSessionRequest(
-      AUTH_PROVIDER,
+      provider,
       code,
-      `${redirectURL}?provider=${AUTH_PROVIDER}`,
+      `${redirectURL}?provider=${provider}`,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((synToken: any) => {
@@ -1477,7 +1477,7 @@ const processFilePart = (
     // uploaded the part.  calculate md5 of the part and add the part to the upload
     calculateMd5(fileSlice).then((md5: string) => {
       const addPartUrl = `/file/v1/file/multipart/${uploadId}/add/${partNumber}?partMD5Hex=${md5}`
-      doPut(
+      doPut<AddPartResponse>(
         addPartUrl,
         undefined,
         accessToken,
@@ -1527,7 +1527,7 @@ export const checkUploadComplete = (
     })
   ) {
     const url = `/file/v1/file/multipart/${status.uploadId}/complete`
-    doPut(
+    doPut<MultipartUploadStatus>(
       url,
       undefined,
       accessToken,
@@ -3078,10 +3078,10 @@ export const getEntityJson = (entityId: string, accessToken?: string) => {
  */
 export const updateEntityJson = (
   entityId: string,
-  json: unknown,
+  json: EntityJson,
   accessToken?: string,
 ) => {
-  return doPut<unknown>(
+  return doPut<EntityJson>(
     ENTITY_JSON(entityId),
     json,
     accessToken,
