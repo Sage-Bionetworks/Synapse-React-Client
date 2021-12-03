@@ -273,7 +273,7 @@ describe('Dataset Items Editor tests', () => {
 
     addItemsViaEntityFinder()
 
-    // Click "Save"
+    await clickSave()
 
     // Verify that items were added to the dataset passed to the update API
     const expectedDatasetItems = [mockFileReference].map(referenceToDatasetItem)
