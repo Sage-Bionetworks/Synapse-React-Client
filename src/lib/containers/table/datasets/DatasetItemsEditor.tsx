@@ -22,7 +22,7 @@ import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../EntityBadgeIcons'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
-  CheckboxRenderer,
+  DatasetEditorCheckboxRenderer,
   CreatedOnRenderer,
   DatasetEditorVersionRenderer,
   EntityErrorRenderer,
@@ -38,7 +38,7 @@ import WarningModal from '../../synapse_form_wrapper/WarningModal'
 import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
 
-type DatasetItemsEditorProps = {
+export type DatasetItemsEditorProps = {
   entityId: string
   onSave?: () => void
   onClose?: () => void
@@ -49,7 +49,6 @@ export type DatasetItemsEditorTableData = DatasetItem & {
   setSelected: (value: boolean) => void
 }
 
-const DATASET_MAX_ITEM_LIMIT = 20000
 const ROW_HEIGHT = 42
 const TABLE_HEIGHT = 350
 
@@ -157,7 +156,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         }
       } else {
         console.warn(
-          'Cannot add items to the Dataset because is undefined. The Dataset may not have been fetched yet.',
+          'Cannot add items to the Dataset because it is undefined. The Dataset may not have been fetched yet.',
         )
         return datasetToUpdate
       }
@@ -262,7 +261,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       width: 40,
       dataKey: 'isSelected',
       headerRenderer: renderedSelectAllCheckbox,
-      cellRenderer: CheckboxRenderer,
+      cellRenderer: DatasetEditorCheckboxRenderer,
     },
     {
       key: 'name',
@@ -372,9 +371,10 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       <WarningModal
         title="Unsaved Changes"
         modalBody="Any unsaved changes will be lost. Are you sure you want to close the editor?"
-        confirmButtonText="OK"
+        confirmButtonText="Close Editor"
         onConfirm={() => {
           if (onClose) {
+            setShowWarningModal(false)
             onClose()
           }
         }}
@@ -400,7 +400,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
         <Button
           variant="outline"
-          disabled={selectedIds.size === DATASET_MAX_ITEM_LIMIT}
+          disabled={datasetToUpdate == null}
           onClick={() => setShowEntityFinder(true)}
         >
           Add Items

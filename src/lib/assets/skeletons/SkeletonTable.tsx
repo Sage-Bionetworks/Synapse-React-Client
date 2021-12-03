@@ -28,14 +28,14 @@ export const SkeletonTable: React.FC<SkeletonTableProps> = ({
 
   useEffect(() => {
     const elements: JSX.Element[] = []
-    times(numRows * numCols, () => {
+    times(numRows * numCols, i => {
       elements.push(
-        <>
+        <React.Fragment key={i}>
           <Skeleton
             height={rowHeight}
             width={`${getRandomInt(35, 75)}%`}
           ></Skeleton>
-        </>,
+        </React.Fragment>,
       )
     })
     setSkeletons(elements)

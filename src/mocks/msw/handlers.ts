@@ -16,6 +16,8 @@ import {
   MOCK_PROJECT_ID,
   MOCK_PROJECT_NAME,
   mockFileEntityJson,
+  mockFileEntityVersionInfo,
+  mockFileEntityVersions,
 } from '../entity/mockEntity'
 import {
   mockUserBundle,
@@ -31,7 +33,23 @@ import {
   USER_PROFILE_ID,
   USER_PROFILE,
   ENTITY_JSON,
+  ENTITY_ID,
+  ENTITY_ID_VERSION,
+  ENTITY_ID_VERSIONS,
 } from '../../lib/utils/APIConstants'
+import {
+  Entity,
+  EntityBundle,
+  PaginatedResults,
+  UserBundle,
+  UserProfile,
+  VersionableEntity,
+} from '../../lib/utils/synapseTypes'
+import { SynapseClientError } from '../../lib/utils/SynapseClient'
+import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
+
+// Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
+type SynapseApiResponse<T> = T | SynapseClientError
 
 const handlers = [
   rest.options('*', async (req, res, ctx) => {
@@ -43,10 +61,11 @@ const handlers = [
       ':id',
     )}`,
     async (req, res, ctx) => {
-      let response: any = {
+      let status = 404
+      let response: SynapseApiResponse<UserProfile> = {
+        status: status,
         reason: `Mock Service worker could not find a user profile with ID ${req.params.id}`,
       }
-      let status = 404
       if (req.params.id === MOCK_USER_ID.toString()) {
         response = mockUserProfileData
         status = 200
@@ -59,8 +78,8 @@ const handlers = [
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_PROFILE}`,
     async (req, res, ctx) => {
       // default return a mock UserProfile.
-      let response: any = mockUserProfileData
-      let status = 200
+      const response: UserProfile = mockUserProfileData
+      const status = 200
       return res(ctx.status(status), ctx.json(response))
     },
   ),
@@ -70,10 +89,11 @@ const handlers = [
       ':id',
     )}`,
     async (req, res, ctx) => {
-      let response: any = {
+      let status = 404
+      let response: SynapseApiResponse<UserBundle> = {
+        status: status,
         reason: `Mock Service worker could not find a user bundle with ID ${req.params.id}`,
       }
-      let status = 404
       if (req.params.id === MOCK_USER_ID.toString()) {
         response = mockUserBundle
         status = 200
@@ -86,12 +106,13 @@ const handlers = [
   rest.post(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY}`,
     async (req, res, ctx) => {
-      let response: any = {
+      let status = 404
+      let response: SynapseApiResponse<Entity> = {
+        status: status,
         reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(
           req.body,
         )}`,
       }
-      let status = 404
       if (req.body) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const requestBody = req.body as any
@@ -111,17 +132,110 @@ const handlers = [
     },
   ),
 
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+      ':entityId',
+    )}`,
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<Entity> = {
+        status: status,
+        reason: `Mock Service worker could not find a mock entity with ID ${req.params.entityId}`,
+      }
+      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
+        response = mockFileEntity
+        status = 200
+      } else if (req.params.entityId === MOCK_PROJECT_ID) {
+        response = mockProjectEntity
+        status = 200
+      }
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID_VERSIONS(
+      ':entityId',
+    )}`,
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<PaginatedResults<VersionInfo>> = {
+        status: status,
+        reason: `Mock Service worker could not find mock entity versions for ID ${req.params.entityId}`,
+      }
+      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
+        response = { results: mockFileEntityVersionInfo }
+        status = 200
+      }
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID_VERSION(
+      ':entityId',
+      ':versionNumber',
+    )}`,
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<VersionableEntity> = {
+        status: status,
+        reason: `Mock Service worker could not find a mock versioned entity with ID ${req.params.entityId}.${req.params.versionNumber}`,
+      }
+      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
+        const requestedVersionNumber = parseInt(req.params.versionNumber)
+        const versionableEntity = mockFileEntityVersions.find(
+          entity => entity.versionNumber === requestedVersionNumber,
+        )
+        if (versionableEntity) {
+          response = versionableEntity
+        }
+        status = 200
+      }
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
   rest.post(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
       ':entityId',
     )}`,
     async (req, res, ctx) => {
-      let response: any = {
+      let status = 404
+      let response: SynapseApiResponse<EntityBundle> = {
+        status: status,
         reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
       }
-      let status = 404
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
         response = mockFileEntityBundle
+        status = 200
+      } else if (req.params.entityId === MOCK_PROJECT_ID) {
+        response = mockProjectEntityBundle
+        status = 200
+      }
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.post(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+      ':entityId',
+      ':versionNumber',
+    )}`,
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<EntityBundle> = {
+        status: status,
+        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+      }
+      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
+        response = mockFileEntityBundle
+        if (req.params.versionNumber) {
+          response.entity = mockFileEntityVersions.find(
+            entity =>
+              entity.versionNumber === parseInt(req.params.versionNumber),
+          )
+        }
         status = 200
       } else if (req.params.entityId === MOCK_PROJECT_ID) {
         response = mockProjectEntityBundle
