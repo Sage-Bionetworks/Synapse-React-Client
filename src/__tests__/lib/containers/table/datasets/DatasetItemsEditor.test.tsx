@@ -183,7 +183,7 @@ describe('Dataset Items Editor tests', () => {
   })
   afterAll(() => server.close())
 
-  function getDatasetHandlerWithItems(items: Array<DatasetItem>) {
+  function getDatasetHandlerWithItems(items?: Array<DatasetItem>) {
     return rest.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
         ':entityId',
@@ -560,5 +560,18 @@ describe('Dataset Items Editor tests', () => {
       expect(mockOnCloseFn).toHaveBeenCalled()
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
+  })
+
+  it('SWC-5876 - Handles a dataset with undefined items', async () => {
+    const getDatasetHandler = getDatasetHandlerWithItems(undefined)
+    server.use(getDatasetHandler, successfulUpdateHandler)
+    await renderComponent()
+
+    // Verify that the dataset is empty and no error was thrown.
+    await waitFor(() =>
+      expect(
+        screen.queryByText('No items in this Dataset', { exact: false }),
+      ).toBeInTheDocument(),
+    )
   })
 })
