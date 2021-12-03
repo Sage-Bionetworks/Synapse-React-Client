@@ -17,25 +17,22 @@ export type DownloadDetailsProps = {
 
 export default function DownloadDetails(props: DownloadDetailsProps) {
   const { numFiles, numPackagableFiles, numBytes } = props
-
+  const numIneligibleFiles = numFiles - numPackagableFiles
   const numBytesTooltipId = 'num_bytes_id'
   const isInactive = numFiles === 0
   const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
     <span className="DownloadDetailsV2">
       <span className="item">
-        <span className={iconClassName}>
-          <IconSvg options={{ icon: 'file' }} />
-        </span>
-        {!isInactive && <> {numFiles} files </>}
+        {!isInactive && <> {numFiles} Files </>}
       </span>
       <span className="item">
         <span className={iconClassName}>
           <IconSvg options={{ icon: 'packagableFile' }} />
         </span>
-        {!isInactive && <> {numPackagableFiles} files eligible for packaging </>}
+        {!isInactive && <> {numPackagableFiles} Files eligible for packaging </>}
       </span>
-      <span
+      {numBytes > 0 && <span
         data-for={numBytesTooltipId}
         data-tip="This is the total size of all files in the Download Cart that are available to download."
         className="item"
@@ -47,11 +44,14 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           effect="solid"
           id={numBytesTooltipId}
         />
-        <span className={iconClassName}>
-          <IconSvg options={{ icon: 'data' }} />
-        </span>
         {calculateFriendlyFileSize(numBytes)}
-      </span>
+      </span>}
+      {numIneligibleFiles > 0 && <span className="item">
+        <span className={`SRC-warning-color`}>
+          <IconSvg options={{ icon: 'warningOutlined' }} />
+        </span>
+        {!isInactive && <> {numIneligibleFiles} Files ineligible for packaging </>}
+      </span>}
     </span>
   )
 }
