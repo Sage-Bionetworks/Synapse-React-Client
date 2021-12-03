@@ -29,10 +29,10 @@ import {
   StarTwoTone,
   SearchTwoTone,
   WatchLater,
-  LayersTwoTone,
   AddCircleTwoTone,
   ReportProblemOutlined,
   Code,
+  GridOnTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -199,7 +199,7 @@ const getIcon = (options: IconSvgOptions) => {
     case 'discussion':
       return <QuestionAnswerTwoTone style={muiSvgStyle} />
     case 'dataset':
-      return <LayersTwoTone style={muiSvgStyle} />
+      return <GridOnTwoTone style={muiSvgStyle} />
     case 'docker':
       return (
         <Docker fill={color ? color : 'currentColor'} style={customSvgStyle} />
