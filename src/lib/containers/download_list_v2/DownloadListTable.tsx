@@ -262,65 +262,67 @@ export default function DownloadListTable() {
                       </td>
                       <td>{createdOn}</td>
                       <td className="stickyColumn">
-                        <span className="downloadItem">
-                          <DirectDownload
-                            associatedObjectId={item.fileEntityId}
-                            associatedObjectType={FileHandleAssociateType.FileEntity}
-                            entityVersionNumber={item.versionNumber.toString()}
-                            displayFileName={false}
-                            onClickCallback={() => {
-                              removeItem({
-                                fileEntityId: item.fileEntityId,
-                                versionNumber: item.versionNumber,
-                              })
-                              displayToast(
-                                `${item.fileName} has been removed from your list.`,
-                                'success',
-                                {title: 'File Download'}
-                              )
-                            }}
-                          />
-                        </span>
-                        {/* <span className="programmaticAccessItem"
-                          data-for={`${item.fileEntityId}-programmatic-instructions-tooltip`}
-                          data-tip="Programmatic download options">
+                        <div className="actionsContainer">
+                          <span className="downloadItem">
+                            <DirectDownload
+                              associatedObjectId={item.fileEntityId}
+                              associatedObjectType={FileHandleAssociateType.FileEntity}
+                              entityVersionNumber={item.versionNumber.toString()}
+                              displayFileName={false}
+                              onClickCallback={() => {
+                                removeItem({
+                                  fileEntityId: item.fileEntityId,
+                                  versionNumber: item.versionNumber,
+                                })
+                                displayToast(
+                                  `${item.fileName} has been removed from your list.`,
+                                  'success',
+                                  {title: 'File Download'}
+                                )
+                              }}
+                            />
+                          </span>
+                          {/* <span className="programmaticAccessItem"
+                            data-for={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                            data-tip="Programmatic download options">
+                              <ReactTooltip
+                                delayShow={TOOLTIP_DELAY_SHOW}
+                                place="left"
+                                type="dark"
+                                effect="solid"
+                                id={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                            />
+                            TODO
+                            </span>
+                          */}
+                          <span className="removeItem"
+                            data-for={`${item.fileEntityId}-removeitem-tooltip`}
+                            data-tip="Remove from Download List"
+                          >
                             <ReactTooltip
                               delayShow={TOOLTIP_DELAY_SHOW}
                               place="left"
                               type="dark"
                               effect="solid"
-                              id={`${item.fileEntityId}-programmatic-instructions-tooltip`}
-                          />
-                          TODO
+                              id={`${item.fileEntityId}-removeitem-tooltip`}
+                            />
+                            <button
+                              className={TESTING_TRASH_BTN_CLASS}
+                              onClick={() => {
+                                removeItem({
+                                  fileEntityId: item.fileEntityId,
+                                  versionNumber: item.versionNumber,
+                                })
+                              }}
+                            >
+                              <IconSvg
+                                  options={{
+                                    icon: 'removeCircle',
+                                  }}
+                                />
+                            </button>
                           </span>
-                         */}
-                        <span className="removeItem"
-                          data-for={`${item.fileEntityId}-removeitem-tooltip`}
-                          data-tip="Remove from Download List"
-                        >
-                          <ReactTooltip
-                            delayShow={TOOLTIP_DELAY_SHOW}
-                            place="left"
-                            type="dark"
-                            effect="solid"
-                            id={`${item.fileEntityId}-removeitem-tooltip`}
-                          />
-                          <button
-                            className={TESTING_TRASH_BTN_CLASS}
-                            onClick={() => {
-                              removeItem({
-                                fileEntityId: item.fileEntityId,
-                                versionNumber: item.versionNumber,
-                              })
-                            }}
-                          >
-                            <IconSvg
-                                options={{
-                                  icon: 'removeCircle',
-                                }}
-                              />
-                          </button>
-                        </span>
+                        </div>
                       </td>
                     </tr>
                   )
