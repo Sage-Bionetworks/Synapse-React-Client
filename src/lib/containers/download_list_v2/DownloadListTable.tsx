@@ -24,6 +24,7 @@ import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 import DirectDownload from '../DirectDownload'
+import { displayToast } from '../ToastMessage'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -272,6 +273,11 @@ export default function DownloadListTable() {
                                 fileEntityId: item.fileEntityId,
                                 versionNumber: item.versionNumber,
                               })
+                              displayToast(
+                                `${item.fileName} has been removed from your list.`,
+                                'success',
+                                {title: 'File Download'}
+                              )
                             }}
                           />
                         </span>
