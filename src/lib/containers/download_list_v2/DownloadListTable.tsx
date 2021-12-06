@@ -56,7 +56,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   //SWC-5858: Update the Download List files table when the statistics change
   useEffect(() => {
-    refetch()
+    if (refetch) {
+      refetch()
+    }
   }, [filesStatistics, refetch])
 
   useEffect(() => {
