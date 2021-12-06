@@ -225,7 +225,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                   refetch()
                 }} />}
                 <DownloadListStats numBytes={data.sumOfFileSizesAvailableForDownload} numPackagableFiles={data.numberOfFilesAvailableForDownloadAndEligibleForPackaging} numFiles={data.numberOfFilesAvailableForDownload}/>
-                <AvailableForDownloadTable filesStatistics={data}/> 
+                {refetch && <AvailableForDownloadTable filesStatistics={data} refetchStatistics={refetch}/> }
               </div>
             </div>}
             {data.numberOfFilesAvailableForDownload === 0 && <div className="placeholder">
