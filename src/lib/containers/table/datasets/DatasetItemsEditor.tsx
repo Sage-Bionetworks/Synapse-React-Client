@@ -17,6 +17,7 @@ import {
   EntityType,
   Reference,
 } from '../../../utils/synapseTypes'
+import { RequiredProperties } from '../../../utils/types/RequiredProperties'
 import Typography from '../../../utils/typography/Typography'
 import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../EntityBadgeIcons'
 import {
@@ -59,9 +60,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
 
   // Disable updating the entity after the initial fetch because we don't want to replace edits that the user makes.
-  const [datasetToUpdate, _setDatasetToUpdate] = useState<Dataset>()
+  const [datasetToUpdate, _setDatasetToUpdate] =
+    useState<RequiredProperties<Dataset, 'items'>>()
   const setDatasetToUpdate = (
-    dataset: React.SetStateAction<Dataset | undefined>,
+    dataset: React.SetStateAction<
+      RequiredProperties<Dataset, 'items'> | undefined
+    >,
   ) => {
     setHasChangedSinceLastSave(true)
     _setDatasetToUpdate(dataset)
@@ -79,13 +83,21 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     datasetToUpdate && datasetToUpdate.items.length === selectedIds.size
   )
 
-  const { refetch } = useGetEntity<Dataset>(entityId, undefined, {
-    enabled: !datasetToUpdate,
-    onSuccess: dataset => {
-      setDatasetToUpdate(dataset)
-      setHasChangedSinceLastSave(false)
+  const { refetch } = useGetEntity<RequiredProperties<Dataset, 'items'>>(
+    entityId,
+    undefined,
+    {
+      enabled: !datasetToUpdate,
+      onSuccess: dataset => {
+        // SWC-5876: Dataset Items may be undefined. This has the same inherent meaning as the empty list, so we'll just change it to save us some null checks.
+        if (dataset.items == null) {
+          dataset.items = []
+        }
+        setDatasetToUpdate(dataset)
+        setHasChangedSinceLastSave(false)
+      },
     },
-  })
+  )
 
   const mutation = useUpdateEntity<Dataset>({
     onSuccess: () => {
@@ -200,7 +212,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
 
   type SelectAllCheckboxRendererProps = {
-    datasetToUpdate: Dataset
+    datasetToUpdate: RequiredProperties<Dataset, 'items'>
     selectedIds: Omit<Set<string>, 'add' | 'delete' | 'clear'>
     addSelectedId: (...items: string[]) => void
     clearSelectedIds: () => void
