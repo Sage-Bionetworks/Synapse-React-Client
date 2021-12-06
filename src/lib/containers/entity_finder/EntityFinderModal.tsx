@@ -3,7 +3,7 @@ import { Reference } from '../../utils/synapseTypes'
 import { FluidModal } from '../FluidModal'
 import EntityFinder, { EntityFinderProps } from './EntityFinder'
 
-type EntityFinderModalProps = {
+export type EntityFinderModalProps = {
   configuration: Omit<EntityFinderProps, 'onSelectedChange'>
   show: boolean
   onClose: () => void

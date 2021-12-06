@@ -1,5 +1,6 @@
 import {
   AnnotationsValueType,
+  Dataset,
   Entity,
   EntityBundle,
   EntityHeader,
@@ -10,6 +11,7 @@ import {
   PaginatedResults,
   RestrictionLevel,
 } from '../../lib/utils/synapseTypes'
+import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
 import {
   mockFileHandle,
   mockPreviewFileHandle,
@@ -23,6 +25,7 @@ export const MOCK_FOLDER_ID = 'syn1234'
 export const MOCK_PROJECT_ID = 'syn12345'
 export const MOCK_PROJECT_NAME = 'A Mock Project'
 export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'
+export const MOCK_DATASET_ENTITY_ID = 'syn234'
 // TODO: Create a mock wiki
 const MOCK_WIKI_ID = '45745485'
 
@@ -35,7 +38,69 @@ export const mockFileEntity: FileEntity = {
   createdBy: MOCK_USER_ID.toString(),
   modifiedBy: MOCK_USER_ID.toString(),
   etag: '00000000-0000-0000-0000-000000000000',
+  versionNumber: 3,
+  versionLabel: '3',
+  isLatestVersion: true,
 }
+
+/**
+ * Version numbers 1 and 3 exist for our mock file
+ */
+export const mockFileEntityVersionInfo: VersionInfo[] = [
+  {
+    id: MOCK_FILE_ENTITY_ID,
+    modifiedBy: MOCK_USER_ID.toString(),
+    versionNumber: 1,
+    versionLabel: '1',
+    versionComment: 'a comment',
+    contentSize: '100',
+    contentMd5: 'd836adae5632872014783b05cd2f76d7',
+    modifiedByPrincipalId: MOCK_USER_ID.toString(),
+    modifiedOn: '2021-03-02T15:05:34.973Z',
+    isLatestVersion: false,
+  },
+  {
+    id: MOCK_FILE_ENTITY_ID,
+    modifiedBy: MOCK_USER_ID.toString(),
+    versionNumber: 3,
+    versionLabel: '3',
+    versionComment: 'a comment about version 3',
+    contentSize: '100',
+    contentMd5: 'bc91a4a16ccb21944fcee55275dc4574',
+    modifiedByPrincipalId: MOCK_USER_ID.toString(),
+    modifiedOn: '2021-03-05T11:31:24.521Z',
+    isLatestVersion: true,
+  },
+]
+
+export const mockFileEntityVersions: FileEntity[] = [
+  {
+    id: MOCK_FILE_ENTITY_ID,
+    parentId: MOCK_PROJECT_ID,
+    dataFileHandleId: MOCK_FILE_HANDLE_ID,
+    name: MOCK_FILE_NAME,
+    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+    createdBy: MOCK_USER_ID.toString(),
+    modifiedBy: MOCK_USER_ID.toString(),
+    etag: '00000000-0000-0000-0000-000000000000',
+    versionNumber: 3,
+    versionLabel: '3',
+    isLatestVersion: true,
+  },
+  {
+    id: MOCK_FILE_ENTITY_ID,
+    parentId: MOCK_PROJECT_ID,
+    dataFileHandleId: MOCK_FILE_HANDLE_ID,
+    name: MOCK_FILE_NAME,
+    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+    createdBy: MOCK_USER_ID.toString(),
+    modifiedBy: MOCK_USER_ID.toString(),
+    etag: '00000000-0000-0000-0000-000000000000',
+    versionNumber: 1,
+    versionLabel: '1',
+    isLatestVersion: false,
+  },
+]
 
 export const mockFileEntityBundle: EntityBundle = {
   entity: mockFileEntity,
@@ -89,6 +154,25 @@ export const mockFileEntityBundle: EntityBundle = {
     ],
   },
   threadCount: 5,
+  path: {
+    path: [
+      {
+        name: 'root',
+        id: 'syn4489',
+        type: 'org.sagebionetworks.repo.model.Folder',
+      },
+      {
+        name: MOCK_PROJECT_NAME,
+        id: MOCK_PROJECT_ID,
+        type: 'org.sagebionetworks.repo.model.Project',
+      },
+      {
+        name: MOCK_FILE_NAME,
+        id: MOCK_FILE_ENTITY_ID,
+        type: 'org.sagebionetworks.repo.model.FileEntity',
+      },
+    ],
+  },
 }
 
 export const mockFileEntityJson: EntityJson = {
@@ -141,10 +225,10 @@ export const mockFolderEntityHeader: EntityHeader = {
 
 export const mockPaginatedEntityHeaders: PaginatedResults<EntityHeader> = {
   totalNumberOfResults: 2,
-  results: [mockFileEntityHeader, mockFolderEntityHeader]
+  results: [mockFileEntityHeader, mockFolderEntityHeader],
 }
 
-export const mockProjectEntity:Entity = {
+export const mockProjectEntity: Entity = {
   name: MOCK_PROJECT_NAME,
   id: MOCK_PROJECT_ID,
   etag: '7849ff2c-1c93-4104-adcf-9e6d6b0c50b5',
@@ -285,4 +369,16 @@ export const mockProjectEntityBundle: EntityBundle = {
     restrictionLevel: RestrictionLevel.OPEN,
     hasUnmetAccessRequirement: false,
   },
+}
+
+export const mockDatasetEntity: Dataset = {
+  id: MOCK_DATASET_ENTITY_ID,
+  parentId: MOCK_PROJECT_ID,
+  name: MOCK_FILE_NAME,
+  concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
+  createdBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
+  etag: '00000000-0000-0000-0000-000000000000',
+  items: [],
+  columnIds: [],
 }

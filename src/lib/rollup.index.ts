@@ -38,6 +38,7 @@ import {
   useSynapseContext,
 } from './utils/SynapseContext'
 import { DatasetItemsEditor } from './containers/table/datasets/DatasetItemsEditor'
+import { EntityTypeIcon } from './containers/EntityIcon'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -79,6 +80,7 @@ const SynapseComponents = {
   UserProfileLinks,
   PlotlyWrapper,
   DatasetItemsEditor,
+  EntityTypeIcon,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

@@ -32,7 +32,8 @@ import {
   AddCircleTwoTone,
   ReportProblemOutlined,
   Code,
-  RemoveCircleTwoTone
+  GridOnTwoTone,
+  RemoveCircleTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -198,6 +199,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <AssessmentTwoTone style={muiSvgStyle} />
     case 'discussion':
       return <QuestionAnswerTwoTone style={muiSvgStyle} />
+    case 'dataset':
+      return <GridOnTwoTone style={muiSvgStyle} />
     case 'docker':
       return (
         <Docker fill={color ? color : 'currentColor'} style={customSvgStyle} />
