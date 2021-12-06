@@ -26,7 +26,6 @@ import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 import DirectDownload from '../DirectDownload'
 import { displayToast } from '../ToastMessage'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
-import useDeepCompareEffect from 'use-deep-compare-effect'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -56,9 +55,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   } = useGetAvailableFilesToDownloadInfinite(sort, filter)
 
   //SWC-5858: Update the Download List files table when the statistics change
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     refetch()
-  }, [filesStatistics])
+  }, [filesStatistics, refetch])
 
   useEffect(() => {
     if (isError && newError) {
