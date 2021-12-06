@@ -25,10 +25,17 @@ import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 import DirectDownload from '../DirectDownload'
 import { displayToast } from '../ToastMessage'
+import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
-export default function DownloadListTable() {
+export type DownloadListTableProps = {
+  filesStatistics: FilesStatisticsResponse,
+  refetchStatistics: () => Promise<any>
+}
+
+export default function DownloadListTable(props: DownloadListTableProps) {
+  const { filesStatistics, refetchStatistics } = props
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
@@ -44,8 +51,15 @@ export default function DownloadListTable() {
     fetchNextPage,
     isError,
     error: newError,
-    refetch,
+    refetch
   } = useGetAvailableFilesToDownloadInfinite(sort, filter)
+
+  //SWC-5858: Update the Download List files table when the statistics change
+  useEffect(() => {
+    if (refetch) {
+      refetch()
+    }
+  }, [filesStatistics, refetch])
 
   useEffect(() => {
     if (isError && newError) {
@@ -76,10 +90,16 @@ export default function DownloadListTable() {
       return 'Only Ineligible'
     }
   }
-  const removeItem = async (item: DownloadListItem) => {
+  const removeItem = async (item: DownloadListItem, fileName: string) => {
     try {
       await SynapseClient.removeItemFromDownloadListV2(item, accessToken)
-      refetch()
+      displayToast(
+        `${fileName} has been removed from your list.`,
+        'success',
+        {title: 'File Download'}
+      )
+      // refetching the statistics will update the download list, so no need to update the file list here.
+      refetchStatistics()
     } catch (err) {
       console.error(err)
     }
@@ -273,12 +293,8 @@ export default function DownloadListTable() {
                                 removeItem({
                                   fileEntityId: item.fileEntityId,
                                   versionNumber: item.versionNumber,
-                                })
-                                displayToast(
-                                  `${item.fileName} has been removed from your list.`,
-                                  'success',
-                                  {title: 'File Download'}
-                                )
+                                },
+                                item.fileName)
                               }}
                             />
                           </span>
@@ -312,7 +328,8 @@ export default function DownloadListTable() {
                                 removeItem({
                                   fileEntityId: item.fileEntityId,
                                   versionNumber: item.versionNumber,
-                                })
+                                },
+                                item.fileName)
                               }}
                             >
                               <IconSvg
