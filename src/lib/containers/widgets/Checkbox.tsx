@@ -10,6 +10,7 @@ export type CheckboxProps = {
   children?: React.ReactChild
   onClick?: (event: React.SyntheticEvent<HTMLDivElement>) => void
   disabled?: boolean
+  'data-testid'?: string
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
@@ -53,6 +54,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
         id={uniqueId}
         onChange={handleCheckboxChange}
         disabled={disabled}
+        data-testid={props['data-testid']}
       />
       <label htmlFor={uniqueId}>{props.label}</label>
       {props.children ?? <></>}

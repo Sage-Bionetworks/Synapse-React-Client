@@ -416,17 +416,20 @@ export const DetailsViewVersionRenderer = ({
   )
 }
 
-export function CheckboxRenderer<
-  T extends {
-    isSelected: boolean
-    isDisabled?: boolean
-    setSelected: (newValue: boolean) => void
-  },
->(props: CellRendererProps<T>) {
-  const { isSelected, isDisabled, setSelected } = props.rowData
+export function DatasetEditorCheckboxRenderer(
+  props: CellRendererProps<
+    EntityIdAndVersionNumber & {
+      isSelected: boolean
+      isDisabled?: boolean
+      setSelected: (newValue: boolean) => void
+    }
+  >,
+) {
+  const { isSelected, isDisabled, setSelected, entityId } = props.rowData
   return (
     !isDisabled && (
       <Checkbox
+        data-testid={`dataset-editor-checkbox-${entityId}`}
         disabled={isDisabled}
         label=""
         checked={isSelected}

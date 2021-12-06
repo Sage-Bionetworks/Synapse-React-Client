@@ -39,6 +39,13 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
     }
   }, [isError, newError])
   
+  // SWC-5874: When arriving at the download cart when there are no ARs, the user should start in the Download list
+  useEffect(() => {
+    if (data && data.numberOfFilesRequiringAction == 0) {
+      setSelectedTabIndex(1)
+    }
+  }, [data])
+  
   if (error) {
     return <ErrorBanner error={error} />
   }
@@ -123,7 +130,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                 <div>
                   <div className="headlineWithHelp">
                     <Typography variant={'headline3'}>
-                      <IconSvg options={{ icon: 'packagableFile' }} /> Web Download (.Zip Packages)
+                      <IconSvg options={{ icon: 'packagableFile' }} /> Web Download (.ZIP Packages)
                     </Typography>
                     <MarkdownPopover
                       contentProps={{ markdown: 'This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.' }}
@@ -135,7 +142,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                   <Typography variant={'body1'}>
                     <ul>
                       <li>
-                        Eligible files will be added to .Zip packages of up to 1GB in size
+                        Eligible files will be added to .ZIP packages of up to 1GB in size
                       </li>
                       <li>
                         If you have more than 1GB, you can create multiple packages
@@ -162,14 +169,14 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                           effect="solid"
                           id="downloadZipPackagesUnavailable"
                         />
-                        Download As .Zip Packages
+                        Download As .ZIP packages
                       </a>}
                   </span>
                 </div>
                 <div>
                   <div className="headlineWithHelp">
                     <Typography variant={'headline3'}>
-                      <IconSvg options={{ icon: 'code' }} /> Programmatic Packages
+                      <IconSvg options={{ icon: 'code' }} /> Programmatic Download
                     </Typography>
                     <MarkdownPopover
                       contentProps={{ markdown: 'This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.' }}
@@ -184,7 +191,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                         Requires installation of a programmatic client (R, Python, CLI)
                       </li>
                       <li>
-                        No limit to the size of each programmatically generated package
+                        No limit to the file size or number of files that can be downloaded
                       </li>
                       <li>
                         Will include files which are hosted on and off Synapse native storage
@@ -206,7 +213,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                         effect="solid"
                         id="downloadProgrammaticallyTooltipId"
                       />
-                      Download Programmatically
+                      Download Programmatically (Coming Soon)
                     </a>
                   </span>
                 </div>

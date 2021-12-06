@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as SRC;
+@use 'sass:map';
 
 //overrides to bootstrap 4 that are directly applied to Bootstrap 4 class names
 .bootstrap-4-backport {
@@ -60,6 +61,11 @@
       padding-top: 0.75rem;
       padding-bottom: 0.75rem;
     }
+  }
+
+  //Tables
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: map.get(SRC.$colors, 'gray-100');
   }
 }
 
