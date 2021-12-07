@@ -1,38 +1,36 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { shallow, mount } from 'enzyme'
-import { EntityLink } from '../../../lib/containers/EntityLink'
-import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
-import { EnumFacetFilter } from '../../../lib/containers/widgets/query-filter/EnumFacetFilter'
-import UserCard from '../../../lib/containers/UserCard'
-import { unCamelCase } from '../../../lib/utils/functions/unCamelCase'
-import { AUTHENTICATED_USERS } from '../../../lib/utils/SynapseConstants'
-import {
-  EntityHeader,
-  UserGroupHeader,
-  UserProfile,
-  QueryResultBundle,
-  Row,
-  QueryBundleRequest,
-  EntityColumnType,
-} from '../../../lib/utils/synapseTypes/'
+import { mount, shallow } from 'enzyme'
+import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { SynapseConstants } from '../../../lib'
+import { EntityLink } from '../../../lib/containers/EntityLink'
+import HasAccess from '../../../lib/containers/HasAccess'
+import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
 import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
 import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
-import { renderTableCell } from '../../../lib/containers/synapse_table_functions/renderTableCell'
-
+import { SynapseTableCell } from '../../../lib/containers/synapse_table_functions/SynapseTableCell'
 import SynapseTable, {
   SORT_STATE,
   SynapseTableProps,
-  Dictionary,
 } from '../../../lib/containers/table/SynapseTable'
-import syn16787123Json from '../../../mocks/query/syn16787123.json'
-import { cloneDeep } from 'lodash-es'
-import HasAccess from '../../../lib/containers/HasAccess'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
+import UserCard from '../../../lib/containers/UserCard'
+import { EnumFacetFilter } from '../../../lib/containers/widgets/query-filter/EnumFacetFilter'
+import { unCamelCase } from '../../../lib/utils/functions/unCamelCase'
+import { AUTHENTICATED_USERS } from '../../../lib/utils/SynapseConstants'
 import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
+import {
+  ColumnType,
+  EntityHeader,
+  QueryBundleRequest,
+  QueryResultBundle,
+  Row,
+  UserGroupHeader,
+  UserProfile,
+} from '../../../lib/utils/synapseTypes/'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 
 const createShallowComponent = (
   props: SynapseTableProps & QueryWrapperChildProps,
@@ -224,9 +222,8 @@ describe('basic functionality', () => {
         'FROM syn987654321 ' +
         "WHERE species='Human' " +
         "AND assay='rnaSeq'"
-      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(
-        originalSql,
-      )
+      const columnIndexes: number[] =
+        instance.getCountFunctionColumnIndexes(originalSql)
       expect(columnIndexes).toHaveLength(0)
     })
     it('group by with count function', async () => {
@@ -236,9 +233,8 @@ describe('basic functionality', () => {
         'FROM syn987654321 ' +
         "WHERE species='Human' " +
         "AND assay='rnaSeq' group by 1, 2"
-      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(
-        originalSql,
-      )
+      const columnIndexes: number[] =
+        instance.getCountFunctionColumnIndexes(originalSql)
       expect(columnIndexes).toEqual([2])
     })
     it('group by without count function', async () => {
@@ -248,9 +244,8 @@ describe('basic functionality', () => {
         'FROM syn987654321 ' +
         "WHERE species='Human' " +
         "AND assay='rnaSeq' group by 1, 2"
-      const columnIndexes: number[] = instance.getCountFunctionColumnIndexes(
-        originalSql,
-      )
+      const columnIndexes: number[] =
+        instance.getCountFunctionColumnIndexes(originalSql)
       expect(columnIndexes).toHaveLength(0)
     })
   })
@@ -378,42 +373,42 @@ describe('basic functionality', () => {
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.ENTITYID,
+          columnType: ColumnType.ENTITYID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.USERID,
+          columnType: ColumnType.USERID,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.DATE,
+          columnType: ColumnType.DATE,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.STRING_LIST,
+          columnType: ColumnType.STRING_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.DATE_LIST,
+          columnType: ColumnType.DATE_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.BOOLEAN_LIST,
+          columnType: ColumnType.BOOLEAN_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.INTEGER_LIST,
+          columnType: ColumnType.INTEGER_LIST,
         },
         {
           id: MOCKED_STRING,
           name: MOCKED_STRING,
-          columnType: EntityColumnType.FILEHANDLEID,
+          columnType: ColumnType.FILEHANDLEID,
         },
       ],
       queryResult: {
@@ -424,44 +419,44 @@ describe('basic functionality', () => {
           etag: MOCKED_STRING,
           headers: [
             {
-              columnType: EntityColumnType.ENTITYID,
+              columnType: ColumnType.ENTITYID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: EntityColumnType.USERID,
+              columnType: ColumnType.USERID,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
-              columnType: EntityColumnType.DATE,
+              columnType: ColumnType.DATE,
               name: MOCKED_STRING,
               id: MOCKED_STRING,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.STRING_LIST,
+              columnType: ColumnType.STRING_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.DATE_LIST,
+              columnType: ColumnType.DATE_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.BOOLEAN_LIST,
+              columnType: ColumnType.BOOLEAN_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.INTEGER_LIST,
+              columnType: ColumnType.INTEGER_LIST,
             },
             {
               id: MOCKED_STRING,
               name: MOCKED_STRING,
-              columnType: EntityColumnType.FILEHANDLEID,
+              columnType: ColumnType.FILEHANDLEID,
             },
           ],
           rows: [
@@ -511,48 +506,42 @@ describe('basic functionality', () => {
     }
 
     it('gets column indicies correctly ', () => {
-      const entities = getColumnIndiciesWithType(
-        mockData,
-        EntityColumnType.ENTITYID,
-      )
+      const entities = getColumnIndiciesWithType(mockData, ColumnType.ENTITYID)
       expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = getColumnIndiciesWithType(
-        mockData,
-        EntityColumnType.USERID,
-      )
+      const userIds = getColumnIndiciesWithType(mockData, ColumnType.USERID)
       expect(userIds).toEqual([USERID_INDEX])
-      const dates = getColumnIndiciesWithType(mockData, EntityColumnType.DATE)
+      const dates = getColumnIndiciesWithType(mockData, ColumnType.DATE)
       expect(dates).toEqual([DATE_INDEX])
       const stringLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.STRING_LIST,
+        ColumnType.STRING_LIST,
       )
       expect(stringLists).toEqual([STRING_LIST_INDEX])
       const dateLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.DATE_LIST,
+        ColumnType.DATE_LIST,
       )
       expect(dateLists).toEqual([DATE_LIST_INDEX])
       const booleanLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.BOOLEAN_LIST,
+        ColumnType.BOOLEAN_LIST,
       )
       expect(booleanLists).toEqual([BOOLEAN_LIST_INDEX])
       const integerLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.INTEGER_LIST,
+        ColumnType.INTEGER_LIST,
       )
       expect(integerLists).toEqual([INTEGER_LIST_INDEX])
       const dateOrIntegerLists = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.DATE_LIST,
-        EntityColumnType.INTEGER_LIST,
+        ColumnType.DATE_LIST,
+        ColumnType.INTEGER_LIST,
       )
       expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
 
       const fileHandleId = getColumnIndiciesWithType(
         mockData,
-        EntityColumnType.FILEHANDLEID,
+        ColumnType.FILEHANDLEID,
       )
       expect(fileHandleId).toEqual([FILEHANDLEID_INDEX])
     })
@@ -581,17 +570,6 @@ describe('basic functionality', () => {
     })
 
     describe('renders table cells correctly', () => {
-      const entityColumnIndicies: number[] = [ENTITYID_INDEX]
-      const userColumnIndicies: number[] = [USERID_INDEX]
-      const dateColumnIndicies: number[] = [DATE_INDEX]
-      const otherListColumnIndicies: number[] = [
-        STRING_LIST_INDEX,
-        INTEGER_LIST_INDEX,
-      ]
-      const dateListColumnIndicies: number[] = [DATE_LIST_INDEX]
-      const booleanListColumnIndicies: number[] = [BOOLEAN_LIST_INDEX]
-      const fileHandleIdColumnIndicies: number[] = [FILEHANDLEID_INDEX]
-      const entityIdListColumnIndicies: number[] = [ENTITYIDLIST_INDEX]
       const mockEntityLinkValue: string = 'syn122'
       const mockUserCardValue: string = 'syn123'
       const mockAllAuthenticatedUsersValue: string = 'syn124'
@@ -604,7 +582,8 @@ describe('basic functionality', () => {
       const mapEntityIdToHeader = {
         [mockEntityLinkValue]: {} as EntityHeader,
       }
-      const mapUserIdToHeader: Dictionary<
+      const mapUserIdToHeader: Record<
+        string,
         Partial<UserGroupHeader & UserProfile>
       > = {
         [mockAllAuthenticatedUsersValue]: {
@@ -619,14 +598,6 @@ describe('basic functionality', () => {
       }
 
       const tableCellProps = {
-        entityColumnIndicies,
-        userColumnIndicies,
-        dateColumnIndicies,
-        dateListColumnIndicies,
-        booleanListColumnIndicies,
-        fileHandleIdColumnIndicies,
-        entityIdListColumnIndicies,
-        otherListColumnIndicies,
         isBold: '',
         mapUserIdToHeader: {},
         columnLinkConfig: undefined,
@@ -638,27 +609,23 @@ describe('basic functionality', () => {
 
       it('renders an entity link', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: ENTITYID_INDEX,
-              columnValue: mockEntityLinkValue,
-              mapEntityIdToHeader,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.ENTITYID}
+            columnValue={mockEntityLinkValue}
+            mapEntityIdToHeader={mapEntityIdToHeader}
+          />,
         )
         expect(tableCell.find(EntityLink)).toHaveLength(1)
       })
       it('renders a link for all authenticated users', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: USERID_INDEX,
-              columnValue: mockAllAuthenticatedUsersValue,
-              mapUserIdToHeader,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.USERID}
+            columnValue={mockAllAuthenticatedUsersValue}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find('span').text().trim()).toEqual(
           '<FontAwesomeIcon /> All registered Synapse users',
@@ -669,14 +636,12 @@ describe('basic functionality', () => {
       })
       it('renders a link for a team', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              mapUserIdToHeader,
-              colIndex: USERID_INDEX,
-              columnValue: mockTeamValue,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.USERID}
+            columnValue={mockTeamValue}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find('a').text().trim()).toEqual(
           `<FontAwesomeIcon /> ${teamName}`,
@@ -685,36 +650,32 @@ describe('basic functionality', () => {
       })
       it('renders a user card link', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              mapUserIdToHeader,
-              colIndex: USERID_INDEX,
-              columnValue: mockUserCardValue,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.USERID}
+            columnValue={mockUserCardValue}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find(UserCard)).toHaveLength(1)
       })
       it('renders a markdown value', () => {
         const mockMarkdownColumnValue = '# column markdown'
-        const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: USERID_INDEX,
-              columnValue: mockMarkdownColumnValue,
-              mapUserIdToHeader,
-              columnLinkConfig: {
-                isMarkdown: true,
-                matchColumnName: 'a',
-              },
-              columnName: 'a',
-              selectColumns: [
-                { columnType: EntityColumnType.STRING, name: 'a', id: '' },
-              ],
-            })}
-          </div>,
+        const tableCell = mount(
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.USERID}
+            columnValue={mockMarkdownColumnValue}
+            mapUserIdToHeader={mapUserIdToHeader}
+            columnLinkConfig={{
+              isMarkdown: true,
+              matchColumnName: 'a',
+            }}
+            columnName={'a'}
+            selectColumns={[
+              { columnType: ColumnType.STRING, name: 'a', id: '' },
+            ]}
+          />,
         )
         expect(tableCell.find(MarkdownSynapse).props().markdown).toEqual(
           mockMarkdownColumnValue,
@@ -722,28 +683,24 @@ describe('basic functionality', () => {
       })
       it('renders a standard value', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: USERID_INDEX,
-              columnValue: mockColumnValue,
-              mapUserIdToHeader,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.STRING}
+            columnValue={mockColumnValue}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find('p').text().trim()).toEqual(mockColumnValue)
       })
 
       it('renders a date value', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: DATE_INDEX,
-              columnValue: mockDateValue,
-              mapUserIdToHeader,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.DATE}
+            columnValue={mockDateValue}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find('p').text().trim()).toEqual(
           new Date(Number(mockDateValue)).toLocaleString(),
@@ -752,14 +709,12 @@ describe('basic functionality', () => {
 
       it('renders a date list value', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: DATE_LIST_INDEX,
-              columnValue: MOCKED_DATE_LIST,
-              mapUserIdToHeader,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.DATE_LIST}
+            columnValue={MOCKED_DATE_LIST}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find('span').text().trim()).toEqual(
           new Date(Number(MOCK_DATE_VALUE)).toLocaleString(),
@@ -768,14 +723,12 @@ describe('basic functionality', () => {
 
       it('renders a integer list value', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: INTEGER_LIST_INDEX,
-              columnValue: MOCKED_INTEGER_LIST,
-              mapUserIdToHeader,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.INTEGER_LIST}
+            columnValue={MOCKED_INTEGER_LIST}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find('span').first().text().trim()).toEqual('10,')
         expect(tableCell.find('span').last().text().trim()).toEqual('11')
@@ -783,14 +736,12 @@ describe('basic functionality', () => {
 
       it('renders a boolean list value', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: BOOLEAN_LIST_INDEX,
-              columnValue: MOCKED_BOOLEAN_LIST,
-              mapUserIdToHeader,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.BOOLEAN_LIST}
+            columnValue={MOCKED_BOOLEAN_LIST}
+            mapUserIdToHeader={mapUserIdToHeader}
+          />,
         )
         expect(tableCell.find('span').first().text().trim()).toEqual('true,')
         expect(tableCell.find('span').last().text().trim()).toEqual('false')
@@ -798,13 +749,11 @@ describe('basic functionality', () => {
 
       it('renders an empty cell for null date', () => {
         const tableCell = shallow(
-          <div>
-            {renderTableCell({
-              ...tableCellProps,
-              colIndex: DATE_INDEX,
-              isMarkdownColumn: false,
-            })}
-          </div>,
+          <SynapseTableCell
+            {...tableCellProps}
+            columnType={ColumnType.DATE}
+            isMarkdownColumn={false}
+          />,
         )
         expect(tableCell.find('p').first().text().trim()).toEqual(
           NOT_SET_DISPLAY_VALUE,

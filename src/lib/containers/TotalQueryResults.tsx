@@ -1,33 +1,44 @@
-import * as React from 'react'
-import {
-  QueryBundleRequest,
-  FacetColumnResultRange,
-  FacetColumnResultValues,
-  EntityHeader,
-  UserProfile,
-  FacetColumnResult,
-  ColumnModel,
-  FacetColumnRequest,
-} from '../utils/synapseTypes'
+import { cloneDeep } from 'lodash-es'
+import React, { FunctionComponent, useState } from 'react'
+import { Button } from 'react-bootstrap'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 import { SynapseClient, SynapseConstants } from '../'
 import {
   getStoredEntityHeaders,
   getStoredUserProfiles,
 } from '../utils/functions/getDataFromFromStorage'
-import useDeepCompareEffect from 'use-deep-compare-effect'
-import { cloneDeep } from 'lodash-es'
+import { useSynapseContext } from '../utils/SynapseContext'
+import {
+  ColumnModel,
+  EntityHeader,
+  FacetColumnRequest,
+  FacetColumnResult,
+  FacetColumnResultRange,
+  FacetColumnResultValues,
+  QueryBundleRequest,
+  UserProfile,
+} from '../utils/synapseTypes'
+import {
+  isColumnMultiValueFunctionQueryFilter,
+  isColumnSingleValueQueryFilter,
+  isTextMatchesQueryFilter,
+  QueryFilter,
+  TextMatchesQueryFilter,
+} from '../utils/synapseTypes/Table/QueryFilter'
+import {
+  QueryWrapperChildProps,
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from './QueryWrapper'
 import SelectionCriteriaPill, {
   FacetWithSelection,
+  SelectionCriteriaPillProps,
 } from './widgets/facet-nav/SelectionCriteriaPill'
 import {
-  applyChangesToValuesColumn,
   applyChangesToRangeColumn,
+  applyChangesToValuesColumn,
 } from './widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
-import { useState, FunctionComponent } from 'react'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS } from './QueryWrapper'
-import { Button } from 'react-bootstrap'
-import { useSynapseContext } from '../utils/SynapseContext'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
@@ -35,7 +46,7 @@ export type TotalQueryResultsProps = {
   lastQueryRequest: QueryBundleRequest
   unitDescription: string
   frontText: string
-  applyChanges?: Function
+  applyChanges?: (newFacets: FacetColumnRequest[]) => void
   showNotch?: boolean
 } & QueryWrapperChildProps
 
@@ -147,7 +158,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   }
 
   useDeepCompareEffect(() => {
-    const calculateTotal = async () => {
+    const calculateTotal = () => {
       const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
       cloneLastQueryRequest.partMask =
         SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -188,15 +199,13 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     calculateTotal()
   }, [parentLoading, accessToken, lastQueryRequest])
 
-  const removeFacetSelection = ({
-    facet,
-    selectedValue,
-  }: FacetWithSelection) => {
+  const removeFacetSelection = (facetWithSelection: FacetWithSelection) => {
+    const { facet, selectedValue } = facetWithSelection
     if (facet.facetType === 'enumeration') {
       applyChangesToValuesColumn(
         lastQueryRequest,
         facet as FacetColumnResultValues,
-        applyChanges!,
+        applyChanges,
         selectedValue?.value,
         false,
       )
@@ -204,31 +213,75 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       applyChangesToRangeColumn(
         lastQueryRequest,
         facet as FacetColumnResultRange,
-        applyChanges!,
+        applyChanges,
         [RadioValuesEnum.ANY, RadioValuesEnum.ANY],
       )
     }
   }
 
-  const removeSearchQuerySelection = (columnName: string, value: string) => {
+  const removeColumnSearchQuerySelection = (
+    columnName: string,
+    value: string,
+  ) => {
     const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
     if (!cloneLastQueryRequest.query.additionalFilters) {
       return
     }
-    cloneLastQueryRequest.query.additionalFilters = cloneLastQueryRequest.query.additionalFilters
-      ?.map(el => {
-        return {
-          columnName: el.columnName,
-          values:
-            el.columnName === columnName
-              ? el.values.filter(el => el !== value)
-              : el.values,
-          operator: el.operator,
-          function: el.function,
-          concreteType: el.concreteType
+    cloneLastQueryRequest.query.additionalFilters =
+      cloneLastQueryRequest.query.additionalFilters?.reduce(function (
+        filtered: QueryFilter[],
+        el: QueryFilter,
+      ) {
+        if (
+          isColumnSingleValueQueryFilter(el) ||
+          isColumnMultiValueFunctionQueryFilter(el)
+        ) {
+          // For column-specific QueryFilters, filter out matching values on the matching column
+          const newElement = {
+            columnName: el.columnName,
+            values:
+              el.columnName === columnName
+                ? el.values.filter(el => el !== value)
+                : el.values,
+            operator: isColumnSingleValueQueryFilter(el)
+              ? el.operator
+              : undefined,
+            function: isColumnMultiValueFunctionQueryFilter(el)
+              ? el.function
+              : undefined,
+            concreteType: el.concreteType,
+          }
+
+          // Drop this QueryFilter if it has no more values
+          if (newElement.values.length > 0) {
+            filtered.push(newElement)
+          }
+        } else {
+          // Don't alter/drop non-column-specific QueryFilters
+          filtered.push(el)
         }
-      })
-      .filter(el => el.values.length > 0)
+        return filtered
+      },
+      [])
+
+    executeQueryRequest!(cloneLastQueryRequest)
+  }
+
+  const removeTextMatchesQueryFilter = (
+    queryFilter: TextMatchesQueryFilter,
+  ) => {
+    const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
+    if (!cloneLastQueryRequest.query.additionalFilters) {
+      return
+    }
+    cloneLastQueryRequest.query.additionalFilters =
+      cloneLastQueryRequest.query.additionalFilters.filter(
+        el =>
+          !(
+            isTextMatchesQueryFilter(el) &&
+            el.searchExpression === queryFilter.searchExpression
+          ),
+      )
     executeQueryRequest!(cloneLastQueryRequest)
   }
 
@@ -238,23 +291,47 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     executeQueryRequest!(initQueryRequest)
   }
 
-  const searchSelectionCriteriaPill = lastQueryRequest?.query.additionalFilters?.map(
-    el => {
-      const { columnName } = el
-      return el.values.map(value => {
-        return (
-          <SelectionCriteriaPill
-            key={value}
-            index={facetsWithSelection.length + 1}
-            filter={{
+  const searchSelectionCriteriaPillProps:
+    | (SelectionCriteriaPillProps & {
+        key: string
+      })[]
+    | undefined = lastQueryRequest?.query.additionalFilters?.reduce(
+    (
+      pillProps: (SelectionCriteriaPillProps & {
+        key: string
+      })[],
+      el: QueryFilter,
+    ) => {
+      if (isTextMatchesQueryFilter(el)) {
+        pillProps.push({
+          key: `fulltextsearch-${el.searchExpression}`,
+          filter: {
+            value: el.searchExpression,
+          },
+          onRemove: () => removeTextMatchesQueryFilter(el),
+        })
+      } else if (
+        isColumnSingleValueQueryFilter(el) ||
+        isColumnMultiValueFunctionQueryFilter(el)
+      ) {
+        const { columnName } = el
+        el.values.forEach(value => {
+          pillProps.push({
+            key: `columnsearch-${value}`,
+            filter: {
               columnName,
               value,
-            }}
-            onRemove={() => removeSearchQuerySelection(el.columnName, value)}
-          />
-        )
-      })
+            },
+            onRemove: () =>
+              removeColumnSearchQuerySelection(el.columnName, value),
+          })
+        })
+      } else {
+        console.warn('Encountered unexpected QueryFilter: ', el)
+      }
+      return pillProps
     },
+    [],
   )
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   if (error) {
@@ -276,19 +353,23 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         )}
       </span>
       <div className="TotalQueryResults__selections">
-        {searchSelectionCriteriaPill}
-        {facetsWithSelection.map((selectedFacet, index) => (
+        {searchSelectionCriteriaPillProps &&
+          searchSelectionCriteriaPillProps.map(props => (
+            <SelectionCriteriaPill {...props} key={props.key} />
+          ))}
+        {facetsWithSelection.map(selectedFacet => (
           <SelectionCriteriaPill
-            key={
+            key={`facets-${
               selectedFacet.selectedValue?.value ?? selectedFacet.displayValue
-            }
+            }`}
             facetWithSelection={selectedFacet}
-            index={index}
-            onRemove={removeFacetSelection}
-          ></SelectionCriteriaPill>
+            onRemove={() => removeFacetSelection(selectedFacet)}
+          />
         ))}
       </div>
-      {facetsWithSelection.length > 0 && (
+      {(facetsWithSelection.length > 0 ||
+        (searchSelectionCriteriaPillProps &&
+          searchSelectionCriteriaPillProps.length > 0)) && (
         <Button
           onClick={clearAll}
           variant="light"

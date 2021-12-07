@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/useSearch'
-import { Hit, SearchQuery } from '../../../../utils/synapseTypes/Search'
+import { SearchQuery } from '../../../../utils/synapseTypes/Search'
 import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
@@ -12,19 +12,14 @@ type SearchDetailsProps = EntityDetailsListSharedProps & {
 
 export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   searchQuery,
-  showVersionSelection,
-  selectColumnType,
-  selected,
-  visibleTypes: includeTypes,
-  selectableTypes,
-  toggleSelection,
+  ...sharedProps
 }) => {
   const {
     data,
-    status,
-    isFetching,
+    isLoading,
     hasNextPage,
     fetchNextPage,
+    isFetchingNextPage,
     error,
     isError,
   } = useSearchInfinite(searchQuery, {
@@ -41,24 +36,11 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   if (searchQuery.queryTerm) {
     return (
       <DetailsView
-        entities={
-          data
-            ? ([] as Hit[]).concat.apply(
-                [],
-                data.pages.map(page => page.hits),
-              )
-            : []
-        }
-        queryStatus={status}
-        queryIsFetching={isFetching}
+        entities={data?.pages.flatMap(page => page.hits) ?? []}
+        isLoading={isLoading}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}
-        showVersionSelection={showVersionSelection}
-        selectColumnType={selectColumnType}
-        selected={selected}
-        visibleTypes={includeTypes}
-        selectableTypes={selectableTypes}
-        toggleSelection={toggleSelection}
+        isFetchingNextPage={isFetchingNextPage}
         noResultsPlaceholder={
           <>
             <img
@@ -71,21 +53,16 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
             </p>
           </>
         }
+        {...sharedProps}
+        enableSelectAll={false} // Disable select all for search
       />
     )
   } else {
     return (
       <DetailsView
         entities={[]}
-        queryStatus={'success'}
-        queryIsFetching={false}
+        isLoading={false}
         hasNextPage={false}
-        showVersionSelection={showVersionSelection}
-        selectColumnType={selectColumnType}
-        selected={selected}
-        visibleTypes={includeTypes}
-        selectableTypes={selectableTypes}
-        toggleSelection={toggleSelection}
         noResultsPlaceholder={
           <>
             <img
@@ -96,6 +73,8 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
             <p>Enter a term or Synapse ID to start searching</p>
           </>
         }
+        {...sharedProps}
+        enableSelectAll={false} // Disable select all for search
       />
     )
   }

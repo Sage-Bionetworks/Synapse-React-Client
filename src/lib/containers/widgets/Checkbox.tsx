@@ -1,8 +1,8 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import { uniqueId as _uniqueId } from 'lodash-es'
+import React, { useEffect, useState } from 'react'
+
 export type CheckboxProps = {
   label: string
-  id: string
   checked?: boolean
   className?: string
   onChange: (newValue: boolean) => void
@@ -10,6 +10,7 @@ export type CheckboxProps = {
   children?: React.ReactChild
   onClick?: (event: React.SyntheticEvent<HTMLDivElement>) => void
   disabled?: boolean
+  'data-testid'?: string
 }
 
 export const Checkbox: React.FunctionComponent<CheckboxProps> = (
@@ -21,6 +22,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
     disabled = false,
   } = props
   const [checked, setChecked] = useState<boolean>(propsChecked)
+  const [uniqueId] = useState(_uniqueId('src-checkbox-'))
 
   useEffect(() => {
     setChecked(propsChecked)
@@ -49,11 +51,12 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
       <input
         type="checkbox"
         checked={checked}
-        id={props.id}
+        id={uniqueId}
         onChange={handleCheckboxChange}
         disabled={disabled}
+        data-testid={props['data-testid']}
       />
-      <label htmlFor={props.id}>{props.label}</label>
+      <label htmlFor={uniqueId}>{props.label}</label>
       {props.children ?? <></>}
     </div>
   )

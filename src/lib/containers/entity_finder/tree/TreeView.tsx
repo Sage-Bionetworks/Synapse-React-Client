@@ -22,6 +22,7 @@ import {
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
 import { NodeAppearance, TreeNode } from './TreeNode'
+import { Map } from 'immutable'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -56,7 +57,7 @@ export type TreeViewProps = {
   projectId?: string
   initialContainer: string | 'root' | null
   showDropdown: boolean
-  selectedEntities: Reference[]
+  selectedEntities: Map<string, number>
   visibleTypes?: EntityType[]
   toggleSelection?: (entity: Reference) => void
   setDetailsViewConfiguration?: (
@@ -109,11 +110,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       : initialContainer,
   )
 
-  const selected =
-    nodeAppearance === NodeAppearance.SELECT
-      ? selectedEntities
-      : [{ targetId: currentContainer } as Reference]
-
   const handleError = useErrorHandler()
 
   useEffect(() => {
@@ -164,12 +160,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   useEffect(() => {
     if (useProjectData && isSuccessProjects) {
       if (projectData?.pages) {
-        setTopLevelEntities(
-          ([] as ProjectHeader[]).concat.apply(
-            [],
-            projectData.pages.map(page => page.results),
-          ),
-        )
+        setTopLevelEntities(projectData.pages.flatMap(page => page.results))
       }
     }
   }, [useProjectData, isSuccessProjects, projectData])
@@ -409,7 +400,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
           {showScopeAsRootNode ? (
             <TreeNode
               level={0}
-              selected={selected}
+              selected={selectedEntities}
               setSelectedId={setSelectedId}
               visibleTypes={visibleTypes}
               autoExpand={shouldAutoExpand}
@@ -422,7 +413,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               <TreeNode
                 key={entity.id}
                 level={0}
-                selected={selected}
+                selected={selectedEntities}
                 setSelectedId={setSelectedId}
                 visibleTypes={visibleTypes}
                 autoExpand={shouldAutoExpand}

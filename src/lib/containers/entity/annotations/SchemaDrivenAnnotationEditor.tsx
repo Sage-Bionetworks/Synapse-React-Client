@@ -1,6 +1,6 @@
 import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
 import { JSONSchema7 } from 'json-schema'
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
@@ -20,9 +20,14 @@ import {
   useGetSchemaBinding,
 } from '../../../utils/hooks/SynapseAPI/useSchema'
 import { SynapseClientError } from '../../../utils/SynapseClient'
-import { entityJsonKeys } from '../../../utils/synapseTypes'
+import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
+import {
+  dropNullishArrayValues,
+  getFriendlyPropertyName,
+  transformErrors,
+} from './AnnotationEditorUtils'
 import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 import { CustomBooleanWidget } from './CustomBooleanWidget'
@@ -49,17 +54,6 @@ export type SchemaDrivenAnnotationEditorModalProps = {
   onHide: () => void
 }
 
-function getFriendlyPropertyName(error: AjvError) {
-  if (error.property.startsWith('[')) {
-    // Additional properties are surrounded by brackets and quotations, so let's remove them
-    return error.property.substring(2, error.property.length - 2)
-  } else if (error.property.startsWith('.')) {
-    return error.property.substring(1)
-  } else {
-    return error.property
-  }
-}
-
 // patternProperties lets us define how to treat additionalProperties in a JSON schema by property name
 // here we can ban properties that collide with entity properties by making their schema "not: {}"
 const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
@@ -71,15 +65,18 @@ const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
-export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenAnnotationEditorProps> = ({
-  entityId,
-  schemaId,
-  liveValidate = false,
-  onSuccess = () => {
-    /* no-op */
-  },
-  onCancel,
-}: SchemaDrivenAnnotationEditorProps) => {
+export const SchemaDrivenAnnotationEditor = (
+  props: SchemaDrivenAnnotationEditorProps,
+) => {
+  const {
+    entityId,
+    schemaId,
+    liveValidate = false,
+    onSuccess = () => {
+      /* no-op */
+    },
+    onCancel,
+  } = props
   const handleError = useErrorHandler()
   const formRef = useRef<Form<Record<string, unknown>>>(null)
 
@@ -153,19 +150,22 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
 
   const isLoading = isLoadingBinding || isLoadingSchema
 
-  const mutation = useUpdateViaJson(
-    entityId!,
-    { ...formData, ...entityJson },
-    {
-      onSuccess: () => {
-        onSuccess()
-      },
-      onError: error => {
-        setSubmissionError(error)
-        setShowSubmissionError(true)
-      },
+  const mutation = useUpdateViaJson({
+    onSuccess: () => {
+      onSuccess()
     },
-  )
+    onError: error => {
+      setSubmissionError(error)
+      setShowSubmissionError(true)
+    },
+  })
+
+  function submitChangedEntity() {
+    mutation.mutate({
+      ...dropNullishArrayValues(formData ?? {}),
+      ...entityJson,
+    } as EntityJson)
+  }
 
   return (
     <div className="bootstrap-4-backport AnnotationEditor">
@@ -183,8 +183,8 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               variant="info"
               transition={false}
             >
-              <b>{entityJson.name as string}</b> requires scientific annotations
-              specified by <b>{schema.jsonSchemaVersionInfo.$id}</b>
+              <b>{entityJson.name}</b> requires scientific annotations specified
+              by <b>{schema.jsonSchemaVersionInfo.$id}</b>
               {'. '}
               <b>
                 <a
@@ -208,7 +208,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               variant="info"
               transition={false}
             >
-              <b>{entityJson.name as string}</b> has no annotations. Click the{' '}
+              <b>{entityJson.name}</b> has no annotations. Click the{' '}
               <AddToList /> button to annotate.
             </Alert>
           )}
@@ -241,15 +241,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
                 'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
               },
             }}
-            transformErrors={(errors: AjvError[]): AjvError[] => {
-              return errors.map(error => {
-                const propertyName = getFriendlyPropertyName(error)
-                if (entityJsonKeys.includes(propertyName)) {
-                  error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
-                }
-                return error
-              })
-            }}
+            transformErrors={transformErrors}
             formData={formData}
             onChange={({ formData }) => {
               setFormData(formData)
@@ -261,8 +253,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
               }
               setShowSubmissionError(false)
               setFormData(formData)
-
-              mutation.mutate()
+              submitChangedEntity()
             }}
             onError={(errors: AjvError[]) => {
               // invoked when submit is clicked and there are client-side validation errors
@@ -334,7 +325,7 @@ export const SchemaDrivenAnnotationEditor: React.FunctionComponent<SchemaDrivenA
             <ConfirmationModal
               show={true}
               onSave={() => {
-                mutation.mutate()
+                submitChangedEntity()
                 setShowConfirmation(false)
               }}
               onCancel={() => {

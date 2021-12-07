@@ -1,25 +1,29 @@
-import * as React from 'react'
+import React from 'react'
+import { Button } from 'react-bootstrap'
+import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import {
+  OBSERVATION_CARD,
   DATASET,
+  DEFAULT_PAGE_SIZE,
   FUNDER,
   GENERIC_CARD,
   MEDIUM_USER_CARD,
-  DEFAULT_PAGE_SIZE,
 } from '../utils/SynapseConstants'
 import {
+  EntityHeader,
   QueryBundleRequest,
   QueryResultBundle,
-  EntityHeader,
+  Row,
 } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
+import loadingScreen from './LoadingScreen'
 import { Dataset, Funder } from './row_renderers'
+import { LoadingObservationCard, ObservationCard } from './row_renderers/ObservationCard'
+import NoContentAvailable from './table/NoContentAvailable'
+import SearchResultsNotFound from './table/SearchResultsNotFound'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
-import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
-import loadingScreen from './LoadingScreen'
-import { Button } from 'react-bootstrap'
-import SearchResultsNotFound from './table/SearchResultsNotFound'
 
 export type CardContainerProps = {
   data?: QueryResultBundle
@@ -27,7 +31,7 @@ export type CardContainerProps = {
   isAlignToLeftNav?: boolean
   title?: string
   executeQueryRequest?: (param: QueryBundleRequest) => void
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   getLastQueryRequest?: () => QueryBundleRequest
   getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
   isLoading?: boolean
@@ -75,6 +79,8 @@ export const CardContainer = (props: CardContainerProps) => {
         return <Funder {...props} />
       case GENERIC_CARD:
         return <GenericCard {...props} />
+      case OBSERVATION_CARD:
+        return <ObservationCard {...props} />
       default:
         return <div /> // this should never happen
     }
@@ -89,21 +95,19 @@ export const CardContainer = (props: CardContainerProps) => {
   })
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (!data) {
-    return <div>{isLoading && loadingScreen}</div>
+    return <div>
+      {isLoading && type === OBSERVATION_CARD && <LoadingObservationCard />}
+      {isLoading && type !== OBSERVATION_CARD && loadingScreen}
+    </div>
   } else if (data && data.queryResult.queryResults.rows.length === 0) {
     // data was retrieved from the backend but there is none to show.
     if (queryRequest.query.additionalFilters) {
       return <SearchResultsNotFound />
     }
     // else show "no results" UI (see PORTALS-1497)
-    return <>
-      <p className="SRC-no-results-title">
-        There is currently no content here.
-      </p>
-      <p className="SRC-no-results-description">
-        Information is always being updated, so check back later to see if content has been added.
-      </p>
-    </>
+    return (
+      <NoContentAvailable />
+    )
   }
   const schema = {}
   data.queryResult.queryResults.headers.forEach((element, index) => {
@@ -135,28 +139,32 @@ export const CardContainer = (props: CardContainerProps) => {
   } else {
     // render the cards
     const cardsData = data.queryResult.queryResults.rows
-    cards = cardsData.length ? cardsData.map((rowData: any, index) => {
-      const key = JSON.stringify(rowData.values)
-      const propsForCard = {
-        key,
-        type,
-        schema,
-        isHeader,
-        secondaryLabelLimit,
-        data: rowData.values,
-        selectColumns: data.selectColumns,
-        columnModels: data.columnModels,
-        tableEntityConcreteType:
-          tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
-        tableId: props.data?.queryResult.queryResults.tableId,
-        ...rest,
-      }
-      return renderCard(propsForCard, type)
-    }) : <></>
+    cards = cardsData.length ? (
+      cardsData.map((rowData: Row) => {
+        const key = JSON.stringify(rowData.values)
+        const propsForCard = {
+          key,
+          type,
+          schema,
+          isHeader,
+          secondaryLabelLimit,
+          data: rowData.values,
+          selectColumns: data.selectColumns,
+          columnModels: data.columnModels,
+          tableEntityConcreteType:
+            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
+          tableId: props.data?.queryResult.queryResults.tableId,
+          ...rest,
+        }
+        return renderCard(propsForCard, type)
+      })
+    ) : (
+      <></>
+    )
   }
 
   return (
-    <div role='list'>
+    <div role="list">
       {title && <h2 className="SRC-card-overview-title">{title}</h2>}
       {!title && unitDescription && showBarChart && (
         <TotalQueryResults

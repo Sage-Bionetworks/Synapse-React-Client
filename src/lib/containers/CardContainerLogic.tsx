@@ -1,32 +1,42 @@
+import { cloneDeep, isEqual } from 'lodash-es'
 import * as React from 'react'
 import { SynapseClient, SynapseConstants } from '../utils'
 import { getNextPageOfData } from '../utils/functions/queryUtils'
 import {
   insertConditionsFromSearchParams,
   KeyValue,
-  SQLOperator,
   parseEntityIdFromSqlStatement,
+  SQLOperator,
 } from '../utils/functions/sqlFunctions'
+import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 import { QueryBundleRequest, QueryResultBundle } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
+import { IconSvgOptions } from './IconSvg'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
- * 
+ *
  * This wasn't done because Enzyme's shallow renderer is not currently
  * compatible with the `contextType` field in the React 16+ context API.
- * 
+ *
  * This can be fixed by rewriting tests to not rely on the shallow renderer.
- * 
+ *
  * See here: https://github.com/enzymejs/enzyme/issues/1553
  */
 
-// TODO: this import nearly doubles the package size of SRC as a UMD build by ~400KB
-// will have to find a way to use individual lodash packages instead of the entire thing
-import { cloneDeep, isEqual } from 'lodash-es'
-import { IconSvgOptions } from './IconSvg'
-import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+/**
+ *  Used when a column value should link to an external URL defined by a value in another column.
+ *  Currently only works in SynapseTable (not cards!)
+ */
+export interface ColumnSpecifiedLink {
+  isMarkdown: false
+  /* The column which should have the displayed value */
+  matchColumnName: string
+  /* The column which has the link. If the link is empty, the value will be displayed without a link. */
+  linkColumnName: string
+}
+
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -58,12 +68,12 @@ export type DescriptionConfig = {
 }
 
 // Specify the indices in the values [] that should be rendered specially
-export type LabelLinkConfig = (MarkdownLink | CardLink)[]
+export type LabelLinkConfig = (MarkdownLink | CardLink | ColumnSpecifiedLink)[]
 
 export type ColumnIconConfigs = {
   columns: {
-    [index:string]: {
-      [index:string]: IconSvgOptions
+    [index: string]: {
+      [index: string]: IconSvgOptions
     }
   }
 }
@@ -92,7 +102,7 @@ export type CardContainerLogicProps = {
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
   facet?: string
-  facetAliases?: {}  
+  facetAliases?: Record<string, string>
   rgbIndex?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
@@ -214,14 +224,11 @@ export default class CardContainerLogic extends React.Component<
       isLoading: true,
     })
 
-    let sqlUsed = this.props.sql
-    if (this.props.searchParams) {
-      sqlUsed = insertConditionsFromSearchParams(
-        this.props.searchParams,
-        this.props.sql,
-        this.props.sqlOperator,
-      )
-    }
+    const sqlUsed = insertConditionsFromSearchParams(
+      this.props.sql,
+      this.props.searchParams,
+      this.props.sqlOperator,
+    )
     const entityId = parseEntityIdFromSqlStatement(sqlUsed)
     const limit = this.props.limit ?? DEFAULT_PAGE_SIZE
     // we don't set this in the state because it hardcodes the sql query, on componentDidUpdate
@@ -248,9 +255,7 @@ export default class CardContainerLogic extends React.Component<
           SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
           SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
           SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-        const hasMoreData =
-          data.queryResult.queryResults.rows.length ===
-          limit
+        const hasMoreData = data.queryResult.queryResults.rows.length === limit
         const newState = {
           hasMoreData,
           data,

@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as SRC;
+@use 'sass:map';
 
 .SRC-arrow-icon,
 .Icon-Plus,
@@ -12,12 +13,12 @@
 .SRC-r-icon,
 .SRC-python-icon {
   path {
-    fill: SRC.$primary-action-color-500;
+    fill: map.get(SRC.$primary-color-palette, 500);
   }
 }
 
 .SRC-terminal-icon > rect.outer {
-  fill: SRC.$primary-action-color-500;
+  fill: map.get(SRC.$primary-color-palette, 500);
 }
 
 .styled-svg-wrapper {
@@ -52,12 +53,12 @@
   &.themed {
     path,
     circle {
-      fill: SRC.$primary-action-color-500;
+      fill: map.get(SRC.$primary-color-palette, 500);
     }
     .icon-kinomics,
     .icon-proteomics {
       path {
-        stroke: SRC.$primary-action-color-500;
+        stroke: map.get(SRC.$primary-color-palette, 500);
         fill: none;
       }
     }
@@ -65,7 +66,7 @@
       .styled-svg-wrapper {
         display: inline-flex;
         padding: 2px;
-        background-color: rgba(SRC.$primary-action-color-500, 0.1);
+        background-color: rgba(map.get(SRC.$primary-color-palette, 500), 0.1);
         border-radius: 50%;
         margin: 0 2px;
       }
@@ -75,7 +76,7 @@
 
 .SRC-Sort-Icon-Active {
   padding: 2px;
-  background-color: SRC.$primary-action-color-500;
+  background-color: map.get(SRC.$primary-color-palette, 500);
   path {
     fill: white;
   }
@@ -85,6 +86,13 @@
   padding: 2px;
 
   path {
-    fill: SRC.$primary-action-color-500;
+    fill: map.get(SRC.$primary-color-palette, 500);
   }
+}
+
+.HelpButton {
+  color: #ababac;
+  margin: 5px;
+  height: 18px;
+  width: 18px;
 }

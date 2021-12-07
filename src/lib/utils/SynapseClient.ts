@@ -109,6 +109,7 @@ import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessT
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
+import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
@@ -152,6 +153,7 @@ import {
   SqlTransformResponse,
   TransformSqlWithFacetsRequest,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
+import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 
 const cookies = new UniversalCookies()
@@ -168,7 +170,6 @@ export const ACCESS_TOKEN_COOKIE_KEY =
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
-export const AUTH_PROVIDER = 'GOOGLE_OAUTH_2_0'
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export const getRootURL = () => {
@@ -336,7 +337,7 @@ export const doPut = <T>(
   accessToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-): Promise<any> => {
+): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
     headers: {
@@ -968,7 +969,7 @@ export const updateEntity = <T extends Entity>(
   accessToken: string | undefined = undefined,
 ): Promise<T> => {
   const url = `/repo/v1/entity/${entity.id}`
-  return doPut(
+  return doPut<T>(
     url,
     entity,
     accessToken,
@@ -1036,9 +1037,13 @@ export const getEntityWiki = (
  * Returns synapse user favorites list given their access token
  * https://rest-docs.synapse.org/rest/GET/favorite.html
  */
-export const getUserFavorites = (accessToken: string | undefined) => {
+export const getUserFavorites = (
+  accessToken: string | undefined,
+  offset: number = 0,
+  limit: number = 200,
+) => {
   // https://sagebionetworks.jira.com/browse/PLFM-6616
-  const url = `${FAVORITES}?offset=0&limit=200`
+  const url = `${FAVORITES}?offset=${offset}&limit=${limit}`
   return doGet<PaginatedResults<EntityHeader>>(
     url,
     accessToken,
@@ -1064,15 +1069,16 @@ export const removeUserFavorite = (
 }
 
 /**
- * Get the user's list of teams they are on
- *
- * @param {*} id ownerID of the synapse user see - https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
+ * Get a list of challenges for which the given user is registered.
+ * see http://rest-docs.synapse.org/rest/GET/challenge.html
  */
-export const getUserTeamList = (
+export const getUserChallenges = (
   accessToken: string | undefined,
-  id: string | number,
-) => {
-  const url = `/repo/v1/user/${id}/team?offset=0&limit=200`
+  userId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200,
+): Promise<ChallengePagedResults> => {
+  const url = `/repo/v1/challenge?participantId=${userId}&offset=${offset}&limit=${limit}`
   return doGet(
     url,
     accessToken,
@@ -1080,6 +1086,27 @@ export const getUserTeamList = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+/**
+ * Get the user's list of teams they are on
+ *
+ * @param {*} id ownerID of the synapse user see - https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserProfile.html
+ */
+export const getUserTeamList = (
+  accessToken: string | undefined,
+  userId: string | number,
+  offset: string | number = 0,
+  limit: string | number = 200,
+): Promise<PaginatedResults<Team>> => {
+  const url = `/repo/v1/user/${userId}/team?offset=${offset}&limit=${limit}`
+  return doGet(
+    url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 /**
  * Get the user's list of teams they are on
  *
@@ -1282,18 +1309,19 @@ This function should be called whenever the root App is initialized
 export const detectSSOCode = () => {
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-  let code: URL | null | string = new URL(window.location.href)
+  let fullUrl: URL | null | string = new URL(window.location.href)
   // in test environment the searchParams isn't defined
-  const { searchParams } = code
+  const { searchParams } = fullUrl
   if (!searchParams) {
     return
   }
-  code = searchParams.get('code')
-  if (code) {
+  const code = searchParams.get('code')
+  const provider = searchParams.get('provider')
+  if (code && provider) {
     oAuthSessionRequest(
-      AUTH_PROVIDER,
+      provider,
       code,
-      `${redirectURL}?provider=${AUTH_PROVIDER}`,
+      `${redirectURL}?provider=${provider}`,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((synToken: any) => {
@@ -1449,7 +1477,7 @@ const processFilePart = (
     // uploaded the part.  calculate md5 of the part and add the part to the upload
     calculateMd5(fileSlice).then((md5: string) => {
       const addPartUrl = `/file/v1/file/multipart/${uploadId}/add/${partNumber}?partMD5Hex=${md5}`
-      doPut(
+      doPut<AddPartResponse>(
         addPartUrl,
         undefined,
         accessToken,
@@ -1499,7 +1527,7 @@ export const checkUploadComplete = (
     })
   ) {
     const url = `/file/v1/file/multipart/${status.uploadId}/complete`
-    doPut(
+    doPut<MultipartUploadStatus>(
       url,
       undefined,
       accessToken,
@@ -2675,6 +2703,23 @@ export const getMyProjects = (
   )
 }
 
+// http://rest-docs.synapse.org/rest/GET/projects/user/principalId.html
+export const getUserProjects = (
+  userId: string,
+  params: GetProjectsParameters = {},
+  accessToken?: string,
+) => {
+  const urlParams = new URLSearchParams(
+    removeUndefined(params) as Record<string, string>,
+  )
+  return doGet<ProjectHeaderList>(
+    `/repo/v1/projects/user/${userId}?${urlParams.toString()}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
 // https://rest-docs.synapse.org/rest/GET/entity/id/path.html
 export const getEntityPath = (entityId: string, accessToken?: string) => {
   return doGet<EntityPath>(
@@ -2686,10 +2731,14 @@ export const getEntityPath = (entityId: string, accessToken?: string) => {
 }
 
 // https://rest-docs.synapse.org/rest/GET/entity/id/version.html
-// TODO: Pagination
-export const getEntityVersions = (entityId: string, accessToken?: string) => {
+export const getEntityVersions = (
+  entityId: string,
+  accessToken?: string,
+  offset: number = 0,
+  limit: number = 200,
+) => {
   return doGet<PaginatedResults<VersionInfo>>(
-    `/repo/v1/entity/${entityId}/version?offset=0&limit=200`,
+    `/repo/v1/entity/${entityId}/version?offset=${offset}&limit=${limit}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3029,10 +3078,10 @@ export const getEntityJson = (entityId: string, accessToken?: string) => {
  */
 export const updateEntityJson = (
   entityId: string,
-  json: unknown,
+  json: EntityJson,
   accessToken?: string,
 ) => {
-  return doPut<unknown>(
+  return doPut<EntityJson>(
     ENTITY_JSON(entityId),
     json,
     accessToken,

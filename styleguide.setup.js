@@ -14,6 +14,7 @@ import {
   GENERIC_CARD,
   COMPUTATIONAL,
   PUBLICATION,
+  OBSERVATION_CARD,
 } from './src/lib/utils/SynapseConstants'
 import brainSvg from './src/demo/containers/playground/icons/brain.svg'
 import circleSvg from './src/demo/containers/playground/icons/circle.svg'
@@ -23,6 +24,7 @@ import moment from 'moment'
 import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
 import { Checkbox } from './src/lib/containers/widgets/Checkbox'
 import { RadioGroup } from './src/lib/containers/widgets/RadioGroup'
+import Typography from './src/lib/utils/typography/Typography'
 import * as ReactBootstrap from 'react-bootstrap'
 import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
 import {
@@ -31,6 +33,11 @@ import {
 } from './src/lib/containers/ToastMessage'
 import React from 'react'
 import ReactDOM from 'react-dom'
+
+// Inject the ToastContainer so we can push toast notifications
+let toastContainerDiv = document.createElement('div')
+document.getElementsByTagName('body')[0].append(toastContainerDiv)
+ReactDOM.render(React.createElement(SynapseToastContainer), toastContainerDiv)
 
 global.currentUserProfile = false
 global.accessToken = false
@@ -44,8 +51,10 @@ global.sessionChangeHandler = async () => {
         if (accessToken) {
           getAuthenticatedOn(accessToken).then(authenticatedOn => {
             const date = moment(authenticatedOn.authenticatedOn).format('L LT')
-            alert(
+            displayToast(
               `You are currently logged in as ${profile.userName} (last authenticated at ${date})`,
+              'info',
+              { autoCloseInMs: 5000 },
             )
           })
         }
@@ -70,11 +79,6 @@ global.iconOptions = {
   'Resilience-AD': resilienceadSvg,
 }
 
-// Inject the ToastContainer so we can push toast notifications
-let toastContainerDiv = document.createElement('div')
-document.getElementsByTagName('body')[0].append(toastContainerDiv)
-ReactDOM.render(React.createElement(SynapseToastContainer), toastContainerDiv)
-
 global.SynapseContextConsumer = SynapseContextConsumer
 global.AVATAR = AVATAR
 global.SMALL_USER_CARD = SMALL_USER_CARD
@@ -83,8 +87,10 @@ global.LARGE_USER_CARD = LARGE_USER_CARD
 global.GENERIC_CARD = GENERIC_CARD
 global.COMPUTATIONAL = COMPUTATIONAL
 global.PUBLICATION = PUBLICATION
+global.OBSERVATION_CARD = OBSERVATION_CARD
 global.Checkbox = Checkbox
 global.RadioGroup = RadioGroup
 global.ReactBootstrap = ReactBootstrap
 global.ReactQueryDevtoolsPanel = ReactQueryDevtoolsPanel
 global.displayToast = displayToast
+global.Typography = Typography

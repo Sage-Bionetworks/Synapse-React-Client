@@ -102,7 +102,7 @@ describe('basic tests', () => {
     const { instance } = await createShallowComponent(props)
     await instance.componentDidMount()
     const result = await instance.getFileEntityData(token, '123444')
-    expect(result).toEqual({ content: formschemaJson, version: undefined })
+    expect(result).toEqual({ content: formschemaJson, version: 3 })
   })
 
   describe('if there is no datafile (no formDataId)', () => {
@@ -212,9 +212,9 @@ describe('basic tests', () => {
       await instance.componentDidMount()
       expect(wrapper).toBeDefined()
       wrapper.find('div').first().hasClass('someFormClass')
-      const formProps: SynapseFormProps = (wrapper
+      const formProps: SynapseFormProps = wrapper
         .find('SynapseForm')
-        .props() as any) as SynapseFormProps
+        .props() as any as SynapseFormProps
       expect(formProps.formTitle).toBe(props.formTitle)
       expect(formProps.isWizardMode).toBeTruthy()
     })
@@ -226,9 +226,9 @@ describe('basic tests', () => {
 
       expect(wrapper).toBeDefined()
       wrapper.find('div').first().hasClass('someFormClass')
-      const formProps: SynapseFormProps = (wrapper
+      const formProps: SynapseFormProps = wrapper
         .find('SynapseForm')
-        .props() as any) as SynapseFormProps
+        .props() as any as SynapseFormProps
       expect(formProps.formTitle).toBe('Another Title')
       expect(Object.keys(formProps.formData)).toEqual(['metadata'])
       expect(formProps.isWizardMode).toBeFalsy()

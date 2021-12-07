@@ -2,9 +2,9 @@ import * as React from 'react'
 
 export const ToolExperimental = () => (
   <svg width="61" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clipPath="url(#clip0)">
-      <g clipPath="url(#clip1)">
-        <g clipPath="url(#clip2)">
+    <g clipPath="url(#ToolExperimentalClip0)">
+      <g clipPath="url(#ToolExperimentalClip1)">
+        <g clipPath="url(#ToolExperimentalClip2)">
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -21,17 +21,17 @@ export const ToolExperimental = () => (
       </g>
     </g>
     <defs>
-      <clipPath id="clip0">
+      <clipPath id="ToolExperimentalClip0">
         <path fill="#fff" d="M0 0h61v76H0z" />
       </clipPath>
-      <clipPath id="clip1">
+      <clipPath id="ToolExperimentalClip1">
         <path
           fill="#fff"
           transform="matrix(.69 0 0 .69 2 4)"
           d="M0 0h85.507v85.507H0z"
         />
       </clipPath>
-      <clipPath id="clip2">
+      <clipPath id="ToolExperimentalClip2">
         <path
           fill="#fff"
           transform="matrix(.69 0 0 .69 9 4)"

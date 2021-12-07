@@ -27,6 +27,7 @@ import {
 import { useEffect } from 'react'
 import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
 import useGetEntityBundle from '../utils/hooks/SynapseAPI/useEntityBundle'
+import { useInView } from 'react-intersection-observer'
 
 const isPublic = (bundle: EntityBundle): boolean => {
   return bundle.benefactorAcl!.resourceAccess.some(ra => {
@@ -38,8 +39,11 @@ const isPublic = (bundle: EntityBundle): boolean => {
   })
 }
 
+export const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID'
+
 export type EntityBadgeIconsProps = {
   entityId: string
+  versionNumber?: number
   flexWrap?: // possible settings for flex-wrap
   | 'wrap'
     | 'nowrap'
@@ -67,31 +71,38 @@ export type EntityBadgeIconsProps = {
   onUnlinkError?: (error: Error) => void
   /** Whether or not the badges (e.g. Annotations) can trigger opening a modal on click */
   canOpenModal: boolean
+  /** Whether this component should render a ReactTooltip or if an external component is managing it */
+  renderTooltipComponent: boolean
 }
 
 /**
  * Stateless component used to show icons that show an entity's status.
  * Adapted from https://github.com/Sage-Bionetworks/SynapseWebClient/blob/46b9b717636cda2421926d96365244bbb72a05b6/src/main/java/org/sagebionetworks/web/client/widget/entity/EntityBadge.java
  */
-export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = ({
-  entityId,
-  flexWrap = 'nowrap',
-  justifyContent = 'flex-start',
-  showIsPublicPrivate = true,
-  showHasLocalSharingSettings = true,
-  showHasAnnotations = true,
-  showHasWiki = true,
-  showHasDiscussionThread = true,
-  showUnlink = true,
-  onUnlink = () => {
-    /* noop */
-  },
-  onUnlinkError = () => {
-    /* noop */
-  },
-  canOpenModal,
-}) => {
-  const ENTITY_BADGE_ICONS_TOOLTIP_ID = 'EntityBadgeIconsTooltipID-' + entityId
+export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
+  const {
+    entityId,
+    versionNumber,
+    flexWrap = 'nowrap',
+    justifyContent = 'flex-start',
+    showIsPublicPrivate = true,
+    showHasLocalSharingSettings = true,
+    showHasAnnotations = true,
+    showHasWiki = true,
+    showHasDiscussionThread = true,
+    showUnlink = true,
+    onUnlink = () => {
+      /* noop */
+    },
+    onUnlinkError = () => {
+      /* noop */
+    },
+    canOpenModal,
+    renderTooltipComponent,
+  } = props
+  const ownTooltipId =
+    ENTITY_BADGE_ICONS_TOOLTIP_ID +
+    (renderTooltipComponent ? `-${entityId}` : '')
 
   enum SchemaConformanceState {
     NO_SCHEMA = '', // or not in experimental mode
@@ -100,7 +111,17 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
     ANNOTATIONS_MISSING = 'Missing',
   }
 
-  const { data: bundle } = useGetEntityBundle(entityId)
+  const { ref, inView } = useInView()
+
+  const { data: bundle } = useGetEntityBundle(
+    entityId,
+    undefined,
+    versionNumber,
+    {
+      enabled: inView,
+      staleTime: 60 * 1000, // 60 seconds
+    },
+  )
   const [showModal, setShowModal] = useState(false)
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,
@@ -109,10 +130,12 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
   const { accessToken, isInExperimentalMode } = useSynapseContext()
 
   const { data: schemaValidationResults } = useGetValidationResults(entityId, {
-    enabled: isInExperimentalMode,
+    enabled: isInExperimentalMode && inView,
+    staleTime: 60 * 1000, // 60 seconds
   })
   const { data: boundSchema } = useGetSchemaBinding(entityId, {
-    enabled: isInExperimentalMode,
+    enabled: isInExperimentalMode && inView,
+    staleTime: 60 * 1000, // 60 seconds
   })
 
   // The maximum number of annotations to show in the popover
@@ -189,121 +212,124 @@ export const EntityBadgeIcons: React.FunctionComponent<EntityBadgeIconsProps> = 
           : ''
       }`
 
-  if (bundle == null) {
-    return null
-  }
-
   return (
-    <div className="EntityBadge" style={{ flexWrap, justifyContent }}>
-      <ReactTooltip
-        id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-        className="EntityBadgeTooltip"
-        delayShow={100}
-        place={'right'}
-      />
-      <div onClick={e => e.stopPropagation()}>
-        <EntityModal
-          entityId={entityId}
-          show={showModal}
-          showTabs={false}
-          onClose={() => setShowModal(false)}
-          initialTab={EntityModalTabs.ANNOTATIONS}
-        />
-      </div>
-      {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
-        <FontAwesomeIcon
-          aria-hidden={false}
-          role="img"
-          className="EntityBadge__Badge"
-          icon={faGlobeAmericas}
-          data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-          data-tip={'Public'}
-          data-testid={'is-public-icon'}
-        />
-      ) : null}
-      {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
-        <FontAwesomeIcon
-          aria-hidden={false}
-          role="img"
-          className="EntityBadge__Badge"
-          icon={faLock}
-          data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-          data-tip={'Private'}
-          data-testid={'is-private-icon'}
-        />
-      ) : null}
-      {showHasLocalSharingSettings &&
-      bundle.benefactorAcl &&
-      entityId === bundle.benefactorAcl!.id ? (
-        <FontAwesomeIcon
-          aria-hidden={false}
-          role="img"
-          className="EntityBadge__Badge"
-          icon={faCheck}
-          data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-          data-tip="Sharing Settings have been set"
-          data-testid={'sharing-settings-icon'}
-        />
-      ) : null}
+    <div className="EntityBadge" ref={ref} style={{ flexWrap, justifyContent }}>
+      {bundle && (
+        <>
+          {renderTooltipComponent && (
+            <ReactTooltip
+              id={ownTooltipId}
+              className="EntityBadgeTooltip"
+              delayShow={100}
+              place={'right'}
+              effect={'solid'}
+            />
+          )}
+          <div onClick={e => e.stopPropagation()}>
+            <EntityModal
+              entityId={entityId}
+              show={showModal}
+              showTabs={false}
+              onClose={() => setShowModal(false)}
+              initialTab={EntityModalTabs.ANNOTATIONS}
+            />
+          </div>
+          {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
+            <FontAwesomeIcon
+              aria-hidden={false}
+              role="img"
+              className="EntityBadge__Badge"
+              icon={faGlobeAmericas}
+              data-for={ownTooltipId}
+              data-tip={'Public'}
+              data-testid={'is-public-icon'}
+            />
+          ) : null}
+          {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
+            <FontAwesomeIcon
+              aria-hidden={false}
+              role="img"
+              className="EntityBadge__Badge"
+              icon={faLock}
+              data-for={ownTooltipId}
+              data-tip={'Private'}
+              data-testid={'is-private-icon'}
+            />
+          ) : null}
+          {showHasLocalSharingSettings &&
+          bundle.benefactorAcl &&
+          entityId === bundle.benefactorAcl!.id ? (
+            <FontAwesomeIcon
+              aria-hidden={false}
+              role="img"
+              className="EntityBadge__Badge"
+              icon={faCheck}
+              data-for={ownTooltipId}
+              data-tip="Sharing Settings have been set"
+              data-testid={'sharing-settings-icon'}
+            />
+          ) : null}
 
-      {showHasAnnotations &&
-        !!(annotationsCount || schemaValidationResults) && (
-          <FontAwesomeIcon
-            aria-hidden={false}
-            role={canOpenModal ? 'button' : 'img'}
-            className={`EntityBadge__Badge ${schemaConformance}`}
-            style={canOpenModal ? { cursor: 'pointer' } : undefined}
-            onClick={canOpenModal ? () => setShowModal(true) : undefined}
-            icon={faTag}
-            data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-            data-tip={sanitizeHtml(annotationsHtml)}
-            data-html={true}
-            data-testid={'annotations-icon'}
-          />
-        )}
-      {showHasWiki && bundle.rootWikiId && (
-        <FontAwesomeIcon
-          aria-hidden={false}
-          role="img"
-          //   style={{ maxWidth: '20px', maxHeight: '20px' }}
-          className="EntityBadge__Badge"
-          icon={faAlignLeft} // faNewspaper is ugly
-          data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-          data-tip="Has a wiki"
-          data-testid={'wiki-icon'}
-        />
+          {showHasAnnotations &&
+            !!(annotationsCount || schemaValidationResults) && (
+              <FontAwesomeIcon
+                aria-hidden={false}
+                role={canOpenModal ? 'button' : 'img'}
+                className={`EntityBadge__Badge ${schemaConformance}`}
+                style={canOpenModal ? { cursor: 'pointer' } : undefined}
+                onClick={canOpenModal ? () => setShowModal(true) : undefined}
+                icon={faTag}
+                data-for={ownTooltipId}
+                data-tip={sanitizeHtml(annotationsHtml)}
+                data-html={true}
+                data-testid={'annotations-icon'}
+              />
+            )}
+          {showHasWiki && bundle.rootWikiId && (
+            <FontAwesomeIcon
+              aria-hidden={false}
+              role="img"
+              //   style={{ maxWidth: '20px', maxHeight: '20px' }}
+              className="EntityBadge__Badge"
+              icon={faAlignLeft} // faNewspaper is ugly
+              data-for={ownTooltipId}
+              data-tip="Has a wiki"
+              data-testid={'wiki-icon'}
+            />
+          )}
+          {showHasDiscussionThread &&
+            !!bundle.threadCount &&
+            !!(bundle.threadCount > 0) && (
+              <FontAwesomeIcon
+                aria-hidden={false}
+                role="img"
+                className="EntityBadge__Badge"
+                icon={faComment}
+                data-for={ownTooltipId}
+                data-tip="Has been mentioned in discussion"
+                data-testid={'discussion-icon'}
+              />
+            )}
+          {showUnlink &&
+            bundle.entityType === EntityType.LINK &&
+            bundle.permissions?.canDelete && (
+              <FontAwesomeIcon
+                aria-hidden={false}
+                role="button"
+                onClick={() => {
+                  SynapseClient.deleteEntity(accessToken, entityId)
+                    .then(() => onUnlink(entityId))
+                    .catch(error => onUnlinkError(error))
+                }}
+                className="EntityBadge__Badge Unlink"
+                icon={faUnlink}
+                data-for={ownTooltipId}
+                data-tip="Remove this link"
+                data-testid={'unlink-icon'}
+              />
+            )}
+        </>
       )}
-      {showHasDiscussionThread &&
-        !!bundle.threadCount &&
-        !!(bundle.threadCount > 0) && (
-          <FontAwesomeIcon
-            aria-hidden={false}
-            role="img"
-            className="EntityBadge__Badge"
-            icon={faComment}
-            data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-            data-tip="Has been mentioned in discussion"
-            data-testid={'discussion-icon'}
-          />
-        )}
-      {showUnlink &&
-        bundle.entityType === EntityType.LINK &&
-        bundle.permissions?.canDelete && (
-          <FontAwesomeIcon
-            aria-hidden={false}
-            role="button"
-            onClick={() => {
-              SynapseClient.deleteEntity(accessToken, entityId)
-                .then(() => onUnlink(entityId))
-                .catch(error => onUnlinkError(error))
-            }}
-            className="EntityBadge__Badge Unlink"
-            icon={faUnlink}
-            data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-            data-tip="Remove this link"
-            data-testid={'unlink-icon'}
-          />
-        )}
     </div>
   )
 }

@@ -8,6 +8,7 @@ import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrappe
 import StackedBarChart from './containers/StackedBarChart'
 import HasAccess from './containers/HasAccess'
 import SynapseTable from './containers/table/SynapseTable'
+import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
 import UserCard from './containers/UserCard'
 import Login from './containers/Login'
 import QueryCount from './containers/QueryCount'
@@ -29,7 +30,9 @@ import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
+import SubsectionRowRenderer from './containers/SubsectionRowRenderer'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
+import FeaturedToolsList from './containers/home_page/featured_tools/FeaturedToolsList'
 import UserCardListGroups from './containers/home_page/people/UserCardListGroups'
 import { AccountLevelBadge } from './containers/AccountLevelBadge'
 import RenderIfInView from './containers/RenderIfInView'
@@ -40,11 +43,13 @@ import EntityFinder from './containers/entity_finder/EntityFinder'
 import ExperimentalMode from './containers/ExperimentalMode'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
+import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
   useSynapseContext,
 } from './utils/SynapseContext'
+import { MarkdownPopover } from './containers/MarkdownPopover'
 
 // we exclude this from main.scss because react doesn't like importing an svg
 // with a relative import.
@@ -56,6 +61,7 @@ import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
+import Typography from './utils/typography/Typography'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -69,6 +75,7 @@ const SynapseComponents = {
   CardContainer,
   QueryWrapper,
   StackedBarChart,
+  StandaloneQueryWrapper,
   SynapseTable,
   CardContainerLogic,
   EntityForm,
@@ -110,6 +117,10 @@ const SynapseComponents = {
   ProgrammaticOptions,
   SynapseToastContainer,
   displayToast,
+  UserProfileLinks,
+  MarkdownPopover,
+  FeaturedToolsList,
+  SubsectionRowRenderer
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext }
+export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext, Typography }

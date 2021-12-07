@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
 
-type FunderProps = {
+export type FunderProps = {
   data?: any
   schema?: any
 }

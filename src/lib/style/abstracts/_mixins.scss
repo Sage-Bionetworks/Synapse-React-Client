@@ -1,4 +1,5 @@
 @use './variables' as SRC;
+@use 'sass:map';
 // -----------------------------------------------------------------------------
 // This file contains all application-wide Sass mixins.
 // -----------------------------------------------------------------------------
@@ -48,10 +49,12 @@
 }
 
 @mixin sortable-table() {
-  thead>tr>th, thead:first-child>tr:first-child>th {
+  thead > tr > th,
+  thead:first-child > tr:first-child > th {
     padding: 10px 6px 5px 7px;
-    border: 1px solid #DDDDDF;
-    color: #515359;
+    border: 1px solid #dddddf;
+    background-color: map.get(SRC.$colors, 'gray-200');
+    color: map.get(SRC.$colors, 'gray-800');
     span {
       display: inline-block;
       float: right;
@@ -62,8 +65,30 @@
   }
 }
 
+@mixin sticky-column() {
+  border-collapse: separate;
+  .stickyColumn {
+    right: 0;
+    position: sticky;
+    z-index: 800;
+  }
+  // fix colors (icons, and set the cell background color to be opaque).
+  thead .stickyColumn {
+    text-align: center;
+  }
+  tbody tr > td.stickyColumn {
+    border-left: 1px solid map.get(SRC.$colors, 'gray-400');
+  }
+  tbody tr:nth-of-type(even) > .stickyColumn {
+    background-color: white;
+  }
+  tbody tr:nth-of-type(odd) > .stickyColumn {
+    background-color: #FBFBFC;
+  }
+}
+
 @mixin underline-tabs(
-  $active-color: SRC.$primary-action-color-500,
+  $active-color: SRC.$secondary-action-color,
   $inactive-color: lightgray
 ) {
   display: flex;
@@ -77,10 +102,15 @@
     transition: border-bottom 300ms ease-in;
   }
   > *[aria-selected='true'] {
-    border-bottom: 3px solid SRC.$primary-action-color-500;
+    border-bottom: 3px solid $active-color;
+    color: SRC.$active-tab-text;
+    svg {
+      color: SRC.$secondary-action-color;
+    }
   }
   > *[aria-selected='false'] {
-    border-bottom: 3px solid lightgray;
+    color: SRC.$inactive-tab-text;
+    border-bottom: 3px solid $inactive-color;
   }
 }
 
@@ -101,16 +131,27 @@ $link-underline-color-default: adjust-color(
   $lightness: 40%
 ) !default;
 
+@mixin disabled() {
+  color: map.get(SRC.$colors, 'gray-600');
+  &:hover {
+    border-bottom: 1px solid $link-underline-color-default;
+    cursor: default;
+  }
+}
+
 // Core link styles across the portal main area.
 @mixin highlightLink() {
   color: SRC.$primary-action-color;
   text-decoration: none;
   font-weight: 700;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   border-bottom: 1px solid $link-underline-color-default;
   &:hover {
-    border-bottom: 2px solid SRC.$primary-action-color-700;
+    border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
     margin-bottom: -1px;
+  }
+  &.disabled {
+    @include disabled;
   }
 }
 
@@ -119,10 +160,13 @@ $link-underline-color-default: adjust-color(
   text-decoration: none;
   font-weight: 700;
   border-bottom: 2px solid transparent;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   &:hover {
-    border-bottom: 2px solid SRC.$primary-action-color-700;
+    border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
     margin-bottom: 0px;
+  }
+  &.disabled {
+    @include disabled;
   }
 }
 
@@ -135,5 +179,8 @@ $link-underline-color-default: adjust-color(
   &:hover {
     border-bottom: unset;
     margin-bottom: unset;
+  }
+  &.disabled {
+    @include disabled;
   }
 }

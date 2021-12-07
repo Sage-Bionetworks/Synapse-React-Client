@@ -103,6 +103,11 @@ export function getWidgetFromPropertyType(
  * react-jsonschema-form SchemaField override for "additionalProperties" only.
  * Modifies the data to provide full compatibility with Synapse annotations features.
  *
+ * This component provides these enhancements to the SchemaField:
+ * - Supports selecting a type, and changing the input widget appropriately
+ * - Identifying the type on mount
+ * - Treat all field values as arrays
+ * - When the last array value is removed, remove the entire key from the form.
  * @param props
  * @returns
  */
@@ -127,23 +132,6 @@ export function AdditionalPropertiesSchemaField<T>(
     }
   }
 
-  /**
-   * This component provides these enhancements to the SchemaField:
-   *
-   * - Supports selecting a type, and changing the input widget appropriately
-   * - Identifying the type on mount
-   * - Treat all field values as arrays
-   * - When the last array value is removed, remove the entire key from the form.
-   */
-
-  // The type determines which widget we show.
-  const [propertyType, setPropertyType] = useState<PropertyType>(
-    PropertyType.STRING,
-  )
-  const [widget, setWidget] = useState<AdditionalPropertyWidget>(
-    AdditionalPropertyWidget.TextWidget,
-  )
-
   const {
     id,
     formData,
@@ -163,6 +151,14 @@ export function AdditionalPropertiesSchemaField<T>(
     setList,
   } = useListState(convertToArray(formData))
 
+  // The type determines which widget we show.
+  const [propertyType, setPropertyType] = useState<PropertyType>(
+    guessPropertyType(list),
+  )
+  const [widget, setWidget] = useState<AdditionalPropertyWidget>(
+    AdditionalPropertyWidget.TextWidget,
+  )
+
   useEffect(() => {
     // The item may not be an array when we get it, and we need to convert it right away because the order of items is not stable, and seems to depend on if the item is an array or not.
     // Otherwise, the order of the properties will change when the user modifies the data. We may be able to fix this by modifying react-jsonschema-form to stabilize the item order.
@@ -171,13 +167,6 @@ export function AdditionalPropertiesSchemaField<T>(
     setTimeout(() => {
       onChange(list)
     }, 100)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    // When we first mount, use the existing data to determine the type
-    setPropertyType(guessPropertyType(list))
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -222,6 +211,7 @@ export function AdditionalPropertiesSchemaField<T>(
           placeholder={props.placeholder ?? ''}
           options={{}}
           formContext={props.formContext as T}
+          onFocus={props.onFocus}
           onBlur={(id, value) => {
             setList(transformDataFromPropertyType(list, propertyType))
             props.onBlur(id, value)

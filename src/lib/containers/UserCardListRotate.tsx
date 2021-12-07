@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
+import React, { useState } from 'react'
+import { insertConditionsFromSearchParams, KeyValue, parseEntityIdFromSqlStatement, SQLOperator } from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
   FacetColumnRequest,
@@ -7,11 +7,12 @@ import {
   QueryResultBundle,
 } from '../utils/synapseTypes/Table'
 import UserCardList from './UserCardList'
-import loadingScreen from './LoadingScreen'
 import { UserCardSize } from './UserCard'
 import { LARGE_USER_CARD } from '../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { LoadingUserCardMedium } from './UserCardMedium'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
 const DEFAULT_DISPLAY_COUNT = 3
@@ -24,6 +25,8 @@ export type UserCardListRotateProps = {
   summaryLink?: string
   summaryLinkText?: string
   selectedFacets?: FacetColumnRequest[]
+  sqlOperator?: SQLOperator
+  searchParams?: KeyValue
 }
 
 export const getDisplayIds = (
@@ -69,6 +72,8 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   summaryLink,
   summaryLinkText,
   selectedFacets,
+  searchParams,
+  sqlOperator
 }) => {
   const { accessToken } = useSynapseContext()
   const [userIds, setUserIds] = useState<string[]>([])
@@ -78,9 +83,14 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   const storageUidKey = `${STORED_UID_KEY}-${sql}-${JSON.stringify(
     selectedFacets,
   )}`
-  useEffect(() => {
+  useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
+      const sqlUsed = insertConditionsFromSearchParams(
+        sql,
+        searchParams,
+        sqlOperator,
+      )
       const entityId = parseEntityIdFromSqlStatement(sql)
       const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
       const request: QueryBundleRequest = {
@@ -88,7 +98,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
         entityId,
         query: {
-          sql,
+          sql: sqlUsed,
           selectedFacets,
         },
       }
@@ -123,11 +133,16 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     return () => {
       mounted = false
     }
-  }, [sql, selectedFacets, count, accessToken])
+  }, [sql, selectedFacets, count, accessToken, searchParams, sqlOperator])
 
   return (
     <div className="UserCardListRotate bootstrap-4-backport">
-      {isLoading && loadingScreen}
+      {isLoading && <LoadingUserCardMedium />}
+      {!isLoading && userIds.length === 0 && (
+        <p className="font-italic">
+          No one was found.
+        </p>
+      )}
       {!isLoading && userIds.length > 0 && (
         <UserCardList list={userIds} size={size} data={queryData} />
       )}

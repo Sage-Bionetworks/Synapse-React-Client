@@ -16,6 +16,8 @@ import {
   EntityType,
 } from '../../../../../lib/utils/synapseTypes'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
+import { Map } from 'immutable'
+import { NO_VERSION_NUMBER } from '../../../../../lib/containers/entity_finder/EntityFinder'
 
 jest.mock(
   '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityChildren',
@@ -37,7 +39,7 @@ const defaultProps: TreeNodeProps = {
     modifiedBy: 100000,
     type: 'org.sagebionetworks.repo.model.FileEntity',
   },
-  selected: [{ targetId: 'syn456' }],
+  selected: Map([['syn456', NO_VERSION_NUMBER]]),
   setSelectedId: mockSetSelectedId,
   appearance: NodeAppearance.SELECT,
   selectableTypes: Object.values(EntityType),
@@ -213,7 +215,7 @@ describe('TreeNode tests', () => {
   it('Has aria-selected as true when the selectedId matches the entity ID', async () => {
     // Set auto-expand to render children and ensure that they don't get the selected attribute
     renderComponent({
-      selected: [{ targetId: defaultProps.entityHeader!.id }],
+      selected: Map([[defaultProps.entityHeader!.id, NO_VERSION_NUMBER]]),
       autoExpand: () => true,
     })
     await waitFor(() =>

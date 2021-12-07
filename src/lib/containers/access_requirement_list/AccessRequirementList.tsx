@@ -118,11 +118,6 @@ export default function AccessRequirementList({
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
-    if (!SynapseClient.isInSynapseExperimentalMode()) {
-      // TODO to be deleted when out of alpha mode
-      setRequestDataStep(-1)
-    }
-
     const sortAccessRequirementByCompletion = async (
       requirements: Array<AccessRequirement>,
     ): Promise<Array<AccessRequirementAndStatus>> => {
@@ -318,7 +313,7 @@ export default function AccessRequirementList({
                     <a
                       className={`${SynapseConstants.SRC_SIGN_IN_CLASS} SRC-boldText `}
                     >
-                      Sign in
+                      Sign in&nbsp;
                     </a>
                     with a Sage Platform (Synapse) user account.
                   </p>

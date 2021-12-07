@@ -10,6 +10,7 @@ import {
   faTable,
   faThList,
   IconDefinition,
+  faTh,
 } from '@fortawesome/free-solid-svg-icons'
 import { faDocker } from '@fortawesome/free-brands-svg-icons'
 import {
@@ -38,6 +39,7 @@ const _ENTITY_TYPE_ICON_MAP = new Map<EntityType, IconDefinition>([
   [EntityType.ENTITY_VIEW, faThList],
   [EntityType.DOCKER_REPO, faDocker],
   [EntityType.SUBMISSION_VIEW, faServer],
+  [EntityType.DATASET, faTh],
 ])
 
 const getIconTypeForEntity = (type: EntityType): IconDefinition | '' => {
@@ -50,6 +52,7 @@ const getIconTypeForEntity = (type: EntityType): IconDefinition | '' => {
     case EntityType.ENTITY_VIEW:
     case EntityType.DOCKER_REPO:
     case EntityType.SUBMISSION_VIEW:
+    case EntityType.DATASET:
       return _ENTITY_TYPE_ICON_MAP.get(type)!
     default:
       return ''

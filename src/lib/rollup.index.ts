@@ -25,16 +25,20 @@ import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
 import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
+import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
 import { EntityModal } from './containers/entity/metadata/EntityModal'
 import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
+import PlotlyWrapper from './containers/PlotlyWrapper'
 import IconSvg from './containers/IconSvg'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
   useSynapseContext,
 } from './utils/SynapseContext'
+import { DatasetItemsEditor } from './containers/table/datasets/DatasetItemsEditor'
+import { EntityTypeIcon } from './containers/EntityIcon'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -73,6 +77,10 @@ const SynapseComponents = {
   SynapseToastContainer,
   displayToast,
   IconSvg,
+  UserProfileLinks,
+  PlotlyWrapper,
+  DatasetItemsEditor,
+  EntityTypeIcon,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

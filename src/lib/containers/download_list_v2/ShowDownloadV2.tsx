@@ -9,13 +9,14 @@ import IconSvg from '../IconSvg'
 
 export type ShowDownloadV2Props = {
   to: string
+  className?: string
 }
 
 /**
  * Nav bar item, displayed when files have been added to the Download Cart.
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
-function ShowDownloadV2({ to }: ShowDownloadV2Props) {
+function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
@@ -64,7 +65,7 @@ function ShowDownloadV2({ to }: ShowDownloadV2Props) {
       />
     </>
   )
-  return <a className="Download-Link v2" href={to} rel="noopener noreferrer">
+  return <a className={`Download-Link v2 ${className}`} href={to} rel="noopener noreferrer">
       {content}
     </a>
   

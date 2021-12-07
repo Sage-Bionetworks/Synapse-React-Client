@@ -8,6 +8,10 @@ import {
 } from '../utils/functions/getEndpoint'
 import { GoogleIcon24 } from '../assets/GoogleIcon24'
 
+export const PROVIDERS = {
+  GOOGLE: 'GOOGLE_OAUTH_2_0',
+}
+
 type State = {
   username: string
   password: string
@@ -18,7 +22,7 @@ type State = {
 }
 
 type Props = {
-  googleRedirectUrl?: string
+  ssoRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: () => void // Callback is invoked after login
 }
@@ -129,10 +133,10 @@ class Login extends React.Component<Props, State> {
     // save current route (so that we can go back here after SSO)
     localStorage.setItem('after-sso-login-url', window.location.href)
     event.preventDefault()
-    const redirectUrl = this.props.googleRedirectUrl
-      ? this.props.googleRedirectUrl
-      : `${SynapseClient.getRootURL()}?provider=${SynapseClient.AUTH_PROVIDER}`
-    SynapseClient.oAuthUrlRequest(SynapseClient.AUTH_PROVIDER, redirectUrl)
+    const redirectUrl = this.props.ssoRedirectUrl
+      ? `${this.props.ssoRedirectUrl}${PROVIDERS.GOOGLE}`
+      : `${SynapseClient.getRootURL()}?provider=${PROVIDERS.GOOGLE}`
+    SynapseClient.oAuthUrlRequest(PROVIDERS.GOOGLE, redirectUrl)
       .then((data: any) => {
         const authUrl = data.authorizationUrl
         window.location = authUrl // ping the url

@@ -1,5 +1,9 @@
-import { EntityHeader, EntityType, ProjectHeader } from '../synapseTypes'
-import { ConcreteEntityType } from '../synapseTypes/ConcreteEntityType'
+import {
+  EntityHeader,
+  EntityType,
+  ENTITY_CONCRETE_TYPE,
+  ProjectHeader,
+} from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
 
 export function getEntityTypeFromHeader(
@@ -30,6 +34,7 @@ export function isContainerType(type: EntityType): boolean {
     case EntityType.TABLE:
     case EntityType.SUBMISSION_VIEW:
     case EntityType.ENTITY_VIEW:
+    case EntityType.DATASET:
       return false
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -54,6 +59,8 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
       return 'Docker Repository'
     case EntityType.SUBMISSION_VIEW:
       return 'Submission View'
+    case EntityType.DATASET:
+      return 'Dataset'
     default:
       console.warn('Entity type could not be mapped to name:', entityType)
       return ''
@@ -61,7 +68,7 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
 }
 
 export function convertToEntityType(
-  typeString: string | ConcreteEntityType | EntityType,
+  typeString: string | ENTITY_CONCRETE_TYPE | EntityType,
 ): EntityType {
   switch (typeString) {
     case EntityType.PROJECT:
@@ -88,11 +95,19 @@ export function convertToEntityType(
     case EntityType.ENTITY_VIEW:
     case 'org.sagebionetworks.repo.model.table.EntityView':
       return EntityType.ENTITY_VIEW
+    case EntityType.DATASET:
+    case 'org.sagebionetworks.repo.model.table.Dataset':
+      return EntityType.DATASET
     default:
       throw new Error(`Unknown entity type: ${typeString}`)
   }
 }
 
+/**
+ * https://docs.synapse.org/rest/org/sagebionetworks/repo/model/VersionableEntity.html
+ * @param type
+ * @returns
+ */
 export function isVersionableEntityType(type: EntityType): boolean {
   switch (type) {
     case EntityType.PROJECT:
@@ -104,6 +119,7 @@ export function isVersionableEntityType(type: EntityType): boolean {
     case EntityType.TABLE:
     case EntityType.SUBMISSION_VIEW:
     case EntityType.ENTITY_VIEW:
+    case EntityType.DATASET:
       return true
     default:
       throw new Error(`Unknown entity type: ${type}`)

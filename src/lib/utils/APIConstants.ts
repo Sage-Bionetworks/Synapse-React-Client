@@ -20,10 +20,16 @@ export const ENTITY_ID = (id: string | number) => `${REPO}/entity/${id}`
 /**
  * Some services allow (but do not require) you to specify the version in the path.
  */
-export const ENTITY_ID_VERSION = (id: string | number, version?: number) =>
-  `${REPO}/entity/${id}${version ? `/version/${version}` : ''}`
-export const ENTITY_BUNDLE_V2 = (id: string | number, version?: number) =>
-  `${ENTITY_ID_VERSION(id, version)}/bundle2`
+export const ENTITY_ID_VERSION = (
+  id: string | number,
+  version?: string | number,
+) => `${REPO}/entity/${id}${version ? `/version/${version}` : ''}`
+export const ENTITY_ID_VERSIONS = (id: string | number) =>
+  `${REPO}/entity/${id}/version/`
+export const ENTITY_BUNDLE_V2 = (
+  id: string | number,
+  version?: string | number,
+) => `${ENTITY_ID_VERSION(id, version)}/bundle2`
 export const ENTITY_ACCESS = (id: string | number) =>
   `${REPO}/entity/${id}/access`
 
@@ -60,4 +66,3 @@ export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
   `${REPO}/accessRequirement/${id}`
 
 export const FAVORITES = `${REPO}/favorite`
-

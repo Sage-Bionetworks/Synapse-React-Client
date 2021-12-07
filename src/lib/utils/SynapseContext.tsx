@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 const defaultQueryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30 * 1000, // 30s
+      staleTime: 60 * 1000, // 60s
       retry: false, // SynapseClient knows which queries to retry
     },
   },

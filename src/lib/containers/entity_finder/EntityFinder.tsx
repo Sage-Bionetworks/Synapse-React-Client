@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Map } from 'immutable'
 import React, {
   useCallback,
   useEffect,
@@ -20,6 +21,7 @@ import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpression
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
+import { KeyValue } from '../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
@@ -33,7 +35,27 @@ import { FinderScope, TreeView } from './tree/TreeView'
 
 library.add(faTimes, faSearch)
 
-const DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
+const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
+const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
+const TREE_DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
+
+// In the map used to track selections, we use -1 to denote 'selected without version'
+// This is necessary because undefined is returned by map.get when the item is not in the map
+export const NO_VERSION_NUMBER = -1
+
+const searchForOnlyTypesBooleanQuery = (
+  entityTypes: EntityType[],
+): KeyValue[] => {
+  // Boolean query terms will be combined with AND, and there's no way to OR.
+  // So we will negate searching for all omitted types.
+  const allTypes = Object.values(EntityType)
+  const typesToOmit = allTypes.filter(type => !entityTypes.includes(type))
+  return typesToOmit.map(type => ({
+    key: 'node_type',
+    value: type.toString(),
+    not: true,
+  }))
+}
 
 export type EntityFinderProps = {
   /** Whether or not it is possible to select multiple entities */
@@ -48,6 +70,8 @@ export type EntityFinderProps = {
   initialContainer: string | 'root' | null
   /** Whether or not versions may be specified when selecting applicable entities */
   showVersionSelection?: boolean
+  /** For versionable entities, require the user to select a numbered version of an entity. This disallows selecting 'Always Latest Version'. Note that the latest version may still be mutable. Default true. */
+  mustSelectVersionNumber?: boolean
   /** The entity types to show in the details view (right pane). Any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInList?: EntityType[]
   /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
@@ -67,9 +91,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
-  selectableTypes = Object.values(EntityType),
-  visibleTypesInList = Object.values(EntityType),
-  visibleTypesInTree = DEFAULT_VISIBLE_TYPES,
+  mustSelectVersionNumber = false,
+  selectableTypes = DEFAULT_SELECTABLE_TYPES,
+  visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
+  visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   selectedCopy = 'Selected',
   treeOnly = false,
 }: EntityFinderProps) => {
@@ -84,12 +109,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     items: [],
   })
   const [searchByIdResults, setSearchByIdResults] = useState<EntityHeader[]>([])
-  const [
-    configFromTreeView,
-    setConfigFromTreeView,
-  ] = useState<EntityDetailsListDataConfiguration>({
-    type: EntityDetailsListDataConfigurationType.PROMPT,
-  })
+  const [configFromTreeView, setConfigFromTreeView] =
+    useState<EntityDetailsListDataConfiguration>({
+      type: EntityDetailsListDataConfigurationType.PROMPT,
+    })
 
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -114,63 +137,82 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     [setBreadcrumbsProps],
   )
 
-  function isSelected(entity: Reference, selected: Reference[]): boolean {
-    return selected.some(
-      s =>
-        s.targetId === entity.targetId &&
-        s.targetVersionNumber === entity.targetVersionNumber,
-    )
-  }
-
-  function otherVersionSelected(
+  /**
+   *
+   * @param entity The entity to check selected status
+   * @param selected the list of selected entities
+   * @returns a boolean array of length equal to entities.length denoting selection status
+   */
+  function isSelected(
     entity: Reference,
-    selected: Reference[],
+    selected: Map<string, number>,
   ): boolean {
-    return selected.some(
-      s =>
-        s.targetId === entity.targetId &&
-        s.targetVersionNumber !== entity.targetVersionNumber,
-    )
+    const match = selected.get(entity.targetId)
+    if (match == null) {
+      return false
+    }
+    if (match === NO_VERSION_NUMBER) {
+      return entity.targetVersionNumber === undefined
+    }
+    return match === entity.targetVersionNumber
   }
 
+  /**
+   * Given the existing selections and a list of toggled references, return the new list of selections
+   * @param selected
+   * @param toggledReference
+   * @returns
+   */
   function entitySelectionReducer(
-    selected: Reference[],
-    toggledReference: Reference,
-  ): Reference[] {
-    let result: Reference[] = []
-    if (isSelected(toggledReference, selected)) {
-      // remove from selection
-      result = selected.filter(e => e.targetId !== toggledReference.targetId)
-    } else if (otherVersionSelected(toggledReference, selected)) {
-      // Currently don't allow selecting two versions of the same entity
-      // replace previous selected version with new selected version
-      result = [
-        ...selected.filter(e => e.targetId !== toggledReference.targetId),
-        toggledReference,
-      ]
-    } else {
-      // add to selection
-      if (!selectMultiple) {
-        result = [toggledReference]
-      } else {
-        result = [
-          ...selected.filter(s => s.targetId !== toggledReference.targetId),
-          toggledReference,
-        ]
+    selected: Map<string, number>,
+    toggledReferences: Reference | Reference[],
+  ): Map<string, number> {
+    const newSelected = selected.withMutations(map => {
+      // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
+      if (!Array.isArray(toggledReferences)) {
+        toggledReferences = [toggledReferences]
       }
-    }
-    onSelectedChange(result)
-    return result
+      toggledReferences.forEach(toggledReference => {
+        if (isSelected(toggledReference, selected)) {
+          // remove from selection
+          map.delete(toggledReference.targetId)
+        } else {
+          // add to selection
+          if (!selectMultiple) {
+            map.clear()
+          }
+          map.set(
+            toggledReference.targetId,
+            toggledReference.targetVersionNumber ?? NO_VERSION_NUMBER,
+          )
+        }
+      })
+    })
+
+    return newSelected
   }
 
   const [selectedEntities, toggleSelection] = useReducer(
     entitySelectionReducer,
-    [] as Reference[],
+    Map<string, number>(),
   )
 
   useEffect(() => {
+    // When it changes, convert the map of selected items to a list of references and invoke the callback
+    onSelectedChange(
+      selectedEntities.toArray().map(([id, version]) => {
+        return {
+          targetId: id,
+          targetVersionNumber:
+            version === NO_VERSION_NUMBER ? undefined : version,
+        }
+      }),
+    )
+  }, [selectedEntities, onSelectedChange])
+
+  useEffect(() => {
     if (searchTerms?.length === 1) {
-      const synIdMatch = searchTerms[0].match(SYNAPSE_ENTITY_ID_REGEX)
+      const synIdMatch = SYNAPSE_ENTITY_ID_REGEX.exec(searchTerms[0])
       if (synIdMatch) {
         SynapseClient.getEntityHeaders(
           [
@@ -282,19 +324,22 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       headerList: searchByIdResults,
                     }
                   : {
-                      type:
-                        EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+                      type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
                       query: {
                         queryTerm: searchTerms,
+                        booleanQuery:
+                          searchForOnlyTypesBooleanQuery(selectableTypes),
                       },
                     }
               }
               showVersionSelection={showVersionSelection}
+              mustSelectVersionNumber={mustSelectVersionNumber}
               selectColumnType={selectMultiple ? 'checkbox' : 'none'}
               selected={selectedEntities}
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
+              enableSelectAll={selectMultiple}
             />
           )}
           {
@@ -344,6 +389,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         <ReflexElement className="DetailsViewReflexElement">
                           <EntityDetailsList
                             configuration={configFromTreeView}
+                            mustSelectVersionNumber={mustSelectVersionNumber}
                             showVersionSelection={showVersionSelection}
                             selected={selectedEntities}
                             visibleTypes={selectableAndVisibleTypesInList}
@@ -352,6 +398,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                               selectMultiple ? 'checkbox' : 'none'
                             }
                             toggleSelection={toggleSelection}
+                            enableSelectAll={selectMultiple}
                           />
                           <Breadcrumbs {...breadcrumbsProps} />
                         </ReflexElement>
@@ -364,7 +411,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
           }
         </div>
 
-        {selectedEntities.length > 0 && (
+        {selectedEntities.size > 0 && (
           <SelectionPane
             title={selectedCopy}
             selectedEntities={selectedEntities}

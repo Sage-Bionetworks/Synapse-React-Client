@@ -8,7 +8,7 @@ import {
   FacetColumnResultValueCount,
   ColumnType,
 } from '../../../../lib/utils/synapseTypes'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import { SynapseConstants } from '../../../../lib'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
@@ -103,31 +103,31 @@ beforeEach(() => init())
 
 describe('initialization', () => {
   it('should render as a dropdown if containerAs = Dropdown', async () => {
-    await act(
-      async () =>
-        await init({
-          containerAs: 'Dropdown',
-        }),
+    act(() =>
+      init({
+        containerAs: 'Dropdown',
+      }),
     )
     expect(container.querySelector('.dropdown')).toBeDefined()
   })
   it('should render as a dropdown if containerAs = Collapsible', async () => {
-    await act(
-      async () =>
-        await init({
-          containerAs: 'Collapsible',
-        }),
+    act(() =>
+      init({
+        containerAs: 'Collapsible',
+      }),
     )
     expect(container.querySelector('div.FacetFilterHeader')).toBeDefined()
   })
 
   it('should initiate selected items correctly', async () => {
-    const checkboxes = container.querySelectorAll<HTMLInputElement>(
-      'input[type="checkbox"]:not(#select_all)',
-    )
-    expect(checkboxes).toHaveLength(3)
+    const checkboxes = (await screen.findAllByRole(
+      'checkbox',
+    )) as HTMLInputElement[]
+    expect(checkboxes).toHaveLength(4)
+
+    expect(checkboxes).toHaveLength(4)
     checkboxes.forEach((checkbox, i) => {
-      if (i === 1) {
+      if (i === 2) {
         expect(checkbox.checked).toBe(true)
       } else {
         expect(checkbox.checked).toBe(false)
@@ -136,11 +136,11 @@ describe('initialization', () => {
   })
 
   describe('collapsible behavior', () => {
-    it('should hide content when toggled', () => {
+    it('should hide content when toggled', async () => {
       init({ ...props, collapsed: false })
       expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'block')
+        container.getElementsByClassName('EnumFacetFilter')[0],
+      ).toHaveClass('MuiCollapse-entered')
 
       // toggle collapse via button
       const button = container.querySelector(
@@ -148,16 +148,18 @@ describe('initialization', () => {
       )
       fireEvent.click(button)
 
-      expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'none')
+      await waitFor(() =>
+        expect(
+          container.getElementsByClassName('EnumFacetFilter')[0],
+        ).toHaveClass('MuiCollapse-hidden'),
+      )
     })
 
-    it('should start collapsed when specified via prop', () => {
+    it('should start collapsed when specified via prop', async () => {
       init({ ...props, collapsed: true })
       expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'none')
+        container.getElementsByClassName('EnumFacetFilter')[0],
+      ).toHaveClass('MuiCollapse-hidden')
 
       // toggle collapse via button
       const button = container.querySelector(
@@ -165,30 +167,35 @@ describe('initialization', () => {
       )
       fireEvent.click(button)
 
-      expect(
-        container.getElementsByClassName('EnumFacetFilter')[0].style,
-      ).toHaveProperty('display', 'block')
+      await waitFor(() =>
+        expect(
+          container.getElementsByClassName('EnumFacetFilter')[0],
+        ).toHaveClass('MuiCollapse-entered'),
+      )
     })
   })
 
   describe('label initialization', () => {
-    it('should set labels correctly for STRING type', async () => {
+    it('should set labels correctly for STRING type', () => {
       const labels = container.querySelectorAll<HTMLSpanElement>(
-        'input[type="checkbox"]:not(#select_all) ~ label',
+        'input[type="checkbox"] ~ label',
       )
       const counts = container.querySelectorAll<HTMLDivElement>(
         '.EnumFacetFilter__count',
       )
-      expect(labels).toHaveLength(3)
-      labels.forEach((label, i) => {
-        if (i !== 2) {
-          expect(label.textContent).toBe(`${stringFacetValues[i].value}`)
-          expect(counts[i].textContent).toBe(`${stringFacetValues[i].count}`)
-        } else {
-          expect(label.textContent).toBe(`Not Assigned`)
-          expect(counts[i].textContent).toBe(`${stringFacetValues[i].count}`)
-        }
-      })
+      expect(labels).toHaveLength(4)
+      expect(counts).toHaveLength(3)
+
+      expect(labels[0].textContent).toBe('All')
+
+      expect(labels[1].textContent).toBe(`${stringFacetValues[0].value}`)
+      expect(counts[0].textContent).toBe(`${stringFacetValues[0].count}`)
+
+      expect(labels[2].textContent).toBe(`${stringFacetValues[1].value}`)
+      expect(counts[1].textContent).toBe(`${stringFacetValues[1].count}`)
+
+      expect(labels[3].textContent).toBe(`Not Assigned`)
+      expect(counts[2].textContent).toBe(`${stringFacetValues[2].count}`)
     })
 
     it('should hide > 5 items if items with index >=5 not selected', async () => {
@@ -216,9 +223,9 @@ describe('initialization', () => {
       })
 
       const labels = container.querySelectorAll(
-        'input[type="checkbox"]:not(#select_all) ~ label',
+        'input[type="checkbox"] ~ label',
       )
-      expect(labels).toHaveLength(20)
+      expect(labels).toHaveLength(facetValues.length + 1)
     })
 
     it('should set labels correctly for ENTITYID type', async () => {
@@ -234,67 +241,79 @@ describe('initialization', () => {
         columnModel: entityColumnModel,
       }
 
-      await act(async () => await init(updatedProps))
+      act(() => init(updatedProps))
       const labels = container.querySelectorAll<HTMLInputElement>(
-        'input:not(#select_all) ~ label',
+        'input[type="checkbox"] ~ label',
       )
       const counts = container.querySelectorAll<HTMLDivElement>(
         '.EnumFacetFilter__count',
       )
-      expect(labels.item(0).textContent).toBe(`Not Assigned`)
+      expect(labels.item(1).textContent).toBe(`Not Assigned`)
       expect(counts.item(0).textContent).toBe(
         `${userEntityFacetValues[0].count}`,
       )
-      expect(labels.item(1).textContent).toBe(`Entity1`)
+
+      // Wait for the entity info to populate and replace the ID
+      await waitFor(() => expect(labels.item(2).textContent).toBe(`Entity1`))
       expect(counts.item(1).textContent).toBe(
         `${userEntityFacetValues[1].count}`,
       )
-      expect(labels.item(2).textContent).toBe(`Entity2`)
+
+      await waitFor(() => expect(labels.item(3).textContent).toBe(`Entity2`))
+      expect(counts.item(2).textContent).toBe(
+        `${userEntityFacetValues[2].count}`,
+      )
+    })
+
+    it('should set labels correctly for USERID type', async () => {
+      const userColumnModel: ColumnModel = {
+        ...columnModel,
+        columnType: ColumnType.USERID,
+        name: 'Users',
+      }
+
+      const updatedProps = {
+        ...props,
+        facetValues: userEntityFacetValues,
+        columnModel: userColumnModel,
+      }
+
+      act(() => init(updatedProps))
+      const labels = container.querySelectorAll<HTMLSpanElement>(
+        'input[type="checkbox"] ~ label',
+      )
+      const counts = container.querySelectorAll<HTMLDivElement>(
+        '.EnumFacetFilter__count',
+      )
+      expect(labels).toHaveLength(4)
+      // First item (0) is select all
+
+      expect(labels.item(1).textContent).toBe(`Not Assigned`)
+      expect(counts.item(0).textContent).toBe(
+        `${userEntityFacetValues[0].count}`,
+      )
+
+      // Wait for the user info to populate and replace the ID
+      await waitFor(() => expect(labels.item(2).textContent).toBe(`somename`))
+      expect(counts.item(1).textContent).toBe(
+        `${userEntityFacetValues[1].count}`,
+      )
+
+      await waitFor(() => expect(labels.item(3).textContent).toBe(`somename2`))
       expect(counts.item(2).textContent).toBe(
         `${userEntityFacetValues[2].count}`,
       )
     })
   })
-
-  it('should set labels correctly for USERID type', async () => {
-    const userColumnModel: ColumnModel = {
-      ...columnModel,
-      columnType: ColumnType.USERID,
-      name: 'Users',
-    }
-
-    const updatedProps = {
-      ...props,
-      facetValues: userEntityFacetValues,
-      columnModel: userColumnModel,
-    }
-
-    await act(async () => await init(updatedProps))
-    const labels = container.querySelectorAll<HTMLSpanElement>(
-      'input[type="checkbox"]:not(#select_all) ~ label',
-    )
-    const counts = container.querySelectorAll<HTMLDivElement>(
-      '.EnumFacetFilter__count',
-    )
-    expect(labels).toHaveLength(3)
-    expect(labels.item(0).textContent).toBe(`Not Assigned`)
-    expect(counts.item(0).textContent).toBe(`${userEntityFacetValues[0].count}`)
-    expect(labels.item(1).textContent).toBe(`somename`)
-    expect(counts.item(1).textContent).toBe(`${userEntityFacetValues[1].count}`)
-    expect(labels.item(2).textContent).toBe(`somename2`)
-    expect(counts.item(2).textContent).toBe(`${userEntityFacetValues[2].count}`)
-  })
 })
 
 describe('callbacks', () => {
   it('should trigger callback on checkbox change after delay', () => {
-    const checkboxes = container.querySelectorAll<HTMLInputElement>(
-      'input[type="checkbox"]:not(#select_all)',
-    )
+    const individualFacetCheckboxes = screen.getAllByRole('checkbox').slice(1)
 
     jest.useFakeTimers()
-    fireEvent.click(checkboxes.item(0))
-    fireEvent.click(checkboxes.item(1))
+    fireEvent.click(individualFacetCheckboxes[0])
+    fireEvent.click(individualFacetCheckboxes[1])
     expect(setTimeout).toHaveBeenCalledTimes(2)
     jest.runOnlyPendingTimers()
     expect(mockCallback).toHaveBeenCalledWith({
@@ -304,11 +323,8 @@ describe('callbacks', () => {
   })
 
   it('should trigger callback on clear', () => {
-    const clear = container.querySelector<HTMLInputElement>(
-      'input[type="checkbox"]#select_all',
-    )
-
-    fireEvent.click(clear!)
+    const selectAllCheckbox = screen.getByLabelText('All')
+    fireEvent.click(selectAllCheckbox)
     expect(mockOnClear).toHaveBeenCalled()
   })
 })

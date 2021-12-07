@@ -5,6 +5,8 @@
 import { omit, pick } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import {
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
   useQuery,
@@ -14,7 +16,106 @@ import {
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { EntityJson, entityJsonKeys, EntityJsonValue } from '../../synapseTypes'
+import {
+  Entity,
+  EntityJson,
+  entityJsonKeys,
+  EntityJsonValue,
+  PaginatedResults,
+} from '../../synapseTypes'
+import { VersionInfo } from '../../synapseTypes/VersionInfo'
+
+export function useGetEntity<T extends Entity>(
+  entityId: string,
+  versionNumber?: string | number,
+  options?: UseQueryOptions<T, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<T, SynapseClientError>(
+    ['entity', entityId, 'entity', versionNumber],
+    () =>
+      SynapseClient.getEntity<T>(
+        accessToken,
+        entityId,
+        versionNumber?.toString(),
+      ),
+    options,
+  )
+}
+
+export function useUpdateEntity<T extends Entity>(
+  options?: UseMutationOptions<T, SynapseClientError, T>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<T, SynapseClientError, T>(
+    (entity: T) => SynapseClient.updateEntity<T>(entity, accessToken),
+    {
+      ...options,
+      onSuccess: async (updatedEntity, variables, ctx) => {
+        await queryClient.invalidateQueries(
+          ['entity', updatedEntity.id, 'entity', undefined],
+          {
+            exact: false,
+          },
+        )
+        queryClient.setQueryData(
+          ['entity', updatedEntity.id, 'entity', undefined],
+          updatedEntity,
+        )
+
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedEntity, variables, ctx)
+        }
+      },
+    },
+  )
+}
+
+export function useGetVersions(
+  entityId: string,
+  offset: number = 0,
+  limit: number = 200,
+  options?: UseQueryOptions<PaginatedResults<VersionInfo>, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
+    ['entity', entityId, 'versions', { offset: offset, limit: limit }],
+    () => SynapseClient.getEntityVersions(entityId, accessToken, offset, limit),
+    options,
+  )
+}
+
+export function useGetVersionsInfinite(
+  entityId: string,
+  options: UseInfiniteQueryOptions<
+    PaginatedResults<VersionInfo>,
+    SynapseClientError
+  >,
+) {
+  const LIMIT = 200
+  const { accessToken } = useSynapseContext()
+  return useInfiniteQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
+    ['entity', entityId, 'versions', 'infinite'],
+    async context => {
+      return await SynapseClient.getEntityVersions(
+        entityId,
+        accessToken,
+        context.pageParam,
+        LIMIT,
+      )
+    },
+    {
+      ...options,
+      getNextPageParam: (lastPage, pages) => {
+        if (lastPage.results.length > 0) return pages.length * LIMIT
+        //set the new offset to (page * limit)
+        else return undefined
+      },
+    },
+  )
+}
 
 export function getStandardEntityFields(json: EntityJson): EntityJson {
   return pick(json, entityJsonKeys) as EntityJson
@@ -67,19 +168,20 @@ export function useGetJson(
 }
 
 export function useUpdateViaJson(
-  entityId: string,
-  json: unknown,
-  options?: UseMutationOptions<EntityJson, SynapseClientError>,
+  options?: UseMutationOptions<EntityJson, SynapseClientError, EntityJson>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
-
-  return useMutation<EntityJson, SynapseClientError>(
-    [accessToken, 'entity', entityId, 'json'],
-    () => SynapseClient.updateEntityJson(entityId, json, accessToken),
+  return useMutation<EntityJson, SynapseClientError, EntityJson>(
+    (json: EntityJson) => {
+      const entityId = json.id
+      return SynapseClient.updateEntityJson(entityId, json, accessToken)
+    },
     {
       ...options,
       onSuccess: async (data, variables, ctx) => {
+        const entityId = data.id
+
         await queryClient.invalidateQueries([accessToken, 'entity', entityId], {
           exact: false,
         })

@@ -1,6 +1,7 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { DownloadListTableProps } from '../download_list_v2/DownloadListTable'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import DownloadListTable from './DownloadListTable'
 
@@ -8,7 +9,7 @@ import DownloadListTable from './DownloadListTable'
  * Table of the files added to the Download Cart that are currently available for download.
  * Note that this creates it's own QueryClient, so it's cache does not persist if you remount.
  */
-export default function AvailableForDownloadTable() {
+export default function AvailableForDownloadTable(props: DownloadListTableProps) {
   const { accessToken } = useSynapseContext()
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -24,8 +25,13 @@ export default function AvailableForDownloadTable() {
   return (
     <QueryClientProvider client={queryClient}>
       <SynapseErrorBoundary>
-        <DownloadListTable />
+        {
+          props.filesStatistics && (
+            <DownloadListTable {...props} />
+          )
+        }
       </SynapseErrorBoundary>
     </QueryClientProvider>
+    
   )
 }

@@ -6,10 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "target": "es5",
-    "lib": [
-      "es6",
-      "dom"
-    ],
+    "lib": ["es2019", "dom"],
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",
@@ -26,7 +23,8 @@
     "strict": true,
     "isolatedModules": true,
     "noEmit": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": false
   },
   "exclude": [
     "rollup.config.js",
@@ -40,7 +38,5 @@
     "jest",
     "setupTests.js"
   ],
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

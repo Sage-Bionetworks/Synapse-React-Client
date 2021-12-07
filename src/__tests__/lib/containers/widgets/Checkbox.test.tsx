@@ -12,7 +12,6 @@ const mockCallback = jest.fn()
 function createTestProps(overrides?: CheckboxProps): CheckboxProps {
   return {
     label: 'checkboxLabel',
-    id: 'c1',
     checked: true,
     className: 'checkboxClass',
     onChange: mockCallback,
@@ -36,7 +35,7 @@ describe('basic function', () => {
     expect(wrapper).toBeDefined()
     expect(wrapper.find('label').text()).toBe(props.label)
     expect(checkboxProps.checked).toBe(true)
-    expect(checkboxProps.id).toBe(props.id)
+    expect(checkboxProps.id!.startsWith('src-checkbox-')).toBe(true)
     expect(wrapper.find('div').at(0).hasClass('checkboxClass')).toBe(true)
   })
 

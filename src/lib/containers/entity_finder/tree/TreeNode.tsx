@@ -6,14 +6,11 @@ import {
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useGetEntityChildrenInfinite } from '../../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import {
-  EntityHeader,
-  ProjectHeader,
-  Reference,
-} from '../../../utils/synapseTypes'
+import { EntityHeader, ProjectHeader } from '../../../utils/synapseTypes'
 import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
+import { Map } from 'immutable'
 
 export type RootNodeConfiguration = {
   nodeText: string
@@ -27,7 +24,7 @@ export enum NodeAppearance {
 
 export type TreeNodeProps = {
   entityHeader?: Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader
-  selected: Reference[]
+  selected: Map<string, number>
   setSelectedId: (entityId: string) => void
   level?: number
   autoExpand?: (entityId: string) => boolean
@@ -106,12 +103,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
     if (isRootNode) {
       setEntityChildren(rootNodeConfiguration!.children)
     } else {
-      setEntityChildren(
-        ([] as EntityHeader[]).concat.apply(
-          [],
-          children?.pages.map(page => page.page) ?? [],
-        ),
-      )
+      setEntityChildren(children?.pages.flatMap(page => page.page) ?? [])
     }
   }, [isRootNode, children, rootNodeConfiguration])
 
@@ -121,7 +113,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         appearance === NodeAppearance.SELECT ? 'SelectNode' : 'BrowseNode'
       }`}
       role="treeitem"
-      aria-selected={selected.map(e => e.targetId).includes(nodeId)}
+      aria-selected={selected.has(nodeId)}
       aria-disabled={isDisabled}
     >
       <div
@@ -165,17 +157,14 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
           <span>{nodeName}</span>
         </div>
         {appearance === NodeAppearance.SELECT && (
-          <div>
-            {nodeInView && (
-              <EntityBadgeIcons
-                entityId={nodeId}
-                showHasDiscussionThread={false}
-                showHasWiki={false}
-                showUnlink={false}
-                canOpenModal={false}
-              />
-            )}
-          </div>
+          <EntityBadgeIcons
+            entityId={nodeId}
+            showHasDiscussionThread={false}
+            showHasWiki={false}
+            showUnlink={false}
+            canOpenModal={false}
+            renderTooltipComponent={true}
+          />
         )}
       </div>
       <div className={'NodeChildren'} aria-hidden={!isExpanded}>

@@ -47,45 +47,53 @@ export function getQueryRequest(
     },
   }
 }
-const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProps> = props => {
-  const {
-    title,
-    description,
-    sql,
-    facetsToPlot,
-    rgbIndex,
-    selectFacetColumnName,
-    selectFacetColumnValue,
-    detailsPagePath,
-    ...rest
-  } = props
-  const initQueryRequest: QueryBundleRequest = getQueryRequest(
-    sql!,
-    selectFacetColumnName,
-    selectFacetColumnValue,
-  )
-  return (
-    <div className="QueryPerFacetPlotsCard">
-      <SynapseContextConsumer>
-        {context => (
-          <QueryWrapper
-            {...rest}
-            token={context?.accessToken}
-            initQueryRequest={initQueryRequest}
-          >
-            <ErrorBanner />
-            <FacetPlotsCard
-              title={title}
-              description={description}
-              facetsToPlot={facetsToPlot}
-              rgbIndex={rgbIndex}
-              detailsPagePath={detailsPagePath}
-            />
-          </QueryWrapper>
-        )}
-      </SynapseContextConsumer>
-    </div>
-  )
-}
+const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProps> =
+  props => {
+    const {
+      title,
+      description,
+      sql,
+      facetsToPlot,
+      rgbIndex,
+      selectFacetColumnName,
+      selectFacetColumnValue,
+      detailsPagePath,
+      ...rest
+    } = props
+    const initQueryRequest: QueryBundleRequest = getQueryRequest(
+      sql!,
+      selectFacetColumnName,
+      selectFacetColumnValue,
+    )
+    return (
+      <div className="QueryPerFacetPlotsCard">
+        <SynapseContextConsumer>
+          {context => (
+            <QueryWrapper
+              {...rest}
+              token={context?.accessToken}
+              initQueryRequest={initQueryRequest}
+            >
+              {queryWrapperChildProps => {
+                return (
+                  <>
+                    <ErrorBanner {...queryWrapperChildProps} />
+                    <FacetPlotsCard
+                      {...queryWrapperChildProps}
+                      title={title}
+                      description={description}
+                      facetsToPlot={facetsToPlot}
+                      rgbIndex={rgbIndex}
+                      detailsPagePath={detailsPagePath}
+                    />
+                  </>
+                )
+              }}
+            </QueryWrapper>
+          )}
+        </SynapseContextConsumer>
+      </div>
+    )
+  }
 
 export default QueryPerFacetPlotsCard

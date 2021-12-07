@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
+import { mockFileStatistics } from '../../../../mocks/mock_file_statistics'
 import DownloadListTableV2, {
 } from '../../../../lib/containers/download_list_v2/DownloadListTable'
 import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
@@ -27,6 +28,7 @@ jest.mock(
 )
 
 const mockFetchNextPage = jest.fn()
+const mockRefetchStatistics = jest.fn()
 const mockUseGetAvailableFilesToDownloadInfinite = useGetAvailableFilesToDownloadInfinite as jest.Mock
 
 const page1: Partial<DownloadListItemResult>[] = [
@@ -60,7 +62,7 @@ const page2: Partial<DownloadListItemResult>[] = [
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <DownloadListTableV2 />
+      <DownloadListTableV2 filesStatistics={mockFileStatistics} refetchStatistics={mockRefetchStatistics}/>
     </SynapseTestContext>,
   )
 }

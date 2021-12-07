@@ -9,6 +9,8 @@ function getRandomInt(min: number, max: number) {
 type SkeletonTableProps = {
   numRows?: number
   numCols?: number
+  rowHeight?: string
+  className?: string
 }
 
 /**
@@ -19,23 +21,29 @@ type SkeletonTableProps = {
 export const SkeletonTable: React.FC<SkeletonTableProps> = ({
   numRows = 5,
   numCols = 2,
+  rowHeight,
+  className,
 }) => {
   const [skeletons, setSkeletons] = useState<JSX.Element[]>([])
 
   useEffect(() => {
     const elements: JSX.Element[] = []
-    times(numRows * numCols, () => {
+    times(numRows * numCols, i => {
       elements.push(
-        <>
-          <Skeleton width={`${getRandomInt(35, 75)}%`}></Skeleton>
-        </>,
+        <React.Fragment key={i}>
+          <Skeleton
+            height={rowHeight}
+            width={`${getRandomInt(35, 75)}%`}
+          ></Skeleton>
+        </React.Fragment>,
       )
     })
     setSkeletons(elements)
-  }, [numRows, numCols])
+  }, [numRows, numCols, rowHeight])
 
   return (
     <div
+      className={className}
       style={{ display: 'grid', gridTemplateColumns: `auto `.repeat(numCols) }}
     >
       {skeletons}

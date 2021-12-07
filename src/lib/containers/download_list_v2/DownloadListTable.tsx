@@ -6,7 +6,6 @@ import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { useInView } from 'react-intersection-observer'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   AvailableFilter,
   Sort,
@@ -17,17 +16,26 @@ import { SynapseClient } from '../../utils'
 import moment from 'moment'
 import UserCard from '../UserCard'
 import SortIcon from '../../assets/icons/Sort'
-import { Direction } from '../../utils/synapseTypes'
-import { SynapseSpinner } from '../LoadingScreen'
+import { Direction, FileHandleAssociateType } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
+import DirectDownload from '../DirectDownload'
+import { displayToast } from '../ToastMessage'
+import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
-export default function DownloadListTable() {
+export type DownloadListTableProps = {
+  filesStatistics: FilesStatisticsResponse,
+  refetchStatistics: () => Promise<any>
+}
+
+export default function DownloadListTable(props: DownloadListTableProps) {
+  const { filesStatistics, refetchStatistics } = props
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
@@ -37,13 +45,21 @@ export default function DownloadListTable() {
   const {
     data,
     status,
-    isFetching,
+    isFetchingNextPage,
+    isLoading,
     hasNextPage,
     fetchNextPage,
     isError,
     error: newError,
-    refetch,
+    refetch
   } = useGetAvailableFilesToDownloadInfinite(sort, filter)
+
+  //SWC-5858: Update the Download List files table when the statistics change
+  useEffect(() => {
+    if (refetch) {
+      refetch()
+    }
+  }, [filesStatistics, refetch])
 
   useEffect(() => {
     if (isError && newError) {
@@ -54,23 +70,16 @@ export default function DownloadListTable() {
   useEffect(() => {
     if (
       status === 'success' &&
-      !isFetching &&
+      !isFetchingNextPage &&
       hasNextPage &&
       fetchNextPage &&
       inView
     ) {
       fetchNextPage()
     }
-  }, [status, isFetching, hasNextPage, fetchNextPage, inView])
+  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView])
 
-  const allRows = data
-    ? ([] as DownloadListItemResult[]).concat.apply(
-        [],
-        data.pages.map(
-          p => p.page,
-        ),
-      )
-    : []
+  const allRows = data?.pages.flatMap(page => page.page) ?? []
 
   const getFilterDisplayText = (f: AvailableFilter) => {
     if (!f) {
@@ -81,10 +90,16 @@ export default function DownloadListTable() {
       return 'Only Ineligible'
     }
   }
-  const removeItem = async (item: DownloadListItem) => {
+  const removeItem = async (item: DownloadListItem, fileName: string) => {
     try {
       await SynapseClient.removeItemFromDownloadListV2(item, accessToken)
-      refetch()
+      displayToast(
+        `${fileName} has been removed from your list.`,
+        'success',
+        {title: 'File Download'}
+      )
+      // refetching the statistics will update the download list, so no need to update the file list here.
+      refetchStatistics()
     } catch (err) {
       console.error(err)
     }
@@ -120,29 +135,33 @@ export default function DownloadListTable() {
       )
     )
   }
-  const availableFiltersArray: AvailableFilter[] = [undefined, 'eligibleForPackaging', 'ineligibleForPackaging']
+  const availableFiltersArray: AvailableFilter[] = [
+    undefined,
+    'eligibleForPackaging',
+    'ineligibleForPackaging',
+  ]
   return (
     <>
       <div className="filterFilesContainer">
-          <span className="filterFilesByText">Filter Files By</span>
-          <Dropdown>
-            <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
-              {getFilterDisplayText(filter)}
-            </Dropdown.Toggle>
-            <Dropdown.Menu role="menu">
-            {availableFiltersArray.map(
-              (availableFilter) => (
+        <span className="filterFilesByText">Filter Files By</span>
+        <Dropdown>
+          <Dropdown.Toggle variant="gray-primary-500" id="dropdown-basic">
+            {getFilterDisplayText(filter)}
+          </Dropdown.Toggle>
+          <Dropdown.Menu role="menu">
+            {availableFiltersArray.map(availableFilter => (
               <Dropdown.Item
-                  role="menuitem"
-                  key={`${getFilterDisplayText(availableFilter)}-filter-option`}
-                  onClick={() => {
-                    setFilter(availableFilter)
-                  }}
-                >
-                  {getFilterDisplayText(availableFilter)}
-                </Dropdown.Item>),)}
-            </Dropdown.Menu>
-          </Dropdown>
+                role="menuitem"
+                key={`${getFilterDisplayText(availableFilter)}-filter-option`}
+                onClick={() => {
+                  setFilter(availableFilter)
+                }}
+              >
+                {getFilterDisplayText(availableFilter)}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
       {allRows.length > 0 && (
         <>
@@ -154,8 +173,15 @@ export default function DownloadListTable() {
             <thead>
               <tr>
                 <th>
-                  File Name
+                  {/* Eligible/Ineligible icon */}
+                </th>
+                <th>
+                  Name
                   <span>{showInteractiveSortIcon('fileName')}</span>
+                </th>
+                <th>
+                  Size
+                  <span>{showInteractiveSortIcon('fileSize')}</span>
                 </th>
                 <th>
                   Project
@@ -177,38 +203,62 @@ export default function DownloadListTable() {
                   Created On
                   <span>{showInteractiveSortIcon('createdOn')}</span>
                 </th>
-                <th>
-                  Size
-                  <span>{showInteractiveSortIcon('fileSize')}</span>
+                <th className="stickyColumn">
+                  Actions
                 </th>
-                {/* th below is made for trash can icon but holds no content */}
-                <th />
               </tr>
             </thead>
             <tbody>
-              {allRows.map((item:DownloadListItemResult) => {
+              {allRows.map((item: DownloadListItemResult) => {
                 if (item) {
                   const addedOn = moment(item.addedOn).format('L LT')
                   const createdOn = moment(item.createdOn).format('L LT')
                   return (
                     <tr key={item.fileEntityId}>
-                      <td>
-                          {item.isEligibleForPackaging && <span
+                      <td className={item.isEligibleForPackaging ? '' : 'ineligibleForPackagingTd'}>
+                        {item.isEligibleForPackaging && (
+                          <span
                             data-for={`${item.fileEntityId}-eligible-tooltip`}
                             data-tip="Eligible for packaging"
                             className="eligibileIcon"
                           >
                             <ReactTooltip
                               delayShow={TOOLTIP_DELAY_SHOW}
-                              place="top"
+                              place="right"
                               type="dark"
                               effect="solid"
                               id={`${item.fileEntityId}-eligible-tooltip`}
                             />
-                            <IconSvg options={{icon: 'packagableFile', color: '#878E95' }} />
-                        </span>}
-                        {!item.isEligibleForPackaging && <span className="ineligibileIcon" />
-                        }
+                            <IconSvg
+                              options={{
+                                icon: 'packagableFile',
+                              }}
+                            />
+                          </span>
+                        )}
+                        {!item.isEligibleForPackaging && (
+                          <span
+                            data-for={`${item.fileEntityId}-ineligible-tooltip`}
+                            data-tip="This file is ineligible for Web packaging <br />because it is >100MB, or it is an external link,<br />or it is not stored on Synapse native storage"
+                            className="ineligibileIcon"
+                          >
+                            <ReactTooltip
+                              delayShow={TOOLTIP_DELAY_SHOW}
+                              place="right"
+                              type="dark"
+                              effect="solid"
+                              multiline={true}
+                              id={`${item.fileEntityId}-ineligible-tooltip`}
+                            />
+                            <IconSvg
+                              options={{
+                                icon: 'warningOutlined',
+                              }}
+                            />
+                          </span>
+                        )}
+                      </td>
+                      <td>
                         <a
                           target="_blank"
                           rel="noopener noreferrer"
@@ -216,6 +266,10 @@ export default function DownloadListTable() {
                         >
                           {item.fileName}
                         </a>
+                      </td>
+                      <td>
+                        {item.fileSizeBytes &&
+                          calculateFriendlyFileSize(item.fileSizeBytes)}
                       </td>
                       <td>{item.projectName}</td>
                       <td>{item.projectId}</td>
@@ -227,25 +281,65 @@ export default function DownloadListTable() {
                         />
                       </td>
                       <td>{createdOn}</td>
-                      <td>
-                        {item.fileSizeBytes &&
-                          calculateFriendlyFileSize(item.fileSizeBytes)}
-                      </td>
-                      <td>
-                        <button
-                          className={TESTING_TRASH_BTN_CLASS}
-                          onClick={() => {
-                            removeItem({
-                              fileEntityId: item.fileEntityId,
-                              versionNumber: item.versionNumber,
-                            })
-                          }}
-                        >
-                          <FontAwesomeIcon
-                            className="SRC-primary-text-color"
-                            icon="trash"
-                          />
-                        </button>
+                      <td className="stickyColumn">
+                        <div className="actionsContainer">
+                          <span className="downloadItem">
+                            <DirectDownload
+                              associatedObjectId={item.fileEntityId}
+                              associatedObjectType={FileHandleAssociateType.FileEntity}
+                              entityVersionNumber={item.versionNumber.toString()}
+                              displayFileName={false}
+                              onClickCallback={() => {
+                                removeItem({
+                                  fileEntityId: item.fileEntityId,
+                                  versionNumber: item.versionNumber,
+                                },
+                                item.fileName)
+                              }}
+                            />
+                          </span>
+                          {/* <span className="programmaticAccessItem"
+                            data-for={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                            data-tip="Programmatic download options">
+                              <ReactTooltip
+                                delayShow={TOOLTIP_DELAY_SHOW}
+                                place="left"
+                                type="dark"
+                                effect="solid"
+                                id={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                            />
+                            TODO
+                            </span>
+                          */}
+                          <span className="removeItem"
+                            data-for={`${item.fileEntityId}-removeitem-tooltip`}
+                            data-tip="Remove from Download List"
+                          >
+                            <ReactTooltip
+                              delayShow={TOOLTIP_DELAY_SHOW}
+                              place="left"
+                              type="dark"
+                              effect="solid"
+                              id={`${item.fileEntityId}-removeitem-tooltip`}
+                            />
+                            <button
+                              className={TESTING_TRASH_BTN_CLASS}
+                              onClick={() => {
+                                removeItem({
+                                  fileEntityId: item.fileEntityId,
+                                  versionNumber: item.versionNumber,
+                                },
+                                item.fileName)
+                              }}
+                            >
+                              <IconSvg
+                                  options={{
+                                    icon: 'removeCircle',
+                                  }}
+                                />
+                            </button>
+                          </span>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -257,10 +351,8 @@ export default function DownloadListTable() {
           </Table>
         </>
       )}
-      {isFetching && (
-        <div className="placeholder">
-          <SynapseSpinner size={30} />
-        </div>
+      {isLoading && (
+        <SkeletonTable numCols={5} numRows={3} />
       )}
     </>
   )

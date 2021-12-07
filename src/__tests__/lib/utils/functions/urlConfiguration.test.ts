@@ -6,7 +6,7 @@ describe('inserting into WHERE clause from URL works', () => {
   }
   it('works without a WHERE clause already present', () => {
     const sqlWithoutWhere = 'SELECT * FROM syn1234567'
-    const sql = insertConditionsFromSearchParams(searchParams, sqlWithoutWhere)
+    const sql = insertConditionsFromSearchParams(sqlWithoutWhere, searchParams)
     expect(sql).toEqual(
       "SELECT *\n  FROM syn1234567\n  WHERE (`grant` LIKE '%GRANT%')",
     )
@@ -18,7 +18,7 @@ describe('inserting into WHERE clause from URL works', () => {
       grantTwo: 'VALUE TWO',
     }
     const sqlWithoutWhere = 'SELECT * FROM syn1234567'
-    const sql = insertConditionsFromSearchParams(searchParams, sqlWithoutWhere)
+    const sql = insertConditionsFromSearchParams(sqlWithoutWhere, searchParams)
     expect(sql).toEqual(
       "SELECT *\n  FROM syn1234567\n  WHERE ((`grantTwo` LIKE '%VALUE TWO%') AND (`grant` LIKE '%GRANT%'))",
     )
@@ -26,7 +26,7 @@ describe('inserting into WHERE clause from URL works', () => {
 
   it('works with a WHERE clause present already and other conditions', () => {
     const sqlWithWhere = 'SELECT * FROM syn1234567 WHERE APPLE = SMITH LIMIT 1'
-    const sql = insertConditionsFromSearchParams(searchParams, sqlWithWhere)
+    const sql = insertConditionsFromSearchParams(sqlWithWhere, searchParams)
     expect(sql).toEqual(
       "SELECT *\n  FROM syn1234567\n  WHERE ((`grant` LIKE '%GRANT%') AND (`APPLE` = `SMITH`))\n  LIMIT 1",
     )
@@ -41,8 +41,8 @@ describe('inserting into WHERE clause from URL works with an equals operator', (
   it('works without a WHERE clause already present', () => {
     const sqlWithoutWhere = 'SELECT * FROM syn1234567'
     const sql = insertConditionsFromSearchParams(
-      searchParams,
       sqlWithoutWhere,
+      searchParams,
       operator,
     )
     expect(sql).toEqual(
@@ -57,8 +57,8 @@ describe('inserting into WHERE clause from URL works with an equals operator', (
     }
     const sqlWithoutWhere = 'SELECT * FROM syn1234567'
     const sql = insertConditionsFromSearchParams(
-      searchParams,
       sqlWithoutWhere,
+      searchParams,
       operator,
     )
     expect(sql).toEqual(
@@ -69,8 +69,8 @@ describe('inserting into WHERE clause from URL works with an equals operator', (
   it('works with a WHERE clause present already and other conditions', () => {
     const sqlWithWhere = 'SELECT * FROM syn1234567 WHERE APPLE = SMITH LIMIT 1'
     const sql = insertConditionsFromSearchParams(
-      searchParams,
       sqlWithWhere,
+      searchParams,
       operator,
     )
     expect(sql).toEqual(
@@ -86,8 +86,8 @@ describe('it works with a HAS clause', () => {
     }
     const sqlWithWhere = 'SELECT * FROM syn1234567'
     const sql = insertConditionsFromSearchParams(
-      searchParams,
       sqlWithWhere,
+      searchParams,
       operator,
     )
     expect(sql).toEqual(
@@ -100,8 +100,8 @@ describe('it works with a HAS clause', () => {
     }
     const sqlWithWhere = 'SELECT * FROM syn1234567'
     const sql = insertConditionsFromSearchParams(
-      searchParams,
       sqlWithWhere,
+      searchParams,
       operator,
     )
     expect(sql).toEqual(

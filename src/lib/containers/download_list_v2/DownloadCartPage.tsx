@@ -1,7 +1,5 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
@@ -11,6 +9,11 @@ import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
 import { CreatePackageV2 } from './CreatePackageV2'
 import FullWidthAlert from '../FullWidthAlert'
+import { ErrorBanner } from '../ErrorBanner'
+import { toError } from '../../utils/ErrorUtils'
+import Typography from '../../utils/typography/Typography'
+import ReactTooltip from 'react-tooltip'
+import { MarkdownPopover } from '../MarkdownPopover'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -22,7 +25,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] = useState<boolean>(false)
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] = useState(false)
-  const handleError = useErrorHandler()
+  const [error, setError] = useState<Error>()
   const {
     data,
     isLoading,
@@ -32,10 +35,20 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
   } = useGetDownloadListStatistics()
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      setError(toError(newError))
     }
-  }, [isError, newError, handleError])
+  }, [isError, newError])
   
+  // SWC-5874: When arriving at the download cart when there are no ARs, the user should start in the Download list
+  useEffect(() => {
+    if (data && data.numberOfFilesRequiringAction == 0) {
+      setSelectedTabIndex(1)
+    }
+  }, [data])
+  
+  if (error) {
+    return <ErrorBanner error={error} />
+  }
   const clearDownloadList = async (
   ) => {
     await SynapseClient.clearDownloadListV2(accessToken)
@@ -112,27 +125,107 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
       {selectedTabIndex == 1 && !isError && !isLoading && data &&
         <div>
           {data.numberOfFilesAvailableForDownload > 0 && 
-            <div>
+            <div className="DownloadListTabContent">
               <div className="subSectionOverview">
-                <div className="container">
-                  <div className="subSectionContainer">
-                    <span className="subSectionTitle">Complete Your Download</span>
-                    <DownloadListStats numBytes={data.sumOfFileSizesAvailableForDownload} numPackagableFiles={data.numberOfFilesAvailableForDownloadAndEligibleForPackaging} numFiles={data.numberOfFilesAvailableForDownload}/>
+                <div>
+                  <div className="headlineWithHelp">
+                    <Typography variant={'headline3'}>
+                      <IconSvg options={{ icon: 'packagableFile' }} /> Web Download (.ZIP Packages)
+                    </Typography>
+                    <MarkdownPopover
+                      contentProps={{ markdown: 'This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.' }}
+                      placement="bottom"
+                    >
+                      <IconSvg options={{icon:'info'}} />
+                    </MarkdownPopover>
                   </div>
-                  <p className="description">Downloading your files programmatically is the quickest and most efficient way to get all of your files, 
-                  both internal and externally hosted. Metadata will always be included in your download automatically when downloading programmatically. 
-                  If you choose to download as .zip files, you can download external files individually at any time.</p>
+                  <Typography variant={'body1'}>
+                    <ul>
+                      <li>
+                        Eligible files will be added to .ZIP packages of up to 1GB in size
+                      </li>
+                      <li>
+                        If you have more than 1GB, you can create multiple packages
+                      </li>
+                      <li>
+                        Will only include files which are hosted on Synapse native storage
+                      </li>
+                      <li>
+                        Packages include a CSV Manifest containing Metadata for each file
+                      </li>
+                    </ul>
+                  </Typography>
                   <span>
-                    <a className="highlight-link" onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>
+                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging > 0 && <a className="highlight-link" onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>}
+                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging == 0 &&
+                      <a className="highlight-link disabled"
+                      data-for="downloadZipPackagesUnavailable"
+                      data-tip="You cannot create a .zip package<br />because there are no eligible files.">
+                        <ReactTooltip
+                          delayShow={300}
+                          multiline={true}
+                          place="top"
+                          type="dark"
+                          effect="solid"
+                          id="downloadZipPackagesUnavailable"
+                        />
+                        Download As .ZIP packages
+                      </a>}
+                  </span>
+                </div>
+                <div>
+                  <div className="headlineWithHelp">
+                    <Typography variant={'headline3'}>
+                      <IconSvg options={{ icon: 'code' }} /> Programmatic Download
+                    </Typography>
+                    <MarkdownPopover
+                      contentProps={{ markdown: 'This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.' }}
+                      placement="bottom"
+                    >
+                      <IconSvg options={{icon:'info'}} />
+                    </MarkdownPopover>
+                  </div>
+                  <Typography variant={'body1'}>
+                    <ul>
+                      <li>
+                        Requires installation of a programmatic client (R, Python, CLI)
+                      </li>
+                      <li>
+                        No limit to the file size or number of files that can be downloaded
+                      </li>
+                      <li>
+                        Will include files which are hosted on and off Synapse native storage
+                      </li>
+                      <li>
+                        Packages include a CSV Manifest containing Metadata for each file
+                      </li>
+                    </ul>
+                  </Typography>
+                  <span>
+                    <a className="highlight-link disabled"
+                      data-for="downloadProgrammaticallyTooltipId"
+                      data-tip="This feature is coming soon.<br />You can still download individual<br />files programmatically.">
+                      <ReactTooltip
+                        delayShow={300}
+                        multiline={true}
+                        place="top"
+                        type="dark"
+                        effect="solid"
+                        id="downloadProgrammaticallyTooltipId"
+                      />
+                      Download Programmatically (Coming Soon)
+                    </a>
                   </span>
                 </div>
               </div>
               <div className="availableForDownloadTableContainer container">
                 {isShowingCreatePackageUI && <CreatePackageV2 onPackageCreation={() => {
                   setIsShowingDownloadSuccessAlert(true)
+                  // we refetch the data because the backend will instantly remove the downloadable files from the download list after a package has been created
                   refetch()
                 }} />}
-                <AvailableForDownloadTable /> 
+                <DownloadListStats numBytes={data.sumOfFileSizesAvailableForDownload} numPackagableFiles={data.numberOfFilesAvailableForDownloadAndEligibleForPackaging} numFiles={data.numberOfFilesAvailableForDownload}/>
+                {refetch && <AvailableForDownloadTable filesStatistics={data} refetchStatistics={refetch}/> }
               </div>
             </div>}
             {data.numberOfFilesAvailableForDownload === 0 && <div className="placeholder">
@@ -142,8 +235,8 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
       <FullWidthAlert
         show={isShowingDownloadSuccessAlert}
         variant='success'
-        title='Package download' 
-        description='The files contained in this zip file have been removed from your list.'
+        title='Package Created' 
+        description='A package has been created with eligible files. The items contained in this .zip file have been removed from your list. If your package is over 1GB, you will need to create multiple packages.'
         autoCloseAfterDelayInSeconds={10}
         onClose={() => { setIsShowingDownloadSuccessAlert(false) }}
       />
