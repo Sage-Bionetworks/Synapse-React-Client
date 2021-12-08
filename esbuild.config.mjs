@@ -110,5 +110,5 @@ esbuild
       },
     )
 
-    writeFileSync('./src/umd/metafile.json', JSON.stringify(result.metafile))
+    // TODO: Use the metafile to determine the impact of each bundled dependency.
   })
