@@ -212,9 +212,7 @@
     "build:rollup": "rollup -c && cp -r src/umd dist/",
     "build:esbuild": "yarn run clean:umd && node esbuild.config.mjs && cp -r src/umd dist/",
     "serve:docs": "DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist server --open",
-    "build:docs": "yarn run build:css && DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist build",
-    "link-src": "yarn link && cd ./node_modules/react && yarn link && cd ../react-router && yarn link && cd ../react-router-dom && yarn link && cd ../../",
-    "unlink-src": "yarn unlink && cd ./node_modules/react && yarn unlink && cd ../react-router && yarn unlink && cd ../react-router-dom && yarn unlink && cd ../../"
+    "build:docs": "yarn run build:css && DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist build"
   },
   "resolutions": {
     "fstream": "1.0.12",
