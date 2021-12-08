@@ -39,3 +39,13 @@ jsconfig.json
 /dist
 
 src/umd
+
+# Yarn: https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+# We're not using zero-installs, for now.
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

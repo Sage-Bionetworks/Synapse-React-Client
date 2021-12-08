@@ -1,7 +1,6 @@
 {
   "name": "synapse-react-client",
   "version": "2.0.62",
-  "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "module": "dist/index.js",
@@ -25,7 +24,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@popperjs/core": "^2.10.2",
-    "@rjsf/core": "^3.0.0",
+    "@rjsf/core": "^3.2.1",
     "@sage-bionetworks/react-base-table": "^1.12.3",
     "@sage-bionetworks/rjsf-core": "^3.1.4",
     "@upsetjs/react": "^1.6.2",
@@ -71,7 +70,7 @@
     "react-plotly.js": "^2.5.1",
     "react-plotlyjs-ts": "^2.2.1",
     "react-popper": "^2.2.5",
-    "react-query": "3.33.1",
+    "react-query": "3.34.0",
     "react-reflex": "^4.0.0",
     "react-router-dom": "5.3.0",
     "react-scripts": "^4.0.3",
@@ -83,7 +82,7 @@
     "react-transition-group": "2.6.0",
     "regenerator-runtime": "^0.13.2",
     "rss-parser": "^3.7.2",
-    "sanitize-html": "^2.3.2",
+    "sanitize-html": "^2.6.0",
     "sass": "^1.30.0",
     "shortid": "^2.2.14",
     "spark-md5": "^3.0.0",
@@ -137,7 +136,7 @@
     "@types/react-router-dom": "4.3.5",
     "@types/react-select": "^4.0.17",
     "@types/react-transition-group": "^2.0.16",
-    "@types/sanitize-html": "^2.3.2",
+    "@types/sanitize-html": "^2.6.0",
     "@types/shortid": "^0.0.29",
     "@types/sinon": "^7.0.2",
     "@types/spark-md5": "^3.0.1",
@@ -150,7 +149,6 @@
     "esbuild": "^0.14.2",
     "esbuild-plugin-globals": "^0.1.1",
     "esbuild-plugin-node-polyfills": "^1.0.2",
-    "esbuild-plugin-svg": "^0.1.0",
     "esbuild-plugin-svgr": "^0.0.3",
     "esbuild-sass-plugin": "^1.8.0",
     "eslint-plugin-jest": "^24.3.6",
@@ -167,6 +165,7 @@
     "prettier": "^2.1.2",
     "react-select-event": "^5.3.0",
     "react-styleguidist": "^11.1.2",
+    "rimraf": "^3.0.2",
     "rollup": "^2.39.0",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
@@ -177,7 +176,7 @@
     "sinon": "^7.2.2",
     "timers-browserify": "^2.0.12",
     "typescript": "4.4.3",
-    "yarn": "^1.22.4"
+    "yarn": "^1.22.17"
   },
   "jest": {
     "moduleNameMapper": {
@@ -188,30 +187,32 @@
     ]
   },
   "scripts": {
+    "clean:build": "rimraf dist",
+    "clean:umd": "rimraf dist/umd",
     "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
     "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html && cp favicon.png styleguide/favicon.png",
     "build-gh": "yarn run build:docs",
     "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o upstream",
     "deploy:origin": "yarn install && yarn run predeploy && gh-pages -d styleguide && gh-pages -d styleguide -o origin",
-    "build-css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=. --load-path=node_modules && sass src/demo/style:src/demo/style --load-path=. --load-path=node_modules",
-    "watch-css": "yarn run build-css && sass src --watch --load-path=. --load-path=node_modules",
+    "watch:css": "yarn run build:css && sass src --watch --load-path=node_modules",
     "start-js": "react-scripts start",
-    "start": "npm-run-all -p watch-css serve:docs",
-    "start-deprecated-demo": "npm-run-all -p watch-css start-js",
+    "start": "npm-run-all -p watch:css serve:docs",
+    "start-deprecated-demo": "npm-run-all -p watch:css start-js",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom --setupFilesAfterEnv ./src/setupTests.js --resetMocks false",
     "test:coverage": "yarn test --coverage",
     "test:noPrompt": "CI=true yarn test",
     "eject": "react-scripts eject",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn run type-check --watch",
-    "build:deprecated": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:rollup",
-    "build": "yarn run build-css && yarn run build:js && yarn run build:copy-assets && yarn build:esbuild",
+    "build:deprecated": "yarn run build:css && yarn run build:js && yarn run build:copy-assets && yarn build:rollup",
+    "build": "yarn run clean:build && yarn run build:css && yarn run build:js && yarn run build:copy-assets && yarn build:esbuild",
+    "build:css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=node_modules && sass src/demo/style:src/demo/style --load-path=node_modules",
     "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:rollup": "rollup -c && cp -r src/umd dist/",
-    "build:esbuild": "node esbuild.config.mjs && cp -r src/umd dist/",
+    "build:esbuild": "yarn run clean:umd && node esbuild.config.mjs && cp -r src/umd dist/",
     "serve:docs": "DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist server --open",
-    "build:docs": "yarn run build-css && DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist build",
+    "build:docs": "yarn run build:css && DISABLE_ESLINT_PLUGIN=true FAST_REFRESH=false npx styleguidist build",
     "link-src": "yarn link && cd ./node_modules/react && yarn link && cd ../react-router && yarn link && cd ../react-router-dom && yarn link && cd ../../",
     "unlink-src": "yarn unlink && cd ./node_modules/react && yarn unlink && cd ../react-router && yarn unlink && cd ../react-router-dom && yarn unlink && cd ../../"
   },
@@ -222,9 +223,7 @@
     "mem": "^4.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "@types/react": "16.9.34",
-    "**/@typescript-eslint/eslint-plugin": "^4.1.1",
-    "**/@typescript-eslint/parser": "^4.1.1"
+    "@types/react": "16.9.34"
   },
   "browser": {
     "timers": "timers-browserify"
@@ -241,5 +240,6 @@
       "last 2 safari version",
       "last 2 ie version"
     ]
-  }
+  },
+  "packageManager": "yarn@3.1.1"
 }

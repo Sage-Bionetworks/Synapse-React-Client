@@ -1,7 +1,6 @@
 import svgrPlugin from 'esbuild-plugin-svgr'
 import sassPlugin from 'esbuild-sass-plugin'
 import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
-import svg from 'esbuild-plugin-svg'
 import esbuild from 'esbuild'
 import GlobalsPlugin from 'esbuild-plugin-globals'
 import { writeFileSync } from 'fs'
@@ -18,7 +17,6 @@ const globals = {
   'plotly.js-basic-dist': 'Plotly',
   '@rjsf/core': 'JSONSchemaForm',
   'react-measure': 'ReactMeasure',
-  'react-tooltip': 'ReactTooltip',
   markdownit: 'markdownit',
   markdownitSynapse: 'markdownitSynapse',
   markdownitSub: 'markdownitSub',
@@ -41,15 +39,13 @@ const esBuildOptions = {
   entryPoints: ['src/lib/rollup.index.ts'],
   bundle: true,
   platform: 'browser',
-  target: 'es2016',
+  target: 'es2015',
   globalName: 'SRC',
   plugins: [
     sassPlugin.sassPlugin({
-      includePaths: ['.', 'node_modules'],
+      includePaths: ['node_modules'],
       outfile: './src/umd/synapse-react-client.production.styles.css',
     }),
-
-    svg(),
     svgrPlugin({ ref: true }),
     ESBuildNodePolyfillsPlugin,
     GlobalsPlugin(globals),
@@ -68,7 +64,6 @@ const esBuildOptions = {
     'katex',
     'rss-parser',
     'react-mailchimp-subscribe',
-    'react-tooltip',
     'markdownit',
     'markdownitSynapse',
     'markdownitSub',
@@ -82,9 +77,11 @@ const esBuildOptions = {
     'markdownitInlineComments',
     'markdownitBr',
     'markdownitMath',
-    'sanitizeHtml',
+    'prop-types',
+    'sanitize-html',
     'react-transition-group',
     // 'json-schema-ref-parser', // bundling this results in a non-functional build (without error). see PORTALS-1907
+    'universal-cookie',
   ],
 }
 
