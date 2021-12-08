@@ -36,7 +36,7 @@ const globals = {
 }
 
 const esBuildOptions = {
-  entryPoints: ['src/lib/rollup.index.ts'],
+  entryPoints: ['src/lib/umd.index.ts'],
   bundle: true,
   platform: 'browser',
   target: 'es2015',
