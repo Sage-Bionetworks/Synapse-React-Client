@@ -1,7 +1,7 @@
 import { mount } from 'enzyme'
 import * as React from 'react'
 import TermsAndConditionsItem from '../../../lib/containers/TermsAndConditionsItem'
-import { ReactComponent as chatBubblesSvg } from '../../../lib/assets/icons/terms/chat-bubbles.svg'
+import chatBubblesSvg from '../../../lib/assets/icons/terms/chat-bubbles.svg'
 
 describe('Terms and Conditions Item: basic functionality', () => {
 
