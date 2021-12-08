@@ -191,7 +191,7 @@
     "eject": "react-scripts eject",
     "type-check": "tsc --noEmit",
     "type-check:watch": "yarn run type-check --watch",
-    "build": "yarn run build:css && yarn run build:js && yarn run build:copy-assets && yarn build:esbuild",
+    "build": "yarn clean:build && yarn run build:css && yarn run build:js && yarn run build:copy-assets && yarn build:esbuild",
     "build:css": "sass src/lib/style/main.scss src/lib/style/main.css --load-path=node_modules && sass src/demo/style:src/demo/style --load-path=node_modules",
     "build:js": "tsc --p tsconfig.build.json",
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
