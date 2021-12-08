@@ -82,7 +82,7 @@
       padding-right: 20px;
     }
   }
-  .subSectionOverview {
+  .subSectionOverviewContainer {
     padding: 30px 0px;
     background-color: SRC.$background-color-gray;
   }
@@ -92,6 +92,12 @@
       display: flex;
       column-gap: 10px;
       >* {
+        &:first-child {
+          padding-left: 0px;
+        }
+        &:last-child {
+          padding-right: 0px;
+        }
         padding: 0px 50px;
       }
       >*:first-child {
