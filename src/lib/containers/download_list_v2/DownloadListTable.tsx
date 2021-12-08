@@ -90,13 +90,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       return 'Only Ineligible'
     }
   }
-  const removeItem = async (item: DownloadListItem, fileName: string) => {
+  const removeItem = async (item: DownloadListItem, fileName: string, title: string) => {
     try {
       await SynapseClient.removeItemFromDownloadListV2(item, accessToken)
       displayToast(
         `${fileName} has been removed from your list.`,
         'success',
-        {title: 'File Download'}
+        {title}
       )
       // refetching the statistics will update the download list, so no need to update the file list here.
       refetchStatistics()
@@ -294,7 +294,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                                   fileEntityId: item.fileEntityId,
                                   versionNumber: item.versionNumber,
                                 },
-                                item.fileName)
+                                item.fileName,
+                                'File Downloaded')
                               }}
                             />
                           </span>
@@ -329,7 +330,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                                   fileEntityId: item.fileEntityId,
                                   versionNumber: item.versionNumber,
                                 },
-                                item.fileName)
+                                item.fileName,
+                                'File Removed')
                               }}
                             >
                               <IconSvg
