@@ -169,7 +169,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   return (
     <span ref={ref}
       data-for={`${associatedObjectId}-direct-download-tooltip`}
-      data-tip="Download this file individually">
+      data-tip={isExternalFile ? 'Navigate to external link' : 'Download this file individually'}>
       <ReactTooltip
         delayShow={TOOLTIP_DELAY_SHOW}
         place="left"
