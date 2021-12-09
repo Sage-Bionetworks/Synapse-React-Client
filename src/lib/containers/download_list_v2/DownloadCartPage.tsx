@@ -13,7 +13,6 @@ import { ErrorBanner } from '../ErrorBanner'
 import { toError } from '../../utils/ErrorUtils'
 import Typography from '../../utils/typography/Typography'
 import ReactTooltip from 'react-tooltip'
-import { MarkdownPopover } from '../MarkdownPopover'
 import { HelpPopover } from '../HelpPopover'
 
 export type DownloadCartPageProps = Record<string, never>
