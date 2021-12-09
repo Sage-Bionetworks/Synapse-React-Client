@@ -24,6 +24,7 @@ import ErrorPage from './containers/ErrorPage'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
+import { HelpPopover } from './containers/HelpPopover'
 import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
@@ -81,6 +82,7 @@ const SynapseComponents = {
   PlotlyWrapper,
   DatasetItemsEditor,
   EntityTypeIcon,
+  HelpPopover,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

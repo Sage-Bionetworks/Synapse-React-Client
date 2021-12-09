@@ -98,7 +98,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         'success',
         {title}
       )
-      // refetching the statistics will update the download list, so no need to update the file list here.
+      // refetching the statistics will update the download list, but refresh the list immediately since this will take time
+      refetch()
       refetchStatistics()
     } catch (err) {
       console.error(err)
