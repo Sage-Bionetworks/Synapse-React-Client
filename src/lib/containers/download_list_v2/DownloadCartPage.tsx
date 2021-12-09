@@ -135,18 +135,12 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                       </Typography>
                       <HelpPopover
                           markdownText='This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.'
-                          helpUrl='https://docsite.com/kfjdlsjflkdsk'
                         />
                     </div>
                     <Typography variant={'body1'}>
                       <ul>
                         <li>
                           Eligible files will be added to .ZIP packages of up to 1GB in size
-                          <HelpPopover
-                        markdownText='This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.'
-                        placement="bottom"
-                        helpUrl='https://docsite.com/kfjdlsjflkdsk'
-                      />
                         </li>
                         <li>
                           If you have more than 1GB, you can create multiple packages
