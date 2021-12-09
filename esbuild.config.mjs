@@ -3,7 +3,6 @@ import sassPlugin from 'esbuild-sass-plugin'
 import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
 import esbuild from 'esbuild'
 import GlobalsPlugin from 'esbuild-plugin-globals'
-import { writeFileSync } from 'fs'
 
 const globals = {
   react: 'React',
@@ -80,7 +79,6 @@ const esBuildOptions = {
     'prop-types',
     'sanitize-html',
     'react-transition-group',
-    // 'json-schema-ref-parser', // bundling this results in a non-functional build (without error). see PORTALS-1907
     'universal-cookie',
   ],
 }
