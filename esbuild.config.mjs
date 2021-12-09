@@ -76,8 +76,6 @@ const esBuildOptions = {
     'markdownitInlineComments',
     'markdownitBr',
     'markdownitMath',
-    'prop-types',
-    'sanitize-html',
     'react-transition-group',
     'universal-cookie',
   ],
