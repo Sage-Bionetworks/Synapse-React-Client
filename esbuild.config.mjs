@@ -1,5 +1,5 @@
 import svgrPlugin from 'esbuild-plugin-svgr'
-import sassPlugin from 'esbuild-sass-plugin'
+import { sassPlugin } from 'esbuild-sass-plugin'
 import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
 import esbuild from 'esbuild'
 import GlobalsPlugin from 'esbuild-plugin-globals'
@@ -40,10 +40,10 @@ const esBuildOptions = {
   platform: 'browser',
   target: 'es2015',
   globalName: 'SRC',
+  tsconfig: 'tsconfig.build.json',
   plugins: [
-    sassPlugin.sassPlugin({
+    sassPlugin({
       includePaths: ['node_modules'],
-      outfile: './src/umd/synapse-react-client.production.styles.css',
     }),
     svgrPlugin({ ref: true }),
     ESBuildNodePolyfillsPlugin,

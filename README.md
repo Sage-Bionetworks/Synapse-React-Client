@@ -45,7 +45,7 @@ You can use a cdn containing the javascript and css required for the client here
 />
 <link
   rel="stylesheet"
-  src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.styles.css"
+  src="https://unpkg.com/synapse-react-client@1.10.10/umd/synapse-react-client.production.min.css"
 />
 ```
 
@@ -140,7 +140,7 @@ To function properly, all components must be wrapped in a [SynapseContextProvide
 
 The context provider also maintains a shared cache (via `react-query`). It is recommended to place the provider at the highest possible point in your component tree, and to use the same provider across components if possible.
 
-Example: 
+Example:
 
 ```tsx
 const myToken = "example-token" // this value may also be undefined, if a user is not signed in
@@ -185,11 +185,12 @@ For a list of variables you can override, see [`src/lib/style/abstracts/_variabl
 Override the variables by importing the SCSS in your project like so:
 
 ```scss
-@use 'node_modules/synapse-react-client/dist/style/main.scss' with (
-  $primary-action-color: $-my-primary-color, 
-  $secondary-action-color: $-my-secondary-color,
-  // ...any other overrides continue
-);
+@use 'node_modules/synapse-react-client/dist/style/main.scss' with
+  (
+    $primary-action-color: $-my-primary-color,
+    $secondary-action-color: $-my-secondary-color,
+    // ...any other overrides continue
+  );
 @use 'node_modules/synapse-react-client/dist/template_style/Index.scss';
 ```
 
@@ -222,18 +223,17 @@ See [Examples](Examples.md)
                     the folder will only contain data that is to be mocked for __tests__.
    ├── /umd
       ├── synapse-react-client.production.min.js: The umd bundle of the client's javascript.
-      ├── synapse-react-client.production.styles.css: The umd bundle of the client's styling.
+      ├── synapse-react-client.production.min.css: The umd bundle of the client's styling.
 ```
 
 ### Configuration Files
 
-|File|Description|
-|---|---|
-| ./types.d.ts | In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project.|
-|./tsconfig.json | Typescript configuration for IDEs, especially VSCode. |
-|./tsconfig.build.json | Typescript configuration for the emitted build |
-|./esbuild.config.mjs | ESBuild configuration to create the UMD package |
-
+| File                  | Description                                                                                                                                                                                  |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ./types.d.ts          | In general this would be used as a library with type declarations for other client developers using Typescript. Currently, it contains only definitions for global CDNs used in the project. |
+| ./tsconfig.json       | Typescript configuration for IDEs, especially VSCode.                                                                                                                                        |
+| ./tsconfig.build.json | Typescript configuration for the emitted build                                                                                                                                               |
+| ./esbuild.config.mjs  | ESBuild configuration to create the UMD package                                                                                                                                              |
 
 ## Project Development
 
@@ -376,10 +376,11 @@ Builds the app for production to the `build` folder.<br>
 ### `yarn run build:esbuild`
 
 This project can be built as a umd bundle. It produces three files
-* `synapse-react-client.production.min.js`
-* `synapse-react-client.development.js`
-* `synapse-react-client.production.min.styles.css`.
-Note - this script is run automatically as part of the build command.
+
+- `synapse-react-client.production.min.js`
+- `synapse-react-client.development.js`
+- `synapse-react-client.production.min.styles.css`.
+  Note - this script is run automatically as part of the build command.
 
 ### `npm run eject`
 
