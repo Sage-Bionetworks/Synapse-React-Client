@@ -75,7 +75,6 @@ const SynapseComponents = {
   SynapseNavDrawer,
   FavoritesPage,
   EntityModal,
-  ProgrammaticOptions: ProgrammaticTableDownload,
   SynapseToastContainer,
   displayToast,
   IconSvg,

@@ -114,13 +114,13 @@ const SynapseComponents = {
   DownloadCartPage,
   ShowDownloadV2,
   FullWidthAlert: FullWidthAlert,
-  ProgrammaticOptions: ProgrammaticTableDownload,
   SynapseToastContainer,
   displayToast,
   UserProfileLinks,
   MarkdownPopover,
   FeaturedToolsList,
-  SubsectionRowRenderer
+  SubsectionRowRenderer,
+  ProgrammaticTableDownload,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext, Typography }
