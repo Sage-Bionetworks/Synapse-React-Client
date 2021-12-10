@@ -1,5 +1,8 @@
 import { Skeleton } from '@material-ui/lab'
-import BaseTable, { ColumnShape } from '@sage-bionetworks/react-base-table'
+import BaseTable, {
+  AutoResizer,
+  ColumnShape,
+} from '@sage-bionetworks/react-base-table'
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
@@ -342,6 +345,10 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     },
   ]
 
+  const totalColumnWidth = defaultColumns.reduce((totalWidth, column) => {
+    return totalWidth + column.width
+  }, 0)
+
   function NoItemsPlaceholder() {
     return (
       <div className="NoItemsPlaceholder">
@@ -430,28 +437,30 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           datasetToUpdate.items.length === 0 ? (
             <NoItemsPlaceholder></NoItemsPlaceholder>
           ) : (
-            <BaseTable
-              classPrefix="DatasetEditorTable"
-              data={tableData}
-              height={TABLE_HEIGHT}
-              width={defaultColumns.reduce((totalWidth, column) => {
-                return totalWidth + column.width
-              }, 0)}
-              rowHeight={ROW_HEIGHT}
-              overscanRowCount={5}
-              columns={defaultColumns}
-              rowClassName={'DatasetEditorRow'}
-              rowProps={({ rowData }) => {
-                return {
-                  'aria-selected': rowData.isSelected,
-                }
-              }}
-              headerCellProps={{
-                role: 'columnheader',
-              }}
-              onRowsRendered={rebuildTooltip}
-              onScroll={rebuildTooltip}
-            ></BaseTable>
+            <AutoResizer height={TABLE_HEIGHT} onResize={rebuildTooltip}>
+              {({ height, width }: { height: number; width: number }) => (
+                <BaseTable
+                  classPrefix="DatasetEditorTable"
+                  data={tableData}
+                  height={height}
+                  width={width > totalColumnWidth ? width : totalColumnWidth}
+                  rowHeight={ROW_HEIGHT}
+                  overscanRowCount={5}
+                  columns={defaultColumns}
+                  rowClassName={'DatasetEditorRow'}
+                  rowProps={({ rowData }) => {
+                    return {
+                      'aria-selected': rowData.isSelected,
+                    }
+                  }}
+                  headerCellProps={{
+                    role: 'columnheader',
+                  }}
+                  onRowsRendered={rebuildTooltip}
+                  onScroll={rebuildTooltip}
+                ></BaseTable>
+              )}
+            </AutoResizer>
           )
         ) : (
           <SkeletonTable
