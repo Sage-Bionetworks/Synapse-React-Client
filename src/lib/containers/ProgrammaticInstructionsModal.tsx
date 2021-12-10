@@ -73,8 +73,10 @@ export const ProgrammaticInstructionsModal = ({
       size="lg"
     >
       <Modal.Header closeButton>
-        <Typography variant={'headline1'}>{title}</Typography>&nbsp;
-        {helpMarkdown && <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />}
+        <Modal.Title>
+          {title}&nbsp;
+          {helpMarkdown && <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="Tabs">
