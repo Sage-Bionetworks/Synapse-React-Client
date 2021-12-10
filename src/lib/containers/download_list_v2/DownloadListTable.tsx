@@ -186,12 +186,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                   <span>{showInteractiveSortIcon('fileSize')}</span>
                 </th>
                 <th>
-                  Project
-                  <span>{showInteractiveSortIcon('projectName')}</span>
-                </th>
-                <th>
                   SynID
                   <span>{showInteractiveSortIcon('synId')}</span>
+                </th>
+                <th>
+                  Project
+                  <span>{showInteractiveSortIcon('projectName')}</span>
                 </th>
                 <th>
                   Added On
@@ -273,8 +273,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         {item.fileSizeBytes &&
                           calculateFriendlyFileSize(item.fileSizeBytes)}
                       </td>
+                      <td>{item.fileEntityId}</td>
                       <td>{item.projectName}</td>
-                      <td>{item.projectId}</td>
                       <td>{addedOn}</td>
                       <td>
                         <UserCard

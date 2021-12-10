@@ -31,9 +31,9 @@ table.DownloadListTableV2 {
       }
     }
   }
-  tbody tr > td:first-child { // file name column
+  tbody tr > td:nth-child(2) { // file name column
     overflow-x: hidden;
-    max-width: 310px;
+    max-width: 570px;
     text-overflow: ellipsis;
   }
 
