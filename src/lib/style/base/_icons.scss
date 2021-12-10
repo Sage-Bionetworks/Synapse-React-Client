@@ -90,9 +90,8 @@
   }
 }
 
-.HelpButton {
-  color: #ababac;
-  margin: 5px;
-  height: 18px;
-  width: 18px;
+svg.HelpButton {
+  color: map.get(SRC.$colors, 'gray-600');
+  cursor: pointer;
+  font-size: 1.2em;
 }

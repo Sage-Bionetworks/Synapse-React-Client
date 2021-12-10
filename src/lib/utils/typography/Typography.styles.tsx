@@ -28,13 +28,13 @@ const useTypographyStyle = makeStyles(
     },
     body1: {
       ...basicFontStyle,
-      fontSize: "16px",
+      fontSize: "14px", // SWC-5887: Should be 16px, but leaving at 14px to match the old paragraph style
       fontWeight: 400,
       lineHeight: "24px",
     },
     body2: {
       ...basicFontStyle,
-      fontSize: "16px",
+      fontSize: "14px", // SWC-5887: Should be 16px, but leaving at 14px to match the old paragraph style
       fontWeight: 400,
       lineHeight: "24px",
       fontStyle: "italic",

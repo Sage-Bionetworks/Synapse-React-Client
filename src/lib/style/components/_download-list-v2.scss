@@ -44,19 +44,19 @@ table.DownloadListTableV2 {
   tbody .stickyColumn .actionsContainer {
     color: map.get(SRC.$colors, 'gray-700'); // make all icons gray-700
     display: grid;
-    grid-template-columns: repeat(2, 45px); // TODO: change to 3 once we have the programmatic access item
+    grid-template-columns: repeat(3, 40px);
     * {
       justify-self: center;
     }
     .downloadItem {
       grid-column: 1 / span 1;
     }
-    .removeItem {
+    .programmaticAccessItem {
       grid-column: 2 / span 1;
     }
-    // .programmaticAccessItem {
-    //   grid-column: 3 / span 1;
-    // }
+    .removeItem {
+      grid-column: 3 / span 1;
+    }
   }
 
   @include SRCMixins.sortable-table();
