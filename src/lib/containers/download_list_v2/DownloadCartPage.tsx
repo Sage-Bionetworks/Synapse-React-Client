@@ -13,7 +13,7 @@ import { ErrorBanner } from '../ErrorBanner'
 import { toError } from '../../utils/ErrorUtils'
 import Typography from '../../utils/typography/Typography'
 import ReactTooltip from 'react-tooltip'
-import { MarkdownPopover } from '../MarkdownPopover'
+import { HelpPopover } from '../HelpPopover'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -133,12 +133,9 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                       <Typography variant={'headline3'}>
                         <IconSvg options={{ icon: 'packagableFile' }} /> Web Download (.ZIP Packages)
                       </Typography>
-                      <MarkdownPopover
-                        contentProps={{ markdown: 'This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.' }}
-                        placement="bottom"
-                      >
-                        <IconSvg options={{icon:'info'}} />
-                      </MarkdownPopover>
+                      <HelpPopover
+                          markdownText='This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.'
+                        />
                     </div>
                     <Typography variant={'body1'}>
                       <ul>
@@ -179,12 +176,9 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                       <Typography variant={'headline3'}>
                         <IconSvg options={{ icon: 'code' }} /> Programmatic Download
                       </Typography>
-                      <MarkdownPopover
-                        contentProps={{ markdown: 'This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.' }}
-                        placement="bottom"
-                      >
-                        <IconSvg options={{icon:'info'}} />
-                      </MarkdownPopover>
+                      <HelpPopover
+                          markdownText='This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.'
+                        />
                     </div>
                     <Typography variant={'body1'}>
                       <ul>

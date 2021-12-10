@@ -6,6 +6,7 @@ import { ButtonVariant } from 'react-bootstrap/esm/types'
 import { usePopper } from 'react-popper'
 import { CSSTransition } from 'react-transition-group'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
+import Typography from '../utils/typography/Typography'
 
 export type MarkdownPopoverProps = {
   children: JSX.Element
@@ -71,7 +72,9 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
         ref={setPopperElement}
         {...attributes.popper}
       >
-        <MarkdownSynapse {...contentProps} />
+        <Typography variant="body1">
+          <MarkdownSynapse {...contentProps} />
+        </Typography>
         <div className="TooltipButtonContainer">
           {actionButton && (
             <Button

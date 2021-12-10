@@ -26,6 +26,7 @@ import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 import DirectDownload from '../DirectDownload'
 import { displayToast } from '../ToastMessage'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
+import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -98,7 +99,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         'success',
         {title}
       )
-      // refetching the statistics will update the download list, so no need to update the file list here.
+      // refetching the statistics will update the download list, but refresh the list immediately since this will take time
+      refetch()
       refetchStatistics()
     } catch (err) {
       console.error(err)
@@ -299,19 +301,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                               }}
                             />
                           </span>
-                          {/* <span className="programmaticAccessItem"
-                            data-for={`${item.fileEntityId}-programmatic-instructions-tooltip`}
-                            data-tip="Programmatic download options">
-                              <ReactTooltip
-                                delayShow={TOOLTIP_DELAY_SHOW}
-                                place="left"
-                                type="dark"
-                                effect="solid"
-                                id={`${item.fileEntityId}-programmatic-instructions-tooltip`}
+                          <span className="programmaticAccessItem">
+                            <DirectProgrammaticDownload 
+                              entityId={item.fileEntityId}
+                              version={item.versionNumber}
                             />
-                            TODO
-                            </span>
-                          */}
+                          </span>
                           <span className="removeItem"
                             data-for={`${item.fileEntityId}-removeitem-tooltip`}
                             data-tip="Remove from Download List"

@@ -42,7 +42,7 @@ import ProjectViewCarousel from './containers/home_page/project_view_carousel/Pr
 import EntityFinder from './containers/entity_finder/EntityFinder'
 import ExperimentalMode from './containers/ExperimentalMode'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
-import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
+import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import {
   SynapseContextProvider,
@@ -114,13 +114,13 @@ const SynapseComponents = {
   DownloadCartPage,
   ShowDownloadV2,
   FullWidthAlert: FullWidthAlert,
-  ProgrammaticOptions,
   SynapseToastContainer,
   displayToast,
   UserProfileLinks,
   MarkdownPopover,
   FeaturedToolsList,
-  SubsectionRowRenderer
+  SubsectionRowRenderer,
+  ProgrammaticTableDownload,
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext, Typography }
