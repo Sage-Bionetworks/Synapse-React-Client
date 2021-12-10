@@ -24,12 +24,15 @@ import ErrorPage from './containers/ErrorPage'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
+import { HelpPopover } from './containers/HelpPopover'
+import DirectProgrammaticDownload from './containers/download_list_v2/DirectProgrammaticDownload'
 import { DownloadConfirmation } from './containers/download_list/DownloadConfirmation'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
 import { EntityModal } from './containers/entity/metadata/EntityModal'
-import ProgrammaticOptions from './containers/table/table-top/ProgrammaticOptions'
+import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
+import { ProgrammaticInstructionsModal } from './containers/ProgrammaticInstructionsModal'
 import PlotlyWrapper from './containers/PlotlyWrapper'
 import IconSvg from './containers/IconSvg'
 import {
@@ -73,7 +76,6 @@ const SynapseComponents = {
   SynapseNavDrawer,
   FavoritesPage,
   EntityModal,
-  ProgrammaticOptions,
   SynapseToastContainer,
   displayToast,
   IconSvg,
@@ -81,6 +83,10 @@ const SynapseComponents = {
   PlotlyWrapper,
   DatasetItemsEditor,
   EntityTypeIcon,
+  HelpPopover,
+  ProgrammaticTableDownload,
+  DirectProgrammaticDownload,
+  ProgrammaticInstructionsModal,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

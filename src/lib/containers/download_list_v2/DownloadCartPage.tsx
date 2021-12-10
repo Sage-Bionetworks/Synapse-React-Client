@@ -13,7 +13,7 @@ import { ErrorBanner } from '../ErrorBanner'
 import { toError } from '../../utils/ErrorUtils'
 import Typography from '../../utils/typography/Typography'
 import ReactTooltip from 'react-tooltip'
-import { MarkdownPopover } from '../MarkdownPopover'
+import { HelpPopover } from '../HelpPopover'
 
 export type DownloadCartPageProps = Record<string, never>
 
@@ -126,96 +126,92 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
         <div>
           {data.numberOfFilesAvailableForDownload > 0 && 
             <div className="DownloadListTabContent">
-              <div className="subSectionOverview">
-                <div>
-                  <div className="headlineWithHelp">
-                    <Typography variant={'headline3'}>
-                      <IconSvg options={{ icon: 'packagableFile' }} /> Web Download (.ZIP Packages)
+              <div className="subSectionOverviewContainer">
+                <div className="subSectionOverview container">
+                  <div>
+                    <div className="headlineWithHelp">
+                      <Typography variant={'headline3'}>
+                        <IconSvg options={{ icon: 'packagableFile' }} /> Web Download (.ZIP Packages)
+                      </Typography>
+                      <HelpPopover
+                          markdownText='This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.'
+                        />
+                    </div>
+                    <Typography variant={'body1'}>
+                      <ul>
+                        <li>
+                          Eligible files will be added to .ZIP packages of up to 1GB in size
+                        </li>
+                        <li>
+                          If you have more than 1GB, you can create multiple packages
+                        </li>
+                        <li>
+                          Will only include files which are hosted on Synapse native storage
+                        </li>
+                        <li>
+                          Packages include a CSV Manifest containing Metadata for each file
+                        </li>
+                      </ul>
                     </Typography>
-                    <MarkdownPopover
-                      contentProps={{ markdown: 'This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process.' }}
-                      placement="bottom"
-                    >
-                      <IconSvg options={{icon:'info'}} />
-                    </MarkdownPopover>
+                    <span>
+                      {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging > 0 && <a className="highlight-link" onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>}
+                      {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging == 0 &&
+                        <a className="highlight-link disabled"
+                        data-for="downloadZipPackagesUnavailable"
+                        data-tip="You cannot create a .zip package<br />because there are no eligible files.">
+                          <ReactTooltip
+                            delayShow={300}
+                            multiline={true}
+                            place="top"
+                            type="dark"
+                            effect="solid"
+                            id="downloadZipPackagesUnavailable"
+                          />
+                          Download As .ZIP packages
+                        </a>}
+                    </span>
                   </div>
-                  <Typography variant={'body1'}>
-                    <ul>
-                      <li>
-                        Eligible files will be added to .ZIP packages of up to 1GB in size
-                      </li>
-                      <li>
-                        If you have more than 1GB, you can create multiple packages
-                      </li>
-                      <li>
-                        Will only include files which are hosted on Synapse native storage
-                      </li>
-                      <li>
-                        Packages include a CSV Manifest containing Metadata for each file
-                      </li>
-                    </ul>
-                  </Typography>
-                  <span>
-                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging > 0 && <a className="highlight-link" onClick={() => {setIsShowingCreatePackageUI(true)}}>Download As .Zip Packages</a>}
-                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging == 0 &&
+                  <div>
+                    <div className="headlineWithHelp">
+                      <Typography variant={'headline3'}>
+                        <IconSvg options={{ icon: 'code' }} /> Programmatic Download
+                      </Typography>
+                      <HelpPopover
+                          markdownText='This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.'
+                        />
+                    </div>
+                    <Typography variant={'body1'}>
+                      <ul>
+                        <li>
+                          Requires installation of a programmatic client (R, Python, CLI)
+                        </li>
+                        <li>
+                          No limit to the file size or number of files that can be downloaded
+                        </li>
+                        <li>
+                          Will include files which are hosted on and off Synapse native storage
+                        </li>
+                        <li>
+                          Packages include a CSV Manifest containing Metadata for each file
+                        </li>
+                      </ul>
+                    </Typography>
+                    <span>
                       <a className="highlight-link disabled"
-                      data-for="downloadZipPackagesUnavailable"
-                      data-tip="You cannot create a .zip package<br />because there are no eligible files.">
+                        data-for="downloadProgrammaticallyTooltipId"
+                        data-tip="This feature is coming soon.<br />You can still download individual<br />files programmatically.">
                         <ReactTooltip
                           delayShow={300}
                           multiline={true}
                           place="top"
                           type="dark"
                           effect="solid"
-                          id="downloadZipPackagesUnavailable"
+                          id="downloadProgrammaticallyTooltipId"
                         />
-                        Download As .ZIP packages
-                      </a>}
-                  </span>
-                </div>
-                <div>
-                  <div className="headlineWithHelp">
-                    <Typography variant={'headline3'}>
-                      <IconSvg options={{ icon: 'code' }} /> Programmatic Download
-                    </Typography>
-                    <MarkdownPopover
-                      contentProps={{ markdown: 'This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.' }}
-                      placement="bottom"
-                    >
-                      <IconSvg options={{icon:'info'}} />
-                    </MarkdownPopover>
+                        Download Programmatically (Coming Soon)
+                      </a>
+                    </span>
                   </div>
-                  <Typography variant={'body1'}>
-                    <ul>
-                      <li>
-                        Requires installation of a programmatic client (R, Python, CLI)
-                      </li>
-                      <li>
-                        No limit to the file size or number of files that can be downloaded
-                      </li>
-                      <li>
-                        Will include files which are hosted on and off Synapse native storage
-                      </li>
-                      <li>
-                        Packages include a CSV Manifest containing Metadata for each file
-                      </li>
-                    </ul>
-                  </Typography>
-                  <span>
-                    <a className="highlight-link disabled"
-                      data-for="downloadProgrammaticallyTooltipId"
-                      data-tip="This feature is coming soon.<br />You can still download individual<br />files programmatically.">
-                      <ReactTooltip
-                        delayShow={300}
-                        multiline={true}
-                        place="top"
-                        type="dark"
-                        effect="solid"
-                        id="downloadProgrammaticallyTooltipId"
-                      />
-                      Download Programmatically (Coming Soon)
-                    </a>
-                  </span>
                 </div>
               </div>
               <div className="availableForDownloadTableContainer container">

@@ -6,7 +6,7 @@ import {
   QueryResultBundle,
   QueryBundleRequest,
 } from '../../../utils/synapseTypes'
-import ProgrammaticOptions from './ProgrammaticOptions'
+import ProgrammaticTableDownload from './ProgrammaticTableDownload'
 import ModalDownload from '../../../containers/ModalDownload'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 
@@ -92,11 +92,11 @@ export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = pr
         )
       }
       {showProgrammaticOptions && queryResultBundle && (
-        <ProgrammaticOptions
+        <ProgrammaticTableDownload
           onHide={() => setShowProgrammaticOptions(false)}
           queryBundleRequest={queryBundleRequest}
           queryResultBundle={queryResultBundle}
-        ></ProgrammaticOptions>
+        ></ProgrammaticTableDownload>
       )}
     </React.Fragment>
   )

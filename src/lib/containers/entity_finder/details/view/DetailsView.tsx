@@ -20,7 +20,6 @@ import {
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
 import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../../EntityBadgeIcons'
-import { MarkdownPopover } from '../../../MarkdownPopover'
 import { BlockingLoader } from '../../../LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
@@ -37,8 +36,8 @@ import {
   TypeIconRenderer,
   DetailsViewVersionRenderer,
 } from './DetailsViewTableRenderers'
-import { HelpOutline } from '@material-ui/icons'
 import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
+import { HelpPopover } from '../../../HelpPopover'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -450,21 +449,10 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   return (
                     <>
                       Version
-                      <MarkdownPopover
-                        contentProps={{
-                          markdown:
-                            'Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”',
-                        }}
-                        showCloseButton={false}
+                      <HelpPopover
+                        markdownText='Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”'
                         placement="right"
-                        strategy="fixed"
-                        style={{ maxWidth: '350px' }}
-                      >
-                        <HelpOutline
-                          className="HelpButton"
-                          style={{ cursor: 'pointer' }}
-                        />
-                      </MarkdownPopover>
+                      />
                     </>
                   )
                 }}
