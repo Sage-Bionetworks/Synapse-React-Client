@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
-import { Typography } from '..'
 import { HelpPopover } from './HelpPopover'
 
 export enum ProgrammaticOptionsTabs {
