@@ -32,6 +32,7 @@ import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/Sc
 import { EntityModal } from './containers/entity/metadata/EntityModal'
 import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
+import { ProgrammaticInstructionsModal } from './containers/ProgrammaticInstructionsModal'
 import PlotlyWrapper from './containers/PlotlyWrapper'
 import IconSvg from './containers/IconSvg'
 import {
@@ -85,6 +86,7 @@ const SynapseComponents = {
   HelpPopover,
   ProgrammaticTableDownload,
   DirectProgrammaticDownload,
+  ProgrammaticInstructionsModal,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
