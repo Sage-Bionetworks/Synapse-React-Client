@@ -1,5 +1,5 @@
 import { FileHandle } from './FileHandle'
-import { AssertionError } from 'assert'
+import assert from 'assert'
 
 export enum ExternalFileHandleConcreteTypeEnum {
   ProxyFileHandle = 'org.sagebionetworks.repo.model.file.ProxyFileHandle',
@@ -26,7 +26,7 @@ export function assertIsExternalFileHandle(
   if (
     x?.concreteType !== ExternalFileHandleConcreteTypeEnum.ExternalFileHandle
   ) {
-    throw new AssertionError({
+    throw new assert.AssertionError({
       message: ` ExternalFileHandle expected but found ${x}`,
     })
   }

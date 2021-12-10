@@ -1,5 +1,4 @@
 import { Modal, ModalBody, ModalFooter, Button } from 'react-bootstrap'
-import ModalHeader from 'react-bootstrap/ModalHeader'
 import React from 'react'
 
 export type DownloadLoginModalProps = {
@@ -10,13 +9,13 @@ export type DownloadLoginModalProps = {
 export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps> = props => {
   return (
     <Modal animation={false} show={true} onHide={() => props.onHide()}>
-      <ModalHeader closeButton>
+      <Modal.Header closeButton>
         <span
           style={{ fontWeight: 'bold', color: '#515359', fontSize: '1.5em' }}
         >
           Sign In Required
         </span>
-      </ModalHeader>
+      </Modal.Header>
       <ModalBody>
         <p>
           Anyone can browse public content on the Synapse website, but in order

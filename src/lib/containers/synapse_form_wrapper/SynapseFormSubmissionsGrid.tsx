@@ -10,8 +10,8 @@ import {
 import { faTrash, faPhone } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WarningModal from './WarningModal'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
+import { Button } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
 
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
