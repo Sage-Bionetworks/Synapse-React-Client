@@ -26,6 +26,14 @@ import {
 } from '../../../../../mocks/entity/mockEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
 
+// Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
+jest.mock(
+  'react-virtualized-auto-sizer',
+  () =>
+    ({ children }) =>
+      children({ height: 450, width: 1200 }),
+)
+
 jest.mock('../../../../../lib/containers/ToastMessage', () => {
   return { displayToast: jest.fn() }
 })

@@ -6,7 +6,7 @@ $table-prefix: DetailsViewTable;
 $table-font-size: 14px;
 $header-background-color: white;
 $row-hovered-background-color: unset;
-@import 'node_modules/@sage-bionetworks/react-base-table/es/BaseTable';
+@import '@sage-bionetworks/react-base-table/es/BaseTable';
 
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {

@@ -27,7 +27,7 @@
     "useUnknownInCatchVariables": false
   },
   "exclude": [
-    "rollup.config.js",
+    "esbuild.config.mjs",
     "node_modules",
     "build",
     "coverage",

@@ -100,7 +100,7 @@
     <!-- local imports-- change in prod -->
     <link
       rel="stylesheet"
-      href="../../umd/synapse-react-client.production.styles.css"
+      href="../../umd/synapse-react-client.production.min.css"
     />
 
     <!--
@@ -127,7 +127,9 @@
     }
   </style>
   <body>
-    <button id="signoutButton" class="btn btn-primary" onclick="signout()">Sign Out</button>
+    <button id="signoutButton" class="btn btn-primary" onclick="signout()">
+      Sign Out
+    </button>
     <div id="panel1"></div>
     <!-- spacer div below -->
     <div id="panel2"></div>
@@ -142,7 +144,7 @@
     <div id="panel11"></div>
     <div id="panel12"></div>
     <div id="panel13"></div>
-    <div style="height: 300px;"></div>
+    <div style="height: 300px"></div>
     <!--
       This HTML file is a an example configuration of SRC used in a plain HTML page,
       if you open it directly in the browser, you will see some components render.
@@ -160,18 +162,19 @@
     //   REPO: 'https://repo-staging.prod.sagebase.org/',
     //   PORTAL: 'https://staging.synapse.org/',
     // }
-    
+
     //attempt to read access token from cookies
     function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
+      const value = `; ${document.cookie}`
+      const parts = value.split(`; ${name}=`)
+      if (parts.length === 2) return parts.pop().split(';').shift()
     }
     function signout() {
-      document.cookie = "org.sagebionetworks.security.user.login.token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+      document.cookie =
+        'org.sagebionetworks.security.user.login.token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
       location.reload()
     }
-    const token = getCookie("org.sagebionetworks.security.user.login.token")
+    const token = getCookie('org.sagebionetworks.security.user.login.token')
     const e = React.createElement // utility for creating elements
     const renderInTryCatch = (reactNode, container, name) => {
       try {
@@ -266,8 +269,8 @@
         loginContainer,
         'Login',
       )
-      const signoutButtonEl = document.getElementById("signoutButton")
-      signoutButtonEl.style.display = "none"
+      const signoutButtonEl = document.getElementById('signoutButton')
+      signoutButtonEl.style.display = 'none'
     }
     const hasAccessContainer = document.querySelector('#panel8')
     const hasAccessProps = {
@@ -284,22 +287,27 @@
     const accessTokenPageProps = {
       title: 'Personal Access Token Management',
       body: 'Manage your tokens right here!!!!!',
-      token
+      token,
     }
     renderInTryCatch(
       e(SRC.SynapseComponents.AccessTokenPage, accessTokenPageProps, null),
       accessTokenPageContainer,
       'Personal Access Token Page',
     )
-    
-    const evaluationQueueEditorListContainer = document.querySelector('#panel10')
+
+    const evaluationQueueEditorListContainer =
+      document.querySelector('#panel10')
     const evaluationRoundEditorListProps = {
       accessToken: token,
       evaluationId: '9614644',
-      utc: true
+      utc: true,
     }
     renderInTryCatch(
-      e(SRC.SynapseComponents.EvaluationRoundEditorList, evaluationRoundEditorListProps, null),
+      e(
+        SRC.SynapseComponents.EvaluationRoundEditorList,
+        evaluationRoundEditorListProps,
+        null,
+      ),
       evaluationQueueEditorListContainer,
       'EvaluationRoundEditorList',
     )
@@ -307,7 +315,7 @@
     const evaluationQueueCardProps = {
       accessToken: token,
       evaluationId: '9614644',
-      utc: true
+      utc: true,
     }
     renderInTryCatch(
       e(SRC.SynapseComponents.EvaluationCard, evaluationQueueCardProps, null),
@@ -318,23 +326,26 @@
     const evaluationQueueEditorProps = {
       accessToken: token,
       evaluationId: '9614644',
-      utc: true
+      utc: true,
     }
     renderInTryCatch(
-      e(SRC.SynapseComponents.EvaluationEditor, evaluationQueueEditorProps, null),
+      e(
+        SRC.SynapseComponents.EvaluationEditor,
+        evaluationQueueEditorProps,
+        null,
+      ),
       evaluationQueueEditorContainer,
       'EvaluationEditor',
     )
 
     const accountLevelBadgeContainer = document.querySelector('#panel13')
     const accountLevelBadgeProps = {
-      userId: '273980'
+      userId: '273980',
     }
     renderInTryCatch(
       e(SRC.SynapseComponents.AccountLevelBadge, accountLevelBadgeProps, null),
       accountLevelBadgeContainer,
       'AccountLevelBadge',
     )
-
   </script>
 </html>
