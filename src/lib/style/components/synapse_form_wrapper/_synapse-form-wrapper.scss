@@ -464,8 +464,8 @@
     .summary-table-header {
       width: 100%;
 
-      th:first-child(),
-      td:first-child() {
+      th:first-child,
+      td:first-child {
         width: 30%;
       }
       th:nth-child(2),

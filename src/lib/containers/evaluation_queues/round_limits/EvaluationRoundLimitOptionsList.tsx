@@ -4,8 +4,8 @@ import {
   LIMIT_TYPE_DISPLAY_NAME,
 } from './EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
-import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
-import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
+import IconPlusSquareFilled from '../../../assets/icons/icon_plus_square_filled.svg'
+import IconTimes from '../../../assets/icons/icon_times.svg'
 import { EvaluationRoundLimitInput } from '../input_models/models'
 import { Button } from 'react-bootstrap'
 
