@@ -45,7 +45,7 @@ export const ProgrammaticInstructionsModal = ({
   let defaultTab
   if (cliCode) {
     defaultTab = ProgrammaticOptionsTabs.COMMAND_LINE
-  } else if (rCode) {
+  } else if (pythonCode) {
     defaultTab = ProgrammaticOptionsTabs.PYTHON
   } else {
     defaultTab = ProgrammaticOptionsTabs.R
