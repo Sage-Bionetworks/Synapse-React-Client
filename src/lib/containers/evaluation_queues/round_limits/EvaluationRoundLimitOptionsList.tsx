@@ -73,7 +73,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
               className="remove-button"
               onClick={handleDeleteLimit(index)}
             >
-              <IconTimes className="SRC-icon-fill" />
+              <img src={IconTimes} className="SRC-icon-fill" />
             </Button>
 
             {/*conditionally create a "add" button*/}
@@ -88,7 +88,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<Evaluation
                     onClick={addNewLimit}
                     className="add-button"
                   >
-                    <IconPlusSquareFilled className="SRC-icon-fill" />
+                    <img src={IconPlusSquareFilled} className="SRC-icon-fill" />
                   </Button>
                 )
             }
