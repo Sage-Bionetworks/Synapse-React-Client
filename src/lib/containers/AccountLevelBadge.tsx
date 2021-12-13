@@ -2,9 +2,9 @@ import { UserBundle } from '../utils/synapseTypes'
 import * as React from 'react'
 import { useState, useEffect } from 'react'
 import { SynapseClient, SynapseConstants } from '../utils'
-import Registered from '../assets/icons/account-registered.svg'
-import Certified from '../assets/icons/account-certified.svg'
-import Validated from '../assets/icons/account-validated.svg'
+import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
+import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
+import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
 import { ErrorBanner } from './ErrorBanner'
 
 export type AccountLevelBadgeProps = {
@@ -56,14 +56,14 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
   }
 
   let accountLevelString: string = accountLevelRegisteredLabel
-  let icon = <img src={Registered} />
+  let icon = <Registered />
   if (userBundle?.isCertified) {
     accountLevelString = accountLevelCertifiedLabel
-    icon = <img src={Certified} />
+    icon = <Certified />
   }
   if (userBundle?.isVerified) {
     accountLevelString = accountLevelVerifiedLabel
-    icon = <img src={Validated} />
+    icon = <Validated />
   }
   return (
     <div className={'AccountLevelBadge cardContainer'}>
