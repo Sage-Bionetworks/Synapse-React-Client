@@ -56,7 +56,7 @@ const TermsAndConditionsItem: React.FunctionComponent<TermsAndConditionsItemProp
         }
       </span>
       <span className="terms-checkbox">
-        <span className={isChecked ? "terms-circle terms-checked" : "terms-circle" } onClick={handleCheckboxClick}><CheckSvg /></span>
+        <span className={isChecked ? "terms-circle terms-checked" : "terms-circle" } onClick={handleCheckboxClick}><img src={CheckSvg} /></span>
         I agree
       </span>
     </>

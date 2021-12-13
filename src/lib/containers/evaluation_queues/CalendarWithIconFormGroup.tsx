@@ -29,7 +29,7 @@ export const CalendarWithIconFormGroup: React.FunctionComponent<CalendarWithIcon
       <InputGroup>
         <InputGroup.Prepend>
           <InputGroup.Text>
-            <CalendarClockIcon />
+            <img src={CalendarClockIcon} />
           </InputGroup.Text>
         </InputGroup.Prepend>
         <Datetime

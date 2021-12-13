@@ -56,14 +56,14 @@ export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> 
   }
 
   let accountLevelString: string = accountLevelRegisteredLabel
-  let icon = <Registered />
+  let icon = <img src={Registered} />
   if (userBundle?.isCertified) {
     accountLevelString = accountLevelCertifiedLabel
-    icon = <Certified />
+    icon = <img src={Certified} />
   }
   if (userBundle?.isVerified) {
     accountLevelString = accountLevelVerifiedLabel
-    icon = <Validated />
+    icon = <img src={Validated} />
   }
   return (
     <div className={'AccountLevelBadge cardContainer'}>
