@@ -1,7 +1,7 @@
 import * as React from 'react'
-import MaintenanceSvg from '../assets/icons/error_page/maintenance.svg'
-import NoAccessSvg from '../assets/icons/error_page/no-access.svg'
-import UnavailableSvg from '../assets/icons/error_page/unavailable.svg'
+import { ReactComponent as MaintenanceSvg } from '../assets/icons/error_page/maintenance.svg'
+import { ReactComponent as NoAccessSvg } from '../assets/icons/error_page/no-access.svg'
+import { ReactComponent as UnavailableSvg } from '../assets/icons/error_page/unavailable.svg'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 
 export type ErrorPageProps = {

@@ -1,4 +1,4 @@
-import svgrPlugin from 'esbuild-plugin-svgr'
+import svgrPlugin from '@sage-bionetworks/esbuild-plugin-svgr'
 import { sassPlugin } from 'esbuild-sass-plugin'
 import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
 import esbuild from 'esbuild'
@@ -45,7 +45,11 @@ const esBuildOptions = {
     sassPlugin({
       includePaths: ['node_modules'],
     }),
-    svgrPlugin({ ref: true }),
+    svgrPlugin({
+      ref: true,
+      namedExport: 'ReactComponent',
+      exportType: 'named',
+    }),
     ESBuildNodePolyfillsPlugin,
     GlobalsPlugin(globals),
   ],
