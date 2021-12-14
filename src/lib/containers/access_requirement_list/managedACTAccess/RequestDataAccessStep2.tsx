@@ -453,11 +453,12 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   const uploadCallback = (data: UploadCallbackResp) => {
     if (data.resp && data.success) {
+      const uploadResponse:FileUploadComplete = data.resp
       if (data.context === 'attachments') {
         const docs = formSubmitRequestObject?.attachments
           ? formSubmitRequestObject?.attachments
           : []
-        docs?.push(data.resp.fileHandleId)
+        docs?.push(uploadResponse.fileHandleId)
         setFormSubmitRequestObject(prevState => {
           return Object.assign({}, prevState, { attachments: docs })
         })
@@ -465,30 +466,30 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         setAttachments(prev => [
           ...prev,
           {
-            fileName: data.resp.fileName,
-            fileHandleId: data.resp.fileHandleId,
+            fileName: uploadResponse.fileName,
+            fileHandleId: uploadResponse.fileHandleId,
           },
         ])
       } else {
         setFormSubmitRequestObject(prevState => {
           return Object.assign({}, prevState, {
-            [data.context]: data.resp.fileHandleId,
+            [data.context]: uploadResponse.fileHandleId,
           })
         })
         // Update the view
         if (data.context === 'ducFileHandleId') {
           setDUC(prevState => {
             return Object.assign({}, prevState, {
-              fileName: data.resp.fileName,
-              fileHandleId: data.resp.fileHandleId,
+              fileName: uploadResponse.fileName,
+              fileHandleId: uploadResponse.fileHandleId,
             })
           })
         }
         if (data.context === 'irbFileHandleId') {
           setIRB(prevState => {
             return Object.assign({}, prevState, {
-              fileName: data.resp.fileName,
-              fileHandleId: data.resp.fileHandleId,
+              fileName: uploadResponse.fileName,
+              fileHandleId: uploadResponse.fileHandleId,
             })
           })
         }
