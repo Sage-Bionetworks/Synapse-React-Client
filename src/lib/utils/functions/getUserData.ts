@@ -1,5 +1,5 @@
 import { SynapseClient } from '..'
-import { UserProfile, FileHandleAssociateType } from '../synapseTypes/'
+import { UserProfile } from '../synapseTypes/'
 import { BackendDestinationEnum, getEndpoint } from './getEndpoint'
 
 /*
