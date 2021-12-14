@@ -66,7 +66,7 @@ type ToastMessageOptions = {
   primaryButtonText?: string
   onPrimaryButtonClick?: () => void
   secondaryButtonText?: string
-  secondaryButtonHref?: string
+  onSecondaryButtonClick?: (() => void) | string
 }
 
 /**
@@ -91,7 +91,7 @@ export const displayToast = (
     primaryButtonText = undefined,
     onPrimaryButtonClick = undefined,
     secondaryButtonText = undefined,
-    secondaryButtonHref = undefined,
+    onSecondaryButtonClick = undefined,
   } = toastMessageOptions ?? {}
 
   let { autoCloseInMs = 15000 } = toastMessageOptions ?? {}
@@ -115,7 +115,7 @@ export const displayToast = (
       primaryButtonText={primaryButtonText}
       onPrimaryButtonClick={onPrimaryButtonClick}
       secondaryButtonText={secondaryButtonText}
-      secondaryButtonHref={secondaryButtonHref}
+      onSecondaryButtonClick={onSecondaryButtonClick}
     />,
     {
       id: id,
