@@ -107,10 +107,13 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               <div className="subSectionOverview">
                 <div className="container">
                   <div className="subSectionContainer">
-                    <span className="subSectionTitle">You Have Files Which Require Actions Before Downloading</span>
+                    <Typography className="actionsRequiredTitle" variant={'headline3'}>
+                      You Have Files Which Require Actions Before Downloading
+                    </Typography>
                   </div>
-                  <p className="description">The items in this category require different actions in order 
-                  to download them. Select Start to complete the action.</p>
+                  <Typography variant={'body1'}>
+                    The items in this category require different actions in order to download them. Select Start to complete the action.
+                  </Typography>
                 </div>
               </div>
               <div className="actionsRequiredContainer container">

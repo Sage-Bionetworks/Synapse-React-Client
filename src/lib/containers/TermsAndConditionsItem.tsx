@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import CheckSvg from '../assets/icons/terms/check.svg'
+import { ReactComponent as CheckSvg } from '../assets/icons/terms/check.svg'
 
 export type tcItem = {
   icon: any
