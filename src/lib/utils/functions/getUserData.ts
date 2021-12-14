@@ -28,33 +28,15 @@ export type UserProfileAndImg = {
   preSignedURL?: string
 }
 
-async function getProfilePic(
+function getProfilePic(
   userProfile: UserProfile,
-  token?: string,
-): Promise<UserProfileAndImg> {
+):UserProfileAndImg {
   if (!userProfile.profilePicureFileHandleId) {
     return { userProfile }
   } else {
-    const fileHandleAssociationList = [
-      {
-        associateObjectId: userProfile.ownerId,
-        associateObjectType: FileHandleAssociateType.UserProfileAttachment,
-        fileHandleId: userProfile.profilePicureFileHandleId,
-      },
-    ]
-
-    const request = {
-      includeFileHandles: false,
-      includePreSignedURLs: true,
-      includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList,
-    }
-
-    const fileHandleList = await SynapseClient.getFiles(request, token)
-    const firstElement = fileHandleList.requestedFiles[0]
     return {
       userProfile,
-      preSignedURL: firstElement.preSignedURL,
+      preSignedURL: `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/userProfile/${userProfile.ownerId}/image/preview?redirect=true`,
     }
   }
 }
