@@ -65,8 +65,10 @@ type ToastMessageOptions = {
   autoCloseInMs?: number
   primaryButtonText?: string
   onPrimaryButtonClick?: () => void
+  dismissOnPrimaryButtonClick?: boolean
   secondaryButtonText?: string
-  secondaryButtonHref?: string
+  onSecondaryButtonClickOrHref?: (() => void) | string
+  dismissOnSecondaryButtonClick?: boolean
 }
 
 /**
@@ -84,30 +86,54 @@ type ToastMessageOptions = {
 export const displayToast = (
   message: string,
   variant?: 'info' | 'success' | 'warning' | 'danger',
-  toastMessageOptions?: ToastMessageOptions,
+  toastMessageOptions: ToastMessageOptions = {},
 ) => {
+  const id = uniqueId('synToast-')
+  const onClose = () => {
+    toast.dismiss(id)
+  }
+
   const {
     title = undefined,
     primaryButtonText = undefined,
-    onPrimaryButtonClick = undefined,
     secondaryButtonText = undefined,
-    secondaryButtonHref = undefined,
-  } = toastMessageOptions ?? {}
+    dismissOnPrimaryButtonClick = false,
+    dismissOnSecondaryButtonClick = false,
+  } = toastMessageOptions
 
-  let { autoCloseInMs = 15000 } = toastMessageOptions ?? {}
+  let onPrimaryButtonClick = toastMessageOptions.onPrimaryButtonClick
+  if (onPrimaryButtonClick && dismissOnPrimaryButtonClick) {
+    onPrimaryButtonClick = () => {
+      onPrimaryButtonClick!()
+      onClose()
+    }
+  }
+
+  let onSecondaryButtonClickOrHref =
+    toastMessageOptions.onSecondaryButtonClickOrHref
+  if (
+    onSecondaryButtonClickOrHref &&
+    typeof onSecondaryButtonClickOrHref === 'function' &&
+    dismissOnSecondaryButtonClick
+  ) {
+    onSecondaryButtonClickOrHref = () => {
+      // @ts-ignore - The above type guard isn't recognized within the inner function
+      onSecondaryButtonClickOrHref()
+      onClose()
+    }
+  }
+
+  let { autoCloseInMs = 15000 } = toastMessageOptions
   // Some toast libraries use 0 to prevent autoclose
   // react-hot-toast doesn't, but we can convert it for better compatibility as we try to migrate to use just one library
   if (autoCloseInMs === 0) {
     autoCloseInMs = Infinity
   }
 
-  const id = uniqueId('synToast-')
   toast(
     <FullWidthAlert
       isGlobal={false}
-      onClose={() => {
-        toast.dismiss(id)
-      }}
+      onClose={onClose}
       variant={variant ?? 'info'}
       show={true}
       title={title}
@@ -115,7 +141,7 @@ export const displayToast = (
       primaryButtonText={primaryButtonText}
       onPrimaryButtonClick={onPrimaryButtonClick}
       secondaryButtonText={secondaryButtonText}
-      secondaryButtonHref={secondaryButtonHref}
+      onSecondaryButtonClickOrHref={onSecondaryButtonClickOrHref}
     />,
     {
       id: id,

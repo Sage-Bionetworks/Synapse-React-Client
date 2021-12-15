@@ -16,7 +16,7 @@ export interface FullWidthAlertProps extends AlertProps {
   primaryButtonText?: string
   onPrimaryButtonClick?: () => void
   secondaryButtonText?: string
-  secondaryButtonHref?: string
+  onSecondaryButtonClickOrHref?: (() => void) | string
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
   isGlobal?: boolean
@@ -46,7 +46,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     title,
     description,
     secondaryButtonText,
-    secondaryButtonHref,
+    onSecondaryButtonClickOrHref,
     primaryButtonText,
     onPrimaryButtonClick,
     show,
@@ -60,7 +60,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
 
   const hasActions =
     (primaryButtonText && onPrimaryButtonClick) ||
-    (secondaryButtonText && secondaryButtonHref)
+    (secondaryButtonText && onSecondaryButtonClickOrHref)
 
   useEffect(() => {
     let timer: NodeJS.Timeout
@@ -94,12 +94,24 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           <Typography variant="headline3">{title}</Typography>
           <Typography variant="body1">{description}</Typography>
         </span>
-        {secondaryButtonText && secondaryButtonHref && (
+        {secondaryButtonText && onSecondaryButtonClickOrHref && (
           <a
             className="secondaryButton"
             target="_blank"
             rel="noopener noreferrer"
-            href={secondaryButtonHref}
+            onClick={
+              typeof onSecondaryButtonClickOrHref === 'function'
+                ? e => {
+                    e.preventDefault()
+                    onSecondaryButtonClickOrHref()
+                  }
+                : undefined
+            }
+            href={
+              typeof onSecondaryButtonClickOrHref === 'string'
+                ? onSecondaryButtonClickOrHref
+                : '#'
+            }
           >
             {' '}
             {secondaryButtonText}
