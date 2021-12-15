@@ -3,12 +3,13 @@ import { Button } from 'react-bootstrap'
 import { uploadFile } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { FileUploadComplete } from '../utils/synapseTypes'
+import { UploadCallbackResp } from './access_requirement_list/managedACTAccess/RequestDataAccessStep2'
 
 export type FileUploadProps = {
   id?: string
   label?: string
   variant?: string // allow you to change the appearance of the button to link (see react bootstrap doc)
-  uploadCallback?: Function
+  uploadCallback?: (response:UploadCallbackResp)=>void
   context?: any // to distinguish which file was uploaded if we have several FileUpload components on the same page
 }
 
@@ -41,7 +42,7 @@ const FileUpload: React.FC<FileUploadProps> = props => {
         console.log('FileUpload: fail to upload file', e)
         uploadCallback?.({
           success: false,
-          message: e,
+          error: e,
         })
       }
     }
