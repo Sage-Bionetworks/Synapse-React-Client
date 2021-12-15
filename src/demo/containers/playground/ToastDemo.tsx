@@ -23,7 +23,7 @@ export const ToastDemo = () => {
         console.log('Primary button clicked!')
       },
       secondaryButtonText: linkText ? linkText : undefined,
-      secondaryButtonHref: '#',
+      onSecondaryButtonClickOrHref: '#',
     })
   }
   return (
