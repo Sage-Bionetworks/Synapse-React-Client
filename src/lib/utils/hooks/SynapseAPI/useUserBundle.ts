@@ -48,7 +48,7 @@ export function useGetUserProfileWithProfilePic(
   // TODO: create useGetFile hook with careful configuration to prevent serving expired pre-signed URLs
   return useQuery<UserProfileAndImg, SynapseClientError>(
     queryKey,
-    () => getProfilePic(userProfile!, accessToken),
+    () => getProfilePic(userProfile!),
     {
       ...options,
       enabled: !!userProfile,
