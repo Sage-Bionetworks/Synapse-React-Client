@@ -14,6 +14,7 @@ import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../utils/SynapseContext'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
+import { UAParser } from 'ua-parser-js'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string
@@ -55,7 +56,8 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
       let preSignedURL
       // SWC-5907: opening in the file must be strictly done in the same click event process (Safari only).
       // https://stackoverflow.com/questions/6628949/window-open-popup-getting-blocked-during-click-event
-      const isSafari = navigator.userAgent.indexOf("Safari") != -1 && navigator.userAgent.indexOf("Chrome") == -1
+      const parser = new UAParser()
+      const isSafari = parser.getBrowser().name == 'Safari'
       let safariDownloadWindow:Window | null = null
       if (isSafari) {
         safariDownloadWindow = window.open("", "Safari Download", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,popup,width=600,height=200")
@@ -80,7 +82,9 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
         if (isSafari && safariDownloadWindow) {
           safariDownloadWindow.location = preSignedURL
           setTimeout(() => {
-            safariDownloadWindow!.close()
+            if (safariDownloadWindow) {
+              safariDownloadWindow.close()
+            }
           }, 10000)
         } else {
           window.open(preSignedURL)
