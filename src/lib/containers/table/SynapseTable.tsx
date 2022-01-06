@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
@@ -168,15 +168,25 @@ export default class SynapseTable extends React.Component<
   shouldComponentUpdate(
     nextProps: QueryWrapperChildProps & SynapseTableProps,
     nextState: Readonly<SynapseTableState>,
-    nextContext: any,
   ): boolean {
-    this.disableResize()
-    return super.shouldComponentUpdate
-      ? super.shouldComponentUpdate(nextProps, nextState, nextContext)
-      : true
+    // ignore isFetching state variables when checking for change in state
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isFetchingEntityHeaders: oldIsFetchingEntityHeaders, isFetchingEntityVersion: oldIsFetchingEntityVersion, ...oldState } = this.state
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isFetchingEntityHeaders: newIsFetchingEntityHeaders, isFetchingEntityVersion: newIsFetchingEntityVersion, ...newState } = nextState
+    const isPropsChange = !eq(this.props, nextProps)
+    const isStateChange = !eq(oldState, newState)
+    const shouldComponentUpdate = isPropsChange || isStateChange
+    if (shouldComponentUpdate) {
+      this.disableResize()
+    }
+    return shouldComponentUpdate
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
-    this.getEntityHeadersInData(false)
+    // PORTALS-2081: if the data changed, then get the new entity headers
+    if (!eq(prevProps.data, this.props.data)) {
+      this.getEntityHeadersInData(false)
+    }
     this.getTableConcreteType(prevProps)
     this.enableResize()
   }
@@ -218,7 +228,12 @@ export default class SynapseTable extends React.Component<
         this.resizer = new ColumnResizer(this.tableElement, RESIZER_OPTIONS)
       }
     } else {
-      this.resizer.reset(RESIZER_OPTIONS)
+      // TODO: use event driven solution instead of timeout.
+      // We need to give SynapseTableCell time to render (which will change the column size).
+      // Alternatively, we may be able to use SizeMe (or withSize() on Cell component) to respond to width change.
+      setTimeout(() => {
+        this.resizer.reset(RESIZER_OPTIONS)  
+      }, 1000)
     }
   }
 
