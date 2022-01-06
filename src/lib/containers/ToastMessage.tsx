@@ -102,9 +102,9 @@ export const displayToast = (
   } = toastMessageOptions
 
   let onPrimaryButtonClick = toastMessageOptions.onPrimaryButtonClick
-  if (onPrimaryButtonClick && dismissOnPrimaryButtonClick) {
+  if (toastMessageOptions.onPrimaryButtonClick && dismissOnPrimaryButtonClick) {
     onPrimaryButtonClick = () => {
-      onPrimaryButtonClick!()
+      toastMessageOptions.onPrimaryButtonClick!()
       onClose()
     }
   }
@@ -118,7 +118,7 @@ export const displayToast = (
   ) {
     onSecondaryButtonClickOrHref = () => {
       // @ts-ignore - The above type guard isn't recognized within the inner function
-      onSecondaryButtonClickOrHref()
+      toastMessageOptions.onSecondaryButtonClickOrHref()
       onClose()
     }
   }
