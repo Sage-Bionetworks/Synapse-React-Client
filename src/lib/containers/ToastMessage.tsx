@@ -101,25 +101,32 @@ export const displayToast = (
     dismissOnSecondaryButtonClick = false,
   } = toastMessageOptions
 
-  let onPrimaryButtonClick = toastMessageOptions.onPrimaryButtonClick
-  if (toastMessageOptions.onPrimaryButtonClick && dismissOnPrimaryButtonClick) {
-    onPrimaryButtonClick = () => {
-      toastMessageOptions.onPrimaryButtonClick!()
-      onClose()
+  let onPrimaryButtonClick
+  if (toastMessageOptions.onPrimaryButtonClick) {
+    if (dismissOnPrimaryButtonClick) {
+      onPrimaryButtonClick = () => {
+        toastMessageOptions.onPrimaryButtonClick!()
+        onClose()
+      }
+    } else {
+      onPrimaryButtonClick = toastMessageOptions.onPrimaryButtonClick
     }
   }
 
-  let onSecondaryButtonClickOrHref =
-    toastMessageOptions.onSecondaryButtonClickOrHref
-  if (
-    onSecondaryButtonClickOrHref &&
-    typeof onSecondaryButtonClickOrHref === 'function' &&
-    dismissOnSecondaryButtonClick
-  ) {
-    onSecondaryButtonClickOrHref = () => {
-      // @ts-ignore - The above type guard isn't recognized within the inner function
-      toastMessageOptions.onSecondaryButtonClickOrHref()
-      onClose()
+  let onSecondaryButtonClickOrHref
+  if (toastMessageOptions.onSecondaryButtonClickOrHref) {
+    if (
+      dismissOnSecondaryButtonClick &&
+      typeof toastMessageOptions.onSecondaryButtonClickOrHref === 'function'
+    ) {
+      onSecondaryButtonClickOrHref = () => {
+        // @ts-ignore - The above type guard isn't recognized within the inner function
+        toastMessageOptions.onSecondaryButtonClickOrHref!()
+        onClose()
+      }
+    } else {
+      onSecondaryButtonClickOrHref =
+        toastMessageOptions.onSecondaryButtonClickOrHref
     }
   }
 
