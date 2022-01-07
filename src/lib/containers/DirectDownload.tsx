@@ -14,6 +14,7 @@ import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../utils/SynapseContext'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
+import { UAParser } from 'ua-parser-js'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string
@@ -52,27 +53,46 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   }, [accessToken, inView])
 
   const getDownloadLink = async () => {
-    let preSignedURL
-    try {
-      if (associatedObjectType === FileHandleAssociateType.TableEntity) {
-        const files = await getTableEntityFileHandle(true)
-        preSignedURL = files.requestedFiles[0].preSignedURL!
-      } else {
-        const file = await getFileResult(fileEntity!, accessToken, false, true)
-        preSignedURL = file.preSignedURL
+      let preSignedURL
+      // SWC-5907: opening in the file must be strictly done in the same click event process (Safari only).
+      // https://stackoverflow.com/questions/6628949/window-open-popup-getting-blocked-during-click-event
+      const parser = new UAParser()
+      const isSafari = parser.getBrowser().name == 'Safari'
+      let safariDownloadWindow:Window | null = null
+      if (isSafari) {
+        safariDownloadWindow = window.open("", "Safari Download", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,popup,width=600,height=200")
+        safariDownloadWindow!.document.body.innerHTML = "Downloading file on Safari..."
       }
-    } catch (e) {
-      console.log('Fail to get file download link: ', e)
-    }
+      try {
+        if (associatedObjectType === FileHandleAssociateType.TableEntity) {
+          const files = await getTableEntityFileHandle(true)
+          preSignedURL = files.requestedFiles[0].preSignedURL!
+        } else {
+          const file = await getFileResult(fileEntity!, accessToken, false, true)
+          preSignedURL = file.preSignedURL
+        }
+      } catch (e) {
+        console.log('Fail to get file download link: ', e)
+      }
 
-    if (!preSignedURL) {
-      console.log('Fail to get file download link')
-    } else {
-      window.open(preSignedURL)
-      if (onClickCallback) {
-        onClickCallback()
+      if (!preSignedURL) {
+        safariDownloadWindow?.close()
+        console.log('Fail to get file download link')
+      } else {
+        if (isSafari && safariDownloadWindow) {
+          safariDownloadWindow.location = preSignedURL
+          setTimeout(() => {
+            if (safariDownloadWindow) {
+              safariDownloadWindow.close()
+            }
+          }, 10000)
+        } else {
+          window.open(preSignedURL)
+        }
+        if (onClickCallback) {
+          onClickCallback()
+        }
       }
-    }
   }
 
   const hasFileHandle = (fh: FileHandle) => {
