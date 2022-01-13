@@ -47,6 +47,8 @@ export interface CardLink {
   // the value that will go into the url link should be surrounded with parenthesis, making the search
   // param study=(ROSMAP) instead of study=ROSMAP
   wrapValueWithParens?: boolean
+  // Conditionally render as a link. Only show a link if the column value in this row has a value (and that value is not 'false').
+  conditionalLinkColumnName?: string
 }
 
 export type MarkdownLink = {

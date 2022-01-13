@@ -366,7 +366,7 @@ export default class GenericCard extends React.Component<
       if (!data || !schema) {
         throw Error('Must specify CardLink and data for linking to work')
       }
-      const { matchColumnName, URLColumnName } = cardLink
+      const { matchColumnName, URLColumnName, conditionalLinkColumnName } = cardLink
       const indexInData = schema[matchColumnName]
       if (indexInData === undefined) {
         console.error(
@@ -374,7 +374,19 @@ export default class GenericCard extends React.Component<
         )
       } else {
         const value = data[indexInData]
-        return `/${cardLink.baseURL}?${URLColumnName}=${value}`
+        if (value) {
+          // value is defined! PORTALS-2088:  Return the link, unless...
+          // a conditionalLinkColumnName has been set and it's value is 'false' or falsy.
+          // Scientist can decide when the value should not be linked.
+          if (conditionalLinkColumnName && schema[conditionalLinkColumnName]) {
+            const indexOfConditionalLinkData = schema[conditionalLinkColumnName]
+            const conditionalLinkValue = data[indexOfConditionalLinkData]
+            if (conditionalLinkValue === 'false' || !conditionalLinkValue) {
+              return undefined
+            }
+          }
+          return `/${cardLink.baseURL}?${URLColumnName}=${value}`
+        }
       }
     }
     return undefined

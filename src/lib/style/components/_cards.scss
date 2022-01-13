@@ -176,6 +176,7 @@ $text-color-lighter: #898989;
     padding-top: $baseline-grid;
     margin-bottom: $baseline-grid;
     max-width: 850px;
+    overflow-x: hidden;
     &.SRC-dataset {
       width: 80%;
     }
