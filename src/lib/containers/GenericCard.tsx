@@ -366,7 +366,19 @@ export default class GenericCard extends React.Component<
       if (!data || !schema) {
         throw Error('Must specify CardLink and data for linking to work')
       }
-      const { matchColumnName, URLColumnName } = cardLink
+      const { matchColumnName, URLColumnName, overrideLinkURLColumnName } = cardLink
+
+      // PORTALS-2088:  Return the link, unless...
+      // an overrideLinkURLColumnName has been set and it's value is defined.
+      // In this case, just use the overrideLinkURLColumnName value
+      if (overrideLinkURLColumnName && schema[overrideLinkURLColumnName]) {
+        const indexOfOverrideLinkURLColumnName = schema[overrideLinkURLColumnName]
+        const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
+        if (overrideLinkValue) {
+          return overrideLinkValue
+        }
+      }
+
       const indexInData = schema[matchColumnName]
       if (indexInData === undefined) {
         console.error(
@@ -374,7 +386,10 @@ export default class GenericCard extends React.Component<
         )
       } else {
         const value = data[indexInData]
-        return `/${cardLink.baseURL}?${URLColumnName}=${value}`
+        if (value) {
+          // value is defined!
+          return `/${cardLink.baseURL}?${URLColumnName}=${value}`
+        }
       }
     }
     return undefined
