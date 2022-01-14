@@ -47,6 +47,8 @@ export interface CardLink {
   // the value that will go into the url link should be surrounded with parenthesis, making the search
   // param study=(ROSMAP) instead of study=ROSMAP
   wrapValueWithParens?: boolean
+  // If set and a value exists in this column for the row, just use this value for the href
+  overrideLinkURLColumnName?: string
 }
 
 export type MarkdownLink = {
