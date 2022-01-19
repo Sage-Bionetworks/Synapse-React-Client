@@ -204,4 +204,27 @@
       border-color: map.get(SRC.$colors, 'gray-400');
     }
   }
+
+  // Tertiary button based on Synapse Design System
+  // See https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Synapse-Style-%26-Component-Library?node-id=53%3A1239
+  .btn-tertiary {
+    @include button-outline-variant(
+      $color: map.get(SRC.$primary-color-palette, 500),
+      $color-hover: map.get(SRC.$primary-color-palette, 600),
+      $active-background: rgba(255, 255, 255, 0),
+      $active-border: map.get(SRC.$primary-color-palette, 700)
+    );
+    border: none;
+    font-weight: 900;
+    &:hover {
+      box-shadow: none;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 2px;
+    }
+
+    &:disabled {
+      color: map.get(SRC.$colors, 'gray-600');
+    }
+  }
 }
