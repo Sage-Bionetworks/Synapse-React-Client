@@ -8,15 +8,31 @@ import {
   Clear,
 } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
+import ReactTooltip from 'react-tooltip'
+import { rebuildTooltip } from '../utils/functions/TooltipUtils'
+
+export type AlertButtonConfig = {
+  text: string
+  isDisabled?: boolean
+  tooltipText?: string
+} & (
+  | // "onClick" or "href", but not both
+  {
+      onClick?:
+        | ((e?: React.MouseEvent<HTMLElement, MouseEvent>) => void)
+        | (() => void)
+    }
+  | { href?: string }
+)
+
+const FULL_WIDTH_ALERT_TOOLTIP_ID = 'FullWidthAlertTooltip'
 
 export interface FullWidthAlertProps extends AlertProps {
   variant: string
   title?: string
   description?: string
-  primaryButtonText?: string
-  onPrimaryButtonClick?: () => void
-  secondaryButtonText?: string
-  onSecondaryButtonClickOrHref?: (() => void) | string
+  primaryButtonConfig?: AlertButtonConfig
+  secondaryButtonConfig?: AlertButtonConfig
   onClose?: () => void
   autoCloseAfterDelayInSeconds?: number
   isGlobal?: boolean
@@ -37,6 +53,41 @@ function getIcon(variant?: string) {
   }
 }
 
+function ButtonFromConfig(props: {
+  config?: AlertButtonConfig
+  className: string
+  variant: string
+}) {
+  const { config, variant, className } = props
+  if (config) {
+    return (
+      <span // See https://github.com/wwayne/react-tooltip/issues/304
+        data-tip={config.tooltipText}
+        data-for={FULL_WIDTH_ALERT_TOOLTIP_ID}
+        data-tip-disable={false}
+      >
+        <Button
+          variant={variant}
+          className={className}
+          disabled={config.isDisabled}
+          onClick={e => {
+            if ('onClick' in config) {
+              e.preventDefault()
+              config.onClick!(e)
+            } else if ('href' in config) {
+              e.preventDefault()
+              window.open(config.href, '_blank', 'noopener')
+            }
+          }}
+        >
+          {config.text}
+        </Button>
+      </span>
+    )
+  }
+  return null
+}
+
 /**
  * Nav bar item, displayed when files have been added to the Download Cart.
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
@@ -45,10 +96,8 @@ function FullWidthAlert(props: FullWidthAlertProps) {
   const {
     title,
     description,
-    secondaryButtonText,
-    onSecondaryButtonClickOrHref,
-    primaryButtonText,
-    onPrimaryButtonClick,
+    primaryButtonConfig,
+    secondaryButtonConfig,
     show,
     onClose,
     autoCloseAfterDelayInSeconds,
@@ -58,9 +107,11 @@ function FullWidthAlert(props: FullWidthAlertProps) {
   } = props
   const iconContent = getIcon(variant)
 
-  const hasActions =
-    (primaryButtonText && onPrimaryButtonClick) ||
-    (secondaryButtonText && onSecondaryButtonClickOrHref)
+  const hasActions = primaryButtonConfig || secondaryButtonConfig
+
+  useEffect(() => {
+    rebuildTooltip()
+  }, [primaryButtonConfig, secondaryButtonConfig])
 
   useEffect(() => {
     let timer: NodeJS.Timeout
@@ -84,6 +135,11 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         isGlobal ? 'global' : ''
       } ${additionalAlertVariantClass}`}
     >
+      <ReactTooltip
+        id={FULL_WIDTH_ALERT_TOOLTIP_ID}
+        delayShow={300}
+        effect="solid"
+      />
       <div
         className={`gridContainer ${hasActions ? '' : 'noActions'} ${
           onClose ? 'hasCloseButton' : ''
@@ -94,38 +150,16 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           <Typography variant="headline3">{title}</Typography>
           <Typography variant="body1">{description}</Typography>
         </span>
-        {secondaryButtonText && onSecondaryButtonClickOrHref && (
-          <a
-            className="secondaryButton"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={
-              typeof onSecondaryButtonClickOrHref === 'function'
-                ? e => {
-                    e.preventDefault()
-                    onSecondaryButtonClickOrHref()
-                  }
-                : undefined
-            }
-            href={
-              typeof onSecondaryButtonClickOrHref === 'string'
-                ? onSecondaryButtonClickOrHref
-                : '#'
-            }
-          >
-            {' '}
-            {secondaryButtonText}
-          </a>
-        )}
-        {primaryButtonText && onPrimaryButtonClick && (
-          <Button
-            className="primaryButton"
-            variant="secondary"
-            onClick={onPrimaryButtonClick}
-          >
-            {primaryButtonText}
-          </Button>
-        )}
+        <ButtonFromConfig
+          config={secondaryButtonConfig}
+          variant="tertiary"
+          className="secondaryButton"
+        />
+        <ButtonFromConfig
+          config={primaryButtonConfig}
+          variant="secondary"
+          className="primaryButton"
+        />
         {onClose && (
           <button className="closeAlert" onClick={onClose}>
             <Clear fontSize={'large'} />

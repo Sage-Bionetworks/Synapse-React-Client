@@ -2,7 +2,7 @@ import { uniqueId } from 'lodash-es'
 import React from 'react'
 import { toast, ToastBar, Toaster } from 'react-hot-toast'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
-import FullWidthAlert from './FullWidthAlert'
+import FullWidthAlert, { AlertButtonConfig } from './FullWidthAlert'
 
 export type ToastMessageProps = {
   text: string
@@ -63,11 +63,9 @@ type ToastMessageOptions = {
   title?: string
   /* autoCloseInMs default: 15000 */
   autoCloseInMs?: number
-  primaryButtonText?: string
-  onPrimaryButtonClick?: () => void
+  primaryButtonConfig?: AlertButtonConfig
+  secondaryButtonConfig?: AlertButtonConfig
   dismissOnPrimaryButtonClick?: boolean
-  secondaryButtonText?: string
-  onSecondaryButtonClickOrHref?: (() => void) | string
   dismissOnSecondaryButtonClick?: boolean
 }
 
@@ -95,38 +93,35 @@ export const displayToast = (
 
   const {
     title = undefined,
-    primaryButtonText = undefined,
-    secondaryButtonText = undefined,
+    primaryButtonConfig = undefined,
+    secondaryButtonConfig = undefined,
     dismissOnPrimaryButtonClick = false,
     dismissOnSecondaryButtonClick = false,
   } = toastMessageOptions
 
-  let onPrimaryButtonClick
-  if (toastMessageOptions.onPrimaryButtonClick) {
-    if (dismissOnPrimaryButtonClick) {
-      onPrimaryButtonClick = () => {
-        toastMessageOptions.onPrimaryButtonClick!()
-        onClose()
-      }
-    } else {
-      onPrimaryButtonClick = toastMessageOptions.onPrimaryButtonClick
+  // If 'dismissOnPrimaryButtonClick' is true, then we need to invoke onClose after onClick is invoked.
+  if (
+    primaryButtonConfig &&
+    'onClick' in primaryButtonConfig &&
+    dismissOnPrimaryButtonClick
+  ) {
+    const onClick = primaryButtonConfig.onClick!
+    primaryButtonConfig.onClick = e => {
+      onClick(e)
+      onClose()
     }
   }
 
-  let onSecondaryButtonClickOrHref
-  if (toastMessageOptions.onSecondaryButtonClickOrHref) {
-    if (
-      dismissOnSecondaryButtonClick &&
-      typeof toastMessageOptions.onSecondaryButtonClickOrHref === 'function'
-    ) {
-      onSecondaryButtonClickOrHref = () => {
-        // @ts-ignore - The above type guard isn't recognized within the inner function
-        toastMessageOptions.onSecondaryButtonClickOrHref!()
-        onClose()
-      }
-    } else {
-      onSecondaryButtonClickOrHref =
-        toastMessageOptions.onSecondaryButtonClickOrHref
+  // ditto for secondary
+  if (
+    secondaryButtonConfig &&
+    'onClick' in secondaryButtonConfig &&
+    dismissOnSecondaryButtonClick
+  ) {
+    const onClick = secondaryButtonConfig.onClick!
+    secondaryButtonConfig.onClick = e => {
+      onClick(e)
+      onClose()
     }
   }
 
@@ -145,10 +140,8 @@ export const displayToast = (
       show={true}
       title={title}
       description={message}
-      primaryButtonText={primaryButtonText}
-      onPrimaryButtonClick={onPrimaryButtonClick}
-      secondaryButtonText={secondaryButtonText}
-      onSecondaryButtonClickOrHref={onSecondaryButtonClickOrHref}
+      primaryButtonConfig={primaryButtonConfig}
+      secondaryButtonConfig={secondaryButtonConfig}
     />,
     {
       id: id,
