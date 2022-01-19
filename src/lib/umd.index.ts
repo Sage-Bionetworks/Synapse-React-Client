@@ -42,6 +42,7 @@ import {
 } from './utils/SynapseContext'
 import { DatasetItemsEditor } from './containers/table/datasets/DatasetItemsEditor'
 import { EntityTypeIcon } from './containers/EntityIcon'
+import { SkeletonButton } from './assets/skeletons/SkeletonButton'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -87,6 +88,7 @@ const SynapseComponents = {
   ProgrammaticTableDownload,
   DirectProgrammaticDownload,
   ProgrammaticInstructionsModal,
+  SkeletonButton,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
