@@ -83,7 +83,7 @@
     background-color: white;
   }
   tbody tr:nth-of-type(odd) > .stickyColumn {
-    background-color: #FBFBFC;
+    background-color: #fbfbfc;
   }
 }
 
@@ -142,13 +142,17 @@ $link-underline-color-default: adjust-color(
 // Core link styles across the portal main area.
 @mixin highlightLink() {
   color: SRC.$primary-action-color;
-  text-decoration: none;
   font-weight: 700;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid $link-underline-color-default;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: $link-underline-color-default;
   &:hover {
-    border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
-    margin-bottom: -1px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    text-decoration-color: map.get(SRC.$primary-color-palette, 700);
   }
   &.disabled {
     @include disabled;
@@ -159,11 +163,12 @@ $link-underline-color-default: adjust-color(
   color: SRC.$primary-action-color;
   text-decoration: none;
   font-weight: 700;
-  border-bottom: 2px solid transparent;
   letter-spacing: 0.5px;
   &:hover {
-    border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
-    margin-bottom: 0px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    text-decoration-color: map.get(SRC.$primary-color-palette, 700);
   }
   &.disabled {
     @include disabled;
