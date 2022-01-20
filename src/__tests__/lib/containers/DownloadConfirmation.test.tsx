@@ -1,7 +1,5 @@
 import { mount } from 'enzyme'
-import {
-  QueryBundleRequest,
-} from '../../../lib/utils/synapseTypes/'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
 import * as React from 'react'
 import {
   DownloadConfirmation,
@@ -52,15 +50,16 @@ const queryBundleResponse: any = {
   sumFileSizesBytes: 40128868,
 }
 
-const addFilesToDownloadListRequest:AddToDownloadListRequest = {
+const addFilesToDownloadListRequest: AddToDownloadListRequest = {
   query: query,
-  concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+  concreteType:
+    'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
 }
 
 const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:
     'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
-  numberOfFilesAdded: 1
+  numberOfFilesAdded: 1,
 }
 
 const createMountedComponent = (props: DownloadConfirmationProps) => {
@@ -144,7 +143,11 @@ describe('it performs the expected functionality', () => {
     expect(mockToastFn).toBeCalledWith(
       'File(s) were successfully added to your Download List.',
       'success',
-      expect.objectContaining({ primaryButtonText: 'View Download List' }),
+      expect.objectContaining({
+        primaryButtonConfig: expect.objectContaining({
+          text: 'View Download List',
+        }),
+      }),
     )
   })
 })
