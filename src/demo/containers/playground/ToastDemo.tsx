@@ -18,12 +18,16 @@ export const ToastDemo = () => {
     displayToast(message, variant, {
       title: title,
       autoCloseInMs: autoClose,
-      primaryButtonText: buttonText ? buttonText : undefined,
-      onPrimaryButtonClick: () => {
-        console.log('Primary button clicked!')
+      primaryButtonConfig: {
+        text: buttonText,
+        onClick: () => {
+          console.log('Primary button clicked!')
+        },
       },
-      secondaryButtonText: linkText ? linkText : undefined,
-      onSecondaryButtonClickOrHref: '#',
+      secondaryButtonConfig: {
+        text: linkText,
+        href: '#',
+      },
     })
   }
   return (

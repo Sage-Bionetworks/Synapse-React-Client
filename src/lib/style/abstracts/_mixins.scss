@@ -83,7 +83,7 @@
     background-color: white;
   }
   tbody tr:nth-of-type(odd) > .stickyColumn {
-    background-color: #FBFBFC;
+    background-color: #fbfbfc;
   }
 }
 
@@ -131,10 +131,17 @@ $link-underline-color-default: adjust-color(
   $lightness: 40%
 ) !default;
 
+@mixin underline($color, $thickness, $offset) {
+  text-decoration: underline;
+  text-underline-offset: $offset;
+  text-decoration-thickness: $thickness;
+  text-decoration-color: $color;
+}
+
 @mixin disabled() {
   color: map.get(SRC.$colors, 'gray-600');
   &:hover {
-    border-bottom: 1px solid $link-underline-color-default;
+    @include underline($link-underline-color-default, 1px, 4px);
     cursor: default;
   }
 }
@@ -142,13 +149,11 @@ $link-underline-color-default: adjust-color(
 // Core link styles across the portal main area.
 @mixin highlightLink() {
   color: SRC.$primary-action-color;
-  text-decoration: none;
   font-weight: 700;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid $link-underline-color-default;
+  @include underline($link-underline-color-default, 1px, 4px);
   &:hover {
-    border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
-    margin-bottom: -1px;
+    @include underline(map.get(SRC.$primary-color-palette, 700), 2px, 4px);
   }
   &.disabled {
     @include disabled;
@@ -159,11 +164,9 @@ $link-underline-color-default: adjust-color(
   color: SRC.$primary-action-color;
   text-decoration: none;
   font-weight: 700;
-  border-bottom: 2px solid transparent;
   letter-spacing: 0.5px;
   &:hover {
-    border-bottom: 2px solid map.get(SRC.$primary-color-palette, 700);
-    margin-bottom: 0px;
+    @include underline(map.get(SRC.$primary-color-palette, 700), 2px, 4px);
   }
   &.disabled {
     @include disabled;
@@ -174,10 +177,10 @@ $link-underline-color-default: adjust-color(
   color: unset;
   text-decoration: unset;
   font-weight: unset;
-  border-bottom: unset;
+  text-decoration: unset;
   letter-spacing: unset;
   &:hover {
-    border-bottom: unset;
+    text-decoration: unset;
     margin-bottom: unset;
   }
   &.disabled {
