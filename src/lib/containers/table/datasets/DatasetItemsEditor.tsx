@@ -120,8 +120,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           'warning',
           {
             title: 'Dataset Updated since Last Fetched',
-            primaryButtonText: 'Retrieve Dataset',
-            onPrimaryButtonClick: refetch,
+            primaryButtonConfig: { text: 'Retrieve Dataset', onClick: refetch },
           },
         )
       } else {

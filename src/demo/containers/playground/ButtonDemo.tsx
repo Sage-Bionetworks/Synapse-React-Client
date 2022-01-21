@@ -23,6 +23,7 @@ export const ButtonDemo: React.FunctionComponent = () => {
   const colorVariants: string[] = [
     'sds-primary',
     'outline',
+    'tertiary',
     'primary',
     'secondary',
     'light-secondary',
