@@ -56,6 +56,8 @@ export type DatasetItemsEditorTableData = DatasetItem & {
 const ROW_HEIGHT = 42
 const TABLE_HEIGHT = 350
 
+const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
+
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { entityId, onSave, onClose } = props
 
@@ -104,13 +106,15 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
   const mutation = useUpdateEntity<Dataset>({
     onSuccess: () => {
-      displayToast(
-        'Create a Version of this Dataset to freeze it in its current state',
-        'success',
-        { title: 'Dataset Saved' },
-      )
       if (onSave) {
         onSave()
+      } else {
+        // If onSave isn't specified, push a generic toast message.
+        displayToast(
+          'Create a Version of this Dataset to freeze it in its current state',
+          'success',
+          { title: 'Dataset Saved' },
+        )
       }
     },
     onError: error => {
@@ -143,22 +147,55 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     }
   })
 
-  function addItemsToDataset(newItems: Reference[]) {
+  function addItemsToDataset(itemsToAdd: Reference[]) {
     setDatasetToUpdate(datasetToUpdate => {
       if (datasetToUpdate) {
-        const existingItems = datasetToUpdate.items.filter(
-          item => !newItems.find(newItem => newItem.targetId === item.entityId),
+        // Items that were already in the dataset and are not being updated
+        const unchangedItems = datasetToUpdate.items.filter(
+          item =>
+            !itemsToAdd.find(newItem => newItem.targetId === item.entityId),
         )
 
-        if (existingItems.length < datasetToUpdate.items.length) {
-          displayToast(
-            'Files were added that were already in the dataset. The versions of those files might have been updated.',
-            'info',
-          )
+        // Items that were already in the dataset, but were selected so the version may have been updated
+        const updatedItems = itemsToAdd.filter(newItem =>
+          datasetToUpdate.items.find(
+            existingItem => existingItem.entityId === newItem.targetId,
+          ),
+        )
+
+        // Items that were not previously in the dataset
+        const newItems = itemsToAdd.filter(
+          newItem =>
+            !datasetToUpdate.items.find(
+              existingItem => existingItem.entityId === newItem.targetId,
+            ),
+        )
+
+        // "X item(s) added"
+        let toastMessageTitle = `${newItems.length} Item${
+          newItems.length === 1 ? '' : 's'
+        } added`
+
+        // "and Y item(s) updated", only shown if there are updated items
+        if (updatedItems.length > 0) {
+          toastMessageTitle += ` and ${updatedItems.length} Item${
+            updatedItems.length === 1 ? '' : 's'
+          } updated`
+        } else {
+          // if no items were updated, title = "X items(s) added" + " to Dataset"
+          toastMessageTitle += ` to Dataset`
         }
 
+        displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
+          title: toastMessageTitle,
+        })
+
         const items = [
-          ...existingItems,
+          ...unchangedItems,
+          ...updatedItems.map(item => ({
+            entityId: item.targetId,
+            versionNumber: item.targetVersionNumber!,
+          })),
           ...newItems.map(item => ({
             entityId: item.targetId,
             versionNumber: item.targetVersionNumber!,
@@ -185,6 +222,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         datasetItem => !selectedIds.has(datasetItem.entityId),
       ),
     }))
+
+    displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
+      title: `${selectedIds.size} Item${
+        selectedIds.size === 1 ? '' : 's'
+      } removed from the Dataset`,
+    })
 
     clearSelectedIds()
   }
