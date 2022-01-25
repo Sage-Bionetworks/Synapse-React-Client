@@ -59,7 +59,7 @@ function ButtonFromConfig(props: {
   variant: string
 }) {
   const { config, variant, className } = props
-  if (config) {
+  if (config && ('onClick' in config || 'href' in config)) {
     return (
       <span // See https://github.com/wwayne/react-tooltip/issues/304
         data-tip={config.tooltipText}
