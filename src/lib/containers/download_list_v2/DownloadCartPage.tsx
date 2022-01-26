@@ -60,7 +60,19 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
         <div className="pageHeader">
           <div className="grid">
             <h3 className="pageHeaderTitle">Your Download Cart</h3>
-            <a className="clearDownloadListLink" onClick={clearDownloadList}>
+            <a
+              className="clearDownloadListLink"
+              onClick={clearDownloadList}
+              data-tip="Immediately removes all items from your download list"
+              data-for="clearDownloadListTooltip"
+            >
+              <ReactTooltip
+                  delayShow={300}
+                  place="right"
+                  type="dark"
+                  effect="solid"
+                  id="clearDownloadListTooltip"
+                />
               <span>
                 <IconSvg options={{
                   icon: 'delete',
@@ -180,7 +192,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                         <IconSvg options={{ icon: 'code' }} /> Programmatic Download
                       </Typography>
                       <HelpPopover
-                          markdownText='This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket.  External links will require navigation to an external site, which may require a separate login process.'
+                          markdownText='This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket).  External links will require navigation to an external site, which may require a separate login process.'
                         />
                     </div>
                     <Typography variant={'body1'}>
