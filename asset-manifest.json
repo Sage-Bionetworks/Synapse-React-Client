@@ -1,11 +1,11 @@
 {
   "files": {
     "main.css": "/Synapse-React-Client/static/css/main.3e5fcfb3.chunk.css",
-    "main.js": "/Synapse-React-Client/build/main.a34688d4.js",
+    "main.js": "/Synapse-React-Client/build/main.ba65594c.js",
     "runtime-main.js": "/Synapse-React-Client/build/bundle.c0e43e4d.js",
     "static/css/2.da02e153.chunk.css": "/Synapse-React-Client/static/css/2.da02e153.chunk.css",
-    "build/2.7d5cd0dc.js": "/Synapse-React-Client/build/2.7d5cd0dc.js",
-    "build/2.7d5cd0dc.js.LICENSE.txt": "/Synapse-React-Client/build/2.7d5cd0dc.js.LICENSE.txt",
+    "build/2.203c1ddf.js": "/Synapse-React-Client/build/2.203c1ddf.js",
+    "build/2.203c1ddf.js.LICENSE.txt": "/Synapse-React-Client/build/2.203c1ddf.js.LICENSE.txt",
     "index.html": "/Synapse-React-Client/index.html",
     "static/css/2.da02e153.chunk.css.map": "/Synapse-React-Client/static/css/2.da02e153.chunk.css.map",
     "static/css/main.3e5fcfb3.chunk.css.map": "/Synapse-React-Client/static/css/main.3e5fcfb3.chunk.css.map",
@@ -49,8 +49,8 @@
   "entrypoints": [
     "build/bundle.c0e43e4d.js",
     "static/css/2.da02e153.chunk.css",
-    "build/2.7d5cd0dc.js",
+    "build/2.203c1ddf.js",
     "static/css/main.3e5fcfb3.chunk.css",
-    "build/main.a34688d4.js"
+    "build/main.ba65594c.js"
   ]
 }
