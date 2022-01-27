@@ -57,7 +57,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
     <span className="download-details-container">
       <span>
         <FontAwesomeIcon className={iconClassName} icon="file" />
-        {!isInactive && <> {numFiles} &nbsp; files </>}
+        {!isInactive && <> {numFiles}&nbsp;files </>}
       </span>
       <span
         data-for={numBytesTooltipId}

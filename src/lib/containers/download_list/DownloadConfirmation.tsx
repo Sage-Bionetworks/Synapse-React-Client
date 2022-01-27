@@ -19,11 +19,13 @@ import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityC
 import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import { displayToast } from '../ToastMessage'
+import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 
 enum StatusEnum {
   LOADING_INFO,
   PROCESSING,
   INFO,
+  INFO_ITEMS_IN_LIST,
   SIGNED_OUT,
 }
 
@@ -95,7 +97,19 @@ const StatusConstruct: UiStateDictionary = {
     infoText: 'Would you like to add all files to the download list?',
     closeText: 'Cancel',
   },
-
+  [StatusEnum.INFO_ITEMS_IN_LIST]: {
+    className: 'alert-info',
+    infoText: (
+      <>
+        You already have files in your download list, which will be mixed with
+        new files added to your download list.
+        <br />
+        We recommend completing or clearing your download list before adding
+        these files.
+      </>
+    ),
+    closeText: 'Cancel',
+  },
   [StatusEnum.PROCESSING]: {
     className: 'alert-info',
     infoText: 'Adding Files To List',
@@ -139,14 +153,22 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       fileCount: 0,
       fileSize: 0,
     })
-    const { refetch } = useGetDownloadListStatistics()
+    const { data: downloadListStatistics, refetch } =
+      useGetDownloadListStatistics()
 
     const lastQueryRequest = getLastQueryRequest!()
     // is not defined (configured for a container)
     const [showDownloadList, setShowDownloadList] = useState(false)
     const updateStats = useCallback(
-      async (count?: number, bytes?: number) => {
-        if (accessToken) {
+      async (
+        count?: number,
+        bytes?: number,
+        downloadListStatistics?: FilesStatisticsResponse,
+      ) => {
+        if (accessToken && downloadListStatistics) {
+          const hasFilesInDownloadList =
+            downloadListStatistics.totalNumberOfFiles ?? 0 > 0
+
           const estimatedDownloadBytesPerSecond = await testDownloadSpeed(
             accessToken,
           )
@@ -156,7 +178,11 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           const duration = moment
             .duration(durationSeconds, 'seconds')
             .humanize()
-          setStatus(StatusEnum.INFO)
+          setStatus(
+            hasFilesInDownloadList
+              ? StatusEnum.INFO_ITEMS_IN_LIST
+              : StatusEnum.INFO,
+          )
           setState({
             fileCount: fileCount,
             fileSize: size,
@@ -174,13 +200,20 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       includeTypes: [EntityType.FILE],
     })
     useDeepCompareEffect(() => {
-      if (isSuccess && entityChildrenData) {
+      if (isSuccess && entityChildrenData && downloadListStatistics) {
         updateStats(
           entityChildrenData.totalChildCount,
           entityChildrenData.sumFileSizesBytes,
+          downloadListStatistics,
         )
       }
-    }, [updateStats, folderId, isSuccess, entityChildrenData])
+    }, [
+      updateStats,
+      folderId,
+      isSuccess,
+      entityChildrenData,
+      downloadListStatistics,
+    ])
 
     const partMask =
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
@@ -196,13 +229,19 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     )
 
     useDeepCompareEffect(() => {
-      if (queryResultBundle) {
+      if (queryResultBundle && downloadListStatistics) {
         updateStats(
           queryResultBundle.queryCount,
           queryResultBundle.sumFileSizes?.sumFileSizesBytes,
+          downloadListStatistics,
         )
       }
-    }, [updateStats, lastQueryRequest, queryResultBundle])
+    }, [
+      updateStats,
+      lastQueryRequest,
+      queryResultBundle,
+      downloadListStatistics,
+    ])
 
     const onCancel = fnClose
       ? () => fnClose()
@@ -238,7 +277,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     const getContent = ({
       fileCount,
       fileSize,
-      errorMessage,
     }: DownloadConfirmationState): JSX.Element => {
       switch (status) {
         case StatusEnum.LOADING_INFO:
@@ -255,13 +293,16 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         case StatusEnum.SIGNED_OUT:
           return <>{StatusConstruct[status].infoText}</>
         case StatusEnum.INFO:
+        case StatusEnum.INFO_ITEMS_IN_LIST:
           return (
             <>
               <DownloadDetails
                 numFiles={fileCount}
                 numBytes={fileSize}
               ></DownloadDetails>
-              <span>{StatusConstruct[status].infoText}</span>
+              <span className="download-confirmation-infoText">
+                {StatusConstruct[status].infoText}
+              </span>
             </>
           )
 
@@ -295,7 +336,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           }
         `}
         >
-          <div>{getContent(state)}</div>
+          {getContent(state)}
           <div className="download-confirmation-action">
             {status !== StatusEnum.PROCESSING && (
               <button className="btn btn-link" onClick={onCancel}>
@@ -303,7 +344,8 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
               </button>
             )}
 
-            {status === StatusEnum.INFO && (
+            {(status === StatusEnum.INFO ||
+              status === StatusEnum.INFO_ITEMS_IN_LIST) && (
               <button
                 type="button"
                 className="btn btn-primary"
