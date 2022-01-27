@@ -60,10 +60,20 @@ export function FullTextSearch(props: FullTextSearchProps) {
           'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
         searchExpression: searchText,
       }
+      // PORTALS-2093: does this additional filter already exist?
+      const found = additionalFilters.find(filter =>
+        filter.concreteType == textMatchesQueryFilter.concreteType &&
+        (filter as TextMatchesQueryFilter).searchExpression == textMatchesQueryFilter.searchExpression
+      )
+      if (found) {
+        return
+      }
       additionalFilters.push(textMatchesQueryFilter)
 
       lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
       executeQueryRequest!(lastQueryRequestDeepClone)
+      // reset the search text after adding this filter
+      setSearchText('')
     }
   }
 
