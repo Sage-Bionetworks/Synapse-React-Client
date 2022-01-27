@@ -62,13 +62,13 @@ function ButtonFromConfig(props: {
   if (config && ('onClick' in config || 'href' in config)) {
     return (
       <span // See https://github.com/wwayne/react-tooltip/issues/304
+        className={className}
         data-tip={config.tooltipText}
         data-for={FULL_WIDTH_ALERT_TOOLTIP_ID}
         data-tip-disable={false}
       >
         <Button
           variant={variant}
-          className={className}
           disabled={config.isDisabled}
           onClick={e => {
             if ('onClick' in config) {
