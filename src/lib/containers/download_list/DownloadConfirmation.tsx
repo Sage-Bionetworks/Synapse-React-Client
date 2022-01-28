@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { SynapseClient, SynapseConstants } from '../../utils'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import { EntityType, QueryBundleRequest } from '../../utils/synapseTypes/'
@@ -27,13 +27,6 @@ enum StatusEnum {
   INFO,
   INFO_ITEMS_IN_LIST,
   SIGNED_OUT,
-}
-
-export type DownloadConfirmationState = {
-  fileCount: number
-  fileSize: number
-  downloadEstimate?: string
-  errorMessage?: string
 }
 
 export type DownloadConfirmationProps = {
@@ -133,6 +126,44 @@ const StatusConstruct: UiStateDictionary = {
   },
 }
 
+const DownloadConfirmationContent = (props: {
+  status: StatusEnum
+  fileCount: number
+  fileSize: number
+}): JSX.Element => {
+  switch (props.status) {
+    case StatusEnum.LOADING_INFO:
+    case StatusEnum.PROCESSING:
+      return (
+        <div>
+          <span className={'spinner white'} />
+          <span className={'spinner__text'}>
+            {StatusConstruct[props.status].infoText}
+          </span>
+        </div>
+      )
+
+    case StatusEnum.SIGNED_OUT:
+      return <>{StatusConstruct[props.status].infoText}</>
+    case StatusEnum.INFO:
+    case StatusEnum.INFO_ITEMS_IN_LIST:
+      return (
+        <>
+          <DownloadDetails
+            numFiles={props.fileCount}
+            numBytes={props.fileSize}
+          ></DownloadDetails>
+          <span className="download-confirmation-infoText">
+            {StatusConstruct[props.status].infoText}
+          </span>
+        </>
+      )
+
+    default:
+      return <></>
+  }
+}
+
 //============= DownloadConfirmation component =============
 
 export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> =
@@ -149,10 +180,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     const [status, setStatus] = useState<StatusEnum>(
       accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
     )
-    const [state, setState] = useState<DownloadConfirmationState>({
-      fileCount: 0,
-      fileSize: 0,
-    })
+
+    const [fileCount, setFileCount] = useState(0)
+    const [fileSize, setFileSize] = useState(0)
+
     const { data: downloadListStatistics, refetch } =
       useGetDownloadListStatistics()
 
@@ -160,34 +191,24 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     // is not defined (configured for a container)
     const [showDownloadList, setShowDownloadList] = useState(false)
     const updateStats = useCallback(
-      async (
+      (
         count?: number,
         bytes?: number,
         downloadListStatistics?: FilesStatisticsResponse,
       ) => {
         if (accessToken && downloadListStatistics) {
           const hasFilesInDownloadList =
-            downloadListStatistics.totalNumberOfFiles ?? 0 > 0
+            downloadListStatistics.totalNumberOfFiles > 0
 
-          const estimatedDownloadBytesPerSecond = await testDownloadSpeed(
-            accessToken,
-          )
           const size = bytes ?? 0
           const fileCount = count ?? 0
-          const durationSeconds = size / estimatedDownloadBytesPerSecond
-          const duration = moment
-            .duration(durationSeconds, 'seconds')
-            .humanize()
           setStatus(
             hasFilesInDownloadList
               ? StatusEnum.INFO_ITEMS_IN_LIST
               : StatusEnum.INFO,
           )
-          setState({
-            fileCount: fileCount,
-            fileSize: size,
-            downloadEstimate: duration,
-          })
+          setFileCount(fileCount)
+          setFileSize(size)
         }
       },
       [accessToken],
@@ -270,46 +291,9 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
         const newStatus = result[0]
         setStatus(newStatus)
         refetch()
-        setState({ ...state, errorMessage: result[1] })
       }
     }
 
-    const getContent = ({
-      fileCount,
-      fileSize,
-    }: DownloadConfirmationState): JSX.Element => {
-      switch (status) {
-        case StatusEnum.LOADING_INFO:
-        case StatusEnum.PROCESSING:
-          return (
-            <div>
-              <span className={'spinner white'} />
-              <span className={'spinner__text'}>
-                {StatusConstruct[status].infoText}
-              </span>
-            </div>
-          )
-
-        case StatusEnum.SIGNED_OUT:
-          return <>{StatusConstruct[status].infoText}</>
-        case StatusEnum.INFO:
-        case StatusEnum.INFO_ITEMS_IN_LIST:
-          return (
-            <>
-              <DownloadDetails
-                numFiles={fileCount}
-                numBytes={fileSize}
-              ></DownloadDetails>
-              <span className="download-confirmation-infoText">
-                {StatusConstruct[status].infoText}
-              </span>
-            </>
-          )
-
-        default:
-          return <></>
-      }
-    }
     if (showDownloadList) {
       // go to the Download Cart Page
       if (downloadCartPageUrl) window.location.href = downloadCartPageUrl
@@ -336,7 +320,11 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           }
         `}
         >
-          {getContent(state)}
+          <DownloadConfirmationContent
+            status={status}
+            fileCount={fileCount}
+            fileSize={fileSize}
+          />
           <div className="download-confirmation-action">
             {status !== StatusEnum.PROCESSING && (
               <button className="btn btn-link" onClick={onCancel}>
