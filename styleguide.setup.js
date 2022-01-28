@@ -15,6 +15,7 @@ import {
   COMPUTATIONAL,
   PUBLICATION,
   OBSERVATION_CARD,
+  EXPERIMENTAL_TOOL,
 } from './src/lib/utils/SynapseConstants'
 import brainSvg from './src/demo/containers/playground/icons/brain.svg'
 import circleSvg from './src/demo/containers/playground/icons/circle.svg'
@@ -88,6 +89,7 @@ global.GENERIC_CARD = GENERIC_CARD
 global.COMPUTATIONAL = COMPUTATIONAL
 global.PUBLICATION = PUBLICATION
 global.OBSERVATION_CARD = OBSERVATION_CARD
+global.EXPERIMENTAL_TOOL = EXPERIMENTAL_TOOL
 global.Checkbox = Checkbox
 global.RadioGroup = RadioGroup
 global.ReactBootstrap = ReactBootstrap

@@ -2,40 +2,47 @@ Configured to show cards:
 ```jsx
 <QueryWrapperPlotNav
   rgbIndex={1}
-  name='Initiatives'
-  sql='SELECT * from syn24189696'
+  name='Tools'
+  sql='SELECT * FROM syn26438037'
   limit={5}
   defaultShowFacetVisualization={false}
   shouldDeepLink={true}
-  facetsToPlot={['fundingAgency']}
-  searchConfiguration={{
-    searchable: ['initiative'],
-  }}
-
   cardConfiguration={{
     type: GENERIC_CARD,
     titleLinkConfig: {
-        matchColumnName: 'initiative',
-        isMarkdown: false,
-        baseURL: 'Explore/Initiatives/DetailsPage',
-        URLColumnName: 'Initiative',
+      isMarkdown: false,
+      baseURL: 'Explore/Tools/DetailsPage',
+      URLColumnName: 'resourceId',
+      matchColumnName: 'resourceId',
+      overrideLinkURLColumnName: 'biobankURL',
     },
+    secondaryLabelLimit: 4,
     genericCardSchema: {
-      type: 'Initiative',
-      title: 'initiative',
-      description: 'summary',
-      link: 'website',
-      imageFileHandleColumnName: 'image',
-      
-      // secondaryLabels: [
-      //   'fundingAgency',
-      //   'abbreviation',
-      // ],
+      type: EXPERIMENTAL_TOOL,
+      title: 'resourceName',
+      subTitle: 'resourceType',
+      description: 'description',
+      secondaryLabels: [
+        'rrid',
+        'synonyms',
+        'cellLineCategory',
+        'cellLineDisease',
+        'modelofManifestation',
+        'backgroundStrain',
+        'backgroundSubstrain',
+        'animalModelDisease',
+        'animalModelOfManifestation',
+        'targetAntigen',
+        'reactiveSpecies',
+        'hostOrganism',
+        'specimenTissueType',
+        'specimenPreparationMethod',
+        'diseaseType',
+        'tumorType',
+        'specimenFormat',
+        'specimenType'
+      ],
     },
-    ctaLinkConfig: {
-      text: 'Visit Website',
-      link: 'website'
-    }
   }}
 />
 ```
