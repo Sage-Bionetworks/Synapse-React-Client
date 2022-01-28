@@ -1,18 +1,21 @@
-import { ActionRequiredCount } from "./ActionRequiredCount";
-import { DownloadListItemResult } from "./DownloadListItemResult";
+import { ActionRequiredCount } from './ActionRequiredCount'
+import { DownloadListItemResult } from './DownloadListItemResult'
 
-export type QueryResponseDetails = AvailableFilesResponse | FilesStatisticsResponse | ActionRequiredResponse
+export type QueryResponseDetails =
+  | AvailableFilesResponse
+  | FilesStatisticsResponse
+  | ActionRequiredResponse
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/AvailableFilesResponse.html
 export type AvailableFilesResponse = {
-  concreteType: string // Will indicate the full package name of the response type.
+  concreteType: 'org.sagebionetworks.repo.model.download.AvailableFilesResponse' // Will indicate the full package name of the response type.
   page: DownloadListItemResult[] //The page of download list items
-  nextPageToken?: string	// When provided, the nextPageToken indicates that there are more results. Forward this token to the next request to get the next page.
+  nextPageToken?: string // When provided, the nextPageToken indicates that there are more results. Forward this token to the next request to get the next page.
 }
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/FilesStatisticsResponse.html
 export type FilesStatisticsResponse = {
-  concreteType: string // Will indicate the full package name of the response type.
+  concreteType: 'org.sagebionetworks.repo.model.download.FilesStatisticsResponse' // Will indicate the full package name of the response type.
   totalNumberOfFiles: number // The total number of files on the user's download list.
   numberOfFilesAvailableForDownload: number // The number of files that are currently available for download.
   numberOfFilesAvailableForDownloadAndEligibleForPackaging: number //The number of files that are currently available for download and eligible for packaging.
@@ -22,7 +25,7 @@ export type FilesStatisticsResponse = {
 
 //http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/ActionRequiredResponse.html
 export type ActionRequiredResponse = {
-  concreteType: string // Will indicate the full package name of the response type.
+  concreteType: 'org.sagebionetworks.repo.model.download.ActionRequiredResponse' // Will indicate the full package name of the response type.
   page: ActionRequiredCount[] //The page of ActionRequiredCount
-  nextPageToken?: string	// When provided, the nextPageToken indicates that there are more results. Forward this token to the next request to get the next page.
+  nextPageToken?: string // When provided, the nextPageToken indicates that there are more results. Forward this token to the next request to get the next page.
 }

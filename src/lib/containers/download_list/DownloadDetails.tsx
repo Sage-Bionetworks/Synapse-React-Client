@@ -8,6 +8,7 @@ import ReactTooltip from 'react-tooltip'
 import moment from 'moment'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { SkeletonInlineBlock } from '../../assets/skeletons/SkeletonInlineBlock'
 
 library.add(faFile)
 library.add(faDatabase)
@@ -23,6 +24,12 @@ type State = {
   downloadSpeed: number
 }
 
+/**
+ * Displays download information including number of files, size of download, and time to download.
+ * Prefer to use {@link download_list_v2/DownloadDetails} instead, particularly when you have information about file packaging in/eligibility
+ * @param props
+ * @returns
+ */
 export default function DownloadDetails(props: DownloadDetailsProps) {
   const [state, setState] = useState<State>({
     isLoading: true,
@@ -57,7 +64,11 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
     <span className="download-details-container">
       <span>
         <FontAwesomeIcon className={iconClassName} icon="file" />
-        {!isInactive && <> {numFiles} &nbsp; files </>}
+        {isInactive ? (
+          <SkeletonInlineBlock width={50} />
+        ) : (
+          <> {numFiles}&nbsp;files </>
+        )}
       </span>
       <span
         data-for={numBytesTooltipId}
@@ -71,7 +82,11 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           id={numBytesTooltipId}
         />
         <FontAwesomeIcon className={iconClassName} icon="database" />
-        {calculateFriendlyFileSize(numBytes)}
+        {isInactive ? (
+          <SkeletonInlineBlock width={50} />
+        ) : (
+          calculateFriendlyFileSize(numBytes)
+        )}
       </span>
       <span
         data-for={friendlyTimeTooltipId}
@@ -85,8 +100,11 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           id={friendlyTimeTooltipId}
         />
         <FontAwesomeIcon className={iconClassName} icon="clock" />
-        {isLoading && numFiles > 0 && <span className="spinner" />}
-        {!isLoading && friendlyTime}
+        {isLoading && numFiles > 0 ? (
+          <SkeletonInlineBlock width={50} />
+        ) : (
+          friendlyTime
+        )}
       </span>
     </span>
   )

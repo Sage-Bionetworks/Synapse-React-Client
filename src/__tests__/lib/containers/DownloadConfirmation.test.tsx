@@ -1,21 +1,22 @@
-import { mount } from 'enzyme'
-import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import {
   DownloadConfirmation,
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
-import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
 import { displayToast } from '../../../lib/containers/ToastMessage'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../../lib/utils/SynapseContext'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
 import { AddToDownloadListRequest } from '../../../lib/utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { AddToDownloadListResponse } from '../../../lib/utils/synapseTypes/DownloadListV2/AddToDownloadListResponse'
+import { FilesStatisticsResponse } from '../../../lib/utils/synapseTypes/DownloadListV2/QueryResponseDetails'
+import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 
-let getQueryTableResultsFn: () => void
-let addFilesToDownloadRequestFn: () => void
+let getQueryTableResultsFn: jest.Mock
+let getDownloadListStatisticsResultsFn: jest.Mock
+let addFilesToDownloadRequestFn: jest.Mock
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const TestDownloadSpeed = require('../../../lib/utils/functions/testDownloadSpeed')
 const mockClose = jest.fn()
@@ -50,6 +51,16 @@ const queryBundleResponse: any = {
   sumFileSizesBytes: 40128868,
 }
 
+const filesStatisticsResponse: FilesStatisticsResponse = {
+  concreteType:
+    'org.sagebionetworks.repo.model.download.FilesStatisticsResponse',
+  totalNumberOfFiles: 0,
+  numberOfFilesAvailableForDownload: 0,
+  numberOfFilesAvailableForDownloadAndEligibleForPackaging: 0,
+  numberOfFilesRequiringAction: 0,
+  sumOfFileSizesAvailableForDownload: 0,
+}
+
 const addFilesToDownloadListRequest: AddToDownloadListRequest = {
   query: query,
   concreteType:
@@ -62,17 +73,16 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   numberOfFilesAdded: 1,
 }
 
-const createMountedComponent = (props: DownloadConfirmationProps) => {
-  const wrapper = mount<React.FunctionComponent<DownloadConfirmationProps>>(
-    <SynapseTestContext>
-      <DownloadConfirmation {...props} />
-    </SynapseTestContext>,
-  )
-
-  return { wrapper }
+function renderComponent(
+  componentProps?: DownloadConfirmationProps,
+  wrapperProps?: SynapseContextType,
+) {
+  return render(<DownloadConfirmation {...componentProps} />, {
+    wrapper: createWrapper(wrapperProps),
+  })
 }
 
-describe('it performs the expected functionality', () => {
+describe('DownloadConfirmation', () => {
   addFilesToDownloadRequestFn = SynapseClient.addFilesToDownloadListV2 = jest
     .fn()
     .mockResolvedValue(addFilesToDownloadListResponse)
@@ -81,6 +91,9 @@ describe('it performs the expected functionality', () => {
   getQueryTableResultsFn = SynapseClient.getQueryTableResults = jest
     .fn()
     .mockResolvedValue(queryBundleResponse)
+
+  getDownloadListStatisticsResultsFn = SynapseClient.getDownloadListStatistics =
+    jest.fn().mockResolvedValue(filesStatisticsResponse)
 
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
@@ -92,61 +105,74 @@ describe('it performs the expected functionality', () => {
   })
 
   it('should render without crashing with just a cancel button', () => {
-    const { wrapper } = createMountedComponent(props)
-    expect(wrapper).toBeDefined()
-    const mainDiv = wrapper.find('.download-confirmation')
-    expect(mainDiv.find('Alert')).toHaveLength(1)
-    expect(wrapper.find('button')).toHaveLength(1)
-    expect(wrapper.find('button').text()).toBe('Cancel')
+    renderComponent(props)
+    screen.getByRole('alert')
+    screen.getByRole('button', { name: 'Cancel' })
     expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
   })
 
   it("should call the 'close' function on cancel", () => {
-    const { wrapper } = createMountedComponent(props)
-    wrapper.find('button').simulate('click')
+    renderComponent(props)
+    userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(props.fnClose).toHaveBeenCalled()
   })
 
-  // I think resolveAllPending relies on useEffect() (rather than useDeepCompareEffect()), so getQueryTableResultsFn is never called
-  it.skip("should call getQueryTableResults with correct params and show 'add' and 'cancel' buttons once info is loaded", async () => {
-    const { wrapper } = createMountedComponent(props)
-    await resolveAllPending(wrapper)
-    expect(getQueryTableResultsFn).toHaveBeenCalledWith(
-      mockGetQueryTableRequest,
-      MOCK_CONTEXT_VALUE.accessToken,
+  it("should call getQueryTableResults with correct params and show 'add' and 'cancel' buttons once info is loaded", async () => {
+    renderComponent(props)
+    await waitFor(() =>
+      expect(getQueryTableResultsFn).toHaveBeenCalledWith(
+        mockGetQueryTableRequest,
+        MOCK_CONTEXT_VALUE.accessToken,
+      ),
     )
     expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
-    expect(wrapper.find('button')).toHaveLength(2)
-    expect(wrapper.find('button.btn-link').text()).toBe('Cancel')
-    expect(wrapper.find('button.btn-primary').text()).toBe('Add')
+    expect(screen.getAllByRole('button')).toHaveLength(2)
+    screen.getByRole('button', { name: 'Cancel' })
+    screen.getByRole('button', { name: 'Add' })
   })
 
   it('should call addFilesToDownload with correct params and show correct text while processing with no buttons', async () => {
-    const { wrapper } = createMountedComponent(props)
-    await resolveAllPending(wrapper)
+    renderComponent(props)
+    const addButton = await screen.findByRole('button', { name: 'Add' })
     //click to add
-    wrapper.find('button.btn-primary').simulate('click')
+    userEvent.click(addButton)
+
     expect(addFilesToDownloadRequestFn).toHaveBeenCalledWith(
       addFilesToDownloadListRequest,
       MOCK_CONTEXT_VALUE.accessToken,
     )
-    expect(wrapper.text()).toBe('Adding Files To List')
-    expect(wrapper.find('button')).toHaveLength(0)
+    screen.getByText('Adding Files To List')
+    expect(screen.queryAllByRole('button')).toHaveLength(0)
   })
 
   it("should show the correct 'view downloads' link when done adding", async () => {
-    const { wrapper } = createMountedComponent(props)
-    await resolveAllPending(wrapper)
-    wrapper.find('button.btn-primary').simulate('click')
-    await resolveAllPending(wrapper)
+    renderComponent(props)
+    userEvent.click(await screen.findByRole('button', { name: 'Add' }))
 
-    expect(mockToastFn).toBeCalledWith(
-      'File(s) were successfully added to your Download List.',
-      'success',
-      expect.objectContaining({
-        primaryButtonConfig: expect.objectContaining({
-          text: 'View Download List',
+    await waitFor(() =>
+      expect(mockToastFn).toBeCalledWith(
+        'File(s) were successfully added to your Download List.',
+        'success',
+        expect.objectContaining({
+          primaryButtonConfig: expect.objectContaining({
+            text: 'View Download List',
+          }),
         }),
+      ),
+    )
+  })
+
+  it('displays a warning when files are already in the download list', async () => {
+    getDownloadListStatisticsResultsFn.mockResolvedValue({
+      ...filesStatisticsResponse,
+      totalNumberOfFiles: 1,
+    })
+
+    renderComponent(props)
+
+    await waitFor(() =>
+      screen.getByText('You already have files in your download list', {
+        exact: false,
       }),
     )
   })
