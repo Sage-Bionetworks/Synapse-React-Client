@@ -1,25 +1,23 @@
-import moment from 'moment'
-import React, { useState, useCallback, useEffect } from 'react'
-import { SynapseClient, SynapseConstants } from '../../utils'
-import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
-import { EntityType, QueryBundleRequest } from '../../utils/synapseTypes/'
-import DownloadDetails from './DownloadDetails'
+import React, { useCallback, useState } from 'react'
+import { Alert } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import { SynapseClient, SynapseConstants } from '../../utils'
+import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
+import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
+import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import { EntityType, QueryBundleRequest } from '../../utils/synapseTypes/'
+import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
+import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import {
-  TopLevelControlsState,
   QueryWrapperState,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
+  TopLevelControlsState,
 } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
-import { Alert } from 'react-bootstrap'
-import { useSynapseContext } from '../../utils/SynapseContext'
-import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
-import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
-import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
-import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import { displayToast } from '../ToastMessage'
-import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
+import DownloadDetails from './DownloadDetails'
 
 enum StatusEnum {
   LOADING_INFO,
