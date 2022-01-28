@@ -214,6 +214,9 @@ $text-color-lighter: #898989;
   .SRC-cardMetadata {
     display: block;
     padding: $baseline-grid;
+    >* {
+      margin-left: 15px;
+    }
     &.hasIcon {
       padding-left: 15%;
     }
