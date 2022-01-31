@@ -11,7 +11,7 @@ import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { Map } from 'immutable'
-import { Typography } from '../../..'
+import Typography from '../../../utils/typography/Typography'
 
 export type RootNodeConfiguration = {
   nodeText: string
