@@ -427,10 +427,10 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
             <Column<DetailsViewRowData>
               key="id"
-              width={120}
+              width={130}
               dataKey="id"
               title="ID"
-              minWidth={120}
+              minWidth={130}
             />
             {showVersionSelection && (
               <Column<DetailsViewRowData>
@@ -462,15 +462,15 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               key={SortBy.CREATED_ON}
               sortable={sort != null}
               title="Created On"
-              width={200}
-              minWidth={150}
+              width={220}
+              minWidth={170}
               cellRenderer={CreatedOnRenderer}
             />
             <Column<DetailsViewRowData>
               key={SortBy.MODIFIED_ON}
               title="Modified On"
-              width={200}
-              minWidth={150}
+              width={220}
+              minWidth={170}
               sortable={sort != null}
               cellRenderer={ModifiedOnRenderer}
             />

@@ -11,6 +11,7 @@ import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { Map } from 'immutable'
+import { Typography } from '../../..'
 
 export type RootNodeConfiguration = {
   nodeText: string
@@ -154,7 +155,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
           </div>
         )}
         <div className="EntityName" data-for={TOOLTIP_ID} data-tip={nodeName}>
-          <span>{nodeName}</span>
+          <span><Typography variant={'smallText1'} style={{margin:'0px'}}>{nodeName}</Typography></span>
         </div>
         {appearance === NodeAppearance.SELECT && (
           <EntityBadgeIcons

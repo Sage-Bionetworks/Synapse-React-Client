@@ -82,8 +82,10 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               Clear Your Download Cart
             </a>
           </div>
-          <p className="description">You may find your added files in the tabs below. Any files which require actions before download can be found in the Access Actions Required tab,
-        while any that can be downloaded now can be found in the Download List tab.</p>
+          <Typography variant='body1'>
+            You may find your added files in the tabs below. Any files which require actions before download can be found in the 
+            Access Actions Required tab, while any that can be downloaded now can be found in the Download List tab.
+          </Typography>
         </div>
       </div>
       <div className="tabs-container">

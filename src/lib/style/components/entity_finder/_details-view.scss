@@ -3,7 +3,7 @@
 @use '../../abstracts/mixins' as SrcMixins;
 
 $table-prefix: DetailsViewTable;
-$table-font-size: 14px;
+$table-font-size: 16px;
 $header-background-color: white;
 $row-hovered-background-color: unset;
 @import '@sage-bionetworks/react-base-table/es/BaseTable';

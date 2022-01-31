@@ -741,7 +741,7 @@ export default class GenericCard extends React.Component<
         {description.length >= CHAR_COUNT_CUTOFF && (
           <a
             style={{
-              fontSize: '14px',
+              fontSize: '16px',
               cursor: 'pointer',
               marginLeft: '5px',
             }}
