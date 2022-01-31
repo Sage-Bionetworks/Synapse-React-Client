@@ -125,7 +125,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                       You Have Files Which Require Actions Before Downloading
                     </Typography>
                   </div>
-                  <Typography variant={'body1'}>
+                  <Typography className='description' variant={'body1'}>
                     The items in this category require different actions in order to download them. Select Start to complete the action.
                   </Typography>
                 </div>
