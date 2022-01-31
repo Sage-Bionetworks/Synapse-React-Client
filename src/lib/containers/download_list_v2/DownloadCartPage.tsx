@@ -82,7 +82,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
               Clear Your Download Cart
             </a>
           </div>
-          <Typography variant='body1'>
+          <Typography className='description' variant='body1'>
             You may find your added files in the tabs below. Any files which require actions before download can be found in the 
             Access Actions Required tab, while any that can be downloaded now can be found in the Download List tab.
           </Typography>
@@ -125,7 +125,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                       You Have Files Which Require Actions Before Downloading
                     </Typography>
                   </div>
-                  <Typography className='description' variant={'body1'}>
+                  <Typography variant={'body1'}>
                     The items in this category require different actions in order to download them. Select Start to complete the action.
                   </Typography>
                 </div>
