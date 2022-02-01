@@ -14,7 +14,7 @@ html {
   // Bootstrap 4 elements in a <div className="bootstrap-4-backport"/>. The conflict is caused by Bootstrap preferring
   // to use rem instead of px for all of their size settings, which means that the 10px defined in HTML is treated as
   // the root element size instead of the 14px that gets used everywhere else.
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /**
