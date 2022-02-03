@@ -22,7 +22,7 @@ export type DirectFileDownloadProps = {
   associatedObjectType?: FileHandleAssociateType
   fileHandleId?: string
   displayFileName?: boolean
-  onClickCallback?: () => void // callback if you want to know when the link was clicked
+  onClickCallback?: (isExternalLink:boolean) => void // callback if you want to know when the link was clicked
 }
 
 const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props => {
@@ -90,7 +90,7 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
           window.open(preSignedURL)
         }
         if (onClickCallback) {
-          onClickCallback()
+          onClickCallback(isExternalFile)
         }
       }
   }
@@ -168,7 +168,11 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   const getIcon = () => {
     if (isExternalFile) {
       return (
-        <button className={'btn-download-icon'} onClick={onClickCallback}>
+        <button className={'btn-download-icon'} onClick={()=> {
+          if (onClickCallback) {
+            onClickCallback(isExternalFile)
+          }
+        }}>
           <a className="ignoreLink" rel="noreferrer" href={externalURL} target="_blank">
             <Icon type="externallink" />
           </a>

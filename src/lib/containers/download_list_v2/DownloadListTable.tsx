@@ -291,13 +291,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                               associatedObjectType={FileHandleAssociateType.FileEntity}
                               entityVersionNumber={item.versionNumber.toString()}
                               displayFileName={false}
-                              onClickCallback={() => {
-                                removeItem({
-                                  fileEntityId: item.fileEntityId,
-                                  versionNumber: item.versionNumber,
-                                },
-                                item.fileName,
-                                'File Downloaded')
+                              onClickCallback={(isExternalLink:boolean) => {
+                                // SWC-5944: remove the item from the download list, unless it's an external link.
+                                if (!isExternalLink) {
+                                  removeItem({
+                                    fileEntityId: item.fileEntityId,
+                                    versionNumber: item.versionNumber,
+                                  },
+                                  item.fileName,
+                                  'File Downloaded')
+                                }
                               }}
                             />
                           </span>
