@@ -577,6 +577,10 @@ describe('basic functionality', () => {
       const teamName: string = 'team name'
       const mockColumnValue: string = 'syn126'
       const mockDateValue: string = '1574268563000'
+      const mockRowId = 122
+      const mockRowVersion = 2
+      const mockIsEntityView = false
+
       // We only care about the conditional rendering, not the
       // instantiation of the EntityLink, so we cast the value
       const mapEntityIdToHeader = {
@@ -605,6 +609,9 @@ describe('basic functionality', () => {
         columnName: '',
         selectColumns: undefined,
         columnModels: undefined,
+        isEntityView: mockIsEntityView,
+        rowId: mockRowId,
+        rowVersionNumber: mockRowVersion
       }
 
       it('renders an entity link', () => {
@@ -618,6 +625,20 @@ describe('basic functionality', () => {
         )
         expect(tableCell.find(EntityLink)).toHaveLength(1)
       })
+      it('PORTALS-2095: renders an entity link for name column in EntityView', () => {
+        const tableCell = shallow(
+          <SynapseTableCell
+            {...tableCellProps}
+            columnName='name'
+            columnType={ColumnType.STRING}
+            columnValue='My amazing project folder'
+            mapEntityIdToHeader={mapEntityIdToHeader}
+            isEntityView={true}
+          />,
+        )
+        expect(tableCell.find(EntityLink)).toHaveLength(1)
+      })
+
       it('renders a link for all authenticated users', () => {
         const tableCell = shallow(
           <SynapseTableCell
