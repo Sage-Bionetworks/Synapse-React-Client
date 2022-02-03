@@ -181,7 +181,7 @@ export const QueryFilter: React.FunctionComponent<
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
     >
-      <h4 className="QueryFilter__title">Filter Data By</h4>
+      <h4 className="QueryFilter__title">Filter By</h4>
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
         facets.map((facet, index) => {

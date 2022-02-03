@@ -182,9 +182,9 @@ export default class SynapseTable extends React.Component<
     }
     return shouldComponentUpdate
   }
-  componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps) {
+  componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps, prevState: Readonly<SynapseTableState>) {
     // PORTALS-2081: if the data changed, then get the new entity headers
-    if (!eq(prevProps.data, this.props.data)) {
+    if (!eq(prevProps.data, this.props.data) || !eq(prevState.isEntityView, this.state.isEntityView)) {
       this.getEntityHeadersInData(false)
     }
     this.getTableConcreteType(prevProps)
@@ -803,7 +803,6 @@ export default class SynapseTable extends React.Component<
                     <p className={isBold}>{columnValue}</p>
                   </a>
                 )}
-
                 {!isCountColumn && (
                   <SynapseTableCell
                     columnType={headers[colIndex].columnType}
@@ -818,6 +817,9 @@ export default class SynapseTable extends React.Component<
                     rowData={row.values}
                     selectColumns={selectColumns}
                     columnModels={columnModels}
+                    isEntityView={this.state.isEntityView}
+                    rowId={row.rowId}
+                    rowVersionNumber={row.versionNumber}
                   />
                 )}
               </td>
@@ -845,10 +847,9 @@ export default class SynapseTable extends React.Component<
       if (isShowingDownloadColumn) {
         // SWC-5790: If this is a FileEntity, the download icon should just go to entity page
         rowContent.unshift(
-          <td className="SRC_noBorderTop direct-download">
+          <td key={`direct-download-${rowSynapseId}`} className="SRC_noBorderTop direct-download">
             {isFileEntity && (
               <DirectDownload
-                key={'direct-download-' + rowSynapseId}
                 associatedObjectId={rowSynapseId}
                 entityVersionNumber={entityVersionNumber}
               ></DirectDownload>
@@ -858,10 +859,9 @@ export default class SynapseTable extends React.Component<
       }
       if (isShowingAddToV2DownloadListColumn) {
         rowContent.unshift(
-          <td className="SRC_noBorderTop add-to-download-list-v2">
+          <td key={`add-to-download-list-v2-${rowSynapseId}`} className="SRC_noBorderTop add-to-download-list-v2" >
             {isFileEntity && (
               <AddToDownloadListV2
-                key={'add-to-download-list-v2-' + rowSynapseId}
                 entityId={rowSynapseId}
                 entityVersionNumber={parseInt(entityVersionNumber)}
               ></AddToDownloadListV2>
