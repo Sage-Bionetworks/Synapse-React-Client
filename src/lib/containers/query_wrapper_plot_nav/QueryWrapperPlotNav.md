@@ -71,7 +71,7 @@ Configured to show a table:
     rgbIndex={1}
     name='Table Demo'
     sqlOperator='='
-    sql='SELECT assay, study, dataType, tissue, consortium FROM syn11346063.14'
+    sql='SELECT name, assay, study, dataType, tissue, consortium FROM syn11346063.14'
     downloadCartPageUrl='#/Other%20Components?id=downloadcartpage'
   />
 ```

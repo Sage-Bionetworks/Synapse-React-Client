@@ -11,19 +11,20 @@ import { EntityTypeIcon } from './EntityIcon'
 
 type EntityLinkProps = {
   entity: string | EntityHeader | Entity
+  versionNumber?: number
   link?: boolean
   className?: string
 }
 
 export const EntityLink = (props: EntityLinkProps) => {
-  const { entity: entityOrId, className, link = true } = props
+  const { entity: entityOrId, className, versionNumber, link = true } = props
 
   let entityId = ''
   if (typeof entityOrId === 'string') {
     entityId = entityOrId
   }
 
-  const { data: fetchedEntity } = useGetEntity(entityId, undefined, {
+  const { data: fetchedEntity } = useGetEntity(entityId, versionNumber, {
     enabled: !!entityId && typeof entityOrId === 'string',
   })
 
@@ -43,7 +44,7 @@ export const EntityLink = (props: EntityLinkProps) => {
             className={className}
             target="_blank"
             rel="noopener noreferrer"
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}`}
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${versionNumber ? `.${versionNumber}` : ''}`}
           >
             <EntityTypeIcon type={type} style={{ marginRight: '5px' }} />
             {entity.name}
