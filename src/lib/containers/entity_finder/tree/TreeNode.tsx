@@ -11,7 +11,6 @@ import { EntityType } from '../../../utils/synapseTypes/EntityType'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { Map } from 'immutable'
-import Typography from '../../../utils/typography/Typography'
 
 export type RootNodeConfiguration = {
   nodeText: string
@@ -34,6 +33,8 @@ export type TreeNodeProps = {
   /* If rootNodeConfiguration is defined, then entityHeader will be ignored */
   rootNodeConfiguration?: RootNodeConfiguration
   selectableTypes: EntityType[]
+  /* currentContainer is the container whose contents are shown on in the right pane in dual-pane configuration, and may only be defined when NodeAppearance is BROWSE */
+  currentContainer?: string | 'root' | null
 }
 
 export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
@@ -46,15 +47,21 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   rootNodeConfiguration,
   appearance,
   selectableTypes,
+  currentContainer,
 }: TreeNodeProps) => {
   const isRootNode = !!rootNodeConfiguration
+  const nodeId = isRootNode ? 'root' : entityHeader!.id
+
+  const isSelected =
+    appearance === NodeAppearance.SELECT
+      ? selected.has(nodeId)
+      : currentContainer === nodeId
 
   const isDisabled =
     !isRootNode &&
     entityHeader &&
     !selectableTypes.includes(getEntityTypeFromHeader(entityHeader))
 
-  const nodeId = isRootNode ? 'root' : entityHeader!.id
   const nodeName = isRootNode
     ? rootNodeConfiguration?.nodeText
     : entityHeader!.name
@@ -114,7 +121,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         appearance === NodeAppearance.SELECT ? 'SelectNode' : 'BrowseNode'
       }`}
       role="treeitem"
-      aria-selected={selected.has(nodeId)}
+      aria-selected={isSelected}
       aria-disabled={isDisabled}
     >
       <div
@@ -131,7 +138,12 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
           }
         }}
       >
-        <ReactTooltip id={TOOLTIP_ID} delayShow={500} place={'top'} />
+        <ReactTooltip
+          id={TOOLTIP_ID}
+          delayShow={500}
+          place={'top'}
+          effect="solid"
+        />
         {entityChildren && entityChildren.length > 0 ? (
           <div
             className={'ExpandButton'}
@@ -155,7 +167,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
           </div>
         )}
         <div className="EntityName" data-for={TOOLTIP_ID} data-tip={nodeName}>
-          <span><Typography variant={'smallText1'} style={{margin:'0px'}}>{nodeName}</Typography></span>
+          <span>{nodeName}</span>
         </div>
         {appearance === NodeAppearance.SELECT && (
           <EntityBadgeIcons
@@ -168,6 +180,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
           />
         )}
       </div>
+      {/* We hide the children using CSS rather than un/mounting the node on toggle because we want to preserve the child's state if shown, hidden, and shown again */}
       <div className={'NodeChildren'} aria-hidden={!isExpanded}>
         {entityChildren &&
           entityChildren.map(child => {
@@ -182,6 +195,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
                 visibleTypes={visibleTypes}
                 appearance={appearance}
                 selectableTypes={selectableTypes}
+                currentContainer={currentContainer}
               />
             )
           })}

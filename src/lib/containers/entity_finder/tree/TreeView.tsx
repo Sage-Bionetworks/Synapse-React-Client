@@ -148,12 +148,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     },
   )
 
-  const {
-    data: currentContainerBundle,
-    isSuccess: isSuccessBundle,
-  } = useGetEntityBundle(currentContainer!, undefined, undefined, {
-    enabled: !!currentContainer && currentContainer !== 'root',
-  })
+  const { data: currentContainerBundle, isSuccess: isSuccessBundle } =
+    useGetEntityBundle(currentContainer!, undefined, undefined, {
+      enabled: !!currentContainer && currentContainer !== 'root',
+    })
 
   const { ref, inView } = useInView({ rootMargin: '500px' })
 
@@ -407,6 +405,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               rootNodeConfiguration={rootNodeConfiguration}
               appearance={nodeAppearance}
               selectableTypes={selectableTypes}
+              currentContainer={currentContainer}
             />
           ) : (
             topLevelEntities.map(entity => (
@@ -420,6 +419,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 entityHeader={entity}
                 appearance={nodeAppearance}
                 selectableTypes={selectableTypes}
+                currentContainer={currentContainer}
               />
             ))
           )}
