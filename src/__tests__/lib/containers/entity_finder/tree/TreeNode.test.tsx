@@ -5,7 +5,7 @@ import { when } from 'jest-when'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
-  NodeAppearance,
+  EntityTreeNodeType,
   TreeNode,
   TreeNodeProps,
 } from '../../../../../lib/containers/entity_finder/tree/TreeNode'
@@ -41,7 +41,7 @@ const defaultProps: TreeNodeProps = {
   },
   selected: Map([['syn456', NO_VERSION_NUMBER]]),
   setSelectedId: mockSetSelectedId,
-  appearance: NodeAppearance.SELECT,
+  treeNodeType: EntityTreeNodeType.SELECT,
   selectableTypes: Object.values(EntityType),
 }
 
@@ -212,9 +212,10 @@ describe('TreeNode tests', () => {
     await waitFor(() => expect(mockFetchNextPageOfChildren).toBeCalled())
   })
 
-  it('Has aria-selected as true when the selectedId matches the entity ID', async () => {
+  it('Has aria-selected as true when the selectedId matches the entity ID (SELECT)', async () => {
     // Set auto-expand to render children and ensure that they don't get the selected attribute
     renderComponent({
+      treeNodeType: EntityTreeNodeType.SELECT,
       selected: Map([[defaultProps.entityHeader!.id, NO_VERSION_NUMBER]]),
       autoExpand: () => true,
     })
@@ -239,6 +240,35 @@ describe('TreeNode tests', () => {
       'false',
     )
   })
+
+  it('Has aria-selected as true when the currentContainer matches the entity ID (BROWSE)', async () => {
+    renderComponent({
+      treeNodeType: EntityTreeNodeType.BROWSE,
+      currentContainer: defaultProps.entityHeader!.id,
+      autoExpand: () => true,
+    })
+    await waitFor(() =>
+      expect(mockUseGetEntityChildren).toBeCalledWith(
+        expect.objectContaining({
+          parentId: expect.stringContaining(defaultProps.entityHeader!.id),
+        }),
+        expect.anything(),
+      ),
+    )
+    expect(screen.getAllByRole('treeitem')[0]).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    expect(screen.getAllByRole('treeitem')[1]).toHaveAttribute(
+      'aria-selected',
+      'false',
+    )
+    expect(screen.getAllByRole('treeitem')[2]).toHaveAttribute(
+      'aria-selected',
+      'false',
+    )
+  })
+
   it('invokes setSelectedId when the item is clicked ', async () => {
     // Set auto-expand to automatically render children
     renderComponent({

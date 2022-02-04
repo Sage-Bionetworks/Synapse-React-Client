@@ -17,7 +17,7 @@ export type RootNodeConfiguration = {
   children: (Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader)[]
 }
 
-export enum NodeAppearance {
+export enum EntityTreeNodeType {
   SELECT,
   BROWSE,
 }
@@ -29,7 +29,7 @@ export type TreeNodeProps = {
   level?: number
   autoExpand?: (entityId: string) => boolean
   visibleTypes?: EntityType[]
-  appearance: NodeAppearance
+  treeNodeType: EntityTreeNodeType
   /* If rootNodeConfiguration is defined, then entityHeader will be ignored */
   rootNodeConfiguration?: RootNodeConfiguration
   selectableTypes: EntityType[]
@@ -45,7 +45,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   autoExpand = () => false,
   visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
   rootNodeConfiguration,
-  appearance,
+  treeNodeType,
   selectableTypes,
   currentContainer,
 }: TreeNodeProps) => {
@@ -53,7 +53,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   const nodeId = isRootNode ? 'root' : entityHeader!.id
 
   const isSelected =
-    appearance === NodeAppearance.SELECT
+    treeNodeType === EntityTreeNodeType.SELECT
       ? selected.has(nodeId)
       : currentContainer === nodeId
 
@@ -118,7 +118,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
   return (
     <div
       className={`Node ${
-        appearance === NodeAppearance.SELECT ? 'SelectNode' : 'BrowseNode'
+        treeNodeType === EntityTreeNodeType.SELECT ? 'SelectNode' : 'BrowseNode'
       }`}
       role="treeitem"
       aria-selected={isSelected}
@@ -159,7 +159,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         ) : (
           <span></span>
         )}
-        {appearance === NodeAppearance.SELECT && ( // SWC-5592
+        {treeNodeType === EntityTreeNodeType.SELECT && ( // SWC-5592
           <div className="EntityIcon">
             {!isRootNode && entityHeader && (
               <EntityTypeIcon type={getEntityTypeFromHeader(entityHeader)} />
@@ -169,7 +169,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
         <div className="EntityName" data-for={TOOLTIP_ID} data-tip={nodeName}>
           <span>{nodeName}</span>
         </div>
-        {appearance === NodeAppearance.SELECT && (
+        {treeNodeType === EntityTreeNodeType.SELECT && (
           <EntityBadgeIcons
             entityId={nodeId}
             showHasDiscussionThread={false}
@@ -193,7 +193,7 @@ export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
                 level={level + 1}
                 autoExpand={autoExpand}
                 visibleTypes={visibleTypes}
-                appearance={appearance}
+                treeNodeType={treeNodeType}
                 selectableTypes={selectableTypes}
                 currentContainer={currentContainer}
               />

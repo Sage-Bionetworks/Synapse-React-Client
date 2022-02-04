@@ -30,7 +30,7 @@ import {
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
 import { SelectionPane } from './SelectionPane'
-import { NodeAppearance } from './tree/TreeNode'
+import { EntityTreeNodeType } from './tree/TreeNode'
 import { FinderScope, TreeView } from './tree/TreeView'
 
 library.add(faTimes, faSearch)
@@ -355,7 +355,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     projectId={projectId}
                     initialContainer={initialContainer}
                     showScopeAsRootNode={false}
-                    nodeAppearance={NodeAppearance.SELECT}
+                    treeNodeType={EntityTreeNodeType.SELECT}
                     selectableTypes={selectableTypes}
                   />
                 </div>
@@ -380,7 +380,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             initialScope={initialScope}
                             projectId={projectId}
                             initialContainer={initialContainer}
-                            nodeAppearance={NodeAppearance.BROWSE}
+                            treeNodeType={EntityTreeNodeType.BROWSE}
                             setBreadcrumbItems={setBreadcrumbs}
                             selectableTypes={visibleTypesInTree}
                           />
