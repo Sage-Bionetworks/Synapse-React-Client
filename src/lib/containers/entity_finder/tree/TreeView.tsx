@@ -21,7 +21,7 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
-import { NodeAppearance, TreeNode } from './TreeNode'
+import { EntityTreeNodeType, TreeNode } from './TreeNode'
 import { Map } from 'immutable'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
@@ -66,7 +66,7 @@ export type TreeViewProps = {
   setBreadcrumbItems?: (items: BreadcrumbItem[]) => void
   /** Determines whether to show the root node corresponding to the selected scope */
   showScopeAsRootNode?: boolean
-  nodeAppearance: NodeAppearance
+  treeNodeType: EntityTreeNodeType
   /** The entity types that may be selected. */
   selectableTypes: EntityType[]
 }
@@ -86,7 +86,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   setDetailsViewConfiguration,
   setBreadcrumbItems,
   showScopeAsRootNode = true,
-  nodeAppearance,
+  treeNodeType,
   selectableTypes,
 }: TreeViewProps) => {
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
@@ -105,7 +105,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   const [currentContainer, setCurrentContainer] = useState<
     string | 'root' | null
   >(
-    nodeAppearance === NodeAppearance.BROWSE
+    treeNodeType === EntityTreeNodeType.BROWSE
       ? initialContainer
       : initialContainer,
   )
@@ -148,12 +148,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     },
   )
 
-  const {
-    data: currentContainerBundle,
-    isSuccess: isSuccessBundle,
-  } = useGetEntityBundle(currentContainer!, undefined, undefined, {
-    enabled: !!currentContainer && currentContainer !== 'root',
-  })
+  const { data: currentContainerBundle, isSuccess: isSuccessBundle } =
+    useGetEntityBundle(currentContainer!, undefined, undefined, {
+      enabled: !!currentContainer && currentContainer !== 'root',
+    })
 
   const { ref, inView } = useInView({ rootMargin: '500px' })
 
@@ -353,7 +351,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   return (
     <div
       className={`TreeView ${
-        nodeAppearance === NodeAppearance.SELECT ? 'SelectTree' : 'BrowseTree'
+        treeNodeType === EntityTreeNodeType.SELECT ? 'SelectTree' : 'BrowseTree'
       }`}
     >
       <div className="Header">
@@ -405,8 +403,9 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
               visibleTypes={visibleTypes}
               autoExpand={shouldAutoExpand}
               rootNodeConfiguration={rootNodeConfiguration}
-              appearance={nodeAppearance}
+              treeNodeType={treeNodeType}
               selectableTypes={selectableTypes}
+              currentContainer={currentContainer}
             />
           ) : (
             topLevelEntities.map(entity => (
@@ -418,8 +417,9 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
                 visibleTypes={visibleTypes}
                 autoExpand={shouldAutoExpand}
                 entityHeader={entity}
-                appearance={nodeAppearance}
+                treeNodeType={treeNodeType}
                 selectableTypes={selectableTypes}
+                currentContainer={currentContainer}
               />
             ))
           )}
