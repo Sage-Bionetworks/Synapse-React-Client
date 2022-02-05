@@ -16,7 +16,7 @@ table.DownloadListTableV2 {
       width: 18px;
     }
   }
-  .ineligibleForPackagingTd {
+  td.ineligibleForPackagingTd:first-child {
     background-color: #F9F5E7;
   }
   thead:first-child > tr:first-child {

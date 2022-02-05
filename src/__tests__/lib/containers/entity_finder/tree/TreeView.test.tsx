@@ -18,7 +18,7 @@ import {
   PaginatedResults,
   ProjectHeader,
 } from '../../../../../lib/utils/synapseTypes'
-import { NodeAppearance } from '../../../../../lib/containers/entity_finder/tree/TreeNode'
+import { EntityTreeNodeType } from '../../../../../lib/containers/entity_finder/tree/TreeNode'
 import userEvent from '@testing-library/user-event'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
@@ -78,7 +78,7 @@ const defaultProps: TreeViewProps = {
   setDetailsViewConfiguration: mockSetDetailsViewConfiguration,
   setBreadcrumbItems: mockSetBreadcrumbItems,
   toggleSelection: mockToggleSelection,
-  nodeAppearance: NodeAppearance.SELECT,
+  treeNodeType: EntityTreeNodeType.SELECT,
   showScopeAsRootNode: true,
   selectableTypes: Object.values(EntityType),
 }
