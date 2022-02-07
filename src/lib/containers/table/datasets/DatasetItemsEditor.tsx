@@ -10,6 +10,7 @@ import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
 import {
   useGetEntity,
+  useGetEntityPath,
   useUpdateEntity,
 } from '../../../utils/hooks/SynapseAPI/useEntity'
 import { useSet } from '../../../utils/hooks/useSet'
@@ -26,8 +27,8 @@ import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../EntityBadgeIcons'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
-  DatasetEditorCheckboxRenderer,
   CreatedOnRenderer,
+  DatasetEditorCheckboxRenderer,
   DatasetEditorVersionRenderer,
   EntityErrorRenderer,
   EntityNameRenderer,
@@ -43,6 +44,7 @@ import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
 
 export type DatasetItemsEditorProps = {
+  /* The synId of the Dataset to modify */
   entityId: string
   onSave?: () => void
   onClose?: () => void
@@ -87,6 +89,10 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const allItemsAreSelected = !!(
     datasetToUpdate && datasetToUpdate.items.length === selectedIds.size
   )
+
+  // We get the project ID to show the "Current Project" context in the Entity Finder.
+  const { data: path } = useGetEntityPath(entityId)
+  const projectId = path?.path[1]?.id
 
   const { refetch } = useGetEntity<RequiredProperties<Dataset, 'items'>>(
     entityId,
@@ -411,6 +417,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     <div className="DatasetEditor bootstrap-4-backport">
       <EntityFinderModal
         configuration={{
+          projectId: projectId,
           selectMultiple: true,
           initialScope: FinderScope.ALL_PROJECTS,
           initialContainer: null,
