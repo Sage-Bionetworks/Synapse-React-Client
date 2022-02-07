@@ -10,8 +10,10 @@ import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
 import {
   useGetEntity,
+  useGetEntityPath,
   useUpdateEntity,
 } from '../../../utils/hooks/SynapseAPI/useEntity'
+import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useSet } from '../../../utils/hooks/useSet'
 import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
 import {
@@ -45,8 +47,6 @@ import { Checkbox } from '../../widgets/Checkbox'
 export type DatasetItemsEditorProps = {
   /* The synId of the Dataset to modify */
   entityId: string
-  /* The projectId is used to add the "Current Project" context to the Entity Finder */
-  projectId?: string
   onSave?: () => void
   onClose?: () => void
 }
@@ -62,7 +62,7 @@ const TABLE_HEIGHT = 350
 const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
-  const { entityId, projectId, onSave, onClose } = props
+  const { entityId, onSave, onClose } = props
 
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
@@ -90,6 +90,10 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const allItemsAreSelected = !!(
     datasetToUpdate && datasetToUpdate.items.length === selectedIds.size
   )
+
+  // We get the project ID to show the "Current Project" context in the Entity Finder.
+  const { data: path } = useGetEntityPath(entityId)
+  const projectId = path?.path[1]?.id
 
   const { refetch } = useGetEntity<RequiredProperties<Dataset, 'items'>>(
     entityId,
