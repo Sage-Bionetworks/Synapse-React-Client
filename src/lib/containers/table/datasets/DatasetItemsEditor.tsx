@@ -13,7 +13,6 @@ import {
   useGetEntityPath,
   useUpdateEntity,
 } from '../../../utils/hooks/SynapseAPI/useEntity'
-import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useSet } from '../../../utils/hooks/useSet'
 import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
 import {
@@ -28,8 +27,8 @@ import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../EntityBadgeIcons'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
-  DatasetEditorCheckboxRenderer,
   CreatedOnRenderer,
+  DatasetEditorCheckboxRenderer,
   DatasetEditorVersionRenderer,
   EntityErrorRenderer,
   EntityNameRenderer,
