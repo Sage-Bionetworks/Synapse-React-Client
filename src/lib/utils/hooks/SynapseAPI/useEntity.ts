@@ -21,6 +21,7 @@ import {
   EntityJson,
   entityJsonKeys,
   EntityJsonValue,
+  EntityPath,
   PaginatedResults,
 } from '../../synapseTypes'
 import { VersionInfo } from '../../synapseTypes/VersionInfo'
@@ -195,5 +196,17 @@ export function useUpdateViaJson(
         }
       },
     },
+  )
+}
+
+export function useGetEntityPath(
+  entityId: string,
+  options?: UseQueryOptions<EntityPath, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<EntityPath, SynapseClientError>(
+    ['entity', entityId, 'path'],
+    () => SynapseClient.getEntityPath(entityId, accessToken),
+    options,
   )
 }
