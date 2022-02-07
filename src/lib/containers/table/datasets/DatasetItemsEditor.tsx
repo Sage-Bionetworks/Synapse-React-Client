@@ -43,7 +43,10 @@ import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
 
 export type DatasetItemsEditorProps = {
+  /* The synId of the Dataset to modify */
   entityId: string
+  /* The projectId is used to add the "Current Project" context to the Entity Finder */
+  projectId?: string
   onSave?: () => void
   onClose?: () => void
 }
@@ -59,7 +62,7 @@ const TABLE_HEIGHT = 350
 const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
-  const { entityId, onSave, onClose } = props
+  const { entityId, projectId, onSave, onClose } = props
 
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
@@ -411,6 +414,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     <div className="DatasetEditor bootstrap-4-backport">
       <EntityFinderModal
         configuration={{
+          projectId: projectId,
           selectMultiple: true,
           initialScope: FinderScope.ALL_PROJECTS,
           initialContainer: null,
