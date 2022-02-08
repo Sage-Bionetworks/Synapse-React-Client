@@ -168,6 +168,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
               id='copy-syn-ids-tooltip'
             />
             <button
+              data-testid="copySynIdsButton"
               onClick={() => {
                 // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
                 setCopyingAllSynapseIDs(true)

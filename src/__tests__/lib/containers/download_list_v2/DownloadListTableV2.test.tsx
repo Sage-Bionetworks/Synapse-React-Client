@@ -4,6 +4,7 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
 import { mockFileStatistics } from '../../../../mocks/mock_file_statistics'
+import userEvent from '@testing-library/user-event'
 import DownloadListTableV2, {
 } from '../../../../lib/containers/download_list_v2/DownloadListTable'
 import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
@@ -58,7 +59,6 @@ const page2: Partial<DownloadListItemResult>[] = [
     createdBy: '100000',
   },
 ]
-
 function renderComponent() {
   return render(
     <SynapseTestContext>
@@ -70,9 +70,6 @@ function renderComponent() {
 describe('DownloadListTableV2 tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-  })
-  it('loads more available download files when inView', async () => {
-    mockAllIsIntersecting(true)
     mockUseGetAvailableFilesToDownloadInfinite.mockReturnValue({
       data: {
         pages: [
@@ -88,16 +85,46 @@ describe('DownloadListTableV2 tests', () => {
         pageParams: [],
       },
       fetchNextPage: mockFetchNextPage,
-      hasNextPage: true,
+      hasNextPage: false,
       isLoading: false,
       isSuccess: true,
     })
-
+  })
+  it('loads more available download files when inView', async () => {
+    mockAllIsIntersecting(true)
+    
     renderComponent()
 
     const fileEntity1 = await screen.findAllByText('file1.txt')
     expect(fileEntity1).toHaveLength(1)
     const fileEntity2 = await screen.findAllByText('file2.txt')
     expect(fileEntity2).toHaveLength(1)
+  })
+  describe("Copy all Synapse IDs", () => {
+    const originalClipboard = { ...global.navigator.clipboard }
+    afterEach(() => {
+      Object.assign(navigator, {
+        clipboard: originalClipboard,
+      })
+    })
+
+    it("should call clipboard.writeText with the expected Synapse IDs", async () => {
+      const mockWriteText = jest.fn()
+      mockWriteText.mockResolvedValue('copied')
+      const mockClipboard = {
+        writeText: mockWriteText,
+      };
+      Object.assign(navigator, {
+        clipboard: mockClipboard,
+      })
+
+      renderComponent()
+      
+      const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
+      userEvent.click(copySynIDsButton)
+      await screen.findAllByText('file2.txt')
+      expect(mockWriteText).toHaveBeenCalled()
+      expect(mockWriteText).toHaveBeenCalledWith("syn1\nsyn2")
+    })
   })
 })
