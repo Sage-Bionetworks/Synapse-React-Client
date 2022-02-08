@@ -76,7 +76,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     const copyAllSynapseIDs = () => {
       const synIDs = allRows.map((item: DownloadListItemResult)=>{
         return item.fileEntityId
-      }).join()
+      }).join('\n')
       // https://caniuse.com/mdn-api_clipboard_writetext
       navigator.clipboard.writeText(synIDs).then(() => { 
         displayToast('Successfully copied to clipboard')
@@ -158,7 +158,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       (
         <span
             data-for='copy-syn-ids-tooltip'
-            data-tip="Copy the full list of Synapse IDs"
+            data-tip="Copy IDs to the clipboard"
           >
             <ReactTooltip
               delayShow={TOOLTIP_DELAY_SHOW}
