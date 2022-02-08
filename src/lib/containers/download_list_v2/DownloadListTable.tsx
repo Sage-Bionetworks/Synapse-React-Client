@@ -27,6 +27,7 @@ import DirectDownload from '../DirectDownload'
 import { displayToast } from '../ToastMessage'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
+import { BlockingLoader } from '../LoadingScreen'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -41,6 +42,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
+  const [copyingAllSynapseIDs, setCopyingAllSynapseIDs] = useState<boolean>(false)
   const [sort, setSort] = useState<Sort | undefined>(undefined)
   const [filter, setFilter] = useState<AvailableFilter | undefined>(undefined)
   const {
@@ -68,19 +70,33 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }, [isError, newError, handleError])
 
+  const allRows = data?.pages.flatMap(page => page.page) ?? []
+
   useEffect(() => {
+    const copyAllSynapseIDs = () => {
+      const synIDs = allRows.map((item: DownloadListItemResult)=>{
+        return item.fileEntityId
+      }).join()
+      // https://caniuse.com/mdn-api_clipboard_writetext
+      navigator.clipboard.writeText(synIDs).then(() => { 
+        displayToast('Successfully copied to clipboard')
+      })
+      setCopyingAllSynapseIDs(false)
+    }
+
     if (
       status === 'success' &&
       !isFetchingNextPage &&
       hasNextPage &&
       fetchNextPage &&
-      inView
+      (inView || copyingAllSynapseIDs)
     ) {
       fetchNextPage()
+    } else if (!hasNextPage && copyingAllSynapseIDs) {
+      // We have all the data in allRows. Put it together and copy to the clipboard
+      copyAllSynapseIDs()
     }
-  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView])
-
-  const allRows = data?.pages.flatMap(page => page.page) ?? []
+  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView, copyingAllSynapseIDs, allRows])
 
   const getFilterDisplayText = (f: AvailableFilter) => {
     if (!f) {
@@ -137,6 +153,37 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       )
     )
   }
+  const showInteractiveCopyIdsIcon = () => {
+    return (
+      (
+        <span
+            data-for='copy-syn-ids-tooltip'
+            data-tip="Copy the full list of Synapse IDs"
+          >
+            <ReactTooltip
+              delayShow={TOOLTIP_DELAY_SHOW}
+              place="right"
+              type="dark"
+              effect="solid"
+              id='copy-syn-ids-tooltip'
+            />
+            <button
+              onClick={() => {
+                // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
+                setCopyingAllSynapseIDs(true)
+              }}
+            >
+              <span style={{height: 15, marginTop: -1}}>
+                <IconSvg
+                  options={{
+                    icon: 'contentCopy',
+                  }}/>
+              </span>
+            </button>
+          </span>
+      )
+    )
+  }
   const availableFiltersArray: AvailableFilter[] = [
     undefined,
     'eligibleForPackaging',
@@ -144,6 +191,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   ]
   return (
     <>
+      <BlockingLoader show={copyingAllSynapseIDs} />
       <div className="filterFilesContainer">
         <span className="filterFilesByText">Filter Files By</span>
         <Dropdown>
@@ -187,6 +235,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 </th>
                 <th>
                   SynID
+                  <span>{showInteractiveCopyIdsIcon()}</span>
                   <span>{showInteractiveSortIcon('synId')}</span>
                 </th>
                 <th>
