@@ -49,7 +49,7 @@ const page1: Partial<DownloadListItemResult>[] = [
 const page2: Partial<DownloadListItemResult>[] = [
   {
     fileEntityId: 'syn2',
-    versionNumber: 1,
+    versionNumber: 3,
     createdOn: 'yesterday',
     addedOn: 'today',
     fileName: 'file2.txt',
@@ -124,7 +124,7 @@ describe('DownloadListTableV2 tests', () => {
       userEvent.click(copySynIDsButton)
       
       expect(mockWriteText).toHaveBeenCalled()
-      expect(mockWriteText).toHaveBeenCalledWith("syn1\nsyn2")
+      expect(mockWriteText).toHaveBeenCalledWith("syn1.1\nsyn2.3")
     })
   })
 })
