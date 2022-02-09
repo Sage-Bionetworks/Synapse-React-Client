@@ -27,6 +27,7 @@ import DirectDownload from '../DirectDownload'
 import { displayToast } from '../ToastMessage'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
+import { BlockingLoader } from '../LoadingScreen'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -41,6 +42,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
+  const [copyingAllSynapseIDs, setCopyingAllSynapseIDs] = useState<boolean>(false)
   const [sort, setSort] = useState<Sort | undefined>(undefined)
   const [filter, setFilter] = useState<AvailableFilter | undefined>(undefined)
   const {
@@ -68,19 +70,33 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     }
   }, [isError, newError, handleError])
 
+  const allRows = data?.pages.flatMap(page => page.page) ?? []
+
   useEffect(() => {
+    const copyAllSynapseIDs = () => {
+      const synIDs = allRows.map((item: DownloadListItemResult)=>{
+        return `${item.fileEntityId}.${item.versionNumber}`
+      }).join('\n')
+      // https://caniuse.com/mdn-api_clipboard_writetext
+      navigator.clipboard.writeText(synIDs).then(() => { 
+        displayToast('Successfully copied to clipboard')
+      })
+      setCopyingAllSynapseIDs(false)
+    }
+
     if (
       status === 'success' &&
       !isFetchingNextPage &&
       hasNextPage &&
       fetchNextPage &&
-      inView
+      (inView || copyingAllSynapseIDs)
     ) {
       fetchNextPage()
+    } else if (!hasNextPage && copyingAllSynapseIDs) {
+      // We have all the data in allRows. Put it together and copy to the clipboard
+      copyAllSynapseIDs()
     }
-  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView])
-
-  const allRows = data?.pages.flatMap(page => page.page) ?? []
+  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView, copyingAllSynapseIDs, allRows])
 
   const getFilterDisplayText = (f: AvailableFilter) => {
     if (!f) {
@@ -106,37 +122,76 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       console.error(err)
     }
   }
-
-  const showInteractiveSortIcon = (columnSortBy: SortField) => {
+  const InteractiveSortIcon = ({
+    columnSortBy,
+  }: {
+    columnSortBy: SortField
+  }) => {
     return (
-      setSort && (
-        <SortIcon
-          role="button"
-          style={{ height: '20px' }}
-          active={sort?.field === columnSortBy}
-          direction={
-            sort?.field === columnSortBy
-              ? sort.direction === 'DESC'
-                ? Direction.DESC
-                : Direction.ASC
-              : Direction.DESC
-          }
-          onClick={() => {
-            const direction =
-              columnSortBy === sort?.field
-                ? sort.direction === 'ASC'
-                  ? 'DESC'
-                  : 'ASC'
-                : 'DESC'
-            setSort({
-              field: columnSortBy,
-              direction,
-            })
-          }}
-        />
+      <span>
+        {setSort && (
+          <SortIcon
+            role="button"
+            style={{ height: '20px' }}
+            active={sort?.field === columnSortBy}
+            direction={
+              sort?.field === columnSortBy
+                ? sort.direction === 'DESC'
+                  ? Direction.DESC
+                  : Direction.ASC
+                : Direction.DESC
+            }
+            onClick={() => {
+              const direction =
+                columnSortBy === sort?.field
+                  ? sort.direction === 'ASC'
+                    ? 'DESC'
+                    : 'ASC'
+                  : 'DESC'
+              setSort({
+                field: columnSortBy,
+                direction,
+              })
+            }}
+          />
+        )}
+      </span>
+    )
+  }
+
+  const InteractiveCopyIdsIcon = () => {
+    return (
+      (
+        <span
+            data-for='copy-syn-ids-tooltip'
+            data-tip="Copy IDs to the clipboard"
+          >
+            <ReactTooltip
+              delayShow={TOOLTIP_DELAY_SHOW}
+              place="right"
+              type="dark"
+              effect="solid"
+              id='copy-syn-ids-tooltip'
+            />
+            <button
+              data-testid="copySynIdsButton"
+              onClick={() => {
+                // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
+                setCopyingAllSynapseIDs(true)
+              }}
+            >
+              <span style={{height: 15, marginTop: -1}}>
+                <IconSvg
+                  options={{
+                    icon: 'contentCopy',
+                  }}/>
+              </span>
+            </button>
+          </span>
       )
     )
   }
+
   const availableFiltersArray: AvailableFilter[] = [
     undefined,
     'eligibleForPackaging',
@@ -144,6 +199,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   ]
   return (
     <>
+      <BlockingLoader show={copyingAllSynapseIDs} />
       <div className="filterFilesContainer">
         <span className="filterFilesByText">Filter Files By</span>
         <Dropdown>
@@ -179,31 +235,32 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 </th>
                 <th>
                   Name
-                  <span>{showInteractiveSortIcon('fileName')}</span>
+                  <InteractiveSortIcon columnSortBy='fileName' />
                 </th>
                 <th>
                   Size
-                  <span>{showInteractiveSortIcon('fileSize')}</span>
+                  <InteractiveSortIcon columnSortBy='fileSize' />
                 </th>
                 <th>
                   SynID
-                  <span>{showInteractiveSortIcon('synId')}</span>
+                  <InteractiveCopyIdsIcon />
+                  <InteractiveSortIcon columnSortBy='synId' />
                 </th>
                 <th>
                   Project
-                  <span>{showInteractiveSortIcon('projectName')}</span>
+                  <InteractiveSortIcon columnSortBy='projectName' />
                 </th>
                 <th>
                   Added On
-                  <span>{showInteractiveSortIcon('addedOn')}</span>
+                  <InteractiveSortIcon columnSortBy='addedOn' />
                 </th>
                 <th>
                   Created By
-                  <span>{showInteractiveSortIcon('createdBy')}</span>
+                  <InteractiveSortIcon columnSortBy='createdBy' />
                 </th>
                 <th>
                   Created On
-                  <span>{showInteractiveSortIcon('createdOn')}</span>
+                  <InteractiveSortIcon columnSortBy='createdOn' />
                 </th>
                 <th className="stickyColumn">
                   Actions
@@ -273,7 +330,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         {item.fileSizeBytes &&
                           calculateFriendlyFileSize(item.fileSizeBytes)}
                       </td>
-                      <td>{item.fileEntityId}</td>
+                      <td>{`${item.fileEntityId}.${item.versionNumber}`}</td>
                       <td>{item.projectName}</td>
                       <td>{addedOn}</td>
                       <td>

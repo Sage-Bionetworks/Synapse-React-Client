@@ -214,9 +214,13 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                       </ul>
                     </Typography>
                     <span>
-                      <a className="highlight-link disabled"
+                      <a className="highlight-link"
+                        rel="noreferrer"
                         data-for="downloadProgrammaticallyTooltipId"
-                        data-tip="This feature is coming soon.<br />You can still download individual<br />files programmatically.">
+                        data-tip="This feature is coming soon.<br />Click here to learn how to download<br />programmatically using other methods"
+                        target="_blank"
+                        href="https://help.synapse.org/docs/API-Clients.1985446128.html"
+                        >
                         <ReactTooltip
                           delayShow={300}
                           multiline={true}
@@ -225,7 +229,7 @@ export const DownloadCartPage:React.FunctionComponent<DownloadCartPageProps> = (
                           effect="solid"
                           id="downloadProgrammaticallyTooltipId"
                         />
-                        Download Programmatically (Coming Soon)
+                        Create Programmatic Package (Coming soon)
                       </a>
                     </span>
                   </div>
