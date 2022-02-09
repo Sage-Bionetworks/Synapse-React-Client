@@ -75,7 +75,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   useEffect(() => {
     const copyAllSynapseIDs = () => {
       const synIDs = allRows.map((item: DownloadListItemResult)=>{
-        return item.fileEntityId
+        return `${item.fileEntityId}.${item.versionNumber}`
       }).join('\n')
       // https://caniuse.com/mdn-api_clipboard_writetext
       navigator.clipboard.writeText(synIDs).then(() => { 
@@ -330,7 +330,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         {item.fileSizeBytes &&
                           calculateFriendlyFileSize(item.fileSizeBytes)}
                       </td>
-                      <td>{item.fileEntityId}</td>
+                      <td>{`${item.fileEntityId}.${item.versionNumber}`}</td>
                       <td>{item.projectName}</td>
                       <td>{addedOn}</td>
                       <td>
