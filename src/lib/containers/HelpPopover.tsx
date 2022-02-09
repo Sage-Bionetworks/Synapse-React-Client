@@ -8,7 +8,6 @@ export type HelpPopoverProps = {
   helpUrl?: string
   placement?: Placement
   showCloseButton?: boolean
-  style?: React.CSSProperties
 }
 
 export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
@@ -16,7 +15,6 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
   helpUrl,
   placement = "bottom",
   showCloseButton = true,
-  style = {},
 }: HelpPopoverProps) => {
   
   const actionButtonConfig = helpUrl ? {
@@ -37,7 +35,6 @@ export const HelpPopover: React.FunctionComponent<HelpPopoverProps> = ({
       >
         <HelpOutlineTwoTone
           className="HelpButton"
-          style={style}
         />
       </MarkdownPopover>
     </>

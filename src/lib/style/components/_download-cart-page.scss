@@ -103,7 +103,10 @@
       .headlineWithHelp {
         display: flex;
         column-gap: 10px;
-        align-items: center;
+        align-items: top;
+        .PopoverContainer {
+          height: 100%;
+        }
       }
     }
   }
