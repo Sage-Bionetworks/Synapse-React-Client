@@ -122,38 +122,44 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       console.error(err)
     }
   }
-
-  const showInteractiveSortIcon = (columnSortBy: SortField) => {
+  const InteractiveSortIcon = ({
+    columnSortBy,
+  }: {
+    columnSortBy: SortField
+  }) => {
     return (
-      setSort && (
-        <SortIcon
-          role="button"
-          style={{ height: '20px' }}
-          active={sort?.field === columnSortBy}
-          direction={
-            sort?.field === columnSortBy
-              ? sort.direction === 'DESC'
-                ? Direction.DESC
-                : Direction.ASC
-              : Direction.DESC
-          }
-          onClick={() => {
-            const direction =
-              columnSortBy === sort?.field
-                ? sort.direction === 'ASC'
-                  ? 'DESC'
-                  : 'ASC'
-                : 'DESC'
-            setSort({
-              field: columnSortBy,
-              direction,
-            })
-          }}
-        />
-      )
+      <span>
+        {setSort && (
+          <SortIcon
+            role="button"
+            style={{ height: '20px' }}
+            active={sort?.field === columnSortBy}
+            direction={
+              sort?.field === columnSortBy
+                ? sort.direction === 'DESC'
+                  ? Direction.DESC
+                  : Direction.ASC
+                : Direction.DESC
+            }
+            onClick={() => {
+              const direction =
+                columnSortBy === sort?.field
+                  ? sort.direction === 'ASC'
+                    ? 'DESC'
+                    : 'ASC'
+                  : 'DESC'
+              setSort({
+                field: columnSortBy,
+                direction,
+              })
+            }}
+          />
+        )}
+      </span>
     )
   }
-  const showInteractiveCopyIdsIcon = () => {
+
+  const InteractiveCopyIdsIcon = () => {
     return (
       (
         <span
@@ -185,6 +191,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       )
     )
   }
+
   const availableFiltersArray: AvailableFilter[] = [
     undefined,
     'eligibleForPackaging',
@@ -228,32 +235,32 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 </th>
                 <th>
                   Name
-                  <span>{showInteractiveSortIcon('fileName')}</span>
+                  <InteractiveSortIcon columnSortBy='fileName' />
                 </th>
                 <th>
                   Size
-                  <span>{showInteractiveSortIcon('fileSize')}</span>
+                  <InteractiveSortIcon columnSortBy='fileSize' />
                 </th>
                 <th>
                   SynID
-                  <span>{showInteractiveCopyIdsIcon()}</span>
-                  <span>{showInteractiveSortIcon('synId')}</span>
+                  <InteractiveCopyIdsIcon />
+                  <InteractiveSortIcon columnSortBy='synId' />
                 </th>
                 <th>
                   Project
-                  <span>{showInteractiveSortIcon('projectName')}</span>
+                  <InteractiveSortIcon columnSortBy='projectName' />
                 </th>
                 <th>
                   Added On
-                  <span>{showInteractiveSortIcon('addedOn')}</span>
+                  <InteractiveSortIcon columnSortBy='addedOn' />
                 </th>
                 <th>
                   Created By
-                  <span>{showInteractiveSortIcon('createdBy')}</span>
+                  <InteractiveSortIcon columnSortBy='createdBy' />
                 </th>
                 <th>
                   Created On
-                  <span>{showInteractiveSortIcon('createdOn')}</span>
+                  <InteractiveSortIcon columnSortBy='createdOn' />
                 </th>
                 <th className="stickyColumn">
                   Actions
