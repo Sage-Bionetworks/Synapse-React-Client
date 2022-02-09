@@ -122,7 +122,7 @@ describe('DownloadListTableV2 tests', () => {
       
       const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
       userEvent.click(copySynIDsButton)
-      await screen.findAllByText('file2.txt')
+      
       expect(mockWriteText).toHaveBeenCalled()
       expect(mockWriteText).toHaveBeenCalledWith("syn1\nsyn2")
     })
