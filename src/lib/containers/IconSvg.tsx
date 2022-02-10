@@ -40,6 +40,7 @@ import AccountCertified from '../assets/mui_components/AccountCertified'
 import AccountRegistered from '../assets/mui_components/AccountRegistered'
 import AccountValidated from '../assets/mui_components/AccountValidated'
 import Chromatin from '../assets/mui_components/Chromatin'
+import ContentCopy from '../assets/mui_components/ContentCopy'
 import Data from '../assets/mui_components/Data'
 import DataLocked from '../assets/mui_components/DataLocked'
 import GeneExpression from '../assets/mui_components/GeneExpression'
@@ -149,6 +150,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <Chromatin fill={color} style={customSvgStyle}></Chromatin>
     case 'clinical':
       return <Clinical fill={color} style={customSvgStyle}></Clinical>
+    case 'contentCopy':
+      return <ContentCopy fill={color} style={customSvgStyle} />
     case 'data':
       return <Data fill={color} style={customSvgStyle}></Data>
     case 'dataLocked':
