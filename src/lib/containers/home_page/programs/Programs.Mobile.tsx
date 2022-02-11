@@ -23,7 +23,7 @@ export default function ProgramsMobile({
     <div className="Programs__Mobile__Content">
       {link && (
         <p className="Programs__Card__header__info__link">
-          <a className="highlight-link" href={link}>
+          <a className="highlight-link" href={link} target="_blank" rel="noreferrer">
             Visit website
           </a>
         </p>
