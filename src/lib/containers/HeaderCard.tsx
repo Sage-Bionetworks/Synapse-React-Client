@@ -68,49 +68,58 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
-      <div className="SRC-portalCardMain">
-        {icon}
-        <div className="SRC-cardContent">
-          <div className="SRC-type">{type}</div>
-          <div>
-            <h3 className="SRC-boldText" style={{ margin: 'none' }}>
-              {href ? (
-                <a target={target} href={href} className="highlight-link">
-                  {title}
-                </a>
-              ) : (
-                <span> {title} </span>
-              )}
-            </h3>
-          </div>
-          {subTitle && <div className="SRC-author"> {subTitle} </div>}
-          {description && (
-            <span className="SRC-font-size-base">
-              {descriptionConfig?.isMarkdown ? (
-                <MarkdownSynapse markdown={description} />
-              ) : (
-                description
-              )}
-            </span>
-          )}
-          <div
-            style={{
-              borderTop: '1px solid rgba(26, 28, 41, 0.2)',
-              marginTop: '15px',
-              paddingTop: '5px',
-            }}
-          >
-            {values && (
-              <CardFooter
-                isHeader={true}
-                secondaryLabelLimit={secondaryLabelLimit}
-                values={values}
-              />
-            )}
+      <div className="container-fluid container-full-width">
+        <div className="row">
+          <div className="col-md-offset-1 col-md-10">
+            <div className="SRC-portalCardMain">
+              {icon}
+              <div style={{ width: '100%' }}>
+                <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
+                  <div className="SRC-type">{type}</div>
+                  <div>
+                    <h3 className="SRC-boldText" style={{ margin: 'none' }}>
+                      {href ? (
+                        <a target={target} href={href} className="highlight-link">
+                          {title}
+                        </a>
+                      ) : (
+                        <span> {title} </span>
+                      )}
+                    </h3>
+                  </div>
+                  {subTitle && <div className="SRC-author"> {subTitle} </div>}
+                  {description && (
+                    <span className="SRC-font-size-base">
+                      {descriptionConfig?.isMarkdown ? (
+                        <MarkdownSynapse markdown={description} />
+                      ) : (
+                        description
+                      )}
+                    </span>
+                  )}
+                </div>
+                <div
+                  style={{
+                    borderTop: '1px solid rgba(26, 28, 41, 0.2)',
+                    marginTop: '15px',
+                    paddingTop: '5px',
+                  }}
+                />
+                <div className="SRC-cardContent">
+                    {values && (
+                      <CardFooter
+                        isHeader={true}
+                        secondaryLabelLimit={secondaryLabelLimit}
+                        values={values}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   )
 }
 

@@ -265,10 +265,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               >
                 <div className="EnumFacetFilter__checkboxContainer">
                   <div className="EnumFacetFilter__showMoreFacetsLabel">
-                    Show more
-                  </div>
-                  <div className="EnumFacetFilter__howMoreFacetsCount">
-                    {filteredSet.length}
+                    Show all ({filteredSet.length})
                   </div>
                 </div>
               </button>
@@ -280,7 +277,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               >
                 <div className="EnumFacetFilter__checkboxContainer">
                   <div className="EnumFacetFilter__showMoreFacetsLabel">
-                    Show Less
+                    Show less
                   </div>
                 </div>
               </button>
