@@ -58,6 +58,9 @@ $text-color-lighter: #898989;
     .SRC-type,
     .SRC-cardThumbnail {
       color: inherit;
+      img, svg {
+        margin-left: 0px;
+      }
     }
     a,
     .SRC-userCard {
@@ -213,7 +216,8 @@ $text-color-lighter: #898989;
 
   .SRC-cardMetadata {
     display: block;
-    padding: $baseline-grid;
+    padding-top: $baseline-grid;
+    padding-bottom: $baseline-grid;
     >* {
       margin-left: 15px;
     }
