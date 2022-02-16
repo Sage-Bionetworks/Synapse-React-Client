@@ -293,8 +293,8 @@ export default class QueryWrapper extends React.Component<
           isFaceted: isFacetAvailable,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,
-            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFacetAvailable : true,
-            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFacetAvailable : true,
+            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFacetAvailable : false,
+            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFacetAvailable : false,
           }
         }
         this.setState(newState)
@@ -401,8 +401,8 @@ export default class QueryWrapper extends React.Component<
           isFaceted: isFacetAvailable,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,
-            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFacetAvailable : true,
-            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFacetAvailable : true,
+            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFacetAvailable : false,
+            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFacetAvailable : false,
           }
         }
         this.setState(newState)
