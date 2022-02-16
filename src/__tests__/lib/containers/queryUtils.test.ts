@@ -3,6 +3,8 @@ import { SynapseConstants } from '../../../lib/utils'
 import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { QueryResultBundle } from 'src/lib/utils/synapseTypes/Table/QueryResultBundle.js'
 import { cloneDeep } from 'lodash-es'
+import { isFacetAvailableAndSupported } from '../../../lib/utils/functions/queryUtils'
+import { FacetColumnResult } from '../../../lib/utils/synapseTypes'
 
 describe('get next page of data', () => {
   const sql = 'SELECT * FROM syn16787123'
@@ -47,5 +49,21 @@ describe('get next page of data', () => {
       // hasMoreData should be false since there are less than PAGE_SIZE results
       expect(partialState.hasMoreData).toEqual(false)
     })
+  })
+})
+
+describe('verify isFacetAvailableAndSupported', () => {
+  const facetAvailable:FacetColumnResult[] = [{columnName:'study',facetType:'enumeration',concreteType:'org.sagebionetworks.repo.model.table.FacetColumnResultValues'}]
+  
+  it('facets are available and relevant to the resultset schema', () => {
+    expect(isFacetAvailableAndSupported('select * from syn123', facetAvailable)).toEqual(true)
+    expect(isFacetAvailableAndSupported('select * from syn123 where a=\'b\'', facetAvailable)).toEqual(true)
+  })
+  it('facets are unavailable, but would be relevant to the resultset schema', () => {
+    expect(isFacetAvailableAndSupported('select * from syn123', [])).toEqual(false)
+    expect(isFacetAvailableAndSupported('select * from syn123 where a=\'b\'', undefined)).toEqual(false)
+  })
+  it('facets are available, but not relevant to the resultset schema', () => {
+    expect(isFacetAvailableAndSupported('select count(id) from syn123 group by study', facetAvailable)).toEqual(false)
   })
 })
