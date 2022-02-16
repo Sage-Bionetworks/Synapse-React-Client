@@ -4,14 +4,22 @@
   @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
     .SRC-wrapper {
       display: grid;
-      grid-template-columns: 60px 10px 25% 10px 75%;
-      padding-right: 120px;
-
+      grid-template-columns: 25% 10px 75%;
+      padding-right: 15px;
+      
       // by default, children take up the full row
       > * {
-        grid-column: 3 / span 3;
+        grid-column: 1 / span 3;
       }
-
+      &.has-facets{
+        padding-right: 120px;
+        grid-template-columns: 60px 10px 25% 10px 75%;
+        > * {
+          grid-column: 3 / span 3;
+        }
+      }
+    }
+    .SRC-wrapper {
       .QueryFilterToggleButton {
         position: relative;
         left: -23px;

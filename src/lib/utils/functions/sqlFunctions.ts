@@ -1,5 +1,5 @@
 import { lexer, parser } from 'sql-parser'
-import { SelectColumn, Row } from '../synapseTypes'
+import { SelectColumn, Row, FacetColumnResult } from '../synapseTypes'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../functions/RegularExpressions'
 
 export type KeyValue = {
@@ -82,6 +82,15 @@ export const getWhereInsertIndex = (tokens: string[][]): number => {
   //else insert it at the end
   targetIndex = tokens.findIndex(el => el[0] === 'EOF')
   return targetIndex
+}
+
+export const isGroupBy = (sql: string): boolean => {
+  const tokens: string[][] = lexer.tokenize(sql)
+  return tokens.findIndex(el => el[0] === 'GROUP') !== -1
+}
+
+export const isFacetAvailableAndSupported = (sql: string, facets?: FacetColumnResult[]): boolean => {
+  return !isGroupBy(sql) && (facets ? facets.length > 0 : false)
 }
 
 // This will construct a sql query by adding the conditions in searchParams

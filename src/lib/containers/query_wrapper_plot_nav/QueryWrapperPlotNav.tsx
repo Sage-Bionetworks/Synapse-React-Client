@@ -2,6 +2,7 @@ import * as React from 'react'
 import { SynapseConstants } from '../../utils/'
 import {
   insertConditionsFromSearchParams,
+  isFacetAvailableAndSupported,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
@@ -106,6 +107,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
               initQueryRequest={initQueryRequest}
             >
               {queryWrapperChildProps => {
+                const isFaceted = isFacetAvailableAndSupported(sqlUsed, queryWrapperChildProps.data?.facets)
                 return (
                   <>
                     {entity &&
@@ -131,14 +133,19 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                       sql={sqlUsed}
                       hideDownload={hideDownload}
                       hideQueryCount={hideQueryCount}
+                      hideFacetFilterControl={!isFaceted}
+                      hideVisualizationsControl={!isFaceted}
                     />
-                    <QueryFilter {...queryWrapperChildProps} {...props} />
-                    <QueryFilterToggleButton {...queryWrapperChildProps} />
+                    {isFaceted && <>
+                      <QueryFilter {...queryWrapperChildProps} {...props} />
+                      <QueryFilterToggleButton {...queryWrapperChildProps} />
+                      </>}
                     <FacetNav
                       {...queryWrapperChildProps}
                       facetsToPlot={facetsToPlot}
                       showNotch={false}
                     />
+
                     <FilterAndView
                       {...queryWrapperChildProps}
                       facetsToFilter={facetsToFilter}
