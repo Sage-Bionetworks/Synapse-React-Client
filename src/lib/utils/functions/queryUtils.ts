@@ -58,7 +58,11 @@ export const getNextPageOfData = async (
     })
 }
 
-const groupByRegEx = /group\s*by/gmi
-export const isFacetAvailableAndSupported = (sql: string, facets?: FacetColumnResult[]): boolean => {
-  return !groupByRegEx.test(sql) && (facets ? facets.length > 0 : false)
+// TODO: Does this matter? If there is a group by, then the facet count data no longer directly represent rows in the currently displayed table.
+// export const isFacetCountInSyncWithRowData = (sql: string): boolean => {
+//   return !(/group\s*by/gmi.test(sql))
+// }
+
+export const isFacetAvailable = (facets?: FacetColumnResult[]):boolean => {
+  return (facets ? facets.length > 0 : false)
 }

@@ -22,7 +22,6 @@ import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import FilterAndView from './FilterAndView'
 import QueryFilterToggleButton from './QueryFilterToggleButton'
 import TopLevelControls, { TopLevelControlsProps } from '../table/TopLevelControls'
-import { isFacetAvailableAndSupported } from '../../utils/functions/queryUtils'
 
 type OwnProps = {
   sql: string
@@ -107,7 +106,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
               initQueryRequest={initQueryRequest}
             >
               {queryWrapperChildProps => {
-                const isFaceted = isFacetAvailableAndSupported(sqlUsed, queryWrapperChildProps.data?.facets)
+                const isFaceted = queryWrapperChildProps.isFacetsAvailable
                 return (
                   <>
                     {entity &&

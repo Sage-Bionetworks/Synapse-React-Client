@@ -12,7 +12,7 @@ import {
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
-import { isFacetAvailableAndSupported } from '../utils/functions/queryUtils'
+import { isFacetAvailable } from '../utils/functions/queryUtils'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
@@ -81,7 +81,7 @@ export type QueryWrapperState = {
   isColumnSelected: string[]
   selectedRowIndices?: number[]
   error: SynapseClientError | undefined
-  isFaceted: boolean
+  isFacetsAvailable: boolean
 }
 
 /*
@@ -131,6 +131,7 @@ export type QueryWrapperChildProps = {
   selectedRowIndices?: number[]
   error?: SynapseClientError | undefined
   lockedFacet?: LockedFacet
+  isFacetsAvailable?: boolean
 }
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -171,7 +172,6 @@ export default class QueryWrapper extends React.Component<
       isAllFilterSelectedForFacet: {},
       loadNowStarted: false,
       lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
-      isFaceted: true,
       topLevelControlsState: {
         showColumnFilter: true,
         showFacetFilter: true,
@@ -182,6 +182,7 @@ export default class QueryWrapper extends React.Component<
       },
       isColumnSelected: [],
       selectedRowIndices: [],
+      isFacetsAvailable: true,
       error: undefined,
     }
     this.componentIndex = props.componentIndex || 0
@@ -281,8 +282,7 @@ export default class QueryWrapper extends React.Component<
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
-        const isFacetAvailable = isFacetAvailableAndSupported(clonedQueryRequest.query.sql, data.facets)
-
+        const isFaceted = isFacetAvailable(data.facets)
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           clonedQueryRequest.query.limit
@@ -290,11 +290,11 @@ export default class QueryWrapper extends React.Component<
           hasMoreData,
           data,
           asyncJobStatus: undefined,
-          isFaceted: isFacetAvailable,
+          isFacetsAvailable: isFaceted,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,
-            showFacetFilter: isFacetAvailable,
-            showFacetVisualization: isFacetAvailable,
+            showFacetFilter: isFaceted,
+            showFacetVisualization: isFaceted,
           }
         }
         this.setState(newState)
@@ -387,7 +387,7 @@ export default class QueryWrapper extends React.Component<
             }
           })
         }
-        const isFacetAvailable = isFacetAvailableAndSupported(this.props.initQueryRequest.query.sql, data.facets)
+        const isFaceted = isFacetAvailable(data.facets)
         const newState = {
           isAllFilterSelectedForFacet,
           hasMoreData,
@@ -398,11 +398,11 @@ export default class QueryWrapper extends React.Component<
             data?.selectColumns
               ?.slice(0, this.props.visibleColumnCount ?? Infinity)
               .map(el => el.name) ?? [],
-          isFaceted: isFacetAvailable,
+          isFacetsAvailable: isFaceted,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,
-            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFacetAvailable : false,
-            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFacetAvailable : false,
+            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFaceted : false,
+            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFaceted : false,
           }
         }
         
@@ -453,7 +453,7 @@ export default class QueryWrapper extends React.Component<
    * Render the children without any formatting
    */
   public render() {
-    const { isLoading, isFaceted } = this.state
+    const { isLoading } = this.state
     const { children, ...rest } = this.props
     const queryWrapperChildProps: QueryWrapperChildProps = {
       isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
@@ -467,6 +467,7 @@ export default class QueryWrapper extends React.Component<
       topLevelControlsState: this.state.topLevelControlsState,
       isColumnSelected: this.state.isColumnSelected,
       selectedRowIndices: this.state.selectedRowIndices,
+      isFacetsAvailable: this.state.isFacetsAvailable,
       error: this.state.error,
       executeInitialQueryRequest: this.executeInitialQueryRequest,
       executeQueryRequest: this.executeQueryRequest,
@@ -478,7 +479,7 @@ export default class QueryWrapper extends React.Component<
     }
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     return (
-      <div className={`SRC-wrapper ${loadingCusrorClass} ${isFaceted ? 'has-facets' : ''}`}>
+      <div className={`SRC-wrapper ${loadingCusrorClass} ${this.state.isFacetsAvailable ? 'has-facets' : ''}`}>
         {children && children(queryWrapperChildProps)}
       </div>
     )
