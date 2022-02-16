@@ -370,7 +370,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       >
                         <ReflexElement
                           className="TreeViewReflexElement"
-                          flex={0.18}
+                          flex={0.24}
                         >
                           <TreeView
                             selectedEntities={selectedEntities}
