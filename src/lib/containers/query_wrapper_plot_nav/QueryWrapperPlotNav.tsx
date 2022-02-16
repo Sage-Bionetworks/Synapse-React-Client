@@ -2,7 +2,6 @@ import * as React from 'react'
 import { SynapseConstants } from '../../utils/'
 import {
   insertConditionsFromSearchParams,
-  isFacetAvailableAndSupported,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
@@ -23,6 +22,7 @@ import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import FilterAndView from './FilterAndView'
 import QueryFilterToggleButton from './QueryFilterToggleButton'
 import TopLevelControls, { TopLevelControlsProps } from '../table/TopLevelControls'
+import { isFacetAvailableAndSupported } from '../../utils/functions/queryUtils'
 
 type OwnProps = {
   sql: string

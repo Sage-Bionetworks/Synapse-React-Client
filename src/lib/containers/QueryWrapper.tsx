@@ -12,7 +12,7 @@ import {
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
-import { isFacetAvailableAndSupported } from '../utils/functions/sqlFunctions'
+import { isFacetAvailableAndSupported } from '../utils/functions/queryUtils'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
@@ -293,8 +293,8 @@ export default class QueryWrapper extends React.Component<
           isFaceted: isFacetAvailable,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,
-            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFacetAvailable : false,
-            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFacetAvailable : false,
+            showFacetFilter: isFacetAvailable,
+            showFacetVisualization: isFacetAvailable,
           }
         }
         this.setState(newState)
@@ -405,6 +405,7 @@ export default class QueryWrapper extends React.Component<
             showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFacetAvailable : false,
           }
         }
+        
         this.setState(newState)
       })
       .catch(error => {

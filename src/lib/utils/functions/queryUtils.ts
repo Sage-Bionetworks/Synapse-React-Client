@@ -1,4 +1,4 @@
-import { QueryBundleRequest } from '../synapseTypes/'
+import { QueryBundleRequest, FacetColumnResult } from '../synapseTypes/'
 import { SynapseClient, SynapseConstants } from '..'
 import { QueryResultBundle } from '../synapseTypes/'
 import { cloneDeep } from 'lodash-es'
@@ -56,4 +56,9 @@ export const getNextPageOfData = async (
       console.log('Failed to get data ', err)
       return {} as PartialStateObject
     })
+}
+
+const groupByRegEx = /group\s*by/gmi
+export const isFacetAvailableAndSupported = (sql: string, facets?: FacetColumnResult[]): boolean => {
+  return !groupByRegEx.test(sql) && (facets ? facets.length > 0 : false)
 }
