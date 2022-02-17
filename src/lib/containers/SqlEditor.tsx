@@ -52,7 +52,7 @@ export function SqlEditor(props: SqlEditorProps) {
 
   return (
     <div
-      className={`SearchV2 ${
+      className={`QueryWrapperTextInput ${
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
@@ -62,9 +62,9 @@ export function SqlEditor(props: SqlEditorProps) {
         in={showSqlEditor}
         timeout={{ enter: 300, exit: 300 }}
       >
-        <form className="SearchV2__searchbar" onSubmit={search}>
+        <form className="QueryWrapperTextInput__searchbar" onSubmit={search}>
           <FontAwesomeIcon
-            className="SearchV2__searchbar__searchicon"
+            className="QueryWrapperTextInput__searchbar__searchicon"
             size={'sm'}
             icon={'search'}
           />

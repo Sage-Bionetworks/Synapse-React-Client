@@ -1,6 +1,6 @@
 @use '../abstracts/variables' as SRC;
 
-.SearchV2 {
+.QueryWrapperTextInput {
   &__searchbar {
     height: 50px;
     background: #f9f9f9;
@@ -78,7 +78,7 @@
     width: 100%;
   }
 
-  &__column-select.SearchV2__animate_height {
+  &__column-select.QueryWrapperTextInput__animate_height {
     overflow: scroll;
   }
 
