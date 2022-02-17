@@ -9,6 +9,7 @@ import { Explore } from './Explore'
 import { Search } from './Search'
 import { Chart } from './Chart'
 import { Filter } from './Filter'
+import { SqlEditorIcon } from './SqlEditorIcon'
 import { Download } from './Download'
 import { Expand } from './Expand'
 import { Collapse } from './Collapse'
@@ -44,4 +45,5 @@ export {
   ColumnsDark,
   VerticalDots,
   ExternalLink,
+  SqlEditorIcon,
 }

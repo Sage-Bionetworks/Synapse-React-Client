@@ -59,12 +59,14 @@
       .TotalQueryResults {
         grid-row: 4 / span 1;
       }
-
-      .FacetNav {
+      .ErrorBannerWrapper {
         grid-row: 5 / span 1;
       }
-      .FilterAndView {
+      .FacetNav {
         grid-row: 6 / span 1;
+      }
+      .FilterAndView {
+        grid-row: 7 / span 1;
       }
 
       // column (depends on if we are showing facet filters)
@@ -83,7 +85,8 @@
         &.TotalQueryResults,
         &.FilterAndView,
         &.TopLevelControls,
-        &.SearchV2 {
+        &.SearchV2,
+        &.ErrorBannerWrapper {
           grid-column: 5 / span 1;
         }
       }
@@ -104,7 +107,8 @@
     .FacetNav,
     .FilterAndView,
     .TopLevelControls,
-    .SearchV2 {
+    .SearchV2,
+    .ErrorBannerWrapper {
       margin-left: 30px;
     }
   }

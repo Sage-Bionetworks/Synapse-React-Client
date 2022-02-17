@@ -52,6 +52,7 @@ export type TopLevelControlsState = {
   showSearchBar: boolean
   showDownloadConfirmation: boolean
   showColumnSelectDropdown: boolean
+  showSqlEditor: boolean
 }
 
 export type SearchQuery = {
@@ -262,6 +263,7 @@ export default class QueryWrapper extends React.Component<
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
       selectedRowIndices: [], // reset selected row indices any time the query is re-run
+      error: undefined,
     })
 
     if (clonedQueryRequest.query) {
@@ -301,7 +303,9 @@ export default class QueryWrapper extends React.Component<
       })
       .catch(error => {
         console.error('Failed to get data ', error)
-        this.setState(error)
+        this.setState({
+          error,
+        })
       })
       .finally(() => {
         this.setState({ isLoading: false, isLoadingNewData: false })
