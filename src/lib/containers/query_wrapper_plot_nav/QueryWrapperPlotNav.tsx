@@ -106,6 +106,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
               initQueryRequest={initQueryRequest}
             >
               {queryWrapperChildProps => {
+                const isFaceted = queryWrapperChildProps.isFacetsAvailable
                 return (
                   <>
                     {entity &&
@@ -131,14 +132,19 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                       sql={sqlUsed}
                       hideDownload={hideDownload}
                       hideQueryCount={hideQueryCount}
+                      hideFacetFilterControl={!isFaceted}
+                      hideVisualizationsControl={!isFaceted}
                     />
-                    <QueryFilter {...queryWrapperChildProps} {...props} />
-                    <QueryFilterToggleButton {...queryWrapperChildProps} />
+                    {isFaceted && <>
+                      <QueryFilter {...queryWrapperChildProps} {...props} />
+                      <QueryFilterToggleButton {...queryWrapperChildProps} />
+                      </>}
                     <FacetNav
                       {...queryWrapperChildProps}
                       facetsToPlot={facetsToPlot}
                       showNotch={false}
                     />
+
                     <FilterAndView
                       {...queryWrapperChildProps}
                       facetsToFilter={facetsToFilter}

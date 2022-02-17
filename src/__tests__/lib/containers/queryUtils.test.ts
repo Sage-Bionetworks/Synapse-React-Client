@@ -3,6 +3,8 @@ import { SynapseConstants } from '../../../lib/utils'
 import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { QueryResultBundle } from 'src/lib/utils/synapseTypes/Table/QueryResultBundle.js'
 import { cloneDeep } from 'lodash-es'
+import { isFacetAvailable } from '../../../lib/utils/functions/queryUtils'
+import { FacetColumnResult } from '../../../lib/utils/synapseTypes'
 
 describe('get next page of data', () => {
   const sql = 'SELECT * FROM syn16787123'
@@ -48,4 +50,20 @@ describe('get next page of data', () => {
       expect(partialState.hasMoreData).toEqual(false)
     })
   })
+})
+
+describe('facet support', () => {
+  const facetAvailable:FacetColumnResult[] = [{columnName:'study',facetType:'enumeration',concreteType:'org.sagebionetworks.repo.model.table.FacetColumnResultValues'}]
+  
+  it('facet availability', () => {
+    expect(isFacetAvailable(facetAvailable)).toEqual(true)
+    expect(isFacetAvailable([])).toEqual(false)
+    expect(isFacetAvailable(undefined)).toEqual(false)
+  })
+  
+  // it('facets are unavailable, but would be relevant to the resultset schema', () => {
+  //   expect(isFacetCountInSyncWithRowData('select * from syn123')).toEqual(true)
+  //   expect(isFacetCountInSyncWithRowData('select * from syn123 where a=\'b\'')).toEqual(true)
+  //   expect(isFacetCountInSyncWithRowData('select count(id) from syn123 group by study')).toEqual(false)
+  // })
 })

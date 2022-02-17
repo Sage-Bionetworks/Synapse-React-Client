@@ -12,6 +12,7 @@ import {
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+import { isFacetAvailable } from '../utils/functions/queryUtils'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
@@ -80,6 +81,7 @@ export type QueryWrapperState = {
   isColumnSelected: string[]
   selectedRowIndices?: number[]
   error: SynapseClientError | undefined
+  isFacetsAvailable: boolean
 }
 
 /*
@@ -129,6 +131,7 @@ export type QueryWrapperChildProps = {
   selectedRowIndices?: number[]
   error?: SynapseClientError | undefined
   lockedFacet?: LockedFacet
+  isFacetsAvailable?: boolean
 }
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -154,6 +157,7 @@ export default class QueryWrapper extends React.Component<
     this.updateParentState = this.updateParentState.bind(this)
     this.getInitQueryRequest = this.getInitQueryRequest.bind(this)
     const showFacetVisualization = props.defaultShowFacetVisualization ?? true
+
     this.state = {
       data: undefined,
       isLoading: true,
@@ -178,6 +182,7 @@ export default class QueryWrapper extends React.Component<
       },
       isColumnSelected: [],
       selectedRowIndices: [],
+      isFacetsAvailable: true,
       error: undefined,
     }
     this.componentIndex = props.componentIndex || 0
@@ -277,6 +282,7 @@ export default class QueryWrapper extends React.Component<
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
+        const isFaceted = isFacetAvailable(data.facets)
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           clonedQueryRequest.query.limit
@@ -284,6 +290,12 @@ export default class QueryWrapper extends React.Component<
           hasMoreData,
           data,
           asyncJobStatus: undefined,
+          isFacetsAvailable: isFaceted,
+          topLevelControlsState: {
+            ...this.state.topLevelControlsState!,
+            showFacetFilter: isFaceted,
+            showFacetVisualization: isFaceted,
+          }
         }
         this.setState(newState)
       })
@@ -375,6 +387,7 @@ export default class QueryWrapper extends React.Component<
             }
           })
         }
+        const isFaceted = isFacetAvailable(data.facets)
         const newState = {
           isAllFilterSelectedForFacet,
           hasMoreData,
@@ -385,7 +398,14 @@ export default class QueryWrapper extends React.Component<
             data?.selectColumns
               ?.slice(0, this.props.visibleColumnCount ?? Infinity)
               .map(el => el.name) ?? [],
+          isFacetsAvailable: isFaceted,
+          topLevelControlsState: {
+            ...this.state.topLevelControlsState!,
+            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFaceted : false,
+            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFaceted : false,
+          }
         }
+        
         this.setState(newState)
       })
       .catch(error => {
@@ -447,6 +467,7 @@ export default class QueryWrapper extends React.Component<
       topLevelControlsState: this.state.topLevelControlsState,
       isColumnSelected: this.state.isColumnSelected,
       selectedRowIndices: this.state.selectedRowIndices,
+      isFacetsAvailable: this.state.isFacetsAvailable,
       error: this.state.error,
       executeInitialQueryRequest: this.executeInitialQueryRequest,
       executeQueryRequest: this.executeQueryRequest,
@@ -458,7 +479,7 @@ export default class QueryWrapper extends React.Component<
     }
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     return (
-      <div className={`SRC-wrapper ${loadingCusrorClass}`}>
+      <div className={`SRC-wrapper ${loadingCusrorClass} ${this.state.isFacetsAvailable ? 'has-facets' : ''}`}>
         {children && children(queryWrapperChildProps)}
       </div>
     )
