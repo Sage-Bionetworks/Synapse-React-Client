@@ -180,6 +180,7 @@ export default class QueryWrapper extends React.Component<
         showSearchBar: false,
         showDownloadConfirmation: false,
         showColumnSelectDropdown: false,
+        showSqlEditor: false,
       },
       isColumnSelected: [],
       selectedRowIndices: [],
