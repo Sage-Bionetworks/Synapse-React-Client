@@ -52,19 +52,21 @@
       .download-confirmation {
         grid-row: 2 / span 1;
       }
-      .SearchV2 {
+      .QueryWrapperTextInput {
         grid-row: 3 / span 1;
         margin-bottom: 10px;
       }
       .TotalQueryResults {
         grid-row: 4 / span 1;
       }
-
-      .FacetNav {
+      .ErrorBannerWrapper {
         grid-row: 5 / span 1;
       }
-      .FilterAndView {
+      .FacetNav {
         grid-row: 6 / span 1;
+      }
+      .FilterAndView {
+        grid-row: 7 / span 1;
       }
 
       // column (depends on if we are showing facet filters)
@@ -83,7 +85,8 @@
         &.TotalQueryResults,
         &.FilterAndView,
         &.TopLevelControls,
-        &.SearchV2 {
+        &.QueryWrapperTextInput,
+        &.ErrorBannerWrapper {
           grid-column: 5 / span 1;
         }
       }
@@ -104,7 +107,8 @@
     .FacetNav,
     .FilterAndView,
     .TopLevelControls,
-    .SearchV2 {
+    .QueryWrapperTextInput,
+    .ErrorBannerWrapper {
       margin-left: 30px;
     }
   }
@@ -117,7 +121,7 @@
     }
   }
 
-  .SearchV2 {
+  .QueryWrapperTextInput {
     // PORTALS-1856: z-index greater than the Show All Graphs button (500)
     z-index: 600;
   }

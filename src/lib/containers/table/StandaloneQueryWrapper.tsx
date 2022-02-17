@@ -11,6 +11,7 @@ import FullTextSearch from '../FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
 import TotalQueryResults from '../TotalQueryResults'
+import SqlEditor from '../SqlEditor'
 
 type SearchParams = {
   searchParams?: {
@@ -132,6 +133,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
                     {...searchConfiguration}
                   />
                 )}
+                <SqlEditor {...queryWrapperChildProps} />
                 {showTopLevelControls && <TotalQueryResults
                   isLoading={queryWrapperChildProps.isLoading!}
                   executeQueryRequest={queryWrapperChildProps.executeQueryRequest}

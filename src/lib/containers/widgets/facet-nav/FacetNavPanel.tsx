@@ -6,6 +6,7 @@ import { Button, Dropdown, Modal } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 import ReactTooltip from 'react-tooltip'
+import { SkeletonInlineBlock } from '../../../assets/skeletons/SkeletonInlineBlock'
 import getColorPalette from '../../../containers/ColorGradient'
 import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
@@ -441,10 +442,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         >
           {!isModalView && (
             <div className="FacetNavPanel__title">
-              <span className="FacetNavPanel__title__name">{plotTitle}</span>
-              {isLoading && (
-                <span style={{ marginLeft: '2px' }} className={'spinner'} />
-              )}
+              {!isLoading && <span className="FacetNavPanel__title__name">{plotTitle}</span>}
+              {isLoading && <SkeletonInlineBlock width={100} />}
               <div className="FacetNavPanel__title__tools">
                 <EnumFacetFilter
                   facetValues={facetToPlot.facetValues}

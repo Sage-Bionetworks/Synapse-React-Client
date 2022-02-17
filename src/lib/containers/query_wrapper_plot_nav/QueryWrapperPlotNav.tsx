@@ -14,7 +14,7 @@ import { DownloadConfirmation } from '../download_list'
 import { ErrorBanner } from '../ErrorBanner'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload'
-import QueryWrapper from '../QueryWrapper'
+import QueryWrapper, { QUERY_FILTERS_EXPANDED_CSS, QUERY_FILTERS_COLLAPSED_CSS } from '../QueryWrapper'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import { SynapseTableProps } from '../table/SynapseTable'
 import FacetNav, { FacetNavOwnProps } from '../widgets/facet-nav/FacetNav'
@@ -22,6 +22,7 @@ import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import FilterAndView from './FilterAndView'
 import QueryFilterToggleButton from './QueryFilterToggleButton'
 import TopLevelControls, { TopLevelControlsProps } from '../table/TopLevelControls'
+import SqlEditor from '../SqlEditor'
 
 type OwnProps = {
   sql: string
@@ -37,6 +38,7 @@ type OwnProps = {
   facetAliases?: Record<string, string>
   hideDownload?: boolean
   hideQueryCount?: boolean
+  hideSqlEditorControl?: boolean
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
   downloadCartPageUrl?: string
@@ -70,6 +72,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
       facetsToFilter,
       hideDownload,
       hideQueryCount,
+      hideSqlEditorControl,
       searchConfiguration,
       limit = DEFAULT_PAGE_SIZE,
       downloadCartPageUrl,
@@ -107,8 +110,18 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
             >
               {queryWrapperChildProps => {
                 const isFaceted = queryWrapperChildProps.isFacetsAvailable
+                const showFacetFilter = queryWrapperChildProps.topLevelControlsState?.showFacetFilter
                 return (
                   <>
+                    <div
+                      className={`ErrorBannerWrapper ${
+                        showFacetFilter
+                          ? QUERY_FILTERS_EXPANDED_CSS
+                          : QUERY_FILTERS_COLLAPSED_CSS
+                      }`}
+                    >
+                      <ErrorBanner {...queryWrapperChildProps} />
+                    </div>
                     {entity &&
                     isTableEntity(entity) &&
                     entity.isSearchEnabled ? (
@@ -119,7 +132,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                         {...searchConfiguration}
                       />
                     )}
-                    <ErrorBanner {...queryWrapperChildProps} />
+                    <SqlEditor {...queryWrapperChildProps} />
                     <DownloadConfirmation
                       {...queryWrapperChildProps}
                       downloadCartPageUrl={downloadCartPageUrl}
@@ -134,6 +147,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                       hideQueryCount={hideQueryCount}
                       hideFacetFilterControl={!isFaceted}
                       hideVisualizationsControl={!isFaceted}
+                      hideSqlEditorControl={hideSqlEditorControl}
                     />
                     {isFaceted && <>
                       <QueryFilter {...queryWrapperChildProps} {...props} />

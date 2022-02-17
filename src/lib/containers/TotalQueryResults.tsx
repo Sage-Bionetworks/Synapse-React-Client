@@ -39,6 +39,7 @@ import {
   applyChangesToValuesColumn,
 } from './widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
+import { SkeletonInlineBlock } from '../assets/skeletons/SkeletonInlineBlock'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
@@ -347,10 +348,10 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       style={style}
     >
       <span className="SRC-boldText SRC-text-title SRC-centerContent">
-        {frontText} {total} {unitDescription}
-        {isLoading && (
-          <span style={{ marginLeft: '2px' }} className={'spinner'} />
-        )}
+        {!isLoading && <>
+          {frontText} {total} {unitDescription}
+        </>}
+        {isLoading && <SkeletonInlineBlock width={100}/>}
       </span>
       <div className="TotalQueryResults__selections">
         {searchSelectionCriteriaPillProps &&

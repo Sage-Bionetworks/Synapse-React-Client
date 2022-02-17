@@ -38,6 +38,7 @@ import {
   EASY_DIFFICULTY,
   MEDIUM_DIFFICULTY,
   VARIABLE_DIFFICULTY,
+  SQL_EDITOR,
 } from '../../../utils/SynapseConstants'
 
 import { ReactComponent as Data2Svg } from '../../../assets/icons/Data2.svg'
@@ -73,6 +74,7 @@ import {
   ColumnsDark,
   VerticalDots,
   ExternalLink,
+  SqlEditorIcon
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -109,6 +111,7 @@ const defaultIcons = {
   [SEARCH]: Search,
   [CHART]: Chart,
   [FILTER]: Filter,
+  [SQL_EDITOR]: SqlEditorIcon,
   [DOWNLOAD]: Download,
   [EXPAND]: Expand,
   [COLLAPSE]: Collapse,
