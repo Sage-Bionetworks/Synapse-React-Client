@@ -165,25 +165,25 @@ class Login extends React.Component<Props, State> {
           or
         </div>
         <Form onSubmit={this.handleLogin}>
-          <label htmlFor={'exampleEmail'}>Username or Email Address</label>
+          <label htmlFor={'username'}>Username or Email Address</label>
           <Form.Control
             required
             autoComplete="username"
             placeholder="Username or Email Address"
             className="LoginComponent__Input"
-            id="exampleEmail"
+            id="username"
             name="username"
             type="text"
             value={this.state.username}
             onChange={this.handleChange}
           />
-          <label htmlFor={'examplePassword'}>Password</label>
+          <label htmlFor={'current-password'}>Password</label>
           <Form.Control
             required
-            autoComplete="password"
+            autoComplete="current-password"
             placeholder="Password"
             className="LoginComponent__Input"
-            id="examplePassword"
+            id="current-password"
             name="password"
             type="password"
             value={this.state.password}
