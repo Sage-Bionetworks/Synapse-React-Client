@@ -8,7 +8,7 @@ import {
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { SynapseContextConsumer } from '../../utils/SynapseContext'
-import { isTableEntity, Query, QueryBundleRequest } from '../../utils/synapseTypes'
+import { isTableEntity, Query, QueryBundleRequest, QueryResultBundle } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
 import { DownloadConfirmation } from '../download_list'
 import { ErrorBanner } from '../ErrorBanner'
@@ -28,8 +28,10 @@ type OwnProps = {
   sql: string
   limit?: number
   shouldDeepLink?: boolean
-  /** If onQueryBundleRequestChange is set, the callback will be invoked when the QueryBundleRequest changes */
-  onQueryBundleRequestChange?: (newQueryBundleRequestJson: string) => void
+  /** If onQueryChange is set, the callback will be invoked when the Query changes */
+  onQueryChange?: (newQuery: Query) => void
+  /** If onQueryResultBundleChange is set, the callback will be invoked when the QueryResultBundle changes */
+  onQueryResultBundleChange?: (newQueryResultBundle: QueryResultBundle) => void
   /** If initQuery is set, it will be the Query used in the initial QueryBundleRequest */
   initQuery?: Query
   tableConfiguration?: SynapseTableProps

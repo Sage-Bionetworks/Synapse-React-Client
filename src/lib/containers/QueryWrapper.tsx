@@ -8,6 +8,7 @@ import {
   FacetColumnResultValues,
   QueryBundleRequest,
   QueryResultBundle,
+  Query,
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
@@ -37,7 +38,8 @@ export type QueryWrapperProps = {
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
-  onQueryBundleRequestChange?: (newQueryBundleRequestJson: string) => void
+  onQueryChange?: (newQuery: Query) => void
+  onQueryResultBundleChange?: (newQueryResultBundle: QueryResultBundle) => void
   hiddenColumns?: string[]
   lockedFacet?: LockedFacet
   defaultShowFacetVisualization?: boolean
@@ -273,8 +275,8 @@ export default class QueryWrapper extends React.Component<
         JSON.stringify(clonedQueryRequest.query),
       )
       if (this.props.shouldDeepLink) {
-        if (this.props.onQueryBundleRequestChange) {
-          this.props.onQueryBundleRequestChange(stringifiedQuery)
+        if (this.props.onQueryChange) {
+          this.props.onQueryChange(clonedQueryRequest.query)
         } else {
           DeepLinkingUtils.updateUrlWithNewSearchParam(
             'QueryWrapper',
@@ -304,6 +306,9 @@ export default class QueryWrapper extends React.Component<
             showFacetFilter: isFaceted,
             showFacetVisualization: isFaceted,
           }
+        }
+        if (this.props.onQueryResultBundleChange) {
+          this.props.onQueryResultBundleChange(data)
         }
         this.setState(newState)
       })
@@ -398,6 +403,9 @@ export default class QueryWrapper extends React.Component<
           })
         }
         const isFaceted = isFacetAvailable(data.facets)
+        if (this.props.onQueryResultBundleChange) {
+          this.props.onQueryResultBundleChange(data)
+        }
         const newState = {
           isAllFilterSelectedForFacet,
           hasMoreData,
