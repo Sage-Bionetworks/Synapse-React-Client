@@ -37,6 +37,7 @@ export type QueryWrapperProps = {
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
+  onQueryBundleRequestChange?: (newQueryBundleRequestJson: string) => void
   hiddenColumns?: string[]
   lockedFacet?: LockedFacet
   defaultShowFacetVisualization?: boolean
@@ -272,11 +273,15 @@ export default class QueryWrapper extends React.Component<
         JSON.stringify(clonedQueryRequest.query),
       )
       if (this.props.shouldDeepLink) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
-          this.componentIndex,
-          stringifiedQuery,
-        )
+        if (this.props.onQueryBundleRequestChange) {
+          this.props.onQueryBundleRequestChange(stringifiedQuery)
+        } else {
+          DeepLinkingUtils.updateUrlWithNewSearchParam(
+            'QueryWrapper',
+            this.componentIndex,
+            stringifiedQuery,
+          )
+        }
       }
     }
     return SynapseClient.getQueryTableResults(
