@@ -8,7 +8,6 @@ import {
   FacetColumnResultValues,
   QueryBundleRequest,
   QueryResultBundle,
-  Query,
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
@@ -38,8 +37,8 @@ export type QueryWrapperProps = {
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
-  onQueryChange?: (newQuery: Query) => void
-  onQueryResultBundleChange?: (newQueryResultBundle: QueryResultBundle) => void
+  onQueryChange?: (newQueryJson: string) => void
+  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   hiddenColumns?: string[]
   lockedFacet?: LockedFacet
   defaultShowFacetVisualization?: boolean
@@ -271,12 +270,13 @@ export default class QueryWrapper extends React.Component<
     })
 
     if (clonedQueryRequest.query) {
+      const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
       const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(clonedQueryRequest.query),
+        clonedQueryRequestJson,
       )
       if (this.props.shouldDeepLink) {
         if (this.props.onQueryChange) {
-          this.props.onQueryChange(clonedQueryRequest.query)
+          this.props.onQueryChange(clonedQueryRequestJson)
         } else {
           DeepLinkingUtils.updateUrlWithNewSearchParam(
             'QueryWrapper',
@@ -308,7 +308,7 @@ export default class QueryWrapper extends React.Component<
           }
         }
         if (this.props.onQueryResultBundleChange) {
-          this.props.onQueryResultBundleChange(data)
+          this.props.onQueryResultBundleChange(JSON.stringify(data))
         }
         this.setState(newState)
       })
@@ -404,7 +404,7 @@ export default class QueryWrapper extends React.Component<
         }
         const isFaceted = isFacetAvailable(data.facets)
         if (this.props.onQueryResultBundleChange) {
-          this.props.onQueryResultBundleChange(data)
+          this.props.onQueryResultBundleChange(JSON.stringify(data))
         }
         const newState = {
           isAllFilterSelectedForFacet,

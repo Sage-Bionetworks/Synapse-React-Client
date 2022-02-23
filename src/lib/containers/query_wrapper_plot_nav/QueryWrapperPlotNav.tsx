@@ -8,7 +8,7 @@ import {
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { SynapseContextConsumer } from '../../utils/SynapseContext'
-import { isTableEntity, Query, QueryBundleRequest, QueryResultBundle } from '../../utils/synapseTypes'
+import { isTableEntity, Query, QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
 import { DownloadConfirmation } from '../download_list'
 import { ErrorBanner } from '../ErrorBanner'
@@ -29,11 +29,11 @@ type OwnProps = {
   limit?: number
   shouldDeepLink?: boolean
   /** If onQueryChange is set, the callback will be invoked when the Query changes */
-  onQueryChange?: (newQuery: Query) => void
+  onQueryChange?: (newQueryJson: string) => void
   /** If onQueryResultBundleChange is set, the callback will be invoked when the QueryResultBundle changes */
-  onQueryResultBundleChange?: (newQueryResultBundle: QueryResultBundle) => void
-  /** If initQuery is set, it will be the Query used in the initial QueryBundleRequest */
-  initQuery?: Query
+  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
+  /** If initQueryJson is set, it will be the Query used in the initial QueryBundleRequest */
+  initQueryJson?: string
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
   searchConfiguration?: SearchV2Props
@@ -82,7 +82,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
       searchConfiguration,
       limit = DEFAULT_PAGE_SIZE,
       downloadCartPageUrl,
-      initQuery,
+      initQueryJson,
     } = props
     const sqlUsed = insertConditionsFromSearchParams(
       sql,
@@ -91,7 +91,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
     )
 
     // use initQuery if set, otherwise use sql
-    const query = initQuery ?? {
+    const query:Query = initQueryJson ? JSON.parse(initQueryJson) as Query : {
       sql: sqlUsed,
       limit: limit,
       offset: 0,
