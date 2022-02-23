@@ -184,9 +184,13 @@ export default class SynapseTable extends React.Component<
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps, prevState: Readonly<SynapseTableState>) {
     // PORTALS-2081: if the data changed, then get the new entity headers
-    if (!eq(prevProps.data, this.props.data) || !eq(prevState.isEntityView, this.state.isEntityView)) {
+    if (!eq(prevProps.data, this.props.data)) {
       this.getEntityHeadersInData(false)
+    } else if (!eq(prevState.isEntityView, this.state.isEntityView)) {
+      // if we determined that this is an entity view, force refresh the entity headers (for Views we need to get the rowIds!)
+      this.getEntityHeadersInData(true)
     }
+
     this.getTableConcreteType(prevProps)
     this.enableResize()
   }
@@ -260,6 +264,7 @@ export default class SynapseTable extends React.Component<
       this.props.data,
       ColumnType.USERID,
     )
+
     const distinctEntityIds = getUniqueEntities(
       data,
       mapEntityIdToHeader,
