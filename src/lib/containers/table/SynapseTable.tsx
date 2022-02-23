@@ -28,7 +28,7 @@ import { QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
 import { ICON_STATE } from './SynapseTableConstants'
-import NoData from '../../assets/icons/file-dotted.svg'
+import { ReactComponent as NoData } from '../../assets/icons/file-dotted.svg'
 import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
@@ -386,7 +386,7 @@ export default class SynapseTable extends React.Component<
       } else {
         return (
           <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-            <img src={NoData} alt="no data"></img>
+            <NoData />
             <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
               This table is currently empty
             </div>
