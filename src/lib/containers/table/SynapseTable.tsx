@@ -49,6 +49,7 @@ import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { SynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import DirectDownload from '../DirectDownload'
+import { isGroupBy } from '../../utils/functions/queryUtils'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -528,10 +529,11 @@ export default class SynapseTable extends React.Component<
     const isShowingAccessColumn: boolean | undefined =
       showAccessColumn && this.state.isEntityView
     const isLoggedIn = !!this.context.accessToken
+    const containsGroupBy = isGroupBy(lastQueryRequest.query.sql)
     const isShowingAddToV2DownloadListColumn: boolean =
-      this.state.isFileView && !this.props.hideDownload && isLoggedIn
+      this.state.isFileView && !this.props.hideDownload && isLoggedIn && !containsGroupBy
     const isShowingDirectDownloadColumn =
-      this.state.isFileView && showDownloadColumn && isLoggedIn
+      this.state.isFileView && showDownloadColumn && isLoggedIn && !containsGroupBy
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
     return (

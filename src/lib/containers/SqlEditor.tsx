@@ -41,7 +41,7 @@ export function SqlEditor(props: SqlEditorProps) {
     const { executeQueryRequest, getLastQueryRequest } = props
     const lastQueryRequestDeepClone = getLastQueryRequest!()
     lastQueryRequestDeepClone.query.sql = sql
-
+    lastQueryRequestDeepClone.query.offset = 0
     executeQueryRequest!(lastQueryRequestDeepClone)
   }
 
