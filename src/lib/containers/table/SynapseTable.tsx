@@ -28,7 +28,7 @@ import { QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
 import { ICON_STATE } from './SynapseTableConstants'
-import NoData from '../../assets/icons/file-dotted.svg'
+import { ReactComponent as NoData } from '../../assets/icons/file-dotted.svg'
 import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
@@ -171,9 +171,17 @@ export default class SynapseTable extends React.Component<
   ): boolean {
     // ignore isFetching state variables when checking for change in state
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isFetchingEntityHeaders: oldIsFetchingEntityHeaders, isFetchingEntityVersion: oldIsFetchingEntityVersion, ...oldState } = this.state
+    const {
+      isFetchingEntityHeaders: oldIsFetchingEntityHeaders,
+      isFetchingEntityVersion: oldIsFetchingEntityVersion,
+      ...oldState
+    } = this.state
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isFetchingEntityHeaders: newIsFetchingEntityHeaders, isFetchingEntityVersion: newIsFetchingEntityVersion, ...newState } = nextState
+    const {
+      isFetchingEntityHeaders: newIsFetchingEntityHeaders,
+      isFetchingEntityVersion: newIsFetchingEntityVersion,
+      ...newState
+    } = nextState
     const isPropsChange = !eq(this.props, nextProps)
     const isStateChange = !eq(oldState, newState)
     const shouldComponentUpdate = isPropsChange || isStateChange
@@ -182,9 +190,15 @@ export default class SynapseTable extends React.Component<
     }
     return shouldComponentUpdate
   }
-  componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps, prevState: Readonly<SynapseTableState>) {
+  componentDidUpdate(
+    prevProps: QueryWrapperChildProps & SynapseTableProps,
+    prevState: Readonly<SynapseTableState>,
+  ) {
     // PORTALS-2081: if the data changed, then get the new entity headers
-    if (!eq(prevProps.data, this.props.data) || !eq(prevState.isEntityView, this.state.isEntityView)) {
+    if (
+      !eq(prevProps.data, this.props.data) ||
+      !eq(prevState.isEntityView, this.state.isEntityView)
+    ) {
       this.getEntityHeadersInData(false)
     }
     this.getTableConcreteType(prevProps)
@@ -232,7 +246,7 @@ export default class SynapseTable extends React.Component<
       // We need to give SynapseTableCell time to render (which will change the column size).
       // Alternatively, we may be able to use SizeMe (or withSize() on Cell component) to respond to width change.
       setTimeout(() => {
-        this.resizer.reset(RESIZER_OPTIONS)  
+        this.resizer.reset(RESIZER_OPTIONS)
       }, 1000)
     }
   }
@@ -386,7 +400,7 @@ export default class SynapseTable extends React.Component<
       } else {
         return (
           <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-            <img src={NoData} alt="no data"></img>
+            <NoData title="no data" />
             <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
               This table is currently empty
             </div>
@@ -847,7 +861,10 @@ export default class SynapseTable extends React.Component<
       if (isShowingDownloadColumn) {
         // SWC-5790: If this is a FileEntity, the download icon should just go to entity page
         rowContent.unshift(
-          <td key={`direct-download-${rowSynapseId}`} className="SRC_noBorderTop direct-download">
+          <td
+            key={`direct-download-${rowSynapseId}`}
+            className="SRC_noBorderTop direct-download"
+          >
             {isFileEntity && (
               <DirectDownload
                 associatedObjectId={rowSynapseId}
@@ -859,7 +876,10 @@ export default class SynapseTable extends React.Component<
       }
       if (isShowingAddToV2DownloadListColumn) {
         rowContent.unshift(
-          <td key={`add-to-download-list-v2-${rowSynapseId}`} className="SRC_noBorderTop add-to-download-list-v2" >
+          <td
+            key={`add-to-download-list-v2-${rowSynapseId}`}
+            className="SRC_noBorderTop add-to-download-list-v2"
+          >
             {isFileEntity && (
               <AddToDownloadListV2
                 entityId={rowSynapseId}

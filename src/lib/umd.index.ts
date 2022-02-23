@@ -43,6 +43,7 @@ import {
 import { DatasetItemsEditor } from './containers/table/datasets/DatasetItemsEditor'
 import { EntityTypeIcon } from './containers/EntityIcon'
 import { SkeletonButton } from './assets/skeletons/SkeletonButton'
+import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -89,6 +90,7 @@ const SynapseComponents = {
   DirectProgrammaticDownload,
   ProgrammaticInstructionsModal,
   SkeletonButton,
+  QueryWrapperPlotNav,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

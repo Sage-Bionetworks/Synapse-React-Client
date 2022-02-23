@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash-es'
 import React, { FunctionComponent, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseClient, SynapseConstants } from '../'
+import { SynapseClient, SynapseConstants } from '../utils'
 import {
   getStoredEntityHeaders,
   getStoredUserProfiles,
