@@ -90,6 +90,7 @@ export default class ModalDownload extends React.Component<
       writeHeader,
       includeRowIdAndRowVersion,
       csvTableDescriptor: { separator },
+      additionalFilters: queryRequest.query.additionalFilters
     }
     SynapseClient.getDownloadFromTableRequest(
       downloadFromTableRequest,
