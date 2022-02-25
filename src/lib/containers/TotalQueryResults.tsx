@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash-es'
 import React, { FunctionComponent, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseClient, SynapseConstants } from '../'
+
 import {
   getStoredEntityHeaders,
   getStoredUserProfiles,
@@ -40,6 +40,8 @@ import {
 } from './widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 import { SkeletonInlineBlock } from '../assets/skeletons/SkeletonInlineBlock'
+import { BUNDLE_MASK_QUERY_COLUMN_MODELS, BUNDLE_MASK_QUERY_COUNT, BUNDLE_MASK_QUERY_FACETS } from '../utils/SynapseConstants'
+import { getQueryTableResults } from '../utils/SynapseClient'
 
 export type TotalQueryResultsProps = {
   isLoading: boolean
@@ -162,12 +164,12 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     const calculateTotal = () => {
       const cloneLastQueryRequest = cloneDeep(lastQueryRequest)
       cloneLastQueryRequest.partMask =
-        SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS
+        BUNDLE_MASK_QUERY_COUNT |
+        BUNDLE_MASK_QUERY_FACETS |
+        BUNDLE_MASK_QUERY_COLUMN_MODELS
       if (parentLoading || total === undefined) {
         setIsLoading(true)
-        SynapseClient.getQueryTableResults(cloneLastQueryRequest, accessToken)
+        getQueryTableResults(cloneLastQueryRequest, accessToken)
           .then(data => {
             setTotal(data.queryCount!)
             const rangeFacetsWithSelections = getRangeFacetsWithSelections(

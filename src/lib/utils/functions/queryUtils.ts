@@ -58,10 +58,9 @@ export const getNextPageOfData = async (
     })
 }
 
-// TODO: Does this matter? If there is a group by, then the facet count data no longer directly represent rows in the currently displayed table.
-// export const isFacetCountInSyncWithRowData = (sql: string): boolean => {
-//   return !(/group\s*by/gmi.test(sql))
-// }
+export const isGroupBy = (sql: string): boolean => {
+  return (/group\s*by/gmi.test(sql))
+}
 
 export const isFacetAvailable = (facets?: FacetColumnResult[]):boolean => {
   return (facets ? facets.length > 0 : false)

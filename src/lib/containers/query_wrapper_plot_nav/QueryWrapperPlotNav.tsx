@@ -8,7 +8,7 @@ import {
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import { SynapseContextConsumer } from '../../utils/SynapseContext'
-import { isTableEntity, QueryBundleRequest } from '../../utils/synapseTypes'
+import { isTableEntity, Query, QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
 import { DownloadConfirmation } from '../download_list'
 import { ErrorBanner } from '../ErrorBanner'
@@ -28,6 +28,12 @@ type OwnProps = {
   sql: string
   limit?: number
   shouldDeepLink?: boolean
+  /** If onQueryChange is set, the callback will be invoked when the Query changes */
+  onQueryChange?: (newQueryJson: string) => void
+  /** If onQueryResultBundleChange is set, the callback will be invoked when the QueryResultBundle changes */
+  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
+  /** If initQueryJson is set, it will be the Query used in the initial QueryBundleRequest */
+  initQueryJson?: string
   tableConfiguration?: SynapseTableProps
   cardConfiguration?: CardConfiguration
   searchConfiguration?: SearchV2Props
@@ -76,6 +82,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
       searchConfiguration,
       limit = DEFAULT_PAGE_SIZE,
       downloadCartPageUrl,
+      initQueryJson,
     } = props
     const sqlUsed = insertConditionsFromSearchParams(
       sql,
@@ -83,7 +90,13 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
       sqlOperator,
     )
 
-    const entityId = parseEntityIdFromSqlStatement(sqlUsed)
+    // use initQuery if set, otherwise use sql
+    const query:Query = initQueryJson ? JSON.parse(initQueryJson) as Query : {
+      sql: sqlUsed,
+      limit: limit,
+      offset: 0,
+    }
+    const entityId = parseEntityIdFromSqlStatement(query.sql)
     const { data: entity } = useGetEntity(entityId)
     const initQueryRequest: QueryBundleRequest = {
       entityId,
@@ -93,11 +106,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
         SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-      query: {
-        sql: sqlUsed,
-        limit: limit,
-        offset: 0,
-      },
+      query,
     }
     return (
       <div className="QueryWrapperPlotNav">

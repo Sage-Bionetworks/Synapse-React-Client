@@ -28,7 +28,7 @@ import { QueryWrapperChildProps } from '../QueryWrapper'
 import TotalQueryResults from '../TotalQueryResults'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
 import { ICON_STATE } from './SynapseTableConstants'
-import NoData from '../../assets/icons/file-dotted.svg'
+import { ReactComponent as NoData } from '../../assets/icons/file-dotted.svg'
 import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
 import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
 import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
@@ -49,6 +49,7 @@ import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { SynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import DirectDownload from '../DirectDownload'
+import { isGroupBy } from '../../utils/functions/queryUtils'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -184,9 +185,13 @@ export default class SynapseTable extends React.Component<
   }
   componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps, prevState: Readonly<SynapseTableState>) {
     // PORTALS-2081: if the data changed, then get the new entity headers
-    if (!eq(prevProps.data, this.props.data) || !eq(prevState.isEntityView, this.state.isEntityView)) {
+    if (!eq(prevProps.data, this.props.data)) {
       this.getEntityHeadersInData(false)
+    } else if (!eq(prevState.isEntityView, this.state.isEntityView)) {
+      // if we determined that this is an entity view, force refresh the entity headers (for Views we need to get the rowIds!)
+      this.getEntityHeadersInData(true)
     }
+
     this.getTableConcreteType(prevProps)
     this.enableResize()
   }
@@ -260,6 +265,7 @@ export default class SynapseTable extends React.Component<
       this.props.data,
       ColumnType.USERID,
     )
+
     const distinctEntityIds = getUniqueEntities(
       data,
       mapEntityIdToHeader,
@@ -386,7 +392,7 @@ export default class SynapseTable extends React.Component<
       } else {
         return (
           <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-            <img src={NoData} alt="no data"></img>
+            <NoData />
             <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
               This table is currently empty
             </div>
@@ -523,10 +529,11 @@ export default class SynapseTable extends React.Component<
     const isShowingAccessColumn: boolean | undefined =
       showAccessColumn && this.state.isEntityView
     const isLoggedIn = !!this.context.accessToken
+    const containsGroupBy = isGroupBy(lastQueryRequest.query.sql)
     const isShowingAddToV2DownloadListColumn: boolean =
-      this.state.isFileView && !this.props.hideDownload && isLoggedIn
+      this.state.isFileView && !this.props.hideDownload && isLoggedIn && !containsGroupBy
     const isShowingDirectDownloadColumn =
-      this.state.isFileView && showDownloadColumn && isLoggedIn
+      this.state.isFileView && showDownloadColumn && isLoggedIn && !containsGroupBy
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
     return (

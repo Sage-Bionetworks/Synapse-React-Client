@@ -37,6 +37,8 @@ export type QueryWrapperProps = {
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
+  onQueryChange?: (newQueryJson: string) => void
+  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   hiddenColumns?: string[]
   lockedFacet?: LockedFacet
   defaultShowFacetVisualization?: boolean
@@ -268,15 +270,20 @@ export default class QueryWrapper extends React.Component<
     })
 
     if (clonedQueryRequest.query) {
+      const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
       const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(clonedQueryRequest.query),
+        clonedQueryRequestJson,
       )
       if (this.props.shouldDeepLink) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
-          this.componentIndex,
-          stringifiedQuery,
-        )
+        if (this.props.onQueryChange) {
+          this.props.onQueryChange(clonedQueryRequestJson)
+        } else {
+          DeepLinkingUtils.updateUrlWithNewSearchParam(
+            'QueryWrapper',
+            this.componentIndex,
+            stringifiedQuery,
+          )
+        }
       }
     }
     return SynapseClient.getQueryTableResults(
@@ -299,6 +306,9 @@ export default class QueryWrapper extends React.Component<
             showFacetFilter: isFaceted,
             showFacetVisualization: isFaceted,
           }
+        }
+        if (this.props.onQueryResultBundleChange) {
+          this.props.onQueryResultBundleChange(JSON.stringify(data))
         }
         this.setState(newState)
       })
@@ -393,6 +403,9 @@ export default class QueryWrapper extends React.Component<
           })
         }
         const isFaceted = isFacetAvailable(data.facets)
+        if (this.props.onQueryResultBundleChange) {
+          this.props.onQueryResultBundleChange(JSON.stringify(data))
+        }
         const newState = {
           isAllFilterSelectedForFacet,
           hasMoreData,
