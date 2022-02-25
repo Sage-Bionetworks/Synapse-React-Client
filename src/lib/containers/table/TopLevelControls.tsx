@@ -16,6 +16,7 @@ import { QueryResultBundle } from '../../utils/synapseTypes'
 import { DownloadOptions } from './table-top'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { SQL_EDITOR } from '../../utils/SynapseConstants'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -24,7 +25,8 @@ export type TopLevelControlsProps = {
   hideDownload?: boolean
   hideVisualizationsControl?: boolean
   hideFacetFilterControl?: boolean
-  hideQueryCount?: boolean,
+  hideQueryCount?: boolean
+  hideSqlEditorControl?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
 }
@@ -69,6 +71,11 @@ const controls: Control[] = [
     key: 'showDownloadConfirmation',
     tooltipText: 'Show options for download',
   },
+  {
+    icon: SQL_EDITOR,
+    key: 'showSqlEditor',
+    tooltipText: 'Show / Hide the Advanced Query Editor',
+  },
 ]
 
 const TopLevelControls = (
@@ -86,6 +93,7 @@ const TopLevelControls = (
     hideVisualizationsControl = false,
     hideFacetFilterControl = false,
     hideQueryCount = false,
+    hideSqlEditorControl = true,
     selectedRowIndices,
     customControls,
     executeQueryRequest,
@@ -141,6 +149,7 @@ const TopLevelControls = (
     updateParentState!({ isColumnSelected: isColumnSelectedCopy })
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
+  
   return (
     <div
       className={`TopLevelControls ${
@@ -179,7 +188,8 @@ const TopLevelControls = (
             if (
               (key === 'showDownloadConfirmation' && hideDownload) ||
               (key === 'showFacetVisualization' && hideVisualizationsControl) ||
-              (key === 'showFacetFilter' && hideFacetFilterControl)
+              (key === 'showFacetFilter' && hideFacetFilterControl) ||
+              (key === 'showSqlEditor' && hideSqlEditorControl)
             ) {
               // needs to be a file view in order for download to make sense
               return <></>

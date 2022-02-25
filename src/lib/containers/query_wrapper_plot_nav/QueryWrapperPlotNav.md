@@ -73,5 +73,6 @@ Configured to show a table:
     sqlOperator='='
     sql='SELECT name, assay, study, dataType, tissue, consortium FROM syn11346063.14'
     downloadCartPageUrl='#/Other%20Components?id=downloadcartpage'
+    hideSqlEditorControl={false}
   />
 ```

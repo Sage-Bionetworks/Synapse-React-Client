@@ -247,7 +247,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     const showFacetFilter = topLevelControlsState?.showFacetFilter
     return (
       <div
-        className={`SearchV2 ${
+        className={`QueryWrapperTextInput ${
           showFacetFilter
             ? QUERY_FILTERS_EXPANDED_CSS
             : QUERY_FILTERS_COLLAPSED_CSS
@@ -255,7 +255,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       >
         <Collapse in={topLevelControlsState?.showSearchBar}>
           <form
-            className="SearchV2__searchbar"
+            className="QueryWrapperTextInput__searchbar"
             onSubmit={this.search}
             onClick={() => {
               this.setState({ show: true })
@@ -263,7 +263,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             ref={this.searchFormRef}
           >
             <FontAwesomeIcon
-              className="SearchV2__searchbar__searchicon"
+              className="QueryWrapperTextInput__searchbar__searchicon"
               size={'sm'}
               icon={'search'}
             />
@@ -280,7 +280,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             />
             {this.state.searchText.length > 0 && (
               <button
-                className="SearchV2__searchbar__clearbutton"
+                className="QueryWrapperTextInput__searchbar__clearbutton"
                 type="button"
                 onClick={() => {
                   this.setState({
@@ -296,15 +296,15 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             )}
           </form>
         </Collapse>
-        <div className="SearchV2__dropdown_pos">
+        <div className="QueryWrapperTextInput__dropdown_pos">
           <CSSTransition
             in={show}
-            classNames="SearchV2__animate_dropdown"
+            classNames="QueryWrapperTextInput__animate_dropdown"
             timeout={{ enter: 0, exit: 300 }}
           >
             <form
               ref={this.radioFormRef}
-              className="SearchV2__column-select SearchV2__animate_height"
+              className="QueryWrapperTextInput__column-select QueryWrapperTextInput__animate_height"
             >
               <p className="deemphasized">
                 <i> Search In Field: </i>

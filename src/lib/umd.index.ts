@@ -20,6 +20,7 @@ import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage
 import FavoritesPage from './containers/FavoritesPage'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
+import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import ErrorPage from './containers/ErrorPage'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
@@ -89,6 +90,7 @@ const SynapseComponents = {
   DirectProgrammaticDownload,
   ProgrammaticInstructionsModal,
   SkeletonButton,
+  QueryWrapperPlotNav,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

@@ -11,14 +11,18 @@ import { cloneDeep } from 'lodash-es'
 // utility function
 const createShallowComponent = async (
   mockRequest: QueryBundleRequest,
-  disableLifecycleMethods: boolean = false,
-  shouldDeepLink: boolean = false,
+  disableLifecycleMethods = false,
+  shouldDeepLink = false,
+  onQueryChange?:(newQueryJson: string) => void,
+  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void,
 ) => {
   const wrapper = await shallow(
     <QueryWrapper
       initQueryRequest={mockRequest}
       facet={'projectStatus'}
       shouldDeepLink={shouldDeepLink}
+      onQueryChange={onQueryChange}
+      onQueryResultBundleChange={onQueryResultBundleChange}
     />,
     { disableLifecycleMethods },
   )
@@ -128,6 +132,27 @@ describe('basic functionality', () => {
     )
     expect(query.sql).toEqual(lastQueryRequest.query.sql)
     expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
+  })
+
+  it('test onQueryChange and onQueryResultBundleChange', async () => {
+    const mockOnQueryChange = jest.fn()
+    const mockOnQueryResultBundleChange = jest.fn()
+    const { instance } = await createShallowComponent(
+      lastQueryRequest,
+      false,
+      true,
+      mockOnQueryChange,
+      mockOnQueryResultBundleChange,
+    )
+
+    await instance.executeQueryRequest(lastQueryRequest)
+    
+    expect(mockOnQueryChange).toBeCalledWith(
+      expect.stringContaining(lastQueryRequest.query.sql),
+    )
+    expect(mockOnQueryResultBundleChange).toHaveBeenLastCalledWith(
+      expect.stringContaining(JSON.stringify(syn16787123Json)),
+    )
   })
 })
 

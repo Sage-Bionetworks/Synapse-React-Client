@@ -12,6 +12,7 @@ import {
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+import { isFacetAvailable } from '../utils/functions/queryUtils'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
@@ -36,6 +37,8 @@ export type QueryWrapperProps = {
   showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
+  onQueryChange?: (newQueryJson: string) => void
+  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   hiddenColumns?: string[]
   lockedFacet?: LockedFacet
   defaultShowFacetVisualization?: boolean
@@ -51,6 +54,7 @@ export type TopLevelControlsState = {
   showSearchBar: boolean
   showDownloadConfirmation: boolean
   showColumnSelectDropdown: boolean
+  showSqlEditor: boolean
 }
 
 export type SearchQuery = {
@@ -80,6 +84,7 @@ export type QueryWrapperState = {
   isColumnSelected: string[]
   selectedRowIndices?: number[]
   error: SynapseClientError | undefined
+  isFacetsAvailable: boolean
 }
 
 /*
@@ -129,6 +134,7 @@ export type QueryWrapperChildProps = {
   selectedRowIndices?: number[]
   error?: SynapseClientError | undefined
   lockedFacet?: LockedFacet
+  isFacetsAvailable?: boolean
 }
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -154,6 +160,7 @@ export default class QueryWrapper extends React.Component<
     this.updateParentState = this.updateParentState.bind(this)
     this.getInitQueryRequest = this.getInitQueryRequest.bind(this)
     const showFacetVisualization = props.defaultShowFacetVisualization ?? true
+
     this.state = {
       data: undefined,
       isLoading: true,
@@ -175,9 +182,11 @@ export default class QueryWrapper extends React.Component<
         showSearchBar: false,
         showDownloadConfirmation: false,
         showColumnSelectDropdown: false,
+        showSqlEditor: false,
       },
       isColumnSelected: [],
       selectedRowIndices: [],
+      isFacetsAvailable: true,
       error: undefined,
     }
     this.componentIndex = props.componentIndex || 0
@@ -257,18 +266,24 @@ export default class QueryWrapper extends React.Component<
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
       selectedRowIndices: [], // reset selected row indices any time the query is re-run
+      error: undefined,
     })
 
     if (clonedQueryRequest.query) {
+      const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
       const stringifiedQuery = encodeURIComponent(
-        JSON.stringify(clonedQueryRequest.query),
+        clonedQueryRequestJson,
       )
       if (this.props.shouldDeepLink) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
-          this.componentIndex,
-          stringifiedQuery,
-        )
+        if (this.props.onQueryChange) {
+          this.props.onQueryChange(clonedQueryRequestJson)
+        } else {
+          DeepLinkingUtils.updateUrlWithNewSearchParam(
+            'QueryWrapper',
+            this.componentIndex,
+            stringifiedQuery,
+          )
+        }
       }
     }
     return SynapseClient.getQueryTableResults(
@@ -277,6 +292,7 @@ export default class QueryWrapper extends React.Component<
       this.updateParentState,
     )
       .then((data: QueryResultBundle) => {
+        const isFaceted = isFacetAvailable(data.facets)
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           clonedQueryRequest.query.limit
@@ -284,12 +300,23 @@ export default class QueryWrapper extends React.Component<
           hasMoreData,
           data,
           asyncJobStatus: undefined,
+          isFacetsAvailable: isFaceted,
+          topLevelControlsState: {
+            ...this.state.topLevelControlsState!,
+            showFacetFilter: isFaceted,
+            showFacetVisualization: isFaceted,
+          }
+        }
+        if (this.props.onQueryResultBundleChange) {
+          this.props.onQueryResultBundleChange(JSON.stringify(data))
         }
         this.setState(newState)
       })
       .catch(error => {
         console.error('Failed to get data ', error)
-        this.setState(error)
+        this.setState({
+          error,
+        })
       })
       .finally(() => {
         this.setState({ isLoading: false, isLoadingNewData: false })
@@ -375,6 +402,10 @@ export default class QueryWrapper extends React.Component<
             }
           })
         }
+        const isFaceted = isFacetAvailable(data.facets)
+        if (this.props.onQueryResultBundleChange) {
+          this.props.onQueryResultBundleChange(JSON.stringify(data))
+        }
         const newState = {
           isAllFilterSelectedForFacet,
           hasMoreData,
@@ -385,7 +416,14 @@ export default class QueryWrapper extends React.Component<
             data?.selectColumns
               ?.slice(0, this.props.visibleColumnCount ?? Infinity)
               .map(el => el.name) ?? [],
+          isFacetsAvailable: isFaceted,
+          topLevelControlsState: {
+            ...this.state.topLevelControlsState!,
+            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFaceted : false,
+            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFaceted : false,
+          }
         }
+        
         this.setState(newState)
       })
       .catch(error => {
@@ -447,6 +485,7 @@ export default class QueryWrapper extends React.Component<
       topLevelControlsState: this.state.topLevelControlsState,
       isColumnSelected: this.state.isColumnSelected,
       selectedRowIndices: this.state.selectedRowIndices,
+      isFacetsAvailable: this.state.isFacetsAvailable,
       error: this.state.error,
       executeInitialQueryRequest: this.executeInitialQueryRequest,
       executeQueryRequest: this.executeQueryRequest,
@@ -458,7 +497,7 @@ export default class QueryWrapper extends React.Component<
     }
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     return (
-      <div className={`SRC-wrapper ${loadingCusrorClass}`}>
+      <div className={`SRC-wrapper ${loadingCusrorClass} ${this.state.isFacetsAvailable ? 'has-facets' : ''}`}>
         {children && children(queryWrapperChildProps)}
       </div>
     )

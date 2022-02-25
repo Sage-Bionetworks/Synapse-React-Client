@@ -87,7 +87,7 @@ export function FullTextSearch(props: FullTextSearchProps) {
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
     <div
-      className={`SearchV2 ${
+      className={`QueryWrapperTextInput ${
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
@@ -97,9 +97,9 @@ export function FullTextSearch(props: FullTextSearchProps) {
         in={topLevelControlsState?.showSearchBar}
         timeout={{ enter: 300, exit: 300 }}
       >
-        <form className="SearchV2__searchbar" onSubmit={search}>
+        <form className="QueryWrapperTextInput__searchbar" onSubmit={search}>
           <FontAwesomeIcon
-            className="SearchV2__searchbar__searchicon"
+            className="QueryWrapperTextInput__searchbar__searchicon"
             size={'sm'}
             icon={'search'}
           />
@@ -113,7 +113,7 @@ export function FullTextSearch(props: FullTextSearchProps) {
           />
           {searchText.length > 0 && (
             <button
-              className="SearchV2__searchbar__clearbutton"
+              className="QueryWrapperTextInput__searchbar__clearbutton"
               type="button"
               onClick={() => {
                 setSearchText('')

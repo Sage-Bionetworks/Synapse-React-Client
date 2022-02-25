@@ -10,7 +10,7 @@ SynapseClient.login = jest.fn().mockResolvedValue({
   authenticationReceipt: 'xyz-456',
 })
 
-describe('Functionality of Login Component ', () => {
+describe('Functionality of Login Component', () => {
   const callback = jest.fn()
 
   it('renders', () => {
