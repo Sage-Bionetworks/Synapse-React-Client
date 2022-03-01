@@ -82,7 +82,8 @@
   }
 }
 
-.SRC-Sort-Icon-Inactive, .Content-Copy-Icon {
+.SRC-Sort-Icon-Inactive,
+.Content-Copy-Icon {
   padding: 2px;
 
   path {
@@ -93,5 +94,5 @@
 svg.HelpButton {
   color: map.get(SRC.$colors, 'gray-600');
   cursor: pointer;
-  font-size: 1.2em;
+  font-size: 0.8em;
 }

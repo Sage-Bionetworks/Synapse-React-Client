@@ -1233,39 +1233,52 @@ hr ~ .SRC-wrapper {
 // Other links should have the normal secondary link style.
 // You can force normal link style by adding the "secondary-links" css class a container of your anchor.
 // Or force the highlighted primary link by adding "highlight-link" css class name to an anchor.
-main, #rootPanel {
-  a:not(.btn), .bootstrap-4-backport a:not(.btn), 
+main,
+#rootPanel {
+  a:not(.btn),
+  .bootstrap-4-backport a:not(.btn),
   .markdown td a:not(.btn),
   .markdown a.SRC-userCard:not(.btn),
   .secondary-links a:not(.btn),
-  .markdown .secondary-links a:not(.btn)
-   {
+  .markdown .secondary-links a:not(.btn) {
     @include SRC_Mixins.normalLink;
-    &:visited, &:active, &:link {
+    &:visited,
+    &:active,
+    &:link {
       @include SRC_Mixins.normalLink;
     }
   }
 
-  .markdown a, .SRC-userCardName a, a.highlight-link,
-  details>summary {
+  .markdown a,
+  .SRC-userCardName a,
+  a.highlight-link,
+  details > summary {
     &:not(.btn) {
       @include SRC_Mixins.highlightLink;
-      &:visited, &:active, &:link {
+      &:visited,
+      &:active,
+      &:link {
         @include SRC_Mixins.highlightLink;
       }
     }
   }
 
   // do not apply special styling to dropdown links or anchors in tabs
-  .dropdown, .nav-tabs, .dropdown-menu, .MuiDrawer-root {
+  .dropdown,
+  .nav-tabs,
+  .dropdown-menu,
+  .MuiDrawer-root {
     a:not(.btn) {
       @include SRC_Mixins.ignoreLink;
     }
   }
-   *, .bootstrap-4-backport {
+  *,
+  .bootstrap-4-backport {
     a.ignoreLink:not(.btn) {
       @include SRC_Mixins.ignoreLink;
-      &:visited, &:active, &:link {
+      &:visited,
+      &:active,
+      &:link {
         @include SRC_Mixins.ignoreLink;
       }
     }
@@ -1281,7 +1294,7 @@ main, #rootPanel {
     position: relative;
     top: 8px;
     left: 6px;
-    color: #878E95;
+    color: #878e95;
   }
   input {
     padding-left: 32px;
@@ -1294,4 +1307,8 @@ main, #rootPanel {
   padding: 5px 10px;
   color: SRC.$primary-action-color;
   text-transform: uppercase;
+}
+
+.SRC-margin-left-5 {
+  margin-left: 5px;
 }
