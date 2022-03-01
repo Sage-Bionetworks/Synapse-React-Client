@@ -7,7 +7,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 
 type IssueCollector = 'SWC' | 'Flagged Content' | 'Request Access'
 
-const ISSUE_COLLECTOR_MAP: Record<IssueCollector, string> = {
+const ISSUE_COLLECTOR_URL_MAP: Record<IssueCollector, string> = {
   SWC: 'https://sagebionetworks.jira.com/s/d41d8cd98f00b204e9800998ecf8427e-T/-bhcm7i/b/6/e73395c53c3b10fde2303f4bf74ffbf6/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs.js?locale=en-US&collectorId=ddc881b3',
   'Flagged Content':
     'https://sagebionetworks.jira.com/s/d41d8cd98f00b204e9800998ecf8427e-T/g39zuk/b/41/e73395c53c3b10fde2303f4bf74ffbf6/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs.js?locale=en-US&collectorId=d0abcfa9',
@@ -60,7 +60,7 @@ export function showJiraIssueCollector(config: JiraIssueCollectorConfig): void {
     }
     // Requires jQuery!
     window.jQuery.ajax({
-      url: ISSUE_COLLECTOR_MAP[issueCollector],
+      url: ISSUE_COLLECTOR_URL_MAP[issueCollector],
       type: 'get',
       cache: true,
       dataType: 'script',
@@ -148,17 +148,5 @@ export function useJiraIssueCollector(config: UseJiraIssueCollectorConfig) {
     }
     // - Don't re-run the effect when currentUser or notificationEmail change -- if they are refetched, we'll end up in a bad state with two pop-ups
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    show,
-    accessToken,
-    profileIsLoading,
-    emailIsLoading,
-    issueCollector,
-    issueSummary,
-    issueDescription,
-    issuePriority,
-    accessRequirementId,
-    synapseDataObjectId,
-    componentId,
-  ])
+  }, [show, accessToken, profileIsLoading, emailIsLoading])
 }

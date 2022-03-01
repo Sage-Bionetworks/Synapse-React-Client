@@ -12,9 +12,13 @@ const defaultQueryClient = new QueryClient({
 })
 
 export type SynapseContextType = {
+  /** The user's access token. If undefined, the user is not logged in */
   accessToken?: string
+  /** If the user has enabled experimental mode */
   isInExperimentalMode: boolean
+  /** If the user prefers time to be displayed in UTC format */
   utcTime: boolean
+  /** Whether to wrap all children of this context in an error boundary. Useful if this context wraps just one component. */
   withErrorBoundary?: boolean
 }
 
