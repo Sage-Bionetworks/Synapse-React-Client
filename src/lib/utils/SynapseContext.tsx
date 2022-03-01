@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { SynapseErrorBoundary } from '../containers/ErrorBanner'
 
 const defaultQueryClient = new QueryClient({
   defaultOptions: {
@@ -14,6 +15,7 @@ export type SynapseContextType = {
   accessToken?: string
   isInExperimentalMode: boolean
   utcTime: boolean
+  withErrorBoundary?: boolean
 }
 
 /**
@@ -33,19 +35,20 @@ export type SynapseContextProviderProps = {
  * @param param0
  * @returns
  */
-export const SynapseContextProvider: React.FunctionComponent<SynapseContextProviderProps> = ({
-  children,
-  synapseContext,
-  queryClient,
-}) => {
-  return (
-    <SynapseContext.Provider value={synapseContext}>
-      <QueryClientProvider client={queryClient ?? defaultQueryClient}>
-        {children}
-      </QueryClientProvider>
-    </SynapseContext.Provider>
-  )
-}
+export const SynapseContextProvider: React.FunctionComponent<SynapseContextProviderProps> =
+  ({ children, synapseContext, queryClient }) => {
+    return (
+      <SynapseContext.Provider value={synapseContext}>
+        <QueryClientProvider client={queryClient ?? defaultQueryClient}>
+          {synapseContext?.withErrorBoundary ? (
+            <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
+          ) : (
+            children
+          )}
+        </QueryClientProvider>
+      </SynapseContext.Provider>
+    )
+  }
 
 export const SynapseContextConsumer = SynapseContext.Consumer
 

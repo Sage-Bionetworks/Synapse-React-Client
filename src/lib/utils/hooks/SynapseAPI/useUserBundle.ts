@@ -3,7 +3,31 @@ import { SynapseClient } from '../..'
 import { getProfilePic, UserProfileAndImg } from '../../functions/getUserData'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { UserProfile } from '../../synapseTypes'
+import { NotificationEmail, UserProfile } from '../../synapseTypes'
+
+export function useGetNotificationEmail(
+  options?: UseQueryOptions<NotificationEmail, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<NotificationEmail, SynapseClientError>(
+    ['notificationEmail'],
+    () => SynapseClient.getNotificationEmail(accessToken),
+    options,
+  )
+}
+
+export function useGetCurrentUserProfile(
+  options?: UseQueryOptions<UserProfile, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  const queryKey = [accessToken, 'user', 'current', 'profile']
+
+  return useQuery<UserProfile, SynapseClientError>(
+    queryKey,
+    () => SynapseClient.getUserProfile(accessToken),
+    options,
+  )
+}
 
 export function useGetUserProfile(
   principalId: string,

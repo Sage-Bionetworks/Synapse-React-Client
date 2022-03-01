@@ -9,6 +9,7 @@ import { isError, isSynapseClientError } from '../utils/ErrorUtils'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Optional } from '../utils/types/Optional'
+import { useJiraIssueCollector } from './JiraIssueCollector'
 import SignInButton from './SignInButton'
 
 type ErrorBannerProps = {
@@ -22,6 +23,14 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   const loginError =
     (error.status === 403 || error.status === 401) && !accessToken
   const accessDenied = error.status === 403 && accessToken
+
+  useJiraIssueCollector({
+    show: error.status >= 500,
+    issueCollector: 'SWC',
+    issueSummary: '',
+    issueDescription: error.reason,
+    issuePriority: '3',
+  })
 
   return (
     <>
@@ -93,18 +102,16 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
   )
 }
 
-export const TableRowFallbackComponent: React.FunctionComponent<FallbackProps> = ({
-  error,
-  resetErrorBoundary,
-}) => {
-  return (
-    <tr>
-      <td colSpan={999}>
-        <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
-      </td>
-    </tr>
-  )
-}
+export const TableRowFallbackComponent: React.FunctionComponent<FallbackProps> =
+  ({ error, resetErrorBoundary }) => {
+    return (
+      <tr>
+        <td colSpan={999}>
+          <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
+        </td>
+      </tr>
+    )
+  }
 
 /**
  * ErrorBoundary component that uses the default error fallback component, unless overridden.

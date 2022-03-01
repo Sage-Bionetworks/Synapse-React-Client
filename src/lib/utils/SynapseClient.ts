@@ -13,6 +13,7 @@ import {
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
   FAVORITES,
+  NOTIFICATION_EMAIL,
   REGISTERED_SCHEMA_ID,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
@@ -75,6 +76,7 @@ import {
   LoginResponse,
   MultipartUploadRequest,
   MultipartUploadStatus,
+  NotificationEmail,
   OAuthClientPublic,
   OAuthConsentGrantedResponse,
   ObjectType,
@@ -3084,6 +3086,21 @@ export const updateEntityJson = (
   return doPut<EntityJson>(
     ENTITY_JSON(entityId),
     json,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This service returns the email used for user notifications, i.e. when a Synapse message
+ *  is sent and if the user has elected to receive messages by email, then this is the
+ *  email address at which the user will receive the message.
+ * https://docs.synapse.org/rest/GET/notificationEmail.html
+ */
+export const getNotificationEmail = (accessToken?: string) => {
+  return doGet<NotificationEmail>(
+    NOTIFICATION_EMAIL,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
