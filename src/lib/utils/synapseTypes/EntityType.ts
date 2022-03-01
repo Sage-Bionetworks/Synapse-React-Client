@@ -9,4 +9,5 @@ export enum EntityType {
   DOCKER_REPO = 'dockerrepo',
   SUBMISSION_VIEW = 'submissionview',
   DATASET = 'dataset',
+  MATERIALIZED_VIEW = 'materializedview',
 }
