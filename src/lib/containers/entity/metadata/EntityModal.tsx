@@ -44,7 +44,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   return (
     <Modal
       className="bootstrap-4-backport EntityMetadata"
-      backdrop={'static'}
+      backdrop='static'
       size={isInEditMode ? 'lg' : undefined}
       show={show}
       animation={false}
