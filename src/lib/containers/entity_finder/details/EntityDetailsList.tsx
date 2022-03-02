@@ -50,6 +50,7 @@ export type EntityDetailsListSharedProps = {
   selected: Map<string, number>
   selectableTypes: EntityType[]
   toggleSelection: (entity: Reference | Reference[]) => void
+  latestVersionText?: string
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {

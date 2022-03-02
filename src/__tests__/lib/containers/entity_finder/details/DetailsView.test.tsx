@@ -585,6 +585,19 @@ describe('DetailsView tests', () => {
         expect(screen.getAllByRole('option').length).toBe(3)
       })
 
+      it('Always Latest Version copy is configurable', async () => {
+        mockAllIsIntersecting(true)
+
+        renderComponent({
+          selectableTypes: [EntityType.FILE],
+          visibleTypes: [EntityType.FILE],
+          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          latestVersionText: 'The Most Recent Version',
+        })
+
+        await screen.findByText('The Most Recent Version')
+      })
+
       it('does not display Always Latest Version if mustSelectVersionNumber is true', async () => {
         mockAllIsIntersecting(true)
 
