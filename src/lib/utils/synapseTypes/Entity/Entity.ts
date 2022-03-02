@@ -131,4 +131,5 @@ export const entityJsonKeys = [
   'type',
   'alias',
   'items',
+  'definingSQL',
 ]
