@@ -6,12 +6,10 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
-import { AnnotationsTable } from './AnnotationsTable'
-import { MetadataTable } from './MetadataTable'
 import Skeleton from '@material-ui/lab/Skeleton'
-import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
 import { SkeletonButton } from '../../../assets/skeletons/SkeletonButton'
 import { SynapseErrorBoundary } from '../../ErrorBanner'
+import { useDependencies } from '../../../utils/SynapseContext'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -37,6 +35,9 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   initialTab = EntityModalTabs.METADATA,
   showTabs = true,
 }: EntityModalProps) => {
+  const { AnnotationsTable, MetadataTable, SchemaDrivenAnnotationEditor } =
+    useDependencies()
+
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
   const [isInEditMode, setIsInEditMode] = useState(false)
   const { data: entityBundle } = useGetEntityBundle(entityId)

@@ -3,6 +3,7 @@ import { noop } from 'lodash-es'
 import React from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
+import { useDependencies } from '../../utils/SynapseContext'
 import {
   ColumnModel,
   ColumnType,
@@ -22,7 +23,6 @@ import EntityIdList from '../EntityIdList'
 import { EntityLink } from '../EntityLink'
 import { SynapseCardLabel } from '../GenericCard'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
-import UserCard from '../UserCard'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 
 type SynapseTableCellProps = {
@@ -58,8 +58,9 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   rowData,
   isEntityView,
   rowId,
-  rowVersionNumber
+  rowVersionNumber,
 }) => {
+  const { UserCard } = useDependencies()
   const isShortString = (s: string, maxCharCount = 20): boolean => {
     return !s || s.length <= maxCharCount
   }

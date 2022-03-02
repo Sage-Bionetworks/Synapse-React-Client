@@ -10,7 +10,9 @@ type SearchDetailsProps = EntityDetailsListSharedProps & {
   searchQuery: SearchQuery
 }
 
-export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
+export type ISearchDetails = React.ComponentType<SearchDetailsProps>
+
+export const SearchDetails: ISearchDetails = ({
   searchQuery,
   ...sharedProps
 }) => {

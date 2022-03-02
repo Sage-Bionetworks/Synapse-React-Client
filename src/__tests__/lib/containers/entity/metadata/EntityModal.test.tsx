@@ -4,19 +4,20 @@ import React from 'react'
 import {
   EntityModal,
   EntityModalProps,
-  EntityModalTabs,
+  EntityModalTabs
 } from '../../../../../lib/containers/entity/metadata/EntityModal'
-import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import {
+  createWrapperWithInjected
+} from '../../../../../lib/testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
-  getEndpoint,
+  getEndpoint
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
 import {
-  mockFileEntity,
   mockFileEntityBundle,
-  MOCK_FILE_ENTITY_ID,
+  MOCK_FILE_ENTITY_ID
 } from '../../../../../mocks/entity/mockEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
 
@@ -26,12 +27,23 @@ const defaultProps: EntityModalProps = {
   entityId: MOCK_FILE_ENTITY_ID,
 }
 
+const mockAnnotationEditor = jest.fn(() => <>Mock Annotation Editor</>)
+const mockAnnotationTable = jest.fn(() => <>Mock Annotation Table</>)
+const mockMetadataTable = jest.fn(() => <>Mock Metadata Table</>)
+
 function renderComponent(
   propOverrides?: Partial<EntityModalProps>,
   wrapperProps?: SynapseContextType,
 ) {
   render(<EntityModal {...defaultProps} {...propOverrides} />, {
-    wrapper: createWrapper(wrapperProps),
+    wrapper: createWrapperWithInjected(
+      {
+        SchemaDrivenAnnotationEditor: mockAnnotationEditor,
+        AnnotationsTable: mockAnnotationTable,
+        MetadataTable: mockMetadataTable,
+      },
+      wrapperProps,
+    ),
   })
 }
 
@@ -40,10 +52,9 @@ describe('EntityModal tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('Shows metadata like the syn ID', async () => {
+  it('Initially shows metadata table', async () => {
     renderComponent()
-    await screen.findByText(mockFileEntity.id!)
-    // tests for specific data are in MetadataTable.test.tsx
+    await screen.findByText('Mock Metadata Table')
   })
 
   it('Shows annotations when the tab is switched', async () => {
@@ -53,10 +64,7 @@ describe('EntityModal tests', () => {
     )[0]
     userEvent.click(annotationsTab)
 
-    await screen.findByText(
-      Object.keys(mockFileEntityBundle.annotations!.annotations)[0],
-    )
-    // tests for specific data are in AnnotationsTable.test.tsx
+    await screen.findByText('Mock Annotation Table')
   })
 
   it('Shows the edit button when the user has edit permissions', async () => {
@@ -117,6 +125,6 @@ describe('EntityModal tests', () => {
     userEvent.click(editButton)
 
     // Text that appears in the editor component if there's a schema
-    await screen.findByText('requires scientific annotations', { exact: false })
+    await screen.findByText('Mock Annotation Editor', { exact: false })
   })
 })

@@ -1,9 +1,9 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { 
-  faTrash, 
+import {
+  faTrash,
   faSortAmountDown,
   faSortAmountUp,
- } from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import React, { useEffect, useState, useCallback } from 'react'
@@ -32,13 +32,12 @@ import HasAccess, {
   getDownloadTypeForFileHandle,
   FileHandleDownloadTypeEnum,
 } from '../HasAccess'
-import UserCard from '../UserCard'
 import { CreatePackage } from './CreatePackage'
 import DownloadDetails from './DownloadDetails'
 import AccessRequirementList, {
   AccessRequirementListProps,
 } from '../access_requirement_list/AccessRequirementList'
-import { useSynapseContext } from '../../utils/SynapseContext'
+import { useDependencies, useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 
 library.add(faTrash)
@@ -62,11 +61,12 @@ export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 /**
  * Web-based download list.
- * 
- * @deprecated Use the new Download List Services instead (that support the Download Cart).  
+ *
+ * @deprecated Use the new Download List Services instead (that support the Download Cart).
  * http://rest-docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.DownloadListController
  */
 export default function DownloadListTable(props: DownloadListTableProps) {
+  const { UserCard } = useDependencies()
   const { accessToken } = useSynapseContext()
 
   // https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables

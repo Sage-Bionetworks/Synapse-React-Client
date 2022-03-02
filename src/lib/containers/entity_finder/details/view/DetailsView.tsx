@@ -70,6 +70,8 @@ export type DetailsViewRowData = (EntityHeader | ProjectHeader | Hit) & {
   currentSelectedVersion?: number
 }
 
+export type IDetailsView = React.ComponentType<DetailsViewProps>
+
 /**
  * Displays a list of entities in a table.
  *
@@ -79,7 +81,7 @@ export type DetailsViewRowData = (EntityHeader | ProjectHeader | Hit) & {
  *
  * @param param0
  */
-export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
+export const DetailsView: IDetailsView = ({
   entities,
   isLoading,
   hasNextPage,
@@ -450,7 +452,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                     <>
                       Version
                       <HelpPopover
-                        markdownText='Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”'
+                        markdownText="Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”"
                         placement="right"
                       />
                     </>

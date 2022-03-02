@@ -17,9 +17,9 @@ export type AnnotationsTableProps = {
   entityId: string
 }
 
-export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
-  entityId,
-}) => {
+export type IAnnotationsTable = React.ComponentType<AnnotationsTableProps>
+
+export const AnnotationsTable: IAnnotationsTable = ({ entityId }) => {
   /**
    * Currently, schema/validation features are only shown in experimental mode.
    */
@@ -53,10 +53,9 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
                   <td className="AnnotationsTable__Row__Key">{key}</td>
                   <td className="AnnotationsTable__Row__Value">
                     {Array.isArray(annotations[key])
-                      ? (annotations[key] as
-                          | string[]
-                          | number[]
-                          | boolean[]).join(', ')
+                      ? (
+                          annotations[key] as string[] | number[] | boolean[]
+                        ).join(', ')
                       : annotations[key]!.toString()}
                   </td>
                 </tr>

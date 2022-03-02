@@ -1,11 +1,11 @@
 import * as React from 'react'
-import UserCard from '../UserCard'
 import IconSvg from '../IconSvg'
 import { ShowMore } from './utils'
 import { getFriendlyPreciseDuration } from '../../utils/functions/getFriendlyPreciseDuration'
 import { unitOfTime } from 'moment'
 import { Skeleton } from '@material-ui/lab'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
+import { useDependencies } from '../../utils/SynapseContext'
 
 type ObservationCardSchema = {
   submitterName: string
@@ -27,8 +27,9 @@ export type ObservationCardProps = {
  */
 export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   data,
-  schema
+  schema,
 }: ObservationCardProps) => {
+  const { UserCard } = useDependencies()
 
   const submitterName = data[schema.submitterName]
   const submitterUserId = data[schema.submitterUserId]
@@ -38,54 +39,53 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
   const tag = data[schema.tag]
   return (
     <div className="SRC-portalCard ObservationCard">
-        <div className="ObservationCard__submitter">
-          {!submitterUserId && (
-            <div>{submitterName}</div>
-          )}
-          {submitterUserId && (
-            <UserCard
-              size={'SMALL USER CARD'}
-              ownerId={submitterUserId}
-            />
-          )}
-        </div>
-        {time && <div className="ObservationCard__time">
+      <div className="ObservationCard__submitter">
+        {!submitterUserId && <div>{submitterName}</div>}
+        {submitterUserId && (
+          <UserCard size={'SMALL USER CARD'} ownerId={submitterUserId} />
+        )}
+      </div>
+      {time && (
+        <div className="ObservationCard__time">
           <IconSvg
             options={{
-              icon: 'time'
+              icon: 'time',
             }}
           />
           <span>{getFriendlyPreciseDuration(time, timeUnits)}</span>
-        </div>}
-        <div className="ObservationCard__text">
-          <ShowMore summary={text} />
         </div>
-        <div className="ObservationCard__tags">
-          {tag && <span className="SRC-tag">{tag}</span>}
-        </div>
+      )}
+      <div className="ObservationCard__text">
+        <ShowMore summary={text} />
       </div>
+      <div className="ObservationCard__tags">
+        {tag && <span className="SRC-tag">{tag}</span>}
+      </div>
+    </div>
   )
 }
 
 export const LoadingObservationCard: React.FunctionComponent = () => {
   return (
     <div className="SRC-portalCard ObservationCard">
-        <div className="ObservationCard__submitter">
-          <span><Skeleton width='100px'/></span>
-        </div>
-        <div className="ObservationCard__time">
-          <IconSvg
-            options={{
-              icon: 'time'
-            }}
-          />
-        </div>
-        <div className="ObservationCard__text">
-          <SkeletonTable numCols={1} numRows={4} />
-        </div>
-        <div className="ObservationCard__tags">
-          <Skeleton width='80px'/>
-        </div>
+      <div className="ObservationCard__submitter">
+        <span>
+          <Skeleton width="100px" />
+        </span>
       </div>
+      <div className="ObservationCard__time">
+        <IconSvg
+          options={{
+            icon: 'time',
+          }}
+        />
+      </div>
+      <div className="ObservationCard__text">
+        <SkeletonTable numCols={1} numRows={4} />
+      </div>
+      <div className="ObservationCard__tags">
+        <Skeleton width="80px" />
+      </div>
+    </div>
   )
 }

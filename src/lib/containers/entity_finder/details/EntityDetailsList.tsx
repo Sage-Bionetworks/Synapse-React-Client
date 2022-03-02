@@ -9,12 +9,8 @@ import {
 } from '../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
 import { SearchQuery } from '../../../utils/synapseTypes/Search'
-import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
-import { FavoritesDetails } from './configurations/FavoritesDetails'
-import { ProjectListDetails } from './configurations/ProjectListDetails'
-import { SearchDetails } from './configurations/SearchDetails'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
-import { DetailsView } from './view/DetailsView'
+import { useDependencies } from '../../../utils/SynapseContext'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
@@ -56,88 +52,98 @@ export type EntityDetailsListProps = EntityDetailsListSharedProps & {
   configuration: EntityDetailsListDataConfiguration
 }
 
-export const EntityDetailsList: React.FunctionComponent<EntityDetailsListProps> =
-  ({ configuration, ...sharedProps }) => {
-    /**
-     * This component simply uses the data configuration prop to determine which configuration component
-     * to use. Each configuration component has its own logic to utilize different Synapse APIs.
-     * The configuration components also manage view props that are more tightly-coupled with data,
-     * such as pagination and sorting.
-     *
-     * In the future, if we wanted to reuse this in other contexts (e.g. not selecting entities), we should consider refactoring
-     * to support different 'Row' components, determining the correct one determined at this level.
-     */
+export type IEntityDetailsList = React.ComponentType<EntityDetailsListProps>
 
-    const [component, setComponent] = useState(<></>)
+export const EntityDetailsList: IEntityDetailsList = ({
+  configuration,
+  ...sharedProps
+}) => {
+  /**
+   * This component simply uses the data configuration prop to determine which configuration component
+   * to use. Each configuration component has its own logic to utilize different Synapse APIs.
+   * The configuration components also manage view props that are more tightly-coupled with data,
+   * such as pagination and sorting.
+   *
+   * In the future, if we wanted to reuse this in other contexts (e.g. not selecting entities), we should consider refactoring
+   * to support different 'Row' components, determining the correct one determined at this level.
+   */
 
-    useDeepCompareEffect(() => {
-      const getComponentFromConfiguration = (
-        config: EntityDetailsListDataConfiguration,
-      ) => {
-        switch (config.type) {
-          case EntityDetailsListDataConfigurationType.PARENT_CONTAINER:
-            return (
-              <EntityChildrenDetails
-                parentContainerId={config.parentContainerId!}
-                {...sharedProps}
-              />
-            )
+  const [component, setComponent] = useState(<></>)
 
-          case EntityDetailsListDataConfigurationType.HEADER_LIST:
-            return (
-              <DetailsView
-                entities={config.headerList as (EntityHeader | ProjectHeader)[]}
-                isLoading={false}
-                hasNextPage={false}
-                {...sharedProps}
-                enableSelectAll={sharedProps.enableSelectAll}
-                selectAllIsChecked={getIsAllSelectedFromInfiniteList(
-                  (config.headerList as (EntityHeader | ProjectHeader)[]) ?? [],
-                  sharedProps.selected,
-                  sharedProps.selectableTypes,
-                )}
-              />
-            )
-          case EntityDetailsListDataConfigurationType.USER_FAVORITES:
-            return <FavoritesDetails {...sharedProps} />
-          case EntityDetailsListDataConfigurationType.ENTITY_SEARCH:
-            return (
-              <SearchDetails searchQuery={config.query!} {...sharedProps} />
-            )
+  const {
+    EntityChildrenDetails,
+    DetailsView,
+    FavoritesDetails,
+    SearchDetails,
+    ProjectListDetails,
+  } = useDependencies()
 
-          case EntityDetailsListDataConfigurationType.USER_PROJECTS:
-            return (
-              <ProjectListDetails
-                projectsParams={config.getProjectParams!}
-                {...sharedProps}
-              />
-            )
-          case EntityDetailsListDataConfigurationType.PROMPT:
-            return (
-              <DetailsView
-                entities={[]}
-                isLoading={false}
-                noResultsPlaceholder={
-                  <div>
-                    Use the left panel to browse Synapse, then make a selection
-                    in this panel
-                  </div>
-                }
-                {...sharedProps}
-                enableSelectAll={false}
-              />
-            )
+  useDeepCompareEffect(() => {
+    const getComponentFromConfiguration = (
+      config: EntityDetailsListDataConfiguration,
+    ) => {
+      switch (config.type) {
+        case EntityDetailsListDataConfigurationType.PARENT_CONTAINER:
+          return (
+            <EntityChildrenDetails
+              parentContainerId={config.parentContainerId!}
+              {...sharedProps}
+            />
+          )
 
-          default:
-            console.warn(
-              'The configuration type does not map to a known view type. No Details view will be rendered. Invalid configuration: ',
-              config,
-            )
-            return <></>
-        }
+        case EntityDetailsListDataConfigurationType.HEADER_LIST:
+          return (
+            <DetailsView
+              entities={config.headerList as (EntityHeader | ProjectHeader)[]}
+              isLoading={false}
+              hasNextPage={false}
+              {...sharedProps}
+              enableSelectAll={sharedProps.enableSelectAll}
+              selectAllIsChecked={getIsAllSelectedFromInfiniteList(
+                (config.headerList as (EntityHeader | ProjectHeader)[]) ?? [],
+                sharedProps.selected,
+                sharedProps.selectableTypes,
+              )}
+            />
+          )
+        case EntityDetailsListDataConfigurationType.USER_FAVORITES:
+          return <FavoritesDetails {...sharedProps} />
+        case EntityDetailsListDataConfigurationType.ENTITY_SEARCH:
+          return <SearchDetails searchQuery={config.query!} {...sharedProps} />
+
+        case EntityDetailsListDataConfigurationType.USER_PROJECTS:
+          return (
+            <ProjectListDetails
+              projectsParams={config.getProjectParams!}
+              {...sharedProps}
+            />
+          )
+        case EntityDetailsListDataConfigurationType.PROMPT:
+          return (
+            <DetailsView
+              entities={[]}
+              isLoading={false}
+              noResultsPlaceholder={
+                <div>
+                  Use the left panel to browse Synapse, then make a selection in
+                  this panel
+                </div>
+              }
+              {...sharedProps}
+              enableSelectAll={false}
+            />
+          )
+
+        default:
+          console.warn(
+            'The configuration type does not map to a known view type. No Details view will be rendered. Invalid configuration: ',
+            config,
+          )
+          return <></>
       }
-      setComponent(getComponentFromConfiguration(configuration))
-    }, [configuration, sharedProps])
+    }
+    setComponent(getComponentFromConfiguration(configuration))
+  }, [configuration, sharedProps])
 
-    return component
-  }
+  return component
+}

@@ -8,7 +8,7 @@ import {
 } from '../utils/functions/RegularExpressions'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
-import { SynapseContext } from '../utils/SynapseContext'
+import { SynapseContext, useDependencies } from '../utils/SynapseContext'
 import { ColumnModel, ColumnType, SelectColumn } from '../utils/synapseTypes'
 import {
   CardLink,
@@ -21,7 +21,6 @@ import HeaderCard from './HeaderCard'
 import IconList from './IconList'
 import MarkdownSynapse from './MarkdownSynapse'
 import { CardFooter, Icon } from './row_renderers/utils'
-import UserCard from './UserCard'
 import { FileHandleLink } from './widgets/FileHandleLink'
 import { ImageFileHandle } from './widgets/ImageFileHandle'
 
@@ -158,6 +157,8 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     className,
     rowData,
   } = props
+
+  const { UserCard } = useDependencies()
   if (!value) {
     return <>{value}</>
   }
@@ -366,13 +367,15 @@ export default class GenericCard extends React.Component<
       if (!data || !schema) {
         throw Error('Must specify CardLink and data for linking to work')
       }
-      const { matchColumnName, URLColumnName, overrideLinkURLColumnName } = cardLink
+      const { matchColumnName, URLColumnName, overrideLinkURLColumnName } =
+        cardLink
 
       // PORTALS-2088:  Return the link, unless...
       // an overrideLinkURLColumnName has been set and it's value is defined.
       // In this case, just use the overrideLinkURLColumnName value
       if (overrideLinkURLColumnName && schema[overrideLinkURLColumnName]) {
-        const indexOfOverrideLinkURLColumnName = schema[overrideLinkURLColumnName]
+        const indexOfOverrideLinkURLColumnName =
+          schema[overrideLinkURLColumnName]
         const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
         if (overrideLinkValue) {
           return overrideLinkValue

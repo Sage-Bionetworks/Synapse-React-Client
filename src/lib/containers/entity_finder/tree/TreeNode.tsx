@@ -37,7 +37,9 @@ export type TreeNodeProps = {
   currentContainer?: string | 'root' | null
 }
 
-export const TreeNode: React.FunctionComponent<TreeNodeProps> = ({
+export type ITreeNode = React.ComponentType<TreeNodeProps>
+
+export const TreeNode: ITreeNode = ({
   entityHeader,
   selected,
   setSelectedId,

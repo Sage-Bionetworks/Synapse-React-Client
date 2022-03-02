@@ -3,6 +3,7 @@ import {
   SynapseContextProvider,
   SynapseContextType,
 } from '../lib/utils/SynapseContext'
+import { defaultInjector } from '../lib/utils/SynapseReactClientDependencyInjector'
 
 export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 
@@ -10,6 +11,7 @@ export const MOCK_CONTEXT_VALUE: SynapseContextType = {
   accessToken: MOCK_ACCESS_TOKEN,
   utcTime: false,
   isInExperimentalMode: false,
+  injector: defaultInjector,
 }
 
 export const MOCK_CONTEXT = React.createContext(MOCK_CONTEXT_VALUE)

@@ -18,20 +18,19 @@ import { SizeMe } from 'react-sizeme'
 import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
-import { useSynapseContext } from '../../utils/SynapseContext'
+import { useDependencies, useSynapseContext } from '../../utils/SynapseContext'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { KeyValue } from '../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
-  EntityDetailsList,
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
 import { SelectionPane } from './SelectionPane'
 import { EntityTreeNodeType } from './tree/TreeNode'
-import { FinderScope, TreeView } from './tree/TreeView'
+import { FinderScope } from './tree/TreeView'
 
 library.add(faTimes, faSearch)
 
@@ -98,6 +97,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectedCopy = 'Selected',
   treeOnly = false,
 }: EntityFinderProps) => {
+  const { EntityDetailsList, TreeView } = useDependencies()
   const { accessToken } = useSynapseContext()
 
   const [searchActive, setSearchActive] = useState(false)

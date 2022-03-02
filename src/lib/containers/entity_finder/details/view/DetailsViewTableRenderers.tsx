@@ -16,6 +16,7 @@ import {
 } from '../../../../utils/hooks/SynapseAPI/useEntity'
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
+import { useDependencies } from '../../../../utils/SynapseContext'
 import {
   DatasetItem,
   EntityType,
@@ -30,7 +31,6 @@ import { EntityLink } from '../../../EntityLink'
 import IconSvg from '../../../IconSvg'
 import { SynapseSpinner } from '../../../LoadingScreen'
 import { DatasetItemsEditorTableData } from '../../../table/datasets/DatasetItemsEditor'
-import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { DetailsViewRowData } from './DetailsView'
@@ -191,6 +191,7 @@ export function ProjectRenderer(props: EntityIdAndVersionRendererProps) {
 }
 
 export function UserCardRenderer({ cellData }: { cellData?: string }) {
+  const { UserCard } = useDependencies()
   return (
     <UserCard
       ownerId={cellData}

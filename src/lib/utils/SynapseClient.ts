@@ -27,6 +27,7 @@ import {
   PRODUCTION_ENDPOINT_CONFIG,
 } from './functions/getEndpoint'
 import { removeUndefined } from './functions/ObjectUtils'
+import { ISynapseClient } from './ISynapseClient'
 import { DATETIME_UTC_COOKIE_KEY } from './SynapseConstants'
 import {
   AccessApproval,
@@ -366,10 +367,6 @@ export const getVersion = (): Promise<SynapseVersion> => {
   )
 }
 
-/**
- * https://rest-docs.synapse.org/rest/POST/download/list/add/async/start.html
- */
-//Start an asynchronous job to add files to a user's download list.
 export const addFilesToDownloadList = (
   request: AddFilesToDownloadListRequest,
   accessToken: string,
@@ -483,7 +480,7 @@ export const getFileHandleByIdURL = (
   )
 }
 
-export const getAsyncResultFromJobId = <T>(
+const getAsyncResultFromJobId = <T>(
   urlRequest: string,
   accessToken: string | undefined = undefined,
   updateParentState?: any,
@@ -1546,6 +1543,7 @@ export const checkUploadComplete = (
       })
   }
 }
+
 const uploadFilePart = async (
   presignedUrl: string,
   file: any,
@@ -1562,7 +1560,8 @@ const uploadFilePart = async (
     body: file,
   })
 }
-export const startMultipartUpload = (
+
+const startMultipartUpload = (
   accessToken: string | undefined,
   fileName: string,
   file: Blob,
@@ -3089,3 +3088,18 @@ export const updateEntityJson = (
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
+
+export const SynapseClient: ISynapseClient = {
+  addFilesToDownloadList,
+  getDownloadFromTableRequest,
+  getFileHandleById,
+  getFileHandleContentFromID,
+  getVersion,
+  getActualFileHandleByIdURL,
+  getUserFavorites,
+  getEntityPath,
+  getEntityHeader,
+  getEntityBundleV2,
+}
+
+export default SynapseClient

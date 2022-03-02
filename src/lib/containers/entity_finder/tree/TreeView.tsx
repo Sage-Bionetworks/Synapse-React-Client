@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
-import { SynapseClient } from '../../../utils'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
-import { useSynapseContext } from '../../../utils/SynapseContext'
+import {
+  useDependencies,
+  useSynapseContext,
+} from '../../../utils/SynapseContext'
 import {
   EntityHeader,
   EntityPath,
@@ -21,7 +23,7 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
-import { EntityTreeNodeType, TreeNode } from './TreeNode'
+import { EntityTreeNodeType } from './TreeNode'
 import { Map } from 'immutable'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
@@ -71,12 +73,14 @@ export type TreeViewProps = {
   selectableTypes: EntityType[]
 }
 
+export type ITreeView = React.ComponentType<TreeViewProps>
+
 /**
  * The TreeView displays a user's entities hierarchically, allowing a user to quickly dive into an entity tree.
  *
  * The tree view currently can only be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
  */
-export const TreeView: React.FunctionComponent<TreeViewProps> = ({
+export const TreeView: ITreeView = ({
   initialScope = FinderScope.CURRENT_PROJECT,
   projectId,
   initialContainer = null,
@@ -92,7 +96,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
-
+  const { TreeNode, SynapseClient } = useDependencies()
   const { accessToken } = useSynapseContext()
 
   const [isLoading, setIsLoading] = useState(false)

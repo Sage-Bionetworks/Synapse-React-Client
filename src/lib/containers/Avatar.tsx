@@ -1,8 +1,8 @@
 import React, { useRef } from 'react'
 import { getColor } from '../utils/functions/getUserData'
 import { UserProfile } from '../utils/synapseTypes'
-import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../utils/hooks/useOverlay'
+import { useDependencies } from '../utils/SynapseContext'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
@@ -16,12 +16,16 @@ export type AvatarProps = {
   showCardOnHover?: boolean
 }
 
-export const Avatar: React.FunctionComponent<AvatarProps> = ({
+export type IAvatar = React.FunctionComponent<AvatarProps>
+
+export const Avatar: IAvatar = ({
   userProfile,
   avatarSize = 'LARGE',
   imageURL,
   showCardOnHover = false,
 }) => {
+  const { UserCardMedium } = useDependencies()
+
   const target = useRef(null)
 
   const mediumUserCard = (
@@ -60,7 +64,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           onMouseEnter={() => toggleShow()}
           onMouseLeave={() => toggleHide()}
           onClick={event => {
-            if (showCardOnHover){
+            if (showCardOnHover) {
               event.stopPropagation()
             }
             isShowingOverlay ? toggleHide(false) : toggleShow(false)
@@ -74,7 +78,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           onMouseEnter={() => toggleShow()}
           onMouseLeave={() => toggleHide()}
           onClick={event => {
-            if (showCardOnHover){
+            if (showCardOnHover) {
               event.stopPropagation()
             }
             isShowingOverlay ? toggleHide(false) : toggleShow(false)

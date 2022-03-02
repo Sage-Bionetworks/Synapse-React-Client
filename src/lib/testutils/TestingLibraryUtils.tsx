@@ -5,9 +5,26 @@ import {
   SynapseContextProvider,
   SynapseContextType,
 } from '../utils/SynapseContext'
+import {
+  defaultInjector,
+  SynapseReactClientDependencyInjector,
+} from '../utils/SynapseReactClientDependencyInjector'
 
 type RtlWrapperProps = {
   children?: ReactNode
+}
+
+export function createWrapperWithInjected(
+  mockDependencies: Partial<SynapseReactClientDependencyInjector>,
+  props?: SynapseContextType,
+) {
+  const wrapperProps = props ?? MOCK_CONTEXT_VALUE
+  wrapperProps.injector = {
+    ...defaultInjector,
+    ...mockDependencies,
+  }
+
+  return createWrapper(wrapperProps)
 }
 
 /**
@@ -15,8 +32,7 @@ type RtlWrapperProps = {
  * includes context and an isolated query cache.
  */
 export const createWrapper = (props?: SynapseContextType) => {
-  // Creating a new query client for each rendering is important isolating tests, otherwise the
-  // cache could be shared across tests.
+  // Creating a new query client for each rendering is important for isolating tests, otherwise the cache could be shared across tests.
   // This is also easier/more reliable than clearing the queryCache after each test.
   // See https://github.com/tannerlinsley/react-query/discussions/1441
   const queryClient = new QueryClient({

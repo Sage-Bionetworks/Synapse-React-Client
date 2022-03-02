@@ -45,12 +45,12 @@ export type UserCardProps = {
   avatarSize?: AvatarSize
   /** Whether to show the avatar with the name for the small user card */
   withAvatar?: boolean
-  className?:string
+  className?: string
 }
 
-export const UserCard: React.FunctionComponent<UserCardProps> = (
-  props: UserCardProps,
-) => {
+export type IUserCard = React.ComponentType<UserCardProps>
+
+export const UserCard: IUserCard = props => {
   const {
     userProfile: initialProfile,
     preSignedURL: initialPreSignedURL,

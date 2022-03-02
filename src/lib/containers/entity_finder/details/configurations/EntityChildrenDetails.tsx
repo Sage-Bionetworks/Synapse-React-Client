@@ -7,11 +7,13 @@ import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 
-type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
+export type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
 }
 
-export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetailsProps> = ({
+export type IEntityChildrenDetails = React.ComponentType<EntityChildrenDetailsProps>
+
+export const EntityChildrenDetails: IEntityChildrenDetails = ({
   parentContainerId,
   ...sharedProps
 }) => {

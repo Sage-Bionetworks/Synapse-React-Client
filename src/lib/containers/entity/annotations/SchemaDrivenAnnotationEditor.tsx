@@ -48,6 +48,9 @@ export type SchemaDrivenAnnotationEditorProps = {
   onCancel?: () => void
 }
 
+export type ISchemaDrivenAnnotationEditor =
+  React.ComponentType<SchemaDrivenAnnotationEditorProps>
+
 export type SchemaDrivenAnnotationEditorModalProps = {
   entityId: string
   show: boolean
@@ -65,7 +68,7 @@ const patternPropertiesBannedKeys = entityJsonKeys.reduce((current, item) => {
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
-export const SchemaDrivenAnnotationEditor = (
+export const SchemaDrivenAnnotationEditor: ISchemaDrivenAnnotationEditor = (
   props: SchemaDrivenAnnotationEditorProps,
 ) => {
   const {

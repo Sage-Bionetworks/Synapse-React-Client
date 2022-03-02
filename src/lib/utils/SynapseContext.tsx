@@ -1,5 +1,9 @@
 import React, { useContext } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import {
+  defaultInjector,
+  SynapseReactClientDependencyInjector,
+} from './SynapseReactClientDependencyInjector'
 
 const defaultQueryClient = new QueryClient({
   defaultOptions: {
@@ -14,6 +18,7 @@ export type SynapseContextType = {
   accessToken?: string
   isInExperimentalMode: boolean
   utcTime: boolean
+  injector?: SynapseReactClientDependencyInjector
 }
 
 /**
@@ -33,19 +38,16 @@ export type SynapseContextProviderProps = {
  * @param param0
  * @returns
  */
-export const SynapseContextProvider: React.FunctionComponent<SynapseContextProviderProps> = ({
-  children,
-  synapseContext,
-  queryClient,
-}) => {
-  return (
-    <SynapseContext.Provider value={synapseContext}>
-      <QueryClientProvider client={queryClient ?? defaultQueryClient}>
-        {children}
-      </QueryClientProvider>
-    </SynapseContext.Provider>
-  )
-}
+export const SynapseContextProvider: React.FunctionComponent<SynapseContextProviderProps> =
+  ({ children, synapseContext, queryClient }) => {
+    return (
+      <SynapseContext.Provider value={synapseContext}>
+        <QueryClientProvider client={queryClient ?? defaultQueryClient}>
+          {children}
+        </QueryClientProvider>
+      </SynapseContext.Provider>
+    )
+  }
 
 export const SynapseContextConsumer = SynapseContext.Consumer
 
@@ -57,4 +59,13 @@ export function useSynapseContext(): SynapseContextType {
     )
   }
   return context
+}
+
+export function useDependencies(): SynapseReactClientDependencyInjector {
+  try {
+    const context = useSynapseContext()
+    return context.injector ?? defaultInjector
+  } catch (e) {
+    return defaultInjector
+  }
 }

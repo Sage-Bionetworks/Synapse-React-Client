@@ -2,15 +2,12 @@ import '@testing-library/jest-dom'
 import { act, render, waitFor, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { SynapseClient } from '../../../../../lib'
 import { EntityDetailsListDataConfigurationType } from '../../../../../lib/containers/entity_finder/details/EntityDetailsList'
 import {
   FinderScope,
   TreeView,
   TreeViewProps,
 } from '../../../../../lib/containers/entity_finder/tree/TreeView'
-import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
-import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import {
   EntityHeader,
   EntityPath,
@@ -22,19 +19,16 @@ import { EntityTreeNodeType } from '../../../../../lib/containers/entity_finder/
 import userEvent from '@testing-library/user-event'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
-
-const TreeNode = require('../../../../../lib/containers/entity_finder/tree/TreeNode')
+import { TreeNode } from '../../../../../lib/containers/entity_finder/tree/TreeNode'
 
 let invokeSetSelectedId: (containerId: string) => void
 
-TreeNode.TreeNode = jest.fn().mockImplementation(({ setSelectedId }) => {
+jest.spyOn(TreeNode).fn().mockImplementation(({ setSelectedId }) => {
   invokeSetSelectedId = (containerId: string) => {
     setSelectedId(containerId)
   }
   return <></>
 })
-
-const mockTreeNode = TreeNode.TreeNode
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useProjects', () => {
   return {
@@ -191,8 +185,6 @@ describe('TreeView tests', () => {
     mockUseGetEntityBundle.mockReturnValue({
       data: {
         path: entityPath,
-      },
-      isSuccess: true,
     })
     mockUseGetProjectsInfinite.mockReturnValue({
       data: {

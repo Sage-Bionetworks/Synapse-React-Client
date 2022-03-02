@@ -4,14 +4,17 @@ import { formatDate } from '../../../utils/functions/DateFormatter'
 import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
 import { getLocationName } from '../../../utils/functions/FileHandleUtils'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
+import { useDependencies } from '../../../utils/SynapseContext'
 import { EntityType, FileEntity } from '../../../utils/synapseTypes'
-import UserCard from '../../UserCard'
 
 export type MetadataTableProps = {
   entityId: string
 }
 
-export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
+export type IMetadataTable = React.ComponentType<MetadataTableProps>
+
+export const MetadataTable: IMetadataTable = ({ entityId }) => {
+  const { UserCard } = useDependencies()
   const { data: entityBundle } = useGetEntityBundle(entityId)
 
   const [fileLocationName, setFileLocationName] = useState<string>()
