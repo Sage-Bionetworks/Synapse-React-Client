@@ -92,6 +92,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
       animation={false}
       show={true}
       onHide={onClose}
+      backdrop='static'
     >
       <Form>
         <Modal.Header closeButton>

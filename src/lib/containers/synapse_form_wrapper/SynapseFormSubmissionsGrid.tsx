@@ -493,6 +493,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
             show={this.state.isShowInfoModal}
             animation={false}
             className={`theme-${this.props.formClass}`}
+            backdrop='static'
           >
             <Modal.Header
               closeButton={false}

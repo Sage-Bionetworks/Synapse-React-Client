@@ -353,7 +353,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   errors,
 }: ConfirmationModalProps) => {
   return (
-    <Modal animation={false} show={show} onHide={onCancel}>
+    <Modal animation={false} show={show} onHide={onCancel} backdrop='static'>
       <Modal.Header closeButton>
         <Modal.Title>Update Annotations</Modal.Title>
       </Modal.Header>
