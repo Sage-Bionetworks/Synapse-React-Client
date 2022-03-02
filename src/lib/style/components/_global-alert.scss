@@ -92,3 +92,8 @@
     }
   }
 }
+
+.SynapseNavDrawerIsShowing .FullWidthAlert[role='alert'].global {
+  left: 56px;
+  width: calc(100vw - 56px);
+}
