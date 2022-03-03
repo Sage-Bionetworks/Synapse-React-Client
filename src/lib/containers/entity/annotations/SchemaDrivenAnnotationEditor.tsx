@@ -6,7 +6,6 @@ import { Alert, Button, Modal } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import ReactTooltip from 'react-tooltip'
 import AddToList from '../../../assets/icons/AddToList'
-import { toError } from '../../../utils/ErrorUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -103,8 +102,8 @@ export const SchemaDrivenAnnotationEditor = (
   const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
     enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
     onError: e => {
-      if (e.status >= 500) {
-        handleError(toError(e))
+      if (e.status !== 404) {
+        handleError(e)
       }
     },
   })
@@ -123,8 +122,8 @@ export const SchemaDrivenAnnotationEditor = (
       retry: false,
       refetchOnWindowFocus: false,
       onError: e => {
-        if (e.status >= 500) {
-          handleError(toError(e))
+        if (e.status !== 404) {
+          handleError(e)
         }
       },
     },
@@ -141,8 +140,8 @@ export const SchemaDrivenAnnotationEditor = (
         return schema
       },
       onError: e => {
-        if (e.status >= 500) {
-          handleError(toError(e))
+        if (e.status !== 404) {
+          handleError(e)
         }
       },
     },
