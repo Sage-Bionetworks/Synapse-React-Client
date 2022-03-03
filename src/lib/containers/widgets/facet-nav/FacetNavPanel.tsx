@@ -418,6 +418,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           animation={false}
           show={showModal}
           onHide={() => setShowModal(false)}
+          backdrop='static'
         >
           <Modal.Header closeButton={true}>
             <Modal.Title>{plotTitle ?? ''}</Modal.Title>

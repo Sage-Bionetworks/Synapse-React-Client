@@ -449,6 +449,7 @@ export default class SynapseTable extends React.Component<
             // @ts-ignore
             onHide={() => this.setState({ isExpanded: false })}
             dialogClassName={'modal-90w'}
+            backdrop='static'
           >
             <Modal.Header
               // @ts-ignore
