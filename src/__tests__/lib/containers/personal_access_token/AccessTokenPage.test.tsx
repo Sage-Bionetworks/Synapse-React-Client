@@ -1,17 +1,49 @@
-import { act } from '@testing-library/react'
-import { mount } from 'enzyme'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import * as React from 'react'
+import { AccessTokenCardProps } from '../../../../lib/containers/personal_access_token/AccessTokenCard'
 import {
   AccessTokenPage,
   AccessTokenPageProps,
 } from '../../../../lib/containers/personal_access_token/AccessTokenPage'
-import { CreateAccessTokenModal } from '../../../../lib/containers/personal_access_token/CreateAccessTokenModal'
-import * as React from 'react'
-import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
+import { CreateAccessTokenModalProps } from '../../../../lib/containers/personal_access_token/CreateAccessTokenModal'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
+import { SynapseClient } from '../../../../lib/utils'
+import { SynapseContextType } from '../../../../lib/utils/SynapseContext'
 import { AccessTokenRecordList } from '../../../../lib/utils/synapseTypes/AccessToken/AccessTokenRecord'
-import { AccessTokenCard } from '../../../../lib/containers/personal_access_token/AccessTokenCard'
-import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
-const SynapseClient = require('../../../../lib/utils/SynapseClient')
+// Mock the CreateAccessTokenModal with a simple dialog with buttons to easily invoke passed props
+jest.mock(
+  '../../../../lib/containers/personal_access_token/CreateAccessTokenModal',
+  () => {
+    return {
+      CreateAccessTokenModal: (props: CreateAccessTokenModalProps) => {
+        return (
+          <div role="dialog">
+            <button onClick={props.onClose}>Invoke onClose</button>
+            <button onClick={props.onCreate}>Invoke onCreate</button>
+          </div>
+        )
+      },
+    }
+  },
+)
+
+jest.mock(
+  '../../../../lib/containers/personal_access_token/AccessTokenCard',
+  () => {
+    return {
+      AccessTokenCard: (props: AccessTokenCardProps) => {
+        return (
+          <div>
+            <p>{props.accessToken.name}</p>
+            <button onClick={props.onDelete}>Invoke onDelete</button>
+          </div>
+        )
+      },
+    }
+  },
+)
 
 const mockResultsFirstPage: AccessTokenRecordList = {
   results: [
@@ -58,6 +90,16 @@ const mockResultsSecondPage: AccessTokenRecordList = {
   ],
   nextPageToken: undefined,
 }
+
+function renderComponent(
+  props: AccessTokenPageProps,
+  wrapperProps?: SynapseContextType,
+) {
+  return render(<AccessTokenPage {...props} />, {
+    wrapper: createWrapper(wrapperProps),
+  })
+}
+
 describe('basic functionality', () => {
   const props: AccessTokenPageProps = {
     title: 'A title',
@@ -69,131 +111,106 @@ describe('basic functionality', () => {
   })
 
   it('shows the create token modal when the button is clicked and hides when onClose is called', async () => {
-    const wrapper = mount(<AccessTokenPage {...props} />, {
-      wrappingComponent: SynapseTestContext,
-    })
-    await resolveAllPending(wrapper)
+    renderComponent(props)
 
-    expect(wrapper.find(CreateAccessTokenModal).length).toEqual(0)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     // Click 'Create new token' button
-    await act(async () => {
-      await wrapper
-        .find('.PersonalAccessTokenPage__Header__CreateButton button')
-        .simulate('click')
-    })
-    await resolveAllPending(wrapper)
+    userEvent.click(
+      await screen.findByRole('button', { name: 'Create New Token' }),
+    )
 
-    expect(wrapper.find(CreateAccessTokenModal).length).toEqual(1)
+    await screen.findByRole('dialog')
 
-    // close the modal using the prop
-    await act(async () => {
-      await wrapper.find(CreateAccessTokenModal).prop('onClose')()
-    })
-    await resolveAllPending(wrapper)
+    // close the modal
+    userEvent.click(
+      await screen.findByRole('button', { name: 'Invoke onClose' }),
+    )
 
-    expect(wrapper.find(CreateAccessTokenModal).length).toEqual(0)
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
   })
 
   it('automatically loads the first page of results', async () => {
-    SynapseClient.getPersonalAccessTokenRecords = jest
-      .fn()
-      .mockResolvedValueOnce(mockResultsFirstPage)
+    jest
+      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
+      .mockResolvedValue(mockResultsFirstPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />, {
-      wrappingComponent: SynapseTestContext,
-    })
-    await resolveAllPending(wrapper)
+    renderComponent(props)
 
-    expect(wrapper.find(AccessTokenCard).length).toEqual(
-      mockResultsFirstPage.results.length,
-    )
-
+    await screen.findByText(mockResultsFirstPage.results[0].name)
     expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(1)
   })
 
   it('rerenders the list when onCreate is called', async () => {
     // We can verify the rerender by checking if the API is called twice
-    SynapseClient.getPersonalAccessTokenRecords = jest
-      .fn()
+    jest
+      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />, {
-      wrappingComponent: SynapseTestContext,
-    })
-    await resolveAllPending(wrapper)
+    renderComponent(props)
 
     // Click the button to render the modal
-    await act(async () => {
-      await wrapper
-        .find('.PersonalAccessTokenPage__Header__CreateButton button')
-        .simulate('click')
-    })
-    await resolveAllPending(wrapper)
+    userEvent.click(
+      await screen.findByRole('button', { name: 'Create New Token' }),
+    )
 
-    await act(async () => {
-      await wrapper.find(CreateAccessTokenModal).prop('onCreate')()
-    })
+    // Simulate creation
+    userEvent.click(
+      await screen.findByRole('button', { name: 'Invoke onCreate' }),
+    )
 
     expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(2)
   })
 
   it('rerenders the list when onDelete is called', async () => {
     // We can verify the rerender by checking if the API is called twice
-    SynapseClient.getPersonalAccessTokenRecords = jest
-      .fn()
+    jest
+      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />, {
-      wrappingComponent: SynapseTestContext,
-    })
-    await resolveAllPending(wrapper)
+    renderComponent(props)
 
     // Trigger onDelete on a card.
-    await act(async () => {
-      await wrapper.find(AccessTokenCard).prop('onDelete')()
-    })
+    userEvent.click(await screen.findByText('Invoke onDelete'))
 
     expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(2)
   })
 
   it('loads a second page and shows the load more button only when there is a next page token', async () => {
-    SynapseClient.getPersonalAccessTokenRecords = jest
-      .fn()
+    jest
+      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
-    const wrapper = mount(<AccessTokenPage {...props} />, {
-      wrappingComponent: SynapseTestContext,
-    })
-    await resolveAllPending(wrapper)
+    renderComponent(props)
+
+    // Only card one is visible initially
+    await screen.findByText(mockResultsFirstPage.results[0].name)
+    expect(
+      screen.queryByText(mockResultsSecondPage.results[0].name),
+    ).not.toBeInTheDocument()
 
     // Verify that we have a 'Load More' button
-    expect(
-      wrapper.find('button.PersonalAccessTokenPage__CardList__LoadMore__Button')
-        .length,
-    ).toEqual(1)
-
-    // Click the button
-    await act(async () => {
-      wrapper
-        .find('button.PersonalAccessTokenPage__CardList__LoadMore__Button')
-        .simulate('click')
-      await resolveAllPending(wrapper)
+    const loadMoreButton = await screen.findByRole('button', {
+      name: 'Load More',
     })
 
-    expect(wrapper.find(AccessTokenCard).length).toEqual(
-      mockResultsFirstPage.results.length +
-        mockResultsSecondPage.results.length,
-    )
+    // Click the button
+    userEvent.click(loadMoreButton)
 
-    // No NPT on page two, so there should no longer be a load button
+    // Both cards are visible
+    await screen.findByText(mockResultsFirstPage.results[0].name)
+    await screen.findByText(mockResultsSecondPage.results[0].name)
+
+    // No nextPageToken on page two, so there should no longer be a load button
     expect(
-      wrapper.find('button.PersonalAccessTokenPage__CardList__LoadMore__Button')
-        .length,
-    ).toEqual(0)
+      screen.queryByRole('button', { name: 'Load More' }),
+    ).not.toBeInTheDocument()
+
     expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(2)
   })
 })
