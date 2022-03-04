@@ -424,6 +424,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           selectableTypes: [EntityType.FILE],
           mustSelectVersionNumber: true,
         }}
+        promptCopy="Find Files located across one or more Folders to add to the Dataset."
         show={showEntityFinder}
         onClose={() => {
           setShowEntityFinder(false)
