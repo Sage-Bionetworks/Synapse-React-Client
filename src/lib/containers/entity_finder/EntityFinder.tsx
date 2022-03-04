@@ -81,7 +81,7 @@ export type EntityFinderProps = {
   /** The types to show in the tree used to navigate. If `treeOnly` is true, any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInTree?: EntityType[]
   /** The text to show before the list of selected entities */
-  selectedCopy?: string
+  selectedCopy?: string | ((count: number) => string)
   /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
   /** Text shown for the latest version, if selectable by the user. Defaults to "Always Latest Version" */
@@ -99,7 +99,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectableTypes = DEFAULT_SELECTABLE_TYPES,
   visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
-  selectedCopy = 'Selected',
+  selectedCopy = selectMultiple ? count => `Selected (${count})` : 'Selected',
   treeOnly = false,
   latestVersionText,
 }: EntityFinderProps) => {
