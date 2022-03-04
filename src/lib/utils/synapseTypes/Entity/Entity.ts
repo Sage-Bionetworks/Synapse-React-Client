@@ -101,9 +101,12 @@ export interface EntityJson extends Record<string, EntityJsonValue> {
  * A string array of all possible keys used by Synapse in Entity objects (objects that inherit this interface: https://docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html).
  * This object is used to determine which fields are standard and which are annotations,
  * so it's important that this array contains all keys in the objects that implement the linked interface above.
+ *
+ * It may make sense to make this a function that accepts the entity type and returns the set of standard keys, since not all entity types have the same keys.
  */
 export const entityJsonKeys = [
   'name',
+  'description',
   'id',
   'etag',
   'createdOn',
@@ -127,4 +130,6 @@ export const entityJsonKeys = [
   'viewTypeMask',
   'type',
   'alias',
+  'items',
+  'definingSQL',
 ]
