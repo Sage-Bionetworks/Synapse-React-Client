@@ -178,14 +178,18 @@ const handlers = [
     )}`,
     async (req, res, ctx) => {
       let status = 404
+      const entityId = req.params.entityId
+      const versionNumber = req.params.versionNumber.toString()
+
       let response: SynapseApiResponse<VersionableEntity> = {
         status: status,
-        reason: `Mock Service worker could not find a mock versioned entity with ID ${req.params.entityId}.${req.params.versionNumber}`,
+        reason: `Mock Service worker could not find a mock versioned entity with ID ${entityId}.${versionNumber}`,
       }
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
-        const requestedVersionNumber = parseInt(req.params.versionNumber)
+        const requestedVersionNumber = parseInt(versionNumber)
         const versionableEntity = mockFileEntityVersions.find(
-          entity => entity.versionNumber === requestedVersionNumber,
+          (entity: VersionableEntity) =>
+            entity.versionNumber === requestedVersionNumber,
         )
         if (versionableEntity) {
           response = versionableEntity
@@ -223,17 +227,19 @@ const handlers = [
       ':versionNumber',
     )}`,
     async (req, res, ctx) => {
+      const entityId = req.params.entityId
+      const versionNumber = req.params.versionNumber.toString()
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
         status: status,
-        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+        reason: `Mock Service worker could not find a mock entity bundle with ID ${entityId}`,
       }
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
         response = mockFileEntityBundle
         if (req.params.versionNumber) {
           response.entity = mockFileEntityVersions.find(
-            entity =>
-              entity.versionNumber === parseInt(req.params.versionNumber),
+            (entity: VersionableEntity) =>
+              entity.versionNumber === parseInt(versionNumber),
           )
         }
         status = 200
