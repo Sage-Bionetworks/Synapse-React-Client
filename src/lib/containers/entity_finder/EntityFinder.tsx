@@ -32,6 +32,8 @@ import {
 import { SelectionPane } from './SelectionPane'
 import { EntityTreeNodeType } from './tree/TreeNode'
 import { FinderScope, TreeView } from './tree/TreeView'
+import pluralize from 'pluralize'
+import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 
 library.add(faTimes, faSearch)
 
@@ -271,7 +273,11 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 }}
               >
                 <FontAwesomeIcon size={'sm'} icon={faSearch} />
-                Search all of Synapse
+                {selectableTypes.length === 1
+                  ? `Search for ${pluralize(
+                      entityTypeToFriendlyName(selectableTypes[0]),
+                    )}`
+                  : 'Search all of Synapse'}
               </Button>
             )}
             <FontAwesomeIcon
