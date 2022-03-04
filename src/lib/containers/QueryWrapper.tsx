@@ -262,6 +262,8 @@ export default class QueryWrapper extends React.Component<
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
     const clonedQueryRequest = cloneDeep(queryRequest)
+    // SWC-6030: If sql changes, reset what columns are visible
+    const resetVisibleColumns = this.state.lastQueryRequest.query.sql !== queryRequest.query.sql
     this.setState({
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
@@ -296,9 +298,14 @@ export default class QueryWrapper extends React.Component<
         const hasMoreData =
           data.queryResult.queryResults.rows.length ===
           clonedQueryRequest.query.limit
+        const isColumnSelected = resetVisibleColumns ?
+            data?.selectColumns
+              ?.slice(0, this.props.visibleColumnCount ?? Infinity)
+              .map(el => el.name) ?? [] : this.state.isColumnSelected
         const newState = {
           hasMoreData,
           data,
+          isColumnSelected,
           asyncJobStatus: undefined,
           isFacetsAvailable: isFaceted,
           topLevelControlsState: {
