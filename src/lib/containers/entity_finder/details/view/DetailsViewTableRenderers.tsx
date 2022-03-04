@@ -344,9 +344,11 @@ export const DatasetEditorVersionRenderer = ({
 export const DetailsViewVersionRenderer = ({
   rowData,
   mustSelectVersionNumber,
+  latestVersionText,
   toggleSelection,
 }: DetailsViewRendererProps & {
   mustSelectVersionNumber: boolean
+  latestVersionText: string
   toggleSelection: (entity: Reference | Reference[]) => void
 }) => {
   const { id, isVersionableEntity, isSelected, currentSelectedVersion } =
@@ -401,7 +403,7 @@ export const DetailsViewVersionRenderer = ({
           }}
         >
           {!mustSelectVersionNumber && (
-            <option value={NO_VERSION_NUMBER}>Always Latest Version</option>
+            <option value={NO_VERSION_NUMBER}>{latestVersionText}</option>
           )}
           {versions.map(version => {
             return (
