@@ -25,7 +25,7 @@ export const ENTITY_ID_VERSION = (
   version?: string | number,
 ) => `${REPO}/entity/${id}${version ? `/version/${version}` : ''}`
 export const ENTITY_ID_VERSIONS = (id: string | number) =>
-  `${REPO}/entity/${id}/version/`
+  `${REPO}/entity/${id}/version`
 export const ENTITY_BUNDLE_V2 = (
   id: string | number,
   version?: string | number,
