@@ -1,6 +1,0 @@
-language: node_js
-node_js:
-  - 15
-script:
-  - yarn test:coverage
-  - yarn build
