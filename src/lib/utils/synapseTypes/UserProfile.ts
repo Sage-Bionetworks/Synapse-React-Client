@@ -4,6 +4,17 @@ export type Settings = {
   sendEmailNotifications: boolean // Should the user receive email notifications? Default true.
   markEmailedMessagesAsRead: boolean // Should messages that are emailed to the user be marked as READ in Synapse? Default false.
 }
+
+// Information about the notification email of the user, including its quarantined status if the email address is currently in quarantine
+export type NotificationEmail = {
+  email: string
+  quarantineStatus?: {
+    reason: 'PERMANENT_BOUNCE' | 'TRANSIENT_BOUNCE' | 'COMPLAINT' | 'OTHER'
+    reasonDetails: string
+    expiration: string
+  }
+}
+
 export type UserProfile = {
   ownerId: string // A foreign key to the ID of the 'principal' object for the user
   uri?: string // The Uniform Resource Identifier (URI) for this entity

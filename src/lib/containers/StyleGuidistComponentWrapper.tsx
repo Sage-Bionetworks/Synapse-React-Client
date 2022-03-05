@@ -11,6 +11,7 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
         accessToken: (global as any).accessToken,
         isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
         utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+        withErrorBoundary: true,
       }}
     >
       <MemoryRouter>

@@ -32,6 +32,8 @@ import {
 import { SelectionPane } from './SelectionPane'
 import { EntityTreeNodeType } from './tree/TreeNode'
 import { FinderScope, TreeView } from './tree/TreeView'
+import pluralize from 'pluralize'
+import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 
 library.add(faTimes, faSearch)
 
@@ -79,9 +81,11 @@ export type EntityFinderProps = {
   /** The types to show in the tree used to navigate. If `treeOnly` is true, any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInTree?: EntityType[]
   /** The text to show before the list of selected entities */
-  selectedCopy?: string
+  selectedCopy?: string | ((count: number) => string)
   /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
+  /** Text shown for the latest version, if selectable by the user. Defaults to "Always Latest Version" */
+  latestVersionText?: string
 }
 
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
@@ -95,8 +99,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   selectableTypes = DEFAULT_SELECTABLE_TYPES,
   visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
-  selectedCopy = 'Selected',
+  selectedCopy = selectMultiple ? count => `Selected (${count})` : 'Selected',
   treeOnly = false,
+  latestVersionText,
 }: EntityFinderProps) => {
   const { accessToken } = useSynapseContext()
 
@@ -268,7 +273,11 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 }}
               >
                 <FontAwesomeIcon size={'sm'} icon={faSearch} />
-                Search all of Synapse
+                {selectableTypes.length === 1
+                  ? `Search for ${pluralize(
+                      entityTypeToFriendlyName(selectableTypes[0]),
+                    )}`
+                  : 'Search all of Synapse'}
               </Button>
             )}
             <FontAwesomeIcon
@@ -340,6 +349,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
               enableSelectAll={selectMultiple}
+              latestVersionText={latestVersionText}
             />
           )}
           {
@@ -399,6 +409,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             }
                             toggleSelection={toggleSelection}
                             enableSelectAll={selectMultiple}
+                            latestVersionText={latestVersionText}
                           />
                           <Breadcrumbs {...breadcrumbsProps} />
                         </ReflexElement>

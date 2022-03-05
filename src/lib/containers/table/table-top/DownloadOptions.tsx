@@ -21,7 +21,7 @@ type DownloadOptionsProps = {
   queryBundleRequest: QueryBundleRequest
 }
 
-export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download List'
+export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download Cart'
 const tooltipDownloadId = 'download'
 
 export const DownloadOptions: React.FunctionComponent<DownloadOptionsProps> = props => {

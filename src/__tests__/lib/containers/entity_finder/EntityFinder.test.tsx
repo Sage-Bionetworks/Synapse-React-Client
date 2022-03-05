@@ -363,146 +363,156 @@ describe('EntityFinder tests', () => {
     )
   })
 
-  it('clicking the search button opens the input field', async () => {
-    renderComponent({ treeOnly: true })
+  describe('Search', () => {
+    it('Updates the search button text when only one type is selectable', async () => {
+      // Folders are the only selectable type, so only folders will appear in search.
+      renderComponent({ selectableTypes: [EntityType.FOLDER] })
 
-    // Tree should be visible before we start search. No table should be visible
-    expect(() => screen.getByRole('tree')).not.toThrowError()
-    expect(() => screen.getByRole('table')).toThrowError()
+      // Search button text should match
+      await screen.findByText('Search for Folders')
+    })
 
-    // Don't show the search box before the button is clicked
-    expect(() => screen.getByRole('textbox')).toThrowError()
+    it('clicking the search button opens the input field', async () => {
+      renderComponent({ treeOnly: true })
 
-    userEvent.click(screen.getByText('Search all of Synapse'))
-    await waitFor(() => screen.getByRole('textbox'))
+      // Tree should be visible before we start search. No table should be visible
+      expect(() => screen.getByRole('tree')).not.toThrowError()
+      expect(() => screen.getByRole('table')).toThrowError()
 
-    // The tree should be hidden when searching. The table of search results should be visible
-    expect(() => screen.getByRole('tree')).toThrowError()
-    expect(() => screen.getByRole('table')).not.toThrowError()
+      // Don't show the search box before the button is clicked
+      expect(() => screen.getByRole('textbox')).toThrowError()
 
-    // Close the search
-    userEvent.click(screen.getByText('Back to Browse'))
+      userEvent.click(screen.getByText('Search all of Synapse'))
+      await waitFor(() => screen.getByRole('textbox'))
 
-    // Tree should come back, table should be gone
-    await waitFor(() => screen.getByRole('tree'))
-    expect(() => screen.getByRole('table')).toThrowError()
+      // The tree should be hidden when searching. The table of search results should be visible
+      expect(() => screen.getByRole('tree')).toThrowError()
+      expect(() => screen.getByRole('table')).not.toThrowError()
 
-    // Search input field should be gone too
-    expect(() => screen.getByRole('textbox')).toThrowError()
-  })
+      // Close the search
+      userEvent.click(screen.getByText('Back to Browse'))
 
-  it('handles searching for terms', async () => {
-    renderComponent({ selectableTypes: [EntityType.FILE] })
+      // Tree should come back, table should be gone
+      await waitFor(() => screen.getByRole('tree'))
+      expect(() => screen.getByRole('table')).toThrowError()
 
-    const query = 'my search terms '
-    const queryTerms = ['my', 'search', 'terms']
-    userEvent.click(screen.getByText('Search all of Synapse'))
-    await waitFor(() => screen.getByRole('textbox'))
-    userEvent.type(screen.getByRole('textbox'), query)
-    userEvent.type(screen.getByRole('textbox'), '{enter}')
+      // Search input field should be gone too
+      expect(() => screen.getByRole('textbox')).toThrowError()
+    })
 
-    await waitFor(() =>
-      expect(mockDetailsList).toBeCalledWith(
-        expect.objectContaining({
-          configuration: {
-            type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
-            query: {
-              queryTerm: queryTerms,
-              // Verify that at least one of the omitted types is excluded from the search
-              booleanQuery: expect.arrayContaining([
-                {
-                  key: 'node_type',
-                  value: 'project',
-                  not: true,
-                },
-              ]),
+    it('handles searching for terms', async () => {
+      renderComponent({ selectableTypes: [EntityType.FILE] })
+
+      const query = 'my search terms '
+      const queryTerms = ['my', 'search', 'terms']
+      userEvent.click(screen.getByText('Search for Files'))
+      await waitFor(() => screen.getByRole('textbox'))
+      userEvent.type(screen.getByRole('textbox'), query)
+      userEvent.type(screen.getByRole('textbox'), '{enter}')
+
+      await waitFor(() =>
+        expect(mockDetailsList).toBeCalledWith(
+          expect.objectContaining({
+            configuration: {
+              type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+              query: {
+                queryTerm: queryTerms,
+                // Verify that at least one of the omitted types is excluded from the search
+                booleanQuery: expect.arrayContaining([
+                  {
+                    key: 'node_type',
+                    value: 'project',
+                    not: true,
+                  },
+                ]),
+              },
             },
-          },
-        }),
-        {},
-      ),
-    )
-    await waitFor(() =>
-      expect(mockDetailsList).toBeCalledWith(
-        expect.objectContaining({
-          configuration: {
-            type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
-            query: {
-              queryTerm: queryTerms,
-              // The lone selectable type should not have been excluded
-              booleanQuery: expect.not.arrayContaining([
-                {
-                  key: 'node_type',
-                  value: 'file',
-                  not: true,
-                },
-              ]),
-            },
-          },
-        }),
-        {},
-      ),
-    )
-  })
-
-  it('handles searching for a synId', async () => {
-    renderComponent()
-
-    const entityId = 'syn123'
-    const version = 2
-
-    const entityHeaderResult = { results: [{ id: entityId }] }
-    const entityHeaderResultWithVersion: PaginatedResults<
-      Partial<EntityHeader>
-    > = {
-      results: [{ id: entityId, versionNumber: version }],
-    }
-
-    when(mockGetEntityHeaders)
-      .calledWith([{ targetId: entityId }], MOCK_ACCESS_TOKEN)
-      .mockResolvedValue(entityHeaderResult)
-
-    when(mockGetEntityHeaders)
-      .calledWith(
-        [{ targetId: entityId, targetVersionNumber: version }],
-        MOCK_ACCESS_TOKEN,
+          }),
+          {},
+        ),
       )
-      .mockResolvedValue(entityHeaderResultWithVersion)
+      await waitFor(() =>
+        expect(mockDetailsList).toBeCalledWith(
+          expect.objectContaining({
+            configuration: {
+              type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
+              query: {
+                queryTerm: queryTerms,
+                // The lone selectable type should not have been excluded
+                booleanQuery: expect.not.arrayContaining([
+                  {
+                    key: 'node_type',
+                    value: 'file',
+                    not: true,
+                  },
+                ]),
+              },
+            },
+          }),
+          {},
+        ),
+      )
+    })
 
-    userEvent.click(screen.getByText('Search all of Synapse'))
-    await waitFor(() => screen.getByRole('textbox'))
-    userEvent.type(screen.getByRole('textbox'), entityId)
-    userEvent.type(screen.getByRole('textbox'), '{enter}')
+    it('handles searching for a synId', async () => {
+      renderComponent()
 
-    await waitFor(() =>
-      expect(mockDetailsList).toBeCalledWith(
-        expect.objectContaining({
-          configuration: {
-            type: EntityDetailsListDataConfigurationType.HEADER_LIST,
-            headerList: entityHeaderResult.results,
-          },
-        }),
-        {},
-      ),
-    )
-    expect(mockGetEntityHeaders).toBeCalledTimes(1)
+      const entityId = 'syn123'
+      const version = 2
 
-    // Search with a version number
-    userEvent.clear(screen.getByRole('textbox'))
-    userEvent.type(screen.getByRole('textbox'), `${entityId}.${version}`)
-    userEvent.type(screen.getByRole('textbox'), '{enter}')
-    await waitFor(() =>
-      expect(mockDetailsList).toBeCalledWith(
-        expect.objectContaining({
-          configuration: {
-            type: EntityDetailsListDataConfigurationType.HEADER_LIST,
-            headerList: entityHeaderResultWithVersion.results,
-          },
-        }),
-        {},
-      ),
-    )
+      const entityHeaderResult = { results: [{ id: entityId }] }
+      const entityHeaderResultWithVersion: PaginatedResults<
+        Partial<EntityHeader>
+      > = {
+        results: [{ id: entityId, versionNumber: version }],
+      }
 
-    expect(mockGetEntityHeaders).toHaveBeenCalledTimes(2)
+      when(mockGetEntityHeaders)
+        .calledWith([{ targetId: entityId }], MOCK_ACCESS_TOKEN)
+        .mockResolvedValue(entityHeaderResult)
+
+      when(mockGetEntityHeaders)
+        .calledWith(
+          [{ targetId: entityId, targetVersionNumber: version }],
+          MOCK_ACCESS_TOKEN,
+        )
+        .mockResolvedValue(entityHeaderResultWithVersion)
+
+      userEvent.click(screen.getByText('Search all of Synapse'))
+      await waitFor(() => screen.getByRole('textbox'))
+      userEvent.type(screen.getByRole('textbox'), entityId)
+      userEvent.type(screen.getByRole('textbox'), '{enter}')
+
+      await waitFor(() =>
+        expect(mockDetailsList).toBeCalledWith(
+          expect.objectContaining({
+            configuration: {
+              type: EntityDetailsListDataConfigurationType.HEADER_LIST,
+              headerList: entityHeaderResult.results,
+            },
+          }),
+          {},
+        ),
+      )
+      expect(mockGetEntityHeaders).toBeCalledTimes(1)
+
+      // Search with a version number
+      userEvent.clear(screen.getByRole('textbox'))
+      userEvent.type(screen.getByRole('textbox'), `${entityId}.${version}`)
+      userEvent.type(screen.getByRole('textbox'), '{enter}')
+      await waitFor(() =>
+        expect(mockDetailsList).toBeCalledWith(
+          expect.objectContaining({
+            configuration: {
+              type: EntityDetailsListDataConfigurationType.HEADER_LIST,
+              headerList: entityHeaderResultWithVersion.results,
+            },
+          }),
+          {},
+        ),
+      )
+
+      expect(mockGetEntityHeaders).toHaveBeenCalledTimes(2)
+    })
   })
 })

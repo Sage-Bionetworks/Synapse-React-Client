@@ -31,6 +31,7 @@ export const WarningModal: React.FunctionComponent<WarningModalProps> = ({
       animation={false}
       className={className}
       onHide={() => onCancel()}
+      backdrop='static'
     >
       <Modal.Header closeButton={false} onHide={() => onCancel()}>
         <Modal.Title>{title}</Modal.Title>

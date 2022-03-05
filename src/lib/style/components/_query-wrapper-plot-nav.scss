@@ -17,6 +17,15 @@
         > * {
           grid-column: 3 / span 3;
         }
+        .download-confirmation,
+        .TotalQueryResults,
+        .FacetNav,
+        .FilterAndView,
+        .TopLevelControls,
+        .QueryWrapperTextInput,
+        .ErrorBannerWrapper {
+            margin-left: 30px;
+        }
       }
     }
     .SRC-wrapper {
@@ -101,15 +110,6 @@
           grid-column: 2 / span 1;
         }
       }
-    }
-    .download-confirmation,
-    .TotalQueryResults,
-    .FacetNav,
-    .FilterAndView,
-    .TopLevelControls,
-    .QueryWrapperTextInput,
-    .ErrorBannerWrapper {
-      margin-left: 30px;
     }
   }
 

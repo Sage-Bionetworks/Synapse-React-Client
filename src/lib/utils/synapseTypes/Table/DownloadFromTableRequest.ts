@@ -1,6 +1,7 @@
 import { CsvTableDescriptor } from './CsvTableDescription'
 import { SortItem } from './Query'
 import { FacetColumnRequest } from './FacetColumnRequest'
+import { QueryFilter } from './QueryFilter'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/DownloadFromTableRequest.html
 // A CSV table download request.
@@ -17,4 +18,5 @@ export type DownloadFromTableRequest = {
   offset?: number //  The optional offset into the results
   limit?: number // The optional limit to the results
   sort?: SortItem[]
+  additionalFilters?: QueryFilter[]
 }

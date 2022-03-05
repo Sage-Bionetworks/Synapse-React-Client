@@ -8,6 +8,7 @@ import {
   FacetColumnResultValues,
   QueryBundleRequest,
   QueryResultBundle,
+  SelectColumn,
 } from '../utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 import { SynapseClientError } from '../utils/SynapseClient'
@@ -159,6 +160,7 @@ export default class QueryWrapper extends React.Component<
     this.getNextPageOfData = this.getNextPageOfData.bind(this)
     this.updateParentState = this.updateParentState.bind(this)
     this.getInitQueryRequest = this.getInitQueryRequest.bind(this)
+    this.getSelectedColumns = this.getSelectedColumns.bind(this)
     const showFacetVisualization = props.defaultShowFacetVisualization ?? true
 
     this.state = {
@@ -253,6 +255,15 @@ export default class QueryWrapper extends React.Component<
   public getInitQueryRequest(): QueryBundleRequest {
     return cloneDeep(this.props.initQueryRequest)
   }
+
+  public getSelectedColumns(isReset:boolean, selectColumns?:SelectColumn[]):string[] {
+    if (isReset) {
+      return selectColumns?.slice(0, this.props.visibleColumnCount ?? Infinity).map(el => el.name) ?? []
+    } else {
+      return this.state.isColumnSelected
+    }
+  }
+
   /**
    * Execute the given query
    *
@@ -262,6 +273,8 @@ export default class QueryWrapper extends React.Component<
    */
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
     const clonedQueryRequest = cloneDeep(queryRequest)
+    // SWC-6030: If sql changes, reset what columns are visible
+    const resetVisibleColumns = this.state.lastQueryRequest.query.sql !== queryRequest.query.sql
     this.setState({
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
@@ -299,6 +312,7 @@ export default class QueryWrapper extends React.Component<
         const newState = {
           hasMoreData,
           data,
+          isColumnSelected: this.getSelectedColumns(resetVisibleColumns, data.selectColumns),
           asyncJobStatus: undefined,
           isFacetsAvailable: isFaceted,
           topLevelControlsState: {
@@ -412,10 +426,7 @@ export default class QueryWrapper extends React.Component<
           data,
           chartSelectionIndex,
           asyncJobStatus: undefined,
-          isColumnSelected:
-            data?.selectColumns
-              ?.slice(0, this.props.visibleColumnCount ?? Infinity)
-              .map(el => el.name) ?? [],
+          isColumnSelected: this.getSelectedColumns(true, data.selectColumns),
           isFacetsAvailable: isFaceted,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,

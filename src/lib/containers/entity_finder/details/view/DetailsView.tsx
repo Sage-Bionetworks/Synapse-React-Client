@@ -55,6 +55,8 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   noResultsPlaceholder?: React.ReactElement
   /** We defer to the configuration component to determine this */
   selectAllIsChecked?: boolean
+  /** The text to show for selecting the latest version, if it can be selected. Default is "Always Latest Version" */
+  latestVersionText?: string
 }
 
 /**
@@ -97,6 +99,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   noResultsPlaceholder,
   enableSelectAll,
   selectAllIsChecked = false,
+  latestVersionText = 'Always Latest Version',
 }) => {
   const queryClient = useQueryClient()
 
@@ -442,6 +445,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   <DetailsViewVersionRenderer
                     mustSelectVersionNumber={mustSelectVersionNumber}
                     toggleSelection={toggleSelection}
+                    latestVersionText={latestVersionText}
                     {...props}
                   />
                 )}
@@ -450,7 +454,13 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                     <>
                       Version
                       <HelpPopover
-                        markdownText='Allows you to choose which version of this item you would like to perform this action on. If you would like the selected reference to update as new versions are created, choose “Always Latest Version”'
+                        className="SRC-margin-left-5"
+                        markdownText={
+                          'Allows you to choose which version of this item you would like to perform this action on.' +
+                          (mustSelectVersionNumber
+                            ? ''
+                            : `If you would like the selected reference to update as new versions are created, choose "${latestVersionText}"`)
+                        }
                         placement="right"
                       />
                     </>

@@ -110,6 +110,9 @@ module.exports = {
             {
                 src:"https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js",
             },
+            {
+                src:"https://unpkg.com/jquery@3.6.0/dist/jquery.min.js",
+            }
         ],
         links: [
             {

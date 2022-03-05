@@ -44,6 +44,7 @@ export const CreateProjectModal: React.FunctionComponent<CreateProjectModalProps
         show={isShowingModal}
         animation={false}
         onHide={hide}
+        backdrop='static'
       >
         <Modal.Header closeButton>
           <Modal.Title>
