@@ -49,12 +49,12 @@ function renderComponent(
   })
 }
 
-describe('EntityModal tests', () => {
+describe.skip('EntityModal tests', () => {
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it.skip('Shows metadata like the syn ID', async () => {
+  it('Shows metadata like the syn ID', async () => {
     renderComponent()
     await screen.findByText(mockFileEntity.id!)
     // tests for specific data are in MetadataTable.test.tsx
