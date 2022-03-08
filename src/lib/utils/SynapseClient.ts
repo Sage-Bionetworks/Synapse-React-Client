@@ -4,6 +4,7 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import {
   ACCESS_REQUIREMENT_BY_ID,
+  ALIAS_AVAILABLE,
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
@@ -15,6 +16,8 @@ import {
   FAVORITES,
   NOTIFICATION_EMAIL,
   REGISTERED_SCHEMA_ID,
+  REGISTER_ACCOUNT_STEP_1,
+  REGISTER_ACCOUNT_STEP_2,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   USER_ID_BUNDLE,
@@ -146,6 +149,7 @@ import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/Evaluatio
 import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
+import { AccountSetupInfo, AliasCheckRequest, AliasCheckResponse, NewUser } from './synapseTypes/Principal/PrincipalServices'
 import { ResearchProject } from './synapseTypes/ResearchProject'
 import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
 import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
@@ -3102,6 +3106,46 @@ export const getNotificationEmail = (accessToken?: string) => {
   return doGet<NotificationEmail>(
     NOTIFICATION_EMAIL,
     accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/principal/available.html
+export const isAliasAvailable = (
+  aliasCheckRequest: AliasCheckRequest,
+  accessToken?: string,
+): Promise<AliasCheckResponse> => {
+  return doPost<AliasCheckResponse>(
+    ALIAS_AVAILABLE,
+    aliasCheckRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/account/emailValidation.html
+export const registerAccountStep1 = (
+  newUser: NewUser,
+): Promise<any> => {
+  return doPost(
+    REGISTER_ACCOUNT_STEP_1,
+    newUser,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/account2.html
+export const registerAccountStep2 = (
+  accountSetupInfo: AccountSetupInfo,
+): Promise<LoginResponse> => {
+  return doPost(
+    REGISTER_ACCOUNT_STEP_2,
+    accountSetupInfo,
+    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
