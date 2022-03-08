@@ -64,7 +64,8 @@ export const USER_PROFILE_ID = (id: string | number) => `${USER_PROFILE}/${id}`
 
 export const NOTIFICATION_EMAIL = `${REPO}/notificationEmail`
 export const ALIAS_AVAILABLE = `${REPO}/principal/available`
-export const REGISTER_ACCOUNT_STEP_1 = `${REPO}/account/emailValidation`
+export const REGISTER_ACCOUNT_STEP_1 = (portalEndpoint: string) =>
+  `${REPO}/account/emailValidation?portalEndpoint=${portalEndpoint}`
 export const REGISTER_ACCOUNT_STEP_2 = `${REPO}/account2`
 
 export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>

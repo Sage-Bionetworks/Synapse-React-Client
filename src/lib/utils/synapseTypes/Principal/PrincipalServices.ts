@@ -10,11 +10,11 @@ export type AliasCheckRequest = {
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/principal/AliasType.html
 export enum AliasType {
-  'USER_NAME',
-  'TEAM_NAME',
-  'USER_EMAIL',
-  'USER_OPEN_ID',
-  'USER_ORCID'
+  USER_NAME = "USER_NAME",
+  TEAM_NAME = "TEAM_NAME",
+  USER_EMAIL = "USER_EMAIL",
+  USER_OPEN_ID = "USER_OPEN_ID",
+  USER_ORCID = "USER_ORCID"
 }
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/principal/AliasCheckResponse.html
@@ -26,7 +26,7 @@ export type AliasCheckResponse = {
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/NewUser.html
 export type NewUser = {
   email: string
-  userName: string
+  userName?: string
   firstName?: string
   lastName?: string
   encodedMembershipInvtnSignedToken?: string

@@ -3128,9 +3128,10 @@ export const isAliasAvailable = (
 // http://rest-docs.synapse.org/rest/POST/account/emailValidation.html
 export const registerAccountStep1 = (
   newUser: NewUser,
+  portalEndpoint: string,
 ): Promise<any> => {
   return doPost(
-    REGISTER_ACCOUNT_STEP_1,
+    REGISTER_ACCOUNT_STEP_1(portalEndpoint),
     newUser,
     undefined,
     undefined,
