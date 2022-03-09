@@ -25,6 +25,7 @@ type Props = {
   ssoRedirectUrl?: string
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: () => void // Callback is invoked after login
+  registerAccountUrl?: string
 }
 
 /**
@@ -146,6 +147,7 @@ class Login extends React.Component<Props, State> {
       })
   }
   public render() {
+    const registerAccountUrl = this.props.registerAccountUrl ?? `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT,)}#!RegisterAccount:0`
     return (
       <div
         id="loginPage"
@@ -208,9 +210,7 @@ class Login extends React.Component<Props, State> {
         </Form>
         <div className={'SRC-center-text'}>
           <a
-            href={`${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}#!RegisterAccount:0`}
+            href={registerAccountUrl}
           >
             Don&apos;t have an account? Register now
           </a>
