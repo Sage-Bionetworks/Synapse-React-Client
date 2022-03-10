@@ -10,6 +10,7 @@ import { GoogleIcon24 } from '../assets/GoogleIcon24'
 
 export const PROVIDERS = {
   GOOGLE: 'GOOGLE_OAUTH_2_0',
+  ORCID: 'ORCID',
 }
 
 type State = {

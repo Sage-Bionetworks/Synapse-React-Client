@@ -2,6 +2,7 @@ import { JSONSchema7 } from 'json-schema'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
+import Login, { PROVIDERS } from '../containers/Login'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ALIAS_AVAILABLE,
@@ -1329,46 +1330,65 @@ export const detectSSOCode = (registerAccountUrl?:string, onError?:(err:any)=>vo
   const state = searchParams.get('state')
   // state is used during OAuth based Synapse account creation (it's the username)
   if (code && provider) {
-    const onSuccess = (synToken: any) => {
-      setAccessTokenCookie(synToken.accessToken, () => {
-        // go back to original route after successful SSO login
-        const originalUrl = localStorage.getItem('after-sso-login-url')
-        localStorage.removeItem('after-sso-login-url')
-        if (originalUrl) {
-          window.location.replace(originalUrl)
+    const redirectUrl = `${redirectURL}?provider=${provider}`
+    const redirectAfterSuccess = () => {
+      // go back to original route after successful SSO login
+      const originalUrl = localStorage.getItem('after-sso-login-url')
+      localStorage.removeItem('after-sso-login-url')
+      if (originalUrl) {
+        window.location.replace(originalUrl)
+      }
+    }
+    if (PROVIDERS.GOOGLE == provider) {
+      const onSuccess = (synToken: any) => {
+        setAccessTokenCookie(synToken.accessToken, redirectAfterSuccess)
+      }
+      const onFailure = (err: any) => {
+        if (err.status === 404) {
+          // Synapse account not found, send to registration page
+          window.location.replace(registerAccountUrl ??
+            `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
+          )
         }
-      })
-    }
-    const onFailure = (err: any) => {
-      if (err.status === 404) {
-        // Synapse account not found, send to registration page
-        window.location.replace(registerAccountUrl ??
-          `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
-        )
+        console.error('Error with Google account association: ', err)
+        if (onError) {
+          onError(err.reason)
+        }
       }
-      console.error('Error on sso sign in ', err)
-      if (onError) {
-        onError(err.reason)
-      }
-    }
 
-    if (state) {
-      oAuthRegisterAccountStep2(
-        state,
-        provider,
-        code,
-        `${redirectURL}?provider=${provider}`,
-        BackendDestinationEnum.REPO_ENDPOINT,
-      ).then(onSuccess)
-      .catch(onFailure)
-    } else {
-      oAuthSessionRequest(
-        provider,
-        code,
-        `${redirectURL}?provider=${provider}`,
-        BackendDestinationEnum.REPO_ENDPOINT,
-      ).then(onSuccess)
+      if (state) {
+        oAuthRegisterAccountStep2(
+          state,
+          provider,
+          code,
+          redirectUrl,
+          BackendDestinationEnum.REPO_ENDPOINT,
+        ).then(onSuccess)
         .catch(onFailure)
+      } else {
+        oAuthSessionRequest(
+          provider,
+          code,
+          redirectUrl,
+          BackendDestinationEnum.REPO_ENDPOINT,
+        ).then(onSuccess)
+          .catch(onFailure)
+      }
+    } else if (PROVIDERS.ORCID == provider) {
+      // now bind this to the user account
+      const onFailure = (err: any) => {
+        console.error('Error binding ORCiD to account: ', err)
+        if (onError) {
+          onError(err.reason)
+        }
+      }
+      bindOAuthProviderToAccount(
+        provider,
+        code,
+        redirectUrl,
+        BackendDestinationEnum.REPO_ENDPOINT
+      ).then(redirectAfterSuccess)
+      .catch(onFailure)
     }
   }
 }
@@ -3191,6 +3211,29 @@ export const registerAccountStep2 = (
   return doPost(
     '/auth/v1/oauth2/account2',
     { provider, authenticationCode, redirectUrl, userName },
+    undefined,
+    undefined,
+    endpoint,
+  )
+}
+
+/**
+ * Bind OAuth account to Synapse account as a new 'alias'.
+ * https://rest-docs.synapse.org/rest/POST/oauth2/alias.html
+ * @param {*} provider
+ * @param {*} authenticationCode
+ * @param {*} redirectUrl
+ * @param {*} endpoint
+ */
+ export const bindOAuthProviderToAccount = (
+  provider: string,
+  authenticationCode: string | number,
+  redirectUrl: string,
+  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+): Promise<LoginResponse> => {
+  return doPost(
+    '/auth/v1/oauth2/alias',
+    { provider, authenticationCode, redirectUrl },
     undefined,
     undefined,
     endpoint,
