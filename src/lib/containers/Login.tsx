@@ -148,7 +148,7 @@ class Login extends React.Component<Props, State> {
       })
   }
   public render() {
-    const registerAccountUrl = this.props.registerAccountUrl ?? `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT,)}#!RegisterAccount:0`
+    const registerAccountUrl = this.props.registerAccountUrl ?? `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!RegisterAccount:0`
     return (
       <div
         id="loginPage"
@@ -195,7 +195,7 @@ class Login extends React.Component<Props, State> {
           {this.getLoginFailureView()}
           <a
             href={`${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
+              BackendDestinationEnum.PORTAL_ENDPOINT
             )}#!PasswordReset:0`}
           >
             Forgot password?
