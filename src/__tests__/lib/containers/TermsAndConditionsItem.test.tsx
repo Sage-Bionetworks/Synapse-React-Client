@@ -1,12 +1,12 @@
 import { mount } from 'enzyme'
 import * as React from 'react'
+import { ChatBubblesIcon } from '../../../lib/assets/icons/terms/ChatBubblesIcon'
 import TermsAndConditionsItem from '../../../lib/containers/TermsAndConditionsItem'
-import chatBubblesSvg from '../../../lib/assets/icons/terms/chat-bubbles.svg'
 
 describe('Terms and Conditions Item: basic functionality', () => {
 
   const mockItem = {
-    icon: chatBubblesSvg,
+    icon: <ChatBubblesIcon />,
     label: "Item 1",
     description: "Item 1 desc"
   }
