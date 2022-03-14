@@ -268,6 +268,7 @@ export const doPost = <T>(
   accessToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
+  signal?: AbortSignal
 ): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
@@ -279,6 +280,7 @@ export const doPost = <T>(
     method: 'POST',
     mode: 'cors',
     credentials: initCredentials,
+    signal: signal
   }
   if (accessToken) {
     // @ts-ignore
@@ -803,6 +805,7 @@ export const getUserProfiles = (
 export const getEntityChildren = (
   request: EntityChildrenRequest,
   accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
 ) => {
   return doPost<EntityChildrenResponse>(
     '/repo/v1/entity/children',
@@ -810,6 +813,7 @@ export const getEntityChildren = (
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+    signal,
   )
 }
 /**

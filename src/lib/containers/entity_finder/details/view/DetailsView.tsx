@@ -57,6 +57,8 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   selectAllIsChecked?: boolean
   /** The text to show for selecting the latest version, if it can be selected. Default is "Always Latest Version" */
   latestVersionText?: string
+  requestKey?: object
+  totalEntities?: number
 }
 
 /**
@@ -100,6 +102,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   enableSelectAll,
   selectAllIsChecked = false,
   latestVersionText = 'Always Latest Version',
+  requestKey,
+  totalEntities
 }) => {
   const queryClient = useQueryClient()
 
@@ -109,7 +113,12 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   const [shouldSelectAll, setShouldSelectAll] = useState(false)
   const [showLoadingScreen, setShowLoadingScreen] = useState(false)
-
+  
+  const cancelQuery = () => {
+    queryClient.cancelQueries(['entitychildren',requestKey])
+    setShowLoadingScreen(false)
+    setShouldSelectAll(false)
+  }
   type DetailsViewRowAppearance = 'hidden' | 'disabled' | 'selected' | 'default'
 
   const determineRowAppearance = (
@@ -302,7 +311,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   return (
     <div className="EntityFinderDetailsView bootstrap-4-backport">
-      <BlockingLoader show={showLoadingScreen} />
+      <BlockingLoader show={showLoadingScreen} entities={entities} onCancel={cancelQuery} totalEntities={totalEntities}/>
       <AutoResizer className="DetailsViewAutosizer" onResize={rebuildTooltip}>
         {({ height, width }: { height: number; width: number }) => (
           <BaseTable
