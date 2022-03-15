@@ -24,7 +24,7 @@ export function useGetEntityChildren(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<EntityChildrenResponse, SynapseClientError>(
-    [accessToken, 'entitychildren', request],
+    ['entitychildren', request],
     () => SynapseClient.getEntityChildren(request, accessToken),
     options,
   )

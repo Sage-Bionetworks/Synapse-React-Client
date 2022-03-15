@@ -1,8 +1,6 @@
 import { LinearProgress } from '@material-ui/core'
 import React, { useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap'
-import { EntityHeader, ProjectHeader } from '../utils/synapseTypes'
-import { Hit } from '../utils/synapseTypes/Search'
 import Typography from '../utils/typography/Typography'
 import '../style/components/_spinner.scss'
 
@@ -37,13 +35,13 @@ export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
   )
 }
 
-type BlockingLoaderProps = {
+export type BlockingLoaderProps = {
   show: boolean
-  entities?: (EntityHeader | ProjectHeader | Hit)[]
+  currentEntities?: number
   totalEntities?: number
   onCancel?: () => void
 }
-export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, entities, onCancel, totalEntities }) => {
+export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentEntities, onCancel, totalEntities }) => {
   useEffect(() => {
     document.body.style.cursor = show ? 'wait' : 'default'
     return () => {
@@ -59,12 +57,17 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, entities, 
             colorPrimary: 'bar-background-color',
             barColorPrimary: 'bar-color',
           }}
-          value={(entities!.length / totalEntities!)*100}
+          value={(currentEntities! / totalEntities!)*100}
 
         />
       </div>
-      <Typography variant="headline3">Fetching selected items</Typography>
-      <Typography variant='hintText'>{entities!.length} of {totalEntities}</Typography>
+      {
+        currentEntities && 
+        <>
+          <Typography variant="headline3">Fetching selected items</Typography>
+          <Typography variant='hintText'>{currentEntities} of {totalEntities}</Typography>
+        </>
+      }
     </>
   )
   return (
@@ -72,7 +75,7 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, entities, 
       className="bootstrap-4-backport BlockingLoader"
       backdrop={false}
       animation={false}
-      show={true}
+      show={show}
       size="sm"
       centered={true}
       onHide={() => {}}
@@ -82,12 +85,12 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, entities, 
         barLoader
       ) : (
         <>
-        <SynapseSpinner size={40}></SynapseSpinner>
-        <Typography variant="headline3">Fetching {entities?.length}</Typography>
+          <SynapseSpinner size={40}/>
+          {currentEntities && <Typography variant="headline3">Fetching {currentEntities}</Typography>}
         </>
       )
     }
-    <Button variant='default' onClick={onCancel}>Cancel</Button>
+    {onCancel && <Button variant='default' onClick={onCancel}>Cancel</Button>}
       </div>
     </Modal>
   )

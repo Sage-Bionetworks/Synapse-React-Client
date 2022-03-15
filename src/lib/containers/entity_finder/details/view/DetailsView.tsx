@@ -103,7 +103,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   selectAllIsChecked = false,
   latestVersionText = 'Always Latest Version',
   requestKey,
-  totalEntities
+  totalEntities, //The total number of entities that can be retrieved 
 }) => {
   const queryClient = useQueryClient()
 
@@ -311,7 +311,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   return (
     <div className="EntityFinderDetailsView bootstrap-4-backport">
-      <BlockingLoader show={showLoadingScreen} entities={entities} onCancel={cancelQuery} totalEntities={totalEntities}/>
+      <BlockingLoader show={showLoadingScreen} currentEntities={entities.length} onCancel={cancelQuery} totalEntities={totalEntities}/>
       <AutoResizer className="DetailsViewAutosizer" onResize={rebuildTooltip}>
         {({ height, width }: { height: number; width: number }) => (
           <BaseTable
