@@ -67,6 +67,7 @@ export const ALIAS_AVAILABLE = `${REPO}/principal/available`
 export const REGISTER_ACCOUNT_STEP_1 = (portalEndpoint: string) =>
   `${REPO}/account/emailValidation?portalEndpoint=${portalEndpoint}`
 export const REGISTER_ACCOUNT_STEP_2 = `${REPO}/account2`
+export const SIGN_TERMS_OF_USE = `${AUTH}/termsOfUse2`
 
 export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
   `${REPO}/accessRequirement/${id}`
