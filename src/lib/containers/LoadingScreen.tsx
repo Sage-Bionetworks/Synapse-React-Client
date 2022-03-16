@@ -7,7 +7,6 @@ import '../style/components/_spinner.scss'
 const loadingScreen = (
   <div className="bar-loader">
     <LinearProgress
-      variant='determinate'
       classes={{
         colorPrimary: 'bar-background-color',
         barColorPrimary: 'bar-color',
@@ -37,11 +36,13 @@ export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
 
 export type BlockingLoaderProps = {
   show: boolean
-  currentEntities?: number
-  totalEntities?: number
+  currentProgress?: number
+  totalProgress?: number
   onCancel?: () => void
+  hintText?: string
+  headlineText?: string
 }
-export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentEntities, onCancel, totalEntities }) => {
+export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentProgress, onCancel, totalProgress, headlineText, hintText }) => {
   useEffect(() => {
     document.body.style.cursor = show ? 'wait' : 'default'
     return () => {
@@ -52,20 +53,21 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentEnt
     <>
       <div className="bar-loader">
         <LinearProgress
+          data-testid="progress-bar"
           variant='determinate'
           classes={{
             colorPrimary: 'bar-background-color',
             barColorPrimary: 'bar-color',
           }}
-          value={(currentEntities! / totalEntities!)*100}
+          value={(currentProgress! / totalProgress!)*100}
 
         />
       </div>
       {
-        currentEntities && 
+        currentProgress && 
         <>
-          <Typography variant="headline3">Fetching selected items</Typography>
-          <Typography variant='hintText'>{currentEntities} of {totalEntities}</Typography>
+          <Typography variant="headline3">{headlineText}</Typography>
+          <Typography variant='hintText'>{hintText}</Typography>
         </>
       }
     </>
@@ -80,13 +82,13 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentEnt
       centered={true}
       onHide={() => {}}
     >
-      <div className="SpinnerContainer">
-      {totalEntities?(
+      <div className="SpinnerContainer" data-testid="spinner-container">
+      {totalProgress?(
         barLoader
       ) : (
         <>
           <SynapseSpinner size={40}/>
-          {currentEntities && <Typography variant="headline3">Fetching {currentEntities}</Typography>}
+          {currentProgress && <Typography variant="headline3">{hintText}</Typography>}
         </>
       )
     }

@@ -1,3 +1,6 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
 .bar-loader {
   display: flex;
   justify-content: center;
@@ -5,12 +8,10 @@
   height: 30px;
   width: 100%;
   .bar-background-color {
-    // background-color: rgba(49, 95, 124, 0.05);
-    background-color: #DFE2E6;
+    background-color: map.get(SRC.$colors, 'gray-400');
   }
   .bar-color {
-    // background-color: #878787;
-    background-color: #F1D285;
+    background-color:  map.get(SRC.$tertiary-color-palette, 400);
   }
   .MuiLinearProgress-determinate {
     margin-bottom: 20px;

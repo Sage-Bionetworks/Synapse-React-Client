@@ -14,6 +14,7 @@ import { useSynapseContext } from '../../../../utils/SynapseContext'
 import {
   Direction,
   EntityHeader,
+  EntityChildrenRequest,
   EntityType,
   ProjectHeader,
   SortBy,
@@ -57,8 +58,10 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   selectAllIsChecked?: boolean
   /** The text to show for selecting the latest version, if it can be selected. Default is "Always Latest Version" */
   latestVersionText?: string
-  requestKey?: object
-  totalEntities?: number
+  /** This request object is only used to tell react-query to cancel fetching all children at once. */
+  getChildrenInfiniteRequestObject?: EntityChildrenRequest
+   /** The total number of entities that can be retrieved */
+  totalProgress?: number
 }
 
 /**
@@ -102,8 +105,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   enableSelectAll,
   selectAllIsChecked = false,
   latestVersionText = 'Always Latest Version',
-  requestKey,
-  totalEntities, //The total number of entities that can be retrieved 
+  getChildrenInfiniteRequestObject,
+  totalProgress, 
 }) => {
   const queryClient = useQueryClient()
 
@@ -115,7 +118,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   const [showLoadingScreen, setShowLoadingScreen] = useState(false)
   
   const cancelQuery = () => {
-    queryClient.cancelQueries(['entitychildren',requestKey])
+     // It's likely that the user will be throttled by the Synapse backend and may be waiting a 
+     // noticeable amount of time for the current request, so cancel it (in addition to cancelling future requests)
+    queryClient.cancelQueries(['entitychildren',getChildrenInfiniteRequestObject])
     setShowLoadingScreen(false)
     setShouldSelectAll(false)
   }
@@ -311,7 +316,14 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
 
   return (
     <div className="EntityFinderDetailsView bootstrap-4-backport">
-      <BlockingLoader show={showLoadingScreen} currentEntities={entities.length} onCancel={cancelQuery} totalEntities={totalEntities}/>
+      <BlockingLoader 
+        show={showLoadingScreen} 
+        currentProgress={entities.length} 
+        totalProgress={totalProgress}
+        hintText={ totalProgress ? `${entities.length.toLocaleString()} of ${totalProgress?.toLocaleString()}` : `Fetching ${entities.length.toLocaleString()}`}
+        headlineText={'Fetching selected items'}
+        onCancel={cancelQuery} 
+      />
       <AutoResizer className="DetailsViewAutosizer" onResize={rebuildTooltip}>
         {({ height, width }: { height: number; width: number }) => (
           <BaseTable
