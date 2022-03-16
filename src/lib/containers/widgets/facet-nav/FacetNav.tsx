@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import TotalQueryResults from '../../../containers/TotalQueryResults'
+import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
   FacetColumnRequest,
   FacetColumnResult,
@@ -51,7 +52,8 @@ export function getFacets(
       // PORTALS-1993: only plot if the facet has count data
       return (
         isFacetToPlot &&
-        (item as FacetColumnResultValues).facetValues.length > 0
+        (item as FacetColumnResultValues).facetValues.length > 0 &&
+        !isSingleNotSetValue(item)
       )
     }) ?? []
   return result
