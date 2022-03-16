@@ -3,8 +3,8 @@ import { SynapseConstants } from '../../../lib/utils'
 import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { QueryResultBundle } from 'src/lib/utils/synapseTypes/Table/QueryResultBundle.js'
 import { cloneDeep } from 'lodash-es'
-import { isFacetAvailable } from '../../../lib/utils/functions/queryUtils'
-import { FacetColumnResult } from '../../../lib/utils/synapseTypes'
+import { isFacetAvailable, isSingleNotSetValue } from '../../../lib/utils/functions/queryUtils'
+import { FacetColumnResult, FacetColumnResultValues } from '../../../lib/utils/synapseTypes'
 
 describe('get next page of data', () => {
   const sql = 'SELECT * FROM syn16787123'
@@ -53,12 +53,26 @@ describe('get next page of data', () => {
 })
 
 describe('facet support', () => {
-  const facetAvailable:FacetColumnResult[] = [{columnName:'study',facetType:'enumeration',concreteType:'org.sagebionetworks.repo.model.table.FacetColumnResultValues'}]
+  const facetAvailable:FacetColumnResultValues[] = [{columnName:'study',facetType:'enumeration',concreteType:'org.sagebionetworks.repo.model.table.FacetColumnResultValues', facetValues:[]}]
   
   it('facet availability', () => {
     expect(isFacetAvailable(facetAvailable)).toEqual(true)
     expect(isFacetAvailable([])).toEqual(false)
     expect(isFacetAvailable(undefined)).toEqual(false)
+  })
+  
+  it('facet has single NOT_SET value tests', () => {
+    const facet:FacetColumnResultValues = {
+      columnName:'study',facetType:'enumeration',concreteType:'org.sagebionetworks.repo.model.table.FacetColumnResultValues', facetValues:[]
+    }
+    facet.facetValues=[]
+    expect(isSingleNotSetValue(facet)).toEqual(false)
+    facet.facetValues=[{value:'real value', count:10, isSelected:false}]
+    expect(isSingleNotSetValue(facet)).toEqual(false)
+    facet.facetValues=[{value:SynapseConstants.VALUE_NOT_SET, count:0, isSelected:false}]
+    expect(isSingleNotSetValue(facet)).toEqual(true)
+    facet.facetValues.push({value:'second value', count:1, isSelected:false})
+    expect(isSingleNotSetValue(facet)).toEqual(false)
   })
   
   // it('facets are unavailable, but would be relevant to the resultset schema', () => {
