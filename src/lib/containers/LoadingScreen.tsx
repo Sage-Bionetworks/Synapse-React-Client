@@ -63,13 +63,9 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentPro
 
         />
       </div>
-      {
-        currentProgress && 
-        <>
-          <Typography variant="headline3">{headlineText}</Typography>
-          <Typography variant='hintText'>{hintText}</Typography>
-        </>
-      }
+      <Typography variant="headline3">{headlineText}</Typography>
+      <Typography variant='hintText'>{hintText}</Typography>
+
     </>
   )
   return (
@@ -88,7 +84,7 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentPro
       ) : (
         <>
           <SynapseSpinner size={40}/>
-          {currentProgress && <Typography variant="headline3">{hintText}</Typography>}
+          <Typography variant="headline3" data-testid="spinner-hint-text">{hintText}</Typography>
         </>
       )
     }
