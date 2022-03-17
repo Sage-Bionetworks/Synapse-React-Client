@@ -21,6 +21,7 @@ import {
   REGISTER_ACCOUNT_STEP_2,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
+  SIGN_TERMS_OF_USE,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
@@ -3229,17 +3230,33 @@ export const registerAccountStep2 = (
  * @param {*} redirectUrl
  * @param {*} endpoint
  */
- export const bindOAuthProviderToAccount = (
+ export const bindOAuthProviderToAccount = async (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
   endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
+  // Special case.  web app may not have discovered the access token by this point in init.
+  // Look for the access token ourselves before binding.
+  const accessToken = await getAccessTokenFromCookie()
   return doPost(
     '/auth/v1/oauth2/alias',
     { provider, authenticationCode, redirectUrl },
-    undefined,
+    accessToken,
     undefined,
     endpoint,
+  )
+}
+
+//http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
+export const signSynapseTermsOfUse = (
+  accessToken: string,
+) => {
+  return doPost(
+    SIGN_TERMS_OF_USE,
+    {accessToken},
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }

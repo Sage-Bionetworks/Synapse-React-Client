@@ -21,6 +21,7 @@ import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../../QueryWrapper'
+import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 
 export type QueryFilterProps = {
   isLoading?: boolean
@@ -190,7 +191,9 @@ export const QueryFilter: React.FunctionComponent<
           )
 
           const shouldStartCollapsed = index > 2
-
+          if (isSingleNotSetValue(facet)) {
+            return
+          }
           return (
             <div className="QueryFilter__facet" key={facet.columnName}>
               {facet.facetType === 'enumeration' && columnModel && (
