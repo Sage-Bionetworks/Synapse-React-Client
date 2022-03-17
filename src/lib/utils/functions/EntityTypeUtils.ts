@@ -35,6 +35,7 @@ export function isContainerType(type: EntityType): boolean {
     case EntityType.SUBMISSION_VIEW:
     case EntityType.ENTITY_VIEW:
     case EntityType.DATASET:
+    case EntityType.MATERIALIZED_VIEW:
       return false
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -54,13 +55,15 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
     case EntityType.LINK:
       return 'Link'
     case EntityType.ENTITY_VIEW:
-      return 'Entity View'
+      return 'View'
     case EntityType.DOCKER_REPO:
       return 'Docker Repository'
     case EntityType.SUBMISSION_VIEW:
       return 'Submission View'
     case EntityType.DATASET:
       return 'Dataset'
+    case EntityType.MATERIALIZED_VIEW:
+      return 'Materialized View'
     default:
       console.warn('Entity type could not be mapped to name:', entityType)
       return ''
@@ -98,6 +101,9 @@ export function convertToEntityType(
     case EntityType.DATASET:
     case 'org.sagebionetworks.repo.model.table.Dataset':
       return EntityType.DATASET
+    case EntityType.MATERIALIZED_VIEW:
+    case 'org.sagebionetworks.repo.model.table.MaterializedView':
+      return EntityType.MATERIALIZED_VIEW
     default:
       throw new Error(`Unknown entity type: ${typeString}`)
   }
@@ -114,6 +120,7 @@ export function isVersionableEntityType(type: EntityType): boolean {
     case EntityType.FOLDER:
     case EntityType.LINK:
     case EntityType.DOCKER_REPO:
+    case EntityType.MATERIALIZED_VIEW: // MaterializedView implements VersionableEntity, but versions aren't supported.
       return false
     case EntityType.FILE:
     case EntityType.TABLE:
