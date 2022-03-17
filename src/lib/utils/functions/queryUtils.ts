@@ -1,6 +1,7 @@
 import { QueryBundleRequest, FacetColumnResult } from '../synapseTypes/'
 import { SynapseClient, SynapseConstants } from '..'
-import { QueryResultBundle } from '../synapseTypes/'
+import { QueryResultBundle,
+  FacetColumnResultValues } from '../synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 
 type PartialStateObject = {
@@ -64,4 +65,10 @@ export const isGroupBy = (sql: string): boolean => {
 
 export const isFacetAvailable = (facets?: FacetColumnResult[]):boolean => {
   return (facets ? facets.length > 0 : false)
+}
+
+export const isSingleNotSetValue = (facet:FacetColumnResult):boolean => {
+  return facet.facetType === 'enumeration' &&
+    (facet as FacetColumnResultValues).facetValues.length == 1 &&
+    (facet as FacetColumnResultValues).facetValues[0].value == SynapseConstants.VALUE_NOT_SET
 }
