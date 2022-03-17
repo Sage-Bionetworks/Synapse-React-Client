@@ -1,0 +1,4 @@
+Change Password:
+```jsx
+<ChangePassword/>
+```
