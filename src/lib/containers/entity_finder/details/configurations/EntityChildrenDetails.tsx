@@ -36,7 +36,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     error,
   } = useGetEntityChildrenInfinite(getChildrenInfiniteRequestObject)
   const entities = data?.pages.flatMap(page => page.page) ?? []
-  const totalProgress = data?.pages[0].totalChildCount
+  const totalEntities = data?.pages[0].totalChildCount
 
   const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     entities,
@@ -67,7 +67,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
       }}
       selectAllIsChecked={selectAllCheckboxState}
       getChildrenInfiniteRequestObject={getChildrenInfiniteRequestObject}
-      totalProgress={totalProgress}
+      totalEntities={totalEntities}
       {...sharedProps}
     />
   )

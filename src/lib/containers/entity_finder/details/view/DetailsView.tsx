@@ -60,8 +60,8 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   latestVersionText?: string
   /** This request object is only used to tell react-query to cancel fetching all children at once. */
   getChildrenInfiniteRequestObject?: EntityChildrenRequest
-   /** The total number of entities that can be retrieved */
-  totalProgress?: number
+     /** The total number of entities that can be retrieved */
+  totalEntities?: number
 }
 
 /**
@@ -106,7 +106,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   selectAllIsChecked = false,
   latestVersionText = 'Always Latest Version',
   getChildrenInfiniteRequestObject,
-  totalProgress, 
+  totalEntities, 
 }) => {
   const queryClient = useQueryClient()
 
@@ -319,8 +319,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       <BlockingLoader 
         show={showLoadingScreen} 
         currentProgress={entities.length} 
-        totalProgress={totalProgress}
-        hintText={ totalProgress ? `${entities.length.toLocaleString()} of ${totalProgress?.toLocaleString()}` : `Fetching ${entities.length.toLocaleString()}`}
+        totalProgress={totalEntities}
+        hintText={ totalEntities ? `${entities.length.toLocaleString()} of ${totalEntities?.toLocaleString()}` : `Fetching ${entities.length.toLocaleString()}`}
         headlineText={'Fetching selected items'}
         onCancel={cancelQuery} 
       />

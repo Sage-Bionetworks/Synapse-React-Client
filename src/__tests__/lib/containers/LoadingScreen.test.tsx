@@ -14,7 +14,6 @@ const defaultProps: BlockingLoaderProps = {
 describe('basic functionality', () => {
     it('shows cancel button when loading can be cancelled', () => {
         render(<BlockingLoader {...defaultProps} onCancel={mockCallback}/>)
-        // console.log(screen.getByRole('button'))
         expect(screen.getByRole('button')).toHaveTextContent('Cancel')
     })
 
@@ -30,7 +29,7 @@ describe('basic functionality', () => {
         expect(screen.getByTestId('progress-bar')).toBeDefined()
     })
 
-    it('should show the number of entites currently loading when known', () => {
+    it('should show the passed hintText loading when known', () => {
         render(<BlockingLoader {...defaultProps} hintText={'Fetching 4'}/>)
         expect(screen.getByTestId('spinner-hint-text')).toHaveTextContent('Fetching 4')
     })
