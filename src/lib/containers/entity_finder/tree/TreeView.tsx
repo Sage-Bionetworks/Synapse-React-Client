@@ -40,10 +40,6 @@ export enum FinderScope {
   FAVORITES = 'My Favorites',
 }
 
-export type EntityFinderHeader =
-  | Pick<EntityHeader, 'name' | 'id' | 'type'>
-  | ProjectHeader
-
 function getScopeOptionNodeName(scope: FinderScope): string {
   switch (scope) {
     case FinderScope.CURRENT_PROJECT:

@@ -47,7 +47,7 @@ type NodeChildren = Readonly<{
 }>
 
 type EntityHeaderNode = EntityFinderHeader & NodeChildren
-type RootNodeConfigurationNode = RootNodeConfiguration & NodeChildren
+type RootNodeConfigurationNode = RootNodeConfiguration
 type PaginationNode = { __paginationNode: true }
 
 type TreeNode = EntityHeaderNode | RootNodeConfigurationNode | PaginationNode
