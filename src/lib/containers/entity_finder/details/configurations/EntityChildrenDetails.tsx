@@ -19,6 +19,13 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
   const handleError = useErrorHandler()
 
+  const getChildrenInfiniteRequestObject = {    
+    parentId: parentContainerId,
+    includeTotalChildCount: true,
+    includeTypes: sharedProps.visibleTypes,
+    sortBy: sortBy,
+    sortDirection: sortDirection,
+  }
   const {
     data,
     isLoading,
@@ -27,15 +34,9 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
     fetchNextPage,
     isError,
     error,
-  } = useGetEntityChildrenInfinite({
-    parentId: parentContainerId,
-    includeTotalChildCount: false,
-    includeTypes: sharedProps.visibleTypes,
-    sortBy: sortBy,
-    sortDirection: sortDirection,
-  })
-
+  } = useGetEntityChildrenInfinite(getChildrenInfiniteRequestObject)
   const entities = data?.pages.flatMap(page => page.page) ?? []
+  const totalEntities = data?.pages[0].totalChildCount
 
   const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     entities,
@@ -65,6 +66,8 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
         setSortDirection(newSortDirection)
       }}
       selectAllIsChecked={selectAllCheckboxState}
+      getChildrenInfiniteRequestObject={getChildrenInfiniteRequestObject}
+      totalEntities={totalEntities}
       {...sharedProps}
     />
   )
