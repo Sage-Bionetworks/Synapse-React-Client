@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import { Map } from 'immutable'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
-import { useInView } from 'react-intersection-observer'
 import { SynapseClient } from '../../../utils'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
@@ -21,8 +21,8 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
-import { EntityTreeNodeType, TreeNode } from './TreeNode'
-import { Map } from 'immutable'
+import { EntityTreeNodeType } from './VirtualizedTree'
+import { RootNodeConfiguration, TreePresenter } from './VirtualizedTree'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -39,6 +39,10 @@ export enum FinderScope {
   CREATED_BY_ME = 'Projects Created By Me',
   FAVORITES = 'My Favorites',
 }
+
+export type EntityFinderHeader =
+  | Pick<EntityHeader, 'name' | 'id' | 'type'>
+  | ProjectHeader
 
 function getScopeOptionNodeName(scope: FinderScope): string {
   switch (scope) {
@@ -145,6 +149,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       : { sort: 'PROJECT_NAME', sortDirection: 'ASC' },
     {
       enabled: useProjectData,
+      refetchInterval: Infinity,
     },
   )
 
@@ -153,8 +158,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       enabled: !!currentContainer && currentContainer !== 'root',
     })
 
-  const { ref, inView } = useInView({ rootMargin: '500px' })
-
   useEffect(() => {
     if (useProjectData && isSuccessProjects) {
       if (projectData?.pages) {
@@ -162,19 +165,6 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       }
     }
   }, [useProjectData, isSuccessProjects, projectData])
-
-  useEffect(() => {
-    if (useProjectData && inView && hasNextPageProjects && !isLoadingProjects) {
-      fetchNextPageProjects()
-    }
-  }, [
-    useProjectData,
-    inView,
-    hasNextPageProjects,
-    fetchNextPageProjects,
-    scope,
-    isLoadingProjects,
-  ])
 
   // Populates the first level of entities in the tree view
   useEffect(() => {
@@ -333,17 +323,40 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
     isSuccessBundle,
   ])
 
-  const rootNodeConfiguration = {
-    nodeText: getScopeOptionNodeName(scope),
-    children: topLevelEntities,
-  }
+  const rootNodeConfiguration: RootNodeConfiguration = useMemo(
+    () => ({
+      show: showScopeAsRootNode,
+      nodeText: getScopeOptionNodeName(scope),
+      children: topLevelEntities,
+      fetchNextPageOfTopLevelEntities:
+        useProjectData && hasNextPageProjects && !isLoadingProjects
+          ? async () => {
+              await fetchNextPageProjects()
+            }
+          : undefined,
+    }),
+    [
+      showScopeAsRootNode,
+      scope,
+      topLevelEntities,
+      useProjectData,
+      hasNextPageProjects,
+      isLoadingProjects,
+      fetchNextPageProjects,
+    ],
+  )
+
   const shouldAutoExpand = useCallback(
     (entityId: string) => {
-      return !!(
-        scope === FinderScope.CURRENT_PROJECT &&
-        initialContainerPath &&
-        isEntityIdInPath(entityId, initialContainerPath)
-      )
+      if (entityId === 'root') {
+        return true
+      } else {
+        return !!(
+          scope === FinderScope.CURRENT_PROJECT &&
+          initialContainerPath &&
+          isEntityIdInPath(entityId, initialContainerPath)
+        )
+      }
     },
     [scope, initialContainerPath],
   )
@@ -395,35 +408,16 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         </div>
       ) : (
         <div className="Tree" role="tree">
-          {showScopeAsRootNode ? (
-            <TreeNode
-              level={0}
-              selected={selectedEntities}
-              setSelectedId={setSelectedId}
-              visibleTypes={visibleTypes}
-              autoExpand={shouldAutoExpand}
-              rootNodeConfiguration={rootNodeConfiguration}
-              treeNodeType={treeNodeType}
-              selectableTypes={selectableTypes}
-              currentContainer={currentContainer}
-            />
-          ) : (
-            topLevelEntities.map(entity => (
-              <TreeNode
-                key={entity.id}
-                level={0}
-                selected={selectedEntities}
-                setSelectedId={setSelectedId}
-                visibleTypes={visibleTypes}
-                autoExpand={shouldAutoExpand}
-                entityHeader={entity}
-                treeNodeType={treeNodeType}
-                selectableTypes={selectableTypes}
-                currentContainer={currentContainer}
-              />
-            ))
-          )}
-          <div ref={ref} style={{ height: '5px', width: '100%' }}></div>
+          <TreePresenter
+            selected={selectedEntities}
+            visibleTypes={visibleTypes}
+            autoExpand={shouldAutoExpand}
+            rootNodeConfiguration={rootNodeConfiguration}
+            treeNodeType={treeNodeType}
+            selectableTypes={selectableTypes}
+            currentContainer={currentContainer}
+            setSelectedId={setSelectedId}
+          />
         </div>
       )}
     </div>

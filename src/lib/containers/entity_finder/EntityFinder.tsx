@@ -30,7 +30,7 @@ import {
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
 import { SelectionPane } from './SelectionPane'
-import { EntityTreeNodeType } from './tree/TreeNode'
+import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { FinderScope, TreeView } from './tree/TreeView'
 import pluralize from 'pluralize'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
