@@ -163,6 +163,7 @@ import {
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import { ChangePasswordWithCurrentPassword } from './synapseTypes/ChangePasswordRequests'
 
 const cookies = new UniversalCookies()
 
@@ -3258,5 +3259,19 @@ export const signSynapseTermsOfUse = (
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/user/changePassword.html
+export const changePasswordWithCurrentPassword = (
+  newPassword: ChangePasswordWithCurrentPassword,
+  accessToken: string | undefined
+) => {
+  return doPost<ChangePasswordWithCurrentPassword>(
+    '/auth/v1/user/changePassword',
+    newPassword,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
   )
 }
