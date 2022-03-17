@@ -47,10 +47,9 @@ type NodeChildren = Readonly<{
 }>
 
 type EntityHeaderNode = EntityFinderHeader & NodeChildren
-type RootNodeConfigurationNode = RootNodeConfiguration
 type PaginationNode = { __paginationNode: true }
 
-type TreeNode = EntityHeaderNode | RootNodeConfigurationNode | PaginationNode
+type TreeNode = EntityHeaderNode | RootNodeConfiguration | PaginationNode
 
 function getTreeNodeType(
   node: TreeNode,
@@ -69,14 +68,19 @@ function isEntityHeaderNode(node: TreeNode): node is EntityHeaderNode {
   return getTreeNodeType(node) === 'entityHeader'
 }
 
-function isRootNode(node: TreeNode): node is RootNodeConfigurationNode {
+function isRootNodeConfiguration(
+  node: TreeNode,
+): node is RootNodeConfiguration {
   return getTreeNodeType(node) === 'rootNodeConfiguration'
 }
 
 function hasMoreChildren(node: TreeNode) {
   if (isPaginationNode(node)) {
     return false
+  } else if (isRootNodeConfiguration(node)) {
+    return node.fetchNextPageOfTopLevelEntities != null
   }
+
   return node.children == null || node.childrenNextPageToken != null
 }
 
@@ -142,7 +146,7 @@ const getNodeData = (config: {
     throw new Error('Cannot create data for a pagination node')
   }
 
-  const id = isRootNode(node) ? 'root' : node.id
+  const id = isRootNodeConfiguration(node) ? 'root' : node.id
 
   const isOpenByDefault = autoExpand(id)
   const isSelected =
@@ -150,7 +154,7 @@ const getNodeData = (config: {
       ? selected.has(id)
       : currentContainer === id
   const isDisabled =
-    !isRootNode(node) &&
+    !isRootNodeConfiguration(node) &&
     node &&
     !selectableTypes.includes(getEntityTypeFromHeader(node))
   /*
@@ -209,7 +213,7 @@ const Node: FC<
 
   const nodeText = isEntityHeaderNode(node)
     ? node.name
-    : isRootNode(node)
+    : isRootNodeConfiguration(node)
     ? node.nodeText
     : ''
 
@@ -306,7 +310,6 @@ export type TreePresenterProps = Readonly<{
   treeNodeType: EntityTreeNodeType
   rootNodeConfiguration: RootNodeConfiguration
   setSelectedId: (entityId: string) => void
-  fetchNextPageOfTopLevelEntities?: () => Promise<void>
   selected: Map<string, number>
   /* currentContainer is the container whose contents are shown on in the right pane in dual-pane configuration, and may only be defined when NodeAppearance is BROWSE */
   currentContainer?: string | 'root' | null
@@ -324,7 +327,6 @@ export const TreePresenter = (props: TreePresenterProps) => {
     rootNodeConfiguration,
     setSelectedId,
     treeNodeType,
-    fetchNextPageOfTopLevelEntities,
     selected,
     currentContainer,
     selectableTypes,
@@ -334,11 +336,13 @@ export const TreePresenter = (props: TreePresenterProps) => {
 
   const { accessToken } = useSynapseContext()
 
-  const [rootNode, setRootNode] = useState<TreeNode>(rootNodeConfiguration)
+  const [rootNode, setRootNode] = useState<RootNodeConfiguration>(
+    rootNodeConfiguration,
+  )
 
   useEffect(() => {
     setRootNode(rootNodeConfiguration)
-  }, [rootNodeConfiguration])
+  }, [rootNodeConfiguration, rootNodeConfiguration.children])
 
   // This function is used by VariableSizeTree to identify the size of each node in the tree.
   const itemSize = useCallback(
@@ -399,8 +403,8 @@ export const TreePresenter = (props: TreePresenterProps) => {
       yield getNodeData({
         node: rootNode,
         nestingLevel: 0,
-        getNextPageOfChildren: fetchNextPageOfTopLevelEntities,
-        hasNextPageOfChildren: fetchNextPageOfTopLevelEntities != null,
+        getNextPageOfChildren: rootNode.fetchNextPageOfTopLevelEntities,
+        hasNextPageOfChildren: hasMoreChildren(rootNode),
         setSelectedId,
         treeNodeType,
         selected,
@@ -453,7 +457,7 @@ export const TreePresenter = (props: TreePresenterProps) => {
                 id: parentMeta.data.id + '-pagination',
                 node: paginationNode,
                 isOpenByDefault: false,
-                hasNextPageOfChildren: false,
+                hasNextPageOfChildren: true,
                 getNextPageOfChildren: parentMeta.data.getNextPageOfChildren,
                 isLeaf: true,
                 isSelected: false,
@@ -475,7 +479,6 @@ export const TreePresenter = (props: TreePresenterProps) => {
     },
     [
       rootNode,
-      fetchNextPageOfTopLevelEntities,
       setSelectedId,
       treeNodeType,
       selected,
