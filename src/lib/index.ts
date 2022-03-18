@@ -28,6 +28,7 @@ import RssFeedCards from './containers/RssFeedCards'
 import TableFeedCards from './containers/TableFeedCards'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
+import FileUpload from './containers/FileUpload'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
 import SubsectionRowRenderer from './containers/SubsectionRowRenderer'
@@ -123,6 +124,7 @@ const SynapseComponents = {
   SubsectionRowRenderer,
   ProgrammaticTableDownload,
   ChangePassword,
+  FileUpload
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext, Typography }

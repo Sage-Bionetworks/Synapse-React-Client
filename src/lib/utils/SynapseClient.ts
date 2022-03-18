@@ -22,9 +22,11 @@ import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SIGN_TERMS_OF_USE,
+  USER_BUNDLE,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
+  VERIFICATION_SUBMISSION,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -102,6 +104,7 @@ import {
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
+  VerificationSubmission,
   WikiPage,
   WikiPageKey,
 } from './synapseTypes/'
@@ -748,6 +751,42 @@ export const getUserBundle = (
 ): Promise<UserBundle> => {
   return doGet<UserBundle>(
     `${USER_ID_BUNDLE(id)}?mask=${mask}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Return the ucurrent user's bundle
+ * http://rest-docs.synapse.org/rest/GET/user/bundle.html
+ */
+ export const getMyUserBundle = (
+  mask: number,
+  accessToken: string | undefined,
+): Promise<UserBundle> => {
+  return doGet<UserBundle>(
+    `${USER_BUNDLE}?mask=${mask}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update your own profile
+ * @param profile 
+ * @param accessToken 
+ * @returns 
+ */
+export const updateMyUserProfile = (
+  profile: UserProfile,
+  accessToken: string | undefined = undefined,
+): Promise<UserProfile> => {
+  const url = '/repo/v1/userProfile'
+  return doPut<UserProfile>(
+    url,
+    profile,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3257,6 +3296,20 @@ export const signSynapseTermsOfUse = (
     SIGN_TERMS_OF_USE,
     {accessToken},
     undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+//https://rest-docs.synapse.org/rest/POST/verificationSubmission.html
+export const createProfileVerificationSubmission = (
+  verificationSubmission: VerificationSubmission,
+  accessToken: string,
+) => {
+  return doPost(
+    VERIFICATION_SUBMISSION,
+    verificationSubmission,
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
