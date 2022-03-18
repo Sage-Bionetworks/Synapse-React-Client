@@ -21,6 +21,7 @@ import {
   RequestInterface,
   RestrictableObjectType,
   SUBMISSION_STATE,
+  UploadCallbackResp,
   UserProfile,
 } from '../../../utils/synapseTypes'
 import DirectDownloadButton from '../../DirectDownloadButton'
@@ -57,13 +58,6 @@ export type DataAccessDocs =
       attachments: DataAccessDoc[] | undefined
     }
   | undefined
-
-export type UploadCallbackResp = {
-  resp?: FileUploadComplete
-  context?: any
-  success?: boolean
-  error?: any
-}
 
 export type AlertProps = {
   key: string

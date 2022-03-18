@@ -2,8 +2,7 @@ import * as React from 'react'
 import { Button } from 'react-bootstrap'
 import { uploadFile } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { FileUploadComplete } from '../utils/synapseTypes'
-import { UploadCallbackResp } from './access_requirement_list/managedACTAccess/RequestDataAccessStep2'
+import { FileUploadComplete, UploadCallbackResp } from '../utils/synapseTypes'
 
 export type FileUploadProps = {
   id?: string
