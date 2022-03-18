@@ -14,7 +14,7 @@ export type FluidModalProps = {
   show: boolean
   children: JSX.Element
   title: string
-  titlePopover?: HelpPopoverProps
+  titlePopoverProps?: HelpPopoverProps
   onClose: () => void
   primaryAction?: ModalAction
   secondaryActions?: ModalAction[]
@@ -47,15 +47,15 @@ export const FluidModal = (props: FluidModalProps) => {
       <Modal.Header closeButton>
         <Modal.Title>
           <Typography variant={'headline1'}>
-            {props.title}{' '}
-            {props.titlePopover && (
+            {props.title}
+            {props.titlePopoverProps && (
               <HelpPopover
                 {...{
                   placement: 'right',
-                  ...props.titlePopover,
+                  ...props.titlePopoverProps,
                   className:
                     'SRC-margin-left-5 ' +
-                    (props.titlePopover?.className ?? ''),
+                    (props.titlePopoverProps?.className ?? ''),
                 }}
               />
             )}

@@ -10,7 +10,7 @@ export type EntityFinderModalProps = {
   show: boolean
   onClose: () => void
   title: string
-  titlePopover?: HelpPopoverProps
+  titlePopoverProps?: HelpPopoverProps
   onConfirm: (selected: Reference[]) => void
   confirmButtonCopy: string
   onCancel: () => void
@@ -24,7 +24,7 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
     <FluidModal
       show={props.show}
       title={props.title}
-      titlePopover={props.titlePopover}
+      titlePopoverProps={props.titlePopoverProps}
       onClose={props.onClose}
       primaryAction={{
         copy: props.confirmButtonCopy,
