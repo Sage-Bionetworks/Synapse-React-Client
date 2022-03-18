@@ -84,6 +84,21 @@ function hasMoreChildren(node: TreeNode) {
   return node.children == null || node.childrenNextPageToken != null
 }
 
+function isLeafNode(node: TreeNode) {
+  if (isPaginationNode(node)) {
+    return true
+  } else if (isRootNodeConfiguration(node)) {
+    return false
+  } else {
+    return (
+      // Entity is not a container
+      !isContainerType(getEntityTypeFromHeader(node)) ||
+      // OR Children have been fetched (nonnull) and there are 0 children
+      (node.children != null && node.children.length === 0)
+    )
+  }
+}
+
 type TreeData = VariableSizeNodeData &
   Readonly<{
     node: TreeNode
@@ -168,10 +183,7 @@ const getNodeData = (config: {
       node,
       getNextPageOfChildren,
       id: id,
-      isLeaf:
-        isEntityHeaderNode(node) &&
-        (!isContainerType(getEntityTypeFromHeader(node)) ||
-          (node.children != null && (node.children ?? []).length === 0)),
+      isLeaf: isLeafNode(node),
       isOpenByDefault: isOpenByDefault,
       nestingLevel,
       setSelectedId,
