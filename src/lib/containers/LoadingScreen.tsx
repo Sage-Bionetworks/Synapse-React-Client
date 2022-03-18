@@ -1,7 +1,8 @@
 import { LinearProgress } from '@material-ui/core'
 import React, { useEffect } from 'react'
-import { Modal } from 'react-bootstrap'
+import { Modal, Button } from 'react-bootstrap'
 import Typography from '../utils/typography/Typography'
+import '../style/components/_spinner.scss'
 
 const loadingScreen = (
   <div className="bar-loader">
@@ -33,17 +34,40 @@ export const SynapseSpinner: React.FC<SynapseSpinnerProps> = ({
   )
 }
 
-type BlockingLoaderProps = {
+export type BlockingLoaderProps = {
   show: boolean
+  currentProgress?: number
+  totalProgress?: number
+  onCancel?: () => void
+  hintText?: string
+  headlineText?: string
 }
-export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show }) => {
+export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentProgress, onCancel, totalProgress, headlineText, hintText }) => {
   useEffect(() => {
     document.body.style.cursor = show ? 'wait' : 'default'
     return () => {
       document.body.style.cursor = 'default'
     }
   }, [show])
+  const barLoader = (
+    <>
+      <div className="bar-loader">
+        <LinearProgress
+          data-testid="progress-bar"
+          variant='determinate'
+          classes={{
+            colorPrimary: 'bar-background-color',
+            barColorPrimary: 'bar-color',
+          }}
+          value={(currentProgress! / totalProgress!)*100}
 
+        />
+      </div>
+      <Typography variant="headline3">{headlineText}</Typography>
+      <Typography variant='hintText'>{hintText}</Typography>
+
+    </>
+  )
   return (
     <Modal
       className="bootstrap-4-backport BlockingLoader"
@@ -54,9 +78,17 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show }) => {
       centered={true}
       onHide={() => {}}
     >
-      <div className="SpinnerContainer">
-        <SynapseSpinner size={40}></SynapseSpinner>
-        <Typography variant="headline3">Loading...</Typography>
+      <div className="SpinnerContainer" data-testid="spinner-container">
+      {totalProgress?(
+        barLoader
+      ) : (
+        <>
+          <SynapseSpinner size={40}/>
+          <Typography variant="headline3" data-testid="spinner-hint-text">{hintText}</Typography>
+        </>
+      )
+    }
+    {onCancel && <Button variant='default' onClick={onCancel}>Cancel</Button>}
       </div>
     </Modal>
   )

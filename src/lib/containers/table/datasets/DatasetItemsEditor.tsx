@@ -424,6 +424,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           selectableTypes: [EntityType.FILE],
           mustSelectVersionNumber: true,
         }}
+        titlePopoverProps={{
+          markdownText:
+            'Use the left pane to browse Projects and Folders to find Files to add to this Dataset. Files in a Dataset can be added from multiple folders. You can also use Search to find and select Files.',
+          // TODO: Datasets help URL
+          helpUrl: 'https://docs.synapse.org/',
+        }}
         promptCopy="Find Files located across one or more Folders to add to the Dataset."
         show={showEntityFinder}
         onClose={() => {

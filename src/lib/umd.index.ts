@@ -36,6 +36,7 @@ import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
 import { ProgrammaticInstructionsModal } from './containers/ProgrammaticInstructionsModal'
 import PlotlyWrapper from './containers/PlotlyWrapper'
 import IconSvg from './containers/IconSvg'
+import ChangePassword from './containers/ChangePassword'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -91,6 +92,7 @@ const SynapseComponents = {
   ProgrammaticInstructionsModal,
   SkeletonButton,
   QueryWrapperPlotNav,
+  ChangePassword,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }

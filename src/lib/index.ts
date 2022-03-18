@@ -28,6 +28,7 @@ import RssFeedCards from './containers/RssFeedCards'
 import TableFeedCards from './containers/TableFeedCards'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
 import UpsetPlot from './containers/UpsetPlot'
+import FileUpload from './containers/FileUpload'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import UserCardListRotate from './containers/UserCardListRotate'
 import SubsectionRowRenderer from './containers/SubsectionRowRenderer'
@@ -44,6 +45,7 @@ import ExperimentalMode from './containers/ExperimentalMode'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
+import ChangePassword from './containers/ChangePassword'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -121,6 +123,8 @@ const SynapseComponents = {
   FeaturedToolsList,
   SubsectionRowRenderer,
   ProgrammaticTableDownload,
+  ChangePassword,
+  FileUpload
 }
 
 export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext, Typography }

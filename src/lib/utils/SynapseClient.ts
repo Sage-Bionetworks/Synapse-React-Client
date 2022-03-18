@@ -22,9 +22,11 @@ import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SIGN_TERMS_OF_USE,
+  USER_BUNDLE,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
+  VERIFICATION_SUBMISSION,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -102,6 +104,7 @@ import {
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
+  VerificationSubmission,
   WikiPage,
   WikiPageKey,
 } from './synapseTypes/'
@@ -163,6 +166,7 @@ import {
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import { ChangePasswordWithCurrentPassword } from './synapseTypes/ChangePasswordRequests'
 
 const cookies = new UniversalCookies()
 
@@ -274,6 +278,7 @@ export const doPost = <T>(
   accessToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
+  signal?: AbortSignal
 ): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
@@ -285,6 +290,7 @@ export const doPost = <T>(
     method: 'POST',
     mode: 'cors',
     credentials: initCredentials,
+    signal: signal
   }
   if (accessToken) {
     // @ts-ignore
@@ -752,6 +758,42 @@ export const getUserBundle = (
 }
 
 /**
+ * Return the ucurrent user's bundle
+ * http://rest-docs.synapse.org/rest/GET/user/bundle.html
+ */
+ export const getMyUserBundle = (
+  mask: number,
+  accessToken: string | undefined,
+): Promise<UserBundle> => {
+  return doGet<UserBundle>(
+    `${USER_BUNDLE}?mask=${mask}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update your own profile
+ * @param profile 
+ * @param accessToken 
+ * @returns 
+ */
+export const updateMyUserProfile = (
+  profile: UserProfile,
+  accessToken: string | undefined = undefined,
+): Promise<UserProfile> => {
+  const url = '/repo/v1/userProfile'
+  return doPut<UserProfile>(
+    url,
+    profile,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get Users and Groups that match the given prefix.
  * http://rest-docs.synapse.org/rest/GET/userGroupHeaders.html
  */
@@ -810,6 +852,7 @@ export const getUserProfiles = (
 export const getEntityChildren = (
   request: EntityChildrenRequest,
   accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
 ) => {
   return doPost<EntityChildrenResponse>(
     '/repo/v1/entity/children',
@@ -817,6 +860,7 @@ export const getEntityChildren = (
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+    signal,
   )
 }
 /**
@@ -3254,5 +3298,33 @@ export const signSynapseTermsOfUse = (
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+//https://rest-docs.synapse.org/rest/POST/verificationSubmission.html
+export const createProfileVerificationSubmission = (
+  verificationSubmission: VerificationSubmission,
+  accessToken: string,
+) => {
+  return doPost(
+    VERIFICATION_SUBMISSION,
+    verificationSubmission,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/user/changePassword.html
+export const changePasswordWithCurrentPassword = (
+  newPassword: ChangePasswordWithCurrentPassword,
+  accessToken: string | undefined
+) => {
+  return doPost<ChangePasswordWithCurrentPassword>(
+    '/auth/v1/user/changePassword',
+    newPassword,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
   )
 }
