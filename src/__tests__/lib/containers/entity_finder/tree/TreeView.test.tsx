@@ -245,12 +245,10 @@ describe('TreeView tests', () => {
     // Capture the fetch function passed to the component
     console.log(mockTreePresenter.mock.calls[0][0])
     const props = mockTreePresenter.mock.calls[0][0] as TreePresenterProps
-    expect(
-      props.rootNodeConfiguration.fetchNextPageOfTopLevelEntities,
-    ).toBeDefined()
+    expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
 
     // Invoke the function
-    props.rootNodeConfiguration.fetchNextPageOfTopLevelEntities!()
+    props.rootNodeConfiguration.fetchNextPage!()
 
     await waitFor(() => expect(mockFetchNextPage).toBeCalled())
   })
@@ -385,16 +383,17 @@ describe('TreeView tests', () => {
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
     expect(mockTreePresenter).toHaveBeenLastCalledWith(
-      expect.objectContaining({
+      expect.objectContaining<TreePresenterProps>({
         rootNodeConfiguration: {
           nodeText: 'Projects',
           children: [entityPath.path[1]],
-          fetchNextPageOfTopLevelEntities: undefined,
+          fetchNextPage: expect.any(Function),
+          hasNextPage: false,
           show: true,
         },
-        autoExpand: expect.anything(),
+        autoExpand: expect.any(Function),
         selected: [],
-        setSelectedId: expect.anything(),
+        setSelectedId: expect.any(Function),
         visibleTypes: defaultProps.visibleTypes,
       }),
       {},
@@ -414,17 +413,18 @@ describe('TreeView tests', () => {
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
     expect(mockTreePresenter).toHaveBeenLastCalledWith(
-      expect.objectContaining({
+      expect.objectContaining<TreePresenterProps>({
         rootNodeConfiguration: {
           nodeText: 'Projects',
           children: [entityPath.path[1]],
-          fetchNextPageOfTopLevelEntities: undefined,
+          fetchNextPage: expect.any(Function),
+          hasNextPage: false,
           show: true,
         },
-        autoExpand: expect.anything(),
+        autoExpand: expect.any(Function),
         selectableTypes: defaultProps.selectableTypes,
         selected: [{ targetId: newSelectedId }],
-        setSelectedId: expect.anything(),
+        setSelectedId: expect.any(Function),
         visibleTypes: defaultProps.visibleTypes,
       }),
       {},

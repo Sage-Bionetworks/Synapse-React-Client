@@ -324,12 +324,10 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       show: showScopeAsRootNode,
       nodeText: getScopeOptionNodeName(scope),
       children: topLevelEntities,
-      fetchNextPageOfTopLevelEntities:
-        useProjectData && hasNextPageProjects && !isLoadingProjects
-          ? async () => {
-              await fetchNextPageProjects()
-            }
-          : undefined,
+      fetchNextPage: async () => {
+        await fetchNextPageProjects()
+      },
+      hasNextPage: useProjectData && hasNextPageProjects! && !isLoadingProjects,
     }),
     [
       showScopeAsRootNode,

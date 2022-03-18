@@ -76,9 +76,9 @@ function isRootNodeConfiguration(
 
 function hasMoreChildren(node: TreeNode) {
   if (isPaginationNode(node)) {
-    return false
+    return true
   } else if (isRootNodeConfiguration(node)) {
-    return node.fetchNextPageOfTopLevelEntities != null
+    return node.hasNextPage
   }
 
   return node.children == null || node.childrenNextPageToken != null
@@ -87,8 +87,7 @@ function hasMoreChildren(node: TreeNode) {
 type TreeData = VariableSizeNodeData &
   Readonly<{
     node: TreeNode
-    hasNextPageOfChildren: boolean
-    getNextPageOfChildren?: () => Promise<void>
+    getNextPageOfChildren: () => Promise<void>
     isLeaf: boolean
     nestingLevel: number
     setSelectedId: (entityId: string) => void
@@ -107,7 +106,8 @@ export type RootNodeConfiguration = {
   nodeText: string
   children: EntityFinderHeader[]
   /** If undefined, no more entities to fetch */
-  fetchNextPageOfTopLevelEntities?: () => Promise<void>
+  fetchNextPage: () => Promise<void>
+  hasNextPage: boolean
 }
 
 /**
@@ -118,8 +118,7 @@ export type RootNodeConfiguration = {
 const getNodeData = (config: {
   node: TreeNode
   nestingLevel: number
-  getNextPageOfChildren?: () => Promise<void>
-  hasNextPageOfChildren: boolean
+  getNextPageOfChildren: () => Promise<void>
   setSelectedId: (entityId: string) => void
   treeNodeType: EntityTreeNodeType
   selected: Map<string, number>
@@ -132,7 +131,6 @@ const getNodeData = (config: {
     node,
     nestingLevel,
     getNextPageOfChildren,
-    hasNextPageOfChildren,
     setSelectedId,
     treeNodeType,
     selected,
@@ -161,7 +159,7 @@ const getNodeData = (config: {
    * If the node is open by default and we haven't fetched its children,
    * fetch the first page (otherwise we won't fetch unless re-toggled)
    */
-  if (getNextPageOfChildren && isOpenByDefault && node.children == null) {
+  if (isOpenByDefault && node.children == null && hasMoreChildren(node)) {
     getNextPageOfChildren()
   }
 
@@ -169,7 +167,6 @@ const getNodeData = (config: {
     data: {
       node,
       getNextPageOfChildren,
-      hasNextPageOfChildren,
       id: id,
       isLeaf:
         isEntityHeaderNode(node) &&
@@ -188,50 +185,54 @@ const getNodeData = (config: {
   }
 }
 
-const Node: FC<
-  NodeComponentProps<TreeData, VariableSizeNodePublicState<TreeData>>
-> = ({
-  data: {
-    node,
-    getNextPageOfChildren,
-    hasNextPageOfChildren,
-    isLeaf,
-    id,
-    nestingLevel,
-    setSelectedId,
-    treeNodeType,
-    isSelected,
-    isDisabled,
-  },
-  isOpen,
-  style,
-  setOpen,
-}) => {
+function Node(
+  props: NodeComponentProps<TreeData, VariableSizeNodePublicState<TreeData>>,
+) {
+  const {
+    data: {
+      node,
+      getNextPageOfChildren,
+      isLeaf,
+      id,
+      nestingLevel,
+      setSelectedId,
+      treeNodeType,
+      isSelected,
+      isDisabled,
+    },
+    isOpen,
+    style,
+    setOpen,
+  } = props
+
   const [isLoading, setLoading] = useState(false)
 
+  const nodeText = isEntityHeaderNode(node) ? (
+    node.name
+  ) : isRootNodeConfiguration(node) ? (
+    node.nodeText
+  ) : (
+    // Pagination node
+    <Skeleton width={100} />
+  )
+
+  // We only use this for pagination nodes. If the pagination node comes into view, then immediately call `getNextPageOfChildren`
   const { ref, inView } = useInView()
-
-  const nodeText = isEntityHeaderNode(node)
-    ? node.name
-    : isRootNodeConfiguration(node)
-    ? node.nodeText
-    : ''
-
   useEffect(() => {
-    if (inView && getNextPageOfChildren) {
+    if (isPaginationNode(node) && inView && getNextPageOfChildren) {
       getNextPageOfChildren()
     }
-  }, [inView, getNextPageOfChildren])
+  }, [node, inView, getNextPageOfChildren])
 
   /**
-   * If the height is 0 (e.g. the root node is purposefully hidden) just return a fragment.
+   * If the height is 0, the node is purposefully hidden. Just render a fragment.
    */
   if ('height' in style && style.height === 0) {
     return <></>
   }
 
   async function toggleExpand() {
-    if (hasNextPageOfChildren && getNextPageOfChildren) {
+    if (hasMoreChildren(node)) {
       setLoading(true)
       await getNextPageOfChildren()
       await setOpen(!isOpen)
@@ -286,11 +287,8 @@ const Node: FC<
         </div>
       )}
 
-      <div
-        className="EntityName"
-        ref={isPaginationNode(node) ? ref : undefined}
-      >
-        {isPaginationNode(node) ? <Skeleton width={100} /> : nodeText}
+      <div className="EntityName" ref={ref}>
+        {nodeText}
       </div>
       {treeNodeType === EntityTreeNodeType.SELECT && (
         <EntityBadgeIcons
@@ -403,8 +401,7 @@ export const TreePresenter = (props: TreePresenterProps) => {
       yield getNodeData({
         node: rootNode,
         nestingLevel: 0,
-        getNextPageOfChildren: rootNode.fetchNextPageOfTopLevelEntities,
-        hasNextPageOfChildren: hasMoreChildren(rootNode),
+        getNextPageOfChildren: rootNode.fetchNextPage,
         setSelectedId,
         treeNodeType,
         selected,
@@ -420,7 +417,7 @@ export const TreePresenter = (props: TreePresenterProps) => {
 
         if (
           !isPaginationNode(parentMeta.node) &&
-          (parentMeta.node.children || parentMeta.data.hasNextPageOfChildren)
+          (parentMeta.node.children || hasMoreChildren(parentMeta.node))
         ) {
           for (let i = 0; i < (parentMeta.node.children ?? []).length; i++) {
             // Step [3]: Yielding all the children of the parent
@@ -430,7 +427,6 @@ export const TreePresenter = (props: TreePresenterProps) => {
               node: childNode,
               nestingLevel: parentMeta.nestingLevel + 1,
               getNextPageOfChildren: () => fetchNextPageOfChildren(childNode),
-              hasNextPageOfChildren: hasMoreChildren(childNode),
               setSelectedId,
               treeNodeType,
               selected,
@@ -444,7 +440,7 @@ export const TreePresenter = (props: TreePresenterProps) => {
           // Step [4] - If the parent node has more children, attach a tiny div that will fetch more children when it comes into view (via intersection observer)
           if (
             parentMeta.node.children != null &&
-            parentMeta.data.hasNextPageOfChildren
+            hasMoreChildren(parentMeta.node)
           ) {
             const paginationNode: PaginationNode = {
               __paginationNode: true,
@@ -457,7 +453,6 @@ export const TreePresenter = (props: TreePresenterProps) => {
                 id: parentMeta.data.id + '-pagination',
                 node: paginationNode,
                 isOpenByDefault: false,
-                hasNextPageOfChildren: true,
                 getNextPageOfChildren: parentMeta.data.getNextPageOfChildren,
                 isLeaf: true,
                 isSelected: false,
