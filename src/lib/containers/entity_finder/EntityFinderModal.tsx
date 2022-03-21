@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Reference } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import { FluidModal } from '../FluidModal'
+import { HelpPopoverProps } from '../HelpPopover'
 import EntityFinder, { EntityFinderProps } from './EntityFinder'
 
 export type EntityFinderModalProps = {
@@ -9,6 +10,7 @@ export type EntityFinderModalProps = {
   show: boolean
   onClose: () => void
   title: string
+  titlePopoverProps?: HelpPopoverProps
   onConfirm: (selected: Reference[]) => void
   confirmButtonCopy: string
   onCancel: () => void
@@ -22,6 +24,7 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
     <FluidModal
       show={props.show}
       title={props.title}
+      titlePopoverProps={props.titlePopoverProps}
       onClose={props.onClose}
       primaryAction={{
         copy: props.confirmButtonCopy,
