@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ReactComponent as CheckSvg } from '../assets/icons/terms/check.svg'
+import { CheckIcon } from '../assets/icons/terms/CheckIcon'
 
 export type tcItem = {
   icon: any
@@ -12,7 +12,7 @@ export type TermsAndConditionsItemProps = {
   enabled: boolean
   checked: boolean
   item: tcItem
-  onChange: Function
+  onChange: (id:number) => void
 }
 
 const TermsAndConditionsItem: React.FunctionComponent<TermsAndConditionsItemProps> = props => {
@@ -45,7 +45,7 @@ const TermsAndConditionsItem: React.FunctionComponent<TermsAndConditionsItemProp
 
   return (
     <>
-      <span className="terms-icon">{<item.icon />}</span>
+      <span className="terms-icon">{item.icon}</span>
       <span className="terms-desc">
         <label dangerouslySetInnerHTML={{ __html: item.label }} />
         { showDesc && item.description && <div className="terms-desc-content" dangerouslySetInnerHTML={{ __html: item.description }} /> }
@@ -56,7 +56,7 @@ const TermsAndConditionsItem: React.FunctionComponent<TermsAndConditionsItemProp
         }
       </span>
       <span className="terms-checkbox">
-        <span className={isChecked ? "terms-circle terms-checked" : "terms-circle" } onClick={handleCheckboxClick}><CheckSvg /></span>
+        <span className={isChecked ? "terms-circle terms-checked" : "terms-circle" } onClick={handleCheckboxClick}><CheckIcon /></span>
         I agree
       </span>
     </>
