@@ -365,7 +365,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     projectId={projectId}
                     initialContainer={initialContainer}
                     showScopeAsRootNode={false}
-                    treeNodeType={EntityTreeNodeType.SELECT}
+                    treeNodeType={EntityTreeNodeType.SINGLE_PANE}
                     selectableTypes={selectableTypes}
                   />
                 </div>
@@ -390,7 +390,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             initialScope={initialScope}
                             projectId={projectId}
                             initialContainer={initialContainer}
-                            treeNodeType={EntityTreeNodeType.BROWSE}
+                            treeNodeType={EntityTreeNodeType.DUAL_PANE}
                             setBreadcrumbItems={setBreadcrumbs}
                             selectableTypes={visibleTypesInTree}
                           />

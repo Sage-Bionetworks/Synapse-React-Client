@@ -30,9 +30,9 @@ import { SynapseSpinner } from '../../LoadingScreen'
 
 export enum EntityTreeNodeType {
   /** The tree component's appearance and interactions will facilitate selection. Nodes will be larger and styles will indicate primary selection */
-  SELECT,
+  SINGLE_PANE,
   /** The tree component's appearance and interactions will facilitate browsing. Nodes will be smaller and styles will indicate secondary selection */
-  BROWSE,
+  DUAL_PANE,
 }
 
 type EntityFinderHeader =
@@ -163,12 +163,11 @@ const getNodeData = (config: {
 
   const isOpenByDefault = autoExpand(id)
   const isSelected =
-    treeNodeType === EntityTreeNodeType.SELECT
+    treeNodeType === EntityTreeNodeType.SINGLE_PANE
       ? selected.has(id)
       : currentContainer === id
   const isDisabled =
     !isRootNodeConfiguration(node) &&
-    node &&
     !selectableTypes.includes(getEntityTypeFromHeader(node))
   /*
    * If the node is open by default and we haven't fetched its children,
@@ -231,7 +230,7 @@ function Node(
   // We only use this for pagination nodes. If the pagination node comes into view, then immediately call `getNextPageOfChildren`
   const { ref, inView } = useInView()
   useEffect(() => {
-    if (isPaginationNode(node) && inView && getNextPageOfChildren) {
+    if (isPaginationNode(node) && inView) {
       getNextPageOfChildren()
     }
   }, [node, inView, getNextPageOfChildren])
@@ -257,7 +256,9 @@ function Node(
   return (
     <div
       className={`Node ${
-        treeNodeType === EntityTreeNodeType.SELECT ? 'SelectNode' : 'BrowseNode'
+        treeNodeType === EntityTreeNodeType.SINGLE_PANE
+          ? 'SelectNode'
+          : 'BrowseNode'
       }`}
       aria-selected={isSelected}
       aria-disabled={isDisabled}
@@ -267,7 +268,7 @@ function Node(
           setSelectedId(id)
         }
         if (
-          treeNodeType === EntityTreeNodeType.BROWSE &&
+          treeNodeType === EntityTreeNodeType.DUAL_PANE &&
           !isOpen &&
           !isSelected
         ) {
@@ -291,7 +292,7 @@ function Node(
           {isLoading ? <SynapseSpinner size={10} /> : isOpen ? '▾' : '▸'}
         </button>
       )}
-      {treeNodeType === EntityTreeNodeType.SELECT && ( // SWC-5592
+      {treeNodeType === EntityTreeNodeType.SINGLE_PANE && ( // SWC-5592
         <div className="EntityIcon">
           {isEntityHeaderNode(node) && (
             <EntityTypeIcon type={getEntityTypeFromHeader(node)} />
@@ -302,7 +303,7 @@ function Node(
       <div className="EntityName" ref={ref}>
         {nodeText}
       </div>
-      {treeNodeType === EntityTreeNodeType.SELECT && (
+      {treeNodeType === EntityTreeNodeType.SINGLE_PANE && (
         <EntityBadgeIcons
           entityId={id}
           showHasDiscussionThread={false}
@@ -367,7 +368,7 @@ export const TreePresenter = (props: TreePresenterProps) => {
       /**
        * The height of all other nodes in the tree varies depending on the tree node type.
        */
-      return treeNodeType === EntityTreeNodeType.BROWSE ? 28 : 60
+      return treeNodeType === EntityTreeNodeType.DUAL_PANE ? 28 : 60
     },
     [treeNodeType, rootNodeConfiguration.show],
   )
@@ -449,7 +450,7 @@ export const TreePresenter = (props: TreePresenterProps) => {
             })
           }
 
-          // Step [4] - If the parent node has more children, attach a tiny div that will fetch more children when it comes into view (via intersection observer)
+          // Step [4] - If the parent node has more children, render a "pagination node" that will fetch more children when it comes into view (via intersection observer)
           if (
             parentMeta.node.children != null &&
             hasMoreChildren(parentMeta.node)
@@ -497,7 +498,7 @@ export const TreePresenter = (props: TreePresenterProps) => {
     ],
   )
 
-  return rootNode ? (
+  return (
     <AutoSizer disableWidth>
       {({ height }: { height: number }) => (
         <VariableSizeTree
@@ -511,7 +512,5 @@ export const TreePresenter = (props: TreePresenterProps) => {
         </VariableSizeTree>
       )}
     </AutoSizer>
-  ) : (
-    <></>
   )
 }

@@ -104,11 +104,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
 
   const [currentContainer, setCurrentContainer] = useState<
     string | 'root' | null
-  >(
-    treeNodeType === EntityTreeNodeType.BROWSE
-      ? initialContainer
-      : initialContainer,
-  )
+  >(initialContainer)
 
   const handleError = useErrorHandler()
 
@@ -358,7 +354,9 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   return (
     <div
       className={`TreeView ${
-        treeNodeType === EntityTreeNodeType.SELECT ? 'SelectTree' : 'BrowseTree'
+        treeNodeType === EntityTreeNodeType.SINGLE_PANE
+          ? 'SelectTree'
+          : 'BrowseTree'
       }`}
     >
       <div className="Header">

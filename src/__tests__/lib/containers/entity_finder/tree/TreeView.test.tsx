@@ -83,7 +83,7 @@ const defaultProps: TreeViewProps = {
   setDetailsViewConfiguration: mockSetDetailsViewConfiguration,
   setBreadcrumbItems: mockSetBreadcrumbItems,
   toggleSelection: mockToggleSelection,
-  treeNodeType: EntityTreeNodeType.SELECT,
+  treeNodeType: EntityTreeNodeType.SINGLE_PANE,
   showScopeAsRootNode: true,
   selectableTypes: Object.values(EntityType),
 }
@@ -243,7 +243,6 @@ describe('TreeView tests', () => {
     expect(mockFetchNextPage).not.toBeCalled()
 
     // Capture the fetch function passed to the component
-    console.log(mockTreePresenter.mock.calls[0][0])
     const props = mockTreePresenter.mock.calls[0][0] as TreePresenterProps
     expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
 
