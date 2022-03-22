@@ -323,7 +323,7 @@ export function Node(
 
 /**
  * Extracted from the React component for testing purposes
- * @returns a zero-argument generator function compatible with react-vtree
+ * @returns a generator function compatible with react-vtree
  */
 export function getTreeWalkerFunction(
   rootNode: RootNodeConfiguration,
