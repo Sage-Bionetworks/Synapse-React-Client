@@ -37,7 +37,7 @@ import {
   ProjectRenderer,
 } from '../../entity_finder/details/view/DetailsViewTableRenderers'
 import { EntityFinderModal } from '../../entity_finder/EntityFinderModal'
-import { FinderScope } from '../../entity_finder/tree/TreeView'
+import { FinderScope } from '../../entity_finder/tree/EntityTree'
 import IconSvg from '../../IconSvg'
 import WarningModal from '../../synapse_form_wrapper/WarningModal'
 import { displayToast } from '../../ToastMessage'

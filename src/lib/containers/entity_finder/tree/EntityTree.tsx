@@ -22,7 +22,7 @@ import {
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
 import { EntityTreeNodeType } from './VirtualizedTree'
-import { RootNodeConfiguration, TreePresenter } from './VirtualizedTree'
+import { RootNodeConfiguration, VirtualizedTree } from './VirtualizedTree'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -51,7 +51,7 @@ function getScopeOptionNodeName(scope: FinderScope): string {
   }
 }
 // if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
-export type TreeViewProps = {
+export type EntityTreeProps = {
   initialScope?: FinderScope
   /** To show the current project, projectId must be defined */
   projectId?: string
@@ -76,7 +76,7 @@ export type TreeViewProps = {
  *
  * The tree view currently can only be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
  */
-export const TreeView: React.FunctionComponent<TreeViewProps> = ({
+export const EntityTree: React.FunctionComponent<EntityTreeProps> = ({
   initialScope = FinderScope.CURRENT_PROJECT,
   projectId,
   initialContainer = null,
@@ -88,7 +88,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
   showScopeAsRootNode = true,
   treeNodeType,
   selectableTypes,
-}: TreeViewProps) => {
+}: EntityTreeProps) => {
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
@@ -401,7 +401,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
         </div>
       ) : (
         <div className="Tree" role="tree">
-          <TreePresenter
+          <VirtualizedTree
             selected={selectedEntities}
             visibleTypes={visibleTypes}
             autoExpand={shouldAutoExpand}

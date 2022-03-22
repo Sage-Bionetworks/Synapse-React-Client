@@ -317,7 +317,7 @@ function Node(
   )
 }
 
-export type TreePresenterProps = Readonly<{
+export type VirtualizedTreeProps = Readonly<{
   treeNodeType: EntityTreeNodeType
   rootNodeConfiguration: RootNodeConfiguration
   setSelectedId: (entityId: string) => void
@@ -333,7 +333,7 @@ export type TreePresenterProps = Readonly<{
  * Component that utilizes react-vtree to efficiently display a tree of entities. react-vtree utilizes react-window
  * to only render visible nodes, which eliminates performance issues as seen in SWC-5978.
  */
-export const TreePresenter = (props: TreePresenterProps) => {
+export const VirtualizedTree = (props: VirtualizedTreeProps) => {
   const {
     rootNodeConfiguration,
     setSelectedId,

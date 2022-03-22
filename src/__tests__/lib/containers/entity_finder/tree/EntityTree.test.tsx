@@ -5,9 +5,9 @@ import { SynapseClient } from '../../../../../lib'
 import { EntityDetailsListDataConfigurationType } from '../../../../../lib/containers/entity_finder/details/EntityDetailsList'
 import {
   FinderScope,
-  TreeView,
-  TreeViewProps,
-} from '../../../../../lib/containers/entity_finder/tree/TreeView'
+  EntityTree,
+  EntityTreeProps,
+} from '../../../../../lib/containers/entity_finder/tree/EntityTree'
 import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import {
@@ -22,14 +22,14 @@ import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import {
   EntityTreeNodeType,
-  TreePresenterProps,
+  VirtualizedTreeProps,
 } from '../../../../../lib/containers/entity_finder/tree/VirtualizedTree'
 
 const VirtualizedTree = require('../../../../../lib/containers/entity_finder/tree/VirtualizedTree')
 
 let invokeSetSelectedId: (containerId: string) => void
 
-VirtualizedTree.TreePresenter = jest
+VirtualizedTree.VirtualizedTree = jest
   .fn()
   .mockImplementation(({ rootNodeConfiguration, setSelectedId }) => {
     invokeSetSelectedId = (containerId: string) => {
@@ -38,7 +38,7 @@ VirtualizedTree.TreePresenter = jest
     return <></>
   })
 
-const mockTreePresenter = VirtualizedTree.TreePresenter
+const mockTreePresenter = VirtualizedTree.VirtualizedTree
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useProjects', () => {
   return {
@@ -72,7 +72,7 @@ const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockSetBreadcrumbItems = jest.fn()
 const mockToggleSelection = jest.fn()
 
-const defaultProps: TreeViewProps = {
+const defaultProps: EntityTreeProps = {
   // We use JS arrays rather than Immutable.Map so we can easily inspect it in
   selectedEntities: [],
   initialScope: FinderScope.CURRENT_PROJECT,
@@ -176,10 +176,10 @@ const entityPath: EntityPath = {
   ],
 }
 
-function renderComponent(propOverrides?: Partial<TreeViewProps>) {
+function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
   return render(
     <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <TreeView {...defaultProps} {...propOverrides} />
+      <EntityTree {...defaultProps} {...propOverrides} />
     </SynapseContextProvider>,
   )
 }
@@ -243,7 +243,7 @@ describe('TreeView tests', () => {
     expect(mockFetchNextPage).not.toBeCalled()
 
     // Capture the fetch function passed to the component
-    const props = mockTreePresenter.mock.calls[0][0] as TreePresenterProps
+    const props = mockTreePresenter.mock.calls[0][0] as VirtualizedTreeProps
     expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
 
     // Invoke the function
@@ -382,7 +382,7 @@ describe('TreeView tests', () => {
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
     expect(mockTreePresenter).toHaveBeenLastCalledWith(
-      expect.objectContaining<TreePresenterProps>({
+      expect.objectContaining<VirtualizedTreeProps>({
         rootNodeConfiguration: {
           nodeText: 'Projects',
           children: [entityPath.path[1]],
@@ -412,7 +412,7 @@ describe('TreeView tests', () => {
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
     expect(mockTreePresenter).toHaveBeenLastCalledWith(
-      expect.objectContaining<TreePresenterProps>({
+      expect.objectContaining<VirtualizedTreeProps>({
         rootNodeConfiguration: {
           nodeText: 'Projects',
           children: [entityPath.path[1]],
