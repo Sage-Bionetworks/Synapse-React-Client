@@ -141,6 +141,7 @@ export const TreeView: React.FunctionComponent<TreeViewProps> = ({
       : { sort: 'PROJECT_NAME', sortDirection: 'ASC' },
     {
       enabled: useProjectData,
+      // Don't refetch the projects. Updating the entity headers will drop all of the children that VirtualizedTree has fetched
       refetchInterval: Infinity,
     },
   )
