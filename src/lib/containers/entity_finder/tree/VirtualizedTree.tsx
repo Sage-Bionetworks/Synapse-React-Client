@@ -99,7 +99,7 @@ function isLeafNode(node: TreeNode) {
   }
 }
 
-type TreeData = VariableSizeNodeData &
+export type TreeData = VariableSizeNodeData &
   Readonly<{
     node: TreeNode
     getNextPageOfChildren: () => Promise<void>
@@ -119,7 +119,7 @@ type NodeMeta = Readonly<{
 export type RootNodeConfiguration = {
   show: boolean
   nodeText: string
-  children: EntityFinderHeader[]
+  children: EntityHeaderNode[]
   /** If undefined, no more entities to fetch */
   fetchNextPage: () => Promise<void>
   hasNextPage: boolean
@@ -127,10 +127,11 @@ export type RootNodeConfiguration = {
 
 /**
  * Converts a TreeNode and related data into a TreeWalkerValue that react-vtree can use to render the tree.
+ * Exported for testing purposes only.
  * @param config
  * @returns
  */
-const getNodeData = (config: {
+export const getNodeData = (config: {
   node: TreeNode
   nestingLevel: number
   getNextPageOfChildren: () => Promise<void>
@@ -196,7 +197,10 @@ const getNodeData = (config: {
   }
 }
 
-function Node(
+/**
+ * Node component for the react-vtree virtualized tree. Exported only for testing purposes
+ */
+export function Node(
   props: NodeComponentProps<TreeData, VariableSizeNodePublicState<TreeData>>,
 ) {
   const {
@@ -317,6 +321,98 @@ function Node(
   )
 }
 
+/**
+ * Extracted from the React component for testing purposes
+ * @returns a zero-argument generator function compatible with react-vtree
+ */
+export function getTreeWalkerFunction(
+  rootNode: RootNodeConfiguration,
+  setSelectedId: VirtualizedTreeProps['setSelectedId'],
+  treeNodeType: VirtualizedTreeProps['treeNodeType'],
+  selected: VirtualizedTreeProps['selected'],
+  selectableTypes: VirtualizedTreeProps['selectableTypes'],
+  autoExpand: VirtualizedTreeProps['autoExpand'],
+  itemSize: (index?: number) => number,
+  currentContainer: VirtualizedTreeProps['currentContainer'],
+  fetchNextPageOfChildren: (node: Writable<EntityHeaderNode>) => Promise<void>,
+): TreeWalker<TreeData, NodeMeta> {
+  return function* treeWalker() {
+    // Step [1]: Define the root node of our tree.
+    yield getNodeData({
+      node: rootNode,
+      nestingLevel: 0,
+      getNextPageOfChildren: rootNode.fetchNextPage,
+      setSelectedId,
+      treeNodeType,
+      selected,
+      selectableTypes,
+      autoExpand,
+      defaultHeight: itemSize(),
+      currentContainer,
+    })
+
+    while (true) {
+      // Step [2]: Get the parent node and nesting level, which will be passed into the Generator.next function by react-vtree.
+      // Yielding `undefined` indicates to react-vtree that we've finished iterating children from the last time we were in the loop.
+      const parentMeta = yield
+
+      if (
+        !isPaginationNode(parentMeta.node) &&
+        (parentMeta.node.children || hasMoreChildren(parentMeta.node))
+      ) {
+        for (let i = 0; i < (parentMeta.node.children ?? []).length; i++) {
+          // Step [3]: Yielding all the children of the parent
+          const childNode = parentMeta.node.children![i]
+
+          yield getNodeData({
+            node: childNode,
+            nestingLevel: parentMeta.nestingLevel + 1,
+            getNextPageOfChildren: () => fetchNextPageOfChildren(childNode),
+            setSelectedId,
+            treeNodeType,
+            selected,
+            selectableTypes,
+            autoExpand,
+            defaultHeight: itemSize(),
+            currentContainer,
+          })
+        }
+
+        // Step [4] - If the parent node has more children, render a "pagination node" that will fetch more children when it comes into view (via intersection observer)
+        if (
+          parentMeta.node.children != null &&
+          hasMoreChildren(parentMeta.node)
+        ) {
+          const paginationNode: PaginationNode = {
+            __paginationNode: true,
+          }
+          const paginationTreeWalkerValue: TreeWalkerValue<TreeData, NodeMeta> =
+            {
+              data: {
+                id: parentMeta.data.id + '-pagination',
+                node: paginationNode,
+                isOpenByDefault: false,
+                getNextPageOfChildren: parentMeta.data.getNextPageOfChildren,
+                isLeaf: true,
+                isSelected: false,
+                defaultHeight: itemSize(),
+                isDisabled: true,
+                nestingLevel: parentMeta.nestingLevel + 1,
+                setSelectedId: () => {},
+                treeNodeType,
+              },
+              nestingLevel: parentMeta.nestingLevel + 1,
+              node: {
+                __paginationNode: true,
+              },
+            }
+          yield paginationTreeWalkerValue
+        }
+      }
+    }
+  }
+}
+
 export type VirtualizedTreeProps = Readonly<{
   treeNodeType: EntityTreeNodeType
   rootNodeConfiguration: RootNodeConfiguration
@@ -408,83 +504,18 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
    * treeWalker is a generator function used by react-vtree to generate the tree structure. The tree is re-built when the function is updated,
    * so the dependencies specified in useCallback are important.
    */
-  const treeWalker = useCallback(
-    function* treeWalker(): ReturnType<TreeWalker<TreeData, NodeMeta>> {
-      // Step [1]: Define the root node of our tree.
-      yield getNodeData({
-        node: rootNode,
-        nestingLevel: 0,
-        getNextPageOfChildren: rootNode.fetchNextPage,
-        setSelectedId,
-        treeNodeType,
-        selected,
-        selectableTypes,
-        autoExpand,
-        defaultHeight: itemSize(),
-        currentContainer,
-      })
-
-      while (true) {
-        // Step [2]: Get the parent. It will be the object the `getNodeData` function constructed, so you can read any data from it.
-        const parentMeta = yield
-
-        if (
-          !isPaginationNode(parentMeta.node) &&
-          (parentMeta.node.children || hasMoreChildren(parentMeta.node))
-        ) {
-          for (let i = 0; i < (parentMeta.node.children ?? []).length; i++) {
-            // Step [3]: Yielding all the children of the parent
-            const childNode = parentMeta.node.children![i]
-
-            yield getNodeData({
-              node: childNode,
-              nestingLevel: parentMeta.nestingLevel + 1,
-              getNextPageOfChildren: () => fetchNextPageOfChildren(childNode),
-              setSelectedId,
-              treeNodeType,
-              selected,
-              selectableTypes,
-              autoExpand,
-              defaultHeight: itemSize(),
-              currentContainer,
-            })
-          }
-
-          // Step [4] - If the parent node has more children, render a "pagination node" that will fetch more children when it comes into view (via intersection observer)
-          if (
-            parentMeta.node.children != null &&
-            hasMoreChildren(parentMeta.node)
-          ) {
-            const paginationNode: PaginationNode = {
-              __paginationNode: true,
-            }
-            const paginationTreeWalkerValue: TreeWalkerValue<
-              TreeData,
-              NodeMeta
-            > = {
-              data: {
-                id: parentMeta.data.id + '-pagination',
-                node: paginationNode,
-                isOpenByDefault: false,
-                getNextPageOfChildren: parentMeta.data.getNextPageOfChildren,
-                isLeaf: true,
-                isSelected: false,
-                defaultHeight: itemSize(),
-                isDisabled: true,
-                nestingLevel: parentMeta.nestingLevel + 1,
-                setSelectedId: () => {},
-                treeNodeType,
-              },
-              nestingLevel: parentMeta.nestingLevel + 1,
-              node: {
-                __paginationNode: true,
-              },
-            }
-            yield paginationTreeWalkerValue
-          }
-        }
-      }
-    },
+  const memoizedTreeWalker = useCallback(
+    getTreeWalkerFunction(
+      rootNode,
+      setSelectedId,
+      treeNodeType,
+      selected,
+      selectableTypes,
+      autoExpand,
+      itemSize,
+      currentContainer,
+      fetchNextPageOfChildren,
+    ),
     [
       rootNode,
       setSelectedId,
@@ -502,7 +533,7 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
     <AutoSizer disableWidth>
       {({ height }: { height: number }) => (
         <VariableSizeTree
-          treeWalker={treeWalker}
+          treeWalker={memoizedTreeWalker}
           itemSize={itemSize}
           height={height}
           async={true}

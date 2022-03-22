@@ -1,200 +1,671 @@
 import '@testing-library/jest-dom'
-import { act, render, waitFor, screen } from '@testing-library/react'
-import React from 'react'
-import { SynapseClient } from '../../../../../lib'
-import { EntityDetailsListDataConfigurationType } from '../../../../../lib/containers/entity_finder/details/EntityDetailsList'
-import {
-  FinderScope,
-  TreeView,
-  TreeViewProps,
-} from '../../../../../lib/containers/entity_finder/tree/TreeView'
-import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
-import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
-import {
-  EntityHeader,
-  EntityPath,
-  EntityType,
-  PaginatedResults,
-  ProjectHeader,
-} from '../../../../../lib/utils/synapseTypes'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { Map } from 'immutable'
+import React from 'react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { VariableSizeNodePublicState } from 'react-vtree'
+import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
 import {
   EntityTreeNodeType,
+  getNodeData,
+  getTreeWalkerFunction,
+  Node,
   RootNodeConfiguration,
-  TreePresenterProps,
+  TreeData,
 } from '../../../../../lib/containers/entity_finder/tree/VirtualizedTree'
-import { Map } from 'immutable'
+import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import { EntityType } from '../../../../../lib/utils/synapseTypes'
 
-jest.mock('../../../../../lib/utils/SynapseClient', () => {
-  return {
-    getUserFavorites: jest.fn(),
-    getEntityPath: jest.fn(),
-    getEntityHeader: jest.fn(),
-  }
-})
-
-const mockSetSelectedId = jest.fn()
-const mockAutoExpand = jest.fn().mockReturnValue(true)
-
-const mockGetUserFavorites = SynapseClient.getUserFavorites as jest.Mock
-const mockGetEntityPath = SynapseClient.getEntityPath as jest.Mock
-const mockGetEntityHeader = SynapseClient.getEntityHeader as jest.Mock
-const mockFetchNextPage = jest.fn()
-
-const mockSetDetailsViewConfiguration = jest.fn()
-
-const rootNodeConfiguration: RootNodeConfiguration = {
-  show: true,
-  nodeText: 'Root Node',
-  children: [],
-  fetchNextPage: function (): Promise<void> {
-    throw new Error('Function not implemented.')
-  },
-  hasNextPage: false,
-}
-
-const defaultProps: TreePresenterProps = {
-  rootNodeConfiguration: rootNodeConfiguration,
-  selected: Map<string, number>(),
-  treeNodeType: EntityTreeNodeType.DUAL_PANE,
-  visibleTypes: [EntityType.PROJECT, EntityType.FOLDER],
-  selectableTypes: Object.values(EntityType),
-  setSelectedId: mockSetSelectedId,
-
-  currentContainer: 'root',
-  autoExpand: mockAutoExpand,
-}
-
-const projectsPage1: Partial<ProjectHeader>[] = [
-  {
-    id: 'syn1',
-    name: 'Project 1',
-    modifiedOn: 'today',
-    modifiedBy: 100000,
-  },
-]
-
-const projectsPage2: Partial<ProjectHeader>[] = [
-  {
-    id: 'syn2',
-    name: 'Project 2',
-    modifiedOn: 'today',
-    modifiedBy: 100000,
-  },
-]
-
-const favorites: PaginatedResults<EntityHeader> = {
-  results: [
-    {
-      id: 'syn3',
-      name: 'Favorite 1 - A Project',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
-      type: 'org.sagebionetworks.repo.model.Folder',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
-    },
-    {
-      id: 'syn4',
-      name: 'Favorite 2 - A file',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
-      type: 'org.sagebionetworks.repo.model.FileEntity',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
-    },
-  ],
-}
-
-const entityPath: EntityPath = {
-  path: [
-    {
-      id: 'syn0',
-      name: 'The root entity that is never seen',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
-      type: 'org.sagebionetworks.repo.model.Folder',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
-    },
-    {
-      id: 'syn5',
-      name: 'Project in entity path',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
-      type: 'org.sagebionetworks.repo.model.Project',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
-    },
-    {
-      id: 'syn6',
-      name: 'Folder in entity path',
-      modifiedOn: 'today',
-      modifiedBy: '100000',
-      type: 'org.sagebionetworks.repo.model.Folder',
-      versionNumber: 1,
-      versionLabel: '',
-      benefactorId: 123,
-      createdOn: 'yesterday',
-      createdBy: '10000',
-    },
-  ],
-}
-
-function renderComponent(propOverrides?: Partial<TreeViewProps>) {
-  return render(
-    <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <TreeView {...defaultProps} {...propOverrides} />
-    </SynapseContextProvider>,
-  )
-}
-
-describe('TreeView tests', () => {
+describe('VirtualizedTree tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-
-    // mockGetUserFavorites.mockResolvedValue(favorites)
-    // mockGetEntityPath.mockResolvedValue(entityPath)
-    // mockGetEntityHeader.mockResolvedValue(entityPath.path[1])
-
-    // mockUseGetEntityBundle.mockReturnValue({
-    //   data: {
-    //     path: entityPath,
-    //   },
-    //   isSuccess: true,
-    // })
-    // mockUseGetProjectsInfinite.mockReturnValue({
-    //   data: {
-    //     pages: [
-    //       {
-    //         results: projectsPage1,
-    //         nextPageToken: '50a0',
-    //       },
-    //       {
-    //         results: projectsPage2,
-    //         nextPageToken: null,
-    //       },
-    //     ],
-    //     pageParams: [],
-    //   },
-    //   fetchNextPage: mockFetchNextPage,
-    //   hasNextPage: false,
-    // })
   })
 
-  it('loads more projects when rootNodeConfiguration.fetchNextPageOfTopLevelEntities is called', async () => {})
+  describe('getNodeData tests', () => {
+    const nestingLevel = 5
+    const getNextPageOfChildren = jest.fn()
+    const setSelectedId = jest.fn()
+    const treeNodeType = EntityTreeNodeType.SINGLE_PANE
+    const selected = Map<string, number>()
+    const selectableTypes = [EntityType.FOLDER]
+    const autoExpand = jest.fn().mockReturnValue(true)
+    const defaultHeight = 50
+    const currentContainer = null
+
+    it('General test for rootNodeConfiguration', () => {
+      const rootNodeConfiguration: RootNodeConfiguration = {
+        show: true,
+        nodeText: 'Favorites',
+        children: [],
+        fetchNextPage: async () => {},
+        hasNextPage: false,
+      }
+      const actual = getNodeData({
+        node: rootNodeConfiguration,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      })
+
+      const expected = {
+        nestingLevel,
+        node: rootNodeConfiguration,
+        data: {
+          id: 'root',
+          node: rootNodeConfiguration,
+          getNextPageOfChildren,
+          isLeaf: false,
+          isOpenByDefault: true,
+          nestingLevel,
+          setSelectedId,
+          treeNodeType,
+          isSelected: false,
+          isDisabled: false,
+          defaultHeight,
+        },
+      }
+
+      expect(actual).toEqual(expected)
+    })
+
+    it('General test for entity header', () => {
+      const node = {
+        id: 'syn123',
+        type: 'org.sagebionetworks.repo.model.Folder',
+        name: 'A Custom Folder Name',
+        fetchNextPage: async () => {},
+        hasNextPage: false,
+      }
+      const actual = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      })
+
+      const expected = {
+        nestingLevel,
+        node: node,
+        data: {
+          id: node.id,
+          node,
+          getNextPageOfChildren,
+          isLeaf: false,
+          isOpenByDefault: true,
+          nestingLevel,
+          setSelectedId,
+          treeNodeType,
+          isSelected: false,
+          isDisabled: false,
+          defaultHeight,
+        },
+      }
+
+      expect(actual).toEqual(expected)
+    })
+    it('isOpenByDefault matches the value of autoExpand', () => {
+      const autoExpandTrue = jest.fn().mockReturnValue(true)
+      const autoExpandFalse = jest.fn().mockReturnValue(false)
+      const node = {
+        id: 'syn123',
+        name: 'A Custom Folder Name',
+        children: [],
+        fetchNextPage: async () => {},
+        hasNextPage: false,
+      }
+
+      let isOpenByDefault = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand: autoExpandTrue, // !
+        defaultHeight,
+        currentContainer,
+      }).data.isOpenByDefault
+
+      expect(isOpenByDefault).toBe(true)
+
+      isOpenByDefault = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand: autoExpandFalse, // !
+        defaultHeight,
+        currentContainer,
+      }).data.isOpenByDefault
+
+      expect(isOpenByDefault).toBe(false)
+    })
+
+    it('automatically fetches children if autoExpanded with undefined children', () => {
+      const autoExpand = jest.fn().mockReturnValue(true)
+      const children = undefined
+      const node = {
+        id: 'syn123',
+        name: 'A Custom Folder Name',
+        children: children,
+        fetchNextPage: async () => {},
+        hasNextPage: false,
+      }
+
+      getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      })
+
+      expect(getNextPageOfChildren).toHaveBeenCalled()
+    })
+    it('For Single Pane tree, selected if the ID is in the selected map', () => {
+      const treeNodeType = EntityTreeNodeType.SINGLE_PANE
+      const id = 'syn123'
+      let selected = Map<string, number>()
+      const node = {
+        id: id,
+        name: 'A Custom Folder Name',
+        children: [],
+        fetchNextPage: async () => {},
+        hasNextPage: false,
+      }
+
+      let isSelected = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      }).data.isSelected
+
+      expect(isSelected).toBe(false)
+
+      selected = Map<string, number>().set(id, 1)
+      isSelected = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      }).data.isSelected
+
+      expect(isSelected).toBe(true)
+    })
+    it('For Dual Pane tree, selected if the ID is the current container', () => {
+      const treeNodeType = EntityTreeNodeType.DUAL_PANE
+      const id = 'syn123'
+      let currentContainer = null
+      const node = {
+        id: id,
+        name: 'A Custom Folder Name',
+        children: [],
+        fetchNextPage: async () => {},
+        hasNextPage: false,
+      }
+
+      let isSelected = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      }).data.isSelected
+
+      expect(isSelected).toBe(false)
+
+      currentContainer = id
+      isSelected = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      }).data.isSelected
+
+      expect(isSelected).toBe(true)
+    })
+    it('isDisabled if is not a selectable type', () => {
+      let selectableTypes = [EntityType.FOLDER]
+      const node = {
+        id: 'syn123',
+        name: 'A Custom Folder Name',
+        type: 'org.sagebionetworks.repo.model.Folder',
+        children: [],
+        fetchNextPage: async () => {},
+        hasNextPage: false,
+      }
+
+      let isDisabled = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      }).data.isDisabled
+
+      expect(isDisabled).toBe(false)
+
+      selectableTypes = []
+      isDisabled = getNodeData({
+        node,
+        nestingLevel,
+        getNextPageOfChildren,
+        setSelectedId,
+        treeNodeType,
+        selected,
+        selectableTypes,
+        autoExpand,
+        defaultHeight,
+        currentContainer,
+      }).data.isDisabled
+
+      expect(isDisabled).toBe(true)
+    })
+    it('throws error when passed a pagination node', () => {
+      expect(() =>
+        getNodeData({
+          node: { __paginationNode: true },
+          nestingLevel,
+          getNextPageOfChildren,
+          setSelectedId,
+          treeNodeType,
+          selected,
+          selectableTypes,
+          autoExpand,
+          defaultHeight,
+          currentContainer,
+        }),
+      ).toThrowError()
+    })
+  })
+
+  describe('treeWalker tests', () => {
+    it('Yields node data in the correct order', async () => {
+      const mockSetSelectedId = jest.fn()
+      const mockAutoExpand = jest.fn().mockReturnValue(false)
+      const mockItemSize = jest.fn().mockReturnValue(50)
+      const mockFetchNextPage = jest.fn()
+      const selectableTypes = [EntityType.FOLDER]
+      const selected = Map<string, number>()
+      const rootNodeConfiguration: RootNodeConfiguration = {
+        show: true,
+        nodeText: 'Projects',
+        children: [
+          {
+            id: 'syn123',
+            name: 'Folder 123',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            children: [],
+          },
+          {
+            id: 'syn456',
+            name: 'Folder 456',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            children: [],
+          },
+        ],
+        fetchNextPage: mockFetchNextPage,
+        hasNextPage: true,
+      }
+      const currentContainer = 'root'
+      /**
+       * Verify that we get nodes in the following order:
+       * - root
+       * - undefined
+       * - child-1
+       * - child-2
+       * -
+       */
+      const treeWalker = getTreeWalkerFunction(
+        rootNodeConfiguration,
+        mockSetSelectedId,
+        EntityTreeNodeType.DUAL_PANE,
+        selected,
+        selectableTypes,
+        mockAutoExpand,
+        mockItemSize,
+        currentContainer,
+        mockFetchNextPage,
+      )
+
+      const generator = treeWalker()
+
+      const rootData = getNodeData({
+        node: rootNodeConfiguration,
+        nestingLevel: 0,
+        getNextPageOfChildren: mockFetchNextPage,
+        setSelectedId: mockSetSelectedId,
+        treeNodeType: EntityTreeNodeType.DUAL_PANE,
+        selected: selected,
+        selectableTypes: selectableTypes,
+        autoExpand: mockAutoExpand,
+        currentContainer: currentContainer,
+        defaultHeight: 50,
+      })
+
+      // Root
+      expect(generator.next().value).toEqual(rootData)
+      // react-vtree will pass the root node and nesting level
+      expect(
+        generator.next({
+          nestingLevel: 0,
+          node: rootNodeConfiguration,
+          data: rootData,
+        }).value,
+      ).toBeUndefined()
+
+      // each of the root's children will be returned
+      const expectedValueChild0 = getNodeData({
+        node: rootNodeConfiguration.children[0],
+        nestingLevel: 1,
+        getNextPageOfChildren: mockFetchNextPage,
+        setSelectedId: mockSetSelectedId,
+        treeNodeType: EntityTreeNodeType.DUAL_PANE,
+        selected: selected,
+        selectableTypes: selectableTypes,
+        autoExpand: mockAutoExpand,
+        currentContainer: currentContainer,
+        defaultHeight: 50,
+      })
+      // non-root nodes have a new function constructed for getNextPageOfChildren
+      expectedValueChild0.data.getNextPageOfChildren = expect.any(Function)
+
+      const expectedValueChild1 = getNodeData({
+        node: rootNodeConfiguration.children[1],
+        nestingLevel: 1,
+        getNextPageOfChildren: mockFetchNextPage,
+        setSelectedId: mockSetSelectedId,
+        treeNodeType: EntityTreeNodeType.DUAL_PANE,
+        selected: selected,
+        selectableTypes: selectableTypes,
+        autoExpand: mockAutoExpand,
+        currentContainer: currentContainer,
+        defaultHeight: 50,
+      })
+      // non-root nodes have a new function constructed for getNextPageOfChildren
+      expectedValueChild1.data.getNextPageOfChildren = expect.any(Function)
+
+      expect(
+        generator.next({
+          nestingLevel: 0,
+          node: rootNodeConfiguration,
+
+          data: rootData,
+        }).value,
+      ).toEqual(expectedValueChild0)
+      expect(
+        generator.next({
+          nestingLevel: 0,
+          node: rootNodeConfiguration,
+          data: rootData,
+        }).value,
+      ).toEqual(expectedValueChild1)
+
+      // The root node has more children that have not been fetched, so a pagination node should be yielded
+      expect(
+        generator.next({
+          nestingLevel: 0,
+          node: rootNodeConfiguration,
+          data: rootData,
+        }).value,
+      ).toEqual(
+        expect.objectContaining({
+          node: { __paginationNode: true },
+        }),
+      )
+
+      // Verify that the next value yielded is undefined
+      expect(
+        generator.next({
+          nestingLevel: 1,
+          node: rootNodeConfiguration.children[0],
+          data: expectedValueChild0,
+        }).value,
+      ).toEqual(undefined)
+
+      // We could keep traversing a tree, but this should be good enough
+    })
+  })
+
+  describe('Node tests', () => {
+    it('Renders a fragment only when height is 0', async () => {
+      const nodeProps: NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      > = {
+        style: { height: 0 },
+        data: {
+          id: 'root',
+          isOpenByDefault: false,
+          defaultHeight: 50,
+          node: {
+            show: false,
+            nodeText: 'Projects',
+            children: [],
+            fetchNextPage: async () => {},
+            hasNextPage: false,
+          },
+          getNextPageOfChildren: async () => {},
+          isLeaf: false,
+          nestingLevel: 0,
+          setSelectedId: id => {},
+          treeNodeType: EntityTreeNodeType.SINGLE_PANE,
+          isSelected: false,
+          isDisabled: false,
+        },
+        setOpen: async (state: boolean) => {},
+        isOpen: true,
+        height: 0, // this height property doesn't seem to do anything
+        resize: (height: number) => {},
+      }
+      render(<Node {...nodeProps} />, {
+        wrapper: createWrapper(),
+      })
+
+      expect(
+        screen.queryByText(nodeProps.data.node.nodeText),
+      ).not.toBeInTheDocument()
+    })
+    it('Fetches next page for a pagination node when inView', async () => {
+      const mockFetchNextPage = jest.fn()
+      const nodeProps: NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      > = {
+        style: { height: 50 },
+        data: {
+          id: 'root-pagination',
+          isOpenByDefault: false,
+          defaultHeight: 50,
+          node: {
+            __paginationNode: true,
+          },
+          getNextPageOfChildren: mockFetchNextPage,
+          isLeaf: false,
+          nestingLevel: 0,
+          setSelectedId: id => {},
+          treeNodeType: EntityTreeNodeType.SINGLE_PANE,
+          isSelected: false,
+          isDisabled: false,
+        },
+        setOpen: async (state: boolean) => {},
+        isOpen: true,
+        height: 50,
+        resize: (height: number) => {},
+      }
+      render(<Node {...nodeProps} />, {
+        wrapper: createWrapper(),
+      })
+
+      expect(mockFetchNextPage).not.toHaveBeenCalled()
+
+      // Node comes into view
+      mockAllIsIntersecting(true)
+
+      await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())
+    })
+
+    it('Fetches children on expand if children have not been fetched', async () => {
+      const mockFetchNextPage = jest.fn()
+      const nodeProps: NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      > = {
+        style: { height: 50 },
+        data: {
+          id: 'root-pagination',
+          isOpenByDefault: false,
+          defaultHeight: 50,
+          node: {
+            id: 'syn123',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            name: 'My Folder',
+            children: undefined,
+          },
+          getNextPageOfChildren: mockFetchNextPage,
+          isLeaf: false,
+          nestingLevel: 0,
+          setSelectedId: id => {},
+          treeNodeType: EntityTreeNodeType.SINGLE_PANE,
+          isSelected: false,
+          isDisabled: false,
+        },
+        setOpen: async (state: boolean) => {},
+        isOpen: false,
+        height: 50,
+        resize: (height: number) => {},
+      }
+      render(<Node {...nodeProps} />, {
+        wrapper: createWrapper(),
+      })
+
+      expect(mockFetchNextPage).not.toHaveBeenCalled()
+
+      userEvent.click(screen.getByRole('button'))
+
+      await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())
+    })
+    it('Displays the entity name for an EntityHeader', async () => {
+      const mockFetchNextPage = jest.fn()
+      const nodeProps: NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      > = {
+        style: { height: 50 },
+        data: {
+          id: 'root-pagination',
+          isOpenByDefault: false,
+          defaultHeight: 50,
+          node: {
+            id: 'syn123',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            name: 'My Folder',
+            children: undefined,
+          },
+          getNextPageOfChildren: mockFetchNextPage,
+          isLeaf: false,
+          nestingLevel: 0,
+          setSelectedId: id => {},
+          treeNodeType: EntityTreeNodeType.SINGLE_PANE,
+          isSelected: false,
+          isDisabled: false,
+        },
+        setOpen: async (state: boolean) => {},
+        isOpen: false,
+        height: 50,
+        resize: (height: number) => {},
+      }
+      render(<Node {...nodeProps} />, {
+        wrapper: createWrapper(),
+      })
+      await screen.findByText(nodeProps.data.node.name)
+    })
+    it('Displays the node text for the root node', async () => {
+      const mockFetchNextPage = jest.fn()
+      const nodeProps: NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      > = {
+        style: { height: 50 },
+        data: {
+          id: 'root-pagination',
+          isOpenByDefault: false,
+          defaultHeight: 50,
+          node: {
+            show: true,
+            nodeText: 'My Favorites',
+            children: [],
+            fetchNextPage: async () => {},
+            hasNextPage: false,
+          },
+          getNextPageOfChildren: mockFetchNextPage,
+          isLeaf: false,
+          nestingLevel: 0,
+          setSelectedId: id => {},
+          treeNodeType: EntityTreeNodeType.SINGLE_PANE,
+          isSelected: false,
+          isDisabled: false,
+        },
+        setOpen: async (state: boolean) => {},
+        isOpen: false,
+        height: 50,
+        resize: (height: number) => {},
+      }
+      render(<Node {...nodeProps} />, {
+        wrapper: createWrapper(),
+      })
+      await screen.findByText(nodeProps.data.node.nodeText)
+    })
+  })
 })
