@@ -2,8 +2,10 @@ import { JSONSchema7 } from 'json-schema'
 import SparkMD5 from 'spark-md5'
 import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
+import { PROVIDERS } from '../containers/Login'
 import {
   ACCESS_REQUIREMENT_BY_ID,
+  ALIAS_AVAILABLE,
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
@@ -15,11 +17,16 @@ import {
   FAVORITES,
   NOTIFICATION_EMAIL,
   REGISTERED_SCHEMA_ID,
+  REGISTER_ACCOUNT_STEP_1,
+  REGISTER_ACCOUNT_STEP_2,
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
+  SIGN_TERMS_OF_USE,
+  USER_BUNDLE,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
+  VERIFICATION_SUBMISSION,
 } from './APIConstants'
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
@@ -97,6 +104,7 @@ import {
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
+  VerificationSubmission,
   WikiPage,
   WikiPageKey,
 } from './synapseTypes/'
@@ -146,6 +154,7 @@ import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/Evaluatio
 import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
+import { AccountSetupInfo, AliasCheckRequest, AliasCheckResponse, NewUser } from './synapseTypes/Principal/PrincipalServices'
 import { ResearchProject } from './synapseTypes/ResearchProject'
 import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
 import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
@@ -157,6 +166,7 @@ import {
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import { ChangePasswordWithCurrentPassword } from './synapseTypes/ChangePasswordRequests'
 
 const cookies = new UniversalCookies()
 
@@ -268,6 +278,7 @@ export const doPost = <T>(
   accessToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
+  signal?: AbortSignal
 ): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
@@ -279,6 +290,7 @@ export const doPost = <T>(
     method: 'POST',
     mode: 'cors',
     credentials: initCredentials,
+    signal: signal
   }
   if (accessToken) {
     // @ts-ignore
@@ -633,11 +645,12 @@ export const login = (
 export const oAuthUrlRequest = (
   provider: string,
   redirectUrl: string,
+  state?: string,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
 ) => {
   return doPost(
     '/auth/v1/oauth2/authurl',
-    { provider, redirectUrl },
+    { provider, redirectUrl, state },
     undefined,
     undefined,
     endpoint,
@@ -656,7 +669,7 @@ export const oAuthSessionRequest = (
   authenticationCode: string | number,
   redirectUrl: string,
   endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
-) => {
+):Promise<LoginResponse> => {
   return doPost(
     '/auth/v1/oauth2/session2',
     { provider, authenticationCode, redirectUrl },
@@ -745,6 +758,42 @@ export const getUserBundle = (
 }
 
 /**
+ * Return the ucurrent user's bundle
+ * http://rest-docs.synapse.org/rest/GET/user/bundle.html
+ */
+ export const getMyUserBundle = (
+  mask: number,
+  accessToken: string | undefined,
+): Promise<UserBundle> => {
+  return doGet<UserBundle>(
+    `${USER_BUNDLE}?mask=${mask}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Update your own profile
+ * @param profile 
+ * @param accessToken 
+ * @returns 
+ */
+export const updateMyUserProfile = (
+  profile: UserProfile,
+  accessToken: string | undefined = undefined,
+): Promise<UserProfile> => {
+  const url = '/repo/v1/userProfile'
+  return doPut<UserProfile>(
+    url,
+    profile,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Get Users and Groups that match the given prefix.
  * http://rest-docs.synapse.org/rest/GET/userGroupHeaders.html
  */
@@ -803,6 +852,7 @@ export const getUserProfiles = (
 export const getEntityChildren = (
   request: EntityChildrenRequest,
   accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
 ) => {
   return doPost<EntityChildrenResponse>(
     '/repo/v1/entity/children',
@@ -810,6 +860,7 @@ export const getEntityChildren = (
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+    signal,
   )
 }
 /**
@@ -1307,11 +1358,13 @@ send the user back to the portal with an authorization code,
 which can be exchanged for a Synapse user session.
 This function should be called whenever the root App is initialized
 (to look for this code parameter and complete the round-trip).
+If state is included, then we assume that this is being used for account creation,
+where we pass the username through the process.
 */
-export const detectSSOCode = () => {
+export const detectSSOCode = (registerAccountUrl?:string, onError?:(err:any)=>void) => {
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-  let fullUrl: URL | null | string = new URL(window.location.href)
+  const fullUrl: URL | null | string = new URL(window.location.href)
   // in test environment the searchParams isn't defined
   const { searchParams } = fullUrl
   if (!searchParams) {
@@ -1319,32 +1372,69 @@ export const detectSSOCode = () => {
   }
   const code = searchParams.get('code')
   const provider = searchParams.get('provider')
+  const state = searchParams.get('state')
+  // state is used during OAuth based Synapse account creation (it's the username)
   if (code && provider) {
-    oAuthSessionRequest(
-      provider,
-      code,
-      `${redirectURL}?provider=${provider}`,
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )
-      .then((synToken: any) => {
-        setAccessTokenCookie(synToken.accessToken, () => {
-          // go back to original route after successful SSO login
-          const originalUrl = localStorage.getItem('after-sso-login-url')
-          localStorage.removeItem('after-sso-login-url')
-          if (originalUrl) {
-            window.location.replace(originalUrl)
-          }
-        })
-      })
-      .catch((err: any) => {
+    const redirectUrl = `${redirectURL}?provider=${provider}`
+    const redirectAfterSuccess = () => {
+      // go back to original route after successful SSO login
+      const originalUrl = localStorage.getItem('after-sso-login-url')
+      localStorage.removeItem('after-sso-login-url')
+      if (originalUrl) {
+        window.location.replace(originalUrl)
+      }
+    }
+    if (PROVIDERS.GOOGLE == provider) {
+      const onSuccess = (synToken: any) => {
+        setAccessTokenCookie(synToken.accessToken, redirectAfterSuccess)
+      }
+      const onFailure = (err: any) => {
         if (err.status === 404) {
           // Synapse account not found, send to registration page
-          window.location.replace(
+          window.location.replace(registerAccountUrl ??
             `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
           )
         }
-        console.error('Error on sso sign in ', err)
-      })
+        console.error('Error with Google account association: ', err)
+        if (onError) {
+          onError(err.reason)
+        }
+      }
+
+      if (state) {
+        oAuthRegisterAccountStep2(
+          state,
+          provider,
+          code,
+          redirectUrl,
+          BackendDestinationEnum.REPO_ENDPOINT,
+        ).then(onSuccess)
+        .catch(onFailure)
+      } else {
+        oAuthSessionRequest(
+          provider,
+          code,
+          redirectUrl,
+          BackendDestinationEnum.REPO_ENDPOINT,
+        ).then(onSuccess)
+          .catch(onFailure)
+      }
+    } else if (PROVIDERS.ORCID == provider) {
+      // now bind this to the user account
+      const onFailure = (err: any) => {
+        console.error('Error binding ORCiD to account: ', err)
+        if (onError) {
+          onError(err.reason)
+        }
+      }
+      bindOAuthProviderToAccount(
+        provider,
+        code,
+        redirectUrl,
+        BackendDestinationEnum.REPO_ENDPOINT
+      ).then(redirectAfterSuccess)
+      .catch(onFailure)
+    }
   }
 }
 
@@ -3104,5 +3194,137 @@ export const getNotificationEmail = (accessToken?: string) => {
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/principal/available.html
+export const isAliasAvailable = (
+  aliasCheckRequest: AliasCheckRequest,
+  accessToken?: string,
+): Promise<AliasCheckResponse> => {
+  return doPost<AliasCheckResponse>(
+    ALIAS_AVAILABLE,
+    aliasCheckRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/account/emailValidation.html
+export const registerAccountStep1 = (
+  newUser: NewUser,
+  portalEndpoint: string,
+): Promise<any> => {
+  return doPost(
+    REGISTER_ACCOUNT_STEP_1(portalEndpoint),
+    newUser,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/account2.html
+export const registerAccountStep2 = (
+  accountSetupInfo: AccountSetupInfo,
+): Promise<LoginResponse> => {
+  return doPost(
+    REGISTER_ACCOUNT_STEP_2,
+    accountSetupInfo,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Step 2 of creating a new account via oauth signin
+ *  http://rest-docs.synapse.org/rest/POST/oauth2/account2.html
+ * @param {*} provider
+ * @param {*} authenticationCode
+ * @param {*} redirectUrl
+ * @param {*} endpoint
+ */
+ export const oAuthRegisterAccountStep2 = (
+  userName: string,
+  provider: string,
+  authenticationCode: string | number,
+  redirectUrl: string,
+  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+): Promise<LoginResponse> => {
+  return doPost(
+    '/auth/v1/oauth2/account2',
+    { provider, authenticationCode, redirectUrl, userName },
+    undefined,
+    undefined,
+    endpoint,
+  )
+}
+
+/**
+ * Bind OAuth account to Synapse account as a new 'alias'.
+ * https://rest-docs.synapse.org/rest/POST/oauth2/alias.html
+ * @param {*} provider
+ * @param {*} authenticationCode
+ * @param {*} redirectUrl
+ * @param {*} endpoint
+ */
+ export const bindOAuthProviderToAccount = async (
+  provider: string,
+  authenticationCode: string | number,
+  redirectUrl: string,
+  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+): Promise<LoginResponse> => {
+  // Special case.  web app may not have discovered the access token by this point in init.
+  // Look for the access token ourselves before binding.
+  const accessToken = await getAccessTokenFromCookie()
+  return doPost(
+    '/auth/v1/oauth2/alias',
+    { provider, authenticationCode, redirectUrl },
+    accessToken,
+    undefined,
+    endpoint,
+  )
+}
+
+//http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
+export const signSynapseTermsOfUse = (
+  accessToken: string,
+) => {
+  return doPost(
+    SIGN_TERMS_OF_USE,
+    {accessToken},
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+//https://rest-docs.synapse.org/rest/POST/verificationSubmission.html
+export const createProfileVerificationSubmission = (
+  verificationSubmission: VerificationSubmission,
+  accessToken: string,
+) => {
+  return doPost(
+    VERIFICATION_SUBMISSION,
+    verificationSubmission,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/user/changePassword.html
+export const changePasswordWithCurrentPassword = (
+  newPassword: ChangePasswordWithCurrentPassword,
+  accessToken: string | undefined
+) => {
+  return doPost<ChangePasswordWithCurrentPassword>(
+    '/auth/v1/user/changePassword',
+    newPassword,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
   )
 }

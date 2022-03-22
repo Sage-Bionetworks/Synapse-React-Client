@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { tcItem } from './TermsAndConditionsItem'
 import TermsAndConditionsItem from './TermsAndConditionsItem'
-import { ReactComponent as chatBubblesSvg } from '../assets/icons/terms/chat-bubbles.svg'
-import { ReactComponent as lockSvg } from '../assets/icons/terms/lock.svg'
-import { ReactComponent as scaleSvg } from '../assets/icons/terms/scale.svg'
-import { ReactComponent as shieldSvg } from '../assets/icons/terms/shield.svg'
-import { ReactComponent as peopleSvg } from '../assets/icons/terms/people.svg'
-import { ReactComponent as penSvg } from '../assets/icons/terms/pen.svg'
-import { ReactComponent as speakerSvg } from '../assets/icons/terms/speaker.svg'
-import { ReactComponent as flagSvg } from '../assets/icons/terms/flag.svg'
 import { Button } from 'react-bootstrap'
+import { ChatBubblesIcon } from '../assets/icons/terms/ChatBubblesIcon'
+import { LockIcon } from '../assets/icons/terms/LockIcon'
+import { ScaleIcon } from '../assets/icons/terms/ScaleIcon'
+import { ShieldIcon } from '../assets/icons/terms/ShieldIcon'
+import { PeopleIcon } from '../assets/icons/terms/PeopleIcon'
+import { PenIcon } from '../assets/icons/terms/PenIcon'
+import { SpeakerIcon } from '../assets/icons/terms/SpeakerIcon'
+import { FlagIcon } from '../assets/icons/terms/FlagIcon'
+
 
 export type TermsAndConditionsProps = {
-  onFormChange: Function
+  onFormChange: (formComplete:boolean)=>void
 }
 
 const dataUseLink = "https://s3.amazonaws.com/static.synapse.org/governance/SynapseCommonsDataUseProcedure.pdf?v=4"
@@ -20,7 +21,7 @@ const termsLink = "https://s3.amazonaws.com/static.synapse.org/governance/SageBi
 
 const tcList: tcItem[] = [
   {
-    icon: chatBubblesSvg,
+    icon: <ChatBubblesIcon />,
     label: 'I will adhere to the Synapse Community Standards of inclusion and respect.',
     description: `A participant in the Synapse Community: <ul>
     <li>Welcomes others</li>
@@ -32,20 +33,20 @@ const tcList: tcItem[] = [
 Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/Governance-Overview.2009597114.html#GovernanceOverview-SynapseCodeofConduct">Synapse Code of Conduct</a>.`,
   },
   {
-    icon: lockSvg,
+    icon: <LockIcon />,
     label: 'I will adhere to all conditions and use limitations, including privacy laws and regulations.',
     description: `For more information about how Sage Bionetworks regulates data access and privacy, please refer to the 
     <a target="_blank" href=${dataUseLink}>Synapse Commons Data Use Procedure</a>.`
   },
   {
-    icon: scaleSvg,
+    icon: <ScaleIcon />,
     label: 'I will act ethically and responsibly.',
     description: `You agree to the following Synapse Operating Ethics Principles, outlined in our 
     <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.
     <br><br>Consequences of misconduct can include loss of both data use privileges and future use of Synapse.`
   },
   {
-    icon: shieldSvg,
+    icon: <ShieldIcon />,
     label: 'I will use appropriate physical, technical and administrative measures to keep data secure and protect participants\' privacy.',
     description: `In your use of Synapse, you agree to:<ul>
     <li>Keep your login information secure and not share with others.</li>
@@ -57,28 +58,28 @@ Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/
     For more information, please refer to the full <a target="_blank" href=${termsLink}>Synapse Terms and Conditions of Use</a>.`
   },
   {
-    icon: peopleSvg,
+    icon: <PeopleIcon />,
     label: 'I will support open access best practices for public facing data.',
     description: `The Synapse open access platform promotes data accessibility and collaboration. We encourage you to 
     contribute your research findings to open access journals when applicable.<br><br>
     You agree to support open access best practices when possible (e.g., sharing code, metadata, annotating files for discovery).`
   },
   {
-    icon: penSvg,
+    icon: <PenIcon />,
     label: 'I will credit research participants and all data sources.',
     description: `You agree to acknowledge data participants and to cite contributors and data sources using the language provided with the dataset.<br><br>
     It is our policy to terminate the access privileges of those who infringe the intellectual property rights of others. For more information, please refer to our full 
     <a target="_blank" href=${termsLink}>Terms and Conditions of Use</a>.`
   },
   {
-    icon: speakerSvg,
+    icon: <SpeakerIcon />,
     label: 'I will not use data for marketing and/or advertising.',
     description: `Data may not be used for marketing or advertising purposes. You agree not to upload or otherwise transmit 
     any unsolicited or unauthorized advertising, promotional materials, junk mail, spam, or any other form of solicitation (commercial or otherwise). <br><br>
     Please review the <a target="_blank" href="https://s3.amazonaws.com/static.synapse.org/governance/SynapsePrivacyPolicy.pdf?v=5">Synapse Privacy Policy</a> for Sage's commitment to privacy protections.`
   },
   {
-    icon: flagSvg,
+    icon: <FlagIcon />,
     label: `I will report any suspected data breach or misuse to privacyofficer@sagebase.org within 2 business days of initial incident knowledge.`,
     description: `Data misuse includes violating dataset access requirements, unauthorized use or 
     redistribution, lack of data accreditation, and unethical data handling.<br><br>

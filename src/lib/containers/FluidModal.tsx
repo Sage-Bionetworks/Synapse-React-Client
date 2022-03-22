@@ -2,6 +2,7 @@ import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { ButtonVariant } from 'react-bootstrap/esm/types'
 import Typography from '../utils/typography/Typography'
+import { HelpPopover, HelpPopoverProps } from './HelpPopover'
 
 type ModalAction = {
   variant?: ButtonVariant
@@ -13,6 +14,7 @@ export type FluidModalProps = {
   show: boolean
   children: JSX.Element
   title: string
+  titlePopoverProps?: HelpPopoverProps
   onClose: () => void
   primaryAction?: ModalAction
   secondaryActions?: ModalAction[]
@@ -44,7 +46,20 @@ export const FluidModal = (props: FluidModalProps) => {
     >
       <Modal.Header closeButton>
         <Modal.Title>
-          <Typography variant={'headline1'}>{props.title}</Typography>
+          <Typography variant={'headline1'}>
+            {props.title}
+            {props.titlePopoverProps && (
+              <HelpPopover
+                {...{
+                  placement: 'right',
+                  ...props.titlePopoverProps,
+                  className:
+                    'SRC-margin-left-5 ' +
+                    (props.titlePopoverProps?.className ?? ''),
+                }}
+              />
+            )}
+          </Typography>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>{props.children}</Modal.Body>

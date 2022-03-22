@@ -11,13 +11,13 @@
   position: relative;
   width: 20px;
   height: 20px;
-  background-image: url('../../assets/logos/logo.svg');
+  background-image: url('https://s3.amazonaws.com/static.synapse.org/images/synapse-logo.svg');
   animation: spinner 1s linear infinite;
   background-size: 20px 20px;
   background-repeat: no-repeat;
 
   &.white {
-    background-image: url('../../assets/logos/logo-white.svg');
+    background-image: url('https://s3.amazonaws.com/static.synapse.org/images/synapse-logo-white.svg');
   }
   + .spinner__text {
     margin-left: 5px;

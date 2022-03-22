@@ -38,6 +38,8 @@ $text-color-disabled: #bbbbbc !default;
 $secondary-action-color: #469285 !default;
 $secondary-action-color-dark: #5660e5 !default;
 
+$tertiary-action-color: #F1D285 !default;
+
 $gray-formtext: #515359 !default;
 $gray-regular: #515359 !default;
 $gray-deemphasized: #ababac !default;
@@ -95,6 +97,18 @@ $secondary-color-palette: (
   700: adjust-color($secondary-action-color, $saturation: 11%, $lightness: -8%),
   800: adjust-color($secondary-action-color, $saturation: 18%, $lightness: -10%),
   900: adjust-color($secondary-action-color, $saturation: 24%, $lightness: -18%),
+) !default;
+
+$tertiary-color-palette: (
+  100: adjust-color($tertiary-action-color, $saturation: -25%, $lightness: 50%),
+  200: adjust-color($tertiary-action-color, $saturation: -13%, $lightness: 20%),
+  300: adjust-color($tertiary-action-color, $saturation: -3%, $lightness: 10%),
+  400: adjust-color($tertiary-action-color, $saturation: -1%, $lightness: 5%),
+  500: $tertiary-action-color,
+  600: adjust-color($tertiary-action-color, $saturation: 5%, $lightness: -4%),
+  700: adjust-color($tertiary-action-color, $saturation: 11%, $lightness: -8%),
+  800: adjust-color($tertiary-action-color, $saturation: 18%, $lightness: -10%),
+  900: adjust-color($tertiary-action-color, $saturation: 24%, $lightness: -18%),
 ) !default;
 
 /// Breakpoints map
