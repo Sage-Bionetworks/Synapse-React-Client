@@ -37,7 +37,7 @@ import {
   ProjectRenderer,
 } from '../../entity_finder/details/view/DetailsViewTableRenderers'
 import { EntityFinderModal } from '../../entity_finder/EntityFinderModal'
-import { FinderScope } from '../../entity_finder/tree/TreeView'
+import { FinderScope } from '../../entity_finder/tree/EntityTree'
 import IconSvg from '../../IconSvg'
 import WarningModal from '../../synapse_form_wrapper/WarningModal'
 import { displayToast } from '../../ToastMessage'
@@ -427,8 +427,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         titlePopoverProps={{
           markdownText:
             'Use the left pane to browse Projects and Folders to find Files to add to this Dataset. Files in a Dataset can be added from multiple folders. You can also use Search to find and select Files.',
-          // TODO: Datasets help URL
-          helpUrl: 'https://docs.synapse.org/',
+          helpUrl: 'https://help.synapse.org/docs/Datasets.2611281979.html',
         }}
         promptCopy="Find Files located across one or more Folders to add to the Dataset."
         show={showEntityFinder}

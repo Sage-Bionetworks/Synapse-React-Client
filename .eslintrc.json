@@ -32,7 +32,7 @@
       { "allowBoolean": true }
     ],
     "@typescript-eslint/unbound-method": "warn",
-    "@typescript-eslint/no-inferrable-types": "warn",
+    "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-unsafe-assignment": "warn",

@@ -21,28 +21,25 @@
     // Other classes may override for specific components
     // See _tree-node-*.scss files
     .Node {
-      .NodeContent {
-        transition: background-color 200ms ease-in;
-        width: 100%;
-        align-items: center;
-        display: inline-grid;
-        // grid-template-columns are defined in `tree-node-browse` and `tree-node-select` files
-        .ExpandButton {
-          grid-column: toggle / span 1;
-          text-align: center;
-          color: SRC.$primary-action-color-active;
-          cursor: pointer;
-        }
-
-        .EntityName {
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
+      transition: background-color 200ms ease-in;
+      width: 100%;
+      align-items: center;
+      display: inline-grid;
+      align-items: center;
+      // grid-template-columns are defined in `tree-node-browse` and `tree-node-select` files
+      .ExpandButton {
+        grid-column: toggle / span 1;
+        text-align: center;
+        color: SRC.$primary-action-color-active;
+        cursor: pointer;
       }
 
-      .NodeChildren[aria-hidden='true'] {
-        display: none;
+      .EntityName {
+        grid-column: name / span 1;
+        white-space: nowrap;
+        overflow-y: visible;
+        overflow-x: clip;
+        text-overflow: ellipsis;
       }
     }
 

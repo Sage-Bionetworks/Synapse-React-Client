@@ -1407,6 +1407,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.11.0":
+  version "7.17.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.2.tgz#66f68591605e59da47523c631416b18508779941"
+  integrity sha512-hzeyJyMA1YGdJTuWU0e/j4wKXrU4OMFvY2MSlaI9B7VQb0r5cxTE3EAIS2Q7Tn2RIcDkRvTA/v2JsAEhxe99uw==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@^7.10.4", "@babel/template@^7.15.4", "@babel/template@^7.3.3":
   version "7.15.4"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.15.4.tgz"
@@ -2857,6 +2864,20 @@
   version "2.9.2"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-2.9.2.tgz"
   integrity sha512-5Fv2DQNO+GpdPZcxp2x/OQG/H19A01WlmpjVD9cKvVFmoVLOZ9LvBgSWG6pSXIU4og5fgbvGPaCV5+VGkWAEHA==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-virtualized-auto-sizer@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.1.tgz#b3187dae1dfc4c15880c9cfc5b45f2719ea6ebd4"
+  integrity sha512-GH8sAnBEM5GV9LTeiz56r4ZhMOUSrP43tAQNSRVxNexDjcNKLCEtnxusAItg1owFUFE6k0NslV26gqVClVvong==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-window@^1.8.5":
+  version "1.8.5"
+  resolved "https://registry.yarnpkg.com/@types/react-window/-/react-window-1.8.5.tgz#285fcc5cea703eef78d90f499e1457e9b5c02fc1"
+  integrity sha512-V9q3CvhC9Jk9bWBOysPGaWy/Z0lxYcTXLtLipkt2cnRj1JOSFNF7wqGpkScSXMgBwC+fnVRg/7shwgddBG5ICw==
   dependencies:
     "@types/react" "*"
 
@@ -13597,6 +13618,11 @@ react-measure@^2.0.2, react-measure@^2.1.2:
     prop-types "^15.6.2"
     resize-observer-polyfill "^1.5.0"
 
+react-merge-refs@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-merge-refs/-/react-merge-refs-1.1.0.tgz#73d88b892c6c68cbb7a66e0800faa374f4c38b06"
+  integrity sha512-alTKsjEL0dKH/ru1Iyn7vliS2QRcBp9zZPGoWxUOvRGWPUYgjo+V01is7p04It6KhgrzhJGnIj9GgX8W4bZoCQ==
+
 react-overlays@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-5.1.1.tgz"
@@ -13911,12 +13937,20 @@ react-transition-group@^4.3.0, react-transition-group@^4.4.0, react-transition-g
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react-virtualized-auto-sizer@^1.0.2:
+react-virtualized-auto-sizer@^1.0.2, react-virtualized-auto-sizer@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.6.tgz"
   integrity sha512-7tQ0BmZqfVF6YYEWcIGuoR3OdYe8I/ZFbNclFlGOC3pMqunkYF/oL30NCjSGl9sMEb17AnzixDz98Kqc3N76HQ==
 
-react-window@^1.8.2:
+react-vtree@3.0.0-beta.3:
+  version "3.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/react-vtree/-/react-vtree-3.0.0-beta.3.tgz#9a2dfc31fa730c39d19b0dff7a9df81ead816bd5"
+  integrity sha512-BGC8kOT2Ti3rne0Nwu+n90TAo8lbYiWT36Cu47aj6bz+Bs7k5p3EVgBTinyuCdU5+n4a9wJOXHAdop/zsR1RAA==
+  dependencies:
+    "@babel/runtime" "^7.11.0"
+    react-merge-refs "^1.1.0"
+
+react-window@^1.8.2, react-window@^1.8.6:
   version "1.8.6"
   resolved "https://registry.yarnpkg.com/react-window/-/react-window-1.8.6.tgz"
   integrity sha512-8VwEEYyjz6DCnGBsd+MgkD0KJ2/OXFULyDtorIiTz+QzwoP94tBoA7CnbtyXMm+cCeAUER5KJcPtWl9cpKbOBg==
