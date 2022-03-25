@@ -8,18 +8,19 @@ import { SizeMe } from 'react-sizeme'
 import ReactTooltip from 'react-tooltip'
 import { SkeletonInlineBlock } from '../../../assets/skeletons/SkeletonInlineBlock'
 import getColorPalette from '../../../containers/ColorGradient'
-import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseClient, SynapseConstants } from '../../../utils'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   ColumnType,
+  FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
   QueryBundleRequest,
 } from '../../../utils/synapseTypes'
 import loadingScreen from '../../LoadingScreen'
+import { useQueryWrapperContext } from '../../QueryWrapper'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
@@ -28,9 +29,13 @@ import {
 
 const Plot = createPlotlyComponent(Plotly)
 
-export type FacetNavPanelOwnProps = {
-  applyChangesToGraphSlice: Function
-  applyChangesToFacetFilter: Function
+export type FacetNavPanelProps = {
+  applyChangesToGraphSlice: (
+    facet: FacetColumnResultValues,
+    value: FacetColumnResultValueCount | undefined,
+    isSelected: boolean,
+  ) => void
+  applyChangesToFacetFilter: (facets: FacetColumnRequest[]) => void
   index: number
   facetToPlot: FacetColumnResultValues
   plotType: PlotType
@@ -43,8 +48,6 @@ export type FacetNavPanelOwnProps = {
 
 const maxLabelLength: number = 19
 const maxLegendLength: number = 30
-
-type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
 
 export type PlotType = 'PIE' | 'BAR'
 
@@ -97,7 +100,7 @@ export async function extractPlotDataArray(
   index: number,
   plotType: PlotType,
   accessToken?: string,
-  facetAliases?: {},
+  facetAliases?: Record<string, string>,
 ) {
   const { colorPalette } = getColorPalette(
     index,
@@ -340,17 +343,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     isModalView,
     applyChangesToFacetFilter,
     applyChangesToGraphSlice,
-    isLoadingNewData,
     index,
     facetToPlot,
-    data,
-    isLoading,
-    facetAliases,
     lastQueryRequest,
     plotType,
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
+  const { data, isLoadingNewBundle, facetAliases } = useQueryWrapperContext()
   const [plotData, setPlotData] = useState<GraphData>()
   const [showModal, setShowModal] = useState(false)
 
@@ -405,7 +405,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     </div>
   )
 
-  if (isLoadingNewData || !facetToPlot) {
+  if ((!data && isLoadingNewBundle) || !facetToPlot) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -418,7 +418,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           animation={false}
           show={showModal}
           onHide={() => setShowModal(false)}
-          backdrop='static'
+          backdrop="static"
         >
           <Modal.Header closeButton={true}>
             <Modal.Title>{plotTitle ?? ''}</Modal.Title>
@@ -443,8 +443,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         >
           {!isModalView && (
             <div className="FacetNavPanel__title">
-              {!isLoading && <span className="FacetNavPanel__title__name">{plotTitle}</span>}
-              {isLoading && <SkeletonInlineBlock width={100} />}
+              {!data && isLoadingNewBundle ? (
+                <SkeletonInlineBlock width={100} />
+              ) : (
+                <span className="FacetNavPanel__title__name">{plotTitle}</span>
+              )}
               <div className="FacetNavPanel__title__tools">
                 <EnumFacetFilter
                   facetValues={facetToPlot.facetValues}

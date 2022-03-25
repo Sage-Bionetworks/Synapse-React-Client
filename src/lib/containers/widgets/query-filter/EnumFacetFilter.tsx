@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Collapse } from '@material-ui/core'
+import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
@@ -10,21 +11,20 @@ import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
 import { UserProfile } from '../../../utils/synapseTypes'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import {
-  ColumnModel,
   FacetColumnResultValueCount,
+  SelectColumn
 } from '../../../utils/synapseTypes/Table'
 import { Checkbox } from '../Checkbox'
 import { FacetFilterHeader } from './FacetFilterHeader'
-import { Collapse } from '@material-ui/core'
 
 library.add(faArrowLeft)
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
-  columnModel: ColumnModel
+  columnModel: SelectColumn
   onChange: Function
   onClear: Function
-  facetAliases: {} | undefined
+  facetAliases?: Record<string, string>
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   collapsed?: boolean
@@ -93,9 +93,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const [isShowDropdown, setIsShowDropdown] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [searchTerm, setSearchText] = useState<string>('')
-  const [filteredSet, setFilteredSet] = useState<FacetColumnResultValueCount[]>(
-    facetValues,
-  )
+  const [filteredSet, setFilteredSet] =
+    useState<FacetColumnResultValueCount[]>(facetValues)
 
   useDeepCompareEffect(() => {
     setFilteredSet(facetValues)

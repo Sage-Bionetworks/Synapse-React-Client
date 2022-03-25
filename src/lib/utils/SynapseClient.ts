@@ -19,7 +19,6 @@ import {
   REGISTERED_SCHEMA_ID,
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
-  SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SIGN_TERMS_OF_USE,
   USER_BUNDLE,
@@ -43,9 +42,8 @@ import {
   AccessRequirement,
   AccessRequirementStatus,
   ACTSubmissionStatus,
-  AddFilesToDownloadListRequest,
-  AddFilesToDownloadListResponse,
   AddPartResponse,
+  AsynchronousJobStatus,
   AsyncJobId,
   BatchFileRequest,
   BatchFileResult,
@@ -120,17 +118,16 @@ import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/Access
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
+import { ChangePasswordWithCurrentPassword } from './synapseTypes/ChangePasswordRequests'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { AddToDownloadListResponse } from './synapseTypes/DownloadListV2/AddToDownloadListResponse'
 import { DownloadListItem } from './synapseTypes/DownloadListV2/DownloadListItem'
 import { DownloadListManifestRequest } from './synapseTypes/DownloadListV2/DownloadListManifestRequest'
-import { DownloadListManifestResponse } from './synapseTypes/DownloadListV2/DownloadListManifestResponse'
 import { DownloadListPackageRequest } from './synapseTypes/DownloadListV2/DownloadListPackageRequest'
 import { DownloadListPackageResponse } from './synapseTypes/DownloadListV2/DownloadListPackageResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
-import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import {
   ActionRequiredRequest,
   AvailableFilesRequest,
@@ -154,7 +151,12 @@ import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/Evaluatio
 import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
-import { AccountSetupInfo, AliasCheckRequest, AliasCheckResponse, NewUser } from './synapseTypes/Principal/PrincipalServices'
+import {
+  AccountSetupInfo,
+  AliasCheckRequest,
+  AliasCheckResponse,
+  NewUser,
+} from './synapseTypes/Principal/PrincipalServices'
 import { ResearchProject } from './synapseTypes/ResearchProject'
 import { JsonSchemaObjectBinding } from './synapseTypes/Schema/JsonSchemaObjectBinding'
 import { ValidationResults } from './synapseTypes/Schema/ValidationResults'
@@ -166,7 +168,6 @@ import {
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
-import { ChangePasswordWithCurrentPassword } from './synapseTypes/ChangePasswordRequests'
 
 const cookies = new UniversalCookies()
 
@@ -278,7 +279,7 @@ export const doPost = <T>(
   accessToken: string | undefined,
   initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
@@ -290,7 +291,7 @@ export const doPost = <T>(
     method: 'POST',
     mode: 'cors',
     credentials: initCredentials,
-    signal: signal
+    signal: signal,
   }
   if (accessToken) {
     // @ts-ignore
@@ -381,63 +382,20 @@ export const getVersion = (): Promise<SynapseVersion> => {
 }
 
 /**
- * https://rest-docs.synapse.org/rest/POST/download/list/add/async/start.html
- */
-//Start an asynchronous job to add files to a user's download list.
-export const addFilesToDownloadList = (
-  request: AddFilesToDownloadListRequest,
-  accessToken: string,
-  updateParentState?: any,
-) => {
-  return doPost<AsyncJobId>(
-    `/file/v1/download/list/add/async/start`,
-    request,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-    .then((resp: AsyncJobId) => {
-      const requestUrl = `/file/v1/download/list/add/async/get/${resp.token}`
-      return getAsyncResultFromJobId<AddFilesToDownloadListResponse>(
-        requestUrl,
-        accessToken,
-        updateParentState,
-      ).then(data => {
-        dispatchDownloadListChangeEvent(data.downloadList)
-        return data
-      })
-    })
-    .catch((error: any) => {
-      throw error
-    })
-}
-
-/**
  * https://rest-docs.synapse.org/rest/POST/entity/id/table/download/csv/async/start.html
  */
-export const getDownloadFromTableRequest = (
+export const getDownloadFromTableRequest = async (
   request: DownloadFromTableRequest,
   accessToken: string | undefined = undefined,
-  updateParentState?: any,
-) => {
-  return doPost<AsyncJobId>(
+): Promise<DownloadFromTableResult> => {
+  const asyncJobId = await doPost<AsyncJobId>(
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/start`,
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((resp: AsyncJobId) => {
-      const requestUrl = `/repo/v1/entity/${request.entityId}/table/download/csv/async/get/${resp.token}`
-      return getAsyncResultFromJobId<DownloadFromTableResult>(
-        requestUrl,
-        accessToken,
-        updateParentState,
-      )
-    })
-    .catch((error: any) => {
-      throw error
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 
 /**
@@ -497,39 +455,54 @@ export const getFileHandleByIdURL = (
   )
 }
 
-export const getAsyncResultFromJobId = <T>(
-  urlRequest: string,
-  accessToken: string | undefined = undefined,
-  updateParentState?: any,
-): Promise<T> => {
-  return doGet(
-    urlRequest,
+/**
+ * Get a completed asynchronous job. Will refetch every 500ms until COMPLETE or FAILED.
+ * @param asyncJobId
+ * @param accessToken
+ * @returns
+ */
+export const getAsyncResultFromJobId = async <TRequest, TResponse>(
+  asyncJobId: string,
+  accessToken?: string,
+): Promise<AsynchronousJobStatus<TRequest, TResponse>> => {
+  let response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
+    `/repo/v1/asynchronous/job/${asyncJobId}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((resp: any) => {
-      // is this the job status?
-      if (resp.jobState && resp.jobState !== 'FAILED') {
-        updateParentState &&
-          updateParentState({
-            asyncJobStatus: resp,
-          })
-        // still processing, wait for a second and try again
-        return delay(500).then(() => {
-          return getAsyncResultFromJobId<T>(
-            urlRequest,
-            accessToken,
-            updateParentState,
-          )
-        })
-      }
-      // these must be the query results!
-      return resp
-    })
-    .catch(error => {
-      throw error
-    })
+  while (response.jobState && response.jobState === 'PROCESSING') {
+    await delay(500)
+    response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
+      `/repo/v1/asynchronous/job/${asyncJobId}`,
+      accessToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+  return response
+}
+
+/**
+ * Get the response body for an asynchronous job, or throw an error if the job failed.
+ * @param asyncJobId
+ * @param accessToken
+ * @returns
+ */
+export const getAsyncResultBodyFromJobId = async <TResponse>(
+  asyncJobId: string,
+  accessToken?: string,
+): Promise<TResponse> => {
+  const response = await getAsyncResultFromJobId<unknown, TResponse>(
+    asyncJobId,
+    accessToken,
+  )
+
+  if (response.jobState === 'FAILED') {
+    throw new Error(response.errorMessage + '\n' + response.errorDetails)
+  }
+
+  return response.responseBody!
 }
 
 /**
@@ -538,28 +511,45 @@ export const getAsyncResultFromJobId = <T>(
  * @param {*} accessToken
  * @param {*} endpoint
  */
-export const getQueryTableResults = (
+export const getQueryTableAsyncJobResults = async (
   queryBundleRequest: QueryBundleRequest,
-  accessToken: string | undefined = undefined,
-  updateParentState?: any,
-): Promise<QueryResultBundle> => {
-  return doPost<AsyncJobId>(
+  accessToken?: string,
+): Promise<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>> => {
+  const asyncJobId = await doPost<AsyncJobId>(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then(resp => {
-      return getAsyncResultFromJobId<QueryResultBundle>(
-        `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${resp.token}`,
-        accessToken,
-        updateParentState,
-      )
-    })
-    .catch((error: any) => {
-      throw error
-    })
+  const response = await getAsyncResultFromJobId<
+    QueryBundleRequest,
+    QueryResultBundle
+  >(asyncJobId.token, accessToken)
+  if (response.jobState === 'FAILED') {
+    throw new Error(response.errorMessage + '\n' + response.errorDetails)
+  }
+  return response
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/POST/entity/id/table/query/nextPage/async/start.html
+ * @param {*} queryBundleRequest
+ * @param {*} accessToken
+ * @param {*} endpoint
+ */
+export const getQueryTableResults = async (
+  queryBundleRequest: QueryBundleRequest,
+  accessToken?: string,
+): Promise<QueryResultBundle> => {
+  const asyncJobId = await doPost<AsyncJobId>(
+    `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
+    queryBundleRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 /**
  *  Run and return results from queryBundleRequest, queryBundle request must be of the
@@ -669,7 +659,7 @@ export const oAuthSessionRequest = (
   authenticationCode: string | number,
   redirectUrl: string,
   endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
-):Promise<LoginResponse> => {
+): Promise<LoginResponse> => {
   return doPost(
     '/auth/v1/oauth2/session2',
     { provider, authenticationCode, redirectUrl },
@@ -761,7 +751,7 @@ export const getUserBundle = (
  * Return the ucurrent user's bundle
  * http://rest-docs.synapse.org/rest/GET/user/bundle.html
  */
- export const getMyUserBundle = (
+export const getMyUserBundle = (
   mask: number,
   accessToken: string | undefined,
 ): Promise<UserBundle> => {
@@ -775,9 +765,9 @@ export const getUserBundle = (
 
 /**
  * Update your own profile
- * @param profile 
- * @param accessToken 
- * @returns 
+ * @param profile
+ * @param accessToken
+ * @returns
  */
 export const updateMyUserProfile = (
   profile: UserProfile,
@@ -901,28 +891,18 @@ export const getFiles = (
  * Get a batch of pre-signed URLs and/or FileHandles for the given list of FileHandleAssociations.
  * https://rest-docs.synapse.org/rest/POST/fileHandle/batch.html
  */
-export const getBulkFiles = (
+export const getBulkFiles = async (
   bulkFileDownloadRequest: BulkFileDownloadRequest,
   accessToken: string | undefined = undefined,
 ): Promise<BulkFileDownloadResponse> => {
-  return doPost<AsyncJobId>(
+  const asyncJobId = await doPost<AsyncJobId>(
     '/file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((asyncJobId: AsyncJobId) => {
-      const urlRequest = `/file/v1/file/bulk/async/get/${asyncJobId.token}`
-      return getAsyncResultFromJobId<BulkFileDownloadResponse>(
-        urlRequest,
-        accessToken,
-      )
-    })
-    .catch(err => {
-      console.error('Error on getBulkFiles ', err)
-      throw err
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 /**
  * Bundled access to Entity and related data components.
@@ -1361,7 +1341,10 @@ This function should be called whenever the root App is initialized
 If state is included, then we assume that this is being used for account creation,
 where we pass the username through the process.
 */
-export const detectSSOCode = (registerAccountUrl?:string, onError?:(err:any)=>void) => {
+export const detectSSOCode = (
+  registerAccountUrl?: string,
+  onError?: (err: any) => void,
+) => {
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
   const fullUrl: URL | null | string = new URL(window.location.href)
@@ -1391,8 +1374,9 @@ export const detectSSOCode = (registerAccountUrl?:string, onError?:(err:any)=>vo
       const onFailure = (err: any) => {
         if (err.status === 404) {
           // Synapse account not found, send to registration page
-          window.location.replace(registerAccountUrl ??
-            `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
+          window.location.replace(
+            registerAccountUrl ??
+              `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
           )
         }
         console.error('Error with Google account association: ', err)
@@ -1408,15 +1392,17 @@ export const detectSSOCode = (registerAccountUrl?:string, onError?:(err:any)=>vo
           code,
           redirectUrl,
           BackendDestinationEnum.REPO_ENDPOINT,
-        ).then(onSuccess)
-        .catch(onFailure)
+        )
+          .then(onSuccess)
+          .catch(onFailure)
       } else {
         oAuthSessionRequest(
           provider,
           code,
           redirectUrl,
           BackendDestinationEnum.REPO_ENDPOINT,
-        ).then(onSuccess)
+        )
+          .then(onSuccess)
           .catch(onFailure)
       }
     } else if (PROVIDERS.ORCID == provider) {
@@ -1431,9 +1417,10 @@ export const detectSSOCode = (registerAccountUrl?:string, onError?:(err:any)=>vo
         provider,
         code,
         redirectUrl,
-        BackendDestinationEnum.REPO_ENDPOINT
-      ).then(redirectAfterSuccess)
-      .catch(onFailure)
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+        .then(redirectAfterSuccess)
+        .catch(onFailure)
     }
   }
 }
@@ -1670,7 +1657,7 @@ export const startMultipartUpload = (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then(async (status: MultipartUploadStatus) => {
+    .then((status: MultipartUploadStatus) => {
       // started the upload
       // keep track of the part state client-side
       const clientSidePartsState: boolean[] = status.partsState
@@ -1680,7 +1667,7 @@ export const startMultipartUpload = (
       for (let i = 0; i < clientSidePartsState.length; i = i + 1) {
         if (!clientSidePartsState[i]) {
           // upload this part.  note that partNumber is always the index+1
-          await processFilePart(
+          processFilePart(
             i + 1,
             status,
             accessToken,
@@ -1834,67 +1821,45 @@ export const addFileToDownloadListV2 = (
 /**
  * http://rest-docs.synapse.org/rest/POST/download/list/package/async/start.html
  */
-export const createPackageFromDownloadListV2 = (
+export const createPackageFromDownloadListV2 = async (
   zipFileName?: string,
-  accessToken: string | undefined = undefined,
-  updateParentState?: any,
-) => {
+  accessToken?: string,
+): Promise<DownloadListPackageResponse> => {
   const request: DownloadListPackageRequest = {
     zipFileName,
     includeManifest: true,
     concreteType:
       'org.sagebionetworks.repo.model.download.DownloadListPackageRequest',
   }
-  return doPost<AsyncJobId>(
+  const asyncJobId = await doPost<AsyncJobId>(
     `/repo/v1/download/list/package/async/start`,
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((resp: AsyncJobId) => {
-      const requestUrl = `/repo/v1/download/list/package/async/get/${resp.token}`
-      return getAsyncResultFromJobId<DownloadListPackageResponse>(
-        requestUrl,
-        accessToken,
-        updateParentState,
-      )
-    })
-    .catch((error: any) => {
-      throw error
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 
 /**
  * http://rest-docs.synapse.org/rest/POST/download/list/package/async/start.html
  */
-export const createManifestFromDownloadListV2 = (
+export const createManifestFromDownloadListV2 = async (
   accessToken: string | undefined = undefined,
-  updateParentState?: any,
 ) => {
   const request: DownloadListManifestRequest = {
     csvTableDescriptor: {},
     concreteType:
       'org.sagebionetworks.repo.model.download.DownloadListManifestRequest',
   }
-  return doPost<AsyncJobId>(
+  const asyncJobId = await doPost<AsyncJobId>(
     `/repo/v1/download/list/manifest/async/start`,
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((resp: AsyncJobId) => {
-      const requestUrl = `/repo/v1/download/list/manifest/async/get/${resp.token}`
-      return getAsyncResultFromJobId<DownloadListManifestResponse>(
-        requestUrl,
-        accessToken,
-        updateParentState,
-      )
-    })
-    .catch((error: any) => {
-      throw error
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 
 /**
@@ -1904,25 +1869,15 @@ export const createManifestFromDownloadListV2 = (
 export const addFilesToDownloadListV2 = async (
   request: AddToDownloadListRequest,
   accessToken: string | undefined = undefined,
-  updateParentState?: any,
 ): Promise<AddToDownloadListResponse> => {
-  return doPost<AsyncJobId>(
+  const asyncJobId = await doPost<AsyncJobId>(
     '/repo/v1//download/list/add/async/start',
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then(resp => {
-      return getAsyncResultFromJobId<AddToDownloadListResponse>(
-        `/repo/v1/download/list/add/async/get/${resp.token}`,
-        accessToken,
-        updateParentState,
-      )
-    })
-    .catch((error: any) => {
-      throw error
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 
 /**
@@ -2704,28 +2659,18 @@ export const deleteDownloadList = (accessToken: string | undefined) => {
  * @param {*} endpoint
  * // technically returns a TableUpdateTransactionResponse, but I don't see any reason we need this
  */
-export const updateTable = (
+export const updateTable = async (
   tableUpdateRequest: TableUpdateTransactionRequest,
   accessToken: string | undefined = undefined,
-  updateParentState?: any,
 ): Promise<any> => {
-  return doPost<AsyncJobId>(
+  const asyncJobId = await doPost<AsyncJobId>(
     `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/start`,
     tableUpdateRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then(resp => {
-      return getAsyncResultFromJobId<any>(
-        `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/get/${resp.token}`,
-        accessToken,
-        updateParentState,
-      )
-    })
-    .catch((error: any) => {
-      throw error
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 
 export const getTransformSqlWithFacetsRequest = (
@@ -2848,7 +2793,7 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
   )
 }
 
-const getDownloadListJobResponse = (
+const getDownloadListJobResponse = async (
   accessToken: string | undefined,
   queryRequestDetails: QueryRequestDetails,
 ): Promise<QueryResponseDetails> => {
@@ -2857,27 +2802,14 @@ const getDownloadListJobResponse = (
       'org.sagebionetworks.repo.model.download.DownloadListQueryRequest',
     requestDetails: queryRequestDetails,
   }
-
-  return doPost<AsyncJobId>(
+  const asyncJobId = await doPost<AsyncJobId>(
     '/repo/v1/download/list/query/async/start',
     downloadListQueryRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((asyncJobId: AsyncJobId) => {
-      const urlRequest = `/repo/v1/download/list/query/async/get/${asyncJobId.token}`
-      return getAsyncResultFromJobId<DownloadListQueryResponse>(
-        urlRequest,
-        accessToken,
-      ).then((queryResponse: DownloadListQueryResponse) => {
-        return queryResponse.responseDetails
-      })
-    })
-    .catch(err => {
-      console.error('Error on getDownloadListV2 ', err)
-      throw err
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 
 /**
@@ -3101,8 +3033,11 @@ export const getSchema = (schema$id: string) => {
 export const getValidationSchema = async (
   schema$id: string,
   accessToken?: string,
-) => {
-  return doPost<AsyncJobId>(
+): Promise<{
+  concreteType: 'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse'
+  validationSchema: JSONSchema7
+}> => {
+  const asyncJobId = await doPost<AsyncJobId>(
     SCHEMA_VALIDATION_START,
     {
       concreteType:
@@ -3113,16 +3048,7 @@ export const getValidationSchema = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-    .then((asyncJobId: AsyncJobId) => {
-      return getAsyncResultFromJobId<{ validationSchema: JSONSchema7 }>(
-        SCHEMA_VALIDATION_GET(asyncJobId.token),
-        accessToken,
-      )
-    })
-    .catch(err => {
-      console.error('Error on getValidationSchema ', err)
-      throw err
-    })
+  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
 }
 
 /**
@@ -3246,7 +3172,7 @@ export const registerAccountStep2 = (
  * @param {*} redirectUrl
  * @param {*} endpoint
  */
- export const oAuthRegisterAccountStep2 = (
+export const oAuthRegisterAccountStep2 = (
   userName: string,
   provider: string,
   authenticationCode: string | number,
@@ -3270,7 +3196,7 @@ export const registerAccountStep2 = (
  * @param {*} redirectUrl
  * @param {*} endpoint
  */
- export const bindOAuthProviderToAccount = async (
+export const bindOAuthProviderToAccount = async (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
@@ -3289,12 +3215,10 @@ export const registerAccountStep2 = (
 }
 
 //http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
-export const signSynapseTermsOfUse = (
-  accessToken: string,
-) => {
+export const signSynapseTermsOfUse = (accessToken: string) => {
   return doPost(
     SIGN_TERMS_OF_USE,
-    {accessToken},
+    { accessToken },
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3318,13 +3242,13 @@ export const createProfileVerificationSubmission = (
 // https://rest-docs.synapse.org/rest/POST/user/changePassword.html
 export const changePasswordWithCurrentPassword = (
   newPassword: ChangePasswordWithCurrentPassword,
-  accessToken: string | undefined
+  accessToken: string | undefined,
 ) => {
   return doPost<ChangePasswordWithCurrentPassword>(
     '/auth/v1/user/changePassword',
     newPassword,
     accessToken,
     undefined,
-    BackendDestinationEnum.REPO_ENDPOINT
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }

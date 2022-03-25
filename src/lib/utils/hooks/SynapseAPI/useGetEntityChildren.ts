@@ -41,8 +41,8 @@ export function useGetEntityChildrenInfinite(
   const { accessToken } = useSynapseContext()
   return useInfiniteQuery<EntityChildrenResponse, SynapseClientError>(
     ['entitychildren', request],
-    async (context: QueryFunctionContext<QueryKey, string>) => {
-      return await SynapseClient.getEntityChildren(
+    (context: QueryFunctionContext<QueryKey, string>) => {
+      return SynapseClient.getEntityChildren(
         {
           ...request,
           includeTotalChildCount: context.pageParam
@@ -51,7 +51,7 @@ export function useGetEntityChildrenInfinite(
           nextPageToken: context.pageParam,
         },
         accessToken,
-        context.signal
+        context.signal,
       )
     },
     {

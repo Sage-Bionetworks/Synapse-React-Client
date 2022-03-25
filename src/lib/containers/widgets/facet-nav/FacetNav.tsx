@@ -10,14 +10,20 @@ import {
   QueryResultBundle,
 } from '../../../utils/synapseTypes'
 import {
-  QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../../QueryWrapper'
+import { useQueryWrapperContext } from '../../QueryWrapper'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 
-export type FacetNavOwnProps = {
+/*
+TODO: This component has a few bugs when its props are updated with new data, this should be handled
+at some point. As of the moment the portal doesn't have a case when the props will update,
+it will always mount this component.
+*/
+
+export type FacetNavProps = {
   facetsToPlot?: string[]
   showNotch?: boolean
 }
@@ -30,13 +36,6 @@ type UiFacetState = {
 }
 
 const DEFAULT_VISIBLE_FACETS = 2
-
-/*
-TODO: This component has a few bugs when its props are updated with new data, this should be handled
-at some point. As of the moment the portal doesn't have a case when the props will update,
-it will always mount this component.
-*/
-export type FacetNavProps = FacetNavOwnProps & QueryWrapperChildProps
 
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 
@@ -60,24 +59,24 @@ export function getFacets(
 }
 
 const FacetNav: React.FunctionComponent<FacetNavProps> = ({
-  data,
-  getLastQueryRequest,
-  isLoadingNewData,
-  isLoading,
-  executeQueryRequest,
-  asyncJobStatus,
-  topLevelControlsState,
   facetsToPlot,
-  getInitQueryRequest,
-  facetAliases,
   showNotch = false,
-  error,
 }: FacetNavProps): JSX.Element => {
+  const {
+    data,
+    getLastQueryRequest,
+    isLoadingNewBundle,
+    executeQueryRequest,
+    error,
+    asyncJobStatus,
+    topLevelControlsState,
+  } = useQueryWrapperContext()
+
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
-  const { showFacetVisualization, showFacetFilter } = topLevelControlsState!
+  const { showFacetVisualization, showFacetFilter } = topLevelControlsState
 
-  const lastQueryRequest = getLastQueryRequest?.()
+  const lastQueryRequest = getLastQueryRequest()
 
   useEffect(() => {
     const result = getFacets(data, facetsToPlot)
@@ -112,9 +111,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 
   // what needs to happen after the filters are adjusted from the plot
   const applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
-    lastQueryRequest!.query.selectedFacets = facets
-    lastQueryRequest!.query.offset = 0
-    executeQueryRequest!(lastQueryRequest!)
+    lastQueryRequest.query.selectedFacets = facets
+    lastQueryRequest.query.offset = 0
+    executeQueryRequest(lastQueryRequest)
   }
 
   // don't show hidden facets
@@ -184,7 +183,7 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
 
   if (error) {
     return <></>
-  } else if (isLoadingNewData) {
+  } else if (!data && isLoadingNewBundle) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {asyncJobStatus?.progressMessage && (
@@ -199,16 +198,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     return (
       <>
         <TotalQueryResults
-          isLoading={isLoading!}
-          executeQueryRequest={executeQueryRequest!}
-          lastQueryRequest={getLastQueryRequest?.()!}
-          getInitQueryRequest={getInitQueryRequest}
           unitDescription={
             hasFacetsOrFilters ? 'Results Filtered By' : 'Results'
           }
           frontText={''}
           showNotch={showNotch}
-          topLevelControlsState={topLevelControlsState}
         />
         {facets.length > 0 && (
           <div
@@ -230,13 +224,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                   key={facet.columnName}
                 >
                   <FacetNavPanel
-                    isLoading={isLoading}
                     index={
                       colorTracker.find(
                         el => el.columnName === facet.columnName,
                       )?.colorIndex!
                     }
-                    data={data}
                     onHide={() => hideFacetInGrid(facet.columnName)}
                     plotType={getPlotType(facet.columnName)}
                     onSetPlotType={(plotType: PlotType) =>
@@ -263,7 +255,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
                       )
                     }
                     isModalView={false}
-                    facetAliases={facetAliases}
                   />
                 </div>
               ))}

@@ -4,7 +4,6 @@ import * as PlotlyTyped from 'plotly.js'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
 
-import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import {
   FacetColumnResultValues,
   ColumnType,
@@ -24,18 +23,17 @@ import {
 } from '../../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../../widgets/facet-nav/FacetNav'
 import { useSynapseContext } from '../../../utils/SynapseContext'
+import { useQueryWrapperContext } from '../../QueryWrapper'
 
 const Plot = createPlotlyComponent(Plotly)
 
-export type FacetPlotsCardOwnProps = {
+export type FacetPlotsCardProps = {
   title?: string
   description?: string
   rgbIndex?: number
   facetsToPlot?: string[]
   detailsPagePath?: string
 }
-
-type FacetPlotsCardProps = FacetPlotsCardOwnProps & QueryWrapperChildProps
 
 const layout: Partial<PlotlyTyped.Layout> = {
   showlegend: false,
@@ -54,15 +52,12 @@ const layout: Partial<PlotlyTyped.Layout> = {
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   title,
   description,
-  isLoadingNewData,
   rgbIndex,
   facetsToPlot,
   detailsPagePath,
-  data,
-  isLoading,
-  facetAliases,
 }: FacetPlotsCardProps): JSX.Element => {
   const { accessToken } = useSynapseContext()
+  const { data, isLoadingNewBundle, facetAliases } = useQueryWrapperContext()
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')
@@ -94,24 +89,23 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
         }),
       ).then(newPlotData => setFacetPlotDataArray(newPlotData))
       // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
-      const selectedFacet:
-        | FacetColumnResultValueCount
-        | undefined = data?.facets?.map(item => {
-        const facetValues: FacetColumnResultValueCount[] = (item as FacetColumnResultValues)
-          .facetValues
-        if (facetValues) {
-          const filteredFacetValues: FacetColumnResultValueCount[] = facetValues.filter(
-            facetValue => {
-              return facetValue.isSelected
-            },
-          )
-          return filteredFacetValues.length > 0
-            ? filteredFacetValues[0]
-            : undefined
-        } else {
-          return undefined
-        }
-      })[0]
+      const selectedFacet: FacetColumnResultValueCount | undefined =
+        data?.facets?.map(item => {
+          const facetValues: FacetColumnResultValueCount[] = (
+            item as FacetColumnResultValues
+          ).facetValues
+          if (facetValues) {
+            const filteredFacetValues: FacetColumnResultValueCount[] =
+              facetValues.filter(facetValue => {
+                return facetValue.isSelected
+              })
+            return filteredFacetValues.length > 0
+              ? filteredFacetValues[0]
+              : undefined
+          } else {
+            return undefined
+          }
+        })[0]
       if (selectedFacet && selectedFacet.value) {
         setSelectedFacetValue(selectedFacet?.value)
       }
@@ -119,7 +113,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   }, [facetsToPlot, data])
 
   if (
-    isLoadingNewData ||
+    isLoadingNewBundle ||
     !facetPlotDataArray ||
     !facetDataArray ||
     facetDataArray.length === 0
@@ -155,7 +149,7 @@ const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
             <span className="FacetPlotsCard__description">{description}</span>
           )}
           {detailsPageLink}
-          {isLoading && (
+          {isLoadingNewBundle && (
             <span style={{ marginLeft: '2px' }} className={'spinner'} />
           )}
         </div>

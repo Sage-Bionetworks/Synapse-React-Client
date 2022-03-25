@@ -3,7 +3,7 @@
 export type FacetColumnValuesRequest = {
   concreteType?: string
   columnName?: string // The name of the faceted column
-  facetValues?: any // The set of facet values that were selected
+  facetValues?: string[] // The set of facet values that were selected
 }
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnRangeRequest.html

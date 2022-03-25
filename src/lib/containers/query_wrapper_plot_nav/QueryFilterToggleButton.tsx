@@ -1,32 +1,36 @@
 import React from 'react'
-import { QueryWrapperChildProps, QUERY_FILTERS_COLLAPSED_CSS, QUERY_FILTERS_EXPANDED_CSS, TopLevelControlsState } from '../QueryWrapper'
 import { Button } from 'react-bootstrap'
 import IconSvg, { IconSvgOptions } from '../IconSvg'
+import {
+  QUERY_FILTERS_COLLAPSED_CSS,
+  QUERY_FILTERS_EXPANDED_CSS,
+} from '../QueryWrapper'
+import { useQueryWrapperContext } from '../QueryWrapper'
 
-
-const QueryFilterToggleButton = (
-  props: QueryWrapperChildProps,
-) => {
+const QueryFilterToggleButton = () => {
   const {
-    updateParentState,
-    topLevelControlsState,
-  } = props
-  const { showFacetFilter } = topLevelControlsState!
+    topLevelControlsState: { showFacetFilter },
+    setTopLevelControlsState,
+  } = useQueryWrapperContext()
+
   const toggleFilterShowingState = () => {
-    const updatedTopLevelControlsState: TopLevelControlsState = {
-      ...topLevelControlsState!,
-      'showFacetFilter': !topLevelControlsState!['showFacetFilter'],
-    }
-    updateParentState!({
-      topLevelControlsState: updatedTopLevelControlsState,
-    })
+    setTopLevelControlsState(state => ({
+      ...state,
+      showFacetFilter: !state.showFacetFilter,
+    }))
   }
-  const iconOptions:IconSvgOptions = {
+  const iconOptions: IconSvgOptions = {
     icon: showFacetFilter ? 'arrowBack' : 'arrowForward',
-    color: 'inherit'
+    color: 'inherit',
   }
   return (
-    <div className={`QueryFilterToggleButton bootstrap-4-backport ${showFacetFilter ? QUERY_FILTERS_EXPANDED_CSS : QUERY_FILTERS_COLLAPSED_CSS}`}>
+    <div
+      className={`QueryFilterToggleButton bootstrap-4-backport ${
+        showFacetFilter
+          ? QUERY_FILTERS_EXPANDED_CSS
+          : QUERY_FILTERS_COLLAPSED_CSS
+      }`}
+    >
       <Button
         variant="outline-primary"
         onClick={toggleFilterShowingState}
@@ -36,7 +40,6 @@ const QueryFilterToggleButton = (
         <IconSvg options={iconOptions}></IconSvg>
       </Button>
     </div>
-
   )
 }
 
