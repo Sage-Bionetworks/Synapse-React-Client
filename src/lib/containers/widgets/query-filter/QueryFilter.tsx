@@ -85,7 +85,7 @@ const patchRequestFacets = (
 export function applyChangesToValuesColumn(
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultValues,
-  onChangeFn: Function,
+  onChangeFn: (result: FacetColumnRequest[]) => void,
   facetName?: string,
   checked: boolean = false,
 ) {
@@ -111,15 +111,15 @@ export function applyChangesToValuesColumn(
 export const applyMultipleChangesToValuesColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultValues,
-  onChangeFn: Function,
-  facetNameMap?: {},
+  onChangeFn: (result: FacetColumnRequest[]) => void,
+  facetNameMap?: Record<string, string>,
 ) => {
   const facetNames = (facetNameMap && Object.keys(facetNameMap)) || []
   if (facetNames.length) {
     facet.facetValues.forEach(facetValue => {
       if (facetNames.includes(facetValue.value)) {
         facetValue.isSelected = facetNameMap
-          ? facetNameMap[facetValue.value]
+          ? !!facetNameMap[facetValue.value]
           : false
       }
     })
@@ -133,7 +133,7 @@ export const applyMultipleChangesToValuesColumn = (
 export const applyChangesToRangeColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultRange,
-  onChangeFn: Function,
+  onChangeFn: (result: FacetColumnRequest[]) => void,
   values: string[],
 ) => {
   facet.columnMin = values[0]

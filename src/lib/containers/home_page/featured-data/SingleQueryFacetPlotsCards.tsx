@@ -10,7 +10,7 @@ import { SynapseContextConsumer } from '../../../utils/SynapseContext'
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   sql?: string
 }
 export function getQueryRequest(sql: string): QueryBundleRequest {

@@ -24,7 +24,7 @@ export type EnumFacetFilterProps = {
   columnModel: ColumnModel
   onChange: Function
   onClear: Function
-  facetAliases: {} | undefined
+  facetAliases?: Record<string, string>
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   collapsed?: boolean

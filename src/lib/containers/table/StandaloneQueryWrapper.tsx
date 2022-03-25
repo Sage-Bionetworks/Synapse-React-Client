@@ -30,8 +30,8 @@ type OwnProps = {
   sql: string
   rgbIndex: number
   unitDescription?: string
-  facetAliases?: Record<string, string>,
-  facet?: string,
+  facetAliases?: Record<string, string>
+  facet?: string
   showTopLevelControls?: boolean
   searchConfiguration?: SearchV2Props
 } & Omit<TopLevelControlsProps, 'entityId'>

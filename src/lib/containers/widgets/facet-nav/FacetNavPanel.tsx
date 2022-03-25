@@ -15,6 +15,7 @@ import { unCamelCase } from '../../../utils/functions/unCamelCase'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   ColumnType,
+  FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
   QueryBundleRequest,
@@ -29,8 +30,12 @@ import {
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetNavPanelOwnProps = {
-  applyChangesToGraphSlice: Function
-  applyChangesToFacetFilter: Function
+  applyChangesToGraphSlice: (
+    facet: FacetColumnResultValues,
+    value: FacetColumnResultValueCount | undefined,
+    isSelected: boolean,
+  ) => void
+  applyChangesToFacetFilter: (facets: FacetColumnRequest[]) => void
   index: number
   facetToPlot: FacetColumnResultValues
   plotType: PlotType
@@ -97,7 +102,7 @@ export async function extractPlotDataArray(
   index: number,
   plotType: PlotType,
   accessToken?: string,
-  facetAliases?: {},
+  facetAliases?: Record<string, string>,
 ) {
   const { colorPalette } = getColorPalette(
     index,
@@ -418,7 +423,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
           animation={false}
           show={showModal}
           onHide={() => setShowModal(false)}
-          backdrop='static'
+          backdrop="static"
         >
           <Modal.Header closeButton={true}>
             <Modal.Title>{plotTitle ?? ''}</Modal.Title>
@@ -443,7 +448,9 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         >
           {!isModalView && (
             <div className="FacetNavPanel__title">
-              {!isLoading && <span className="FacetNavPanel__title__name">{plotTitle}</span>}
+              {!isLoading && (
+                <span className="FacetNavPanel__title__name">{plotTitle}</span>
+              )}
               {isLoading && <SkeletonInlineBlock width={100} />}
               <div className="FacetNavPanel__title__tools">
                 <EnumFacetFilter

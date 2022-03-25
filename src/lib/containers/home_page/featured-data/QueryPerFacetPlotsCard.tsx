@@ -12,7 +12,7 @@ export type QueryPerFacetPlotsCardProps = {
   description?: string
   rgbIndex?: number
   facetsToPlot?: string[]
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   selectFacetColumnName: string
   selectFacetColumnValue: string
   sql?: string

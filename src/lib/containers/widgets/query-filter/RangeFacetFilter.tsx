@@ -22,7 +22,7 @@ export type RangeFacetFilterProps = {
   facetResult: FacetColumnResultRange
   columnModel: ColumnModel
   onChange: Function
-  facetAliases: {} | undefined
+  facetAliases?: Record<string, string>
   collapsed?: boolean
 }
 

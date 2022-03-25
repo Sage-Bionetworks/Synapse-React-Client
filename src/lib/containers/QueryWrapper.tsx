@@ -78,7 +78,7 @@ export type QueryWrapperState = {
   // TODO: Delete lastFacetSelection once StackedBarChart.tsx/Facets.tsx are deleted
   lastFacetSelection: FacetSelection
   chartSelectionIndex: number
-  asyncJobStatus?: AsynchronousJobStatus
+  asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
   facetAliases?: Record<string, string>
   loadNowStarted: boolean
   topLevelControlsState?: TopLevelControlsState
@@ -127,7 +127,7 @@ export type QueryWrapperChildProps = {
   facetAliases?: Record<string, string>
   lastFacetSelection?: FacetSelection
   chartSelectionIndex?: number
-  asyncJobStatus?: AsynchronousJobStatus
+  asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
   showBarChart?: boolean
   hasMoreData?: boolean
   topLevelControlsState?: TopLevelControlsState
@@ -256,9 +256,16 @@ export default class QueryWrapper extends React.Component<
     return cloneDeep(this.props.initQueryRequest)
   }
 
-  public getSelectedColumns(isReset:boolean, selectColumns?:SelectColumn[]):string[] {
+  public getSelectedColumns(
+    isReset: boolean,
+    selectColumns?: SelectColumn[],
+  ): string[] {
     if (isReset) {
-      return selectColumns?.slice(0, this.props.visibleColumnCount ?? Infinity).map(el => el.name) ?? []
+      return (
+        selectColumns
+          ?.slice(0, this.props.visibleColumnCount ?? Infinity)
+          .map(el => el.name) ?? []
+      )
     } else {
       return this.state.isColumnSelected
     }
@@ -274,7 +281,8 @@ export default class QueryWrapper extends React.Component<
   public executeQueryRequest(queryRequest: QueryBundleRequest) {
     const clonedQueryRequest = cloneDeep(queryRequest)
     // SWC-6030: If sql changes, reset what columns are visible
-    const resetVisibleColumns = this.state.lastQueryRequest.query.sql !== queryRequest.query.sql
+    const resetVisibleColumns =
+      this.state.lastQueryRequest.query.sql !== queryRequest.query.sql
     this.setState({
       isLoading: true,
       lastQueryRequest: clonedQueryRequest,
@@ -284,9 +292,7 @@ export default class QueryWrapper extends React.Component<
 
     if (clonedQueryRequest.query) {
       const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
-      const stringifiedQuery = encodeURIComponent(
-        clonedQueryRequestJson,
-      )
+      const stringifiedQuery = encodeURIComponent(clonedQueryRequestJson)
       if (this.props.shouldDeepLink) {
         if (this.props.onQueryChange) {
           this.props.onQueryChange(clonedQueryRequestJson)
@@ -312,14 +318,17 @@ export default class QueryWrapper extends React.Component<
         const newState = {
           hasMoreData,
           data,
-          isColumnSelected: this.getSelectedColumns(resetVisibleColumns, data.selectColumns),
+          isColumnSelected: this.getSelectedColumns(
+            resetVisibleColumns,
+            data.selectColumns,
+          ),
           asyncJobStatus: undefined,
           isFacetsAvailable: isFaceted,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,
             showFacetFilter: isFaceted,
             showFacetVisualization: isFaceted,
-          }
+          },
         }
         if (this.props.onQueryResultBundleChange) {
           this.props.onQueryResultBundleChange(JSON.stringify(data))
@@ -430,11 +439,16 @@ export default class QueryWrapper extends React.Component<
           isFacetsAvailable: isFaceted,
           topLevelControlsState: {
             ...this.state.topLevelControlsState!,
-            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFaceted : false,
-            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFaceted : false,
-          }
+            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter
+              ? isFaceted
+              : false,
+            showFacetVisualization: this.state.topLevelControlsState
+              ?.showFacetVisualization
+              ? isFaceted
+              : false,
+          },
         }
-        
+
         this.setState(newState)
       })
       .catch(error => {
@@ -508,7 +522,11 @@ export default class QueryWrapper extends React.Component<
     }
     const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
     return (
-      <div className={`SRC-wrapper ${loadingCusrorClass} ${this.state.isFacetsAvailable ? 'has-facets' : ''}`}>
+      <div
+        className={`SRC-wrapper ${loadingCusrorClass} ${
+          this.state.isFacetsAvailable ? 'has-facets' : ''
+        }`}
+      >
         {children && children(queryWrapperChildProps)}
       </div>
     )
