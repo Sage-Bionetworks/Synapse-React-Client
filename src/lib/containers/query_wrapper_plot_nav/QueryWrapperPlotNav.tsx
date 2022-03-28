@@ -7,22 +7,30 @@ import {
 } from '../../utils/functions/sqlFunctions'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { SynapseContextConsumer } from '../../utils/SynapseContext'
-import { isTableEntity, Query, QueryBundleRequest } from '../../utils/synapseTypes'
+import {
+  isTableEntity,
+  Query,
+  QueryBundleRequest,
+} from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
 import { DownloadConfirmation } from '../download_list'
 import { ErrorBanner } from '../ErrorBanner'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload'
-import QueryWrapper, { QUERY_FILTERS_EXPANDED_CSS, QUERY_FILTERS_COLLAPSED_CSS } from '../QueryWrapper'
+import { QueryWrapper, QueryWrapperContextConsumer } from '../QueryWrapper'
 import SearchV2, { SearchV2Props } from '../SearchV2'
+import SqlEditor from '../SqlEditor'
 import { SynapseTableProps } from '../table/SynapseTable'
-import FacetNav, { FacetNavOwnProps } from '../widgets/facet-nav/FacetNav'
+import TopLevelControls, {
+  TopLevelControlsProps,
+} from '../table/TopLevelControls'
+import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import FilterAndView from './FilterAndView'
 import QueryFilterToggleButton from './QueryFilterToggleButton'
-import TopLevelControls, { TopLevelControlsProps } from '../table/TopLevelControls'
-import SqlEditor from '../SqlEditor'
+
+const QUERY_FILTERS_EXPANDED_CSS = 'isShowingFacetFilters'
+const QUERY_FILTERS_COLLAPSED_CSS = 'isHidingFacetFilters'
 
 type OwnProps = {
   sql: string
@@ -60,7 +68,7 @@ type Operator = {
 }
 
 export type QueryWrapperPlotNavProps = SearchParams &
-  Partial<FacetNavOwnProps> &
+  FacetNavProps &
   Operator &
   OwnProps
 
@@ -91,102 +99,102 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
     )
 
     // use initQuery if set, otherwise use sql
-    const query:Query = initQueryJson ? JSON.parse(initQueryJson) as Query : {
-      sql: sqlUsed,
-      limit: limit,
-      offset: 0,
-    }
+    const query: Query = initQueryJson
+      ? (JSON.parse(initQueryJson) as Query)
+      : {
+          sql: sqlUsed,
+          limit: limit,
+          offset: 0,
+        }
     const entityId = parseEntityIdFromSqlStatement(query.sql)
     const { data: entity } = useGetEntity(entityId)
     const initQueryRequest: QueryBundleRequest = {
       entityId,
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       partMask:
+        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+        SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+        SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
         SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
         SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+        SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+        SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
       query,
     }
     return (
       <div className="QueryWrapperPlotNav">
-        <SynapseContextConsumer>
-          {context => (
-            <QueryWrapper
-              {...props}
-              token={context?.accessToken}
-              initQueryRequest={initQueryRequest}
-            >
-              {queryWrapperChildProps => {
-                const isFaceted = queryWrapperChildProps.isFacetsAvailable
-                const showFacetFilter = queryWrapperChildProps.topLevelControlsState?.showFacetFilter
-                return (
-                  <>
-                    <div
-                      className={`ErrorBannerWrapper ${
-                        showFacetFilter
-                          ? QUERY_FILTERS_EXPANDED_CSS
-                          : QUERY_FILTERS_COLLAPSED_CSS
-                      }`}
-                    >
-                      <ErrorBanner {...queryWrapperChildProps} />
-                    </div>
-                    {entity &&
-                    isTableEntity(entity) &&
-                    entity.isSearchEnabled ? (
-                      <FullTextSearch {...queryWrapperChildProps} />
-                    ) : (
-                      <SearchV2
-                        {...queryWrapperChildProps}
-                        {...searchConfiguration}
-                      />
-                    )}
-                    <SqlEditor {...queryWrapperChildProps} />
-                    <DownloadConfirmation
-                      {...queryWrapperChildProps}
-                      downloadCartPageUrl={downloadCartPageUrl}
-                    />
-                    <TopLevelControls
-                      {...queryWrapperChildProps}
-                      showColumnSelection={tableConfiguration !== undefined}
-                      name={name}
-                      entityId={entityId}
-                      sql={sqlUsed}
-                      hideDownload={hideDownload}
-                      hideQueryCount={hideQueryCount}
-                      hideFacetFilterControl={!isFaceted}
-                      hideVisualizationsControl={!isFaceted}
-                      hideSqlEditorControl={hideSqlEditorControl}
-                    />
-                    {isFaceted && <>
-                      <QueryFilter {...queryWrapperChildProps} {...props} />
-                      <QueryFilterToggleButton {...queryWrapperChildProps} />
-                      </>}
-                    <FacetNav
-                      {...queryWrapperChildProps}
-                      facetsToPlot={facetsToPlot}
-                      showNotch={false}
-                    />
-
-                    <FilterAndView
-                      {...queryWrapperChildProps}
-                      facetsToFilter={facetsToFilter}
-                      tableConfiguration={tableConfiguration}
-                      hideDownload={hideDownload}
-                      cardConfiguration={cardConfiguration}
-                    />
-                    {showExportMetadata && (
-                      <ModalDownload
-                        {...queryWrapperChildProps}
-                        onClose={() => setShowExportMetadata(false)}
-                      />
-                    )}
-                  </>
+        <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
+          <QueryWrapperContextConsumer>
+            {queryWrapperContext => {
+              if (queryWrapperContext === undefined) {
+                throw new Error(
+                  'No queryWrapperContext found when using QueryWrapperContextConsumer',
                 )
-              }}
-            </QueryWrapper>
-          )}
-        </SynapseContextConsumer>
+              }
+              const showFacetFilter =
+                queryWrapperContext?.topLevelControlsState.showFacetFilter ||
+                queryWrapperContext?.topLevelControlsState.showFacetFilter ===
+                  undefined
+              const isFaceted = queryWrapperContext?.isFacetsAvailable
+
+              return (
+                <>
+                  <div
+                    className={`ErrorBannerWrapper ${
+                      showFacetFilter
+                        ? QUERY_FILTERS_EXPANDED_CSS
+                        : QUERY_FILTERS_COLLAPSED_CSS
+                    }`}
+                  >
+                    <ErrorBanner error={queryWrapperContext?.error} />
+                  </div>
+                  {entity && isTableEntity(entity) && entity.isSearchEnabled ? (
+                    <FullTextSearch />
+                  ) : (
+                    <SearchV2
+                      {...searchConfiguration}
+                      queryWrapperContext={queryWrapperContext}
+                    />
+                  )}
+                  <SqlEditor />
+                  <DownloadConfirmation
+                    downloadCartPageUrl={downloadCartPageUrl}
+                  />
+                  <TopLevelControls
+                    showColumnSelection={tableConfiguration !== undefined}
+                    name={name}
+                    hideDownload={hideDownload}
+                    hideQueryCount={hideQueryCount}
+                    hideFacetFilterControl={!isFaceted}
+                    hideVisualizationsControl={!isFaceted}
+                    hideSqlEditorControl={hideSqlEditorControl}
+                  />
+                  {isFaceted && (
+                    <>
+                      <QueryFilter facetsToFilter={facetsToFilter} />
+                      <QueryFilterToggleButton />
+                    </>
+                  )}
+                  <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
+                  <FilterAndView
+                    tableConfiguration={tableConfiguration}
+                    hideDownload={hideDownload}
+                    cardConfiguration={cardConfiguration}
+                  />
+                  {showExportMetadata && (
+                    <ModalDownload
+                      getLastQueryRequest={
+                        queryWrapperContext?.getLastQueryRequest
+                      }
+                      onClose={() => setShowExportMetadata(false)}
+                    />
+                  )}
+                </>
+              )
+            }}
+          </QueryWrapperContextConsumer>
+        </QueryWrapper>
       </div>
     )
   }

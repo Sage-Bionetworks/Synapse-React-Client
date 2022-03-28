@@ -8,7 +8,6 @@ import { SizeMe } from 'react-sizeme'
 import ReactTooltip from 'react-tooltip'
 import { SkeletonInlineBlock } from '../../../assets/skeletons/SkeletonInlineBlock'
 import getColorPalette from '../../../containers/ColorGradient'
-import { QueryWrapperChildProps } from '../../../containers/QueryWrapper'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseClient, SynapseConstants } from '../../../utils'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
@@ -18,9 +17,9 @@ import {
   FacetColumnRequest,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
-  QueryBundleRequest,
 } from '../../../utils/synapseTypes'
 import loadingScreen from '../../LoadingScreen'
+import { useQueryWrapperContext } from '../../QueryWrapper'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
@@ -29,7 +28,7 @@ import {
 
 const Plot = createPlotlyComponent(Plotly)
 
-export type FacetNavPanelOwnProps = {
+export type FacetNavPanelProps = {
   applyChangesToGraphSlice: (
     facet: FacetColumnResultValues,
     value: FacetColumnResultValueCount | undefined,
@@ -43,13 +42,10 @@ export type FacetNavPanelOwnProps = {
   onHide: () => void
   isModalView: boolean
   onCloseModal?: () => void
-  lastQueryRequest: QueryBundleRequest | undefined
 }
 
 const maxLabelLength: number = 19
 const maxLegendLength: number = 30
-
-type FacetNavPanelProps = FacetNavPanelOwnProps & QueryWrapperChildProps
 
 export type PlotType = 'PIE' | 'BAR'
 
@@ -345,17 +341,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     isModalView,
     applyChangesToFacetFilter,
     applyChangesToGraphSlice,
-    isLoadingNewData,
     index,
     facetToPlot,
-    data,
-    isLoading,
-    facetAliases,
-    lastQueryRequest,
     plotType,
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
+  const { data, isLoadingNewBundle, facetAliases, getLastQueryRequest } =
+    useQueryWrapperContext()
   const [plotData, setPlotData] = useState<GraphData>()
   const [showModal, setShowModal] = useState(false)
 
@@ -410,7 +403,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     </div>
   )
 
-  if (isLoadingNewData || !facetToPlot) {
+  if ((!data && isLoadingNewBundle) || !facetToPlot) {
     return (
       <div className="SRC-loadingContainer SRC-centerContentColumn">
         {loadingScreen}
@@ -448,10 +441,11 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         >
           {!isModalView && (
             <div className="FacetNavPanel__title">
-              {!isLoading && (
+              {!data && isLoadingNewBundle ? (
+                <SkeletonInlineBlock width={100} />
+              ) : (
                 <span className="FacetNavPanel__title__name">{plotTitle}</span>
               )}
-              {isLoading && <SkeletonInlineBlock width={100} />}
               <div className="FacetNavPanel__title__tools">
                 <EnumFacetFilter
                   facetValues={facetToPlot.facetValues}
@@ -463,7 +457,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   facetAliases={facetAliases}
                   onChange={(facetNamesMap: {}) => {
                     applyMultipleChangesToValuesColumn(
-                      lastQueryRequest,
+                      getLastQueryRequest(),
                       facetToPlot,
                       applyChangesToFacetFilter,
                       facetNamesMap,
@@ -471,7 +465,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }}
                   onClear={() => {
                     applyChangesToValuesColumn(
-                      lastQueryRequest,
+                      getLastQueryRequest(),
                       facetToPlot,
                       applyChangesToFacetFilter,
                     )
@@ -515,7 +509,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   facetAliases={facetAliases}
                   onChange={(facetNamesMap: {}) => {
                     applyMultipleChangesToValuesColumn(
-                      lastQueryRequest,
+                      getLastQueryRequest(),
                       facetToPlot,
                       applyChangesToFacetFilter,
                       facetNamesMap,
@@ -523,7 +517,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   }}
                   onClear={() => {
                     applyChangesToValuesColumn(
-                      lastQueryRequest,
+                      getLastQueryRequest(),
                       facetToPlot,
                       applyChangesToFacetFilter,
                     )

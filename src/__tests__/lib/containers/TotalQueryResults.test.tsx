@@ -1,40 +1,36 @@
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
 import * as React from 'react'
+import { SynapseConstants } from '../../../lib'
+import {
+  QueryWrapperContextProvider,
+  QueryWrapperContextType,
+} from '../../../lib/containers/QueryWrapper'
 import TotalQueryResults, {
   TotalQueryResultsProps,
 } from '../../../lib/containers/TotalQueryResults'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import {
+  ColumnType,
+  QueryBundleRequest,
   QueryResultBundle,
   RowSet,
-  QueryBundleRequest,
-  ColumnType,
 } from '../../../lib/utils/synapseTypes/'
-import { SynapseConstants } from '../../../lib'
-import { act } from 'react-dom/test-utils'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
 
-const createMountedComponent = (props: TotalQueryResultsProps) => {
-  const wrapper = mount(<TotalQueryResults {...props} />, {
-    wrappingComponent: SynapseTestContext,
-  })
-  return { wrapper }
+function renderComponent(
+  props: TotalQueryResultsProps,
+  queryWrapperContextProps: Partial<QueryWrapperContextType>,
+) {
+  render(
+    <QueryWrapperContextProvider queryWrapperContext={queryWrapperContextProps}>
+      <TotalQueryResults {...props} />
+    </QueryWrapperContextProvider>,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
-const actions = async (
-  wrapper: { update: () => void },
-  _actions: () => void,
-) => {
-  await act(async () => {
-    await new Promise(resolve => setTimeout(resolve, 0))
-    _actions()
-    wrapper.update()
-  })
-}
-
-describe('it works', () => {
+describe('TotalQueryResults test', () => {
   const mockQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: '',
@@ -97,44 +93,21 @@ describe('it works', () => {
     },
   }
 
-  const lastQueryRequest = mockQueryRequest
-  const SynapseClient = require('../../../lib/utils/SynapseClient')
-  const mockGetQueryTableResultsFn = jest
-    .fn()
-    .mockResolvedValue(mockQueryReturn)
-  SynapseClient.getQueryTableResults = mockGetQueryTableResultsFn
+  const queryWrapperContext: Partial<QueryWrapperContextType> = {
+    data: mockQueryReturn,
+    getLastQueryRequest: () => mockQueryRequest,
+    isLoadingNewBundle: false,
+  }
+
   const displayText = 'Displaying'
   const unitDescription = 'units'
   const props: TotalQueryResultsProps = {
     unitDescription,
-    isLoading: false,
-    token: '',
-    lastQueryRequest,
-    frontText: 'Displaying',
+    frontText: displayText,
   }
-  it('renders without crashing', async () => {
-    const { wrapper } = createMountedComponent(props)
-    await actions(wrapper, () => {
-      expect(wrapper).toBeDefined()
-    })
-  })
+  it('Shows the display text, query count, and unit description', async () => {
+    renderComponent(props, queryWrapperContext)
 
-  it('calls synapse with query count part mask', async () => {
-    mockGetQueryTableResultsFn.mockClear()
-    const { wrapper } = createMountedComponent(props)
-    await actions(wrapper, () => {
-      expect(wrapper.find('.SRC-boldText').text()).toContain(
-        `${displayText} ${mockQueryReturn.queryCount} ${unitDescription}`,
-      )
-      expect(mockGetQueryTableResultsFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          partMask:
-            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS,
-        }),
-        MOCK_CONTEXT_VALUE.accessToken,
-      )
-    })
+    await screen.findByText(`Displaying ${mockQueryReturn.queryCount} units`)
   })
 })

@@ -1,22 +1,32 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { FullTextSearch } from '../../../lib/containers/FullTextSearch'
 import {
-  FullTextSearch,
-  FullTextSearchProps,
-} from '../../../lib/containers/FullTextSearch'
+  QueryWrapperContextProvider,
+  QueryWrapperContextType,
+} from '../../../lib/containers/QueryWrapper'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
-const renderComponent = (props: FullTextSearchProps) => {
-  return render(<FullTextSearch {...props} />, {
-    wrapper: createWrapper(),
-  })
+const renderComponent = (
+  defaultQueryWrapperContext: Partial<QueryWrapperContextType>,
+) => {
+  return render(
+    <QueryWrapperContextProvider
+      queryWrapperContext={defaultQueryWrapperContext}
+    >
+      <FullTextSearch />
+    </QueryWrapperContextProvider>,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
 const mockExecuteQueryRequest = jest.fn()
 const mockGetLastQueryRequest = jest.fn()
 
-const defaultProps: FullTextSearchProps = {
+const queryWrapperContext: Partial<QueryWrapperContextType> = {
   topLevelControlsState: {
     showSearchBar: true,
     showFacetFilter: true,
@@ -34,12 +44,12 @@ describe('FullTextSearch tests', () => {
   })
 
   it('shows/hides the search bar based on prop', () => {
-    const component = renderComponent(defaultProps)
+    const component = renderComponent(queryWrapperContext)
 
     component.container.querySelector('.MuiCollapse-entered')
 
     renderComponent({
-      ...defaultProps,
+      ...queryWrapperContext,
       topLevelControlsState: {
         showSearchBar: false, // call under test
         showFacetFilter: true,
@@ -50,7 +60,7 @@ describe('FullTextSearch tests', () => {
   })
 
   it('adds the appropriate QueryFilter when searching', () => {
-    renderComponent(defaultProps)
+    renderComponent(queryWrapperContext)
 
     const searchBox = screen.getByRole('textbox')
 
@@ -73,7 +83,7 @@ describe('FullTextSearch tests', () => {
   })
 
   it('enforces a minimum character requirement', () => {
-    renderComponent(defaultProps)
+    renderComponent(queryWrapperContext)
 
     const searchBox = screen.getByRole('textbox')
 

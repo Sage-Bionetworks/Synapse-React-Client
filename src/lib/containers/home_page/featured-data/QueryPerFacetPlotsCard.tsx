@@ -1,11 +1,10 @@
 import * as React from 'react'
-import QueryWrapper from '../../QueryWrapper'
-import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../../utils'
+import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ErrorBanner } from '../../ErrorBanner'
+import { QueryWrapper, QueryWrapperContextConsumer } from '../../QueryWrapper'
 import FacetPlotsCard from './FacetPlotsCard'
-import { SynapseContextConsumer } from '../../../utils/SynapseContext'
 
 export type QueryPerFacetPlotsCardProps = {
   title?: string
@@ -67,31 +66,25 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProp
     )
     return (
       <div className="QueryPerFacetPlotsCard">
-        <SynapseContextConsumer>
-          {context => (
-            <QueryWrapper
-              {...rest}
-              token={context?.accessToken}
-              initQueryRequest={initQueryRequest}
-            >
-              {queryWrapperChildProps => {
-                return (
-                  <>
-                    <ErrorBanner {...queryWrapperChildProps} />
-                    <FacetPlotsCard
-                      {...queryWrapperChildProps}
-                      title={title}
-                      description={description}
-                      facetsToPlot={facetsToPlot}
-                      rgbIndex={rgbIndex}
-                      detailsPagePath={detailsPagePath}
-                    />
-                  </>
+        <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+          <QueryWrapperContextConsumer>
+            {queryWrapperContext => {
+              if (queryWrapperContext === undefined) {
+                throw new Error(
+                  'No queryWrapperContext found when using QueryWraperContextConsumer',
                 )
-              }}
-            </QueryWrapper>
-          )}
-        </SynapseContextConsumer>
+              }
+              return <ErrorBanner error={queryWrapperContext.error} />
+            }}
+          </QueryWrapperContextConsumer>
+          <FacetPlotsCard
+            title={title}
+            description={description}
+            facetsToPlot={facetsToPlot}
+            rgbIndex={rgbIndex}
+            detailsPagePath={detailsPagePath}
+          />
+        </QueryWrapper>
       </div>
     )
   }

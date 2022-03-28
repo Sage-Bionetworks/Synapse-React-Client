@@ -1,19 +1,32 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import SqlEditor, { SqlEditorProps } from '../../../lib/containers/SqlEditor'
+import {
+  QueryWrapperContextProvider,
+  QueryWrapperContextType,
+} from '../../../lib/containers/QueryWrapper'
+import SqlEditor from '../../../lib/containers/SqlEditor'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
-const renderComponent = (props: SqlEditorProps) => {
-  return render(<SqlEditor {...props} />, {
-    wrapper: createWrapper(),
-  })
+const renderComponent = (
+  defaultQueryWrapperContext: Partial<QueryWrapperContextType>,
+) => {
+  return render(
+    <QueryWrapperContextProvider
+      queryWrapperContext={defaultQueryWrapperContext}
+    >
+      <SqlEditor />
+    </QueryWrapperContextProvider>,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
 const mockExecuteQueryRequest = jest.fn()
 const mockGetLastQueryRequest = jest.fn()
 
-const defaultProps: SqlEditorProps = {
+const defaultQueryWrapperContext: Partial<QueryWrapperContextType> = {
   topLevelControlsState: {
     showSqlEditor: true,
     showFacetFilter: true,
@@ -31,10 +44,10 @@ describe('SqlEditor tests', () => {
   })
 
   it('shows/hides the sql editor based on prop', () => {
-    const component = renderComponent(defaultProps)
+    const component = renderComponent(defaultQueryWrapperContext)
     component.container.querySelector('.MuiCollapse-entered')
     renderComponent({
-      ...defaultProps,
+      ...defaultQueryWrapperContext,
       topLevelControlsState: {
         showSqlEditor: false, // call under test
         showFacetFilter: true,
@@ -44,7 +57,7 @@ describe('SqlEditor tests', () => {
   })
 
   it('edits the sql', () => {
-    renderComponent(defaultProps)
+    renderComponent(defaultQueryWrapperContext)
     const box = screen.getByRole('textbox')
     const newSql = 'select study from syn456'
     userEvent.type(box, newSql + '{enter}')

@@ -5,33 +5,25 @@ import { Collapse } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '../utils/synapseTypes/Table/QueryFilter'
 import {
-  QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-  TopLevelControlsState,
 } from './QueryWrapper'
+import { useQueryWrapperContext } from './QueryWrapper'
 
 library.add(faSearch)
 library.add(faTimes)
 
-// Define the minimum set of props needed for this component
-export type FullTextSearchProps = Pick<
-  QueryWrapperChildProps,
-  'executeQueryRequest' | 'getLastQueryRequest'
-> & {
-  topLevelControlsState?: Pick<
-    TopLevelControlsState,
-    'showSearchBar' | 'showFacetFilter'
-  >
-}
-
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
 
-export function FullTextSearch(props: FullTextSearchProps) {
+export function FullTextSearch() {
+  const {
+    executeQueryRequest,
+    getLastQueryRequest,
+    topLevelControlsState: { showSearchBar, showFacetFilter },
+  } = useQueryWrapperContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const showSearchBar = props?.topLevelControlsState?.showSearchBar
 
   useEffect(() => {
     if (showSearchBar) {
@@ -49,9 +41,7 @@ export function FullTextSearch(props: FullTextSearchProps) {
         `Search term must have a minimum of ${MIN_SEARCH_QUERY_LENGTH} characters`,
       )
     } else {
-      const { executeQueryRequest, getLastQueryRequest } = props
-
-      const lastQueryRequestDeepClone = getLastQueryRequest!()
+      const lastQueryRequestDeepClone = getLastQueryRequest()
 
       const { additionalFilters = [] } = lastQueryRequestDeepClone.query
 
@@ -61,9 +51,11 @@ export function FullTextSearch(props: FullTextSearchProps) {
         searchExpression: searchText,
       }
       // PORTALS-2093: does this additional filter already exist?
-      const found = additionalFilters.find(filter =>
-        filter.concreteType == textMatchesQueryFilter.concreteType &&
-        (filter as TextMatchesQueryFilter).searchExpression == textMatchesQueryFilter.searchExpression
+      const found = additionalFilters.find(
+        filter =>
+          filter.concreteType == textMatchesQueryFilter.concreteType &&
+          (filter as TextMatchesQueryFilter).searchExpression ==
+            textMatchesQueryFilter.searchExpression,
       )
       if (found) {
         return
@@ -71,7 +63,7 @@ export function FullTextSearch(props: FullTextSearchProps) {
       additionalFilters.push(textMatchesQueryFilter)
 
       lastQueryRequestDeepClone.query.additionalFilters = additionalFilters
-      executeQueryRequest!(lastQueryRequestDeepClone)
+      executeQueryRequest(lastQueryRequestDeepClone)
       // reset the search text after adding this filter
       setSearchText('')
     }
@@ -82,9 +74,6 @@ export function FullTextSearch(props: FullTextSearchProps) {
     setSearchText(event.currentTarget.value)
   }
 
-  const { topLevelControlsState } = props
-
-  const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (
     <div
       className={`QueryWrapperTextInput ${
@@ -93,10 +82,7 @@ export function FullTextSearch(props: FullTextSearchProps) {
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
     >
-      <Collapse
-        in={topLevelControlsState?.showSearchBar}
-        timeout={{ enter: 300, exit: 300 }}
-      >
+      <Collapse in={showSearchBar} timeout={{ enter: 300, exit: 300 }}>
         <form className="QueryWrapperTextInput__searchbar" onSubmit={search}>
           <FontAwesomeIcon
             className="QueryWrapperTextInput__searchbar__searchicon"

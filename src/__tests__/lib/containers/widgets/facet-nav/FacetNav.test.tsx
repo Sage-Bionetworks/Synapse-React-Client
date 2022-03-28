@@ -12,6 +12,10 @@ import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFace
 import { SynapseConstants } from '../../../../../lib'
 import userEvent from '@testing-library/user-event'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
+import {
+  QueryWrapperContextProvider,
+  QueryWrapperContextType,
+} from '../../../../../lib/containers/QueryWrapper'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -25,8 +29,8 @@ const lastQueryRequest: QueryBundleRequest = {
 }
 const mockGetLastQueryRequest = jest.fn(() => lastQueryRequest)
 
-const defaultProps: FacetNavProps = {
-  isLoading: false,
+const defaultQueryWrapperContext: Partial<QueryWrapperContextType> = {
+  isLoadingNewBundle: false,
   getLastQueryRequest: mockGetLastQueryRequest,
   data: testData as QueryResultBundle,
   topLevelControlsState: {
@@ -37,13 +41,6 @@ const defaultProps: FacetNavProps = {
     showDownloadConfirmation: false,
     showColumnSelectDropdown: false,
   },
-}
-
-function createTestProps(overrides?: FacetNavProps): FacetNavProps {
-  return {
-    ...defaultProps,
-    ...overrides,
-  }
 }
 
 function getButtonOnFacet(
@@ -58,11 +55,23 @@ function getButtonOnFacet(
   }
 }
 
-function init(overrides?: FacetNavProps) {
-  const props = createTestProps(overrides)
-  render(<FacetNav {...props} />, {
-    wrapper: SynapseTestContext,
-  })
+function init(
+  props?: FacetNavProps,
+  queryWrapperContextProps?: Partial<QueryWrapperContextType>,
+) {
+  render(
+    <QueryWrapperContextProvider
+      queryWrapperContext={{
+        ...defaultQueryWrapperContext,
+        ...queryWrapperContextProps,
+      }}
+    >
+      <FacetNav {...props} />
+    </QueryWrapperContextProvider>,
+    {
+      wrapper: SynapseTestContext,
+    },
+  )
 }
 
 describe('facets display hide/show', () => {
@@ -81,7 +90,7 @@ describe('facets display hide/show', () => {
 
     userEvent.click(showMoreButton)
 
-    const expectedLength = defaultProps.data?.facets?.filter(
+    const expectedLength = defaultQueryWrapperContext.data?.facets?.filter(
       facet => facet.facetType === 'enumeration',
     ).length
 
@@ -93,9 +102,9 @@ describe('facets display hide/show', () => {
   })
 
   it('if there are only 2 facets show more button should not exist', async () => {
-    const data = cloneDeep(defaultProps.data)
+    const data = cloneDeep(defaultQueryWrapperContext.data)
     data!.facets = data?.facets?.splice(0, 2)
-    init({
+    init(undefined, {
       data: data,
     })
     expect(() => screen.getByText('View All Charts')).toThrowError()

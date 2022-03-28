@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { shallow, ShallowWrapper } from 'enzyme'
+import { mount } from 'enzyme'
 import {
   QueryFilterProps,
   QueryFilter,
@@ -9,7 +9,13 @@ import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
 import _ from 'lodash-es'
 
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
-import { QueryWrapperChildProps } from '../../../../../lib/containers/QueryWrapper'
+import {
+  QueryWrapperContextProvider,
+  QueryWrapperContextType,
+} from '../../../../../lib/containers/QueryWrapper'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import { act } from 'react-dom/test-utils'
 
 const lastQueryRequestResult = {
   partMask: 53,
@@ -40,42 +46,54 @@ const lastQueryRequestResult = {
 const mockExecuteQueryRequest = jest.fn(_selectedFacets => null)
 const mockGetQueryRequest = jest.fn(() => _.cloneDeep(lastQueryRequestResult))
 
-function createTestProps(overrides?: QueryFilterProps & QueryWrapperChildProps): QueryFilterProps & QueryWrapperChildProps {
+function createTestProps(overrides?: QueryFilterProps): QueryFilterProps {
   return {
-    isLoading: false,
-    data: mockQueryResponseData as QueryResultBundle,
-    getLastQueryRequest: mockGetQueryRequest,
-    executeQueryRequest: mockExecuteQueryRequest,
-    token: '123',
-    topLevelControlsState : {
-      showColumnFilter: true,
-      showFacetFilter: true,
-      showFacetVisualization: true,
-      showSearchBar: false,
-      showDownloadConfirmation: false,
-      showColumnSelectDropdown: false,
-    },
     ...overrides,
   }
 }
 
-let wrapper: ShallowWrapper<
-  React.FunctionComponent<QueryFilterProps>,
-  any,
-  Readonly<{}>
->
-let props: QueryFilterProps & QueryWrapperChildProps
-
-function init(overrides?: QueryFilterProps & QueryWrapperChildProps) {
-  jest.clearAllMocks()
-  props = createTestProps(overrides)
-  wrapper = shallow(<QueryFilter {...props} />)
+const defaultQueryWrapperContext: Partial<QueryWrapperContextType> = {
+  data: mockQueryResponseData as QueryResultBundle,
+  getLastQueryRequest: mockGetQueryRequest,
+  executeQueryRequest: mockExecuteQueryRequest,
+  isLoadingNewBundle: false,
+  topLevelControlsState: {
+    showColumnFilter: true,
+    showFacetFilter: true,
+    showFacetVisualization: true,
+    showSearchBar: false,
+    showDownloadConfirmation: false,
+    showColumnSelectDropdown: false,
+  },
 }
 
-beforeEach(() => init())
+let props: QueryFilterProps
+
+function init(overrides?: QueryFilterProps) {
+  jest.clearAllMocks()
+  props = createTestProps(overrides)
+  return mount(<QueryFilter {...props} />, {
+    wrappingComponent: ({ synapseContext, queryWrapperContext, children }) => {
+      return (
+        <SynapseContextProvider synapseContext={synapseContext}>
+          <QueryWrapperContextProvider
+            queryWrapperContext={queryWrapperContext}
+          >
+            {children}
+          </QueryWrapperContextProvider>
+        </SynapseContextProvider>
+      )
+    },
+    wrappingComponentProps: {
+      synapseContext: MOCK_CONTEXT_VALUE,
+      queryWrapperContext: defaultQueryWrapperContext,
+    },
+  })
+}
 
 describe('initialization', () => {
   it('should initiate selected items correctly', async () => {
+    const wrapper = init()
     const enumFacets = mockQueryResponseData.facets.filter(
       facet => facet.facetType === 'enumeration',
     )
@@ -87,6 +105,8 @@ describe('initialization', () => {
   })
 
   it('should only expand the first three collapsible facets', async () => {
+    const wrapper = init()
+
     const facets = wrapper.children()
     facets.forEach((facet, index) => {
       if (index === 0) return // title
@@ -100,15 +120,16 @@ describe('initialization', () => {
 
   it('should respect facetsToFilter', async () => {
     // set facetsToFilter to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
-    init({facetsToFilter: ['Year']})
+    const wrapper = init({ facetsToFilter: ['Year'] })
     expect(wrapper.find('EnumFacetFilter').exists()).toBeFalsy()
     expect(wrapper.find('RangeFacetFilter').exists()).toBeTruthy()
   })
 })
 
-
 describe('handling child component callbacks', () => {
   it('should propagate enum update correctly', async () => {
+    const wrapper = init()
+
     const expectedResult = [
       {
         columnName: 'Make',
@@ -126,13 +147,17 @@ describe('handling child component callbacks', () => {
     ]
 
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    enumWrapper.simulate('change', { Ford: true })
+    act(() => {
+      enumWrapper.props()['onChange']({ Ford: true })
+    })
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
 
   it('should propagate enum clear correctly', async () => {
+    const wrapper = init()
+
     const expectedResult = [
       {
         columnName: 'Year',
@@ -143,13 +168,17 @@ describe('handling child component callbacks', () => {
       },
     ]
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    enumWrapper.simulate('clear')
+    act(() => {
+      enumWrapper.props()['onClear']()
+    })
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
 
   it('should propagate range correctly', async () => {
+    const wrapper = init()
+
     const expectedResult = [
       {
         columnName: 'Make',
@@ -166,7 +195,9 @@ describe('handling child component callbacks', () => {
       },
     ]
     const enumWrapper = wrapper.find('RangeFacetFilter').at(0)
-    enumWrapper.simulate('change', ['1997', '1998'])
+    act(() => {
+      enumWrapper.props()['onChange'](['1997', '1998'])
+    })
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)

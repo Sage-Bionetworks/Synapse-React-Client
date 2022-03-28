@@ -1,11 +1,10 @@
 import * as React from 'react'
-import QueryWrapper from '../../QueryWrapper'
+import { QueryWrapper, QueryWrapperContextConsumer } from '../../QueryWrapper'
 import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../../utils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ErrorBanner } from '../../ErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
-import { SynapseContextConsumer } from '../../../utils/SynapseContext'
 
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
@@ -36,33 +35,27 @@ const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsC
     const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
     return (
       <div className="SingleQueryFacetPlotsCards">
-        <SynapseContextConsumer>
-          {context => (
-            <QueryWrapper
-              {...rest}
-              token={context?.accessToken}
-              initQueryRequest={initQueryRequest}
-            >
-              {queryWrapperChildProps => {
-                return (
-                  <>
-                    <ErrorBanner {...queryWrapperChildProps} />
-                    {facetsToPlot?.map(facetName => {
-                      return (
-                        <FacetPlotsCard
-                          {...queryWrapperChildProps}
-                          key={`FacetPlotCard-${facetName}`}
-                          facetsToPlot={[facetName]}
-                          rgbIndex={rgbIndex}
-                        />
-                      )
-                    })}
-                  </>
+        <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+          <QueryWrapperContextConsumer>
+            {queryWrapperContext => {
+              if (queryWrapperContext === undefined) {
+                throw new Error(
+                  'No queryWrapperContext found when using QueryWraperContextConsumer',
                 )
-              }}
-            </QueryWrapper>
-          )}
-        </SynapseContextConsumer>
+              }
+              return <ErrorBanner error={queryWrapperContext.error} />
+            }}
+          </QueryWrapperContextConsumer>
+          {facetsToPlot?.map(facetName => {
+            return (
+              <FacetPlotsCard
+                key={`FacetPlotCard-${facetName}`}
+                facetsToPlot={[facetName]}
+                rgbIndex={rgbIndex}
+              />
+            )
+          })}
+        </QueryWrapper>
       </div>
     )
   }

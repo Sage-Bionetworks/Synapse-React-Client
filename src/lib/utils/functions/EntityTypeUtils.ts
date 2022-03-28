@@ -1,6 +1,8 @@
 import {
+  Entity,
   EntityHeader,
   EntityType,
+  EntityView,
   ENTITY_CONCRETE_TYPE,
   ProjectHeader,
 } from '../synapseTypes'
@@ -131,4 +133,14 @@ export function isVersionableEntityType(type: EntityType): boolean {
     default:
       throw new Error(`Unknown entity type: ${type}`)
   }
+}
+
+export function isEntityView(entity: Entity): entity is EntityView {
+  return (
+    entity.concreteType === 'org.sagebionetworks.repo.model.table.EntityView'
+  )
+}
+
+export function hasFilesInView(entity: EntityView) {
+  return (entity.viewTypeMask & 0x01) != 0
 }

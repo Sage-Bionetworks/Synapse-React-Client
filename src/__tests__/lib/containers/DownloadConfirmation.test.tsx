@@ -5,6 +5,11 @@ import {
   DownloadConfirmation,
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
+import {
+  QueryWrapper,
+  QueryWrapperContextProvider,
+  QueryWrapperContextType,
+} from '../../../lib/containers/QueryWrapper'
 import { displayToast } from '../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
@@ -14,7 +19,6 @@ import { AddToDownloadListResponse } from '../../../lib/utils/synapseTypes/Downl
 import { FilesStatisticsResponse } from '../../../lib/utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 
-let getQueryTableResultsFn: jest.Mock
 let getDownloadListStatisticsResultsFn: jest.Mock
 let addFilesToDownloadRequestFn: jest.Mock
 const SynapseClient = require('../../../lib/utils/SynapseClient')
@@ -28,13 +32,6 @@ const mockToastFn = displayToast
 
 const query = {
   sql: 'SELECT * FROM syn123456789',
-}
-
-const mockGetQueryTableRequest = {
-  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  entityId: 'syn123456789',
-  partMask: 64 + 2,
-  query,
 }
 
 const queryBundleRequest: QueryBundleRequest = {
@@ -73,13 +70,26 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   numberOfFilesAdded: 1,
 }
 
+const queryWrapperContext: Partial<QueryWrapperContextType> = {
+  getLastQueryRequest: () => queryBundleRequest,
+  data: queryBundleResponse,
+  topLevelControlsState: {
+    showDownloadConfirmation: true,
+  },
+}
+
 function renderComponent(
   componentProps?: DownloadConfirmationProps,
   wrapperProps?: SynapseContextType,
 ) {
-  return render(<DownloadConfirmation {...componentProps} />, {
-    wrapper: createWrapper(wrapperProps),
-  })
+  return render(
+    <QueryWrapperContextProvider queryWrapperContext={queryWrapperContext}>
+      <DownloadConfirmation {...componentProps} />
+    </QueryWrapperContextProvider>,
+    {
+      wrapper: createWrapper(wrapperProps),
+    },
+  )
 }
 
 describe('DownloadConfirmation', () => {
@@ -88,16 +98,12 @@ describe('DownloadConfirmation', () => {
     .mockResolvedValue(addFilesToDownloadListResponse)
 
   TestDownloadSpeed.testDownloadSpeed = jest.fn().mockResolvedValue(55)
-  getQueryTableResultsFn = SynapseClient.getQueryTableResults = jest
-    .fn()
-    .mockResolvedValue(queryBundleResponse)
 
   getDownloadListStatisticsResultsFn = SynapseClient.getDownloadListStatistics =
     jest.fn().mockResolvedValue(filesStatisticsResponse)
 
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
-    getLastQueryRequest: () => queryBundleRequest,
   }
 
   beforeEach(() => {
@@ -108,7 +114,6 @@ describe('DownloadConfirmation', () => {
     renderComponent(props)
     screen.getByRole('alert')
     screen.getByRole('button', { name: 'Cancel' })
-    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
   })
 
   it("should call the 'close' function on cancel", () => {
@@ -119,14 +124,7 @@ describe('DownloadConfirmation', () => {
 
   it("should call getQueryTableResults with correct params and show 'add' and 'cancel' buttons once info is loaded", async () => {
     renderComponent(props)
-    await waitFor(() =>
-      expect(getQueryTableResultsFn).toHaveBeenCalledWith(
-        mockGetQueryTableRequest,
-        MOCK_CONTEXT_VALUE.accessToken,
-      ),
-    )
-    expect(getQueryTableResultsFn).toHaveBeenCalledTimes(1)
-    expect(screen.getAllByRole('button')).toHaveLength(2)
+    await waitFor(() => expect(screen.getAllByRole('button')).toHaveLength(2))
     screen.getByRole('button', { name: 'Cancel' })
     screen.getByRole('button', { name: 'Add' })
   })

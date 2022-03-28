@@ -1,6 +1,7 @@
 import { View } from './View'
 
-export type ENTITY_VIEW_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.table.EntityView'
+export type ENTITY_VIEW_CONCRETE_TYPE =
+  'org.sagebionetworks.repo.model.table.EntityView'
 
 export interface EntityView extends View {
   concreteType: ENTITY_VIEW_CONCRETE_TYPE

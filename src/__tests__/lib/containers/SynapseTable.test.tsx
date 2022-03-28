@@ -6,7 +6,7 @@ import { SynapseConstants } from '../../../lib'
 import { EntityLink } from '../../../lib/containers/EntityLink'
 import HasAccess from '../../../lib/containers/HasAccess'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
-import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
+import { QueryWrapperContextType } from '../../../lib/containers/QueryWrapper'
 import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
 import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
 import { SynapseTableCell } from '../../../lib/containers/synapse_table_functions/SynapseTableCell'
@@ -30,12 +30,11 @@ import {
   UserProfile,
 } from '../../../lib/utils/synapseTypes/'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import syn16787123Json from '../../../mocks/query/syn16787123.json'
+import queryResultBundle from '../../../mocks/query/syn16787123'
 
-const createShallowComponent = (
-  props: SynapseTableProps & QueryWrapperChildProps,
-) => {
+const createShallowComponent = (props: SynapseTableProps) => {
   const wrapper = mount<SynapseTable>(<SynapseTable {...props} />, {
+    // While the SynapseContext is passed as a prop to SynapseTable, SynapseTable renders child components that rely on the context
     wrappingComponent: SynapseContextProvider,
     wrappingComponentProps: {
       synapseContext: MOCK_CONTEXT_VALUE,
@@ -46,11 +45,8 @@ const createShallowComponent = (
 }
 
 describe('basic functionality', () => {
-  const SynapseClient = require('../../../lib/utils/SynapseClient')
   // setup tests
   const title = 'studies'
-  const synapseId = 'syn16787123'
-  const castData = syn16787123Json
   const totalColumns = 13
   const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -94,15 +90,22 @@ describe('basic functionality', () => {
   const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
   const executeQueryRequest = jest.fn()
 
-  const props = {
-    lastQueryRequest,
+  const queryWrapperContext: Partial<QueryWrapperContextType> = {
+    data: queryResultBundle,
+    entity: {
+      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+    },
     getLastQueryRequest,
     executeQueryRequest,
-    synapseId,
-    title,
-    chartSelectionIndex: 0,
     isAllFilterSelectedForFacet: {},
-    data: castData,
+    chartSelectionIndex: 0,
+    columnsToShowInTable: [
+      'projectStatus',
+      'dataStatus',
+      'fundingAgency',
+      'tumorType',
+      'diseaseFocus',
+    ],
     topLevelControlsState: {
       showColumnFilter: true,
       showFacetFilter: true,
@@ -110,16 +113,16 @@ describe('basic functionality', () => {
       showSearchBar: false,
       showDownloadConfirmation: false,
       showColumnSelectDropdown: false,
+      showSqlEditor: false,
     },
-    isColumnSelected: [
-      'projectStatus',
-      'dataStatus',
-      'fundingAgency',
-      'tumorType',
-      'diseaseFocus',
-    ],
+  }
+
+  const props: SynapseTableProps = {
+    synapseContext: MOCK_CONTEXT_VALUE,
+    queryWrapperContext: queryWrapperContext,
+    title,
     facet: 'tumorType',
-  } as SynapseTableProps & QueryWrapperChildProps
+  }
 
   it('renders without crashing', async () => {
     const { wrapper } = createShallowComponent(props)
@@ -129,37 +132,17 @@ describe('basic functionality', () => {
   it('Does not renders HasAccess when the entity type is not EntityView', async () => {
     const { wrapper, instance } = createShallowComponent({
       ...props,
+      queryWrapperContext: {
+        ...props.queryWrapperContext,
+        entity: {
+          concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+        },
+      },
+      // showAccessColumn should be overriden
       showAccessColumn: true,
     })
     expect(wrapper).toBeDefined()
-    expect(instance.state.isFileView).toEqual(false)
     expect(wrapper.find(HasAccess)).toHaveLength(0)
-  })
-
-  it('updates correctly', async () => {
-    const mockEntityCall = jest.fn().mockResolvedValue({
-      concreteType: 'EntityView',
-    })
-    SynapseClient.getEntity = mockEntityCall
-    const { wrapper, instance } = createShallowComponent(props)
-    expect(wrapper).toBeDefined()
-    const newTableId = 'syn123'
-    // setup data
-    const dataWithNewTableId = cloneDeep(syn16787123Json) as QueryResultBundle
-    dataWithNewTableId.queryResult.queryResults.tableId = 'syn123'
-    // listen to function call
-
-    await wrapper.setProps({
-      data: dataWithNewTableId,
-    })
-    // since we now disable lifecycle methods during construction (because of DOM interaction for column-resizer), manually call update functions
-    instance.getEntityHeadersInData(true)
-    instance.getTableConcreteType(props)
-
-    expect(mockEntityCall).toHaveBeenCalledWith(
-      MOCK_CONTEXT_VALUE.accessToken,
-      newTableId,
-    )
   })
 
   describe('unCamelCase', () => {
@@ -365,7 +348,7 @@ describe('basic functionality', () => {
     const MOCKED_BOOLEAN_LIST = '[true, false]'
     const MOCKED_INTEGER_LIST = '[10, 11]'
     const MOCKED_NUM = 1
-    // syn16787123Json has two columns of type entity, the second
+    // The query result bundle has two columns of type entity, the second
     // is of type ENTITYID, the third is USERID
     const mockData: QueryResultBundle = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -611,7 +594,7 @@ describe('basic functionality', () => {
         columnModels: undefined,
         isEntityView: mockIsEntityView,
         rowId: mockRowId,
-        rowVersionNumber: mockRowVersion
+        rowVersionNumber: mockRowVersion,
       }
 
       it('renders an entity link', () => {
@@ -629,9 +612,9 @@ describe('basic functionality', () => {
         const tableCell = shallow(
           <SynapseTableCell
             {...tableCellProps}
-            columnName='name'
+            columnName="name"
             columnType={ColumnType.STRING}
-            columnValue='My amazing project folder'
+            columnValue="My amazing project folder"
             mapEntityIdToHeader={mapEntityIdToHeader}
             isEntityView={true}
           />,

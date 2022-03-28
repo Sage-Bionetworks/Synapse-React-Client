@@ -22,10 +22,10 @@ import {
 } from '../utils/synapseTypes/Table/QueryFilter'
 import {
   LockedFacet,
-  QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from './QueryWrapper'
+import { QueryWrapperContextType } from './QueryWrapper'
 
 library.add(faCaretDown)
 library.add(faCaretUp)
@@ -52,9 +52,10 @@ export type SearchV2Props = {
   defaultColumn?: string
   searchable?: SearchableColumnsV2
   lockedFacet?: LockedFacet
+  queryWrapperContext: QueryWrapperContextType
 }
 
-type InternalSearchProps = QueryWrapperChildProps & SearchV2Props
+type InternalSearchProps = SearchV2Props
 
 class Search extends React.Component<InternalSearchProps, SearchState> {
   public searchFormRef: React.RefObject<HTMLFormElement>
@@ -79,8 +80,8 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   componentDidUpdate(prevProps: InternalSearchProps) {
     if (
-      !prevProps.topLevelControlsState?.showSearchBar &&
-      this.props.topLevelControlsState?.showSearchBar
+      !prevProps.queryWrapperContext?.topLevelControlsState.showSearchBar &&
+      this.props.queryWrapperContext?.topLevelControlsState.showSearchBar
     ) {
       this.setState({
         show: true,
@@ -129,16 +130,18 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
       } else {
         // Otherwise, get the first column model that can be searched.
         // And for study details page: if lockedFacet is defined, remove it from the search
-        const searchableColumnModels = this.props.data?.columnModels
-          ?.filter(el => el.name !== lockedFacet?.facet)
-          .filter(el => this.isSupportedColumn(el))
+        const searchableColumnModels =
+          this.props.queryWrapperContext?.data?.columnModels
+            ?.filter(el => el.name !== lockedFacet?.facet)
+            .filter(el => this.isSupportedColumn(el))
         columnName = searchableColumnModels?.[0].name ?? ''
       }
     }
     this.setState({
       show: false,
     })
-    const { executeQueryRequest, getLastQueryRequest } = this.props
+    const { executeQueryRequest, getLastQueryRequest } =
+      this.props.queryWrapperContext!
 
     const lastQueryRequestDeepClone = getLastQueryRequest!()
 
@@ -157,7 +160,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     if (indexOfColumn === -1) {
       // get the column model to figure out what kind of filter we should apply.
       const columnModel: ColumnModel | undefined =
-        this.props.data?.columnModels?.filter(el => el.name === columnName)[0]
+        this.props.queryWrapperContext?.data?.columnModels?.filter(
+          el => el.name === columnName,
+        )[0]
       if (columnModel?.columnType.endsWith('_LIST')) {
         const columnMultiValueQueryFilter: ColumnMultiValueFunctionQueryFilter =
           {
@@ -219,11 +224,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
 
   render() {
     const {
-      data,
-      topLevelControlsState,
-      facetAliases,
       searchable,
       lockedFacet,
+      queryWrapperContext: { data, topLevelControlsState, facetAliases },
     } = this.props
     const { searchText, show, columnName } = this.state
     let searchColumns: string[] = []

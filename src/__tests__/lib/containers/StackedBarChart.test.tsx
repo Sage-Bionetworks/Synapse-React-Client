@@ -5,14 +5,11 @@ import StackedBarChart, {
   NEXT_CLICK,
   PREVIOUS_ITEM_CLICK,
 } from '../../../lib/containers/StackedBarChart'
-import syn16787123Json from '../../../mocks/query/syn16787123.json'
-import { QueryWrapperChildProps } from '../../../lib/containers/QueryWrapper'
+import syn16787123Json from '../../../mocks/query/syn16787123'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import { SynapseConstants } from '../../../lib'
 
-const createShallowComponent = (
-  props: StackedBarChartProps & QueryWrapperChildProps,
-) => {
+const createShallowComponent = (props: StackedBarChartProps) => {
   const wrapper = shallow(<StackedBarChart {...props} />)
   const instance = wrapper.instance() as StackedBarChart
   return { wrapper, instance }
@@ -93,18 +90,20 @@ describe('it performs basic functionality', () => {
   const getLastQueryRequest = jest.fn(() => lastQueryRequest)
   const unitDescription = 'types'
   // setup tests stubs
-  const props = {
-    facet,
+  const props: StackedBarChartProps = {
     unitDescription,
-    getLastQueryRequest,
-    data: castData,
-    isAllFilterSelectedForFacet: {},
     synapseId: 'syn16787123',
     loadingScreen: <div />,
     isChecked: [],
-    chartSelectionIndex: 0,
-    updateParentState: jest.fn(() => {}),
-  } as StackedBarChartProps & QueryWrapperChildProps
+    facet,
+    queryWrapperContext: {
+      data: castData,
+      getLastQueryRequest,
+      chartSelectionIndex: 0,
+      isAllFilterSelectedForFacet: {},
+      setChartSelectionIndex: jest.fn(),
+    },
+  }
 
   it('renders without crashing', () => {
     const { wrapper } = createShallowComponent(props)

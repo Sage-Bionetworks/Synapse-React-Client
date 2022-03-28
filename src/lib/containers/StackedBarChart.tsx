@@ -4,16 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import ReactMeasure from 'react-measure'
 import ReactTooltip from 'react-tooltip'
-import { getColorPalette } from './ColorGradient'
-import { QueryWrapperChildProps } from './QueryWrapper'
+import { SynapseConstants } from '../utils'
+import { getIsValueSelected } from '../utils/functions/facetUtils'
+import { unCamelCase } from '../utils/functions/unCamelCase'
 import {
   FacetColumnResultValueCount,
   QueryResultBundle,
 } from '../utils/synapseTypes/'
-import { getIsValueSelected } from '../utils/functions/facetUtils'
-import { unCamelCase } from '../utils/functions/unCamelCase'
+import { getColorPalette } from './ColorGradient'
 import loadingScreen from './LoadingScreen'
-import { SynapseConstants } from '../utils'
+import { QueryWrapperContextType } from './QueryWrapper'
 library.add(faAngleLeft)
 library.add(faAngleRight)
 
@@ -39,8 +39,12 @@ export type StackedBarChartState = {
 }
 
 export type StackedBarChartProps = {
+  queryWrapperContext: QueryWrapperContextType
+  facet?: string
   link?: string
   linkText?: string
+  rgbIndex: number
+  unitDescription: string
 }
 
 type Info = {
@@ -49,7 +53,6 @@ type Info = {
   index: number
 }
 
-type InternalProps = StackedBarChartProps & QueryWrapperChildProps
 /**
  * Make a simple stacked bar chart
  *
@@ -57,10 +60,10 @@ type InternalProps = StackedBarChartProps & QueryWrapperChildProps
  * @extends {React.Component}
  */
 export default class StackedBarChart extends React.Component<
-  InternalProps,
+  StackedBarChartProps,
   StackedBarChartState
 > {
-  constructor(props: InternalProps) {
+  constructor(props: StackedBarChartProps) {
     super(props)
     this.handleHover = this.handleHover.bind(this)
     this.handleExit = this.handleExit.bind(this)
@@ -105,38 +108,38 @@ export default class StackedBarChart extends React.Component<
   /**
    * Handle column click event
    */
-  public handleClick = (dict: Info) => (
-    _event: React.MouseEvent<SVGElement>,
-  ) => {
-    // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
-    this.props.updateParentState!({ chartSelectionIndex: dict.index })
-  }
-
-  public handleArrowClick = (direction: string) => (
-    _event: React.MouseEvent,
-  ) => {
-    let { chartSelectionIndex = 0 } = this.props
-    let dict: any = this.extractPropsData(this.props.data)
-    const length = Object.keys(dict).length
-    if (direction === PREVIOUS_ITEM_CLICK) {
-      chartSelectionIndex -= 1
-      // if its at zero then we want to wrap around to the end
-      chartSelectionIndex =
-        chartSelectionIndex < 0 ? length - 1 : chartSelectionIndex
-    } else {
-      chartSelectionIndex += 1
+  public handleClick =
+    (dict: Info) => (_event: React.MouseEvent<SVGElement>) => {
+      // https://medium.freecodecamp.org/reactjs-pass-parameters-to-event-handlers-ca1f5c422b9
+      this.props.queryWrapperContext.setChartSelectionIndex(dict.index)
     }
-    chartSelectionIndex = chartSelectionIndex % length
 
-    dict = dict[chartSelectionIndex]
-    this.props.updateParentState!({ chartSelectionIndex })
-    // return is only for testing purposes
-    return chartSelectionIndex
-  }
+  public handleArrowClick =
+    (direction: string) => (_event: React.MouseEvent) => {
+      let { chartSelectionIndex = 0 } = this.props.queryWrapperContext
+      let dict: any = this.extractPropsData(this.props.queryWrapperContext.data)
+      const length = Object.keys(dict).length
+      if (direction === PREVIOUS_ITEM_CLICK) {
+        chartSelectionIndex -= 1
+        // if its at zero then we want to wrap around to the end
+        chartSelectionIndex =
+          chartSelectionIndex < 0 ? length - 1 : chartSelectionIndex
+      } else {
+        chartSelectionIndex += 1
+      }
+      chartSelectionIndex = chartSelectionIndex % length
+
+      dict = dict[chartSelectionIndex]
+      this.props.queryWrapperContext.setChartSelectionIndex(chartSelectionIndex)
+      // return is only for testing purposes
+      return chartSelectionIndex
+    }
 
   public getTextForChartSelection(xData: any) {
-    const { chartSelectionIndex = 0 } = this.props
-    const { facetAliases = {}, facet } = this.props
+    const {
+      facet,
+      queryWrapperContext: { chartSelectionIndex = 0, facetAliases = {} },
+    } = this.props
     const facetValueDisplay =
       xData[chartSelectionIndex] && xData[chartSelectionIndex].value
     const filterDisplay = facetAliases[facet!] || unCamelCase(facet)
@@ -156,25 +159,27 @@ export default class StackedBarChart extends React.Component<
   }
 
   public getFileCount(xData: any) {
-    const { chartSelectionIndex = 1 } = this.props
+    const { chartSelectionIndex = 1 } = this.props.queryWrapperContext
     return xData[chartSelectionIndex] && xData[chartSelectionIndex].count
   }
 
   public render() {
     const {
-      data,
-      isLoadingNewData,
       rgbIndex,
       facet = '',
       unitDescription,
-      isLoading,
-      lastFacetSelection,
-      isAllFilterSelectedForFacet,
-      chartSelectionIndex,
-      asyncJobStatus,
+      queryWrapperContext: {
+        data,
+        isLoadingNewBundle,
+        isLoadingNewPage,
+        lastFacetSelection,
+        isAllFilterSelectedForFacet,
+        chartSelectionIndex,
+        asyncJobStatus,
+      },
     } = this.props
     // while loading
-    if (isLoadingNewData) {
+    if (isLoadingNewBundle) {
       return (
         <div className="SRC-loadingContainer SRC-centerContentColumn">
           {loadingScreen}
@@ -183,24 +188,24 @@ export default class StackedBarChart extends React.Component<
       )
     }
     const xData = this.extractPropsData(data)
-    let total: number = 0
-    const width: number = this.state.dimensions.bounds!.width
+    let total = 0
+    const width: number = this.state.dimensions.bounds.width
     // sum up the counts of data
     for (const key in xData) {
       if (xData.hasOwnProperty(key)) {
         total += xData[key].count
       }
     }
-    const { colorPalette, textColors } = getColorPalette(
-      rgbIndex!,
-      xData.length,
-    )
+    const { colorPalette, textColors } = getColorPalette(rgbIndex, xData.length)
     const originalColor = colorPalette[0]
 
     return (
       <React.Fragment>
         {/* TODO: Refactor the chart into its own component */}
-        <div className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top" data-testid='StackedBarChart'>
+        <div
+          className="SRC-bar-border SRC-bar-marginTop SRC-bar-border-top"
+          data-testid="StackedBarChart"
+        >
           <ReactMeasure
             bounds={true}
             onResize={(contentRect: any) => {
@@ -213,10 +218,10 @@ export default class StackedBarChart extends React.Component<
                   const textColor: string = textColors[index]
                   const rgbColor: string = colorPalette[index]
                   let rectStyle: any
-                  const isValueSelected = isAllFilterSelectedForFacet![facet]
+                  const isValueSelected = isAllFilterSelectedForFacet[facet]
                     ? true
                     : getIsValueSelected({
-                        isLoading,
+                        isLoading: isLoadingNewPage,
                         lastFacetSelection,
                         columnName: facet,
                         curFacetSelection: obj,
@@ -236,12 +241,12 @@ export default class StackedBarChart extends React.Component<
                   if (chartSelectionIndex === index) {
                     style.filter = 'drop-shadow(5px 5px 5px rgba(0,0,0,0.5))'
                   }
-                  const label: string = `${facet}: ${obj.value}  - ${obj.count} ${unitDescription}`
+                  const label = `${facet}: ${obj.value}  - ${obj.count} ${unitDescription}`
                   // there was one bug where a new line character was in the obj.value, making data-for
                   // break because its a special character, below we remove that
                   const tooltipId = obj.value.replace(/(\r\n|\n|\r)/gm, '')
                   // basic heuristic to calculate the number of pixels needed to show the value on the bar chart
-                  const value = obj.count as number
+                  const value = obj.count
                   const numCharsInValue = value.toString().length * 4.5 // represents width of a character
 
                   return (

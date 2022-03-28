@@ -85,7 +85,7 @@ export const getWhereInsertIndex = (tokens: string[][]): number => {
 }
 
 // This will construct a sql query by adding the conditions in searchParams
-// to the WHERE clause, preserving all other clauses.  
+// to the WHERE clause, preserving all other clauses.
 // If the searchParams are not defined, this will simply return the given sql.
 export const insertConditionsFromSearchParams = (
   sql: string,
@@ -175,6 +175,13 @@ export const formatSQLFromParser = (tokens: string[][]) => {
 //look for a pattern of 'from[some number of spaces]syn[somenumbers]` case insensitive
 export const parseEntityIdFromSqlStatement = (sql: string): string => {
   const matches = sql.match(/(from)\s+(syn)\d+/gi)
+  return matches && matches[0] ? matches[0].substr(5).trim() : ''
+}
+
+export const parseEntityIdAndVersionFromSqlStatement = (
+  sql: string,
+): string => {
+  const matches = sql.match(/(from)\s+(syn)\d+(\.\d+)?/gi)
   return matches && matches[0] ? matches[0].substr(5).trim() : ''
 }
 

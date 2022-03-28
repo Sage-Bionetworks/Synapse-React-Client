@@ -1,45 +1,53 @@
 import * as React from 'react'
-import { shallow } from 'enzyme'
-import QueryWrapper, {
-  QueryWrapperState,
+import {
+  QueryWrapper,
+  QueryWrapperContextType,
+  QueryWrapperProps,
+  useQueryWrapperContext,
 } from '../../../lib/containers/QueryWrapper'
-import syn16787123Json from '../../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123'
 import { SynapseConstants } from '../../../lib/utils/'
 import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
+import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
+import {
+  MOCK_CONTEXT_VALUE,
+  SynapseTestContext,
+} from '../../../mocks/MockSynapseContext'
+import { render, screen, waitFor } from '@testing-library/react'
+
+let providedContext: QueryWrapperContextType | undefined
+const renderedTextConfirmation = 'QueryWrapper rendered!'
+
+const QueryWrapperContextReciever = jest.fn((props: any) => {
+  // An error would be thrown if context was not provided by QueryWrapper
+  const context = useQueryWrapperContext()
+  providedContext = context
+  return <>{renderedTextConfirmation}</>
+})
 
 // utility function
-const createShallowComponent = async (
-  mockRequest: QueryBundleRequest,
-  disableLifecycleMethods = false,
-  shouldDeepLink = false,
-  onQueryChange?:(newQueryJson: string) => void,
-  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void,
-) => {
-  const wrapper = await shallow(
-    <QueryWrapper
-      initQueryRequest={mockRequest}
-      facet={'projectStatus'}
-      shouldDeepLink={shouldDeepLink}
-      onQueryChange={onQueryChange}
-      onQueryResultBundleChange={onQueryResultBundleChange}
-    />,
-    { disableLifecycleMethods },
+const renderComponent = (props: Partial<QueryWrapperProps>) => {
+  render(
+    <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+      <QueryWrapper facet={'projectStatus'} {...props}>
+        <QueryWrapperContextReciever></QueryWrapperContextReciever>
+      </QueryWrapper>
+    </SynapseContextProvider>,
   )
-  const instance = wrapper.instance() as QueryWrapper
-  return { instance, wrapper }
 }
 
 // Test setup
 const SynapseClient = require('../../../lib/utils/SynapseClient')
-SynapseClient.getQueryTableResults = jest.fn(() =>
-  Promise.resolve(syn16787123Json),
-)
-SynapseClient.getIntuitiveQueryTableResults = jest.fn(() =>
-  Promise.resolve(syn16787123Json),
-)
+SynapseClient.getQueryTableAsyncJobResults = jest.fn(queryBundleRequest => {
+  return Promise.resolve({
+    requestBody: queryBundleRequest,
+    jobState: 'COMPLETE',
+    responseBody: syn16787123Json,
+  })
+})
 
-const lastQueryRequest: QueryBundleRequest = {
+const initialQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
   partMask:
     SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
@@ -55,100 +63,96 @@ const lastQueryRequest: QueryBundleRequest = {
 
 describe('basic functionality', () => {
   it('renders without crashing', async () => {
-    const { wrapper } = await createShallowComponent(lastQueryRequest, true)
-    expect(wrapper).toBeDefined()
+    renderComponent({ initQueryRequest: initialQueryRequest })
+    await screen.findByText(renderedTextConfirmation)
+  })
+
+  it('Context values are accurate', async () => {
+    renderComponent({ initQueryRequest: initialQueryRequest })
+    await waitFor(() => providedContext?.isLoadingNewBundle === false)
+    expect(providedContext).toEqual(
+      expect.objectContaining({
+        data: syn16787123Json,
+        hasNextPage: true,
+      }),
+    )
   })
 
   it('componentDidMountWorks', async () => {
-    const { instance, wrapper } = await createShallowComponent(
-      lastQueryRequest,
-      true,
+    renderComponent({ initQueryRequest: initialQueryRequest })
+
+    await waitFor(() =>
+      expect(SynapseClient.getQueryTableAsyncJobResults).toHaveBeenCalled(),
     )
 
-    const spyOnExecute = jest.spyOn(instance, 'executeInitialQueryRequest')
-    await instance.componentDidMount()
-    expect(spyOnExecute).toHaveBeenCalled()
-    expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
-    const state = wrapper.state() as QueryWrapperState
-    expect(state.isAllFilterSelectedForFacet).toEqual({
-      dataStatus: true,
-      diseaseFocus: true,
-      fundingAgency: true,
-      projectStatus: true,
-      tumorType: true,
-    })
+    await waitFor(() =>
+      expect(providedContext?.isAllFilterSelectedForFacet).toEqual({
+        dataStatus: true,
+        diseaseFocus: true,
+        fundingAgency: true,
+        projectStatus: true,
+        tumorType: true,
+      }),
+    )
   })
 
-  it('componentDidUpdate works', async () => {
-    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
+  it('Executing a new query updates the last query request', async () => {
+    renderComponent({ initQueryRequest: initialQueryRequest })
 
-    const newToken = '123'
-    const spyOnExecuteQueryRequest = jest.spyOn(instance, 'executeQueryRequest')
+    // Wait for the children to render to ensure context is created
+    await screen.findByText(renderedTextConfirmation)
 
-    // test login
-    wrapper.setProps({
-      token: newToken,
-    })
-    expect(spyOnExecuteQueryRequest).toHaveBeenCalled()
+    // Initial + last query should be the initial query
+    expect(providedContext?.getInitQueryRequest()).toEqual(initialQueryRequest)
+    expect(providedContext?.getLastQueryRequest()).toEqual(initialQueryRequest)
 
-    const spyOnExecuteInitQueryRequest = jest.spyOn(
-      instance,
-      'executeInitialQueryRequest',
-    )
-    const newQueryRequest = cloneDeep(lastQueryRequest)
+    // Update the query with new SQL
+    const newQueryRequest = cloneDeep(initialQueryRequest)
     newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
-    // test new query lastQueryRequest
-    wrapper.setProps({
-      initQueryRequest: newQueryRequest,
-    })
-    expect(spyOnExecuteInitQueryRequest).toHaveBeenCalled()
-  })
+    providedContext?.executeQueryRequest(newQueryRequest)
 
-  it('returns the last query lastQueryRequest correctly ', async () => {
-    const { instance } = await createShallowComponent(lastQueryRequest)
-    expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
-  })
-
-  it('executeQueryRequest works', async () => {
-    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
-    const state = wrapper.state() as QueryWrapperState
-    await instance.executeQueryRequest(lastQueryRequest)
-    expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
-    expect(state.hasMoreData).toEqual(true)
+    // Last query should be the new query
+    await waitFor(() =>
+      expect(providedContext?.getLastQueryRequest()).toEqual(newQueryRequest),
+    )
+    // Initial query should not change
+    expect(providedContext?.getInitQueryRequest()).toEqual(initialQueryRequest)
   })
 
   it('executeQueryRequest updates url if param is set', async () => {
-    const { instance } = await createShallowComponent(
-      lastQueryRequest,
-      false,
-      true,
-    )
+    renderComponent({
+      initQueryRequest: initialQueryRequest,
+      shouldDeepLink: true,
+    })
 
-    await instance.executeQueryRequest(lastQueryRequest)
+    await waitFor(() => expect(providedContext).toBeDefined())
+    providedContext!.executeQueryRequest(initialQueryRequest)
     const location = window.location
     expect(location.search).toContain('QueryWrapper0')
     const query = JSON.parse(
       decodeURIComponent(location.search.split('QueryWrapper0=')[1]),
     )
-    expect(query.sql).toEqual(lastQueryRequest.query.sql)
-    expect(SynapseClient.getQueryTableResults).toHaveBeenCalled()
+    expect(query.sql).toEqual(initialQueryRequest.query.sql)
+    expect(SynapseClient.getQueryTableAsyncJobResults).toHaveBeenCalled()
   })
 
   it('test onQueryChange and onQueryResultBundleChange', async () => {
     const mockOnQueryChange = jest.fn()
     const mockOnQueryResultBundleChange = jest.fn()
-    const { instance } = await createShallowComponent(
-      lastQueryRequest,
-      false,
-      true,
-      mockOnQueryChange,
-      mockOnQueryResultBundleChange,
-    )
+    renderComponent({
+      initQueryRequest: initialQueryRequest,
+      shouldDeepLink: true,
+      onQueryChange: mockOnQueryChange,
+      onQueryResultBundleChange: mockOnQueryResultBundleChange,
+    })
 
-    await instance.executeQueryRequest(lastQueryRequest)
-    
-    expect(mockOnQueryChange).toBeCalledWith(
-      expect.stringContaining(lastQueryRequest.query.sql),
+    await waitFor(() => expect(providedContext).toBeDefined())
+    providedContext!.executeQueryRequest(initialQueryRequest)
+
+    await waitFor(() =>
+      expect(mockOnQueryChange).toBeCalledWith(
+        expect.stringContaining(initialQueryRequest.query.sql),
+      ),
     )
     expect(mockOnQueryResultBundleChange).toHaveBeenLastCalledWith(
       expect.stringContaining(JSON.stringify(syn16787123Json)),
@@ -159,8 +163,12 @@ describe('basic functionality', () => {
 describe('deep linking', () => {
   it('when there are no searchParams', async () => {
     window.history.pushState({}, 'Page Title', '/any/url/you/like')
-    const { instance } = await createShallowComponent(lastQueryRequest)
-    expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
+    renderComponent({ initQueryRequest: initialQueryRequest })
+    await waitFor(() =>
+      expect(providedContext?.getLastQueryRequest()).toEqual(
+        initialQueryRequest,
+      ),
+    )
   })
   it('when there are no applicable search params', async () => {
     window.history.pushState(
@@ -168,12 +176,17 @@ describe('deep linking', () => {
       'Page Title',
       '/any/url/you/like?someparam=someValue',
     )
-    const { instance } = await createShallowComponent(lastQueryRequest)
-    expect(instance.getLastQueryRequest()).toEqual(lastQueryRequest)
+    renderComponent({ initQueryRequest: initialQueryRequest })
+
+    await waitFor(() =>
+      expect(providedContext?.getLastQueryRequest()).toEqual(
+        initialQueryRequest,
+      ),
+    )
   })
 
   it('when there is a single param in the url', async () => {
-    const lqr = cloneDeep(lastQueryRequest)
+    const lqr = cloneDeep(initialQueryRequest)
     lqr.query.sql = 'SELECT * FROM syn12345'
     window.history.pushState(
       {},
@@ -181,14 +194,15 @@ describe('deep linking', () => {
       '/any/url/you/like?QueryWrapper0=' +
         encodeURIComponent(JSON.stringify(lqr.query)),
     )
-    const { instance } = await createShallowComponent(lastQueryRequest)
-    const lastQuery = instance.getLastQueryRequest()
+    renderComponent({ initQueryRequest: initialQueryRequest })
+    await waitFor(() => expect(providedContext).toBeDefined())
+    const lastQuery = providedContext!.getLastQueryRequest()
     // expect(lastQuery).not.toEqual(lastQueryRequest)
     expect(lastQuery.entityId).toBe('syn12345')
     expect(lastQuery.query.sql).toBe(lqr.query.sql)
   })
   it('when there are multiple params in the url', async () => {
-    const lqr = cloneDeep(lastQueryRequest)
+    const lqr = cloneDeep(initialQueryRequest)
     lqr.query.sql = 'SELECT * FROM syn12345'
     window.history.pushState(
       {},
@@ -196,48 +210,58 @@ describe('deep linking', () => {
       '/any/url/you/like?someotherParam=param&QueryWrapper0=' +
         encodeURIComponent(JSON.stringify(lqr.query)),
     ) + '&anotherPram=somethingElse'
-    const { instance } = await createShallowComponent(lastQueryRequest)
-    const lastQuery = instance.getLastQueryRequest()
-    expect(lastQuery).not.toEqual(lastQueryRequest)
+    renderComponent({ initQueryRequest: initialQueryRequest })
+    await waitFor(() => expect(providedContext).toBeDefined())
+
+    const lastQuery = providedContext!.getLastQueryRequest()
+    expect(lastQuery).not.toEqual(initialQueryRequest)
     expect(lastQuery.entityId).toBe('syn12345')
     expect(lastQuery.query.sql).toBe(lqr.query.sql)
   })
 })
 
 describe('locked facet', () => {
-  const newProps = {
-    lockedFacet: {
-      facet: 'abc',
-      value: '123',
-    },
+  const lockedFacet = {
+    facet: 'tumorType',
+    value: 'Cutaneous Neurofibroma',
   }
-  const newProps2 = {
-    lockedFacet: {},
-  }
-  const newState = {
-    data: {
-      facets: [
-        { columnName: 'abc', facetType: 'enumeration', concreteType: 'blah' },
-        { columnName: 'def', facetType: 'enumeration', concreteType: 'blah' },
-      ],
-    },
-  }
+  const noLockedFacet = {}
 
   it('removeLockedFacetData should remove locked facet data', async () => {
-    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
-    wrapper.setProps(newProps)
-    wrapper.setState(newState)
-    expect(instance.removeLockedFacetData()).toEqual({
-      facets: [
-        { columnName: 'def', facetType: 'enumeration', concreteType: 'blah' },
-      ],
+    renderComponent({
+      initQueryRequest: initialQueryRequest,
+      lockedFacet: lockedFacet,
     })
+
+    await waitFor(() => expect(providedContext).toBeDefined())
+
+    // One facet should be removed
+    expect(providedContext!.data!.facets!.length).toEqual(
+      syn16787123Json.facets!.length - 1,
+    )
+    // The removed facet should match the locked facet name
+    expect(
+      providedContext!.data!.facets!.find(
+        facet => facet.columnName === 'tumorType',
+      ),
+    ).not.toBeDefined()
   })
 
   it('removeLockedFacetData should not remove any data if locked facet value is not set', async () => {
-    const { instance, wrapper } = await createShallowComponent(lastQueryRequest)
-    wrapper.setProps(newProps2)
-    wrapper.setState(newState)
-    expect(instance.removeLockedFacetData()?.facets).toHaveLength(2)
+    renderComponent({
+      initQueryRequest: initialQueryRequest,
+      lockedFacet: noLockedFacet,
+    })
+    await waitFor(() => expect(providedContext).toBeDefined())
+
+    expect(providedContext!.data!.facets!.length).toEqual(
+      syn16787123Json.facets!.length,
+    )
+
+    expect(
+      providedContext!.data!.facets!.find(
+        facet => facet.columnName === 'tumorType',
+      ),
+    ).toBeDefined()
   })
 })
