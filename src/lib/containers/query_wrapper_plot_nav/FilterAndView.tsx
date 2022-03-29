@@ -6,8 +6,9 @@ import {
 import CardContainer from '../CardContainer'
 import SynapseTable, { SynapseTableProps } from '../table/SynapseTable'
 import { CardConfiguration } from '../CardContainerLogic'
-import { useQueryWrapperContext } from '../QueryWrapper'
+import { useQueryContext } from '../QueryWrapper'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 
 export type OwnProps = {
   tableConfiguration: SynapseTableProps | undefined
@@ -18,11 +19,12 @@ export type OwnProps = {
 const FilterAndView = (props: OwnProps) => {
   const { tableConfiguration, cardConfiguration, hideDownload } = props
   const synapseContext = useSynapseContext()
-  const queryWrapperContext = useQueryWrapperContext()
+  const queryContext = useQueryContext()
+  const queryVisualizationContext = useQueryVisualizationContext()
   return (
     <div
       className={`FilterAndView ${
-        queryWrapperContext.topLevelControlsState.showFacetFilter
+        queryVisualizationContext.topLevelControlsState.showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
@@ -31,7 +33,8 @@ const FilterAndView = (props: OwnProps) => {
         <SynapseTable
           {...tableConfiguration}
           synapseContext={synapseContext}
-          queryWrapperContext={queryWrapperContext}
+          queryContext={queryContext}
+          queryVisualizationContext={queryVisualizationContext}
           hideDownload={hideDownload}
         />
       ) : (

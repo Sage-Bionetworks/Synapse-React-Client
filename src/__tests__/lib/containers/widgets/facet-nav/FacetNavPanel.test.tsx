@@ -9,9 +9,10 @@ import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFace
 import { SynapseConstants } from '../../../../../lib'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 import {
-  QueryWrapperContextProvider,
-  QueryWrapperContextType,
+  QueryContextProvider,
+  QueryContextType,
 } from '../../../../../lib/containers/QueryWrapper'
+import { QueryVisualizationContextProvider } from '../../../../../lib/containers/QueryVisualizationWrapper'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -49,7 +50,7 @@ function createTestProps(overrides?: FacetNavPanelProps): FacetNavPanelProps {
   }
 }
 
-const defaultQueryWrapperContext: Partial<QueryWrapperContextType> = {
+const defaultQueryContext: Partial<QueryContextType> = {
   data: testData,
   getLastQueryRequest: () => ({}),
   isLoadingNewBundle: false,
@@ -60,19 +61,21 @@ let props: FacetNavPanelProps
 
 function init(
   overrides?: FacetNavPanelProps,
-  queryWrapperContextProps?: Partial<QueryWrapperContextType>,
+  queryContextProps?: Partial<QueryContextType>,
 ) {
   props = createTestProps(overrides)
   container = render(
     <SynapseTestContext>
-      <QueryWrapperContextProvider
-        queryWrapperContext={{
-          ...defaultQueryWrapperContext,
-          ...queryWrapperContextProps,
+      <QueryContextProvider
+        queryContext={{
+          ...defaultQueryContext,
+          ...queryContextProps,
         }}
       >
-        <FacetNavPanel {...props} />
-      </QueryWrapperContextProvider>
+        <QueryVisualizationContextProvider queryVisualizationContext={{}}>
+          <FacetNavPanel {...props} />
+        </QueryVisualizationContextProvider>
+      </QueryContextProvider>
     </SynapseTestContext>,
   ).container
 }

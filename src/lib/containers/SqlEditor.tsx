@@ -3,27 +3,27 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Collapse } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from './QueryWrapper'
-import { useQueryWrapperContext } from './QueryWrapper'
+import { useQueryContext } from './QueryWrapper'
 
 library.add(faSearch)
 
 export function SqlEditor() {
+  const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
   const {
-    executeQueryRequest,
-    getLastQueryRequest,
     topLevelControlsState: { showSqlEditor, showFacetFilter },
-  } = useQueryWrapperContext()
+  } = useQueryVisualizationContext()
+
   const [sql, setSql] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (showSqlEditor) {
-      const defaultSql = getLastQueryRequest
-        ? getLastQueryRequest().query.sql
-        : ''
+      const defaultSql = getLastQueryRequest().query.sql
+
       setSql(defaultSql)
       inputRef.current?.focus()
     }

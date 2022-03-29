@@ -1,21 +1,23 @@
-import * as React from 'react'
 import { mount } from 'enzyme'
-import {
-  QueryFilterProps,
-  QueryFilter,
-} from '../../../../../lib/containers/widgets/query-filter/QueryFilter'
-import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
-
 import _ from 'lodash-es'
-
-import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
-import {
-  QueryWrapperContextProvider,
-  QueryWrapperContextType,
-} from '../../../../../lib/containers/QueryWrapper'
-import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
-import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import * as React from 'react'
 import { act } from 'react-dom/test-utils'
+import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextProviderProps,
+} from '../../../../../lib/containers/QueryVisualizationWrapper'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../../../lib/containers/QueryWrapper'
+import {
+  QueryFilter,
+  QueryFilterProps,
+} from '../../../../../lib/containers/widgets/query-filter/QueryFilter'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
+import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 
 const lastQueryRequestResult = {
   partMask: 53,
@@ -52,20 +54,24 @@ function createTestProps(overrides?: QueryFilterProps): QueryFilterProps {
   }
 }
 
-const defaultQueryWrapperContext: Partial<QueryWrapperContextType> = {
+const defaultQueryContext: Partial<QueryContextType> = {
   data: mockQueryResponseData as QueryResultBundle,
   getLastQueryRequest: mockGetQueryRequest,
   executeQueryRequest: mockExecuteQueryRequest,
   isLoadingNewBundle: false,
-  topLevelControlsState: {
-    showColumnFilter: true,
-    showFacetFilter: true,
-    showFacetVisualization: true,
-    showSearchBar: false,
-    showDownloadConfirmation: false,
-    showColumnSelectDropdown: false,
-  },
 }
+
+const defaultQueryVisualizationContext: Partial<QueryVisualizationContextProviderProps> =
+  {
+    topLevelControlsState: {
+      showColumnFilter: true,
+      showFacetFilter: true,
+      showFacetVisualization: true,
+      showSearchBar: false,
+      showDownloadConfirmation: false,
+      showColumnSelectDropdown: false,
+    },
+  }
 
 let props: QueryFilterProps
 
@@ -73,20 +79,22 @@ function init(overrides?: QueryFilterProps) {
   jest.clearAllMocks()
   props = createTestProps(overrides)
   return mount(<QueryFilter {...props} />, {
-    wrappingComponent: ({ synapseContext, queryWrapperContext, children }) => {
+    wrappingComponent: ({ synapseContext, queryContext, children }) => {
       return (
         <SynapseContextProvider synapseContext={synapseContext}>
-          <QueryWrapperContextProvider
-            queryWrapperContext={queryWrapperContext}
-          >
-            {children}
-          </QueryWrapperContextProvider>
+          <QueryContextProvider queryContext={queryContext}>
+            <QueryVisualizationContextProvider
+              queryVisualizationContext={defaultQueryVisualizationContext}
+            >
+              {children}
+            </QueryVisualizationContextProvider>
+          </QueryContextProvider>
         </SynapseContextProvider>
       )
     },
     wrappingComponentProps: {
       synapseContext: MOCK_CONTEXT_VALUE,
-      queryWrapperContext: defaultQueryWrapperContext,
+      queryContext: defaultQueryContext,
     },
   })
 }

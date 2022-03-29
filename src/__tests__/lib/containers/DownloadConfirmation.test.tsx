@@ -6,9 +6,13 @@ import {
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
 import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../lib/containers/QueryVisualizationWrapper'
+import {
   QueryWrapper,
-  QueryWrapperContextProvider,
-  QueryWrapperContextType,
+  QueryContextProvider,
+  QueryContextType,
 } from '../../../lib/containers/QueryWrapper'
 import { displayToast } from '../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
@@ -70,9 +74,12 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   numberOfFilesAdded: 1,
 }
 
-const queryWrapperContext: Partial<QueryWrapperContextType> = {
+const queryContext: Partial<QueryContextType> = {
   getLastQueryRequest: () => queryBundleRequest,
   data: queryBundleResponse,
+}
+
+const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
   topLevelControlsState: {
     showDownloadConfirmation: true,
   },
@@ -83,9 +90,13 @@ function renderComponent(
   wrapperProps?: SynapseContextType,
 ) {
   return render(
-    <QueryWrapperContextProvider queryWrapperContext={queryWrapperContext}>
-      <DownloadConfirmation {...componentProps} />
-    </QueryWrapperContextProvider>,
+    <QueryContextProvider queryContext={queryContext}>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={queryVisualizationContext}
+      >
+        <DownloadConfirmation {...componentProps} />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
     {
       wrapper: createWrapper(wrapperProps),
     },

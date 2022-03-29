@@ -6,7 +6,8 @@ import { SynapseConstants } from '../../../lib'
 import { EntityLink } from '../../../lib/containers/EntityLink'
 import HasAccess from '../../../lib/containers/HasAccess'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
-import { QueryWrapperContextType } from '../../../lib/containers/QueryWrapper'
+import { QueryVisualizationContextType } from '../../../lib/containers/QueryVisualizationWrapper'
+import { QueryContextType } from '../../../lib/containers/QueryWrapper'
 import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
 import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
 import { SynapseTableCell } from '../../../lib/containers/synapse_table_functions/SynapseTableCell'
@@ -90,15 +91,16 @@ describe('basic functionality', () => {
   const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
   const executeQueryRequest = jest.fn()
 
-  const queryWrapperContext: Partial<QueryWrapperContextType> = {
+  const queryContext: Partial<QueryContextType> = {
     data: queryResultBundle,
     entity: {
       concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
     },
-    getLastQueryRequest,
+    getLastQueryRequest: getLastQueryRequest,
     executeQueryRequest,
-    isAllFilterSelectedForFacet: {},
-    chartSelectionIndex: 0,
+  }
+
+  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
     columnsToShowInTable: [
       'projectStatus',
       'dataStatus',
@@ -119,7 +121,8 @@ describe('basic functionality', () => {
 
   const props: SynapseTableProps = {
     synapseContext: MOCK_CONTEXT_VALUE,
-    queryWrapperContext: queryWrapperContext,
+    queryContext: queryContext,
+    queryVisualizationContext: queryVisualizationContext,
     title,
     facet: 'tumorType',
   }
@@ -132,8 +135,8 @@ describe('basic functionality', () => {
   it('Does not renders HasAccess when the entity type is not EntityView', async () => {
     const { wrapper, instance } = createShallowComponent({
       ...props,
-      queryWrapperContext: {
-        ...props.queryWrapperContext,
+      queryContext: {
+        ...props.queryContext,
         entity: {
           concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
         },

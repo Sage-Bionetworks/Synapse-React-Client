@@ -1,24 +1,24 @@
 import * as React from 'react'
-import { RangeFacetFilter } from './RangeFacetFilter'
-import { EnumFacetFilter } from './EnumFacetFilter'
-
+import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
+import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import {
-  FacetColumnResultValues,
-  FacetColumnResult,
-  FacetColumnResultRange,
-} from '../../../utils/synapseTypes/Table/FacetColumnResult'
-import {
-  FacetColumnValuesRequest,
   FacetColumnRangeRequest,
   FacetColumnRequest,
+  FacetColumnValuesRequest,
 } from '../../../utils/synapseTypes/Table/FacetColumnRequest'
-import { QueryBundleRequest } from '../../../utils/synapseTypes'
+import {
+  FacetColumnResult,
+  FacetColumnResultRange,
+  FacetColumnResultValues,
+} from '../../../utils/synapseTypes/Table/FacetColumnResult'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
+  useQueryContext,
 } from '../../QueryWrapper'
-import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
-import { useQueryWrapperContext } from '../../QueryWrapper'
+import { EnumFacetFilter } from './EnumFacetFilter'
+import { RangeFacetFilter } from './RangeFacetFilter'
 
 export type QueryFilterProps = {
   facetsToFilter?: string[]
@@ -138,14 +138,10 @@ export const applyChangesToRangeColumn = (
 export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   facetsToFilter,
 }): JSX.Element => {
-  const {
-    data,
-    isLoadingNewBundle,
-    getLastQueryRequest,
-    executeQueryRequest,
-    facetAliases,
-    topLevelControlsState,
-  } = useQueryWrapperContext()
+  const { data, isLoadingNewBundle, getLastQueryRequest, executeQueryRequest } =
+    useQueryContext()
+
+  const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
 
   if (!data) {
     return <></>

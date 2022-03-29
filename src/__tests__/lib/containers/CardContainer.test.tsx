@@ -5,8 +5,12 @@ import CardContainer, {
   CardContainerProps,
 } from '../../../lib/containers/CardContainer'
 import {
-  QueryWrapperContextProvider,
-  QueryWrapperContextType,
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../lib/containers/QueryVisualizationWrapper'
+import {
+  QueryContextProvider,
+  QueryContextType,
 } from '../../../lib/containers/QueryWrapper'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import {
@@ -18,12 +22,19 @@ import syn16787123Json from '../../../mocks/query/syn16787123'
 
 const mountComponent = (
   props: CardContainerProps,
-  queryWrapperContext: QueryWrapperContextType,
+  queryContext: QueryContextType,
 ) => {
+  const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
+    {}
+
   const wrapper = mount(
-    <QueryWrapperContextProvider queryWrapperContext={queryWrapperContext}>
-      <CardContainer {...props} />
-    </QueryWrapperContextProvider>,
+    <QueryContextProvider queryContext={queryContext}>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={defaultQueryVisualizationContext}
+      >
+        <CardContainer {...props} />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
     {
       wrappingComponent: SynapseTestContext,
     },
@@ -61,28 +72,23 @@ describe('it performs all functionality', () => {
     type,
   }
 
-  const queryWrapperContext: Partial<QueryWrapperContextType> = {
+  const queryContext: Partial<QueryContextType> = {
     data,
     hasNextPage: true,
-    getLastQueryRequest,
-
+    getLastQueryRequest: getLastQueryRequest,
     appendNextPageToResults: getNextPageOfData,
   }
 
+  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {}
+
   it('renders without crashing', () => {
-    const tree = mountComponent(props, queryWrapperContext)
+    const tree = mountComponent(props, queryContext)
     expect(tree).toBeDefined()
   })
 
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
-    const { wrapper } = mountComponent(
-      {
-        ...props,
-        facet: 'projectStatus',
-      },
-      queryWrapperContext,
-    )
+    const { wrapper } = mountComponent(props, queryContext)
     expect(wrapper.find('Button').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('Button').text()).toEqual('View More')
@@ -90,12 +96,12 @@ describe('it performs all functionality', () => {
 
   it('Renders with a title', () => {
     const title = 'HelloWorld'
-    const { wrapper } = mountComponent({ ...props, title }, queryWrapperContext)
+    const { wrapper } = mountComponent({ ...props, title }, queryContext)
     expect(wrapper.find('h2.SRC-card-overview-title').text()).toEqual(title)
   })
 
   it('handleViewMore works', () => {
-    const { wrapper } = mountComponent(props, queryWrapperContext)
+    const { wrapper } = mountComponent(props, queryContext)
     // go through calling handle view more
     wrapper.find('Button').simulate('click')
     expect(getLastQueryRequest).toHaveBeenCalled()
@@ -103,14 +109,11 @@ describe('it performs all functionality', () => {
   })
 
   it('show ViewMore does not render when hasNextPage is false', () => {
-    const queryWrapperContextWithHasNextPageFalse = {
-      ...queryWrapperContext,
+    const queryContextWithHasNextPageFalse = {
+      ...queryContext,
       hasNextPage: false,
     }
-    const { wrapper } = mountComponent(
-      props,
-      queryWrapperContextWithHasNextPageFalse,
-    )
+    const { wrapper } = mountComponent(props, queryContextWithHasNextPageFalse)
     expect(wrapper.find('Button')).toHaveLength(0)
   })
 })

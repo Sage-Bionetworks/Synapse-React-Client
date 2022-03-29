@@ -31,33 +31,6 @@ function renderComponent(
 }
 
 describe('StandaloneQueryWrapper rendering tests', () => {
-  it('renders our custom stacked bar chart', async () => {
-    const data = syn20337467Json as QueryResultBundle
-    SynapseClient.getEntity = jest.fn().mockResolvedValue({
-      id: 'syn123',
-      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-    })
-    SynapseClient.getQueryTableAsyncJobResults = jest.fn(queryBundleRequest => {
-      return Promise.resolve({
-        requestBody: queryBundleRequest,
-        jobState: 'COMPLETE',
-        responseBody: data,
-      })
-    })
-
-    renderComponent({
-      rgbIndex: 7,
-      unitDescription: 'Tools',
-      link: 'Explore/Computational Tools',
-      linkText: 'Explore Computational Tools',
-      facet: 'softwareType',
-      sql: 'SELECT * FROM syn20337467',
-    })
-
-    await waitFor(() => {
-      expect(screen.getAllByTestId('StackedBarChart').length).toBe(1)
-    })
-  })
   it('renders a Synapse table', async () => {
     const data = syn20337467Json as QueryResultBundle
     SynapseClient.getEntity = jest.fn().mockResolvedValue({

@@ -1,10 +1,11 @@
 import * as React from 'react'
-import { QueryWrapper, QueryWrapperContextConsumer } from '../../QueryWrapper'
+import { QueryWrapper, QueryContextConsumer } from '../../QueryWrapper'
 import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../../utils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ErrorBanner } from '../../ErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
@@ -31,30 +32,34 @@ export function getQueryRequest(sql: string): QueryBundleRequest {
 }
 const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsCardsProps> =
   props => {
-    const { sql, facetsToPlot, rgbIndex, ...rest } = props
+    const { sql, facetsToPlot, rgbIndex, facetAliases } = props
     const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
     return (
       <div className="SingleQueryFacetPlotsCards">
-        <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-          <QueryWrapperContextConsumer>
-            {queryWrapperContext => {
-              if (queryWrapperContext === undefined) {
-                throw new Error(
-                  'No queryWrapperContext found when using QueryWraperContextConsumer',
-                )
-              }
-              return <ErrorBanner error={queryWrapperContext.error} />
-            }}
-          </QueryWrapperContextConsumer>
-          {facetsToPlot?.map(facetName => {
-            return (
-              <FacetPlotsCard
-                key={`FacetPlotCard-${facetName}`}
-                facetsToPlot={[facetName]}
-                rgbIndex={rgbIndex}
-              />
-            )
-          })}
+        <QueryWrapper initQueryRequest={initQueryRequest}>
+          <QueryVisualizationWrapper
+            rgbIndex={rgbIndex}
+            facetAliases={facetAliases}
+          >
+            <QueryContextConsumer>
+              {queryContext => {
+                if (queryContext === undefined) {
+                  throw new Error(
+                    'No queryContext found when using QueryWraperContextConsumer',
+                  )
+                }
+                return <ErrorBanner error={queryContext.error} />
+              }}
+            </QueryContextConsumer>
+            {facetsToPlot?.map(facetName => {
+              return (
+                <FacetPlotsCard
+                  key={`FacetPlotCard-${facetName}`}
+                  facetsToPlot={[facetName]}
+                />
+              )
+            })}
+          </QueryVisualizationWrapper>
         </QueryWrapper>
       </div>
     )

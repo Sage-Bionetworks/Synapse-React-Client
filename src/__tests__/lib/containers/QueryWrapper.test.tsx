@@ -1,9 +1,9 @@
 import * as React from 'react'
 import {
   QueryWrapper,
-  QueryWrapperContextType,
+  QueryContextType,
   QueryWrapperProps,
-  useQueryWrapperContext,
+  useQueryContext,
 } from '../../../lib/containers/QueryWrapper'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import { SynapseConstants } from '../../../lib/utils/'
@@ -15,13 +15,14 @@ import {
   SynapseTestContext,
 } from '../../../mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
+import { act } from 'react-dom/test-utils'
 
-let providedContext: QueryWrapperContextType | undefined
+let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
 
-const QueryWrapperContextReciever = jest.fn((props: any) => {
+const QueryContextReciever = jest.fn((props: any) => {
   // An error would be thrown if context was not provided by QueryWrapper
-  const context = useQueryWrapperContext()
+  const context = useQueryContext()
   providedContext = context
   return <>{renderedTextConfirmation}</>
 })
@@ -30,8 +31,8 @@ const QueryWrapperContextReciever = jest.fn((props: any) => {
 const renderComponent = (props: Partial<QueryWrapperProps>) => {
   render(
     <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <QueryWrapper facet={'projectStatus'} {...props}>
-        <QueryWrapperContextReciever></QueryWrapperContextReciever>
+      <QueryWrapper {...props}>
+        <QueryContextReciever></QueryContextReciever>
       </QueryWrapper>
     </SynapseContextProvider>,
   )
@@ -78,24 +79,6 @@ describe('basic functionality', () => {
     )
   })
 
-  it('componentDidMountWorks', async () => {
-    renderComponent({ initQueryRequest: initialQueryRequest })
-
-    await waitFor(() =>
-      expect(SynapseClient.getQueryTableAsyncJobResults).toHaveBeenCalled(),
-    )
-
-    await waitFor(() =>
-      expect(providedContext?.isAllFilterSelectedForFacet).toEqual({
-        dataStatus: true,
-        diseaseFocus: true,
-        fundingAgency: true,
-        projectStatus: true,
-        tumorType: true,
-      }),
-    )
-  })
-
   it('Executing a new query updates the last query request', async () => {
     renderComponent({ initQueryRequest: initialQueryRequest })
 
@@ -109,7 +92,9 @@ describe('basic functionality', () => {
     // Update the query with new SQL
     const newQueryRequest = cloneDeep(initialQueryRequest)
     newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
-    providedContext?.executeQueryRequest(newQueryRequest)
+    act(() => {
+      providedContext?.executeQueryRequest(newQueryRequest)
+    })
 
     // Last query should be the new query
     await waitFor(() =>

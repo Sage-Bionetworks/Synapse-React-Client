@@ -12,7 +12,7 @@ import { UserProfile } from '../../../utils/synapseTypes'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import {
   FacetColumnResultValueCount,
-  SelectColumn
+  SelectColumn,
 } from '../../../utils/synapseTypes/Table'
 import { Checkbox } from '../Checkbox'
 import { FacetFilterHeader } from './FacetFilterHeader'

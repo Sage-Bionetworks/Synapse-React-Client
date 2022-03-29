@@ -3,7 +3,8 @@ import { SynapseConstants } from '../../../utils'
 import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ErrorBanner } from '../../ErrorBanner'
-import { QueryWrapper, QueryWrapperContextConsumer } from '../../QueryWrapper'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { QueryWrapper, QueryContextConsumer } from '../../QueryWrapper'
 import FacetPlotsCard from './FacetPlotsCard'
 
 export type QueryPerFacetPlotsCardProps = {
@@ -67,23 +68,24 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProp
     return (
       <div className="QueryPerFacetPlotsCard">
         <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-          <QueryWrapperContextConsumer>
-            {queryWrapperContext => {
-              if (queryWrapperContext === undefined) {
-                throw new Error(
-                  'No queryWrapperContext found when using QueryWraperContextConsumer',
-                )
-              }
-              return <ErrorBanner error={queryWrapperContext.error} />
-            }}
-          </QueryWrapperContextConsumer>
-          <FacetPlotsCard
-            title={title}
-            description={description}
-            facetsToPlot={facetsToPlot}
-            rgbIndex={rgbIndex}
-            detailsPagePath={detailsPagePath}
-          />
+          <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
+            <QueryContextConsumer>
+              {queryContext => {
+                if (queryContext === undefined) {
+                  throw new Error(
+                    'No queryContext found when using QueryWraperContextConsumer',
+                  )
+                }
+                return <ErrorBanner error={queryContext.error} />
+              }}
+            </QueryContextConsumer>
+            <FacetPlotsCard
+              title={title}
+              description={description}
+              facetsToPlot={facetsToPlot}
+              detailsPagePath={detailsPagePath}
+            />
+          </QueryVisualizationWrapper>
         </QueryWrapper>
       </div>
     )

@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
-import { useContext } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
@@ -10,7 +10,6 @@ import { SynapseClientError } from '../utils/SynapseClient'
 import {
   AsynchronousJobStatus,
   Entity,
-  FacetColumnResultValues,
   QueryBundleRequest,
   QueryResultBundle,
 } from '../utils/synapseTypes'
@@ -18,54 +17,53 @@ import {
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 
-export type QueryWrapperContextType = {
-  // Query related:
+export type QueryContextType = {
+  /** The entity being queried. Will be undefined while initially fetching */
   entity: Entity | undefined
+  /** The query results, which will be undefined while initially fetching a new bundle, but will not be unloaded when fetching new pages */
   data: QueryResultBundle | undefined
+  /** Returns a deep clone of the current query bundle request */
   getLastQueryRequest: () => QueryBundleRequest
+  /** Returns a deep clone of the initial query bundle request */
   getInitQueryRequest: () => QueryBundleRequest
+  /** Updates the current query with the passed request */
   executeQueryRequest: (param: QueryBundleRequest) => void
+  /** Returns true when loading a new page of query results */
   isLoadingNewPage: boolean
+  /** Returns true when loading a brand new query result bundle. Will not be true when just loading the next page of query results. */
   isLoadingNewBundle: boolean
-  // TODO: should topLevelControls be in a QueryVisualizationWrapper?
-  topLevelControlsState: TopLevelControlsState
-  setTopLevelControlsState: React.Dispatch<
-    React.SetStateAction<TopLevelControlsState>
-  >
-  columnsToShowInTable: string[]
-  setColumnsToShowInTable: (newState: string[]) => void
-  selectedRowIndices: number[]
-  setSelectedRowIndices: (newState: number[]) => void
-  lastFacetSelection: FacetSelection
-  setLastFacetSelection: (newState: FacetSelection) => void
-  isAllFilterSelectedForFacet: Record<string, boolean>
-  setIsAllFilterSelectedForFacet: (newState: Record<string, boolean>) => void
+  /** The error returned by the query request, if one is encountered */
   error: SynapseClientError | null
+  /** The status of the asynchronous job. */
   asyncJobStatus: AsynchronousJobStatus<unknown, unknown>
-  isFacetsAvailable: boolean
-  setCurrentPage: React.Dispatch<React.SetStateAction<number | 'ALL'>>
+  /** Whether or not the query result bundle has a next page */
   hasNextPage: boolean
+  /** Invoke this method to fetch and append the next page of rows to the data  */
   appendNextPageToResults: () => Promise<void>
+  /** Invoke to fetch and update the data with the next page of query results */
   goToNextPage: () => Promise<void>
+  /** Whether or not the query result bundle has a previous page */
   hasPreviousPage: boolean
+  /** Invoke to fetch and update the data with the previous page of query results */
   goToPreviousPage: () => Promise<void>
-  // General UI related:
-  facetAliases?: Record<string, string>
-
-  // PlotNav related:
-  chartSelectionIndex: number
-  setChartSelectionIndex: (newState: number) => void
+  /** Whether or not facets are available to be filtered upon based on the current data */
+  isFacetsAvailable: boolean
+  /**
+   * A facet may be "locked" so that it is not modifiable by the user, for example when showing only data relevant to a particular facet value on a Details Page.
+   * The value of a locked facet will result in a client-side modification of the result bundle data.
+   */
+  lockedFacet?: LockedFacet
 }
 
 /**
  * This must be exported to use the context in class components.
  */
-export const QueryWrapperContext = React.createContext<
-  QueryWrapperContextType | undefined
->(undefined)
+export const QueryContext = createContext<QueryContextType | undefined>(
+  undefined,
+)
 
-export type QueryWrapperContextProviderProps = {
-  queryWrapperContext: QueryWrapperContextType
+export type QueryContextProviderProps = {
+  queryContext: QueryContextType
 }
 
 /**
@@ -73,50 +71,36 @@ export type QueryWrapperContextProviderProps = {
  * @param param0
  * @returns
  */
-export const QueryWrapperContextProvider: React.FunctionComponent<QueryWrapperContextProviderProps> =
-  ({ children, queryWrapperContext }) => {
-    return (
-      <QueryWrapperContext.Provider value={queryWrapperContext}>
-        {children}
-      </QueryWrapperContext.Provider>
-    )
-  }
+export const QueryContextProvider: React.FC<QueryContextProviderProps> = ({
+  children,
+  queryContext,
+}) => {
+  return (
+    <QueryContext.Provider value={queryContext}>
+      {children}
+    </QueryContext.Provider>
+  )
+}
 
-export function useQueryWrapperContext(): QueryWrapperContextType {
-  const context = useContext(QueryWrapperContext)
+export function useQueryContext(): QueryContextType {
+  const context = useContext(QueryContext)
   if (context === undefined) {
-    throw new Error('useQueryWrapperContext must be used within a QueryWrapper')
+    throw new Error('useQueryContext must be used within a QueryWrapper')
   }
   return context
 }
 
-export const QueryWrapperContextConsumer = QueryWrapperContext.Consumer
-
-// TODO -- Query Wrapper should only be concerned with managing the query data.
-// Viz logic should go into its own wrapper. It could consume the QueryWrapperContext, if needed.
-export type QueryWrapperPropsThatShouldBelongToAnotherWrapper = {
-  // Visualization related:
-  // maybe should have a QueryVisualizationContext?
-  rgbIndex?: number
-  unitDescription?: string
-  showBarChart?: boolean
-  facetAliases?: Record<string, string>
-}
+export const QueryContextConsumer = QueryContext.Consumer
 
 export type QueryWrapperProps = {
+  children: React.ReactNode | React.ReactNode[]
   initQueryRequest: QueryBundleRequest
-  visibleColumnCount?: number
-  // TODO: document what this is doing
-  facet?: string
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
-  hiddenColumns?: string[]
   lockedFacet?: LockedFacet
-  defaultShowFacetVisualization?: boolean
-  children: React.ReactNode | React.ReactNode[]
-} & QueryWrapperPropsThatShouldBelongToAnotherWrapper
+}
 
 export type TopLevelControlsState = {
   showFacetVisualization: boolean
@@ -144,23 +128,14 @@ export type LockedFacet = {
   value?: string
 }
 
-export type FacetSelection = {
-  columnName: string
-  facetValue: string
-  selector: string
-}
-
 /**
- * Class wraps around any Synapse views that are dependent on a query bundle
- * Those classes then take in as props:
- *
- * @class QueryWrapper
- * @extends {React.Component}
+ * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
+ * either `useQueryContext` or `QueryContextConsumer`.
  */
 export function QueryWrapper(props: QueryWrapperProps) {
   const { initQueryRequest, onQueryChange, onQueryResultBundleChange } = props
   const [lastQueryRequest, setLastQueryRequest] =
-    React.useState<QueryBundleRequest>(initQueryRequest)
+    useState<QueryBundleRequest>(initQueryRequest)
   const {
     data: infiniteData,
     hasNextPage,
@@ -171,6 +146,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     refetch,
     error,
     isPreviousData,
+    remove,
   } = useInfiniteQueryResultBundle(lastQueryRequest, {
     // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
     keepPreviousData: true,
@@ -183,7 +159,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const { data: entity } = useGetEntity(entityId)
 
-  const [currentPage, setCurrentPage] = React.useState<number | 'ALL'>(0)
+  const [currentPage, setCurrentPage] = useState<number | 'ALL'>(0)
 
   async function appendNextPageToResults(): Promise<void> {
     if (!hasNextPage) {
@@ -243,108 +219,28 @@ export function QueryWrapper(props: QueryWrapperProps) {
       }
     : undefined
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (onQueryChange) {
       onQueryChange(lastQueryRequest.query.sql)
     }
   }, [onQueryChange, lastQueryRequest.query.sql])
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data && onQueryResultBundleChange) {
       onQueryResultBundleChange(JSON.stringify(data))
     }
   }, [data, onQueryResultBundleChange])
 
-  const selectColumns = data?.selectColumns
-  /**
-   * Effects to run when the SQL changes
-   */
-  React.useEffect(() => {
-    // Reset the selected columns
-    setIsColumnSelected(
-      selectColumns
-        ?.slice(0, props.visibleColumnCount ?? Infinity)
-        .map(el => el.name) ?? [],
-    )
-  }, [selectColumns, lastQueryRequest.query.sql, props.visibleColumnCount])
+  const componentIndex = props.componentIndex ?? 0
 
   const isFacetsAvailable = data
     ? isFacetAvailable(data.facets, data.selectColumns)
     : true
 
-  React.useEffect(() => {
-    if (!isFacetsAvailable) {
-      setTopLevelControlsState(state => ({
-        ...state,
-        showFacetFilter: false,
-        showFacetVisualization: false,
-      }))
-    }
-  }, [isFacetsAvailable])
-
-  React.useEffect(() => {
-    const enumFacets = data?.facets?.filter(
-      el => el.facetType === 'enumeration',
-    ) as FacetColumnResultValues[] | undefined
-    if (enumFacets) {
-      const isAllFilterSelectedForFacetClone = cloneDeep(
-        isAllFilterSelectedForFacet,
-      )
-
-      enumFacets.forEach(el => {
-        // isAll is only true iff there are no facets selected or all elements are selected
-        const { facetValues } = el
-        const isAllFalse = facetValues.every(facet => !facet.isSelected)
-        const isAllTrue = facetValues.every(facet => facet.isSelected)
-        const isByDefaultSelected = isAllFalse || isAllTrue
-        isAllFilterSelectedForFacetClone[el.columnName] = isByDefaultSelected
-        if (el.columnName === props.facet && !isAllFalse) {
-          // Note - this picks the first selected facet
-          setChartSelectionIndex(
-            facetValues
-              .sort((a, b) => b.count - a.count)
-              .findIndex(facet => facet.isSelected),
-          )
-        }
-      })
-      setIsAllFilterSelectedForFacet(isAllFilterSelectedForFacetClone)
-    }
-  }, [])
-
-  // TODO: Delete lastFacetSelection once StackedBarChart.tsx/Facets.tsx are deleted
-  const [lastFacetSelection, setLastFacetSelection] =
-    React.useState<FacetSelection>({
-      columnName: '',
-      facetValue: '',
-      selector: '',
-    })
-
-  const componentIndex = props.componentIndex ?? 0
-
-  const [topLevelControlsState, setTopLevelControlsState] =
-    React.useState<TopLevelControlsState>({
-      showColumnFilter: true,
-      showFacetFilter: true,
-      showFacetVisualization: props.defaultShowFacetVisualization ?? true,
-      showSearchBar: false,
-      showDownloadConfirmation: false,
-      showColumnSelectDropdown: false,
-      showSqlEditor: false,
-    })
-
-  const [chartSelectionIndex, setChartSelectionIndex] = React.useState(0)
-
-  const [isAllFilterSelectedForFacet, setIsAllFilterSelectedForFacet] =
-    React.useState<Record<string, boolean>>({})
-  const [isColumnSelected, setIsColumnSelected] = React.useState<string[]>([])
-  const [selectedRowIndices, setSelectedRowIndices] = React.useState<number[]>(
-    [],
-  )
-
   /**
    * Inspect the URL to see if we have a particular query request that we must show.
    */
-  React.useEffect(() => {
+  useEffect(() => {
     const query = DeepLinkingUtils.getQueryRequestFromLink(
       'QueryWrapper',
       componentIndex,
@@ -361,9 +257,9 @@ export function QueryWrapper(props: QueryWrapperProps) {
    * @returns
    * @memberof QueryWrapper
    */
-  function getLastQueryRequest(): QueryBundleRequest {
+  const getLastQueryRequest = React.useCallback(() => {
     return cloneDeep(lastQueryRequest)
-  }
+  }, [lastQueryRequest])
 
   /**
    * Pass down a deep clone (so no side affects on the child's part) of the
@@ -377,16 +273,14 @@ export function QueryWrapper(props: QueryWrapperProps) {
   }
 
   /**
-   * Execute the given query request, updating all of the data in the queryWrapper to match the new query
+   * Execute the given query request, updating all of the data in the QueryContext to match the new query
    * @param {*} queryRequest Query request as specified by
    *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
    */
   function executeQueryRequest(queryRequest: QueryBundleRequest) {
     const clonedQueryRequest = cloneDeep(queryRequest)
-    // SWC-6030: If sql changes, reset what columns are visible
 
     setLastQueryRequest(clonedQueryRequest)
-    setSelectedRowIndices([])
     setCurrentPage(0)
 
     if (clonedQueryRequest.query) {
@@ -404,6 +298,15 @@ export function QueryWrapper(props: QueryWrapperProps) {
         }
       }
     }
+    /**
+     * TODO: We remove the cached data because it can interfere with user controls, such as the QueryFilter.
+     * For example, if you filter on a facet with value ["a"], then value ["a", "b"], then value ["a"] again,
+     * we'll have a cache hit on the last query, so we won't get a loading state, but the controls haven't been updated
+     * to handle cache hits. Forcing a cache miss here fixes this, but ideally the controls should handle this case.
+     */
+    remove()
+    // end TODO
+
     refetch()
   }
 
@@ -428,7 +331,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     }
   }
 
-  const context: QueryWrapperContextType = {
+  const context: QueryContextType = {
     data: removeLockedFacetData(),
     isLoadingNewPage: isFetchingNextPage,
     hasNextPage: !!hasNextPage,
@@ -436,24 +339,11 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isLoadingNewBundle: isLoadingNewBundle,
     getLastQueryRequest,
     getInitQueryRequest,
-    topLevelControlsState,
-    setTopLevelControlsState,
-    columnsToShowInTable: isColumnSelected,
-    setColumnsToShowInTable: setIsColumnSelected,
-    selectedRowIndices,
-    setSelectedRowIndices,
-    lastFacetSelection,
-    setLastFacetSelection,
-    isAllFilterSelectedForFacet,
-    setIsAllFilterSelectedForFacet,
-    chartSelectionIndex,
-    setChartSelectionIndex,
     error: error,
-    facetAliases: props.facetAliases,
-    isFacetsAvailable,
     entity,
     executeQueryRequest,
-    setCurrentPage,
+    isFacetsAvailable,
+    // TODO: Get the real job status
     asyncJobStatus: {
       jobState: 'PROCESSING',
       jobCanceling: false,
@@ -472,7 +362,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
       errorDetails: '',
       runtimeMS: 0,
     },
-    appendNextPageToResults,
+    appendNextPageToResults: appendNextPageToResults,
     goToNextPage,
     goToPreviousPage,
   }
@@ -480,9 +370,10 @@ export function QueryWrapper(props: QueryWrapperProps) {
    * Render the children without any formatting
    */
   const { children } = props
-  const loadingCursorClass = isLoadingNewBundle ? 'SRC-logo-cursor' : ''
+  const loadingCursorClass =
+    isLoadingNewBundle || isFetchingNextPage ? 'SRC-logo-cursor' : ''
   return (
-    <QueryWrapperContextProvider queryWrapperContext={context}>
+    <QueryContextProvider queryContext={context}>
       <div
         className={`SRC-wrapper ${loadingCursorClass} ${
           isFacetsAvailable ? 'has-facets' : ''
@@ -490,6 +381,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
       >
         {children}
       </div>
-    </QueryWrapperContextProvider>
+    </QueryContextProvider>
   )
 }

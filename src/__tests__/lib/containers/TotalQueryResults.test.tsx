@@ -2,8 +2,12 @@ import { render, screen } from '@testing-library/react'
 import * as React from 'react'
 import { SynapseConstants } from '../../../lib'
 import {
-  QueryWrapperContextProvider,
-  QueryWrapperContextType,
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../lib/containers/QueryVisualizationWrapper'
+import {
+  QueryContextProvider,
+  QueryContextType,
 } from '../../../lib/containers/QueryWrapper'
 import TotalQueryResults, {
   TotalQueryResultsProps,
@@ -18,12 +22,17 @@ import {
 
 function renderComponent(
   props: TotalQueryResultsProps,
-  queryWrapperContextProps: Partial<QueryWrapperContextType>,
+  queryContextProps: Partial<QueryContextType>,
+  queryVisualizationContext: Partial<QueryVisualizationContextType>,
 ) {
   render(
-    <QueryWrapperContextProvider queryWrapperContext={queryWrapperContextProps}>
-      <TotalQueryResults {...props} />
-    </QueryWrapperContextProvider>,
+    <QueryContextProvider queryContext={queryContextProps}>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={queryVisualizationContext}
+      >
+        <TotalQueryResults {...props} />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
     {
       wrapper: createWrapper(),
     },
@@ -93,7 +102,7 @@ describe('TotalQueryResults test', () => {
     },
   }
 
-  const queryWrapperContext: Partial<QueryWrapperContextType> = {
+  const queryContext: Partial<QueryContextType> = {
     data: mockQueryReturn,
     getLastQueryRequest: () => mockQueryRequest,
     isLoadingNewBundle: false,
@@ -102,11 +111,15 @@ describe('TotalQueryResults test', () => {
   const displayText = 'Displaying'
   const unitDescription = 'units'
   const props: TotalQueryResultsProps = {
-    unitDescription,
     frontText: displayText,
   }
+
+  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
+    unitDescription,
+  }
+
   it('Shows the display text, query count, and unit description', async () => {
-    renderComponent(props, queryWrapperContext)
+    renderComponent(props, queryContext, queryVisualizationContext)
 
     await screen.findByText(`Displaying ${mockQueryReturn.queryCount} units`)
   })

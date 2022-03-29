@@ -12,7 +12,7 @@ import { EntityHeader, Row } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
-import { useQueryWrapperContext } from './QueryWrapper'
+import { useQueryContext } from './QueryWrapper'
 import { Dataset, Funder } from './row_renderers'
 import {
   LoadingObservationCard,
@@ -30,7 +30,6 @@ export type CardContainerProps = {
   facetAliases?: Record<string, string>
   isLoading?: boolean
   unitDescription?: string
-  showBarChart?: boolean
 } & CardConfiguration
 
 export const CardContainer = (props: CardContainerProps) => {
@@ -40,13 +39,12 @@ export const CardContainer = (props: CardContainerProps) => {
     type,
     isLoading,
     secondaryLabelLimit = 3,
-    showBarChart = true,
     title,
     ...rest
   } = props
 
   const { data, getLastQueryRequest, appendNextPageToResults, hasNextPage } =
-    useQueryWrapperContext()
+    useQueryContext()
 
   const queryRequest = getLastQueryRequest()
 
@@ -151,11 +149,8 @@ export const CardContainer = (props: CardContainerProps) => {
   return (
     <div role="list">
       {title && <h2 className="SRC-card-overview-title">{title}</h2>}
-      {!title && unitDescription && showBarChart && (
-        <TotalQueryResults
-          unitDescription={unitDescription}
-          frontText={'Displaying'}
-        />
+      {!title && unitDescription && (
+        <TotalQueryResults frontText={'Displaying'} />
       )}
       {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
       {cards}

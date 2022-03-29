@@ -19,7 +19,8 @@ import {
   FacetColumnResultValues,
 } from '../../../utils/synapseTypes'
 import loadingScreen from '../../LoadingScreen'
-import { useQueryWrapperContext } from '../../QueryWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
+import { useQueryContext } from '../../QueryWrapper'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,
@@ -98,7 +99,6 @@ export async function extractPlotDataArray(
   index: number,
   plotType: PlotType,
   accessToken?: string,
-  facetAliases?: Record<string, string>,
 ) {
   const { colorPalette } = getColorPalette(
     index,
@@ -233,7 +233,7 @@ export async function extractPlotDataArray(
 const applyFacetFilter = (
   event: PlotlyTyped.PlotMouseEvent,
   allFacetValues: FacetColumnResultValues,
-  callbackApplyFn: Function,
+  callbackApplyFn: FacetNavPanelProps['applyChangesToGraphSlice'],
 ) => {
   if (event.points && event.points[0]) {
     const plotPointData: any = event.points[0]
@@ -347,8 +347,10 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
     onSetPlotType,
   } = props
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle, facetAliases, getLastQueryRequest } =
-    useQueryWrapperContext()
+  const { data, isLoadingNewBundle, getLastQueryRequest } = useQueryContext()
+
+  const { facetAliases } = useQueryVisualizationContext()
+
   const [plotData, setPlotData] = useState<GraphData>()
   const [showModal, setShowModal] = useState(false)
 
@@ -455,7 +457,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                     )!
                   }
                   facetAliases={facetAliases}
-                  onChange={(facetNamesMap: {}) => {
+                  onChange={(facetNamesMap: Record<string, string>) => {
                     applyMultipleChangesToValuesColumn(
                       getLastQueryRequest(),
                       facetToPlot,
@@ -507,7 +509,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                     )!
                   }
                   facetAliases={facetAliases}
-                  onChange={(facetNamesMap: {}) => {
+                  onChange={(facetNamesMap: Record<string, string>) => {
                     applyMultipleChangesToValuesColumn(
                       getLastQueryRequest(),
                       facetToPlot,

@@ -1,17 +1,17 @@
 import React from 'react'
 import { Button } from 'react-bootstrap'
 import IconSvg, { IconSvgOptions } from '../IconSvg'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../QueryWrapper'
-import { useQueryWrapperContext } from '../QueryWrapper'
 
 const QueryFilterToggleButton = () => {
   const {
     topLevelControlsState: { showFacetFilter },
     setTopLevelControlsState,
-  } = useQueryWrapperContext()
+  } = useQueryVisualizationContext()
 
   const toggleFilterShowingState = () => {
     setTopLevelControlsState(state => ({

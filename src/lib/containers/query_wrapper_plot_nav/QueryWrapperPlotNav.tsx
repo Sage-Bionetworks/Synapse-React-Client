@@ -17,7 +17,11 @@ import { DownloadConfirmation } from '../download_list'
 import { ErrorBanner } from '../ErrorBanner'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload'
-import { QueryWrapper, QueryWrapperContextConsumer } from '../QueryWrapper'
+import {
+  QueryVisualizationContextConsumer,
+  QueryVisualizationWrapper,
+} from '../QueryVisualizationWrapper'
+import { QueryWrapper, QueryContextConsumer } from '../QueryWrapper'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import SqlEditor from '../SqlEditor'
 import { SynapseTableProps } from '../table/SynapseTable'
@@ -125,75 +129,108 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
     return (
       <div className="QueryWrapperPlotNav">
         <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
-          <QueryWrapperContextConsumer>
-            {queryWrapperContext => {
-              if (queryWrapperContext === undefined) {
-                throw new Error(
-                  'No queryWrapperContext found when using QueryWrapperContextConsumer',
-                )
-              }
-              const showFacetFilter =
-                queryWrapperContext?.topLevelControlsState.showFacetFilter ||
-                queryWrapperContext?.topLevelControlsState.showFacetFilter ===
-                  undefined
-              const isFaceted = queryWrapperContext?.isFacetsAvailable
+          <QueryVisualizationWrapper
+            unitDescription={'Results'}
+            rgbIndex={props.rgbIndex}
+            facetAliases={props.facetAliases}
+            visibleColumnCount={props.visibleColumnCount}
+            defaultShowFacetVisualization={props.defaultShowFacetVisualization}
+          >
+            <QueryContextConsumer>
+              {queryContext => {
+                if (queryContext === undefined) {
+                  throw new Error(
+                    'No queryContext found when using QueryContextConsumer',
+                  )
+                }
 
-              return (
-                <>
-                  <div
-                    className={`ErrorBannerWrapper ${
-                      showFacetFilter
-                        ? QUERY_FILTERS_EXPANDED_CSS
-                        : QUERY_FILTERS_COLLAPSED_CSS
-                    }`}
-                  >
-                    <ErrorBanner error={queryWrapperContext?.error} />
-                  </div>
-                  {entity && isTableEntity(entity) && entity.isSearchEnabled ? (
-                    <FullTextSearch />
-                  ) : (
-                    <SearchV2
-                      {...searchConfiguration}
-                      queryWrapperContext={queryWrapperContext}
-                    />
-                  )}
-                  <SqlEditor />
-                  <DownloadConfirmation
-                    downloadCartPageUrl={downloadCartPageUrl}
-                  />
-                  <TopLevelControls
-                    showColumnSelection={tableConfiguration !== undefined}
-                    name={name}
-                    hideDownload={hideDownload}
-                    hideQueryCount={hideQueryCount}
-                    hideFacetFilterControl={!isFaceted}
-                    hideVisualizationsControl={!isFaceted}
-                    hideSqlEditorControl={hideSqlEditorControl}
-                  />
-                  {isFaceted && (
-                    <>
-                      <QueryFilter facetsToFilter={facetsToFilter} />
-                      <QueryFilterToggleButton />
-                    </>
-                  )}
-                  <FacetNav facetsToPlot={facetsToPlot} showNotch={false} />
-                  <FilterAndView
-                    tableConfiguration={tableConfiguration}
-                    hideDownload={hideDownload}
-                    cardConfiguration={cardConfiguration}
-                  />
-                  {showExportMetadata && (
-                    <ModalDownload
-                      getLastQueryRequest={
-                        queryWrapperContext?.getLastQueryRequest
+                const isFaceted = queryContext?.isFacetsAvailable
+
+                return (
+                  <QueryVisualizationContextConsumer>
+                    {queryVisualizationContext => {
+                      if (queryVisualizationContext === undefined) {
+                        throw new Error(
+                          'No queryVisualizationContext found when using QueryVisualizationContextConsumer',
+                        )
                       }
-                      onClose={() => setShowExportMetadata(false)}
-                    />
-                  )}
-                </>
-              )
-            }}
-          </QueryWrapperContextConsumer>
+
+                      const showFacetFilter =
+                        queryVisualizationContext?.topLevelControlsState
+                          .showFacetFilter ||
+                        queryVisualizationContext?.topLevelControlsState
+                          .showFacetFilter === undefined
+
+                      return (
+                        <>
+                          <div
+                            className={`ErrorBannerWrapper ${
+                              showFacetFilter
+                                ? QUERY_FILTERS_EXPANDED_CSS
+                                : QUERY_FILTERS_COLLAPSED_CSS
+                            }`}
+                          >
+                            <ErrorBanner error={queryContext?.error} />
+                          </div>
+                          {entity &&
+                          isTableEntity(entity) &&
+                          entity.isSearchEnabled ? (
+                            <FullTextSearch />
+                          ) : (
+                            <SearchV2
+                              {...searchConfiguration}
+                              queryContext={queryContext}
+                              queryVisualizationContext={
+                                queryVisualizationContext
+                              }
+                            />
+                          )}
+                          <SqlEditor />
+                          <DownloadConfirmation
+                            downloadCartPageUrl={downloadCartPageUrl}
+                          />
+                          <TopLevelControls
+                            showColumnSelection={
+                              tableConfiguration !== undefined
+                            }
+                            name={name}
+                            hideDownload={hideDownload}
+                            hideQueryCount={hideQueryCount}
+                            hideFacetFilterControl={!isFaceted}
+                            hideVisualizationsControl={!isFaceted}
+                            hideSqlEditorControl={hideSqlEditorControl}
+                          />
+                          {isFaceted && (
+                            <>
+                              <QueryFilter facetsToFilter={facetsToFilter} />
+                              <QueryFilterToggleButton />
+                            </>
+                          )}
+                          <FacetNav
+                            facetsToPlot={facetsToPlot}
+                            showNotch={false}
+                          />
+                          <FilterAndView
+                            tableConfiguration={tableConfiguration}
+                            hideDownload={hideDownload}
+                            cardConfiguration={cardConfiguration}
+                          />
+                          {showExportMetadata && (
+                            <ModalDownload
+                              getLastQueryRequest={
+                                queryContext?.getLastQueryRequest
+                              }
+                              onClose={() => setShowExportMetadata(false)}
+                            />
+                          )}
+                        </>
+                      )
+                    }}
+                  </QueryVisualizationContextConsumer>
+                )
+              }}
+            </QueryContextConsumer>
+          </QueryVisualizationWrapper>
         </QueryWrapper>
       </div>
     )

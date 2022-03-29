@@ -5,11 +5,10 @@ import {
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
-import StackedBarChart, { StackedBarChartProps } from '../StackedBarChart'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import { isTableEntity, QueryBundleRequest } from '../../utils/synapseTypes'
 import { SynapseConstants } from '../../utils'
-import { QueryWrapper, QueryWrapperContextConsumer } from '../QueryWrapper'
+import { QueryWrapper, QueryContextConsumer } from '../QueryWrapper'
 import TopLevelControls, { TopLevelControlsProps } from './TopLevelControls'
 import FullTextSearch from '../FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SearchV2'
@@ -17,6 +16,10 @@ import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
 import TotalQueryResults from '../TotalQueryResults'
 import SqlEditor from '../SqlEditor'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import {
+  QueryVisualizationContextConsumer,
+  QueryVisualizationWrapper,
+} from '../QueryVisualizationWrapper'
 
 type SearchParams = {
   searchParams?: {
@@ -36,13 +39,11 @@ type OwnProps = {
   rgbIndex: number
   unitDescription?: string
   facetAliases?: Record<string, string>
-  facet?: string
   showTopLevelControls?: boolean
   searchConfiguration?: SearchV2Props
 } & Omit<TopLevelControlsProps, 'entityId'>
 
-export type StandaloneQueryWrapperProps = Partial<StackedBarChartProps> &
-  Partial<SynapseTableProps> &
+export type StandaloneQueryWrapperProps = Partial<SynapseTableProps> &
   SearchParams &
   Operator &
   OwnProps
@@ -65,14 +66,12 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
   })
 }
 /**
- * This component was initially implemented on the portal side. It renders a StackedBarChart if link and linkText are provided, and renders a SynapseTable if a title is provided.
+ * This component was initially implemented on the portal side. It renders a SynapseTable if a title is provided.
  * If showTopLevelControls is set to true, then the SynapseTable will also include the TopLevelControls (search, export table, column selection).
  */
 const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProps> =
   props => {
     const {
-      link,
-      linkText,
       title,
       searchParams,
       sqlOperator,
@@ -84,7 +83,6 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
       showTopLevelControls = false,
       searchConfiguration,
       unitDescription = 'Results',
-      facet,
       rgbIndex,
       ...rest
     } = props
@@ -107,73 +105,83 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
         {...rest}
         initQueryRequest={derivedQueryRequestFromSearchParams}
       >
-        <QueryWrapperContextConsumer>
-          {queryWrapperContext => {
-            if (queryWrapperContext === undefined) {
-              throw new Error(
-                'No queryWrapperContext found when calling QueryWrapperContextConsumer',
+        <QueryVisualizationWrapper
+          rgbIndex={rgbIndex}
+          unitDescription={unitDescription}
+          {...rest}
+        >
+          <QueryContextConsumer>
+            {queryContext => {
+              if (queryContext === undefined) {
+                throw new Error(
+                  'No queryContext found when calling QueryContextConsumer',
+                )
+              }
+              return (
+                <QueryVisualizationContextConsumer>
+                  {queryVisualizationContext => {
+                    if (queryVisualizationContext === undefined) {
+                      throw new Error(
+                        'No queryVisualizationContext found when calling QueryVisualizationContextConsumer',
+                      )
+                    }
+
+                    return (
+                      <>
+                        {title ? (
+                          <>
+                            {showTopLevelControls && (
+                              <TopLevelControls
+                                showColumnSelection={true}
+                                name={name}
+                                hideDownload={hideDownload}
+                                hideQueryCount={hideQueryCount}
+                                hideFacetFilterControl={true}
+                                hideVisualizationsControl={true}
+                              />
+                            )}
+                            {entity &&
+                            isTableEntity(entity) &&
+                            entity.isSearchEnabled ? (
+                              <FullTextSearch />
+                            ) : (
+                              <SearchV2
+                                {...searchConfiguration}
+                                queryContext={queryContext}
+                                queryVisualizationContext={
+                                  queryVisualizationContext
+                                }
+                              />
+                            )}
+                            <SqlEditor />
+                            {showTopLevelControls && (
+                              <TotalQueryResults
+                                frontText={''}
+                                showNotch={false}
+                              />
+                            )}
+                            <SynapseTable
+                              synapseContext={synapseContext}
+                              queryContext={queryContext}
+                              queryVisualizationContext={
+                                queryVisualizationContext
+                              }
+                              showAccessColumn={showAccessColumn}
+                              title={title}
+                              data-testid="SynapseTable"
+                            />
+                          </>
+                        ) : (
+                          <React.Fragment />
+                        )}
+                      </>
+                    )
+                  }}
+                </QueryVisualizationContextConsumer>
               )
-            }
-            return (
-              <>
-                {link && linkText ? (
-                  <StackedBarChart
-                    queryWrapperContext={queryWrapperContext}
-                    rgbIndex={rgbIndex}
-                    unitDescription={unitDescription}
-                    facet={facet}
-                    link={link}
-                    linkText={linkText}
-                  />
-                ) : (
-                  <React.Fragment />
-                )}
-                {title ? (
-                  <>
-                    {showTopLevelControls && (
-                      <TopLevelControls
-                        showColumnSelection={true}
-                        name={name}
-                        hideDownload={hideDownload}
-                        hideQueryCount={hideQueryCount}
-                        hideFacetFilterControl={true}
-                        hideVisualizationsControl={true}
-                      />
-                    )}
-                    {entity &&
-                    isTableEntity(entity) &&
-                    entity.isSearchEnabled ? (
-                      <FullTextSearch />
-                    ) : (
-                      <SearchV2
-                        {...searchConfiguration}
-                        queryWrapperContext={queryWrapperContext}
-                      />
-                    )}
-                    <SqlEditor />
-                    {showTopLevelControls && (
-                      <TotalQueryResults
-                        unitDescription={unitDescription}
-                        frontText={''}
-                        showNotch={false}
-                      />
-                    )}
-                    <SynapseTable
-                      synapseContext={synapseContext}
-                      queryWrapperContext={queryWrapperContext}
-                      unitDescription={unitDescription}
-                      showAccessColumn={showAccessColumn}
-                      title={title}
-                      data-testid="SynapseTable"
-                    />
-                  </>
-                ) : (
-                  <React.Fragment />
-                )}
-              </>
-            )
-          }}
-        </QueryWrapperContextConsumer>
+            }}
+          </QueryContextConsumer>
+        </QueryVisualizationWrapper>
       </QueryWrapper>
     )
   }

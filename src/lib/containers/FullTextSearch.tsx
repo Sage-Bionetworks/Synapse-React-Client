@@ -8,7 +8,8 @@ import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from './QueryWrapper'
-import { useQueryWrapperContext } from './QueryWrapper'
+import { useQueryContext } from './QueryWrapper'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 
 library.add(faSearch)
 library.add(faTimes)
@@ -17,11 +18,10 @@ library.add(faTimes)
 const MIN_SEARCH_QUERY_LENGTH = 3
 
 export function FullTextSearch() {
+  const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
   const {
-    executeQueryRequest,
-    getLastQueryRequest,
     topLevelControlsState: { showSearchBar, showFacetFilter },
-  } = useQueryWrapperContext()
+  } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
 

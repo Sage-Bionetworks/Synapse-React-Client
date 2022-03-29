@@ -23,14 +23,14 @@ import {
 } from '../../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../../widgets/facet-nav/FacetNav'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import { useQueryWrapperContext } from '../../QueryWrapper'
+import { useQueryContext } from '../../QueryWrapper'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 const Plot = createPlotlyComponent(Plotly)
 
 export type FacetPlotsCardProps = {
   title?: string
   description?: string
-  rgbIndex?: number
   facetsToPlot?: string[]
   detailsPagePath?: string
 }
@@ -52,12 +52,12 @@ const layout: Partial<PlotlyTyped.Layout> = {
 const FacetPlotsCard: React.FunctionComponent<FacetPlotsCardProps> = ({
   title,
   description,
-  rgbIndex,
   facetsToPlot,
   detailsPagePath,
 }: FacetPlotsCardProps): JSX.Element => {
   const { accessToken } = useSynapseContext()
-  const { data, isLoadingNewBundle, facetAliases } = useQueryWrapperContext()
+  const { data, isLoadingNewBundle } = useQueryContext()
+  const { facetAliases, rgbIndex } = useQueryVisualizationContext()
   const [facetPlotDataArray, setFacetPlotDataArray] = useState<GraphData[]>([])
   const [facetDataArray, setFacetDataArray] = useState<FacetColumnResult[]>([])
   const [selectedFacetValue, setSelectedFacetValue] = useState<string>('')

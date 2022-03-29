@@ -9,18 +9,8 @@ import { QueryBundleRequest } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { IconSvgOptions } from './IconSvg'
+import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
 import { QueryWrapper } from './QueryWrapper'
-
-/**
- * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
- *
- * This wasn't done because Enzyme's shallow renderer is not currently
- * compatible with the `contextType` field in the React 16+ context API.
- *
- * This can be fixed by rewriting tests to not rely on the shallow renderer.
- *
- * See here: https://github.com/enzymejs/enzyme/issues/1553
- */
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -99,7 +89,6 @@ export type CardContainerLogicProps = {
   unitDescription?: string
   sqlOperator?: SQLOperator
   searchParams?: KeyValue
-  facet?: string
   facetAliases?: Record<string, string>
   rgbIndex?: number
   isHeader?: boolean
@@ -131,7 +120,13 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
 
   return (
     <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
-      <CardContainer {...props} />
+      <QueryVisualizationWrapper
+        rgbIndex={props.rgbIndex}
+        unitDescription={props.unitDescription}
+        facetAliases={props.facetAliases}
+      >
+        <CardContainer {...props} />
+      </QueryVisualizationWrapper>
     </QueryWrapper>
   )
 }

@@ -2,21 +2,28 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import {
-  QueryWrapperContextProvider,
-  QueryWrapperContextType,
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../lib/containers/QueryVisualizationWrapper'
+import {
+  QueryContextProvider,
+  QueryContextType,
 } from '../../../lib/containers/QueryWrapper'
 import SqlEditor from '../../../lib/containers/SqlEditor'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
 const renderComponent = (
-  defaultQueryWrapperContext: Partial<QueryWrapperContextType>,
+  queryContext: Partial<QueryContextType>,
+  queryVisualizationContext: Partial<QueryVisualizationContextType>,
 ) => {
   return render(
-    <QueryWrapperContextProvider
-      queryWrapperContext={defaultQueryWrapperContext}
-    >
-      <SqlEditor />
-    </QueryWrapperContextProvider>,
+    <QueryContextProvider queryContext={queryContext}>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={queryVisualizationContext}
+      >
+        <SqlEditor />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
     {
       wrapper: createWrapper(),
     },
@@ -26,14 +33,17 @@ const renderComponent = (
 const mockExecuteQueryRequest = jest.fn()
 const mockGetLastQueryRequest = jest.fn()
 
-const defaultQueryWrapperContext: Partial<QueryWrapperContextType> = {
-  topLevelControlsState: {
-    showSqlEditor: true,
-    showFacetFilter: true,
-  },
+const defaultQueryContext: Partial<QueryContextType> = {
   executeQueryRequest: mockExecuteQueryRequest,
   getLastQueryRequest: mockGetLastQueryRequest,
 }
+const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
+  {
+    topLevelControlsState: {
+      showSqlEditor: true,
+      showFacetFilter: true,
+    },
+  }
 
 describe('SqlEditor tests', () => {
   beforeEach(() => {
@@ -44,10 +54,13 @@ describe('SqlEditor tests', () => {
   })
 
   it('shows/hides the sql editor based on prop', () => {
-    const component = renderComponent(defaultQueryWrapperContext)
+    const component = renderComponent(
+      defaultQueryContext,
+      defaultQueryVisualizationContext,
+    )
     component.container.querySelector('.MuiCollapse-entered')
-    renderComponent({
-      ...defaultQueryWrapperContext,
+    renderComponent(defaultQueryContext, {
+      ...defaultQueryVisualizationContext,
       topLevelControlsState: {
         showSqlEditor: false, // call under test
         showFacetFilter: true,
@@ -57,7 +70,7 @@ describe('SqlEditor tests', () => {
   })
 
   it('edits the sql', () => {
-    renderComponent(defaultQueryWrapperContext)
+    renderComponent(defaultQueryContext, defaultQueryVisualizationContext)
     const box = screen.getByRole('textbox')
     const newSql = 'select study from syn456'
     userEvent.type(box, newSql + '{enter}')

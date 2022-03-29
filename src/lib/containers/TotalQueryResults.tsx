@@ -28,11 +28,12 @@ import {
   QueryFilter,
   TextMatchesQueryFilter,
 } from '../utils/synapseTypes/Table/QueryFilter'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from './QueryWrapper'
-import { useQueryWrapperContext } from './QueryWrapper'
+import { useQueryContext } from './QueryWrapper'
 import SelectionCriteriaPill, {
   FacetWithSelection,
   SelectionCriteriaPillProps,
@@ -45,8 +46,8 @@ import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
 
 export type TotalQueryResultsProps = {
   style?: React.CSSProperties
-  unitDescription: string
   frontText: string
+  endText?: string
   applyChanges?: (newFacets: FacetColumnRequest[]) => void
   showNotch?: boolean
 }
@@ -56,8 +57,8 @@ export type TotalQueryResultsProps = {
 
 const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   style,
-  unitDescription,
   frontText,
+  endText = '',
   showNotch = false,
 }) => {
   const {
@@ -66,9 +67,12 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     getLastQueryRequest,
     executeQueryRequest,
     getInitQueryRequest,
-    topLevelControlsState,
     error,
-  } = useQueryWrapperContext()
+  } = useQueryContext()
+
+  const { topLevelControlsState, unitDescription } =
+    useQueryVisualizationContext()
+
   const total = data?.queryCount
   const [facetsWithSelection, setFacetsWithSelection] = useState<
     FacetWithSelection[]
@@ -333,7 +337,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       ) : (
         <>
           <span className="SRC-boldText SRC-text-title SRC-centerContent">
-            {frontText} {total?.toLocaleString()} {unitDescription}
+            {frontText} {total?.toLocaleString()} {unitDescription} {endText}
           </span>
           <div className="TotalQueryResults__selections">
             {searchSelectionCriteriaPillProps &&

@@ -9,11 +9,12 @@ import {
   FacetColumnResultValues,
   QueryResultBundle,
 } from '../../../utils/synapseTypes'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../../QueryWrapper'
-import { useQueryWrapperContext } from '../../QueryWrapper'
+import { useQueryContext } from '../../QueryWrapper'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 
@@ -69,9 +70,9 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     executeQueryRequest,
     error,
     asyncJobStatus,
-    topLevelControlsState,
-  } = useQueryWrapperContext()
+  } = useQueryContext()
 
+  const { topLevelControlsState } = useQueryVisualizationContext()
   const [facetUiStateArray, setFacetUiStateArray] = useState<UiFacetState[]>([])
   const [isFirstTime, setIsFirstTime] = useState(true)
   const { showFacetVisualization, showFacetFilter } = topLevelControlsState
@@ -198,10 +199,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     return (
       <>
         <TotalQueryResults
-          unitDescription={
-            hasFacetsOrFilters ? 'Results Filtered By' : 'Results'
-          }
           frontText={''}
+          endText={hasFacetsOrFilters ? 'Filtered By' : ''}
           showNotch={showNotch}
         />
         {facets.length > 0 && (

@@ -5,12 +5,13 @@ import { SQL_EDITOR } from '../../utils/SynapseConstants'
 import { EntityView, QueryResultBundle } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import QueryCount from '../QueryCount'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
   TopLevelControlsState,
 } from '../QueryWrapper'
-import { useQueryWrapperContext } from '../QueryWrapper'
+import { useQueryContext } from '../QueryWrapper'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
@@ -87,17 +88,20 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
 
   const {
     entity,
-    topLevelControlsState,
-    setTopLevelControlsState,
     data,
     getInitQueryRequest,
-    columnsToShowInTable: isColumnSelected,
-    selectedRowIndices,
     executeQueryRequest,
     getLastQueryRequest,
+  } = useQueryContext()
+
+  const {
+    topLevelControlsState,
+    setTopLevelControlsState,
+    columnsToShowInTable,
+    selectedRowIndices,
     facetAliases,
-    setColumnsToShowInTable: setIsColumnSelected,
-  } = useQueryWrapperContext()
+    setColumnsToShowInTable,
+  } = useQueryVisualizationContext()
 
   const isFileView =
     entity?.concreteType ===
@@ -132,15 +136,15 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
    * @memberof SynapseTable
    */
   const toggleColumnSelection = (columnName: string) => {
-    let isColumnSelectedCopy = cloneDeep(isColumnSelected)
-    if (isColumnSelectedCopy.includes(columnName)) {
-      isColumnSelectedCopy = isColumnSelectedCopy.filter(
+    let columnsToShowInTableCopy = cloneDeep(columnsToShowInTable)
+    if (columnsToShowInTableCopy.includes(columnName)) {
+      columnsToShowInTableCopy = columnsToShowInTableCopy.filter(
         el => el !== columnName,
       )
     } else {
-      isColumnSelectedCopy.push(columnName)
+      columnsToShowInTableCopy.push(columnName)
     }
-    setIsColumnSelected(isColumnSelectedCopy)
+    setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
 
@@ -238,7 +242,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           {showColumnSelection && (
             <ColumnSelection
               headers={data?.selectColumns}
-              isColumnSelected={isColumnSelected}
+              isColumnSelected={columnsToShowInTable}
               toggleColumnSelection={toggleColumnSelection}
               darkTheme={true}
               facetAliases={facetAliases}
