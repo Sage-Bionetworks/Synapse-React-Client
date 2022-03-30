@@ -172,7 +172,9 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     const [fileSize, setFileSize] = useState(0)
 
     const { data: downloadListStatistics, refetch } =
-      useGetDownloadListStatistics()
+      useGetDownloadListStatistics({
+        enabled: accessToken != null,
+      })
 
     const lastQueryRequest = getLastQueryRequest()
     // is not defined (configured for a container)
