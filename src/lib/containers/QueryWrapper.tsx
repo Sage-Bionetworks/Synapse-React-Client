@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
@@ -195,28 +195,34 @@ export function QueryWrapper(props: QueryWrapperProps) {
     setCurrentPage(currentPage - 1)
   }
 
-  // Use page 0 because it has all of the bundle objects that we only fetch once, such as queryCount
-  const responseBody = infiniteData?.pages[0].responseBody
-  const data: QueryResultBundle | undefined = responseBody
-    ? {
-        ...responseBody,
+  const data: QueryResultBundle | undefined = useMemo(() => {
+    if (
+      infiniteData == null ||
+      infiniteData.pages.length === 0 ||
+      infiniteData.pages[0].responseBody == null
+    ) {
+      return undefined
+    }
+
+    if (currentPage === 'ALL') {
+      // Modify the first page so the result is the concatenation of all of the fetched rows.
+      return {
+        ...infiniteData?.pages[0].responseBody,
         queryResult: {
-          ...responseBody.queryResult,
+          ...infiniteData?.pages[0].responseBody?.queryResult,
           queryResults: {
-            ...responseBody.queryResult.queryResults,
+            ...infiniteData?.pages[0].responseBody?.queryResult?.queryResults,
             rows:
-              // if currentPage is "ALL", the rows can be concatenated into one object
-              currentPage === 'ALL'
-                ? infiniteData.pages.flatMap(
-                    page => page.responseBody!.queryResult.queryResults.rows,
-                  ) ?? []
-                : // otherwise, use the currentPage index to get the rows
-                  infiniteData.pages[currentPage].responseBody!.queryResult
-                    .queryResults.rows,
+              infiniteData.pages.flatMap(
+                page => page.responseBody!.queryResult.queryResults.rows,
+              ) ?? [],
           },
         },
       }
-    : undefined
+    }
+
+    return infiniteData?.pages[currentPage].responseBody
+  }, [currentPage, infiniteData])
 
   useDeepCompareEffect(() => {
     if (onQueryChange) {

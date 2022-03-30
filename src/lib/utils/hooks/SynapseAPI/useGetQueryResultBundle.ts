@@ -55,9 +55,12 @@ export function useInfiniteQueryResultBundle(
             ...queryBundleRequest.query,
             offset: offset,
           },
-          // if we're on the first page, send the original partMask
-          // otherwise, just ask for the query results (if they're in the original partMask)
-          // as it's the only part that changes between pages
+          /**
+           * If we're on the first page, send the original partMask.
+           * Otherwise, just ask for the queryResults (if they're in the original partMask), as it's the only part that changes between pages.
+           *
+           * We'll merge the "aggregation" parts and the pages of queryResults in the `select` function.
+           */
           partMask:
             offset !== 0
               ? queryBundleRequest.partMask & BUNDLE_MASK_QUERY_RESULTS
@@ -68,6 +71,26 @@ export function useInfiniteQueryResultBundle(
     },
     {
       ...options,
+      select: data => {
+        /**
+         * Since we we only fetch queryResults on 2nd and subsequent pages, we add to all pages the aggregate parts
+         * that we only fetched on the first page.
+         */
+        const firstPage = data?.pages[0]
+        if (firstPage.responseBody) {
+          for (let i = 0; i < data.pages.length; i++) {
+            const page = data.pages[i]
+            if (page.responseBody != null) {
+              data.pages[i].responseBody = {
+                ...firstPage.responseBody,
+                // queryResult changes on each page.
+                queryResult: page.responseBody.queryResult,
+              }
+            }
+          }
+        }
+        return data
+      },
       getPreviousPageParam: firstPage => {
         if (firstPage.jobState !== 'COMPLETE') {
           return undefined
