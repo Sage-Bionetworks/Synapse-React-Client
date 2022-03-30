@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { SynapseConstants } from '..'
 import {
+  insertConditionsFromSearchParams,
   KeyValue,
   parseEntityIdFromSqlStatement,
   SQLOperator,
@@ -100,11 +101,16 @@ export type CardContainerLogicProps = {
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
  */
 export const CardContainerLogic = (props: CardContainerLogicProps) => {
+  const sql = insertConditionsFromSearchParams(
+    props.sql,
+    props.searchParams,
+    props.sqlOperator,
+  )
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: parseEntityIdFromSqlStatement(props.sql),
+    entityId: parseEntityIdFromSqlStatement(sql),
     query: {
-      sql: props.sql,
+      sql: sql,
       limit: props.limit,
     },
     partMask:

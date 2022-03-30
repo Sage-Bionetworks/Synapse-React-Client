@@ -11,7 +11,12 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 
 export type OwnProps = {
-  tableConfiguration: SynapseTableProps | undefined
+  tableConfiguration:
+    | Omit<
+        SynapseTableProps,
+        'synapseContext' | 'queryContext' | 'queryVisualizationContext'
+      >
+    | undefined
   cardConfiguration: CardConfiguration | undefined
   hideDownload?: boolean
 }

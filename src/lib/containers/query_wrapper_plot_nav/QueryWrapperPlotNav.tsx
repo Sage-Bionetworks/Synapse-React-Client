@@ -46,7 +46,10 @@ type OwnProps = {
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   /** If initQueryJson is set, it will be the Query used in the initial QueryBundleRequest */
   initQueryJson?: string
-  tableConfiguration?: SynapseTableProps
+  tableConfiguration?: Omit<
+    SynapseTableProps,
+    'synapseContext' | 'queryContext' | 'queryVisualizationContext'
+  >
   cardConfiguration?: CardConfiguration
   searchConfiguration?: SearchV2Props
   rgbIndex?: number
