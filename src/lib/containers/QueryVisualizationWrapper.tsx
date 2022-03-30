@@ -28,9 +28,7 @@ export type QueryVisualizationContextProviderProps = {
 }
 
 /**
- * Provides context necessary for most components in SRC
- * @param param0
- * @returns
+ * Provides fields and functions related to visualizing a Synapse table query. For actual query data, see QueryContextProvider.
  */
 export const QueryVisualizationContextProvider: React.FunctionComponent<QueryVisualizationContextProviderProps> =
   ({ children, queryVisualizationContext }) => {

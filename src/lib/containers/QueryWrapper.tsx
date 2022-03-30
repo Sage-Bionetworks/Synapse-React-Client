@@ -68,9 +68,7 @@ export type QueryContextProviderProps = {
 }
 
 /**
- * Provides context necessary for most components in SRC
- * @param param0
- * @returns
+ * Provides data related to a Synapse table query, and functions for iterating through pages of the data.
  */
 export const QueryContextProvider: React.FC<QueryContextProviderProps> = ({
   children,
@@ -105,7 +103,7 @@ export type QueryWrapperProps = {
 
 export type TopLevelControlsState = {
   showFacetVisualization: boolean
-  showFacetFilter?: boolean
+  showFacetFilter: boolean
   showColumnFilter: boolean
   showSearchBar: boolean
   showDownloadConfirmation: boolean
@@ -149,7 +147,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isPreviousData,
     remove,
   } = useInfiniteQueryResultBundle(lastQueryRequest, {
-    // staleTime: 1000 * 60 * 3, // 3 minutes
     // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
     keepPreviousData: true,
   })
