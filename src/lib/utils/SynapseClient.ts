@@ -19,6 +19,7 @@ import {
   REGISTERED_SCHEMA_ID,
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
+  SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SIGN_TERMS_OF_USE,
   USER_BUNDLE,
@@ -214,8 +215,15 @@ type SynapseError = {
  * Error message returned by the Synapse backend joined with the
  * HTTP status code.
  */
-export type SynapseClientError = SynapseError & {
-  status: number
+export class SynapseClientError extends Error {
+  public status: number
+  public reason: string
+
+  constructor(status: number, reason: string) {
+    super(reason)
+    this.status = status
+    this.reason = reason
+  }
 }
 
 /*
@@ -254,21 +262,13 @@ const fetchWithExponentialTimeout = async <TResponse>(
 
   if (response.ok) {
     return responseObject as TResponse
-  } else if (typeof responseObject === 'string') {
-    throw {
-      reason: responseObject,
-      status: response.status,
-    }
-  } else if ('reason' in responseObject) {
-    throw {
-      reason: responseObject.reason,
-      status: response.status,
-    }
+  } else if (typeof responseObject === 'object' && 'reason' in responseObject) {
+    throw new SynapseClientError(response.status, responseObject.reason)
   } else {
-    throw {
-      reason: responseObject,
-      status: response.status,
-    }
+    throw new SynapseClientError(
+      response.status,
+      JSON.stringify(responseObject),
+    )
   }
 }
 
@@ -394,7 +394,11 @@ export const getDownloadFromTableRequest = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/entity/${request.entityId}/table/download/csv/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 
 /**
@@ -464,6 +468,7 @@ export const getFileHandleByIdURL = (
  */
 export const getAsyncResultFromJobId = async <TRequest, TResponse>(
   asyncJobId: string,
+  responseBodyEndpoint: string,
   accessToken?: string,
   setCurrentAsyncResult?: (
     result: AsynchronousJobStatus<TRequest, TResponse>,
@@ -486,6 +491,20 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
     )
     setCurrentAsyncResult?.(response)
   }
+
+  if (response.jobState === 'FAILED') {
+    /**
+     * While we technically already have the failure reason in the response, the HTTP response doesn't give a helpful error code (e.g. 403)
+     * that we can use for an error banner. We can get the HTTP code if we fetch the response body directly.
+     */
+    doGet<TResponse>(
+      responseBodyEndpoint,
+      accessToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  }
+
   return response
 }
 
@@ -497,16 +516,14 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
  */
 export const getAsyncResultBodyFromJobId = async <TResponse>(
   asyncJobId: string,
+  responseBodyEndpoint: string,
   accessToken?: string,
 ): Promise<TResponse> => {
   const response = await getAsyncResultFromJobId<unknown, TResponse>(
     asyncJobId,
+    responseBodyEndpoint,
     accessToken,
   )
-
-  if (response.jobState === 'FAILED') {
-    throw new Error(response.errorMessage + '\n' + response.errorDetails)
-  }
 
   return response.responseBody!
 }
@@ -528,14 +545,11 @@ export const getQueryTableAsyncJobResults = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  const response = await getAsyncResultFromJobId<
-    QueryBundleRequest,
-    QueryResultBundle
-  >(asyncJobId.token, accessToken)
-  if (response.jobState === 'FAILED') {
-    throw new Error(response.errorMessage + '\n' + response.errorDetails)
-  }
-  return response
+  return getAsyncResultFromJobId<QueryBundleRequest, QueryResultBundle>(
+    asyncJobId.token,
+    `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 
 /**
@@ -555,7 +569,11 @@ export const getQueryTableResults = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 /**
  *  Run and return results from queryBundleRequest, queryBundle request must be of the
@@ -908,7 +926,11 @@ export const getBulkFiles = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/file/v1/file/bulk/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 /**
  * Bundled access to Entity and related data components.
@@ -1839,7 +1861,11 @@ export const createPackageFromDownloadListV2 = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/download/list/package/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 
 /**
@@ -1860,7 +1886,11 @@ export const createManifestFromDownloadListV2 = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/download/list/manifest/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 
 /**
@@ -1872,13 +1902,17 @@ export const addFilesToDownloadListV2 = async (
   accessToken: string | undefined = undefined,
 ): Promise<AddToDownloadListResponse> => {
   const asyncJobId = await doPost<AsyncJobId>(
-    '/repo/v1//download/list/add/async/start',
+    '/repo/v1/download/list/add/async/start',
     request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/download/list/add/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 
 /**
@@ -2671,7 +2705,11 @@ export const updateTable = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 
 export const getTransformSqlWithFacetsRequest = (
@@ -2810,7 +2848,11 @@ const getDownloadListJobResponse = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    `/repo/v1/download/list/query/async/get/${asyncJobId.token}`,
+    accessToken,
+  )
 }
 
 /**
@@ -3049,7 +3091,11 @@ export const getValidationSchema = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(asyncJobId.token, accessToken)
+  return getAsyncResultBodyFromJobId(
+    asyncJobId.token,
+    SCHEMA_VALIDATION_GET(asyncJobId.token),
+    accessToken,
+  )
 }
 
 /**

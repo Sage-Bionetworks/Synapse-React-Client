@@ -8,10 +8,11 @@ import {
 } from '../utils/functions/sqlFunctions'
 import { QueryBundleRequest } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
+import { ErrorBanner } from './ErrorBanner'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { IconSvgOptions } from './IconSvg'
 import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
-import { QueryWrapper } from './QueryWrapper'
+import { QueryContextConsumer, QueryWrapper } from './QueryWrapper'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -132,6 +133,9 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
         facetAliases={props.facetAliases}
       >
         <CardContainer {...props} />
+        <QueryContextConsumer>
+          {queryContext => <ErrorBanner error={queryContext?.error} />}
+        </QueryContextConsumer>
       </QueryVisualizationWrapper>
     </QueryWrapper>
   )

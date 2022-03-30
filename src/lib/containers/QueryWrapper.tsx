@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
@@ -148,6 +149,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isPreviousData,
     remove,
   } = useInfiniteQueryResultBundle(lastQueryRequest, {
+    // staleTime: 1000 * 60 * 3, // 3 minutes
     // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
     keepPreviousData: true,
   })
@@ -219,11 +221,11 @@ export function QueryWrapper(props: QueryWrapperProps) {
       }
     : undefined
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (onQueryChange) {
-      onQueryChange(lastQueryRequest.query.sql)
+      onQueryChange(JSON.stringify(lastQueryRequest.query))
     }
-  }, [onQueryChange, lastQueryRequest.query.sql])
+  }, [onQueryChange, lastQueryRequest.query])
 
   useEffect(() => {
     if (data && onQueryResultBundleChange) {

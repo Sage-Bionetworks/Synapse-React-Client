@@ -158,16 +158,9 @@ export function QueryVisualizationWrapper(
    * Render the children without any formatting
    */
   const { children } = props
-  const loadingCursorClass = isLoadingNewBundle ? 'SRC-logo-cursor' : ''
   return (
     <QueryVisualizationContextProvider queryVisualizationContext={context}>
-      <div
-        className={`SRC-wrapper ${loadingCursorClass} ${
-          isFacetsAvailable ? 'has-facets' : ''
-        }`}
-      >
-        {children}
-      </div>
+      {children}
     </QueryVisualizationContextProvider>
   )
 }

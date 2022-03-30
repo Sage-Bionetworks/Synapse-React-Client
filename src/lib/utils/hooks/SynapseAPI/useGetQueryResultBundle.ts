@@ -69,6 +69,9 @@ export function useInfiniteQueryResultBundle(
     {
       ...options,
       getPreviousPageParam: firstPage => {
+        if (firstPage.jobState !== 'COMPLETE') {
+          return undefined
+        }
         const request = firstPage.requestBody
         if (request.query.offset == null || request.query.offset === 0) {
           return undefined
@@ -78,6 +81,9 @@ export function useInfiniteQueryResultBundle(
         return request.query.offset - pageSize
       },
       getNextPageParam: (page, allPages) => {
+        if (page.jobState !== 'COMPLETE') {
+          return undefined
+        }
         const request = page.requestBody
         const pageSize = request.query.limit ?? DEFAULT_PAGE_SIZE
         const totalQueryResultCount = allPages[0].responseBody?.queryCount
