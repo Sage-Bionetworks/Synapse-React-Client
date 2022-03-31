@@ -5,7 +5,7 @@ import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import SummaryTable, {
   SummaryTableProps,
 } from '../../../../lib/containers/synapse_form_wrapper/SummaryTable'
-import $RefParser from 'json-schema-ref-parser'
+import $RefParser from '@apidevtools/json-schema-ref-parser'
 
 import {
   stepsWithUserData,
