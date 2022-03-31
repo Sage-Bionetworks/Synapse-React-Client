@@ -1,16 +1,16 @@
 import * as React from 'react'
-import QueryWrapper from '../../QueryWrapper'
-import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../../utils'
+import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
-import { ErrorBanner } from '../../ErrorBanner'
+import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { QueryWrapper } from '../../QueryWrapper'
+import { QueryWrapperErrorBanner } from '../../QueryWrapperErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
-import { SynapseContextConsumer } from '../../../utils/SynapseContext'
 
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
   facetsToPlot?: string[]
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
   sql?: string
 }
 export function getQueryRequest(sql: string): QueryBundleRequest {
@@ -32,37 +32,26 @@ export function getQueryRequest(sql: string): QueryBundleRequest {
 }
 const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsCardsProps> =
   props => {
-    const { sql, facetsToPlot, rgbIndex, ...rest } = props
+    const { sql, facetsToPlot, rgbIndex, facetAliases } = props
     const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
     return (
       <div className="SingleQueryFacetPlotsCards">
-        <SynapseContextConsumer>
-          {context => (
-            <QueryWrapper
-              {...rest}
-              token={context?.accessToken}
-              initQueryRequest={initQueryRequest}
-            >
-              {queryWrapperChildProps => {
-                return (
-                  <>
-                    <ErrorBanner {...queryWrapperChildProps} />
-                    {facetsToPlot?.map(facetName => {
-                      return (
-                        <FacetPlotsCard
-                          {...queryWrapperChildProps}
-                          key={`FacetPlotCard-${facetName}`}
-                          facetsToPlot={[facetName]}
-                          rgbIndex={rgbIndex}
-                        />
-                      )
-                    })}
-                  </>
-                )
-              }}
-            </QueryWrapper>
-          )}
-        </SynapseContextConsumer>
+        <QueryWrapper initQueryRequest={initQueryRequest}>
+          <QueryVisualizationWrapper
+            rgbIndex={rgbIndex}
+            facetAliases={facetAliases}
+          >
+            <QueryWrapperErrorBanner />
+            {facetsToPlot?.map(facetName => {
+              return (
+                <FacetPlotsCard
+                  key={`FacetPlotCard-${facetName}`}
+                  facetsToPlot={[facetName]}
+                />
+              )
+            })}
+          </QueryVisualizationWrapper>
+        </QueryWrapper>
       </div>
     )
   }

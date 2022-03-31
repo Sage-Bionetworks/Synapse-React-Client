@@ -19,13 +19,12 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
   parens,
 }) => {
   const { accessToken } = useSynapseContext()
+
   const [storedSqlQueryCount, setStoredSqlQueryCount] = useState<{}>({})
   // maps sql string to true/false, true if already made a request for this sql's query count
   // false or undefined if not
-  const [
-    isCalculatingQueryCountForSql,
-    setIsCalculatingQueryCountForSql,
-  ] = useState<{}>({})
+  const [isCalculatingQueryCountForSql, setIsCalculatingQueryCountForSql] =
+    useState<{}>({})
   let mounted = true
 
   useEffect(() => {

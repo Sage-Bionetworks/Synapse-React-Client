@@ -16,11 +16,11 @@ type ColumnSelectionProps = {
   onChange?: () => void
   toggleColumnSelection: (name: string) => void
   darkTheme?: boolean
-  facetAliases?: {}
+  facetAliases?: Record<string, string>
 }
 
 type MetadataEvent = {
-  source: "select" | "click" | "rootClose" | "keydown";
+  source: 'select' | 'click' | 'rootClose' | 'keydown'
 }
 
 const tooltipColumnSelectionId = 'addAndRemoveColumns'
@@ -33,12 +33,16 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
     isColumnSelected,
     toggleColumnSelection,
     darkTheme,
-    facetAliases
+    facetAliases,
   } = props
 
   const [show, setShow] = useState(false)
-  const onDropdownClick = (_show: boolean, _event: React.SyntheticEvent<Dropdown, Event>, metadata: MetadataEvent) => {
-    if (metadata.source === "rootClose") {
+  const onDropdownClick = (
+    _show: boolean,
+    _event: React.SyntheticEvent<Dropdown, Event>,
+    metadata: MetadataEvent,
+  ) => {
+    if (metadata.source === 'rootClose') {
       setShow(false)
     } else {
       setShow(true)
@@ -47,16 +51,18 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
   return (
     <Dropdown
       as="span"
-      onToggle={(show: boolean, event: React.SyntheticEvent<Dropdown, Event>, metadata: MetadataEvent) =>
-        onDropdownClick(show, event, metadata)
-      }
+      onToggle={(
+        show: boolean,
+        event: React.SyntheticEvent<Dropdown, Event>,
+        metadata: MetadataEvent,
+      ) => onDropdownClick(show, event, metadata)}
       show={show}
       drop="down"
     >
       <ElementWithTooltip
         idForToolTip={tooltipColumnSelectionId}
         tooltipText={'Add / Remove Table Columns'}
-        icon={darkTheme ? "columnsdark": "columns"}
+        icon={darkTheme ? 'columnsdark' : 'columns'}
         darkTheme={darkTheme}
       ></ElementWithTooltip>
 

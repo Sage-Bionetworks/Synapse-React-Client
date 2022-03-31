@@ -1,15 +1,27 @@
+import ColumnResizer from 'column-resizer'
 import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
+import { ReactComponent as NoData } from '../../assets/icons/file-dotted.svg'
 import { SynapseClient } from '../../utils'
+import {
+  hasFilesInView,
+  isEntityView,
+} from '../../utils/functions/EntityTypeUtils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
+import { isGroupBy } from '../../utils/functions/queryUtils'
 import {
   formatSQLFromParser,
   isGroupByInSql,
 } from '../../utils/functions/sqlFunctions'
+import { SynapseContextType } from '../../utils/SynapseContext'
 import {
+  ColumnModel,
+  ColumnType,
   EntityHeader,
+  FacetColumnRequest,
   FacetColumnResult,
   FacetColumnResultValues,
   QueryBundleRequest,
@@ -19,37 +31,29 @@ import {
   SortItem,
   UserGroupHeader,
   UserProfile,
-  FacetColumnRequest,
-  ColumnType,
-  ColumnModel,
 } from '../../utils/synapseTypes/'
-import HasAccess from '../HasAccess'
-import { QueryWrapperChildProps } from '../QueryWrapper'
-import TotalQueryResults from '../TotalQueryResults'
-import { unCamelCase } from './../../utils/functions/unCamelCase'
-import { ICON_STATE } from './SynapseTableConstants'
-import { ReactComponent as NoData } from '../../assets/icons/file-dotted.svg'
-import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
-import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
-import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
-import { Checkbox } from '../widgets/Checkbox'
+import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { LabelLinkConfig } from '../CardContainerLogic'
+import DirectDownload from '../DirectDownload'
+import HasAccess from '../HasAccess'
+import loadingScreen from '../LoadingScreen'
+import ModalDownload from '../ModalDownload'
+import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
+import { QueryContextType } from '../QueryWrapper'
+import { Icon } from '../row_renderers/utils'
+import { getColumnIndiciesWithType } from '../synapse_table_functions/getColumnIndiciesWithType'
+import { getUniqueEntities } from '../synapse_table_functions/getUniqueEntities'
+import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
+import TotalQueryResults from '../TotalQueryResults'
+import { Checkbox } from '../widgets/Checkbox'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
 import {
-  applyMultipleChangesToValuesColumn,
   applyChangesToValuesColumn,
+  applyMultipleChangesToValuesColumn,
 } from '../widgets/query-filter/QueryFilter'
-import ColumnResizer from 'column-resizer'
-import ModalDownload from '../ModalDownload'
-import loadingScreen from '../LoadingScreen'
-import { Icon } from '../row_renderers/utils'
+import { unCamelCase } from './../../utils/functions/unCamelCase'
 import SearchResultsNotFound from './SearchResultsNotFound'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import AddToDownloadListV2 from '../AddToDownloadListV2'
-import { SynapseContext } from '../../utils/SynapseContext'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import DirectDownload from '../DirectDownload'
-import { isGroupBy } from '../../utils/functions/queryUtils'
+import { ICON_STATE } from './SynapseTableConstants'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -87,16 +91,15 @@ export type SynapseTableState = {
   columnIconSortState: number[]
   isExportTableDownloadOpen: boolean
   isExpanded: boolean
-  isEntityView: boolean
-  isFileView: boolean
   mapEntityIdToHeader: Record<string, EntityHeader>
   mapUserIdToHeader: Record<string, Partial<UserGroupHeader & UserProfile>>
   isColumnSelectionOpen: boolean
   isFetchingEntityHeaders: boolean
-  isFetchingEntityVersion: boolean
 }
 export type SynapseTableProps = {
-  visibleColumnCount?: number
+  synapseContext: SynapseContextType
+  queryContext: QueryContextType
+  queryVisualizationContext: QueryVisualizationContextType
   title?: string
   showAccessColumn?: boolean
   showDownloadColumn?: boolean
@@ -106,10 +109,10 @@ export type SynapseTableProps = {
 }
 
 export default class SynapseTable extends React.Component<
-  QueryWrapperChildProps & SynapseTableProps,
+  SynapseTableProps,
   SynapseTableState
 > {
-  constructor(props: QueryWrapperChildProps & SynapseTableProps) {
+  constructor(props: SynapseTableProps) {
     super(props)
     this.componentDidMount = this.componentDidMount.bind(this)
     this.componentWillUnmount = this.componentWillUnmount.bind(this)
@@ -137,8 +140,6 @@ export default class SynapseTable extends React.Component<
       isExportTableDownloadOpen: false,
       isExpanded: false,
       isColumnSelectionOpen: false,
-      isEntityView: false,
-      isFileView: false,
       // sortedColumnSelection contains the columns which are
       // selected currently and their sort status as eithet
       // off, desc, or asc.
@@ -146,12 +147,9 @@ export default class SynapseTable extends React.Component<
       mapEntityIdToHeader: {},
       mapUserIdToHeader: {},
       isFetchingEntityHeaders: false,
-      isFetchingEntityVersion: false,
     }
     this.getEntityHeadersInData = this.getEntityHeadersInData.bind(this)
   }
-
-  static contextType = SynapseContext
 
   // instance variables
   resizer: any
@@ -167,14 +165,20 @@ export default class SynapseTable extends React.Component<
   }
 
   shouldComponentUpdate(
-    nextProps: QueryWrapperChildProps & SynapseTableProps,
+    nextProps: SynapseTableProps,
     nextState: Readonly<SynapseTableState>,
   ): boolean {
     // ignore isFetching state variables when checking for change in state
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isFetchingEntityHeaders: oldIsFetchingEntityHeaders, isFetchingEntityVersion: oldIsFetchingEntityVersion, ...oldState } = this.state
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isFetchingEntityHeaders: newIsFetchingEntityHeaders, isFetchingEntityVersion: newIsFetchingEntityVersion, ...newState } = nextState
+    const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      isFetchingEntityHeaders: oldIsFetchingEntityHeaders,
+      ...oldState
+    } = this.state
+    const {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      isFetchingEntityHeaders: newIsFetchingEntityHeaders,
+      ...newState
+    } = nextState
     const isPropsChange = !eq(this.props, nextProps)
     const isStateChange = !eq(oldState, newState)
     const shouldComponentUpdate = isPropsChange || isStateChange
@@ -183,48 +187,25 @@ export default class SynapseTable extends React.Component<
     }
     return shouldComponentUpdate
   }
-  componentDidUpdate(prevProps: QueryWrapperChildProps & SynapseTableProps, prevState: Readonly<SynapseTableState>) {
+  componentDidUpdate(
+    prevProps: SynapseTableProps,
+    prevState: Readonly<SynapseTableState>,
+  ) {
     // PORTALS-2081: if the data changed, then get the new entity headers
-    if (!eq(prevProps.data, this.props.data)) {
+    if (!eq(prevProps.queryContext.data, this.props.queryContext.data)) {
       this.getEntityHeadersInData(false)
-    } else if (!eq(prevState.isEntityView, this.state.isEntityView)) {
+    } else if (
+      prevProps.queryContext.entity &&
+      this.props.queryContext.entity &&
+      !eq(
+        isEntityView(prevProps.queryContext.entity),
+        isEntityView(this.props.queryContext.entity),
+      )
+    ) {
       // if we determined that this is an entity view, force refresh the entity headers (for Views we need to get the rowIds!)
       this.getEntityHeadersInData(true)
     }
-
-    this.getTableConcreteType(prevProps)
     this.enableResize()
-  }
-
-  public async getTableConcreteType(
-    prevProps: QueryWrapperChildProps & SynapseTableProps,
-  ) {
-    const token = this.context.accessToken
-    const { data } = this.props
-    if (!data || this.state.isFetchingEntityVersion) {
-      return
-    }
-
-    const currentTableId = data?.queryResult.queryResults.tableId
-    const previousTableId = prevProps.data?.queryResult.queryResults.tableId
-    if (currentTableId && previousTableId !== currentTableId) {
-      this.setState({
-        isFetchingEntityVersion: true,
-      })
-      const entityData = await SynapseClient.getEntity(token, currentTableId)
-      const isEntityView = entityData.concreteType.includes('EntityView')
-      // PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
-      // Set isFileView to true if the Entity could have any Files in it.  Check if bit 1 is set in the viewTypeMask.
-      //  http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityView.html
-      const isFileView = isEntityView
-        ? ((entityData as any).viewTypeMask & 1) != 0
-        : false
-      this.setState({
-        isEntityView: isEntityView,
-        isFileView: isFileView,
-        isFetchingEntityVersion: false,
-      })
-    }
   }
 
   enableResize() {
@@ -237,7 +218,7 @@ export default class SynapseTable extends React.Component<
       // We need to give SynapseTableCell time to render (which will change the column size).
       // Alternatively, we may be able to use SizeMe (or withSize() on Cell component) to respond to width change.
       setTimeout(() => {
-        this.resizer.reset(RESIZER_OPTIONS)  
+        this.resizer.reset(RESIZER_OPTIONS)
       }, 1000)
     }
   }
@@ -249,8 +230,8 @@ export default class SynapseTable extends React.Component<
   }
 
   public async getEntityHeadersInData(forceRefresh: boolean) {
-    const { data } = this.props
-    if (!data) {
+    const { data, entity } = this.props.queryContext
+    if (!data || !entity) {
       return
     } else if (this.state.isFetchingEntityHeaders && !forceRefresh) {
       return
@@ -258,11 +239,11 @@ export default class SynapseTable extends React.Component<
     const mapEntityIdToHeader = cloneDeep(this.state.mapEntityIdToHeader)
     const mapUserIdToHeader = cloneDeep(this.state.mapUserIdToHeader)
     const entityIdColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       ColumnType.ENTITYID,
     )
     const userIdColumnIndicies = getColumnIndiciesWithType(
-      this.props.data,
+      data,
       ColumnType.USERID,
     )
 
@@ -272,11 +253,11 @@ export default class SynapseTable extends React.Component<
       entityIdColumnIndicies,
     )
     // also include row entity ids if this is a view (it's possible that the ID column was not selected)
-    if (this.state.isEntityView) {
+    if (isEntityView(entity)) {
       const { queryResult } = data
       const { queryResults } = queryResult
       const { rows } = queryResults
-      rows.forEach(row => {
+      rows.forEach((row: Row) => {
         const rowSynapseId = `syn${row.rowId}`
         distinctEntityIds.add(rowSynapseId)
       })
@@ -306,7 +287,7 @@ export default class SynapseTable extends React.Component<
         })
         const data = await SynapseClient.getEntityHeaders(
           referenceList,
-          this.context.accessToken,
+          this.props.synapseContext.accessToken,
         )
         const { results } = data
         results.forEach(el => {
@@ -324,7 +305,7 @@ export default class SynapseTable extends React.Component<
       try {
         const data = await SynapseClient.getGroupHeadersBatch(
           ids,
-          this.context.accessToken,
+          this.props.synapseContext.accessToken,
         )
         data.children.forEach(el => {
           if (el.isIndividual) {
@@ -358,18 +339,18 @@ export default class SynapseTable extends React.Component<
    * Display the view
    */
   public render() {
-    if (this.props.isLoadingNewData) {
+    if (
+      !this.props.queryContext.data &&
+      this.props.queryContext.isLoadingNewBundle
+    ) {
       return loadingScreen
-    } else if (!this.props.data) {
+    } else if (!this.props.queryContext.data) {
       return <></>
     }
     // unpack all the data
     const {
-      data,
-      isLoading = true,
-      unitDescription,
-      showBarChart,
-      topLevelControlsState,
+      queryContext: { data },
+      queryVisualizationContext: { topLevelControlsState, unitDescription },
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { queryResults } = queryResult
@@ -377,13 +358,10 @@ export default class SynapseTable extends React.Component<
     const { headers } = queryResults
     const { facets = [] } = data
     const { isExpanded, isExportTableDownloadOpen } = this.state
-    const queryRequest = this.props.getLastQueryRequest!()
-    const { showFacetFilter } = topLevelControlsState!
+    const queryRequest = this.props.queryContext.getLastQueryRequest()
+    const { showFacetFilter } = topLevelControlsState
 
     let className = ''
-    if (showBarChart) {
-      className = 'SRC-marginBottomTop'
-    }
     const hasResults = data.queryResult.queryResults.rows.length > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
     if (!hasResults && queryRequest.query.offset === 0) {
@@ -424,10 +402,7 @@ export default class SynapseTable extends React.Component<
                 style={{ minHeight: '20px' }}
               >
                 <TotalQueryResults
-                  isLoading={isLoading}
                   style={{ fontSize: 15 }}
-                  unitDescription={unitDescription}
-                  lastQueryRequest={queryRequest}
                   frontText={'Showing'}
                   applyChanges={(newFacets: FacetColumnRequest[]) =>
                     this.applyChangesFromQueryFilter(newFacets)
@@ -449,7 +424,7 @@ export default class SynapseTable extends React.Component<
             // @ts-ignore
             onHide={() => this.setState({ isExpanded: false })}
             dialogClassName={'modal-90w'}
-            backdrop='static'
+            backdrop="static"
           >
             <Modal.Header
               // @ts-ignore
@@ -466,7 +441,7 @@ export default class SynapseTable extends React.Component<
 
   private showGroupRowData = (selectedRow: Row) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
-    const queryCopy = this.props.getLastQueryRequest!().query
+    const queryCopy = this.props.queryContext.getLastQueryRequest().query
     const parsed = this.getSqlUnderlyingDataForRow(selectedRow, queryCopy.sql)
     queryCopy.sql = parsed.newSql
     const queryJSON = JSON.stringify(queryCopy)
@@ -481,12 +456,11 @@ export default class SynapseTable extends React.Component<
     facets: FacetColumnResult[],
     rows: Row[],
   ) => {
-    const lastQueryRequest = this.props.getLastQueryRequest?.()!
+    const lastQueryRequest = this.props.queryContext.getLastQueryRequest?.()!
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
-    const pastZero: boolean = lastQueryRequest.query.offset! > 0
     const {
-      hasMoreData,
+      queryContext: { entity, hasNextPage, hasPreviousPage },
       showAccessColumn,
       showDownloadColumn,
       isRowSelectionVisible,
@@ -516,7 +490,7 @@ export default class SynapseTable extends React.Component<
         onClick={this.handlePaginationClick(PREVIOUS)}
         type="button"
         style={{
-          marginRight: !hasMoreData && pastZero ? 0 : '10px',
+          marginRight: !hasNextPage && hasPreviousPage ? 0 : '10px',
           marginBottom: '20px',
           display: 'inline-flex',
           justifyContent: 'center',
@@ -527,14 +501,31 @@ export default class SynapseTable extends React.Component<
       </Button>
     )
 
-    const isShowingAccessColumn: boolean | undefined =
-      showAccessColumn && this.state.isEntityView
-    const isLoggedIn = !!this.context.accessToken
     const containsGroupBy = isGroupBy(lastQueryRequest.query.sql)
-    const isShowingAddToV2DownloadListColumn: boolean =
-      this.state.isFileView && !this.props.hideDownload && isLoggedIn && !containsGroupBy
+    const isShowingAccessColumn: boolean | undefined =
+      showAccessColumn && entity && isEntityView(entity) && !containsGroupBy
+    const isLoggedIn = !!this.props.synapseContext.accessToken
+
+    // PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
+    // Set isFileView to true if the Entity could have any Files in it.  Check if bit 1 is set in the viewTypeMask.
+    //  http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityView.html
+
+    // TODO: is file view or is dataset
+    const isShowingAddToV2DownloadListColumn: boolean = !!(
+      entity &&
+      isEntityView(entity) &&
+      hasFilesInView(entity) &&
+      !this.props.hideDownload &&
+      isLoggedIn &&
+      !containsGroupBy
+    )
     const isShowingDirectDownloadColumn =
-      this.state.isFileView && showDownloadColumn && isLoggedIn && !containsGroupBy
+      entity &&
+      isEntityView(entity) &&
+      hasFilesInView(entity) &&
+      showDownloadColumn &&
+      isLoggedIn &&
+      !containsGroupBy
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     const tableEntityId: string = lastQueryRequest?.entityId
     return (
@@ -574,8 +565,8 @@ export default class SynapseTable extends React.Component<
           </tbody>
         </table>
         <div className="bootstrap-4-backport" style={{ textAlign: 'right' }}>
-          {pastZero && previousBtn}
-          {hasMoreData && nextBtn}
+          {hasPreviousPage && previousBtn}
+          {hasNextPage && nextBtn}
         </div>
       </div>
     )
@@ -659,7 +650,7 @@ export default class SynapseTable extends React.Component<
     ])
     // add new items to where clause, but only if the column name corresponds to a real column in the table/view!
     // use row.values
-    if (this.props.data === undefined) {
+    if (this.props.queryContext.data === undefined) {
       return { synId: '', newSql: '' }
     }
     const whereIndex = tokens.findIndex(el => el[0] === 'WHERE')
@@ -706,18 +697,13 @@ export default class SynapseTable extends React.Component<
    */
   private handlePaginationClick =
     (eventType: string) => (_event: React.MouseEvent<HTMLButtonElement>) => {
-      const queryRequest = this.props.getLastQueryRequest!()
-      let currentOffset = queryRequest.query.offset!
-      // if its a "previous" click subtract from the offset
-      // otherwise its next and we paginate forward
+      const { goToNextPage, goToPreviousPage } = this.props.queryContext
       if (eventType === PREVIOUS) {
-        currentOffset -= queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+        goToPreviousPage()
       }
       if (eventType === NEXT) {
-        currentOffset += queryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+        goToNextPage()
       }
-      queryRequest.query.offset = currentOffset
-      this.props.executeQueryRequest!(queryRequest)
     }
   /**
    * Handle a column having been selected
@@ -745,10 +731,10 @@ export default class SynapseTable extends React.Component<
         direction: SORT_STATE[columnIconSortState[dict.index]],
       })
     }
-    const queryRequest = this.props.getLastQueryRequest!()
+    const queryRequest = this.props.queryContext.getLastQueryRequest()
     queryRequest.query.sort = sortedColumnSelection
     queryRequest.query.offset = 0
-    this.props.executeQueryRequest!(queryRequest)
+    this.props.queryContext.executeQueryRequest(queryRequest)
     this.setState({
       columnIconSortState,
       sortedColumnSelection,
@@ -766,17 +752,19 @@ export default class SynapseTable extends React.Component<
   ) {
     const rowsFormatted: JSX.Element[] = []
     const {
-      data,
-      isColumnSelected,
-      selectedRowIndices,
-      updateParentState,
+      queryContext: { data, entity },
+      queryVisualizationContext: {
+        columnsToShowInTable,
+        selectedRowIndices,
+        setSelectedRowIndices,
+      },
       columnLinks = [],
     } = this.props
     const { selectColumns = [], columnModels = [] } = data!
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
     // find column indices that are COUNT type
     const countColumnIndexes = this.getCountFunctionColumnIndexes(
-      this.props.getLastQueryRequest!().query.sql,
+      this.props.queryContext.getLastQueryRequest().query.sql,
     )
 
     rows.forEach((row, rowIndex) => {
@@ -786,7 +774,7 @@ export default class SynapseTable extends React.Component<
       const rowContent = row.values.map(
         (columnValue: string, colIndex: number) => {
           const columnName = headers[colIndex].name
-          const isColumnActive = isColumnSelected!.includes(columnName)
+          const isColumnActive = columnsToShowInTable.includes(columnName)
           const columnLinkConfig = columnLinks.find(el => {
             return el.matchColumnName === columnName
           })
@@ -825,7 +813,7 @@ export default class SynapseTable extends React.Component<
                     rowData={row.values}
                     selectColumns={selectColumns}
                     columnModels={columnModels}
-                    isEntityView={this.state.isEntityView}
+                    isEntityView={!!(entity && isEntityView(entity))}
                     rowId={row.rowId}
                     rowVersionNumber={row.versionNumber}
                   />
@@ -855,7 +843,10 @@ export default class SynapseTable extends React.Component<
       if (isShowingDownloadColumn) {
         // SWC-5790: If this is a FileEntity, the download icon should just go to entity page
         rowContent.unshift(
-          <td key={`direct-download-${rowSynapseId}`} className="SRC_noBorderTop direct-download">
+          <td
+            key={`direct-download-${rowSynapseId}`}
+            className="SRC_noBorderTop direct-download"
+          >
             {isFileEntity && (
               <DirectDownload
                 associatedObjectId={rowSynapseId}
@@ -867,7 +858,10 @@ export default class SynapseTable extends React.Component<
       }
       if (isShowingAddToV2DownloadListColumn) {
         rowContent.unshift(
-          <td key={`add-to-download-list-v2-${rowSynapseId}`} className="SRC_noBorderTop add-to-download-list-v2" >
+          <td
+            key={`add-to-download-list-v2-${rowSynapseId}`}
+            className="SRC_noBorderTop add-to-download-list-v2"
+          >
             {isFileEntity && (
               <AddToDownloadListV2
                 entityId={rowSynapseId}
@@ -894,10 +888,8 @@ export default class SynapseTable extends React.Component<
                     cloneSelectedRowIndices.splice(index, 1)
                   }
                 }
-                // update parent state on change
-                updateParentState!({
-                  selectedRowIndices: cloneSelectedRowIndices,
-                })
+                // update context on change
+                setSelectedRowIndices(cloneSelectedRowIndices)
               }}
             ></Checkbox>
           </td>,
@@ -932,10 +924,13 @@ export default class SynapseTable extends React.Component<
     lastQueryRequest: QueryBundleRequest,
   ) {
     const { sortedColumnSelection, columnIconSortState } = this.state
-    const { facetAliases = {}, isColumnSelected, lockedFacet } = this.props
+    const {
+      queryVisualizationContext: { facetAliases = {}, columnsToShowInTable },
+      queryContext: { lockedFacet },
+    } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
       (column: SelectColumn, index: number) => {
-        const isHeaderSelected = isColumnSelected!.includes(column.name)
+        const isHeaderSelected = columnsToShowInTable.includes(column.name)
         if (isHeaderSelected) {
           // for background color
           const isSelected: boolean =
@@ -1069,7 +1064,7 @@ export default class SynapseTable extends React.Component<
   // Direct user to corresponding query on synapse
   private advancedSearch(event: React.SyntheticEvent) {
     event && event.preventDefault()
-    const lastQueryRequest = this.props.getLastQueryRequest!()
+    const lastQueryRequest = this.props.queryContext.getLastQueryRequest()
     const { query } = lastQueryRequest
     // base 64 encode the json of the query and go to url with the encoded object
     const encodedQuery = btoa(JSON.stringify(query))
@@ -1081,7 +1076,7 @@ export default class SynapseTable extends React.Component<
   }
 
   private getLengthOfPropsData() {
-    const { data } = this.props
+    const { data } = this.props.queryContext
     return data!.queryResult.queryResults.headers.length
   }
   /**
@@ -1091,13 +1086,21 @@ export default class SynapseTable extends React.Component<
    * @memberof SynapseTable
    */
   public toggleColumnSelection = (columnName: string) => {
-    let isColumnSelected = cloneDeep(this.props.isColumnSelected!)
-    if (isColumnSelected.includes(columnName)) {
-      isColumnSelected = isColumnSelected.filter(el => el !== columnName)
+    const {
+      queryVisualizationContext: {
+        columnsToShowInTable,
+        setColumnsToShowInTable,
+      },
+    } = this.props
+    let columnsToShowInTableCopy = cloneDeep(columnsToShowInTable)
+    if (columnsToShowInTableCopy.includes(columnName)) {
+      columnsToShowInTableCopy = columnsToShowInTableCopy.filter(
+        el => el !== columnName,
+      )
     } else {
-      isColumnSelected.push(columnName)
+      columnsToShowInTableCopy.push(columnName)
     }
-    this.props.updateParentState!({ isColumnSelected })
+    setColumnsToShowInTable(columnsToShowInTableCopy)
   }
 
   /**
@@ -1114,13 +1117,13 @@ export default class SynapseTable extends React.Component<
     facetColumnResult: FacetColumnResultValues,
     columnModel: ColumnModel,
     lastQueryRequest: QueryBundleRequest,
-    facetAliases?: {},
+    facetAliases?: Record<string, string>,
   ) {
     return (
       <EnumFacetFilter
         containerAs="Dropdown"
         facetValues={facetColumnResult.facetValues}
-        columnModel={columnModel!}
+        columnModel={columnModel}
         facetAliases={facetAliases}
         onChange={(facetNamesMap: {}) => {
           applyMultipleChangesToValuesColumn(
@@ -1142,10 +1145,11 @@ export default class SynapseTable extends React.Component<
   }
 
   public applyChangesFromQueryFilter = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest = this.props.getLastQueryRequest!()
+    const queryRequest: QueryBundleRequest =
+      this.props.queryContext.getLastQueryRequest()
     queryRequest.query.selectedFacets = facets
     queryRequest.query.offset = 0
-    this.props.executeQueryRequest!(queryRequest)
+    this.props.queryContext.executeQueryRequest(queryRequest)
   }
 }
 type ColumnReference = {

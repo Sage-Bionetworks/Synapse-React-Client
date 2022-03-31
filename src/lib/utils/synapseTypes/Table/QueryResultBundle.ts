@@ -14,4 +14,5 @@ export interface QueryResultBundle {
   columnModels?: ColumnModel[] // The list of ColumnModels for the table. Use mask = 0x10 to include in the bundle.
   facets?: FacetColumnResult[] // The list of facets for the search results
   sumFileSizes?: SumFileSizes
+  lastUpdatedOn?: string
 }

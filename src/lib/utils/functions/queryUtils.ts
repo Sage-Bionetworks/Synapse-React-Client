@@ -1,7 +1,10 @@
-import { QueryBundleRequest, FacetColumnResult } from '../synapseTypes/'
+import {
+  QueryBundleRequest,
+  FacetColumnResult,
+  SelectColumn,
+} from '../synapseTypes/'
 import { SynapseClient, SynapseConstants } from '..'
-import { QueryResultBundle,
-  FacetColumnResultValues } from '../synapseTypes/'
+import { QueryResultBundle, FacetColumnResultValues } from '../synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 
 type PartialStateObject = {
@@ -43,7 +46,7 @@ export const getNextPageOfData = async (
       // push on the new data retrieved from the API call
       const hasMoreData =
         newData.queryResult.queryResults.rows.length ===
-        queryRequest.query.limit ?? SynapseConstants.DEFAULT_PAGE_SIZE
+          queryRequest.query.limit ?? SynapseConstants.DEFAULT_PAGE_SIZE
       oldData.queryResult.queryResults.rows.push(
         ...newData.queryResult.queryResults.rows,
       )
@@ -60,15 +63,42 @@ export const getNextPageOfData = async (
 }
 
 export const isGroupBy = (sql: string): boolean => {
-  return (/group\s*by/gmi.test(sql))
+  return /group\s*by/gim.test(sql)
 }
 
-export const isFacetAvailable = (facets?: FacetColumnResult[]):boolean => {
-  return (facets ? facets.length > 0 : false)
+export const isFacetAvailable = (
+  facets?: FacetColumnResult[],
+  selectColumns?: SelectColumn[],
+): boolean => {
+  /**
+   *  Facets are available iff
+   *    * there is at least one facet AND
+   *    * each facet has a corresponding columnModel in the selectColumns AND
+   *    * each facets has a valid value other than the null/not set value
+   */
+  if (facets == null || selectColumns == null) {
+    return false
+  }
+
+  if (facets.length === 0 || selectColumns.length === 0) {
+    return false
+  }
+
+  const facetsWithValuesAndColumnModels = facets.filter(facet => {
+    return (
+      !isSingleNotSetValue(facet) &&
+      selectColumns.find(model => model.name === facet.columnName)
+    )
+  })
+
+  return facetsWithValuesAndColumnModels.length > 0
 }
 
-export const isSingleNotSetValue = (facet:FacetColumnResult):boolean => {
-  return facet.facetType === 'enumeration' &&
+export const isSingleNotSetValue = (facet: FacetColumnResult): boolean => {
+  return (
+    facet.facetType === 'enumeration' &&
     (facet as FacetColumnResultValues).facetValues.length == 1 &&
-    (facet as FacetColumnResultValues).facetValues[0].value == SynapseConstants.VALUE_NOT_SET
+    (facet as FacetColumnResultValues).facetValues[0].value ==
+      SynapseConstants.VALUE_NOT_SET
+  )
 }
