@@ -1,23 +1,17 @@
-import * as React from 'react'
 import { shallow } from 'enzyme'
-import syn16787123Json from '../../../mocks/query/syn16787123.json'
+import * as React from 'react'
+import { SynapseConstants } from '../../../lib'
+import CardContainer from '../../../lib/containers/CardContainer'
 import CardContainerLogic, {
   CardContainerLogicProps,
 } from '../../../lib/containers/CardContainerLogic'
-import { SynapseConstants } from '../../../lib'
-import CardContainer from '../../../lib/containers/CardContainer'
-import {
-  QueryResultBundle,
-  QueryBundleRequest,
-} from '../../../lib/utils/synapseTypes/'
+import syn16787123Json from '../../../mocks/query/syn16787123'
 
 const createShallowComponent = async (
   props: CardContainerLogicProps,
   disableLifecycleMethods: boolean = false,
 ) => {
-  const wrapper = await shallow(<CardContainerLogic {...props} />, {
-    disableLifecycleMethods,
-  })
+  const wrapper = await shallow(<CardContainerLogic {...props} />)
   const instance = wrapper.instance() as CardContainerLogic
   return { wrapper, instance }
 }
@@ -25,14 +19,13 @@ const createShallowComponent = async (
 describe('it performs basic functionality', () => {
   const sql = 'SELECT * FROM syn16787123'
   const SynapseClient = require('../../../lib/utils/SynapseClient')
-  SynapseClient.getIntuitiveQueryTableResults = jest.fn(() =>
-    Promise.resolve(syn16787123Json),
-  )
+
   SynapseClient.getQueryTableResults = jest.fn(() =>
     Promise.resolve(syn16787123Json),
   )
   const props = {
     sql,
+    limit: 5,
     unitDescription: 'files',
     type: SynapseConstants.STUDY,
   }
@@ -43,108 +36,33 @@ describe('it performs basic functionality', () => {
     expect(wrapper.find(CardContainer)).toHaveLength(1)
   })
 
-  it('mounts correctly', async () => {
-    const { wrapper, instance } = await createShallowComponent(props, true)
-    // test state was setup correctly
-    expect(wrapper.state()).toEqual(CardContainerLogic.defaultState)
+  it('passes down props correctly', async () => {
+    const { wrapper } = await createShallowComponent(props, true)
 
-    // verify executeInitialQueryRequest was called
-    const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
-    // await because there's async operations
-    await instance.componentDidMount()
-    expect(spy).toHaveBeenCalled()
-
-    // verify state was updated correctly, this also tests that executeInitialQueryRequest functions correctly
-    expect(wrapper.state()).toEqual({
-      data: syn16787123Json,
-      queryRequest: {
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        entityId: 'syn16787123',
-        partMask:
-          SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-          SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-          SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-        // NOTE: queryCount has been removed from the partMask here
-        query: {
-          sql,
-          limit: 25,
-          offset: 0,
-        },
-      },
-      isLoading: false,
-      totalResultsNoFacet: syn16787123Json.queryCount,
-      hasMoreData: true,
-    })
-  })
-
-  it('grabs the next page of data', async () => {
-    const { wrapper, instance } = await createShallowComponent(props)
-    // test grabbing next page of data
-    const getNextPageOfDataRequest: QueryBundleRequest = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      partMask:
-        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-      entityId: 'syn16787123',
-      query: {
-        sql,
-        limit: 25,
-        offset: 25,
-      },
-    }
-
-    // await because there's async operations
-    await instance.getNextPageOfData(getNextPageOfDataRequest)
-
-    /*
-      verify not loading after call finishes
-    */
-    const isLoading: boolean = wrapper.state('isLoading')
-    const lastQueryRequest = wrapper.state('queryRequest') as QueryResultBundle
-    expect(isLoading).toEqual(false)
-    expect(lastQueryRequest).toEqual(getNextPageOfDataRequest)
-  })
-
-  it('returns the last query request', async () => {
-    const { instance } = await createShallowComponent(props)
-
-    expect(instance.getLastQueryRequest()).toEqual({
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      entityId: 'syn16787123',
-      partMask:
-        SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-        SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-        SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-      query: {
-        sql,
-        limit: 25,
-        offset: 0,
-      },
-    })
-  })
-
-  it('componenetDidUpdate works', async () => {
-    const { wrapper, instance } = await createShallowComponent(props)
-
-    const newSql = 'SELECT * FROM OTHER_TABLE'
-    const newToken = '123'
-    const spy = jest.spyOn(instance, 'executeInitialQueryRequest')
-    // if sql changes in props then we expect the component to have called executeInitialQueryRequest
-    // since there's an entirely new sql statement
-    await wrapper.setProps({
-      sql: newSql,
-      token: '',
-    })
-
-    spy.mockReset()
-    // if token changes in props then we expect the component to have called executeInitialQueryRequest
-    await wrapper.setProps({ sql: newSql, token: newToken })
-    expect(spy).toHaveBeenCalled()
-
-    spy.mockReset()
-    // if token changes in props then we expect the component to have called executeInitialQueryRequest
-    await wrapper.setProps({ sql: newSql, token: newToken })
-    expect(spy).toHaveBeenCalledTimes(0)
+    const QueryWrapper = wrapper.find('QueryWrapper')
+    expect(QueryWrapper.props()).toEqual(
+      expect.objectContaining({
+        initQueryRequest: expect.objectContaining({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          entityId: 'syn16787123',
+          partMask:
+            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+            SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+            SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+            SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+            SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
+          query: {
+            sql: props.sql,
+            limit: props.limit,
+          },
+        }),
+      }),
+    )
+    const CardContainer = wrapper.find('CardContainer')
+    expect(CardContainer.props()).toEqual(props)
   })
 })

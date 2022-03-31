@@ -1,6 +1,6 @@
 import * as React from 'react'
 import FacetNavPanel, {
-  FacetNavPanelOwnProps,
+  FacetNavPanelProps,
   truncate,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
 import { render } from '@testing-library/react'
@@ -8,6 +8,11 @@ import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
 import { SynapseConstants } from '../../../../../lib'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../../../lib/containers/QueryWrapper'
+import { QueryVisualizationContextProvider } from '../../../../../lib/containers/QueryVisualizationWrapper'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -16,7 +21,7 @@ const mockSetPlotTypeCallback = jest.fn(() => null)
 const stringFacetValues: FacetColumnResultValues = {
   facetType: 'enumeration',
   columnName: 'Make',
-  concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+  concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
   facetValues: [
     { value: 'Honda', count: 2, isSelected: false },
     { value: 'Chevy', count: 1, isSelected: true },
@@ -28,10 +33,8 @@ const stringFacetValues: FacetColumnResultValues = {
   ],
 }
 
-function createTestProps(
-  overrides?: FacetNavPanelOwnProps,
-): FacetNavPanelOwnProps {
-  const defaultProps: FacetNavPanelOwnProps = {
+function createTestProps(overrides?: FacetNavPanelProps): FacetNavPanelProps {
+  const defaultProps: FacetNavPanelProps = {
     applyChangesToGraphSlice: mockApplyCallback,
     applyChangesToFacetFilter: mockApplyCallback,
     index: 1,
@@ -39,25 +42,40 @@ function createTestProps(
     onHide: mockHideCallback,
     plotType: 'PIE',
     onSetPlotType: mockSetPlotTypeCallback,
-    lastQueryRequest: {} as any,
     isModalView: false,
   }
   return {
     ...defaultProps,
     ...overrides,
-    // @ts-ignore
-    data: testData,
   }
 }
 
-let container: HTMLElement
-let props: FacetNavPanelOwnProps
+const defaultQueryContext: Partial<QueryContextType> = {
+  data: testData,
+  getLastQueryRequest: () => ({}),
+  isLoadingNewBundle: false,
+}
 
-function init(overrides?: FacetNavPanelOwnProps) {
+let container: HTMLElement
+let props: FacetNavPanelProps
+
+function init(
+  overrides?: FacetNavPanelProps,
+  queryContextProps?: Partial<QueryContextType>,
+) {
   props = createTestProps(overrides)
   container = render(
     <SynapseTestContext>
-      <FacetNavPanel {...props} />
+      <QueryContextProvider
+        queryContext={{
+          ...defaultQueryContext,
+          ...queryContextProps,
+        }}
+      >
+        <QueryVisualizationContextProvider queryVisualizationContext={{}}>
+          <FacetNavPanel {...props} />
+        </QueryVisualizationContextProvider>
+      </QueryContextProvider>
     </SynapseTestContext>,
   ).container
 }
