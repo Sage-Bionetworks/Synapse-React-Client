@@ -1,8 +1,12 @@
 import {
+  Entity,
   EntityHeader,
   EntityType,
+  EntityView,
   ENTITY_CONCRETE_TYPE,
+  ENTITY_VIEW_TYPE_MASK_FILE,
   ProjectHeader,
+  Dataset,
 } from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
 
@@ -131,4 +135,30 @@ export function isVersionableEntityType(type: EntityType): boolean {
     default:
       throw new Error(`Unknown entity type: ${type}`)
   }
+}
+
+export function isDataset(entity: Entity): entity is Dataset {
+  return entity.concreteType === 'org.sagebionetworks.repo.model.table.Dataset'
+}
+
+export function isEntityView(entity: Entity): entity is EntityView {
+  return (
+    entity.concreteType === 'org.sagebionetworks.repo.model.table.EntityView'
+  )
+}
+
+/**
+ * @param entityView
+ * @returns true iff the viewTypeMask allows files to appear in the view
+ */
+export function hasFilesInView(entityView: EntityView) {
+  return (entityView.viewTypeMask & ENTITY_VIEW_TYPE_MASK_FILE) != 0
+}
+
+/**
+ * @param entityView
+ * @returns true iff the viewTypeMask allows only files to appear in the view
+ */
+export function isFileView(entityView: EntityView) {
+  return entityView.viewTypeMask === ENTITY_VIEW_TYPE_MASK_FILE
 }

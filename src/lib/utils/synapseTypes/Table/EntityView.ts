@@ -1,6 +1,16 @@
 import { View } from './View'
 
-export type ENTITY_VIEW_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.table.EntityView'
+export const ENTITY_VIEW_TYPE_MASK_FILE = 0x01
+export const ENTITY_VIEW_TYPE_MASK_PROJECT = 0x02
+export const ENTITY_VIEW_TYPE_MASK_TABLE = 0x04
+export const ENTITY_VIEW_TYPE_MASK_FOLDER = 0x08
+export const ENTITY_VIEW_TYPE_MASK_VIEW = 0x10
+export const ENTITY_VIEW_TYPE_MASK_DOCKER = 0x20
+export const ENTITY_VIEW_TYPE_MASK_SUBMISSIONVIEW = 0x40
+export const ENTITY_VIEW_TYPE_MASK_DATASET = 0x80
+
+export type ENTITY_VIEW_CONCRETE_TYPE =
+  'org.sagebionetworks.repo.model.table.EntityView'
 
 export interface EntityView extends View {
   concreteType: ENTITY_VIEW_CONCRETE_TYPE

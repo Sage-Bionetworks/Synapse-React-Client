@@ -85,7 +85,7 @@ export const getWhereInsertIndex = (tokens: string[][]): number => {
 }
 
 // This will construct a sql query by adding the conditions in searchParams
-// to the WHERE clause, preserving all other clauses.  
+// to the WHERE clause, preserving all other clauses.
 // If the searchParams are not defined, this will simply return the given sql.
 export const insertConditionsFromSearchParams = (
   sql: string,

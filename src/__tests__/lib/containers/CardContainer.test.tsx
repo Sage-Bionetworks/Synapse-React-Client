@@ -4,25 +4,48 @@ import { SynapseConstants } from '../../../lib'
 import CardContainer, {
   CardContainerProps,
 } from '../../../lib/containers/CardContainer'
+import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../lib/containers/QueryVisualizationWrapper'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../lib/containers/QueryWrapper'
 import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
-import syn16787123Json from '../../../mocks/query/syn16787123.json'
+import syn16787123Json from '../../../mocks/query/syn16787123'
 
-const mountComponent = (props: CardContainerProps) => {
-  const wrapper = mount(<CardContainer {...props} />, {
-    wrappingComponent: SynapseTestContext,
-  })
+const mountComponent = (
+  props: CardContainerProps,
+  queryContext: QueryContextType,
+) => {
+  const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
+    {}
+
+  const wrapper = mount(
+    <QueryContextProvider queryContext={queryContext}>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={defaultQueryVisualizationContext}
+      >
+        <CardContainer {...props} />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
+    {
+      wrappingComponent: SynapseTestContext,
+    },
+  )
   const instance = wrapper.instance()
   return { wrapper, instance }
 }
 
 describe('it performs all functionality', () => {
   // for our purposes its okay to return the same data again
-  const getNextPageOfData = jest.fn((_arg: QueryBundleRequest) => {})
+  const getNextPageOfData = jest.fn(() => {})
   const sql = 'SELECT * FROM syn16787123'
   const lastQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -45,26 +68,27 @@ describe('it performs all functionality', () => {
   // cast the data to ignore ts warning
   const data = syn16787123Json as QueryResultBundle
   const props = {
-    getNextPageOfData,
-    getLastQueryRequest,
-    sql,
     unitDescription,
     type,
-    data,
-    hasMoreData: true,
   }
 
+  const queryContext: Partial<QueryContextType> = {
+    data,
+    hasNextPage: true,
+    getLastQueryRequest: getLastQueryRequest,
+    appendNextPageToResults: getNextPageOfData,
+  }
+
+  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {}
+
   it('renders without crashing', () => {
-    const tree = mountComponent(props)
+    const tree = mountComponent(props, queryContext)
     expect(tree).toBeDefined()
   })
 
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
-    const { wrapper } = mountComponent({
-      ...props,
-      facet: 'projectStatus',
-    })
+    const { wrapper } = mountComponent(props, queryContext)
     expect(wrapper.find('Button').text()).toEqual('View More')
     expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
     expect(wrapper.find('Button').text()).toEqual('View More')
@@ -72,33 +96,24 @@ describe('it performs all functionality', () => {
 
   it('Renders with a title', () => {
     const title = 'HelloWorld'
-    const { wrapper } = mountComponent({ ...props, title })
+    const { wrapper } = mountComponent({ ...props, title }, queryContext)
     expect(wrapper.find('h2.SRC-card-overview-title').text()).toEqual(title)
   })
 
   it('handleViewMore works', () => {
-    const { wrapper } = mountComponent(props)
+    const { wrapper } = mountComponent(props, queryContext)
     // go through calling handle view more
     wrapper.find('Button').simulate('click')
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
   })
 
-  it('show ViewMore does not render when hasMoreData is false', () => {
-    const propsWithHasMoreDataFalse = {
-      ...props,
-      hasMoreData: false,
+  it('show ViewMore does not render when hasNextPage is false', () => {
+    const queryContextWithHasNextPageFalse = {
+      ...queryContext,
+      hasNextPage: false,
     }
-    const { wrapper } = mountComponent(propsWithHasMoreDataFalse)
+    const { wrapper } = mountComponent(props, queryContextWithHasNextPageFalse)
     expect(wrapper.find('Button')).toHaveLength(0)
-  })
-
-  it('show ViewMore should render when limit is set and data has more than limit', () => {
-    const propsWithHasMoreDataFalse = {
-      ...props,
-      limit: 3,
-    }
-    const { wrapper } = mountComponent(propsWithHasMoreDataFalse)
-    expect(wrapper.find('Button')).toHaveLength(1)
   })
 })

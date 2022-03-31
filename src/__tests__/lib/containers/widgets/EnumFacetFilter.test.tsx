@@ -312,6 +312,7 @@ describe('callbacks', () => {
     const individualFacetCheckboxes = screen.getAllByRole('checkbox').slice(1)
 
     jest.useFakeTimers()
+    jest.spyOn(global, 'setTimeout')
     fireEvent.click(individualFacetCheckboxes[0])
     fireEvent.click(individualFacetCheckboxes[1])
     expect(setTimeout).toHaveBeenCalledTimes(2)
