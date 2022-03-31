@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { cloneDeep } from 'lodash'
 import {
   insertConditionsFromSearchParams,
@@ -40,10 +40,18 @@ type OwnProps = {
   unitDescription?: string
   facetAliases?: Record<string, string>
   showTopLevelControls?: boolean
-  searchConfiguration?: SearchV2Props
+  searchConfiguration?: Omit<
+    SearchV2Props,
+    'queryContext' | 'queryVisualizationContext'
+  >
 } & Omit<TopLevelControlsProps, 'entityId'>
 
-export type StandaloneQueryWrapperProps = Partial<SynapseTableProps> &
+export type StandaloneQueryWrapperProps = Partial<
+  Omit<
+    SynapseTableProps,
+    'synapseContext' | 'queryContext' | 'queryVisualizationContext'
+  >
+> &
   SearchParams &
   Operator &
   OwnProps

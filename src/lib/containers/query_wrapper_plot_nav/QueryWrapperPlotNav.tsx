@@ -14,7 +14,6 @@ import {
 } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
 import { DownloadConfirmation } from '../download_list'
-import { ErrorBanner } from '../ErrorBanner'
 import FullTextSearch from '../FullTextSearch'
 import ModalDownload from '../ModalDownload'
 import {
@@ -22,6 +21,7 @@ import {
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper, QueryContextConsumer } from '../QueryWrapper'
+import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import SqlEditor from '../SqlEditor'
 import { SynapseTableProps } from '../table/SynapseTable'
@@ -51,7 +51,10 @@ type OwnProps = {
     'synapseContext' | 'queryContext' | 'queryVisualizationContext'
   >
   cardConfiguration?: CardConfiguration
-  searchConfiguration?: SearchV2Props
+  searchConfiguration?: Omit<
+    SearchV2Props,
+    'queryContext' | 'queryVisualizationContext'
+  >
   rgbIndex?: number
   facetsToPlot?: string[]
   facetsToFilter?: string[]
@@ -173,7 +176,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                                 : QUERY_FILTERS_COLLAPSED_CSS
                             }`}
                           >
-                            <ErrorBanner error={queryContext?.error} />
+                            <QueryWrapperErrorBanner />
                           </div>
                           {entity &&
                           isTableEntity(entity) &&
@@ -221,7 +224,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                           {showExportMetadata && (
                             <ModalDownload
                               getLastQueryRequest={
-                                queryContext?.getLastQueryRequest
+                                queryContext.getLastQueryRequest
                               }
                               onClose={() => setShowExportMetadata(false)}
                             />

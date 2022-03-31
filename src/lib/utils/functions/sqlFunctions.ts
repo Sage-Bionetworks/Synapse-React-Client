@@ -178,13 +178,6 @@ export const parseEntityIdFromSqlStatement = (sql: string): string => {
   return matches && matches[0] ? matches[0].substr(5).trim() : ''
 }
 
-export const parseEntityIdAndVersionFromSqlStatement = (
-  sql: string,
-): string => {
-  const matches = sql.match(/(from)\s+(syn)\d+(\.\d+)?/gi)
-  return matches && matches[0] ? matches[0].substr(5).trim() : ''
-}
-
 export const resultToJson = <T>(
   headerColumns: SelectColumn[],
   rowColumns: Row[],

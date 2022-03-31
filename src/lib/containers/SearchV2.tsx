@@ -49,12 +49,12 @@ type SearchState = {
 export type SearchableColumnsV2 = string[]
 
 export type SearchV2Props = {
+  queryContext: QueryContextType
+  queryVisualizationContext: QueryVisualizationContextType
   isQueryWrapperMenuChild?: boolean
   defaultColumn?: string
   searchable?: SearchableColumnsV2
   lockedFacet?: LockedFacet
-  queryContext: QueryContextType
-  queryVisualizationContext: QueryVisualizationContextType
 }
 
 type InternalSearchProps = SearchV2Props

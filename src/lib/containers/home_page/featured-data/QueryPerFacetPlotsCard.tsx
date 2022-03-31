@@ -2,9 +2,9 @@ import * as React from 'react'
 import { SynapseConstants } from '../../../utils'
 import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
-import { ErrorBanner } from '../../ErrorBanner'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
-import { QueryWrapper, QueryContextConsumer } from '../../QueryWrapper'
+import { QueryWrapper } from '../../QueryWrapper'
+import { QueryWrapperErrorBanner } from '../../QueryWrapperErrorBanner'
 import FacetPlotsCard from './FacetPlotsCard'
 
 export type QueryPerFacetPlotsCardProps = {
@@ -69,16 +69,7 @@ const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProp
       <div className="QueryPerFacetPlotsCard">
         <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
           <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
-            <QueryContextConsumer>
-              {queryContext => {
-                if (queryContext === undefined) {
-                  throw new Error(
-                    'No queryContext found when using QueryWraperContextConsumer',
-                  )
-                }
-                return <ErrorBanner error={queryContext.error} />
-              }}
-            </QueryContextConsumer>
+            <QueryWrapperErrorBanner />
             <FacetPlotsCard
               title={title}
               description={description}

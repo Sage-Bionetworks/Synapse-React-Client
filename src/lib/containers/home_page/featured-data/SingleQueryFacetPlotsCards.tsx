@@ -1,11 +1,11 @@
 import * as React from 'react'
-import { QueryWrapper, QueryContextConsumer } from '../../QueryWrapper'
-import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { SynapseConstants } from '../../../utils'
+import { parseEntityIdFromSqlStatement } from '../../../utils/functions/sqlFunctions'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
-import { ErrorBanner } from '../../ErrorBanner'
-import FacetPlotsCard from './FacetPlotsCard'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { QueryWrapper } from '../../QueryWrapper'
+import { QueryWrapperErrorBanner } from '../../QueryWrapperErrorBanner'
+import FacetPlotsCard from './FacetPlotsCard'
 
 export type SingleQueryFacetPlotsCardsProps = {
   rgbIndex?: number
@@ -41,16 +41,7 @@ const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsC
             rgbIndex={rgbIndex}
             facetAliases={facetAliases}
           >
-            <QueryContextConsumer>
-              {queryContext => {
-                if (queryContext === undefined) {
-                  throw new Error(
-                    'No queryContext found when using QueryWraperContextConsumer',
-                  )
-                }
-                return <ErrorBanner error={queryContext.error} />
-              }}
-            </QueryContextConsumer>
+            <QueryWrapperErrorBanner />
             {facetsToPlot?.map(facetName => {
               return (
                 <FacetPlotsCard

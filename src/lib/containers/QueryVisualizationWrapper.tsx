@@ -72,22 +72,6 @@ export type TopLevelControlsState = {
   showSqlEditor: boolean
 }
 
-export type SearchQuery = {
-  columnName: string
-  searchText: string
-}
-
-/*
-  For details page: to lock a facet name (e.g. study, grant) so that the facet name
-  and its all possible values will not appear on the details page. The facet name is
-  given by the url's search param. The type is defined here so that other child components
-  in SRC won't generate type errors.
- */
-export type LockedFacet = {
-  facet?: string
-  value?: string
-}
-
 /**
  * QueryVisualizationWrapper manages UI state for components that query tables in Synapse. That state can be accessed
  * or updated using QueryVisualizationContext. A QueryVisualizationWrapper must be used within a QueryWrapper.

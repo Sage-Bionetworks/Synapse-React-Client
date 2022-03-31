@@ -4,6 +4,7 @@ import {
   EntityType,
   EntityView,
   ENTITY_CONCRETE_TYPE,
+  ENTITY_VIEW_TYPE_MASK_FILE,
   ProjectHeader,
 } from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
@@ -141,6 +142,18 @@ export function isEntityView(entity: Entity): entity is EntityView {
   )
 }
 
-export function hasFilesInView(entity: EntityView) {
-  return (entity.viewTypeMask & 0x01) != 0
+/**
+ * @param entityView
+ * @returns true iff the viewTypeMask allows files to appear in the view
+ */
+export function hasFilesInView(entityView: EntityView) {
+  return (entityView.viewTypeMask & ENTITY_VIEW_TYPE_MASK_FILE) != 0
+}
+
+/**
+ * @param entityView
+ * @returns true iff the viewTypeMask allows only files to appear in the view
+ */
+export function isFileView(entityView: EntityView) {
+  return entityView.viewTypeMask === ENTITY_VIEW_TYPE_MASK_FILE
 }

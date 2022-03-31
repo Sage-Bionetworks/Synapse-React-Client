@@ -101,7 +101,7 @@ export function useInfiniteQueryResultBundle(
         }
         const pageSize = request.query.limit ?? DEFAULT_PAGE_SIZE
 
-        return request.query.offset - pageSize
+        return Math.max(request.query.offset - pageSize, 0)
       },
       getNextPageParam: (page, allPages) => {
         if (page.jobState !== 'COMPLETE') {

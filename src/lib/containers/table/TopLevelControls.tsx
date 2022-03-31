@@ -1,8 +1,12 @@
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
+import {
+  isEntityView,
+  isFileView as isFileViewUtil,
+} from '../../utils/functions/EntityTypeUtils'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
-import { EntityView, QueryResultBundle } from '../../utils/synapseTypes'
+import { QueryResultBundle } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import QueryCount from '../QueryCount'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
@@ -103,12 +107,10 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setColumnsToShowInTable,
   } = useQueryVisualizationContext()
 
-  const isFileView =
-    entity?.concreteType ===
-      'org.sagebionetworks.repo.model.table.EntityView' &&
-    (entity as EntityView | undefined)?.viewTypeMask === 1
-  const isDataset =
-    entity?.concreteType === 'org.sagebionetworks.repo.model.table.Dataset'
+  const isFileView = entity && isEntityView(entity) && isFileViewUtil(entity)
+
+  // const isDataset =
+  //   entity?.concreteType === 'org.sagebionetworks.repo.model.table.Dataset'
 
   const setControlState = (control: keyof TopLevelControlsState) => {
     const updatedTopLevelControlsState: Partial<TopLevelControlsState> = {
@@ -170,7 +172,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               )}
             </Typography>
           )}
-          {isDataset && (
+          {/* {isDataset && (
             <div className="TopLevelControls__hiddenFilesWarning">
               {name && (
                 <Typography variant="smallText1">
@@ -184,7 +186,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                 </Typography>
               )}
             </div>
-          )}
+          )} */}
         </div>
         <div className="TopLevelControls__actions">
           {customControls &&
@@ -224,7 +226,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   onDownloadFiles={() => setControlState(key)}
                   queryResultBundle={data}
                   queryBundleRequest={getLastQueryRequest()}
-                  isFileView={isFileView || isDataset}
+                  isFileView={isFileView}
                 />
               )
             }

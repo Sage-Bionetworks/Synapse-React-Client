@@ -248,6 +248,8 @@ const fetchWithExponentialTimeout = async <TResponse>(
   let response = await fetch(url, options)
   while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
     await delay(delayMs)
+    // Exponential backoff if we re-fetch
+    delayMs = delayMs * 2
     response = await fetch(url, options)
   }
 

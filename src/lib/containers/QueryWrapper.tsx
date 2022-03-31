@@ -144,15 +144,15 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isLoading: queryIsLoading,
     refetch,
     error,
-    isPreviousData,
+    isPreviousData: newQueryIsFetching,
     remove,
   } = useInfiniteQueryResultBundle(lastQueryRequest, {
     // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
     keepPreviousData: true,
   })
 
-  // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (isPreviousData)
-  const isLoadingNewBundle = queryIsLoading || isPreviousData
+  // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
+  const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
 
   const entityId = parseEntityIdFromSqlStatement(lastQueryRequest.query.sql)
 
