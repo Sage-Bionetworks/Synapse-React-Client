@@ -200,7 +200,7 @@
     "start": "npm-run-all -p watch:css serve:docs",
     "start-deprecated-demo": "npm-run-all -p watch:css start-js",
     "test": "craco test --transformIgnorePatterns \"node_modules/(?!(lodash-es|jest*)/)\" , --env=jsdom --setupFilesAfterEnv ./src/setupTests.js --resetMocks false",
-    "test:coverage": "yarn test",
+    "test:coverage": "yarn test --coverage",
     "test:noPrompt": "CI=true yarn test",
     "eject": "craco eject",
     "type-check": "tsc --noEmit",
