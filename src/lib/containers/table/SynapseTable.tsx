@@ -7,6 +7,7 @@ import { ReactComponent as NoData } from '../../assets/icons/file-dotted.svg'
 import { SynapseClient } from '../../utils'
 import {
   hasFilesInView,
+  isDataset,
   isEntityView,
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
@@ -513,16 +514,14 @@ export default class SynapseTable extends React.Component<
     // TODO: is file view or is dataset
     const isShowingAddToV2DownloadListColumn: boolean = !!(
       entity &&
-      isEntityView(entity) &&
-      hasFilesInView(entity) &&
+      ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity)) &&
       !this.props.hideDownload &&
       isLoggedIn &&
       !containsGroupBy
     )
     const isShowingDirectDownloadColumn =
       entity &&
-      isEntityView(entity) &&
-      hasFilesInView(entity) &&
+      ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity)) &&
       showDownloadColumn &&
       isLoggedIn &&
       !containsGroupBy
