@@ -207,7 +207,7 @@ export function delay(t: number) {
 /**
  * Error message returned by the Synapse Backend
  */
-type SynapseError = {
+export type SynapseError = {
   reason: string
 }
 

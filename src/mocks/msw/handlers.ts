@@ -45,11 +45,11 @@ import {
   UserProfile,
   VersionableEntity,
 } from '../../lib/utils/synapseTypes'
-import { SynapseClientError } from '../../lib/utils/SynapseClient'
+import { SynapseError } from '../../lib/utils/SynapseClient'
 import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
-type SynapseApiResponse<T> = T | SynapseClientError
+type SynapseApiResponse<T> = T | SynapseError
 
 const handlers = [
   rest.options('*', async (req, res, ctx) => {
@@ -63,7 +63,6 @@ const handlers = [
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<UserProfile> = {
-        status: status,
         reason: `Mock Service worker could not find a user profile with ID ${req.params.id}`,
       }
       if (req.params.id === MOCK_USER_ID.toString()) {
@@ -91,7 +90,6 @@ const handlers = [
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<UserBundle> = {
-        status: status,
         reason: `Mock Service worker could not find a user bundle with ID ${req.params.id}`,
       }
       if (req.params.id === MOCK_USER_ID.toString()) {
@@ -108,7 +106,6 @@ const handlers = [
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<Entity> = {
-        status: status,
         reason: `Mock Service worker could not find a matching mock entity for this request : ${JSON.stringify(
           req.body,
         )}`,
@@ -139,7 +136,6 @@ const handlers = [
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<Entity> = {
-        status: status,
         reason: `Mock Service worker could not find a mock entity with ID ${req.params.entityId}`,
       }
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
@@ -160,7 +156,6 @@ const handlers = [
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<PaginatedResults<VersionInfo>> = {
-        status: status,
         reason: `Mock Service worker could not find mock entity versions for ID ${req.params.entityId}`,
       }
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
@@ -182,7 +177,6 @@ const handlers = [
       const versionNumber = req.params.versionNumber.toString()
 
       let response: SynapseApiResponse<VersionableEntity> = {
-        status: status,
         reason: `Mock Service worker could not find a mock versioned entity with ID ${entityId}.${versionNumber}`,
       }
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
@@ -207,7 +201,6 @@ const handlers = [
     async (req, res, ctx) => {
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
-        status: status,
         reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
       }
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
@@ -231,7 +224,6 @@ const handlers = [
       const versionNumber = req.params.versionNumber.toString()
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
-        status: status,
         reason: `Mock Service worker could not find a mock entity bundle with ID ${entityId}`,
       }
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
