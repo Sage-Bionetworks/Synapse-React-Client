@@ -75,7 +75,7 @@ const MissingQueryResultsWarning: React.FunctionComponent<MissingQueryResultsWar
         >
           <WarningSharp
             className="SRC-color-warning"
-            style={{ fontSize: '12pt' }}
+            style={{ fontSize: '16px' }}
           />
           {difference.toLocaleString() + ' Unavailable'}
           <HelpPopover
