@@ -11,7 +11,7 @@ import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 const markdownText = 'This is markdown text.'
 
 const defaultProps: MarkdownPopoverProps = {
-  children: <button>Click Me</button>,
+  children: <div>Click Me</div>,
   contentProps: {
     markdown: markdownText,
   },

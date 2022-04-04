@@ -91,7 +91,7 @@ describe('basic functionality', () => {
 
     // Update the query with new SQL
     const newQueryRequest = cloneDeep(initialQueryRequest)
-    newQueryRequest.query.sql = 'SELECT * FROM NEW_TABLE'
+    newQueryRequest.query.sql = 'SELECT new_columns FROM syn16787123'
     act(() => {
       providedContext?.executeQueryRequest(newQueryRequest)
     })
