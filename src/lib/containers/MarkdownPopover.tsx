@@ -113,6 +113,7 @@ export const MarkdownPopover: React.FunctionComponent<MarkdownPopoverProps> = ({
   return (
     <>
       <span
+        role="button"
         className="PopoverContainer bootstrap-4-backport"
         onClick={() => setShow(val => !val)}
         ref={setReferenceElement}
