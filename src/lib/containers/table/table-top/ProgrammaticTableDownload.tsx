@@ -48,8 +48,8 @@ function ProgrammaticOptions({
         const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(
           indexOfFrom,
         )}`
-        // Escape backticks and quotation marks
-        setGeneratedSql(selectStarTransformedSql.replace(/(["`])/g, '\\$1'))
+        // Replace backticks and quotation marks with escaped quotations
+        setGeneratedSql(selectStarTransformedSql.replace(/["`]/g, '\\"'))
       } catch (e) {
         console.error('Error on getTransformSqlWithFacetsRequest ', e)
       }
