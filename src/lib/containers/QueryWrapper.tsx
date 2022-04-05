@@ -36,7 +36,7 @@ export type QueryContextType = {
   /** The error returned by the query request, if one is encountered */
   error: SynapseClientError | null
   /** The status of the asynchronous job. */
-  asyncJobStatus: AsynchronousJobStatus<unknown, unknown>
+  asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
   /** Whether or not the query result bundle has a next page */
   hasNextPage: boolean
   /** Invoke this method to fetch and append the next page of rows to the data  */
@@ -350,25 +350,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     entity,
     executeQueryRequest,
     isFacetsAvailable,
-    // TODO: Get the real job status
-    asyncJobStatus: {
-      jobState: 'PROCESSING',
-      jobCanceling: false,
-      requestBody: undefined,
-      responseBody: undefined,
-      etag: '',
-      jobId: '',
-      startedByUserId: 0,
-      startedOn: '',
-      changedOn: '',
-      progressMessage: '',
-      progressCurrent: 0,
-      progressTotal: 0,
-      exception: '',
-      errorMessage: '',
-      errorDetails: '',
-      runtimeMS: 0,
-    },
+    asyncJobStatus: infiniteData?.pages[0],
     appendNextPageToResults: appendNextPageToResults,
     goToNextPage,
     goToPreviousPage,
