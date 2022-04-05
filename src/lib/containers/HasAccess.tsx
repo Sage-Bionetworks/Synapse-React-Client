@@ -152,9 +152,8 @@ export default class HasAccess extends React.Component<
     super(props)
     this.getRestrictionInformation = this.getRestrictionInformation.bind(this)
     this.getFileEntityFileHandle = this.getFileEntityFileHandle.bind(this)
-    this.updateStateFileHandleAccessBlocked = this.updateStateFileHandleAccessBlocked.bind(
-      this,
-    )
+    this.updateStateFileHandleAccessBlocked =
+      this.updateStateFileHandleAccessBlocked.bind(this)
 
     this.state = {
       fileHandleDownloadType: undefined,
@@ -168,9 +167,7 @@ export default class HasAccess extends React.Component<
 
   componentDidUpdate(prevProps: HasAccessProps) {
     // SWC-5821: If the entity ID prop changes, force refresh
-    if (
-      prevProps.entityId != this.props.entityId
-    ) {
+    if (prevProps.entityId != this.props.entityId) {
       this.refresh(true)
     }
   }
@@ -201,12 +198,8 @@ export default class HasAccess extends React.Component<
   }
 
   getFileEntityFileHandle = (forceRefresh?: boolean) => {
-    const {
-      entityId,
-      entityVersionNumber,
-      isInDownloadList,
-      fileHandle,
-    } = this.props
+    const { entityId, entityVersionNumber, isInDownloadList, fileHandle } =
+      this.props
 
     if (this.state.fileHandleDownloadType && !forceRefresh) {
       // already know the downloadType
@@ -321,7 +314,7 @@ export default class HasAccess extends React.Component<
           icon={iconProp}
           className="SRC-whiteText"
           size="1x"
-          transform={{ x: 5 }}
+          transform={{ x: 4.5, y: -0.5 }}
           style={{ fontSize: '13px' }}
         />
       </span>
