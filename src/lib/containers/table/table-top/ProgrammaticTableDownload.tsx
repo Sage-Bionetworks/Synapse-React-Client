@@ -45,8 +45,11 @@ function ProgrammaticOptions({
         // SWC-5686: The ID column is required by the client, and this column may not have been selected!
         // Change the SQL to "SELECT * ..."
         const indexOfFrom = res.transformedSql.toUpperCase().indexOf('FROM SYN')
-        const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(indexOfFrom)}`
-        setGeneratedSql(selectStarTransformedSql.replace(/"/g, '\\"'))
+        const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(
+          indexOfFrom,
+        )}`
+        // Escape backticks and quotation marks
+        setGeneratedSql(selectStarTransformedSql.replace(/(["`])/g, '\\$1'))
       } catch (e) {
         console.error('Error on getTransformSqlWithFacetsRequest ', e)
       }
@@ -58,26 +61,43 @@ function ProgrammaticOptions({
     <ProgrammaticInstructionsModal
       show={true}
       onClose={onHide}
-      title='Download Programmatically'
-      cliNotes={<>
-        This command line code will download Synapse files AND file annotations to your working directory.
-        </>}
+      title="Download Programmatically"
+      cliNotes={
+        <>
+          This command line code will download Synapse files AND file
+          annotations to your working directory.
+        </>
+      }
       cliCode={`synapse get -q "${generatedSql}"`}
-      rNotes={<>
-          This R code will download file annotations only. Use <a target='_blank'
-            rel='noopener noreferrer'
-            href='https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles'>
+      rNotes={
+        <>
+          This R code will download file annotations only. Use{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles"
+          >
             synGet{'()'}
-          </a> to loop over the list of Synapse IDs from the file annotations to download files.
-        </>}
+          </a>{' '}
+          to loop over the list of Synapse IDs from the file annotations to
+          download files.
+        </>
+      }
       rCode={`query ${'<-'} synTableQuery("${generatedSql}")${'\n'}read.table(query$filepath, sep = ",")`}
-      pythonNotes={<>
-        This Python code will download file annotations only. Use <a target='_blank'
-            rel='noopener noreferrer'
-            href='https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles'>
+      pythonNotes={
+        <>
+          This Python code will download file annotations only. Use{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles"
+          >
             syn.get
-          </a> to loop over the list of Synapse IDs from the file annotations to download files.
-        </>}
+          </a>{' '}
+          to loop over the list of Synapse IDs from the file annotations to
+          download files.
+        </>
+      }
       pythonCode={`query = syn.tableQuery("${generatedSql}")${'\n'}query.asDataFrame()`}
     />
   )
