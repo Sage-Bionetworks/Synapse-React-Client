@@ -1,10 +1,6 @@
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
-import {
-  isEntityView,
-  isFileView as isFileViewUtil,
-} from '../../utils/functions/EntityTypeUtils'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
 import { QueryResultBundle } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
@@ -91,7 +87,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   } = props
 
   const {
-    entity,
     data,
     getInitQueryRequest,
     executeQueryRequest,
@@ -106,11 +101,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     facetAliases,
     setColumnsToShowInTable,
   } = useQueryVisualizationContext()
-
-  const isFileView = entity && isEntityView(entity) && isFileViewUtil(entity)
-
-  // const isDataset =
-  //   entity?.concreteType === 'org.sagebionetworks.repo.model.table.Dataset'
 
   const setControlState = (control: keyof TopLevelControlsState) => {
     const updatedTopLevelControlsState: Partial<TopLevelControlsState> = {
@@ -172,21 +162,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               )}
             </Typography>
           )}
-          {/* {isDataset && (
-            <div className="TopLevelControls__hiddenFilesWarning">
-              {name && (
-                <Typography variant="smallText1">
-                  {name}{' '}
-                  {!hideQueryCount && (
-                    <QueryCount
-                      sql={getInitQueryRequest().query.sql}
-                      parens={true}
-                    />
-                  )}
-                </Typography>
-              )}
-            </div>
-          )} */}
         </div>
         <div className="TopLevelControls__actions">
           {customControls &&
@@ -226,7 +201,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   onDownloadFiles={() => setControlState(key)}
                   queryResultBundle={data}
                   queryBundleRequest={getLastQueryRequest()}
-                  isFileView={isFileView}
                 />
               )
             }

@@ -6,6 +6,7 @@ import {
   ENTITY_CONCRETE_TYPE,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ProjectHeader,
+  Dataset,
 } from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
 
@@ -134,6 +135,10 @@ export function isVersionableEntityType(type: EntityType): boolean {
     default:
       throw new Error(`Unknown entity type: ${type}`)
   }
+}
+
+export function isDataset(entity: Entity): entity is Dataset {
+  return entity.concreteType === 'org.sagebionetworks.repo.model.table.Dataset'
 }
 
 export function isEntityView(entity: Entity): entity is EntityView {

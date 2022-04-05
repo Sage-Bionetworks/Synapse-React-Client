@@ -44,6 +44,17 @@ export const ENTITY_SCHEMA_BINDING = (id: string | number) =>
 export const ENTITY_SCHEMA_VALIDATION = (id: string | number) =>
   `${ENTITY_SCHEMA(id)}/validation`
 
+export const TABLE_QUERY_ASYNC_START = (id: string | number) =>
+  `${ENTITY_ID(id)}/table/query/async/start`
+
+export const TABLE_QUERY_ASYNC_GET = (
+  entityId: string | number,
+  asyncJobToken: string,
+) => `${ENTITY_ID(entityId)}/table/query/async/get/${asyncJobToken}`
+
+export const ASYNCHRONOUS_JOB_TOKEN = (asyncJobToken: string) =>
+  `${REPO}/asynchronous/job/${asyncJobToken}`
+
 export const USER_PROFILE_ENDPOINT = `${REPO}/userProfile`
 
 export const SCHEMA = `${REPO}/schema`
