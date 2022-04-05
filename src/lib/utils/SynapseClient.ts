@@ -6,6 +6,7 @@ import { PROVIDERS } from '../containers/Login'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ALIAS_AVAILABLE,
+  ASYNCHRONOUS_JOB_TOKEN,
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
@@ -22,6 +23,8 @@ import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
   SIGN_TERMS_OF_USE,
+  TABLE_QUERY_ASYNC_GET,
+  TABLE_QUERY_ASYNC_START,
   USER_BUNDLE,
   USER_ID_BUNDLE,
   USER_PROFILE,
@@ -477,7 +480,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
   ) => void,
 ): Promise<AsynchronousJobStatus<TRequest, TResponse>> => {
   let response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
-    `/repo/v1/asynchronous/job/${asyncJobId}`,
+    ASYNCHRONOUS_JOB_TOKEN(asyncJobId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -486,7 +489,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
   while (response.jobState && response.jobState === 'PROCESSING') {
     await delay(500)
     response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
-      `/repo/v1/asynchronous/job/${asyncJobId}`,
+      ASYNCHRONOUS_JOB_TOKEN(asyncJobId),
       accessToken,
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
@@ -541,7 +544,7 @@ export const getQueryTableAsyncJobResults = async (
   accessToken?: string,
 ): Promise<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>> => {
   const asyncJobId = await doPost<AsyncJobId>(
-    `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
+    TABLE_QUERY_ASYNC_START(queryBundleRequest.entityId),
     queryBundleRequest,
     accessToken,
     undefined,
@@ -549,7 +552,7 @@ export const getQueryTableAsyncJobResults = async (
   )
   return getAsyncResultFromJobId<QueryBundleRequest, QueryResultBundle>(
     asyncJobId.token,
-    `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/get/${asyncJobId.token}`,
+    TABLE_QUERY_ASYNC_GET(queryBundleRequest.entityId, asyncJobId.token),
     accessToken,
   )
 }
