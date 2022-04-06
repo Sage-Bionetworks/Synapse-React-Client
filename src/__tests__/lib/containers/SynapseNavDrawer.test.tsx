@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { SynapseNavDrawer, SynapseNavDrawerProps } from '../../../lib/containers/SynapseNavDrawer'
+import {
+  SynapseNavDrawer,
+  SynapseNavDrawerProps,
+} from '../../../lib/containers/SynapseNavDrawer'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 import { server } from '../../../mocks/msw/server'
@@ -22,17 +25,16 @@ describe('SynapseNavDrawer tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('Shows Synapse Nav Drawer with logged in user items', () => {
+  it('Shows Synapse Nav Drawer with logged in user items', async () => {
     // mock successful response set up in handlers.ts (when an access token is provided)
     renderComponent()
 
-    // provide waitForElementOptions to allow time to update the component state (with user info)
-    screen.findByTestId('Projects', undefined, { timeout: 1000 })
-    screen.findByTestId('Favorites', undefined, { timeout: 1000 })
-    screen.findByTestId('Teams', undefined, { timeout: 1000 })
-    screen.findByTestId('Challenges', undefined, { timeout: 1000 })
-    screen.findByTestId('Search')
-    screen.findByTestId('Help')
-    screen.findByTestId('Your Account', undefined, { timeout: 1000 })
+    await screen.findByTestId('Projects')
+    await screen.findByTestId('Favorites')
+    await screen.findByTestId('Teams')
+    await screen.findByTestId('Challenges')
+    await screen.findByTestId('Search')
+    await screen.findByTestId('Help')
+    await screen.findByTestId('Your Account')
   })
 })

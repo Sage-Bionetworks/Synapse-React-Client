@@ -131,12 +131,15 @@ describe('test EvaluationEditor', () => {
     props = { ...props, entityId, evaluationId }
 
     jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
 
     expect(() =>
       mount(<EvaluationEditor {...props} />, {
         wrappingComponent: SynapseTestContext,
       }),
     ).toThrow(Error)
+
+    console.error.mockRestore()
   })
 
   test('save button clicked when using entityId creates new evaluation', () => {

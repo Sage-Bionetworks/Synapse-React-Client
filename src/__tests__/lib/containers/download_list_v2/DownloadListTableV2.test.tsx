@@ -5,8 +5,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
 import { mockFileStatistics } from '../../../../mocks/mock_file_statistics'
 import userEvent from '@testing-library/user-event'
-import DownloadListTableV2, {
-} from '../../../../lib/containers/download_list_v2/DownloadListTable'
+import DownloadListTableV2 from '../../../../lib/containers/download_list_v2/DownloadListTable'
 import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
 import { DownloadListItemResult } from '../../../../lib/utils/synapseTypes/DownloadListV2/DownloadListItemResult'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
@@ -30,14 +29,15 @@ jest.mock(
 
 const mockFetchNextPage = jest.fn()
 const mockRefetchStatistics = jest.fn()
-const mockUseGetAvailableFilesToDownloadInfinite = useGetAvailableFilesToDownloadInfinite as jest.Mock
+const mockUseGetAvailableFilesToDownloadInfinite =
+  useGetAvailableFilesToDownloadInfinite as jest.Mock
 
 const page1: Partial<DownloadListItemResult>[] = [
   {
     fileEntityId: 'syn1',
     versionNumber: 1,
-    createdOn: 'yesterday',
-    addedOn: 'today',
+    createdOn: '2019-02-06T21:17:25.790Z',
+    addedOn: '2021-12-26T21:17:25.790Z',
     fileName: 'file1.txt',
     fileSizeBytes: 1,
     projectId: 'syn200',
@@ -50,8 +50,8 @@ const page2: Partial<DownloadListItemResult>[] = [
   {
     fileEntityId: 'syn2',
     versionNumber: 3,
-    createdOn: 'yesterday',
-    addedOn: 'today',
+    createdOn: '2019-02-06T21:17:25.790Z',
+    addedOn: '2021-12-26T21:17:25.790Z',
     fileName: 'file2.txt',
     fileSizeBytes: 2,
     projectId: 'syn200',
@@ -62,7 +62,10 @@ const page2: Partial<DownloadListItemResult>[] = [
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <DownloadListTableV2 filesStatistics={mockFileStatistics} refetchStatistics={mockRefetchStatistics}/>
+      <DownloadListTableV2
+        filesStatistics={mockFileStatistics}
+        refetchStatistics={mockRefetchStatistics}
+      />
     </SynapseTestContext>,
   )
 }
@@ -92,7 +95,7 @@ describe('DownloadListTableV2 tests', () => {
   })
   it('loads more available download files when inView', async () => {
     mockAllIsIntersecting(true)
-    
+
     renderComponent()
 
     const fileEntity1 = await screen.findAllByText('file1.txt')
@@ -100,7 +103,7 @@ describe('DownloadListTableV2 tests', () => {
     const fileEntity2 = await screen.findAllByText('file2.txt')
     expect(fileEntity2).toHaveLength(1)
   })
-  describe("Copy all Synapse IDs", () => {
+  describe('Copy all Synapse IDs', () => {
     const originalClipboard = { ...global.navigator.clipboard }
     afterEach(() => {
       Object.assign(navigator, {
@@ -108,23 +111,23 @@ describe('DownloadListTableV2 tests', () => {
       })
     })
 
-    it("should call clipboard.writeText with the expected Synapse IDs", async () => {
+    it('should call clipboard.writeText with the expected Synapse IDs', async () => {
       const mockWriteText = jest.fn()
       mockWriteText.mockResolvedValue('copied')
       const mockClipboard = {
         writeText: mockWriteText,
-      };
+      }
       Object.assign(navigator, {
         clipboard: mockClipboard,
       })
 
       renderComponent()
-      
+
       const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
       userEvent.click(copySynIDsButton)
-      
+
       expect(mockWriteText).toHaveBeenCalled()
-      expect(mockWriteText).toHaveBeenCalledWith("syn1.1\nsyn2.3")
+      expect(mockWriteText).toHaveBeenCalledWith('syn1.1\nsyn2.3')
     })
   })
 })

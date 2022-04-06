@@ -260,7 +260,11 @@ describe('TreeView tests', () => {
       })
 
       userEvent.click(screen.getByRole('button'))
-      expect(() => screen.getAllByLabelText('Current Project')).toThrowError()
+      await waitFor(() =>
+        expect(
+          screen.queryByLabelText('Current Project'),
+        ).not.toBeInTheDocument(),
+      )
     })
 
     it('can select `Current Project` if initial container is provided', async () => {
@@ -270,7 +274,7 @@ describe('TreeView tests', () => {
       })
 
       userEvent.click(screen.getByRole('button'))
-      expect(screen.getAllByText('Current Project').length).toBe(1)
+      await waitFor(() => screen.getByText('Current Project'))
     })
 
     it('changes data when a new selection is made', async () => {

@@ -16,6 +16,7 @@ import {
 } from '../../../lib/containers/QueryWrapper'
 import { displayToast } from '../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { delay } from '../../../lib/utils/SynapseClient'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
 import { AddToDownloadListRequest } from '../../../lib/utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
@@ -118,6 +119,7 @@ describe('DownloadConfirmation', () => {
   }
 
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.clearAllMocks()
   })
 
@@ -140,24 +142,31 @@ describe('DownloadConfirmation', () => {
     screen.getByRole('button', { name: 'Add' })
   })
 
-  it('should call addFilesToDownload with correct params and show correct text while processing with no buttons', async () => {
+  it('should call addFilesToDownload with correct params and shows loading and complete states', async () => {
+    addFilesToDownloadRequestFn = SynapseClient.addFilesToDownloadListV2 = jest
+      .fn()
+      .mockImplementation(async () => {
+        await delay(100)
+        return addFilesToDownloadListResponse
+      })
+
     renderComponent(props)
     const addButton = await screen.findByRole('button', { name: 'Add' })
     //click to add
     userEvent.click(addButton)
 
+    // Verify that the call was made and we're in the loading state
     expect(addFilesToDownloadRequestFn).toHaveBeenCalledWith(
       addFilesToDownloadListRequest,
       MOCK_CONTEXT_VALUE.accessToken,
     )
-    screen.getByText('Adding Files To List')
+    await screen.findByText('Adding Files To List')
     expect(screen.queryAllByRole('button')).toHaveLength(0)
-  })
 
-  it("should show the correct 'view downloads' link when done adding", async () => {
-    renderComponent(props)
-    userEvent.click(await screen.findByRole('button', { name: 'Add' }))
+    // Advance to the completion of the request
+    jest.advanceTimersByTime(150)
 
+    // Verify that we have the correct result state
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith(
         'File(s) were successfully added to your Download List.',

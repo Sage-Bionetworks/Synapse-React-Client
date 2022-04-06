@@ -5,6 +5,7 @@ import {
   EntityBundle,
   EntityHeader,
   EntityJson,
+  EntityPath,
   EntityType,
   FileEntity,
   ObjectType,
@@ -26,6 +27,8 @@ export const MOCK_PROJECT_ID = 'syn12345'
 export const MOCK_PROJECT_NAME = 'A Mock Project'
 export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'
 export const MOCK_DATASET_ENTITY_ID = 'syn234'
+export const MOCK_DATASET_NAME = 'My mock dataset'
+
 // TODO: Create a mock wiki
 const MOCK_WIKI_ID = '45745485'
 
@@ -374,11 +377,31 @@ export const mockProjectEntityBundle: EntityBundle = {
 export const mockDatasetEntity: Dataset = {
   id: MOCK_DATASET_ENTITY_ID,
   parentId: MOCK_PROJECT_ID,
-  name: MOCK_FILE_NAME,
+  name: MOCK_DATASET_NAME,
   concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
   createdBy: MOCK_USER_ID.toString(),
   modifiedBy: MOCK_USER_ID.toString(),
   etag: '00000000-0000-0000-0000-000000000000',
   items: [],
   columnIds: [],
+}
+
+export const mockDatasetEntityPath: EntityPath = {
+  path: [
+    {
+      name: 'root',
+      id: 'syn4489',
+      type: 'org.sagebionetworks.repo.model.Folder',
+    },
+    {
+      name: MOCK_PROJECT_NAME,
+      id: MOCK_PROJECT_ID,
+      type: 'org.sagebionetworks.repo.model.Project',
+    },
+    {
+      name: MOCK_DATASET_NAME,
+      id: MOCK_DATASET_ENTITY_ID,
+      type: 'org.sagebionetworks.repo.model.FileEntity',
+    },
+  ],
 }

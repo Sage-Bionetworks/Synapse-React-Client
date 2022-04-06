@@ -5,15 +5,12 @@ import {
   QueryWrapperProps,
   useQueryContext,
 } from '../../../lib/containers/QueryWrapper'
-import syn16787123Json from '../../../mocks/query/syn16787123'
+import syn16787123Json from '../../../mocks/query/syn16787123.json'
 import { SynapseConstants } from '../../../lib/utils/'
 import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
 import { cloneDeep } from 'lodash-es'
 import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 
@@ -111,7 +108,9 @@ describe('basic functionality', () => {
     })
 
     await waitFor(() => expect(providedContext).toBeDefined())
-    providedContext!.executeQueryRequest(initialQueryRequest)
+    act(() => {
+      providedContext!.executeQueryRequest(initialQueryRequest)
+    })
     const location = window.location
     expect(location.search).toContain('QueryWrapper0')
     const query = JSON.parse(
@@ -132,7 +131,9 @@ describe('basic functionality', () => {
     })
 
     await waitFor(() => expect(providedContext).toBeDefined())
-    providedContext!.executeQueryRequest(initialQueryRequest)
+    act(() => {
+      providedContext!.executeQueryRequest(initialQueryRequest)
+    })
 
     await waitFor(() =>
       expect(mockOnQueryChange).toBeCalledWith(

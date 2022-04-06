@@ -12,6 +12,7 @@ import {
   ENTITY_BUNDLE_V2,
   ENTITY_HEADERS,
   ENTITY_ID,
+  ENTITY_ID_PATH,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
@@ -2804,7 +2805,7 @@ export const getUserProjects = (
 // https://rest-docs.synapse.org/rest/GET/entity/id/path.html
 export const getEntityPath = (entityId: string, accessToken?: string) => {
   return doGet<EntityPath>(
-    `/repo/v1/entity/${entityId}/path`,
+    ENTITY_ID_PATH(entityId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

@@ -3,6 +3,7 @@ import {
   ENTITY,
   ENTITY_BUNDLE_V2,
   ENTITY_ID,
+  ENTITY_ID_PATH,
   ENTITY_ID_VERSION,
   ENTITY_ID_VERSIONS,
   ENTITY_JSON,
@@ -15,6 +16,7 @@ import {
 import {
   Entity,
   EntityBundle,
+  EntityPath,
   PaginatedResults,
   VersionableEntity,
 } from '../../../lib/utils/synapseTypes'
@@ -103,6 +105,25 @@ export const entityHandlers = [
       if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
         response = { results: mockFileEntityVersionInfo }
         status = 200
+      }
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID_PATH(
+      ':entityId',
+    )}`,
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<EntityPath> = {
+        reason: `Mock Service worker could not find mock entity versions for ID ${req.params.entityId}`,
+      }
+      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
+        response = mockFileEntityBundle.path!
+        status = 200
+      } else if (req.params.entityId === MOCK_DATASET_ENTITY_ID) {
+        response = mockDatasetEntityBundle.path!
       }
       return res(ctx.status(status), ctx.json(response))
     },

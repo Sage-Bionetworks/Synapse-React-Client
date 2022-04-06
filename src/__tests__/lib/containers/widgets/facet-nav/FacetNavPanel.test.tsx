@@ -3,7 +3,7 @@ import FacetNavPanel, {
   FacetNavPanelProps,
   truncate,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
 import { SynapseConstants } from '../../../../../lib'
@@ -13,6 +13,7 @@ import {
   QueryContextType,
 } from '../../../../../lib/containers/QueryWrapper'
 import { QueryVisualizationContextProvider } from '../../../../../lib/containers/QueryVisualizationWrapper'
+import { resolveAllPending } from '../../../../../lib/testutils/EnzymeHelpers'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -83,6 +84,7 @@ function init(
 describe('initialization', () => {
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
     init()
+    await screen.findAllByRole('button')
     const panel = container.querySelectorAll<HTMLElement>('div.FacetNavPanel')
     expect(panel).toHaveLength(1)
 
@@ -109,6 +111,8 @@ describe('initialization', () => {
       onSetPlotType: mockSetPlotTypeCallback,
       isModalView: true,
     })
+    await screen.findAllByRole('button')
+
     const panel = container.querySelectorAll<HTMLElement>(
       'div.FacetNavPanel--expanded',
     )
@@ -127,7 +131,7 @@ describe('initialization', () => {
     expect(panelBody2.length).toBe(1)
   })
 
-  it('should truncate values', async () => {
+  it('should truncate values', () => {
     expect(truncate(undefined, 10)).toEqual(undefined)
     expect(truncate('', 0)).toEqual('')
     expect(truncate('', 5)).toEqual('')

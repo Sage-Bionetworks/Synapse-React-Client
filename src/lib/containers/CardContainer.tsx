@@ -32,6 +32,21 @@ export type CardContainerProps = {
   unitDescription?: string
 } & CardConfiguration
 
+const Card = (props: any) => {
+  switch (props.type) {
+    case DATASET:
+      return <Dataset {...props} />
+    case FUNDER:
+      return <Funder {...props} />
+    case GENERIC_CARD:
+      return <GenericCard {...props} />
+    case OBSERVATION_CARD:
+      return <ObservationCard {...props} />
+    default:
+      return <div /> // this should never happen
+  }
+}
+
 export const CardContainer = (props: CardContainerProps) => {
   const {
     isHeader = false,
@@ -47,21 +62,6 @@ export const CardContainer = (props: CardContainerProps) => {
     useQueryContext()
 
   const queryRequest = getLastQueryRequest()
-
-  const renderCard = (props: any, type: string) => {
-    switch (type) {
-      case DATASET:
-        return <Dataset {...props} />
-      case FUNDER:
-        return <Funder {...props} />
-      case GENERIC_CARD:
-        return <GenericCard {...props} />
-      case OBSERVATION_CARD:
-        return <ObservationCard {...props} />
-      default:
-        return <div /> // this should never happen
-    }
-  }
 
   const ids = data?.queryResult.queryResults.tableId
     ? [data?.queryResult.queryResults.tableId]
@@ -139,7 +139,7 @@ export const CardContainer = (props: CardContainerProps) => {
           tableId: data?.queryResult.queryResults.tableId,
           ...rest,
         }
-        return renderCard(propsForCard, type)
+        return <Card {...propsForCard} key={rowData.rowId} />
       })
     ) : (
       <></>
