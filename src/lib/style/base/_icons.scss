@@ -96,3 +96,7 @@ svg.HelpButton {
   cursor: pointer;
   font-size: 0.8em;
 }
+
+.SRC-color-warning {
+  color: map.get(SRC.$colors, 'warning');
+}
