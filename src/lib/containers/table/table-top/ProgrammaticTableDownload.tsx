@@ -48,7 +48,7 @@ function ProgrammaticOptions({
         const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(
           indexOfFrom,
         )}`
-        // Replace backticks and quotation marks with escaped quotations
+        // Replace backticks and quotation marks with escaped quotations -- note that Python won't accept escaped backticks
         setGeneratedSql(selectStarTransformedSql.replace(/["`]/g, '\\"'))
       } catch (e) {
         console.error('Error on getTransformSqlWithFacetsRequest ', e)
