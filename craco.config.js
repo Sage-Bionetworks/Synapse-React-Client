@@ -19,6 +19,7 @@ module.exports = {
       add: [
         new ProvidePlugin({
           process: 'process/browser',
+          Buffer: ['buffer', 'Buffer'],
         }),
       ],
     },
