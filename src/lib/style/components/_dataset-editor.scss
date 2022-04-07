@@ -1,5 +1,6 @@
 @use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SrcMixins;
+@use '../../template_style/form' as Form;
 @use 'sass:map';
 
 .DatasetEditor {
@@ -24,6 +25,7 @@
   .DatasetEditorTableContainer {
     width: 100%;
     overflow-x: auto;
+    @include Form.customCheckbox($checkbox-top-offset: 5px);
     .DatasetEditorTable {
       p {
         margin-bottom: unset;
@@ -58,6 +60,10 @@
 .EntityNameWithIconRenderer {
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  svg {
+    margin-bottom: 3px;
+  }
 }
 
 .EntityErrorRenderer {
