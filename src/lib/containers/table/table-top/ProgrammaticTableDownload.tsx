@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   QueryBundleRequest,
   QueryResultBundle,
@@ -48,14 +48,24 @@ function ProgrammaticOptions({
         const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(
           indexOfFrom,
         )}`
-        // Replace backticks and quotation marks with escaped quotations -- note that Python won't accept escaped backticks
-        setGeneratedSql(selectStarTransformedSql.replace(/["`]/g, '\\"'))
+        setGeneratedSql(selectStarTransformedSql)
       } catch (e) {
         console.error('Error on getTransformSqlWithFacetsRequest ', e)
       }
     }
     getData()
   }, [queryBundleRequest, queryResultBundle])
+
+  // Replace quotation marks with escaped quotations. For CLI, also escape backticks.
+  const commandLineSql = useMemo(
+    () => generatedSql.replace(/(["`])/g, '\\$1'),
+    [generatedSql],
+  )
+
+  const clientSql = useMemo(
+    () => generatedSql.replace(/"/g, '\\"'),
+    [generatedSql],
+  )
 
   return (
     <ProgrammaticInstructionsModal
@@ -68,7 +78,7 @@ function ProgrammaticOptions({
           annotations to your working directory.
         </>
       }
-      cliCode={`synapse get -q "${generatedSql}"`}
+      cliCode={`synapse get -q "${commandLineSql}"`}
       rNotes={
         <>
           This R code will download file annotations only. Use{' '}
@@ -83,7 +93,7 @@ function ProgrammaticOptions({
           download files.
         </>
       }
-      rCode={`query ${'<-'} synTableQuery("${generatedSql}")${'\n'}read.table(query$filepath, sep = ",")`}
+      rCode={`query ${'<-'} synTableQuery("${clientSql}")${'\n'}read.table(query$filepath, sep = ",")`}
       pythonNotes={
         <>
           This Python code will download file annotations only. Use{' '}
@@ -98,7 +108,7 @@ function ProgrammaticOptions({
           download files.
         </>
       }
-      pythonCode={`query = syn.tableQuery("${generatedSql}")${'\n'}query.asDataFrame()`}
+      pythonCode={`query = syn.tableQuery("${clientSql}")${'\n'}query.asDataFrame()`}
     />
   )
 }
