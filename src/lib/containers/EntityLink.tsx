@@ -44,9 +44,11 @@ export const EntityLink = (props: EntityLinkProps) => {
             className={className}
             target="_blank"
             rel="noopener noreferrer"
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${versionNumber ? `.${versionNumber}` : ''}`}
+            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${
+              versionNumber ? `.${versionNumber}` : ''
+            }`}
           >
-            <EntityTypeIcon type={type} style={{ marginRight: '5px' }} />
+            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
             {entity.name}
           </a>
         </p>
@@ -54,7 +56,7 @@ export const EntityLink = (props: EntityLinkProps) => {
     } else {
       return (
         <p className={className}>
-          <EntityTypeIcon type={type} style={{ marginRight: '5px' }} />
+          <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
           {entity.name}
         </p>
       )

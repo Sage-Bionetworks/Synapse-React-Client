@@ -21,9 +21,7 @@
     }
   }
 
-  .Node.BrowseNode[aria-disabled='false'][aria-selected='true']
-    > .EntityName
-    > span {
+  .Node.BrowseNode[aria-disabled='false'][aria-selected='true'] > .EntityName {
     font-weight: bold;
   }
 }
