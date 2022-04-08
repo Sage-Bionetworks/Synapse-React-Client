@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   QueryBundleRequest,
   QueryResultBundle,
@@ -45,8 +45,10 @@ function ProgrammaticOptions({
         // SWC-5686: The ID column is required by the client, and this column may not have been selected!
         // Change the SQL to "SELECT * ..."
         const indexOfFrom = res.transformedSql.toUpperCase().indexOf('FROM SYN')
-        const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(indexOfFrom)}`
-        setGeneratedSql(selectStarTransformedSql.replace(/"/g, '\\"'))
+        const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(
+          indexOfFrom,
+        )}`
+        setGeneratedSql(selectStarTransformedSql)
       } catch (e) {
         console.error('Error on getTransformSqlWithFacetsRequest ', e)
       }
@@ -54,31 +56,59 @@ function ProgrammaticOptions({
     getData()
   }, [queryBundleRequest, queryResultBundle])
 
+  // Replace quotation marks with escaped quotations. For CLI, also escape backticks.
+  const commandLineSql = useMemo(
+    () => generatedSql.replace(/(["`])/g, '\\$1'),
+    [generatedSql],
+  )
+
+  const clientSql = useMemo(
+    () => generatedSql.replace(/"/g, '\\"'),
+    [generatedSql],
+  )
+
   return (
     <ProgrammaticInstructionsModal
       show={true}
       onClose={onHide}
-      title='Download Programmatically'
-      cliNotes={<>
-        This command line code will download Synapse files AND file annotations to your working directory.
-        </>}
-      cliCode={`synapse get -q "${generatedSql}"`}
-      rNotes={<>
-          This R code will download file annotations only. Use <a target='_blank'
-            rel='noopener noreferrer'
-            href='https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles'>
+      title="Download Programmatically"
+      cliNotes={
+        <>
+          This command line code will download Synapse files AND file
+          annotations to your working directory.
+        </>
+      }
+      cliCode={`synapse get -q "${commandLineSql}"`}
+      rNotes={
+        <>
+          This R code will download file annotations only. Use{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles"
+          >
             synGet{'()'}
-          </a> to loop over the list of Synapse IDs from the file annotations to download files.
-        </>}
-      rCode={`query ${'<-'} synTableQuery("${generatedSql}")${'\n'}read.table(query$filepath, sep = ",")`}
-      pythonNotes={<>
-        This Python code will download file annotations only. Use <a target='_blank'
-            rel='noopener noreferrer'
-            href='https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles'>
+          </a>{' '}
+          to loop over the list of Synapse IDs from the file annotations to
+          download files.
+        </>
+      }
+      rCode={`query ${'<-'} synTableQuery("${clientSql}")${'\n'}read.table(query$filepath, sep = ",")`}
+      pythonNotes={
+        <>
+          This Python code will download file annotations only. Use{' '}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://help.synapse.org/docs/Get-Started-with-Downloading-Data.2004254837.html#GetStartedwithDownloadingData-DownloadingFiles"
+          >
             syn.get
-          </a> to loop over the list of Synapse IDs from the file annotations to download files.
-        </>}
-      pythonCode={`query = syn.tableQuery("${generatedSql}")${'\n'}query.asDataFrame()`}
+          </a>{' '}
+          to loop over the list of Synapse IDs from the file annotations to
+          download files.
+        </>
+      }
+      pythonCode={`query = syn.tableQuery("${clientSql}")${'\n'}query.asDataFrame()`}
     />
   )
 }

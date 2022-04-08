@@ -4,6 +4,7 @@ import React from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
 import { QueryResultBundle } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
+import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import QueryCount from '../QueryCount'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
@@ -88,6 +89,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
 
   const {
     data,
+    entity,
     getInitQueryRequest,
     executeQueryRequest,
     getLastQueryRequest,
@@ -152,15 +154,20 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       <h3>
         <div className="TopLevelControls__querycount">
           {name && (
-            <Typography variant="sectionTitle" role="heading">
-              {name}{' '}
-              {!hideQueryCount && (
-                <QueryCount
-                  sql={getInitQueryRequest().query.sql}
-                  parens={true}
-                />
+            <>
+              <Typography variant="sectionTitle" role="heading">
+                {name}{' '}
+                {!hideQueryCount && (
+                  <QueryCount
+                    sql={getInitQueryRequest().query.sql}
+                    parens={true}
+                  />
+                )}
+              </Typography>
+              {!hideQueryCount && entity && (
+                <MissingQueryResultsWarning entity={entity} />
               )}
-            </Typography>
+            </>
           )}
         </div>
         <div className="TopLevelControls__actions">

@@ -4,15 +4,15 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
-import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
+import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/useEntity'
 import { useInfiniteQueryResultBundle } from '../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import { SynapseClientError } from '../utils/SynapseClient'
 import {
   AsynchronousJobStatus,
-  Entity,
   QueryBundleRequest,
   QueryResultBundle,
+  Table,
 } from '../utils/synapseTypes'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
@@ -20,7 +20,7 @@ export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 
 export type QueryContextType = {
   /** The entity being queried. Will be undefined while initially fetching */
-  entity: Entity | undefined
+  entity: Table | undefined
   /** The query results, which will be undefined while initially fetching a new bundle, but will not be unloaded when fetching new pages */
   data: QueryResultBundle | undefined
   /** Returns a deep clone of the current query bundle request */
@@ -36,7 +36,7 @@ export type QueryContextType = {
   /** The error returned by the query request, if one is encountered */
   error: SynapseClientError | null
   /** The status of the asynchronous job. */
-  asyncJobStatus: AsynchronousJobStatus<unknown, unknown>
+  asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
   /** Whether or not the query result bundle has a next page */
   hasNextPage: boolean
   /** Invoke this method to fetch and append the next page of rows to the data  */
@@ -154,9 +154,11 @@ export function QueryWrapper(props: QueryWrapperProps) {
   // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
   const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
 
-  const entityId = parseEntityIdFromSqlStatement(lastQueryRequest.query.sql)
+  const { entityId, versionNumber } = parseEntityIdAndVersionFromSqlStatement(
+    lastQueryRequest.query.sql,
+  )!
 
-  const { data: entity } = useGetEntity(entityId)
+  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
 
   const [currentPage, setCurrentPage] = useState<number | 'ALL'>(0)
 
@@ -348,25 +350,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     entity,
     executeQueryRequest,
     isFacetsAvailable,
-    // TODO: Get the real job status
-    asyncJobStatus: {
-      jobState: 'PROCESSING',
-      jobCanceling: false,
-      requestBody: undefined,
-      responseBody: undefined,
-      etag: '',
-      jobId: '',
-      startedByUserId: 0,
-      startedOn: '',
-      changedOn: '',
-      progressMessage: '',
-      progressCurrent: 0,
-      progressTotal: 0,
-      exception: '',
-      errorMessage: '',
-      errorDetails: '',
-      runtimeMS: 0,
-    },
+    asyncJobStatus: infiniteData?.pages[0],
     appendNextPageToResults: appendNextPageToResults,
     goToNextPage,
     goToPreviousPage,
