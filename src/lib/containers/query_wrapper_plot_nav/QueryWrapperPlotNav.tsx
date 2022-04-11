@@ -193,6 +193,15 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> =
                           )}
                           <SqlEditor />
                           <DownloadConfirmation
+                            getLastQueryRequest={
+                              queryContext.getLastQueryRequest
+                            }
+                            topLevelControlsState={
+                              queryVisualizationContext.topLevelControlsState
+                            }
+                            setTopLevelControlsState={
+                              queryVisualizationContext.setTopLevelControlsState
+                            }
                             downloadCartPageUrl={downloadCartPageUrl}
                           />
                           <TopLevelControls

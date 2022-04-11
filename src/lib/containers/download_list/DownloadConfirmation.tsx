@@ -4,16 +4,16 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { SynapseClient } from '../../utils'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
+import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { EntityType, QueryBundleRequest } from '../../utils/synapseTypes/'
 import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import { TopLevelControlsState } from '../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../QueryWrapper'
-import { useQueryContext } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
 import { displayToast } from '../ToastMessage'
 import DownloadDetails from './DownloadDetails'
@@ -27,6 +27,13 @@ enum StatusEnum {
 }
 
 export type DownloadConfirmationProps = {
+  // TODO: Use useQueryContext/useQueryVisualizationContext instead of passing in props
+  // This component is used outside of a QueryWrapper in SWC so that needs to be fixed first.
+  getLastQueryRequest: () => QueryBundleRequest
+  topLevelControlsState?: TopLevelControlsState
+  setTopLevelControlsState?: React.Dispatch<
+    React.SetStateAction<TopLevelControlsState>
+  >
   fnClose?: () => void
   folderId?: string
   downloadCartPageUrl?: string
@@ -159,10 +166,17 @@ const DownloadConfirmationContent = (props: {
 //============= DownloadConfirmation component =============
 
 export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> =
-  ({ folderId, fnClose, downloadCartPageUrl = '/DownloadCart' }) => {
-    const { data: queryResultBundle, getLastQueryRequest } = useQueryContext()
-    const { topLevelControlsState, setTopLevelControlsState } =
-      useQueryVisualizationContext()
+  ({
+    getLastQueryRequest,
+    topLevelControlsState,
+    setTopLevelControlsState,
+    folderId,
+    fnClose,
+    downloadCartPageUrl = '/DownloadCart',
+  }) => {
+    const { data: queryResultBundle } = useGetQueryResultBundle(
+      getLastQueryRequest(),
+    )
     const { accessToken } = useSynapseContext()
     const [status, setStatus] = useState<StatusEnum>(
       accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
@@ -243,10 +257,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     const onCancel = fnClose
       ? () => fnClose()
       : () => {
-          setTopLevelControlsState(state => ({
-            ...state,
-            showDownloadConfirmation: false,
-          }))
+          if (setTopLevelControlsState) {
+            setTopLevelControlsState(state => ({
+              ...state,
+              showDownloadConfirmation: false,
+            }))
+          }
         }
 
     const triggerAddToDownload = async () => {
@@ -286,7 +302,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           transition={false}
           className={`download-confirmation ${
             StatusConstruct[status].className
-          } ${topLevelControlsState.showDownloadConfirmation ? '' : 'hidden'}
+          } ${topLevelControlsState?.showDownloadConfirmation ? '' : 'hidden'}
           ${
             showFacetFilter
               ? QUERY_FILTERS_EXPANDED_CSS

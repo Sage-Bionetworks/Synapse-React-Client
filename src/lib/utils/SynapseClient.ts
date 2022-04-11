@@ -132,6 +132,7 @@ import { DownloadListManifestRequest } from './synapseTypes/DownloadListV2/Downl
 import { DownloadListPackageRequest } from './synapseTypes/DownloadListV2/DownloadListPackageRequest'
 import { DownloadListPackageResponse } from './synapseTypes/DownloadListV2/DownloadListPackageResponse'
 import { DownloadListQueryRequest } from './synapseTypes/DownloadListV2/DownloadListQueryRequest'
+import { DownloadListQueryResponse } from './synapseTypes/DownloadListV2/DownloadListQueryResponse'
 import {
   ActionRequiredRequest,
   AvailableFilesRequest,
@@ -2853,11 +2854,12 @@ const getDownloadListJobResponse = async (
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultBodyFromJobId(
+  const response = await getAsyncResultBodyFromJobId<DownloadListQueryResponse>(
     asyncJobId.token,
     `/repo/v1/download/list/query/async/get/${asyncJobId.token}`,
     accessToken,
   )
+  return response.responseDetails
 }
 
 /**
