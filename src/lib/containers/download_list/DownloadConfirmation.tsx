@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { Alert } from 'react-bootstrap'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { SynapseClient } from '../../utils'
+import { SynapseClient, SynapseConstants } from '../../utils'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import { useGetEntityChildren } from '../../utils/hooks/SynapseAPI/useGetEntityChildren'
 import useGetQueryResultBundle from '../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
@@ -27,15 +27,13 @@ enum StatusEnum {
 }
 
 export type DownloadConfirmationProps = {
-  // TODO: Use useQueryContext/useQueryVisualizationContext instead of passing in props
-  // This component is used outside of a QueryWrapper in SWC so that needs to be fixed first.
-  getLastQueryRequest: () => QueryBundleRequest
+  fnClose?: () => void
+  getLastQueryRequest?: () => QueryBundleRequest
+  folderId?: string
   topLevelControlsState?: TopLevelControlsState
   setTopLevelControlsState?: React.Dispatch<
     React.SetStateAction<TopLevelControlsState>
   >
-  fnClose?: () => void
-  folderId?: string
   downloadCartPageUrl?: string
 }
 
@@ -168,16 +166,14 @@ const DownloadConfirmationContent = (props: {
 export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> =
   ({
     getLastQueryRequest,
-    topLevelControlsState,
-    setTopLevelControlsState,
     folderId,
     fnClose,
+    setTopLevelControlsState,
+    topLevelControlsState,
     downloadCartPageUrl = '/DownloadCart',
   }) => {
-    const { data: queryResultBundle } = useGetQueryResultBundle(
-      getLastQueryRequest(),
-    )
     const { accessToken } = useSynapseContext()
+    const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
     const [status, setStatus] = useState<StatusEnum>(
       accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
     )
@@ -186,11 +182,9 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     const [fileSize, setFileSize] = useState(0)
 
     const { data: downloadListStatistics, refetch } =
-      useGetDownloadListStatistics({
-        enabled: accessToken != null,
-      })
+      useGetDownloadListStatistics()
 
-    const lastQueryRequest = getLastQueryRequest()
+    const lastQueryRequest = getLastQueryRequest!()
     // is not defined (configured for a container)
     const [showDownloadList, setShowDownloadList] = useState(false)
     const updateStats = useCallback(
@@ -239,6 +233,19 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       downloadListStatistics,
     ])
 
+    const partMask =
+      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
+
+    const queryBundleRequestSizeInformation: QueryBundleRequest = {
+      ...lastQueryRequest,
+      partMask,
+    }
+
+    const { data: queryResultBundle } = useGetQueryResultBundle(
+      queryBundleRequestSizeInformation,
+    )
+
     useDeepCompareEffect(() => {
       if (queryResultBundle && downloadListStatistics) {
         updateStats(
@@ -258,8 +265,8 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
       ? () => fnClose()
       : () => {
           if (setTopLevelControlsState) {
-            setTopLevelControlsState(state => ({
-              ...state,
+            setTopLevelControlsState(topLevelControlsState => ({
+              ...topLevelControlsState,
               showDownloadConfirmation: false,
             }))
           }
@@ -302,7 +309,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           transition={false}
           className={`download-confirmation ${
             StatusConstruct[status].className
-          } ${topLevelControlsState?.showDownloadConfirmation ? '' : 'hidden'}
+          } ${showDownloadConfirmation ? '' : 'hidden'}
           ${
             showFacetFilter
               ? QUERY_FILTERS_EXPANDED_CSS
