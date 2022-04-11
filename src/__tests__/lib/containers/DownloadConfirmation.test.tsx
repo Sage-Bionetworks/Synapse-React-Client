@@ -74,29 +74,18 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   numberOfFilesAdded: 1,
 }
 
-const queryContext: Partial<QueryContextType> = {
-  getLastQueryRequest: () => queryBundleRequest,
-  data: queryBundleResponse,
-}
-
-const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
-  topLevelControlsState: {
-    showDownloadConfirmation: true,
-  },
-}
-
 function renderComponent(
   componentProps?: DownloadConfirmationProps,
   wrapperProps?: SynapseContextType,
 ) {
   return render(
-    <QueryContextProvider queryContext={queryContext}>
-      <QueryVisualizationContextProvider
-        queryVisualizationContext={queryVisualizationContext}
-      >
-        <DownloadConfirmation {...componentProps} />
-      </QueryVisualizationContextProvider>
-    </QueryContextProvider>,
+    // <QueryContextProvider queryContext={queryContext}>
+    //   <QueryVisualizationContextProvider
+    //     queryVisualizationContext={queryVisualizationContext}
+    //   >
+    <DownloadConfirmation {...componentProps} />,
+    //   </QueryVisualizationContextProvider>
+    // </QueryContextProvider>,
     {
       wrapper: createWrapper(wrapperProps),
     },
@@ -113,8 +102,17 @@ describe('DownloadConfirmation', () => {
   getDownloadListStatisticsResultsFn = SynapseClient.getDownloadListStatistics =
     jest.fn().mockResolvedValue(filesStatisticsResponse)
 
+  SynapseClient.getQueryTableResults = jest
+    .fn()
+    .mockResolvedValue(queryBundleResponse)
+
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
+    topLevelControlsState: {
+      showDownloadConfirmation: true,
+    },
+    setTopLevelControlsState: jest.fn(),
+    getLastQueryRequest: () => queryBundleRequest,
   }
 
   beforeEach(() => {
