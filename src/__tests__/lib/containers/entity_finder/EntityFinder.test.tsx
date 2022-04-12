@@ -12,7 +12,7 @@ import EntityFinder, {
   EntityFinderProps,
   NO_VERSION_NUMBER,
 } from '../../../../lib/containers/entity_finder/EntityFinder'
-import { FinderScope } from '../../../../lib/containers/entity_finder/tree/TreeView'
+import { FinderScope } from '../../../../lib/containers/entity_finder/tree/EntityTree'
 import useGetEntityBundle from '../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import {
   EntityHeader,
@@ -39,7 +39,7 @@ jest.mock('react-reflex', () => {
   }
 })
 
-const TreeView = require('../../../../lib/containers/entity_finder/tree/TreeView')
+const EntityTree = require('../../../../lib/containers/entity_finder/tree/EntityTree')
 const DetailsList = require('../../../../lib/containers/entity_finder/details/EntityDetailsList')
 
 let invokeToggleSelectionViaTable: (reference: Reference) => void
@@ -48,7 +48,7 @@ let invokeSetConfigViaTree: (
   configuration: EntityDetailsListDataConfiguration,
 ) => void
 
-TreeView.TreeView = jest
+EntityTree.EntityTree = jest
   .fn()
   .mockImplementation(({ toggleSelection, setDetailsViewConfiguration }) => {
     invokeToggleSelectionViaTree = reference => {
@@ -68,7 +68,7 @@ DetailsList.EntityDetailsList = jest
     return <div role="table"></div>
   })
 
-const mockTreeView = TreeView.TreeView
+const mockEntityTree = EntityTree.EntityTree
 const mockDetailsList = DetailsList.EntityDetailsList
 
 jest.mock('../../../../lib/utils/SynapseClient', () => {

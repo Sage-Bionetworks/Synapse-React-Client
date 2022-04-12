@@ -275,7 +275,7 @@ describe('Dataset Items Editor tests', () => {
         screen.getAllByRole('button', {
           exact: false,
           name: 'Add Items',
-        })[0],
+        })[1],
       ).not.toBeDisabled(),
     )
 

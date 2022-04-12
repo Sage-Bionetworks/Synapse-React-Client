@@ -12,6 +12,14 @@ import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFace
 import { SynapseConstants } from '../../../../../lib'
 import userEvent from '@testing-library/user-event'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../../../lib/containers/QueryWrapper'
+import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../../../lib/containers/QueryVisualizationWrapper'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -25,26 +33,23 @@ const lastQueryRequest: QueryBundleRequest = {
 }
 const mockGetLastQueryRequest = jest.fn(() => lastQueryRequest)
 
-const defaultProps: FacetNavProps = {
-  isLoading: false,
+const defaultQueryContext: Partial<QueryContextType> = {
+  isLoadingNewBundle: false,
   getLastQueryRequest: mockGetLastQueryRequest,
   data: testData as QueryResultBundle,
-  topLevelControlsState: {
-    showFacetVisualization: true,
-    showFacetFilter: true,
-    showColumnFilter: true,
-    showSearchBar: true,
-    showDownloadConfirmation: false,
-    showColumnSelectDropdown: false,
-  },
 }
 
-function createTestProps(overrides?: FacetNavProps): FacetNavProps {
-  return {
-    ...defaultProps,
-    ...overrides,
+const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
+  {
+    topLevelControlsState: {
+      showFacetVisualization: true,
+      showFacetFilter: true,
+      showColumnFilter: true,
+      showSearchBar: true,
+      showDownloadConfirmation: false,
+      showColumnSelectDropdown: false,
+    },
   }
-}
 
 function getButtonOnFacet(
   text: string,
@@ -58,11 +63,31 @@ function getButtonOnFacet(
   }
 }
 
-function init(overrides?: FacetNavProps) {
-  const props = createTestProps(overrides)
-  render(<FacetNav {...props} />, {
-    wrapper: SynapseTestContext,
-  })
+function init(
+  props?: FacetNavProps,
+  queryContextProps?: Partial<QueryContextType>,
+  queryVisualizationContextProps?: Partial<QueryVisualizationContextType>,
+) {
+  render(
+    <QueryContextProvider
+      queryContext={{
+        ...defaultQueryContext,
+        ...queryContextProps,
+      }}
+    >
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={{
+          ...defaultQueryVisualizationContext,
+          ...queryVisualizationContextProps,
+        }}
+      >
+        <FacetNav {...props} />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
+    {
+      wrapper: SynapseTestContext,
+    },
+  )
 }
 
 describe('facets display hide/show', () => {
@@ -81,7 +106,7 @@ describe('facets display hide/show', () => {
 
     userEvent.click(showMoreButton)
 
-    const expectedLength = defaultProps.data?.facets?.filter(
+    const expectedLength = defaultQueryContext.data?.facets?.filter(
       facet => facet.facetType === 'enumeration',
     ).length
 
@@ -93,9 +118,9 @@ describe('facets display hide/show', () => {
   })
 
   it('if there are only 2 facets show more button should not exist', async () => {
-    const data = cloneDeep(defaultProps.data)
+    const data = cloneDeep(defaultQueryContext.data)
     data!.facets = data?.facets?.splice(0, 2)
-    init({
+    init(undefined, {
       data: data,
     })
     expect(() => screen.getByText('View All Charts')).toThrowError()

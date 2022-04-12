@@ -1,4 +1,4 @@
-import $RefParser from 'json-schema-ref-parser'
+import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { get, includes } from 'lodash-es'
 import * as React from 'react'
 import { Button } from 'react-bootstrap'

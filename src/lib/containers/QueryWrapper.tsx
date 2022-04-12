@@ -1,51 +1,104 @@
+import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
-
-import { SynapseClient } from '../utils/'
-import { getNextPageOfData } from '../utils/functions/queryUtils'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
+import { isFacetAvailable } from '../utils/functions/queryUtils'
+import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
+import { useGetEntity } from '../utils/hooks/SynapseAPI/useEntity'
+import { useInfiniteQueryResultBundle } from '../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import { SynapseClientError } from '../utils/SynapseClient'
 import {
   AsynchronousJobStatus,
-  FacetColumnResultValues,
   QueryBundleRequest,
   QueryResultBundle,
-  SelectColumn,
-} from '../utils/synapseTypes/'
-import { cloneDeep } from 'lodash-es'
-import { SynapseClientError } from '../utils/SynapseClient'
-import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
-import { isFacetAvailable } from '../utils/functions/queryUtils'
+  Table,
+} from '../utils/synapseTypes'
+
+export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
+export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
+
+export type QueryContextType = {
+  /** The entity being queried. Will be undefined while initially fetching */
+  entity: Table | undefined
+  /** The query results, which will be undefined while initially fetching a new bundle, but will not be unloaded when fetching new pages */
+  data: QueryResultBundle | undefined
+  /** Returns a deep clone of the current query bundle request */
+  getLastQueryRequest: () => QueryBundleRequest
+  /** Returns a deep clone of the initial query bundle request */
+  getInitQueryRequest: () => QueryBundleRequest
+  /** Updates the current query with the passed request */
+  executeQueryRequest: (param: QueryBundleRequest) => void
+  /** Returns true when loading a new page of query results */
+  isLoadingNewPage: boolean
+  /** Returns true when loading a brand new query result bundle. Will not be true when just loading the next page of query results. */
+  isLoadingNewBundle: boolean
+  /** The error returned by the query request, if one is encountered */
+  error: SynapseClientError | null
+  /** The status of the asynchronous job. */
+  asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
+  /** Whether or not the query result bundle has a next page */
+  hasNextPage: boolean
+  /** Invoke this method to fetch and append the next page of rows to the data  */
+  appendNextPageToResults: () => Promise<void>
+  /** Invoke to fetch and update the data with the next page of query results */
+  goToNextPage: () => Promise<void>
+  /** Whether or not the query result bundle has a previous page */
+  hasPreviousPage: boolean
+  /** Invoke to fetch and update the data with the previous page of query results */
+  goToPreviousPage: () => Promise<void>
+  /** Whether or not facets are available to be filtered upon based on the current data */
+  isFacetsAvailable: boolean
+  /**
+   * A facet may be "locked" so that it is not modifiable by the user, for example when showing only data relevant to a particular facet value on a Details Page.
+   * The value of a locked facet will result in a client-side modification of the result bundle data.
+   */
+  lockedFacet?: LockedFacet
+}
 
 /**
- * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
- *
- * This wasn't done because Enzyme's shallow renderer is not currently
- * compatible with the `contextType` field in the React 16+ context API.
- *
- * This can be fixed by rewriting tests to not rely on the shallow renderer.
- *
- * See here: https://github.com/enzymejs/enzyme/issues/1553
+ * This must be exported to use the context in class components.
  */
+export const QueryContext = createContext<QueryContextType | undefined>(
+  undefined,
+)
+
+export type QueryContextProviderProps = {
+  queryContext: QueryContextType
+}
+
+/**
+ * Provides data related to a Synapse table query, and functions for iterating through pages of the data.
+ */
+export const QueryContextProvider: React.FC<QueryContextProviderProps> = ({
+  children,
+  queryContext,
+}) => {
+  return (
+    <QueryContext.Provider value={queryContext}>
+      {children}
+    </QueryContext.Provider>
+  )
+}
+
+export function useQueryContext(): QueryContextType {
+  const context = useContext(QueryContext)
+  if (context === undefined) {
+    throw new Error('useQueryContext must be used within a QueryWrapper')
+  }
+  return context
+}
+
+export const QueryContextConsumer = QueryContext.Consumer
 
 export type QueryWrapperProps = {
-  visibleColumnCount?: number
+  children: React.ReactNode | React.ReactNode[]
   initQueryRequest: QueryBundleRequest
-  rgbIndex?: number
-  token?: string
-  facet?: string
-  unitDescription?: string
-  facetAliases?: Record<string, string>
-  loadNow?: boolean
-  showBarChart?: boolean
   componentIndex?: number //used for deep linking
   shouldDeepLink?: boolean
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
-  hiddenColumns?: string[]
   lockedFacet?: LockedFacet
-  defaultShowFacetVisualization?: boolean
-  children?: (
-    queryWrapperChildProps: QueryWrapperChildProps,
-  ) => React.ReactNode | React.ReactNode[]
 }
 
 export type TopLevelControlsState = {
@@ -63,31 +116,6 @@ export type SearchQuery = {
   searchText: string
 }
 
-export type QueryWrapperState = {
-  /*
-    isAllFilterSelectedForFacet tracks whether for a particular
-     facet if the 'All' button has been selected, this tracks the
-     click event and syncs Facets.tsx and SynapseTable.tsx
-  */
-  isAllFilterSelectedForFacet: Record<string, boolean>
-  data: QueryResultBundle | undefined
-  isLoadingNewData: boolean // occurs when props change
-  isLoading: boolean // occurs when state changes
-  lastQueryRequest: QueryBundleRequest
-  hasMoreData: boolean
-  // TODO: Delete lastFacetSelection once StackedBarChart.tsx/Facets.tsx are deleted
-  lastFacetSelection: FacetSelection
-  chartSelectionIndex: number
-  asyncJobStatus?: AsynchronousJobStatus
-  facetAliases?: Record<string, string>
-  loadNowStarted: boolean
-  topLevelControlsState?: TopLevelControlsState
-  isColumnSelected: string[]
-  selectedRowIndices?: number[]
-  error: SynapseClientError | undefined
-  isFacetsAvailable: boolean
-}
-
 /*
   For details page: to lock a facet name (e.g. study, grant) so that the facet name
   and its all possible values will not appear on the details page. The facet name is
@@ -99,140 +127,135 @@ export type LockedFacet = {
   value?: string
 }
 
-export type FacetSelection = {
-  columnName: string
-  facetValue: string
-  selector: string
-}
-
-// Since the component is an HOC we export the props passed down
-export type QueryWrapperChildProps = {
-  isAllFilterSelectedForFacet?: Record<string, boolean>
-  isLoading?: boolean
-  token?: string
-  entityId?: string
-  isLoadingNewData?: boolean
-  executeQueryRequest?: (param: QueryBundleRequest) => void
-  executeInitialQueryRequest?: () => void
-  getNextPageOfData?: (queryRequest: QueryBundleRequest) => void
-  getLastQueryRequest?: () => QueryBundleRequest
-  getInitQueryRequest?: () => QueryBundleRequest
-  data?: QueryResultBundle
-  facet?: string
-  updateParentState?: <K extends keyof QueryWrapperState>(
-    param: Pick<QueryWrapperState, K>,
-  ) => void
-  rgbIndex?: number
-  unitDescription?: string
-  facetAliases?: Record<string, string>
-  lastFacetSelection?: FacetSelection
-  chartSelectionIndex?: number
-  asyncJobStatus?: AsynchronousJobStatus
-  showBarChart?: boolean
-  hasMoreData?: boolean
-  topLevelControlsState?: TopLevelControlsState
-  isColumnSelected?: string[]
-  selectedRowIndices?: number[]
-  error?: SynapseClientError | undefined
-  lockedFacet?: LockedFacet
-  isFacetsAvailable?: boolean
-}
-export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
-export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
-
 /**
- * Class wraps around any Synapse views that are dependent on a query bundle
- * Those classes then take in as props:
- *
- * @class QueryWrapper
- * @extends {React.Component}
+ * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
+ * either `useQueryContext` or `QueryContextConsumer`.
  */
-export default class QueryWrapper extends React.Component<
-  QueryWrapperProps,
-  QueryWrapperState
-> {
-  private componentIndex: number
-  constructor(props: QueryWrapperProps) {
-    super(props)
-    this.executeInitialQueryRequest = this.executeInitialQueryRequest.bind(this)
-    this.executeQueryRequest = this.executeQueryRequest.bind(this)
-    this.getLastQueryRequest = this.getLastQueryRequest.bind(this)
-    this.getNextPageOfData = this.getNextPageOfData.bind(this)
-    this.updateParentState = this.updateParentState.bind(this)
-    this.getInitQueryRequest = this.getInitQueryRequest.bind(this)
-    this.getSelectedColumns = this.getSelectedColumns.bind(this)
-    const showFacetVisualization = props.defaultShowFacetVisualization ?? true
+export function QueryWrapper(props: QueryWrapperProps) {
+  const { initQueryRequest, onQueryChange, onQueryResultBundleChange } = props
+  const [lastQueryRequest, setLastQueryRequest] =
+    useState<QueryBundleRequest>(initQueryRequest)
+  const {
+    data: infiniteData,
+    hasNextPage,
+    fetchPreviousPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isLoading: queryIsLoading,
+    refetch,
+    error,
+    isPreviousData: newQueryIsFetching,
+    remove,
+  } = useInfiniteQueryResultBundle(lastQueryRequest, {
+    // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
+    keepPreviousData: true,
+  })
 
-    this.state = {
-      data: undefined,
-      isLoading: true,
-      isLoadingNewData: true,
-      hasMoreData: true,
-      lastFacetSelection: {
-        columnName: '',
-        facetValue: '',
-        selector: '',
-      },
-      chartSelectionIndex: 0,
-      isAllFilterSelectedForFacet: {},
-      loadNowStarted: false,
-      lastQueryRequest: cloneDeep(this.props.initQueryRequest!),
-      topLevelControlsState: {
-        showColumnFilter: true,
-        showFacetFilter: true,
-        showFacetVisualization,
-        showSearchBar: false,
-        showDownloadConfirmation: false,
-        showColumnSelectDropdown: false,
-        showSqlEditor: false,
-      },
-      isColumnSelected: [],
-      selectedRowIndices: [],
-      isFacetsAvailable: true,
-      error: undefined,
+  // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
+  const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
+
+  const { entityId, versionNumber } = parseEntityIdAndVersionFromSqlStatement(
+    lastQueryRequest.query.sql,
+  )!
+
+  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
+
+  const [currentPage, setCurrentPage] = useState<number | 'ALL'>(0)
+
+  async function appendNextPageToResults(): Promise<void> {
+    if (!hasNextPage) {
+      throw new Error(
+        'Called appendNextPageToResults when there is no next page',
+      )
     }
-    this.componentIndex = props.componentIndex || 0
+    await fetchNextPage()
+    setCurrentPage('ALL')
   }
 
+  async function goToNextPage(): Promise<void> {
+    if (!hasNextPage) {
+      throw new Error('Called goToNextPage when there is no next page')
+    }
+    if (currentPage === 'ALL') {
+      throw new Error('Cannot go to next page when all pages are displayed')
+    }
+    await fetchNextPage()
+    setCurrentPage(currentPage + 1)
+  }
+
+  const hasPreviousPage = currentPage !== 'ALL' && currentPage > 0
+
+  async function goToPreviousPage(): Promise<void> {
+    if (currentPage === 'ALL') {
+      throw new Error('Cannot go to previous page when all pages are displayed')
+    }
+    if (!hasPreviousPage) {
+      throw new Error('Called goToNextPage when there is no next page')
+    }
+
+    await fetchPreviousPage()
+    setCurrentPage(currentPage - 1)
+  }
+
+  const data: QueryResultBundle | undefined = useMemo(() => {
+    if (
+      infiniteData == null ||
+      infiniteData.pages.length === 0 ||
+      infiniteData.pages[0].responseBody == null
+    ) {
+      return undefined
+    }
+
+    if (currentPage === 'ALL') {
+      // Modify the first page so the result is the concatenation of all of the fetched rows.
+      return {
+        ...infiniteData?.pages[0].responseBody,
+        queryResult: {
+          ...infiniteData?.pages[0].responseBody?.queryResult,
+          queryResults: {
+            ...infiniteData?.pages[0].responseBody?.queryResult?.queryResults,
+            rows:
+              infiniteData.pages.flatMap(
+                page => page.responseBody!.queryResult.queryResults.rows,
+              ) ?? [],
+          },
+        },
+      }
+    }
+
+    return infiniteData?.pages[currentPage].responseBody
+  }, [currentPage, infiniteData])
+
+  useDeepCompareEffect(() => {
+    if (onQueryChange) {
+      onQueryChange(JSON.stringify(lastQueryRequest.query))
+    }
+  }, [onQueryChange, lastQueryRequest.query])
+
+  useEffect(() => {
+    if (data && onQueryResultBundleChange) {
+      onQueryResultBundleChange(JSON.stringify(data))
+    }
+  }, [data, onQueryResultBundleChange])
+
+  const componentIndex = props.componentIndex ?? 0
+
+  const isFacetsAvailable = data
+    ? isFacetAvailable(data.facets, data.selectColumns)
+    : true
+
   /**
-   * Compute default query request
-   *
-   * @memberof QueryWrapper
+   * Inspect the URL to see if we have a particular query request that we must show.
    */
-  public componentDidMount() {
-    const { loadNow = true } = this.props
+  useEffect(() => {
     const query = DeepLinkingUtils.getQueryRequestFromLink(
       'QueryWrapper',
-      this.componentIndex,
+      componentIndex,
     )
-
-    if (loadNow) {
-      this.executeInitialQueryRequest(query)
+    if (query) {
+      setLastQueryRequest(query)
     }
-  }
-
-  /**
-   * @memberof QueryWrapper
-   */
-  public componentDidUpdate(prevProps: QueryWrapperProps) {
-    /**
-     *  If component updates and the token has changed (they signed in) then the data should be pulled in. Or if the
-     *  sql query has changed of the component then perform an update.
-     */
-
-    const { loadNow = true } = this.props
-    if (loadNow && !this.state.loadNowStarted) {
-      this.executeInitialQueryRequest()
-    } else if (loadNow && this.props.token !== prevProps.token) {
-      // if loadNow is true and they've logged in with a token that is not undefined, null, or an empty string when it was before
-      this.executeQueryRequest(this.getLastQueryRequest())
-    } else if (
-      prevProps.initQueryRequest.query.sql !==
-      this.props.initQueryRequest!.query.sql
-    ) {
-      this.executeInitialQueryRequest()
-    }
-  }
+  }, [])
 
   /**
    * Pass down a deep clone (so no side affects on the child's part) of the
@@ -241,9 +264,9 @@ export default class QueryWrapper extends React.Component<
    * @returns
    * @memberof QueryWrapper
    */
-  public getLastQueryRequest(): QueryBundleRequest {
-    return cloneDeep(this.state.lastQueryRequest)
-  }
+  const getLastQueryRequest = React.useCallback(() => {
+    return cloneDeep(lastQueryRequest)
+  }, [lastQueryRequest])
 
   /**
    * Pass down a deep clone (so no side affects on the child's part) of the
@@ -252,209 +275,46 @@ export default class QueryWrapper extends React.Component<
    * @returns
    * @memberof QueryWrapper
    */
-  public getInitQueryRequest(): QueryBundleRequest {
-    return cloneDeep(this.props.initQueryRequest)
-  }
-
-  public getSelectedColumns(isReset:boolean, selectColumns?:SelectColumn[]):string[] {
-    if (isReset) {
-      return selectColumns?.slice(0, this.props.visibleColumnCount ?? Infinity).map(el => el.name) ?? []
-    } else {
-      return this.state.isColumnSelected
-    }
+  function getInitQueryRequest(): QueryBundleRequest {
+    return cloneDeep(props.initQueryRequest)
   }
 
   /**
-   * Execute the given query
-   *
+   * Execute the given query request, updating all of the data in the QueryContext to match the new query
    * @param {*} queryRequest Query request as specified by
    *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-   * @memberof QueryWrapper
    */
-  public executeQueryRequest(queryRequest: QueryBundleRequest) {
+  function executeQueryRequest(queryRequest: QueryBundleRequest) {
     const clonedQueryRequest = cloneDeep(queryRequest)
-    // SWC-6030: If sql changes, reset what columns are visible
-    const resetVisibleColumns = this.state.lastQueryRequest.query.sql !== queryRequest.query.sql
-    this.setState({
-      isLoading: true,
-      lastQueryRequest: clonedQueryRequest,
-      selectedRowIndices: [], // reset selected row indices any time the query is re-run
-      error: undefined,
-    })
+
+    setLastQueryRequest(clonedQueryRequest)
+    setCurrentPage(0)
 
     if (clonedQueryRequest.query) {
       const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
-      const stringifiedQuery = encodeURIComponent(
-        clonedQueryRequestJson,
-      )
-      if (this.props.shouldDeepLink) {
-        if (this.props.onQueryChange) {
-          this.props.onQueryChange(clonedQueryRequestJson)
+      const stringifiedQuery = encodeURIComponent(clonedQueryRequestJson)
+      if (props.shouldDeepLink) {
+        if (props.onQueryChange) {
+          props.onQueryChange(clonedQueryRequestJson)
         } else {
           DeepLinkingUtils.updateUrlWithNewSearchParam(
             'QueryWrapper',
-            this.componentIndex,
+            componentIndex,
             stringifiedQuery,
           )
         }
       }
     }
-    return SynapseClient.getQueryTableResults(
-      clonedQueryRequest,
-      this.props.token,
-      this.updateParentState,
-    )
-      .then((data: QueryResultBundle) => {
-        const isFaceted = isFacetAvailable(data.facets)
-        const hasMoreData =
-          data.queryResult.queryResults.rows.length ===
-          clonedQueryRequest.query.limit
-        const newState = {
-          hasMoreData,
-          data,
-          isColumnSelected: this.getSelectedColumns(resetVisibleColumns, data.selectColumns),
-          asyncJobStatus: undefined,
-          isFacetsAvailable: isFaceted,
-          topLevelControlsState: {
-            ...this.state.topLevelControlsState!,
-            showFacetFilter: isFaceted,
-            showFacetVisualization: isFaceted,
-          }
-        }
-        if (this.props.onQueryResultBundleChange) {
-          this.props.onQueryResultBundleChange(JSON.stringify(data))
-        }
-        this.setState(newState)
-      })
-      .catch(error => {
-        console.error('Failed to get data ', error)
-        this.setState({
-          error,
-        })
-      })
-      .finally(() => {
-        this.setState({ isLoading: false, isLoadingNewData: false })
-      })
-  }
+    /**
+     * TODO: We remove the cached data because it can interfere with user controls, such as the QueryFilter.
+     * For example, if you filter on a facet with value ["a"], then value ["a", "b"], then value ["a"] again,
+     * we'll have a cache hit on the last query, so we won't get a loading state, but the controls haven't been updated
+     * to handle cache hits. Forcing a cache miss here fixes this, but ideally the controls should handle this case.
+     */
+    remove()
+    // end TODO
 
-  /**
-   * Grab the next page of data, pulling in 25 more rows.
-   *
-   * @param {*} queryRequest Query request as specified by
-   *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-   * @memberof QueryWrapper
-   */
-  public async getNextPageOfData(queryRequest: QueryBundleRequest) {
-    this.setState({
-      isLoading: true,
-    })
-
-    await getNextPageOfData(
-      queryRequest,
-      this.state.data!,
-      this.props.token,
-    ).then(newState => {
-      this.setState({
-        ...newState,
-        isLoading: false,
-        lastQueryRequest: cloneDeep(queryRequest),
-      })
-    })
-  }
-
-  /**
-   * Execute the initial query passed into the component
-   *
-   * @param {*} queryRequest Query request as specified by
-   *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-   * @memberof QueryWrapper
-   */
-  public executeInitialQueryRequest(
-    initQueryRequest: QueryBundleRequest = this.props.initQueryRequest,
-  ) {
-    const lastQueryRequest: QueryBundleRequest = cloneDeep(initQueryRequest)
-    this.setState({
-      isLoading: true,
-      chartSelectionIndex: 0,
-      loadNowStarted: true,
-      lastQueryRequest,
-    })
-    SynapseClient.getQueryTableResults(
-      initQueryRequest,
-      this.props.token,
-      this.updateParentState,
-    )
-      .then((data: QueryResultBundle) => {
-        const hasMoreData =
-          data.queryResult.queryResults.rows.length ===
-            initQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
-        const isAllFilterSelectedForFacet = cloneDeep(
-          this.state.isAllFilterSelectedForFacet,
-        )
-        let { chartSelectionIndex } = this.state
-        if (this.props.facet) {
-          if (!data.facets) {
-            throw Error(
-              'Error on query request, must include facets in partmask to show facets',
-            )
-          }
-          const enumFacets = data.facets.filter(
-            el => el.facetType === 'enumeration',
-          ) as FacetColumnResultValues[]
-          enumFacets.forEach(el => {
-            // isAll is only true iff there are no facets selected or all elements are selected
-            const { facetValues } = el
-            const isAllFalse = facetValues.every(facet => !facet.isSelected)
-            const isAllTrue = facetValues.every(facet => facet.isSelected)
-            const isByDefaultSelected = isAllFalse || isAllTrue
-            isAllFilterSelectedForFacet[el.columnName] = isByDefaultSelected
-            if (el.columnName === this.props.facet && !isAllFalse) {
-              // Note - this picks the first selected facet
-              chartSelectionIndex = facetValues
-                .sort((a, b) => b.count - a.count)
-                .findIndex(facet => facet.isSelected)
-            }
-          })
-        }
-        const isFaceted = isFacetAvailable(data.facets)
-        if (this.props.onQueryResultBundleChange) {
-          this.props.onQueryResultBundleChange(JSON.stringify(data))
-        }
-        const newState = {
-          isAllFilterSelectedForFacet,
-          hasMoreData,
-          data,
-          chartSelectionIndex,
-          asyncJobStatus: undefined,
-          isColumnSelected: this.getSelectedColumns(true, data.selectColumns),
-          isFacetsAvailable: isFaceted,
-          topLevelControlsState: {
-            ...this.state.topLevelControlsState!,
-            showFacetFilter: this.state.topLevelControlsState?.showFacetFilter ? isFaceted : false,
-            showFacetVisualization: this.state.topLevelControlsState?.showFacetVisualization ? isFaceted : false,
-          }
-        }
-        
-        this.setState(newState)
-      })
-      .catch(error => {
-        console.error('Failed to get data ', error)
-        this.setState({
-          error,
-        })
-      })
-      .finally(() => {
-        this.setState({
-          isLoading: false,
-          isLoadingNewData: false,
-        })
-      })
-  }
-
-  public updateParentState<K extends keyof QueryWrapperState>(
-    update: Pick<QueryWrapperState, K>,
-  ) {
-    this.setState(update)
+    refetch()
   }
 
   /**
@@ -462,55 +322,54 @@ export default class QueryWrapper extends React.Component<
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  public removeLockedFacetData() {
-    const lockedFacet = this.props.lockedFacet?.facet
-    if (lockedFacet && this.state.data) {
+  function removeLockedFacetData() {
+    const lockedFacet = props.lockedFacet?.facet
+    if (lockedFacet && data) {
       // for details page, return data without the "locked" facet
-      const data = cloneDeep(this.state.data)
-      const facets = data.facets?.filter(
+      const dataCopy: QueryResultBundle = cloneDeep(data)
+      const facets = dataCopy.facets?.filter(
         item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase(),
       )
-      data.facets = facets
-      return data
+      dataCopy.facets = facets
+      return dataCopy
     } else {
       // for other pages, just return the data
-      return this.state.data
+      return data
     }
   }
 
+  const context: QueryContextType = {
+    data: removeLockedFacetData(),
+    isLoadingNewPage: isFetchingNextPage,
+    hasNextPage: !!hasNextPage,
+    hasPreviousPage: !!hasPreviousPage,
+    isLoadingNewBundle: isLoadingNewBundle,
+    getLastQueryRequest,
+    getInitQueryRequest,
+    error: error,
+    entity,
+    executeQueryRequest,
+    isFacetsAvailable,
+    asyncJobStatus: infiniteData?.pages[0],
+    appendNextPageToResults: appendNextPageToResults,
+    goToNextPage,
+    goToPreviousPage,
+  }
   /**
    * Render the children without any formatting
    */
-  public render() {
-    const { isLoading } = this.state
-    const { children, ...rest } = this.props
-    const queryWrapperChildProps: QueryWrapperChildProps = {
-      isAllFilterSelectedForFacet: this.state.isAllFilterSelectedForFacet,
-      data: this.removeLockedFacetData(),
-      hasMoreData: this.state.hasMoreData,
-      lastFacetSelection: this.state.lastFacetSelection,
-      chartSelectionIndex: this.state.chartSelectionIndex,
-      isLoading: this.state.isLoading,
-      isLoadingNewData: this.state.isLoadingNewData,
-      asyncJobStatus: this.state.asyncJobStatus,
-      topLevelControlsState: this.state.topLevelControlsState,
-      isColumnSelected: this.state.isColumnSelected,
-      selectedRowIndices: this.state.selectedRowIndices,
-      isFacetsAvailable: this.state.isFacetsAvailable,
-      error: this.state.error,
-      executeInitialQueryRequest: this.executeInitialQueryRequest,
-      executeQueryRequest: this.executeQueryRequest,
-      getLastQueryRequest: this.getLastQueryRequest,
-      getNextPageOfData: this.getNextPageOfData,
-      updateParentState: this.updateParentState,
-      getInitQueryRequest: this.getInitQueryRequest,
-      ...rest,
-    }
-    const loadingCusrorClass = isLoading ? 'SRC-logo-cursor' : ''
-    return (
-      <div className={`SRC-wrapper ${loadingCusrorClass} ${this.state.isFacetsAvailable ? 'has-facets' : ''}`}>
-        {children && children(queryWrapperChildProps)}
+  const { children } = props
+  const loadingCursorClass =
+    isLoadingNewBundle || isFetchingNextPage ? 'SRC-logo-cursor' : ''
+  return (
+    <QueryContextProvider queryContext={context}>
+      <div
+        className={`SRC-wrapper ${loadingCursorClass} ${
+          isFacetsAvailable ? 'has-facets' : ''
+        }`}
+      >
+        {children}
       </div>
-    )
-  }
+    </QueryContextProvider>
+  )
 }

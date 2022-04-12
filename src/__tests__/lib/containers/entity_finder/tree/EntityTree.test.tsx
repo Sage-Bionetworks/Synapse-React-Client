@@ -1,14 +1,13 @@
 import '@testing-library/jest-dom'
 import { act, render, waitFor, screen } from '@testing-library/react'
 import React from 'react'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { SynapseClient } from '../../../../../lib'
 import { EntityDetailsListDataConfigurationType } from '../../../../../lib/containers/entity_finder/details/EntityDetailsList'
 import {
   FinderScope,
-  TreeView,
-  TreeViewProps,
-} from '../../../../../lib/containers/entity_finder/tree/TreeView'
+  EntityTree,
+  EntityTreeProps,
+} from '../../../../../lib/containers/entity_finder/tree/EntityTree'
 import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
 import {
@@ -18,23 +17,28 @@ import {
   PaginatedResults,
   ProjectHeader,
 } from '../../../../../lib/utils/synapseTypes'
-import { EntityTreeNodeType } from '../../../../../lib/containers/entity_finder/tree/TreeNode'
 import userEvent from '@testing-library/user-event'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+import {
+  EntityTreeNodeType,
+  VirtualizedTreeProps,
+} from '../../../../../lib/containers/entity_finder/tree/VirtualizedTree'
 
-const TreeNode = require('../../../../../lib/containers/entity_finder/tree/TreeNode')
+const VirtualizedTree = require('../../../../../lib/containers/entity_finder/tree/VirtualizedTree')
 
 let invokeSetSelectedId: (containerId: string) => void
 
-TreeNode.TreeNode = jest.fn().mockImplementation(({ setSelectedId }) => {
-  invokeSetSelectedId = (containerId: string) => {
-    setSelectedId(containerId)
-  }
-  return <></>
-})
+VirtualizedTree.VirtualizedTree = jest
+  .fn()
+  .mockImplementation(({ rootNodeConfiguration, setSelectedId }) => {
+    invokeSetSelectedId = (containerId: string) => {
+      setSelectedId(containerId)
+    }
+    return <></>
+  })
 
-const mockTreeNode = TreeNode.TreeNode
+const mockTreePresenter = VirtualizedTree.VirtualizedTree
 
 jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useProjects', () => {
   return {
@@ -68,7 +72,8 @@ const mockUseGetEntityBundle = useGetEntityBundle as jest.Mock
 const mockSetBreadcrumbItems = jest.fn()
 const mockToggleSelection = jest.fn()
 
-const defaultProps: TreeViewProps = {
+const defaultProps: EntityTreeProps = {
+  // We use JS arrays rather than Immutable.Map so we can easily inspect it in
   selectedEntities: [],
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: 'syn5',
@@ -78,7 +83,7 @@ const defaultProps: TreeViewProps = {
   setDetailsViewConfiguration: mockSetDetailsViewConfiguration,
   setBreadcrumbItems: mockSetBreadcrumbItems,
   toggleSelection: mockToggleSelection,
-  treeNodeType: EntityTreeNodeType.SELECT,
+  treeNodeType: EntityTreeNodeType.SINGLE_PANE,
   showScopeAsRootNode: true,
   selectableTypes: Object.values(EntityType),
 }
@@ -171,10 +176,10 @@ const entityPath: EntityPath = {
   ],
 }
 
-function renderComponent(propOverrides?: Partial<TreeViewProps>) {
+function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
   return render(
     <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <TreeView {...defaultProps} {...propOverrides} />
+      <EntityTree {...defaultProps} {...propOverrides} />
     </SynapseContextProvider>,
   )
 }
@@ -182,7 +187,6 @@ function renderComponent(propOverrides?: Partial<TreeViewProps>) {
 describe('TreeView tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockAllIsIntersecting(false)
 
     mockGetUserFavorites.mockResolvedValue(favorites)
     mockGetEntityPath.mockResolvedValue(entityPath)
@@ -213,7 +217,7 @@ describe('TreeView tests', () => {
     })
   })
 
-  it('loads more projects when inView', async () => {
+  it('loads more projects when rootNodeConfiguration.fetchNextPageOfTopLevelEntities is called', async () => {
     mockUseGetProjectsInfinite.mockReturnValue({
       data: {
         pages: [
@@ -235,11 +239,15 @@ describe('TreeView tests', () => {
 
     renderComponent({ initialScope: FinderScope.ALL_PROJECTS })
 
-    // Don't fetch the next page until it's in view
+    // Don't fetch the next page until the prop is called
     expect(mockFetchNextPage).not.toBeCalled()
 
-    // End of list comes into view, triggering more to load
-    mockAllIsIntersecting(true)
+    // Capture the fetch function passed to the component
+    const props = mockTreePresenter.mock.calls[0][0] as VirtualizedTreeProps
+    expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
+
+    // Invoke the function
+    props.rootNodeConfiguration.fetchNextPage!()
 
     await waitFor(() => expect(mockFetchNextPage).toBeCalled())
   })
@@ -373,16 +381,18 @@ describe('TreeView tests', () => {
 
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
-    expect(mockTreeNode).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        level: 0,
+    expect(mockTreePresenter).toHaveBeenLastCalledWith(
+      expect.objectContaining<VirtualizedTreeProps>({
         rootNodeConfiguration: {
           nodeText: 'Projects',
           children: [entityPath.path[1]],
+          fetchNextPage: expect.any(Function),
+          hasNextPage: false,
+          show: true,
         },
-        autoExpand: expect.anything(),
+        autoExpand: expect.any(Function),
         selected: [],
-        setSelectedId: expect.anything(),
+        setSelectedId: expect.any(Function),
         visibleTypes: defaultProps.visibleTypes,
       }),
       {},
@@ -401,17 +411,19 @@ describe('TreeView tests', () => {
 
     await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
 
-    expect(mockTreeNode).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        level: 0,
+    expect(mockTreePresenter).toHaveBeenLastCalledWith(
+      expect.objectContaining<VirtualizedTreeProps>({
         rootNodeConfiguration: {
           nodeText: 'Projects',
           children: [entityPath.path[1]],
+          fetchNextPage: expect.any(Function),
+          hasNextPage: false,
+          show: true,
         },
-        autoExpand: expect.anything(),
+        autoExpand: expect.any(Function),
         selectableTypes: defaultProps.selectableTypes,
         selected: [{ targetId: newSelectedId }],
-        setSelectedId: expect.anything(),
+        setSelectedId: expect.any(Function),
         visibleTypes: defaultProps.visibleTypes,
       }),
       {},

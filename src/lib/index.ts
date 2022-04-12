@@ -1,11 +1,9 @@
 import 'regenerator-runtime/runtime'
 import 'react-app-polyfill/ie11'
 import 'react-app-polyfill/stable'
-import { Facets } from './containers/Facets'
 import MarkdownSynapse from './containers/MarkdownSynapse'
-import QueryWrapper from './containers/QueryWrapper'
+import { QueryWrapper } from './containers/QueryWrapper'
 import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
-import StackedBarChart from './containers/StackedBarChart'
 import HasAccess from './containers/HasAccess'
 import SynapseTable from './containers/table/SynapseTable'
 import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
@@ -72,11 +70,9 @@ const SynapseContext = {
 }
 
 const SynapseComponents = {
-  Facets,
   Login,
   CardContainer,
   QueryWrapper,
-  StackedBarChart,
   StandaloneQueryWrapper,
   SynapseTable,
   CardContainerLogic,
@@ -124,7 +120,13 @@ const SynapseComponents = {
   SubsectionRowRenderer,
   ProgrammaticTableDownload,
   ChangePassword,
-  FileUpload
+  FileUpload,
 }
 
-export { SynapseClient, SynapseConstants, SynapseComponents, SynapseContext, Typography }
+export {
+  SynapseClient,
+  SynapseConstants,
+  SynapseComponents,
+  SynapseContext,
+  Typography,
+}

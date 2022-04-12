@@ -1,28 +1,48 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
+import { FullTextSearch } from '../../../lib/containers/FullTextSearch'
 import {
-  FullTextSearch,
-  FullTextSearchProps,
-} from '../../../lib/containers/FullTextSearch'
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../lib/containers/QueryVisualizationWrapper'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../lib/containers/QueryWrapper'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
-const renderComponent = (props: FullTextSearchProps) => {
-  return render(<FullTextSearch {...props} />, {
-    wrapper: createWrapper(),
-  })
+const renderComponent = (
+  queryContext: Partial<QueryContextType>,
+  queryVisualizationContext: Partial<QueryVisualizationContextType>,
+) => {
+  return render(
+    <QueryContextProvider queryContext={queryContext}>
+      <QueryVisualizationContextProvider
+        queryVisualizationContext={queryVisualizationContext}
+      >
+        <FullTextSearch />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
 const mockExecuteQueryRequest = jest.fn()
 const mockGetLastQueryRequest = jest.fn()
 
-const defaultProps: FullTextSearchProps = {
+const queryContext: Partial<QueryContextType> = {
+  executeQueryRequest: mockExecuteQueryRequest,
+  getLastQueryRequest: mockGetLastQueryRequest,
+}
+
+const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
   topLevelControlsState: {
     showSearchBar: true,
     showFacetFilter: true,
   },
-  executeQueryRequest: mockExecuteQueryRequest,
-  getLastQueryRequest: mockGetLastQueryRequest,
 }
 
 describe('FullTextSearch tests', () => {
@@ -34,12 +54,11 @@ describe('FullTextSearch tests', () => {
   })
 
   it('shows/hides the search bar based on prop', () => {
-    const component = renderComponent(defaultProps)
+    const component = renderComponent(queryContext, queryVisualizationContext)
 
     component.container.querySelector('.MuiCollapse-entered')
 
-    renderComponent({
-      ...defaultProps,
+    renderComponent(queryContext, {
       topLevelControlsState: {
         showSearchBar: false, // call under test
         showFacetFilter: true,
@@ -50,7 +69,7 @@ describe('FullTextSearch tests', () => {
   })
 
   it('adds the appropriate QueryFilter when searching', () => {
-    renderComponent(defaultProps)
+    renderComponent(queryContext, queryVisualizationContext)
 
     const searchBox = screen.getByRole('textbox')
 
@@ -73,7 +92,7 @@ describe('FullTextSearch tests', () => {
   })
 
   it('enforces a minimum character requirement', () => {
-    renderComponent(defaultProps)
+    renderComponent(queryContext, queryVisualizationContext)
 
     const searchBox = screen.getByRole('textbox')
 

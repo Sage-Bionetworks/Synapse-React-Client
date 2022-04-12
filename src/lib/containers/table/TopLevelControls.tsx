@@ -1,27 +1,24 @@
-import React, { useEffect, useState } from 'react'
-import QueryCount from '../QueryCount'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+import { cloneDeep } from 'lodash-es'
+import React from 'react'
+import { SQL_EDITOR } from '../../utils/SynapseConstants'
+import { QueryResultBundle } from '../../utils/synapseTypes'
+import Typography from '../../utils/typography/Typography'
+import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
+import QueryCount from '../QueryCount'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import {
-  QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
   TopLevelControlsState,
 } from '../QueryWrapper'
-import Typography from '../../utils/typography/Typography'
-import { ColumnSelection } from './table-top/ColumnSelection'
-import { SynapseClient } from '../../utils'
+import { useQueryContext } from '../QueryWrapper'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
-import { cloneDeep } from 'lodash-es'
-import { QueryResultBundle } from '../../utils/synapseTypes'
 import { DownloadOptions } from './table-top'
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/sqlFunctions'
-import { useSynapseContext } from '../../utils/SynapseContext'
-import { SQL_EDITOR } from '../../utils/SynapseConstants'
+import { ColumnSelection } from './table-top/ColumnSelection'
 
 export type TopLevelControlsProps = {
   name?: string
-  entityId: string
-  sql: string
   hideDownload?: boolean
   hideVisualizationsControl?: boolean
   hideFacetFilterControl?: boolean
@@ -78,36 +75,38 @@ const controls: Control[] = [
   },
 ]
 
-const TopLevelControls = (
-  props: QueryWrapperChildProps & TopLevelControlsProps,
-) => {
+const TopLevelControls = (props: TopLevelControlsProps) => {
   const {
     name,
-    sql,
-    updateParentState,
-    topLevelControlsState,
-    data,
     showColumnSelection = false,
-    isColumnSelected,
     hideDownload = false,
     hideVisualizationsControl = false,
     hideFacetFilterControl = false,
     hideQueryCount = false,
     hideSqlEditorControl = true,
-    selectedRowIndices,
     customControls,
+  } = props
+
+  const {
+    data,
+    entity,
+    getInitQueryRequest,
     executeQueryRequest,
     getLastQueryRequest,
+  } = useQueryContext()
+
+  const {
+    topLevelControlsState,
+    setTopLevelControlsState,
+    columnsToShowInTable,
+    selectedRowIndices,
     facetAliases,
-  } = props
-  const { accessToken } = useSynapseContext()
-  const entityId = parseEntityIdFromSqlStatement(sql)
-  const [isFileView, setIsFileView] = useState(false)
+    setColumnsToShowInTable,
+  } = useQueryVisualizationContext()
 
   const setControlState = (control: keyof TopLevelControlsState) => {
-    const updatedTopLevelControlsState: TopLevelControlsState = {
-      ...topLevelControlsState!,
-      [control]: !topLevelControlsState![control],
+    const updatedTopLevelControlsState: Partial<TopLevelControlsState> = {
+      [control]: !topLevelControlsState[control],
     }
     if (control === 'showSearchBar') {
       updatedTopLevelControlsState.showDownloadConfirmation = false
@@ -115,21 +114,14 @@ const TopLevelControls = (
     if (control === 'showDownloadConfirmation') {
       updatedTopLevelControlsState.showSearchBar = false
     }
-    updateParentState!({
-      topLevelControlsState: updatedTopLevelControlsState,
-    })
+    setTopLevelControlsState(state => ({
+      ...state,
+      ...updatedTopLevelControlsState,
+    }))
   }
 
-  useEffect(() => {
-    const getIsFileView = async () => {
-      const entityData = await SynapseClient.getEntity(accessToken, entityId)
-      setIsFileView(entityData.concreteType.includes('EntityView'))
-    }
-    getIsFileView()
-  }, [entityId, accessToken])
-
   const refresh = () => {
-    executeQueryRequest!(getLastQueryRequest!())
+    executeQueryRequest(getLastQueryRequest())
   }
   /**
    * Handles the toggle of a column select, this will cause the table to
@@ -138,18 +130,18 @@ const TopLevelControls = (
    * @memberof SynapseTable
    */
   const toggleColumnSelection = (columnName: string) => {
-    let isColumnSelectedCopy = cloneDeep(isColumnSelected!)
-    if (isColumnSelectedCopy.includes(columnName)) {
-      isColumnSelectedCopy = isColumnSelectedCopy.filter(
+    let columnsToShowInTableCopy = cloneDeep(columnsToShowInTable)
+    if (columnsToShowInTableCopy.includes(columnName)) {
+      columnsToShowInTableCopy = columnsToShowInTableCopy.filter(
         el => el !== columnName,
       )
     } else {
-      isColumnSelectedCopy.push(columnName)
+      columnsToShowInTableCopy.push(columnName)
     }
-    updateParentState!({ isColumnSelected: isColumnSelectedCopy })
+    setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
-  
+
   return (
     <div
       className={`TopLevelControls ${
@@ -157,13 +149,26 @@ const TopLevelControls = (
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
-      data-testid='TopLevelControls'
+      data-testid="TopLevelControls"
     >
       <h3>
         <div className="TopLevelControls__querycount">
-          {name && <Typography variant='sectionTitle' role='heading'>
-            {name} {(!hideQueryCount && <QueryCount sql={sql} parens={true} />)}
-          </Typography>}
+          {name && (
+            <>
+              <Typography variant="sectionTitle" role="heading">
+                {name}{' '}
+                {!hideQueryCount && (
+                  <QueryCount
+                    sql={getInitQueryRequest().query.sql}
+                    parens={true}
+                  />
+                )}
+              </Typography>
+              {!hideQueryCount && entity && (
+                <MissingQueryResultsWarning entity={entity} />
+              )}
+            </>
+          )}
         </div>
         <div className="TopLevelControls__actions">
           {customControls &&
@@ -171,7 +176,9 @@ const TopLevelControls = (
               return (
                 <button
                   key={customControl.buttonText}
-                  className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${customControl.classNames}`}
+                  className={`btn SRC-roundBorder SRC-primary-background-color SRC-whiteText ${
+                    customControl.classNames ?? ''
+                  }`}
                   style={{ marginRight: '5px' }}
                   type="button"
                   onClick={() =>
@@ -196,11 +203,11 @@ const TopLevelControls = (
             } else if (key === 'showDownloadConfirmation') {
               return (
                 <DownloadOptions
+                  key={key}
                   darkTheme={true}
                   onDownloadFiles={() => setControlState(key)}
                   queryResultBundle={data}
-                  queryBundleRequest={getLastQueryRequest!()}
-                  isFileView={isFileView && !hideDownload}
+                  queryBundleRequest={getLastQueryRequest()}
                 />
               )
             }
@@ -218,7 +225,7 @@ const TopLevelControls = (
           {showColumnSelection && (
             <ColumnSelection
               headers={data?.selectColumns}
-              isColumnSelected={isColumnSelected!}
+              isColumnSelected={columnsToShowInTable}
               toggleColumnSelection={toggleColumnSelection}
               darkTheme={true}
               facetAliases={facetAliases}

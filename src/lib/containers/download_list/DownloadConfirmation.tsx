@@ -9,11 +9,10 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 import { EntityType, QueryBundleRequest } from '../../utils/synapseTypes/'
 import { AddToDownloadListRequest } from '../../utils/synapseTypes/DownloadListV2/AddToDownloadListRequest'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
+import { TopLevelControlsState } from '../QueryVisualizationWrapper'
 import {
-  QueryWrapperState,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-  TopLevelControlsState,
 } from '../QueryWrapper'
 import SignInButton from '../SignInButton'
 import { displayToast } from '../ToastMessage'
@@ -32,9 +31,9 @@ export type DownloadConfirmationProps = {
   getLastQueryRequest?: () => QueryBundleRequest
   folderId?: string
   topLevelControlsState?: TopLevelControlsState
-  updateParentState?: <K extends keyof QueryWrapperState>(
-    param: Pick<QueryWrapperState, K>,
-  ) => void
+  setTopLevelControlsState?: React.Dispatch<
+    React.SetStateAction<TopLevelControlsState>
+  >
   downloadCartPageUrl?: string
 }
 
@@ -169,7 +168,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     getLastQueryRequest,
     folderId,
     fnClose,
-    updateParentState,
+    setTopLevelControlsState,
     topLevelControlsState,
     downloadCartPageUrl = '/DownloadCart',
   }) => {
@@ -265,12 +264,12 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     const onCancel = fnClose
       ? () => fnClose()
       : () => {
-          updateParentState!({
-            topLevelControlsState: {
-              ...topLevelControlsState!,
+          if (setTopLevelControlsState) {
+            setTopLevelControlsState(topLevelControlsState => ({
+              ...topLevelControlsState,
               showDownloadConfirmation: false,
-            },
-          })
+            }))
+          }
         }
 
     const triggerAddToDownload = async () => {

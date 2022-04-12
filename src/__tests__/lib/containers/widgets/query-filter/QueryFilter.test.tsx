@@ -1,15 +1,23 @@
-import * as React from 'react'
-import { shallow, ShallowWrapper } from 'enzyme'
-import {
-  QueryFilterProps,
-  QueryFilter,
-} from '../../../../../lib/containers/widgets/query-filter/QueryFilter'
-import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
-
+import { mount } from 'enzyme'
 import _ from 'lodash-es'
-
+import * as React from 'react'
+import { act } from 'react-dom/test-utils'
+import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextProviderProps,
+} from '../../../../../lib/containers/QueryVisualizationWrapper'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../../../lib/containers/QueryWrapper'
+import {
+  QueryFilter,
+  QueryFilterProps,
+} from '../../../../../lib/containers/widgets/query-filter/QueryFilter'
+import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
+import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
-import { QueryWrapperChildProps } from '../../../../../lib/containers/QueryWrapper'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 
 const lastQueryRequestResult = {
   partMask: 53,
@@ -40,14 +48,22 @@ const lastQueryRequestResult = {
 const mockExecuteQueryRequest = jest.fn(_selectedFacets => null)
 const mockGetQueryRequest = jest.fn(() => _.cloneDeep(lastQueryRequestResult))
 
-function createTestProps(overrides?: QueryFilterProps & QueryWrapperChildProps): QueryFilterProps & QueryWrapperChildProps {
+function createTestProps(overrides?: QueryFilterProps): QueryFilterProps {
   return {
-    isLoading: false,
-    data: mockQueryResponseData as QueryResultBundle,
-    getLastQueryRequest: mockGetQueryRequest,
-    executeQueryRequest: mockExecuteQueryRequest,
-    token: '123',
-    topLevelControlsState : {
+    ...overrides,
+  }
+}
+
+const defaultQueryContext: Partial<QueryContextType> = {
+  data: mockQueryResponseData as QueryResultBundle,
+  getLastQueryRequest: mockGetQueryRequest,
+  executeQueryRequest: mockExecuteQueryRequest,
+  isLoadingNewBundle: false,
+}
+
+const defaultQueryVisualizationContext: Partial<QueryVisualizationContextProviderProps> =
+  {
+    topLevelControlsState: {
       showColumnFilter: true,
       showFacetFilter: true,
       showFacetVisualization: true,
@@ -55,27 +71,37 @@ function createTestProps(overrides?: QueryFilterProps & QueryWrapperChildProps):
       showDownloadConfirmation: false,
       showColumnSelectDropdown: false,
     },
-    ...overrides,
   }
-}
 
-let wrapper: ShallowWrapper<
-  React.FunctionComponent<QueryFilterProps>,
-  any,
-  Readonly<{}>
->
-let props: QueryFilterProps & QueryWrapperChildProps
+let props: QueryFilterProps
 
-function init(overrides?: QueryFilterProps & QueryWrapperChildProps) {
+function init(overrides?: QueryFilterProps) {
   jest.clearAllMocks()
   props = createTestProps(overrides)
-  wrapper = shallow(<QueryFilter {...props} />)
+  return mount(<QueryFilter {...props} />, {
+    wrappingComponent: ({ synapseContext, queryContext, children }) => {
+      return (
+        <SynapseContextProvider synapseContext={synapseContext}>
+          <QueryContextProvider queryContext={queryContext}>
+            <QueryVisualizationContextProvider
+              queryVisualizationContext={defaultQueryVisualizationContext}
+            >
+              {children}
+            </QueryVisualizationContextProvider>
+          </QueryContextProvider>
+        </SynapseContextProvider>
+      )
+    },
+    wrappingComponentProps: {
+      synapseContext: MOCK_CONTEXT_VALUE,
+      queryContext: defaultQueryContext,
+    },
+  })
 }
-
-beforeEach(() => init())
 
 describe('initialization', () => {
   it('should initiate selected items correctly', async () => {
+    const wrapper = init()
     const enumFacets = mockQueryResponseData.facets.filter(
       facet => facet.facetType === 'enumeration',
     )
@@ -87,6 +113,8 @@ describe('initialization', () => {
   })
 
   it('should only expand the first three collapsible facets', async () => {
+    const wrapper = init()
+
     const facets = wrapper.children()
     facets.forEach((facet, index) => {
       if (index === 0) return // title
@@ -100,15 +128,16 @@ describe('initialization', () => {
 
   it('should respect facetsToFilter', async () => {
     // set facetsToFilter to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
-    init({facetsToFilter: ['Year']})
+    const wrapper = init({ facetsToFilter: ['Year'] })
     expect(wrapper.find('EnumFacetFilter').exists()).toBeFalsy()
     expect(wrapper.find('RangeFacetFilter').exists()).toBeTruthy()
   })
 })
 
-
 describe('handling child component callbacks', () => {
   it('should propagate enum update correctly', async () => {
+    const wrapper = init()
+
     const expectedResult = [
       {
         columnName: 'Make',
@@ -126,13 +155,17 @@ describe('handling child component callbacks', () => {
     ]
 
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    enumWrapper.simulate('change', { Ford: true })
+    act(() => {
+      enumWrapper.props()['onChange']({ Ford: true })
+    })
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
 
   it('should propagate enum clear correctly', async () => {
+    const wrapper = init()
+
     const expectedResult = [
       {
         columnName: 'Year',
@@ -143,13 +176,17 @@ describe('handling child component callbacks', () => {
       },
     ]
     const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    enumWrapper.simulate('clear')
+    act(() => {
+      enumWrapper.props()['onClear']()
+    })
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
   })
 
   it('should propagate range correctly', async () => {
+    const wrapper = init()
+
     const expectedResult = [
       {
         columnName: 'Make',
@@ -166,7 +203,9 @@ describe('handling child component callbacks', () => {
       },
     ]
     const enumWrapper = wrapper.find('RangeFacetFilter').at(0)
-    enumWrapper.simulate('change', ['1997', '1998'])
+    act(() => {
+      enumWrapper.props()['onChange'](['1997', '1998'])
+    })
     const expected = _.cloneDeep(lastQueryRequestResult)
     expected.query = { ...expected.query, selectedFacets: expectedResult }
     expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
