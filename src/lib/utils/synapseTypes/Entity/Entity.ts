@@ -38,7 +38,8 @@ export interface Entity {
 }
 
 type LINK_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.Link'
-type DOCKER_REPOSITORY_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.docker.DockerRepository'
+type DOCKER_REPOSITORY_CONCRETE_TYPE =
+  'org.sagebionetworks.repo.model.docker.DockerRepository'
 type FOLDER_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.Folder'
 type PROJECT_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.Project'
 

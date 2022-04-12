@@ -1,8 +1,10 @@
-export type AsynchronousJobStatus = {
-  jobState: any // The job's state can be one of the following enumerations
+export type AsynchJobState = 'PROCESSING' | 'FAILED' | 'COMPLETE'
+
+export type AsynchronousJobStatus<TRequest, TResponse> = {
+  jobState: AsynchJobState // The job's state can be one of the following enumerations
   jobCanceling: boolean // Was the job being asked to cancel.
-  requestBody: any // The body of an Asynchronous job request.
-  responseBody: any // The body of an Asynchronous job response.
+  requestBody: TRequest // The body of an Asynchronous job request.
+  responseBody?: TResponse // The body of an Asynchronous job response.
   etag: string // The etag of the status will change whenever the status changes.
   jobId: string // The ID if the job issued when this job request was issued.
   startedByUserId: number // The ID of the user that started the job

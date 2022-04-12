@@ -1,6 +1,7 @@
 @use '../../abstracts/variables' as SRC;
 @use './entity-finder' as EntityFinder;
 @use '../../abstracts/mixins' as SrcMixins;
+@use '../../../template_style/form' as Form;
 
 $table-prefix: DetailsViewTable;
 $table-font-size: 16px;
@@ -15,9 +16,11 @@ $row-hovered-background-color: unset;
     overflow-y: hidden;
   }
 }
-
-.DetailsViewTable__header {
-  box-shadow: 3px 3px 7px -1px rgba(0, 0, 30, 0.2);
+.DetailsViewTable {
+  .DetailsViewTable__header {
+    box-shadow: 3px 3px 7px -1px rgba(0, 0, 30, 0.2);
+  }
+  @include Form.customCheckbox($checkbox-top-offset: 3px);
 }
 
 .EntityFinderDetailsView {
@@ -56,11 +59,8 @@ $row-hovered-background-color: unset;
   }
 
   &[aria-selected='true'] {
-    color: $-selected-color;
     background-color: $-selected-background-color;
     .UserCardSmall {
-      color: $-selected-color !important;
-      border-color: $-selected-color !important;
     }
   }
 

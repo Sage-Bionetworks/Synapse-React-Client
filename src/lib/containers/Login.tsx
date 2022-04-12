@@ -27,6 +27,7 @@ type Props = {
   redirectUrl?: string // will redirect here after a successful login. if unset, reload the current page url.
   sessionCallback: () => void // Callback is invoked after login
   registerAccountUrl?: string
+  resetPasswordUrl?: string
 }
 
 /**
@@ -149,6 +150,7 @@ class Login extends React.Component<Props, State> {
   }
   public render() {
     const registerAccountUrl = this.props.registerAccountUrl ?? `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!RegisterAccount:0`
+    const resetPasswordUrl = this.props.resetPasswordUrl ?? `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!PasswordReset:0`
     return (
       <div
         id="loginPage"
@@ -194,9 +196,7 @@ class Login extends React.Component<Props, State> {
           />
           {this.getLoginFailureView()}
           <a
-            href={`${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT
-            )}#!PasswordReset:0`}
+            href={resetPasswordUrl}
           >
             Forgot password?
           </a>

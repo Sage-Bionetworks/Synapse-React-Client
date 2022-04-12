@@ -1,11 +1,11 @@
-import { SynapseConstants, SynapseClient } from '../utils/'
-import React, { useEffect, useState } from 'react'
-import {
-  QueryBundleRequest,
-  FacetColumnValuesRequest,
-} from '../utils/synapseTypes/'
+import React from 'react'
+import { SynapseConstants } from '../utils/'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
-import { useSynapseContext } from '../utils/SynapseContext'
+import useGetQueryResultBundle from '../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import {
+  FacetColumnValuesRequest,
+  QueryBundleRequest,
+} from '../utils/synapseTypes/'
 
 export type QueryCountProps = {
   sql: string
@@ -18,65 +18,25 @@ const QueryCount: React.FunctionComponent<QueryCountProps> = ({
   selectedFacets,
   parens,
 }) => {
-  const { accessToken } = useSynapseContext()
-  const [storedSqlQueryCount, setStoredSqlQueryCount] = useState<{}>({})
-  // maps sql string to true/false, true if already made a request for this sql's query count
-  // false or undefined if not
-  const [
-    isCalculatingQueryCountForSql,
-    setIsCalculatingQueryCountForSql,
-  ] = useState<{}>({})
-  let mounted = true
+  const entityId = parseEntityIdFromSqlStatement(sql)
 
-  useEffect(() => {
-    const calculateRowCount = () => {
-      if (mounted) {
-        const entityId = parseEntityIdFromSqlStatement(sql)
-        if (
-          isCalculatingQueryCountForSql[`${sql}-${accessToken}`] ||
-          storedSqlQueryCount[`${sql}-${accessToken}`]
-        ) {
-          // its either in progress or its already been calculated
-          return
-        }
-        const request: QueryBundleRequest = {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          query: {
-            sql,
-            selectedFacets,
-          },
-          entityId,
-          partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
-        }
-        const newIsCalculatingQueryCountForSql = {
-          ...isCalculatingQueryCountForSql,
-        }
-        newIsCalculatingQueryCountForSql[`${sql}-${accessToken}`] = true
-        setIsCalculatingQueryCountForSql(newIsCalculatingQueryCountForSql)
-        SynapseClient.getQueryTableResults(request, accessToken).then(data => {
-          const newStoredSqlQueryCount = {
-            ...storedSqlQueryCount,
-          }
-          newStoredSqlQueryCount[`${sql}-${accessToken}`] = data!.queryCount
-          setStoredSqlQueryCount(newStoredSqlQueryCount)
-        })
-      }
-    }
+  const request: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    query: {
+      sql,
+      selectedFacets,
+    },
+    entityId,
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+  }
 
-    calculateRowCount()
+  const { data: queryResult } = useGetQueryResultBundle(request)
 
-    return () => {
-      mounted = false
-    }
-  }, [sql, selectedFacets, accessToken])
-
-  const count = storedSqlQueryCount[`${sql}-${accessToken}`]
-  const localCount = count?.toLocaleString()
+  const localCount = queryResult?.queryCount?.toLocaleString()
   /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString#Using_toLocaleString */
   return (
     <React.Fragment>
-      {count && (parens ? `(${localCount})` : localCount)}
+      {localCount && (parens ? `(${localCount})` : localCount)}
     </React.Fragment>
   )
 }

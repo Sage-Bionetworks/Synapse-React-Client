@@ -311,7 +311,7 @@ describe('DetailsView tests', () => {
         setSort: mockSetSort,
       })
 
-      userEvent.click(screen.getAllByRole('button')[1])
+      userEvent.click(screen.getAllByRole('button')[2])
 
       expect(mockSetSort).toBeCalledWith(SortBy.CREATED_ON, Direction.DESC)
     })
@@ -322,7 +322,7 @@ describe('DetailsView tests', () => {
         setSort: mockSetSort,
       })
 
-      userEvent.click(screen.getAllByRole('button')[2])
+      userEvent.click(screen.getAllByRole('button')[3])
 
       expect(mockSetSort).toBeCalledWith(SortBy.MODIFIED_ON, Direction.ASC)
     })

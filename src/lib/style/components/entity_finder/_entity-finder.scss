@@ -7,16 +7,12 @@ $-header-height: 45px;
 $-border: $-border-size solid SRC.$border-color-gray;
 $-finder-height: 500px;
 $-breadcrumb-height: 40px;
-$-selected-color: white;
-$-selected-background-color: SRC.$primary-action-color-active;
+$-selected-background-color: map.get(SRC.$secondary-color-palette, 200);
 $-selected-hover-background-color: color.adjust(
   $-selected-background-color,
-  $lightness: -5%
+  $lightness: -10%
 );
-$-hover-background-color: color.change(
-  SRC.$primary-action-color-active,
-  $alpha: 0.2
-);
+$-hover-background-color: map.get(SRC.$primary-color-palette, 100);
 $-tree-only-width: 600px;
 $-splitter-width: 12px;
 

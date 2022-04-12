@@ -30,8 +30,8 @@ import {
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
 import { SelectionPane } from './SelectionPane'
-import { EntityTreeNodeType } from './tree/TreeNode'
-import { FinderScope, TreeView } from './tree/TreeView'
+import { EntityTreeNodeType } from './tree/VirtualizedTree'
+import { FinderScope, EntityTree } from './tree/EntityTree'
 import pluralize from 'pluralize'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 
@@ -356,7 +356,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             <div style={searchActive ? { display: 'none' } : {}}>
               {treeOnly ? (
                 <div>
-                  <TreeView
+                  <EntityTree
                     toggleSelection={toggleSelection}
                     showDropdown={true}
                     visibleTypes={selectableAndVisibleTypesInTree}
@@ -365,7 +365,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     projectId={projectId}
                     initialContainer={initialContainer}
                     showScopeAsRootNode={false}
-                    treeNodeType={EntityTreeNodeType.SELECT}
+                    treeNodeType={EntityTreeNodeType.SINGLE_PANE}
                     selectableTypes={selectableTypes}
                   />
                 </div>
@@ -382,7 +382,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                           className="TreeViewReflexElement"
                           flex={0.24}
                         >
-                          <TreeView
+                          <EntityTree
                             selectedEntities={selectedEntities}
                             setDetailsViewConfiguration={setConfigFromTreeView}
                             showDropdown={true}
@@ -390,7 +390,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             initialScope={initialScope}
                             projectId={projectId}
                             initialContainer={initialContainer}
-                            treeNodeType={EntityTreeNodeType.BROWSE}
+                            treeNodeType={EntityTreeNodeType.DUAL_PANE}
                             setBreadcrumbItems={setBreadcrumbs}
                             selectableTypes={visibleTypesInTree}
                           />

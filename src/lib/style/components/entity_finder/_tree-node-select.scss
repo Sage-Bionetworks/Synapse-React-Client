@@ -13,37 +13,27 @@
   .Tree {
     .Node.SelectNode {
       border-top: 1px solid white;
-      .NodeContent {
-        grid-template-columns: [toggle] 15px [icon] 27px [name] auto [badge] auto;
-        padding: 16px 20px;
-        .ExpandButton {
-          font-size: large;
-          color: unset;
-        }
+      grid-template-columns: [toggle] 15px [icon] 27px [name] auto [badge] auto;
+      padding: 16px 20px;
+      .ExpandButton {
+        font-size: large;
+        color: unset;
+      }
 
-        .EntityIcon {
-          text-align: center;
-          grid-column: icon / span 1;
-          margin-bottom: 3px;
-        }
+      .EntityIcon {
+        text-align: center;
+        grid-column: icon / span 1;
+        margin-bottom: 3px;
       }
     }
     .Node.SelectNode[aria-selected='true'] {
-      > .NodeContent {
-        background: $-selected-background-color;
-        color: $-selected-color;
-        > .ExpandButton {
-          color: rgb(255, 255, 255);
-        }
-      }
-      > .NodeContent:hover {
+      background: $-selected-background-color;
+      &:hover {
         @include -hover($-selected-hover-background-color);
       }
     }
   }
-  .Node[aria-disabled='false'] {
-    > .NodeContent:hover {
-      @include -hover();
-    }
+  .Node[aria-disabled='false']:hover {
+    @include -hover();
   }
 }

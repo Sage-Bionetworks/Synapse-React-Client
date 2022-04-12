@@ -1,34 +1,26 @@
 import * as React from 'react'
-import { RangeFacetFilter } from './RangeFacetFilter'
-import { EnumFacetFilter } from './EnumFacetFilter'
-
+import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
+import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import {
-  FacetColumnResultValues,
-  FacetColumnResult,
-  FacetColumnResultRange,
-} from '../../../utils/synapseTypes/Table/FacetColumnResult'
-import {
-  FacetColumnValuesRequest,
   FacetColumnRangeRequest,
   FacetColumnRequest,
+  FacetColumnValuesRequest,
 } from '../../../utils/synapseTypes/Table/FacetColumnRequest'
 import {
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '../../../utils/synapseTypes'
+  FacetColumnResult,
+  FacetColumnResultRange,
+  FacetColumnResultValues,
+} from '../../../utils/synapseTypes/Table/FacetColumnResult'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
-  QueryWrapperChildProps,
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
+  useQueryContext,
 } from '../../QueryWrapper'
-import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
+import { EnumFacetFilter } from './EnumFacetFilter'
+import { RangeFacetFilter } from './RangeFacetFilter'
 
 export type QueryFilterProps = {
-  isLoading?: boolean
-  data?: QueryResultBundle
-  getLastQueryRequest?: Function
-  executeQueryRequest?: Function
-  facetAliases?: {}
   facetsToFilter?: string[]
 }
 
@@ -85,7 +77,7 @@ const patchRequestFacets = (
 export function applyChangesToValuesColumn(
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultValues,
-  onChangeFn: Function,
+  onChangeFn: (result: FacetColumnRequest[]) => void,
   facetName?: string,
   checked: boolean = false,
 ) {
@@ -111,15 +103,15 @@ export function applyChangesToValuesColumn(
 export const applyMultipleChangesToValuesColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultValues,
-  onChangeFn: Function,
-  facetNameMap?: {},
+  onChangeFn: (result: FacetColumnRequest[]) => void,
+  facetNameMap?: Record<string, string>,
 ) => {
   const facetNames = (facetNameMap && Object.keys(facetNameMap)) || []
   if (facetNames.length) {
     facet.facetValues.forEach(facetValue => {
       if (facetNames.includes(facetValue.value)) {
         facetValue.isSelected = facetNameMap
-          ? facetNameMap[facetValue.value]
+          ? !!facetNameMap[facetValue.value]
           : false
       }
     })
@@ -133,7 +125,7 @@ export const applyMultipleChangesToValuesColumn = (
 export const applyChangesToRangeColumn = (
   lastRequest: QueryBundleRequest | undefined,
   facet: FacetColumnResultRange,
-  onChangeFn: Function,
+  onChangeFn: (result: FacetColumnRequest[]) => void,
   values: string[],
 ) => {
   facet.columnMin = values[0]
@@ -143,35 +135,32 @@ export const applyChangesToRangeColumn = (
   onChangeFn(result)
 }
 
-export const QueryFilter: React.FunctionComponent<
-  QueryWrapperChildProps & QueryFilterProps
-> = ({
-  data,
-  isLoading = false,
-  getLastQueryRequest,
-  executeQueryRequest,
-  facetAliases,
+export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   facetsToFilter,
-  topLevelControlsState,
-}: QueryWrapperChildProps & QueryFilterProps): JSX.Element => {
+}): JSX.Element => {
+  const { data, isLoadingNewBundle, getLastQueryRequest, executeQueryRequest } =
+    useQueryContext()
+
+  const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
+
   if (!data) {
     return <></>
   }
-  const { showFacetFilter } = topLevelControlsState!
-  const columnModels = data.columnModels
+  const { showFacetFilter } = topLevelControlsState
+  const columnModels = data.selectColumns
   let facets = data.facets as FacetColumnResult[]
   if (facetsToFilter) {
     facets = facets.filter(facet => {
       return facetsToFilter.includes(facet.columnName)
     })
   }
-  const lastRequest = getLastQueryRequest ? getLastQueryRequest() : undefined
+  const lastRequest = getLastQueryRequest()
 
   const applyChanges = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest = getLastQueryRequest!()
+    const queryRequest: QueryBundleRequest = getLastQueryRequest()
     queryRequest.query.selectedFacets = facets
     queryRequest.query.offset = 0
-    executeQueryRequest!(queryRequest)
+    executeQueryRequest(queryRequest)
   }
 
   return (
@@ -183,13 +172,12 @@ export const QueryFilter: React.FunctionComponent<
       }`}
     >
       <h4 className="QueryFilter__title">Filter By</h4>
-      {isLoading && <div>Loading...</div>}
-      {!isLoading &&
+      {isLoadingNewBundle && <div>Loading...</div>}
+      {!isLoadingNewBundle &&
         facets.map((facet, index) => {
           const columnModel = columnModels!.find(
             model => model.name === facet.columnName,
           )
-
           const shouldStartCollapsed = index > 2
           if (isSingleNotSetValue(facet)) {
             return
@@ -200,36 +188,32 @@ export const QueryFilter: React.FunctionComponent<
                 <EnumFacetFilter
                   containerAs="Collapsible"
                   collapsed={shouldStartCollapsed}
-                  facetValues={(facet as FacetColumnResultValues).facetValues}
-                  columnModel={columnModel!}
+                  facetValues={facet.facetValues}
+                  columnModel={columnModel}
                   facetAliases={facetAliases}
-                  onChange={(facetNamesMap: {}) =>
+                  onChange={(facetNamesMap: Record<string, string>) =>
                     applyMultipleChangesToValuesColumn(
                       lastRequest,
-                      facet as FacetColumnResultValues,
+                      facet,
                       applyChanges,
                       facetNamesMap,
                     )
                   }
                   onClear={() =>
-                    applyChangesToValuesColumn(
-                      lastRequest,
-                      facet as FacetColumnResultValues,
-                      applyChanges,
-                    )
+                    applyChangesToValuesColumn(lastRequest, facet, applyChanges)
                   }
                 ></EnumFacetFilter>
               )}
               {facet.facetType === 'range' && columnModel && (
                 <RangeFacetFilter
-                  facetResult={facet as FacetColumnResultRange}
+                  facetResult={facet}
                   columnModel={columnModel}
                   facetAliases={facetAliases}
                   collapsed={shouldStartCollapsed}
                   onChange={(values: string[]) =>
                     applyChangesToRangeColumn(
                       lastRequest,
-                      facet as FacetColumnResultRange,
+                      facet,
                       applyChanges,
                       values,
                     )
