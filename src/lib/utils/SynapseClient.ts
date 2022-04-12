@@ -122,7 +122,7 @@ import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/Access
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
-import { ChangePasswordWithCurrentPassword } from './synapseTypes/ChangePasswordRequests'
+import { ChangePasswordWithCurrentPassword, ChangePasswordWithToken } from './synapseTypes/ChangePasswordRequests'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
@@ -173,10 +173,6 @@ import {
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
-<<<<<<< HEAD
-import { ChangePasswordWithCurrentPassword, ChangePasswordWithToken } from './synapseTypes/ChangePasswordRequests'
-=======
->>>>>>> upstream/develop
 
 const cookies = new UniversalCookies()
 
