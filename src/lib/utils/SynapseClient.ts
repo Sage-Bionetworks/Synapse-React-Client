@@ -3324,7 +3324,7 @@ export const changePasswordWithToken = (
 export const resetPassword = (
   email: string,
 ) => {
-  const endpoint = window.location.href  + '#'
+  const endpoint = window.location.href  + '?passwordResetToken='
   const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(endpoint)}`
   return doPost(
     url,
