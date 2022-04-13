@@ -81,6 +81,20 @@ export const entityQueryKeys = {
       tableQueryBundleRequest: queryBundleRequest,
     },
   ],
+
+  boundJSONSchema: (id: string) => [
+    {
+      ...entityQueryKeys.entity(id)[0],
+      scope: 'boundJSONSchema',
+    },
+  ],
+
+  schemaValidationResults: (id: string) => [
+    {
+      ...entityQueryKeys.entity(id)[0],
+      scope: 'schemaValidationResults',
+    },
+  ],
 }
 
 export function invalidateAllQueriesForEntity(
