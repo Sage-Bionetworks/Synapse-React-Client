@@ -9,7 +9,7 @@ import {
   EntityTreeProps,
 } from '../../../../../lib/containers/entity_finder/tree/EntityTree'
 import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
-import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle'
 import {
   EntityHeader,
   EntityPath,
@@ -46,7 +46,7 @@ jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useProjects', () => {
   }
 })
 
-jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle', () => {
+jest.mock('../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle', () => {
   return {
     __esModule: true,
     default: jest.fn(),

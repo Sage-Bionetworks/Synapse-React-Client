@@ -13,11 +13,9 @@ import {
 import {
   useGetJson,
   useUpdateViaJson,
-} from '../../../utils/hooks/SynapseAPI/useEntity'
-import {
-  useGetSchema,
-  useGetSchemaBinding,
-} from '../../../utils/hooks/SynapseAPI/useSchema'
+} from '../../../utils/hooks/SynapseAPI/entity/useEntity'
+import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI/entity/useEntityBoundSchema'
+import { useGetSchema } from '../../../utils/hooks/SynapseAPI/useSchema'
 import { SynapseClientError } from '../../../utils/SynapseClient'
 import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
@@ -100,7 +98,7 @@ export const SchemaDrivenAnnotationEditor = (
   const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
 
   const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
-    enabled: !entityId || !formData, // once we have data, don't refetch. it would overwrite the user's entries
+    enabled: !!entityId && !formData, // once we have data, don't refetch. it would overwrite the user's entries
     onError: e => {
       if (e.status !== 404) {
         handleError(e)
@@ -352,7 +350,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   errors,
 }: ConfirmationModalProps) => {
   return (
-    <Modal animation={false} show={show} onHide={onCancel} backdrop='static'>
+    <Modal animation={false} show={show} onHide={onCancel} backdrop="static">
       <Modal.Header closeButton>
         <Modal.Title>Update Annotations</Modal.Title>
       </Modal.Header>

@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
-import { useGetEntityHeaders } from '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityHeaders'
+import { useGetEntityHeaders } from '../../../../../lib/utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
 import {
   EntityHeader,
   PaginatedResults,

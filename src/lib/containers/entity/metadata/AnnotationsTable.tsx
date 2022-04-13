@@ -8,9 +8,9 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI/useSchema'
+import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI/entity/useEntityBoundSchema'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import { useGetJson } from '../../../utils/hooks/SynapseAPI/useEntity'
+import { useGetJson } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 
 export type AnnotationsTableProps = {
@@ -53,10 +53,9 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
                   <td className="AnnotationsTable__Row__Key">{key}</td>
                   <td className="AnnotationsTable__Row__Value">
                     {Array.isArray(annotations[key])
-                      ? (annotations[key] as
-                          | string[]
-                          | number[]
-                          | boolean[]).join(', ')
+                      ? (
+                          annotations[key] as string[] | number[] | boolean[]
+                        ).join(', ')
                       : annotations[key]!.toString()}
                   </td>
                 </tr>

@@ -8,7 +8,7 @@ import {
 import { SynapseConstants } from '../../../utils'
 import { SynapseClientError, getFiles } from '../../../utils/SynapseClient'
 import { ErrorBanner } from '../../ErrorBanner'
-import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import GoalsMobile from './Goals.Mobile'
 import GoalsDesktop from './Goals.Desktop'
@@ -52,9 +52,8 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
       sql: `select * from ${entityId} order by ItemOrder`,
     },
   }
-  const { data: queryResultBundle } = useGetQueryResultBundle(
-    queryBundleRequest,
-  )
+  const { data: queryResultBundle } =
+    useGetQueryResultBundle(queryBundleRequest)
 
   useEffect(() => {
     const getData = async () => {

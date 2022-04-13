@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
 import { QueryClient } from 'react-query'
-import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { EntityBundle } from '../../../../../lib/utils/synapseTypes'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'

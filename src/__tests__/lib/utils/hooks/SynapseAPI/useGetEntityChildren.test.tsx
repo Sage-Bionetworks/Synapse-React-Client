@@ -3,7 +3,7 @@ import React from 'react'
 import {
   useGetEntityChildren,
   useGetEntityChildrenInfinite,
-} from '../../../../../lib/utils/hooks/SynapseAPI/useGetEntityChildren'
+} from '../../../../../lib/utils/hooks/SynapseAPI/entity/useGetEntityChildren'
 import {
   EntityChildrenRequest,
   EntityChildrenResponse,

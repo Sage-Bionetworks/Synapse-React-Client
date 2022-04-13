@@ -2,7 +2,7 @@ import React from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
 
-import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
 import ProgramsMobile from './Programs.Mobile'
 import ProgramsDesktop from './Programs.Desktop'
@@ -55,9 +55,8 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
       sql: `select * from ${entityId}`,
     },
   }
-  const { data: queryResultBundle } = useGetQueryResultBundle(
-    queryBundleRequest,
-  )
+  const { data: queryResultBundle } =
+    useGetQueryResultBundle(queryBundleRequest)
 
   const titleColumnIndex = getFieldIndex(titleColumnName, queryResultBundle)
   const summaryColumnIndex = getFieldIndex(summaryColumnName, queryResultBundle)

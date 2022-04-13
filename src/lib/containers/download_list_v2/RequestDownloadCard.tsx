@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { toError } from '../../utils/ErrorUtils'
-import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI/useGetEntityHeaders'
+import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
 import { EntityHeader } from '../../utils/synapseTypes'
 import { Icon } from '../row_renderers/utils'
 import { VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'

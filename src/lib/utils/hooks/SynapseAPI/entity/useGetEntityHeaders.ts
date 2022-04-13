@@ -1,12 +1,12 @@
 import { useQuery, UseQueryOptions } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClient'
-import { useSynapseContext } from '../../SynapseContext'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClient'
+import { useSynapseContext } from '../../../SynapseContext'
 import {
   EntityHeader,
   PaginatedResults,
   ReferenceList,
-} from '../../synapseTypes'
+} from '../../../synapseTypes'
 
 export function useGetEntityHeaders(
   references: ReferenceList,
