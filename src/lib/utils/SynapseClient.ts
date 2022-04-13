@@ -122,7 +122,7 @@ import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/Access
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
-import { ChangePasswordWithCurrentPassword } from './synapseTypes/ChangePasswordRequests'
+import { ChangePasswordWithCurrentPassword, ChangePasswordWithToken } from './synapseTypes/ChangePasswordRequests'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
@@ -3302,6 +3302,34 @@ export const changePasswordWithCurrentPassword = (
     '/auth/v1/user/changePassword',
     newPassword,
     accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://rest-docs.synapse.org/rest/POST/user/changePassword.html
+export const changePasswordWithToken = (
+  newPassword: ChangePasswordWithToken,
+) => {
+  return doPost<ChangePasswordWithToken>(
+    '/auth/v1/user/changePassword',
+    newPassword,
+    undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
+// http://rest-docs.synapse.org/rest/POST/user/password/reset.html
+export const resetPassword = (
+  email: string,
+) => {
+  const endpoint = window.location.href  + '?passwordResetToken='
+  const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(endpoint)}`
+  return doPost(
+    url,
+    {email},
+    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

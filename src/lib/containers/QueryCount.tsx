@@ -1,7 +1,7 @@
 import React from 'react'
 import { SynapseConstants } from '../utils/'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
-import useGetQueryResultBundle from '../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import {
   FacetColumnValuesRequest,
   QueryBundleRequest,

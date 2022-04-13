@@ -5,7 +5,7 @@ import {
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
-import { useGetEntity } from '../../utils/hooks/SynapseAPI/useEntity'
+import { useGetEntity } from '../../utils/hooks/SynapseAPI/entity/useEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
 import {
   isTableEntity,

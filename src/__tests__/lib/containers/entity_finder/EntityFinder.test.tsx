@@ -13,7 +13,7 @@ import EntityFinder, {
   NO_VERSION_NUMBER,
 } from '../../../../lib/containers/entity_finder/EntityFinder'
 import { FinderScope } from '../../../../lib/containers/entity_finder/tree/EntityTree'
-import useGetEntityBundle from '../../../../lib/utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityBundle from '../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle'
 import {
   EntityHeader,
   EntityType,
@@ -26,7 +26,7 @@ import {
 } from '../../../../mocks/MockSynapseContext'
 import { Map } from 'immutable'
 
-jest.mock('../../../../lib/utils/hooks/SynapseAPI/useEntityBundle')
+jest.mock('../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle')
 jest.mock('react-reflex', () => {
   return {
     ReflexContainer: jest
