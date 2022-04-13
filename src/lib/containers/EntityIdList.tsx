@@ -23,7 +23,7 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
     }
   }, [entityIdList, inView])
 
-  const getEntityTypes = async () => {
+  const getEntityTypes = () => {
     if (!entityIdList.length) return
 
     getEntityHeadersByIds(entityIdList, accessToken)

@@ -20,9 +20,11 @@ import {
 import DirectDownload from '../DirectDownload'
 import EntityIdList from '../EntityIdList'
 import { EntityLink } from '../EntityLink'
+import EvaluationIdRenderer from '../EvaluationIdRenderer'
 import { SynapseCardLabel } from '../GenericCard'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import UserCard from '../UserCard'
+import UserIdList from '../UserIdList'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 
 type SynapseTableCellProps = {
@@ -156,10 +158,13 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
       const jsonData: string[] = JSON.parse(columnValue)
       return <EntityIdList entityIdList={jsonData} />
     }
+    case ColumnType.USERID_LIST: {
+      const jsonData: string[] = JSON.parse(columnValue)
+      return <UserIdList userIds={jsonData} />
+    }
     // handle other list types
     case ColumnType.STRING_LIST:
-    case ColumnType.INTEGER_LIST:
-    case ColumnType.USERID_LIST: {
+    case ColumnType.INTEGER_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return (
         <p>
@@ -174,6 +179,10 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         </p>
       )
     }
+    case ColumnType.EVALUATIONID: {
+      return <EvaluationIdRenderer evaluationId={columnValue} />
+    }
+    
     case ColumnType.DATE:
       return (
         <p className={isBold}>
@@ -218,11 +227,20 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         }
       }
       break
+    case ColumnType.LINK:
+      return (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={columnValue}
+        >
+          {columnValue}
+        </a>
+      )
     case ColumnType.STRING:
     case ColumnType.DOUBLE:
     case ColumnType.INTEGER:
     case ColumnType.BOOLEAN:
-    case ColumnType.LINK:
     case ColumnType.LARGETEXT: {
       const isShort = isShortString(columnValue)
       if (isShort) {

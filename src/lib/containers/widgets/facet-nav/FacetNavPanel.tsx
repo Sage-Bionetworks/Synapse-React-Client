@@ -119,7 +119,7 @@ export async function extractPlotDataArray(
     const filteredValues = facetValues
       .map(value => value.value)
       .filter(val => val !== SynapseConstants.VALUE_NOT_SET)
-    if (columnType === ColumnType.ENTITYID) {
+    if (columnType === ColumnType.ENTITYID || columnType === ColumnType.ENTITYID_LIST) {
       // TODO: Pagination
       const response = await SynapseClient.getEntityHeadersByIds(
         filteredValues,
@@ -128,7 +128,7 @@ export async function extractPlotDataArray(
       for (const header of response.results) {
         map.set(header.id, header.name)
       }
-    } else if (columnType === ColumnType.USERID) {
+    } else if (columnType === ColumnType.USERID || columnType === ColumnType.USERID_LIST) {
       const response = await SynapseClient.getGroupHeadersBatch(
         filteredValues,
         accessToken,
