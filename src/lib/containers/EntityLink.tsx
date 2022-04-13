@@ -5,7 +5,7 @@ import {
   getEntityTypeFromHeader,
 } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { useGetEntity } from '../utils/hooks/SynapseAPI/useEntity'
+import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import { Entity, EntityHeader } from '../utils/synapseTypes/'
 import { EntityTypeIcon } from './EntityIcon'
 

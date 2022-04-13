@@ -5,6 +5,8 @@
 import { omit, pick } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import {
+  QueryFunctionContext,
+  QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -13,9 +15,9 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClient'
-import { useSynapseContext } from '../../SynapseContext'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClient'
+import { useSynapseContext } from '../../../SynapseContext'
 import {
   Entity,
   EntityJson,
@@ -23,8 +25,9 @@ import {
   EntityJsonValue,
   EntityPath,
   PaginatedResults,
-} from '../../synapseTypes'
-import { VersionInfo } from '../../synapseTypes/VersionInfo'
+} from '../../../synapseTypes'
+import { VersionInfo } from '../../../synapseTypes/VersionInfo'
+import { entityQueryKeys, invalidateAllQueriesForEntity } from './queryKeys'
 
 export function useGetEntity<T extends Entity>(
   entityId: string,
@@ -33,7 +36,7 @@ export function useGetEntity<T extends Entity>(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<T, SynapseClientError>(
-    ['entity', entityId, 'entity', versionNumber],
+    entityQueryKeys.version(entityId, versionNumber),
     () =>
       SynapseClient.getEntity<T>(
         accessToken,
@@ -55,14 +58,9 @@ export function useUpdateEntity<T extends Entity>(
     {
       ...options,
       onSuccess: async (updatedEntity, variables, ctx) => {
-        await queryClient.invalidateQueries(
-          ['entity', updatedEntity.id, 'entity', undefined],
-          {
-            exact: false,
-          },
-        )
+        await invalidateAllQueriesForEntity(queryClient, updatedEntity.id!)
         queryClient.setQueryData(
-          ['entity', updatedEntity.id, 'entity', undefined],
+          entityQueryKeys.entity(updatedEntity.id!),
           updatedEntity,
         )
 
@@ -82,7 +80,7 @@ export function useGetVersions(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    ['entity', entityId, 'versions', { offset: offset, limit: limit }],
+    entityQueryKeys.versionsQuery(entityId, limit, offset),
     () => SynapseClient.getEntityVersions(entityId, accessToken, offset, limit),
     options,
   )
@@ -98,8 +96,8 @@ export function useGetVersionsInfinite(
   const LIMIT = 200
   const { accessToken } = useSynapseContext()
   return useInfiniteQuery<PaginatedResults<VersionInfo>, SynapseClientError>(
-    ['entity', entityId, 'versions', 'infinite'],
-    async context => {
+    entityQueryKeys.versions(entityId),
+    async (context: QueryFunctionContext<QueryKey, number>) => {
       return await SynapseClient.getEntityVersions(
         entityId,
         accessToken,
@@ -148,7 +146,7 @@ export function useGetJson(
   >()
   const { accessToken } = useSynapseContext()
   const query = useQuery<EntityJson, SynapseClientError>(
-    [accessToken, 'entity', entityId, 'json'],
+    entityQueryKeys.json(entityId),
     () => SynapseClient.getEntityJson(entityId, accessToken),
     options,
   )
@@ -183,13 +181,8 @@ export function useUpdateViaJson(
       onSuccess: async (data, variables, ctx) => {
         const entityId = data.id
 
-        await queryClient.invalidateQueries([accessToken, 'entity', entityId], {
-          exact: false,
-        })
-        queryClient.setQueryData(
-          [accessToken, 'entity', entityId, 'json'],
-          data,
-        )
+        await invalidateAllQueriesForEntity(queryClient, entityId)
+        queryClient.setQueryData(entityQueryKeys.json(entityId), data)
 
         if (options?.onSuccess) {
           await options.onSuccess(data, variables, ctx)
@@ -205,7 +198,7 @@ export function useGetEntityPath(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<EntityPath, SynapseClientError>(
-    ['entity', entityId, 'path'],
+    entityQueryKeys.path(entityId),
     () => SynapseClient.getEntityPath(entityId, accessToken),
     options,
   )

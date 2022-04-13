@@ -13,8 +13,8 @@ import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
 import {
   useGetEntity,
   useGetVersionsInfinite,
-} from '../../../../utils/hooks/SynapseAPI/useEntity'
-import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/useEntityBundle'
+} from '../../../../utils/hooks/SynapseAPI/entity/useEntity'
+import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import {
   DatasetItem,

@@ -23,10 +23,10 @@ import {
 import {
   useGetSchemaBinding,
   useGetValidationResults,
-} from '../utils/hooks/SynapseAPI/useSchema'
+} from '../utils/hooks/SynapseAPI/entity/useEntityBoundSchema'
 import { useEffect } from 'react'
 import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
-import useGetEntityBundle from '../utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityBundle from '../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { useInView } from 'react-intersection-observer'
 
 const isPublic = (bundle: EntityBundle): boolean => {

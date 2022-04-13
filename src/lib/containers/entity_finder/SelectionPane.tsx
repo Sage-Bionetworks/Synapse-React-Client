@@ -1,7 +1,7 @@
 import { Clear } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
-import useGetEntityBundle from '../../utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityBundle from '../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import { EntityTypeIcon } from '../EntityIcon'

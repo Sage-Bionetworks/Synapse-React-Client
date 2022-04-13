@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
-import useGetQueryResultBundle from '../../../../../lib/utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../../../../../lib/utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import {
   QueryBundleRequest,
   QueryResultBundle,

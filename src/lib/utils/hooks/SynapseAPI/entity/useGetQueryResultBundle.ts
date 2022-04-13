@@ -6,18 +6,19 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClient'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClient'
 import {
   BUNDLE_MASK_QUERY_RESULTS,
   DEFAULT_PAGE_SIZE,
-} from '../../SynapseConstants'
-import { useSynapseContext } from '../../SynapseContext'
+} from '../../../SynapseConstants'
+import { useSynapseContext } from '../../../SynapseContext'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,
   QueryResultBundle,
-} from '../../synapseTypes'
+} from '../../../synapseTypes'
+import { entityQueryKeys } from './queryKeys'
 
 export default function useGetQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
@@ -26,7 +27,7 @@ export default function useGetQueryResultBundle(
   const { accessToken } = useSynapseContext()
 
   return useQuery<QueryResultBundle, SynapseClientError>(
-    ['queryResultBundle', queryBundleRequest],
+    entityQueryKeys.tableQueryResult(queryBundleRequest, false),
     () => SynapseClient.getQueryTableResults(queryBundleRequest, accessToken),
     options,
   )
@@ -45,7 +46,7 @@ export function useInfiniteQueryResultBundle(
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
   >(
-    ['queryResultBundle', queryBundleRequest, 'infinite'],
+    entityQueryKeys.tableQueryResult(queryBundleRequest, true),
     (context: QueryFunctionContext<QueryKey, string>) => {
       const offset = context.pageParam ? parseInt(context.pageParam) : 0
       return SynapseClient.getQueryTableAsyncJobResults(
