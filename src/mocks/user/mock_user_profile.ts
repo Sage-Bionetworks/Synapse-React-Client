@@ -5,6 +5,7 @@ import {
 } from '../../lib/utils/synapseTypes'
 
 export const MOCK_USER_ID = 999
+export const MOCK_USER_NAME = 'myUserName'
 
 export const mockUserProfileData: UserProfile = {
   summary: 'My summary bio',
@@ -15,7 +16,7 @@ export const mockUserProfileData: UserProfile = {
   company: 'Researcher',
   position: '',
   ownerId: `${MOCK_USER_ID}`,
-  userName: 'myUserName',
+  userName: MOCK_USER_NAME,
   createdOn: '2018-06-18T21:42:48.000Z',
   url: '',
 }
