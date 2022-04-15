@@ -2,7 +2,7 @@ import * as React from 'react'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
-import { QueryResultBundle, UserProfile } from '../utils/synapseTypes/'
+import { QueryResultBundle, UserProfile, ColumnType } from '../utils/synapseTypes/'
 import UserCard, { UserCardSize } from './UserCard'
 import { without } from 'lodash-es'
 
@@ -84,7 +84,7 @@ export default class UserCardList extends React.Component<
       el => el.name === 'institution',
     )
     const ownerId = data.queryResult.queryResults.headers.findIndex(
-      el => el.columnType === 'USERID',
+      el => el.columnType === ColumnType.USERID,
     )
     const nullOwnerIdsRows = data.queryResult.queryResults.rows.filter(
       el => !el.values[ownerId],
