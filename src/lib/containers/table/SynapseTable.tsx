@@ -97,6 +97,7 @@ export type SynapseTableState = {
   isColumnSelectionOpen: boolean
   isFetchingEntityHeaders: boolean
 }
+
 export type SynapseTableProps = {
   synapseContext: SynapseContextType
   queryContext: QueryContextType
@@ -107,6 +108,11 @@ export type SynapseTableProps = {
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
   isRowSelectionVisible?: boolean
+  /**
+   * If true, columns created by the COUNT function will render with a link to Synapse that opens the disaggregated query results filtered by the conditions of that row.
+   * Note that this is very brittle and only supports one column at a time. See SWC-6075 for more information. Default false.
+   */
+  linkCountToDisaggregatedQuery?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -758,6 +764,7 @@ export default class SynapseTable extends React.Component<
         setSelectedRowIndices,
       },
       columnLinks = [],
+      linkCountToDisaggregatedQuery = false,
     } = this.props
     const { selectColumns = [], columnModels = [] } = data!
     const { mapEntityIdToHeader, mapUserIdToHeader } = this.state
@@ -782,6 +789,8 @@ export default class SynapseTable extends React.Component<
             columnName,
           )
           const isCountColumn = countColumnIndexes.includes(colIndex)
+          const linkToDisaggregatedQuery =
+            isCountColumn && linkCountToDisaggregatedQuery
           const isBold = index === -1 ? '' : 'SRC-boldText'
           if (isColumnActive) {
             return (
@@ -789,7 +798,7 @@ export default class SynapseTable extends React.Component<
                 className="SRC_noBorderTop SRC-synapseTableTd"
                 key={`(${rowIndex}${columnValue}${colIndex})`}
               >
-                {isCountColumn && (
+                {linkToDisaggregatedQuery ? (
                   <a
                     href={this.showGroupRowData(row)}
                     target="_blank"
@@ -797,8 +806,7 @@ export default class SynapseTable extends React.Component<
                   >
                     <p className={isBold}>{columnValue}</p>
                   </a>
-                )}
-                {!isCountColumn && (
+                ) : (
                   <SynapseTableCell
                     columnType={headers[colIndex].columnType}
                     columnValue={columnValue}
