@@ -179,7 +179,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     newClassName = className?.concat(' ', 'SRC-lightLink')
   }
   // PORTALS-1913: special rendering for user ID lists
-  if (columnModelType === 'USERID_LIST' && strList) {
+  if (columnModelType === ColumnType.USERID_LIST && strList) {
     return (
       <>
         {strList.map((val: string, index: number) => {
@@ -198,7 +198,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       </>
     )
   }
-  if (columnModelType === 'USERID' && str) {
+  if (columnModelType === ColumnType.USERID && str) {
     return (
       <UserCard ownerId={str} size={SMALL_USER_CARD} className={newClassName} />
     )

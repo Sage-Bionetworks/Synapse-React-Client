@@ -8,7 +8,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
-import { UserProfile } from '../../../utils/synapseTypes'
+import { UserProfile, ColumnType } from '../../../utils/synapseTypes'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import {
   FacetColumnResultValueCount,
@@ -22,8 +22,8 @@ library.add(faArrowLeft)
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
   columnModel: SelectColumn
-  onChange: Function
-  onClear: Function
+  onChange: (facetNamesMap: Record<string, string>)=>void
+  onClear: ()=>void
   facetAliases?: Record<string, string>
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
@@ -109,7 +109,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const allIsSelected = facetValues.filter(item => item.isSelected).length === 0
 
   const userIds =
-    columnModel?.columnType === 'USERID'
+    (columnModel?.columnType === ColumnType.USERID || columnModel?.columnType === ColumnType.USERID_LIST)
       ? facetValues.map(facet => facet.value)
       : []
   const userProfiles = useGetInfoFromIds<UserProfile>({
@@ -118,7 +118,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   })
 
   const entityIds =
-    columnModel?.columnType === 'ENTITYID'
+    (columnModel?.columnType === ColumnType.ENTITYID || columnModel?.columnType === ColumnType.ENTITYID_LIST)
       ? facetValues.map(facet => facet.value)
       : []
   const entityHeaders = useGetInfoFromIds<EntityHeader>({
@@ -389,7 +389,7 @@ function EnumFacetFilterOption({
           setIsSelected(newValue)
           onChange(newValue)
         }}
-        key={id + index}
+        key={`${id}-${index}`}
         checked={isSelected}
         label={label}
       ></Checkbox>
