@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
 import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
 import { getLocationName } from '../../../utils/functions/FileHandleUtils'
-import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { EntityType, FileEntity } from '../../../utils/synapseTypes'
 import UserCard from '../../UserCard'
 

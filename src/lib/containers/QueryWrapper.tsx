@@ -5,8 +5,8 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
-import { useGetEntity } from '../utils/hooks/SynapseAPI/useEntity'
-import { useInfiniteQueryResultBundle } from '../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
+import { useInfiniteQueryResultBundle } from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import { SynapseClientError } from '../utils/SynapseClient'
 import {
   AsynchronousJobStatus,

@@ -1,8 +1,9 @@
 import { useQuery, UseQueryOptions } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClient'
-import { useSynapseContext } from '../../SynapseContext'
-import { EntityBundle, EntityBundleRequest } from '../../synapseTypes'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClient'
+import { useSynapseContext } from '../../../SynapseContext'
+import { EntityBundle, EntityBundleRequest } from '../../../synapseTypes'
+import { entityQueryKeys } from './queryKeys'
 
 const ALL_FIELDS: EntityBundleRequest = {
   includeEntity: true,
@@ -29,7 +30,7 @@ export default function useGetEntityBundle(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<EntityBundle, SynapseClientError>(
-    [accessToken, 'entity', entityId, 'bundle', version, bundleRequest],
+    entityQueryKeys.bundle(entityId, version, bundleRequest),
     () =>
       SynapseClient.getEntityBundleV2(
         entityId,

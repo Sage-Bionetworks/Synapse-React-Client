@@ -12,7 +12,7 @@ import {
   useGetEntity,
   useGetEntityPath,
   useUpdateEntity,
-} from '../../../utils/hooks/SynapseAPI/useEntity'
+} from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { useSet } from '../../../utils/hooks/useSet'
 import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
 import {

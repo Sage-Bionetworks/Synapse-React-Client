@@ -2,7 +2,7 @@ import React from 'react'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { SynapseConstants } from '../../../utils'
 import { ErrorBanner } from '../../ErrorBanner'
-import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/useGetQueryResultBundle'
+import useGetQueryResultBundle from '../../../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import ResourcesDesktop from './Resources.Desktop'
 import ResourcesMobile from './Resources.Mobile'
 import useShowDesktop from '../../../utils/hooks/useShowDesktop'
@@ -37,9 +37,8 @@ export const Resources: React.FC<ResourcesProps> = (props: ResourcesProps) => {
       sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
     },
   }
-  const { data: queryResultBundle, error } = useGetQueryResultBundle(
-    queryBundleRequest,
-  )
+  const { data: queryResultBundle, error } =
+    useGetQueryResultBundle(queryBundleRequest)
 
   const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResultBundle)
   const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResultBundle)

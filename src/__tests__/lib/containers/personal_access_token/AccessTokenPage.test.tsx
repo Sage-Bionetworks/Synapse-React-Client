@@ -153,16 +153,22 @@ describe('basic functionality', () => {
     renderComponent(props)
 
     // Click the button to render the modal
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Create New Token' }),
-    )
+    const openModalButton = await screen.findByRole('button', {
+      name: 'Create New Token',
+    })
+    userEvent.click(openModalButton)
 
     // Simulate creation
-    userEvent.click(
-      await screen.findByRole('button', { name: 'Invoke onCreate' }),
-    )
+    const createTokenButton = await screen.findByRole('button', {
+      name: 'Invoke onCreate',
+    })
+    userEvent.click(createTokenButton)
 
-    expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(2)
+    await waitFor(() =>
+      expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(
+        2,
+      ),
+    )
   })
 
   it('rerenders the list when onDelete is called', async () => {
@@ -175,9 +181,14 @@ describe('basic functionality', () => {
     renderComponent(props)
 
     // Trigger onDelete on a card.
-    userEvent.click(await screen.findByText('Invoke onDelete'))
+    const deleteButton = await screen.findByText('Invoke onDelete')
+    userEvent.click(deleteButton)
 
-    expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(2)
+    await waitFor(() =>
+      expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(
+        2,
+      ),
+    )
   })
 
   it('loads a second page and shows the load more button only when there is a next page token', async () => {

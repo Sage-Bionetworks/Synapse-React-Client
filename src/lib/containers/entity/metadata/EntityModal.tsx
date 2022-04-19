@@ -5,7 +5,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/useEntityBundle'
+import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 import Skeleton from '@material-ui/lab/Skeleton'
