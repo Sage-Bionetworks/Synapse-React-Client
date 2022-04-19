@@ -160,6 +160,7 @@ import {
   AccountSetupInfo,
   AliasCheckRequest,
   AliasCheckResponse,
+  EmailValidationSignedToken,
   NewUser,
 } from './synapseTypes/Principal/PrincipalServices'
 import { ResearchProject } from './synapseTypes/ResearchProject'
@@ -3330,6 +3331,81 @@ export const resetPassword = (
     url,
     {email},
     undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/POST/account/id/emailValidation.html
+ * @param email
+ * @param userId
+ * @param portalEndpoint
+ * @param accessToken
+ */
+export const addEmailAddressStep1 = (
+  email: string,
+  userId: string,
+  portalEndpoint: string,
+  accessToken: string | undefined,
+) => {
+  return doPost(
+    `/repo/v1/account/${userId}/emailValidation?portalEndpoint=${portalEndpoint}`,
+    {email},
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/POST/email.html
+ * @param emailValidationSignedToken
+ * @param accessToken
+ */
+export const addEmailAddressStep2 = (
+  emailValidationSignedToken: EmailValidationSignedToken,
+  accessToken: string | undefined,
+) => {
+  return doPost(
+    `/repo/v1/email`,
+    emailValidationSignedToken,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/DELETE/email.html
+ * @param email
+ * @param accessToken
+ */
+export const deleteEmail = (
+  accessToken: string | undefined,
+  email?: string
+ ) => {
+  return doDelete(
+    `/repo/v1/email?email=${email}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * https://rest-docs.synapse.org/rest/PUT/notificationEmail.html
+ * @param email
+ * @param accessToken
+ */
+ export const updateNotificationEmail = (
+  email: string,
+  accessToken: string | undefined,
+) => {
+  return doPut(
+    '/repo/v1/notificationEmail',
+    {email},
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
