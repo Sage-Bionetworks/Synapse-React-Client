@@ -84,14 +84,17 @@ export const getWhereInsertIndex = (tokens: string[][]): number => {
   return targetIndex
 }
 
-// This will construct a sql query by adding the conditions in searchParams
-// to the WHERE clause, preserving all other clauses.
-// If the searchParams are not defined, this will simply return the given sql.
+/**
+ * This will construct a sql query by adding the conditions in searchParams
+ * to the WHERE clause, preserving all other clauses.
+ * If the searchParams are not defined, this will simply return the given sql.
+ */
 export const insertConditionsFromSearchParams = (
   sql: string,
   searchParams?: KeyValue,
   operator: SQLOperator = 'LIKE',
 ) => {
+  // TODO: Replace SQL manipulation with QueryFilters. See PORTALS-2157
   // if there are no search params, or if all search params are QueryWrapper queries
   if (!searchParams) {
     return sql
