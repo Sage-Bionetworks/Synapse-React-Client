@@ -296,7 +296,18 @@ export default class HasAccess extends React.Component<
       })
   }
 
-  renderIconHelper = (iconProp: IconProp, classColor: string) => {
+  renderIconSvg(icon: string, color: string) {
+    return (
+      <IconSvg
+        options={{
+          icon: icon,
+          color: color,
+        }}
+      />
+    )
+  }
+
+  renderFontAwesomeIcon = (iconProp: IconProp, classColor: string) => {
     return (
       <span className="fa-layers fa-fw">
         <FontAwesomeIcon
@@ -316,64 +327,42 @@ export default class HasAccess extends React.Component<
     )
   }
 
-  renderOpenAccessIcon() {
-    return (
-      <ThemeContext.Consumer>
-        {theme => {
-          return (
-            <IconSvg
-              options={{
-                icon: 'accessOpen',
-                color: theme.colors.success,
-              }}
-            />
-          )
-        }}
-      </ThemeContext.Consumer>
-    )
-  }
-
-  renderLockedIcon() {
-    return (
-      <ThemeContext.Consumer>
-        {theme => {
-          return (
-            <IconSvg
-              options={{
-                icon: 'accessClosed',
-                color: theme.colors.warning,
-              }}
-            />
-          )
-        }}
-      </ThemeContext.Consumer>
-    )
-  }
-
   renderIcon = (
     downloadType: FileHandleDownloadTypeEnum | string,
     restrictionInformation?: RestrictionInformationResponse,
   ) => {
     // if there are any access restrictions
     if (restrictionInformation?.hasUnmetAccessRequirement) {
-      return this.renderLockedIcon()
+      return (
+        <ThemeContext.Consumer>
+          {theme => this.renderIconSvg('accessClosed', theme.colors.warning)}
+        </ThemeContext.Consumer>
+      )
     }
     switch (downloadType) {
       // fileHandle available
       case FileHandleDownloadTypeEnum.ExternalFileLink:
       case FileHandleDownloadTypeEnum.ExternalCloudFile:
-        return this.renderIconHelper(faLink, 'SRC-warning-color')
+        return this.renderFontAwesomeIcon(faLink, 'SRC-warning-color')
       case FileHandleDownloadTypeEnum.TooLarge:
-        return this.renderIconHelper(faDatabase, 'SRC-danger-color')
+        return this.renderFontAwesomeIcon(faDatabase, 'SRC-danger-color')
       // was FileEntity, but no fileHandle was available
       case FileHandleDownloadTypeEnum.AccessBlockedByACL:
       case FileHandleDownloadTypeEnum.AccessBlockedToAnonymous:
-        return this.renderLockedIcon()
+        return (
+          <ThemeContext.Consumer>
+            {theme => this.renderIconSvg('accessClosed', theme.colors.warning)}
+          </ThemeContext.Consumer>
+        )
       // was a FileEntity, and fileHandle was available
       case FileHandleDownloadTypeEnum.Accessible:
       // or was not a FileEntity, but no unmet access restrictions
       case FileHandleDownloadTypeEnum.NoFileHandle:
-        return this.renderOpenAccessIcon()
+        return (
+          <ThemeContext.Consumer>
+            {theme => this.renderIconSvg('accessOpen', theme.colors.success)}
+          </ThemeContext.Consumer>
+        )
       default:
         // nothing is rendered until access requirement is loaded
         return <></>
