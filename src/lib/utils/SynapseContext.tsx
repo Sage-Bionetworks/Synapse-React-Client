@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { SynapseErrorBoundary } from '../containers/ErrorBanner'
+import { SynapseTheme, ThemeProvider } from './hooks/useTheme'
 
 const defaultQueryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +33,7 @@ export const SynapseContext = React.createContext<
 export type SynapseContextProviderProps = {
   synapseContext?: SynapseContextType
   queryClient?: QueryClient
+  theme?: SynapseTheme
 }
 
 /**
@@ -40,15 +42,17 @@ export type SynapseContextProviderProps = {
  * @returns
  */
 export const SynapseContextProvider: React.FunctionComponent<SynapseContextProviderProps> =
-  ({ children, synapseContext, queryClient }) => {
+  ({ children, synapseContext, queryClient, theme }) => {
     return (
       <SynapseContext.Provider value={synapseContext}>
         <QueryClientProvider client={queryClient ?? defaultQueryClient}>
-          {synapseContext?.withErrorBoundary ? (
-            <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
-          ) : (
-            children
-          )}
+          <ThemeProvider theme={theme}>
+            {synapseContext?.withErrorBoundary ? (
+              <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
+            ) : (
+              children
+            )}
+          </ThemeProvider>
         </QueryClientProvider>
       </SynapseContext.Provider>
     )
