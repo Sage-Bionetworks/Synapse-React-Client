@@ -1,9 +1,4 @@
-import {
-  faDatabase,
-  faLink,
-  faUnlockAlt,
-  faLock,
-} from '@fortawesome/free-solid-svg-icons'
+import { faDatabase, faLink } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { mount } from 'enzyme'
 import {
@@ -33,6 +28,7 @@ import {
   SynapseTestContext,
 } from '../../../mocks/MockSynapseContext'
 import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
+import IconSvg from '../../../lib/containers/IconSvg'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const entityId = 'syn9988882982'
@@ -112,9 +108,9 @@ describe('basic tests', () => {
 
     await resolveAllPending(wrapper)
 
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('accessOpen')
     // no access restrictions
     expect(wrapper.find('button')).toHaveLength(0)
   })
@@ -129,9 +125,9 @@ describe('basic tests', () => {
     const { wrapper } = renderComponent(props)
     await resolveAllPending(wrapper)
 
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('accessOpen')
     // no access restrictions
     expect(wrapper.find('button')).toHaveLength(0)
   })
@@ -142,9 +138,9 @@ describe('basic tests', () => {
       isInDownloadList: false,
       fileHandle: externalFileHandle,
     })
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('accessOpen')
     // no access restrictions
     expect(wrapper.find('button')).toHaveLength(0)
   })
@@ -227,9 +223,9 @@ describe('basic tests', () => {
       isInDownloadList: false,
       fileHandle: tooLargeFileHandle,
     })
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('accessOpen')
     // no access restrictions
     expect(wrapper.find('button')).toHaveLength(0)
   })
@@ -251,9 +247,9 @@ describe('basic tests', () => {
       ...props,
       fileHandle: IsOpenNoUnmetAccessRestrictions,
     })
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faUnlockAlt)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('accessOpen')
   })
 
   it('works with unmet controlled access data AND an UNAUTHORIZED ACL', async () => {
@@ -277,9 +273,9 @@ describe('basic tests', () => {
       mockUnmetControlledDataRestrictionInformationACT,
     )
 
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faLock)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('accessClosed')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[
@@ -310,9 +306,9 @@ describe('basic tests', () => {
       mockOpenRestrictionInformation,
     )
 
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faLock)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('accessClosed')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[FileHandleDownloadTypeEnum.AccessBlockedByACL]
