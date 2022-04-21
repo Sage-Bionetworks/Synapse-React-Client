@@ -1,10 +1,12 @@
-import React, { useContext } from 'react'
+import { merge } from 'lodash'
+import React, { useContext, useMemo } from 'react'
+import DeepPartial from '../types/DeepPartial'
 
 /**
- * TODO: Ensure the default colors here match the default colors in _variables.scss
+ * TODO: Ensure the default colors here match the default colors in _variables.scss, ideally having a single point of control
  */
 
-const defaultTheme: ThemeContextType = {
+export const defaultSynapseTheme: SynapseTheme = {
   colors: {
     success: '#32a330',
     info: '#017fa5',
@@ -13,7 +15,7 @@ const defaultTheme: ThemeContextType = {
   },
 }
 
-export type ThemeContextType = {
+export type SynapseTheme = {
   colors: {
     success: string
     info: string
@@ -25,23 +27,34 @@ export type ThemeContextType = {
 /**
  * This must be exported to use the context in class components.
  */
-export const ThemeContext = React.createContext<ThemeContextType>(defaultTheme)
+export const ThemeContext =
+  React.createContext<SynapseTheme>(defaultSynapseTheme)
 
 export type ThemeProviderProps = {
-  theme?: ThemeContextType
+  theme?: DeepPartial<SynapseTheme>
+}
+
+export function mergeTheme(theme: DeepPartial<SynapseTheme>): SynapseTheme {
+  // TODO: Handle merging color palettes where an entire palette can be generated from a single base color.
+  return merge({}, defaultSynapseTheme, theme)
 }
 
 export const ThemeProvider: React.FunctionComponent<ThemeProviderProps> = ({
-  theme = defaultTheme,
+  theme = defaultSynapseTheme,
   children,
 }) => {
-  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+  const mergedTheme = useMemo(() => mergeTheme(theme), [theme])
+  return (
+    <ThemeContext.Provider value={mergedTheme}>
+      {children}
+    </ThemeContext.Provider>
+  )
 }
 
-export function useTheme(): ThemeContextType {
+export function useTheme(): SynapseTheme {
   const context = useContext(ThemeContext)
   if (context === undefined) {
-    return defaultTheme
+    return defaultSynapseTheme
   }
   return context
 }
