@@ -1234,6 +1234,7 @@ hr ~ .SRC-wrapper {
 // You can force normal link style by adding the "secondary-links" css class a container of your anchor.
 // Or force the highlighted primary link by adding "highlight-link" css class name to an anchor.
 main,
+.modal,
 #rootPanel {
   a:not(.btn),
   .bootstrap-4-backport a:not(.btn),
@@ -1252,7 +1253,8 @@ main,
   .markdown a,
   .SRC-userCardName a,
   a.highlight-link,
-  details > summary {
+  details > summary,
+  .modal-body a:not(.btn) {
     &:not(.btn) {
       @include SRC_Mixins.highlightLink;
       &:visited,
