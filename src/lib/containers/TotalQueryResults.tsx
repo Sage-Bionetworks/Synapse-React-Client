@@ -13,6 +13,7 @@ import {
 } from '../utils/functions/getDataFromFromStorage'
 import {
   ColumnModel,
+  ColumnType,
   EntityHeader,
   FacetColumnRequest,
   FacetColumnResult,
@@ -141,12 +142,12 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         facet.facetValues.forEach(facetValue => {
           if (facetValue.isSelected) {
             let displayValue = facetValue.value
-            if (columnModel?.columnType === 'ENTITYID') {
+            if (columnModel?.columnType === ColumnType.ENTITYID || columnModel?.columnType === ColumnType.ENTITYID_LIST) {
               displayValue = getDisplayValueForEntityColumn(
                 lookUpEntityHeaders,
                 facetValue.value,
               )
-            } else if (columnModel?.columnType === 'USERID') {
+            } else if (columnModel?.columnType === ColumnType.USERID || columnModel?.columnType === ColumnType.USERID_LIST) {
               displayValue = getDisplayValueUserIdColumn(
                 lookUpUserProfiles,
                 facetValue.value,

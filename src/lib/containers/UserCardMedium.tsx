@@ -248,7 +248,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
                 {`${userName}@synapse.org`}
               </a>
             </span>
-            {IconCopy}
+            <IconCopy />
           </p>
         )}
         {ORCIDHref && (

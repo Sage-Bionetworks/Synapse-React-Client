@@ -2,6 +2,7 @@ import 'regenerator-runtime/runtime'
 import 'react-app-polyfill/ie11'
 import 'react-app-polyfill/stable'
 import MarkdownSynapse from './containers/MarkdownSynapse'
+import MarkdownCollapse from './containers/MarkdownCollapse'
 import { QueryWrapper } from './containers/QueryWrapper'
 import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
 import HasAccess from './containers/HasAccess'
@@ -80,6 +81,7 @@ const SynapseComponents = {
   UserCard,
   QueryCount,
   Markdown: MarkdownSynapse,
+  MarkdownCollapse,
   ModalDownload,
   SynapseFormWrapper,
   SynapseFormSubmissionsGrid,

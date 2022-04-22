@@ -44,6 +44,7 @@ export type MarkdownSynapseProps = {
   markdown?: string
   renderInline?: boolean
   objectType?: ObjectType
+  onMarkdownProcessingDone?: (ref:HTMLInputElement|null)=>void
 }
 const md = markdownit({ html: true })
 
@@ -688,6 +689,9 @@ export default class MarkdownSynapse extends React.Component<
   public async componentDidMount() {
     if (this.state.data.markdown) {
       this.setState({ isLoading: false })
+      if (this.props.onMarkdownProcessingDone) {
+        this.props.onMarkdownProcessingDone(this.markupRef.current)
+      }
       return
     }
     // we use this.markupRef.current && because in testing environment refs aren't defined
@@ -700,6 +704,9 @@ export default class MarkdownSynapse extends React.Component<
     await this.getWikiPageMarkdown()
     this.processMath()
     this.setState({ isLoading: false })
+    if (this.props.onMarkdownProcessingDone) {
+      this.props.onMarkdownProcessingDone(this.markupRef.current)
+    }
   }
 
   // on component update find and re-render the math/widget items accordingly

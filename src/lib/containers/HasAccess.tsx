@@ -16,13 +16,7 @@
  */
 
 import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCircle,
-  faDatabase,
-  faLink,
-  faUnlockAlt,
-  faLock,
-} from '@fortawesome/free-solid-svg-icons'
+import { faCircle, faDatabase, faLink } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import ReactTooltip from 'react-tooltip'
@@ -50,8 +44,9 @@ import AccessRequirementList, {
 } from './access_requirement_list/AccessRequirementList'
 import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 import { SynapseContext } from '../utils/SynapseContext'
+import IconSvg from './IconSvg'
+import { ThemeContext } from '../utils/hooks/useTheme'
 
-library.add(faUnlockAlt)
 library.add(faDatabase)
 library.add(faCircle)
 
@@ -301,7 +296,18 @@ export default class HasAccess extends React.Component<
       })
   }
 
-  renderIconHelper = (iconProp: IconProp, classColor: string) => {
+  renderIconSvg(icon: string, color: string) {
+    return (
+      <IconSvg
+        options={{
+          icon: icon,
+          color: color,
+        }}
+      />
+    )
+  }
+
+  renderFontAwesomeIcon = (iconProp: IconProp, classColor: string) => {
     return (
       <span className="fa-layers fa-fw">
         <FontAwesomeIcon
@@ -327,24 +333,36 @@ export default class HasAccess extends React.Component<
   ) => {
     // if there are any access restrictions
     if (restrictionInformation?.hasUnmetAccessRequirement) {
-      return this.renderIconHelper(faLock, 'SRC-warning-color')
+      return (
+        <ThemeContext.Consumer>
+          {theme => this.renderIconSvg('accessClosed', theme.colors.warning)}
+        </ThemeContext.Consumer>
+      )
     }
     switch (downloadType) {
       // fileHandle available
       case FileHandleDownloadTypeEnum.ExternalFileLink:
       case FileHandleDownloadTypeEnum.ExternalCloudFile:
-        return this.renderIconHelper(faLink, 'SRC-warning-color')
+        return this.renderFontAwesomeIcon(faLink, 'SRC-warning-color')
       case FileHandleDownloadTypeEnum.TooLarge:
-        return this.renderIconHelper(faDatabase, 'SRC-danger-color')
+        return this.renderFontAwesomeIcon(faDatabase, 'SRC-danger-color')
       // was FileEntity, but no fileHandle was available
       case FileHandleDownloadTypeEnum.AccessBlockedByACL:
       case FileHandleDownloadTypeEnum.AccessBlockedToAnonymous:
-        return this.renderIconHelper(faLock, 'SRC-warning-color')
+        return (
+          <ThemeContext.Consumer>
+            {theme => this.renderIconSvg('accessClosed', theme.colors.warning)}
+          </ThemeContext.Consumer>
+        )
       // was a FileEntity, and fileHandle was available
       case FileHandleDownloadTypeEnum.Accessible:
       // or was not a FileEntity, but no unmet access restrictions
       case FileHandleDownloadTypeEnum.NoFileHandle:
-        return this.renderIconHelper(faUnlockAlt, 'SRC-success-color')
+        return (
+          <ThemeContext.Consumer>
+            {theme => this.renderIconSvg('accessOpen', theme.colors.success)}
+          </ThemeContext.Consumer>
+        )
       default:
         // nothing is rendered until access requirement is loaded
         return <></>
@@ -411,7 +429,8 @@ export default class HasAccess extends React.Component<
           style={{
             fontSize: '14px',
             cursor: 'pointer',
-            marginLeft: '10px',
+            marginLeft: '5px',
+            verticalAlign: 'middle',
           }}
           className={this.props.className}
           onClick={this.handleGetAccess}
