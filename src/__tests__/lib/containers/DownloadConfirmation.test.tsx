@@ -178,7 +178,7 @@ describe('DownloadConfirmation', () => {
     renderComponent(props)
 
     await waitFor(() =>
-      screen.getByText('You already have files in your download list', {
+      screen.getByText('Files that you add will be mixed in with the files already in your download list', {
         exact: false,
       }),
     )
