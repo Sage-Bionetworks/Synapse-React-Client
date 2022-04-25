@@ -91,11 +91,9 @@ const StatusConstruct: UiStateDictionary = {
     className: 'alert-info',
     infoText: (
       <>
-        You already have files in your download list, which will be mixed with
-        new files added to your download list.
+        Note: Files that you add will be mixed in with the files already in your download list.
         <br />
-        We recommend completing or clearing your download list before adding
-        these files.
+        If you don’t want to mix these files, clear your download list before continuing.
       </>
     ),
     closeText: 'Cancel',
