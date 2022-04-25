@@ -35,7 +35,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const { accessToken } = useSynapseContext()
 
   const [state, setState] = useState<State>({
-    isLoading: !!numBytes, // loading=true (to figure out the estimated download time) iff we were given a byte count
+    isLoading: !!numBytes, // figure out the estimated download time iff we were given a byte count
     downloadSpeed: 0,
   })
   const { isLoading, downloadSpeed } = state
