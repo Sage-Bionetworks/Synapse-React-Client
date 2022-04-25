@@ -60,8 +60,6 @@ describe('it performs all functionality', () => {
       )
     })
     expect(container.querySelectorAll('svg.SRC-inactive')).toHaveLength(1)
-    expect(screen.queryByTestId('numBytesUI')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('downloadTimeEstimateUI')).not.toBeInTheDocument()
   })
   it('renders with undefined bytes', async () => {
     await act(async () => {
