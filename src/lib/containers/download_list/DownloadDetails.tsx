@@ -16,7 +16,7 @@ library.add(faClock)
 
 export type DownloadDetailsProps = {
   numFiles: number
-  numBytes: number
+  numBytes?: number
 }
 
 type State = {
@@ -31,13 +31,14 @@ type State = {
  * @returns
  */
 export default function DownloadDetails(props: DownloadDetailsProps) {
+  const { numFiles, numBytes } = props
+  const { accessToken } = useSynapseContext()
+
   const [state, setState] = useState<State>({
-    isLoading: true,
+    isLoading: !!numBytes,
     downloadSpeed: 0,
   })
-  const { accessToken } = useSynapseContext()
   const { isLoading, downloadSpeed } = state
-  const { numFiles, numBytes } = props
 
   useEffect(() => {
     if (accessToken) {
@@ -51,28 +52,33 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   }, [accessToken])
 
   const timeEstimateInSeconds =
-    isLoading || downloadSpeed === 0 ? 0 : numBytes / downloadSpeed
+    isLoading || downloadSpeed === 0 || !numBytes ? 0 : numBytes / downloadSpeed
+  const isTimeEstimateLoading = timeEstimateInSeconds === 0
   const friendlyTime =
-    timeEstimateInSeconds === 0
+    isTimeEstimateLoading
       ? ''
       : moment.duration(timeEstimateInSeconds, 'seconds').humanize()
   const numBytesTooltipId = 'num_bytes_id'
   const friendlyTimeTooltipId = 'friendly_time_id'
-  const isInactive = numFiles === 0 || timeEstimateInSeconds === 0
-  const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
+
+  const isZeroFiles = numFiles === 0
+  const fileCountIconClass = isZeroFiles ? 'SRC-inactive' : 'SRC-primary-text-color'
+
+  const timeEstimateIconClass = isTimeEstimateLoading ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
     <span className="download-details-container">
       <span>
-        <FontAwesomeIcon className={iconClassName} icon="file" />
-        {isInactive ? (
+        <FontAwesomeIcon className={fileCountIconClass} icon="file" />
+        {isZeroFiles ? (
           <SkeletonInlineBlock width={50} />
         ) : (
           <> {numFiles}&nbsp;files </>
         )}
       </span>
-      <span
+      {numBytes && <span
         data-for={numBytesTooltipId}
         data-tip="This is the total size of all files. Zipped package(s) will likely be smaller."
+        data-testid="numBytesUI"
       >
         <ReactTooltip
           delayShow={TOOLTIP_DELAY_SHOW}
@@ -81,16 +87,17 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           effect="solid"
           id={numBytesTooltipId}
         />
-        <FontAwesomeIcon className={iconClassName} icon="database" />
-        {isInactive ? (
+        <FontAwesomeIcon className={timeEstimateIconClass} icon="database" />
+        {isTimeEstimateLoading ? (
           <SkeletonInlineBlock width={50} />
         ) : (
           calculateFriendlyFileSize(numBytes)
         )}
-      </span>
-      <span
+      </span>}
+      {numBytes && <span
         data-for={friendlyTimeTooltipId}
         data-tip="This is an estimate of how long package download will take."
+        data-testid="downloadTimeEstimateUI"
       >
         <ReactTooltip
           delayShow={TOOLTIP_DELAY_SHOW}
@@ -99,13 +106,13 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           effect="solid"
           id={friendlyTimeTooltipId}
         />
-        <FontAwesomeIcon className={iconClassName} icon="clock" />
+        <FontAwesomeIcon className={timeEstimateIconClass} icon="clock" />
         {isLoading && numFiles > 0 ? (
           <SkeletonInlineBlock width={50} />
         ) : (
           friendlyTime
         )}
-      </span>
+      </span>}
     </span>
   )
 }
