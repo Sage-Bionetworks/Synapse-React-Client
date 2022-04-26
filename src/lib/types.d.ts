@@ -1,4 +1,3 @@
-declare module 'sql-parser'
 declare module 'sql-parser' {
   const lexer: {
     tokenize: (input: string) => string[][]

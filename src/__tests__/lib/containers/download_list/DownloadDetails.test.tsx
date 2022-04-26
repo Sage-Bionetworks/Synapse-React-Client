@@ -5,8 +5,9 @@ import DownloadDetails, {
 import ReactDOM from 'react-dom'
 import { act } from 'react-dom/test-utils'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
+import { screen } from '@testing-library/react'
 
-describe('it performs all functionality ', () => {
+describe('it performs all functionality', () => {
   let container: HTMLDivElement
   beforeEach(() => {
     container = document.createElement('div')
@@ -49,7 +50,7 @@ describe('it performs all functionality ', () => {
       container.querySelectorAll('svg.SRC-primary-text-color'),
     ).toHaveLength(3)
   })
-  it('renders with all the fields nulled out', async () => {
+  it('renders with the numFiles is 0', async () => {
     await act(async () => {
       ReactDOM.render(
         <SynapseTestContext>
@@ -58,6 +59,18 @@ describe('it performs all functionality ', () => {
         container,
       )
     })
-    expect(container.querySelectorAll('svg.SRC-inactive')).toHaveLength(3)
+    expect(container.querySelectorAll('svg.SRC-inactive')).toHaveLength(1)
+  })
+  it('renders with undefined bytes', async () => {
+    await act(async () => {
+      ReactDOM.render(
+        <SynapseTestContext>
+          <DownloadDetails {...{ ...props, numBytes: undefined }} />
+        </SynapseTestContext>,
+        container,
+      )
+    })
+    expect(screen.queryByTestId('numBytesUI')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('downloadTimeEstimateUI')).not.toBeInTheDocument()
   })
 })

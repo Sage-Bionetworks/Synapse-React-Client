@@ -91,11 +91,9 @@ const StatusConstruct: UiStateDictionary = {
     className: 'alert-info',
     infoText: (
       <>
-        You already have files in your download list, which will be mixed with
-        new files added to your download list.
+        Note: Files that you add will be mixed in with the files already in your download list.
         <br />
-        We recommend completing or clearing your download list before adding
-        these files.
+        If you don’t want to mix these files, clear your download list before continuing.
       </>
     ),
     closeText: 'Cancel',
@@ -126,7 +124,7 @@ const StatusConstruct: UiStateDictionary = {
 const DownloadConfirmationContent = (props: {
   status: StatusEnum
   fileCount: number
-  fileSize: number
+  fileSize?: number
 }): JSX.Element => {
   switch (props.status) {
     case StatusEnum.LOADING_INFO:
@@ -179,7 +177,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
     )
 
     const [fileCount, setFileCount] = useState(0)
-    const [fileSize, setFileSize] = useState(0)
+    const [fileSize, setFileSize] = useState<number>()
 
     const { data: downloadListStatistics, refetch } =
       useGetDownloadListStatistics()
@@ -197,7 +195,6 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
           const hasFilesInDownloadList =
             downloadListStatistics.totalNumberOfFiles > 0
 
-          const size = bytes ?? 0
           const fileCount = count ?? 0
           setStatus(
             hasFilesInDownloadList
@@ -205,7 +202,7 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
               : StatusEnum.INFO,
           )
           setFileCount(fileCount)
-          setFileSize(size)
+          setFileSize(bytes)
         }
       },
       [accessToken],
@@ -248,9 +245,10 @@ export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationP
 
     useDeepCompareEffect(() => {
       if (queryResultBundle && downloadListStatistics) {
+        const isGreaterThanReportedValue = queryResultBundle.sumFileSizes?.greaterThan
         updateStats(
           queryResultBundle.queryCount,
-          queryResultBundle.sumFileSizes?.sumFileSizesBytes,
+          isGreaterThanReportedValue ? undefined : queryResultBundle.sumFileSizes?.sumFileSizesBytes,
           downloadListStatistics,
         )
       }

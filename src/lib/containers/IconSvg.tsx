@@ -34,6 +34,8 @@ import {
   Code,
   GridOnTwoTone,
   RemoveCircleTwoTone,
+  LockOpenTwoTone,
+  VpnKeyTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -90,6 +92,10 @@ const getIcon = (options: IconSvgOptions) => {
   }
 
   switch (icon) {
+    case 'accessOpen':
+      return <LockOpenTwoTone style={customSvgStyle} />
+    case 'accessClosed':
+      return <VpnKeyTwoTone style={customSvgStyle} />
     case 'arrowBack':
       return <ArrowBackIos style={muiSvgStyle} />
     case 'arrowForward':

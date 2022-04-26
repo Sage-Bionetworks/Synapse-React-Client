@@ -101,16 +101,6 @@ export type QueryWrapperProps = {
   lockedFacet?: LockedFacet
 }
 
-export type TopLevelControlsState = {
-  showFacetVisualization: boolean
-  showFacetFilter: boolean
-  showColumnFilter: boolean
-  showSearchBar: boolean
-  showDownloadConfirmation: boolean
-  showColumnSelectDropdown: boolean
-  showSqlEditor: boolean
-}
-
 export type SearchQuery = {
   columnName: string
   searchText: string

@@ -6,11 +6,13 @@ import { QueryResultBundle } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import QueryCount from '../QueryCount'
-import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import {
+  TopLevelControlsState,
+  useQueryVisualizationContext,
+} from '../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
-  TopLevelControlsState,
 } from '../QueryWrapper'
 import { useQueryContext } from '../QueryWrapper'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'

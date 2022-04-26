@@ -3,12 +3,17 @@
 
 .SRC-arrow-icon,
 .Icon-Plus,
-.Icon-Minus {
+.Icon-Minus,
+.Icon-Copy.primary {
   path {
     fill: SRC.$primary-action-color;
   }
 }
-
+.Icon-Copy {
+  path {
+    fill: #DCDCDC;
+  }
+}
 .SRC-java-icon,
 .SRC-r-icon,
 .SRC-python-icon {
