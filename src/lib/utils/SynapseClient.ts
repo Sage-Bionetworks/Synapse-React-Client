@@ -3269,6 +3269,27 @@ export const bindOAuthProviderToAccount = async (
   )
 }
 
+/**
+ * Remove an alias associated with an account via the OAuth mechanism.
+ * http://rest-docs.synapse.org/rest/DELETE/oauth2/alias.html
+ * @param provider
+ * @param accessToken 
+ * @param alias
+ */
+export const unbindOAuthProviderToAccount = async(
+  provider: string,
+  accessToken: string | undefined,
+  alias: string,
+) => {
+  const url = `/auth/v1/oauth2/alias?provider=${provider}&alias=${encodeURIComponent(alias)}`
+  return doDelete(
+    url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
 //http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
 export const signSynapseTermsOfUse = (accessToken: string) => {
   return doPost(
