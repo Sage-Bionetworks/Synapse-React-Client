@@ -122,7 +122,10 @@ import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/Access
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
 import { AuthenticatedOn } from './synapseTypes/AuthenticatedOn'
 import { ChallengePagedResults } from './synapseTypes/ChallengePagedResults'
-import { ChangePasswordWithCurrentPassword, ChangePasswordWithToken } from './synapseTypes/ChangePasswordRequests'
+import {
+  ChangePasswordWithCurrentPassword,
+  ChangePasswordWithToken,
+} from './synapseTypes/ChangePasswordRequests'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
@@ -469,7 +472,7 @@ export const getFileHandleByIdURL = (
  * Get a completed asynchronous job. Will refetch every 500ms until COMPLETE or FAILED.
  * @param asyncJobId
  * @param accessToken
- * @param setCurrentAsyncResult - optional function that will receive the AsynchronousJobStatus object every time
+ * @param setCurrentAsyncStatus - optional function that will receive the AsynchronousJobStatus object every time
  *   it's fetched, including while it is in the "PROCESSING" state.
  * @returns
  */
@@ -477,7 +480,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
   asyncJobId: string,
   responseBodyEndpoint: string,
   accessToken?: string,
-  setCurrentAsyncResult?: (
+  setCurrentAsyncStatus?: (
     result: AsynchronousJobStatus<TRequest, TResponse>,
   ) => void,
 ): Promise<AsynchronousJobStatus<TRequest, TResponse>> => {
@@ -487,7 +490,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  setCurrentAsyncResult?.(response)
+  setCurrentAsyncStatus?.(response)
   while (response.jobState && response.jobState === 'PROCESSING') {
     await delay(500)
     response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
@@ -496,7 +499,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
-    setCurrentAsyncResult?.(response)
+    setCurrentAsyncStatus?.(response)
   }
 
   if (response.jobState === 'FAILED') {
@@ -504,7 +507,7 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
      * While we technically already have the failure reason in the response, the HTTP response doesn't give a helpful error code (e.g. 403)
      * that we can use for an error banner. We can get the HTTP code if we fetch the response body directly.
      */
-    doGet<TResponse>(
+    await doGet<TResponse>(
       responseBodyEndpoint,
       accessToken,
       undefined,
@@ -544,6 +547,9 @@ export const getAsyncResultBodyFromJobId = async <TResponse>(
 export const getQueryTableAsyncJobResults = async (
   queryBundleRequest: QueryBundleRequest,
   accessToken?: string,
+  setCurrentAsyncStatus?: (
+    result: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  ) => void,
 ): Promise<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>> => {
   const asyncJobId = await doPost<AsyncJobId>(
     TABLE_QUERY_ASYNC_START(queryBundleRequest.entityId),
@@ -556,6 +562,7 @@ export const getQueryTableAsyncJobResults = async (
     asyncJobId.token,
     TABLE_QUERY_ASYNC_GET(queryBundleRequest.entityId, asyncJobId.token),
     accessToken,
+    setCurrentAsyncStatus,
   )
 }
 
@@ -3273,20 +3280,22 @@ export const bindOAuthProviderToAccount = async (
  * Remove an alias associated with an account via the OAuth mechanism.
  * http://rest-docs.synapse.org/rest/DELETE/oauth2/alias.html
  * @param provider
- * @param accessToken 
+ * @param accessToken
  * @param alias
  */
-export const unbindOAuthProviderToAccount = async(
+export const unbindOAuthProviderToAccount = async (
   provider: string,
   accessToken: string | undefined,
   alias: string,
 ) => {
-  const url = `/auth/v1/oauth2/alias?provider=${provider}&alias=${encodeURIComponent(alias)}`
+  const url = `/auth/v1/oauth2/alias?provider=${provider}&alias=${encodeURIComponent(
+    alias,
+  )}`
   return doDelete(
     url,
     accessToken,
     undefined,
-    BackendDestinationEnum.REPO_ENDPOINT
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -3338,19 +3347,19 @@ export const changePasswordWithToken = (
     newPassword,
     undefined,
     undefined,
-    BackendDestinationEnum.REPO_ENDPOINT
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
 // http://rest-docs.synapse.org/rest/POST/user/password/reset.html
-export const resetPassword = (
-  email: string,
-) => {
-  const endpoint = window.location.href  + '?passwordResetToken='
-  const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(endpoint)}`
+export const resetPassword = (email: string) => {
+  const endpoint = window.location.href + '?passwordResetToken='
+  const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(
+    endpoint,
+  )}`
   return doPost(
     url,
-    {email},
+    { email },
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3372,7 +3381,7 @@ export const addEmailAddressStep1 = (
 ) => {
   return doPost(
     `/repo/v1/account/${userId}/emailValidation?portalEndpoint=${portalEndpoint}`,
-    {email},
+    { email },
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3404,8 +3413,8 @@ export const addEmailAddressStep2 = (
  */
 export const deleteEmail = (
   accessToken: string | undefined,
-  email?: string
- ) => {
+  email?: string,
+) => {
   return doDelete(
     `/repo/v1/email?email=${email}`,
     accessToken,
@@ -3419,13 +3428,13 @@ export const deleteEmail = (
  * @param email
  * @param accessToken
  */
- export const updateNotificationEmail = (
+export const updateNotificationEmail = (
   email: string,
   accessToken: string | undefined,
 ) => {
   return doPut(
     '/repo/v1/notificationEmail',
-    {email},
+    { email },
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

@@ -39,6 +39,9 @@ export function useInfiniteQueryResultBundle(
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
   >,
+  setCurrentAsyncStatus?: (
+    status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  ) => void,
 ) {
   const { accessToken } = useSynapseContext()
 
@@ -68,6 +71,7 @@ export function useInfiniteQueryResultBundle(
               : queryBundleRequest.partMask,
         },
         accessToken,
+        setCurrentAsyncStatus,
       )
     },
     {
