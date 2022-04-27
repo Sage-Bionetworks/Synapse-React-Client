@@ -22,7 +22,8 @@
         .FacetNav,
         .FilterAndView,
         .TopLevelControls,
-        .QueryWrapperTextInput,
+        .QueryWrapperSearchInput,
+        .QueryWrapperSqlEditorInput,
         .ErrorBannerWrapper {
             margin-left: 30px;
         }
@@ -61,21 +62,25 @@
       .download-confirmation {
         grid-row: 2 / span 1;
       }
-      .QueryWrapperTextInput {
+      .QueryWrapperSearchInput {
         grid-row: 3 / span 1;
         margin-bottom: 10px;
       }
-      .TotalQueryResults {
+      .QueryWrapperSqlEditorInput {
         grid-row: 4 / span 1;
+        margin-bottom: 10px;
       }
-      .ErrorBannerWrapper {
+      .TotalQueryResults {
         grid-row: 5 / span 1;
       }
-      .FacetNav {
+      .ErrorBannerWrapper {
         grid-row: 6 / span 1;
       }
-      .FilterAndView {
+      .FacetNav {
         grid-row: 7 / span 1;
+      }
+      .FilterAndView {
+        grid-row: 8 / span 1;
       }
 
       // column (depends on if we are showing facet filters)
@@ -94,7 +99,8 @@
         &.TotalQueryResults,
         &.FilterAndView,
         &.TopLevelControls,
-        &.QueryWrapperTextInput,
+        &.QueryWrapperSearchInput,
+        &.QueryWrapperSqlEditorInput,
         &.ErrorBannerWrapper {
           grid-column: 5 / span 1;
         }

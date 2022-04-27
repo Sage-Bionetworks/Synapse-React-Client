@@ -46,16 +46,16 @@ export function SqlEditor() {
 
   return (
     <div
-      className={`QueryWrapperTextInput ${
+      className={`QueryWrapperSqlEditorInput ${
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
     >
       <Collapse in={showSqlEditor} timeout={{ enter: 300, exit: 300 }}>
-        <form className="QueryWrapperTextInput__searchbar" onSubmit={search}>
+        <form className="QueryWrapperSqlEditorInput__searchbar" onSubmit={search}>
           <FontAwesomeIcon
-            className="QueryWrapperTextInput__searchbar__searchicon"
+            className="QueryWrapperSqlEditorInput__searchbar__searchicon"
             size={'sm'}
             icon={'search'}
           />

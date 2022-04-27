@@ -70,16 +70,16 @@ export function FullTextSearch() {
 
   return (
     <div
-      className={`QueryWrapperTextInput ${
+      className={`QueryWrapperSearchInput ${
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
     >
       <Collapse in={showSearchBar} timeout={{ enter: 300, exit: 300 }}>
-        <form className="QueryWrapperTextInput__searchbar" onSubmit={search}>
+        <form className="QueryWrapperSearchInput__searchbar" onSubmit={search}>
           <FontAwesomeIcon
-            className="QueryWrapperTextInput__searchbar__searchicon"
+            className="QueryWrapperSearchInput__searchbar__searchicon"
             size={'sm'}
             icon={'search'}
           />
@@ -93,7 +93,7 @@ export function FullTextSearch() {
           />
           {searchText.length > 0 && (
             <button
-              className="QueryWrapperTextInput__searchbar__clearbutton"
+              className="QueryWrapperSearchInput__searchbar__clearbutton"
               type="button"
               onClick={() => {
                 setSearchText('')
