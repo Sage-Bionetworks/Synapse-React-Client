@@ -507,14 +507,17 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
      * While we technically already have the failure reason in the response, the HTTP response doesn't give a helpful error code (e.g. 403)
      * that we can use for an error banner. We can get the HTTP code if we fetch the response body directly.
      */
-    await doGet<TResponse>(
+    const failureResponse = await doGet<TResponse>(
       responseBodyEndpoint,
       accessToken,
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
+    console.warn(
+      'SynapseClient.getAsyncResultFromJobId should have thrown an error, but instead retrieved the following response:',
+      failureResponse,
+    )
   }
-
   return response
 }
 
