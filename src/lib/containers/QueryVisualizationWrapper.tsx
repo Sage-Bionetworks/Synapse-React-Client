@@ -60,6 +60,7 @@ export type QueryVisualizationWrapperProps = {
   visibleColumnCount?: number
   hiddenColumns?: string[]
   defaultShowFacetVisualization?: boolean
+  defaultShowSearchBar?: boolean
 }
 
 export type TopLevelControlsState = {
@@ -87,7 +88,7 @@ export function QueryVisualizationWrapper(
       showColumnFilter: true,
       showFacetFilter: true,
       showFacetVisualization: props.defaultShowFacetVisualization ?? true,
-      showSearchBar: false,
+      showSearchBar: props.defaultShowSearchBar ?? false,
       showDownloadConfirmation: false,
       showColumnSelectDropdown: false,
       showSqlEditor: false,

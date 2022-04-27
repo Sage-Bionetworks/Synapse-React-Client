@@ -2,7 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Collapse } from '@material-ui/core'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '../utils/synapseTypes/Table/QueryFilter'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
@@ -24,12 +24,6 @@ export function FullTextSearch() {
   } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (showSearchBar) {
-      searchInputRef.current?.focus()
-    }
-  }, [showSearchBar])
 
   const search = (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
