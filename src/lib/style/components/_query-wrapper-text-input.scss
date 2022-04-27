@@ -1,6 +1,6 @@
 @use '../abstracts/variables' as SRC;
 
-.QueryWrapperTextInput {
+.QueryWrapperSearchInput, .QueryWrapperSqlEditorInput {
   &__searchbar {
     height: 50px;
     background: #f9f9f9;
@@ -78,7 +78,7 @@
     width: 100%;
   }
 
-  &__column-select.QueryWrapperTextInput__animate_height {
+  &__column-select.QueryWrapperSearchInput__animate_height {
     overflow: scroll;
   }
 
