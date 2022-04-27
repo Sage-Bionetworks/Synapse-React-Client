@@ -3,7 +3,7 @@ import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { lexer } from 'sql-parser'
-import { ReactComponent as NoData } from '../../assets/icons/file-dotted.svg'
+import NoData from '../../assets/icons/NoData'
 import { SynapseClient } from '../../utils'
 import {
   hasFilesInView,
@@ -377,7 +377,7 @@ export default class SynapseTable extends React.Component<
       } else {
         return (
           <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-            <NoData />
+            {NoData}
             <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
               This table is currently empty
             </div>
