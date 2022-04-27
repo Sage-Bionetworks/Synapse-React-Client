@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { getEntityHeadersByIds } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
+import { EntityLink } from './EntityLink'
 
 export type EntityIdListProps = {
   entityIdList: string[]
@@ -10,7 +11,7 @@ export type EntityIdListProps = {
 const EntityIdList: React.FC<EntityIdListProps> = props => {
   const { accessToken } = useSynapseContext()
   const { entityIdList } = props
-  const [entityNameList, setEntityNameList] = useState<string>('')
+  const [entityLinkArray, setEntityLinkArray] = useState([<></>])
   const { ref, inView } = useInView()
   let mounted: boolean = true
 
@@ -28,15 +29,17 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
 
     getEntityHeadersByIds(entityIdList, accessToken)
       .then(entity => {
-        const list = entity.results.map(el => el.name).join(', ')
-        setEntityNameList(list)
+        const newEntityList = entity.results.map(el => {
+          return <EntityLink entity={el} key={el.id} />
+        })
+        setEntityLinkArray(newEntityList)
       })
       .catch(e => {
-        console.log('EntityIdList: Error getting entity header names', e)
+        console.log('EntityIdList: Error getting entity headers', e)
       })
   }
 
-  return <span ref={ref}>{entityNameList}</span>
+  return <span ref={ref}>{entityLinkArray}</span>
 }
 
 export default EntityIdList
