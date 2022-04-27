@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/Synapse-React-Client/build/bundle.0b54304b.js",
+    "main.js": "/Synapse-React-Client/build/bundle.6930f5f0.js",
     "main.css": "/Synapse-React-Client/static/css/main.98c4d40e.css",
     "static/media/json-form-tool-no-submissions.svg": "/Synapse-React-Client/static/media/json-form-tool-no-submissions.fec08af7d31dc589a0aae87aeb81f6c5.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.e6c377472cce05af7f16f64c513a3e4c.svg",
@@ -10,13 +10,11 @@
     "static/media/DNA_Two.svg": "/Synapse-React-Client/static/media/DNA_Two.70bdaef96892e579a3566d66f2e1a950.svg",
     "static/media/circle.svg": "/Synapse-React-Client/static/media/circle.f459176fce9562b2c7b396b18593dd2f.svg",
     "static/media/brain.svg": "/Synapse-React-Client/static/media/brain.c57c711a367668a3ea71d07c97a562ea.svg",
-    "static/media/NoSearchResults.svg": "/Synapse-React-Client/static/media/NoSearchResults.3df249a3b2a1ae4ca22f5b5534df20f9.svg",
     "static/media/no-access.svg": "/Synapse-React-Client/static/media/no-access.0e94665de4977ec86780f2c5fd49e8b9.svg",
     "static/media/mouse.svg": "/Synapse-React-Client/static/media/mouse.c553a72d71457d46e730954aa9909603.svg",
     "static/media/study-active.svg": "/Synapse-React-Client/static/media/study-active.2c026b9e1126cd51ef2021904e07eb49.svg",
     "static/media/study-complete.svg": "/Synapse-React-Client/static/media/study-complete.9e7172baeea668805c53cff4ac1d2e28.svg",
     "static/media/resiliencead.svg": "/Synapse-React-Client/static/media/resiliencead.6c9aa92238be65b159928054bafc5394.svg",
-    "static/media/file-dotted.svg": "/Synapse-React-Client/static/media/file-dotted.26331297dafc98bad92e95758debcc10.svg",
     "index.html": "/Synapse-React-Client/index.html",
     "static/media/account-certified.svg": "/Synapse-React-Client/static/media/account-certified.89e6d8f6346f891e172d67e3e622a1b9.svg",
     "static/media/file.svg": "/Synapse-React-Client/static/media/file.8b3947aef146eabf0f48b4c0832684b7.svg",
@@ -31,7 +29,7 @@
     "static/media/chart2.svg": "/Synapse-React-Client/static/media/chart2.e4b5d61ed9ee4e10a0d6aeecede76d5e.svg"
   },
   "entrypoints": [
-    "build/bundle.0b54304b.js",
+    "build/bundle.6930f5f0.js",
     "static/css/main.98c4d40e.css"
   ]
 }
