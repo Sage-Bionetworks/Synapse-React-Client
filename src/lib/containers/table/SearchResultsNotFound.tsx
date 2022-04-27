@@ -1,9 +1,9 @@
 import React from 'react'
-import { ReactComponent as NoSearchResults } from '../../assets/icons/NoSearchResults.svg'
+import NoSearchResults from '../../assets/icons/NoSearchResults'
 
 export default function SearchResultsNotFound() {
   return <div className="text-center">
-    <NoSearchResults />
+    {NoSearchResults}
     <h4>No Matching Results</h4>
     <p>
       Try checking the spelling or removing filters.
