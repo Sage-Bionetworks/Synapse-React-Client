@@ -143,7 +143,7 @@ export function useJiraIssueCollector(config: UseJiraIssueCollectorConfig) {
       } else {
         console.warn('Fetching profile data to display Jira popup')
       }
-    } else {
+    } else if (show && !accessToken) {
       console.error('User not logged in, not showing Jira popup')
     }
     // - Don't re-run the effect when currentUser or notificationEmail change -- if they are refetched, we'll end up in a bad state with two pop-ups
