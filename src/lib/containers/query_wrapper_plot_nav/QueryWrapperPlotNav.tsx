@@ -119,6 +119,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       }
   const entityId = parseEntityIdFromSqlStatement(query.sql)
   const { data: entity } = useGetEntity(entityId)
+  const isFullTextSearchEnabled = entity &&
+    isTableEntity(entity) &&
+    entity.isSearchEnabled
   const initQueryRequest: QueryBundleRequest = {
     entityId,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -142,6 +145,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
           facetAliases={props.facetAliases}
           visibleColumnCount={props.visibleColumnCount}
           defaultShowFacetVisualization={props.defaultShowFacetVisualization}
+          defaultShowSearchBar={isFullTextSearchEnabled}
         >
           <QueryContextConsumer>
             {queryContext => {
@@ -179,9 +183,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         >
                           <QueryWrapperErrorBanner />
                         </div>
-                        {entity &&
-                        isTableEntity(entity) &&
-                        entity.isSearchEnabled ? (
+                        {isFullTextSearchEnabled ? (
                           <FullTextSearch />
                         ) : (
                           <SearchV2
