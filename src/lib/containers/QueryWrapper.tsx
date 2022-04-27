@@ -125,6 +125,9 @@ export function QueryWrapper(props: QueryWrapperProps) {
   const { initQueryRequest, onQueryChange, onQueryResultBundleChange } = props
   const [lastQueryRequest, setLastQueryRequest] =
     useState<QueryBundleRequest>(initQueryRequest)
+  const [currentAsyncStatus, setCurrentAsyncStatus] = useState<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle> | undefined
+  >(undefined)
   const {
     data: infiniteData,
     hasNextPage,
@@ -136,10 +139,14 @@ export function QueryWrapper(props: QueryWrapperProps) {
     error,
     isPreviousData: newQueryIsFetching,
     remove,
-  } = useInfiniteQueryResultBundle(lastQueryRequest, {
-    // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
-    keepPreviousData: true,
-  })
+  } = useInfiniteQueryResultBundle(
+    lastQueryRequest,
+    {
+      // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
+      keepPreviousData: true,
+    },
+    setCurrentAsyncStatus,
+  )
 
   // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
   const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
@@ -340,7 +347,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     entity,
     executeQueryRequest,
     isFacetsAvailable,
-    asyncJobStatus: infiniteData?.pages[0],
+    asyncJobStatus: currentAsyncStatus,
     appendNextPageToResults: appendNextPageToResults,
     goToNextPage,
     goToPreviousPage,
