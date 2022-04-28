@@ -9,8 +9,9 @@ export const ENTITY_VIEW_TYPE_MASK_DOCKER = 0x20
 export const ENTITY_VIEW_TYPE_MASK_SUBMISSIONVIEW = 0x40
 export const ENTITY_VIEW_TYPE_MASK_DATASET = 0x80
 
-export type ENTITY_VIEW_CONCRETE_TYPE =
+export const ENTITY_VIEW_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.table.EntityView'
+export type ENTITY_VIEW_CONCRETE_TYPE = typeof ENTITY_VIEW_CONCRETE_TYPE_VALUE
 
 export interface EntityView extends View {
   concreteType: ENTITY_VIEW_CONCRETE_TYPE
