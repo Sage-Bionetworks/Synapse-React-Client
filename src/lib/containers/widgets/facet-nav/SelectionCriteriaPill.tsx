@@ -69,15 +69,16 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> =
         'Expected either facetWithSelection or filter in SelectionCriteriaPill but got neither',
       )
     }
+    const key = encodeURIComponent(tooltipText)
     return (
       <ElementWithTooltip
-        idForToolTip={`selectionCriteria_${tooltipText}`}
+        idForToolTip={`selectionCriteria_${key}`}
         tooltipText={tooltipText}
         callbackFn={() => {}}
       >
         <label
           className="SelectionCriteriaPill"
-          key={`SelectionCriteriaPill ${tooltipText}`}
+          key={`SelectionCriteriaPill ${key}`}
         >
           <span>{innerText}</span>
           <button
