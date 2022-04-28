@@ -1,18 +1,33 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
-import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
+import {
+  entityTypeToFriendlyName,
+  getVersionDisplay,
+  isVersionableEntity,
+} from '../../../utils/functions/EntityTypeUtils'
 import { getLocationName } from '../../../utils/functions/FileHandleUtils'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { EntityType, FileEntity } from '../../../utils/synapseTypes'
 import UserCard from '../../UserCard'
 
 export type MetadataTableProps = {
-  entityId: string
+  readonly entityId: string
+  readonly versionNumber?: number
 }
 
-export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
-  const { data: entityBundle } = useGetEntityBundle(entityId)
+export const MetadataTable = ({
+  entityId,
+  versionNumber,
+}: MetadataTableProps) => {
+  const { data: entityBundle } = useGetEntityBundle(
+    entityId,
+    undefined,
+    versionNumber,
+  )
+
+  const isVersionable =
+    entityBundle && isVersionableEntity(entityBundle.entity!)
 
   const [fileLocationName, setFileLocationName] = useState<string>()
 
@@ -49,6 +64,14 @@ export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
             {entityBundle.entity?.id}
           </td>
         </tr>
+        {isVersionable && (
+          <tr className="MetadataTable__Row">
+            <td className="MetadataTable__Row__Key">Version</td>
+            <td className="MetadataTable__Row__Value">
+              {getVersionDisplay(entityBundle.entity!)}
+            </td>
+          </tr>
+        )}
         {fileLocationName && (
           <tr className="MetadataTable__Row">
             <td className="MetadataTable__Row__Key">Storage</td>

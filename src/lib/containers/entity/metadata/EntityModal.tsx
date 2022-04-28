@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap'
-import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
+import {
+  entityTypeToFriendlyName,
+  isVersionableEntityType,
+} from '../../../utils/functions/EntityTypeUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -12,6 +15,9 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
 import { SkeletonButton } from '../../../assets/skeletons/SkeletonButton'
 import { SynapseErrorBoundary } from '../../ErrorBanner'
+import { VersionableEntity } from '../../../utils/synapseTypes'
+import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
+import ReactTooltip from 'react-tooltip'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -25,6 +31,7 @@ export enum EntityModalTabs {
 export type EntityModalProps = {
   readonly show: boolean
   readonly entityId: string
+  readonly versionNumber?: number
   readonly onClose: () => void
   readonly initialTab?: EntityModalTabs
   readonly showTabs?: boolean
@@ -32,6 +39,7 @@ export type EntityModalProps = {
 
 export const EntityModal: React.FC<EntityModalProps> = ({
   entityId,
+  versionNumber,
   show,
   onClose,
   initialTab = EntityModalTabs.METADATA,
@@ -39,12 +47,30 @@ export const EntityModal: React.FC<EntityModalProps> = ({
 }: EntityModalProps) => {
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
   const [isInEditMode, setIsInEditMode] = useState(false)
-  const { data: entityBundle } = useGetEntityBundle(entityId)
+  const { data: entityBundle } = useGetEntityBundle(
+    entityId,
+    undefined,
+    versionNumber,
+  )
+
+  const canEdit = entityBundle && entityBundle.permissions?.canEdit
+
+  const isVersionable =
+    entityBundle && isVersionableEntityType(entityBundle.entityType!)
+
+  const isLatestVersion =
+    isVersionable && (entityBundle.entity as VersionableEntity).isLatestVersion!
+
+  useEffect(() => {
+    if (show) {
+      rebuildTooltip()
+    }
+  }, [show])
 
   return (
     <Modal
       className="bootstrap-4-backport EntityMetadata"
-      backdrop='static'
+      backdrop="static"
       size={isInEditMode ? 'lg' : undefined}
       show={show}
       animation={false}
@@ -58,6 +84,13 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         )}
       </Modal.Header>
       <Modal.Body>
+        <ReactTooltip
+          id="entityModalTooltip"
+          delayShow={300}
+          type="dark"
+          effect="solid"
+          className="SRC-tooltip"
+        />
         {showTabs ? (
           <div className="Tabs">
             {Object.keys(EntityModalTabs).map((tabName: string) => {
@@ -92,24 +125,32 @@ export const EntityModal: React.FC<EntityModalProps> = ({
                   />
                 </SynapseErrorBoundary>
               ) : (
-                <AnnotationsTable entityId={entityId} />
+                <AnnotationsTable
+                  entityId={entityId}
+                  versionNumber={versionNumber}
+                />
               )}
             </>
           )}
           {currentTab === EntityModalTabs.METADATA && (
-            <MetadataTable entityId={entityId} />
+            <MetadataTable entityId={entityId} versionNumber={versionNumber} />
           )}
         </>
       </Modal.Body>
       {!isInEditMode && ( // in edit mode, an editor manages its own footer
         <Modal.Footer>
           <div className="ButtonContainer">
-            {entityBundle &&
-            entityBundle.permissions?.canEdit &&
-            currentTab === EntityModalTabs.ANNOTATIONS ? ( // Currently only have an editor for annotations
+            {canEdit && currentTab === EntityModalTabs.ANNOTATIONS ? ( // Currently only have an editor for annotations
               <>
                 <Button
                   variant="primary-500"
+                  disabled={isVersionable && !isLatestVersion}
+                  data-for="entityModalTooltip"
+                  data-tip={
+                    isVersionable && !isLatestVersion
+                      ? 'Annotations can only be edited on the latest version'
+                      : undefined
+                  }
                   onClick={() => {
                     setIsInEditMode(true)
                   }}

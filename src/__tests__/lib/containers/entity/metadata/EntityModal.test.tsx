@@ -108,6 +108,28 @@ describe.skip('EntityModal tests', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('Does not show the edit button for annotations when looking at an older version', async () => {
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ':entityId',
+          ':versionNumber',
+        )}`,
+        async (req, res, ctx) => {
+          const response = mockFileEntityBundle
+          response.entity!.isLatestVersion = false
+          mockFileEntityBundle.permissions = { canEdit: true }
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+    )
+
+    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    expect(
+      screen.queryByRole('button', { name: 'Edit' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('Opens the annotation editor when edit is clicked', async () => {
     server.use(
       rest.post(
@@ -116,6 +138,7 @@ describe.skip('EntityModal tests', () => {
         )}`,
         async (req, res, ctx) => {
           const response = mockFileEntityBundle
+          response.entity!.isLatestVersion = true
           mockFileEntityBundle.permissions = { canEdit: true }
           return res(ctx.status(200), ctx.json(response))
         },
