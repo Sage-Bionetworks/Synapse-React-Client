@@ -36,7 +36,7 @@ export type QueryCount = {
 
 type OwnProps = {
   sql: string
-  rgbIndex: number
+  rgbIndex?: number
   unitDescription?: string
   facetAliases?: Record<string, string>
   showTopLevelControls?: boolean
@@ -136,52 +136,46 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
 
                     return (
                       <>
-                        {title ? (
-                          <>
-                            {showTopLevelControls && (
-                              <TopLevelControls
-                                showColumnSelection={true}
-                                name={name}
-                                hideDownload={hideDownload}
-                                hideQueryCount={hideQueryCount}
-                                hideFacetFilterControl={true}
-                                hideVisualizationsControl={true}
-                              />
-                            )}
-                            {entity &&
-                            isTableEntity(entity) &&
-                            entity.isSearchEnabled ? (
-                              <FullTextSearch />
-                            ) : (
-                              <SearchV2
-                                {...searchConfiguration}
-                                queryContext={queryContext}
-                                queryVisualizationContext={
-                                  queryVisualizationContext
-                                }
-                              />
-                            )}
-                            <SqlEditor />
-                            {showTopLevelControls && (
-                              <TotalQueryResults
-                                frontText={''}
-                                showNotch={false}
-                              />
-                            )}
-                            <SynapseTable
-                              synapseContext={synapseContext}
+                        {showTopLevelControls && (
+                            <TopLevelControls
+                              showColumnSelection={true}
+                              name={name}
+                              hideDownload={hideDownload}
+                              hideQueryCount={hideQueryCount}
+                              hideFacetFilterControl={true}
+                              hideVisualizationsControl={true}
+                            />
+                          )}
+                          {entity &&
+                          isTableEntity(entity) &&
+                          entity.isSearchEnabled ? (
+                            <FullTextSearch />
+                          ) : (
+                            <SearchV2
+                              {...searchConfiguration}
                               queryContext={queryContext}
                               queryVisualizationContext={
                                 queryVisualizationContext
                               }
-                              showAccessColumn={showAccessColumn}
-                              title={title}
-                              data-testid="SynapseTable"
                             />
-                          </>
-                        ) : (
-                          <React.Fragment />
-                        )}
+                          )}
+                          <SqlEditor />
+                          {showTopLevelControls && (
+                            <TotalQueryResults
+                              frontText={''}
+                              showNotch={false}
+                            />
+                          )}
+                          <SynapseTable
+                            synapseContext={synapseContext}
+                            queryContext={queryContext}
+                            queryVisualizationContext={
+                              queryVisualizationContext
+                            }
+                            showAccessColumn={showAccessColumn}
+                            title={title}
+                            data-testid="SynapseTable"
+                          />
                       </>
                     )
                   }}

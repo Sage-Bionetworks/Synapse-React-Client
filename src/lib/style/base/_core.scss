@@ -1254,7 +1254,7 @@ main,
   .SRC-userCardName a,
   a.highlight-link,
   details > summary,
-  .modal-body a:not(.btn) {
+  .modal-body *:not(.dropdown-menu) a:not(.btn) {
     &:not(.btn) {
       @include SRC_Mixins.highlightLink;
       &:visited,
