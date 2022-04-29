@@ -1,10 +1,19 @@
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
+  getVersionDisplay,
   isContainerType,
   isVersionableEntityType,
 } from '../../../../lib/utils/functions/EntityTypeUtils'
-import { EntityType } from '../../../../lib/utils/synapseTypes'
+import {
+  Dataset,
+  DATASET_CONCRETE_TYPE_VALUE,
+  EntityType,
+  FileEntity,
+  FILE_ENTITY_CONCRETE_TYPE_VALUE,
+  TableEntity,
+  TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+} from '../../../../lib/utils/synapseTypes'
 
 const allEntityTypes = [
   {
@@ -105,5 +114,57 @@ describe('EntityTypeUtils tests', () => {
     for (const type of Object.values(EntityType)) {
       expect(() => isVersionableEntityType(type as EntityType)).not.toThrow()
     }
+  })
+
+  describe('getVersionDisplay tests', () => {
+    test('The current version of a file', () => {
+      const file: Partial<FileEntity> = {
+        concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
+        isLatestVersion: true,
+        versionNumber: 5,
+      }
+
+      expect(getVersionDisplay(file)).toEqual('5 (Current)')
+    })
+
+    test('A previous version of a file', () => {
+      const file: Partial<FileEntity> = {
+        concreteType: FILE_ENTITY_CONCRETE_TYPE_VALUE,
+        isLatestVersion: false,
+        versionNumber: 5,
+      }
+
+      expect(getVersionDisplay(file)).toEqual('5')
+    })
+
+    test('A previous version of a table', () => {
+      const table: Partial<TableEntity> = {
+        concreteType: TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+        isLatestVersion: false,
+        versionNumber: 5,
+      }
+
+      expect(getVersionDisplay(table)).toEqual('5')
+    })
+
+    test('The current version of a non-dataset table', () => {
+      const table: Partial<TableEntity> = {
+        concreteType: TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+        isLatestVersion: true,
+        versionNumber: 5,
+      }
+
+      expect(getVersionDisplay(table)).toEqual('Current')
+    })
+
+    test('A previous version of a dataset', () => {
+      const dataset: Partial<Dataset> = {
+        concreteType: DATASET_CONCRETE_TYPE_VALUE,
+        isLatestVersion: true,
+        versionNumber: 5,
+      }
+
+      expect(getVersionDisplay(dataset)).toEqual('Draft')
+    })
   })
 })

@@ -210,11 +210,17 @@ export function getVersionDisplay(entity: Entity): string {
     console.warn("Entity isn't versionable:", entity)
     return ''
   }
-  if (!entity.isLatestVersion || !isTable(entity)) {
-    return entity.versionNumber!.toString()
-  } else if (isDataset(entity)) {
-    return 'Draft'
+
+  if (entity.isLatestVersion) {
+    if (!isTable(entity)) {
+      // e.g. Files. Always show the version number
+      return `${entity.versionNumber!.toString()} (Current)`
+    } else if (isDataset(entity)) {
+      return 'Draft'
+    } else {
+      return 'Current'
+    }
   } else {
-    return 'Current'
+    return entity.versionNumber!.toString()
   }
 }

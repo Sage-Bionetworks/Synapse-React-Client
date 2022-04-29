@@ -68,121 +68,126 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   }, [show])
 
   return (
-    <Modal
-      className="bootstrap-4-backport EntityMetadata"
-      backdrop="static"
-      size={isInEditMode ? 'lg' : undefined}
-      show={show}
-      animation={false}
-      onHide={onClose}
-    >
-      <Modal.Header closeButton>
-        {entityBundle ? (
-          <Modal.Title>{entityBundle.entity!.name}</Modal.Title>
-        ) : (
-          <Skeleton width={'40%'} />
-        )}
-      </Modal.Header>
-      <Modal.Body>
-        <ReactTooltip
-          id="entityModalTooltip"
-          delayShow={300}
-          type="dark"
-          effect="solid"
-          className="SRC-tooltip"
-        />
-        {showTabs ? (
-          <div className="Tabs">
-            {Object.keys(EntityModalTabs).map((tabName: string) => {
-              return (
-                <div
-                  className="Tab"
-                  role="tab"
-                  key={tabName}
-                  onClick={e => {
-                    e.stopPropagation()
-                    setCurrentTab(EntityModalTabs[tabName])
-                  }}
-                  aria-selected={tabName === currentTab}
-                >
-                  {tabName}
-                </div>
-              )
-            })}
-          </div>
-        ) : null}
-        <>
-          {currentTab === EntityModalTabs.ANNOTATIONS && (
-            <>
-              {isInEditMode ? (
-                <SynapseErrorBoundary>
-                  <SchemaDrivenAnnotationEditor
-                    entityId={entityId}
-                    onSuccess={() => {
-                      setIsInEditMode(false)
+    <>
+      <ReactTooltip
+        id="entityModalTooltip"
+        delayShow={300}
+        type="dark"
+        effect="solid"
+        className="SRC-tooltip"
+      />
+      <Modal
+        className="bootstrap-4-backport EntityMetadata"
+        backdrop="static"
+        size={isInEditMode ? 'lg' : undefined}
+        show={show}
+        animation={false}
+        onHide={onClose}
+      >
+        <Modal.Header closeButton>
+          {entityBundle ? (
+            <Modal.Title>{entityBundle.entity!.name}</Modal.Title>
+          ) : (
+            <Skeleton width={'40%'} />
+          )}
+        </Modal.Header>
+        <Modal.Body>
+          {showTabs && !isInEditMode ? (
+            <div className="Tabs">
+              {Object.keys(EntityModalTabs).map((tabName: string) => {
+                return (
+                  <div
+                    className="Tab"
+                    role="tab"
+                    key={tabName}
+                    onClick={e => {
+                      e.stopPropagation()
+                      setCurrentTab(EntityModalTabs[tabName])
                     }}
-                    onCancel={() => setIsInEditMode(false)}
-                  />
-                </SynapseErrorBoundary>
-              ) : (
-                <AnnotationsTable
-                  entityId={entityId}
-                  versionNumber={versionNumber}
-                />
-              )}
-            </>
-          )}
-          {currentTab === EntityModalTabs.METADATA && (
-            <MetadataTable entityId={entityId} versionNumber={versionNumber} />
-          )}
-        </>
-      </Modal.Body>
-      {!isInEditMode && ( // in edit mode, an editor manages its own footer
-        <Modal.Footer>
-          <div className="ButtonContainer">
-            {canEdit && currentTab === EntityModalTabs.ANNOTATIONS ? ( // Currently only have an editor for annotations
+                    aria-selected={tabName === currentTab}
+                  >
+                    {tabName}
+                  </div>
+                )
+              })}
+            </div>
+          ) : null}
+          <>
+            {currentTab === EntityModalTabs.ANNOTATIONS && (
               <>
+                {isInEditMode ? (
+                  <SynapseErrorBoundary>
+                    <SchemaDrivenAnnotationEditor
+                      entityId={entityId}
+                      onSuccess={() => {
+                        setIsInEditMode(false)
+                      }}
+                      onCancel={() => setIsInEditMode(false)}
+                    />
+                  </SynapseErrorBoundary>
+                ) : (
+                  <AnnotationsTable
+                    entityId={entityId}
+                    versionNumber={versionNumber}
+                  />
+                )}
+              </>
+            )}
+            {currentTab === EntityModalTabs.METADATA && (
+              <MetadataTable
+                entityId={entityId}
+                versionNumber={versionNumber}
+              />
+            )}
+          </>
+        </Modal.Body>
+        {!isInEditMode && ( // in edit mode, an editor manages its own footer
+          <Modal.Footer>
+            <div className="ButtonContainer">
+              {canEdit && currentTab === EntityModalTabs.ANNOTATIONS ? ( // Currently only have an editor for annotations
+                <>
+                  <Button
+                    variant="primary-500"
+                    disabled={isVersionable && !isLatestVersion}
+                    data-for="entityModalTooltip"
+                    data-tip={
+                      isVersionable && !isLatestVersion
+                        ? 'Annotations can only be edited on the latest version'
+                        : undefined
+                    }
+                    onClick={() => {
+                      setIsInEditMode(true)
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <div className="Spacer" />
+                </>
+              ) : (
+                <div className="Spacer" />
+              )}
+              {entityBundle ? (
                 <Button
                   variant="primary-500"
-                  disabled={isVersionable && !isLatestVersion}
-                  data-for="entityModalTooltip"
-                  data-tip={
-                    isVersionable && !isLatestVersion
-                      ? 'Annotations can only be edited on the latest version'
-                      : undefined
+                  onClick={() =>
+                    window.open(
+                      `${getEndpoint(
+                        BackendDestinationEnum.PORTAL_ENDPOINT,
+                      )}#!Synapse:${entityId}`,
+                      '_blank',
+                      'noopener',
+                    )
                   }
-                  onClick={() => {
-                    setIsInEditMode(true)
-                  }}
                 >
-                  Edit
+                  Open {entityTypeToFriendlyName(entityBundle.entityType!)}
                 </Button>
-                <div className="Spacer" />
-              </>
-            ) : (
-              <div className="Spacer" />
-            )}
-            {entityBundle ? (
-              <Button
-                variant="primary-500"
-                onClick={() =>
-                  window.open(
-                    `${getEndpoint(
-                      BackendDestinationEnum.PORTAL_ENDPOINT,
-                    )}#!Synapse:${entityId}`,
-                    '_blank',
-                    'noopener',
-                  )
-                }
-              >
-                Open {entityTypeToFriendlyName(entityBundle.entityType!)}
-              </Button>
-            ) : (
-              <SkeletonButton placeholderText="Open entity" />
-            )}
-          </div>
-        </Modal.Footer>
-      )}
-    </Modal>
+              ) : (
+                <SkeletonButton placeholderText="Open entity" />
+              )}
+            </div>
+          </Modal.Footer>
+        )}
+      </Modal>
+    </>
   )
 }

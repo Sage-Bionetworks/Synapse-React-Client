@@ -79,24 +79,13 @@ export const MetadataTable = ({
           </tr>
         )}
         <tr className="MetadataTable__Row">
-          <td className="MetadataTable__Row__Key">Last Modified On</td>
-          <td className="MetadataTable__Row__Value">
-            {formatDate(moment(entityBundle.entity?.modifiedOn))}
-          </td>
-        </tr>
-        <tr className="MetadataTable__Row">
-          <td className="MetadataTable__Row__Key">Created On</td>
-          <td className="MetadataTable__Row__Value">
-            {formatDate(moment(entityBundle.entity?.createdOn))}
-          </td>
-        </tr>
-        <tr className="MetadataTable__Row">
-          <td className="MetadataTable__Row__Key">Modified By</td>
+          <td className="MetadataTable__Row__Key"> Last Modified By</td>
           <td className="MetadataTable__Row__Value">
             <UserCard
               size="SMALL USER CARD"
               ownerId={entityBundle.entity?.modifiedBy}
-            />
+            />{' '}
+            at {formatDate(moment(entityBundle.entity?.modifiedOn))}
           </td>
         </tr>
         <tr className="MetadataTable__Row">
@@ -105,7 +94,8 @@ export const MetadataTable = ({
             <UserCard
               size="SMALL USER CARD"
               ownerId={entityBundle.entity?.createdBy}
-            />
+            />{' '}
+            at {formatDate(moment(entityBundle.entity?.createdOn))}
           </td>
         </tr>
       </tbody>

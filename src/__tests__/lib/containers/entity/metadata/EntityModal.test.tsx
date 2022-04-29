@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash'
 import React from 'react'
 import {
   EntityModal,
@@ -77,8 +78,8 @@ describe.skip('EntityModal tests', () => {
           ':entityId',
         )}`,
         async (req, res, ctx) => {
-          const response = mockFileEntityBundle
-          mockFileEntityBundle.permissions = { canEdit: true }
+          const response = cloneDeep(mockFileEntityBundle)
+          response.permissions = { canEdit: true }
           return res(ctx.status(200), ctx.json(response))
         },
       ),
@@ -95,8 +96,8 @@ describe.skip('EntityModal tests', () => {
           ':entityId',
         )}`,
         async (req, res, ctx) => {
-          const response = mockFileEntityBundle
-          mockFileEntityBundle.permissions = { canEdit: false }
+          const response = cloneDeep(mockFileEntityBundle)
+          response.permissions = { canEdit: false }
           return res(ctx.status(200), ctx.json(response))
         },
       ),
@@ -116,9 +117,9 @@ describe.skip('EntityModal tests', () => {
           ':versionNumber',
         )}`,
         async (req, res, ctx) => {
-          const response = mockFileEntityBundle
+          const response = cloneDeep(mockFileEntityBundle)
           response.entity!.isLatestVersion = false
-          mockFileEntityBundle.permissions = { canEdit: true }
+          response.permissions = { canEdit: true }
           return res(ctx.status(200), ctx.json(response))
         },
       ),
@@ -137,9 +138,9 @@ describe.skip('EntityModal tests', () => {
           ':entityId',
         )}`,
         async (req, res, ctx) => {
-          const response = mockFileEntityBundle
+          const response = cloneDeep(mockFileEntityBundle)
           response.entity!.isLatestVersion = true
-          mockFileEntityBundle.permissions = { canEdit: true }
+          response.permissions = { canEdit: true }
           return res(ctx.status(200), ctx.json(response))
         },
       ),
