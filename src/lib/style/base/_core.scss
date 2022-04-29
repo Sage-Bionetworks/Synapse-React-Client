@@ -1236,17 +1236,34 @@ hr ~ .SRC-wrapper {
 main,
 .modal,
 #rootPanel {
-  a:not(.btn),
-  .bootstrap-4-backport a:not(.btn),
-  .markdown td a:not(.btn),
-  .markdown a.SRC-userCard:not(.btn),
-  .secondary-links a:not(.btn),
-  .markdown .secondary-links a:not(.btn) {
-    @include SRC_Mixins.normalLink;
-    &:visited,
-    &:active,
-    &:link {
+  a,
+  .bootstrap-4-backport a,
+  .markdown td a,
+  .markdown a.SRC-userCard,
+  .secondary-links a,
+  .markdown .secondary-links a,
+  .modal-body .dropdown-menu a {
+    &:not(.btn) {
       @include SRC_Mixins.normalLink;
+      &:visited,
+      &:active,
+      &:link {
+        @include SRC_Mixins.normalLink;
+      }
+    }
+  }
+
+  .modal-body .dropdown-menu a {
+    &:not(.btn) {
+      color: unset;
+      &:visited,
+      &:active,
+      &:link {
+        color:unset;
+      }
+      &:hover {
+        color:white;
+      }
     }
   }
 
@@ -1254,7 +1271,7 @@ main,
   .SRC-userCardName a,
   a.highlight-link,
   details > summary,
-  .modal-body a:not(.btn) {
+  .modal-body a {
     &:not(.btn) {
       @include SRC_Mixins.highlightLink;
       &:visited,
