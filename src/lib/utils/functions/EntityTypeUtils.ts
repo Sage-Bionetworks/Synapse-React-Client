@@ -7,8 +7,24 @@ import {
   ENTITY_VIEW_TYPE_MASK_FILE,
   ProjectHeader,
   Dataset,
+  Table,
+  TableEntity,
+  SubmissionView,
+  VersionableEntity,
+  VIEW_CONCRETE_TYPE_VALUES,
+  View,
+  TABLE_CONCRETE_TYPE_VALUES,
+  SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
+  DATASET_CONCRETE_TYPE_VALUE,
+  ENTITY_VIEW_CONCRETE_TYPE_VALUE,
 } from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
+import {
+  MaterializedView,
+  MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
+} from '../synapseTypes/Table/MaterializedView'
+import { TABLE_ENTITY_CONCRETE_TYPE_VALUE } from '../synapseTypes/Table/TableEntity'
+import { isTypeViaConcreteTypeFactory } from './TypeUtils'
 
 export function getEntityTypeFromHeader(
   header:
@@ -137,15 +153,35 @@ export function isVersionableEntityType(type: EntityType): boolean {
   }
 }
 
-export function isDataset(entity: Entity): entity is Dataset {
-  return entity.concreteType === 'org.sagebionetworks.repo.model.table.Dataset'
-}
+export const isTable = isTypeViaConcreteTypeFactory<Table, Entity>(
+  ...TABLE_CONCRETE_TYPE_VALUES,
+)
 
-export function isEntityView(entity: Entity): entity is EntityView {
-  return (
-    entity.concreteType === 'org.sagebionetworks.repo.model.table.EntityView'
-  )
-}
+export const isView = isTypeViaConcreteTypeFactory<View, Entity>(
+  ...VIEW_CONCRETE_TYPE_VALUES,
+)
+
+export const isTableEntity = isTypeViaConcreteTypeFactory<TableEntity, Entity>(
+  TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+)
+
+export const isSubmissionView = isTypeViaConcreteTypeFactory<
+  SubmissionView,
+  Entity
+>(SUBMISSION_VIEW_CONCRETE_TYPE_VALUE)
+
+export const isMaterializedView = isTypeViaConcreteTypeFactory<
+  MaterializedView,
+  Entity
+>(MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE)
+
+export const isDataset = isTypeViaConcreteTypeFactory<Dataset, Entity>(
+  DATASET_CONCRETE_TYPE_VALUE,
+)
+
+export const isEntityView = isTypeViaConcreteTypeFactory<EntityView, Entity>(
+  ENTITY_VIEW_CONCRETE_TYPE_VALUE,
+)
 
 /**
  * @param entityView
@@ -161,4 +197,30 @@ export function hasFilesInView(entityView: EntityView) {
  */
 export function isFileView(entityView: EntityView) {
   return entityView.viewTypeMask === ENTITY_VIEW_TYPE_MASK_FILE
+}
+
+export function isVersionableEntity(
+  entity: Entity,
+): entity is VersionableEntity {
+  return isVersionableEntityType(convertToEntityType(entity.concreteType))
+}
+
+export function getVersionDisplay(entity: Entity): string {
+  if (!isVersionableEntity(entity)) {
+    console.warn("Entity isn't versionable:", entity)
+    return ''
+  }
+
+  if (entity.isLatestVersion) {
+    if (!isTable(entity)) {
+      // e.g. Files. Always show the version number
+      return `${entity.versionNumber!.toString()} (Current)`
+    } else if (isDataset(entity)) {
+      return 'Draft'
+    } else {
+      return 'Current'
+    }
+  } else {
+    return entity.versionNumber!.toString()
+  }
 }

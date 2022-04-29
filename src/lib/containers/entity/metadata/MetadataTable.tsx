@@ -1,18 +1,33 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { formatDate } from '../../../utils/functions/DateFormatter'
-import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
+import {
+  entityTypeToFriendlyName,
+  getVersionDisplay,
+  isVersionableEntity,
+} from '../../../utils/functions/EntityTypeUtils'
 import { getLocationName } from '../../../utils/functions/FileHandleUtils'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { EntityType, FileEntity } from '../../../utils/synapseTypes'
 import UserCard from '../../UserCard'
 
 export type MetadataTableProps = {
-  entityId: string
+  readonly entityId: string
+  readonly versionNumber?: number
 }
 
-export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
-  const { data: entityBundle } = useGetEntityBundle(entityId)
+export const MetadataTable = ({
+  entityId,
+  versionNumber,
+}: MetadataTableProps) => {
+  const { data: entityBundle } = useGetEntityBundle(
+    entityId,
+    undefined,
+    versionNumber,
+  )
+
+  const isVersionable =
+    entityBundle && isVersionableEntity(entityBundle.entity!)
 
   const [fileLocationName, setFileLocationName] = useState<string>()
 
@@ -49,6 +64,14 @@ export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
             {entityBundle.entity?.id}
           </td>
         </tr>
+        {isVersionable && (
+          <tr className="MetadataTable__Row">
+            <td className="MetadataTable__Row__Key">Version</td>
+            <td className="MetadataTable__Row__Value">
+              {getVersionDisplay(entityBundle.entity!)}
+            </td>
+          </tr>
+        )}
         {fileLocationName && (
           <tr className="MetadataTable__Row">
             <td className="MetadataTable__Row__Key">Storage</td>
@@ -56,24 +79,13 @@ export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
           </tr>
         )}
         <tr className="MetadataTable__Row">
-          <td className="MetadataTable__Row__Key">Last Modified On</td>
-          <td className="MetadataTable__Row__Value">
-            {formatDate(moment(entityBundle.entity?.modifiedOn))}
-          </td>
-        </tr>
-        <tr className="MetadataTable__Row">
-          <td className="MetadataTable__Row__Key">Created On</td>
-          <td className="MetadataTable__Row__Value">
-            {formatDate(moment(entityBundle.entity?.createdOn))}
-          </td>
-        </tr>
-        <tr className="MetadataTable__Row">
-          <td className="MetadataTable__Row__Key">Modified By</td>
+          <td className="MetadataTable__Row__Key"> Last Modified By</td>
           <td className="MetadataTable__Row__Value">
             <UserCard
               size="SMALL USER CARD"
               ownerId={entityBundle.entity?.modifiedBy}
-            />
+            />{' '}
+            at {formatDate(moment(entityBundle.entity?.modifiedOn))}
           </td>
         </tr>
         <tr className="MetadataTable__Row">
@@ -82,7 +94,8 @@ export const MetadataTable: React.FC<MetadataTableProps> = ({ entityId }) => {
             <UserCard
               size="SMALL USER CARD"
               ownerId={entityBundle.entity?.createdBy}
-            />
+            />{' '}
+            at {formatDate(moment(entityBundle.entity?.createdOn))}
           </td>
         </tr>
       </tbody>

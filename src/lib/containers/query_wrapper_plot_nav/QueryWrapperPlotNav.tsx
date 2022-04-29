@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { SynapseConstants } from '../../utils/'
+import { isTableEntity } from '../../utils/functions/EntityTypeUtils'
 import {
   insertConditionsFromSearchParams,
   parseEntityIdFromSqlStatement,
@@ -7,11 +8,7 @@ import {
 } from '../../utils/functions/sqlFunctions'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI/entity/useEntity'
 import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import {
-  isTableEntity,
-  Query,
-  QueryBundleRequest,
-} from '../../utils/synapseTypes'
+import { Query, QueryBundleRequest } from '../../utils/synapseTypes'
 import { CardConfiguration } from '../CardContainerLogic'
 import { DownloadConfirmation } from '../download_list'
 import FullTextSearch from '../FullTextSearch'

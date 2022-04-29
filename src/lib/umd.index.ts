@@ -21,6 +21,7 @@ import FavoritesPage from './containers/FavoritesPage'
 import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationEditorPage'
 import { EntityFinder } from './containers/entity_finder/EntityFinder'
 import QueryWrapperPlotNav from './containers/query_wrapper_plot_nav/QueryWrapperPlotNav'
+import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
 import ErrorPage from './containers/ErrorPage'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
@@ -92,6 +93,7 @@ const SynapseComponents = {
   ProgrammaticInstructionsModal,
   SkeletonButton,
   QueryWrapperPlotNav,
+  StandaloneQueryWrapper,
   ChangePassword,
 }
 

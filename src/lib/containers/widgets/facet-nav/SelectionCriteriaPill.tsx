@@ -69,7 +69,7 @@ const SelectionCriteriaPill: FunctionComponent<SelectionCriteriaPillProps> =
         'Expected either facetWithSelection or filter in SelectionCriteriaPill but got neither',
       )
     }
-    const key = btoa(tooltipText)
+    const key = encodeURIComponent(tooltipText)
     return (
       <ElementWithTooltip
         idForToolTip={`selectionCriteria_${key}`}

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash'
 import React from 'react'
 import {
   EntityModal,
@@ -77,8 +78,8 @@ describe.skip('EntityModal tests', () => {
           ':entityId',
         )}`,
         async (req, res, ctx) => {
-          const response = mockFileEntityBundle
-          mockFileEntityBundle.permissions = { canEdit: true }
+          const response = cloneDeep(mockFileEntityBundle)
+          response.permissions = { canEdit: true }
           return res(ctx.status(200), ctx.json(response))
         },
       ),
@@ -95,8 +96,30 @@ describe.skip('EntityModal tests', () => {
           ':entityId',
         )}`,
         async (req, res, ctx) => {
-          const response = mockFileEntityBundle
-          mockFileEntityBundle.permissions = { canEdit: false }
+          const response = cloneDeep(mockFileEntityBundle)
+          response.permissions = { canEdit: false }
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ),
+    )
+
+    renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
+    expect(
+      screen.queryByRole('button', { name: 'Edit' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('Does not show the edit button for annotations when looking at an older version', async () => {
+    server.use(
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
+          ':entityId',
+          ':versionNumber',
+        )}`,
+        async (req, res, ctx) => {
+          const response = cloneDeep(mockFileEntityBundle)
+          response.entity!.isLatestVersion = false
+          response.permissions = { canEdit: true }
           return res(ctx.status(200), ctx.json(response))
         },
       ),
@@ -115,8 +138,9 @@ describe.skip('EntityModal tests', () => {
           ':entityId',
         )}`,
         async (req, res, ctx) => {
-          const response = mockFileEntityBundle
-          mockFileEntityBundle.permissions = { canEdit: true }
+          const response = cloneDeep(mockFileEntityBundle)
+          response.entity!.isLatestVersion = true
+          response.permissions = { canEdit: true }
           return res(ctx.status(200), ctx.json(response))
         },
       ),
