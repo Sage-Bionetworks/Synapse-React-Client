@@ -42,8 +42,8 @@ describe('MetadataTable tests', () => {
     await screen.findByText('Synapse ID')
     await screen.findByText(mockProjectEntityBundle.entity!.id!)
     /* Not checking the values of dates, they are passed through a formatter. */
-    await screen.findByText('Last Modified On')
-    await screen.findByText('Created On')
+    await screen.findByText('Last Modified By')
+    await screen.findByText('Created By')
     expect(
       (await screen.findAllByText(`@${mockUserProfileData.userName}`)).length,
     ).toBe(2)

@@ -1,6 +1,6 @@
 import { AttachmentData } from '../AttachmentData'
-import { TABLE_CONCRETE_TYPE } from '../Table/Table'
-import { FILE_ENTITY_CONCRETE_TYPE } from './FileEntity'
+import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
+import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -56,9 +56,13 @@ export interface Versionable {
   versionNumber?: number
 }
 
-type VERSIONABLE_ENTITY_CONCRETE_TYPE =
-  | FILE_ENTITY_CONCRETE_TYPE
-  | TABLE_CONCRETE_TYPE
+export const VERSIONABLE_ENTITY_CONCRETE_TYPE_VALUES = [
+  FILE_ENTITY_CONCRETE_TYPE_VALUE,
+  ...TABLE_CONCRETE_TYPE_VALUES,
+] as const
+
+export type VERSIONABLE_ENTITY_CONCRETE_TYPE =
+  typeof VERSIONABLE_ENTITY_CONCRETE_TYPE_VALUES[number]
 
 export interface VersionableEntity extends Entity, Versionable {
   /* The version label for this entity */

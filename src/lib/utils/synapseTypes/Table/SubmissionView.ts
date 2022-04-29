@@ -1,6 +1,9 @@
 import { View } from './View'
 
-export type SUBMISSION_VIEW_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.table.EntityView'
+export const SUBMISSION_VIEW_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.table.SubmissionView'
+export type SUBMISSION_VIEW_CONCRETE_TYPE =
+  typeof SUBMISSION_VIEW_CONCRETE_TYPE_VALUE
 
 /**
  * A view of evaluation submissions whose scope is defined by the evaluation ids the submissions are part of. The user must have READ_PRIVATE_SUBMISSION access on each of the evaluations in the scope.

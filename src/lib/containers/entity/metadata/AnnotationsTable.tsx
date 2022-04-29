@@ -14,7 +14,8 @@ import { useGetJson } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 
 export type AnnotationsTableProps = {
-  entityId: string
+  readonly entityId: string
+  readonly versionNumber?: number
 }
 
 export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
@@ -25,6 +26,7 @@ export const AnnotationsTable: React.FC<AnnotationsTableProps> = ({
    */
   const { isInExperimentalMode } = useSynapseContext()
 
+  // TODO: Support versioned annotations, see PLFM-7290
   const { entityMetadata, annotations, isLoading } = useGetJson(entityId)
 
   const { data: boundSchema } = useGetSchemaBinding(entityId, {

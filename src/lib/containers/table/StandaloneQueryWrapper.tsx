@@ -6,7 +6,7 @@ import {
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
-import { isTableEntity, QueryBundleRequest } from '../../utils/synapseTypes'
+import { QueryBundleRequest } from '../../utils/synapseTypes'
 import { SynapseConstants } from '../../utils'
 import { QueryWrapper, QueryContextConsumer } from '../QueryWrapper'
 import TopLevelControls, { TopLevelControlsProps } from './TopLevelControls'
@@ -20,6 +20,7 @@ import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper'
+import { isTableEntity } from '../../utils/functions/EntityTypeUtils'
 
 type SearchParams = {
   searchParams?: {
