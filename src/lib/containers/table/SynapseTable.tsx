@@ -217,7 +217,8 @@ export default class SynapseTable extends React.Component<
 
   enableResize() {
     if (!this.resizer) {
-      if (this.tableElement) {
+      // only create the resizer if the tableElement is in the DOM and there's more than one select column in the data.
+      if (this.tableElement && this.getLengthOfPropsData()>1) {
         this.resizer = new ColumnResizer(this.tableElement, RESIZER_OPTIONS)
       }
     } else {
@@ -535,8 +536,7 @@ export default class SynapseTable extends React.Component<
     const tableEntityId: string = lastQueryRequest?.entityId
     return (
       <div
-        style={{ minHeight: '400px' }}
-        className="SRC-overflowAuto"
+        className="SynapseTable SRC-overflowAuto"
         data-testid="SynapseTable"
       >
         <table

@@ -1177,6 +1177,10 @@ hr ~ .SRC-wrapper {
   width: 3px;
 }
 
+.SynapseTable {
+  min-height: 400px;
+}
+
 .table > tbody > tr > td {
   vertical-align: middle;
   &.SRC-synapseTableTd {
