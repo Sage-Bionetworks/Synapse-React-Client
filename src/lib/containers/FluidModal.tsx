@@ -42,8 +42,6 @@ function ModalActionButton(props: ModalAction) {
  * @returns
  */
 export const FluidModal = (props: FluidModalProps) => {
-  const hasActions =
-    props.primaryAction || props.secondaryActions || props.tertiaryActions
   // TODO: Info button
   return (
     <Modal
@@ -72,26 +70,10 @@ export const FluidModal = (props: FluidModalProps) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>{props.children}</Modal.Body>
-      {hasActions && (
-        <Modal.Footer>
-          {props.tertiaryActions && (
-            <>
-              {props.tertiaryActions.map((action, index) => {
-                return (
-                  <ModalActionButton
-                    key={index}
-                    {...{
-                      variant: 'outline',
-                      ...action,
-                    }}
-                  />
-                )
-              })}
-              <div style={{ margin: 'auto' }}></div>
-            </>
-          )}
-          {props.secondaryActions &&
-            props.secondaryActions.reverse().map((action, index) => {
+      <Modal.Footer>
+        {props.tertiaryActions && (
+          <>
+            {props.tertiaryActions.map((action, index) => {
               return (
                 <ModalActionButton
                   key={index}
@@ -102,16 +84,30 @@ export const FluidModal = (props: FluidModalProps) => {
                 />
               )
             })}
-          {props.primaryAction && (
-            <ModalActionButton
-              {...{
-                variant: 'sds-primary',
-                ...props.primaryAction,
-              }}
-            />
-          )}
-        </Modal.Footer>
-      )}
+            <div style={{ margin: 'auto' }}></div>
+          </>
+        )}
+        {props.secondaryActions &&
+          props.secondaryActions.reverse().map((action, index) => {
+            return (
+              <ModalActionButton
+                key={index}
+                {...{
+                  variant: 'outline',
+                  ...action,
+                }}
+              />
+            )
+          })}
+        {props.primaryAction && (
+          <ModalActionButton
+            {...{
+              variant: 'sds-primary',
+              ...props.primaryAction,
+            }}
+          />
+        )}
+      </Modal.Footer>
     </Modal>
   )
 }
