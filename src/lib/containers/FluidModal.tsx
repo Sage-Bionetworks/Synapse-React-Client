@@ -1,3 +1,4 @@
+import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { ButtonVariant } from 'react-bootstrap/esm/types'
@@ -5,15 +6,19 @@ import Typography from '../utils/typography/Typography'
 import { HelpPopover, HelpPopoverProps } from './HelpPopover'
 
 type ModalAction = {
+  skeleton?: boolean
   variant?: ButtonVariant
-  copy: React.ReactNode
-  onClick: () => void
+  copy?: React.ReactNode
+  onClick?: () => void
+  disabled?: boolean
+  [key: string]: any
 }
 
 export type FluidModalProps = {
+  className?: string
   show: boolean
   children: JSX.Element
-  title: string
+  title: string | JSX.Element
   titlePopoverProps?: HelpPopoverProps
   onClose: () => void
   primaryAction?: ModalAction
@@ -21,12 +26,14 @@ export type FluidModalProps = {
   tertiaryActions?: ModalAction[]
 }
 
-function ModalActionButton(props: Required<ModalAction>) {
-  return (
-    <Button variant={props.variant} onClick={props.onClick}>
-      {props.copy}
-    </Button>
-  )
+function ModalActionButton(props: ModalAction) {
+  const { copy, skeleton, ...rest } = props
+
+  if (props.skeleton) {
+    return <Skeleton variant="rect" width={150} />
+  }
+
+  return <Button {...rest}>{copy}</Button>
 }
 
 /**
@@ -38,7 +45,7 @@ export const FluidModal = (props: FluidModalProps) => {
   // TODO: Info button
   return (
     <Modal
-      className="FluidModal bootstrap-4-backport"
+      className={`FluidModal bootstrap-4-backport ${props.className ?? ''}`}
       backdrop="static"
       animation={false}
       show={props.show}

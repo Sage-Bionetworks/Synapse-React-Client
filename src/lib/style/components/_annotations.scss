@@ -68,6 +68,10 @@
         margin: 12px 5px 1rem;
         justify-self: center;
         align-self: start;
+
+        svg {
+          vertical-align: unset;
+        }
       }
 
       .array-item {
