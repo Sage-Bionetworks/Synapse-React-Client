@@ -39,16 +39,14 @@ export type SchemaDrivenAnnotationEditorProps = {
   entityId?: string
   /** If no entity ID is supplied, the schema to use for the form */
   schemaId?: string
+  /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()` */
+  formRef?: React.RefObject<Form<Record<string, unknown>>>
+  /** Provide live input validation. This can cause major performance degradation. */
   liveValidate?: boolean
+  /** Invoked after a successful form submission */
   onSuccess?: () => void
-  /** If defined, shows a 'Cancel' button and runs this effect on click */
+  /** If defined and formRef is not supplied, shows a 'Cancel' button and runs this effect on click */
   onCancel?: () => void
-}
-
-export type SchemaDrivenAnnotationEditorModalProps = {
-  entityId: string
-  show: boolean
-  onHide: () => void
 }
 
 // patternProperties lets us define how to treat additionalProperties in a JSON schema by property name
@@ -73,6 +71,7 @@ export const SchemaDrivenAnnotationEditor = (
       /* no-op */
     },
     onCancel,
+    formRef: formRefFromParent,
   } = props
   const handleError = useErrorHandler()
   const formRef = useRef<Form<Record<string, unknown>>>(null)
@@ -216,7 +215,7 @@ export const SchemaDrivenAnnotationEditor = (
             ArrayFieldTemplate={CustomArrayFieldTemplate}
             ObjectFieldTemplate={CustomObjectFieldTemplate}
             FieldTemplate={CustomDefaultTemplate}
-            ref={formRef}
+            ref={formRefFromParent ?? formRef}
             disabled={mutation.isLoading}
             /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
             ErrorList={() => null}
@@ -298,25 +297,29 @@ export const SchemaDrivenAnnotationEditor = (
                 Annotations could not be updated: {submissionError.reason}
               </Alert>
             )}
-            <hr />
-            <div className="SaveButtonContainer">
-              <Button
-                variant="primary-500"
-                onClick={() => {
-                  formRef.current!.submit()
-                }}
-              >
-                {entityId ? 'Save' : 'Validate'}
-              </Button>
-              {onCancel && (
-                <>
-                  <div className="Spacer" />
-                  <Button variant="primary-500" onClick={onCancel}>
-                    Cancel
+            {!formRefFromParent && (
+              <>
+                <hr />
+                <div className="SaveButtonContainer">
+                  <Button
+                    variant="primary-500"
+                    onClick={() => {
+                      formRef.current!.submit()
+                    }}
+                  >
+                    {entityId ? 'Save' : 'Validate'}
                   </Button>
-                </>
-              )}
-            </div>
+                  {onCancel && (
+                    <>
+                      <div className="Spacer" />
+                      <Button variant="primary-500" onClick={onCancel}>
+                        Cancel
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
           </Form>
           {showConfirmation && (
             <ConfirmationModal

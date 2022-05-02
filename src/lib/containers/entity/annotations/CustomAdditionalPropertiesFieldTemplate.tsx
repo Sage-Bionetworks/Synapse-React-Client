@@ -35,7 +35,7 @@ export const CustomAdditionalPropertiesFieldTemplate = (
     return <div className="hidden">{children}</div>
   }
   return (
-    <div className={classNames}>
+    <div className={`${classNames ?? ''} container-fluid`}>
       <div className="row form-additional">
         <div className="col-xs-3">
           <FormGroup>
