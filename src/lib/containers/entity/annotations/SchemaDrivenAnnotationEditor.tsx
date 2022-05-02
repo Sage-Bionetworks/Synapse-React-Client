@@ -39,7 +39,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   entityId?: string
   /** If no entity ID is supplied, the schema to use for the form */
   schemaId?: string
-  /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()` */
+  /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()`. If provided, the editor will not render its own submit UI. */
   formRef?: React.RefObject<Form<Record<string, unknown>>>
   /** Provide live input validation. This can cause major performance degradation. */
   liveValidate?: boolean
