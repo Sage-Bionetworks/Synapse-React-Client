@@ -58,6 +58,9 @@ export type DatasetItemsEditorTableData = DatasetItem & {
 const ROW_HEIGHT = 42
 const TABLE_HEIGHT = 350
 
+const ADD_FILES = 'Add Files'
+const REMOVE_FILES = 'Remove Files'
+const NO_FILES_IN_THIS_DATASET = 'No files in this Dataset'
 const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
@@ -130,7 +133,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           'warning',
           {
             title: 'Dataset Updated since Last Fetched',
-            primaryButtonConfig: { text: 'Retrieve Dataset', onClick: refetch },
+            primaryButtonConfig: {
+              text: 'Retrieve Dataset',
+              onClick: () => {
+                refetch()
+              },
+            },
           },
         )
       } else {
@@ -400,14 +408,16 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   function NoItemsPlaceholder() {
     return (
       <div className="NoItemsPlaceholder">
-        <Typography variant={'headline3'}>No items in this Dataset</Typography>
+        <Typography variant={'headline3'}>
+          {NO_FILES_IN_THIS_DATASET}
+        </Typography>
         <Button
           className="AddItemsButton"
           variant="outline"
           onClick={() => setShowEntityFinder(true)}
         >
           <IconSvg options={{ icon: 'addCircleTwoTone' }} />
-          <span>Add Items</span>
+          <span>{ADD_FILES}</span>
         </Button>
       </div>
     )
@@ -477,14 +487,14 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           disabled={datasetToUpdate == null}
           onClick={() => setShowEntityFinder(true)}
         >
-          Add Items
+          {ADD_FILES}
         </Button>
         <Button
           disabled={selectedIds.size === 0}
           variant="outline"
           onClick={removeSelectedItemsFromDataset}
         >
-          Remove Items
+          {REMOVE_FILES}
         </Button>
       </div>
       <div className="DatasetEditorTableContainer">
