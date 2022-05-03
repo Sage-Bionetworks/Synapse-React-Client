@@ -833,7 +833,7 @@ export const updateMyUserProfile = (
  */
 export const getUserGroupHeaders = (
   prefix: string = '',
-  typeFilter: TYPE_FILTER = 'ALL',
+  typeFilter: TYPE_FILTER = TYPE_FILTER.ALL,
   offset: number = 0,
   limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {
