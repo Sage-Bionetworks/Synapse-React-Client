@@ -34,6 +34,7 @@ export type SynapseContextProviderProps = {
   synapseContext?: SynapseContextType
   queryClient?: QueryClient
   theme?: SynapseTheme
+  children?: React.ReactElement
 }
 
 /**
