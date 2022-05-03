@@ -42,6 +42,14 @@ import IconSvg from '../../IconSvg'
 import WarningModal from '../../synapse_form_wrapper/WarningModal'
 import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
+import {
+  SAVE_THE_DATASET_TO_CONTINUE,
+  NO_FILES_IN_THIS_DATASET,
+  ADD_FILES,
+  REMOVE_FILES,
+  CREATE_VERSION_TO_FREEZE,
+  DATASET_SAVED,
+} from './DatasetDisplayConstants'
 
 export type DatasetItemsEditorProps = {
   /* The synId of the Dataset to modify */
@@ -57,11 +65,6 @@ export type DatasetItemsEditorTableData = DatasetItem & {
 
 const ROW_HEIGHT = 42
 const TABLE_HEIGHT = 350
-
-const ADD_FILES = 'Add Files'
-const REMOVE_FILES = 'Remove Files'
-const NO_FILES_IN_THIS_DATASET = 'No files in this Dataset'
-const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { entityId, onSave, onClose } = props
@@ -119,11 +122,9 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         onSave()
       } else {
         // If onSave isn't specified, push a generic toast message.
-        displayToast(
-          'Create a Version of this Dataset to freeze it in its current state',
-          'success',
-          { title: 'Dataset Saved' },
-        )
+        displayToast(CREATE_VERSION_TO_FREEZE, 'success', {
+          title: DATASET_SAVED,
+        })
       }
     },
     onError: error => {
@@ -444,8 +445,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         onClose={() => {
           setShowEntityFinder(false)
         }}
-        title="Add Files to Dataset"
-        confirmButtonCopy="Add Files"
+        title={ADD_FILES + ' to Dataset'}
+        confirmButtonCopy={ADD_FILES}
         onConfirm={items => {
           addItemsToDataset(items)
           setShowEntityFinder(false)

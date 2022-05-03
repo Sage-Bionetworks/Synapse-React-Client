@@ -7,6 +7,11 @@ import {
   EntityFinderModalProps,
 } from '../../../../../lib/containers/entity_finder/EntityFinderModal'
 import {
+  ADD_FILES,
+  NO_FILES_IN_THIS_DATASET,
+  REMOVE_FILES,
+} from '../../../../../lib/containers/table/datasets/DatasetDisplayConstants'
+import {
   DatasetItemsEditor,
   DatasetItemsEditorProps,
 } from '../../../../../lib/containers/table/datasets/DatasetItemsEditor'
@@ -81,7 +86,7 @@ function mockEntityFinderToAddItems(items: Array<Reference>) {
 function addItemsViaEntityFinder() {
   const addItemsButton = screen.getAllByRole('button', {
     exact: false,
-    name: 'Add Items',
+    name: ADD_FILES,
   })[0]
   // Mocked entity finder is not visible
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -113,7 +118,7 @@ function clickRemove() {
   userEvent.click(
     screen.getByRole('button', {
       exact: true,
-      name: 'Remove Items',
+      name: REMOVE_FILES,
     }),
   )
 }
@@ -142,7 +147,7 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
     expect(
       screen.getAllByRole('button', {
         exact: false,
-        name: 'Add Items',
+        name: ADD_FILES,
       })[0],
     ).not.toBeDisabled(),
   )
@@ -171,7 +176,7 @@ async function verifyNoneSelected() {
     expect(
       screen.getByRole('button', {
         exact: false,
-        name: 'Remove Items',
+        name: REMOVE_FILES,
       }),
     ).toBeDisabled(),
   )
@@ -236,10 +241,10 @@ describe('Dataset Items Editor tests', () => {
     server.use(getEmptyDatasetHandler)
 
     await renderComponent()
-    await screen.findByText('No items in this Dataset', { exact: true })
+    await screen.findByText(NO_FILES_IN_THIS_DATASET, { exact: true })
     const addItemsButtons = await screen.findAllByRole('button', {
       exact: false,
-      name: 'Add Items',
+      name: ADD_FILES,
     })
     expect(addItemsButtons.length).toBe(2)
   })
@@ -254,7 +259,7 @@ describe('Dataset Items Editor tests', () => {
       expect(
         screen.getAllByRole('button', {
           exact: false,
-          name: 'Add Items',
+          name: ADD_FILES,
         })[0],
       ).not.toBeDisabled(),
     )
@@ -274,7 +279,7 @@ describe('Dataset Items Editor tests', () => {
       expect(
         screen.getAllByRole('button', {
           exact: false,
-          name: 'Add Items',
+          name: ADD_FILES,
         })[1],
       ).not.toBeDisabled(),
     )
@@ -406,7 +411,7 @@ describe('Dataset Items Editor tests', () => {
         expect(
           screen.getByRole('button', {
             exact: false,
-            name: 'Remove Items',
+            name: REMOVE_FILES,
           }),
         ).toBeDisabled(),
       )
@@ -418,7 +423,7 @@ describe('Dataset Items Editor tests', () => {
         expect(
           screen.getByRole('button', {
             exact: false,
-            name: 'Remove Items',
+            name: REMOVE_FILES,
           }),
         ).not.toBeDisabled(),
       )
@@ -578,7 +583,7 @@ describe('Dataset Items Editor tests', () => {
     // Verify that the dataset is empty and no error was thrown.
     await waitFor(() =>
       expect(
-        screen.queryByText('No items in this Dataset', { exact: false }),
+        screen.queryByText(NO_FILES_IN_THIS_DATASET, { exact: false }),
       ).toBeInTheDocument(),
     )
   })
