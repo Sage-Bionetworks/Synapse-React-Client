@@ -414,7 +414,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         </Typography>
         <Button
           className="AddItemsButton"
-          variant="outline"
+          variant="sds-primary"
           onClick={() => setShowEntityFinder(true)}
         >
           <IconSvg options={{ icon: 'addCircleTwoTone' }} />
@@ -484,7 +484,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         </div>
 
         <Button
-          variant="outline"
+          variant="sds-primary"
           disabled={datasetToUpdate == null}
           onClick={() => setShowEntityFinder(true)}
         >
