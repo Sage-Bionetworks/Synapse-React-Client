@@ -7,3 +7,10 @@ export type UserGroupHeader = {
   displayName: string //	This is deprecated and will always be null
   isIndividual: boolean //	True if this is a user, false if it is a group
 }
+
+// http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/principal/TypeFilter.html
+export enum TYPE_FILTER {
+  USERS_ONLY = 'USERS_ONLY',
+  TEAMS_ONLY = 'TEAMS_ONLY',
+  ALL = 'ALL',
+}

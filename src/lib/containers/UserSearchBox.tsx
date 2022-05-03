@@ -3,48 +3,39 @@ import Downshift from 'downshift'
 import { useState } from 'react'
 import { getUserGroupHeaders } from '../utils/SynapseClient'
 import { UserGroupHeader, UserGroupHeaderResponsePage } from '../utils/synapseTypes'
-import { UserCardSmall } from './UserCardSmall'
+import UserCard from './UserCard'
+import { SMALL_USER_CARD } from '../utils/SynapseConstants'
+import IconSvg from './IconSvg'
+import {
+  TYPE_FILTER
+} from '../utils/synapseTypes/UserGroupHeader'
+
 
 export type UserSearchBoxProps = {
   id?: string  // id for the input tag
-  onSelectCallback?: (selected:FormattedUserHeader) => void,
+  onSelectCallback?: (selected:UserGroupHeader) => void,
+  typeFilter?: TYPE_FILTER,
   filterUserIds?: string[]
 }
 
-export type FormattedUserHeader = {
-  ownerId: string
-  firstName: string
-  lastName: string
-  userName: string
-}
-
 const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
-  const { id, onSelectCallback, filterUserIds } = props
-  const [users, setUsers] = useState<FormattedUserHeader[]>([])
+  const { id, onSelectCallback, filterUserIds, typeFilter } = props
+  const [users, setUsers] = useState<UserGroupHeader[]>([])
 
   const onInputValueChange = async (inputValue:string) => {
     try {
-      const headers:UserGroupHeaderResponsePage = await getUserGroupHeaders(inputValue)
+      const headers:UserGroupHeaderResponsePage = await getUserGroupHeaders(inputValue, typeFilter)
       const filtered:UserGroupHeader[] = filterUserIds?.length ? headers.children
         .filter((user:UserGroupHeader) => {
           return !filterUserIds.includes(user.ownerId)
         }) : headers.children
-      const formattedList:FormattedUserHeader[] = filtered
-        .map((user:UserGroupHeader) => {
-          return {
-            ownerId: user.ownerId,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            userName: user.userName,
-          }
-      })
-      setUsers(formattedList)
+      setUsers(filtered)
     } catch (e) {
       console.log("onInputValueChange", e)
     }
   }
 
-  const onSelectedItem = (selected:FormattedUserHeader) => {
+  const onSelectedItem = (selected:UserGroupHeader) => {
     if (onSelectCallback) {
       onSelectCallback(selected)
     }
@@ -69,24 +60,20 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
             id: id,
             type: 'search',
             role: 'searchbox',
-            placeholder: 'Enter the name of the Synapse user...'
+            placeholder: 'Enter the name...'
           })} style={{marginBottom: '0'}} />
           <ul {...getMenuProps()} className={isOpen ? "users-visible" : ""} role='list'>
-            { isOpen ? users.filter((user:FormattedUserHeader) => !inputValue
+            { isOpen ? users.filter((user:UserGroupHeader) => !inputValue
               || `${user.firstName} ${user.lastName}`.includes(inputValue)
               || user.userName.includes(inputValue))
                   .map((item, index) => (
                     <li key={`userSearchBox-${index}`} {...getItemProps({key:item.ownerId, index, item})}>
-                      <UserCardSmall
-                        userProfile={{
-                          ownerId: item.ownerId,
-                          firstName: item.firstName || '',
-                          lastName: item.lastName || '',
-                          userName: item.userName
-                        }}
+                      {item.isIndividual ? <UserCard
+                        ownerId={item.ownerId}
                         disableLink={true}
+                        size={SMALL_USER_CARD}
                         showFullName={true}
-                      />
+                      /> : <p><IconSvg options={{ icon: 'team' }} /><a> {item.userName}</a></p>}
                     </li>
                   ))
                 : null
