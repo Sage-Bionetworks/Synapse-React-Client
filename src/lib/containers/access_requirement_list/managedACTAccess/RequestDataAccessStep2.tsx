@@ -21,6 +21,7 @@ import {
   RequestInterface,
   RestrictableObjectType,
   SUBMISSION_STATE,
+  TYPE_FILTER,
   UploadCallbackResp,
   UserProfile,
 } from '../../../utils/synapseTypes'
@@ -631,6 +632,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             </span>
             <UserSearchBox
               id={'requesters'}
+              typeFilter={TYPE_FILTER.USERS_ONLY}
               onSelectCallback={onSelectUserCallback}
               filterUserIds={accessors.map(user => user.profile.ownerId)}
             />

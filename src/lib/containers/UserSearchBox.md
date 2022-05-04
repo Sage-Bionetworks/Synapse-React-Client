@@ -1,5 +1,5 @@
 ```jsx
 
-  <UserSearchBox />
+  <UserSearchBox onSelectCallback={(selected) => alert(`Selected principal ID = ${selected.ownerId}`)}/>
 
 ```
