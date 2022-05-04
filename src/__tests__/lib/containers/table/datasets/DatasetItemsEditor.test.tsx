@@ -7,13 +7,11 @@ import {
   EntityFinderModalProps,
 } from '../../../../../lib/containers/entity_finder/EntityFinderModal'
 import {
+  DatasetItemsEditor,
+  DatasetItemsEditorProps,
   ADD_FILES,
   NO_FILES_IN_THIS_DATASET,
   REMOVE_FILES,
-} from '../../../../../lib/containers/table/datasets/DatasetDisplayConstants'
-import {
-  DatasetItemsEditor,
-  DatasetItemsEditorProps,
 } from '../../../../../lib/containers/table/datasets/DatasetItemsEditor'
 import { displayToast } from '../../../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
