@@ -111,6 +111,9 @@ import {
   WikiPageKey,
 } from './synapseTypes/'
 import {
+  TYPE_FILTER
+} from './synapseTypes/UserGroupHeader'
+import {
   ACCESS_TYPE,
   CreateSubmissionRequest,
   ManagedACTAccessRequirementStatus,
@@ -830,7 +833,7 @@ export const updateMyUserProfile = (
  */
 export const getUserGroupHeaders = (
   prefix: string = '',
-  typeFilter: string = 'ALL',
+  typeFilter: TYPE_FILTER = TYPE_FILTER.ALL,
   offset: number = 0,
   limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {

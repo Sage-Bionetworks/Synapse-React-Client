@@ -45,6 +45,8 @@ export type UserCardProps = {
   avatarSize?: AvatarSize
   /** Whether to show the avatar with the name for the small user card */
   withAvatar?: boolean
+  /** Whether to show the full name in the small user card */
+  showFullName?: boolean
   className?:string
 }
 

@@ -85,13 +85,13 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     )
   }
 
-  // PORTALS-2095: Special case. If this is an EntityView, and we are rendering the 'name' column,
+  // PORTALS-2095: Special case. If this is an EntityView, and we are rendering the 'id' or 'name' column,
   // and we have a rowId and rowVersionNumber (should always be the case), and our entityIdToHeader map
   // contains the row Synapse ID, then auto-link.
   if (
     entity &&
     (isEntityView(entity) || isDataset(entity)) &&
-    columnName == 'id' &&
+    (columnName === 'id' || columnName === 'name') &&
     rowId &&
     rowVersionNumber
   ) {
@@ -103,30 +103,12 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
           versionNumber={rowVersionNumber}
           className={`${isBold}`}
           showIcon={false}
-          displayTextField={'id'}
+          displayTextField={columnName}
         />
       )
     }
   }
-  if (
-    entity &&
-    (isEntityView(entity) || isDataset(entity)) &&
-    columnName == 'name' &&
-    rowId &&
-    rowVersionNumber
-  ) {
-    const synId = `syn${rowId.toString()}`
-    if (Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, synId)) {
-      return (
-        <EntityLink
-          entity={mapEntityIdToHeader[synId]}
-          versionNumber={rowVersionNumber}
-          className={`${isBold}`}
-          displayTextField={'name'}
-        />
-      )
-    }
-  }
+
   switch (columnType) {
     case ColumnType.ENTITYID:
       if (

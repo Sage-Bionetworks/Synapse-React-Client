@@ -43,6 +43,14 @@ import WarningModal from '../../synapse_form_wrapper/WarningModal'
 import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
 
+export const ADD_FILES = 'Add Files'
+export const REMOVE_FILES = 'Remove Files'
+export const NO_FILES_IN_THIS_DATASET = 'No files in this Dataset'
+export const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
+export const CREATE_VERSION_TO_FREEZE =
+  'Create a Version of this Dataset to freeze it in its current state'
+export const DATASET_SAVED = 'Dataset Saved'
+
 export type DatasetItemsEditorProps = {
   /* The synId of the Dataset to modify */
   entityId: string
@@ -57,8 +65,6 @@ export type DatasetItemsEditorTableData = DatasetItem & {
 
 const ROW_HEIGHT = 42
 const TABLE_HEIGHT = 350
-
-const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { entityId, onSave, onClose } = props
@@ -116,11 +122,9 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         onSave()
       } else {
         // If onSave isn't specified, push a generic toast message.
-        displayToast(
-          'Create a Version of this Dataset to freeze it in its current state',
-          'success',
-          { title: 'Dataset Saved' },
-        )
+        displayToast(CREATE_VERSION_TO_FREEZE, 'success', {
+          title: DATASET_SAVED,
+        })
       }
     },
     onError: error => {
@@ -130,7 +134,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           'warning',
           {
             title: 'Dataset Updated since Last Fetched',
-            primaryButtonConfig: { text: 'Retrieve Dataset', onClick: refetch },
+            primaryButtonConfig: {
+              text: 'Retrieve Dataset',
+              onClick: () => {
+                refetch()
+              },
+            },
           },
         )
       } else {
@@ -400,14 +409,16 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   function NoItemsPlaceholder() {
     return (
       <div className="NoItemsPlaceholder">
-        <Typography variant={'headline3'}>No items in this Dataset</Typography>
+        <Typography variant={'headline3'}>
+          {NO_FILES_IN_THIS_DATASET}
+        </Typography>
         <Button
           className="AddItemsButton"
-          variant="outline"
+          variant="sds-primary"
           onClick={() => setShowEntityFinder(true)}
         >
           <IconSvg options={{ icon: 'addCircleTwoTone' }} />
-          <span>Add Items</span>
+          <span>{ADD_FILES}</span>
         </Button>
       </div>
     )
@@ -434,8 +445,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         onClose={() => {
           setShowEntityFinder(false)
         }}
-        title="Add Files to Dataset"
-        confirmButtonCopy="Add Files"
+        title={ADD_FILES + ' to Dataset'}
+        confirmButtonCopy={ADD_FILES}
         onConfirm={items => {
           addItemsToDataset(items)
           setShowEntityFinder(false)
@@ -473,18 +484,18 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         </div>
 
         <Button
-          variant="outline"
+          variant="sds-primary"
           disabled={datasetToUpdate == null}
           onClick={() => setShowEntityFinder(true)}
         >
-          Add Items
+          {ADD_FILES}
         </Button>
         <Button
           disabled={selectedIds.size === 0}
           variant="outline"
           onClick={removeSelectedItemsFromDataset}
         >
-          Remove Items
+          {REMOVE_FILES}
         </Button>
       </div>
       <div className="DatasetEditorTableContainer">
