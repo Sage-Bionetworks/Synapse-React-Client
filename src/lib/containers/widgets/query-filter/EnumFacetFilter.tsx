@@ -22,8 +22,8 @@ library.add(faArrowLeft)
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
   columnModel: SelectColumn
-  onChange: (facetNamesMap: Record<string, string>)=>void
-  onClear: ()=>void
+  onChange: (facetNamesMap: Record<string, string>) => void
+  onClear: () => void
   facetAliases?: Record<string, string>
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
@@ -109,7 +109,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   const allIsSelected = facetValues.filter(item => item.isSelected).length === 0
 
   const userIds =
-    (columnModel?.columnType === ColumnType.USERID || columnModel?.columnType === ColumnType.USERID_LIST)
+    columnModel?.columnType === ColumnType.USERID ||
+    columnModel?.columnType === ColumnType.USERID_LIST
       ? facetValues.map(facet => facet.value)
       : []
   const userProfiles = useGetInfoFromIds<UserProfile>({
@@ -118,7 +119,8 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
   })
 
   const entityIds =
-    (columnModel?.columnType === ColumnType.ENTITYID || columnModel?.columnType === ColumnType.ENTITYID_LIST)
+    columnModel?.columnType === ColumnType.ENTITYID ||
+    columnModel?.columnType === ColumnType.ENTITYID_LIST
       ? facetValues.map(facet => facet.value)
       : []
   const entityHeaders = useGetInfoFromIds<EntityHeader>({

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { noop } from 'lodash-es'
 import React from 'react'
+import { isEntityView, isDataset } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import {
@@ -22,12 +23,13 @@ import EntityIdList from '../EntityIdList'
 import { EntityLink } from '../EntityLink'
 import EvaluationIdRenderer from '../EvaluationIdRenderer'
 import { SynapseCardLabel } from '../GenericCard'
+import { useQueryContext } from '../QueryWrapper'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import UserCard from '../UserCard'
 import UserIdList from '../UserIdList'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 
-type SynapseTableCellProps = {
+export type SynapseTableCellProps = {
   columnType: ColumnType
   columnValue: string
   isBold: string
@@ -38,9 +40,7 @@ type SynapseTableCellProps = {
   columnName: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
-  tableEntityId?: string
   rowData: string[]
-  isEntityView: boolean
   rowId: number
   rowVersionNumber: number
 }
@@ -56,12 +56,12 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   columnName,
   selectColumns,
   columnModels,
-  tableEntityId,
   rowData,
-  isEntityView,
   rowId,
-  rowVersionNumber
+  rowVersionNumber,
 }) => {
+  const { entity } = useQueryContext()
+
   const isShortString = (s: string, maxCharCount = 20): boolean => {
     return !s || s.length <= maxCharCount
   }
@@ -88,7 +88,13 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   // PORTALS-2095: Special case. If this is an EntityView, and we are rendering the 'name' column,
   // and we have a rowId and rowVersionNumber (should always be the case), and our entityIdToHeader map
   // contains the row Synapse ID, then auto-link.
-  if (isEntityView && columnName == 'name' && rowId && rowVersionNumber) {
+  if (
+    entity &&
+    (isEntityView(entity) || isDataset(entity)) &&
+    columnName == 'id' &&
+    rowId &&
+    rowVersionNumber
+  ) {
     const synId = `syn${rowId.toString()}`
     if (Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, synId)) {
       return (
@@ -96,6 +102,27 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
           entity={mapEntityIdToHeader[synId]}
           versionNumber={rowVersionNumber}
           className={`${isBold}`}
+          showIcon={false}
+          displayTextField={'id'}
+        />
+      )
+    }
+  }
+  if (
+    entity &&
+    (isEntityView(entity) || isDataset(entity)) &&
+    columnName == 'name' &&
+    rowId &&
+    rowVersionNumber
+  ) {
+    const synId = `syn${rowId.toString()}`
+    if (Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, synId)) {
+      return (
+        <EntityLink
+          entity={mapEntityIdToHeader[synId]}
+          versionNumber={rowVersionNumber}
+          className={`${isBold}`}
+          displayTextField={'name'}
         />
       )
     }
@@ -109,6 +136,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
           <EntityLink
             entity={mapEntityIdToHeader[columnValue]}
             className={`${isBold}`}
+            displayTextField={'name'}
           />
         )
       }
@@ -146,12 +174,14 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnType.FILEHANDLEID:
       return (
         <>
-          <DirectDownload
-            associatedObjectId={tableEntityId!}
-            associatedObjectType={FileHandleAssociateType.TableEntity}
-            fileHandleId={columnValue}
-            displayFileName={true}
-          />
+          {entity && (
+            <DirectDownload
+              associatedObjectId={entity.id!}
+              associatedObjectType={FileHandleAssociateType.TableEntity}
+              fileHandleId={columnValue}
+              displayFileName={true}
+            />
+          )}
         </>
       )
     case ColumnType.ENTITYID_LIST: {
@@ -182,7 +212,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnType.EVALUATIONID: {
       return <EvaluationIdRenderer evaluationId={columnValue} />
     }
-    
+
     case ColumnType.DATE:
       return (
         <p className={isBold}>
@@ -229,11 +259,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
       break
     case ColumnType.LINK:
       return (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href={columnValue}
-        >
+        <a target="_blank" rel="noopener noreferrer" href={columnValue}>
           {columnValue}
         </a>
       )

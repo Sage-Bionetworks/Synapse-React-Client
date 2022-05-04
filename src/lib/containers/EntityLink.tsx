@@ -12,12 +12,24 @@ import { EntityTypeIcon } from './EntityIcon'
 type EntityLinkProps = {
   entity: string | EntityHeader | Entity
   versionNumber?: number
+  /** Whether the component should link to the entity page in Synapse. Default true */
   link?: boolean
   className?: string
+  /** Whether to display an icon identifying the entity type. Default true */
+  showIcon?: boolean
+  /** The field of the entity to display. Default is 'name' */
+  displayTextField?: keyof Entity
 }
 
 export const EntityLink = (props: EntityLinkProps) => {
-  const { entity: entityOrId, className, versionNumber, link = true } = props
+  const {
+    entity: entityOrId,
+    className,
+    versionNumber,
+    displayTextField = 'name',
+    link = true,
+    showIcon = true,
+  } = props
 
   let entityId = ''
   if (typeof entityOrId === 'string') {
@@ -48,8 +60,10 @@ export const EntityLink = (props: EntityLinkProps) => {
               versionNumber ? `.${versionNumber}` : ''
             }`}
           >
-            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
-            {entity.name}
+            {showIcon && (
+              <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
+            )}
+            {entity[displayTextField]}
           </a>
         </p>
       )
@@ -57,7 +71,7 @@ export const EntityLink = (props: EntityLinkProps) => {
       return (
         <p className={className}>
           <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
-          {entity.name}
+          {entity[displayTextField]}
         </p>
       )
     }

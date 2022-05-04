@@ -1,309 +1,266 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { mount, shallow } from 'enzyme'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
-import * as React from 'react'
+import React from 'react'
 import { SynapseConstants } from '../../../lib'
-import { EntityLink } from '../../../lib/containers/EntityLink'
-import HasAccess from '../../../lib/containers/HasAccess'
-import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 import { QueryVisualizationContextType } from '../../../lib/containers/QueryVisualizationWrapper'
-import { QueryContextType } from '../../../lib/containers/QueryWrapper'
-import { getColumnIndiciesWithType } from '../../../lib/containers/synapse_table_functions/getColumnIndiciesWithType'
-import { getUniqueEntities } from '../../../lib/containers/synapse_table_functions/getUniqueEntities'
-import { SynapseTableCell } from '../../../lib/containers/synapse_table_functions/SynapseTableCell'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../lib/containers/QueryWrapper'
+import {
+  SynapseTableCell,
+  SynapseTableCellProps,
+} from '../../../lib/containers/synapse_table_functions/SynapseTableCell'
 import SynapseTable, {
   SORT_STATE,
   SynapseTableProps,
 } from '../../../lib/containers/table/SynapseTable'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
-import UserCard from '../../../lib/containers/UserCard'
-import { EnumFacetFilter } from '../../../lib/containers/widgets/query-filter/EnumFacetFilter'
-import { unCamelCase } from '../../../lib/utils/functions/unCamelCase'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { AUTHENTICATED_USERS } from '../../../lib/utils/SynapseConstants'
-import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
 import {
   ColumnType,
   EntityHeader,
   QueryBundleRequest,
   QueryResultBundle,
-  Row,
   UserGroupHeader,
   UserProfile,
 } from '../../../lib/utils/synapseTypes/'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
-import queryResultBundle from '../../../mocks/query/syn16787123'
+import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
 
-const createShallowComponent = (props: SynapseTableProps) => {
-  const wrapper = mount<SynapseTable>(<SynapseTable {...props} />, {
-    // While the SynapseContext is passed as a prop to SynapseTable, SynapseTable renders child components that rely on the context
-    wrappingComponent: SynapseContextProvider,
-    wrappingComponentProps: {
-      synapseContext: MOCK_CONTEXT_VALUE,
-    },
-  })
-  const instance = wrapper.instance()
-  return { wrapper, instance }
+const queryResultBundle: QueryResultBundle =
+  queryResultBundleJson as QueryResultBundle
+
+const title = 'studies'
+const totalColumns = 13
+const lastQueryRequest: QueryBundleRequest = {
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  entityId: '12345',
+  partMask:
+    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+    SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  query: {
+    sql: 'SELECT * FROM syn16787123',
+    limit: 25,
+    offset: 0,
+    selectedFacets: [
+      {
+        columnName: 'projectStatus',
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+        facetValues: ['Active', 'Completed'],
+      },
+      {
+        columnName: 'tumorType',
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+        facetValues: [
+          SynapseConstants.VALUE_NOT_SET,
+          'Cutaneous Neurofibroma',
+          'JMML',
+          'Low Grade Glioma',
+          'MPNST',
+          'Plexiform Neurofibroma',
+          'Plexiform Neurofibroma | MPNST',
+          'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
+          'Schwannoma',
+          'Schwannoma | Meningioma',
+          'SMN',
+        ],
+      },
+    ],
+  },
+}
+const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
+const executeQueryRequest = jest.fn()
+
+const queryContext: Partial<QueryContextType> = {
+  data: queryResultBundle,
+  entity: {
+    concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+  },
+  getLastQueryRequest: getLastQueryRequest,
+  executeQueryRequest,
 }
 
+const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
+  columnsToShowInTable: [
+    'projectStatus',
+    'dataStatus',
+    'fundingAgency',
+    'tumorType',
+    'diseaseFocus',
+  ],
+  topLevelControlsState: {
+    showColumnFilter: true,
+    showFacetFilter: true,
+    showFacetVisualization: true,
+    showSearchBar: false,
+    showDownloadConfirmation: false,
+    showColumnSelectDropdown: false,
+    showSqlEditor: false,
+  },
+}
+
+const props: SynapseTableProps = {
+  synapseContext: MOCK_CONTEXT_VALUE,
+  queryContext: queryContext,
+  queryVisualizationContext: queryVisualizationContext,
+  title,
+  facet: 'tumorType',
+}
+
+function renderTable(
+  props: Omit<SynapseTableProps, 'queryContext'>,
+  queryContext: QueryContextType,
+) {
+  return render(
+    <QueryContextProvider queryContext={queryContext}>
+      <SynapseTable {...props} queryContext={queryContext} />
+    </QueryContextProvider>,
+    {
+      wrapper: createWrapper(),
+    },
+  )
+}
+
+function renderTableCell(
+  props: SynapseTableCellProps,
+  queryContext: QueryContextType,
+) {
+  return render(
+    <QueryContextProvider queryContext={queryContext}>
+      <SynapseTableCell {...props} />
+    </QueryContextProvider>,
+    {
+      wrapper: createWrapper(),
+    },
+  )
+}
+
+jest.mock('../../../lib/containers/HasAccess', () => {
+  return function MockHasAccess() {
+    return <div data-testid="HasAccess"></div>
+  }
+})
+
+jest.mock('../../../lib/containers/EntityLink', () => {
+  return {
+    EntityLink: function MockEntityLink() {
+      return <div data-testid="EntityLink"></div>
+    },
+  }
+})
+
+jest.mock('../../../lib/containers/UserCard', () => {
+  return function MockUserCard() {
+    return <div data-testid="UserCard"></div>
+  }
+})
+
 describe('basic functionality', () => {
-  // setup tests
-  const title = 'studies'
-  const totalColumns = 13
-  const lastQueryRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: '12345',
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    query: {
-      sql: 'SELECT * FROM syn16787123',
-      limit: 25,
-      offset: 0,
-      selectedFacets: [
-        {
-          columnName: 'projectStatus',
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: ['Active', 'Completed'],
+  it('Does not renders HasAccess when the entity type is EntityView', async () => {
+    renderTable(
+      {
+        ...props,
+        // showAccessColumn should be overriden
+        showAccessColumn: true,
+      },
+      {
+        ...queryContext,
+        entity: {
+          concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
         },
-        {
-          columnName: 'tumorType',
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          facetValues: [
-            SynapseConstants.VALUE_NOT_SET,
-            'Cutaneous Neurofibroma',
-            'JMML',
-            'Low Grade Glioma',
-            'MPNST',
-            'Plexiform Neurofibroma',
-            'Plexiform Neurofibroma | MPNST',
-            'Plexiform Neurofibroma | MPNST | Cutaneous Neurofibroma',
-            'Schwannoma',
-            'Schwannoma | Meningioma',
-            'SMN',
-          ],
-        },
-      ],
-    },
-  }
-  const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
-  const executeQueryRequest = jest.fn()
-
-  const queryContext: Partial<QueryContextType> = {
-    data: queryResultBundle,
-    entity: {
-      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-    },
-    getLastQueryRequest: getLastQueryRequest,
-    executeQueryRequest,
-  }
-
-  const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
-    columnsToShowInTable: [
-      'projectStatus',
-      'dataStatus',
-      'fundingAgency',
-      'tumorType',
-      'diseaseFocus',
-    ],
-    topLevelControlsState: {
-      showColumnFilter: true,
-      showFacetFilter: true,
-      showFacetVisualization: true,
-      showSearchBar: false,
-      showDownloadConfirmation: false,
-      showColumnSelectDropdown: false,
-      showSqlEditor: false,
-    },
-  }
-
-  const props: SynapseTableProps = {
-    synapseContext: MOCK_CONTEXT_VALUE,
-    queryContext: queryContext,
-    queryVisualizationContext: queryVisualizationContext,
-    title,
-    facet: 'tumorType',
-  }
-
-  it('renders without crashing', async () => {
-    const { wrapper } = createShallowComponent(props)
-    expect(wrapper).toBeDefined()
+      },
+    )
+    await waitFor(() =>
+      expect(screen.queryAllByTestId('HasAccess')).not.toHaveLength(0),
+    )
   })
 
-  it('Does not renders HasAccess when the entity type is not EntityView', async () => {
-    const { wrapper, instance } = createShallowComponent({
-      ...props,
-      queryContext: {
-        ...props.queryContext,
+  it('Renders HasAccess when the entity type is not EntityView', () => {
+    renderTable(
+      {
+        ...props,
+        // showAccessColumn should be overriden
+        showAccessColumn: true,
+      },
+      {
+        ...queryContext,
         entity: {
           concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
         },
       },
-      // showAccessColumn should be overriden
-      showAccessColumn: true,
-    })
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(HasAccess)).toHaveLength(0)
-  })
-
-  describe('unCamelCase', () => {
-    it('works as expected', async () => {
-      expect(unCamelCase('basicCase')).toEqual('Basic Case')
-      expect(unCamelCase('DNA')).toEqual('DNA')
-      expect(unCamelCase('AnotherCase')).toEqual('Another Case')
-      expect(unCamelCase('silly ColumnName Test (ms)')).toEqual(
-        'Silly Column Name Test (ms)',
-      )
-      // these cases do not work as expected, and still need facet aliases
-      // expect(unCamelCase('pH')).toEqual('pH') // actual 'P H'
-      // expect(unCamelCase('nf1Genotype/nf2Genotype')).toEqual('NF1 Genotype/NF2 Genotype') // actual 'Nf1Genotype/nf2Genotype'
-      // expect(unCamelCase('cBioFileFormat')).toEqual('cBio File Format') // actual 'C Bio File Format'
-    })
-  })
-
-  describe('PORTALS-527: aggregate query support (show underlying data)', () => {
-    it('sql parsing test', async () => {
-      const { instance } = createShallowComponent(props)
-      const originalSql: string =
-        'SELECT bar, baz, count(distinct file_id)' +
-        'AS biz FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq' group by 1,2 order by 3 asc"
-      const testRow: Row = {
-        rowId: 123,
-        values: ['bar1', 'baz1', '10'],
-        versionNumber: 8,
-      }
-      const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql)
-      expect(sql.synId).toEqual('syn987654321')
-      expect(sql.newSql).toEqual(
-        "SELECT *\n  FROM syn987654321\n  WHERE ((((`species` = 'Human') AND (`assay` = 'rnaSeq')) AND (`bar` = 'bar1')) AND (`baz` = 'baz1'))",
-      )
-    })
-    it('sql parsing test without WHERE clause', async () => {
-      const { instance } = createShallowComponent(props)
-      const originalSql: string =
-        'SELECT bar, baz, count(distinct file_id)' +
-        'AS biz FROM syn987654321 ' +
-        'Group By 1,2 order by 3 asc'
-      const testRow: Row = {
-        rowId: 123,
-        values: ['bar1', 'baz1', '10'],
-        versionNumber: 8,
-      }
-      const sql = instance.getSqlUnderlyingDataForRow(testRow, originalSql)
-      expect(sql.synId).toEqual('syn987654321')
-      expect(sql.newSql).toEqual(
-        "SELECT *\n  FROM syn987654321\n  WHERE ((`bar` = 'bar1') AND (`baz` = 'baz1'))",
-      )
-    })
-  })
-  describe('PORTALS-527: get count function column indexes', () => {
-    it('not group by', async () => {
-      const { instance } = createShallowComponent(props)
-      const originalSql: string =
-        'SELECT bar, baz' +
-        'FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq'"
-      const columnIndexes: number[] =
-        instance.getCountFunctionColumnIndexes(originalSql)
-      expect(columnIndexes).toHaveLength(0)
-    })
-    it('group by with count function', async () => {
-      const { instance } = createShallowComponent(props)
-      const originalSql: string =
-        'SELECT bar, baz, count(distinct id) as files, concat(biz)' +
-        'FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq' group by 1, 2"
-      const columnIndexes: number[] =
-        instance.getCountFunctionColumnIndexes(originalSql)
-      expect(columnIndexes).toEqual([2])
-    })
-    it('group by without count function', async () => {
-      const { instance } = createShallowComponent(props)
-      const originalSql: string =
-        'SELECT bar, baz, concat(distinct id) as files, concat(biz)' +
-        'FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq' group by 1, 2"
-      const columnIndexes: number[] =
-        instance.getCountFunctionColumnIndexes(originalSql)
-      expect(columnIndexes).toHaveLength(0)
-    })
+    )
+    expect(screen.queryByTestId('HasAccess')).not.toBeInTheDocument()
   })
 
   describe('create table headers works', () => {
-    it('renders correctly', () => {
-      const { wrapper } = createShallowComponent(props)
+    it('renders correctly', async () => {
+      renderTable(props, queryContext)
       // there are a total of 13 columns in view, so we expect
       // 13 headers
-      expect(wrapper.find('th')).toHaveLength(totalColumns)
+      expect(await screen.findAllByRole('columnheader')).toHaveLength(
+        totalColumns,
+      )
       // there are five facets for the dataset so there should be 5
       // faceted columns
-      expect(wrapper.find(EnumFacetFilter)).toHaveLength(5)
-      expect(wrapper.find('th.SRC-hidden')).toHaveLength(8)
+      expect(
+        await screen.findAllByRole('button', {
+          name: 'Filter by specific facet',
+        }),
+      ).toHaveLength(5)
     })
 
     it('handle column sort press works', async () => {
       /*
-        Overview:
-          Go through clicking a column's sort button, there are
-          three states that cycle:
-            - off
-            - descending
-            - ascending
-      */
-      const { wrapper, instance } = createShallowComponent(props)
+          Overview:
+            Go through clicking a column's sort button, there are
+            three states that cycle:
+              - off
+              - descending
+              - ascending
+        */
+      renderTable(props, queryContext)
       // simulate having clicked the sort button on the first column
-      // projectName -- this should set it to descend
-      const sortedColumn = 'projectName'
+      // projectStatus -- this should set it to descend
+      const sortedColumn = 'projectStatus'
       const columnClickInformation = {
         index: 0,
-        name: 'projectName',
+        name: sortedColumn,
       }
-      const eventStub = {} as any
-      await instance.handleColumnSortPress(columnClickInformation)(eventStub)
-      const projectNameIconDescending = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+      userEvent.click(
+        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      )
       const descendingColumnObject = {
         column: sortedColumn,
         direction: SORT_STATE[1],
       }
-      const projectNameColumnDescending = [descendingColumnObject]
-      expect(wrapper.state('columnIconSortState')).toEqual(
-        projectNameIconDescending,
-      )
-      expect(wrapper.state('sortedColumnSelection')).toEqual(
-        projectNameColumnDescending,
-      )
       // below we match only the part of the object that we expect to have changed
-      expect(executeQueryRequest).toHaveBeenCalledWith(
-        expect.objectContaining({
-          query: expect.objectContaining({
-            sort: [descendingColumnObject],
+      await waitFor(() =>
+        expect(executeQueryRequest).toHaveBeenCalledWith(
+          expect.objectContaining({
+            query: expect.objectContaining({
+              sort: [descendingColumnObject],
+            }),
           }),
-        }),
+        ),
       )
 
       // simulate second button click
       // simulate having clicked the sort button on the first column
-      // projectName -- this should set it to descend
-      await instance.handleColumnSortPress(columnClickInformation)(eventStub)
-      const projectNameIconAscending = [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      // projectStatus -- this should set it to descend
+      userEvent.click(
+        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      )
       const ascendingColumnObject = {
         column: sortedColumn,
         direction: SORT_STATE[2],
       }
-      const projectNameColumnAscending = [ascendingColumnObject]
-      expect(wrapper.state('columnIconSortState')).toEqual(
-        projectNameIconAscending,
-      )
-      expect(wrapper.state('sortedColumnSelection')).toEqual(
-        projectNameColumnAscending,
-      )
       // below we match only the part of the object that we expect to have changed
       expect(executeQueryRequest).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -314,14 +271,10 @@ describe('basic functionality', () => {
       )
       // simulate second button click
       // simulate having clicked the sort button on the first column
-      // projectName -- this should set it to descend
-      await instance.handleColumnSortPress(columnClickInformation)(eventStub)
-      const projectNameIconOff = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      // projectStatus -- this should set it to descend
       // it shouldn't be in the api call at all
-      const projectNameColumnOff: any = []
-      expect(wrapper.state('columnIconSortState')).toEqual(projectNameIconOff)
-      expect(wrapper.state('sortedColumnSelection')).toEqual(
-        projectNameColumnOff,
+      userEvent.click(
+        (await screen.findAllByRole('button', { name: 'sort' }))[0],
       )
       // below we match only the part of the object that we expect to have changed
       expect(executeQueryRequest).toHaveBeenCalledWith(
@@ -335,437 +288,279 @@ describe('basic functionality', () => {
   })
 
   describe('table cells render correctly', () => {
-    const ENTITYID_INDEX = 0
-    const USERID_INDEX = 1
-    const DATE_INDEX = 2
-    const STRING_LIST_INDEX = 3
-    const DATE_LIST_INDEX = 4
-    const BOOLEAN_LIST_INDEX = 5
-    const INTEGER_LIST_INDEX = 6
-    const FILEHANDLEID_INDEX = 7
-    const ENTITYIDLIST_INDEX = 8
-    const MOCKED_STRING = 'MOCKED_VALUE'
-    const MOCKED_STRING_LIST = '["MOCKED_VALUE1","MOCKED_VALUE2"]'
     const MOCK_DATE_VALUE = '1581360939000'
     const MOCKED_DATE_LIST = `[${MOCK_DATE_VALUE}]`
     const MOCKED_BOOLEAN_LIST = '[true, false]'
     const MOCKED_INTEGER_LIST = '[10, 11]'
-    const MOCKED_NUM = 1
-    // The query result bundle has two columns of type entity, the second
-    // is of type ENTITYID, the third is USERID
-    const mockData: QueryResultBundle = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-      selectColumns: [
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.ENTITYID,
-        },
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.USERID,
-        },
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.DATE,
-        },
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.STRING_LIST,
-        },
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.DATE_LIST,
-        },
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.BOOLEAN_LIST,
-        },
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.INTEGER_LIST,
-        },
-        {
-          id: MOCKED_STRING,
-          name: MOCKED_STRING,
-          columnType: ColumnType.FILEHANDLEID,
-        },
-      ],
-      queryResult: {
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
-        queryResults: {
-          concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-          tableId: MOCKED_STRING,
-          etag: MOCKED_STRING,
-          headers: [
-            {
-              columnType: ColumnType.ENTITYID,
-              name: MOCKED_STRING,
-              id: MOCKED_STRING,
-            },
-            {
-              columnType: ColumnType.USERID,
-              name: MOCKED_STRING,
-              id: MOCKED_STRING,
-            },
-            {
-              columnType: ColumnType.DATE,
-              name: MOCKED_STRING,
-              id: MOCKED_STRING,
-            },
-            {
-              id: MOCKED_STRING,
-              name: MOCKED_STRING,
-              columnType: ColumnType.STRING_LIST,
-            },
-            {
-              id: MOCKED_STRING,
-              name: MOCKED_STRING,
-              columnType: ColumnType.DATE_LIST,
-            },
-            {
-              id: MOCKED_STRING,
-              name: MOCKED_STRING,
-              columnType: ColumnType.BOOLEAN_LIST,
-            },
-            {
-              id: MOCKED_STRING,
-              name: MOCKED_STRING,
-              columnType: ColumnType.INTEGER_LIST,
-            },
-            {
-              id: MOCKED_STRING,
-              name: MOCKED_STRING,
-              columnType: ColumnType.FILEHANDLEID,
-            },
-          ],
-          rows: [
-            {
-              values: [
-                'syn123',
-                'syn120',
-                '1567525763000',
-                MOCKED_STRING_LIST,
-                MOCKED_DATE_LIST,
-                MOCKED_BOOLEAN_LIST,
-                MOCKED_INTEGER_LIST,
-              ],
-              versionNumber: MOCKED_NUM,
-              rowId: MOCKED_NUM,
-            },
-            {
-              // @ts-ignore
-              values: [
-                'syn124',
-                'syn120',
-                null,
-                MOCKED_STRING_LIST,
-                MOCKED_DATE_LIST,
-                MOCKED_BOOLEAN_LIST,
-                MOCKED_INTEGER_LIST,
-              ],
-              versionNumber: MOCKED_NUM,
-              rowId: MOCKED_NUM,
-            },
-            {
-              values: [
-                'syn125',
-                'syn121',
-                '1567525763003',
-                MOCKED_STRING_LIST,
-                MOCKED_DATE_LIST,
-                MOCKED_BOOLEAN_LIST,
-                MOCKED_INTEGER_LIST,
-              ],
-              versionNumber: MOCKED_NUM,
-              rowId: MOCKED_NUM,
-            },
-          ],
-        },
+
+    const mockEntityLinkValue: string = 'syn122'
+    const mockUserCardValue: string = 'syn123'
+    const mockAllAuthenticatedUsersValue: string = 'syn124'
+    const mockTeamValue: string = 'syn125'
+    const teamName: string = 'team name'
+    const mockColumnValue: string = 'syn126'
+    const mockDateValue: string = '1574268563000'
+    const mockRowId = 122
+    const mockRowVersion = 2
+
+    // We only care about the conditional rendering, not the
+    // instantiation of the EntityLink, so we cast the value
+    const mapEntityIdToHeader = {
+      [mockEntityLinkValue]: {} as EntityHeader,
+    }
+    const mapUserIdToHeader: Record<
+      string,
+      Partial<UserGroupHeader & UserProfile>
+    > = {
+      [mockAllAuthenticatedUsersValue]: {
+        isIndividual: false,
+        userName: AUTHENTICATED_USERS,
       },
+      [mockTeamValue]: {
+        isIndividual: false,
+        userName: teamName,
+      },
+      [mockUserCardValue]: {},
     }
 
-    it('gets column indicies correctly ', () => {
-      const entities = getColumnIndiciesWithType(mockData, ColumnType.ENTITYID)
-      expect(entities).toEqual([ENTITYID_INDEX])
-      const userIds = getColumnIndiciesWithType(mockData, ColumnType.USERID)
-      expect(userIds).toEqual([USERID_INDEX])
-      const dates = getColumnIndiciesWithType(mockData, ColumnType.DATE)
-      expect(dates).toEqual([DATE_INDEX])
-      const stringLists = getColumnIndiciesWithType(
-        mockData,
-        ColumnType.STRING_LIST,
-      )
-      expect(stringLists).toEqual([STRING_LIST_INDEX])
-      const dateLists = getColumnIndiciesWithType(
-        mockData,
-        ColumnType.DATE_LIST,
-      )
-      expect(dateLists).toEqual([DATE_LIST_INDEX])
-      const booleanLists = getColumnIndiciesWithType(
-        mockData,
-        ColumnType.BOOLEAN_LIST,
-      )
-      expect(booleanLists).toEqual([BOOLEAN_LIST_INDEX])
-      const integerLists = getColumnIndiciesWithType(
-        mockData,
-        ColumnType.INTEGER_LIST,
-      )
-      expect(integerLists).toEqual([INTEGER_LIST_INDEX])
-      const dateOrIntegerLists = getColumnIndiciesWithType(
-        mockData,
-        ColumnType.DATE_LIST,
-        ColumnType.INTEGER_LIST,
-      )
-      expect(dateOrIntegerLists).toEqual([DATE_LIST_INDEX, INTEGER_LIST_INDEX])
+    const tableCellProps: SynapseTableCellProps = {
+      isBold: '',
+      mapUserIdToHeader: {},
+      columnLinkConfig: undefined,
+      rowIndex: undefined,
+      columnName: '',
+      selectColumns: undefined,
+      columnModels: undefined,
+      rowId: mockRowId,
+      rowVersionNumber: mockRowVersion,
+    }
 
-      const fileHandleId = getColumnIndiciesWithType(
-        mockData,
-        ColumnType.FILEHANDLEID,
+    it('renders an entity link', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.ENTITYID,
+          columnValue: mockEntityLinkValue,
+          mapEntityIdToHeader: mapEntityIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
       )
-      expect(fileHandleId).toEqual([FILEHANDLEID_INDEX])
+
+      await screen.findByTestId('EntityLink')
     })
 
-    it('gets unique entities', () => {
-      // test entityId column type
-      let mapEntityIdToHeader = {}
-      let indicies = [ENTITYID_INDEX]
-      let uniqueEntities = getUniqueEntities(
-        mockData,
-        mapEntityIdToHeader,
-        indicies,
+    it('PORTALS-2095: renders an entity link for name column in EntityView', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnName: 'name',
+          columnType: ColumnType.STRING,
+          columnValue: 'My amazing project folder',
+          mapEntityIdToHeader: mapEntityIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+          },
+        },
       )
-      expect(uniqueEntities.size).toEqual(3)
-      // test userId column
-      mapEntityIdToHeader = {
-        syn120: {},
-      }
-      indicies = [USERID_INDEX]
-      uniqueEntities = getUniqueEntities(
-        mockData,
-        mapEntityIdToHeader,
-        indicies,
-      )
-      expect(uniqueEntities.size).toEqual(1)
+
+      await screen.findByTestId('EntityLink')
     })
 
-    describe('renders table cells correctly', () => {
-      const mockEntityLinkValue: string = 'syn122'
-      const mockUserCardValue: string = 'syn123'
-      const mockAllAuthenticatedUsersValue: string = 'syn124'
-      const mockTeamValue: string = 'syn125'
-      const teamName: string = 'team name'
-      const mockColumnValue: string = 'syn126'
-      const mockDateValue: string = '1574268563000'
-      const mockRowId = 122
-      const mockRowVersion = 2
-      const mockIsEntityView = false
-
-      // We only care about the conditional rendering, not the
-      // instantiation of the EntityLink, so we cast the value
-      const mapEntityIdToHeader = {
-        [mockEntityLinkValue]: {} as EntityHeader,
-      }
-      const mapUserIdToHeader: Record<
-        string,
-        Partial<UserGroupHeader & UserProfile>
-      > = {
-        [mockAllAuthenticatedUsersValue]: {
-          isIndividual: false,
-          userName: AUTHENTICATED_USERS,
+    it('renders a link for all authenticated users', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.USERID,
+          columnValue: mockAllAuthenticatedUsersValue,
+          mapUserIdToHeader: mapUserIdToHeader,
         },
-        [mockTeamValue]: {
-          isIndividual: false,
-          userName: teamName,
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
         },
-        [mockUserCardValue]: {},
-      }
+      )
 
-      const tableCellProps = {
-        isBold: '',
-        mapUserIdToHeader: {},
-        columnLinkConfig: undefined,
-        rowIndex: undefined,
-        columnName: '',
-        selectColumns: undefined,
-        columnModels: undefined,
-        isEntityView: mockIsEntityView,
-        rowId: mockRowId,
-        rowVersionNumber: mockRowVersion,
-      }
+      await screen.findByText('All registered Synapse users', { exact: false })
+    })
 
-      it('renders an entity link', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.ENTITYID}
-            columnValue={mockEntityLinkValue}
-            mapEntityIdToHeader={mapEntityIdToHeader}
-          />,
-        )
-        expect(tableCell.find(EntityLink)).toHaveLength(1)
-      })
-      it('PORTALS-2095: renders an entity link for name column in EntityView', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnName="name"
-            columnType={ColumnType.STRING}
-            columnValue="My amazing project folder"
-            mapEntityIdToHeader={mapEntityIdToHeader}
-            isEntityView={true}
-          />,
-        )
-        expect(tableCell.find(EntityLink)).toHaveLength(1)
-      })
+    it('renders a link for a team', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.USERID,
+          columnValue: mockTeamValue,
+          mapUserIdToHeader: mapUserIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
 
-      it('renders a link for all authenticated users', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.USERID}
-            columnValue={mockAllAuthenticatedUsersValue}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find('span').text().trim()).toEqual(
-          '<FontAwesomeIcon /> All registered Synapse users',
-        )
-        expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual(
-          'globe-americas',
-        )
-      })
-      it('renders a link for a team', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.USERID}
-            columnValue={mockTeamValue}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find('a').text().trim()).toEqual(
-          `<FontAwesomeIcon /> ${teamName}`,
-        )
-        expect(tableCell.find(FontAwesomeIcon).props().icon).toEqual('users')
-      })
-      it('renders a user card link', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.USERID}
-            columnValue={mockUserCardValue}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find(UserCard)).toHaveLength(1)
-      })
-      it('renders a markdown value', () => {
-        const mockMarkdownColumnValue = '# column markdown'
-        const tableCell = mount(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.USERID}
-            columnValue={mockMarkdownColumnValue}
-            mapUserIdToHeader={mapUserIdToHeader}
-            columnLinkConfig={{
-              isMarkdown: true,
-              matchColumnName: 'a',
-            }}
-            columnName={'a'}
-            selectColumns={[
-              { columnType: ColumnType.STRING, name: 'a', id: '' },
-            ]}
-          />,
-        )
-        expect(tableCell.find(MarkdownSynapse).props().markdown).toEqual(
-          mockMarkdownColumnValue,
-        )
-      })
-      it('renders a standard value', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.STRING}
-            columnValue={mockColumnValue}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find('p').text().trim()).toEqual(mockColumnValue)
-      })
+      await screen.findByText(teamName, { exact: false })
+    })
 
-      it('renders a date value', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.DATE}
-            columnValue={mockDateValue}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find('p').text().trim()).toEqual(
-          new Date(Number(mockDateValue)).toLocaleString(),
-        )
-      })
+    it('renders a user card link', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.USERID,
+          columnValue: mockUserCardValue,
+          mapUserIdToHeader: mapUserIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
 
-      it('renders a date list value', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.DATE_LIST}
-            columnValue={MOCKED_DATE_LIST}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find('span').text().trim()).toEqual(
-          new Date(Number(MOCK_DATE_VALUE)).toLocaleString(),
-        )
-      })
+      await screen.findByTestId('UserCard')
+    })
 
-      it('renders a integer list value', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.INTEGER_LIST}
-            columnValue={MOCKED_INTEGER_LIST}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find('span').first().text().trim()).toEqual('10,')
-        expect(tableCell.find('span').last().text().trim()).toEqual('11')
-      })
+    it('renders a markdown value', async () => {
+      const mockMarkdownColumnValue = '# column markdown'
 
-      it('renders a boolean list value', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.BOOLEAN_LIST}
-            columnValue={MOCKED_BOOLEAN_LIST}
-            mapUserIdToHeader={mapUserIdToHeader}
-          />,
-        )
-        expect(tableCell.find('span').first().text().trim()).toEqual('true,')
-        expect(tableCell.find('span').last().text().trim()).toEqual('false')
-      })
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.USERID,
+          columnValue: mockMarkdownColumnValue,
+          mapUserIdToHeader: mapUserIdToHeader,
+          columnLinkConfig: {
+            isMarkdown: true,
+            matchColumnName: 'a',
+          },
+          columnName: 'a',
+          selectColumns: [{ columnType: ColumnType.STRING, name: 'a', id: '' }],
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
 
-      it('renders an empty cell for null date', () => {
-        const tableCell = shallow(
-          <SynapseTableCell
-            {...tableCellProps}
-            columnType={ColumnType.DATE}
-            isMarkdownColumn={false}
-          />,
-        )
-        expect(tableCell.find('p').first().text().trim()).toEqual(
-          NOT_SET_DISPLAY_VALUE,
-        )
-      })
+      await screen.findByText(mockMarkdownColumnValue)
+    })
+
+    it('renders a standard value', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.STRING,
+          columnValue: mockColumnValue,
+          mapUserIdToHeader: mapUserIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
+
+      await screen.findByText(mockColumnValue)
+    })
+
+    it('renders a date value', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.DATE,
+          columnValue: mockDateValue,
+          mapUserIdToHeader: mapUserIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
+
+      await screen.findByText(new Date(Number(mockDateValue)).toLocaleString())
+    })
+
+    it('renders a date list value', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.DATE_LIST,
+          columnValue: MOCKED_DATE_LIST,
+          mapUserIdToHeader: mapUserIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
+
+      await screen.findByText(
+        new Date(Number(MOCK_DATE_VALUE)).toLocaleString(),
+      )
+    })
+
+    it('renders a integer list value', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.INTEGER_LIST,
+          columnValue: MOCKED_INTEGER_LIST,
+          mapUserIdToHeader: mapUserIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
+
+      await screen.findByText('10,', { exact: false })
+      await screen.findByText('11', { exact: false })
+    })
+
+    it('renders a boolean list value', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.BOOLEAN_LIST,
+          columnValue: MOCKED_BOOLEAN_LIST,
+          mapUserIdToHeader: mapUserIdToHeader,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
+
+      await screen.findByText('true,')
+      await screen.findByText('false')
+    })
+
+    it('renders an empty cell for null date', async () => {
+      renderTableCell(
+        {
+          ...tableCellProps,
+          columnType: ColumnType.DATE,
+          isMarkdownColumn: false,
+        },
+        {
+          entity: {
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
+      )
+
+      await screen.findByText(NOT_SET_DISPLAY_VALUE)
     })
   })
 })
