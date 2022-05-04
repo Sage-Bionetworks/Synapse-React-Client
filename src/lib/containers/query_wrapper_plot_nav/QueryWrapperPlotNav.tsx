@@ -63,6 +63,7 @@ type OwnProps = {
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
   downloadCartPageUrl?: string
+  showLastUpdatedOn?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'>
 
 type SearchParams = {
@@ -99,6 +100,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     limit = DEFAULT_PAGE_SIZE,
     downloadCartPageUrl,
     initQueryJson,
+    showLastUpdatedOn,
   } = props
   const sqlUsed = insertConditionsFromSearchParams(
     sql,
@@ -116,9 +118,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       }
   const entityId = parseEntityIdFromSqlStatement(query.sql)
   const { data: entity } = useGetEntity(entityId)
-  const isFullTextSearchEnabled = entity &&
-    isTableEntity(entity) &&
-    entity.isSearchEnabled
+  const isFullTextSearchEnabled =
+    entity && isTableEntity(entity) && entity.isSearchEnabled
   const initQueryRequest: QueryBundleRequest = {
     entityId,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -143,6 +144,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
           visibleColumnCount={props.visibleColumnCount}
           defaultShowFacetVisualization={props.defaultShowFacetVisualization}
           defaultShowSearchBar={isFullTextSearchEnabled}
+          showLastUpdatedOn={showLastUpdatedOn}
         >
           <QueryContextConsumer>
             {queryContext => {
