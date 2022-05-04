@@ -109,6 +109,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
           darkTheme ? 'dark-theme' : ''
         } `}
         variant={'light'}
+        aria-label={tooltipText}
       >
         {tooltipTriggerContents}
       </Dropdown.Toggle>
