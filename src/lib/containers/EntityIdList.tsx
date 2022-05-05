@@ -30,7 +30,9 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
     getEntityHeadersByIds(entityIdList, accessToken)
       .then(entity => {
         const newEntityList = entity.results.map(el => {
-          return <EntityLink entity={el} key={el.id} />
+          return (
+            <EntityLink entity={el} key={el.id} displayTextField={'name'} />
+          )
         })
         setEntityLinkArray(newEntityList)
       })

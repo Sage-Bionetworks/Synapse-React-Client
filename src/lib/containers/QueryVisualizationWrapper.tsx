@@ -14,6 +14,8 @@ export type QueryVisualizationContextType = {
   facetAliases?: Record<string, string>
   rgbIndex?: number
   unitDescription?: string
+  /** Whether to show when the table or view was last updated. */
+  showLastUpdatedOn?: boolean
 }
 
 /**
@@ -61,6 +63,7 @@ export type QueryVisualizationWrapperProps = {
   hiddenColumns?: string[]
   defaultShowFacetVisualization?: boolean
   defaultShowSearchBar?: boolean
+  showLastUpdatedOn?: boolean
 }
 
 export type TopLevelControlsState = {
@@ -136,6 +139,7 @@ export function QueryVisualizationWrapper(
     facetAliases: props.facetAliases,
     rgbIndex: props.rgbIndex,
     unitDescription: props.unitDescription,
+    showLastUpdatedOn: props.showLastUpdatedOn,
   }
   /**
    * Render the children without any formatting

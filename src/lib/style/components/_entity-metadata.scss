@@ -21,6 +21,7 @@
   }
 }
 
+.MetadataTable,
 .AnnotationsTable {
   width: 100%;
   margin: 0px;
@@ -42,17 +43,6 @@
   }
 }
 
-.MetadataTable {
-  width: 100%;
-  margin: 0px;
-  &__Row {
-    &__Key {
-      font-weight: bold;
-      padding: 6px 0px;
-    }
-
-    &__Value {
-      padding: 6px 0px;
-    }
-  }
+.FluidModal.EntityMetadata:not(.isInEditMode) .modal-dialog {
+  max-width: 600px;
 }

@@ -8,6 +8,7 @@ import {
   Clear,
   PhotoCameraOutlined,
   Cached,
+  Group,
   InfoOutlined,
   AddShoppingCart,
   ShoppingCartOutlined,
@@ -120,6 +121,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <AddCircleTwoTone style={muiSvgStyle}></AddCircleTwoTone>
     case 'reload':
       return <Cached style={muiSvgStyle}></Cached>
+    case 'team':
+      return <Group style={muiSvgStyle}></Group>
     case 'photoCamera':
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
     case 'info':

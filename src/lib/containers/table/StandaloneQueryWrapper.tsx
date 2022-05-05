@@ -21,6 +21,7 @@ import {
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper'
 import { isTableEntity } from '../../utils/functions/EntityTypeUtils'
+import LastUpdatedOn from '../query_wrapper_plot_nav/LastUpdatedOn'
 
 type SearchParams = {
   searchParams?: {
@@ -45,6 +46,7 @@ type OwnProps = {
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
+  showLastUpdatedOn?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'>
 
 export type StandaloneQueryWrapperProps = Partial<
@@ -64,7 +66,8 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
     entityId: parseEntityIdFromSqlStatement(sql),
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     query: {
@@ -79,7 +82,7 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
  * If showTopLevelControls is set to true, then the SynapseTable will also include the TopLevelControls (search, export table, column selection).
  */
 const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProps> =
-  props => {
+  (props: StandaloneQueryWrapperProps) => {
     const {
       title,
       searchParams,
@@ -93,6 +96,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
       searchConfiguration,
       unitDescription = 'Results',
       rgbIndex,
+      showLastUpdatedOn,
       ...rest
     } = props
 
@@ -117,6 +121,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
         <QueryVisualizationWrapper
           rgbIndex={rgbIndex}
           unitDescription={unitDescription}
+          showLastUpdatedOn={showLastUpdatedOn}
           {...rest}
         >
           <QueryContextConsumer>
@@ -138,45 +143,41 @@ const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProp
                     return (
                       <>
                         {showTopLevelControls && (
-                            <TopLevelControls
-                              showColumnSelection={true}
-                              name={name}
-                              hideDownload={hideDownload}
-                              hideQueryCount={hideQueryCount}
-                              hideFacetFilterControl={true}
-                              hideVisualizationsControl={true}
-                            />
-                          )}
-                          {entity &&
-                          isTableEntity(entity) &&
-                          entity.isSearchEnabled ? (
-                            <FullTextSearch />
-                          ) : (
-                            <SearchV2
-                              {...searchConfiguration}
-                              queryContext={queryContext}
-                              queryVisualizationContext={
-                                queryVisualizationContext
-                              }
-                            />
-                          )}
-                          <SqlEditor />
-                          {showTopLevelControls && (
-                            <TotalQueryResults
-                              frontText={''}
-                              showNotch={false}
-                            />
-                          )}
-                          <SynapseTable
-                            synapseContext={synapseContext}
+                          <TopLevelControls
+                            showColumnSelection={true}
+                            name={name}
+                            hideDownload={hideDownload}
+                            hideQueryCount={hideQueryCount}
+                            hideFacetFilterControl={true}
+                            hideVisualizationsControl={true}
+                          />
+                        )}
+                        {entity &&
+                        isTableEntity(entity) &&
+                        entity.isSearchEnabled ? (
+                          <FullTextSearch />
+                        ) : (
+                          <SearchV2
+                            {...searchConfiguration}
                             queryContext={queryContext}
                             queryVisualizationContext={
                               queryVisualizationContext
                             }
-                            showAccessColumn={showAccessColumn}
-                            title={title}
-                            data-testid="SynapseTable"
                           />
+                        )}
+                        <SqlEditor />
+                        {showTopLevelControls && (
+                          <TotalQueryResults frontText={''} showNotch={false} />
+                        )}
+                        <SynapseTable
+                          synapseContext={synapseContext}
+                          queryContext={queryContext}
+                          queryVisualizationContext={queryVisualizationContext}
+                          showAccessColumn={showAccessColumn}
+                          title={title}
+                          data-testid="SynapseTable"
+                        />
+                        <LastUpdatedOn />
                       </>
                     )
                   }}

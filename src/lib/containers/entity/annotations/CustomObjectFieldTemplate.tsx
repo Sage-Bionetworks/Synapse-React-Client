@@ -19,10 +19,8 @@ export function CustomObjectFieldTemplate(
   const { TitleField, DescriptionField } = props
   const CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID = `CustomObjectFieldTooltip-${props.idSchema.$id}`
 
-  const [
-    previousSchemaDefinedProperties,
-    setPreviousSchemaDefinedProperties,
-  ] = useState<Set<string>>(new Set())
+  const [previousSchemaDefinedProperties, setPreviousSchemaDefinedProperties] =
+    useState<Set<string>>(new Set())
 
   /**
    * We track how the schema changes as the user enters data, causing conditional subschemas to be evaluated.
@@ -95,17 +93,19 @@ export function CustomObjectFieldTemplate(
         return <div key={prop.name}>{prop.content}</div>
       })}
       {utils.canExpand(props.schema, props.uiSchema, props.formData) && (
-        <Button
-          variant="gray"
-          className="object-property-expand"
-          onClick={props.onAddClick(props.schema)}
-          disabled={props.disabled || props.readonly}
-          data-for={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
-          data-tip={`Add a new custom field`}
-          aria-label={'Add Custom Field'}
-        >
-          <AddToList />
-        </Button>
+        <div className="container-fluid">
+          <Button
+            variant="gray"
+            className="object-property-expand"
+            onClick={props.onAddClick(props.schema)}
+            disabled={props.disabled || props.readonly}
+            data-for={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
+            data-tip={`Add a new custom field`}
+            aria-label={'Add Custom Field'}
+          >
+            <AddToList />
+          </Button>
+        </div>
       )}
     </fieldset>
   )
