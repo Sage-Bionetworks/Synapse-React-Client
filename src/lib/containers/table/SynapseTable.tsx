@@ -305,7 +305,7 @@ export default class SynapseTable extends React.Component<
         console.error('Error on retrieving entity header list , ', err)
       }
     }
-    const userPorfileIds: string[] = []
+    const userProfileIds: string[] = []
     if (distinctUserIds.size > 0) {
       // Make call to get group headers and user profiles
       const ids = Array.from(distinctUserIds)
@@ -317,7 +317,7 @@ export default class SynapseTable extends React.Component<
         )
         data.children.forEach(el => {
           if (el.isIndividual) {
-            userPorfileIds.push(el.ownerId)
+            userProfileIds.push(el.ownerId)
           } else {
             mapUserIdToHeader[el.ownerId] = el
           }
@@ -326,9 +326,9 @@ export default class SynapseTable extends React.Component<
         console.error('Error on getGroupHeaders batch: ', err)
       }
     }
-    if (userPorfileIds.length > 0) {
+    if (userProfileIds.length > 0) {
       try {
-        const data = await getUserProfileWithProfilePicAttached(userPorfileIds)
+        const data = await getUserProfileWithProfilePicAttached(userProfileIds)
         data.list.forEach((el: UserProfile) => {
           mapUserIdToHeader[el.ownerId] = el
         })

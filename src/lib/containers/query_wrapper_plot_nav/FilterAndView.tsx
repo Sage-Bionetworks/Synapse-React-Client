@@ -9,6 +9,7 @@ import { CardConfiguration } from '../CardContainerLogic'
 import { useQueryContext } from '../QueryWrapper'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
+import LastUpdatedOn from './LastUpdatedOn'
 
 export type OwnProps = {
   tableConfiguration:
@@ -46,6 +47,7 @@ const FilterAndView = (props: OwnProps) => {
         <></>
       )}
       {cardConfiguration ? <CardContainer {...cardConfiguration} /> : <></>}
+      <LastUpdatedOn />
     </div>
   )
 }
