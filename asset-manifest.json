@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/Synapse-React-Client/build/bundle.0abcd2a4.js",
-    "main.css": "/Synapse-React-Client/static/css/main.9e017696.css",
+    "main.js": "/Synapse-React-Client/build/bundle.f805aeef.js",
+    "main.css": "/Synapse-React-Client/static/css/main.57d8a0b4.css",
     "static/media/json-form-tool-no-submissions.svg": "/Synapse-React-Client/static/media/json-form-tool-no-submissions.fec08af7d31dc589a0aae87aeb81f6c5.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.e6c377472cce05af7f16f64c513a3e4c.svg",
     "static/media/maintenance.svg": "/Synapse-React-Client/static/media/maintenance.e4904e61c027f1344d0815e0b0412c32.svg",
@@ -23,13 +23,13 @@
     "static/media/account-registered.svg": "/Synapse-React-Client/static/media/account-registered.05d4126836ddb41d4ef9c5ef04b747af.svg",
     "static/media/subscribe_plus.svg": "/Synapse-React-Client/static/media/subscribe_plus.17a46c92dc3e9dfc2d72137e28333905.svg",
     "static/media/person.svg": "/Synapse-React-Client/static/media/person.4a689f34e18e34a96771fa2d2d1a1019.svg",
-    "index.cjs": "/Synapse-React-Client/06ad11ea3e32fd3e4303.cjs",
+    "index.cjs": "/Synapse-React-Client/cd351d7c31d0d3fccf96.cjs",
     "static/media/icon_times.svg": "/Synapse-React-Client/static/media/icon_times.50b0eb4b3784fa68364fddd50f6b102b.svg",
     "static/media/icon_plus_square_filled.svg": "/Synapse-React-Client/static/media/icon_plus_square_filled.747b06b7b9929f520a42ffaee2b70a62.svg",
     "static/media/chart2.svg": "/Synapse-React-Client/static/media/chart2.e4b5d61ed9ee4e10a0d6aeecede76d5e.svg"
   },
   "entrypoints": [
-    "build/bundle.0abcd2a4.js",
-    "static/css/main.9e017696.css"
+    "build/bundle.f805aeef.js",
+    "static/css/main.57d8a0b4.css"
   ]
 }
