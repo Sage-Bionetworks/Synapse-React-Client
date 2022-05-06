@@ -145,6 +145,10 @@ const Icon: React.FunctionComponent<IconProps> = ({
   // TODO: get rid of dataset icon class, none of the icons should be special cased
   const datasetCustomStyle =
     value === DATASET || type === DATASET ? { height: '55px' } : {}
+
+  if (typeof Icon === 'string') {
+    return <img src={Icon} className={`iconImg`} />
+  }
   return (
     <span className={cssClass}>
       <Icon style={datasetCustomStyle} />
