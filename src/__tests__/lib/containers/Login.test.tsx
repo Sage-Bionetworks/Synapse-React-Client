@@ -1,7 +1,7 @@
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import { shallow } from 'enzyme'
 import Login from '../../../lib/containers/Login'
-import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 SynapseClient.login = jest.fn().mockResolvedValue({
@@ -14,22 +14,17 @@ describe('Functionality of Login Component', () => {
   const callback = jest.fn()
 
   it('renders', () => {
-    const tree = shallow(<Login sessionCallback={callback} />)
-    expect(tree).toBeDefined()
+    render(<Login sessionCallback={callback} />)
+    screen.getByLabelText('Username or Email Address')
+    screen.getByLabelText('Password')
   })
 
   it('Makes a login request and invokes the callback when clicking Sign In', async () => {
-    const tree = shallow(<Login sessionCallback={callback} />)
+    render(<Login sessionCallback={callback} />)
 
-    const loginButton = tree.findWhere(
-      n =>
-        n.name() === 'Button' &&
-        n.prop('className').includes('SRC-login-button'),
-    )
-    loginButton.prop('onSubmit')({ preventDefault: () => {} })
+    userEvent.click(screen.getByRole('button', { name: 'Log in' }))
 
-    await resolveAllPending(tree)
-    expect(SynapseClient.login).toHaveBeenCalled()
-    expect(callback).toHaveBeenCalled()
+    await waitFor(() => expect(SynapseClient.login).toHaveBeenCalled())
+    await waitFor(() => expect(callback).toHaveBeenCalled())
   })
 })
