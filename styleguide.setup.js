@@ -17,10 +17,10 @@ import {
   OBSERVATION_CARD,
   EXPERIMENTAL_TOOL,
 } from './src/lib/utils/SynapseConstants'
-import brainSvg from './src/demo/containers/playground/icons/brain.svg'
-import circleSvg from './src/demo/containers/playground/icons/circle.svg'
-import mouseSvg from './src/demo/containers/playground/icons/mouse.svg'
-import resilienceadSvg from './src/demo/containers/playground/icons/resiliencead.svg'
+import { ReactComponent as brainSvg } from './src/demo/containers/playground/icons/brain.svg'
+import { ReactComponent as circleSvg } from './src/demo/containers/playground/icons/circle.svg'
+import { ReactComponent as mouseSvg } from './src/demo/containers/playground/icons/mouse.svg'
+import { ReactComponent as resilienceadSvg } from './src/demo/containers/playground/icons/resiliencead.svg'
 import moment from 'moment'
 import { SynapseContextConsumer } from './src/lib/utils/SynapseContext'
 import { Checkbox } from './src/lib/containers/widgets/Checkbox'

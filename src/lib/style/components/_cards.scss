@@ -58,7 +58,8 @@ $text-color-lighter: #898989;
     .SRC-type,
     .SRC-cardThumbnail {
       color: inherit;
-      img, svg {
+      img,
+      svg {
         margin-left: 0px;
       }
     }
@@ -218,7 +219,7 @@ $text-color-lighter: #898989;
     display: block;
     padding-top: $baseline-grid;
     padding-bottom: $baseline-grid;
-    >* {
+    > * {
       margin-left: 15px;
     }
     &.hasIcon {
@@ -295,10 +296,6 @@ $text-color-lighter: #898989;
       margin: $baseline-grid 0 $baseline-grid 15%;
     }
   }
-}
-
-img.iconImg.SRC-datasetIcon {
-  max-width: 60px !important;
 }
 
 .SRC-cardRowDesktop {

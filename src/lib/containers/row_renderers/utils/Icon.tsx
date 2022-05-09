@@ -74,7 +74,7 @@ import {
   ColumnsDark,
   VerticalDots,
   ExternalLink,
-  SqlEditorIcon
+  SqlEditorIcon,
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
@@ -125,9 +125,12 @@ const defaultIcons = {
   [CHART2]: chart2Svg,
   [FILE]: fileSvg,
   [EXTERNALLINK]: ExternalLink,
-  [EASY_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/easy.svg',
-  [MEDIUM_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/medium.svg',
-  [VARIABLE_DIFFICULTY]: 'https://s3.amazonaws.com/static.synapse.org/images/variable.svg',
+  [EASY_DIFFICULTY]:
+    'https://s3.amazonaws.com/static.synapse.org/images/easy.svg',
+  [MEDIUM_DIFFICULTY]:
+    'https://s3.amazonaws.com/static.synapse.org/images/medium.svg',
+  [VARIABLE_DIFFICULTY]:
+    'https://s3.amazonaws.com/static.synapse.org/images/variable.svg',
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,
@@ -140,15 +143,22 @@ const Icon: React.FunctionComponent<IconProps> = ({
   // or if the type of card has a corresponding icon, e.g. 'Publication'
   const Icon = iconSet[value] || iconSet[type]
   // TODO: get rid of dataset icon class, none of the icons should be special cased
-  const datasetIconClass =
-    value === DATASET || type === DATASET ? 'SRC-datasetIcon' : ''
-  if (typeof Icon == 'function') {
-    return (
-      <span className={cssClass}>
-        <Icon />
-      </span>
-    )
+  const datasetCustomStyle =
+    value === DATASET || type === DATASET ? { height: '55px' } : {}
+
+  const className = `iconImg ${cssClass ?? ''}`
+
+  if (Icon == null) {
+    console.warn('Icon type not found:', type)
+    return <></>
   }
-  return <img src={Icon} className={`iconImg ${datasetIconClass}`} />
+  if (typeof Icon === 'string') {
+    return <img src={Icon} className={className} />
+  }
+  return (
+    <span>
+      <Icon className={className} style={datasetCustomStyle} />
+    </span>
+  )
 }
 export default Icon

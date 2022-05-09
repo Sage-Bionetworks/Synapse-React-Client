@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+import { merge } from 'lodash-es'
 import React, { useContext, useMemo } from 'react'
 import DeepPartial from '../types/DeepPartial'
 
