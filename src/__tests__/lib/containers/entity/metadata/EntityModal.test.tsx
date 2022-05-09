@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import {
   EntityModal,
