@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.js": "/Synapse-React-Client/build/bundle.f805aeef.js",
-    "main.css": "/Synapse-React-Client/static/css/main.57d8a0b4.css",
+    "main.js": "/Synapse-React-Client/build/bundle.b5aa2e01.js",
+    "main.css": "/Synapse-React-Client/static/css/main.6f94a13c.css",
     "static/media/json-form-tool-no-submissions.svg": "/Synapse-React-Client/static/media/json-form-tool-no-submissions.fec08af7d31dc589a0aae87aeb81f6c5.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.e6c377472cce05af7f16f64c513a3e4c.svg",
     "static/media/maintenance.svg": "/Synapse-React-Client/static/media/maintenance.e4904e61c027f1344d0815e0b0412c32.svg",
     "static/media/organizations.svg": "/Synapse-React-Client/static/media/organizations.0f01112ac421c71b449390ec29dc3efd.svg",
     "static/media/unavailable.svg": "/Synapse-React-Client/static/media/unavailable.d5393e45f9bc01e30685ad654558d393.svg",
+    "static/media/circle.svg": "/Synapse-React-Client/static/media/circle.ebd435cbf660a88560bc01d8cca278f4.svg",
     "static/media/DNA_Two.svg": "/Synapse-React-Client/static/media/DNA_Two.70bdaef96892e579a3566d66f2e1a950.svg",
-    "static/media/circle.svg": "/Synapse-React-Client/static/media/circle.f459176fce9562b2c7b396b18593dd2f.svg",
-    "static/media/brain.svg": "/Synapse-React-Client/static/media/brain.c57c711a367668a3ea71d07c97a562ea.svg",
+    "static/media/brain.svg": "/Synapse-React-Client/static/media/brain.dc062355639601b28b69fec665bc825b.svg",
     "static/media/no-access.svg": "/Synapse-React-Client/static/media/no-access.0e94665de4977ec86780f2c5fd49e8b9.svg",
     "static/media/mouse.svg": "/Synapse-React-Client/static/media/mouse.c553a72d71457d46e730954aa9909603.svg",
     "static/media/study-active.svg": "/Synapse-React-Client/static/media/study-active.2c026b9e1126cd51ef2021904e07eb49.svg",
     "static/media/study-complete.svg": "/Synapse-React-Client/static/media/study-complete.9e7172baeea668805c53cff4ac1d2e28.svg",
-    "static/media/resiliencead.svg": "/Synapse-React-Client/static/media/resiliencead.6c9aa92238be65b159928054bafc5394.svg",
+    "static/media/resiliencead.svg": "/Synapse-React-Client/static/media/resiliencead.015173b1a7729df1a7f72246ff7c60f2.svg",
     "index.html": "/Synapse-React-Client/index.html",
     "static/media/account-certified.svg": "/Synapse-React-Client/static/media/account-certified.89e6d8f6346f891e172d67e3e622a1b9.svg",
     "static/media/file.svg": "/Synapse-React-Client/static/media/file.8b3947aef146eabf0f48b4c0832684b7.svg",
@@ -29,7 +29,7 @@
     "static/media/chart2.svg": "/Synapse-React-Client/static/media/chart2.e4b5d61ed9ee4e10a0d6aeecede76d5e.svg"
   },
   "entrypoints": [
-    "build/bundle.f805aeef.js",
-    "static/css/main.57d8a0b4.css"
+    "build/bundle.b5aa2e01.js",
+    "static/css/main.6f94a13c.css"
   ]
 }
