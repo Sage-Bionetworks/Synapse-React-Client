@@ -18,60 +18,67 @@ export type FeaturedDataTabsProps = {
   sql: string
 }
 
-const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props => {
-  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
-  const { configs, rgbIndex, sql } = props
-  // explore all data button
-  const selectedTabProps: FeatureDataTabProps = configs[selectedTabIndex]
-  return (
-    <div className="FeaturedDataTabs">
-      {/* tabs */}
-      <div className="FeaturedDataTabs__tabs">
-        {configs.map((config, index) => {
-          const isSelectedTabIndex: boolean = index === selectedTabIndex
-          return (
-            <div
-              className={`FeaturedDataTabs__tabs__tab ${
-                isSelectedTabIndex
-                  ? 'FeaturedDataTabs__tabs__tab__selected'
-                  : ''
-              }`}
-              key={config.title}
-            >
-              <button onClick={() => setSelectedTabIndex(index)}>
-                {config.icon && <Icon type={config.icon}></Icon>}
-                {config.title}
-              </button>
-            </div>
-          )
-        })}
-      </div>
-      {/* tab content */}
-      {selectedTabProps && (
-        <>
-          <FeaturedDataPlots
-            key={`${sql}-${selectedTabIndex}`}
-            {...selectedTabProps.plotsConfig}
-            rgbIndex={rgbIndex}
-            sql={sql}
-            explorePagePath={selectedTabProps.explorePagePath}
-          />
-          {selectedTabProps.explorePagePath && (
-            <div className="bootstrap-4-backport FeaturedDataTabs__explore-all">
-              <Button
-                className="pill"
-                variant="secondary"
-                size="lg"
-                href={selectedTabProps.explorePagePath}
+const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> =
+  props => {
+    const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
+    const { configs, rgbIndex, sql } = props
+    // explore all data button
+    const selectedTabProps: FeatureDataTabProps = configs[selectedTabIndex]
+    return (
+      <div className="FeaturedDataTabs">
+        {/* tabs */}
+        <div className="FeaturedDataTabs__tabs">
+          {configs.map((config, index) => {
+            const isSelectedTabIndex: boolean = index === selectedTabIndex
+            return (
+              <div
+                className={`FeaturedDataTabs__tabs__tab ${
+                  isSelectedTabIndex
+                    ? 'FeaturedDataTabs__tabs__tab__selected'
+                    : ''
+                }`}
+                key={config.title}
               >
-                EXPLORE ALL {selectedTabProps.exploreObjectType?.toUpperCase()}
-              </Button>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  )
-}
+                <button
+                  className="SRC-centerAndJustifyContent"
+                  onClick={() => setSelectedTabIndex(index)}
+                >
+                  {config.icon && (
+                    <Icon cssClass="iconImg" type={config.icon}></Icon>
+                  )}
+                  <span>{config.title}</span>
+                </button>
+              </div>
+            )
+          })}
+        </div>
+        {/* tab content */}
+        {selectedTabProps && (
+          <>
+            <FeaturedDataPlots
+              key={`${sql}-${selectedTabIndex}`}
+              {...selectedTabProps.plotsConfig}
+              rgbIndex={rgbIndex}
+              sql={sql}
+              explorePagePath={selectedTabProps.explorePagePath}
+            />
+            {selectedTabProps.explorePagePath && (
+              <div className="bootstrap-4-backport FeaturedDataTabs__explore-all">
+                <Button
+                  className="pill"
+                  variant="secondary"
+                  size="lg"
+                  href={selectedTabProps.explorePagePath}
+                >
+                  EXPLORE ALL{' '}
+                  {selectedTabProps.exploreObjectType?.toUpperCase()}
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    )
+  }
 
 export default FeaturedDataTabs
