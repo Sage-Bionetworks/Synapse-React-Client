@@ -1,4 +1,4 @@
-import { uniqueId } from 'lodash'
+import { uniqueId } from 'lodash-es'
 import { rest } from 'msw'
 import {
   ASYNCHRONOUS_JOB_TOKEN,

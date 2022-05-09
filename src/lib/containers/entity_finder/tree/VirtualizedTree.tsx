@@ -1,6 +1,6 @@
 import { Skeleton } from '@material-ui/lab'
 import { Map } from 'immutable'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
