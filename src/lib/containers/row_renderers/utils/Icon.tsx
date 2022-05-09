@@ -146,12 +146,18 @@ const Icon: React.FunctionComponent<IconProps> = ({
   const datasetCustomStyle =
     value === DATASET || type === DATASET ? { height: '55px' } : {}
 
+  const className = `iconImg ${cssClass ?? ''}`
+
+  if (Icon == null) {
+    console.warn('Icon type not found:', type)
+    return <></>
+  }
   if (typeof Icon === 'string') {
-    return <img src={Icon} className={`iconImg`} />
+    return <img src={Icon} className={className} />
   }
   return (
-    <span className={cssClass}>
-      <Icon style={datasetCustomStyle} />
+    <span>
+      <Icon className={className} style={datasetCustomStyle} />
     </span>
   )
 }

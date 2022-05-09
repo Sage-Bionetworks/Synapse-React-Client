@@ -43,9 +43,7 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> =
                   className="SRC-centerAndJustifyContent"
                   onClick={() => setSelectedTabIndex(index)}
                 >
-                  {config.icon && (
-                    <Icon cssClass="iconImg" type={config.icon}></Icon>
-                  )}
+                  {config.icon && <Icon type={config.icon}></Icon>}
                   <span>{config.title}</span>
                 </button>
               </div>
