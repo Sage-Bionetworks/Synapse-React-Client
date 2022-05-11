@@ -6,7 +6,9 @@ export type RequestDataAccessSuccessProps = {
   onHide: () => void
 }
 
-const RequestDataAccessSuccess: React.FC<RequestDataAccessSuccessProps> = props => {
+const RequestDataAccessSuccess: React.FC<
+  RequestDataAccessSuccessProps
+> = props => {
   const { onHide } = props
   return (
     <>
@@ -16,8 +18,10 @@ const RequestDataAccessSuccess: React.FC<RequestDataAccessSuccessProps> = props 
         </ReactBootstrap.Modal.Title>
       </ReactBootstrap.Modal.Header>
       <ReactBootstrap.Modal.Body>
-        <p style={{margin: "2rem 0"}}>
-          Your data access request been submitted and is currently being reviewed. Please allow for up to 2 weeks for your request to be reviewed and approved.
+        <p style={{ margin: '2rem 0' }}>
+          Your data access request been submitted and is currently being
+          reviewed. Please allow for up to 2 weeks for your request to be
+          reviewed and approved.
         </p>
       </ReactBootstrap.Modal.Body>
       <ReactBootstrap.Modal.Footer>

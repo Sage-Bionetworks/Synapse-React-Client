@@ -1,7 +1,6 @@
 @use '../abstracts/variables' as SRC;
 
 .UserCardListRotate {
-
   .SRC-card-grid-row {
     display: grid;
     grid-template-columns: 1fr;
@@ -27,7 +26,6 @@
     .cardContainer {
       box-shadow: SRC.$box-shadow-soft;
     }
-
   }
 
   .UserCardListRotate__summary {
@@ -42,13 +40,10 @@
       display: inline-block;
     }
   }
-
 }
 
 @media (min-width: 980px) {
-  .UserCardListRotate .SRC-card-grid-row{
+  .UserCardListRotate .SRC-card-grid-row {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
-

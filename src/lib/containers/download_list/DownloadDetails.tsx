@@ -54,17 +54,20 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const timeEstimateInSeconds =
     isLoading || downloadSpeed === 0 || !numBytes ? 0 : numBytes / downloadSpeed
   const isTimeEstimateLoading = timeEstimateInSeconds === 0
-  const friendlyTime =
-    isTimeEstimateLoading
-      ? ''
-      : moment.duration(timeEstimateInSeconds, 'seconds').humanize()
+  const friendlyTime = isTimeEstimateLoading
+    ? ''
+    : moment.duration(timeEstimateInSeconds, 'seconds').humanize()
   const numBytesTooltipId = 'num_bytes_id'
   const friendlyTimeTooltipId = 'friendly_time_id'
 
   const isZeroFiles = numFiles === 0
-  const fileCountIconClass = isZeroFiles ? 'SRC-inactive' : 'SRC-primary-text-color'
+  const fileCountIconClass = isZeroFiles
+    ? 'SRC-inactive'
+    : 'SRC-primary-text-color'
 
-  const timeEstimateIconClass = isTimeEstimateLoading ? 'SRC-inactive' : 'SRC-primary-text-color'
+  const timeEstimateIconClass = isTimeEstimateLoading
+    ? 'SRC-inactive'
+    : 'SRC-primary-text-color'
   return (
     <span className="download-details-container">
       <span>
@@ -75,44 +78,48 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           <> {numFiles}&nbsp;files </>
         )}
       </span>
-      {numBytes && <span
-        data-for={numBytesTooltipId}
-        data-tip="This is the total size of all files. Zipped package(s) will likely be smaller."
-        data-testid="numBytesUI"
-      >
-        <ReactTooltip
-          delayShow={TOOLTIP_DELAY_SHOW}
-          place="top"
-          type="dark"
-          effect="solid"
-          id={numBytesTooltipId}
-        />
-        <FontAwesomeIcon className={timeEstimateIconClass} icon="database" />
-        {isTimeEstimateLoading ? (
-          <SkeletonInlineBlock width={50} />
-        ) : (
-          calculateFriendlyFileSize(numBytes)
-        )}
-      </span>}
-      {numBytes && <span
-        data-for={friendlyTimeTooltipId}
-        data-tip="This is an estimate of how long package download will take."
-        data-testid="downloadTimeEstimateUI"
-      >
-        <ReactTooltip
-          delayShow={TOOLTIP_DELAY_SHOW}
-          place="top"
-          type="dark"
-          effect="solid"
-          id={friendlyTimeTooltipId}
-        />
-        <FontAwesomeIcon className={timeEstimateIconClass} icon="clock" />
-        {isLoading && numFiles > 0 ? (
-          <SkeletonInlineBlock width={50} />
-        ) : (
-          friendlyTime
-        )}
-      </span>}
+      {numBytes && (
+        <span
+          data-for={numBytesTooltipId}
+          data-tip="This is the total size of all files. Zipped package(s) will likely be smaller."
+          data-testid="numBytesUI"
+        >
+          <ReactTooltip
+            delayShow={TOOLTIP_DELAY_SHOW}
+            place="top"
+            type="dark"
+            effect="solid"
+            id={numBytesTooltipId}
+          />
+          <FontAwesomeIcon className={timeEstimateIconClass} icon="database" />
+          {isTimeEstimateLoading ? (
+            <SkeletonInlineBlock width={50} />
+          ) : (
+            calculateFriendlyFileSize(numBytes)
+          )}
+        </span>
+      )}
+      {numBytes && (
+        <span
+          data-for={friendlyTimeTooltipId}
+          data-tip="This is an estimate of how long package download will take."
+          data-testid="downloadTimeEstimateUI"
+        >
+          <ReactTooltip
+            delayShow={TOOLTIP_DELAY_SHOW}
+            place="top"
+            type="dark"
+            effect="solid"
+            id={friendlyTimeTooltipId}
+          />
+          <FontAwesomeIcon className={timeEstimateIconClass} icon="clock" />
+          {isLoading && numFiles > 0 ? (
+            <SkeletonInlineBlock width={50} />
+          ) : (
+            friendlyTime
+          )}
+        </span>
+      )}
     </span>
   )
 }

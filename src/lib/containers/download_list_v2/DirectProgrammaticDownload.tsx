@@ -11,7 +11,7 @@ type DirectProgrammaticDownloadProps = {
 
 function DirectProgrammaticDownload({
   entityId,
-  version
+  version,
 }: DirectProgrammaticDownloadProps) {
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
 
@@ -19,7 +19,9 @@ function DirectProgrammaticDownload({
 synLogin('username','password')
 
 # Obtain a pointer and download the data
-${entityId} <- synGet(entity='${entityId}'${version ? `, version=${version}` : ''} ) `
+${entityId} <- synGet(entity='${entityId}'${
+    version ? `, version=${version}` : ''
+  } ) `
 
   const pythonCode = `import synapseclient
 
@@ -27,18 +29,23 @@ syn = synapseclient.Synapse()
 syn.login('synapse_username','password')
 
 # Obtain a pointer and download the data
-${entityId} = syn.get(entity='${entityId}'${version ? `, version=${version}` : ''} )
+${entityId} = syn.get(entity='${entityId}'${
+    version ? `, version=${version}` : ''
+  } )
 
 # Get the path to the local copy of the data file
 filepath = ${entityId}.path`
 
-  const cliCode = `synapse get ${entityId} ${version ? `--version ${version}` : ''}`
+  const cliCode = `synapse get ${entityId} ${
+    version ? `--version ${version}` : ''
+  }`
 
   return (
     <>
       <span
-          data-for={`${entityId}-direct-programmatic-download-tooltip`}
-          data-tip='Programmatic download options'>
+        data-for={`${entityId}-direct-programmatic-download-tooltip`}
+        data-tip="Programmatic download options"
+      >
         <ReactTooltip
           delayShow={TOOLTIP_DELAY_SHOW}
           place="left"
@@ -46,18 +53,23 @@ filepath = ${entityId}.path`
           effect="solid"
           id={`${entityId}-direct-programmatic-download-tooltip`}
         />
-        <button className={'btn-download-icon'} onClick={() => setIsShowingModal(true)}>
+        <button
+          className={'btn-download-icon'}
+          onClick={() => setIsShowingModal(true)}
+        >
           <IconSvg options={{ icon: 'code' }} />
         </button>
       </span>
-      {isShowingModal && <ProgrammaticInstructionsModal
-        show={true}
-        onClose={() => setIsShowingModal(false)}
-        title='Download Programmatically'
-        cliCode={cliCode}
-        rCode={rCode}
-        pythonCode={pythonCode}
-      />}
+      {isShowingModal && (
+        <ProgrammaticInstructionsModal
+          show={true}
+          onClose={() => setIsShowingModal(false)}
+          title="Download Programmatically"
+          cliCode={cliCode}
+          rCode={rCode}
+          pythonCode={pythonCode}
+        />
+      )}
     </>
   )
 }

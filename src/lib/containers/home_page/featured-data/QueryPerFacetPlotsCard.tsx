@@ -47,39 +47,40 @@ export function getQueryRequest(
     },
   }
 }
-const QueryPerFacetPlotsCard: React.FunctionComponent<QueryPerFacetPlotsCardProps> =
-  props => {
-    const {
-      title,
-      description,
-      sql,
-      facetsToPlot,
-      rgbIndex,
-      selectFacetColumnName,
-      selectFacetColumnValue,
-      detailsPagePath,
-      ...rest
-    } = props
-    const initQueryRequest: QueryBundleRequest = getQueryRequest(
-      sql!,
-      selectFacetColumnName,
-      selectFacetColumnValue,
-    )
-    return (
-      <div className="QueryPerFacetPlotsCard">
-        <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
-          <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
-            <QueryWrapperErrorBanner />
-            <FacetPlotsCard
-              title={title}
-              description={description}
-              facetsToPlot={facetsToPlot}
-              detailsPagePath={detailsPagePath}
-            />
-          </QueryVisualizationWrapper>
-        </QueryWrapper>
-      </div>
-    )
-  }
+const QueryPerFacetPlotsCard: React.FunctionComponent<
+  QueryPerFacetPlotsCardProps
+> = props => {
+  const {
+    title,
+    description,
+    sql,
+    facetsToPlot,
+    rgbIndex,
+    selectFacetColumnName,
+    selectFacetColumnValue,
+    detailsPagePath,
+    ...rest
+  } = props
+  const initQueryRequest: QueryBundleRequest = getQueryRequest(
+    sql!,
+    selectFacetColumnName,
+    selectFacetColumnValue,
+  )
+  return (
+    <div className="QueryPerFacetPlotsCard">
+      <QueryWrapper {...rest} initQueryRequest={initQueryRequest}>
+        <QueryVisualizationWrapper rgbIndex={rgbIndex} {...rest}>
+          <QueryWrapperErrorBanner />
+          <FacetPlotsCard
+            title={title}
+            description={description}
+            facetsToPlot={facetsToPlot}
+            detailsPagePath={detailsPagePath}
+          />
+        </QueryVisualizationWrapper>
+      </QueryWrapper>
+    </div>
+  )
+}
 
 export default QueryPerFacetPlotsCard

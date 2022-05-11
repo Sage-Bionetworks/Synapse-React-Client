@@ -5,25 +5,25 @@ import useTypographyStyle from './Typography.styles'
 
 interface ITypography extends Omit<TypographyProps, 'variant'> {
   variant:
-  | 'headline1'
-  | 'headline2'
-  | 'headline3'
-  | 'body1'
-  | 'body2'
-  | 'breadcrumb1'
-  | 'breadcrumb2'
-  | 'smallText1'
-  | 'smallText2'
-  | 'smallLink'
-  | 'label'
-  | 'buttonLink'
-  | 'hintText'
-  | 'sectionTitle'
-  | 'subsectionHeader'
+    | 'headline1'
+    | 'headline2'
+    | 'headline3'
+    | 'body1'
+    | 'body2'
+    | 'breadcrumb1'
+    | 'breadcrumb2'
+    | 'smallText1'
+    | 'smallText2'
+    | 'smallLink'
+    | 'label'
+    | 'buttonLink'
+    | 'hintText'
+    | 'sectionTitle'
+    | 'subsectionHeader'
   component?: ElementType
 }
 
-const Typography: FC<ITypography> = (props) => {
+const Typography: FC<ITypography> = props => {
   const classes = useTypographyStyle()
   const isCustom = Object.keys(classes).indexOf(props.variant) > -1
   return (

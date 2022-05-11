@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
@@ -21,24 +21,24 @@ function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
   const handleError = useErrorHandler()
   const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
   const tooltipText = 'Click to view items in your download cart.'
-  
+
   const {
     data,
     isLoading,
     isError,
     error: newError,
   } = useGetDownloadListStatistics()
-  
+
   useEffect(() => {
     if (isError && newError && accessToken) {
       handleError(toError(newError))
     }
   }, [isError, newError, handleError, accessToken])
 
-  if (!accessToken || isLoading ) {
+  if (!accessToken || isLoading) {
     return <></>
   }
-  
+
   const size = data?.totalNumberOfFiles ?? 0
   if (size === 0) {
     return <></>
@@ -49,7 +49,7 @@ function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
         <span className="SRC-primary-text-color">
           <IconSvg
             options={{
-              icon: 'cart'
+              icon: 'cart',
             }}
           />
         </span>
@@ -65,10 +65,15 @@ function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
       />
     </>
   )
-  return <a className={`Download-Link v2 ${className}`} href={to} rel="noopener noreferrer">
+  return (
+    <a
+      className={`Download-Link v2 ${className}`}
+      href={to}
+      rel="noopener noreferrer"
+    >
       {content}
     </a>
-  
+  )
 }
 
 export default ShowDownloadV2

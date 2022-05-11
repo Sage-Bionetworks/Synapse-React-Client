@@ -9,11 +9,20 @@ type EndpointObject = {
   PORTAL: string
 }
 
-const KNOWN_SYNAPSE_ORG_URLS = ['www.synapse.org', 'staging.synapse.org', 'tst.synapse.org', '127.0.0.1']
-export const getSynapsePortalEndpoint = (hostname:string):string => {
-  return KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase()) ? '/' : 'https://www.synapse.org/'
+const KNOWN_SYNAPSE_ORG_URLS = [
+  'www.synapse.org',
+  'staging.synapse.org',
+  'tst.synapse.org',
+  '127.0.0.1',
+]
+export const getSynapsePortalEndpoint = (hostname: string): string => {
+  return KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase())
+    ? '/'
+    : 'https://www.synapse.org/'
 }
-const DEFAULT_SYNAPSE_PORTAL = getSynapsePortalEndpoint(window.location.hostname)
+const DEFAULT_SYNAPSE_PORTAL = getSynapsePortalEndpoint(
+  window.location.hostname,
+)
 
 export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
   REPO: 'https://repo-prod.prod.sagebase.org',

@@ -12,7 +12,9 @@ export type CancelRequestDataAccessProps = {
   onHide: () => void
 }
 
-const CancelRequestDataAccess: React.FC<CancelRequestDataAccessProps> = props => {
+const CancelRequestDataAccess: React.FC<
+  CancelRequestDataAccessProps
+> = props => {
   const { accessToken } = useSynapseContext()
   const { formSubmitRequestObject, onHide } = props
   const [alert, setAlert] = useState<AlertProps | undefined>()

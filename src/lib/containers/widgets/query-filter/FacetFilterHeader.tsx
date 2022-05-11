@@ -10,12 +10,9 @@ export type FacetFilterHeaderProps = {
   onClick: Function
   facetAliases: {} | undefined
 }
-export const FacetFilterHeader: React.FunctionComponent<FacetFilterHeaderProps> = ({
-  label,
-  isCollapsed,
-  onClick,
-  facetAliases,
-}: FacetFilterHeaderProps) => {
+export const FacetFilterHeader: React.FunctionComponent<
+  FacetFilterHeaderProps
+> = ({ label, isCollapsed, onClick, facetAliases }: FacetFilterHeaderProps) => {
   return (
     <div className="FacetFilterHeader">
       <label className="FacetFilterHeader__label">

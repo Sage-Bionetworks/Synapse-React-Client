@@ -259,13 +259,7 @@
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
       "items": {
-        "ui:order": [
-          "name",
-          "reference",
-          "species",
-          "species_other",
-          "*"
-        ],
+        "ui:order": ["name", "reference", "species", "species_other", "*"],
         "name": {
           "ui:placeholder": "Enter a unique name for this experiment",
           "ui:description": ""
@@ -337,39 +331,36 @@
         "dose_regimen": {
           "ui:help": "Please select the dosing regimen used in this study. Select acute for single dose; subchronic for dosing beyond acute treatment but < 1 month.",
           "ui:widget": "radio",
-      
-        "ui:placeholder": ""
-      },
-      "pretreatment_time": {
-        "ui:help": "Please describe the pretreatment time used for this experiment",
-        "ui:placeholder": "Enter pretreatment time"
-      },
-      "route": {
-        "ui:help": "",
-        "ui:placeholder": "Select from list"
-      },
-      "drug_formulation": {
-        "ui:placeholder": "In a few sentences, describe the compound formulation",
-        "ui:help": "",
-        "ui:widget": "textarea",
-        "ui:options": {
-          "rows": 10
+
+          "ui:placeholder": ""
+        },
+        "pretreatment_time": {
+          "ui:help": "Please describe the pretreatment time used for this experiment",
+          "ui:placeholder": "Enter pretreatment time"
+        },
+        "route": {
+          "ui:help": "",
+          "ui:placeholder": "Select from list"
+        },
+        "drug_formulation": {
+          "ui:placeholder": "In a few sentences, describe the compound formulation",
+          "ui:help": "",
+          "ui:widget": "textarea",
+          "ui:options": {
+            "rows": 10
+          }
+        },
+        "adverse_events_description": {
+          "ui:widget": "textarea",
+          "ui:placeholder": "Describe any adverse events",
+          "ui:help": "Please indicate any unexpected or adverse events that were observed during the course of this study."
         }
-      },
-      "adverse_events_description": {
-        "ui:widget": "textarea",
-        "ui:placeholder": "Describe any adverse events",
-        "ui:help": "Please indicate any unexpected or adverse events that were observed during the course of this study."
       }
     }
-  }
-},
+  },
   "pk_in_silico": {
     "ui:title": "PK in Silico",
-    "ui:order": [
-      "partition_coefficient",
-      "*"
-    ],
+    "ui:order": ["partition_coefficient", "*"],
     "partition_coefficient": {
       "ui:help": "Please provide the partition coefficient, which is the ratio of concentrations of a compound in a mixture of two immiscible phases at equilibrium.",
       "ui:placeholder": "Enter the partition coefficient"
@@ -402,16 +393,10 @@
   "pk_in_vivo": {
     "classNames": "experiments-list",
     "ui:title": "PK In Vivo",
- "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
+    "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
       "items": {
-        "ui:order": [
-          "name",
-          "reference",
-          "species",
-          "species_other",
-          "*"
-        ],
+        "ui:order": ["name", "reference", "species", "species_other", "*"],
         "name": {
           "ui:placeholder": "Enter a unique name for this experiment",
           "ui:description": ""
@@ -491,16 +476,8 @@
     "ui:title": "LD50",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
-
       "items": {
-
-        "ui:order": [
-          "name",
-          "reference",
-          "species",
-          "species_other",
-          "*"
-        ],
+        "ui:order": ["name", "reference", "species", "species_other", "*"],
         "name": {
           "ui:placeholder": "Enter a unique name for this experiment",
           "ui:description": ""
@@ -522,10 +499,10 @@
         },
         "assay_description": {
           "ui:widget": "textarea",
-          "ui:help": "In a few sentences, describe the assay and methods used in the LD50 study.",          
+          "ui:help": "In a few sentences, describe the assay and methods used in the LD50 study.",
           "ui:placeholder": "Enter assay details."
         },
-        
+
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
@@ -547,13 +524,6 @@
           "ui:help": "Please indicate the sex of the subjects used in this study"
         },
 
-
-
-
-
-
-
-
         "duration": {
           "ui:title": "Study Duration",
           "ui:placeholder": "What was the duration of the study?"
@@ -574,7 +544,7 @@
             "ui:placeholder": ""
           }
         },
-     
+
         "ld50": {
           "ui:help": "",
           "ui:placeholder": "What was the LD50?"
@@ -590,8 +560,6 @@
             "rows": 10
           }
         }
-       
-       
       }
     }
   },
@@ -600,16 +568,8 @@
     "ui:title": "Acute Dosing",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
-
       "items": {
-
-        "ui:order": [
-          "name",
-          "reference",
-          "species",
-          "species_other",
-          "*"
-        ],
+        "ui:order": ["name", "reference", "species", "species_other", "*"],
         "name": {
           "ui:placeholder": "Enter a unique name for this experiment",
           "ui:description": ""
@@ -633,7 +593,7 @@
           "ui:widget": "textarea",
           "ui:placeholder": "Enter assay details"
         },
-        
+
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
@@ -691,8 +651,6 @@
           "ui:placeholder": "Describe adverse events",
           "ui:help": "Please describe any unexpected or adverse events that were observed during this study."
         }
-       
-       
       }
     }
   },
@@ -701,16 +659,8 @@
     "ui:title": "Chronic Dosing",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
-
       "items": {
-
-        "ui:order": [
-          "name",
-          "reference",
-          "species",
-          "species_other",
-          "*"
-        ],
+        "ui:order": ["name", "reference", "species", "species_other", "*"],
         "name": {
           "ui:placeholder": "Enter a unique name for this experiment",
           "ui:description": ""
@@ -734,7 +684,7 @@
           "ui:widget": "textarea",
           "ui:placeholder": "Enter assay details"
         },
-        
+
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
@@ -792,26 +742,16 @@
           "ui:placeholder": "Describe adverse events",
           "ui:help": "Please describe any unexpected or adverse events that were observed during the study of this compound."
         }
-       
-       
       }
     }
   },
   "teratogenicity": {
     "classNames": "experiments-list",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
-   
+
     "experiments": {
-
       "items": {
-
-        "ui:order": [
-          "name",
-          "reference",
-          "species",
-          "species_other",
-          "*"
-        ],
+        "ui:order": ["name", "reference", "species", "species_other", "*"],
         "name": {
           "ui:placeholder": "Enter a unique name for this experiment",
           "ui:description": ""
@@ -835,7 +775,7 @@
           "ui:widget": "textarea",
           "ui:placeholder": "Enter assay details"
         },
-        
+
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
           "classNames": "data-range",
@@ -893,8 +833,6 @@
           "ui:placeholder": "Describe adverse events",
           "ui:help": "Please describe any unexpected or adverse events that were observed during the study of this compound."
         }
-       
-       
       }
     }
   },

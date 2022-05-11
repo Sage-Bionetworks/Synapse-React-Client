@@ -3,9 +3,9 @@ import { Button, Modal } from 'react-bootstrap'
 import { HelpPopover } from './HelpPopover'
 
 export enum ProgrammaticOptionsTabs {
-  COMMAND_LINE = "Command Line",
-  R = "R",
-  PYTHON = "Python",
+  COMMAND_LINE = 'Command Line',
+  R = 'R',
+  PYTHON = 'Python',
 }
 
 export type ProgrammaticInstructionsModalProps = {
@@ -49,18 +49,23 @@ export const ProgrammaticInstructionsModal = ({
   } else {
     defaultTab = ProgrammaticOptionsTabs.R
   }
-  const [currentTab, setCurrentTab] = useState<ProgrammaticOptionsTabs>(defaultTab)
+  const [currentTab, setCurrentTab] =
+    useState<ProgrammaticOptionsTabs>(defaultTab)
 
-  const installationInstructions = <p>Installation instructions are available at our
-    {' '}
-    <a
-      className="ProgrammaticOptions__docslink"
-      href="https://help.synapse.org/docs/Installing-Synapse-API-Clients.1985249668.html"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Synapse API Documentation Site
-    </a>.</p>
+  const installationInstructions = (
+    <p>
+      Installation instructions are available at our{' '}
+      <a
+        className="ProgrammaticOptions__docslink"
+        href="https://help.synapse.org/docs/Installing-Synapse-API-Clients.1985249668.html"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Synapse API Documentation Site
+      </a>
+      .
+    </p>
+  )
 
   return (
     <Modal
@@ -74,23 +79,30 @@ export const ProgrammaticInstructionsModal = ({
       <Modal.Header closeButton>
         <Modal.Title>
           {title}&nbsp;
-          {helpMarkdown && <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />}
+          {helpMarkdown && (
+            <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />
+          )}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="Tabs">
-          {cliCode && <div
+          {cliCode && (
+            <div
               className="Tab"
               role="tab"
               onClick={e => {
                 e.stopPropagation()
                 setCurrentTab(ProgrammaticOptionsTabs.COMMAND_LINE)
               }}
-              aria-selected={ProgrammaticOptionsTabs.COMMAND_LINE === currentTab}
+              aria-selected={
+                ProgrammaticOptionsTabs.COMMAND_LINE === currentTab
+              }
             >
               {ProgrammaticOptionsTabs.COMMAND_LINE}
-            </div>}
-          {rCode && <div
+            </div>
+          )}
+          {rCode && (
+            <div
               className="Tab"
               role="tab"
               onClick={e => {
@@ -100,53 +112,49 @@ export const ProgrammaticInstructionsModal = ({
               aria-selected={ProgrammaticOptionsTabs.R === currentTab}
             >
               {ProgrammaticOptionsTabs.R}
-            </div>}
-          {pythonCode && <div
-            className="Tab"
-            role="tab"
-            onClick={e => {
-              e.stopPropagation()
-              setCurrentTab(ProgrammaticOptionsTabs.PYTHON)
-            }}
-            aria-selected={ProgrammaticOptionsTabs.PYTHON === currentTab}
-          >
-            {ProgrammaticOptionsTabs.PYTHON}
-          </div>}
+            </div>
+          )}
+          {pythonCode && (
+            <div
+              className="Tab"
+              role="tab"
+              onClick={e => {
+                e.stopPropagation()
+                setCurrentTab(ProgrammaticOptionsTabs.PYTHON)
+              }}
+              aria-selected={ProgrammaticOptionsTabs.PYTHON === currentTab}
+            >
+              {ProgrammaticOptionsTabs.PYTHON}
+            </div>
+          )}
         </div>
         <div className="TabContent">
           {currentTab === ProgrammaticOptionsTabs.COMMAND_LINE && (
             <>
-              <p>
-                {cliNotes}
-              </p>
+              <p>{cliNotes}</p>
               {installationInstructions}
               <pre> {cliCode} </pre>
-            </>)}
+            </>
+          )}
           {currentTab === ProgrammaticOptionsTabs.R && (
             <>
-              <p>
-                {rNotes}
-              </p>
+              <p>{rNotes}</p>
               {installationInstructions}
-              <pre>
-                {rCode}
-              </pre>
-            </>)}
+              <pre>{rCode}</pre>
+            </>
+          )}
           {currentTab === ProgrammaticOptionsTabs.PYTHON && (
             <>
-              <p>
-                {pythonNotes}
-              </p>
+              <p>{pythonNotes}</p>
               {installationInstructions}
-              <pre>
-                  {pythonCode}
-              </pre>
-            </>)}
+              <pre>{pythonCode}</pre>
+            </>
+          )}
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='primary' onClick={onClose}>
-            OK
+        <Button variant="primary" onClick={onClose}>
+          OK
         </Button>
       </Modal.Footer>
     </Modal>

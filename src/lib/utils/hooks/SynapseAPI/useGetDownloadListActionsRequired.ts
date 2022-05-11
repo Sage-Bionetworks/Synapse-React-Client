@@ -52,8 +52,7 @@ export function useGetDownloadListActionsRequiredInfinite(
     },
     {
       ...options,
-      getNextPageParam: page =>
-        page.nextPageToken,
+      getNextPageParam: page => page.nextPageToken,
     },
   )
 }

@@ -17,13 +17,13 @@ table.DownloadListTableV2 {
     }
   }
   td.ineligibleForPackagingTd:first-child {
-    background-color: #F9F5E7;
+    background-color: #f9f5e7;
   }
   thead:first-child > tr:first-child {
     > th {
       min-width: 120px;
       &:first-child {
-        border-right: none;  
+        border-right: none;
         min-width: unset;
       }
       &:nth-child(2) {
@@ -31,7 +31,8 @@ table.DownloadListTableV2 {
       }
     }
   }
-  tbody tr > td:nth-child(2) { // file name column
+  tbody tr > td:nth-child(2) {
+    // file name column
     overflow-x: hidden;
     max-width: 570px;
     text-overflow: ellipsis;

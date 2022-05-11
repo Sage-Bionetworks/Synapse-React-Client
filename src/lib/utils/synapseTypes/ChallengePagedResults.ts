@@ -1,4 +1,4 @@
-import { EntityHeader } from "./EntityHeader"
+import { EntityHeader } from './EntityHeader'
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/ChallengePagedResults.html
 export type ChallengePagedResults = {
@@ -23,4 +23,3 @@ export type ChallengeWithProjectHeader = {
   challenge: Challenge // The Challenge
   projectHeader: EntityHeader // to optimize, include the EntityHeader for the associated Project
 }
-

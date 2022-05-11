@@ -90,7 +90,7 @@ export default class ModalDownload extends React.Component<
       writeHeader,
       includeRowIdAndRowVersion,
       csvTableDescriptor: { separator },
-      additionalFilters: queryRequest.query.additionalFilters
+      additionalFilters: queryRequest.query.additionalFilters,
     }
     SynapseClient.getDownloadFromTableRequest(
       downloadFromTableRequest,
@@ -140,7 +140,12 @@ export default class ModalDownload extends React.Component<
       backgroundSize: 50,
     }
     return (
-      <Modal animation={false} show={true} onHide={this.props.onClose} backdrop='static'>
+      <Modal
+        animation={false}
+        show={true}
+        onHide={this.props.onClose}
+        backdrop="static"
+      >
         <Modal.Body>
           <button style={closeBtn} onClick={this.props.onClose}>
             <FontAwesomeIcon style={{ fontSize: '21px' }} icon="times" />
@@ -162,7 +167,11 @@ export default class ModalDownload extends React.Component<
               </div>
             )}
             <div style={{ textAlign: 'right' }}>
-              <Button variant="default" onClick={this.props.onClose} style={{ marginRight: '5px' }}>
+              <Button
+                variant="default"
+                onClick={this.props.onClose}
+                style={{ marginRight: '5px' }}
+              >
                 Cancel
               </Button>
               <Button type="submit" variant="primary">

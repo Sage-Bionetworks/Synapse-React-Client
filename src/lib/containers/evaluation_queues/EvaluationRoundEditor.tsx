@@ -120,11 +120,9 @@ const convertInputsToEvaluationRound = (
   }
 }
 
-export const EvaluationRoundEditor: React.FunctionComponent<EvaluationRoundEditorProps> = ({
-  evaluationRoundInput,
-  onSave,
-  onDelete,
-}) => {
+export const EvaluationRoundEditor: React.FunctionComponent<
+  EvaluationRoundEditorProps
+> = ({ evaluationRoundInput, onSave, onDelete }) => {
   const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)

@@ -1,8 +1,8 @@
-import * as React from 'react';
-import VisibilityObserver from './VisibilityObserver';
+import * as React from 'react'
+import VisibilityObserver from './VisibilityObserver'
 
 export default class RenderIfInView extends React.Component {
-  public render() {    
+  public render() {
     return <VisibilityObserver renderInView={this.getChildren} />
   }
 

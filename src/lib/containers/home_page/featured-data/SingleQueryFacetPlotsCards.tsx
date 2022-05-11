@@ -30,30 +30,31 @@ export function getQueryRequest(sql: string): QueryBundleRequest {
     },
   }
 }
-const SingleQueryFacetPlotsCards: React.FunctionComponent<SingleQueryFacetPlotsCardsProps> =
-  props => {
-    const { sql, facetsToPlot, rgbIndex, facetAliases } = props
-    const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
-    return (
-      <div className="SingleQueryFacetPlotsCards">
-        <QueryWrapper initQueryRequest={initQueryRequest}>
-          <QueryVisualizationWrapper
-            rgbIndex={rgbIndex}
-            facetAliases={facetAliases}
-          >
-            <QueryWrapperErrorBanner />
-            {facetsToPlot?.map(facetName => {
-              return (
-                <FacetPlotsCard
-                  key={`FacetPlotCard-${facetName}`}
-                  facetsToPlot={[facetName]}
-                />
-              )
-            })}
-          </QueryVisualizationWrapper>
-        </QueryWrapper>
-      </div>
-    )
-  }
+const SingleQueryFacetPlotsCards: React.FunctionComponent<
+  SingleQueryFacetPlotsCardsProps
+> = props => {
+  const { sql, facetsToPlot, rgbIndex, facetAliases } = props
+  const initQueryRequest: QueryBundleRequest = getQueryRequest(sql!)
+  return (
+    <div className="SingleQueryFacetPlotsCards">
+      <QueryWrapper initQueryRequest={initQueryRequest}>
+        <QueryVisualizationWrapper
+          rgbIndex={rgbIndex}
+          facetAliases={facetAliases}
+        >
+          <QueryWrapperErrorBanner />
+          {facetsToPlot?.map(facetName => {
+            return (
+              <FacetPlotsCard
+                key={`FacetPlotCard-${facetName}`}
+                facetsToPlot={[facetName]}
+              />
+            )
+          })}
+        </QueryVisualizationWrapper>
+      </QueryWrapper>
+    </div>
+  )
+}
 
 export default SingleQueryFacetPlotsCards

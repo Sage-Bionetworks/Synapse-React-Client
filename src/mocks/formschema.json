@@ -1,9 +1,7 @@
 {
   "title": "IDG DREAM Round 2 Survey",
   "type": "object",
-  "required": [
-    "file"
-  ],
+  "required": ["file"],
   "properties": {
     "file": {
       "type": "string",

@@ -1,4 +1,4 @@
 export type FacetType = {
-  enumeration?: string,
+  enumeration?: string
   range?: any
 }

@@ -1,5 +1,7 @@
 ```jsx
-      <TermsAndConditions
-        onFormChange={(completed) => { console.log("is the form completed?", completed) }}
-      />
+<TermsAndConditions
+  onFormChange={completed => {
+    console.log('is the form completed?', completed)
+  }}
+/>
 ```

@@ -8,7 +8,10 @@ import {
   MeetAccessRequirement,
   RequestDownload,
 } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
-import { LoadingAccessRequirementCard, MeetAccessRequirementCard } from './MeetAccessRequirementCard'
+import {
+  LoadingAccessRequirementCard,
+  MeetAccessRequirementCard,
+} from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 
 export default function DownloadListActionsRequired() {
@@ -54,7 +57,8 @@ export default function DownloadListActionsRequired() {
   const renderActionRequired = (actionRequiredCount: ActionRequiredCount) => {
     switch (actionRequiredCount.action.concreteType) {
       case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
-        const meetARAction: MeetAccessRequirement = actionRequiredCount.action as MeetAccessRequirement
+        const meetARAction: MeetAccessRequirement =
+          actionRequiredCount.action as MeetAccessRequirement
         return (
           <MeetAccessRequirementCard
             key={meetARAction.accessRequirementId}
@@ -64,7 +68,8 @@ export default function DownloadListActionsRequired() {
         )
       }
       case 'org.sagebionetworks.repo.model.download.RequestDownload': {
-        const requestDownloadAction: RequestDownload = actionRequiredCount.action as RequestDownload
+        const requestDownloadAction: RequestDownload =
+          actionRequiredCount.action as RequestDownload
         return (
           <RequestDownloadCard
             key={requestDownloadAction.benefactorId}
@@ -91,9 +96,7 @@ export default function DownloadListActionsRequired() {
           <div ref={ref} />
         </div>
       )}
-      {isLoading && (
-        <LoadingAccessRequirementCard />
-      )}
+      {isLoading && <LoadingAccessRequirementCard />}
     </>
   )
 }

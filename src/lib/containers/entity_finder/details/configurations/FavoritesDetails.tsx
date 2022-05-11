@@ -8,9 +8,9 @@ import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetI
 
 type FavoritesDetailsProps = EntityDetailsListSharedProps
 
-export const FavoritesDetails: React.FunctionComponent<FavoritesDetailsProps> = ({
-  ...sharedProps
-}) => {
+export const FavoritesDetails: React.FunctionComponent<
+  FavoritesDetailsProps
+> = ({ ...sharedProps }) => {
   const {
     data,
     isLoading,

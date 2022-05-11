@@ -5,7 +5,7 @@ import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 import {
   mockFolderEntityHeader,
-  mockFileEntityHeader
+  mockFileEntityHeader,
 } from '../../../mocks/entity/mockEntity'
 import { server } from '../../../mocks/msw/server'
 
@@ -23,7 +23,7 @@ describe('FavoritesPage tests', () => {
   it('Shows the table of favorites', async () => {
     // mock successful response set up in handlers.ts
     renderComponent()
-    
+
     await screen.findByText(mockFolderEntityHeader.name)
     await screen.findByText(mockFileEntityHeader.name)
   })

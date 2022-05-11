@@ -43,7 +43,7 @@ type AccessRequirementAndStatus = {
 }
 
 export type AccessRequirementListProps = {
-  entityId: string  // will show this entity info
+  entityId: string // will show this entity info
   accessRequirementFromProps?: Array<AccessRequirement>
   onHide?: () => void
   renderAsModal?: boolean
@@ -97,15 +97,11 @@ export default function AccessRequirementList({
 
   const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
-  const [
-    managedACTAccessRequirement,
-    setManagedACTAccessRequirement,
-  ] = useState<ManagedACTAccessRequirement>()
+  const [managedACTAccessRequirement, setManagedACTAccessRequirement] =
+    useState<ManagedACTAccessRequirement>()
   const [researchProjectId, setresearchProjectId] = useState<string>('')
-  const [
-    formSubmitRequestObject,
-    setFormSubmitRequestObject,
-  ] = useState<RequestInterface>()
+  const [formSubmitRequestObject, setFormSubmitRequestObject] =
+    useState<RequestInterface>()
 
   const entityHeaderProps: UseGetInfoFromIdsProps = {
     ids: [entityId],
@@ -157,14 +153,12 @@ export default function AccessRequirementList({
             accessToken,
             entityId,
           )
-          const sortedAccessRequirements = await sortAccessRequirementByCompletion(
-            requirements,
-          )
+          const sortedAccessRequirements =
+            await sortAccessRequirementByCompletion(requirements)
           setAccessRequirements(sortedAccessRequirements)
         } else {
-          const sortedAccessRequirements = await sortAccessRequirementByCompletion(
-            accessRequirementFromProps!,
-          )
+          const sortedAccessRequirements =
+            await sortAccessRequirementByCompletion(accessRequirementFromProps!)
           setAccessRequirements(sortedAccessRequirements)
         }
 
@@ -221,9 +215,7 @@ export default function AccessRequirementList({
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
         return (
           <ManagedACTAccessRequirementComponentNew
-            accessRequirement={
-              accessRequirement as ManagedACTAccessRequirement
-            }
+            accessRequirement={accessRequirement as ManagedACTAccessRequirement}
             accessRequirementStatus={
               accessRequirementStatus as ManagedACTAccessRequirementStatus
             }
@@ -289,15 +281,17 @@ export default function AccessRequirementList({
             />
           </span>
           &nbsp;
-          {numberOfFilesAffected && <span>
-            {numberOfFilesAffected} File(s)
-          </span>}
-          {!numberOfFilesAffected && <a
-            className="AccessRequirementList__register-text-link"
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
-          >
+          {numberOfFilesAffected && (
+            <span>{numberOfFilesAffected} File(s)</span>
+          )}
+          {!numberOfFilesAffected && (
+            <a
+              className="AccessRequirementList__register-text-link"
+              href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityId}`}
+            >
               {entityInformation[0]?.name}
-          </a>}
+            </a>
+          )}
           <h4
             className="AccessRequirementList__instruction"
             style={{ marginTop: '3rem' }}
@@ -330,10 +324,8 @@ export default function AccessRequirementList({
               )}
               {isSignedIn && (
                 <p>
-                  You have signed in with the Sage Platform (Synapse) user account {' '}
-                  <b>
-                    {user?.userName}@synapse.org
-                  </b>
+                  You have signed in with the Sage Platform (Synapse) user
+                  account <b>{user?.userName}@synapse.org</b>
                 </p>
               )}
             </div>
@@ -408,11 +400,7 @@ export default function AccessRequirementList({
         )
         break
       case 5:
-        renderContent = (
-          <RequestDataAccessSuccess
-            onHide={() => onHide?.()}
-            />
-        )
+        renderContent = <RequestDataAccessSuccess onHide={() => onHide?.()} />
         break
       default:
         renderContent = content

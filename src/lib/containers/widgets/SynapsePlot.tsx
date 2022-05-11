@@ -70,14 +70,8 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
     if (!this.state.isLoaded) {
       return
     }
-    const {
-      title,
-      xtitle,
-      ytitle,
-      type,
-      xaxistype,
-      showlegend,
-    } = this.props.widgetparamsMapped
+    const { title, xtitle, ytitle, type, xaxistype, showlegend } =
+      this.props.widgetparamsMapped
     const queryData = this.state
     const isHorizontal = this.props.widgetparamsMapped.horizontal.toLowerCase()
     const layout: any = {

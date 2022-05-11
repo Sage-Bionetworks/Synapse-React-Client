@@ -138,9 +138,7 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
           for (const newReferences of newReferencesChunks) {
             const newData =
               type === 'USER_PROFILE'
-                ? await getUserProfileItems(
-                    newReferences as string[],
-                  )
+                ? await getUserProfileItems(newReferences as string[])
                 : await getEntityHeaderItems(
                     newReferences as ReferenceList,
                     accessToken,

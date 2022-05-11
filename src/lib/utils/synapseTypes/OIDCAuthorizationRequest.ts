@@ -7,15 +7,15 @@ export type OIDCAuthorizationRequest = {
     id_token?: {
       [key: string]: {
         essential: boolean
-        value: string,
-        values: string[],
+        value: string
+        values: string[]
       }
     }
     userinfo?: {
       [key: string]: {
         essential?: boolean
-        value?: string,
-        values?: string[],
+        value?: string
+        values?: string[]
       }
     }
   }

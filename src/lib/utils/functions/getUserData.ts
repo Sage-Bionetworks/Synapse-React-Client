@@ -6,15 +6,15 @@ import { BackendDestinationEnum, getEndpoint } from './getEndpoint'
   Utility functions for UserCards
 */
 
-async function getUserProfileWithProfilePicAttached(
-  principalIds: string[],
-) {
+async function getUserProfileWithProfilePicAttached(principalIds: string[]) {
   const userProfiles = await SynapseClient.getUserProfiles(principalIds)
   const profilesWithPictures = userProfiles.list.map(profile => {
     if (profile.profilePicureFileHandleId) {
       return {
         ...profile,
-        clientPreSignedURL: `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/userProfile/${profile.ownerId}/image/preview?redirect=true`
+        clientPreSignedURL: `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/userProfile/${profile.ownerId}/image/preview?redirect=true`,
       }
     } else {
       return profile
@@ -28,15 +28,17 @@ export type UserProfileAndImg = {
   preSignedURL?: string
 }
 
-function getProfilePic(
-  userProfile: UserProfile,
-):UserProfileAndImg {
+function getProfilePic(userProfile: UserProfile): UserProfileAndImg {
   if (!userProfile.profilePicureFileHandleId) {
     return { userProfile }
   } else {
     return {
       userProfile,
-      preSignedURL: `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/userProfile/${userProfile.ownerId}/image/preview?redirect=true`,
+      preSignedURL: `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}/repo/v1/userProfile/${
+        userProfile.ownerId
+      }/image/preview?redirect=true`,
     }
   }
 }

@@ -10,7 +10,7 @@ import {
   faTable,
   faThList,
   IconDefinition,
-  faTh
+  faTh,
 } from '@fortawesome/free-solid-svg-icons'
 import { faDocker } from '@fortawesome/free-brands-svg-icons'
 import {
@@ -27,7 +27,7 @@ library.add(
   faServer,
   faTable,
   faThList,
-  faDocker
+  faDocker,
 )
 
 const _ENTITY_TYPE_ICON_MAP = new Map<EntityType, IconDefinition>([

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { shallow,  ShallowWrapper } from 'enzyme'
+import { shallow, ShallowWrapper } from 'enzyme'
 import {
   RangeSlider,
   RangeSliderProps,
@@ -9,7 +9,7 @@ const mockCallback = jest.fn(() => {})
 
 function createTestProps(overrides?: RangeSliderProps): RangeSliderProps {
   return {
-    initialValues:{min: '1', max: '20'},
+    initialValues: { min: '1', max: '20' },
     domain: ['0', '35'],
     onChange: mockCallback,
     step: 1,
@@ -29,7 +29,6 @@ beforeEach(() => init())
 
 describe('initialization ', () => {
   it('should render with correct properties', () => {
-
     expect(wrapper).toBeDefined()
 
     expect(wrapper.find('Slider').prop('domain')).toEqual([0, 35])
@@ -46,19 +45,18 @@ describe('callbacks', () => {
     expect(mockCallback).not.toHaveBeenCalled()
   })
 
-  it('should call the callbackFn on change when doUpdateOnApply is false',  () => {
-    init({...props, doUpdateOnApply: false})
+  it('should call the callbackFn on change when doUpdateOnApply is false', () => {
+    init({ ...props, doUpdateOnApply: false })
     mockCallback.mockClear()
     wrapper.find('Slider').simulate('change', [2, 10])
-    expect(mockCallback).toHaveBeenCalledWith({min:2, max: 10})
+    expect(mockCallback).toHaveBeenCalledWith({ min: 2, max: 10 })
   })
- 
+
   it('should allways call callbackFn on Apply', () => {
-    init({...props, doUpdateOnApply: true})
+    init({ ...props, doUpdateOnApply: true })
     mockCallback.mockClear()
     wrapper.find('Slider').simulate('change', [2, 10])
     wrapper.find('button').simulate('click')
-    expect(mockCallback).toHaveBeenCalledWith({min:2, max:10})
+    expect(mockCallback).toHaveBeenCalledWith({ min: 2, max: 10 })
   })
- 
 })

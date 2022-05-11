@@ -25,7 +25,10 @@ type UserCardLargeProps = {
  */
 // Disable function name because compiler has to know that its a class
 // tslint:disable-next-line:function-name
-export function UserCardLarge({ userProfile, isCertified }: UserCardLargeProps) {
+export function UserCardLarge({
+  userProfile,
+  isCertified,
+}: UserCardLargeProps) {
   const { summary, industry, location, url } = userProfile
 
   return (

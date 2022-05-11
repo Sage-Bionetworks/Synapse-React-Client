@@ -8,7 +8,10 @@ import { toError } from '../utils/ErrorUtils'
 import { SynapseSpinner } from './LoadingScreen'
 import { useGetFavorites } from '../utils/hooks/SynapseAPI/useFavorites'
 import IconSvg from './IconSvg'
-import { convertToEntityType, entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+} from '../utils/functions/EntityTypeUtils'
 import ReactTooltip from 'react-tooltip'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { EntityTypeIcon } from './EntityIcon'
@@ -27,7 +30,9 @@ export default function FavoritesPage() {
   const { accessToken } = useSynapseContext()
   const [sort, setSort] = useState<Sort | undefined>(undefined)
   const [searchText, setSearchText] = useState<string>('')
-  const [sortedData, setSortedData] = useState<EntityHeader[] | undefined>(undefined)
+  const [sortedData, setSortedData] = useState<EntityHeader[] | undefined>(
+    undefined,
+  )
   const [error, setError] = useState<Error>()
   const {
     data,
@@ -49,9 +54,11 @@ export default function FavoritesPage() {
     }
   }, [accessToken])
 
-  const filterEntityHeaders = (searchTerm:string, array:EntityHeader[]) => {
+  const filterEntityHeaders = (searchTerm: string, array: EntityHeader[]) => {
     const searchTermLowercase = searchTerm.toLowerCase()
-    return array.filter(item => item.name.toLowerCase().indexOf(searchTermLowercase) >= 0)
+    return array.filter(
+      item => item.name.toLowerCase().indexOf(searchTermLowercase) >= 0,
+    )
   }
 
   useEffect(() => {
@@ -60,13 +67,16 @@ export default function FavoritesPage() {
       if (sort) {
         newData.sort((a, b) => {
           if (sort.direction == 'DESC') {
-            return (a[sort.field].toLowerCase() > b[sort.field].toLowerCase()) ? 1 : -1
-          }
-          else {
-            return (a[sort.field].toLowerCase() < b[sort.field].toLowerCase()) ? 1 : -1
+            return a[sort.field].toLowerCase() > b[sort.field].toLowerCase()
+              ? 1
+              : -1
+          } else {
+            return a[sort.field].toLowerCase() < b[sort.field].toLowerCase()
+              ? 1
+              : -1
           }
         })
-      } 
+      }
       if (searchText) {
         newData = filterEntityHeaders(searchText, newData)
       }
@@ -122,7 +132,9 @@ export default function FavoritesPage() {
     <div className="FavoritesPage">
       <div className="searchInputWithIcon">
         <IconSvg options={{ icon: 'searchOutlined' }} />
-        <Form.Control type="search" placeholder="Favorite Name" 
+        <Form.Control
+          type="search"
+          placeholder="Favorite Name"
           value={searchText}
           onChange={event => {
             setSearchText(event.target.value)
@@ -152,18 +164,20 @@ export default function FavoritesPage() {
               </tr>
             </thead>
             <tbody>
-              {sortedData.map((item:EntityHeader) => {
+              {sortedData.map((item: EntityHeader) => {
                 if (item) {
                   const entityType = convertToEntityType(item.type)
                   return (
                     <tr key={item.id}>
                       <td>
-                          <a
-                            data-tip="Click the star to remove this item from your favorites"
-                            data-for={`${item.id}-Tooltip`}
-                            onClick={()=>{removeFavorite(item)}}
-                            className="ignoreLink"
-                          >
+                        <a
+                          data-tip="Click the star to remove this item from your favorites"
+                          data-for={`${item.id}-Tooltip`}
+                          onClick={() => {
+                            removeFavorite(item)
+                          }}
+                          className="ignoreLink"
+                        >
                           <ReactTooltip
                             delayShow={300}
                             place="right"
@@ -171,7 +185,9 @@ export default function FavoritesPage() {
                             effect="solid"
                             id={`${item.id}-Tooltip`}
                           />
-                          <IconSvg options={{icon:'fav', color: '#EDC766'}} />
+                          <IconSvg
+                            options={{ icon: 'fav', color: '#EDC766' }}
+                          />
                         </a>
                       </td>
                       <td>
@@ -183,7 +199,10 @@ export default function FavoritesPage() {
                         </a>
                       </td>
                       <td>
-                        <EntityTypeIcon type={entityType} style={{ marginRight: '5px' }} />
+                        <EntityTypeIcon
+                          type={entityType}
+                          style={{ marginRight: '5px' }}
+                        />
                         {entityTypeToFriendlyName(entityType)}
                       </td>
                     </tr>

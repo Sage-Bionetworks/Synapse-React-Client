@@ -1,4 +1,4 @@
-import { DownloadListItem } from "./DownloadListItem";
+import { DownloadListItem } from './DownloadListItem'
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/AddBatchOfFilesToDownloadListRequest.html
 export type AddBatchOfFilesToDownloadListRequest = {

@@ -19,7 +19,7 @@ export type FeaturedToolsListProps = {
 
 type ToolData = {
   id: string
-  name: string,
+  name: string
   description: string
   type: string
   date: string
@@ -27,16 +27,18 @@ type ToolData = {
 
 /**
  * Display a set of FeaturedToolCards (driven by a Table/View). Driven by the following annotations/column names:
- * 'id', 'name', 'type', and 'description'. 
+ * 'id', 'name', 'type', and 'description'.
  */
-export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> = ({
+export const FeaturedToolsList: React.FunctionComponent<
+  FeaturedToolsListProps
+> = ({
   entityId,
   toolDetailPageURL,
   idColumnName = 'id',
   nameColumnName = 'name',
   descriptionColumnName = 'description',
   typeColumnName = 'type',
-  dateColumnName = 'date'
+  dateColumnName = 'date',
 }) => {
   const sql = `SELECT "${idColumnName}", "${nameColumnName}", "${descriptionColumnName}", "${typeColumnName}", "${dateColumnName}" FROM ${entityId} ORDER BY ROW_ID DESC LIMIT 3`
   const queryBundleRequest: QueryBundleRequest = {
@@ -53,34 +55,20 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
   const { accessToken } = useSynapseContext()
   const [tools, setTools] = useState<ToolData[]>([])
   const [error, setError] = useState<Error>()
-  const {
-    data: queryResultBundle,
-    error: queryError,
-  } = useGetQueryResultBundle(queryBundleRequest)
+  const { data: queryResultBundle, error: queryError } =
+    useGetQueryResultBundle(queryBundleRequest)
 
   useEffect(() => {
     const getData = () => {
       try {
-        const idIndex = getFieldIndex(
-          idColumnName,
-          queryResultBundle,
-        )
-        const nameColumnIndex = getFieldIndex(
-          nameColumnName,
-          queryResultBundle,
-        )
-        const typeColumnIndex = getFieldIndex(
-          typeColumnName,
-          queryResultBundle,
-        )
+        const idIndex = getFieldIndex(idColumnName, queryResultBundle)
+        const nameColumnIndex = getFieldIndex(nameColumnName, queryResultBundle)
+        const typeColumnIndex = getFieldIndex(typeColumnName, queryResultBundle)
         const descriptionColumnIndex = getFieldIndex(
           descriptionColumnName,
           queryResultBundle,
         )
-        const dateColumnIndex = getFieldIndex(
-          dateColumnName,
-          queryResultBundle,
-        )
+        const dateColumnIndex = getFieldIndex(dateColumnName, queryResultBundle)
 
         const tools: ToolData[] =
           queryResultBundle?.queryResult.queryResults.rows.map(row => {
@@ -89,7 +77,7 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
               description: row.values[descriptionColumnIndex],
               type: row.values[typeColumnIndex],
               id: row.values[idIndex],
-              date: row.values[dateColumnIndex]
+              date: row.values[dateColumnIndex],
             }
           }) ?? []
         if (queryError) {
@@ -107,7 +95,17 @@ export const FeaturedToolsList: React.FunctionComponent<FeaturedToolsListProps> 
       }
     }
     getData()
-  }, [entityId, accessToken, queryResultBundle, queryError, idColumnName, nameColumnName, typeColumnName, descriptionColumnName, dateColumnName])
+  }, [
+    entityId,
+    accessToken,
+    queryResultBundle,
+    queryError,
+    idColumnName,
+    nameColumnName,
+    typeColumnName,
+    descriptionColumnName,
+    dateColumnName,
+  ])
 
   return error ? (
     <ErrorBanner error={error}></ErrorBanner>

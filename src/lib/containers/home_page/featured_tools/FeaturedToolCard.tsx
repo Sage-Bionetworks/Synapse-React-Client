@@ -12,7 +12,7 @@ export type FeaturedToolCardProps = {
 }
 
 export const FeaturedToolCard: React.FunctionComponent<
-FeaturedToolCardProps & React.HTMLAttributes<HTMLDivElement>
+  FeaturedToolCardProps & React.HTMLAttributes<HTMLDivElement>
 > = ({ id, name, description, type, toolDetailPageURL, date, ...domProps }) => {
   return (
     <div
@@ -22,15 +22,13 @@ FeaturedToolCardProps & React.HTMLAttributes<HTMLDivElement>
       }`}
     >
       <div className="FeaturedToolCard__Type">
-        <span className="SRC-tag">
-          {type}
-        </span>
+        <span className="SRC-tag">{type}</span>
       </div>
-      <div className="FeaturedToolCard__Date">{formatDate(moment(parseInt(date)), 'MMMM YYYY')}</div>
+      <div className="FeaturedToolCard__Date">
+        {formatDate(moment(parseInt(date)), 'MMMM YYYY')}
+      </div>
       <div className="FeaturedToolCard__Name">{name}</div>
-      <div className="FeaturedToolCard__Description">
-        {description}
-      </div>
+      <div className="FeaturedToolCard__Description">{description}</div>
       <div>
         <a
           className="FeaturedToolCard__Link"

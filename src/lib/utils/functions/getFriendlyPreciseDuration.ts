@@ -1,4 +1,4 @@
-import moment, { DurationInputArg1, DurationInputArg2 } from "moment"
+import moment, { DurationInputArg1, DurationInputArg2 } from 'moment'
 
 const getPart = (n: number, unitDescriptor: string) => {
   if (n > 0) {
@@ -11,7 +11,10 @@ const getPart = (n: number, unitDescriptor: string) => {
  * Return a "humanized" version of the given time, where the time given is in timeUnits.
  * moment.humanize() precision is unsatisfactory for our purposes.
  */
-export const getFriendlyPreciseDuration = (time: DurationInputArg1, timeUnits: DurationInputArg2):string => {
+export const getFriendlyPreciseDuration = (
+  time: DurationInputArg1,
+  timeUnits: DurationInputArg2,
+): string => {
   const duration = moment.duration(time, timeUnits)
   const years = duration.years()
   const months = duration.months() % 12
@@ -19,5 +22,11 @@ export const getFriendlyPreciseDuration = (time: DurationInputArg1, timeUnits: D
   const hours = duration.hours() % 24
   const minutes = duration.minutes() % 60
   const seconds = duration.seconds() % 60
-  return `${getPart(years, 'year')}${getPart(months, 'month')}${getPart(days, 'day')}${getPart(hours, 'hour')}${getPart(minutes, 'minute')}${getPart(seconds, 'second')}`.trim()
+  return `${getPart(years, 'year')}${getPart(months, 'month')}${getPart(
+    days,
+    'day',
+  )}${getPart(hours, 'hour')}${getPart(minutes, 'minute')}${getPart(
+    seconds,
+    'second',
+  )}`.trim()
 }

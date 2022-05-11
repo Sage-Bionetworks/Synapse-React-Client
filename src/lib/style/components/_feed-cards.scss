@@ -5,10 +5,10 @@
 }
 .FeedSubscribe {
   .FeedSubscribeToNewsLink {
-    color: #404B63;
+    color: #404b63;
     margin-right: 15px;
     &:hover {
-      color: #404B63;
+      color: #404b63;
       cursor: pointer;
     }
   }
@@ -39,25 +39,27 @@
   padding: 15px 0px;
 
   @media (min-width: 801px) {
-  .FeedItems {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    .FeedItem {
-      width: 30%;
+    .FeedItems {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      .FeedItem {
+        width: 30%;
+      }
     }
-  }}  
+  }
   @media (max-width: 800px) {
     .FeedItems {
       display: block;
       .FeedItem {
         width: 100%;
       }
-    }}  
-    
+    }
+  }
+
   .FeedItems {
-    .FeedItem {      
-      border: 1px solid #DDDDDF;
+    .FeedItem {
+      border: 1px solid #dddddf;
       padding: 20px;
       margin: 10px;
       background-color: white;
@@ -82,13 +84,13 @@
         }
       }
       .FeedItemDate {
-        color: #ABABAC;
+        color: #ababac;
         margin-bottom: 0px;
       }
       .FeedItemTitle {
         font-size: 16px;
         line-height: 144%;
-        color: #1A1C29;
+        color: #1a1c29;
         font-weight: bold;
         margin-bottom: 5px;
       }
@@ -99,7 +101,6 @@
         margin-bottom: 10px;
       }
     }
-
   }
   .FeedViewAllNewsButtonContainer {
     padding-top: 20px;

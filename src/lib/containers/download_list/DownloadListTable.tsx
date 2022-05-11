@@ -1,9 +1,9 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { 
-  faTrash, 
+import {
+  faTrash,
   faSortAmountDown,
   faSortAmountUp,
- } from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import React, { useEffect, useState, useCallback } from 'react'
@@ -62,8 +62,8 @@ export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 /**
  * Web-based download list.
- * 
- * @deprecated Use the new Download List Services instead (that support the Download Cart).  
+ *
+ * @deprecated Use the new Download List Services instead (that support the Download Cart).
  * http://rest-docs.synapse.org/rest/#org.sagebionetworks.repo.web.controller.DownloadListController
  */
 export default function DownloadListTable(props: DownloadListTableProps) {

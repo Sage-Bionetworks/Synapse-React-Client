@@ -9,7 +9,6 @@ import {
 import { RangeValues } from './Range'
 import { useState } from 'react'
 
-
 /**************** RANGE SLIDER SUBCOMPONENTS *********************/
 
 /***  handles ***/
@@ -37,7 +36,6 @@ export const Handle: React.FunctionComponent<IHandleProps> = ({
     {...getHandleProps(id)}
   />
 )
-
 
 /***   track  ***/
 interface ITrackProps {
@@ -97,9 +95,7 @@ export const Tick: React.FunctionComponent<ITickProps> = ({
   </div>
 )
 
-
 /*************  RANGE SLIDER COMPONENT ****************/
-
 
 export type RangeSliderProps = {
   domain: string[]
@@ -122,7 +118,10 @@ function getInitialValues(initialValues: RangeValues, domain: string[]) {
   return result
 }
 
-export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdateOnApply=true, ...props} ) => {
+export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({
+  doUpdateOnApply = true,
+  ...props
+}) => {
   const stringArrToNumArr = (inputArr: string[]) =>
     inputArr.map(value => Number(value))
 
@@ -149,7 +148,9 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdate
 
   return (
     <div className="RangeSlider">
-      <div className="RangeSlider__values">{values[0]} - {values[1]}</div>
+      <div className="RangeSlider__values">
+        {values[0]} - {values[1]}
+      </div>
       <div
         className={`RangeSlider__wrapper${
           doUpdateOnApply ? '--flex' : '--block'
@@ -214,7 +215,7 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({doUpdate
         {doUpdateOnApply && (
           <button
             className="RangeSlider__btnApply"
-            onClick={() =>  props.onChange({ min: values[0], max: values[1] })}
+            onClick={() => props.onChange({ min: values[0], max: values[1] })}
           >
             Apply
           </button>

@@ -78,10 +78,7 @@
       "default": "binding",
       "static": "true",
       "copy": "<p>Use this section to enter results from any in vitro binding and efficacy studies that have been performed on this compound, including which cell lines were used, the binding affinity, and the IC50 or EC50. If this data is not yet available for this compound,  you can select “Exclude” from the Binding and Efficacy sub menus.</p>",
-      "children": [
-        "binding",
-        "efficacy"
-      ]
+      "children": ["binding", "efficacy"]
     },
     {
       "id": "binding",

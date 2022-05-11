@@ -22,10 +22,12 @@ export type DirectFileDownloadProps = {
   associatedObjectType?: FileHandleAssociateType
   fileHandleId?: string
   displayFileName?: boolean
-  onClickCallback?: (isExternalLink:boolean) => void // callback if you want to know when the link was clicked
+  onClickCallback?: (isExternalLink: boolean) => void // callback if you want to know when the link was clicked
 }
 
-const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props => {
+const DirectDownload: React.FunctionComponent<
+  DirectFileDownloadProps
+> = props => {
   const { accessToken } = useSynapseContext()
   const {
     associatedObjectId,
@@ -53,46 +55,51 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   }, [accessToken, inView])
 
   const getDownloadLink = async () => {
-      let preSignedURL
-      // SWC-5907: opening in the file must be strictly done in the same click event process (Safari only).
-      // https://stackoverflow.com/questions/6628949/window-open-popup-getting-blocked-during-click-event
-      const parser = new UAParser()
-      const isSafari = parser.getBrowser().name == 'Safari'
-      let safariDownloadWindow:Window | null = null
-      if (isSafari) {
-        safariDownloadWindow = window.open("", "Safari Download", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,popup,width=600,height=200")
-        safariDownloadWindow!.document.body.innerHTML = "Downloading file on Safari..."
-      }
-      try {
-        if (associatedObjectType === FileHandleAssociateType.TableEntity) {
-          const files = await getTableEntityFileHandle(true)
-          preSignedURL = files.requestedFiles[0].preSignedURL!
-        } else {
-          const file = await getFileResult(fileEntity!, accessToken, false, true)
-          preSignedURL = file.preSignedURL
-        }
-      } catch (e) {
-        console.log('Fail to get file download link: ', e)
-      }
-
-      if (!preSignedURL) {
-        safariDownloadWindow?.close()
-        console.log('Fail to get file download link')
+    let preSignedURL
+    // SWC-5907: opening in the file must be strictly done in the same click event process (Safari only).
+    // https://stackoverflow.com/questions/6628949/window-open-popup-getting-blocked-during-click-event
+    const parser = new UAParser()
+    const isSafari = parser.getBrowser().name == 'Safari'
+    let safariDownloadWindow: Window | null = null
+    if (isSafari) {
+      safariDownloadWindow = window.open(
+        '',
+        'Safari Download',
+        'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,popup,width=600,height=200',
+      )
+      safariDownloadWindow!.document.body.innerHTML =
+        'Downloading file on Safari...'
+    }
+    try {
+      if (associatedObjectType === FileHandleAssociateType.TableEntity) {
+        const files = await getTableEntityFileHandle(true)
+        preSignedURL = files.requestedFiles[0].preSignedURL!
       } else {
-        if (isSafari && safariDownloadWindow) {
-          safariDownloadWindow.location = preSignedURL
-          setTimeout(() => {
-            if (safariDownloadWindow) {
-              safariDownloadWindow.close()
-            }
-          }, 10000)
-        } else {
-          window.open(preSignedURL)
-        }
-        if (onClickCallback) {
-          onClickCallback(isExternalFile)
-        }
+        const file = await getFileResult(fileEntity!, accessToken, false, true)
+        preSignedURL = file.preSignedURL
       }
+    } catch (e) {
+      console.log('Fail to get file download link: ', e)
+    }
+
+    if (!preSignedURL) {
+      safariDownloadWindow?.close()
+      console.log('Fail to get file download link')
+    } else {
+      if (isSafari && safariDownloadWindow) {
+        safariDownloadWindow.location = preSignedURL
+        setTimeout(() => {
+          if (safariDownloadWindow) {
+            safariDownloadWindow.close()
+          }
+        }, 10000)
+      } else {
+        window.open(preSignedURL)
+      }
+      if (onClickCallback) {
+        onClickCallback(isExternalFile)
+      }
+    }
   }
 
   const hasFileHandle = (fh: FileHandle) => {
@@ -168,12 +175,20 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   const getIcon = () => {
     if (isExternalFile) {
       return (
-        <button className={'btn-download-icon'} onClick={()=> {
-          if (onClickCallback) {
-            onClickCallback(isExternalFile)
-          }
-        }}>
-          <a className="ignoreLink" rel="noreferrer" href={externalURL} target="_blank">
+        <button
+          className={'btn-download-icon'}
+          onClick={() => {
+            if (onClickCallback) {
+              onClickCallback(isExternalFile)
+            }
+          }}
+        >
+          <a
+            className="ignoreLink"
+            rel="noreferrer"
+            href={externalURL}
+            target="_blank"
+          >
             <Icon type="externallink" />
           </a>
         </button>
@@ -191,9 +206,15 @@ const DirectDownload: React.FunctionComponent<DirectFileDownloadProps> = props =
   }
 
   return (
-    <span ref={ref}
+    <span
+      ref={ref}
       data-for={`${associatedObjectId}-direct-download-tooltip`}
-      data-tip={isExternalFile ? 'Navigate to external link' : 'Download this file individually'}>
+      data-tip={
+        isExternalFile
+          ? 'Navigate to external link'
+          : 'Download this file individually'
+      }
+    >
       <ReactTooltip
         delayShow={TOOLTIP_DELAY_SHOW}
         place="left"

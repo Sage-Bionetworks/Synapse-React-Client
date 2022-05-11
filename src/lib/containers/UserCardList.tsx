@@ -2,7 +2,11 @@ import * as React from 'react'
 import { getUserProfileWithProfilePicAttached } from '../utils/functions/getUserData'
 import { UserProfileList } from '../utils/SynapseClient'
 import { MEDIUM_USER_CARD } from '../utils/SynapseConstants'
-import { QueryResultBundle, UserProfile, ColumnType } from '../utils/synapseTypes/'
+import {
+  QueryResultBundle,
+  UserProfile,
+  ColumnType,
+} from '../utils/synapseTypes/'
 import UserCard, { UserCardSize } from './UserCard'
 import { without } from 'lodash-es'
 
@@ -108,46 +112,48 @@ export default class UserCardList extends React.Component<
     let fauxUserProfileIndex = 0
     return (
       <div className="SRC-card-grid-row">
-        {// we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
-        list.map(ownerId => {
-          const userProfile = userProfileMap[ownerId]
-          if (userProfile) {
+        {
+          // we loop through the list from the props because thats the 'active set of data' whereas the data stored in state could be stale
+          list.map(ownerId => {
+            const userProfile = userProfileMap[ownerId]
+            if (userProfile) {
+              return (
+                <div
+                  key={JSON.stringify(userProfile)}
+                  className="SRC-grid-item SRC-narrow-grid-item"
+                >
+                  <UserCard
+                    size={size}
+                    preSignedURL={userProfile.clientPreSignedURL}
+                    userProfile={userProfile}
+                  />
+                </div>
+              )
+            }
+            const fauxUserProfile =
+              fauxUserProfilesList && fauxUserProfilesList[fauxUserProfileIndex]
+            if (!fauxUserProfile) {
+              // This could happen in one of two cases:
+              // - The props just updated with a new userlist where the data is being gathered for this particular user
+              //   OR there is no mapping for this user
+              return false
+            }
+            fauxUserProfileIndex += 1
             return (
               <div
-                key={JSON.stringify(userProfile)}
+                key={JSON.stringify(fauxUserProfile)}
                 className="SRC-grid-item SRC-narrow-grid-item"
               >
                 <UserCard
+                  disableLink={true}
+                  hideEmail={true}
                   size={size}
-                  preSignedURL={userProfile.clientPreSignedURL}
-                  userProfile={userProfile}
+                  userProfile={fauxUserProfile}
                 />
               </div>
             )
-          }
-          const fauxUserProfile =
-            fauxUserProfilesList && fauxUserProfilesList[fauxUserProfileIndex]
-          if (!fauxUserProfile) {
-            // This could happen in one of two cases:
-            // - The props just updated with a new userlist where the data is being gathered for this particular user
-            //   OR there is no mapping for this user
-            return false
-          }
-          fauxUserProfileIndex += 1
-          return (
-            <div
-              key={JSON.stringify(fauxUserProfile)}
-              className="SRC-grid-item SRC-narrow-grid-item"
-            >
-              <UserCard
-                disableLink={true}
-                hideEmail={true}
-                size={size}
-                userProfile={fauxUserProfile}
-              />
-            </div>
-          )
-        })}
+          })
+        }
       </div>
     )
   }
