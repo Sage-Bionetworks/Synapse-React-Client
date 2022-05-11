@@ -8,6 +8,8 @@ import ReplyIcon from '../assets/icons/reply.svg'
 import ThreadIcon from '../assets/icons/thread.svg'
 import Typography from '../utils/typography/Typography'
 import { Col, Row } from 'react-bootstrap'
+import UserCard from './UserCard'
+import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 
 export const getMessage = async (url: string): Promise<any> => {
     const response = await fetch(url, {
@@ -34,7 +36,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
     const [replyBundle, setReplyBundle] = useState<DiscussionReplyBundle>()
     const [replyAuthor, setReplyAuthor] = useState<UserProfile>()
 
-    const getStuff = async () => {
+    const getThreadOrReply = async () => {
         let someUrl
         const thread = await getThread(threadId, accessToken)
         if (replyId) {
@@ -51,21 +53,18 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
     }
 
     useEffect(() => {
-        getStuff()
+        getThreadOrReply()
     }, [])
 
     const getUrl = (threadId: string, replyId: string, projectId: string) => {
         return `https://synapse.org/#!Synapse:${projectId}/discussion/threadId=${threadId}&replyId=${replyId}`
-    }
-    const getUserPage = (userId: string) => {
-        return `https://synapse.org/#!Profile:${userId}`
     }
 
     return (
         <div className='search-result-container'>
             <Row>
                 <Col xs={1}>
-                    <img src={replyId ? ReplyIcon : ThreadIcon} alt={replyId ? 'reply-icon' : 'thread-icon'} className='search-result-icon'/>
+                    <img src={replyId ? ReplyIcon : ThreadIcon} alt={replyId ? 'reply-icon' : 'thread-icon'} className='search-result-icon' />
                 </Col>
                 <Col xs={11}>
                     <Typography variant='headline3'>
@@ -77,9 +76,7 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
                         </Typography>
                     </div>
                     <div className='search-result-footer'>
-                        <Typography variant='body1'>
-                            {replyId ? 'Reply' : 'Thread'} by <a className='link' href={getUserPage(replyAuthor?.ownerId!)} >@{replyAuthor?.userName}</a> {moment(replyBundle?.createdOn).format('l LT')}
-                        </Typography>
+                        {replyId ? 'Reply' : 'Thread'} by {<UserCard size={SMALL_USER_CARD} ownerId={replyAuthor?.ownerId!} />} {moment(replyBundle?.createdOn).format('l LT')}
                     </div>
                 </Col>
             </Row>
