@@ -14,9 +14,7 @@ import { getEvaluation } from '../../../lib/utils/SynapseClient'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 
-SynapseClient.getEvaluation = jest
-  .fn()
-  .mockResolvedValue(mockEvaluationQueue)
+SynapseClient.getEvaluation = jest.fn().mockResolvedValue(mockEvaluationQueue)
 
 describe('EvaluationIdRenderer: basic functionality', () => {
   const props: EvaluationIdRendererProps = {

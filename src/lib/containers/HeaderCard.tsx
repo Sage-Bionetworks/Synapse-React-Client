@@ -79,7 +79,11 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
                   <div>
                     <h3 className="SRC-boldText" style={{ margin: 'none' }}>
                       {href ? (
-                        <a target={target} href={href} className="highlight-link">
+                        <a
+                          target={target}
+                          href={href}
+                          className="highlight-link"
+                        >
                           {title}
                         </a>
                       ) : (
@@ -106,20 +110,20 @@ const HeaderCard: React.FunctionComponent<HeaderCardProps> = ({
                   }}
                 />
                 <div className="SRC-cardContent">
-                    {values && (
-                      <CardFooter
-                        isHeader={true}
-                        secondaryLabelLimit={secondaryLabelLimit}
-                        values={values}
-                      />
-                    )}
-                  </div>
+                  {values && (
+                    <CardFooter
+                      isHeader={true}
+                      secondaryLabelLimit={secondaryLabelLimit}
+                      values={values}
+                    />
+                  )}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   )
 }
 

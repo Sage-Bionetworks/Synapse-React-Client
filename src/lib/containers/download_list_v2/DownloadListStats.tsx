@@ -9,17 +9,17 @@ export type DownloadListStatsProps = {
 
 export default function DownloadListStats(props: DownloadListStatsProps) {
   const { numFiles, numPackagableFiles, numBytes } = props
-  
+
   return (
     <div>
-        <DownloadDetails
-          numFiles={numFiles}
-          numPackagableFiles={numPackagableFiles}
-          numBytes={numBytes}
-        ></DownloadDetails>
+      <DownloadDetails
+        numFiles={numFiles}
+        numPackagableFiles={numPackagableFiles}
+        numBytes={numBytes}
+      ></DownloadDetails>
       {
-      // also have access to fileStats.numberOfFilesRequiringAction 
-      // and fileStats.totalNumberOfFiles
+        // also have access to fileStats.numberOfFilesRequiringAction
+        // and fileStats.totalNumberOfFiles
       }
     </div>
   )

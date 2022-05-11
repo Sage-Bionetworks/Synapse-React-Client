@@ -16,7 +16,8 @@ export default function useGetAccessRequirement(
 
   return useQuery<AccessRequirement, SynapseClientError, AccessRequirement>(
     ['accessRequirementById', accessToken, accessRequirementId],
-    () => SynapseClient.getAccessRequirementById(accessToken, accessRequirementId),
+    () =>
+      SynapseClient.getAccessRequirementById(accessToken, accessRequirementId),
     options,
   )
 }

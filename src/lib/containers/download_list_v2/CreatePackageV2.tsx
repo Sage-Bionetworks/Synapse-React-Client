@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
-import {
-  Button,
-} from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import {
   createPackageFromDownloadListV2,
-  getFileHandleByIdURL
+  getFileHandleByIdURL,
 } from '../../utils/SynapseClient'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { DownloadListPackageResponse } from '../../utils/synapseTypes/DownloadListV2/DownloadListPackageResponse'
@@ -43,16 +41,20 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
     setIsLoading(true)
     try {
       const fileNameWithZipExtension = `${fileName}.zip`
-      const currentBulkFileDownloadResponse = await createPackageFromDownloadListV2(
-        fileNameWithZipExtension,
-        accessToken,
-      )
+      const currentBulkFileDownloadResponse =
+        await createPackageFromDownloadListV2(
+          fileNameWithZipExtension,
+          accessToken,
+        )
 
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
       const { resultFileHandleId } = currentBulkFileDownloadResponse
       try {
         //reset
-        window.location.href = await getFileHandleByIdURL(resultFileHandleId, accessToken)
+        window.location.href = await getFileHandleByIdURL(
+          resultFileHandleId,
+          accessToken,
+        )
         setZipFileName('')
         setBulkFileDownloadResponse(undefined)
         onPackageCreation()
@@ -81,32 +83,33 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
             Create your Download Package
           </span>
           <span className="createPackageDescription">
-            Name your download package and select Download Package to get started.
+            Name your download package and select Download Package to get
+            started.
           </span>
-          {!isLoading && !bulkFileDownloadResponse && <div className="inputAndCreateButton">
-            <input
-              onChange={onChange}
-              type="text"
-              placeholder="PackageName"
-              style={{width:'233px'}}
-            ></input>
-            <span className="zipUI">.zip</span>
-            <Button
-              variant={fileName ? 'primary' : 'dark'}
-              onClick={createPackageHandler}
-              type="button"
-              style={{ marginLeft: 20 }}
-              disabled={ fileName ? false : true}
-            >
-              Download Package
-            </Button>
-          </div>}
+          {!isLoading && !bulkFileDownloadResponse && (
+            <div className="inputAndCreateButton">
+              <input
+                onChange={onChange}
+                type="text"
+                placeholder="PackageName"
+                style={{ width: '233px' }}
+              ></input>
+              <span className="zipUI">.zip</span>
+              <Button
+                variant={fileName ? 'primary' : 'dark'}
+                onClick={createPackageHandler}
+                type="button"
+                style={{ marginLeft: 20 }}
+                disabled={fileName ? false : true}
+              >
+                Download Package
+              </Button>
+            </div>
+          )}
           {isLoading && (
             <div className="creatingPackage">
               <span className="spinner" />
-              <span style={{ marginLeft: 5 }}>
-                Creating package...
-              </span>
+              <span style={{ marginLeft: 5 }}>Creating package...</span>
             </div>
           )}
         </div>
@@ -116,9 +119,10 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
         variant={alert?.variant ? alert.variant : 'success'}
         description={alert?.message}
         autoCloseAfterDelayInSeconds={10}
-        onClose={() => { setAlert(undefined) }}
+        onClose={() => {
+          setAlert(undefined)
+        }}
       />
     </>
-    
   )
 }

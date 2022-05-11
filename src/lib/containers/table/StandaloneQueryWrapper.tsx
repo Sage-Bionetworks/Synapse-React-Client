@@ -81,113 +81,112 @@ const generateInitQueryRequest = (sql: string): QueryBundleRequest => {
  * This component was initially implemented on the portal side. It renders a SynapseTable if a title is provided.
  * If showTopLevelControls is set to true, then the SynapseTable will also include the TopLevelControls (search, export table, column selection).
  */
-const StandaloneQueryWrapper: React.FunctionComponent<StandaloneQueryWrapperProps> =
-  (props: StandaloneQueryWrapperProps) => {
-    const {
-      title,
-      searchParams,
-      sqlOperator,
-      showAccessColumn,
-      sql,
-      hideDownload,
-      hideQueryCount,
-      name,
-      showTopLevelControls = false,
-      searchConfiguration,
-      unitDescription = 'Results',
-      rgbIndex,
-      showLastUpdatedOn,
-      ...rest
-    } = props
+const StandaloneQueryWrapper: React.FunctionComponent<
+  StandaloneQueryWrapperProps
+> = (props: StandaloneQueryWrapperProps) => {
+  const {
+    title,
+    searchParams,
+    sqlOperator,
+    showAccessColumn,
+    sql,
+    hideDownload,
+    hideQueryCount,
+    name,
+    showTopLevelControls = false,
+    searchConfiguration,
+    unitDescription = 'Results',
+    rgbIndex,
+    showLastUpdatedOn,
+    ...rest
+  } = props
 
-    const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
+  const derivedQueryRequestFromSearchParams = generateInitQueryRequest(sql)
 
-    if (searchParams) {
-      derivedQueryRequestFromSearchParams.query.sql =
-        insertConditionsFromSearchParams(
-          derivedQueryRequestFromSearchParams.query.sql,
-          searchParams,
-          sqlOperator,
-        )
-    }
-    const synapseContext = useSynapseContext()
-    const entityId = parseEntityIdFromSqlStatement(sql)
-    const { data: entity } = useGetEntity(entityId)
-    return (
-      <QueryWrapper
+  if (searchParams) {
+    derivedQueryRequestFromSearchParams.query.sql =
+      insertConditionsFromSearchParams(
+        derivedQueryRequestFromSearchParams.query.sql,
+        searchParams,
+        sqlOperator,
+      )
+  }
+  const synapseContext = useSynapseContext()
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  const { data: entity } = useGetEntity(entityId)
+  return (
+    <QueryWrapper
+      {...rest}
+      initQueryRequest={derivedQueryRequestFromSearchParams}
+    >
+      <QueryVisualizationWrapper
+        rgbIndex={rgbIndex}
+        unitDescription={unitDescription}
+        showLastUpdatedOn={showLastUpdatedOn}
         {...rest}
-        initQueryRequest={derivedQueryRequestFromSearchParams}
       >
-        <QueryVisualizationWrapper
-          rgbIndex={rgbIndex}
-          unitDescription={unitDescription}
-          showLastUpdatedOn={showLastUpdatedOn}
-          {...rest}
-        >
-          <QueryContextConsumer>
-            {queryContext => {
-              if (queryContext === undefined) {
-                throw new Error(
-                  'No queryContext found when calling QueryContextConsumer',
-                )
-              }
-              return (
-                <QueryVisualizationContextConsumer>
-                  {queryVisualizationContext => {
-                    if (queryVisualizationContext === undefined) {
-                      throw new Error(
-                        'No queryVisualizationContext found when calling QueryVisualizationContextConsumer',
-                      )
-                    }
+        <QueryContextConsumer>
+          {queryContext => {
+            if (queryContext === undefined) {
+              throw new Error(
+                'No queryContext found when calling QueryContextConsumer',
+              )
+            }
+            return (
+              <QueryVisualizationContextConsumer>
+                {queryVisualizationContext => {
+                  if (queryVisualizationContext === undefined) {
+                    throw new Error(
+                      'No queryVisualizationContext found when calling QueryVisualizationContextConsumer',
+                    )
+                  }
 
-                    return (
-                      <>
-                        {showTopLevelControls && (
-                          <TopLevelControls
-                            showColumnSelection={true}
-                            name={name}
-                            hideDownload={hideDownload}
-                            hideQueryCount={hideQueryCount}
-                            hideFacetFilterControl={true}
-                            hideVisualizationsControl={true}
-                          />
-                        )}
-                        {entity &&
-                        isTableEntity(entity) &&
-                        entity.isSearchEnabled ? (
-                          <FullTextSearch />
-                        ) : (
-                          <SearchV2
-                            {...searchConfiguration}
-                            queryContext={queryContext}
-                            queryVisualizationContext={
-                              queryVisualizationContext
-                            }
-                          />
-                        )}
-                        <SqlEditor />
-                        {showTopLevelControls && (
-                          <TotalQueryResults frontText={''} showNotch={false} />
-                        )}
-                        <SynapseTable
-                          synapseContext={synapseContext}
+                  return (
+                    <>
+                      {showTopLevelControls && (
+                        <TopLevelControls
+                          showColumnSelection={true}
+                          name={name}
+                          hideDownload={hideDownload}
+                          hideQueryCount={hideQueryCount}
+                          hideFacetFilterControl={true}
+                          hideVisualizationsControl={true}
+                        />
+                      )}
+                      {entity &&
+                      isTableEntity(entity) &&
+                      entity.isSearchEnabled ? (
+                        <FullTextSearch />
+                      ) : (
+                        <SearchV2
+                          {...searchConfiguration}
                           queryContext={queryContext}
                           queryVisualizationContext={queryVisualizationContext}
-                          showAccessColumn={showAccessColumn}
-                          title={title}
-                          data-testid="SynapseTable"
                         />
-                        <LastUpdatedOn />
-                      </>
-                    )
-                  }}
-                </QueryVisualizationContextConsumer>
-              )
-            }}
-          </QueryContextConsumer>
-        </QueryVisualizationWrapper>
-      </QueryWrapper>
-    )
-  }
+                      )}
+                      <SqlEditor />
+                      {showTopLevelControls && (
+                        <TotalQueryResults frontText={''} showNotch={false} />
+                      )}
+                      <SynapseTable
+                        synapseContext={synapseContext}
+                        queryContext={queryContext}
+                        queryVisualizationContext={queryVisualizationContext}
+                        showAccessColumn={showAccessColumn}
+                        title={title}
+                        data-testid="SynapseTable"
+                      />
+                      <LastUpdatedOn />
+                    </>
+                  )
+                }}
+              </QueryVisualizationContextConsumer>
+            )
+          }}
+        </QueryContextConsumer>
+      </QueryVisualizationWrapper>
+    </QueryWrapper>
+  )
+}
 
 export default StandaloneQueryWrapper

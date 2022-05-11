@@ -6,7 +6,7 @@ import {
   TERMS_OF_USE_TITLE,
   SELF_SIGN_TITLE,
   ACT_TITLE,
-  LOCK_TITLE
+  LOCK_TITLE,
 } from '../../../../lib/containers/download_list_v2/MeetAccessRequirementCard'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../lib/utils/SynapseContext'
@@ -14,9 +14,9 @@ import { rest, server } from '../../../../mocks/msw/server'
 import {
   mockToUAccessRequirement,
   // mockACTAccessRequirement,
-  mockLockAccessRequirement, 
+  mockLockAccessRequirement,
   mockManagedACTAccessRequirement,
-  mockSelfSignAccessRequirement
+  mockSelfSignAccessRequirement,
 } from '../../../../mocks/mockAccessRequirements'
 import { ACCESS_REQUIREMENT_BY_ID } from '../../../../lib/utils/APIConstants'
 import {
@@ -27,21 +27,18 @@ import {
 const ACCESS_REQUIREMENT_ID = 1111
 const defaultProps: MeetAccessRequirementCardProps = {
   accessRequirementId: ACCESS_REQUIREMENT_ID,
-  count: 10
+  count: 10,
 }
 
-const setupAccessRequirementResponse = (accessRequirement:any) => {
+const setupAccessRequirementResponse = (accessRequirement: any) => {
   server.use(
     rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_BY_ID(
-          ACCESS_REQUIREMENT_ID,
-      )}`,
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}${ACCESS_REQUIREMENT_BY_ID(ACCESS_REQUIREMENT_ID)}`,
 
       async (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json(accessRequirement),
-        )
+        return res(ctx.status(200), ctx.json(accessRequirement))
       },
     ),
   )
@@ -74,7 +71,7 @@ describe('MeetAccessRequirementCard tests', () => {
     renderComponent()
     await screen.findByText(ACT_TITLE)
   })
-  
+
   it('Show a Lock AR', async () => {
     setupAccessRequirementResponse(mockLockAccessRequirement)
     renderComponent()

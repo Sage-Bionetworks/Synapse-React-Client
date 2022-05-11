@@ -1,4 +1,3 @@
-
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/AccessTokenRecord.html
 export type AccessTokenRecord = {
   id: string
@@ -8,7 +7,7 @@ export type AccessTokenRecord = {
   name: string
   createdOn: string
   lastUsed: string
-  state: "ACTIVE" | "EXPIRED"
+  state: 'ACTIVE' | 'EXPIRED'
 }
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/auth/AccessTokenRecordList.html

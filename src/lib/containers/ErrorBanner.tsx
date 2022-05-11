@@ -102,16 +102,17 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
   )
 }
 
-export const TableRowFallbackComponent: React.FunctionComponent<FallbackProps> =
-  ({ error, resetErrorBoundary }) => {
-    return (
-      <tr>
-        <td colSpan={999}>
-          <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
-        </td>
-      </tr>
-    )
-  }
+export const TableRowFallbackComponent: React.FunctionComponent<
+  FallbackProps
+> = ({ error, resetErrorBoundary }) => {
+  return (
+    <tr>
+      <td colSpan={999}>
+        <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
+      </td>
+    </tr>
+  )
+}
 
 /**
  * ErrorBoundary component that uses the default error fallback component, unless overridden.

@@ -15,19 +15,19 @@ export type VerificationSubmission = {
 export type VerificationState = {
   createdOn: string
   createdBy: string
-  state: VerificationStateEnum,
+  state: VerificationStateEnum
   reason?: string
   notes?: string // Additional notes that can be set by the ACT team and that is not exposed to the end user.
 }
 
 export enum VerificationStateEnum {
-  SUBMITTED = "SUBMITTED",
-  APPROVED = "APPROVED",
-  REJECTED = "REJECTED",
-  SUSPENDED = "SUSPENDED",
+  SUBMITTED = 'SUBMITTED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  SUSPENDED = 'SUSPENDED',
 }
 
 export type AttachmentMetadata = {
-  fileName: string,
+  fileName: string
   id: string // file handle ID
 }

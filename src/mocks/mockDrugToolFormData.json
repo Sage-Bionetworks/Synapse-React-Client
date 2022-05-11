@@ -63,9 +63,7 @@
     "route": ["sublingual", "injection", "transdermal"],
     "orally_active": "no"
   },
-  "in_vivo_data": {
-
-  },
+  "in_vivo_data": {},
 
   "metadata": {
     "formSchemaVersion": 154,

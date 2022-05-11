@@ -149,8 +149,8 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       {`@${userProfile.userName}`}
       {showFullName && (
         <span className={'user-fullname'}>
-            &nbsp;{`${userProfile.firstName} ${userProfile.lastName}`}
-          </span>
+          &nbsp;{`${userProfile.firstName} ${userProfile.lastName}`}
+        </span>
       )}
     </span>
   ) : (

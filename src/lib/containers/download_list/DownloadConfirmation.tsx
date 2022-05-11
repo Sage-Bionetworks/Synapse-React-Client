@@ -91,9 +91,11 @@ const StatusConstruct: UiStateDictionary = {
     className: 'alert-info',
     infoText: (
       <>
-        Note: Files that you add will be mixed in with the files already in your download list.
+        Note: Files that you add will be mixed in with the files already in your
+        download list.
         <br />
-        If you don’t want to mix these files, clear your download list before continuing.
+        If you don’t want to mix these files, clear your download list before
+        continuing.
       </>
     ),
     closeText: 'Cancel',
@@ -161,184 +163,183 @@ const DownloadConfirmationContent = (props: {
 
 //============= DownloadConfirmation component =============
 
-export const DownloadConfirmation: React.FunctionComponent<DownloadConfirmationProps> =
-  ({
-    getLastQueryRequest,
+export const DownloadConfirmation: React.FunctionComponent<
+  DownloadConfirmationProps
+> = ({
+  getLastQueryRequest,
+  folderId,
+  fnClose,
+  setTopLevelControlsState,
+  topLevelControlsState,
+  downloadCartPageUrl = '/DownloadCart',
+}) => {
+  const { accessToken } = useSynapseContext()
+  const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
+  const [status, setStatus] = useState<StatusEnum>(
+    accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
+  )
+
+  const [fileCount, setFileCount] = useState(0)
+  const [fileSize, setFileSize] = useState<number>()
+
+  const { data: downloadListStatistics, refetch } =
+    useGetDownloadListStatistics()
+
+  const lastQueryRequest = getLastQueryRequest!()
+  // is not defined (configured for a container)
+  const [showDownloadList, setShowDownloadList] = useState(false)
+  const updateStats = useCallback(
+    (
+      count?: number,
+      bytes?: number,
+      downloadListStatistics?: FilesStatisticsResponse,
+    ) => {
+      if (accessToken && downloadListStatistics) {
+        const hasFilesInDownloadList =
+          downloadListStatistics.totalNumberOfFiles > 0
+
+        const fileCount = count ?? 0
+        setStatus(
+          hasFilesInDownloadList
+            ? StatusEnum.INFO_ITEMS_IN_LIST
+            : StatusEnum.INFO,
+        )
+        setFileCount(fileCount)
+        setFileSize(bytes)
+      }
+    },
+    [accessToken],
+  )
+
+  const { data: entityChildrenData, isSuccess } = useGetEntityChildren({
+    parentId: folderId,
+    includeSumFileSizes: true,
+    includeTotalChildCount: true,
+    includeTypes: [EntityType.FILE],
+  })
+  useDeepCompareEffect(() => {
+    if (isSuccess && entityChildrenData && downloadListStatistics) {
+      updateStats(
+        entityChildrenData.totalChildCount,
+        entityChildrenData.sumFileSizesBytes,
+        downloadListStatistics,
+      )
+    }
+  }, [
+    updateStats,
     folderId,
-    fnClose,
-    setTopLevelControlsState,
-    topLevelControlsState,
-    downloadCartPageUrl = '/DownloadCart',
-  }) => {
-    const { accessToken } = useSynapseContext()
-    const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
-    const [status, setStatus] = useState<StatusEnum>(
-      accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
-    )
+    isSuccess,
+    entityChildrenData,
+    downloadListStatistics,
+  ])
 
-    const [fileCount, setFileCount] = useState(0)
-    const [fileSize, setFileSize] = useState<number>()
+  const partMask =
+    SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+    SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
 
-    const { data: downloadListStatistics, refetch } =
-      useGetDownloadListStatistics()
+  const queryBundleRequestSizeInformation: QueryBundleRequest = {
+    ...lastQueryRequest,
+    partMask,
+  }
 
-    const lastQueryRequest = getLastQueryRequest!()
-    // is not defined (configured for a container)
-    const [showDownloadList, setShowDownloadList] = useState(false)
-    const updateStats = useCallback(
-      (
-        count?: number,
-        bytes?: number,
-        downloadListStatistics?: FilesStatisticsResponse,
-      ) => {
-        if (accessToken && downloadListStatistics) {
-          const hasFilesInDownloadList =
-            downloadListStatistics.totalNumberOfFiles > 0
+  const { data: queryResultBundle } = useGetQueryResultBundle(
+    queryBundleRequestSizeInformation,
+  )
 
-          const fileCount = count ?? 0
-          setStatus(
-            hasFilesInDownloadList
-              ? StatusEnum.INFO_ITEMS_IN_LIST
-              : StatusEnum.INFO,
-          )
-          setFileCount(fileCount)
-          setFileSize(bytes)
+  useDeepCompareEffect(() => {
+    if (queryResultBundle && downloadListStatistics) {
+      const isGreaterThanReportedValue =
+        queryResultBundle.sumFileSizes?.greaterThan
+      updateStats(
+        queryResultBundle.queryCount,
+        isGreaterThanReportedValue
+          ? undefined
+          : queryResultBundle.sumFileSizes?.sumFileSizesBytes,
+        downloadListStatistics,
+      )
+    }
+  }, [updateStats, lastQueryRequest, queryResultBundle, downloadListStatistics])
+
+  const onCancel = fnClose
+    ? () => fnClose()
+    : () => {
+        if (setTopLevelControlsState) {
+          setTopLevelControlsState(topLevelControlsState => ({
+            ...topLevelControlsState,
+            showDownloadConfirmation: false,
+          }))
         }
-      },
-      [accessToken],
-    )
-
-    const { data: entityChildrenData, isSuccess } = useGetEntityChildren({
-      parentId: folderId,
-      includeSumFileSizes: true,
-      includeTotalChildCount: true,
-      includeTypes: [EntityType.FILE],
-    })
-    useDeepCompareEffect(() => {
-      if (isSuccess && entityChildrenData && downloadListStatistics) {
-        updateStats(
-          entityChildrenData.totalChildCount,
-          entityChildrenData.sumFileSizesBytes,
-          downloadListStatistics,
-        )
       }
-    }, [
-      updateStats,
-      folderId,
-      isSuccess,
-      entityChildrenData,
-      downloadListStatistics,
-    ])
 
-    const partMask =
-      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES
-
-    const queryBundleRequestSizeInformation: QueryBundleRequest = {
-      ...lastQueryRequest,
-      partMask,
+  const triggerAddToDownload = async () => {
+    if (!accessToken) {
+      setStatus(StatusEnum.SIGNED_OUT)
+    } else {
+      setStatus(StatusEnum.PROCESSING)
+      const goToDownloadListFn = () => setShowDownloadList(true)
+      const result = await addToDownload(
+        accessToken,
+        onCancel,
+        lastQueryRequest,
+        folderId,
+        goToDownloadListFn,
+      )
+      const newStatus = result[0]
+      setStatus(newStatus)
+      refetch()
     }
+  }
 
-    const { data: queryResultBundle } = useGetQueryResultBundle(
-      queryBundleRequestSizeInformation,
-    )
-
-    useDeepCompareEffect(() => {
-      if (queryResultBundle && downloadListStatistics) {
-        const isGreaterThanReportedValue = queryResultBundle.sumFileSizes?.greaterThan
-        updateStats(
-          queryResultBundle.queryCount,
-          isGreaterThanReportedValue ? undefined : queryResultBundle.sumFileSizes?.sumFileSizesBytes,
-          downloadListStatistics,
-        )
-      }
-    }, [
-      updateStats,
-      lastQueryRequest,
-      queryResultBundle,
-      downloadListStatistics,
-    ])
-
-    const onCancel = fnClose
-      ? () => fnClose()
-      : () => {
-          if (setTopLevelControlsState) {
-            setTopLevelControlsState(topLevelControlsState => ({
-              ...topLevelControlsState,
-              showDownloadConfirmation: false,
-            }))
-          }
-        }
-
-    const triggerAddToDownload = async () => {
-      if (!accessToken) {
-        setStatus(StatusEnum.SIGNED_OUT)
-      } else {
-        setStatus(StatusEnum.PROCESSING)
-        const goToDownloadListFn = () => setShowDownloadList(true)
-        const result = await addToDownload(
-          accessToken,
-          onCancel,
-          lastQueryRequest,
-          folderId,
-          goToDownloadListFn,
-        )
-        const newStatus = result[0]
-        setStatus(newStatus)
-        refetch()
-      }
-    }
-
-    if (showDownloadList) {
-      // go to the Download Cart Page
-      if (downloadCartPageUrl) window.location.href = downloadCartPageUrl
-      else
-        console.error(
-          'Missing the Download Cart Page URL in the component configuration.',
-        )
-    }
-    const showFacetFilter = topLevelControlsState?.showFacetFilter
-    return (
-      <>
-        <Alert
-          dismissible={false}
-          show={true}
-          variant={'info'}
-          transition={false}
-          className={`download-confirmation ${
-            StatusConstruct[status].className
-          } ${showDownloadConfirmation ? '' : 'hidden'}
+  if (showDownloadList) {
+    // go to the Download Cart Page
+    if (downloadCartPageUrl) window.location.href = downloadCartPageUrl
+    else
+      console.error(
+        'Missing the Download Cart Page URL in the component configuration.',
+      )
+  }
+  const showFacetFilter = topLevelControlsState?.showFacetFilter
+  return (
+    <>
+      <Alert
+        dismissible={false}
+        show={true}
+        variant={'info'}
+        transition={false}
+        className={`download-confirmation ${
+          StatusConstruct[status].className
+        } ${showDownloadConfirmation ? '' : 'hidden'}
           ${
             showFacetFilter
               ? QUERY_FILTERS_EXPANDED_CSS
               : QUERY_FILTERS_COLLAPSED_CSS
           }
         `}
-        >
-          <DownloadConfirmationContent
-            status={status}
-            fileCount={fileCount}
-            fileSize={fileSize}
-          />
-          <div className="download-confirmation-action">
-            {status !== StatusEnum.PROCESSING && (
-              <button className="btn btn-link" onClick={onCancel}>
-                {StatusConstruct[status].closeText}
-              </button>
-            )}
+      >
+        <DownloadConfirmationContent
+          status={status}
+          fileCount={fileCount}
+          fileSize={fileSize}
+        />
+        <div className="download-confirmation-action">
+          {status !== StatusEnum.PROCESSING && (
+            <button className="btn btn-link" onClick={onCancel}>
+              {StatusConstruct[status].closeText}
+            </button>
+          )}
 
-            {(status === StatusEnum.INFO ||
-              status === StatusEnum.INFO_ITEMS_IN_LIST) && (
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={triggerAddToDownload}
-              >
-                Add
-              </button>
-            )}
-          </div>
-        </Alert>
-      </>
-    )
-  }
+          {(status === StatusEnum.INFO ||
+            status === StatusEnum.INFO_ITEMS_IN_LIST) && (
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={triggerAddToDownload}
+            >
+              Add
+            </button>
+          )}
+        </div>
+      </Alert>
+    </>
+  )
+}

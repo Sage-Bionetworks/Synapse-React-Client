@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { insertConditionsFromSearchParams, KeyValue, parseEntityIdFromSqlStatement, SQLOperator } from '../utils/functions/sqlFunctions'
+import {
+  insertConditionsFromSearchParams,
+  KeyValue,
+  parseEntityIdFromSqlStatement,
+  SQLOperator,
+} from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
   ColumnType,
@@ -28,9 +33,17 @@ export type SubsectionRowRendererProps = {
   limit?: number
 }
 
-const LIST_COLUMN_TYPES = [ColumnType.BOOLEAN_LIST, ColumnType.DATE_LIST, ColumnType.ENTITYID_LIST, ColumnType.INTEGER_LIST, ColumnType.STRING_LIST]
+const LIST_COLUMN_TYPES = [
+  ColumnType.BOOLEAN_LIST,
+  ColumnType.DATE_LIST,
+  ColumnType.ENTITYID_LIST,
+  ColumnType.INTEGER_LIST,
+  ColumnType.STRING_LIST,
+]
 
-const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps> = ({
+const SubsectionRowRenderer: React.FunctionComponent<
+  SubsectionRowRendererProps
+> = ({
   sql,
   searchParams,
   sqlOperator,
@@ -90,7 +103,7 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
    * If a "friendly values map" was provided, then use the friendly value if any of the raw values match.
    * Otherwise, just return the raw value.
    * @param rawValue
-   * @returns 
+   * @returns
    */
   const getFriendlyValue = (rawValue: string) => {
     if (!friendlyValuesMap) {
@@ -103,18 +116,31 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
   return (
     <div className="SubsectionRowRenderer bootstrap-4-backport">
       {isLoading && <SkeletonTable numRows={2} numCols={1} />}
-      {!isLoading && rowSet && rowSet.rows.length > 0 && (
+      {!isLoading &&
+        rowSet &&
+        rowSet.rows.length > 0 &&
         rowSet.headers.map((selectColumn, colIndex) => {
           // If a link column was provided (that contain URLs), do not create a page sub-section for that column.
           if (columnLink && selectColumn.name == columnLink.linkColumnName) {
             return <></>
           }
-          return <div key={`${colIndex}`} className="SubsectionRowRenderer__item" role="table">
-            <Typography variant={columnNameIsSectionTitle ? 'sectionTitle' : 'subsectionHeader'} role='heading'>{selectColumn.name}</Typography>
-            {columnNameIsSectionTitle && <hr />}
-            <div role="rowgroup">
-              {
-                rowSet.rows.map((row, rowIndex) => {
+          return (
+            <div
+              key={`${colIndex}`}
+              className="SubsectionRowRenderer__item"
+              role="table"
+            >
+              <Typography
+                variant={
+                  columnNameIsSectionTitle ? 'sectionTitle' : 'subsectionHeader'
+                }
+                role="heading"
+              >
+                {selectColumn.name}
+              </Typography>
+              {columnNameIsSectionTitle && <hr />}
+              <div role="rowgroup">
+                {rowSet.rows.map((row, rowIndex) => {
                   const cellValue = row.values[colIndex]
                   // If the cell value is undefined, then go to the next row.
                   if (!cellValue) {
@@ -126,41 +152,66 @@ const SubsectionRowRenderer: React.FunctionComponent<SubsectionRowRendererProps>
                     const jsonData: string[] = JSON.parse(cellValue)
                     values = jsonData.map((val: string, index: number) => {
                       return (
-                        <div key={index} className="SubsectionRowRenderer__item__value" role="row">
-                          {isMarkdown && <MarkdownSynapse markdown={getFriendlyValue(val)} />}
+                        <div
+                          key={index}
+                          className="SubsectionRowRenderer__item__value"
+                          role="row"
+                        >
+                          {isMarkdown && (
+                            <MarkdownSynapse markdown={getFriendlyValue(val)} />
+                          )}
                           {!isMarkdown && <p>{getFriendlyValue(val)}</p>}
                         </div>
                       )
-                    }
-                    )
+                    })
                   } else {
                     // If this cell value represents a single value
                     let renderedValue
                     const friendlyCellValue = getFriendlyValue(cellValue)
                     if (isMarkdown) {
-                      renderedValue = <MarkdownSynapse markdown={friendlyCellValue} />
-                    } else if (columnLink && columnLink.matchColumnName == selectColumn.name) {
+                      renderedValue = (
+                        <MarkdownSynapse markdown={friendlyCellValue} />
+                      )
+                    } else if (
+                      columnLink &&
+                      columnLink.matchColumnName == selectColumn.name
+                    ) {
                       // If a link column was provided, then we need to create links (the url is in this other column)
-                      const urlColumnIndex = rowSet.headers.findIndex(col => col.name == columnLink.linkColumnName)
+                      const urlColumnIndex = rowSet.headers.findIndex(
+                        col => col.name == columnLink.linkColumnName,
+                      )
                       if (urlColumnIndex > -1) {
-                        renderedValue = <a rel="noopener noreferrer" target="_blank" href={row.values[urlColumnIndex]}>{friendlyCellValue}</a>
+                        renderedValue = (
+                          <a
+                            rel="noopener noreferrer"
+                            target="_blank"
+                            href={row.values[urlColumnIndex]}
+                          >
+                            {friendlyCellValue}
+                          </a>
+                        )
                       } else {
                         renderedValue = <p>{friendlyCellValue}</p>
                       }
                     } else {
                       renderedValue = <p>{friendlyCellValue}</p>
                     }
-                    values = <div key={rowIndex} className="SubsectionRowRenderer__item__value" role="row">
-                      {renderedValue}
-                    </div>
+                    values = (
+                      <div
+                        key={rowIndex}
+                        className="SubsectionRowRenderer__item__value"
+                        role="row"
+                      >
+                        {renderedValue}
+                      </div>
+                    )
                   }
                   return values
-                })
-              }
+                })}
+              </div>
             </div>
-          </div>
-        })
-      )}
+          )
+        })}
     </div>
   )
 }

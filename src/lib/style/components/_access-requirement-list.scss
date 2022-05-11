@@ -115,7 +115,6 @@
   }
 }
 
-
 .bootstrap-4-backport {
   &.AccessRequirementList {
     .terms-of-use-content {
@@ -125,11 +124,11 @@
       .modal-content {
         padding: 0;
         .modal-header {
-          padding: 10px
+          padding: 10px;
         }
       }
-      .access-requirement-list-alert.alert{
-        margin-top: 0
+      .access-requirement-list-alert.alert {
+        margin-top: 0;
       }
     }
     &.cancel-modal {
@@ -139,7 +138,7 @@
       }
     }
     .LoginComponent {
-      width: 350px
+      width: 350px;
     }
 
     .access-request-form2 {
@@ -188,7 +187,7 @@
       }
       .user-fullname {
         font-weight: bold;
-        color: SRC.$gray-regular
+        color: SRC.$gray-regular;
       }
     }
   }

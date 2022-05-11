@@ -2,7 +2,7 @@ import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { get, includes } from 'lodash-es'
 import * as React from 'react'
 import { Button } from 'react-bootstrap'
-import {Alert} from 'react-bootstrap'
+import { Alert } from 'react-bootstrap'
 import { UiSchema } from '@rjsf/core'
 import { SynapseClient } from '../../utils'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
@@ -166,9 +166,8 @@ class SynapseFormWrapper extends React.Component<
         )
         formData = JSON.parse(fileData)
         if (submitted && formData && formData['metadata']) {
-          ;({ formSchemaVersion, uiSchemaVersion, navSchemaVersion } = formData[
-            'metadata'
-          ])
+          ;({ formSchemaVersion, uiSchemaVersion, navSchemaVersion } =
+            formData['metadata'])
         }
       }
 

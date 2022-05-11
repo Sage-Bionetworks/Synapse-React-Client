@@ -2,20 +2,16 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import UserProjects, {
-} from '../../../../lib/containers/user_profile_links/UserProjects'
+import UserProjects from '../../../../lib/containers/user_profile_links/UserProjects'
 import { useGetUserProjectsInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetUserProjects'
 import { ProjectHeader } from '../../../../lib/utils/synapseTypes'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
-jest.mock(
-  '../../../../lib/utils/hooks/SynapseAPI/useGetUserProjects',
-  () => {
-    return {
-      useGetUserProjectsInfinite: jest.fn(),
-    }
-  },
-)
+jest.mock('../../../../lib/utils/hooks/SynapseAPI/useGetUserProjects', () => {
+  return {
+    useGetUserProjectsInfinite: jest.fn(),
+  }
+})
 
 const mockFetchNextPage = jest.fn()
 const mockUseGetUserProjectsInfinite = useGetUserProjectsInfinite as jest.Mock
@@ -26,7 +22,7 @@ const page1: Partial<ProjectHeader>[] = [
     lastActivity: 'today',
     modifiedBy: 10001,
     modifiedOn: 'yesterday',
-    name: 'The first'
+    name: 'The first',
   },
 ]
 
@@ -36,14 +32,14 @@ const page2: Partial<ProjectHeader>[] = [
     lastActivity: 'today',
     modifiedBy: 10001,
     modifiedOn: 'yesterday',
-    name: 'The second'
+    name: 'The second',
   },
 ]
 
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <UserProjects userId={userId}/>
+      <UserProjects userId={userId} />
     </SynapseTestContext>,
   )
 }

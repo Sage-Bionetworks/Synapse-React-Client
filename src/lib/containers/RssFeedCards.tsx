@@ -130,37 +130,41 @@ export default class RssFeedCards extends React.Component<
                     className={`FeedItem ${isItemVisible ? '' : 'hidden'}`}
                   >
                     <div>
-                      {this.props.allowCategories && this.props.allowCategories.length > 0 &&
-                        <div className="FeedItemCategories">
-                          {item['categories'].map((categoryName: string) => {
-                            // are we allowed to show this category/tag?
-                            const categoryNameLowerCase = categoryName.toLowerCase()
-                            const allowCategories = this.props.allowCategories
-                            if (
-                              allowCategories?.findIndex(
-                                item =>
-                                  categoryNameLowerCase === item.toLowerCase(),
-                              ) === -1
-                            )
-                              return <></>
-                            // else
-                            return (
-                              <a
-                                href={`${
-                                  this.state.rssFeed.link
-                                }/tag/${categoryName.replace(' ', '-')}`}
-                                className="SRC-no-border-bottom-imp"
-                                key={`${item.guid}_${categoryName}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <div className="FeedItemCategory">
-                                  {categoryName}
-                                </div>
-                              </a>
-                            )
-                          })}
-                        </div>}
+                      {this.props.allowCategories &&
+                        this.props.allowCategories.length > 0 && (
+                          <div className="FeedItemCategories">
+                            {item['categories'].map((categoryName: string) => {
+                              // are we allowed to show this category/tag?
+                              const categoryNameLowerCase =
+                                categoryName.toLowerCase()
+                              const allowCategories = this.props.allowCategories
+                              if (
+                                allowCategories?.findIndex(
+                                  item =>
+                                    categoryNameLowerCase ===
+                                    item.toLowerCase(),
+                                ) === -1
+                              )
+                                return <></>
+                              // else
+                              return (
+                                <a
+                                  href={`${
+                                    this.state.rssFeed.link
+                                  }/tag/${categoryName.replace(' ', '-')}`}
+                                  className="SRC-no-border-bottom-imp"
+                                  key={`${item.guid}_${categoryName}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  <div className="FeedItemCategory">
+                                    {categoryName}
+                                  </div>
+                                </a>
+                              )
+                            })}
+                          </div>
+                        )}
                       <p className="FeedItemDate">
                         {moment(item['isoDate']).format('MMMM YYYY')}
                       </p>

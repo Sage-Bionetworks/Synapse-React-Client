@@ -8,7 +8,7 @@ export type FileUploadProps = {
   id?: string
   label?: string
   variant?: string // allow you to change the appearance of the button to link (see react bootstrap doc)
-  uploadCallback?: (response:UploadCallbackResp)=>void
+  uploadCallback?: (response: UploadCallbackResp) => void
   context?: any // to distinguish which file was uploaded if we have several FileUpload components on the same page
 }
 

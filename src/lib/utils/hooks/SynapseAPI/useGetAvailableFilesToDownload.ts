@@ -60,8 +60,7 @@ export function useGetAvailableFilesToDownloadInfinite(
     },
     {
       ...options,
-      getNextPageParam: page =>
-        page.nextPageToken,
+      getNextPageParam: page => page.nextPageToken,
     },
   )
 }

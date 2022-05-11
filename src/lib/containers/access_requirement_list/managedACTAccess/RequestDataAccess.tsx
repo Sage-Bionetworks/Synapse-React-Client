@@ -60,9 +60,8 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
   )
   const [submissionState, setSubmissionState] = useState<SUBMISSION_STATE>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
-  const [isSubmissionCanceled, setIsSubmissionCanceled] = useState<boolean>(
-    false,
-  )
+  const [isSubmissionCanceled, setIsSubmissionCanceled] =
+    useState<boolean>(false)
 
   useEffect(() => {
     setIsApproved(propsIsApproved)
@@ -101,12 +100,11 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
             ),
           }
           try {
-            const resp:
-              | ACTSubmissionStatus
-              | any = await cancelDataAccessRequest(
-              accessRequirementStatus?.currentSubmissionStatus!.submissionId!,
-              accessToken!,
-            )
+            const resp: ACTSubmissionStatus | any =
+              await cancelDataAccessRequest(
+                accessRequirementStatus?.currentSubmissionStatus!.submissionId!,
+                accessToken!,
+              )
             if (resp.state === SUBMISSION_STATE.CANCELLED) {
               // successfully cancelled
               setAlert({
@@ -202,7 +200,8 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
           message: (
             <>
               <strong>Your data access request has been rejected.</strong>
-              <br />{submissionStatus.rejectedReason || ''}
+              <br />
+              {submissionStatus.rejectedReason || ''}
             </>
           ),
         })

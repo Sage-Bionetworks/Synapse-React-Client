@@ -29,11 +29,13 @@ const UserIdList: React.FC<UserIdListProps> = props => {
 
     getUserProfiles(userIds, accessToken)
       .then(userProfiles => {
-        const list = userProfiles.list.map(el => <UserCardSmall
-          key={el.ownerId}
-          userProfile={el}
-          className='SRC-marginFifteen'
-        />)
+        const list = userProfiles.list.map(el => (
+          <UserCardSmall
+            key={el.ownerId}
+            userProfile={el}
+            className="SRC-marginFifteen"
+          />
+        ))
         setProfileCards(list)
       })
       .catch(e => {

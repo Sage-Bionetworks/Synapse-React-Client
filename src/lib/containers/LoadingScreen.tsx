@@ -42,7 +42,14 @@ export type BlockingLoaderProps = {
   hintText?: string
   headlineText?: string
 }
-export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentProgress, onCancel, totalProgress, headlineText, hintText }) => {
+export const BlockingLoader: React.FC<BlockingLoaderProps> = ({
+  show,
+  currentProgress,
+  onCancel,
+  totalProgress,
+  headlineText,
+  hintText,
+}) => {
   useEffect(() => {
     document.body.style.cursor = show ? 'wait' : 'default'
     return () => {
@@ -54,18 +61,16 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentPro
       <div className="bar-loader">
         <LinearProgress
           data-testid="progress-bar"
-          variant='determinate'
+          variant="determinate"
           classes={{
             colorPrimary: 'bar-background-color',
             barColorPrimary: 'bar-color',
           }}
-          value={(currentProgress! / totalProgress!)*100}
-
+          value={(currentProgress! / totalProgress!) * 100}
         />
       </div>
       <Typography variant="headline3">{headlineText}</Typography>
-      <Typography variant='hintText'>{hintText}</Typography>
-
+      <Typography variant="hintText">{hintText}</Typography>
     </>
   )
   return (
@@ -79,16 +84,21 @@ export const BlockingLoader: React.FC<BlockingLoaderProps> = ({ show, currentPro
       onHide={() => {}}
     >
       <div className="SpinnerContainer" data-testid="spinner-container">
-      {totalProgress?(
-        barLoader
-      ) : (
-        <>
-          <SynapseSpinner size={40}/>
-          <Typography variant="headline3" data-testid="spinner-hint-text">{hintText}</Typography>
-        </>
-      )
-    }
-    {onCancel && <Button variant='default' onClick={onCancel}>Cancel</Button>}
+        {totalProgress ? (
+          barLoader
+        ) : (
+          <>
+            <SynapseSpinner size={40} />
+            <Typography variant="headline3" data-testid="spinner-hint-text">
+              {hintText}
+            </Typography>
+          </>
+        )}
+        {onCancel && (
+          <Button variant="default" onClick={onCancel}>
+            Cancel
+          </Button>
+        )}
       </div>
     </Modal>
   )

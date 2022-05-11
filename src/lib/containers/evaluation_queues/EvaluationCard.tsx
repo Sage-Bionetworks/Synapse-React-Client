@@ -129,12 +129,9 @@ type EvaluationCardDropdownProps = {
   onDelete: () => void
 }
 
-const EvaluationCardDropdown: React.FunctionComponent<EvaluationCardDropdownProps> = ({
-  permissions,
-  onEdit,
-  onModifyAccess,
-  onDelete,
-}) => {
+const EvaluationCardDropdown: React.FunctionComponent<
+  EvaluationCardDropdownProps
+> = ({ permissions, onEdit, onModifyAccess, onDelete }) => {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
 
   if (

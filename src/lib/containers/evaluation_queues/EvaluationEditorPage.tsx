@@ -15,7 +15,9 @@ export type EvaluationEditorPageProps = {
 /**
  * Combined editor that allows editing an Evaluation's data and also it's associated rounds (once the Evaluation exists on Synapse)
  */
-export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageProps> = ({
+export const EvaluationEditorPage: React.FunctionComponent<
+  EvaluationEditorPageProps
+> = ({
   evaluationId,
   entityId,
   onDeleteSuccess,
@@ -60,10 +62,8 @@ export const EvaluationEditorPage: React.FunctionComponent<EvaluationEditorPageP
  * forcing EvaluationRoundEditorList to handle undefined `evaluationId`.
  */
 const FakeEvaluationRoundEditorList: React.FunctionComponent = () => {
-  const [
-    showEvaluationNotExistAlert,
-    setShowEvaluationNotExistAlert,
-  ] = useState<boolean>(false)
+  const [showEvaluationNotExistAlert, setShowEvaluationNotExistAlert] =
+    useState<boolean>(false)
 
   return (
     <div>

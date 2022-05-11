@@ -23,71 +23,72 @@ export type MissingQueryResultsWarningProps = {
  * If possible, this component will render a warning message if results may be missing from the query due to user permissions or
  * entities being deleted. If not possible, it will render an empty fragment.
  */
-const MissingQueryResultsWarning: React.FunctionComponent<MissingQueryResultsWarningProps> =
-  ({ entity }) => {
-    // Currently, Datasets are the only table type for which we can reliably get this info.
-    // Other cases will need a new service, tracked by PLFM-7046
-    const isMissingResultsCalculable = entity && isDataset(entity)
+const MissingQueryResultsWarning: React.FunctionComponent<
+  MissingQueryResultsWarningProps
+> = ({ entity }) => {
+  // Currently, Datasets are the only table type for which we can reliably get this info.
+  // Other cases will need a new service, tracked by PLFM-7046
+  const isMissingResultsCalculable = entity && isDataset(entity)
 
-    const request: QueryBundleRequest = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      query: {
-        sql: `SELECT * FROM ${entity.id!}${
-          !entity.isLatestVersion && entity.versionNumber
-            ? `.${entity.versionNumber}`
-            : ''
-        }`,
-      },
-      entityId: entity.id!,
-      partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
-    }
+  const request: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    query: {
+      sql: `SELECT * FROM ${entity.id!}${
+        !entity.isLatestVersion && entity.versionNumber
+          ? `.${entity.versionNumber}`
+          : ''
+      }`,
+    },
+    entityId: entity.id!,
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+  }
 
-    const { data: queryResult } = useGetQueryResultBundle(request, {
-      enabled: isMissingResultsCalculable,
-    })
-    if (isMissingResultsCalculable && queryResult && entity) {
-      const totalVisibleResults = queryResult.queryCount!
-      const totalResults = entity.items?.length ?? 0
+  const { data: queryResult } = useGetQueryResultBundle(request, {
+    enabled: isMissingResultsCalculable,
+  })
+  if (isMissingResultsCalculable && queryResult && entity) {
+    const totalVisibleResults = queryResult.queryCount!
+    const totalResults = entity.items?.length ?? 0
 
-      if (totalVisibleResults === totalResults) {
-        // All of the results are visible, so there is no need to show a warning.
-        return <></>
-      }
-
-      const difference = totalResults - totalVisibleResults
-
-      let helpMessage = ''
-
-      if (entity.isLatestVersion) {
-        helpMessage = DATASETS_CURRENT_VERSION_HELP
-      } else {
-        helpMessage = DATASETS_SNAPSHOT_HELP
-      }
-
-      return (
-        <Typography
-          className="SRC-centerContent"
-          style={{
-            marginLeft: 10,
-          }}
-          variant="smallText1"
-          color="textSecondary"
-        >
-          <WarningSharp
-            className="SRC-color-warning"
-            style={{ fontSize: '16px' }}
-          />
-          {difference.toLocaleString() + ' Unavailable'}
-          <HelpPopover
-            className="SRC-margin-left-5"
-            markdownText={helpMessage}
-            placement="right"
-          ></HelpPopover>
-        </Typography>
-      )
-    } else {
+    if (totalVisibleResults === totalResults) {
+      // All of the results are visible, so there is no need to show a warning.
       return <></>
     }
+
+    const difference = totalResults - totalVisibleResults
+
+    let helpMessage = ''
+
+    if (entity.isLatestVersion) {
+      helpMessage = DATASETS_CURRENT_VERSION_HELP
+    } else {
+      helpMessage = DATASETS_SNAPSHOT_HELP
+    }
+
+    return (
+      <Typography
+        className="SRC-centerContent"
+        style={{
+          marginLeft: 10,
+        }}
+        variant="smallText1"
+        color="textSecondary"
+      >
+        <WarningSharp
+          className="SRC-color-warning"
+          style={{ fontSize: '16px' }}
+        />
+        {difference.toLocaleString() + ' Unavailable'}
+        <HelpPopover
+          className="SRC-margin-left-5"
+          markdownText={helpMessage}
+          placement="right"
+        ></HelpPopover>
+      </Typography>
+    )
+  } else {
+    return <></>
   }
+}
 
 export default MissingQueryResultsWarning

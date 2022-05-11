@@ -31,7 +31,10 @@ const EvaluationIdRenderer: React.FC<EvaluationIdRendererProps> = props => {
         setEvaluationName(evaluationQueue.name)
       })
       .catch(e => {
-        console.log('EvaluationIdListRenderer: Error getting evaluation queue names', e)
+        console.log(
+          'EvaluationIdListRenderer: Error getting evaluation queue names',
+          e,
+        )
       })
   }
 

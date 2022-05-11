@@ -185,12 +185,8 @@ For a list of variables you can override, see [`src/lib/style/abstracts/_variabl
 Override the variables by importing the SCSS in your project like so:
 
 ```scss
-@use 'node_modules/synapse-react-client/dist/style/main.scss' with
-  (
-    $primary-action-color: $-my-primary-color,
-    $secondary-action-color: $-my-secondary-color,
-    // ...any other overrides continue
-  );
+@use 'node_modules/synapse-react-client/dist/style/main.scss' with ($primary-action-color:
+      $-my-primary-color, $secondary-action-color: $-my-secondary-color, // ...any other overrides continue);
 @use 'node_modules/synapse-react-client/dist/template_style/Index.scss';
 ```
 

@@ -11,9 +11,16 @@ export type PageProgressProps = {
   forwardBtnActive: boolean
 }
 
-const PageProgress: React.FunctionComponent<PageProgressProps> = (props) => {
-
-  const {barColor, barPercent, backBtnLabel, forwardBtnLabel, forwardBtnActive, backBtnCallback, forwardBtnCallback} = props
+const PageProgress: React.FunctionComponent<PageProgressProps> = props => {
+  const {
+    barColor,
+    barPercent,
+    backBtnLabel,
+    forwardBtnLabel,
+    forwardBtnActive,
+    backBtnCallback,
+    forwardBtnCallback,
+  } = props
   const [progressPercent, setProgressPercent] = useState<number>(0)
   let mounted = true
 
@@ -26,13 +33,13 @@ const PageProgress: React.FunctionComponent<PageProgressProps> = (props) => {
     }
   }, [barPercent])
 
-  const handleBackButtonClick = (e:React.MouseEvent) => {
-    if(backBtnCallback) {
+  const handleBackButtonClick = (e: React.MouseEvent) => {
+    if (backBtnCallback) {
       backBtnCallback()
     }
   }
 
-  const handleNextButtonClick = (e:React.MouseEvent) => {
+  const handleNextButtonClick = (e: React.MouseEvent) => {
     if (forwardBtnCallback && forwardBtnActive) {
       forwardBtnCallback()
     }
@@ -43,19 +50,21 @@ const PageProgress: React.FunctionComponent<PageProgressProps> = (props) => {
       <div
         className="page-progress-percent"
         style={{
-          width: progressPercent + "%",
-          backgroundColor: barColor
+          width: progressPercent + '%',
+          backgroundColor: barColor,
         }}
-      >
-      </div>
+      ></div>
       <div className="page-progress-action">
-        <Button
-          className="btn-progress-back"
-          onClick={handleBackButtonClick}>{backBtnLabel}
+        <Button className="btn-progress-back" onClick={handleBackButtonClick}>
+          {backBtnLabel}
         </Button>
         <Button
-          className={forwardBtnActive ? "btn-progress-next-active" : "btn-progress-next" }
-          onClick={handleNextButtonClick}>{forwardBtnLabel}
+          className={
+            forwardBtnActive ? 'btn-progress-next-active' : 'btn-progress-next'
+          }
+          onClick={handleNextButtonClick}
+        >
+          {forwardBtnLabel}
         </Button>
       </div>
     </section>

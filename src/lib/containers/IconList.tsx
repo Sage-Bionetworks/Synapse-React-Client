@@ -3,7 +3,7 @@ import IconSvg, { IconSvgOptions } from './IconSvg'
 
 export type IconListProps = {
   iconConfigs: {
-    [index:string]: IconSvgOptions  // if the icon option has the "label" set, it will show tooltip in IconSvg
+    [index: string]: IconSvgOptions // if the icon option has the "label" set, it will show tooltip in IconSvg
   }
   iconNames: string[]
   useTheme?: boolean
@@ -11,15 +11,14 @@ export type IconListProps = {
 }
 
 const IconList: React.FunctionComponent<IconListProps> = props => {
-
   const { iconConfigs, iconNames, useTheme, useBackground } = props
   let noMatch: boolean = false
-  const css = useTheme ? "icon-list themed" : "icon-list"
+  const css = useTheme ? 'icon-list themed' : 'icon-list'
   const componentCss = useBackground ? `${css} bg-circle` : css
 
   const buildIconList = () => {
     const unique = Array.from(new Set(iconNames))
-    return unique.map((el:any) => {
+    return unique.map((el: any) => {
       const iconConfig = iconConfigs[el]
       // if this data type value doesn't have a matching icon, we use the "other" icon
       if (!iconConfig) {
@@ -31,10 +30,14 @@ const IconList: React.FunctionComponent<IconListProps> = props => {
     })
   }
 
-  return(
+  return (
     <span className={componentCss}>
-    { buildIconList() }
-      { noMatch && iconConfigs['other'] ? <IconSvg options={iconConfigs['other']} /> : <></>}
+      {buildIconList()}
+      {noMatch && iconConfigs['other'] ? (
+        <IconSvg options={iconConfigs['other']} />
+      ) : (
+        <></>
+      )}
     </span>
   )
 }

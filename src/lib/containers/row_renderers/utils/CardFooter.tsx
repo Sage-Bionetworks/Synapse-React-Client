@@ -46,7 +46,11 @@ class CardFooter extends React.Component<CardFooterProps, State> {
     this.setState({ isDesktop: window.innerWidth > 600 })
   }
 
-  renderRowValue = (columnName: string, value: string, tableColumnName: string) => {
+  renderRowValue = (
+    columnName: string,
+    value: string,
+    tableColumnName: string,
+  ) => {
     const columnIconOptions = this.props.columnIconOptions
     if (!value.match || !value.trim) {
       // value can sometimes be a react element, so it doesn't have a .match function, interestingly I didn't
@@ -67,16 +71,21 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       )
     }
     // Only display icon when columnIconOptions is set in config file
-    if (columnIconOptions && columnIconOptions.columns && Object.keys(columnIconOptions.columns).includes(tableColumnName)) {
+    if (
+      columnIconOptions &&
+      columnIconOptions.columns &&
+      Object.keys(columnIconOptions.columns).includes(tableColumnName)
+    ) {
       const options = columnIconOptions.columns[tableColumnName][value]
-      if (!options) {  // if we can't find an icon to match, just return the value
+      if (!options) {
+        // if we can't find an icon to match, just return the value
         return <span>{value}</span>
       } else {
-        options.padding = "right"
+        options.padding = 'right'
         return (
           <>
             <IconSVG options={options}></IconSVG>
-            <span style={{"verticalAlign": "middle"}}>{value}</span>
+            <span style={{ verticalAlign: 'middle' }}>{value}</span>
           </>
         )
       }
@@ -149,13 +158,11 @@ class CardFooter extends React.Component<CardFooterProps, State> {
                     className="highlight-link"
                   >
                     Show {isShowMoreOn ? 'Less' : 'More'}
-                    <IconSVG options={{
-                      icon:
-                        isShowMoreOn
-                          ? 'expandLess'
-                          : 'expandMore'
-                      
-                    }}></IconSVG>
+                    <IconSVG
+                      options={{
+                        icon: isShowMoreOn ? 'expandLess' : 'expandMore',
+                      }}
+                    ></IconSVG>
                   </a>
                 </td>
               </tr>

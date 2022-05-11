@@ -30,12 +30,9 @@ const selectUnusedType = (
   ) as EvaluationRoundLimitType
 }
 
-export const EvaluationRoundLimitOptionsList: React.FunctionComponent<EvaluationRoundLimitOptionsListProps> = ({
-  limitInputs,
-  handleChange,
-  handleDeleteLimit,
-  onAddNewLimit,
-}) => {
+export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
+  EvaluationRoundLimitOptionsListProps
+> = ({ limitInputs, handleChange, handleDeleteLimit, onAddNewLimit }) => {
   // all types that are currently being used
   const selectedTypes: Set<EvaluationRoundLimitType> = new Set(
     limitInputs.map(limit => limit.type),

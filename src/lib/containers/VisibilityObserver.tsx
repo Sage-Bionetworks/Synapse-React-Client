@@ -1,52 +1,51 @@
 /** Originally from YamUI.  May need to alter to update to later versions of react-intersection-observer (which does the heavy lifting).
  * This component has the option to provide an outOfView renderer, which might be useful in the future.
  */
-import * as React from 'react';
-import Observer from 'react-intersection-observer';
-
+import * as React from 'react'
+import Observer from 'react-intersection-observer'
 
 export interface BaseComponentProps {
   /**
    * One or more class names to be added to the root element of this component, i.e.
    * `"class-one class-two"`.
    */
-  className?: string;
+  className?: string
 }
 
 export interface NestableBaseComponentProps extends BaseComponentProps {
   /**
    * Elements to be rendered as children of this component.
    */
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export interface VisibilityObserverProps extends BaseComponentProps {
   /**
    * A callback which will be triggered when the component is scrolled into view.
    */
-  onEnterView?: (() => void);
+  onEnterView?: () => void
 
   /**
    * A callback which will be triggered when the component is scrolled out of view.
    */
-  onLeaveView?: (() => void);
+  onLeaveView?: () => void
 
   /**
    * Render prop to return child content when the component is visible in the viewport. Once the component
    * has been in view it will always use this render prop, even when scrolled back out of view.
    */
-  renderInView?: (() => React.ReactNode);
+  renderInView?: () => React.ReactNode
 
   /**
    * Render prop to return child content before the component becomes visible in the viewport.
    */
-  renderOutOfView?: (() => React.ReactNode);
+  renderOutOfView?: () => React.ReactNode
 
   /**
    * Wrapper element tag name.
    * @default 'div'
    */
-  tag?: string;
+  tag?: string
 
   /**
    * A CSS margin string which pushes the intersection boundary further in or out of the viewport.
@@ -56,11 +55,11 @@ export interface VisibilityObserverProps extends BaseComponentProps {
    * it's already becoming visible.
    * "200px", "200px 0 50px 0", "-50px" are all valid values.
    */
-  rootMargin?: string;
+  rootMargin?: string
 }
 
 export interface VisibilityObserverState {
-  hasBeenInView: boolean;
+  hasBeenInView: boolean
 }
 
 /**
@@ -68,53 +67,56 @@ export interface VisibilityObserverState {
  * on viewport visibility. It will render the `renderOutOfView` prop until it is scrolled into view, then will
  * always render the `renderInView` prop instead. Callbacks will always be triggered on visibility changes.
  */
-export default class VisibilityObserver extends React.Component<VisibilityObserverProps, VisibilityObserverState> {
+export default class VisibilityObserver extends React.Component<
+  VisibilityObserverProps,
+  VisibilityObserverState
+> {
   constructor(props: VisibilityObserverProps) {
-    super(props);
+    super(props)
     this.state = {
       hasBeenInView: false,
-    };
+    }
   }
 
   public render() {
-    const { rootMargin, tag } = this.props;
+    const { rootMargin, tag } = this.props
 
     return (
       <Observer
-        as={tag as any || 'div'}
+        as={(tag as any) || 'div'}
         rootMargin={rootMargin}
         onChange={this.onVisibilityChange}
       >
         {this.getObserverChildren}
       </Observer>
-    );
+    )
   }
 
   private getObserverChildren = (isVisible: boolean) => {
-    const { renderInView, renderOutOfView } = this.props;
-    const shouldRenderAsInView = isVisible || this.state.hasBeenInView;
+    const { renderInView, renderOutOfView } = this.props
+    const shouldRenderAsInView = isVisible || this.state.hasBeenInView
 
     if (shouldRenderAsInView && renderInView) {
-      return renderInView();
+      return renderInView()
     }
 
     if (!isVisible && renderOutOfView) {
-      return renderOutOfView();
+      return renderOutOfView()
     }
 
-    return null;
-  };
+    return null
+  }
 
   private onVisibilityChange = (isVisible: boolean) => {
     if (isVisible) {
-      this.setState({ hasBeenInView: true });
+      this.setState({ hasBeenInView: true })
       if (this.props.onEnterView) {
-        this.props.onEnterView();
+        this.props.onEnterView()
       }
     } else {
       if (this.props.onLeaveView) {
-        this.props.onLeaveView();
+        this.props.onLeaveView()
       }
     }
-  };
+  }
 }

@@ -11,15 +11,14 @@ type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
 }
 
-export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetailsProps> = ({
-  parentContainerId,
-  ...sharedProps
-}) => {
+export const EntityChildrenDetails: React.FunctionComponent<
+  EntityChildrenDetailsProps
+> = ({ parentContainerId, ...sharedProps }) => {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
   const handleError = useErrorHandler()
 
-  const getChildrenInfiniteRequestObject = {    
+  const getChildrenInfiniteRequestObject = {
     parentId: parentContainerId,
     includeTotalChildCount: true,
     includeTypes: sharedProps.visibleTypes,

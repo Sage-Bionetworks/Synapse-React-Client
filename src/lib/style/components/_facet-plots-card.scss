@@ -1,12 +1,12 @@
 @use '../abstracts/variables' as SRC;
 
-.FacetPlotsCard {  
+.FacetPlotsCard {
   background-color: white;
   overflow: hidden;
   &__titlebar {
     min-height: 64px;
     padding: 12px 25px;
-    display:flex;
+    display: flex;
     flex-direction: column;
     justify-content: center;
   }

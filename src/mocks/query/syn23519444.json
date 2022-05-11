@@ -62,12 +62,7 @@
         {
           "rowId": 4,
           "versionNumber": 3,
-          "values": [
-            null,
-            "1586196174000",
-            "More than 3 items!",
-            "3333333"
-          ]
+          "values": [null, "1586196174000", "More than 3 items!", "3333333"]
         }
       ]
     }

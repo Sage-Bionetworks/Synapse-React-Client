@@ -8,12 +8,10 @@ import { ReactWrapper, ShallowWrapper } from 'enzyme'
 export async function resolveAllPending(
   wrapper: ReactWrapper<any> | ShallowWrapper<any>,
 ) {
-  await act(
-    async (): Promise<any> => {
-      await Promise.resolve(wrapper)
-      await new Promise(resolve => setImmediate(resolve))
-      wrapper.update()
-      return wrapper
-    },
-  )
+  await act(async (): Promise<any> => {
+    await Promise.resolve(wrapper)
+    await new Promise(resolve => setImmediate(resolve))
+    wrapper.update()
+    return wrapper
+  })
 }

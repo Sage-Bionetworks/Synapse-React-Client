@@ -1,4 +1,4 @@
-import { DownloadListItem } from "./DownloadListItem";
+import { DownloadListItem } from './DownloadListItem'
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/RemoveBatchOfFilesFromDownloadListRequest.html
 export type RemoveBatchOfFilesFromDownloadListRequest = {

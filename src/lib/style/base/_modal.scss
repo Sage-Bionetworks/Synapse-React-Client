@@ -1,5 +1,3 @@
-
-
 // https://github.com/twbs/bootstrap/blob/c140347bd26851c79e76766ae381e91c159b3f48/scss/_modal.scss
 .modal-dialog-scrollable {
   height: 100%;
@@ -25,7 +23,6 @@
 }
 
 .bootstrap-4-backport {
-
   &.modal-auto-height {
     .modal-dialog-scrollable {
       height: auto;
@@ -60,7 +57,5 @@
     .alert {
       margin: 1rem 0;
     }
-
   }
 }
-

@@ -70,5 +70,5 @@
   Add a horizontal line behind text
  */
 .bg-strike {
-  @include SrcMixins.bg-strike()
+  @include SrcMixins.bg-strike();
 }

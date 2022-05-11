@@ -29,7 +29,9 @@ export type EvaluationEditorProps = {
 /**
  * Edits basic properties of an Evaluation
  */
-export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = ({
+export const EvaluationEditor: React.FunctionComponent<
+  EvaluationEditorProps
+> = ({
   evaluationId,
   entityId,
   onDeleteSuccess,
@@ -50,14 +52,10 @@ export const EvaluationEditor: React.FunctionComponent<EvaluationEditorProps> = 
 
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [
-    submissionInstructionsMessage,
-    setSubmissionInstructionsMessage,
-  ] = useState<string>('')
-  const [
-    submissionReceiptMessage,
-    setSubmissionReceiptMessage,
-  ] = useState<string>('')
+  const [submissionInstructionsMessage, setSubmissionInstructionsMessage] =
+    useState<string>('')
+  const [submissionReceiptMessage, setSubmissionReceiptMessage] =
+    useState<string>('')
 
   const [evaluation, setEvaluation] = useState<Evaluation>({
     contentSource: entityId,
@@ -207,10 +205,9 @@ type EvaluationEditorDropdownProps = {
   onDelete?: () => void
 }
 
-const EvaluationEditorDropdown: React.FunctionComponent<EvaluationEditorDropdownProps> = ({
-  onClick,
-  onDelete,
-}) => {
+const EvaluationEditorDropdown: React.FunctionComponent<
+  EvaluationEditorDropdownProps
+> = ({ onClick, onDelete }) => {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
 
   return (

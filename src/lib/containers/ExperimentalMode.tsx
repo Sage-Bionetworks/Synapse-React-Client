@@ -7,7 +7,8 @@ import { EXPERIMENTAL_MODE_COOKIE } from '../utils/SynapseConstants'
 import { InfoOutlined } from '@material-ui/icons'
 
 const ExperimentalMode: React.FC = () => {
-  const [isExperimentalModeOn, setIsExperimentalModeOn] = useState<boolean>(false)
+  const [isExperimentalModeOn, setIsExperimentalModeOn] =
+    useState<boolean>(false)
   const cookies = new UniversalCookies()
   let mounted = true
 
@@ -33,32 +34,37 @@ const ExperimentalMode: React.FC = () => {
     setIsExperimentalModeOn(false)
   }
 
-  const popover = ({...props}) =>  (
-    <div className={"bootstrap-4-backport"} >
-      <Popover id={"experimental-mode-popover"} {...props}>
+  const popover = ({ ...props }) => (
+    <div className={'bootstrap-4-backport'}>
+      <Popover id={'experimental-mode-popover'} {...props}>
         <Popover.Content>
-          This mode gives you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.
+          This mode gives you early access to features that are still in
+          development. Please note that we do not guarantee an absence of
+          errors, and that the data created using these features may be lost
+          during product upgrade.
         </Popover.Content>
       </Popover>
     </div>
-  );
+  )
 
-  return (<span className={"experimental-mode-wrapper"}>
-    <Button
-      className={"experimental-mode"}
-      variant="link"
-      onClick={isExperimentalModeOn ? deleteExperimentalModeCookie: createExperimentalModeCookie}
-    >
-      Experimental mode is {isExperimentalModeOn ? "on" : "off"}
-    </Button>
-    <OverlayTrigger
-      trigger="click"
-      placement="top"
-      overlay={popover}
-    >
-      <InfoOutlined style={{verticalAlign: 'middle'}} />
-    </OverlayTrigger>
-  </span>)
+  return (
+    <span className={'experimental-mode-wrapper'}>
+      <Button
+        className={'experimental-mode'}
+        variant="link"
+        onClick={
+          isExperimentalModeOn
+            ? deleteExperimentalModeCookie
+            : createExperimentalModeCookie
+        }
+      >
+        Experimental mode is {isExperimentalModeOn ? 'on' : 'off'}
+      </Button>
+      <OverlayTrigger trigger="click" placement="top" overlay={popover}>
+        <InfoOutlined style={{ verticalAlign: 'middle' }} />
+      </OverlayTrigger>
+    </span>
+  )
 }
 
 export default ExperimentalMode

@@ -21,15 +21,14 @@ class Dataset extends React.Component<DatasetProps, {}> {
     this.handleLinkClick = this.handleLinkClick.bind(this)
   }
 
-  public handleLinkClick = (link: string) => (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault()
-    window.open(
-      `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`,
-      '_blank',
-    )
-  }
+  public handleLinkClick =
+    (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      window.open(
+        `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`,
+        '_blank',
+      )
+    }
 
   public render() {
     const { data, schema, selectColumns, columnModels } = this.props

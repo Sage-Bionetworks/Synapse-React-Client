@@ -26,12 +26,8 @@ describe('getting endpoints works', () => {
     )
   })
   it('returns relative portal endpoint', () => {
-    expect(getSynapsePortalEndpoint('www.synapse.org')).toEqual(
-      '/',
-    )
-    expect(getSynapsePortalEndpoint('staging.synapse.org')).toEqual(
-      '/',
-    )
+    expect(getSynapsePortalEndpoint('www.synapse.org')).toEqual('/')
+    expect(getSynapsePortalEndpoint('staging.synapse.org')).toEqual('/')
   })
   it('uses custom object set in the window', () => {
     const OVERRIDE_ENDPOINT_CONFIG = {

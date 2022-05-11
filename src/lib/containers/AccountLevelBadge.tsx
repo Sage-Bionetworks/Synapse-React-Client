@@ -15,9 +15,9 @@ export const accountLevelRegisteredLabel: string = 'Registered'
 export const accountLevelCertifiedLabel: string = 'Certified'
 export const accountLevelVerifiedLabel: string = 'Validated'
 
-export const AccountLevelBadge: React.FunctionComponent<AccountLevelBadgeProps> = ({
-  userId,
-}: AccountLevelBadgeProps) => {
+export const AccountLevelBadge: React.FunctionComponent<
+  AccountLevelBadgeProps
+> = ({ userId }: AccountLevelBadgeProps) => {
   const [error, setError] = useState()
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>(
     undefined,

@@ -95,7 +95,7 @@ describe('basic functionality', () => {
     SynapseClient.getEntityChildren
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
-    const controller = new AbortController
+    const controller = new AbortController()
 
     const { result, waitFor } = renderHook(
       () => useGetEntityChildrenInfinite(request),
@@ -123,7 +123,7 @@ describe('basic functionality', () => {
         nextPageToken: page1.nextPageToken,
       },
       MOCK_CONTEXT_VALUE.accessToken,
-      controller.signal
+      controller.signal,
     )
     expect(result.current.data?.pages[1]).toEqual(page2)
     expect(result.current.hasNextPage).toBe(false)

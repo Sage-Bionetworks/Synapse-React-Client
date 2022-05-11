@@ -1,6 +1,4 @@
-
 ```jsx
-
 <FeaturedToolsList
   entityId={'syn26450069'}
   idColumnName={'resourceId'}
