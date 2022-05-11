@@ -23,35 +23,41 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (
     <span className="DownloadDetailsV2">
-      <span className="item">
-        {!isInactive && <> {numFiles} Files </>}
-      </span>
+      <span className="item">{!isInactive && <> {numFiles} Files </>}</span>
       <span className="item">
         <span className={iconClassName}>
           <IconSvg options={{ icon: 'packagableFile' }} />
         </span>
-        {!isInactive && <> {numPackagableFiles} Files eligible for packaging </>}
+        {!isInactive && (
+          <> {numPackagableFiles} Files eligible for packaging </>
+        )}
       </span>
-      {numBytes > 0 && <span
-        data-for={numBytesTooltipId}
-        data-tip="This is the total size of all files in the Download Cart that are available to download."
-        className="item"
-      >
-        <ReactTooltip
-          delayShow={TOOLTIP_DELAY_SHOW}
-          place="top"
-          type="dark"
-          effect="solid"
-          id={numBytesTooltipId}
-        />
-        {calculateFriendlyFileSize(numBytes)}
-      </span>}
-      {numIneligibleFiles > 0 && <span className="item">
-        <span className={`SRC-warning-color`}>
-          <IconSvg options={{ icon: 'warningOutlined' }} />
+      {numBytes > 0 && (
+        <span
+          data-for={numBytesTooltipId}
+          data-tip="This is the total size of all files in the Download Cart that are available to download."
+          className="item"
+        >
+          <ReactTooltip
+            delayShow={TOOLTIP_DELAY_SHOW}
+            place="top"
+            type="dark"
+            effect="solid"
+            id={numBytesTooltipId}
+          />
+          {calculateFriendlyFileSize(numBytes)}
         </span>
-        {!isInactive && <> {numIneligibleFiles} Files ineligible for packaging </>}
-      </span>}
+      )}
+      {numIneligibleFiles > 0 && (
+        <span className="item">
+          <span className={`SRC-warning-color`}>
+            <IconSvg options={{ icon: 'warningOutlined' }} />
+          </span>
+          {!isInactive && (
+            <> {numIneligibleFiles} Files ineligible for packaging </>
+          )}
+        </span>
+      )}
     </span>
   )
 }

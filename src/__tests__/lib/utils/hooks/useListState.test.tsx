@@ -6,15 +6,11 @@ type UserListStateWrapperProps = {
   initialValue: string[]
 }
 
-const UseListStateWrapper: React.FunctionComponent<UserListStateWrapperProps> = ({
-  initialValue,
-}) => {
-  const {
-    list,
-    handleListRemove,
-    handleListChange,
-    appendToList,
-  } = useListState(initialValue)
+const UseListStateWrapper: React.FunctionComponent<
+  UserListStateWrapperProps
+> = ({ initialValue }) => {
+  const { list, handleListRemove, handleListChange, appendToList } =
+    useListState(initialValue)
   return (
     <div>
       <ul>

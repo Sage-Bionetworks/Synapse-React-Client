@@ -1,4 +1,4 @@
-name: "NPM Publish and GitHub tag"
+name: 'NPM Publish and GitHub tag'
 on:
   push:
     branches:

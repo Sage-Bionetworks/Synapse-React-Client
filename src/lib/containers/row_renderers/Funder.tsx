@@ -11,12 +11,11 @@ export default class Funder extends React.Component<FunderProps, {}> {
     super(props)
     this.handleLinkClick = this.handleLinkClick.bind(this)
   }
-  public handleLinkClick = (link: string) => (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    event.preventDefault()
-    window.open(link, '_blank')
-  }
+  public handleLinkClick =
+    (link: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      window.open(link, '_blank')
+    }
   public render() {
     const { data, schema } = this.props
     const organizationName = data[schema.organizationName]

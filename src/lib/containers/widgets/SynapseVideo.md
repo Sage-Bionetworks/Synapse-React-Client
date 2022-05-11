@@ -1,3 +1,3 @@
 ```jsx
-<SynapseVideo params={{vimeoId: '355433104'}} />
+<SynapseVideo params={{ vimeoId: '355433104' }} />
 ```

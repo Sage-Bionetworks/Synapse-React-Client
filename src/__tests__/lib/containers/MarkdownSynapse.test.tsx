@@ -175,7 +175,9 @@ describe('it performs all functionality', () => {
       }
 
       await renderComponent(props)
-      await screen.getByTestId('synapse-video-url', undefined, { timeout: 10000 })
+      await screen.getByTestId('synapse-video-url', undefined, {
+        timeout: 10000,
+      })
     })
 
     it('do not render a video widget without token', async () => {

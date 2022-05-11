@@ -10,7 +10,9 @@ export type AddToDownloadListV2Props = {
   entityVersionNumber?: number
 }
 
-const AddToDownloadListV2: React.FunctionComponent<AddToDownloadListV2Props> = props => {
+const AddToDownloadListV2: React.FunctionComponent<
+  AddToDownloadListV2Props
+> = props => {
   const { entityId, entityVersionNumber } = props
   const { accessToken } = useSynapseContext()
   if (!accessToken) {

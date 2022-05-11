@@ -110,9 +110,7 @@ import {
   WikiPage,
   WikiPageKey,
 } from './synapseTypes/'
-import {
-  TYPE_FILTER
-} from './synapseTypes/UserGroupHeader'
+import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import {
   ACCESS_TYPE,
   CreateSubmissionRequest,

@@ -47,7 +47,7 @@ export type UserCardProps = {
   withAvatar?: boolean
   /** Whether to show the full name in the small user card */
   showFullName?: boolean
-  className?:string
+  className?: string
 }
 
 export const UserCard: React.FunctionComponent<UserCardProps> = (

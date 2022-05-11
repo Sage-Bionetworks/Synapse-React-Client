@@ -19,7 +19,9 @@ export type ManagedACTAccessRequirementComponentProps = {
   requestDataStepCallback?: (props: requestDataStepCallbackProps) => void
 }
 
-const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirementComponentProps> = props => {
+const ManagedACTAccessRequirementComponent: React.FC<
+  ManagedACTAccessRequirementComponentProps
+> = props => {
   const {
     entityId,
     user,
@@ -34,10 +36,11 @@ const ManagedACTAccessRequirementComponent: React.FC<ManagedACTAccessRequirement
   useEffect(() => {
     const getManagedACTAccessData = async () => {
       try {
-        const wikipageRequirement = await SynapseClient.getWikiPageKeyForAccessRequirement(
-          accessToken,
-          accessRequirement.id,
-        )
+        const wikipageRequirement =
+          await SynapseClient.getWikiPageKeyForAccessRequirement(
+            accessToken,
+            accessRequirement.id,
+          )
         setWikiPage(wikipageRequirement)
       } catch (err) {
         console.error('Error on get ManagedACTAccessRequirement', err)

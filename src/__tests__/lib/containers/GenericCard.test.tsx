@@ -6,11 +6,9 @@ import GenericCard, {
   GenericCardSchema,
   CARD_SHORT_DESCRIPTION_CSS,
 } from '../../../lib/containers/GenericCard'
-import * as Utils from '../../../lib/containers/row_renderers/utils'
 import {
   CardLink,
   LabelLinkConfig,
-  MarkdownValue,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
 import { SelectColumn, ColumnType } from '../../../lib/utils/synapseTypes'
@@ -19,6 +17,10 @@ import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserCard from '../../../lib/containers/UserCard'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import {
+  CardFooter,
+  ShowMore,
+} from '../../../lib/containers/row_renderers/utils'
 
 const renderComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />, {
@@ -69,7 +71,7 @@ describe('it renders the UI correctly', () => {
   const MOCKED_TITLE = 'MOCKED TITLE'
   const MOCKED_SUBTITLE = 'MOCKED SUBTITLE'
   const MOCKED_DESCRIPTION = 'MOCKED DESCRIPTION'
-  const MOCKED_ICON = 'AMP-AD'
+  const MOCKED_ICON = 'dataset'
   const MOCKED_LABELONE = 'MOCKED_LABELONE'
   const MOCKED_LABELTWO = 'MOCKED_LABELONE'
   const MOCKED_LINK = 'MOCKED_LINK'
@@ -126,18 +128,17 @@ describe('it renders the UI correctly', () => {
     expect(wrapper.find(`.${CARD_SHORT_DESCRIPTION_CSS}`).text()).toEqual(
       MOCKED_DESCRIPTION,
     )
-    expect(wrapper.find(Utils.CardFooter)).toBeDefined()
+    expect(wrapper.find(CardFooter)).toBeDefined()
   })
 
   it('renders as a Header without crashing', () => {
     const { wrapper } = renderComponent(propsForHeaderMode)
     expect(wrapper).toBeDefined()
-    expect(wrapper.find('img').prop('src')).toEqual(iconOptions['AMP-AD'])
     expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
     expect(wrapper.find('h3').text()).toEqual(data[0])
-    expect(wrapper.find(Utils.ShowMore)).toHaveLength(0)
+    expect(wrapper.find(ShowMore)).toHaveLength(0)
     expect(wrapper.find('.SRC-font-size-base').text()).toEqual(data[2])
-    expect(wrapper.find(Utils.CardFooter)).toHaveLength(1)
+    expect(wrapper.find(CardFooter)).toHaveLength(1)
   })
 
   it.skip('renders the query handles corretly', () => {
@@ -177,7 +178,7 @@ describe('it renders the UI correctly', () => {
     })
   })
 
-  describe('Renders a FileHandleLink when the title is a file handle ', () => {
+  describe('Renders a FileHandleLink when the title is a file handle', () => {
     const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
     const tableId = 'TABLE_ID_MOCK'
     const columnModelWithFileHandleTitle = [
@@ -231,7 +232,7 @@ describe('it renders the UI correctly', () => {
     })
   })
 
-  describe('Renders a ImageFileHandle when imageFileHandleColumnName is set ', () => {
+  describe('Renders a ImageFileHandle when imageFileHandleColumnName is set', () => {
     const FILE_HANDLE_COLUMN_TYPE = ColumnType.FILEHANDLEID
     const tableId = 'TABLE_ID_MOCK'
     const columnModelWithFileHandle = [
@@ -305,7 +306,7 @@ describe('it renders the UI correctly', () => {
       expect(target).toEqual(SELF)
     })
 
-    it('creates a DOI link ', () => {
+    it('creates a DOI link', () => {
       const doi = '10.1093/neuonc/noy046'
       const doiLink = `https://dx.doi.org/${doi}`
       const { href, target } = instance.getLinkParams(
@@ -560,24 +561,24 @@ describe('it makes the correct URL for the secondary labels', () => {
 describe('It renders markdown for the description', () => {
   const renderShortDescription = GenericCard.prototype.renderShortDescription
   const renderLongDescription = GenericCard.prototype.renderLongDescription
-  const descriptionLinkConfig: MarkdownValue = {
+  const descriptionLinkConfig = {
     isMarkdown: true,
   }
   const value = '# header [website](synapse.org)'
 
-  it('hides the short description if MarkdownValue is specified', () => {
+  it('hides the short description if descriptionConfig is specified', () => {
     const wrapper = mount(
       <>{renderShortDescription(value, false, '', descriptionLinkConfig)} </>,
     )
     expect(wrapper.find(<div />)).toHaveLength(0)
   })
-  it('shows the short description if MarkdownValue is not specified', () => {
+  it('shows the short description if descriptionConfig is not specified', () => {
     const wrapper = mount(
       <>{renderShortDescription(value, false, '', undefined)} </>,
     )
     expect(wrapper.find('div')).toHaveLength(1)
   })
-  it('hides the short description if MarkdownValue is specified', () => {
+  it('hides the long description if descriptionConfig is specified', () => {
     const wrapper = mount(
       <>{renderLongDescription(value, false, '', descriptionLinkConfig)} </>,
     )

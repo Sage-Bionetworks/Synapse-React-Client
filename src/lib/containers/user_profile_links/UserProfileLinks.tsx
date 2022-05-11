@@ -9,24 +9,22 @@ import UserProjects from './UserProjects'
 import UserTeams from './UserTeams'
 
 export enum UserProfileLinksTabs {
-  PROJECTS = "Projects",
-  TEAMS = "Teams",
-  CHALLENGES = "Challenges",
+  PROJECTS = 'Projects',
+  TEAMS = 'Teams',
+  CHALLENGES = 'Challenges',
 }
 
 type UserProfileLinksProps = {
   userId: string
 }
 
-function UserProfileLinks({
-  userId,
-}: UserProfileLinksProps) {
-  const [currentTab, setCurrentTab] = useState<UserProfileLinksTabs>(UserProfileLinksTabs.PROJECTS)
+function UserProfileLinks({ userId }: UserProfileLinksProps) {
+  const [currentTab, setCurrentTab] = useState<UserProfileLinksTabs>(
+    UserProfileLinksTabs.PROJECTS,
+  )
   const { data: userProfile } = useGetUserProfile(userId)
 
-  function getIconName(
-    currentTab: UserProfileLinksTabs,
-  ): string {
+  function getIconName(currentTab: UserProfileLinksTabs): string {
     switch (currentTab) {
       case UserProfileLinksTabs.PROJECTS:
         return 'dashboard'
@@ -38,10 +36,9 @@ function UserProfileLinks({
   }
   return (
     <div className="UserProfileLinks">
-    
       <Typography variant="headline2" className="title">
         {userProfile && <>{userProfile?.userName}&apos;s Items</>}
-        {!userProfile && <Skeleton width='75%' />}
+        {!userProfile && <Skeleton width="75%" />}
       </Typography>
       <div className="Tabs">
         {Object.keys(UserProfileLinksTabs).map((keyName: string) => {
@@ -57,7 +54,10 @@ function UserProfileLinks({
               aria-selected={UserProfileLinksTabs[keyName] === currentTab}
             >
               <Typography variant="buttonLink">
-                <IconSvg options={{ icon: getIconName(UserProfileLinksTabs[keyName]) }} /> {UserProfileLinksTabs[keyName]}
+                <IconSvg
+                  options={{ icon: getIconName(UserProfileLinksTabs[keyName]) }}
+                />{' '}
+                {UserProfileLinksTabs[keyName]}
               </Typography>
             </div>
           )
@@ -68,15 +68,18 @@ function UserProfileLinks({
           {currentTab === UserProfileLinksTabs.PROJECTS && (
             <>
               <UserProjects userId={userId} />
-            </>)}
+            </>
+          )}
           {currentTab === UserProfileLinksTabs.TEAMS && (
             <>
               <UserTeams userId={userId} />
-            </>)}
+            </>
+          )}
           {currentTab === UserProfileLinksTabs.CHALLENGES && (
             <>
               <UserChallenges userId={userId} />
-            </>)}
+            </>
+          )}
         </SynapseErrorBoundary>
       </div>
     </div>

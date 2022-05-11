@@ -269,7 +269,7 @@
       "default": "chronic_dosing",
       "child": true,
       "excluded": false,
-      "rules":[],
+      "rules": [],
       "validationRules": [
         {
           "conditions": {

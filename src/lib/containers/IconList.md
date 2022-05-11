@@ -13,7 +13,7 @@
       'proteomics': { icon: 'proteomics' },
       'kinomics': { icon: 'kinomics' },
     }
-  } 
+  }
   iconNames={["reload", "drugCombinationScreen", "proteomics", "check"]}
   />
 }
@@ -73,7 +73,7 @@
       'drugCombinationScreen': { icon: 'rat', label: 'I am a mouse!' },
       'geneExpression': { icon: 'geneExpression', label: ':-D'},
     }
-  } 
+  }
   iconNames={["drugCombinationScreen", "geneExpression"]}
   />
 }

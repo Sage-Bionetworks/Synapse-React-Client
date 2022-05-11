@@ -31,20 +31,12 @@ describe('basic function', () => {
   it('should render with explanatory links and without login', () => {
     expect(wrapper.find('ModalHeader')).toHaveLength(1)
     expect(wrapper.find('ModalFooter').find('button')).toHaveLength(2)
-    expect(
-      wrapper
-        .find('ModalFooter')
-        .find('button')
-        .at(0)
-        .text(),
-    ).toBe('CANCEL')
-    expect(
-      wrapper
-        .find('ModalFooter')
-        .find('button')
-        .at(1)
-        .text(),
-    ).toBe('Sign in')
+    expect(wrapper.find('ModalFooter').find('button').at(0).text()).toBe(
+      'CANCEL',
+    )
+    expect(wrapper.find('ModalFooter').find('button').at(1).text()).toBe(
+      'Sign in',
+    )
     expect(wrapper.find('a')).toHaveLength(2)
     expect(wrapper.find('Login')).toHaveLength(0)
   })

@@ -6,12 +6,12 @@
       display: grid;
       grid-template-columns: 25% 10px 75%;
       padding-right: 15px;
-      
+
       // by default, children take up the full row
       > * {
         grid-column: 1 / span 3;
       }
-      &.has-facets{
+      &.has-facets {
         padding-right: 120px;
         grid-template-columns: 60px 10px 25% 10px 75%;
         > * {
@@ -25,7 +25,7 @@
         .QueryWrapperSearchInput,
         .QueryWrapperSqlEditorInput,
         .ErrorBannerWrapper {
-            margin-left: 30px;
+          margin-left: 30px;
         }
       }
     }

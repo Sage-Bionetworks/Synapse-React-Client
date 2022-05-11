@@ -18,7 +18,8 @@ export type Props = {
 export default function SynapseVideo({ params }: Props) {
   const { accessToken } = useSynapseContext()
   const [externalVideoUrl, setExternalVideoUrl] = useState<string>()
-  const [synapseVideoPresignedUrl, setSynapseVideoPresignedUrl] = useState<string>()
+  const [synapseVideoPresignedUrl, setSynapseVideoPresignedUrl] =
+    useState<string>()
 
   const videoWidth = params.width ?? ''
   const videoHeight = params.height ?? ''
@@ -75,41 +76,46 @@ export default function SynapseVideo({ params }: Props) {
   const RenderVideo = () => {
     if (synapseVideoPresignedUrl) {
       if (accessToken) {
-        return (<video
-          controls
-          src={synapseVideoPresignedUrl}
-          width={videoWidth}
-          height={videoHeight}
-          data-testid="synapse-video-url"
-        >
-          It does not support the HTML5 Video element.
-        </video>)
-      } else {  // if not logged in, show login button
-        return (<p>
-          You will need to
-          <button
-            data-testid="video-login"
-            className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn default
-                `}
+        return (
+          <video
+            controls
+            src={synapseVideoPresignedUrl}
+            width={videoWidth}
+            height={videoHeight}
+            data-testid="synapse-video-url"
           >
-            Sign in
-          </button>
-          in for access to that resource.
-        </p>)
+            It does not support the HTML5 Video element.
+          </video>
+        )
+      } else {
+        // if not logged in, show login button
+        return (
+          <p>
+            You will need to
+            <button
+              data-testid="video-login"
+              className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn default
+                `}
+            >
+              Sign in
+            </button>
+            in for access to that resource.
+          </p>
+        )
       }
     } else if (externalVideoUrl) {
-      return (<iframe
-        title="video frame"
-        src={externalVideoUrl}
-        width={videoWidth}
-        height={videoHeight}
-      ></iframe>)
+      return (
+        <iframe
+          title="video frame"
+          src={externalVideoUrl}
+          width={videoWidth}
+          height={videoHeight}
+        ></iframe>
+      )
     } else {
       return <></>
     }
   }
 
-  return (
-    <RenderVideo />
-  )
+  return <RenderVideo />
 }

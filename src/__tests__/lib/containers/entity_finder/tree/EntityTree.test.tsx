@@ -46,12 +46,15 @@ jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useProjects', () => {
   }
 })
 
-jest.mock('../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle', () => {
-  return {
-    __esModule: true,
-    default: jest.fn(),
-  }
-})
+jest.mock(
+  '../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle',
+  () => {
+    return {
+      __esModule: true,
+      default: jest.fn(),
+    }
+  },
+)
 
 jest.mock('../../../../../lib/utils/SynapseClient', () => {
   return {

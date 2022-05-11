@@ -139,10 +139,10 @@ function getTotalsByProp<T>(data: GraphItem[], prop: string): T[] {
   }, {})
   const result = []
   for (const property in resultObject) {
-    result.push(({
+    result.push({
       [prop]: property,
       count: resultObject[property] as number,
-    } as unknown) as T)
+    } as unknown as T)
   }
   return result
 }

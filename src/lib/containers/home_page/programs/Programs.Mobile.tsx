@@ -23,18 +23,18 @@ export default function ProgramsMobile({
     <div className="Programs__Mobile__Content">
       {link && (
         <p className="Programs__Card__header__info__link">
-          <a className="highlight-link" href={link} target="_blank" rel="noreferrer">
+          <a
+            className="highlight-link"
+            href={link}
+            target="_blank"
+            rel="noreferrer"
+          >
             Visit website
           </a>
         </p>
       )}
       <p>{summary}</p>
-      <Button
-        variant="secondary"
-        size="lg"
-        href={exploreLink}
-        className="pill"
-      >
+      <Button variant="secondary" size="lg" href={exploreLink} className="pill">
         EXPLORE
       </Button>
     </div>

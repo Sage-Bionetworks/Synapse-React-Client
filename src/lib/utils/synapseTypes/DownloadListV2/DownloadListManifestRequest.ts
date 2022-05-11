@@ -1,4 +1,4 @@
-import { CsvTableDescriptor } from "../Table";
+import { CsvTableDescriptor } from '../Table'
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/DownloadListManifestRequest.html
 export type DownloadListManifestRequest = {

@@ -60,7 +60,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           onMouseEnter={() => toggleShow()}
           onMouseLeave={() => toggleHide()}
           onClick={event => {
-            if (showCardOnHover){
+            if (showCardOnHover) {
               event.stopPropagation()
             }
             isShowingOverlay ? toggleHide(false) : toggleShow(false)
@@ -74,7 +74,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           onMouseEnter={() => toggleShow()}
           onMouseLeave={() => toggleHide()}
           onClick={event => {
-            if (showCardOnHover){
+            if (showCardOnHover) {
               event.stopPropagation()
             }
             isShowingOverlay ? toggleHide(false) : toggleShow(false)

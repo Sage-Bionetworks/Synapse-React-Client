@@ -16,10 +16,9 @@ const dateFormatOptionUTC: Intl.DateTimeFormatOptions = {
   timeZoneName: 'short',
 }
 
-export const CreatedOnByUserDiv: React.FunctionComponent<CreatedOnByUserDivProps> = ({
-  userId,
-  date,
-}) => {
+export const CreatedOnByUserDiv: React.FunctionComponent<
+  CreatedOnByUserDivProps
+> = ({ userId, date }) => {
   const { utcTime } = useSynapseContext()
   return (
     <div className="created-on">

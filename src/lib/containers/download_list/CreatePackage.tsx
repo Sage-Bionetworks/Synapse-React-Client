@@ -79,10 +79,8 @@ export const CreatePackage = (props: CreatePackageProps) => {
         zipFileName: fileNameWithZipExtension,
         zipFileFormat: ZipFileFormat.Flat,
       }
-      const currentBulkFileDownloadResponse: BulkFileDownloadResponse = await getBulkFiles(
-        bulkFileDownloadRequest,
-        accessToken,
-      )
+      const currentBulkFileDownloadResponse: BulkFileDownloadResponse =
+        await getBulkFiles(bulkFileDownloadRequest, accessToken)
       setBulkFileDownloadResponse(currentBulkFileDownloadResponse)
     } catch (err) {
       setAlert({

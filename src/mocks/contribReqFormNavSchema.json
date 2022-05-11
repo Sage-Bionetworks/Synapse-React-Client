@@ -157,45 +157,44 @@
           },
           "priority:": 1
         },
-          {
-            "conditions": {
-              "all": [
-                {
-                  "fact": "contributions",
-                  "operator": "contains",
-                  "path": ".contribution_type",
-                  "value": "analysis"
-                }
-              ]
-            },
-            "event": {
-              "type": "next",
-              "params": {
-                "next": "analysis"
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "analysis"
               }
-            },
-            "priority:": 2
+            ]
           },
-          {
-            "conditions": {
-              "all": [
-                {
-                  "fact": "contributions",
-                  "operator": "contains",
-                  "path": ".contribution_type",
-                  "value": "tools"
-                }
-              ]
-            },
-            "event": {
-              "type": "next",
-              "params": {
-                "next": "tools"
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "analysis"
+            }
+          },
+          "priority:": 2
+        },
+        {
+          "conditions": {
+            "all": [
+              {
+                "fact": "contributions",
+                "operator": "contains",
+                "path": ".contribution_type",
+                "value": "tools"
               }
-            },
-            "priority:": 2
-          }
-
+            ]
+          },
+          "event": {
+            "type": "next",
+            "params": {
+              "next": "tools"
+            }
+          },
+          "priority:": 2
+        }
       ]
     },
     {
@@ -288,8 +287,7 @@
       "title": "Mouse",
       "default": "summary",
       "rules": [
-  
-      {
+        {
           "conditions": {
             "all": [
               {
@@ -581,7 +579,7 @@
         }
       ]
     },
-  
+
     {
       "id": "analysis",
       "order": 62,
@@ -622,7 +620,6 @@
       "title": "Summary",
       "default": null,
       "final": true
-   
     }
   ]
 }

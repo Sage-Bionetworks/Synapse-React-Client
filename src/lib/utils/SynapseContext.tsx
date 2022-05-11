@@ -42,22 +42,23 @@ export type SynapseContextProviderProps = {
  * @param param0
  * @returns
  */
-export const SynapseContextProvider: React.FunctionComponent<SynapseContextProviderProps> =
-  ({ children, synapseContext, queryClient, theme }) => {
-    return (
-      <SynapseContext.Provider value={synapseContext}>
-        <QueryClientProvider client={queryClient ?? defaultQueryClient}>
-          <ThemeProvider theme={theme}>
-            {synapseContext?.withErrorBoundary ? (
-              <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
-            ) : (
-              children
-            )}
-          </ThemeProvider>
-        </QueryClientProvider>
-      </SynapseContext.Provider>
-    )
-  }
+export const SynapseContextProvider: React.FunctionComponent<
+  SynapseContextProviderProps
+> = ({ children, synapseContext, queryClient, theme }) => {
+  return (
+    <SynapseContext.Provider value={synapseContext}>
+      <QueryClientProvider client={queryClient ?? defaultQueryClient}>
+        <ThemeProvider theme={theme}>
+          {synapseContext?.withErrorBoundary ? (
+            <SynapseErrorBoundary>{children}</SynapseErrorBoundary>
+          ) : (
+            children
+          )}
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SynapseContext.Provider>
+  )
+}
 
 export const SynapseContextConsumer = SynapseContext.Consumer
 

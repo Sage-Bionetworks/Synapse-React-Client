@@ -18,5 +18,5 @@ export type RequestDownload = {
 // In order to download a file the user will need to meet an access requirement associated with the file.
 export type MeetAccessRequirement = {
   concreteType: string
-  accessRequirementId	: number // The ID of the access requirement that the user needs to meet in order to download a file.
+  accessRequirementId: number // The ID of the access requirement that the user needs to meet in order to download a file.
 }

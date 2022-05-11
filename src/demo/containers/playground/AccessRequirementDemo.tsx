@@ -2,10 +2,8 @@ import * as React from 'react'
 import AccessRequirementList from '../../../lib/containers/access_requirement_list/AccessRequirementList'
 
 export const AccessRequirementDemo: React.FunctionComponent = () => {
-  const [
-    displayAccessRequirement,
-    setDisplayAccessRequirement,
-  ] = React.useState<boolean>(false)
+  const [displayAccessRequirement, setDisplayAccessRequirement] =
+    React.useState<boolean>(false)
   const currentWindowLocation = window.location.href
   const [inputValue, setInputValue] = React.useState<string>('')
 

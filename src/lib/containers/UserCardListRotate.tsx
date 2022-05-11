@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { insertConditionsFromSearchParams, KeyValue, parseEntityIdFromSqlStatement, SQLOperator } from '../utils/functions/sqlFunctions'
+import {
+  insertConditionsFromSearchParams,
+  KeyValue,
+  parseEntityIdFromSqlStatement,
+  SQLOperator,
+} from '../utils/functions/sqlFunctions'
 import { SynapseClient, SynapseConstants } from '../utils'
 import {
   FacetColumnRequest,
@@ -74,7 +79,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
   summaryLinkText,
   selectedFacets,
   searchParams,
-  sqlOperator
+  sqlOperator,
 }) => {
   const { accessToken } = useSynapseContext()
   const [userIds, setUserIds] = useState<string[]>([])
@@ -140,9 +145,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
     <div className="UserCardListRotate bootstrap-4-backport">
       {isLoading && <LoadingUserCardMedium />}
       {!isLoading && userIds.length === 0 && (
-        <p className="font-italic">
-          No one was found.
-        </p>
+        <p className="font-italic">No one was found.</p>
       )}
       {!isLoading && userIds.length > 0 && (
         <UserCardList list={userIds} size={size} data={queryData} />

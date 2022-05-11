@@ -35,24 +35,27 @@ describe('CreateProjectModal tests', () => {
 
   it('Creates project on submit', async () => {
     renderComponent()
-    const input:HTMLInputElement = (await screen.findByTestId('projectInput')) as HTMLInputElement
-    fireEvent.change(input, {target: {value: MOCK_PROJECT_NAME}})
+    const input: HTMLInputElement = (await screen.findByTestId(
+      'projectInput',
+    )) as HTMLInputElement
+    fireEvent.change(input, { target: { value: MOCK_PROJECT_NAME } })
     expect(input.value).toBe(MOCK_PROJECT_NAME)
-    fireEvent.keyDown(input, {key: 'Enter'})
-    
+    fireEvent.keyDown(input, { key: 'Enter' })
+
     // should show success alert
     await screen.findByText('Project created')
   })
 
   it('Shows error if creation fails', async () => {
     renderComponent()
-    const input:HTMLInputElement = (await screen.findByTestId('projectInput')) as HTMLInputElement
-    fireEvent.change(input, {target: {value: MOCK_INVALID_PROJECT_NAME}})
+    const input: HTMLInputElement = (await screen.findByTestId(
+      'projectInput',
+    )) as HTMLInputElement
+    fireEvent.change(input, { target: { value: MOCK_INVALID_PROJECT_NAME } })
     expect(input.value).toBe(MOCK_INVALID_PROJECT_NAME)
-    fireEvent.keyDown(input, {key: 'Enter'})
-    
+    fireEvent.keyDown(input, { key: 'Enter' })
+
     // should show error alert
     await screen.findByText('Invalid project name')
   })
-
 })

@@ -28,7 +28,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
 
   render() {
     const { tabIndex } = this.state
-    
+
     const genericCardSchema: CardConfiguration = {
       type: SynapseConstants.GENERIC_CARD,
       genericCardSchema: {
@@ -78,7 +78,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
               title: 'Full Name',
               subTitle: 'Short Description',
               icon: 'Program',
-            }}            
+            }}
             isHeader={true}
             iconOptions={iconOptions}
           />
@@ -86,7 +86,7 @@ export default class CardContainerLogicDemo extends React.Component<{}, State> {
         {tabIndex === 1 && (
           <CardContainerLogic
             type={SynapseConstants.MEDIUM_USER_CARD}
-            sql={'SELECT ownerID as ownerId FROM syn13897207'}            
+            sql={'SELECT ownerID as ownerId FROM syn13897207'}
           />
         )}
         {tabIndex === 2 && (

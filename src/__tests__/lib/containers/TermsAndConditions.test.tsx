@@ -3,7 +3,6 @@ import * as React from 'react'
 import TermsAndConditions from '../../../lib/containers/TermsAndConditions'
 
 describe('Terms And Conditions: basic functionality', () => {
-
   const props = {
     onFormChange: jest.fn(),
   }
@@ -16,8 +15,7 @@ describe('Terms And Conditions: basic functionality', () => {
 
   it('should render all checkboxes', async () => {
     const wrapper = mount(<TermsAndConditions {...props} />)
-    const li = wrapper.find(".term-list > li")
+    const li = wrapper.find('.term-list > li')
     expect(li.length).toEqual(checkboxCount)
   })
-
 })

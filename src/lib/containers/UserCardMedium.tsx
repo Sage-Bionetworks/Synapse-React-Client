@@ -42,17 +42,21 @@ export type UserCardMediumProps = {
  * @param {string} value the email address of the user
  * @returns
  */
-const copyToClipboard = (
-  ref: React.MutableRefObject<HTMLElement | null>,
-  value: string,
-  onCopy: () => void,
-) => (event: React.SyntheticEvent) => {
-  event.preventDefault()
+const copyToClipboard =
+  (
+    ref: React.MutableRefObject<HTMLElement | null>,
+    value: string,
+    onCopy: () => void,
+  ) =>
+  (event: React.SyntheticEvent) => {
+    event.preventDefault()
 
-  // use the Clipboard API
-  // https://caniuse.com/mdn-api_clipboard_writetext
-  navigator.clipboard.writeText(value).then(() => { onCopy() })
-}
+    // use the Clipboard API
+    // https://caniuse.com/mdn-api_clipboard_writetext
+    navigator.clipboard.writeText(value).then(() => {
+      onCopy()
+    })
+  }
 
 export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   userProfile,
@@ -81,14 +85,8 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
     }, 4000)
   }
 
-  const {
-    displayName,
-    userName,
-    firstName,
-    lastName,
-    position,
-    company,
-  } = userProfile
+  const { displayName, userName, firstName, lastName, position, company } =
+    userProfile
 
   useEffect(() => {
     const pageClick = (_event: any) => {
@@ -221,11 +219,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
         {!hideEmail && (
           <p
             ref={copyToClipboardRef}
-            className={`${
-              isLarge
-                ? 'SRC-whiteText'
-                : ''
-            }
+            className={`${isLarge ? 'SRC-whiteText' : ''}
               SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}
             onClick={copyToClipboard(
               copyToClipboardRef,
@@ -240,11 +234,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             tabIndex={0}
           >
             <span style={{ paddingRight: '5px', paddingBottom: '2px' }}>
-              <a className={`link ${
-                isLarge
-                  ? 'SRC-whiteText'
-                  : ''
-                }`}>
+              <a className={`link ${isLarge ? 'SRC-whiteText' : ''}`}>
                 {`${userName}@synapse.org`}
               </a>
             </span>
@@ -256,13 +246,9 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             href={ORCIDHref}
             target="_blank"
             rel="noopener noreferrer"
-            style={{width: 'fit-content'}}
+            style={{ width: 'fit-content' }}
             tabIndex={0}
-            className={
-              isLarge
-                ? 'SRC-whiteText'
-                : ''
-            }
+            className={isLarge ? 'SRC-whiteText' : ''}
           >
             View ORCID
           </a>
@@ -343,17 +329,17 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
 }
 
 export const LoadingUserCardMedium: React.FunctionComponent = () => {
-  return <div
-    className="cardContainer SRC-userCard SRC-userCardMediumUp"
-    style={{width:'380px'}}
-  >
-    <Skeleton variant='circle' width='80px' height='80px'/>
-    <div style={{width:'250px'}}>
-      <SkeletonTable numCols={1} numRows={2}/>
+  return (
+    <div
+      className="cardContainer SRC-userCard SRC-userCardMediumUp"
+      style={{ width: '380px' }}
+    >
+      <Skeleton variant="circle" width="80px" height="80px" />
+      <div style={{ width: '250px' }}>
+        <SkeletonTable numCols={1} numRows={2} />
+      </div>
     </div>
-  </div>
+  )
 }
 
-
 export default UserCardMedium
-

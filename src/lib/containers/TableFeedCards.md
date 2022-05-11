@@ -1,6 +1,3 @@
-
 ```jsx
-    <TableFeedCards
-      tableEntityId='syn23520190'
-    />
+<TableFeedCards tableEntityId="syn23520190" />
 ```

@@ -31,9 +31,8 @@ class FormServicesIntegrationDemo extends React.Component<
     this.onSubmitFormData = this.onSubmitFormData.bind(this)
     this.listMyFormData = this.listMyFormData.bind(this)
     this.listFormAdminFormData = this.listFormAdminFormData.bind(this)
-    this.onReadFormDataFileHandleContents = this.onReadFormDataFileHandleContents.bind(
-      this,
-    )
+    this.onReadFormDataFileHandleContents =
+      this.onReadFormDataFileHandleContents.bind(this)
   }
 
   public onCreateFormGroup(): void {

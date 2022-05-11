@@ -143,13 +143,8 @@ export function AdditionalPropertiesSchemaField<T>(
     uiSchema,
   } = props
 
-  const {
-    list,
-    handleListChange,
-    handleListRemove,
-    appendToList,
-    setList,
-  } = useListState(convertToArray(formData))
+  const { list, handleListChange, handleListRemove, appendToList, setList } =
+    useListState(convertToArray(formData))
 
   // The type determines which widget we show.
   const [propertyType, setPropertyType] = useState<PropertyType>(

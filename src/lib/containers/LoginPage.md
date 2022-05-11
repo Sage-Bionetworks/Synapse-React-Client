@@ -1,3 +1,7 @@
 ```jsx
-<LoginPage sessionCallback={()=>{window.location.reload()}} />
+<LoginPage
+  sessionCallback={() => {
+    window.location.reload()
+  }}
+/>
 ```

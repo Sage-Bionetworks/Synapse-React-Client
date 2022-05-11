@@ -43,43 +43,22 @@ function updateValue(
 describe('number range ', () => {
   it('should render with correct properties', () => {
     expect(wrapper).toBeDefined()
-    expect(
-      wrapper
-        .find('input')
-        .at(0)
-        .props().value,
-    ).toBe(props.initialValues!.min)
-    expect(
-      wrapper
-        .find('input')
-        .at(1)
-        .props().value,
-    ).toBe(props.initialValues!.max)
-    expect(
-      wrapper
-        .find('div')
-        .at(0)
-        .hasClass('rangeClass'),
-    ).toBe(true)
+    expect(wrapper.find('input').at(0).props().value).toBe(
+      props.initialValues!.min,
+    )
+    expect(wrapper.find('input').at(1).props().value).toBe(
+      props.initialValues!.max,
+    )
+    expect(wrapper.find('div').at(0).hasClass('rangeClass')).toBe(true)
   })
 
   it('should render without values specified', () => {
-    let noDefaultProps = { ...props, initialValues: undefined}
+    let noDefaultProps = { ...props, initialValues: undefined }
     init(noDefaultProps)
     expect(wrapper).toBeDefined()
-    expect(
-      wrapper
-        .find('input')
-        .at(0)
-        .props().value,
-    ).toBeUndefined()
+    expect(wrapper.find('input').at(0).props().value).toBeUndefined()
 
-    expect(
-      wrapper
-        .find('input')
-        .at(1)
-        .props().value,
-    ).toBeUndefined()
+    expect(wrapper.find('input').at(1).props().value).toBeUndefined()
   })
 
   it('should call callbackFn correctly', () => {
@@ -103,38 +82,18 @@ describe('date range', () => {
     max: new Date(2019, 7, 3).toString(),
   }
   it('should render with correct checked state', () => {
-    init({ ...props, type: 'date', initialValues: initialValues})
-    expect(
-      wrapper
-        .find('input')
-        .at(0)
-        .props().value,
-    ).toBe('2019-01-04')
-    expect(
-      wrapper
-        .find('input')
-        .at(1)
-        .props().value,
-    ).toBe('2019-10-03')
+    init({ ...props, type: 'date', initialValues: initialValues })
+    expect(wrapper.find('input').at(0).props().value).toBe('2019-01-04')
+    expect(wrapper.find('input').at(1).props().value).toBe('2019-10-03')
   })
 
   it('should render without values specified', () => {
     let noDefaultProps = { ...props, initialValues: undefined }
     init(noDefaultProps)
     expect(wrapper).toBeDefined()
-    expect(
-      wrapper
-        .find('input')
-        .at(0)
-        .props().value,
-    ).toBeUndefined()
+    expect(wrapper.find('input').at(0).props().value).toBeUndefined()
 
-    expect(
-      wrapper
-        .find('input')
-        .at(1)
-        .props().value,
-    ).toBeUndefined()
+    expect(wrapper.find('input').at(1).props().value).toBeUndefined()
   })
 
   it('should call callbackFn correctly', async () => {

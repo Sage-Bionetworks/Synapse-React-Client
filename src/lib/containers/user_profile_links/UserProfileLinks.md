@@ -1,5 +1,3 @@
 ```jsx
-
-  <UserProfileLinks userId='1131050' />
-
+<UserProfileLinks userId="1131050" />
 ```

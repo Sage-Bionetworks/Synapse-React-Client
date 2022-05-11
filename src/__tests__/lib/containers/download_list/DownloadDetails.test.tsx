@@ -71,6 +71,8 @@ describe('it performs all functionality', () => {
       )
     })
     expect(screen.queryByTestId('numBytesUI')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('downloadTimeEstimateUI')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('downloadTimeEstimateUI'),
+    ).not.toBeInTheDocument()
   })
 })

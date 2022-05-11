@@ -18,7 +18,9 @@ export type FeaturedDataTabsProps = {
   sql: string
 }
 
-const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props => {
+const FeaturedDataTabs: React.FunctionComponent<
+  FeaturedDataTabsProps
+> = props => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const { configs, rgbIndex, sql } = props
   // explore all data button
@@ -38,9 +40,12 @@ const FeaturedDataTabs: React.FunctionComponent<FeaturedDataTabsProps> = props =
               }`}
               key={config.title}
             >
-              <button onClick={() => setSelectedTabIndex(index)}>
+              <button
+                className="SRC-centerAndJustifyContent"
+                onClick={() => setSelectedTabIndex(index)}
+              >
                 {config.icon && <Icon type={config.icon}></Icon>}
-                {config.title}
+                <span>{config.title}</span>
               </button>
             </div>
           )

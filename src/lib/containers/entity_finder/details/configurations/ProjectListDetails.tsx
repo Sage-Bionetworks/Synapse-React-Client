@@ -11,10 +11,9 @@ type ProjectListDetailsProps = EntityDetailsListSharedProps & {
   projectsParams: GetProjectsParameters
 }
 
-export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps> = ({
-  projectsParams,
-  ...sharedProps
-}) => {
+export const ProjectListDetails: React.FunctionComponent<
+  ProjectListDetailsProps
+> = ({ projectsParams, ...sharedProps }) => {
   const {
     data,
     isLoading,
