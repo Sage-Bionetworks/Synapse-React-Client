@@ -9,6 +9,7 @@ import { SynapseSpinner } from './LoadingScreen'
 import { Entity } from '../utils/synapseTypes'
 import Typography from '../utils/typography/Typography'
 import NoSearchResults from '../assets/icons/NoSearchResults'
+import { Button } from 'react-bootstrap'
 
 export type ForumSearchProps = {
     forumId: string,
@@ -116,23 +117,29 @@ const ForumSearch = (props: ForumSearchProps) => {
             {
                 noSearchResult && <NoSearchResultComponent />
             }
-            {isLoading ?
-                <div style={{ textAlign: 'center' }}>
-                    <SynapseSpinner size={40} />
-                </div> :
-                matchList &&
-                <>
-                    {props.projectId && (
-                        <Typography variant='body2'>Results for '{searchInput}' in {entity?.name}</Typography>
-                    )}
-                    {matchList.map(entity =>
-                        <div key={`${entity.forumId}-${entity.threadId}-${entity.replyId}`}>
-                            <DiscussionReply threadId={entity.threadId} replyId={entity.replyId} />
-                        </div>
-                    )}
-                </>
+            {
+                isLoading ?
+                    <div style={{ textAlign: 'center' }}>
+                        <SynapseSpinner size={40} />
+                    </div> :
+                    matchList &&
+                    <>
+                        {props.projectId && (
+                            <Typography variant='body2'>Results for '{searchInput}' in {entity?.name}</Typography>
+                        )}
+                        {matchList.map(entity =>
+                            <div key={`${entity.forumId}-${entity.threadId}-${entity.replyId}`}>
+                                <DiscussionReply threadId={entity.threadId} replyId={entity.replyId} />
+                            </div>
+                        )}
+                    </>
             }
-            {searchResult?.nextPageToken && <button onClick={onLoadMore}>Load more</button>}
+            {
+                searchResult?.nextPageToken &&
+                <div className='text-center'>
+                    <Button onClick={onLoadMore}>Load more</Button>
+                </div>
+            }
         </div>
     )
 }
