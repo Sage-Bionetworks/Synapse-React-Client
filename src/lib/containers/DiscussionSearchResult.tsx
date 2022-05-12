@@ -61,44 +61,40 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
     }, [])
 
     const getUrl = (threadId: string, projectId: string, replyId?: string,) => {
-        return `https://synapse.org/#!Synapse:${projectId}/discussion/threadId=${threadId}&replyId=${replyId}`
+        let url = `https://synapse.org/#!Synapse:${projectId}/discussion/threadId=${threadId}`
+        if (replyId) {
+            url += `&replyId=${replyId}`
+        }
+        return url
     }
 
     return (
         <div className='search-result-container'>
-            {isLoading ?
-                <LoadingDiscussionSearchResult />
-                :
-                <Row>
-                    <Col xs={1}>
-                        {replyId ? <IconSvg options={{ icon: 'replyTwoTone' }} /> : <IconSvg options={{ icon: 'chatTwoTone' }} />}
-                    </Col>
-                    <Col xs={11}>
-                        <Typography variant='headline3'>
-                            <a className='link' href={getUrl(threadBundle?.id!, replyBundle?.id!, threadBundle?.projectId!)}>{threadBundle?.title}</a>
-                        </Typography>
-                        <div className='truncated'>
-                            <Typography variant='body1'>
-                                {messageUrl}
+            <Row>
+                <Col xs={1}>
+                    {
+                        isLoading ? <Skeleton variant='circle' width='40px' height='40px' /> :
+                            replyId ? <IconSvg options={{ icon: 'replyTwoTone' }} /> : <IconSvg options={{ icon: 'chatTwoTone' }} />
+                    }
+                </Col>
+                <Col xs={11}>
+                    {isLoading ? <SkeletonTable numCols={1} numRows={4} /> :
+                        <>
+                            <Typography variant='headline3'>
+                                <a className='link' href={getUrl(threadBundle?.id!, threadBundle?.projectId!, replyBundle?.id)}>{threadBundle?.title}</a>
                             </Typography>
-                        </div>
-                        <div className='search-result-footer'>
-                            {replyId ? 'Reply' : 'Thread'} by {<UserCard size={SMALL_USER_CARD} ownerId={replyAuthor?.ownerId!} />} {moment(replyBundle?.createdOn).format('l LT')}
-                        </div>
-                    </Col>
-                </Row>
-            }
-        </div>
-    )
-}
-
-export const LoadingDiscussionSearchResult: React.FunctionComponent = () => {
-    return (
-        <div>
-            <Skeleton />
-            <div>
-                <SkeletonTable numCols={1} numRows={3} />
-            </div>
+                            <div className='truncated'>
+                                <Typography variant='body1'>
+                                    {messageUrl}
+                                </Typography>
+                            </div>
+                            <div className='search-result-footer'>
+                                {replyId ? 'Reply' : 'Thread'} by {<UserCard size={SMALL_USER_CARD} ownerId={replyAuthor?.ownerId!} />} {moment(replyBundle?.createdOn).format('l LT')}
+                            </div>
+                        </>
+                    }
+                </Col>
+            </Row>
         </div>
     )
 }
