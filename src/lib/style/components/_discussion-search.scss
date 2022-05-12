@@ -7,20 +7,20 @@
     .ClearSearchIcon {
         cursor: pointer;
         position: relative;
-        left: -20px;
+        left: -42px;
         margin-right: -8px;
     }
 
     .SearchBar {
         flex-grow: 1;
         margin: 10px 0;
-        padding: 5px 28px;
+        padding: 10px;
         border: none;
         background-color: #ebebeb;
     }
 
     .SearchBarResult {
-        width: 95%;
+        width: 93%;
     }
 }
 
