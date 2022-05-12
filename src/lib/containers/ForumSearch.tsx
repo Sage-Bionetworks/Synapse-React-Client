@@ -26,7 +26,7 @@ const ForumSearch = (props: ForumSearchProps) => {
     const onSearch = async () => {
         setSearchResult(undefined)
         setNoSearchResult(false)
-        try{
+        try {
             const searchResponse = await forumSearch(
                 {
                     searchString: searchInput,
@@ -39,7 +39,7 @@ const ForumSearch = (props: ForumSearchProps) => {
             }
             setSearchResult(searchResponse)
             setMatchList(searchResponse.matches)
-        } catch(err: any){
+        } catch (err: any) {
             displayToast(err.reason as string, 'danger')
         }
     }
@@ -108,7 +108,13 @@ const ForumSearch = (props: ForumSearchProps) => {
                 )}
             </div>
             {
-                noSearchResult && <NoSearchResultComponent />
+                noSearchResult &&
+                <>
+                    {props.projectId && (
+                        <Typography variant='body2'>No results for '{searchInput}' in {entity?.name}</Typography>
+                    )}
+                    <NoSearchResultComponent />
+                </>
             }
             {
                 matchList &&
