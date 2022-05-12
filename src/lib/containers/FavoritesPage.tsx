@@ -131,7 +131,7 @@ export default function FavoritesPage() {
   return (
     <div className="FavoritesPage">
       <div className="searchInputWithIcon">
-        <IconSvg options={{ icon: 'searchOutlined' }} />
+        <IconSvg icon="searchOutlined" />
         <Form.Control
           type="search"
           placeholder="Favorite Name"
@@ -186,7 +186,8 @@ export default function FavoritesPage() {
                             id={`${item.id}-Tooltip`}
                           />
                           <IconSvg
-                            options={{ icon: 'fav', color: '#EDC766' }}
+                            icon={'fav'}
+                            options={{ color: '#EDC766' }}
                           />
                         </a>
                       </td>

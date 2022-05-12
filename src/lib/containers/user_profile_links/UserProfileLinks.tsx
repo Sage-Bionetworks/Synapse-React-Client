@@ -54,9 +54,7 @@ function UserProfileLinks({ userId }: UserProfileLinksProps) {
               aria-selected={UserProfileLinksTabs[keyName] === currentTab}
             >
               <Typography variant="buttonLink">
-                <IconSvg
-                  options={{ icon: getIconName(UserProfileLinksTabs[keyName]) }}
-                />{' '}
+                <IconSvg icon={getIconName(UserProfileLinksTabs[keyName])} />{' '}
                 {UserProfileLinksTabs[keyName]}
               </Typography>
             </div>

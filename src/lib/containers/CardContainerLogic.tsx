@@ -64,7 +64,7 @@ export type LabelLinkConfig = (MarkdownLink | CardLink | ColumnSpecifiedLink)[]
 export type ColumnIconConfigs = {
   columns: {
     [index: string]: {
-      [index: string]: IconSvgOptions
+      [index: string]: IconSvgOptions & { icon: string }
     }
   }
 }

@@ -99,7 +99,7 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
                           />
                         ) : (
                           <p>
-                            <IconSvg options={{ icon: 'team' }} />
+                            <IconSvg icon="team" />
                             <a> {item.userName}</a>
                           </p>
                         )}

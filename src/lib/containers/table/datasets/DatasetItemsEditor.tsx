@@ -417,7 +417,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           variant="sds-primary"
           onClick={() => setShowEntityFinder(true)}
         >
-          <IconSvg options={{ icon: 'addCircleTwoTone' }} />
+          <IconSvg icon="addCircleTwoTone" />
           <span>{ADD_FILES}</span>
         </Button>
       </div>

@@ -58,9 +58,9 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
   let synapseClientError: SynapseClientError | undefined = undefined
   let jsError: Error | undefined = undefined
   let stringError: string | undefined = undefined
-  if (isSynapseClientError(error)) {
+  if (error instanceof SynapseClientError) {
     synapseClientError = error
-  } else if (isError(error)) {
+  } else if (error instanceof Error) {
     jsError = error
   } else if (typeof error === 'string') {
     stringError = error

@@ -40,7 +40,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
 }) => {
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
   const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(
-    <IconSvg options={{ icon: 'accountRegistered' }} />,
+    <IconSvg icon="accountRegistered" />,
   )
   const target = useRef(null)
 
@@ -69,10 +69,10 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         undefined,
       )
       if (userBundle?.isCertified) {
-        setAccountLevelIcon(<IconSvg options={{ icon: 'accountCertified' }} />)
+        setAccountLevelIcon(<IconSvg icon="accountCertified" />)
       }
       if (userBundle?.isVerified) {
-        setAccountLevelIcon(<IconSvg options={{ icon: 'accountValidated' }} />)
+        setAccountLevelIcon(<IconSvg icon="accountValidated" />)
       }
       setUserBundle(bundle)
     } catch (err) {

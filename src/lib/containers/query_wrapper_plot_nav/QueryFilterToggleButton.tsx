@@ -19,8 +19,8 @@ const QueryFilterToggleButton = () => {
       showFacetFilter: !state.showFacetFilter,
     }))
   }
+  const icon = showFacetFilter ? 'arrowBack' : 'arrowForward'
   const iconOptions: IconSvgOptions = {
-    icon: showFacetFilter ? 'arrowBack' : 'arrowForward',
     color: 'inherit',
   }
   return (
@@ -37,7 +37,7 @@ const QueryFilterToggleButton = () => {
         type="button"
         size="lg"
       >
-        <IconSvg options={iconOptions}></IconSvg>
+        <IconSvg icon={icon} options={iconOptions}></IconSvg>
       </Button>
     </div>
   )

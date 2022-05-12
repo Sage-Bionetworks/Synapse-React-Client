@@ -53,7 +53,7 @@ const AddToDownloadListV2: React.FunctionComponent<
           effect="solid"
           id={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
         />
-        <IconSvg options={{ icon: 'addToCart' }} />
+        <IconSvg icon="addToCart" />
       </a>
     </>
   )

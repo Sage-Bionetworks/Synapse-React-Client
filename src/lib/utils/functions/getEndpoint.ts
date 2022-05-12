@@ -18,14 +18,14 @@ const KNOWN_SYNAPSE_ORG_URLS = [
 export const getSynapsePortalEndpoint = (hostname: string): string => {
   return KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase())
     ? '/'
-    : 'https://www.synapse.org/'
+    : 'https://portal-dev.dev.sagebase.org/'
 }
 const DEFAULT_SYNAPSE_PORTAL = getSynapsePortalEndpoint(
   window.location.hostname,
 )
 
 export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
-  REPO: 'https://repo-prod.prod.sagebase.org',
+  REPO: 'https://repo-dev.dev.sagebase.org',
   PORTAL: DEFAULT_SYNAPSE_PORTAL,
 }
 

@@ -193,11 +193,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           }}
         >
           <span style={{ height: 15, marginTop: -1 }}>
-            <IconSvg
-              options={{
-                icon: 'contentCopy',
-              }}
-            />
+            <IconSvg icon="contentCopy" />
           </span>
         </button>
       </span>
@@ -302,11 +298,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                               effect="solid"
                               id={`${item.fileEntityId}-eligible-tooltip`}
                             />
-                            <IconSvg
-                              options={{
-                                icon: 'packagableFile',
-                              }}
-                            />
+                            <IconSvg icon="packagableFile" />
                           </span>
                         )}
                         {!item.isEligibleForPackaging && (
@@ -323,11 +315,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                               multiline={true}
                               id={`${item.fileEntityId}-ineligible-tooltip`}
                             />
-                            <IconSvg
-                              options={{
-                                icon: 'warningOutlined',
-                              }}
-                            />
+                            <IconSvg icon="warningOutlined" />
                           </span>
                         )}
                       </td>
@@ -410,11 +398,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                                 )
                               }}
                             >
-                              <IconSvg
-                                options={{
-                                  icon: 'removeCircle',
-                                }}
-                              />
+                              <IconSvg icon="removeCircle" />
                             </button>
                           </span>
                         </div>

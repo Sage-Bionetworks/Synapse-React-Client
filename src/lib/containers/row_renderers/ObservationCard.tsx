@@ -45,11 +45,7 @@ export const ObservationCard: React.FunctionComponent<ObservationCardProps> = ({
       </div>
       {time && (
         <div className="ObservationCard__time">
-          <IconSvg
-            options={{
-              icon: 'time',
-            }}
-          />
+          <IconSvg icon="time" />
           <span>{getFriendlyPreciseDuration(time, timeUnits)}</span>
         </div>
       )}
@@ -72,11 +68,7 @@ export const LoadingObservationCard: React.FunctionComponent = () => {
         </span>
       </div>
       <div className="ObservationCard__time">
-        <IconSvg
-          options={{
-            icon: 'time',
-          }}
-        />
+        <IconSvg icon="time" />
       </div>
       <div className="ObservationCard__text">
         <SkeletonTable numCols={1} numRows={4} />

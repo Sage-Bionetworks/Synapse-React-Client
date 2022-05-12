@@ -468,7 +468,7 @@ export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
         data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
         data-tip={message}
       >
-        <IconSvg options={{ icon: 'warningOutlined' }} />
+        <IconSvg icon="warningOutlined" />
       </div>
     )
   }

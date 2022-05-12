@@ -53,7 +53,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
       case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
         title = TERMS_OF_USE_TITLE
         iconType = EASY_DIFFICULTY
-        description = ar.description ?? ''
+        description = ar.name ?? ''
         break
       case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement: {
         title = SELF_SIGN_TITLE
@@ -66,14 +66,14 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         } else {
           iconType = EASY_DIFFICULTY
         }
-        description = ar.description ?? ''
+        description = ar.name ?? ''
         break
       }
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
         title = ACT_TITLE
         iconType = VARIABLE_DIFFICULTY
-        description = ar.description ?? ''
+        description = ar.name ?? ''
         break
       case 'org.sagebionetworks.repo.model.LockAccessRequirement':
         title = LOCK_TITLE

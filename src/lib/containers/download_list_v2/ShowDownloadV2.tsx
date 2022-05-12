@@ -47,11 +47,7 @@ function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
     <>
       <span id={idForToolTip} data-for={idForToolTip} data-tip={tooltipText}>
         <span className="SRC-primary-text-color">
-          <IconSvg
-            options={{
-              icon: 'cart',
-            }}
-          />
+          <IconSvg icon="cart" />
         </span>
         <span className={`download-cart-size`}>{size}</span>
       </span>

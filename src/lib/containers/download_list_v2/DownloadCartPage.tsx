@@ -78,8 +78,8 @@ export const DownloadCartPage: React.FunctionComponent<
               />
               <span>
                 <IconSvg
+                  icon="delete"
                   options={{
-                    icon: 'delete',
                     padding: 'right',
                   }}
                 />
@@ -169,8 +169,8 @@ export const DownloadCartPage: React.FunctionComponent<
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'}>
-                        <IconSvg options={{ icon: 'packagableFile' }} /> Web
-                        Download (.ZIP Packages)
+                        <IconSvg icon="packagableFile" /> Web Download (.ZIP
+                        Packages)
                       </Typography>
                       <HelpPopover markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process." />
                     </div>
@@ -229,8 +229,7 @@ export const DownloadCartPage: React.FunctionComponent<
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'}>
-                        <IconSvg options={{ icon: 'code' }} /> Programmatic
-                        Download
+                        <IconSvg icon="code" /> Programmatic Download
                       </Typography>
                       <HelpPopover markdownText="This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket).  External links will require navigation to an external site, which may require a separate login process." />
                     </div>

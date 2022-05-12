@@ -4,6 +4,7 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import { PROVIDERS } from '../containers/Login'
 import {
+  ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ALIAS_AVAILABLE,
   ASYNCHRONOUS_JOB_TOKEN,
@@ -178,6 +179,8 @@ import {
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import { SubmissionPage } from './synapseTypes/AccessRequirement/Submission'
+import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
 
 const cookies = new UniversalCookies()
 
@@ -233,6 +236,22 @@ export class SynapseClientError extends Error {
     this.status = status
     this.reason = reason
   }
+}
+
+export async function allowNotFoundError<T>(
+  fn: () => Promise<T>,
+): Promise<T | null> {
+  let response = null
+  try {
+    response = await fn()
+  } catch (e) {
+    if (e instanceof SynapseClientError && e.status === 404) {
+      // Permitted
+    } else {
+      throw e
+    }
+  }
+  return response
 }
 
 /*
@@ -2520,15 +2539,29 @@ export const getAccessRequirement = (
  * @param {number} id id of the access requirement
  * @returns {Promise<AccessRequirement>}
  */
-export const getAccessRequirementById = (
+export const getAccessRequirementById = <T extends AccessRequirement>(
   accessToken: string | undefined,
-  id: number,
-): Promise<AccessRequirement> => {
-  return doGet<AccessRequirement>(
+  id: string | number,
+): Promise<T> => {
+  return doGet<T>(
     ACCESS_REQUIREMENT_BY_ID(id),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const getAccessRequirementAcl = (
+  accessToken: string | undefined,
+  id: string | number,
+): Promise<AccessControlList | null> => {
+  return allowNotFoundError(() =>
+    doGet<AccessControlList>(
+      ACCESS_REQUIREMENT_ACL(id),
+      accessToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 
@@ -2574,6 +2607,27 @@ export const getAllAccessRequirements = (
     )
   }
   return getAllOfPaginatedService(fn)
+}
+
+/**
+ * Get submissions for an Access Requirement
+ *
+ * @deprecated
+ */
+export function getSubmissionsForAccessRequirement(
+  accessToken: string | undefined,
+  id: string,
+): Promise<SubmissionPage> {
+  const url = `/repo/v1/accessRequirement/${id}/submissions`
+  return doPost<SubmissionPage>(
+    url,
+    {
+      accessRequirementId: id,
+    },
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }
 
 /**
@@ -3031,6 +3085,21 @@ export const cancelDataAccessRequest = (
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// https://docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId.html
+// Request to update a submission' state. Only ACT member can perform this action.
+export const updateSubmissionStatus = (
+  request: SubmissionStateChangeRequest,
+  accessToken: string,
+) => {
+  return doPut<void>(
+    `/repo/v1/dataAccessSubmission/${request.submissionId}`,
+    request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

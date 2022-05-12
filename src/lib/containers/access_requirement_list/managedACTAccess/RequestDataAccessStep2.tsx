@@ -604,11 +604,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       <>
         {msg}
         <a href={link} target={'_blank'} rel={'noreferrer'}>
-          <IconSvg
-            options={{
-              icon: 'info',
-            }}
-          />
+          <IconSvg icon="info" />
         </a>
       </>
     ) : (
@@ -676,7 +672,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                             onClearAccessor(accessor.profile.ownerId)
                           }
                         >
-                          <IconSvg options={{ icon: 'clear' }} />
+                          <IconSvg icon="clear" />
                         </Button>
                       )
                   }
@@ -830,7 +826,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                           onClearAttachment(attachment.fileHandleId)
                         }
                       >
-                        <IconSvg options={{ icon: 'clear' }} />
+                        <IconSvg icon="clear" />
                       </Button>
                     </div>
                   )

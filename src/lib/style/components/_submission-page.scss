@@ -1,0 +1,37 @@
+.SubmissionPage {
+  @media screen and (min-width: 768px) {
+    display: flex;
+    .SubmissionSummary {
+      width: 375px;
+      max-width: 400px;
+      padding-right: 40px;
+
+      .SubmissionSummaryGrid {
+        display: grid;
+        column-gap: 10px;
+        row-gap: 10px;
+        grid-template-columns: auto auto;
+        > * {
+          white-space: nowrap;
+          //   justify-self: start;
+          //   align-self: center;
+        }
+      }
+    }
+  }
+  ul {
+    padding-left: 25px;
+    li {
+      margin-top: 5px;
+    }
+  }
+
+  .AccessRequirementWikiContainer {
+    background: #f1f3f580;
+    border: 1px solid #dfe2e6;
+
+    .AccessRequirementWikiContent {
+      margin: 40px;
+    }
+  }
+}

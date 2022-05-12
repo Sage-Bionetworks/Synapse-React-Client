@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import {
@@ -37,6 +37,7 @@ import {
   RemoveCircleTwoTone,
   LockOpenTwoTone,
   VpnKeyTwoTone,
+  Refresh,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -60,7 +61,6 @@ import PackagableFile from '../assets/mui_components/PackagableFile'
 import Docker from '../assets/mui_components/Docker'
 
 export type IconSvgOptions = {
-  icon: string
   color?: string // If no color is provided, it should inherit current color
   size?: string
   padding?: 'left' | 'right'
@@ -68,7 +68,8 @@ export type IconSvgOptions = {
 }
 
 export type IconSvgProps = {
-  options: IconSvgOptions
+  icon: string
+  options?: IconSvgOptions
 }
 
 export type SVGStyleProps = {
@@ -77,8 +78,9 @@ export type SVGStyleProps = {
   fill?: string
 }
 
-const getIcon = (options: IconSvgOptions) => {
-  const { icon, color } = options
+const MapIcon = (props: { icon: string; options: IconSvgOptions }) => {
+  const { icon, options } = props
+  const { color } = options
 
   // Styles for svg imported from mui
   const muiSvgStyle: SVGStyleProps = {
@@ -227,18 +229,17 @@ const getIcon = (options: IconSvgOptions) => {
       return <ReportProblemOutlined style={muiSvgStyle}></ReportProblemOutlined>
     case 'removeCircle':
       return <RemoveCircleTwoTone style={muiSvgStyle}></RemoveCircleTwoTone>
+    case 'renew':
+      return <Refresh style={muiSvgStyle} />
     default:
       return <></>
   }
 }
 
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { options } = props
-  const { icon, color, padding, label } = options
-  let mounted = true
-
+  const { icon, options = {} } = props
   // Do not set inline style unless it is specified because it's hard to override
-  const getPadding = (padding: any) => {
+  const getPadding = (padding: 'left' | 'right' | undefined) => {
     if (padding === 'left') {
       return { paddingLeft: '0.2rem' }
     }
@@ -247,16 +248,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
     }
     return {}
   }
-  const wrapperCss = getPadding(padding)
-
-  useEffect(() => {
-    if (mounted) {
-      //
-    }
-    return () => {
-      mounted = false
-    }
-  }, [icon, color])
+  const wrapperCss = getPadding(options.padding)
 
   return (
     <>
@@ -266,16 +258,17 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         style={wrapperCss}
         id={`icon-${icon}`}
         data-for={`icon-${icon}`}
-        data-tip={label}
+        data-tip={options.label}
       >
-        {getIcon(options)}
+        <MapIcon icon={icon} options={options} />
       </span>
-      {label && (
+      {options.label && (
         <ReactTooltip
           className={'icon-svg-tooltip'}
           delayShow={TOOLTIP_DELAY_SHOW}
           id={`icon-${icon}`}
           place={'top'}
+          effect={'solid'}
         />
       )}
     </>

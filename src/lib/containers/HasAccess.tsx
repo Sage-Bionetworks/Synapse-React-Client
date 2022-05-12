@@ -299,8 +299,8 @@ export default class HasAccess extends React.Component<
   renderIconSvg(icon: string, color: string) {
     return (
       <IconSvg
+        icon={icon}
         options={{
-          icon: icon,
           color: color,
         }}
       />

@@ -197,7 +197,7 @@ const DirectDownload: React.FunctionComponent<
     if (hasFileAccess) {
       return (
         <button className={'btn-download-icon'} onClick={getDownloadLink}>
-          <IconSvg options={{ icon: 'download' }} />
+          <IconSvg icon="download" />
           {displayFileName && fileName ? fileName : ''}
         </button>
       )

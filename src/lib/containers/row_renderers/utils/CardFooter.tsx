@@ -84,7 +84,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
         options.padding = 'right'
         return (
           <>
-            <IconSVG options={options}></IconSVG>
+            <IconSVG icon={options.icon} options={options}></IconSVG>
             <span style={{ verticalAlign: 'middle' }}>{value}</span>
           </>
         )
@@ -159,10 +159,8 @@ class CardFooter extends React.Component<CardFooterProps, State> {
                   >
                     Show {isShowMoreOn ? 'Less' : 'More'}
                     <IconSVG
-                      options={{
-                        icon: isShowMoreOn ? 'expandLess' : 'expandMore',
-                      }}
-                    ></IconSVG>
+                      icon={isShowMoreOn ? 'expandLess' : 'expandMore'}
+                    />
                   </a>
                 </td>
               </tr>
