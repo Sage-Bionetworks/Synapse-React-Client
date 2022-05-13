@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../../../utils/ErrorUtils'
 import { useGetFavoritesInfinite } from '../../../../utils/hooks/SynapseAPI/useFavorites'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
@@ -35,7 +34,7 @@ export const FavoritesDetails: React.FunctionComponent<
 
   useEffect(() => {
     if (isError && error) {
-      handleError(toError(error))
+      handleError(error)
     }
   }, [isError, error, handleError])
 

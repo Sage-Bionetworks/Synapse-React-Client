@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult'
-import { toError } from '../../utils/ErrorUtils'
 import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
@@ -67,7 +66,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
 

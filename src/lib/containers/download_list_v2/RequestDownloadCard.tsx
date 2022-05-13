@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
 import { EntityHeader } from '../../utils/synapseTypes'
 import { Icon } from '../row_renderers/utils'
@@ -28,7 +27,7 @@ export const RequestDownloadCard: React.FunctionComponent<
   const entityHeader: EntityHeader | undefined = data?.results[0]
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
 

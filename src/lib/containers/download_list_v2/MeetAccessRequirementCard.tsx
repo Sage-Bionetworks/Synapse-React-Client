@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
 import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/useGetAccessRequirement'
 import { SelfSignAccessRequirement } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
@@ -39,7 +38,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
   } = useGetAccessRequirement(accessRequirementId)
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] =
