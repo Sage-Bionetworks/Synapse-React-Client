@@ -4,7 +4,7 @@ import { AccessRequirementStatus } from './AccessRequirementStatus'
  * The state of a Submission.
  * http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/dataaccess/SubmissionState.html
  */
-export enum SUBMISSION_STATE {
+export enum SubmissionState {
   SUBMITTED = 'SUBMITTED',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
@@ -19,7 +19,7 @@ export type ACTSubmissionStatus = {
   submissionId: string
   submittedBy: string
   rejectedReason: string
-  state: SUBMISSION_STATE
+  state: SubmissionState
   modifiedOn: string
 }
 

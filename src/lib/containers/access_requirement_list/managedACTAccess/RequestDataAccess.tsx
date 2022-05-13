@@ -13,7 +13,7 @@ import {
   ApprovalState,
   ManagedACTAccessRequirement,
   SelfSignAccessRequirement,
-  SUBMISSION_STATE,
+  SubmissionState,
   TermsOfUseAccessRequirement,
   UserProfile,
   WikiPageKey,
@@ -58,7 +58,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
   const [isApproved, setIsApproved] = useState<boolean | undefined>(
     propsIsApproved,
   )
-  const [submissionState, setSubmissionState] = useState<SUBMISSION_STATE>()
+  const [submissionState, setSubmissionState] = useState<SubmissionState>()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [isSubmissionCanceled, setIsSubmissionCanceled] =
     useState<boolean>(false)
@@ -86,7 +86,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
       if (accessToken) {
         // !isSubmissionCanceled: if the submission has already been canceled, don't cancel again
         if (
-          submissionState === SUBMISSION_STATE.SUBMITTED &&
+          submissionState === SubmissionState.SUBMITTED &&
           !isSubmissionCanceled
         ) {
           const errAlert = {
@@ -105,7 +105,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
                 accessRequirementStatus?.currentSubmissionStatus!.submissionId!,
                 accessToken!,
               )
-            if (resp.state === SUBMISSION_STATE.CANCELLED) {
+            if (resp.state === SubmissionState.CANCELLED) {
               // successfully cancelled
               setAlert({
                 key: 'success',
@@ -161,14 +161,14 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
       if (submissionState) {
         let btnActionText
         switch (submissionState) {
-          case SUBMISSION_STATE.SUBMITTED:
+          case SubmissionState.SUBMITTED:
             btnActionText = isSubmissionCanceled
               ? 'Update Request'
               : `Cancel Request`
             break
-          case SUBMISSION_STATE.APPROVED:
-          case SUBMISSION_STATE.REJECTED:
-          case SUBMISSION_STATE.CANCELLED:
+          case SubmissionState.APPROVED:
+          case SubmissionState.REJECTED:
+          case SubmissionState.CANCELLED:
             btnActionText = 'Update Request'
         }
         return btnActionText
@@ -182,19 +182,19 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
 
   const showSubmissionStatusAlert = (submissionStatus: ACTSubmissionStatus) => {
     switch (submissionStatus.state) {
-      case SUBMISSION_STATE.SUBMITTED:
+      case SubmissionState.SUBMITTED:
         setAlert({
           key: 'primary',
           message: <strong>You have submitted a data access request.</strong>,
         })
         break
-      case SUBMISSION_STATE.APPROVED:
+      case SubmissionState.APPROVED:
         setAlert({
           key: 'success',
           message: <strong>Your data access request has been approved.</strong>,
         })
         break
-      case SUBMISSION_STATE.REJECTED:
+      case SubmissionState.REJECTED:
         setAlert({
           key: 'danger',
           message: (
