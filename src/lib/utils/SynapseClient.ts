@@ -4,6 +4,7 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import { PROVIDERS } from '../containers/Login'
 import {
+  ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ALIAS_AVAILABLE,
   ASYNCHRONOUS_JOB_TOKEN,
@@ -110,7 +111,6 @@ import {
   WikiPage,
   WikiPageKey,
 } from './synapseTypes/'
-import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import {
   ACCESS_TYPE,
   CreateSubmissionRequest,
@@ -118,6 +118,7 @@ import {
   RequestInterface,
 } from './synapseTypes/AccessRequirement'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
+import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
@@ -177,6 +178,7 @@ import {
   TransformSqlWithFacetsRequest,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
+import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
 import { DiscussionReplyBundle, DiscussionThreadBundle } from './synapseTypes/DiscussionBundle'
 import { MessageURL } from './synapseTypes/MessageUrl'
@@ -236,6 +238,27 @@ export class SynapseClientError extends Error {
     this.status = status
     this.reason = reason
   }
+}
+
+/**
+ * Invokes a function that makes a request to Synapse and returns null if the server responds with a 404.
+ * @param fn a function that may throw a SynapseClientError when encountering an HTTP Error Code
+ * @returns The result of the function call, or null if the result is a 404 "Not Found" error.
+ */
+export async function allowNotFoundError<T>(
+  fn: () => Promise<T>,
+): Promise<T | null> {
+  let response = null
+  try {
+    response = await fn()
+  } catch (e) {
+    if (e instanceof SynapseClientError && e.status === 404) {
+      // Permitted
+    } else {
+      throw e
+    }
+  }
+  return response
 }
 
 /*
@@ -2522,15 +2545,36 @@ export const getAccessRequirement = (
  * @param {number} id id of the access requirement
  * @returns {Promise<AccessRequirement>}
  */
-export const getAccessRequirementById = (
+export const getAccessRequirementById = <T extends AccessRequirement>(
   accessToken: string | undefined,
-  id: number,
-): Promise<AccessRequirement> => {
-  return doGet<AccessRequirement>(
+  id: string | number,
+): Promise<T> => {
+  return doGet<T>(
     ACCESS_REQUIREMENT_BY_ID(id),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Fetch the ACL for the access requirement with the given id.
+ *
+ * See https://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/acl.html
+ * @returns the ACL for the specified AR, or null if the ACL does not exist
+ */
+export const getAccessRequirementAcl = (
+  accessToken: string | undefined,
+  id: string | number,
+): Promise<AccessControlList | null> => {
+  // It's possible for an AR to not have an ACL, so pre-emptively handle 404
+  return allowNotFoundError(() =>
+    doGet<AccessControlList>(
+      ACCESS_REQUIREMENT_ACL(id),
+      accessToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 
@@ -3032,6 +3076,28 @@ export const cancelDataAccessRequest = (
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Request to update a submission' state. Only ACT members and delegates with the REVIEW_SUBMISSION ACL
+ * permission can perform this action.
+ *
+ * See https://docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId.html
+ * @param request
+ * @param accessToken
+ * @returns
+ */
+export const updateSubmissionStatus = (
+  request: SubmissionStateChangeRequest,
+  accessToken?: string,
+) => {
+  return doPut<void>(
+    `/repo/v1/dataAccessSubmission/${request.submissionId}`,
+    request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

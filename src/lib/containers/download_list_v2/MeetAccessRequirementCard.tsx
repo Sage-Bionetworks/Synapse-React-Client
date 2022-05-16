@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
-import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/useGetAccessRequirement'
+import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
 import { SelfSignAccessRequirement } from '../../utils/synapseTypes'
 import { Button } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
@@ -39,7 +38,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
   } = useGetAccessRequirement(accessRequirementId)
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
   const [isShowingAccessRequirement, setIsShowingAccessRequirement] =
@@ -53,7 +52,7 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
       case SUPPORTED_ACCESS_REQUIREMENTS.TermsOfUseAccessRequirement:
         title = TERMS_OF_USE_TITLE
         iconType = EASY_DIFFICULTY
-        description = ar.description ?? ''
+        description = ar.name ?? ''
         break
       case SUPPORTED_ACCESS_REQUIREMENTS.SelfSignAccessRequirement: {
         title = SELF_SIGN_TITLE
@@ -66,14 +65,14 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         } else {
           iconType = EASY_DIFFICULTY
         }
-        description = ar.description ?? ''
+        description = ar.name ?? ''
         break
       }
       case SUPPORTED_ACCESS_REQUIREMENTS.ManagedACTAccessRequirement:
       case SUPPORTED_ACCESS_REQUIREMENTS.ACTAccessRequirement:
         title = ACT_TITLE
         iconType = VARIABLE_DIFFICULTY
-        description = ar.description ?? ''
+        description = ar.name ?? ''
         break
       case 'org.sagebionetworks.repo.model.LockAccessRequirement':
         title = LOCK_TITLE

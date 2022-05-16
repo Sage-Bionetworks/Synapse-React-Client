@@ -7,7 +7,10 @@ import {
   PaginatedResults,
 } from '../../../lib/utils/synapseTypes'
 import { SynapseClient } from '../../../lib/utils'
-import { FunctionReturningPaginatedResults } from '../../../lib/utils/SynapseClient'
+import {
+  FunctionReturningPaginatedResults,
+  SynapseClientError,
+} from '../../../lib/utils/SynapseClient'
 import { rest, server } from '../../../mocks/msw/server'
 import { ASYNCHRONOUS_JOB_TOKEN } from '../../../lib/utils/APIConstants'
 
@@ -171,6 +174,37 @@ describe('SynapseClient tests', () => {
   })
 
   describe('SynapseClient unit tests', () => {
+    describe('allowNotFoundError', () => {
+      it('Passes along a non-404 successful response', async () => {
+        const expected = {
+          arbitrary: 'data',
+        }
+        const fn = jest.fn().mockResolvedValue(expected)
+
+        const actual = await SynapseClient.allowNotFoundError(fn)
+
+        expect(expected).toEqual(actual)
+      })
+      it('Passes null on a 404 response', async () => {
+        const expected = null
+        const fn = jest
+          .fn()
+          .mockRejectedValue(new SynapseClientError(404, 'Not found!'))
+
+        const actual = await SynapseClient.allowNotFoundError(fn)
+
+        expect(expected).toEqual(actual)
+      })
+      it('Passes along a non-404 error response', async () => {
+        const expected = new SynapseClientError(400, 'Bad request!')
+        const fn = jest.fn().mockRejectedValue(expected)
+
+        await expect(() =>
+          SynapseClient.allowNotFoundError(fn),
+        ).rejects.toEqual(expected)
+      })
+    })
+
     describe('getAllOfPaginatedService', () => {
       it('works with < 50 results', async () => {
         const results = ['a']

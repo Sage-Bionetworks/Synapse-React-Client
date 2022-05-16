@@ -10,7 +10,6 @@ import IconSvg from '../IconSvg'
 import { CreatePackageV2 } from './CreatePackageV2'
 import FullWidthAlert from '../FullWidthAlert'
 import { ErrorBanner } from '../ErrorBanner'
-import { toError } from '../../utils/ErrorUtils'
 import Typography from '../../utils/typography/Typography'
 import ReactTooltip from 'react-tooltip'
 import { HelpPopover } from '../HelpPopover'
@@ -39,7 +38,7 @@ export const DownloadCartPage: React.FunctionComponent<
   } = useGetDownloadListStatistics()
   useEffect(() => {
     if (isError && newError) {
-      setError(toError(newError))
+      setError(newError)
     }
   }, [isError, newError])
 

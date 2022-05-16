@@ -20,7 +20,7 @@ import {
   ManagedACTAccessRequirement,
   RequestInterface,
   RestrictableObjectType,
-  SUBMISSION_STATE,
+  SubmissionState,
   TYPE_FILTER,
   UploadCallbackResp,
   UserProfile,
@@ -356,7 +356,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           const submission_resp: ACTSubmissionStatus =
             await submitDataAccessRequest(requestObject, accessToken!)
           const alertMsg = getSubmissionMsg(submission_resp)
-          if (submission_resp.state === SUBMISSION_STATE.REJECTED) {
+          if (submission_resp.state === SubmissionState.REJECTED) {
             setAlert({
               key: 'danger',
               message: alertMsg,
@@ -396,13 +396,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const getSubmissionMsg = (submission_resp: ACTSubmissionStatus) => {
     const msgStart = 'The information has been '
     switch (submission_resp.state) {
-      case SUBMISSION_STATE.SUBMITTED:
+      case SubmissionState.SUBMITTED:
         return <strong>{msgStart} submitted.</strong>
-      case SUBMISSION_STATE.APPROVED:
+      case SubmissionState.APPROVED:
         return <strong>{msgStart} approved.</strong>
-      case SUBMISSION_STATE.CANCELLED:
+      case SubmissionState.CANCELLED:
         return <strong>{msgStart} canceled.</strong>
-      case SUBMISSION_STATE.REJECTED:
+      case SubmissionState.REJECTED:
         return (
           <>
             <strong>{msgStart} rejected.</strong>{' '}
