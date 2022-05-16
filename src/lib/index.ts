@@ -45,6 +45,8 @@ import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import ChangePassword from './containers/ChangePassword'
+import ForumSearch from './containers/ForumSearch'
+import DiscussionSearchResult from './containers/DiscussionSearchResult'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -123,6 +125,8 @@ const SynapseComponents = {
   ProgrammaticTableDownload,
   ChangePassword,
   FileUpload,
+  ForumSearch,
+  DiscussionSearchResult,
 }
 
 export {
