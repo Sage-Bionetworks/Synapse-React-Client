@@ -1,5 +1,3 @@
 ```jsx
-
 <ExperimentalMode />
-
 ```

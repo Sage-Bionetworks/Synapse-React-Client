@@ -15,7 +15,10 @@ import {
   mockUiSchema as formUiSchema,
   mockInvalidScreenData as inVivoData,
 } from '../../../../mocks/mock_drug_tool_data'
-import { NavActionEnum, Step } from '../../../../lib/containers/synapse_form_wrapper/types'
+import {
+  NavActionEnum,
+  Step,
+} from '../../../../lib/containers/synapse_form_wrapper/types'
 
 const formTitle = 'my submission'
 

@@ -61,9 +61,9 @@ const fetchEvaluationList = (
 /**
  * Edits EvaluationsRounds for an Evaluation.
  */
-export const EvaluationRoundEditorList: React.FunctionComponent<EvaluationRoundEditorListProps> = ({
-  evaluationId,
-}: EvaluationRoundEditorListProps) => {
+export const EvaluationRoundEditorList: React.FunctionComponent<
+  EvaluationRoundEditorListProps
+> = ({ evaluationId }: EvaluationRoundEditorListProps) => {
   const { accessToken } = useSynapseContext()
   const [error, setError] = useState<string | SynapseClientError | undefined>()
 

@@ -53,7 +53,10 @@ export function SqlEditor() {
       }`}
     >
       <Collapse in={showSqlEditor} timeout={{ enter: 300, exit: 300 }}>
-        <form className="QueryWrapperSqlEditorInput__searchbar" onSubmit={search}>
+        <form
+          className="QueryWrapperSqlEditorInput__searchbar"
+          onSubmit={search}
+        >
           <FontAwesomeIcon
             className="QueryWrapperSqlEditorInput__searchbar__searchicon"
             size={'sm'}

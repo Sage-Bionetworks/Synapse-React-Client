@@ -27,11 +27,7 @@
         "binding_affinity_constant": {
           "type": "string",
           "title": "Binding Affinity Constant",
-          "enum": [
-            "Ki",
-            "Kd",
-            "Km"
-          ],
+          "enum": ["Ki", "Kd", "Km"],
           "uniqueItems": true
         }
       }
@@ -67,14 +63,8 @@
         "efficacy_measure_type": {
           "type": "string",
           "title": "Efficacy Measure",
-          "enum": [
-            "EC50",
-            "IC50"
-          ],
-          "enumNames": [
-            "EC50 (mg/kg)",
-            "IC50 (nmol/L)"
-          ],
+          "enum": ["EC50", "IC50"],
+          "enumNames": ["EC50 (mg/kg)", "IC50 (nmol/L)"],
           "uniqueItems": true
         }
       }
@@ -121,28 +111,16 @@
         "data_sharing": {
           "type": "boolean",
           "default": false,
-          "enum": [
-            true,
-            false
-          ],
-          "enumNames": [
-            "I agree to data sharing",
-            "I want to discuss further"
-          ],
+          "enum": [true, false],
+          "enumNames": ["I agree to data sharing", "I want to discuss further"],
           "uniqueItems": true,
           "title": "Data Sharing"
         },
         "is_off_label": {
           "type": "boolean",
           "default": false,
-          "enum": [
-            true,
-            false
-          ],
-          "enumNames": [
-            "Yes",
-            "No"
-          ],
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
           "uniqueItems": true,
           "title": "Is this compound available for off label use?"
         },
@@ -170,11 +148,7 @@
     },
     "measurements": {
       "type": "object",
-      "required": [
-        "compound_availability",
-        "molecular_weight",
-        "is_solution"
-      ],
+      "required": ["compound_availability", "molecular_weight", "is_solution"],
       "properties": {
         "compound_availability": {
           "title": "Available compound amount (mg)",
@@ -188,14 +162,8 @@
         "is_solution": {
           "title": "Is the compound a solution?",
           "type": "boolean",
-          "enum": [
-            true,
-            false
-          ],
-          "enumNames": [
-            "Yes",
-            "No"
-          ],
+          "enum": [true, false],
+          "enumNames": ["Yes", "No"],
           "default": false
         }
       },
@@ -205,18 +173,14 @@
             {
               "properties": {
                 "is_solution": {
-                  "enum": [
-                    false
-                  ]
+                  "enum": [false]
                 }
               }
             },
             {
               "properties": {
                 "is_solution": {
-                  "enum": [
-                    true
-                  ]
+                  "enum": [true]
                 },
                 "compound_concentration": {
                   "title": "Concentration (mg/ml)",
@@ -255,18 +219,8 @@
         },
         "therapeutic_approach": {
           "type": "string",
-          "enum": [
-            "prophylactic",
-            "symptomatic",
-            "both",
-            "unknown"
-          ],
-          "enumNames": [
-            "Prophylactic",
-            "Symptomatic",
-            "Both",
-            "Unknown"
-          ],
+          "enum": ["prophylactic", "symptomatic", "both", "unknown"],
+          "enumNames": ["Prophylactic", "Symptomatic", "Both", "Unknown"],
           "uniqueItems": true,
           "title": "What is the therapeutic approach?"
         },
@@ -288,16 +242,8 @@
         },
         "water_soluble": {
           "type": "string",
-          "enum": [
-            "yes",
-            "no",
-            "unknown"
-          ],
-          "enumNames": [
-            "Yes",
-            "No",
-            "Unknown"
-          ],
+          "enum": ["yes", "no", "unknown"],
+          "enumNames": ["Yes", "No", "Unknown"],
           "uniqueItems": true,
           "title": "Is the compound water soluble?"
         },
@@ -331,16 +277,8 @@
         },
         "orally_active": {
           "type": "string",
-          "enum": [
-            "yes",
-            "no",
-            "unknown"
-          ],
-          "enumNames": [
-            "Yes",
-            "No",
-            "Unknown"
-          ],
+          "enum": ["yes", "no", "unknown"],
+          "enumNames": ["Yes", "No", "Unknown"],
           "uniqueItems": true,
           "title": "Is the drug orally active?"
         }
@@ -351,10 +289,7 @@
             {
               "properties": {
                 "water_soluble": {
-                  "enum": [
-                    "no",
-                    "unknown"
-                  ]
+                  "enum": ["no", "unknown"]
                 }
               },
               "required": []
@@ -362,18 +297,14 @@
             {
               "properties": {
                 "water_soluble": {
-                  "enum": [
-                    "yes"
-                  ]
+                  "enum": ["yes"]
                 },
                 "solubility_limitations": {
                   "type": "string",
                   "title": "Describe any solubility limitations"
                 }
               },
-              "required": [
-                "solubility_limitations"
-              ]
+              "required": ["solubility_limitations"]
             }
           ]
         }
@@ -458,16 +389,8 @@
         "sex": {
           "type": "string",
           "title": "Subject Sex",
-          "enum": [
-            "male",
-            "female",
-            "both"
-          ],
-          "enumNames": [
-            "Male",
-            "Female",
-            "Both"
-          ]
+          "enum": ["male", "female", "both"],
+          "enumNames": ["Male", "Female", "Both"]
         },
         "ed50": {
           "type": "string",
@@ -490,16 +413,8 @@
         "dose_regimen": {
           "type": "string",
           "title": "Dosing Regimen",
-          "enum": [
-            "acute",
-            "chronic",
-            "sub_chronic"
-          ],
-          "enumNames": [
-            "Acute",
-            "Chronic",
-            "Sub Chronic"
-          ]
+          "enum": ["acute", "chronic", "sub_chronic"],
+          "enumNames": ["Acute", "Chronic", "Sub Chronic"]
         },
         "pretreatment_time": {
           "type": "string",
@@ -563,18 +478,14 @@
             {
               "properties": {
                 "species": {
-                  "enum": [
-                    "other"
-                  ]
+                  "enum": ["other"]
                 },
                 "species_other": {
                   "title": "Other Species",
                   "type": "string"
                 }
               },
-              "required": [
-                "species_other"
-              ]
+              "required": ["species_other"]
             }
           ]
         }

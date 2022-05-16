@@ -1,4 +1,4 @@
-import { Query } from "../Table";
+import { Query } from '../Table'
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/AddToDownloadListRequest.html
 export type AddToDownloadListRequest = {

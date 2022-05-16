@@ -59,11 +59,13 @@ export interface ListStateReturn<T> {
 export const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
   const [list, setList] = useState(initialState)
 
-  const handleListChange = (index: number) => (changedValue: T): void => {
-    const modifiedList = [...list]
-    modifiedList[index] = changedValue
-    setList(modifiedList)
-  }
+  const handleListChange =
+    (index: number) =>
+    (changedValue: T): void => {
+      const modifiedList = [...list]
+      modifiedList[index] = changedValue
+      setList(modifiedList)
+    }
 
   const handleListRemove = (index: number) => (): void => {
     const modifiedList = list.filter((value, arr_index) => index !== arr_index)

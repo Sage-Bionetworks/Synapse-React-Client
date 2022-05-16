@@ -1,5 +1,5 @@
-$terms-text-color: #ABABAC;
-$terms-accent-gray: #DCDCDC;
+$terms-text-color: #ababac;
+$terms-accent-gray: #dcdcdc;
 $terms-margin: 20px;
 $terms-checkbox-dimension: 40px;
 $signatureLine-width: 420px;
@@ -33,7 +33,7 @@ $signatureLine-width: 420px;
         opacity: 1;
       }
       > span {
-        flex: 1
+        flex: 1;
       }
       .terms-desc {
         ul {
@@ -74,7 +74,7 @@ $signatureLine-width: 420px;
         line-height: $terms-checkbox-dimension;
       }
       .terms-checked {
-        background-color: #28A745;
+        background-color: #28a745;
         border: none;
         text-align: center;
       }

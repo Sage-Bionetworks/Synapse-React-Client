@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
 import { useInView } from 'react-intersection-observer'
 import { ProjectHeader } from '../../utils/synapseTypes'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
@@ -30,7 +29,7 @@ export default function UserProjects({ userId }: UserProjectsProps) {
 
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
 

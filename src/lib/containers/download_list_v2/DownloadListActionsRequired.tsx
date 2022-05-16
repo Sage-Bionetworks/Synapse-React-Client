@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
 import { useGetDownloadListActionsRequiredInfinite } from '../../utils/hooks/SynapseAPI/useGetDownloadListActionsRequired'
 import { useInView } from 'react-intersection-observer'
 import {
@@ -8,7 +7,10 @@ import {
   MeetAccessRequirement,
   RequestDownload,
 } from '../../utils/synapseTypes/DownloadListV2/ActionRequiredCount'
-import { LoadingAccessRequirementCard, MeetAccessRequirementCard } from './MeetAccessRequirementCard'
+import {
+  LoadingAccessRequirementCard,
+  MeetAccessRequirementCard,
+} from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 
 export default function DownloadListActionsRequired() {
@@ -28,7 +30,7 @@ export default function DownloadListActionsRequired() {
 
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
 
@@ -54,7 +56,8 @@ export default function DownloadListActionsRequired() {
   const renderActionRequired = (actionRequiredCount: ActionRequiredCount) => {
     switch (actionRequiredCount.action.concreteType) {
       case 'org.sagebionetworks.repo.model.download.MeetAccessRequirement': {
-        const meetARAction: MeetAccessRequirement = actionRequiredCount.action as MeetAccessRequirement
+        const meetARAction: MeetAccessRequirement =
+          actionRequiredCount.action as MeetAccessRequirement
         return (
           <MeetAccessRequirementCard
             key={meetARAction.accessRequirementId}
@@ -64,7 +67,8 @@ export default function DownloadListActionsRequired() {
         )
       }
       case 'org.sagebionetworks.repo.model.download.RequestDownload': {
-        const requestDownloadAction: RequestDownload = actionRequiredCount.action as RequestDownload
+        const requestDownloadAction: RequestDownload =
+          actionRequiredCount.action as RequestDownload
         return (
           <RequestDownloadCard
             key={requestDownloadAction.benefactorId}
@@ -91,9 +95,7 @@ export default function DownloadListActionsRequired() {
           <div ref={ref} />
         </div>
       )}
-      {isLoading && (
-        <LoadingAccessRequirementCard />
-      )}
+      {isLoading && <LoadingAccessRequirementCard />}
     </>
   )
 }

@@ -1,5 +1,8 @@
 import { FileEntity } from '../lib/utils/synapseTypes/'
-import { Step, StepStateEnum } from '../lib/containers/synapse_form_wrapper/types'
+import {
+  Step,
+  StepStateEnum,
+} from '../lib/containers/synapse_form_wrapper/types'
 import { ListResponse, StatusEnum } from '../lib/utils/synapseTypes/'
 import _mockFormData from './mockDrugToolFormData.json'
 import _mockNavSchema from './mockDrugToolFormNavSchema.json'
@@ -10,7 +13,7 @@ export const mockFormData = _mockFormData
 export const mockFormSchema = _mockFormSchema
 export const mockNavSchema = _mockNavSchema
 export const mockUiSchema = _mockUiSchema
-export const mockInvalidScreenData = _mockFormDataComplexInvalid 
+export const mockInvalidScreenData = _mockFormDataComplexInvalid
 export const steps: Step[] = [
   {
     id: 'toxicology _data',

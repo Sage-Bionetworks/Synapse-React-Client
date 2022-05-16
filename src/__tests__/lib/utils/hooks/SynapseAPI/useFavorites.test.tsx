@@ -5,9 +5,7 @@ import {
   EntityHeader,
   PaginatedResults,
 } from '../../../../../lib/utils/synapseTypes'
-import {
-  MOCK_CONTEXT_VALUE,
-} from '../../../../../mocks/MockSynapseContext'
+import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
 

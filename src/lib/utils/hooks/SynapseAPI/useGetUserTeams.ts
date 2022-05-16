@@ -1,7 +1,4 @@
-import {
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-} from 'react-query'
+import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
@@ -21,17 +18,18 @@ export function useGetUserTeamsInfinite(
   return useInfiniteQuery<PaginatedResults<Team>, SynapseClientError>(
     ['getuserteams', userId],
     async context => {
-      return SynapseClient.getUserTeamList(accessToken,
+      return SynapseClient.getUserTeamList(
+        accessToken,
         userId,
         context.pageParam, // pass the context.pageParam for the new offset
-        10 // limit
+        10, // limit
       )
     },
     {
       ...options,
       getNextPageParam: (lastPage, pages) => {
         if (lastPage.results.length > 0)
-          return pages.length * 10  //set the new offset to (page * limit)
+          return pages.length * 10 //set the new offset to (page * limit)
         else return undefined
       },
     },

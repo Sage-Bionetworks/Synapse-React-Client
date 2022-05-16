@@ -149,8 +149,14 @@ class Login extends React.Component<Props, State> {
       })
   }
   public render() {
-    const registerAccountUrl = this.props.registerAccountUrl ?? `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!RegisterAccount:0`
-    const resetPasswordUrl = this.props.resetPasswordUrl ?? `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!PasswordReset:0`
+    const registerAccountUrl =
+      this.props.registerAccountUrl ??
+      `${getEndpoint(
+        BackendDestinationEnum.PORTAL_ENDPOINT,
+      )}#!RegisterAccount:0`
+    const resetPasswordUrl =
+      this.props.resetPasswordUrl ??
+      `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}#!PasswordReset:0`
     return (
       <div
         id="loginPage"
@@ -195,11 +201,7 @@ class Login extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
           {this.getLoginFailureView()}
-          <a
-            href={resetPasswordUrl}
-          >
-            Forgot password?
-          </a>
+          <a href={resetPasswordUrl}>Forgot password?</a>
           <Button
             variant="primary-500"
             onSubmit={this.handleLogin}
@@ -210,9 +212,7 @@ class Login extends React.Component<Props, State> {
           </Button>
         </Form>
         <div className={'SRC-center-text'}>
-          <a
-            href={registerAccountUrl}
-          >
+          <a href={registerAccountUrl}>
             Don&apos;t have an account? Register now
           </a>
         </div>

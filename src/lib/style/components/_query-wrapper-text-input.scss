@@ -1,6 +1,7 @@
 @use '../abstracts/variables' as SRC;
 
-.QueryWrapperSearchInput, .QueryWrapperSqlEditorInput {
+.QueryWrapperSearchInput,
+.QueryWrapperSqlEditorInput {
   &__searchbar {
     height: 50px;
     background: #f9f9f9;

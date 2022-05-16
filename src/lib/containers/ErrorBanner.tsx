@@ -5,7 +5,6 @@ import {
   ErrorBoundaryPropsWithComponent,
   FallbackProps,
 } from 'react-error-boundary'
-import { isError, isSynapseClientError } from '../utils/ErrorUtils'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Optional } from '../utils/types/Optional'
@@ -58,9 +57,9 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
   let synapseClientError: SynapseClientError | undefined = undefined
   let jsError: Error | undefined = undefined
   let stringError: string | undefined = undefined
-  if (isSynapseClientError(error)) {
+  if (error instanceof SynapseClientError) {
     synapseClientError = error
-  } else if (isError(error)) {
+  } else if (error instanceof Error) {
     jsError = error
   } else if (typeof error === 'string') {
     stringError = error
@@ -102,16 +101,17 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
   )
 }
 
-export const TableRowFallbackComponent: React.FunctionComponent<FallbackProps> =
-  ({ error, resetErrorBoundary }) => {
-    return (
-      <tr>
-        <td colSpan={999}>
-          <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
-        </td>
-      </tr>
-    )
-  }
+export const TableRowFallbackComponent: React.FunctionComponent<
+  FallbackProps
+> = ({ error, resetErrorBoundary }) => {
+  return (
+    <tr>
+      <td colSpan={999}>
+        <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
+      </td>
+    </tr>
+  )
+}
 
 /**
  * ErrorBoundary component that uses the default error fallback component, unless overridden.

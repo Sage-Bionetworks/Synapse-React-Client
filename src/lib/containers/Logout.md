@@ -1,4 +1,7 @@
-
 ```jsx
-<Logout callback={()=>{location.reload()}} />
+<Logout
+  callback={() => {
+    location.reload()
+  }}
+/>
 ```

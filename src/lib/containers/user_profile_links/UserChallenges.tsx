@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../utils/ErrorUtils'
 import { useInView } from 'react-intersection-observer'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/useGetUserChallenges'
@@ -28,7 +27,7 @@ export default function UserChallenges({ userId }: UserChallengesProps) {
 
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
 

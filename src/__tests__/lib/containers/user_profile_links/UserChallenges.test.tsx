@@ -7,17 +7,15 @@ import { useGetUserChallengesInfinite } from '../../../../lib/utils/hooks/Synaps
 import { ChallengeWithProjectHeader } from '../../../../lib/utils/synapseTypes/ChallengePagedResults'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
-jest.mock(
-  '../../../../lib/utils/hooks/SynapseAPI/useGetUserChallenges',
-  () => {
-    return {
-      useGetUserChallengesInfinite: jest.fn(),
-    }
-  },
-)
+jest.mock('../../../../lib/utils/hooks/SynapseAPI/useGetUserChallenges', () => {
+  return {
+    useGetUserChallengesInfinite: jest.fn(),
+  }
+})
 
 const mockFetchNextPage = jest.fn()
-const mockUseGetUserChallengesInfinite = useGetUserChallengesInfinite as jest.Mock
+const mockUseGetUserChallengesInfinite =
+  useGetUserChallengesInfinite as jest.Mock
 const userId = '10000'
 const page1: Partial<ChallengeWithProjectHeader>[] = [
   {
@@ -25,7 +23,7 @@ const page1: Partial<ChallengeWithProjectHeader>[] = [
       id: '100',
       projectId: 'syn100',
       etag: '123456',
-      participantTeamId: '1000'
+      participantTeamId: '1000',
     },
     projectHeader: {
       id: '100',
@@ -36,7 +34,7 @@ const page1: Partial<ChallengeWithProjectHeader>[] = [
       modifiedBy: 'y',
       modifiedOn: 'today',
       type: 'org.sagebionetworks.repo.model.Project',
-    }
+    },
   },
 ]
 
@@ -46,7 +44,7 @@ const page2: Partial<ChallengeWithProjectHeader>[] = [
       id: '101',
       projectId: 'syn101',
       etag: '123456',
-      participantTeamId: '1000'
+      participantTeamId: '1000',
     },
     projectHeader: {
       id: '101',
@@ -57,15 +55,14 @@ const page2: Partial<ChallengeWithProjectHeader>[] = [
       modifiedBy: 'y',
       modifiedOn: 'today',
       type: 'org.sagebionetworks.repo.model.Project',
-    }
+    },
   },
-
 ]
 
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <UserChallenges userId={userId}/>
+      <UserChallenges userId={userId} />
     </SynapseTestContext>,
   )
 }
@@ -81,11 +78,11 @@ describe('UserChallenges tests', () => {
         pages: [
           {
             results: page1,
-            totalNumberOfResults: 2
+            totalNumberOfResults: 2,
           },
           {
             results: page2,
-            totalNumberOfResults: 2
+            totalNumberOfResults: 2,
           },
         ],
         pageParams: [],

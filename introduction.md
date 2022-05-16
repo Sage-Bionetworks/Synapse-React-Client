@@ -10,4 +10,3 @@ This project helps you integrate your app with the Synapse API backend by offeri
 [Synapse.org](https://www.synapse.org/) is a client written for the Synapse platform.
 
 Interested in contributing to this project? See [contributing](https://github.com/Sage-Bionetworks/Synapse-React-Client/blob/develop/CONTRIBUTING.md).
-

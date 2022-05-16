@@ -20,7 +20,7 @@ import {
   ManagedACTAccessRequirement,
   RequestInterface,
   RestrictableObjectType,
-  SUBMISSION_STATE,
+  SubmissionState,
   TYPE_FILTER,
   UploadCallbackResp,
   UserProfile,
@@ -87,15 +87,14 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const [DUC, setDUC] = useState<DataAccessDoc>()
   const [IRB, setIRB] = useState<DataAccessDoc>()
   const [attachments, setAttachments] = useState<DataAccessDoc[]>([])
-  const [
-    formSubmitRequestObject,
-    setFormSubmitRequestObject,
-  ] = useState<RequestInterface | RenewalInterface>()
+  const [formSubmitRequestObject, setFormSubmitRequestObject] = useState<
+    RequestInterface | RenewalInterface
+  >()
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [isRenewal, setIsRenewal] = useState<boolean>(false)
   const [accessors, setAccessors] = useState<Accessor[]>([])
 
-  const requestedFileTypes:requestedFileTypesMap = {}
+  const requestedFileTypes: requestedFileTypesMap = {}
   const batchFileRequest: BatchFileRequest = {
     requestedFiles: [],
     includeFileHandles: true,
@@ -124,13 +123,19 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     // SWC-5765: Filter out duplicate accessors that are in an existing Access Requirement data access request
     if (dataAccessRequestData.accessorChanges) {
       const seen = new Set()
-      dataAccessRequestData.accessorChanges =  dataAccessRequestData.accessorChanges.filter(accessorChange => {
-          return seen.has(accessorChange.userId) ? false : seen.add(accessorChange.userId)
-      })
+      dataAccessRequestData.accessorChanges =
+        dataAccessRequestData.accessorChanges.filter(accessorChange => {
+          return seen.has(accessorChange.userId)
+            ? false
+            : seen.add(accessorChange.userId)
+        })
     }
-  
+
     // renewal case
-    if (dataAccessRequestData.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal') {
+    if (
+      dataAccessRequestData.concreteType ===
+      'org.sagebionetworks.repo.model.dataaccess.Renewal'
+    ) {
       setIsRenewal(true)
     }
 
@@ -170,11 +175,14 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       return getUserProfileById(accessToken, userId)
     })
     Promise.all(promises).then(profiles => {
-      const profileAndAccessType:Accessor[] = profiles.map((item, i) => {
-        const accessType = accessorChanges && accessorChanges[i]?.type ? accessorChanges[i].type : AccessType.GAIN_ACCESS
+      const profileAndAccessType: Accessor[] = profiles.map((item, i) => {
+        const accessType =
+          accessorChanges && accessorChanges[i]?.type
+            ? accessorChanges[i].type
+            : AccessType.GAIN_ACCESS
         return {
           profile: item,
-          accessType: accessType
+          accessType: accessType,
         }
       })
       setAccessors(profileAndAccessType)
@@ -266,7 +274,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       getFiles(batchFileRequest, accessToken).then(resp => {
         resp.requestedFiles.forEach(file => {
           const fileName = file.fileHandle!.fileName
-          const fileTypes:string[] = requestedFileTypes[file.fileHandleId]
+          const fileTypes: string[] = requestedFileTypes[file.fileHandleId]
 
           fileTypes.forEach((type: string) => {
             switch (type) {
@@ -345,12 +353,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           })
 
           // and submit
-          const submission_resp: ACTSubmissionStatus = await submitDataAccessRequest(
-            requestObject,
-            accessToken!,
-          )
+          const submission_resp: ACTSubmissionStatus =
+            await submitDataAccessRequest(requestObject, accessToken!)
           const alertMsg = getSubmissionMsg(submission_resp)
-          if (submission_resp.state === SUBMISSION_STATE.REJECTED) {
+          if (submission_resp.state === SubmissionState.REJECTED) {
             setAlert({
               key: 'danger',
               message: alertMsg,
@@ -358,7 +364,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
           } else {
             // Navigate to the submission success dialog
             requestDataStepCallback?.({
-              step: 5
+              step: 5,
             })
           }
         } else {
@@ -390,13 +396,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const getSubmissionMsg = (submission_resp: ACTSubmissionStatus) => {
     const msgStart = 'The information has been '
     switch (submission_resp.state) {
-      case SUBMISSION_STATE.SUBMITTED:
+      case SubmissionState.SUBMITTED:
         return <strong>{msgStart} submitted.</strong>
-      case SUBMISSION_STATE.APPROVED:
+      case SubmissionState.APPROVED:
         return <strong>{msgStart} approved.</strong>
-      case SUBMISSION_STATE.CANCELLED:
+      case SubmissionState.CANCELLED:
         return <strong>{msgStart} canceled.</strong>
-      case SUBMISSION_STATE.REJECTED:
+      case SubmissionState.REJECTED:
         return (
           <>
             <strong>{msgStart} rejected.</strong>{' '}
@@ -411,8 +417,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   const onClearAccessor = (pid: string) => {
     // Update the view
-    const filtered:Accessor[]  = accessors.filter(item =>
-      item.profile.ownerId !== pid
+    const filtered: Accessor[] = accessors.filter(
+      item => item.profile.ownerId !== pid,
     )
     setAccessors(filtered)
 
@@ -420,7 +426,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     const newAccessorChanges: AccessorChange[] = filtered.map(item => {
       return {
         userId: item.profile.ownerId,
-        type: item.accessType
+        type: item.accessType,
       }
     })
     setFormSubmitRequestObject(prevState => {
@@ -433,7 +439,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   const onClearAttachment = (fid: string) => {
     // Update the view
     const filtered: DataAccessDoc[] = attachments.filter(
-      item => item.fileHandleId !== fid
+      item => item.fileHandleId !== fid,
     )
     setAttachments(filtered)
 
@@ -448,7 +454,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   const uploadCallback = (data: UploadCallbackResp) => {
     if (data.resp && data.success) {
-      const uploadResponse:FileUploadComplete = data.resp
+      const uploadResponse: FileUploadComplete = data.resp
       if (data.context === 'attachments') {
         const docs = formSubmitRequestObject?.attachments
           ? formSubmitRequestObject?.attachments
@@ -491,7 +497,10 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
       }
     } else if (!data.success && data.error) {
       // show the error
-      console.log('RequestDataAccessStep2: Error uploading the file', data.error)
+      console.log(
+        'RequestDataAccessStep2: Error uploading the file',
+        data.error,
+      )
       setAlert({
         key: 'danger',
         message: getErrorMessage(data.error.reason),
@@ -501,8 +510,9 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
   // User search input event handler
   const onSelectUserCallback = (selected: UserProfile) => {
-
-    const currentAccessorIds = accessors.map(accessor => accessor.profile.ownerId)
+    const currentAccessorIds = accessors.map(
+      accessor => accessor.profile.ownerId,
+    )
 
     // if user is not already in the accessor list (prevent duplicates in accessor list)
     if (!currentAccessorIds.includes(selected.ownerId)) {
@@ -515,8 +525,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             lastName: selected.lastName,
             userName: selected.userName,
           },
-          accessType: AccessType.GAIN_ACCESS
-        }
+          accessType: AccessType.GAIN_ACCESS,
+        },
       ])
 
       const selectedAccessor: AccessorChange = {
@@ -533,20 +543,23 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     }
   }
 
-  const handleTextAreaInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>, id: string) => {
+  const handleTextAreaInputChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+    id: string,
+  ) => {
     const value = e.target.value
-    switch(id) {
+    switch (id) {
       case 'publications':
         setFormSubmitRequestObject(prevState => {
           return Object.assign({}, prevState, {
-            publication: value
+            publication: value,
           })
         })
         break
       case 'summaryOfUse':
         setFormSubmitRequestObject(prevState => {
           return Object.assign({}, prevState, {
-            summaryOfUse: value
+            summaryOfUse: value,
           })
         })
         break
@@ -568,37 +581,39 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
     formCopy[index2].type = accessType
     setFormSubmitRequestObject(prevState => {
       return Object.assign({}, prevState, {
-        accessorChanges: formCopy
+        accessorChanges: formCopy,
       })
     })
   }
 
   const getAccessorRequirementHelpText = () => {
-    let link:string = ''
+    let link: string = ''
     let msg: string = ''
 
     if (managedACTAccessRequirement.isCertifiedUserRequired) {
-      link = 'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
+      link =
+        'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
       msg = 'All data requesters must be a certified user.'
     }
     if (managedACTAccessRequirement.isValidatedProfileRequired) {
-      link = 'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
+      link =
+        'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
       msg = 'All data requesters must have a validated user profile.'
     }
-    return link && msg ? <>
-      {msg}
-      <a
-        href={link}
-        target={'_blank'}
-        rel={'noreferrer'}
-      >
-        <IconSvg
-          options={{
-            icon: 'info',
-          }}
-        />
-      </a>
-    </> : <></>
+    return link && msg ? (
+      <>
+        {msg}
+        <a href={link} target={'_blank'} rel={'noreferrer'}>
+          <IconSvg
+            options={{
+              icon: 'info',
+            }}
+          />
+        </a>
+      </>
+    ) : (
+      <></>
+    )
   }
 
   return (
@@ -623,12 +638,13 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             </Form.Label>
             <br />
             <span className={'requester-label'}>
-              {
-                managedACTAccessRequirement.isDUCRequired && (
-                  <>This list should match those listed on your DUC.<br /></>
-                )
-              }
-              { getAccessorRequirementHelpText() }
+              {managedACTAccessRequirement.isDUCRequired && (
+                <>
+                  This list should match those listed on your DUC.
+                  <br />
+                </>
+              )}
+              {getAccessorRequirementHelpText()}
             </span>
             <UserSearchBox
               id={'requesters'}
@@ -640,56 +656,60 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
 
           {/* Accessors List */}
           <Form.Group style={{ marginBottom: '4rem' }}>
-            {
-              accessors.map((accessor, i ) => {
-                return (
-                  <div className={'list-items'} key={`accessor-${i}`}>
-                    <UserCardSmall
-                      userProfile={accessor.profile}
-                      showAccountLevelIcon={true}
-                      disableLink={true}
-                      showFullName={true}
-                    />
-                    {
-                      // only display delete button if the user profile is other users and has not access before
-                      (user.ownerId !== accessor.profile.ownerId) && (accessor.accessType === AccessType.GAIN_ACCESS) && (
+            {accessors.map((accessor, i) => {
+              return (
+                <div className={'list-items'} key={`accessor-${i}`}>
+                  <UserCardSmall
+                    userProfile={accessor.profile}
+                    showAccountLevelIcon={true}
+                    disableLink={true}
+                    showFullName={true}
+                  />
+                  {
+                    // only display delete button if the user profile is other users and has not access before
+                    user.ownerId !== accessor.profile.ownerId &&
+                      accessor.accessType === AccessType.GAIN_ACCESS && (
                         <Button
                           className={'clear-x'}
                           variant={'link'}
-                          onClick={() => onClearAccessor(accessor.profile.ownerId)}
+                          onClick={() =>
+                            onClearAccessor(accessor.profile.ownerId)
+                          }
                         >
                           <IconSvg options={{ icon: 'clear' }} />
                         </Button>
                       )
-                    }
-                    {
-                      // Renewal/Revoke data access, only display if isRenewal is true
-                      isRenewal && (accessor.accessType !== AccessType.GAIN_ACCESS) && (
-                        <>
-                          <RadioGroup
-                            id={`accessor-renewal-${accessor.profile.ownerId}`}
-                            value={accessor.accessType}
-                            options={[
-                              {
-                                label: 'Renew',
-                                value: AccessType.RENEW_ACCESS
-                              },
-                              {
-                                label: 'Revoke',
-                                value: AccessType.REVOKE_ACCESS
-                              },
-                            ]}
-                            onChange={(value: string) =>
-                              onAccessorRadioBtnChange(value as AccessType, accessor.profile.ownerId)
-                            }
-                          ></RadioGroup>
-                        </>
-                      )
-                    }
-                  </div>
-                )
-              })
-            }
+                  }
+                  {
+                    // Renewal/Revoke data access, only display if isRenewal is true
+                    isRenewal && accessor.accessType !== AccessType.GAIN_ACCESS && (
+                      <>
+                        <RadioGroup
+                          id={`accessor-renewal-${accessor.profile.ownerId}`}
+                          value={accessor.accessType}
+                          options={[
+                            {
+                              label: 'Renew',
+                              value: AccessType.RENEW_ACCESS,
+                            },
+                            {
+                              label: 'Revoke',
+                              value: AccessType.REVOKE_ACCESS,
+                            },
+                          ]}
+                          onChange={(value: string) =>
+                            onAccessorRadioBtnChange(
+                              value as AccessType,
+                              accessor.profile.ownerId,
+                            )
+                          }
+                        ></RadioGroup>
+                      </>
+                    )
+                  }
+                </div>
+              )
+            })}
           </Form.Group>
 
           {/* DUC */}
@@ -705,7 +725,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                     <DirectDownloadButton
                       fileHandleAssociation={{
                         associateObjectId: DUCTemplate?.associateObjectId!,
-                        associateObjectType: DUCTemplate.associateObjectType as FileHandleAssociateType,
+                        associateObjectType:
+                          DUCTemplate.associateObjectType as FileHandleAssociateType,
                         fileHandleId: DUCTemplate.fileHandleId,
                       }}
                       fileName={DUCTemplate.fileName}
@@ -727,7 +748,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                     <DirectDownloadButton
                       fileHandleAssociation={{
                         associateObjectId: DUC.associateObjectId!,
-                        associateObjectType: DUC.associateObjectType as FileHandleAssociateType,
+                        associateObjectType:
+                          DUC.associateObjectType as FileHandleAssociateType,
                         fileHandleId: DUC.fileHandleId,
                       }}
                       fileName={DUC?.fileName}
@@ -759,7 +781,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                   <DirectDownloadButton
                     fileHandleAssociation={{
                       associateObjectId: IRB.associateObjectId!,
-                      associateObjectType: IRB.associateObjectType as FileHandleAssociateType,
+                      associateObjectType:
+                        IRB.associateObjectType as FileHandleAssociateType,
                       fileHandleId: IRB.fileHandleId,
                     }}
                     fileName={IRB?.fileName}
@@ -792,7 +815,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
                       <DirectDownloadButton
                         fileHandleAssociation={{
                           associateObjectId: attachment.associateObjectId!,
-                          associateObjectType: attachment.associateObjectType as FileHandleAssociateType,
+                          associateObjectType:
+                            attachment.associateObjectType as FileHandleAssociateType,
                           fileHandleId: attachment.fileHandleId,
                         }}
                         fileName={attachment?.fileName}
@@ -821,36 +845,43 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
             )
           }
 
-          { // Publications & Summary of Use
+          {
+            // Publications & Summary of Use
             isRenewal && (
-            <>
-              <Form.Group>
-                <Form.Label htmlFor={'publications'} className={'SRC-noMargin'}>
-                  Publication(s)
-                </Form.Label>
-                <Form.Control
-                  id={"publications"}
-                  as="textarea"
-                  rows={3}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    handleTextAreaInputChange(e, 'publications')
-                  }
-                />
-              </Form.Group>
-              <Form.Group>
-                <Form.Label htmlFor={'summaryOfUse'} className={'SRC-noMargin'}>
-                  Summary of use
-                </Form.Label>
-                <Form.Control
-                  id={"summaryOfUse"}
-                  as="textarea"
-                  rows={3}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    handleTextAreaInputChange(e, 'summaryOfUse')
-                  }
-                />
-              </Form.Group>
-            </>
+              <>
+                <Form.Group>
+                  <Form.Label
+                    htmlFor={'publications'}
+                    className={'SRC-noMargin'}
+                  >
+                    Publication(s)
+                  </Form.Label>
+                  <Form.Control
+                    id={'publications'}
+                    as="textarea"
+                    rows={3}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      handleTextAreaInputChange(e, 'publications')
+                    }
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Label
+                    htmlFor={'summaryOfUse'}
+                    className={'SRC-noMargin'}
+                  >
+                    Summary of use
+                  </Form.Label>
+                  <Form.Control
+                    id={'summaryOfUse'}
+                    as="textarea"
+                    rows={3}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      handleTextAreaInputChange(e, 'summaryOfUse')
+                    }
+                  />
+                </Form.Group>
+              </>
             )
           }
 

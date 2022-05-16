@@ -9,7 +9,9 @@ import DownloadListTable from './DownloadListTable'
  * Table of the files added to the Download Cart that are currently available for download.
  * Note that this creates it's own QueryClient, so it's cache does not persist if you remount.
  */
-export default function AvailableForDownloadTable(props: DownloadListTableProps) {
+export default function AvailableForDownloadTable(
+  props: DownloadListTableProps,
+) {
   const { accessToken } = useSynapseContext()
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -25,13 +27,8 @@ export default function AvailableForDownloadTable(props: DownloadListTableProps)
   return (
     <QueryClientProvider client={queryClient}>
       <SynapseErrorBoundary>
-        {
-          props.filesStatistics && (
-            <DownloadListTable {...props} />
-          )
-        }
+        {props.filesStatistics && <DownloadListTable {...props} />}
       </SynapseErrorBoundary>
     </QueryClientProvider>
-    
   )
 }

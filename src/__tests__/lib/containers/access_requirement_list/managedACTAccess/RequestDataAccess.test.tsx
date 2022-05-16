@@ -4,7 +4,7 @@ import RequestDataAccess from '../../../../../lib/containers/access_requirement_
 import {
   ACCESS_TYPE,
   ManagedACTAccessRequirement,
-  SUBMISSION_STATE,
+  SubmissionState,
 } from '../../../../../lib/utils/synapseTypes'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
@@ -36,7 +36,7 @@ describe('RequestDataAccess: basic functionality', () => {
       submissionId: 'string',
       submittedBy: 'string',
       rejectedReason: 'string',
-      state: SUBMISSION_STATE.SUBMITTED,
+      state: SubmissionState.SUBMITTED,
       modifiedOn: 'string',
     },
     accessRequirementId: 'string',

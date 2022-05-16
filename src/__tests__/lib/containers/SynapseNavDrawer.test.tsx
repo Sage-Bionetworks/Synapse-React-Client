@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
-import { SynapseNavDrawer, SynapseNavDrawerProps } from '../../../lib/containers/SynapseNavDrawer'
+import {
+  SynapseNavDrawer,
+  SynapseNavDrawerProps,
+} from '../../../lib/containers/SynapseNavDrawer'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
 import { server } from '../../../mocks/msw/server'

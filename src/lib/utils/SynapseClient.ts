@@ -4,6 +4,7 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import { PROVIDERS } from '../containers/Login'
 import {
+  ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ALIAS_AVAILABLE,
   ASYNCHRONOUS_JOB_TOKEN,
@@ -111,15 +112,13 @@ import {
   WikiPageKey,
 } from './synapseTypes/'
 import {
-  TYPE_FILTER
-} from './synapseTypes/UserGroupHeader'
-import {
   ACCESS_TYPE,
   CreateSubmissionRequest,
   ManagedACTAccessRequirementStatus,
   RequestInterface,
 } from './synapseTypes/AccessRequirement'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
+import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
 import { AccessTokenGenerationResponse } from './synapseTypes/AccessToken/AccessTokenGenerationResponse'
 import { AccessTokenRecordList } from './synapseTypes/AccessToken/AccessTokenRecord'
@@ -179,7 +178,11 @@ import {
   TransformSqlWithFacetsRequest,
 } from './synapseTypes/Table/TransformSqlWithFacetsRequest'
 import { Team } from './synapseTypes/Team'
+import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import { DiscussionReplyBundle, DiscussionThreadBundle } from './synapseTypes/DiscussionBundle'
+import { MessageURL } from './synapseTypes/MessageUrl'
+import { DiscussionSearchRequest, DiscussionSearchResponse } from './synapseTypes/DiscussionSearch'
 
 const cookies = new UniversalCookies()
 
@@ -235,6 +238,27 @@ export class SynapseClientError extends Error {
     this.status = status
     this.reason = reason
   }
+}
+
+/**
+ * Invokes a function that makes a request to Synapse and returns null if the server responds with a 404.
+ * @param fn a function that may throw a SynapseClientError when encountering an HTTP Error Code
+ * @returns The result of the function call, or null if the result is a 404 "Not Found" error.
+ */
+export async function allowNotFoundError<T>(
+  fn: () => Promise<T>,
+): Promise<T | null> {
+  let response = null
+  try {
+    response = await fn()
+  } catch (e) {
+    if (e instanceof SynapseClientError && e.status === 404) {
+      // Permitted
+    } else {
+      throw e
+    }
+  }
+  return response
 }
 
 /*
@@ -1199,9 +1223,8 @@ export const getTeamList = (
   limit: number = 10,
   offset: number = 0,
 ) => {
-  const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
-    fragment ? `&fragment=${fragment}` : ''
-  }`
+  const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${fragment ? `&fragment=${fragment}` : ''
+    }`
   return doGet(
     url,
     accessToken,
@@ -1419,7 +1442,7 @@ export const detectSSOCode = (
           // Synapse account not found, send to registration page
           window.location.replace(
             registerAccountUrl ??
-              `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
+            `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!RegisterAccount:0`,
           )
         }
         console.error('Error with Google account association: ', err)
@@ -2522,15 +2545,36 @@ export const getAccessRequirement = (
  * @param {number} id id of the access requirement
  * @returns {Promise<AccessRequirement>}
  */
-export const getAccessRequirementById = (
+export const getAccessRequirementById = <T extends AccessRequirement>(
   accessToken: string | undefined,
-  id: number,
-): Promise<AccessRequirement> => {
-  return doGet<AccessRequirement>(
+  id: string | number,
+): Promise<T> => {
+  return doGet<T>(
     ACCESS_REQUIREMENT_BY_ID(id),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Fetch the ACL for the access requirement with the given id.
+ *
+ * See https://rest-docs.synapse.org/rest/GET/accessRequirement/requirementId/acl.html
+ * @returns the ACL for the specified AR, or null if the ACL does not exist
+ */
+export const getAccessRequirementAcl = (
+  accessToken: string | undefined,
+  id: string | number,
+): Promise<AccessControlList | null> => {
+  // It's possible for an AR to not have an ACL, so pre-emptively handle 404
+  return allowNotFoundError(() =>
+    doGet<AccessControlList>(
+      ACCESS_REQUIREMENT_ACL(id),
+      accessToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 
@@ -2762,8 +2806,7 @@ export const getPersonalAccessTokenRecords = (
   nextPageToken: string | undefined,
 ) => {
   return doGet<AccessTokenRecordList>(
-    `/auth/v1/personalAccessToken${
-      nextPageToken ? '?nextPageToken=' + nextPageToken : ''
+    `/auth/v1/personalAccessToken${nextPageToken ? '?nextPageToken=' + nextPageToken : ''
     }`,
     accessToken,
     undefined,
@@ -3033,6 +3076,28 @@ export const cancelDataAccessRequest = (
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Request to update a submission' state. Only ACT members and delegates with the REVIEW_SUBMISSION ACL
+ * permission can perform this action.
+ *
+ * See https://docs.synapse.org/rest/PUT/dataAccessSubmission/submissionId.html
+ * @param request
+ * @param accessToken
+ * @returns
+ */
+export const updateSubmissionStatus = (
+  request: SubmissionStateChangeRequest,
+  accessToken?: string,
+) => {
+  return doPut<void>(
+    `/repo/v1/dataAccessSubmission/${request.submissionId}`,
+    request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3444,5 +3509,108 @@ export const updateNotificationEmail = (
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get a reply and its statistic given its ID.
+Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/reply/replyId.html
+ * @param replyId
+ * @param accessToken
+ */
+export const getReply = (
+  replyId: string,
+  accessToken: string | undefined,
+) => {
+  return doGet<DiscussionReplyBundle>(
+    `/repo/v1/reply/${replyId}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
+/**
+ * This API is used to get the message URL of a reply. The message 
+ * URL is the URL to download the file which contains the reply message.
+ * Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/reply/messageUrl.html
+ * @param messageKey
+ * @param accessToken
+ */
+
+export const getReplyMessageUrl = (
+  messageKey: string,
+  accessToken: string | undefined
+) => {
+  return doGet<MessageURL>(
+    `/repo/v1/reply/messageUrl?messageKey=${messageKey}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
+/**
+ * This API is used to get a thread and its statistic given its ID.
+ * Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/thread/threadId.html
+ * @param threadId
+ * @param accessToken
+ */
+export const getThread = (
+  threadId: string,
+  accessToken: string | undefined,
+) => {
+  return doGet<DiscussionThreadBundle>(
+    `/repo/v1/thread/${threadId}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
+/**
+ * This API is used to get the message URL of a reply. The message 
+ * URL is the URL to download the file which contains the reply message.
+ * Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/thread/messageUrl.html
+ * @param messageKey
+ * @param accessToken
+ */
+
+export const getThreadMessageUrl = (
+  messageKey: string,
+  accessToken: string | undefined
+) => {
+  return doGet<MessageURL>(
+    `/repo/v1/thread/messageUrl?messageKey=${messageKey}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
+  )
+}
+
+/**
+ * Performs a full text search in the forum defined by the given id.
+ * Target users: anyone who has READ permission on the project of the forum.
+ * http://rest-docs.synapse.org/rest/POST/forum/forumId/search.html
+ * @param discussionSearchRequest
+ * @param forumId
+ * @param accessToken
+ */
+
+export const forumSearch = (
+  discussionSearchRequest: DiscussionSearchRequest,
+  forumId: string,
+  accessToken: string|undefined
+) => {
+  return doPost<DiscussionSearchResponse>(
+    `/repo/v1/forum/${forumId}/search`,
+    discussionSearchRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT
   )
 }

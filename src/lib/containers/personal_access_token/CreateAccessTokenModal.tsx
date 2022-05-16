@@ -24,10 +24,9 @@ export type CreateAccessTokenModalProps = {
   onCreate: (...args: any[]) => void
 }
 
-export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenModalProps> = ({
-  onClose,
-  onCreate,
-}: CreateAccessTokenModalProps) => {
+export const CreateAccessTokenModal: React.FunctionComponent<
+  CreateAccessTokenModalProps
+> = ({ onClose, onCreate }: CreateAccessTokenModalProps) => {
   const { accessToken } = useSynapseContext()
   const [tokenName, setTokenName] = React.useState('')
   const [viewAccess, setViewAccess] = React.useState(true)
@@ -92,7 +91,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<CreateAccessTokenMo
       animation={false}
       show={true}
       onHide={onClose}
-      backdrop='static'
+      backdrop="static"
     >
       <Form>
         <Modal.Header closeButton>

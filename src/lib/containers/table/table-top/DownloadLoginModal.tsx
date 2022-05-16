@@ -6,9 +6,16 @@ export type DownloadLoginModalProps = {
   onHide: () => void
 }
 
-export const DownloadLoginModal: React.FunctionComponent<DownloadLoginModalProps> = props => {
+export const DownloadLoginModal: React.FunctionComponent<
+  DownloadLoginModalProps
+> = props => {
   return (
-    <Modal animation={false} show={true} onHide={() => props.onHide()} backdrop='static'>
+    <Modal
+      animation={false}
+      show={true}
+      onHide={() => props.onHide()}
+      backdrop="static"
+    >
       <Modal.Header closeButton>
         <span
           style={{ fontWeight: 'bold', color: '#515359', fontSize: '1.5em' }}

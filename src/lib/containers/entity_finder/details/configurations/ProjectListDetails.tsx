@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../../../utils/ErrorUtils'
 import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/useProjects'
 import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -11,10 +10,9 @@ type ProjectListDetailsProps = EntityDetailsListSharedProps & {
   projectsParams: GetProjectsParameters
 }
 
-export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps> = ({
-  projectsParams,
-  ...sharedProps
-}) => {
+export const ProjectListDetails: React.FunctionComponent<
+  ProjectListDetailsProps
+> = ({ projectsParams, ...sharedProps }) => {
   const {
     data,
     isLoading,
@@ -39,7 +37,7 @@ export const ProjectListDetails: React.FunctionComponent<ProjectListDetailsProps
 
   useEffect(() => {
     if (isError && error) {
-      handleError(toError(error))
+      handleError(error)
     }
   }, [isError, error, handleError])
 

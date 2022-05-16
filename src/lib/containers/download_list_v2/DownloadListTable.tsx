@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult'
-import { toError } from '../../utils/ErrorUtils'
 import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
@@ -32,7 +31,7 @@ export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
 export type DownloadListTableProps = {
-  filesStatistics: FilesStatisticsResponse,
+  filesStatistics: FilesStatisticsResponse
   refetchStatistics: () => Promise<any>
 }
 
@@ -42,7 +41,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
-  const [copyingAllSynapseIDs, setCopyingAllSynapseIDs] = useState<boolean>(false)
+  const [copyingAllSynapseIDs, setCopyingAllSynapseIDs] =
+    useState<boolean>(false)
   const [sort, setSort] = useState<Sort | undefined>(undefined)
   const [filter, setFilter] = useState<AvailableFilter | undefined>(undefined)
   const {
@@ -54,7 +54,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     fetchNextPage,
     isError,
     error: newError,
-    refetch
+    refetch,
   } = useGetAvailableFilesToDownloadInfinite(sort, filter)
 
   //SWC-5858: Update the Download List files table when the statistics change
@@ -66,7 +66,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   useEffect(() => {
     if (isError && newError) {
-      handleError(toError(newError))
+      handleError(newError)
     }
   }, [isError, newError, handleError])
 
@@ -74,11 +74,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   useEffect(() => {
     const copyAllSynapseIDs = () => {
-      const synIDs = allRows.map((item: DownloadListItemResult)=>{
-        return `${item.fileEntityId}.${item.versionNumber}`
-      }).join('\n')
+      const synIDs = allRows
+        .map((item: DownloadListItemResult) => {
+          return `${item.fileEntityId}.${item.versionNumber}`
+        })
+        .join('\n')
       // https://caniuse.com/mdn-api_clipboard_writetext
-      navigator.clipboard.writeText(synIDs).then(() => { 
+      navigator.clipboard.writeText(synIDs).then(() => {
         displayToast('Successfully copied to clipboard')
       })
       setCopyingAllSynapseIDs(false)
@@ -96,7 +98,15 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       // We have all the data in allRows. Put it together and copy to the clipboard
       copyAllSynapseIDs()
     }
-  }, [status, isFetchingNextPage, hasNextPage, fetchNextPage, inView, copyingAllSynapseIDs, allRows])
+  }, [
+    status,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    inView,
+    copyingAllSynapseIDs,
+    allRows,
+  ])
 
   const getFilterDisplayText = (f: AvailableFilter) => {
     if (!f) {
@@ -107,14 +117,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       return 'Only Ineligible'
     }
   }
-  const removeItem = async (item: DownloadListItem, fileName: string, title: string) => {
+  const removeItem = async (
+    item: DownloadListItem,
+    fileName: string,
+    title: string,
+  ) => {
     try {
       await SynapseClient.removeItemFromDownloadListV2(item, accessToken)
-      displayToast(
-        `${fileName} has been removed from your list.`,
-        'success',
-        {title}
-      )
+      displayToast(`${fileName} has been removed from your list.`, 'success', {
+        title,
+      })
       // refetching the statistics will update the download list, but refresh the list immediately since this will take time
       refetch()
       refetchStatistics()
@@ -161,34 +173,33 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   const InteractiveCopyIdsIcon = () => {
     return (
-      (
-        <span
-            data-for='copy-syn-ids-tooltip'
-            data-tip="Copy IDs to the clipboard"
-          >
-            <ReactTooltip
-              delayShow={TOOLTIP_DELAY_SHOW}
-              place="right"
-              type="dark"
-              effect="solid"
-              id='copy-syn-ids-tooltip'
-            />
-            <button
-              data-testid="copySynIdsButton"
-              onClick={() => {
-                // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
-                setCopyingAllSynapseIDs(true)
+      <span
+        data-for="copy-syn-ids-tooltip"
+        data-tip="Copy IDs to the clipboard"
+      >
+        <ReactTooltip
+          delayShow={TOOLTIP_DELAY_SHOW}
+          place="right"
+          type="dark"
+          effect="solid"
+          id="copy-syn-ids-tooltip"
+        />
+        <button
+          data-testid="copySynIdsButton"
+          onClick={() => {
+            // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
+            setCopyingAllSynapseIDs(true)
+          }}
+        >
+          <span style={{ height: 15, marginTop: -1 }}>
+            <IconSvg
+              options={{
+                icon: 'contentCopy',
               }}
-            >
-              <span style={{height: 15, marginTop: -1}}>
-                <IconSvg
-                  options={{
-                    icon: 'contentCopy',
-                  }}/>
-              </span>
-            </button>
+            />
           </span>
-      )
+        </button>
+      </span>
     )
   }
 
@@ -230,41 +241,37 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           >
             <thead>
               <tr>
-                <th>
-                  {/* Eligible/Ineligible icon */}
-                </th>
+                <th>{/* Eligible/Ineligible icon */}</th>
                 <th>
                   Name
-                  <InteractiveSortIcon columnSortBy='fileName' />
+                  <InteractiveSortIcon columnSortBy="fileName" />
                 </th>
                 <th>
                   Size
-                  <InteractiveSortIcon columnSortBy='fileSize' />
+                  <InteractiveSortIcon columnSortBy="fileSize" />
                 </th>
                 <th>
                   SynID
                   <InteractiveCopyIdsIcon />
-                  <InteractiveSortIcon columnSortBy='synId' />
+                  <InteractiveSortIcon columnSortBy="synId" />
                 </th>
                 <th>
                   Project
-                  <InteractiveSortIcon columnSortBy='projectName' />
+                  <InteractiveSortIcon columnSortBy="projectName" />
                 </th>
                 <th>
                   Added On
-                  <InteractiveSortIcon columnSortBy='addedOn' />
+                  <InteractiveSortIcon columnSortBy="addedOn" />
                 </th>
                 <th>
                   Created By
-                  <InteractiveSortIcon columnSortBy='createdBy' />
+                  <InteractiveSortIcon columnSortBy="createdBy" />
                 </th>
                 <th>
                   Created On
-                  <InteractiveSortIcon columnSortBy='createdOn' />
+                  <InteractiveSortIcon columnSortBy="createdOn" />
                 </th>
-                <th className="stickyColumn">
-                  Actions
-                </th>
+                <th className="stickyColumn">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -274,7 +281,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                   const createdOn = moment(item.createdOn).format('L LT')
                   return (
                     <tr key={item.fileEntityId}>
-                      <td className={item.isEligibleForPackaging ? '' : 'ineligibleForPackagingTd'}>
+                      <td
+                        className={
+                          item.isEligibleForPackaging
+                            ? ''
+                            : 'ineligibleForPackagingTd'
+                        }
+                      >
                         {item.isEligibleForPackaging && (
                           <span
                             data-for={`${item.fileEntityId}-eligible-tooltip`}
@@ -345,29 +358,34 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                           <span className="downloadItem">
                             <DirectDownload
                               associatedObjectId={item.fileEntityId}
-                              associatedObjectType={FileHandleAssociateType.FileEntity}
+                              associatedObjectType={
+                                FileHandleAssociateType.FileEntity
+                              }
                               entityVersionNumber={item.versionNumber.toString()}
                               displayFileName={false}
-                              onClickCallback={(isExternalLink:boolean) => {
+                              onClickCallback={(isExternalLink: boolean) => {
                                 // SWC-5944: remove the item from the download list, unless it's an external link.
                                 if (!isExternalLink) {
-                                  removeItem({
-                                    fileEntityId: item.fileEntityId,
-                                    versionNumber: item.versionNumber,
-                                  },
-                                  item.fileName,
-                                  'File Downloaded')
+                                  removeItem(
+                                    {
+                                      fileEntityId: item.fileEntityId,
+                                      versionNumber: item.versionNumber,
+                                    },
+                                    item.fileName,
+                                    'File Downloaded',
+                                  )
                                 }
                               }}
                             />
                           </span>
                           <span className="programmaticAccessItem">
-                            <DirectProgrammaticDownload 
+                            <DirectProgrammaticDownload
                               entityId={item.fileEntityId}
                               version={item.versionNumber}
                             />
                           </span>
-                          <span className="removeItem"
+                          <span
+                            className="removeItem"
                             data-for={`${item.fileEntityId}-removeitem-tooltip`}
                             data-tip="Remove from Download List"
                           >
@@ -381,19 +399,21 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             <button
                               className={TESTING_TRASH_BTN_CLASS}
                               onClick={() => {
-                                removeItem({
-                                  fileEntityId: item.fileEntityId,
-                                  versionNumber: item.versionNumber,
-                                },
-                                item.fileName,
-                                'File Removed')
+                                removeItem(
+                                  {
+                                    fileEntityId: item.fileEntityId,
+                                    versionNumber: item.versionNumber,
+                                  },
+                                  item.fileName,
+                                  'File Removed',
+                                )
                               }}
                             >
                               <IconSvg
-                                  options={{
-                                    icon: 'removeCircle',
-                                  }}
-                                />
+                                options={{
+                                  icon: 'removeCircle',
+                                }}
+                              />
                             </button>
                           </span>
                         </div>
@@ -408,9 +428,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
           </Table>
         </>
       )}
-      {isLoading && (
-        <SkeletonTable numCols={5} numRows={3} />
-      )}
+      {isLoading && <SkeletonTable numCols={5} numRows={3} />}
     </>
   )
 }

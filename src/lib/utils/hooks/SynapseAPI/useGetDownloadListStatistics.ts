@@ -1,7 +1,4 @@
-import {
-  useQuery,
-  UseQueryOptions,
-} from 'react-query'
+import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'

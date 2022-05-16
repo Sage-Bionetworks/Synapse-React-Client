@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { toError } from '../../../../utils/ErrorUtils'
 import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/entity/useGetEntityChildren'
 import { Direction, SortBy } from '../../../../utils/synapseTypes'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -11,15 +10,14 @@ type EntityChildrenDetailsProps = EntityDetailsListSharedProps & {
   parentContainerId: string
 }
 
-export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetailsProps> = ({
-  parentContainerId,
-  ...sharedProps
-}) => {
+export const EntityChildrenDetails: React.FunctionComponent<
+  EntityChildrenDetailsProps
+> = ({ parentContainerId, ...sharedProps }) => {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
   const handleError = useErrorHandler()
 
-  const getChildrenInfiniteRequestObject = {    
+  const getChildrenInfiniteRequestObject = {
     parentId: parentContainerId,
     includeTotalChildCount: true,
     includeTypes: sharedProps.visibleTypes,
@@ -49,7 +47,7 @@ export const EntityChildrenDetails: React.FunctionComponent<EntityChildrenDetail
 
   useEffect(() => {
     if (isError && error) {
-      handleError(toError(error))
+      handleError(error)
     }
   }, [isError, error, handleError])
 

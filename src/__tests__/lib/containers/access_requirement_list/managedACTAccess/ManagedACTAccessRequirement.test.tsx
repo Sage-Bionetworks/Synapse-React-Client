@@ -4,7 +4,7 @@ import ManagedACTAccessRequirementComponent from '../../../../../lib/containers/
 import {
   ACCESS_TYPE,
   ManagedACTAccessRequirement,
-  SUBMISSION_STATE,
+  SubmissionState,
 } from '../../../../../lib/utils/synapseTypes'
 import RequestDataAccess from '../../../../../lib/containers/access_requirement_list/managedACTAccess/RequestDataAccess'
 import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
@@ -37,7 +37,7 @@ describe('ManagedACTAccessRequirement: basic functionality', () => {
       submissionId: 'string',
       submittedBy: 'string',
       rejectedReason: 'string',
-      state: SUBMISSION_STATE.SUBMITTED,
+      state: SubmissionState.SUBMITTED,
       modifiedOn: 'string',
     },
     accessRequirementId: 'string',

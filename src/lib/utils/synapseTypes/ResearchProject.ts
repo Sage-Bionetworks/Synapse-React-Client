@@ -5,15 +5,14 @@
  */
 
 export type ResearchProject = {
-  id?: string,
-  accessRequirementId: string,
-  institution: string,
-  projectLead: string,
-  intendedDataUseStatement: string,
-  createdOn?: string,
-  modifiedOn?: string,
-  createdBy?: string,
-  modifiedBy?: string,
-  etag?: string,
+  id?: string
+  accessRequirementId: string
+  institution: string
+  projectLead: string
+  intendedDataUseStatement: string
+  createdOn?: string
+  modifiedOn?: string
+  createdBy?: string
+  modifiedBy?: string
+  etag?: string
 }
-

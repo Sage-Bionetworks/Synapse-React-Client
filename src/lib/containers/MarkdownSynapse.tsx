@@ -44,7 +44,7 @@ export type MarkdownSynapseProps = {
   markdown?: string
   renderInline?: boolean
   objectType?: ObjectType
-  onMarkdownProcessingDone?: (ref:HTMLInputElement|null)=>void
+  onMarkdownProcessingDone?: (ref: HTMLInputElement | null) => void
 }
 const md = markdownit({ html: true })
 
@@ -259,9 +259,8 @@ export default class MarkdownSynapse extends React.Component<
       return
     }
     // use regex to grab all elements
-    const mathExpressions = this.markupRef.current.querySelectorAll<HTMLElement>(
-      '[id^="mathjax-"]',
-    )
+    const mathExpressions =
+      this.markupRef.current.querySelectorAll<HTMLElement>('[id^="mathjax-"]')
     // go through all obtained elements and transform them with katex
     const regEx = new RegExp(/\\[()[\]]/, 'g') // Look for a '\' followed by either '(', ')', '[', or ']'. We delete these strings since they interfere with katex processing.
     mathExpressions.forEach(element => {
@@ -350,7 +349,8 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public addIdsToReferenceWidgets(text: string) {
-    const referenceRegex = /<span id="wikiReference.*?<span data-widgetparams.*?span>/g
+    const referenceRegex =
+      /<span id="wikiReference.*?<span data-widgetparams.*?span>/g
     let referenceCount = 1
 
     return text.replace(referenceRegex, () => {
@@ -660,7 +660,8 @@ export default class MarkdownSynapse extends React.Component<
   }
   public renderSynapseTOC(originalMarkup: string) {
     const elements: any[] = []
-    const TOC_HEADER_REGEX_WITH_ID = /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
+    const TOC_HEADER_REGEX_WITH_ID =
+      /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
     let text = ''
     originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, (p1, p2, p3, p4) => {
       text += p4

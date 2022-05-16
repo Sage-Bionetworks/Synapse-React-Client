@@ -12,9 +12,7 @@ export default function ResourcesMobile({ data }: ResourcesMobileProps) {
     <div className="Resources_Mobile">
       {data.map(({ name, ownerId, wikiId }) => {
         let title = <> {name} </>
-        let markdown = (
-          <MarkdownSynapse ownerId={ownerId} wikiId={wikiId} />
-        )
+        let markdown = <MarkdownSynapse ownerId={ownerId} wikiId={wikiId} />
         return <ExpandableContent title={title} content={markdown} />
       })}
     </div>

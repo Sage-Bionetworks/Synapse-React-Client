@@ -23,10 +23,8 @@ const RequestDataAccessStep1: React.FC<RequestDataAccessStep1Props> = props => {
   const { accessToken } = useSynapseContext()
   const [projectLead, setProjectLead] = useState<string>('')
   const [institution, setInstitution] = useState<string>('')
-  const [
-    intendedDataUseStatement,
-    setIntendedDataUseStatement,
-  ] = useState<string>('')
+  const [intendedDataUseStatement, setIntendedDataUseStatement] =
+    useState<string>('')
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const researchProjectRef = useRef({})
   let mounted = true

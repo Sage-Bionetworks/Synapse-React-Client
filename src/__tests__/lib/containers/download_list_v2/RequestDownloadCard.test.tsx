@@ -8,12 +8,16 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../lib/utils/functions/getEndpoint'
-import { RequestDownloadCard, RequestDownloadCardProps, REQUEST_DOWNLOAD_TITLE } from '../../../../lib/containers/download_list_v2/RequestDownloadCard'
+import {
+  RequestDownloadCard,
+  RequestDownloadCardProps,
+  REQUEST_DOWNLOAD_TITLE,
+} from '../../../../lib/containers/download_list_v2/RequestDownloadCard'
 
 const ENTITY_ID = 'syn29218'
 const defaultProps: RequestDownloadCardProps = {
   entityId: ENTITY_ID,
-  count: 10
+  count: 10,
 }
 const mockEntityHeaderResult = { results: [{ id: ENTITY_ID }] }
 const setupEntityHeaderResponse = () => {
@@ -21,10 +25,7 @@ const setupEntityHeaderResponse = () => {
     rest.post(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
       async (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json(mockEntityHeaderResult),
-        )
+        return res(ctx.status(200), ctx.json(mockEntityHeaderResult))
       },
     ),
   )

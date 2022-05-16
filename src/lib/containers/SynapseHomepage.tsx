@@ -39,7 +39,9 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
       <div className="SynapseHomepage__Section PrimaryBackground">
         <div className="HeroContainer">
           <div className="Headline WhiteText">
-            <div className="SynapseLogoContainer"><SynapseFullLogo/></div>
+            <div className="SynapseLogoContainer">
+              <SynapseFullLogo />
+            </div>
             <div className="HeadlineSentence">
               <span className="Headline-Strong">Organize</span>
               <span className="Headline-Light">
@@ -103,7 +105,7 @@ export const SynapseHomepage: React.FunctionComponent<SynapseHomepageProps> = ({
             rel="noopener noreferrer"
             className="SRC-whiteText ignoreLink"
           >
-            <IconSvg options={{icon: 'searchOutlined'}} />
+            <IconSvg options={{ icon: 'searchOutlined' }} />
             Search Synapse Projects
           </a>
         </div>

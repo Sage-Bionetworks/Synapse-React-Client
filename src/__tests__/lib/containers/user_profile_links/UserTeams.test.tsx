@@ -7,14 +7,11 @@ import { useGetUserTeamsInfinite } from '../../../../lib/utils/hooks/SynapseAPI/
 import { Team } from '../../../../lib/utils/synapseTypes/Team'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
-jest.mock(
-  '../../../../lib/utils/hooks/SynapseAPI/useGetUserTeams',
-  () => {
-    return {
-      useGetUserTeamsInfinite: jest.fn(),
-    }
-  },
-)
+jest.mock('../../../../lib/utils/hooks/SynapseAPI/useGetUserTeams', () => {
+  return {
+    useGetUserTeamsInfinite: jest.fn(),
+  }
+})
 
 const mockFetchNextPage = jest.fn()
 const mockUseGetUserTeamsInfinite = useGetUserTeamsInfinite as jest.Mock
@@ -22,21 +19,21 @@ const userId = '10000'
 const page1: Partial<Team>[] = [
   {
     id: '100',
-    name: 'The first'
+    name: 'The first',
   },
 ]
 
 const page2: Partial<Team>[] = [
   {
     id: '101',
-    name: 'The second'
+    name: 'The second',
   },
 ]
 
 function renderComponent() {
   return render(
     <SynapseTestContext>
-      <UserTeams userId={userId}/>
+      <UserTeams userId={userId} />
     </SynapseTestContext>,
   )
 }

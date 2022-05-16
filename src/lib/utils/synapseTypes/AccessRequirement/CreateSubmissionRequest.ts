@@ -6,8 +6,8 @@
 import { RestrictableObjectType } from '../RestrictionInformation'
 
 export type CreateSubmissionRequest = {
-  requestId: string,
-  requestEtag: string,
-  subjectId: string,
+  requestId: string
+  requestEtag: string
+  subjectId: string
   subjectType: RestrictableObjectType
 }

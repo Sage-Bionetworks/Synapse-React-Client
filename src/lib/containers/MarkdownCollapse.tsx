@@ -8,7 +8,7 @@ import { displayToast } from './ToastMessage'
 
 export type MarkdownCollapseProps = {
   // The text that should be shown.  If not given, will default to "full text"
-  textDescription?: string 
+  textDescription?: string
   showCopyPlainText?: boolean
 } & MarkdownSynapseProps
 
@@ -16,37 +16,39 @@ export type MarkdownCollapseProps = {
  * Wraps a MarkdownSynapse in a Collapse area, with customizable text description.
  * Will pass down all properties to the MarkdownSynapse component, so this can be used in
  * the portal detail pages.
- * @param props 
+ * @param props
  */
 const MarkdownCollapse = (props: MarkdownCollapseProps) => {
   const [show, setShow] = useState(false)
   const [wordCount, setWordCount] = useState<number>()
   const [plainText, setPlainText] = useState<string>()
 
-  const onMarkdownProcessingDone = (ref:HTMLInputElement|null) => {
-      const textContent = ref?.textContent
-      if (textContent) {
-        setPlainText(textContent.trim())
-        setWordCount(textContent.trim().split(/\s+/).length)
-      }
+  const onMarkdownProcessingDone = (ref: HTMLInputElement | null) => {
+    const textContent = ref?.textContent
+    if (textContent) {
+      setPlainText(textContent.trim())
+      setWordCount(textContent.trim().split(/\s+/).length)
+    }
   }
 
-  const { textDescription = "full text", showCopyPlainText } = props
-  return ( 
+  const { textDescription = 'full text', showCopyPlainText } = props
+  return (
     <div className="MarkdownCollapse bootstrap-4-backport">
+      <p>
+        {show ? <IconMinus /> : <IconPlus />}
+        <SafeAnchor
+          className="highlight-link"
+          onClick={() => setShow(!show)}
+          aria-controls="collapse-text"
+          aria-expanded={show}
+        >
+          {show ? 'Hide' : 'View'} {textDescription}{' '}
+          {wordCount ? `(${wordCount} words)` : ''}
+        </SafeAnchor>
+      </p>
+      {showCopyPlainText && (
         <p>
-          {show ? <IconMinus /> : <IconPlus />}
-          <SafeAnchor
-            className="highlight-link"
-            onClick={() => setShow(!show)}
-            aria-controls="collapse-text"
-            aria-expanded={show}
-          >
-            {show ? 'Hide' : 'View'} {textDescription} {wordCount ? `(${wordCount} words)` : ''}
-          </SafeAnchor>
-        </p>
-        {showCopyPlainText && <p>
-          <IconCopy className='primary'/>
+          <IconCopy className="primary" />
           <SafeAnchor
             className="highlight-link"
             onClick={() => {
@@ -59,12 +61,16 @@ const MarkdownCollapse = (props: MarkdownCollapseProps) => {
           >
             Copy {textDescription} to clipboard
           </SafeAnchor>
-        </p>}
-        <Collapse in={show}>
-          <div id="collapse-text">
-            <MarkdownSynapse onMarkdownProcessingDone={onMarkdownProcessingDone} {...props} />
-          </div>
-        </Collapse>
+        </p>
+      )}
+      <Collapse in={show}>
+        <div id="collapse-text">
+          <MarkdownSynapse
+            onMarkdownProcessingDone={onMarkdownProcessingDone}
+            {...props}
+          />
+        </div>
+      </Collapse>
     </div>
   )
 }

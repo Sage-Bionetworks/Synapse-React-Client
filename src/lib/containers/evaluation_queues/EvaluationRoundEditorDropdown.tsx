@@ -9,10 +9,9 @@ export type EvaluationRoundEditorDropdownProps = {
   onSave: () => void
 }
 
-export const EvaluationRoundEditorDropdown: React.FunctionComponent<EvaluationRoundEditorDropdownProps> = ({
-  onSave,
-  onDelete,
-}) => {
+export const EvaluationRoundEditorDropdown: React.FunctionComponent<
+  EvaluationRoundEditorDropdownProps
+> = ({ onSave, onDelete }) => {
   const [deleteWarningShow, setDeleteWarningShow] = useState<boolean>(false)
 
   return (

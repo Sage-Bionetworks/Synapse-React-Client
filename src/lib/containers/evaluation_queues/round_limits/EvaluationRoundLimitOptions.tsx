@@ -10,21 +10,18 @@ export type EvaluationRoundLimitOptionsProps = {
   onChange: (limitInput: EvaluationRoundLimitInput) => void
 }
 
-export const LIMIT_TYPE_DISPLAY_NAME: Partial<Record<
-  EvaluationRoundLimitType,
-  string
->> = {
+export const LIMIT_TYPE_DISPLAY_NAME: Partial<
+  Record<EvaluationRoundLimitType, string>
+> = {
   // EvaluationRoundLimitType.TOTAL is purposely omitted because an <input> in the parent handles it
   DAILY: 'Daily Limit',
   WEEKLY: 'Weekly Limit',
   MONTHLY: 'Monthly Limit',
 }
 
-export const EvaluationRoundLimitOptions: React.FunctionComponent<EvaluationRoundLimitOptionsProps> = ({
-  limitInput,
-  allSelectedTypes,
-  onChange,
-}) => {
+export const EvaluationRoundLimitOptions: React.FunctionComponent<
+  EvaluationRoundLimitOptionsProps
+> = ({ limitInput, allSelectedTypes, onChange }) => {
   return (
     <React.Fragment>
       <FormGroup className="limit-type">

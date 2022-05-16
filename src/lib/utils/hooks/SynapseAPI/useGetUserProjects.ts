@@ -1,7 +1,4 @@
-import {
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-} from 'react-query'
+import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
@@ -30,8 +27,7 @@ export function useGetUserProjectsInfinite(
     },
     {
       ...options,
-      getNextPageParam: page =>
-        page.nextPageToken,
+      getNextPageParam: page => page.nextPageToken,
     },
   )
 }

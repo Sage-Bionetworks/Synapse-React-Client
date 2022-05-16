@@ -110,14 +110,8 @@ class StatisticsPlot extends React.Component<
     if (!this.state.isLoaded || !this.state.plotData) {
       return
     }
-    const {
-      title,
-      xtitle,
-      ytitle,
-      isHorizontal,
-      xaxistype,
-      showlegend,
-    } = this.props
+    const { title, xtitle, ytitle, isHorizontal, xaxistype, showlegend } =
+      this.props
     const plotData = this.state.plotData
     const layout: any = {
       showlegend,

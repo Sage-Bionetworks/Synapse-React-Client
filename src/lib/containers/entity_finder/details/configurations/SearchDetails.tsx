@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/useSearch'
 import { SearchQuery } from '../../../../utils/synapseTypes/Search'
-import { toError } from '../../../../utils/ErrorUtils'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 
@@ -29,7 +28,7 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
 
   useEffect(() => {
     if (isError && error) {
-      handleError(toError(error))
+      handleError(error)
     }
   }, [isError, error, handleError])
 

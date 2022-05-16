@@ -1,4 +1,3 @@
-
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Team.html
 export type Team = {
   id: string //The id of the Team.

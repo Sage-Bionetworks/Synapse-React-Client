@@ -116,10 +116,12 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         // elems looks like [{ name: 'A', sets: ['S1', 'S2'] }, { name: 'B', sets: ['S1'] }, ...]
         const sets = extractSets(elems)
         // PORTALS-1673: sort by assay name
-        const sortedSets = (sets as any).sort((a: { name: string }, b: { name: string }) => {
-          return ('' + b.name).localeCompare(a.name)
-        })
-        
+        const sortedSets = (sets as any).sort(
+          (a: { name: string }, b: { name: string }) => {
+            return ('' + b.name).localeCompare(a.name)
+          },
+        )
+
         const combinations = generateCombinations(sortedSets, {
           type: 'intersection',
           min: 1,

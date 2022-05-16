@@ -35,9 +35,9 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
   describe('transformDataFromPropertyType tests', () => {
     it('converts strings to numbers', () => {
       const data = ['1', '2', '3']
-      expect(
-        transformDataFromPropertyType(data, PropertyType.INTEGER),
-      ).toEqual([1, 2, 3])
+      expect(transformDataFromPropertyType(data, PropertyType.INTEGER)).toEqual(
+        [1, 2, 3],
+      )
     })
 
     it('converts numbers to strings', () => {

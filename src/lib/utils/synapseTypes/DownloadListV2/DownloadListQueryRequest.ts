@@ -1,4 +1,4 @@
-import { QueryRequestDetails } from "./QueryRequestDetails";
+import { QueryRequestDetails } from './QueryRequestDetails'
 
 // http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/download/DownloadListQueryRequest.html
 export type DownloadListQueryRequest = {

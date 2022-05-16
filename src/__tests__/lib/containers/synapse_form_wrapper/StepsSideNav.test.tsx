@@ -53,16 +53,8 @@ describe('basic tests', () => {
     const spy = jest.spyOn(mock, 'onStepChangeFn')
     const { wrapper } = createShallowComponent(props)
     //steps in progress will not have links so link#2 corresponds to step#3
-    expect(
-      wrapper
-        .find('button')
-        .at(2)
-        .text(),
-    ).toEqual(stepsArray[3].title)
-    wrapper
-      .find('button')
-      .at(2)
-      .simulate('click')
+    expect(wrapper.find('button').at(2).text()).toEqual(stepsArray[3].title)
+    wrapper.find('button').at(2).simulate('click')
     expect(spy).toHaveBeenCalledWith(stepsArray[3])
   })
 

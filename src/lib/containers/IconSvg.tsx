@@ -37,6 +37,8 @@ import {
   RemoveCircleTwoTone,
   LockOpenTwoTone,
   VpnKeyTwoTone,
+  ReplyTwoTone,
+  ChatTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -227,6 +229,10 @@ const getIcon = (options: IconSvgOptions) => {
       return <ReportProblemOutlined style={muiSvgStyle}></ReportProblemOutlined>
     case 'removeCircle':
       return <RemoveCircleTwoTone style={muiSvgStyle}></RemoveCircleTwoTone>
+    case 'replyTwoTone':
+      return <ReplyTwoTone style={muiSvgStyle}></ReplyTwoTone>
+    case 'chatTwoTone':
+      return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
     default:
       return <></>
   }
