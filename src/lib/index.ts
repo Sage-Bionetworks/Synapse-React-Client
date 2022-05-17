@@ -61,6 +61,7 @@ import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationE
 import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
 import FullWidthAlert from './containers/FullWidthAlert'
+import ForumSearch from './containers/ForumSearch'
 import { SynapseToastContainer, displayToast } from './containers/ToastMessage'
 import Typography from './utils/typography/Typography'
 
@@ -123,6 +124,7 @@ const SynapseComponents = {
   ProgrammaticTableDownload,
   ChangePassword,
   FileUpload,
+  ForumSearch,
 }
 
 export {

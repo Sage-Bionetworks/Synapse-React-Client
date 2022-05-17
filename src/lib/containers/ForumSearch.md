@@ -1,3 +1,6 @@
 ```jsx
-<ForumSearch forumId='1032'/>
+<ForumSearch
+  forumId="1032"
+  onSearchUIVisible={visible => alert(`Is visible? ${visible}`)}
+/>
 ```

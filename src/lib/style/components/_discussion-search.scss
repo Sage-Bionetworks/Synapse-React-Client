@@ -1,6 +1,6 @@
 .ForumSearch {
     .SearchIcon {
-        left: 22px;
+        left: 30px;
         position: relative;
     }
 
@@ -9,18 +9,22 @@
         position: relative;
         left: -42px;
         margin-right: -8px;
+        width: 10px;
     }
 
     .SearchBar {
         flex-grow: 1;
-        margin: 10px 0;
-        padding: 10px;
+        padding: 6px 10px 6px 33px;
         border: none;
         background-color: #ebebeb;
     }
 
     .SearchBarResult {
         width: 93%;
+    }
+
+    .ResultsText, .NoResultsText {
+        margin: 15px 0px 10px 22px;
     }
 }
 
