@@ -38,6 +38,7 @@ import { ProgrammaticInstructionsModal } from './containers/ProgrammaticInstruct
 import PlotlyWrapper from './containers/PlotlyWrapper'
 import IconSvg from './containers/IconSvg'
 import ChangePassword from './containers/ChangePassword'
+import ForumSearch from './containers/ForumSearch'
 import {
   SynapseContextProvider,
   SynapseContextConsumer,
@@ -95,6 +96,7 @@ const SynapseComponents = {
   QueryWrapperPlotNav,
   StandaloneQueryWrapper,
   ChangePassword,
+  ForumSearch,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
