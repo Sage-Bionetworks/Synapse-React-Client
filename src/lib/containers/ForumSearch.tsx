@@ -16,11 +16,11 @@ import { displayToast } from './ToastMessage'
 export type ForumSearchProps = {
   forumId: string
   projectId?: string
-  onSearchUIVisible?: (visible: boolean) => void
+  onSearchResultsVisible?: (visible: boolean) => void
 }
 
 const ForumSearch = (props: ForumSearchProps) => {
-  const { onSearchUIVisible } = props
+  const { onSearchResultsVisible } = props
   const { accessToken } = useSynapseContext()
   const [searchInput, setSearchInput] = useState<string>('')
   const [searchResult, setSearchResult] = useState<DiscussionSearchResponse>()
@@ -29,8 +29,8 @@ const ForumSearch = (props: ForumSearchProps) => {
   const [noSearchResult, setNoSearchResult] = useState(false)
 
   const onSearch = async () => {
-    if (onSearchUIVisible) {
-      onSearchUIVisible(true)
+    if (onSearchResultsVisible) {
+      onSearchResultsVisible(true)
     }
     try {
       setSearchResult(undefined)
@@ -54,8 +54,8 @@ const ForumSearch = (props: ForumSearchProps) => {
   }
 
   const onResetSearch = () => {
-    if (onSearchUIVisible) {
-      onSearchUIVisible(false)
+    if (onSearchResultsVisible) {
+      onSearchResultsVisible(false)
     }
     setSearchInput('')
     setSearchResult(undefined)
@@ -135,7 +135,7 @@ const ForumSearch = (props: ForumSearchProps) => {
       {noSearchResult && (
         <>
           {props.projectId && (
-            <Typography variant="body2">
+            <Typography variant="body2" className="NoResultsText">
               No results for '{searchInput}' in {entity?.name}
             </Typography>
           )}
@@ -144,8 +144,8 @@ const ForumSearch = (props: ForumSearchProps) => {
       )}
       {matchList && (
         <>
-          {props.projectId && (
-            <Typography variant="body2">
+          {props.projectId && !noSearchResult && (
+            <Typography variant="body2" className="ResultsText">
               Results for '{searchInput}' in {entity?.name}
             </Typography>
           )}

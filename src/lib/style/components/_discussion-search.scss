@@ -13,14 +13,17 @@
 
     .SearchBar {
         flex-grow: 1;
-        margin: 10px 0;
-        padding: 10px 10px 10px 33px;
+        padding: 6px 10px 6px 33px;
         border: none;
         background-color: #ebebeb;
     }
 
     .SearchBarResult {
         width: 93%;
+    }
+
+    .ResultsText, .NoResultsText {
+        margin: 15px 0px 10px 22px;
     }
 }
 
