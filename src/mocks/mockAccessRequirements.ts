@@ -9,6 +9,7 @@ import {
 
 const defaultAccessRequirement = {
   id: 1,
+  name: 'Mocked access requirement',
   etag: '26489045-3a98-405f-b214-9e1c90208c64',
   createdOn: '2019-02-06T21:17:25.790Z',
   modifiedOn: '2020-07-24T18:11:35.323Z',

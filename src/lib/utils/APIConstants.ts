@@ -84,4 +84,7 @@ export const VERIFICATION_SUBMISSION = `${REPO}/verificationSubmission`
 export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
   `${REPO}/accessRequirement/${id}`
 
+export const ACCESS_REQUIREMENT_ACL = (id: string | number) =>
+  ACCESS_REQUIREMENT_BY_ID(id) + '/acl'
+
 export const FAVORITES = `${REPO}/favorite`

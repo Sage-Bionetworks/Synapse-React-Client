@@ -4,7 +4,6 @@ import { SynapseClient } from '../utils'
 import SortIcon from '../assets/icons/Sort'
 import { Direction, EntityHeader } from '../utils/synapseTypes'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { toError } from '../utils/ErrorUtils'
 import { SynapseSpinner } from './LoadingScreen'
 import { useGetFavorites } from '../utils/hooks/SynapseAPI/useFavorites'
 import IconSvg from './IconSvg'
@@ -44,7 +43,7 @@ export default function FavoritesPage() {
 
   useEffect(() => {
     if (isError && newError) {
-      setError(toError(newError))
+      setError(newError)
     }
   }, [isError, newError])
 
