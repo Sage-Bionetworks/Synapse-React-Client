@@ -184,6 +184,15 @@ import {
 import { Team } from './synapseTypes/Team'
 import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import {
+  DiscussionReplyBundle,
+  DiscussionThreadBundle,
+} from './synapseTypes/DiscussionBundle'
+import { MessageURL } from './synapseTypes/MessageUrl'
+import {
+  DiscussionSearchRequest,
+  DiscussionSearchResponse,
+} from './synapseTypes/DiscussionSearch'
 
 const cookies = new UniversalCookies()
 
@@ -3510,6 +3519,106 @@ export const updateNotificationEmail = (
   return doPut(
     '/repo/v1/notificationEmail',
     { email },
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get a reply and its statistic given its ID.
+Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/reply/replyId.html
+ * @param replyId
+ * @param accessToken
+ */
+export const getReply = (replyId: string, accessToken: string | undefined) => {
+  return doGet<DiscussionReplyBundle>(
+    `/repo/v1/reply/${replyId}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get the message URL of a reply. The message
+ * URL is the URL to download the file which contains the reply message.
+ * Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/reply/messageUrl.html
+ * @param messageKey
+ * @param accessToken
+ */
+
+export const getReplyMessageUrl = (
+  messageKey: string,
+  accessToken: string | undefined,
+) => {
+  return doGet<MessageURL>(
+    `/repo/v1/reply/messageUrl?messageKey=${messageKey}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get a thread and its statistic given its ID.
+ * Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/thread/threadId.html
+ * @param threadId
+ * @param accessToken
+ */
+export const getThread = (
+  threadId: string,
+  accessToken: string | undefined,
+) => {
+  return doGet<DiscussionThreadBundle>(
+    `/repo/v1/thread/${threadId}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get the message URL of a reply. The message
+ * URL is the URL to download the file which contains the reply message.
+ * Target users: anyone who has READ permission to the project.
+ * http://rest-docs.synapse.org/rest/GET/thread/messageUrl.html
+ * @param messageKey
+ * @param accessToken
+ */
+
+export const getThreadMessageUrl = (
+  messageKey: string,
+  accessToken: string | undefined,
+) => {
+  return doGet<MessageURL>(
+    `/repo/v1/thread/messageUrl?messageKey=${messageKey}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Performs a full text search in the forum defined by the given id.
+ * Target users: anyone who has READ permission on the project of the forum.
+ * http://rest-docs.synapse.org/rest/POST/forum/forumId/search.html
+ * @param discussionSearchRequest
+ * @param forumId
+ * @param accessToken
+ */
+
+export const forumSearch = (
+  discussionSearchRequest: DiscussionSearchRequest,
+  forumId: string,
+  accessToken: string | undefined,
+) => {
+  return doPost<DiscussionSearchResponse>(
+    `/repo/v1/forum/${forumId}/search`,
+    discussionSearchRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
