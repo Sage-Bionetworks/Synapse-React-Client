@@ -115,7 +115,6 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     useState(false)
 
   async function approveSubmission() {
-    // Show intermediate modal and then fire request
     return await SynapseClient.updateSubmissionStatus(
       {
         submissionId: submission?.id ?? '',
