@@ -1,23 +1,5 @@
+import ACCESS_TYPE from '../ACCESS_TYPE'
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
-
-export enum ACCESS_TYPE {
-  CREATE = 'CREATE',
-  READ = 'READ',
-  UPDATE = 'UPDATE',
-  DELETE = 'DELETE',
-  CHANGE_PERMISSIONS = 'CHANGE_PERMISSIONS',
-  DOWNLOAD = 'DOWNLOAD',
-  UPLOAD = 'UPLOAD',
-  PARTICIPATE = 'PARTICIPATE',
-  SUBMIT = 'SUBMIT',
-  READ_PRIVATE_SUBMISSION = 'READ_PRIVATE_SUBMISSION',
-  UPDATE_SUBMISSION = 'UPDATE_SUBMISSION',
-  DELETE_SUBMISSION = 'DELETE_SUBMISSION',
-  TEAM_MEMBERSHIP_UPDATE = 'TEAM_MEMBERSHIP_UPDATE',
-  SEND_MESSAGE = 'SEND_MESSAGE',
-  CHANGE_SETTINGS = 'CHANGE_SETTINGS',
-  MODERATE = 'MODERATE',
-}
 
 export interface AccessRequirement {
   versionNumber: number //	The version number issued to this version on the object.

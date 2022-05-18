@@ -1,0 +1,64 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+.SubmissionPage {
+  @media screen and (min-width: 768px) {
+    display: flex;
+    .SubmissionSummary {
+      width: 375px;
+      max-width: 400px;
+      padding-right: 40px;
+    }
+    .SubmissionRightPane {
+      flex-grow: 1;
+    }
+  }
+  .ButtonContainer {
+    display: flex;
+    gap: 10px;
+    button {
+      flex-grow: 1;
+      flex-basis: 0;
+    }
+  }
+  .FieldName {
+    color: map.get(SRC.$colors, 'gray-700');
+    text-transform: uppercase;
+  }
+  .SubmissionSummary {
+    margin-bottom: 15px;
+    .SubmissionSummaryGrid {
+      display: grid;
+      column-gap: 10px;
+      grid-template-columns: auto auto;
+
+      .Key {
+        grid-column: 1;
+      }
+
+      .Value {
+        grid-column: 2;
+      }
+
+      > * {
+        white-space: nowrap;
+        //   justify-self: start;
+        //   align-self: center;
+      }
+    }
+  }
+  ul {
+    padding-left: 25px;
+    li {
+      margin-top: 5px;
+    }
+  }
+
+  .AccessRequirementWikiContainer {
+    background: #f1f3f580;
+    border: 1px solid #dfe2e6;
+
+    .AccessRequirementWikiContent {
+      margin: 40px;
+    }
+  }
+}

@@ -23,6 +23,7 @@ import {
   SubmissionState,
   TYPE_FILTER,
   UploadCallbackResp,
+  UserGroupHeader,
   UserProfile,
 } from '../../../utils/synapseTypes'
 import DirectDownloadButton from '../../DirectDownloadButton'
@@ -509,7 +510,7 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
   }
 
   // User search input event handler
-  const onSelectUserCallback = (selected: UserProfile) => {
+  const onSelectUserCallback = (selected: UserGroupHeader) => {
     const currentAccessorIds = accessors.map(
       accessor => accessor.profile.ownerId,
     )
@@ -521,8 +522,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         {
           profile: {
             ownerId: selected.ownerId,
-            firstName: selected.firstName,
-            lastName: selected.lastName,
+            firstName: selected.firstName!,
+            lastName: selected.lastName!,
             userName: selected.userName,
           },
           accessType: AccessType.GAIN_ACCESS,
