@@ -1,15 +1,13 @@
-import * as React from 'react'
 import Downshift from 'downshift'
+import * as React from 'react'
 import { useState } from 'react'
 import { getUserGroupHeaders } from '../utils/SynapseClient'
 import {
   UserGroupHeader,
   UserGroupHeaderResponsePage,
 } from '../utils/synapseTypes'
-import UserCard from './UserCard'
-import { SMALL_USER_CARD } from '../utils/SynapseConstants'
-import IconSvg from './IconSvg'
 import { TYPE_FILTER } from '../utils/synapseTypes/UserGroupHeader'
+import UserOrTeamBadge from './UserOrTeamBadge'
 
 export type UserSearchBoxProps = {
   id?: string // id for the input tag
@@ -48,7 +46,9 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
   return (
     <>
       <Downshift
-        onInputValueChange={inputValue => onInputValueChange(inputValue)}
+        onInputValueChange={inputValue => {
+          onInputValueChange(inputValue)
+        }}
         onChange={selectedItem => onSelectedItem(selectedItem)}
         itemToString={item => (item?.name ? item.name : '')}
       >
@@ -90,19 +90,11 @@ const UserSearchBox: React.FC<UserSearchBoxProps> = props => {
                         key={`userSearchBox-${index}`}
                         {...getItemProps({ key: item.ownerId, index, item })}
                       >
-                        {item.isIndividual ? (
-                          <UserCard
-                            ownerId={item.ownerId}
-                            disableLink={true}
-                            size={SMALL_USER_CARD}
-                            showFullName={true}
-                          />
-                        ) : (
-                          <p>
-                            <IconSvg options={{ icon: 'team' }} />
-                            <a> {item.userName}</a>
-                          </p>
-                        )}
+                        <UserOrTeamBadge
+                          userGroupHeader={item}
+                          disableHref={true}
+                          showFullName={true}
+                        />
                       </li>
                     ))
                 : null}
