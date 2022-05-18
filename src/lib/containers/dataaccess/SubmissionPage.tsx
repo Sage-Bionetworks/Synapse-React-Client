@@ -259,8 +259,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Skeleton width={100} />
             )}
           </Typography>
-          {/* TODO: Determine if modifiedOn reliably indicates a reviewer if not the submitter. */}
-          <Typography variant="smallText1">Modified By</Typography>
+          <Typography variant="smallText1" className="FieldName">
+            Modified By
+          </Typography>
           <Typography variant="smallText1">
             {submission ? (
               <UserCard
@@ -271,8 +272,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Skeleton width={100} />
             )}
           </Typography>
-          <br />
-          <Typography variant="smallText1">Modified On</Typography>
+          <Typography variant="smallText1" className="FieldName">
+            Modified On
+          </Typography>
           <Typography variant="smallText1">
             {submission ? (
               formatDate(moment(submission.modifiedOn))
