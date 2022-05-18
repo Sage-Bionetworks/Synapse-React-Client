@@ -1,11 +1,10 @@
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
 import { SynapseClient } from '../utils'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { UserGroupHeader } from '../utils/synapseTypes'
-import IconSvg from './IconSvg'
+import TeamBadge from './TeamBadge'
 import UserCard from './UserCard'
 
 type UserOrTeamBadgeProps = {
@@ -15,30 +14,6 @@ type UserOrTeamBadgeProps = {
   userGroupHeader?: UserGroupHeader
   showFullName?: boolean
   disableHref?: boolean
-}
-
-const TeamBadge = (props: {
-  teamId: string | number
-  teamName: string
-  disableHref?: boolean
-}) => {
-  const { teamId, teamName, disableHref } = props
-
-  return (
-    <span>
-      <IconSvg options={{ icon: 'team' }} />
-      <a
-        style={{ marginLeft: '5px' }}
-        href={
-          disableHref
-            ? undefined
-            : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${teamId}`
-        }
-      >
-        {teamName}
-      </a>
-    </span>
-  )
 }
 
 export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
