@@ -137,11 +137,7 @@ describe('Submission Page tests', () => {
     await screen.findByText('Synapse Access and Compliance Team')
 
     await screen.findByText('Conditions')
-    await screen.findByText(
-      'Expiration period: ' +
-        mockManagedACTAccessRequirement.expirationPeriod.toString() +
-        ' day(s)',
-    )
+    await screen.findByText('Expiration period: 1 day(s)')
 
     await screen.findByText('Modified By')
     await screen.findByText('Modified On')
