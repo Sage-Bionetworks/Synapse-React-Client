@@ -70,11 +70,11 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   })
 
   let primaryAction
-  let tertiaryActions
+  let secondaryActions
 
   if (!entityBundle) {
     primaryAction = { skeleton: true }
-    tertiaryActions = undefined
+    secondaryActions = undefined
   } else {
     // TODO: Determine if we're on the entity page to conditonally show this button
     primaryAction = {
@@ -99,7 +99,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
           annotationEditorFormRef.current?.submit()
         },
       }
-      tertiaryActions = [
+      secondaryActions = [
         {
           copy: 'Cancel',
           onClick: () => {
@@ -108,7 +108,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         },
       ]
     } else if (canEdit) {
-      tertiaryActions = [
+      secondaryActions = [
         {
           copy: 'Edit',
           disabled: isVersionable && !isLatestVersion,
@@ -139,7 +139,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         show={show}
         onClose={onClose}
         primaryAction={primaryAction}
-        tertiaryActions={tertiaryActions}
+        secondaryActions={secondaryActions}
       >
         <>
           <ReactTooltip
