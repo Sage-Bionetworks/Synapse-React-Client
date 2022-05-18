@@ -204,7 +204,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           <Typography variant="smallText1">
             <ul>
               <li>
-                Expiration period: {accessRequirement.expirationPeriod} day(s)
+                Expiration period:{' '}
+                {moment
+                  .duration(accessRequirement.expirationPeriod, 'milliseconds')
+                  .asDays()}{' '}
+                day(s)
                 {accessRequirement.expirationPeriod === 0 && ' (no expiration)'}
               </li>
 
