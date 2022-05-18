@@ -76,18 +76,19 @@ export const EntityModal: React.FC<EntityModalProps> = ({
     primaryAction = { skeleton: true }
     secondaryActions = undefined
   } else {
-    // TODO: Determine if we're on the entity page to conditonally show this button
-    primaryAction = {
-      skeleton: false,
-      copy: `Open ${entityTypeToFriendlyName(entityBundle.entityType!)}`,
-      onClick: () =>
-        window.open(
-          `${getEndpoint(
-            BackendDestinationEnum.PORTAL_ENDPOINT,
-          )}#!Synapse:${entityId}`,
-          '_blank',
-          'noopener',
-        ),
+    if (!window.location.href.includes(entityId)) {
+      primaryAction = {
+        skeleton: false,
+        copy: `Open ${entityTypeToFriendlyName(entityBundle.entityType!)}`,
+        onClick: () =>
+          window.open(
+            `${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}#!Synapse:${entityId}`,
+            '_blank',
+            'noopener',
+          ),
+      }
     }
   }
 
