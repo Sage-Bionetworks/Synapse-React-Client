@@ -52,7 +52,7 @@
   }
 
   .AccessRequirementWikiContainer {
-    background: #f1f3f580;
+    background: map.get(SRC.$colors, 'gray-100');
     border: 1px solid #dfe2e6;
 
     .AccessRequirementWikiContent {
