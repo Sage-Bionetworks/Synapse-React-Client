@@ -73,7 +73,6 @@ export const SchemaDrivenAnnotationEditor = (
     onCancel,
     formRef: formRefFromParent,
   } = props
-  const handleError = useErrorHandler()
   const formRef = useRef<Form<Record<string, unknown>>>(null)
 
   // Annotation fields fetched and modified via the form
@@ -98,11 +97,7 @@ export const SchemaDrivenAnnotationEditor = (
 
   const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
     enabled: !!entityId && !formData, // once we have data, don't refetch. it would overwrite the user's entries
-    onError: e => {
-      if (e.status !== 404) {
-        handleError(e)
-      }
-    },
+    useErrorBoundary: true,
   })
 
   useEffect(() => {
@@ -116,13 +111,8 @@ export const SchemaDrivenAnnotationEditor = (
     entityId!,
     {
       enabled: !!entityId,
-      retry: false,
       refetchOnWindowFocus: false,
-      onError: e => {
-        if (e.status !== 404) {
-          handleError(e)
-        }
-      },
+      useErrorBoundary: true,
     },
   )
 
@@ -136,11 +126,7 @@ export const SchemaDrivenAnnotationEditor = (
         delete schema.$id
         return schema
       },
-      onError: e => {
-        if (e.status !== 404) {
-          handleError(e)
-        }
-      },
+      useErrorBoundary: true,
     },
   )
 
@@ -197,7 +183,7 @@ export const SchemaDrivenAnnotationEditor = (
               </b>
             </Alert>
           )}
-          {entityJson && (!formData || isEmpty(formData)) && !schema && (
+          {entityJson && (!formData || isEmpty(formData)) && schema === null && (
             <Alert
               dismissible={false}
               show={true}
