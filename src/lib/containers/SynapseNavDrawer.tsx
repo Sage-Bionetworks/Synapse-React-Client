@@ -9,10 +9,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import { Avatar } from './Avatar'
 import { Form } from 'react-bootstrap'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
-import {
-  getMyUserBundle,
-  isInSynapseExperimentalMode,
-} from '../utils/SynapseClient'
+import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { CreateProjectModal } from './CreateProjectModal'
 
 export type SynapseNavDrawerProps = {
@@ -112,9 +109,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
         SynapseConstants.USER_BUNDLE_MASK_IS_ACT_MEMBER |
         SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
         SynapseConstants.USER_BUNDLE_MASK_IS_AR_REVIEWER
-      // const userProfile = await SynapseClient.getUserProfile(accessToken)
-      const userBundle = await getMyUserBundle(mask, accessToken)
-      // setUserProfile(userProfile)
+      const userBundle = await SynapseClient.getMyUserBundle(mask, accessToken)
       setUserProfile(userBundle.userProfile)
       setUserBundle(userBundle)
     }
