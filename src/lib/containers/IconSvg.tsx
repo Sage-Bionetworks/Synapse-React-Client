@@ -60,6 +60,7 @@ import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
 import Docker from '../assets/mui_components/Docker'
+import AccessManagement from '../assets/mui_components/AccessManagement'
 
 export type IconSvgOptions = {
   icon: string
@@ -233,6 +234,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <ReplyTwoTone style={muiSvgStyle}></ReplyTwoTone>
     case 'chatTwoTone':
       return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
+    case 'accessManagement':
+      return <AccessManagement></AccessManagement>
     default:
       return <></>
   }

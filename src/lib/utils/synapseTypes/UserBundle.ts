@@ -10,4 +10,5 @@ export type UserBundle = {
   isCertified?: boolean // true iff the user is Certified
   isVerified?: boolean // true iff the user is Verified
   isACTMember?: boolean // true iff the user is an ACT member
+  isARReviewer?: boolean // true iff the user has permissions to review data access submissions on at least one access requirement (This is always true for an ACT member)
 }
