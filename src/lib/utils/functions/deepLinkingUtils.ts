@@ -87,7 +87,7 @@ export function updateUrlWithNewSearchParam(
     location.port ? ':' + location.port : ''
   }${location.pathname}?${searchString}`
 
-  window.history.pushState('object or string', 'Title', newURL)
+  window.history.replaceState('object or string', 'Title', newURL)
 }
 
 export function getQueryRequestFromLink(
