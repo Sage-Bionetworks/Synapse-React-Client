@@ -235,7 +235,7 @@ const getIcon = (options: IconSvgOptions) => {
     case 'chatTwoTone':
       return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
     case 'accessManagement':
-      return <AccessManagement></AccessManagement>
+      return <AccessManagement style={muiSvgStyle}></AccessManagement>
     default:
       return <></>
   }

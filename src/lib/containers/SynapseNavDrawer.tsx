@@ -106,7 +106,6 @@ export const SynapseNavDrawer: React.FunctionComponent<
   useEffect(() => {
     async function getUserProfile() {
       const mask =
-        SynapseConstants.USER_BUNDLE_MASK_IS_ACT_MEMBER |
         SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
         SynapseConstants.USER_BUNDLE_MASK_IS_AR_REVIEWER
       const userBundle = await SynapseClient.getMyUserBundle(mask, accessToken)
@@ -257,8 +256,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   onClickGoToUrl: '/#!Trash:0',
                 })}
               {isInSynapseExperimentalMode() &&
-                (currentUserBundle?.isACTMember ||
-                  currentUserBundle?.isARReviewer) &&
+                currentUserBundle?.isARReviewer &&
                 getListItem({
                   tooltip: 'Data Access Management',
                   iconName: 'accessManagement',
