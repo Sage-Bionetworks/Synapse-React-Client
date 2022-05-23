@@ -1,6 +1,7 @@
 import { useListState } from '../../../../lib/utils/hooks/useListState'
 import React from 'react'
-import { mount } from 'enzyme'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 type UserListStateWrapperProps = {
   initialValue: string[]
@@ -39,40 +40,61 @@ const UseListStateWrapper: React.FunctionComponent<
 describe('test useListState()', () => {
   const initialList = ['asdf', 'qwerty']
 
-  it('append value', () => {
-    const wrapper = mount(<UseListStateWrapper initialValue={initialList} />)
-    expect(wrapper.find('ul').children()).toHaveLength(initialList.length)
+  it('append value', async () => {
+    render(<UseListStateWrapper initialValue={initialList} />)
 
-    wrapper.find('.add').simulate('click')
-    expect(wrapper.find('ul').children()).toHaveLength(initialList.length + 1)
-    expect(
-      wrapper.find('ul').childAt(2).find(HTMLInputElement).prop('value'),
-    ).toBe('new value')
+    expect(await screen.findAllByRole('listitem')).toHaveLength(
+      initialList.length,
+    )
+
+    userEvent.click(screen.getByText('add value'))
+
+    expect(await screen.findAllByRole('listitem')).toHaveLength(
+      initialList.length + 1,
+    )
+    expect(screen.getAllByRole<HTMLInputElement>('textbox')[2].value).toBe(
+      'new value',
+    )
   })
 
-  it('remove value', () => {
-    const wrapper = mount(<UseListStateWrapper initialValue={initialList} />)
-    expect(wrapper.find('ul').children()).toHaveLength(initialList.length)
+  it('remove value', async () => {
+    render(<UseListStateWrapper initialValue={initialList} />)
+    expect(await screen.findAllByRole('listitem')).toHaveLength(
+      initialList.length,
+    )
 
-    wrapper.find('.remove-0').simulate('click')
-    expect(wrapper.find('ul').children()).toHaveLength(initialList.length - 1)
-    expect(
-      wrapper.find('ul').childAt(0).find(HTMLInputElement).prop('value'),
-    ).toBe('qwerty')
+    userEvent.click(screen.getByText('remove + asdf'))
+
+    expect(await screen.findAllByRole('listitem')).toHaveLength(
+      initialList.length - 1,
+    )
+    expect(screen.getAllByRole<HTMLInputElement>('textbox')[0].value).toBe(
+      'qwerty',
+    )
   })
 
-  it('update value', () => {
-    const wrapper = mount(<UseListStateWrapper initialValue={initialList} />)
-    expect(wrapper.find('ul').children()).toHaveLength(initialList.length)
+  it('update value', async () => {
+    render(<UseListStateWrapper initialValue={initialList} />)
+    expect(await screen.findAllByRole('listitem')).toHaveLength(
+      initialList.length,
+    )
 
-    wrapper
-      .find('ul')
-      .childAt(1)
-      .find(HTMLInputElement)
-      .simulate('change', { target: { value: 'changed value' } })
-    expect(wrapper.find('ul').children()).toHaveLength(initialList.length)
-    expect(
-      wrapper.find('ul').childAt(1).find(HTMLInputElement).prop('value'),
-    ).toBe('changed value')
+    screen.getAllByRole<HTMLInputElement>('textbox')[0].value = 'new value'
+
+    const getInput = () => screen.getAllByRole<HTMLInputElement>('textbox')[1]
+
+    userEvent.clear(getInput())
+
+    expect(await screen.findAllByRole('listitem')).toHaveLength(
+      initialList.length,
+    )
+    await waitFor(() => expect(getInput().value).toBe(''))
+
+    userEvent.paste(getInput(), 'changed value')
+
+    expect(await screen.findAllByRole('listitem')).toHaveLength(
+      initialList.length,
+    )
+    await waitFor(() => expect(getInput().value).toBe('changed value'))
   })
 })

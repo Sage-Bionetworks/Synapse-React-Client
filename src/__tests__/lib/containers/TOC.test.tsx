@@ -1,9 +1,7 @@
+import { render, screen } from '@testing-library/react'
 import * as React from 'react'
-import { mount } from 'enzyme'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
-import { delay } from '../../../lib/utils/SynapseClient'
-import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 describe('renders without crashing', () => {
   let SynapseClient: any
   beforeAll(() => {
@@ -19,32 +17,31 @@ describe('renders without crashing', () => {
     SynapseClient.getEntityWiki = jest.fn(() =>
       Promise.resolve({ markdown: '${toc}\n#Heading1' }),
     )
-    const tree = await mount(
-      <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />,
-      {
-        wrappingComponent: SynapseTestContext,
-      },
-    )
-    await delay(_TIME_DELAY)
-    expect(tree.find('div.markdown')).toHaveLength(1)
-    // peculiar behavior below where only usng .render() works
-    expect(tree.render().find('a.link.toc-indent1')).toHaveLength(1)
-    expect(tree.render().find('h1#SRC-header-1')).toHaveLength(1)
+
+    render(<MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />, {
+      wrapper: createWrapper(),
+    })
+
+    // Render a link in the TOC that points to the corresponding heading element
+    const tocLink = await screen.findByRole<HTMLAnchorElement>('link')
+    const heading = await screen.findByRole<HTMLHeadingElement>('heading')
+    expect(tocLink).toHaveClass('link toc-indent1')
+
+    // TODO: Test that the link points to the header
   })
 
   it('renders a table of contents with a non-toc-header header', async () => {
     SynapseClient.getEntityWiki = jest.fn(() =>
       Promise.resolve({ markdown: "${toc}\n#Heading1\n##! Don't show me!" }),
     )
-    const tree = await mount(
-      <MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />,
-      {
-        wrappingComponent: SynapseTestContext,
-      },
-    )
-    await delay(_TIME_DELAY)
-    expect(tree.find('div.markdown')).toHaveLength(1)
-    expect(tree.render().find('h2')).toHaveLength(1)
-    expect(tree.render().find('h2#SRC-header-2')).toHaveLength(0)
+    render(<MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />, {
+      wrapper: createWrapper(),
+    })
+
+    const tocLinks = await screen.findAllByRole<HTMLAnchorElement>('link')
+    const headings = await screen.findAllByRole<HTMLHeadingElement>('heading')
+
+    expect(tocLinks).toHaveLength(1)
+    expect(headings).toHaveLength(2)
   })
 })

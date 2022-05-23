@@ -1,6 +1,6 @@
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import ReactTooltip from 'react-tooltip'
 import IconSvg, { IconSvgOptions } from '../../../lib/containers/IconSvg'
 
 describe('IconSvg: basic functionality', () => {
@@ -9,14 +9,9 @@ describe('IconSvg: basic functionality', () => {
     color: '#000000',
   }
 
-  it('render component without crashing', async () => {
-    const wrapper = mount(<IconSvg options={iconOptions} />)
-    expect(wrapper).toBeDefined()
-  })
-
-  it('should render the correct icon', async () => {
-    const wrapper = mount(<IconSvg options={iconOptions} />)
-    expect(wrapper.find('.styled-svg-wrapper').prop('data-svg')).toEqual('data')
+  it('should render an image', () => {
+    render(<IconSvg options={iconOptions} />)
+    screen.getByRole('img')
   })
 
   it('should render tooltip when label is set', async () => {
@@ -25,7 +20,9 @@ describe('IconSvg: basic functionality', () => {
       color: '#000000',
       label: 'abc',
     }
-    const wrapper = mount(<IconSvg options={iconOptionsWithLabel} />)
-    expect(wrapper.containsMatchingElement(<ReactTooltip />)).toEqual(true)
+    render(<IconSvg options={iconOptionsWithLabel} />)
+    const iconContainer = screen.getByRole('img')
+    userEvent.hover(iconContainer)
+    await screen.findByText(iconOptionsWithLabel.label!)
   })
 })
