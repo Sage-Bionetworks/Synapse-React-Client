@@ -1,7 +1,7 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:map';
 .SubmissionPage {
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: map.get(SRC.$breakpoints, 'medium')) {
     display: flex;
     .SubmissionSummary {
       width: 375px;
@@ -19,10 +19,6 @@
       flex-grow: 1;
       flex-basis: 0;
     }
-  }
-  .FieldName {
-    color: map.get(SRC.$colors, 'gray-700');
-    text-transform: uppercase;
   }
   .SubmissionSummary {
     margin-bottom: 15px;

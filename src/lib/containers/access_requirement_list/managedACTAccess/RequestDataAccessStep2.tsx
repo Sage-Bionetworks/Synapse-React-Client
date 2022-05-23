@@ -522,8 +522,8 @@ const RequestDataAccessStep2: React.FC<RequestDataAccessStep2Props> = props => {
         {
           profile: {
             ownerId: selected.ownerId,
-            firstName: selected.firstName!,
-            lastName: selected.lastName!,
+            firstName: selected.firstName ?? '',
+            lastName: selected.lastName ?? '',
             userName: selected.userName,
           },
           accessType: AccessType.GAIN_ACCESS,

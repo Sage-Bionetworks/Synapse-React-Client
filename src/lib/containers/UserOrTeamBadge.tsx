@@ -24,14 +24,8 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     userGroupHeader: providedUserGroupHeader,
   } = props
 
-  if (principalId == null && providedUserGroupHeader == null) {
-    console.error(
-      'Expected one of principalId or userGroupHeader to be defined but both were null or undefined',
-    )
-  }
-
   if (principalId == null) {
-    principalId = providedUserGroupHeader!.ownerId
+    principalId = providedUserGroupHeader?.ownerId
   }
 
   const { accessToken } = useSynapseContext()
@@ -52,12 +46,17 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     }
   }, [accessToken, principalId, userGroupHeader])
 
-  if (userGroupHeader === undefined) {
+  if (principalId == null && providedUserGroupHeader == null) {
+    console.error(
+      'Expected one of principalId or userGroupHeader to be defined but both were null or undefined',
+    )
+    return <></>
+  } else if (userGroupHeader === undefined) {
     return <Skeleton width={150} />
   } else if (userGroupHeader.isIndividual) {
     return (
       <UserCard
-        ownerId={principalId.toString()}
+        ownerId={principalId!.toString()}
         size={SMALL_USER_CARD}
         disableLink={disableHref}
         showFullName={showFullName}
@@ -66,7 +65,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
   } else {
     return (
       <TeamBadge
-        teamId={principalId}
+        teamId={principalId!}
         teamName={userGroupHeader.userName}
         disableHref={disableHref}
       />

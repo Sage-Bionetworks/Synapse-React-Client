@@ -112,6 +112,15 @@ const useTypographyStyle = makeStyles(
       lineHeight: '21px',
       marginTop: '21px',
     },
+    dataFieldKey: {
+      ...basicFontStyle,
+      fontSize: '14px',
+      fontWeight: 400,
+      lineHeight: '16px',
+      marginTop: '16px',
+      color: '#878e95', // gray-700
+      textTransform: 'uppercase',
+    },
   }),
   { name: 'SRC-Typography' },
 )

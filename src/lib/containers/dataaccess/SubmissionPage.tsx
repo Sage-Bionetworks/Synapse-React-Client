@@ -142,9 +142,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         }}
       />
       <div className="SubmissionSummary">
-        <Typography className="FieldName" variant="smallText1">
-          Status
-        </Typography>
+        <Typography variant="dataFieldKey">Status</Typography>
         <Typography variant="headline3">
           {submission ? submission.state : <Skeleton width={100} />}
         </Typography>
@@ -168,16 +166,12 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         ) : (
           <Skeleton width={200} />
         )}
-        <Typography variant="smallText1" className="FieldName">
-          Access Requirement Name
-        </Typography>
+        <Typography variant="dataFieldKey">Access Requirement Name</Typography>
         <Typography variant="smallText1">
           {accessRequirement?.name ?? <Skeleton width={100} />}
         </Typography>
         <br />
-        <Typography variant="smallText1" className="FieldName">
-          Assigned Reviewer
-        </Typography>
+        <Typography variant="dataFieldKey">Assigned Reviewer</Typography>
         <Typography variant="smallText1">
           {acl !== undefined ? (
             acl !== null ? (
@@ -197,9 +191,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           )}
         </Typography>
         <br />
-        <Typography variant="smallText1" className="FieldName">
-          Conditions
-        </Typography>
+        <Typography variant="dataFieldKey">Conditions</Typography>
         {accessRequirement ? (
           <Typography variant="smallText1">
             <ul>
@@ -236,9 +228,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         )}
         <br />
         <div className="SubmissionSummaryGrid">
-          <Typography variant="smallText1" className="FieldName">
-            Submitted By
-          </Typography>
+          <Typography variant="dataFieldKey">Submitted By</Typography>
           <Typography variant="smallText1">
             {submission ? (
               <UserCard
@@ -249,9 +239,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Skeleton width={100} />
             )}
           </Typography>
-          <Typography variant="smallText1" className="FieldName">
-            Submitted On
-          </Typography>
+          <Typography variant="dataFieldKey">Submitted On</Typography>
           <Typography variant="smallText1">
             {submission ? (
               formatDate(moment(submission.submittedOn))
@@ -259,9 +247,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Skeleton width={100} />
             )}
           </Typography>
-          <Typography variant="smallText1" className="FieldName">
-            Modified By
-          </Typography>
+          <Typography variant="dataFieldKey">Modified By</Typography>
           <Typography variant="smallText1">
             {submission ? (
               <UserCard
@@ -272,9 +258,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Skeleton width={100} />
             )}
           </Typography>
-          <Typography variant="smallText1" className="FieldName">
-            Modified On
-          </Typography>
+          <Typography variant="dataFieldKey">Modified On</Typography>
           <Typography variant="smallText1">
             {submission ? (
               formatDate(moment(submission.modifiedOn))
@@ -282,7 +266,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Skeleton width={100} />
             )}
           </Typography>
-          <Typography className="FieldName Key" variant="smallText1">
+          <Typography className="Key" variant="dataFieldKey">
             Data Requesters
             {`${submission ? ` (${submission.accessorChanges.length})` : ''}`}
           </Typography>
@@ -313,7 +297,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           ) : (
             <Skeleton width={100} />
           )}
-          <Typography className="FieldName Key" variant="smallText1">
+          <Typography className="Key" variant="dataFieldKey">
             Institution
           </Typography>
           <Typography className="Value" variant="smallText1">
@@ -323,7 +307,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Skeleton width={100} />
             )}
           </Typography>
-          <Typography className="FieldName Key" variant="smallText1">
+          <Typography className="Key" variant="dataFieldKey">
             Project Lead
           </Typography>
           <Typography className="Value" variant="smallText1">
@@ -368,7 +352,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               <Typography variant="headline2">
                 Intended Data Use Statement
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
                 {submission.researchProjectSnapshot.intendedDataUseStatement}
               </Typography>
             </>
@@ -377,7 +361,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           {submission?.ducFileHandleId && (
             <>
               <Typography variant="smallText2">
-                Data User Certificate (DUC)
+                Data Use Certificate (DUC)
               </Typography>
               <DataAccessSubmissionFileHandleLink
                 submissionId={submission.id}
