@@ -179,7 +179,6 @@ export function AdditionalPropertiesSchemaField<T>(
       const coercedList = transformDataFromPropertyType(list, nextPropertyType)
       // if the data is empty or identical after conversion, then just update the property type
       if (dataIsEmpty || nextPropertyType !== propertyType) {
-        console.log(list, coercedList, isEqual(list, coercedList))
         if (isEqual(list, coercedList)) {
           setPropertyType(nextPropertyType)
         }
