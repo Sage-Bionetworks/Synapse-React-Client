@@ -273,6 +273,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         id={`icon-${icon}`}
         data-for={`icon-${icon}`}
         data-tip={label}
+        role={'img'}
       >
         {getIcon(options)}
       </span>
