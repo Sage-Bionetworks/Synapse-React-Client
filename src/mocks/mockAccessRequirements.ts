@@ -46,7 +46,7 @@ export const mockManagedACTAccessRequirement: ManagedACTAccessRequirement = {
   isIDUPublic: false,
   isIDURequired: false,
   ducTemplateFileHandleId: '11111',
-  expirationPeriod: 1,
+  expirationPeriod: 1000 * 60 * 60 * 24, // 1 day
   isIRBApprovalRequired: false,
   isValidatedProfileRequired: false,
 }

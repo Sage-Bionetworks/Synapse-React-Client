@@ -33,13 +33,15 @@ describe('basic tests', () => {
     expect(wrapper).toBeDefined()
     expect(wrapper.find('.modal-title.h4').text()).toBe(props.title)
     expect(wrapper.find('div.modal-body').text()).toBe(props.modalBody)
-    expect(wrapper.find('.btn-success').text()).toBe(props.confirmButtonText)
+    expect(wrapper.find('.btn-sds-primary').text()).toBe(
+      props.confirmButtonText,
+    )
   })
 
   it('should call callback fn with correct arguments', async () => {
     const spy = jest.spyOn(mock, 'confirmFn')
     const { wrapper } = createMountedComponent(props)
-    const btn = wrapper.find('.btn-success')
+    const btn = wrapper.find('.btn-sds-primary')
     btn.simulate('click')
     expect(spy).toHaveBeenCalledWith('one', 'two')
   })

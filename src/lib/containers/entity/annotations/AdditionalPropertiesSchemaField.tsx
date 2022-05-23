@@ -1,7 +1,9 @@
 import { FieldProps, utils as rjsfUtils } from '@sage-bionetworks/rjsf-core'
+import { isEqual } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { useListState } from '../../../utils/hooks/useListState'
+import FullWidthAlert from '../../FullWidthAlert'
 import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
 
 // Matches ####-##-##T##:##:##.###Z, e.g. 1970-01-01T12:00:000Z
@@ -147,9 +149,11 @@ export function AdditionalPropertiesSchemaField<T>(
     useListState(convertToArray(formData))
 
   // The type determines which widget we show.
-  const [propertyType, setPropertyType] = useState<PropertyType>(
-    guessPropertyType(list),
-  )
+  const [propertyType, setPropertyType] = useState(guessPropertyType(list))
+
+  // If the property type is updated, store it in a new variable where we'll show a warning if data may be lost on coersion
+  const [nextPropertyType, setNextPropertyType] = useState(propertyType)
+
   const [widget, setWidget] = useState<AdditionalPropertyWidget>(
     AdditionalPropertyWidget.TextWidget,
   )
@@ -158,20 +162,49 @@ export function AdditionalPropertiesSchemaField<T>(
     // The item may not be an array when we get it, and we need to convert it right away because the order of items is not stable, and seems to depend on if the item is an array or not.
     // Otherwise, the order of the properties will change when the user modifies the data. We may be able to fix this by modifying react-jsonschema-form to stabilize the item order.
 
-    // TODO: This doesn't work without a delay.
+    // FIXME: This doesn't work without a delay.
     setTimeout(() => {
       onChange(list)
-    }, 100)
+    }, 50)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  /**
+   * This effect is invoked whenever the user attempts to change the data type of a custom annotation.
+   */
   useEffect(() => {
-    // When the selected type changes, switch to the appropriate widget for accepting input
-    setWidget(getWidgetFromPropertyType(propertyType))
+    function onNextPropertyTypeUpdate() {
+      const dataIsEmpty =
+        list.length === 0 || list.every(item => item == null || item == '')
+      const coercedList = transformDataFromPropertyType(list, nextPropertyType)
+      // if the data is empty or identical after conversion, then just update the property type
+      if (dataIsEmpty || nextPropertyType !== propertyType) {
+        if (isEqual(list, coercedList)) {
+          setPropertyType(nextPropertyType)
+        }
+      }
+    }
 
-    // Coerce the data to match the new type
-    setList(transformDataFromPropertyType(list, propertyType))
+    onNextPropertyTypeUpdate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nextPropertyType])
 
+  /**
+   * This effect is invoked whenever the propertyType changes.
+   */
+  useEffect(() => {
+    function coerceDataAndUpdateWidget() {
+      const coercedList = transformDataFromPropertyType(list, nextPropertyType)
+
+      // Data conversion is non-destructive or has been confirmed by the user
+      setPropertyType(nextPropertyType)
+      // When the selected type changes, switch to the appropriate widget for accepting input
+      setWidget(getWidgetFromPropertyType(nextPropertyType))
+      // Coerce the data to match the new type
+      setList(coercedList)
+    }
+
+    coerceDataAndUpdateWidget()
     // Don't add other properties to dependency array because we don't want to automatically coerce input
     // i.e. Only coerce data when the type changes, which should only be on mount or when the user explicitly chooses a new type.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,16 +286,17 @@ export function AdditionalPropertiesSchemaField<T>(
   return (
     <>
       <FormGroup className="col-xs-3">
-        <FormLabel id={`${id}-type`}>Type</FormLabel>
+        <FormLabel htmlFor={`${id}-type`}>Type</FormLabel>
         <FormControl
           as="select"
+          role="listbox"
           disabled={props.disabled}
           readOnly={props.readonly}
           value={propertyType}
           required={true}
           id={`${id}-type`}
           onChange={e => {
-            setPropertyType(e.target.value as PropertyType)
+            setNextPropertyType(e.target.value as PropertyType)
           }}
         >
           {Object.keys(PropertyType).map(type => (
@@ -290,6 +324,26 @@ export function AdditionalPropertiesSchemaField<T>(
         formContext={props.formContext as unknown}
         formData={props.formData}
       />
+      {propertyType !== nextPropertyType && (
+        <FullWidthAlert
+          variant="warning"
+          title="Data may be lost when converting types"
+          description={`Are you sure you want to convert ${name} from ${propertyType} to ${nextPropertyType}? Current values may be lost on conversion.`}
+          primaryButtonConfig={{
+            text: 'Convert',
+            onClick: () => {
+              setPropertyType(nextPropertyType)
+            },
+          }}
+          secondaryButtonConfig={{
+            text: 'Cancel',
+            onClick: () => {
+              setNextPropertyType(propertyType)
+            },
+          }}
+          isGlobal={false}
+        />
+      )}
     </>
   )
 }

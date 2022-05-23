@@ -18,6 +18,11 @@ import SynapseTable, {
 } from '../../../lib/containers/table/SynapseTable'
 import { NOT_SET_DISPLAY_VALUE } from '../../../lib/containers/table/SynapseTableConstants'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { ENTITY_HEADERS } from '../../../lib/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../lib/utils/functions/getEndpoint'
 import { AUTHENTICATED_USERS } from '../../../lib/utils/SynapseConstants'
 import {
   ColumnType,
@@ -27,7 +32,9 @@ import {
   UserGroupHeader,
   UserProfile,
 } from '../../../lib/utils/synapseTypes/'
+import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockEntity'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { rest, server } from '../../../mocks/msw/server'
 import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
 
 const queryResultBundle: QueryResultBundle =
@@ -161,7 +168,23 @@ jest.mock('../../../lib/containers/UserCard', () => {
   }
 })
 
-describe('basic functionality', () => {
+server.use(
+  rest.post(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
+    async (req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json({ results: [{ id: MOCK_FILE_ENTITY_ID }] }),
+      )
+    },
+  ),
+)
+
+describe('SynapseTable tests', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   it('Does not renders HasAccess when the entity type is EntityView', async () => {
     renderTable(
       {

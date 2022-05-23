@@ -1,6 +1,8 @@
-import { isEmpty } from 'lodash-es'
+import { isEmpty, uniqueId } from 'lodash-es'
 import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import { SynapseConstants } from '../utils'
+import { isTableEntity } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import {
   DOI_REGEX,
@@ -9,7 +11,13 @@ import {
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { SynapseContext } from '../utils/SynapseContext'
-import { ColumnModel, ColumnType, SelectColumn } from '../utils/synapseTypes'
+import {
+  ColumnModel,
+  ColumnType,
+  FileHandleAssociateType,
+  FileHandleAssociation,
+  SelectColumn,
+} from '../utils/synapseTypes'
 import {
   CardLink,
   ColumnSpecifiedLink,
@@ -20,6 +28,7 @@ import {
 import HeaderCard from './HeaderCard'
 import IconList from './IconList'
 import MarkdownSynapse from './MarkdownSynapse'
+import { QueryContextType } from './QueryWrapper'
 import { CardFooter, Icon } from './row_renderers/utils'
 import UserCard from './UserCard'
 import { FileHandleLink } from './widgets/FileHandleLink'
@@ -63,9 +72,9 @@ export type GenericCardProps = {
   schema: Record<string, number>
   // Row values
   data: string[]
-  tableEntityConcreteType: string | undefined
   tableId: string | undefined
   columnIconOptions?: {}
+  queryContext: QueryContextType
 } & CommonCardProps
 
 export type GenericCardState = {
@@ -224,9 +233,10 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     }
   }
 
+  let labelContent: JSX.Element
   if (labelLink.isMarkdown) {
     if (strList) {
-      return (
+      labelContent = (
         <>
           {strList.map((el, index) => {
             return (
@@ -240,39 +250,61 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         </>
       )
     } else {
-      return <MarkdownSynapse renderInline={true} markdown={value} />
+      labelContent = <MarkdownSynapse renderInline={true} markdown={value} />
     }
-  }
-  const split = strList ? strList : str.split(',')
-  if ('linkColumnName' in labelLink) {
-    const linkIndex =
-      selectColumns?.findIndex(el => el.name === labelLink.linkColumnName) ||
-      columnModels?.findIndex(el => el.name === labelLink.linkColumnName)
-    if (linkIndex == null) {
-      console.warn(
-        `Could not determine column index of ${labelLink.linkColumnName}`,
-      )
-      return <>{value}</>
-    } else {
-      const href = rowData[linkIndex]
+  } else {
+    const split = strList ? strList : str.split(',')
+    if ('linkColumnName' in labelLink) {
+      const linkIndex =
+        selectColumns?.findIndex(el => el.name === labelLink.linkColumnName) ||
+        columnModels?.findIndex(el => el.name === labelLink.linkColumnName)
+      if (linkIndex == null) {
+        console.warn(
+          `Could not determine column index of ${labelLink.linkColumnName}`,
+        )
+        labelContent = <>{value}</>
+      } else {
+        const href = rowData[linkIndex]
 
-      if (isEmpty(href)) {
-        return <>{value}</>
+        if (isEmpty(href)) {
+          labelContent = <>{value}</>
+        } else {
+          labelContent = (
+            <>
+              {split.map((el, index) => {
+                return (
+                  <React.Fragment key={el}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      key={el}
+                      className={newClassName}
+                      style={style}
+                    >
+                      {el}
+                    </a>
+                    {index < split.length - 1 && (
+                      <span style={{ marginRight: 4 }}>, </span>
+                    )}
+                  </React.Fragment>
+                )
+              })}
+            </>
+          )
+        }
       }
-
-      return (
+    } else {
+      labelContent = (
         <>
           {split.map((el, index) => {
+            const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
+            const value = wrapValueWithParens ? `(${el})` : el
+            const href = `/${baseURL}?${URLColumnName}=${value}`
+
             return (
               <React.Fragment key={el}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  key={el}
-                  className={newClassName}
-                  style={style}
-                >
+                <a href={href} key={el} className={newClassName} style={style}>
                   {el}
                 </a>
                 {index < split.length - 1 && (
@@ -284,27 +316,19 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         </>
       )
     }
-  } else {
-    return (
-      <>
-        {split.map((el, index) => {
-          const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-          const value = wrapValueWithParens ? `(${el})` : el
-          const href = `/${baseURL}?${URLColumnName}=${value}`
+  }
 
-          return (
-            <React.Fragment key={el}>
-              <a href={href} key={el} className={newClassName} style={style}>
-                {el}
-              </a>
-              {index < split.length - 1 && (
-                <span style={{ marginRight: 4 }}>, </span>
-              )}
-            </React.Fragment>
-          )
-        })}
-      </>
+  if (labelLink.tooltipText) {
+    // wrap in a tooltip
+    const id = uniqueId('GenericCardLabelTooltip-')
+    return (
+      <span data-tip={labelLink.tooltipText} data-for={id}>
+        <ReactTooltip delayShow={300} type="dark" effect="solid" id={id} />
+        {labelContent}
+      </span>
     )
+  } else {
+    return labelContent
   }
 }
 
@@ -314,6 +338,9 @@ type ValueOrMultiValue = {
   columnModelType?: ColumnType
 }
 
+/**
+ * Renders a card from a table query
+ */
 export default class GenericCard extends React.Component<
   GenericCardProps,
   GenericCardState
@@ -459,9 +486,8 @@ export default class GenericCard extends React.Component<
       facetAliases = {},
       descriptionConfig,
       rgbIndex,
-      tableId,
-      tableEntityConcreteType,
       columnIconOptions,
+      queryContext: { entity: table },
     } = this.props
 
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
@@ -525,6 +551,30 @@ export default class GenericCard extends React.Component<
       }
     }
 
+    const fileHandleId = imageFileHandleIdValue || linkValue
+
+    /**
+     * To show a direct download link to a file, we need to determine the association that gives permission to download the file.
+     */
+    let fileHandleAssociation: FileHandleAssociation | undefined = undefined
+    if (table) {
+      if (isTableEntity(table)) {
+        // The file handle is in the table
+        fileHandleAssociation = {
+          fileHandleId,
+          associateObjectId: table?.id ?? '',
+          associateObjectType: FileHandleAssociateType.TableEntity,
+        }
+      } else {
+        // We're looking at a view, so the FileEntity (whose ID matches the row ID) gives permission to download the file handle
+        fileHandleAssociation = {
+          fileHandleId,
+          associateObjectId: data[schema.id],
+          associateObjectType: FileHandleAssociateType.FileEntity,
+        }
+      }
+    }
+
     const showFooter = values.length > 0
 
     const style: React.CSSProperties = {
@@ -544,12 +594,9 @@ export default class GenericCard extends React.Component<
                 : undefined,
             }}
           >
-            <ImageFileHandle
-              fileHandleId={imageFileHandleIdValue}
-              tableEntityConcreteType={tableEntityConcreteType}
-              rowId={data[schema.id]}
-              tableId={tableId}
-            />
+            {fileHandleAssociation && (
+              <ImageFileHandle fileHandleAssociation={fileHandleAssociation} />
+            )}
           </div>
         )}
         {!imageFileHandleIdValue && (
@@ -605,6 +652,7 @@ export default class GenericCard extends React.Component<
       ctaHref = newCtaHref
       ctaTarget = newCtaTarget
     }
+
     return (
       <div style={style} className={'SRC-portalCard'}>
         <div className={'SRC-portalCardMain'}>
@@ -631,13 +679,11 @@ export default class GenericCard extends React.Component<
                 style={{ margin: 'none' }}
               >
                 {!titleLinkConfig &&
-                titleColumnType === ColumnType.FILEHANDLEID ? (
+                titleColumnType === ColumnType.FILEHANDLEID &&
+                fileHandleAssociation ? (
                   <FileHandleLink
-                    fileHandleId={linkValue}
-                    tableEntityConcreteType={tableEntityConcreteType}
+                    fileHandleAssociation={fileHandleAssociation}
                     showDownloadIcon={type !== SynapseConstants.EXPERIMENTAL}
-                    rowId={data![schema.id]}
-                    tableId={tableId}
                     displayValue={title}
                   />
                 ) : (

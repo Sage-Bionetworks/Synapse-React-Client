@@ -107,6 +107,15 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
     <></>
   )
 
+  const fullName = showFullName ? (
+    <span className={'user-fullname'}>
+      &nbsp;
+      {`${userProfile.firstName ?? ''}`}&nbsp;{`${userProfile.lastName ?? ''}`}
+    </span>
+  ) : (
+    <></>
+  )
+
   return showCardOnHover ? (
     <>
       {OverlayComponent}
@@ -130,11 +139,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
       >
         {avatar}
         {`@${userProfile.userName}`}
-        {showFullName && (
-          <span className={'user-fullname'}>
-            &nbsp;{`${userProfile.firstName} ${userProfile.lastName}`}
-          </span>
-        )}
+        {fullName}
         {showAccountLevelIcon && (
           <span className={'account-level-icon'}>{accountLevelIcon}</span>
         )}
@@ -147,11 +152,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
     >
       {avatar}
       {`@${userProfile.userName}`}
-      {showFullName && (
-        <span className={'user-fullname'}>
-          &nbsp;{`${userProfile.firstName} ${userProfile.lastName}`}
-        </span>
-      )}
+      {fullName}
     </span>
   ) : (
     <a>
