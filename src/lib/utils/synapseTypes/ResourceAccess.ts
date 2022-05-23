@@ -1,4 +1,6 @@
+import ACCESS_TYPE from './ACCESS_TYPE'
+
 export type ResourceAccess = {
   principalId: number
-  accessType: string[]
+  accessType: ACCESS_TYPE[]
 }

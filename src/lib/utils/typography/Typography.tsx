@@ -20,6 +20,7 @@ interface ITypography extends Omit<TypographyProps, 'variant'> {
     | 'hintText'
     | 'sectionTitle'
     | 'subsectionHeader'
+    | 'dataFieldKey'
   component?: ElementType
 }
 
