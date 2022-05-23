@@ -192,7 +192,7 @@ export const SchemaDrivenAnnotationEditor = (
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  View required schema
+                  View required schema (JSON)
                 </a>
               </b>
             </Alert>
