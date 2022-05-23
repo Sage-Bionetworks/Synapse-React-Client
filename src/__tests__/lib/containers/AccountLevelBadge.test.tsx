@@ -1,10 +1,9 @@
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
 import * as React from 'react'
-import { resolveAllPending } from '../../../lib/testutils/EnzymeHelpers'
 import {
   AccountLevelBadge,
-  accountLevelRegisteredLabel,
   accountLevelCertifiedLabel,
+  accountLevelRegisteredLabel,
   accountLevelVerifiedLabel,
 } from '../../../lib/containers/AccountLevelBadge'
 import { UserBundle } from '../../../lib/utils/synapseTypes'
@@ -41,36 +40,30 @@ describe('basic functionality', () => {
       .fn()
       .mockResolvedValueOnce(mockRegistered)
 
-    const wrapper = mount(<AccountLevelBadge {...props} />)
-    await resolveAllPending(wrapper)
+    render(<AccountLevelBadge {...props} />)
 
     // find account level label
-    const label = wrapper.find('.AccountLevelBadge__body__userAccountLevel')
-    expect(label.text()).toEqual(accountLevelRegisteredLabel)
+    await screen.findByText(accountLevelRegisteredLabel)
     expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('certified user', async () => {
     SynapseClient.getUserBundle = jest.fn().mockResolvedValueOnce(mockCertified)
 
-    const wrapper = mount(<AccountLevelBadge {...props} />)
-    await resolveAllPending(wrapper)
+    render(<AccountLevelBadge {...props} />)
 
     // find account level label
-    const label = wrapper.find('.AccountLevelBadge__body__userAccountLevel')
-    expect(label.text()).toEqual(accountLevelCertifiedLabel)
+    await screen.findByText(accountLevelCertifiedLabel)
     expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
   })
 
   it('verified user', async () => {
     SynapseClient.getUserBundle = jest.fn().mockResolvedValueOnce(mockVerified)
 
-    const wrapper = mount(<AccountLevelBadge {...props} />)
-    await resolveAllPending(wrapper)
+    render(<AccountLevelBadge {...props} />)
 
     // find account level label
-    const label = wrapper.find('.AccountLevelBadge__body__userAccountLevel')
-    expect(label.text()).toEqual(accountLevelVerifiedLabel)
+    await screen.findByText(accountLevelVerifiedLabel)
     expect(SynapseClient.getUserBundle).toHaveBeenCalledTimes(1)
   })
 })
