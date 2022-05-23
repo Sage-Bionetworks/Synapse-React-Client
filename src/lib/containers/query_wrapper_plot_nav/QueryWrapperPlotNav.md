@@ -44,6 +44,14 @@ Configured to show cards:
         'specimenType',
       ],
     },
+    labelLinkConfig: [
+      {
+        isMarkdown: true,
+        matchColumnName: 'rrid',
+        tooltipText:
+          'This is to demo a custom tooltip that describes column data',
+      },
+    ],
   }}
 />
 ```

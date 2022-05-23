@@ -1,5 +1,6 @@
-import { isEmpty } from 'lodash-es'
+import { isEmpty, uniqueId } from 'lodash-es'
 import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import { SynapseConstants } from '../utils'
 import { isTableEntity } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
@@ -232,9 +233,10 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     }
   }
 
+  let labelContent: JSX.Element
   if (labelLink.isMarkdown) {
     if (strList) {
-      return (
+      labelContent = (
         <>
           {strList.map((el, index) => {
             return (
@@ -248,39 +250,61 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         </>
       )
     } else {
-      return <MarkdownSynapse renderInline={true} markdown={value} />
+      labelContent = <MarkdownSynapse renderInline={true} markdown={value} />
     }
-  }
-  const split = strList ? strList : str.split(',')
-  if ('linkColumnName' in labelLink) {
-    const linkIndex =
-      selectColumns?.findIndex(el => el.name === labelLink.linkColumnName) ||
-      columnModels?.findIndex(el => el.name === labelLink.linkColumnName)
-    if (linkIndex == null) {
-      console.warn(
-        `Could not determine column index of ${labelLink.linkColumnName}`,
-      )
-      return <>{value}</>
-    } else {
-      const href = rowData[linkIndex]
+  } else {
+    const split = strList ? strList : str.split(',')
+    if ('linkColumnName' in labelLink) {
+      const linkIndex =
+        selectColumns?.findIndex(el => el.name === labelLink.linkColumnName) ||
+        columnModels?.findIndex(el => el.name === labelLink.linkColumnName)
+      if (linkIndex == null) {
+        console.warn(
+          `Could not determine column index of ${labelLink.linkColumnName}`,
+        )
+        labelContent = <>{value}</>
+      } else {
+        const href = rowData[linkIndex]
 
-      if (isEmpty(href)) {
-        return <>{value}</>
+        if (isEmpty(href)) {
+          labelContent = <>{value}</>
+        } else {
+          labelContent = (
+            <>
+              {split.map((el, index) => {
+                return (
+                  <React.Fragment key={el}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      key={el}
+                      className={newClassName}
+                      style={style}
+                    >
+                      {el}
+                    </a>
+                    {index < split.length - 1 && (
+                      <span style={{ marginRight: 4 }}>, </span>
+                    )}
+                  </React.Fragment>
+                )
+              })}
+            </>
+          )
+        }
       }
-
-      return (
+    } else {
+      labelContent = (
         <>
           {split.map((el, index) => {
+            const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
+            const value = wrapValueWithParens ? `(${el})` : el
+            const href = `/${baseURL}?${URLColumnName}=${value}`
+
             return (
               <React.Fragment key={el}>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  key={el}
-                  className={newClassName}
-                  style={style}
-                >
+                <a href={href} key={el} className={newClassName} style={style}>
                   {el}
                 </a>
                 {index < split.length - 1 && (
@@ -292,27 +316,19 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         </>
       )
     }
-  } else {
-    return (
-      <>
-        {split.map((el, index) => {
-          const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-          const value = wrapValueWithParens ? `(${el})` : el
-          const href = `/${baseURL}?${URLColumnName}=${value}`
+  }
 
-          return (
-            <React.Fragment key={el}>
-              <a href={href} key={el} className={newClassName} style={style}>
-                {el}
-              </a>
-              {index < split.length - 1 && (
-                <span style={{ marginRight: 4 }}>, </span>
-              )}
-            </React.Fragment>
-          )
-        })}
-      </>
+  if (labelLink.tooltipText) {
+    // wrap in a tooltip
+    const id = uniqueId('GenericCardLabelTooltip-')
+    return (
+      <span data-tip={labelLink.tooltipText} data-for={id}>
+        <ReactTooltip delayShow={300} type="dark" effect="solid" id={id} />
+        {labelContent}
+      </span>
     )
+  } else {
+    return labelContent
   }
 }
 
