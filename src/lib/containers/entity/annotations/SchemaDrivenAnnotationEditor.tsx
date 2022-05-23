@@ -3,7 +3,6 @@ import { JSONSchema7 } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
-import { useErrorHandler } from 'react-error-boundary'
 import ReactTooltip from 'react-tooltip'
 import AddToList from '../../../assets/icons/AddToList'
 import {
