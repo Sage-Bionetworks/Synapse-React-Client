@@ -1,8 +1,7 @@
-import CopyToClipboardInput from '../../../lib/containers/CopyToClipboardInput'
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import { act } from '@testing-library/react'
-import { Button, FormControl } from 'react-bootstrap'
+import CopyToClipboardInput from '../../../lib/containers/CopyToClipboardInput'
 
 describe('basic functionality', () => {
   const props = {
@@ -10,31 +9,29 @@ describe('basic functionality', () => {
     inputWidth: '500px',
   }
 
-  it('copies to clipboard when icon is clicked', async () => {
+  it('copies to clipboard when icon is clicked', () => {
     Object.assign(navigator, {
       clipboard: {
         writeText: jest.fn().mockImplementation(() => Promise.resolve()),
       },
     })
-    const wrapper = mount(<CopyToClipboardInput {...props} />)
-    await act(async () => {
-      await wrapper.find(Button).simulate('click')
-    })
+    render(<CopyToClipboardInput {...props} />)
+    const button = screen.getByRole('button')
+    userEvent.click(button)
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       'some value to be copied',
     )
   })
 
-  it('copies to clipboard when input field is clicked', async () => {
+  it('copies to clipboard when input field is clicked', () => {
     Object.assign(navigator, {
       clipboard: {
         writeText: jest.fn().mockImplementation(() => Promise.resolve()),
       },
     })
-    const wrapper = mount(<CopyToClipboardInput {...props} />)
-    await act(async () => {
-      await wrapper.find(FormControl).simulate('click')
-    })
+    render(<CopyToClipboardInput {...props} />)
+    const inputField = screen.getByRole('textbox')
+    userEvent.click(inputField)
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       'some value to be copied',
     )
