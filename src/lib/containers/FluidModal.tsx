@@ -23,7 +23,6 @@ export type FluidModalProps = {
   onClose: () => void
   primaryAction?: ModalAction
   secondaryActions?: ModalAction[]
-  tertiaryActions?: ModalAction[]
 }
 
 function ModalActionButton(props: ModalAction) {
@@ -71,22 +70,6 @@ export const FluidModal = (props: FluidModalProps) => {
       </Modal.Header>
       <Modal.Body>{props.children}</Modal.Body>
       <Modal.Footer>
-        {props.tertiaryActions && (
-          <>
-            {props.tertiaryActions.map((action, index) => {
-              return (
-                <ModalActionButton
-                  key={index}
-                  {...{
-                    variant: 'outline',
-                    ...action,
-                  }}
-                />
-              )
-            })}
-            <div style={{ margin: 'auto' }}></div>
-          </>
-        )}
         {props.secondaryActions &&
           props.secondaryActions.reverse().map((action, index) => {
             return (

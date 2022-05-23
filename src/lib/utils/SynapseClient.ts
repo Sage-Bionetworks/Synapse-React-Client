@@ -3126,11 +3126,13 @@ export const updateSubmissionStatus = (
  */
 //
 export const getSchemaBinding = (entityId: string, accessToken?: string) => {
-  return doGet<JsonSchemaObjectBinding>(
-    ENTITY_SCHEMA_BINDING(entityId),
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
+  return allowNotFoundError(() =>
+    doGet<JsonSchemaObjectBinding>(
+      ENTITY_SCHEMA_BINDING(entityId),
+      accessToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 
