@@ -116,25 +116,25 @@
 }
 .markdown p {
   margin: 0px;
-  padding-bottom: 12px;
+  margin-bottom: 12px;
 }
 .markdown h1 {
-  padding: 35px 0 12px 0;
+  margin: 35px 0 24px 0;
 }
 .markdown h2 {
-  padding: 29px 0 10px 0;
+  margin: 29px 0 22px 0;
 }
 .markdown h3 {
-  padding: 23px 0 8px 0;
+  margin: 23px 0 20px 0;
 }
 .markdown h4 {
-  padding: 17px 0 6px 0;
+  margin: 17px 0 18px 0;
 }
 .markdown h5 {
-  padding: 11px 0 4px 0;
+  margin: 11px 0 16px 0;
 }
 .markdown h6 {
-  padding: 5px 0 2px 0;
+  margin: 5px 0 14px 0;
 }
 
 .toc-indent1 {
@@ -163,4 +163,8 @@
 
 .markdown span.bootstrap-4-backport a {
   margin: 20px 20px 20px 0px;
+}
+
+.markdown details {
+  cursor: pointer;
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 
 export interface ListStateReturn<T> {
   // initial state of the list
@@ -10,7 +10,7 @@ export interface ListStateReturn<T> {
   // generates a function to append to the end of the list
   appendToList: (...newItem: T[]) => void
   //changes the entire list state
-  setList: (list: T[]) => void
+  setList: Dispatch<SetStateAction<T[]>>
 }
 /**
  * This is used when a component's state uses a List<T> and has child components
@@ -57,7 +57,7 @@ export interface ListStateReturn<T> {
  * @returns an ListStateReturn object containing the useState value and additonal change/remove/push hnndlers. Use object destructuring
  */
 export const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
-  const [list, setList] = useState(initialState)
+  const [list, setList] = useState<T[]>(initialState)
 
   const handleListChange =
     (index: number) =>

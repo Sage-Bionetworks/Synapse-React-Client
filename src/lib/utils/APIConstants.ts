@@ -87,4 +87,14 @@ export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
 export const ACCESS_REQUIREMENT_ACL = (id: string | number) =>
   ACCESS_REQUIREMENT_BY_ID(id) + '/acl'
 
+export const ACCESS_REQUIREMENT_WIKI_PAGE_KEY = (id: string | number) =>
+  // Note that this is `access_requirement` not `accessRequirement`!
+  `${REPO}/access_requirement/${id}/wikikey`
+
 export const FAVORITES = `${REPO}/favorite`
+
+export const USER_GROUP_HEADERS = `${REPO}/userGroupHeaders`
+export const USER_GROUP_HEADERS_BATCH = `${REPO}/userGroupHeaders/batch`
+
+export const DATA_ACCESS_SUBMISSION_BY_ID = (id: string | number) =>
+  `${REPO}/dataAccessSubmission/${id}`
