@@ -31,6 +31,7 @@ export default function AccessRequirementSearchBox(
     <AsyncSelect
       defaultOptions
       cacheOptions
+      isClearable
       loadOptions={_loadOptions}
       onChange={option => {
         props.onChange(option?.id)
