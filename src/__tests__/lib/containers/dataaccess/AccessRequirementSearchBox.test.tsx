@@ -27,7 +27,7 @@ describe('Submission Page tests', () => {
 
     // Configure MSW
     server.use(
-      // Return a mocked access requirement
+      // Return mocked access requirement search results
       rest.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
