@@ -6,6 +6,9 @@ import {
   RestrictableObjectType,
   ACCESS_TYPE,
 } from '../lib/utils/synapseTypes'
+import { AccessRequirementSearchResponse } from '../lib/utils/synapseTypes/AccessRequirement/AccessRequirementSearch'
+import { MOCK_PROJECT_ID } from './entity/mockEntity'
+import { MOCK_USER_ID } from './user/mock_user_profile'
 
 const defaultAccessRequirement = {
   id: 1,
@@ -61,4 +64,45 @@ export const mockACTAccessRequirement: ACTAccessRequirement = {
 export const mockLockAccessRequirement = {
   ...defaultAccessRequirement,
   concreteType: 'org.sagebionetworks.repo.model.LockAccessRequirement',
+}
+
+export const mockSearchResults: AccessRequirementSearchResponse = {
+  results: [
+    {
+      id: '123',
+      createdOn: '2015-10-14T20:58:22.798Z',
+      modifiedOn: '2022-03-15T18:21:30.284Z',
+      name: 'Access Requirement 1',
+      version: '34',
+      relatedProjectIds: [MOCK_PROJECT_ID],
+      reviewerIds: [MOCK_USER_ID.toString()],
+    },
+    {
+      id: '9603055',
+      createdOn: '2017-08-23T18:48:20.892Z',
+      modifiedOn: '2022-05-20T22:26:44.406Z',
+      name: 'Access Requiremnent 2',
+      version: '269',
+      relatedProjectIds: [MOCK_PROJECT_ID],
+      reviewerIds: [],
+    },
+    {
+      id: '9605257',
+      createdOn: '2021-01-15T17:05:10.544Z',
+      modifiedOn: '2021-01-15T17:13:06.767Z',
+      name: 'Another AR',
+      version: '3',
+      relatedProjectIds: ['syn18599653'],
+      reviewerIds: [],
+    },
+    {
+      id: '9605529',
+      createdOn: '2021-12-20T17:42:32.822Z',
+      modifiedOn: '2021-12-20T18:17:46.904Z',
+      name: 'Some mock ARs',
+      version: '5',
+      relatedProjectIds: [],
+      reviewerIds: [],
+    },
+  ],
 }

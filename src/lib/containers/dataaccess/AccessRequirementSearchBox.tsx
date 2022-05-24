@@ -3,7 +3,7 @@ import AsyncSelect from 'react-select/async'
 import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
-type AccessRequirementSearchBoxProps = {
+export type AccessRequirementSearchBoxProps = {
   onChange: (accessRequirementId?: string | undefined) => void
 }
 export default function AccessRequirementSearchBox(
