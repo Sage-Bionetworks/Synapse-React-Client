@@ -2,26 +2,40 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import selectEvent from 'react-select-event'
-import AccessRequirementSearchBox from '../../../../lib/containers/dataaccess/AccessRequirementSearchBox'
+import AccessRequirementSearchBox, {
+  getOptionLabel,
+} from '../../../../lib/containers/dataaccess/AccessRequirementSearchBox'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
-import { ACCESS_REQUIREMENT_SEARCH } from '../../../../lib/utils/APIConstants'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
+} from '../../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../lib/utils/functions/getEndpoint'
-import { mockSearchResults } from '../../../../mocks/mockAccessRequirements'
+import {
+  mockManagedACTAccessRequirement as mockAccessRequirement,
+  mockSearchResults,
+} from '../../../../mocks/mockAccessRequirements'
 import { rest, server } from '../../../../mocks/msw/server'
 
 const mockOnChange = jest.fn()
 const onServiceRecievedRequest = jest.fn()
 
-function renderComponent() {
-  render(<AccessRequirementSearchBox onChange={mockOnChange} />, {
-    wrapper: createWrapper(),
-  })
+function renderComponent(initialId?: string | number) {
+  render(
+    <AccessRequirementSearchBox
+      initialId={initialId}
+      onChange={mockOnChange}
+    />,
+    {
+      wrapper: createWrapper(),
+    },
+  )
 }
 
-describe('Submission Page tests', () => {
+describe('Access Requirement Search Box tests', () => {
   beforeAll(() => {
     server.listen()
 
@@ -38,6 +52,17 @@ describe('Submission Page tests', () => {
           return res(ctx.status(200), ctx.json(mockSearchResults))
         },
       ),
+      // Return an access requirement specified by ID
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+
+        async (req, res, ctx) => {
+          onServiceRecievedRequest(req.body)
+          return res(ctx.status(200), ctx.json(mockAccessRequirement))
+        },
+      ),
     )
   })
   afterEach(() => {
@@ -45,6 +70,16 @@ describe('Submission Page tests', () => {
     jest.clearAllMocks()
   })
   afterAll(() => server.close())
+
+  describe('Test getOptionLabel', () => {
+    it('Shows name and ID', () => {
+      expect(getOptionLabel(123, 'abc')).toBe('abc (123)')
+    })
+
+    it("Doesn't show ID if name is equal to ID", () => {
+      expect(getOptionLabel(123, '123')).toBe('123')
+    })
+  })
 
   it('Queries the service with the initial blank query', async () => {
     renderComponent()
@@ -91,10 +126,40 @@ describe('Submission Page tests', () => {
     expect(mockOnChange).not.toHaveBeenCalled()
 
     // Select the first access requirement (the label is $NAME ($ID))
-    await selectEvent.select(input, 'Access Requirement 1 (123)')
+    await selectEvent.select(
+      input,
+      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+    )
     // The prop should have fired upon selecting this option
     await waitFor(() =>
       expect(mockOnChange).toBeCalledWith(mockSearchResults.results[0].id),
+    )
+  })
+
+  it('Renders an initial AR specified by ID', async () => {
+    renderComponent(mockAccessRequirement.id)
+
+    const input = await screen.findByRole<HTMLInputElement>('textbox')
+
+    expect(input.value).toContain(mockAccessRequirement.name)
+  })
+
+  it('Supports pasting/typing an AR ID', async () => {
+    renderComponent()
+
+    const input = await screen.findByRole<HTMLInputElement>('textbox')
+
+    userEvent.type(input, mockAccessRequirement.id.toString())
+
+    // If the AR specified by ID is fetched, then it should be selectable
+    await selectEvent.select(
+      input,
+      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+    )
+
+    // The prop should have fired upon selecting this option
+    await waitFor(() =>
+      expect(mockOnChange).toBeCalledWith(mockAccessRequirement.id.toString()),
     )
   })
 })

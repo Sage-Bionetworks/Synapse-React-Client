@@ -69,11 +69,11 @@ export const mockLockAccessRequirement = {
 export const mockSearchResults: AccessRequirementSearchResponse = {
   results: [
     {
-      id: '123',
-      createdOn: '2015-10-14T20:58:22.798Z',
-      modifiedOn: '2022-03-15T18:21:30.284Z',
-      name: 'Access Requirement 1',
-      version: '34',
+      id: mockManagedACTAccessRequirement.id.toString(),
+      createdOn: mockManagedACTAccessRequirement.createdOn,
+      modifiedOn: mockManagedACTAccessRequirement.modifiedOn,
+      name: mockManagedACTAccessRequirement.name,
+      version: mockManagedACTAccessRequirement.versionNumber.toString(),
       relatedProjectIds: [MOCK_PROJECT_ID],
       reviewerIds: [MOCK_USER_ID.toString()],
     },

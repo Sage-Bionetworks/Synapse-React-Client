@@ -9,7 +9,7 @@ import {
 } from '../../../synapseTypes'
 
 export default function useGetAccessRequirement<T extends AccessRequirement>(
-  accessRequirementId: number,
+  accessRequirementId: string | number,
   options?: UseQueryOptions<T, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
