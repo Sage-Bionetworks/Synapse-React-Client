@@ -10,7 +10,7 @@ export default function AccessRequirementSearchBox(
   props: AccessRequirementSearchBoxProps,
 ) {
   const { accessToken } = useSynapseContext()
-  async function _loadOptions(inputValue: string) {
+  async function loadOptions(inputValue: string) {
     const data = await SynapseClient.searchAccessRequirements(accessToken, {
       nameContains: inputValue,
     })
@@ -32,7 +32,7 @@ export default function AccessRequirementSearchBox(
       defaultOptions
       cacheOptions
       isClearable
-      loadOptions={_loadOptions}
+      loadOptions={loadOptions}
       onChange={option => {
         props.onChange(option?.id)
       }}
