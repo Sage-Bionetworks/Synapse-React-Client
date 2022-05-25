@@ -103,8 +103,8 @@
   }
   input[type='checkbox']:focus + label::before,
   input[type='checkbox']:focus + span::before,
-  input[type='radio']:focus:checked + label::before,
-  input[type='radio']:focus:checked + span::before,
+  input[type='radio']:focus + label::before,
+  input[type='radio']:focus + span::before,
   input[type='checkbox']:hover:checked:not(:disabled) + label::before,
   input[type='checkbox']:hover:checked:not(:disabled) + span::before,
   input[type='radio']:hover:checked:not(:disabled) + label::before,

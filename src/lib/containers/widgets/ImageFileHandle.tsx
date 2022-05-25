@@ -1,17 +1,21 @@
-import { FileHandleAssociateType } from '../../utils/synapseTypes'
+import { FileHandleAssociation } from '../../utils/synapseTypes'
 import React, { useEffect, useState } from 'react'
 import { SynapseClient } from '../../utils'
 import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 type ImageFileHandleProps = {
-  fileHandleId: string
-  tableEntityConcreteType: string | undefined
-  rowId: string | undefined
-  tableId: string | undefined
+  fileHandleAssociation: FileHandleAssociation
 }
+
 export const ImageFileHandle = (props: ImageFileHandleProps) => {
-  const { fileHandleId, tableEntityConcreteType, rowId, tableId } = props
+  const {
+    fileHandleAssociation: {
+      fileHandleId,
+      associateObjectId,
+      associateObjectType,
+    },
+  } = props
   const { accessToken } = useSynapseContext()
   const [url, setUrl] = useState<string>()
   const { ref, inView } = useInView({
@@ -20,18 +24,13 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
   })
 
   useEffect(() => {
-    const getData = async () => {
-      const isFileView = tableEntityConcreteType?.includes('EntityView')
-      const fileAssociateType: FileHandleAssociateType = isFileView
-        ? FileHandleAssociateType.FileEntity
-        : FileHandleAssociateType.TableEntity
-      const fileAssociateId = isFileView ? rowId : tableId
-      if (fileAssociateId && inView) {
+    const getData = () => {
+      if (fileHandleId && associateObjectId && associateObjectType && inView) {
         SynapseClient.getActualFileHandleByIdURL(
           fileHandleId,
           accessToken,
-          fileAssociateType,
-          fileAssociateId,
+          associateObjectType,
+          associateObjectId,
           false,
         )
           .then(url => {
@@ -47,10 +46,9 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
   }, [
     inView,
     fileHandleId,
-    rowId,
-    tableId,
-    tableEntityConcreteType,
+    associateObjectId,
     accessToken,
+    associateObjectType,
   ])
 
   return (

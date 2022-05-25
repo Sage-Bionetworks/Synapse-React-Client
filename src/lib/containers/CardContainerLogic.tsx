@@ -24,6 +24,8 @@ export interface ColumnSpecifiedLink {
   matchColumnName: string
   /* The column which has the link. If the link is empty, the value will be displayed without a link. */
   linkColumnName: string
+  // If set, also show a tooltip
+  tooltipText?: string
 }
 
 export interface CardLink {
@@ -38,12 +40,16 @@ export interface CardLink {
   wrapValueWithParens?: boolean
   // If set and a value exists in this column for the row, just use this value for the href
   overrideLinkURLColumnName?: string
+  // If set, also show a tooltip
+  tooltipText?: string
 }
 
 export type MarkdownLink = {
   isMarkdown: true
   // the columns whos value will be used for the markdown
   matchColumnName: string
+  // If set, also show a tooltip
+  tooltipText?: string
 }
 
 export type CTACardLink = {

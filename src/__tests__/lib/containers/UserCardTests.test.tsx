@@ -300,7 +300,12 @@ describe('it creates the correct UI for the UserCardContextMenu', () => {
 })
 describe('it creates the correct UI for the large card', () => {
   const props = {
-    userProfile: mockUserProfileData,
+    userProfile: {
+      ...mockUserProfileData,
+      industry: undefined,
+      position: undefined,
+      url: undefined,
+    },
     size: SynapseConstants.LARGE_USER_CARD,
   }
 

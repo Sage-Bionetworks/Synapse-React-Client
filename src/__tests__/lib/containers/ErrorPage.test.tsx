@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
 import ErrorPage, { ErrorPageProps } from '../../../lib/containers/ErrorPage'
 
 describe('DirectDownload: basic functionality', () => {
@@ -9,15 +9,11 @@ describe('DirectDownload: basic functionality', () => {
     message: '5678',
   }
 
-  it('render error page component without crashing', async () => {
-    const wrapper = mount(<ErrorPage {...propsNoAccess} />)
-    expect(wrapper).toBeDefined()
-  })
-
-  it('should render the correct content', async () => {
-    const wrapper = mount(<ErrorPage {...propsNoAccess} />)
-    expect(wrapper.find('no-access.svg')).not.toBeNull()
-    expect(wrapper.find('h2').text()).toEqual('bcd')
-    expect(wrapper.find('p').text()).toEqual('5678')
+  it('should render the correct content', () => {
+    render(<ErrorPage {...propsNoAccess} />)
+    // Should actually be an image, but our test platform doesn't currently load SVGs imported as React Components
+    screen.getByText('no-access.svg')
+    screen.getByRole('heading', { name: propsNoAccess.title })
+    screen.getByText(propsNoAccess.message)
   })
 })

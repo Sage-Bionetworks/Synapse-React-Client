@@ -11,7 +11,11 @@ import {
   LabelLinkConfig,
 } from '../../../lib/containers/CardContainerLogic'
 import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
-import { SelectColumn, ColumnType } from '../../../lib/utils/synapseTypes'
+import {
+  SelectColumn,
+  ColumnType,
+  FileHandleAssociateType,
+} from '../../../lib/utils/synapseTypes'
 import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
 import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
@@ -33,6 +37,8 @@ const renderComponent = (props: GenericCardProps) => {
 mockAllIsIntersecting(true)
 
 describe('it renders the UI correctly', () => {
+  const tableId = 'TABLE_ID_MOCK'
+
   const iconOptions = {
     'AMP-AD': 'MOCKED_IMG_SVG_STRING',
   }
@@ -99,8 +105,12 @@ describe('it renders the UI correctly', () => {
     secondaryLabelLimit: 3,
     selectColumns: [],
     columnModels: [],
-    tableEntityConcreteType: '',
-    tableId: '',
+    queryContext: {
+      entity: {
+        id: tableId,
+        concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+      },
+    },
   }
 
   const propsForHeaderMode: GenericCardProps = {
@@ -111,8 +121,12 @@ describe('it renders the UI correctly', () => {
     isHeader: true,
     selectColumns: [],
     columnModels: [],
-    tableEntityConcreteType: '',
-    tableId: '',
+    queryContext: {
+      entity: {
+        id: tableId,
+        concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+      },
+    },
   }
 
   it('renders without crashing in non header mode', () => {
@@ -149,7 +163,6 @@ describe('it renders the UI correctly', () => {
   })
 
   describe('Renders UserCards when a UserId_List column is present', () => {
-    const tableId = 'TABLE_ID_MOCK'
     const columnModelWithUserIdList = [
       {
         columnType: ColumnType.USERID_LIST,
@@ -158,14 +171,18 @@ describe('it renders the UI correctly', () => {
       },
     ]
     it('Renders a UserCard with an EntityView associate type', () => {
-      const tableEntityConcreteType = 'EntityView'
       const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
           secondaryLabels: ['userIdList'],
         },
-        tableEntityConcreteType,
+        queryContext: {
+          entity: {
+            id: tableId,
+            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+          },
+        },
         columnModels: columnModelWithUserIdList,
         titleLinkConfig: undefined,
         tableId,
@@ -190,43 +207,51 @@ describe('it renders the UI correctly', () => {
     ]
 
     it('Renders a FileHandleLink with an EntityView associate type', () => {
-      const tableEntityConcreteType = 'EntityView'
       const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
-        tableEntityConcreteType,
+        queryContext: {
+          entity: {
+            id: tableId,
+            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+          },
+        },
         columnModels: columnModelWithFileHandleTitle,
         titleLinkConfig: undefined,
         tableId,
       })
       expect(wrapper.find(FileHandleLink)).toHaveLength(1)
       expect(wrapper.find(FileHandleLink).props()).toEqual({
-        token: undefined,
-        fileHandleId: MOCKED_LINK,
         showDownloadIcon: true,
-        tableEntityConcreteType,
-        rowId: MOCKED_ID,
-        tableId,
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_LINK,
+          associateObjectId: MOCKED_ID,
+          associateObjectType: FileHandleAssociateType.FileEntity,
+        },
         displayValue: MOCKED_TITLE,
       })
     })
 
     it('Renders a FileHandleLink with a table associate type', () => {
-      const tableEntityConcreteType = 'Table'
       const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
-        tableEntityConcreteType,
+        queryContext: {
+          entity: {
+            id: tableId,
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
         columnModels: columnModelWithFileHandleTitle,
         titleLinkConfig: undefined,
         tableId,
       })
       expect(wrapper.find(FileHandleLink)).toHaveLength(1)
       expect(wrapper.find(FileHandleLink).props()).toEqual({
-        token: undefined,
-        fileHandleId: MOCKED_LINK,
         showDownloadIcon: true,
-        tableEntityConcreteType,
-        rowId: MOCKED_ID,
-        tableId,
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_LINK,
+          associateObjectId: tableId,
+          associateObjectType: FileHandleAssociateType.TableEntity,
+        },
         displayValue: MOCKED_TITLE,
       })
     })
@@ -243,47 +268,55 @@ describe('it renders the UI correctly', () => {
       },
     ]
     it('Renders a ImageFileHandle with an EntityView associate type', () => {
-      const tableEntityConcreteType = 'EntityView'
       const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
           imageFileHandleColumnName: 'image',
         },
-        tableEntityConcreteType,
+        queryContext: {
+          entity: {
+            id: tableId,
+            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+          },
+        },
         columnModels: columnModelWithFileHandle,
         titleLinkConfig: undefined,
         tableId,
       })
       expect(wrapper.find(ImageFileHandle)).toHaveLength(1)
       expect(wrapper.find(ImageFileHandle).props()).toEqual({
-        token: undefined,
-        fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
-        tableEntityConcreteType,
-        rowId: MOCKED_ID,
-        tableId,
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+          associateObjectId: MOCKED_ID,
+          associateObjectType: FileHandleAssociateType.FileEntity,
+        },
       })
     })
     it('Renders a ImageFileHandle with a table associate type', () => {
-      const tableEntityConcreteType = 'Table'
       const { wrapper } = renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
           imageFileHandleColumnName: 'image',
         },
-        tableEntityConcreteType,
+        queryContext: {
+          entity: {
+            id: tableId,
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+          },
+        },
         columnModels: columnModelWithFileHandle,
         titleLinkConfig: undefined,
         tableId,
       })
       expect(wrapper.find(ImageFileHandle)).toHaveLength(1)
       expect(wrapper.find(ImageFileHandle).props()).toEqual({
-        token: undefined,
-        fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
-        tableEntityConcreteType,
-        rowId: MOCKED_ID,
-        tableId,
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+          associateObjectId: tableId,
+          associateObjectType: FileHandleAssociateType.TableEntity,
+        },
       })
     })
   })
