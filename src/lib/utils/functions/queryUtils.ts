@@ -62,10 +62,6 @@ export const getNextPageOfData = async (
     })
 }
 
-export const isGroupBy = (sql: string): boolean => {
-  return /group\s*by/gim.test(sql)
-}
-
 export const isFacetAvailable = (
   facets?: FacetColumnResult[],
   selectColumns?: SelectColumn[],
