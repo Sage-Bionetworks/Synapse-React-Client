@@ -42,9 +42,9 @@ export const CardContainer = (props: CardContainerProps) => {
     title,
     ...rest
   } = props
-
+  const queryContext = useQueryContext()
   const { data, getLastQueryRequest, appendNextPageToResults, hasNextPage } =
-    useQueryContext()
+    queryContext
 
   const queryRequest = getLastQueryRequest()
 
@@ -55,7 +55,7 @@ export const CardContainer = (props: CardContainerProps) => {
       case FUNDER:
         return <Funder {...props} />
       case GENERIC_CARD:
-        return <GenericCard {...props} />
+        return <GenericCard {...props} queryContext={queryContext} />
       case OBSERVATION_CARD:
         return <ObservationCard {...props} />
       default:

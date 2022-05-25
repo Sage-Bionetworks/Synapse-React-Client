@@ -145,6 +145,37 @@ export const getValueOrMultiValue = ({
   return { str: value, columnModelType: selectedColumnOrUndefined?.columnType }
 }
 
+export const getColumnIndex = (
+  columnName?: string,
+  selectColumns?: SelectColumn[],
+  columnModels?: ColumnModel[],
+): number | undefined => {
+  return (
+    selectColumns?.findIndex(el => el.name === columnName) ||
+    columnModels?.findIndex(el => el.name === columnName)
+  )
+}
+
+// SWC-6115: special rendering of the version column (for Views)
+export const VersionLabel: React.FC<{
+  synapseId: string
+  version: string
+}> = props => {
+  const { synapseId, version } = props
+  return (
+    <span>
+      {version}&nbsp;&nbsp;
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synapseId}.${version}`}
+      >
+        (Show Version History on Synapse)
+      </a>
+    </span>
+  )
+}
+
 type SynapseCardLabelProps = {
   value: string
   columnName: string
@@ -255,9 +286,11 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
   } else {
     const split = strList ? strList : str.split(',')
     if ('linkColumnName' in labelLink) {
-      const linkIndex =
-        selectColumns?.findIndex(el => el.name === labelLink.linkColumnName) ||
-        columnModels?.findIndex(el => el.name === labelLink.linkColumnName)
+      const linkIndex = getColumnIndex(
+        labelLink.linkColumnName,
+        selectColumns,
+        columnModels,
+      )
       if (linkIndex == null) {
         console.warn(
           `Could not determine column index of ${labelLink.linkColumnName}`,
@@ -489,7 +522,6 @@ export default class GenericCard extends React.Component<
       columnIconOptions,
       queryContext: { entity: table },
     } = this.props
-
     // GenericCard inherits properties from CommonCardProps so that the properties have the same name
     // and type, but theres one nuance which is that we can't override if one specific property will be
     // defined, so we assert genericCardSchema is not null and assign to genericCardSchemaDefined
@@ -529,23 +561,33 @@ export default class GenericCard extends React.Component<
     )
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
+    const isView = table && !isTableEntity(table)
     for (let i = 0; i < secondaryLabels.length; i += 1) {
       const columnName = secondaryLabels[i]
       let value: any = data[schema[columnName]]
+      let columnDisplayName
       if (value) {
-        const labelLink = labelLinkConfig?.find(
-          el => el.matchColumnName === columnName,
-        )
-        value = SynapseCardLabel({
-          value,
-          columnName,
-          labelLink,
-          isHeader,
-          selectColumns,
-          columnModels,
-          rowData: data,
-        })
-        const columnDisplayName = unCamelCase(columnName, facetAliases)
+        // SWC-6115: special rendering of the version column (for Views)
+        if (isView && columnName === 'currentVersion') {
+          const synapseId = data[schema.id]
+          const version = value
+          value = VersionLabel({ synapseId, version })
+          columnDisplayName = 'Version'
+        } else {
+          const labelLink = labelLinkConfig?.find(
+            el => el.matchColumnName === columnName,
+          )
+          value = SynapseCardLabel({
+            value,
+            columnName,
+            labelLink,
+            isHeader,
+            selectColumns,
+            columnModels,
+            rowData: data,
+          })
+          columnDisplayName = unCamelCase(columnName, facetAliases)
+        }
         const keyValue = [columnDisplayName, value, columnName]
         values.push(keyValue)
       }
