@@ -4,6 +4,7 @@ import { Table } from 'react-bootstrap'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { useSynapseContext } from '../utils/SynapseContext'
 import {
+  AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
   AccessApprovalSearchResult,
 } from '../utils/synapseTypes'
@@ -12,7 +13,8 @@ import Typography from '../utils/typography/Typography'
 import IconSvg from './IconSvg'
 import UserCard from './UserCard'
 import { displayToast } from './ToastMessage'
-
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { SynapseSpinner } from './LoadingScreen'
 export type AccessApprovalsTableProps = {
   accessorId: string
   accessRequirementId?: string
@@ -23,18 +25,46 @@ export const AccessApprovalsTable: React.FunctionComponent<
   const { accessToken } = useSynapseContext()
   const [searchResult, setSearchResult] =
     useState<AccessApprovalSearchResponse>()
+  const [isLoading, setIsLoading] = useState(false)
+  const [arList, setArList] = useState<AccessApprovalSearchResult[]>()
+
   const getApprovals = async () => {
     try {
+      const searchRequest: AccessApprovalSearchRequest = {
+        accessorId,
+        accessRequirementId,
+      }
       const approvalResponse = await accessApprovalSearch(
-        {
-          accessorId,
-          accessRequirementId,
-        },
+        searchRequest,
         accessToken,
       )
       setSearchResult(approvalResponse)
+      setArList(approvalResponse.results)
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
+    }
+  }
+
+  const onLoadMore = async () => {
+    setIsLoading(true)
+    try {
+      const searchRequest: AccessApprovalSearchRequest = {
+        accessorId,
+        accessRequirementId,
+        nextPageToken: searchResult?.nextPageToken,
+      }
+      const approvalResponse = await accessApprovalSearch(
+        searchRequest,
+        accessToken,
+      )
+      setSearchResult(approvalResponse)
+      if (arList) {
+        setArList([...arList, ...approvalResponse.results])
+      }
+    } catch (err: any) {
+      displayToast(err.reason as string, 'danger')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -144,11 +174,13 @@ export const AccessApprovalsTable: React.FunctionComponent<
             return (
               <tr key={item.id}>
                 <td className="remove-border">
-                  <a>{item.accessRequirementId}</a>
+                  <a
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.accessRequirementId}`}
+                  >
+                    {item.accessRequirementId}
+                  </a>
                 </td>
-                <td className="remove-border">
-                  <a>{item.accessRequirementName}</a>
-                </td>
+                <td className="remove-border">{item.accessRequirementName}</td>
                 <td className="remove-border">
                   <UserCard size={SMALL_USER_CARD} ownerId={item.submitterId} />
                 </td>
@@ -168,6 +200,14 @@ export const AccessApprovalsTable: React.FunctionComponent<
           })}
         </tbody>
       </Table>
+      {searchResult?.nextPageToken &&
+        (isLoading ? (
+          <SynapseSpinner size={30} />
+        ) : (
+          <button className="load-more-button" onClick={onLoadMore}>
+            Show More
+          </button>
+        ))}
     </div>
   )
 }

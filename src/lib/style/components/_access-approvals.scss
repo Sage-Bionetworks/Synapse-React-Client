@@ -22,4 +22,12 @@
     .expired {
         color: map.get(SRC.$colors, 'gray-700')
     }
+
+    .load-more-button {
+        border: 1px solid #395979;
+        padding: 6px 12px;
+        font-family: Lato;
+        font-weight: 900;
+        color: #395979;
+    }
 }
