@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import IconSvg from './IconSvg'
 import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import ReactTooltip from 'react-tooltip'
-import { SynapseClient } from '../utils'
-import { UserProfile } from '../utils/synapseTypes'
+import { SynapseClient, SynapseConstants } from '../utils'
+import { UserBundle, UserProfile } from '../utils/synapseTypes'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Avatar } from './Avatar'
 import { Form } from 'react-bootstrap'
@@ -97,6 +97,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
   const [isOpen, setOpen] = useState(initIsOpen)
   const [selectedItem, setSelectedItem] = useState<NavItem>()
   const [currentUserProfile, setUserProfile] = useState<UserProfile>()
+  const [currentUserBundle, setUserBundle] = useState<UserBundle>()
   const [projectSearchText, setProjectSearchText] = useState<string>('')
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
@@ -104,8 +105,12 @@ export const SynapseNavDrawer: React.FunctionComponent<
 
   useEffect(() => {
     async function getUserProfile() {
-      const userProfile = await SynapseClient.getUserProfile(accessToken)
-      setUserProfile(userProfile)
+      const mask =
+        SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
+        SynapseConstants.USER_BUNDLE_MASK_IS_AR_REVIEWER
+      const userBundle = await SynapseClient.getMyUserBundle(mask, accessToken)
+      setUserProfile(userBundle.userProfile)
+      setUserBundle(userBundle)
     }
     if (accessToken) {
       getUserProfile()
@@ -249,6 +254,13 @@ export const SynapseNavDrawer: React.FunctionComponent<
                   tooltip: 'Trash Can',
                   iconName: 'delete',
                   onClickGoToUrl: '/#!Trash:0',
+                })}
+              {isInSynapseExperimentalMode() &&
+                currentUserBundle?.isARReviewer &&
+                getListItem({
+                  tooltip: 'Data Access Management',
+                  iconName: 'accessManagement',
+                  onClickGoToUrl: '/#!DataAccessManagment:default',
                 })}
             </>
           )}
