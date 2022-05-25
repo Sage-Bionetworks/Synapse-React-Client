@@ -6,10 +6,8 @@ import { PROVIDERS } from '../containers/Login'
 import {
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
-  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ALIAS_AVAILABLE,
   ASYNCHRONOUS_JOB_TOKEN,
-  DATA_ACCESS_SUBMISSION_BY_ID,
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
@@ -29,8 +27,6 @@ import {
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
   USER_BUNDLE,
-  USER_GROUP_HEADERS,
-  USER_GROUP_HEADERS_BATCH,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
@@ -193,7 +189,10 @@ import {
   DiscussionSearchRequest,
   DiscussionSearchResponse,
 } from './synapseTypes/DiscussionSearch'
-
+import {
+  AccessApprovalSearchRequest,
+  AccessApprovalSearchResponse,
+} from './synapseTypes/AccessApproval'
 const cookies = new UniversalCookies()
 
 // TODO: Create JSON response types for all return types
@@ -872,8 +871,7 @@ export const getUserGroupHeaders = (
   limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    USER_GROUP_HEADERS +
-      `?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
+    `/repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -889,7 +887,7 @@ export const getGroupHeadersBatch = (
   accessToken: string | undefined,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
+    `/repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1274,7 +1272,7 @@ export const getWikiPageKeyForAccessRequirement = (
   accessToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
-  const url = ACCESS_REQUIREMENT_WIKI_PAGE_KEY(ownerId)
+  const url = `/repo/v1/access_requirement/${ownerId}/wikikey`
   return doGet<WikiPageKey>(
     url,
     accessToken,
@@ -3109,7 +3107,7 @@ export const updateSubmissionStatus = (
   accessToken?: string,
 ) => {
   return doPut<void>(
-    DATA_ACCESS_SUBMISSION_BY_ID(request.submissionId),
+    `/repo/v1/dataAccessSubmission/${request.submissionId}`,
     request,
     accessToken,
     undefined,
@@ -3126,13 +3124,11 @@ export const updateSubmissionStatus = (
  */
 //
 export const getSchemaBinding = (entityId: string, accessToken?: string) => {
-  return allowNotFoundError(() =>
-    doGet<JsonSchemaObjectBinding>(
-      ENTITY_SCHEMA_BINDING(entityId),
-      accessToken,
-      undefined,
-      BackendDestinationEnum.REPO_ENDPOINT,
-    ),
+  return doGet<JsonSchemaObjectBinding>(
+    ENTITY_SCHEMA_BINDING(entityId),
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -3621,6 +3617,27 @@ export const forumSearch = (
   return doPost<DiscussionSearchResponse>(
     `/repo/v1/forum/${forumId}/search`,
     discussionSearchRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Search through the history of access approvals filtering by accessor/submitter
+ * and optional by access requirement id. The caller must be a member of the ACT.
+ * https://rest-docs.synapse.org/rest/POST/accessApproval/search.html
+ * @param accessApprovalSearchRequest
+ * @param accessToken
+ */
+
+export const accessApprovalSearch = (
+  accessApprovalSearchRequest: AccessApprovalSearchRequest | undefined,
+  accessToken: string | undefined,
+) => {
+  return doPost<AccessApprovalSearchResponse>(
+    '/repo/v1/accessApproval/search',
+    accessApprovalSearchRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

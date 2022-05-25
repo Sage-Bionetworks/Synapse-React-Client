@@ -39,6 +39,7 @@ import {
   VpnKeyTwoTone,
   ReplyTwoTone,
   ChatTwoTone,
+  SortTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -236,6 +237,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
     case 'accessManagement':
       return <AccessManagement style={muiSvgStyle}></AccessManagement>
+    case 'sortTwoTone':
+      return <SortTwoTone style={muiSvgStyle}></SortTwoTone>
     default:
       return <></>
   }

@@ -1,6 +1,30 @@
+import { SortDirection } from '../../containers/FavoritesPage'
+
 export enum ApprovalState {
   APPROVED = 'APPROVED',
   REVOKED = 'REVOKED',
+}
+
+export enum AccessApprovalSortField {
+  MODIFIED_ON = 'MODIFIED_ON',
+  EXPIRED_ON = 'EXPIRED_ON',
+}
+
+export interface AccessApprovalSearchSort {
+  field: AccessApprovalSortField
+  direction: SortDirection
+}
+
+export interface AccessApprovalSearchResult {
+  id: string
+  accessRequirementId: string
+  accessRequirementVersion: string
+  accessRequirementName: string
+  submitterId: string
+  reviewerId: string
+  state: ApprovalState
+  modifiedOn: string
+  expiredOn: string
 }
 
 export interface AccessApproval {
@@ -16,4 +40,16 @@ export interface AccessApproval {
   accessorId: string //	The ID of the principal (user or group) approved for access
   expiredOn?: string //	The date this object will be expired.
   state: ApprovalState //	JSON enum for the state of AccessApproval
+}
+
+export interface AccessApprovalSearchRequest {
+  accessorId: string // 	Filter by the id of the principal that is an accessor in the approval. Note that the submitter is always part of the accessors. This field is required.
+  accessRequirementId?: string // Filter by the id of the access requirement of the approvals.
+  sort?: AccessApprovalSearchSort[] // Identifies both the field and direction for a single sort operation.
+  nextPageToken?: string // A token used to get the next page of a request.
+}
+
+export interface AccessApprovalSearchResponse {
+  results: AccessApprovalSearchResult[] // The matching Access Approval information corresponding to the search parameters
+  nextPageToken: string // A token used to get the next page of a particular search query.
 }
