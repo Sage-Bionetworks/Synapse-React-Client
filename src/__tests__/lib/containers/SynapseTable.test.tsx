@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { SynapseConstants } from '../../../lib'
 import { QueryVisualizationContextType } from '../../../lib/containers/QueryVisualizationWrapper'
 import {
@@ -27,12 +28,16 @@ import { AUTHENTICATED_USERS } from '../../../lib/utils/SynapseConstants'
 import {
   ColumnType,
   EntityHeader,
+  EntityView,
+  ENTITY_VIEW_TYPE_MASK_FILE,
+  PaginatedResults,
   QueryBundleRequest,
   QueryResultBundle,
+  Reference,
+  ReferenceList,
   UserGroupHeader,
   UserProfile,
 } from '../../../lib/utils/synapseTypes/'
-import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockEntity'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../mocks/msw/server'
 import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
@@ -172,10 +177,17 @@ server.use(
   rest.post(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
     async (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({ results: [{ id: MOCK_FILE_ENTITY_ID }] }),
-      )
+      const requestBody: ReferenceList = JSON.parse(req.body!).references
+      const responseBody: PaginatedResults<EntityHeader> = {
+        results: requestBody.map((reference: Reference) => {
+          return {
+            id: reference.targetId,
+            name: 3,
+            type: 'org.sagebionetworks.repo.model.FileEntity',
+          }
+        }),
+      }
+      return res(ctx.status(200), ctx.json(responseBody))
     },
   ),
 )
@@ -308,6 +320,64 @@ describe('SynapseTable tests', () => {
         }),
       )
     })
+  })
+
+  it('Shows add to download cart column for an Entity View that contains files', async () => {
+    const testQueryContext = cloneDeep(queryContext)
+    testQueryContext.entity = {
+      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+      viewTypeMask: ENTITY_VIEW_TYPE_MASK_FILE,
+    } as EntityView
+    renderTable({ ...props, showDownloadColumn: true }, testQueryContext)
+    mockAllIsIntersecting(true)
+
+    expect(
+      screen.queryByTestId('AddToDownloadListV2ColumnHeader'),
+    ).toBeInTheDocument()
+
+    expect(
+      (await screen.findAllByTestId('AddToDownloadListV2')).length,
+    ).toBeGreaterThan(0)
+  })
+
+  it('Shows add to download cart download column for a dataset', async () => {
+    const testQueryContext = cloneDeep(queryContext)
+    testQueryContext.entity = {
+      concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
+    }
+    renderTable({ ...props, showDownloadColumn: true }, testQueryContext)
+    mockAllIsIntersecting(true)
+
+    expect(
+      screen.queryByTestId('AddToDownloadListV2ColumnHeader'),
+    ).toBeInTheDocument()
+
+    expect(
+      (await screen.findAllByTestId('AddToDownloadListV2')).length,
+    ).toBeGreaterThan(0)
+  })
+
+  it('Hides download columns when rows of an entity-containing view have no IDs', () => {
+    // e.g. when the view has a GROUP BY or DISTINCT clause, the rows no longer represent individual entities, so they can't be downloaded
+    // this is indicated by the rows of the result query not having rowIds, rather than the rowId matching the synID of the corresponding entity
+    const testQueryContext = cloneDeep(queryContext)
+    testQueryContext.entity = {
+      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+      viewTypeMask: ENTITY_VIEW_TYPE_MASK_FILE,
+    }
+    testQueryContext.data!.queryResult.queryResults.rows =
+      testQueryContext.data!.queryResult.queryResults.rows.map(row => ({
+        ...row,
+        rowId: undefined,
+      }))
+
+    renderTable({ ...props, showDownloadColumn: true }, testQueryContext)
+    mockAllIsIntersecting(true)
+
+    expect(
+      screen.queryByTestId('AddToDownloadListV2ColumnHeader'),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByTestId('AddToDownloadListV2')).not.toBeInTheDocument()
   })
 
   describe('table cells render correctly', () => {
