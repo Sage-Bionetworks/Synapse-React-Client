@@ -39,6 +39,9 @@ $text-color-lighter: #898989;
         max-width: 75px;
       }
     }
+    svg {
+      height: 55px;
+    }
   }
   .SRC-cardMetadata {
     background-color: $color-gray-background;

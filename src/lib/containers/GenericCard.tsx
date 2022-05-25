@@ -27,6 +27,7 @@ import {
 } from './CardContainerLogic'
 import HeaderCard from './HeaderCard'
 import IconList from './IconList'
+import IconSvg, { type2SvgIconName } from './IconSvg'
 import MarkdownSynapse from './MarkdownSynapse'
 import { QueryContextType } from './QueryWrapper'
 import { CardFooter, Icon } from './row_renderers/utils'
@@ -66,6 +67,7 @@ export type GenericCardProps = {
   columnModels?: ColumnModel[]
   facetAliases?: Record<string, string>
   iconOptions?: IconOptions
+  useTypeColumnForIcon?: boolean
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   // Maps columnName to index
@@ -512,6 +514,7 @@ export default class GenericCard extends React.Component<
       selectColumns,
       columnModels,
       iconOptions,
+      useTypeColumnForIcon = false,
       isHeader = false,
       titleLinkConfig,
       ctaLinkConfig,
@@ -546,7 +549,6 @@ export default class GenericCard extends React.Component<
       data[schema[genericCardSchemaDefined.dataTypeIconNames || '']]
     const imageFileHandleIdValue =
       data[schema[genericCardSchemaDefined.imageFileHandleColumnName || '']]
-
     const titleColumnModel = columnModels?.find(
       el => genericCardSchemaDefined.link === el.name,
     )
@@ -627,7 +629,7 @@ export default class GenericCard extends React.Component<
     }
     const icon: JSX.Element = (
       <>
-        {imageFileHandleIdValue && (
+        {!useTypeColumnForIcon && imageFileHandleIdValue && (
           <div
             className="SRC-imageThumbnail"
             style={{
@@ -641,9 +643,16 @@ export default class GenericCard extends React.Component<
             )}
           </div>
         )}
-        {!imageFileHandleIdValue && (
+        {!useTypeColumnForIcon && !imageFileHandleIdValue && (
           <div className="SRC-cardThumbnail">
             <Icon iconOptions={iconOptions} value={iconValue} type={type} />
+          </div>
+        )}
+        {useTypeColumnForIcon && (
+          <div className="SRC-cardThumbnail">
+            <IconSvg
+              options={{ icon: type2SvgIconName[data[schema['type']]] }}
+            />
           </div>
         )}
       </>
