@@ -141,7 +141,9 @@ describe('Access Requirement Search Box tests', () => {
 
     const input = await screen.findByRole<HTMLInputElement>('textbox')
 
-    expect(input.value).toContain(mockAccessRequirement.name)
+    await waitFor(() =>
+      expect(input.value).toContain(mockAccessRequirement.name),
+    )
   })
 
   it('Supports pasting/typing an AR ID', async () => {

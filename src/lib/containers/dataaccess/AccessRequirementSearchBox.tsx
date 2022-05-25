@@ -64,7 +64,14 @@ export default function AccessRequirementSearchBox(
 
   return (
     <AsyncSelect
-      defaultInputValue={initialId?.toString()}
+      defaultInputValue={
+        initialId
+          ? getOptionLabel(
+              initialId,
+              initialAccessRequirement?.name ?? initialId.toString(),
+            )
+          : undefined
+      }
       defaultOptions={
         initialId
           ? [
