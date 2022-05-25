@@ -51,5 +51,5 @@ export interface AccessApprovalSearchRequest {
 
 export interface AccessApprovalSearchResponse {
   results: AccessApprovalSearchResult[] // The matching Access Approval information corresponding to the search parameters
-  nextPageToken: string // A token used to get the next page of a particular search query.
+  nextPageToken?: string // A token used to get the next page of a particular search query.
 }

@@ -7,14 +7,18 @@ import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
   AccessApprovalSearchResult,
+  AccessApprovalSearchSort,
+  AccessApprovalSortField,
 } from '../utils/synapseTypes'
-import { accessApprovalSearch } from '../utils/SynapseClient'
+import { searchAccessApprovals } from '../utils/SynapseClient'
 import Typography from '../utils/typography/Typography'
 import IconSvg from './IconSvg'
 import UserCard from './UserCard'
 import { displayToast } from './ToastMessage'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { SynapseSpinner } from './LoadingScreen'
+import { SortDirection } from './FavoritesPage'
+
 export type AccessApprovalsTableProps = {
   accessorId: string
   accessRequirementId?: string
@@ -26,6 +30,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
   const [searchResult, setSearchResult] =
     useState<AccessApprovalSearchResponse>()
   const [isLoading, setIsLoading] = useState(false)
+  const [isDescending, setIsDescending] = useState(false)
   const [arList, setArList] = useState<AccessApprovalSearchResult[]>()
 
   const getApprovals = async () => {
@@ -34,7 +39,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
         accessorId,
         accessRequirementId,
       }
-      const approvalResponse = await accessApprovalSearch(
+      const approvalResponse = await searchAccessApprovals(
         searchRequest,
         accessToken,
       )
@@ -53,7 +58,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
         accessRequirementId,
         nextPageToken: searchResult?.nextPageToken,
       }
-      const approvalResponse = await accessApprovalSearch(
+      const approvalResponse = await searchAccessApprovals(
         searchRequest,
         accessToken,
       )
@@ -70,57 +75,34 @@ export const AccessApprovalsTable: React.FunctionComponent<
 
   useEffect(() => {
     getApprovals()
-  }, [accessToken])
+  }, [accessToken, accessorId, accessRequirementId])
 
-  type SortedColumn = {
-    column: string
-    isDescending: boolean
-  }
-
-  const [sortedColumn, setSortedColumn] = useState<SortedColumn>({
-    column: '',
-    isDescending: false,
-  })
-  const sortList = (
-    itemA: AccessApprovalSearchResult,
-    itemB: AccessApprovalSearchResult,
-    column: string,
+  const sortColumn = async (
+    field: AccessApprovalSortField,
     isDescending: boolean,
   ) => {
-    const direction = isDescending ? 1 : -1
-
-    switch (column) {
-      case 'modifiedOn':
-        return itemB.modifiedOn.localeCompare(itemA.modifiedOn) * direction
-      case 'expiredOn':
-        // In case there is no expiration date set it as current
-        const expiredB =
-          itemB.expiredOn !== undefined
-            ? itemB.expiredOn
-            : new Date().toDateString()
-        const expiredA =
-          itemA.expiredOn !== undefined
-            ? itemA.expiredOn
-            : new Date().toDateString()
-        return expiredB.localeCompare(expiredA) * direction
-      default:
-        return 1
-    }
-  }
-
-  const sortColumn = async (column: string) => {
     try {
-      const isDescending =
-        column === sortedColumn.column ? !sortedColumn.isDescending : false
-      setSortedColumn({
-        column,
-        isDescending,
-      })
-      const currentAccessApprovals: AccessApprovalSearchResult[] =
-        searchResult?.results ?? []
-      currentAccessApprovals.sort((itemA, itemB) => {
-        return sortList(itemA, itemB, column, isDescending)
-      })
+      const direction = isDescending
+        ? ('DESC' as SortDirection)
+        : ('ASC' as SortDirection)
+      const sort: AccessApprovalSearchSort[] = [
+        {
+          field,
+          direction,
+        },
+      ]
+      const searchRequest: AccessApprovalSearchRequest = {
+        accessorId,
+        accessRequirementId,
+        sort,
+      }
+      const sortRequest = await searchAccessApprovals(
+        searchRequest,
+        accessToken,
+      )
+      setSearchResult(sortRequest)
+      setArList(sortRequest.results)
+      setIsDescending(!isDescending)
     } catch (err) {
       console.error(err)
     }
@@ -143,7 +125,12 @@ export const AccessApprovalsTable: React.FunctionComponent<
               Modified Date
               <button
                 style={{ float: 'right' }}
-                onClick={() => sortColumn('modifiedOn')}
+                onClick={() =>
+                  sortColumn(
+                    'MODIFIED_ON' as AccessApprovalSortField,
+                    isDescending,
+                  )
+                }
               >
                 <IconSvg
                   options={{
@@ -156,7 +143,12 @@ export const AccessApprovalsTable: React.FunctionComponent<
               Expires
               <button
                 style={{ float: 'right' }}
-                onClick={() => sortColumn('expiredOn')}
+                onClick={() =>
+                  sortColumn(
+                    'EXPIRED_ON' as AccessApprovalSortField,
+                    isDescending,
+                  )
+                }
               >
                 <IconSvg
                   options={{

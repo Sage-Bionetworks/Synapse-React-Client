@@ -6,8 +6,10 @@ import { PROVIDERS } from '../containers/Login'
 import {
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ALIAS_AVAILABLE,
   ASYNCHRONOUS_JOB_TOKEN,
+  DATA_ACCESS_SUBMISSION_BY_ID,
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
@@ -27,6 +29,8 @@ import {
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
   USER_BUNDLE,
+  USER_GROUP_HEADERS,
+  USER_GROUP_HEADERS_BATCH,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
@@ -871,7 +875,8 @@ export const getUserGroupHeaders = (
   limit: number = 20,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    `/repo/v1/userGroupHeaders?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
+    USER_GROUP_HEADERS +
+      `?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
     undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -887,7 +892,7 @@ export const getGroupHeadersBatch = (
   accessToken: string | undefined,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
-    `/repo/v1/userGroupHeaders/batch?ids=${ids.join(',')}`,
+    USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -1272,7 +1277,7 @@ export const getWikiPageKeyForAccessRequirement = (
   accessToken: string | undefined,
   ownerId: string | number,
 ): Promise<WikiPageKey> => {
-  const url = `/repo/v1/access_requirement/${ownerId}/wikikey`
+  const url = ACCESS_REQUIREMENT_WIKI_PAGE_KEY(ownerId)
   return doGet<WikiPageKey>(
     url,
     accessToken,
@@ -3107,7 +3112,7 @@ export const updateSubmissionStatus = (
   accessToken?: string,
 ) => {
   return doPut<void>(
-    `/repo/v1/dataAccessSubmission/${request.submissionId}`,
+    DATA_ACCESS_SUBMISSION_BY_ID(request.submissionId),
     request,
     accessToken,
     undefined,
@@ -3124,11 +3129,13 @@ export const updateSubmissionStatus = (
  */
 //
 export const getSchemaBinding = (entityId: string, accessToken?: string) => {
-  return doGet<JsonSchemaObjectBinding>(
-    ENTITY_SCHEMA_BINDING(entityId),
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
+  return allowNotFoundError(() =>
+    doGet<JsonSchemaObjectBinding>(
+      ENTITY_SCHEMA_BINDING(entityId),
+      accessToken,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }
 
@@ -3631,7 +3638,7 @@ export const forumSearch = (
  * @param accessToken
  */
 
-export const accessApprovalSearch = (
+export const searchAccessApprovals = (
   accessApprovalSearchRequest: AccessApprovalSearchRequest | undefined,
   accessToken: string | undefined,
 ) => {
