@@ -101,7 +101,9 @@ export const AccessApprovalsTable: React.FunctionComponent<
         accessToken,
       )
       setSearchResult(sortRequest)
-      setArList(sortRequest.results)
+      if (arList) {
+        setArList([...arList, ...sortRequest.results])
+      }
       setIsDescending(!isDescending)
     } catch (err) {
       console.error(err)
