@@ -133,6 +133,8 @@ export default class SynapseTable extends React.Component<
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.enableResize = this.enableResize.bind(this)
     this.disableResize = this.disableResize.bind(this)
+    this.isEntityViewOrDataset = this.isEntityViewOrDataset.bind(this)
+    this.allRowsHaveId = this.allRowsHaveId.bind(this)
 
     // store the offset and sorted selection that is currently held
     this.state = {
@@ -260,10 +262,7 @@ export default class SynapseTable extends React.Component<
       entityIdColumnIndicies,
     )
     // also include row entity ids if this is a view (it's possible that the ID column was not selected)
-    if (
-      (isEntityView(entity) || isDataset(entity)) &&
-      data.queryResult.queryResults.rows.every(row => !!row.rowId)
-    ) {
+    if (this.isEntityViewOrDataset() && this.allRowsHaveId()) {
       const { queryResult } = data
       const { queryResults } = queryResult
       const { rows } = queryResults
@@ -449,6 +448,27 @@ export default class SynapseTable extends React.Component<
     )
   }
 
+  /**
+   * If this is a view/dataset and rows have an ID, then rows represent individual objects in Synapse.
+   * Presence of row IDs also indicates that the query is also necessarily not summary data, e.g. the query does
+   * not include an operation like GROUP BY, DISTINCT, etc., that would cause rows to not map 1:1 to Synapse Entities
+   */
+  private allRowsHaveId(): boolean {
+    const {
+      queryContext: { data },
+    } = this.props
+    return (
+      data?.queryResult.queryResults.rows.every(row => !!row.rowId) ?? false
+    )
+  }
+
+  private isEntityViewOrDataset(): boolean {
+    const {
+      queryContext: { entity },
+    } = this.props
+    return (entity && (isEntityView(entity) || isDataset(entity))) ?? false
+  }
+
   private showGroupRowData = (selectedRow: Row) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = this.props.queryContext.getLastQueryRequest().query
@@ -474,7 +494,7 @@ export default class SynapseTable extends React.Component<
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const {
-      queryContext: { data, entity, hasNextPage, hasPreviousPage },
+      queryContext: { entity, hasNextPage, hasPreviousPage },
       showAccessColumn,
       showDownloadColumn,
       isRowSelectionVisible,
@@ -516,21 +536,6 @@ export default class SynapseTable extends React.Component<
     )
 
     /**
-     * If all rows have an ID, then this is a view that represents individual objects in Synapse.
-     * Presence of row IDs also indicates that the query is also necessarily not summary data, e.g. the query does
-     * not include an operation like GROUP BY, DISTINCT, etc., that would cause rows to not map 1:1 to Synapse Entities
-     */
-    const rowsHaveId = data?.queryResult.queryResults.rows.every(
-      row => !!row.rowId,
-    )
-
-    /**
-     * i.e. the view has Synapse Entities in it
-     */
-    const isEntityViewOrDataset =
-      entity && (isEntityView(entity) || isDataset(entity))
-
-    /**
      * i.e. the view may have FileEntities in it
      *
      * PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
@@ -540,11 +545,14 @@ export default class SynapseTable extends React.Component<
       ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity))
 
     const isShowingAccessColumn: boolean | undefined =
-      showAccessColumn && entity && isEntityViewOrDataset && rowsHaveId
+      showAccessColumn &&
+      entity &&
+      this.isEntityViewOrDataset() &&
+      this.allRowsHaveId()
     const isLoggedIn = !!this.props.synapseContext.accessToken
 
     const rowsAreDownloadable =
-      entity && isFileViewOrDataset && isLoggedIn && rowsHaveId
+      entity && isFileViewOrDataset && isLoggedIn && this.allRowsHaveId()
 
     const isShowingAddToV2DownloadListColumn: boolean = !!(
       rowsAreDownloadable && !this.props.hideDownload
