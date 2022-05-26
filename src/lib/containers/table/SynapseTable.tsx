@@ -11,7 +11,6 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { isGroupBy } from '../../utils/functions/queryUtils'
 import { isGroupByInSql } from '../../utils/functions/sqlFunctions'
 import { SynapseContextType } from '../../utils/SynapseContext'
 import {
@@ -50,9 +49,9 @@ import { unCamelCase } from './../../utils/functions/unCamelCase'
 import SearchResultsNotFound from './SearchResultsNotFound'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
+  getColumnIndiciesWithType,
   getCountFunctionColumnIndices,
   getSqlUnderlyingDataForRow,
-  getColumnIndiciesWithType,
   getUniqueEntities,
 } from './SynapseTableUtils'
 
@@ -134,6 +133,8 @@ export default class SynapseTable extends React.Component<
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
     this.enableResize = this.enableResize.bind(this)
     this.disableResize = this.disableResize.bind(this)
+    this.isEntityViewOrDataset = this.isEntityViewOrDataset.bind(this)
+    this.allRowsHaveId = this.allRowsHaveId.bind(this)
 
     // store the offset and sorted selection that is currently held
     this.state = {
@@ -261,7 +262,7 @@ export default class SynapseTable extends React.Component<
       entityIdColumnIndicies,
     )
     // also include row entity ids if this is a view (it's possible that the ID column was not selected)
-    if (isEntityView(entity)) {
+    if (this.isEntityViewOrDataset() && this.allRowsHaveId()) {
       const { queryResult } = data
       const { queryResults } = queryResult
       const { rows } = queryResults
@@ -447,6 +448,27 @@ export default class SynapseTable extends React.Component<
     )
   }
 
+  /**
+   * If this is a view/dataset and rows have an ID, then rows represent individual objects in Synapse.
+   * Presence of row IDs also indicates that the query is also necessarily not summary data, e.g. the query does
+   * not include an operation like GROUP BY, DISTINCT, etc., that would cause rows to not map 1:1 to Synapse Entities
+   */
+  private allRowsHaveId(): boolean {
+    const {
+      queryContext: { data },
+    } = this.props
+    return (
+      data?.queryResult.queryResults.rows.every(row => !!row.rowId) ?? false
+    )
+  }
+
+  private isEntityViewOrDataset(): boolean {
+    const {
+      queryContext: { entity },
+    } = this.props
+    return (entity && (isEntityView(entity) || isDataset(entity))) ?? false
+  }
+
   private showGroupRowData = (selectedRow: Row) => {
     // magic happens - parse query, deep copy query bundle request, modify, encode, send to Synapse.org.  Easy!
     const queryCopy = this.props.queryContext.getLastQueryRequest().query
@@ -513,29 +535,32 @@ export default class SynapseTable extends React.Component<
       </Button>
     )
 
-    const containsGroupBy = isGroupBy(lastQueryRequest.query.sql)
+    /**
+     * i.e. the view may have FileEntities in it
+     *
+     * PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
+     */
+    const isFileViewOrDataset =
+      entity &&
+      ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity))
+
     const isShowingAccessColumn: boolean | undefined =
-      showAccessColumn && entity && isEntityView(entity) && !containsGroupBy
+      showAccessColumn &&
+      entity &&
+      this.isEntityViewOrDataset() &&
+      this.allRowsHaveId()
     const isLoggedIn = !!this.props.synapseContext.accessToken
 
-    // PORTALS-2010:  Enhance change made for PORTALS-1973.  File specific action will only be shown for rows that represent FileEntities.
-    // Set isFileView to true if the Entity could have any Files in it.  Check if bit 1 is set in the viewTypeMask.
-    //  http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/EntityView.html
+    const rowsAreDownloadable =
+      entity && isFileViewOrDataset && isLoggedIn && this.allRowsHaveId()
 
-    // TODO: is file view or is dataset
     const isShowingAddToV2DownloadListColumn: boolean = !!(
-      entity &&
-      ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity)) &&
-      !this.props.hideDownload &&
-      isLoggedIn &&
-      !containsGroupBy
+      rowsAreDownloadable && !this.props.hideDownload
     )
+
     const isShowingDirectDownloadColumn =
-      entity &&
-      ((isEntityView(entity) && hasFilesInView(entity)) || isDataset(entity)) &&
-      showDownloadColumn &&
-      isLoggedIn &&
-      !containsGroupBy
+      rowsAreDownloadable && showDownloadColumn
+
     /* min height ensure if no rows are selected that a dropdown menu is still accessible */
     return (
       <div className="SynapseTable SRC-overflowAuto" data-testid="SynapseTable">
@@ -750,7 +775,7 @@ export default class SynapseTable extends React.Component<
             {isFileEntity && (
               <AddToDownloadListV2
                 entityId={rowSynapseId}
-                entityVersionNumber={parseInt(entityVersionNumber)}
+                entityVersionNumber={parseInt(entityVersionNumber!)}
               ></AddToDownloadListV2>
             )}
           </td>,
@@ -781,7 +806,7 @@ export default class SynapseTable extends React.Component<
         )
       }
 
-      const rowFormatted = <tr key={row.rowId}>{rowContent}</tr>
+      const rowFormatted = <tr key={row.rowId ?? rowIndex}>{rowContent}</tr>
       rowsFormatted.push(rowFormatted)
     })
     return rowsFormatted
@@ -914,7 +939,10 @@ export default class SynapseTable extends React.Component<
     }
     if (isShowingAddToV2DownloadListColumn) {
       tableColumnHeaderElements.unshift(
-        <th key="addToV2DownloadListColumn">
+        <th
+          data-testId="AddToDownloadListV2ColumnHeader"
+          key="addToV2DownloadListColumn"
+        >
           <div className="SRC-centerContent">&nbsp;</div>
         </th>,
       )
@@ -1012,7 +1040,7 @@ export default class SynapseTable extends React.Component<
         facetValues={facetColumnResult.facetValues}
         columnModel={columnModel}
         facetAliases={facetAliases}
-        onChange={(facetNamesMap: {}) => {
+        onChange={(facetNamesMap: Record<string, string>) => {
           applyMultipleChangesToValuesColumn(
             lastQueryRequest,
             facetColumnResult,

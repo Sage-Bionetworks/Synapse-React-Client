@@ -41,6 +41,7 @@ const AddToDownloadListV2: React.FunctionComponent<
   return (
     <>
       <a
+        data-testid="AddToDownloadListV2"
         data-tip="Add this file to your Download Cart"
         data-for={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
         onClick={addToDownloadListV2}
