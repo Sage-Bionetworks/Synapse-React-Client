@@ -25,6 +25,7 @@ import {
   CardFooter,
   ShowMore,
 } from '../../../lib/containers/row_renderers/utils'
+import IconSvg from '../../../lib/containers/IconSvg'
 
 const renderComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />, {
@@ -72,6 +73,7 @@ describe('it renders the UI correctly', () => {
     id: 7,
     image: 8,
     userIdList: 9,
+    type: 10,
   }
 
   const MOCKED_TITLE = 'MOCKED TITLE'
@@ -84,6 +86,7 @@ describe('it renders the UI correctly', () => {
   const MOCKED_ID = 'MOCKED_ID'
   const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
   const MOCKED_USER_ID = '[12345]'
+  const MOCKED_TYPE = 'folder'
 
   const data = [
     MOCKED_TITLE,
@@ -96,6 +99,7 @@ describe('it renders the UI correctly', () => {
     MOCKED_ID,
     MOCKED_IMAGE_FILE_HANDLE_ID,
     MOCKED_USER_ID,
+    MOCKED_TYPE,
   ]
 
   const propsForNonHeaderMode: GenericCardProps = {
@@ -191,6 +195,29 @@ describe('it renders the UI correctly', () => {
       expect(wrapper.find(UserCard).props()).toEqual({
         ownerId: 12345,
         size: 'SMALL USER CARD',
+      })
+    })
+  })
+
+  describe('Renders expected entity type icon when useTypeColumnForIcon is set to true', () => {
+    it('Renders expected entity type icon when useTypeColumnForIcon is set to true', () => {
+      const { wrapper } = renderComponent({
+        ...propsForNonHeaderMode,
+        queryContext: {
+          entity: {
+            id: tableId,
+            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+          },
+        },
+        useTypeColumnForIcon: true,
+        titleLinkConfig: undefined,
+        tableId,
+      })
+      expect(wrapper.find(IconSvg)).toHaveLength(1)
+      expect(wrapper.find(IconSvg).props()).toEqual({
+        options: {
+          icon: 'folder',
+        },
       })
     })
   })
