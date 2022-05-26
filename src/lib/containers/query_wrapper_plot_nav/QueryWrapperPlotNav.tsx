@@ -62,6 +62,7 @@ type OwnProps = {
   hideSqlEditorControl?: boolean
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
+  defaultShowSearchBox?: boolean
   downloadCartPageUrl?: string
   showLastUpdatedOn?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'>
@@ -143,7 +144,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
           facetAliases={props.facetAliases}
           visibleColumnCount={props.visibleColumnCount}
           defaultShowFacetVisualization={props.defaultShowFacetVisualization}
-          defaultShowSearchBar={isFullTextSearchEnabled}
+          defaultShowSearchBar={
+            props.defaultShowSearchBox || isFullTextSearchEnabled
+          }
           showLastUpdatedOn={showLastUpdatedOn}
         >
           <QueryContextConsumer>

@@ -41,8 +41,8 @@ export type SynapseTableCellProps = {
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
   rowData: string[]
-  rowId: number
-  rowVersionNumber: number
+  rowId?: number
+  rowVersionNumber?: number
 }
 
 export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({

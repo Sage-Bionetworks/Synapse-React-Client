@@ -7,6 +7,7 @@ Configured to show cards:
   sql="SELECT * FROM syn26438037"
   limit={5}
   defaultShowFacetVisualization={false}
+  defaultShowSearchBox={true}
   shouldDeepLink={true}
   cardConfiguration={{
     type: GENERIC_CARD,
@@ -44,6 +45,14 @@ Configured to show cards:
         'specimenType',
       ],
     },
+    labelLinkConfig: [
+      {
+        isMarkdown: true,
+        matchColumnName: 'rrid',
+        tooltipText:
+          'This is to demo a custom tooltip that describes column data',
+      },
+    ],
   }}
 />
 ```

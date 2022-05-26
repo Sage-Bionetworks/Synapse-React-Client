@@ -1,48 +1,63 @@
-import { FileHandleAssociateType } from '../../utils/synapseTypes'
-import React from 'react'
+import {
+  BatchFileRequest,
+  BatchFileResult,
+  FileHandleAssociation,
+} from '../../utils/synapseTypes'
+import React, { useEffect, useState } from 'react'
 import { SynapseConstants, SynapseClient } from '../../utils'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 type FileHandleLinkProps = {
-  fileHandleId: string
+  fileHandleAssociation: FileHandleAssociation
   redirect?: boolean
   showDownloadIcon: boolean
-  tableEntityConcreteType: string | undefined
-  rowId: string | undefined
-  tableId: string | undefined
-  displayValue: string | undefined
+  displayValue?: string
 }
 export const FileHandleLink = (props: FileHandleLinkProps) => {
   const {
-    fileHandleId,
+    fileHandleAssociation,
     showDownloadIcon,
-    tableEntityConcreteType,
-    rowId,
-    tableId,
     redirect = false,
     displayValue,
   } = props
   const { accessToken } = useSynapseContext()
-  if (!tableEntityConcreteType) {
-    // still loading
-    return <></>
+
+  const [batchFileResult, setBatchFileResult] = useState<
+    BatchFileResult | undefined
+  >()
+
+  useEffect(() => {
+    if (displayValue === undefined) {
+      const getFiles = async () => {
+        const batchFileRequest: BatchFileRequest = {
+          requestedFiles: [fileHandleAssociation],
+          includeFileHandles: true,
+          includePreSignedURLs: false,
+          includePreviewPreSignedURLs: false,
+        }
+        setBatchFileResult(
+          await SynapseClient.getFiles(batchFileRequest, accessToken),
+        )
+      }
+      getFiles()
+    }
+  }, [accessToken, displayValue, fileHandleAssociation])
+
+  let fileName = undefined
+  if (batchFileResult) {
+    fileName = batchFileResult.requestedFiles[0].fileHandle?.fileName
   }
-  const isFileView = tableEntityConcreteType.includes('EntityView')
-  const fileAssociateType: FileHandleAssociateType = isFileView
-    ? FileHandleAssociateType.FileEntity
-    : FileHandleAssociateType.TableEntity
-  const fileAssociateId = isFileView ? rowId : tableId
+
   return (
     <button
-      // @ts-ignore
       onClick={() => {
-        if (accessToken && fileAssociateId) {
+        if (accessToken && fileHandleAssociation) {
           SynapseClient.getActualFileHandleByIdURL(
-            fileHandleId,
+            fileHandleAssociation.fileHandleId,
             accessToken,
-            fileAssociateType,
-            fileAssociateId,
+            fileHandleAssociation.associateObjectType,
+            fileHandleAssociation.associateObjectId,
             redirect,
           )
             .then(url => {
@@ -57,7 +72,7 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
       type="button"
       style={{ padding: 0 }}
     >
-      {displayValue ?? fileHandleId}
+      {displayValue ?? fileName ?? fileHandleAssociation.fileHandleId}
       {showDownloadIcon && (
         <FontAwesomeIcon style={{ marginLeft: 5 }} icon="download" />
       )}

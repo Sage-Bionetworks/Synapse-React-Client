@@ -39,6 +39,10 @@ import {
   VpnKeyTwoTone,
   ReplyTwoTone,
   ChatTwoTone,
+  FolderTwoTone,
+  LinkTwoTone,
+  ListTwoTone,
+  StorageTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -60,6 +64,8 @@ import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
 import Docker from '../assets/mui_components/Docker'
+import AccessManagement from '../assets/mui_components/AccessManagement'
+import { EntityType } from '../utils/synapseTypes/EntityType'
 
 export type IconSvgOptions = {
   icon: string
@@ -207,8 +213,16 @@ const getIcon = (options: IconSvgOptions) => {
       return <LanguageTwoTone style={muiSvgStyle} />
     case 'file':
       return <InsertDriveFileTwoTone style={muiSvgStyle} />
+    case 'folder':
+      return <FolderTwoTone style={muiSvgStyle} />
+    case 'link':
+      return <LinkTwoTone style={muiSvgStyle} />
     case 'table':
       return <TableChartTwoTone style={muiSvgStyle} />
+    case 'entityview':
+      return <ListTwoTone style={muiSvgStyle} />
+    case 'submissionview':
+      return <StorageTwoTone style={muiSvgStyle} />
     case 'challenge':
       return <AssessmentTwoTone style={muiSvgStyle} />
     case 'discussion':
@@ -233,6 +247,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <ReplyTwoTone style={muiSvgStyle}></ReplyTwoTone>
     case 'chatTwoTone':
       return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
+    case 'accessManagement':
+      return <AccessManagement style={muiSvgStyle}></AccessManagement>
     default:
       return <></>
   }
@@ -273,6 +289,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         id={`icon-${icon}`}
         data-for={`icon-${icon}`}
         data-tip={label}
+        role={'img'}
       >
         {getIcon(options)}
       </span>
@@ -286,6 +303,22 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
       )}
     </>
   )
+}
+
+/**
+ * Map entity type values to appropriate icon values supported by IconSvg.
+ */
+export const type2SvgIconName: Record<EntityType, string> = {
+  file: 'file',
+  project: 'dashboard',
+  folder: 'folder',
+  table: 'table',
+  link: 'link',
+  entityview: 'entityview',
+  materializedview: 'entityview',
+  dockerrepo: 'docker',
+  submissionview: 'submissionview',
+  dataset: 'dataset',
 }
 
 export default IconSvg

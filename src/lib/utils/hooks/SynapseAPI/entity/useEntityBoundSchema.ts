@@ -8,10 +8,10 @@ import { entityQueryKeys } from './queryKeys'
 
 export function useGetSchemaBinding(
   entityId: string,
-  options?: UseQueryOptions<JsonSchemaObjectBinding, SynapseClientError>,
+  options?: UseQueryOptions<JsonSchemaObjectBinding | null, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery<JsonSchemaObjectBinding, SynapseClientError>(
+  return useQuery<JsonSchemaObjectBinding | null, SynapseClientError>(
     entityQueryKeys.boundJSONSchema(entityId),
     () => SynapseClient.getSchemaBinding(entityId, accessToken),
     options,

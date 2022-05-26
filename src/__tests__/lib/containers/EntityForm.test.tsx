@@ -1,20 +1,11 @@
+import { render, screen } from '@testing-library/react'
 import * as React from 'react'
-import { mount } from 'enzyme'
 import EntityForm, { EntityFormProps } from '../../../lib/containers/EntityForm'
-import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { mockFileEntity } from '../../../mocks/entity/mockEntity'
-import reactJsonschemaForm from '@rjsf/core'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 
-const createShallowComponent = (props: EntityFormProps) => {
-  const wrapper = mount(<EntityForm {...props} />, {
-    wrappingComponent: SynapseTestContext,
-  })
-  const instance = wrapper.instance() as EntityForm
-  return { wrapper, instance }
-}
-
-describe('it basic tests', () => {
+describe('EntityForm', () => {
   // Test setup
   const SynapseClient = require('../../../lib/utils/SynapseClient')
   SynapseClient.getUserProfile = jest.fn(() =>
@@ -24,6 +15,12 @@ describe('it basic tests', () => {
   SynapseClient.lookupChildEntity = jest.fn(() =>
     Promise.resolve({ id: targetFolderId }),
   )
+  SynapseClient.getFileResult = jest.fn(() =>
+    Promise.resolve({ presignedUrl: 'presigned-url' }),
+  )
+
+  SynapseClient.getFileHandleContent = jest.fn(() => Promise.resolve('{}'))
+
   SynapseClient.getEntity = jest.fn(() => Promise.resolve(mockFileEntity))
   const parentContainerId: string = 'syn20355732'
   const formSchemaEntityId: string = 'syn20184776'
@@ -37,13 +34,12 @@ describe('it basic tests', () => {
     initFormData,
     synIdCallback,
   }
-  it('renders without crashing', () => {
-    const { wrapper } = createShallowComponent(props)
-    expect(wrapper).toBeDefined()
-  })
 
   it('renders Form', () => {
-    const { wrapper } = createShallowComponent(props)
-    expect(wrapper.find(reactJsonschemaForm)).toBeDefined()
+    const { container } = render(<EntityForm {...props} />, {
+      wrapper: createWrapper(),
+    })
+    const form = container.querySelector('form')
+    expect(form).toBeDefined()
   })
 })

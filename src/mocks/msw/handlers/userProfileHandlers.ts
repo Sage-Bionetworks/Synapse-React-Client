@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import {
   FAVORITES,
+  USER_GROUP_HEADERS_BATCH,
   USER_ID_BUNDLE,
   USER_PROFILE,
   USER_PROFILE_ID,
@@ -9,13 +10,13 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
-import { UserBundle, UserProfile } from '../../../lib/utils/synapseTypes'
-import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
-  mockUserBundle,
-  mockUserProfileData,
-  MOCK_USER_ID,
-} from '../../user/mock_user_profile'
+  UserBundle,
+  UserGroupHeaderResponsePage,
+  UserProfile,
+} from '../../../lib/utils/synapseTypes'
+import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
+import { mockUserData, mockUserProfileData } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 
 export const userProfileHandlers = [
@@ -31,8 +32,11 @@ export const userProfileHandlers = [
       let response: SynapseApiResponse<UserProfile> = {
         reason: `Mock Service worker could not find a user profile with ID ${req.params.id}`,
       }
-      if (req.params.id === MOCK_USER_ID.toString()) {
-        response = mockUserProfileData
+      const match = mockUserData.find(
+        userData => userData.id.toString() === req.params.id,
+      )
+      if (match && match.userProfile) {
+        response = match.userProfile
         status = 200
       }
       return res(ctx.status(status), ctx.json(response))
@@ -64,8 +68,11 @@ export const userProfileHandlers = [
       let response: SynapseApiResponse<UserBundle> = {
         reason: `Mock Service worker could not find a user bundle with ID ${req.params.id}`,
       }
-      if (req.params.id === MOCK_USER_ID.toString()) {
-        response = mockUserBundle
+      const match = mockUserData.find(
+        userData => userData.id.toString() === req.params.id,
+      )
+      if (match && match.userBundle) {
+        response = match.userBundle
         status = 200
       }
       return res(ctx.status(status), ctx.json(response))
@@ -79,6 +86,24 @@ export const userProfileHandlers = [
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
     async (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(mockPaginatedEntityHeaders))
+    },
+  ),
+
+  /**
+   * Get a batch of user group headers
+   */
+  rest.get(
+    `${getEndpoint(
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )}${USER_GROUP_HEADERS_BATCH}`,
+    async (req, res, ctx) => {
+      const ids = req.url.searchParams.get('ids')!.split(',')
+      const responsePage: UserGroupHeaderResponsePage = {
+        children: mockUserData
+          .filter(userData => ids.includes(userData.id.toString()))
+          .map(userData => userData.userGroupHeader),
+      }
+      return res(ctx.status(200), ctx.json(responsePage))
     },
   ),
 ]

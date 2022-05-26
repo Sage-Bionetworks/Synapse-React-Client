@@ -1,9 +1,10 @@
 import * as React from 'react'
-import { mount, ReactWrapper } from 'enzyme'
 import {
   RadioGroup,
   RadioGroupProps,
 } from '../../../../lib/containers/widgets/RadioGroup'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
 const mockCallback = jest.fn()
 
@@ -23,48 +24,46 @@ function createTestProps(overrides?: RadioGroupProps): RadioGroupProps {
   }
 }
 
-let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
 let props: RadioGroupProps
 
 function init(overrides?: RadioGroupProps) {
   props = createTestProps(overrides)
-  wrapper = mount(<RadioGroup {...props} />)
+  render(<RadioGroup {...props} />)
 }
-
-beforeEach(() => init())
 
 describe('basic function', () => {
   it('should render with correct properties', () => {
-    expect(wrapper.find('input')).toHaveLength(props.options.length)
-    expect(wrapper.find('div').at(0).hasClass('radioGroupClass')).toBe(true)
-    expect(wrapper.find('label').at(0).find('label').text()).toBe(
-      props.options[0].label,
-    )
+    init()
+    const radioGroup = screen.getByRole<HTMLDivElement>('radiogroup')
+    const radioOptions = screen.getAllByRole<HTMLInputElement>('radio')
+    expect(radioOptions).toHaveLength(props.options.length)
+    expect(radioGroup.className.includes('radioGroupClass')).toBe(true)
+    screen.getByLabelText(props.options[0].label)
 
-    expect(wrapper.find('input').at(1).props().checked).toBe(true)
-    expect(wrapper.find('input').at(2).props().checked).toBe(false)
+    expect(radioOptions[0]).not.toBeChecked()
+    expect(radioOptions[1]).toBeChecked()
+    expect(radioOptions[2]).not.toBeChecked()
   })
 
-  it('should have correct item changed', () => {
-    init({ ...props, value: 'value2' })
-    expect(wrapper.find('input').at(0).props().checked).toBe(false)
-    expect(wrapper.find('input').at(1).props().checked).toBe(false)
-    expect(wrapper.find('input').at(2).props().checked).toBe(true)
+  it('should invoke callback when the user clicks an input', () => {
+    init()
+
+    const radioOptions = screen.getAllByRole<HTMLInputElement>('radio')
+
+    userEvent.click(radioOptions[2])
+
+    expect(mockCallback).toHaveBeenCalledTimes(1)
+    expect(mockCallback).toHaveBeenCalledWith(props.options[2].value)
   })
 
   it('should not crash without value specified', () => {
     init({ ...props, value: undefined })
-    expect(wrapper.find('input').at(0).props().checked).toBe(false)
-    expect(wrapper.find('input').at(1).props().checked).toBe(false)
-    expect(wrapper.find('input').at(2).props().checked).toBe(false)
-  })
+    screen.getByRole<HTMLDivElement>('radiogroup')
+    const radioOptions = screen.getAllByRole<HTMLInputElement>('radio')
+    expect(radioOptions).toHaveLength(props.options.length)
 
-  it('should call callbackFn on change with correct params and change the value', () => {
-    let radio = wrapper.find('input').at(1)
-
-    expect(radio.props().checked).toBe(true)
-
-    wrapper.find('input').at(1).simulate('click')
-    expect(mockCallback).toHaveBeenCalledWith(props.options[1].value)
+    expect(radioOptions[0]).not.toBeChecked()
+    expect(radioOptions[1]).not.toBeChecked()
+    expect(radioOptions[2]).not.toBeChecked()
   })
 })
