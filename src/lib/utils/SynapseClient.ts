@@ -6,6 +6,7 @@ import { PROVIDERS } from '../containers/Login'
 import {
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ALIAS_AVAILABLE,
   ASYNCHRONOUS_JOB_TOKEN,
@@ -121,6 +122,10 @@ import {
   ManagedACTAccessRequirementStatus,
   RequestInterface,
 } from './synapseTypes/AccessRequirement'
+import {
+  AccessRequirementSearchRequest,
+  AccessRequirementSearchResponse,
+} from './synapseTypes/AccessRequirement/AccessRequirementSearch'
 import { RenewalInterface } from './synapseTypes/AccessRequirement/RenewalInterface'
 import { SubmissionStateChangeRequest } from './synapseTypes/AccessRequirement/SubmissionStateChangeRequest'
 import { AccessTokenGenerationRequest } from './synapseTypes/AccessToken/AccessTokenGenerationRequest'
@@ -132,6 +137,14 @@ import {
   ChangePasswordWithCurrentPassword,
   ChangePasswordWithToken,
 } from './synapseTypes/ChangePasswordRequests'
+import {
+  DiscussionReplyBundle,
+  DiscussionThreadBundle,
+} from './synapseTypes/DiscussionBundle'
+import {
+  DiscussionSearchRequest,
+  DiscussionSearchResponse,
+} from './synapseTypes/DiscussionSearch'
 import { AddBatchOfFilesToDownloadListRequest } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListRequest'
 import { AddBatchOfFilesToDownloadListResponse } from './synapseTypes/DownloadListV2/AddBatchOfFilesToDownloadListResponse'
 import { AddToDownloadListRequest } from './synapseTypes/DownloadListV2/AddToDownloadListRequest'
@@ -165,6 +178,7 @@ import { EvaluationRoundListResponse } from './synapseTypes/Evaluation/Evaluatio
 import { UserEvaluationPermissions } from './synapseTypes/Evaluation/UserEvaluationPermissions'
 import { GetProjectsParameters } from './synapseTypes/GetProjectsParams'
 import { HasAccessResponse } from './synapseTypes/HasAccessResponse'
+import { MessageURL } from './synapseTypes/MessageUrl'
 import {
   AccountSetupInfo,
   AliasCheckRequest,
@@ -184,15 +198,6 @@ import {
 import { Team } from './synapseTypes/Team'
 import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
-import {
-  DiscussionReplyBundle,
-  DiscussionThreadBundle,
-} from './synapseTypes/DiscussionBundle'
-import { MessageURL } from './synapseTypes/MessageUrl'
-import {
-  DiscussionSearchRequest,
-  DiscussionSearchResponse,
-} from './synapseTypes/DiscussionSearch'
 
 const cookies = new UniversalCookies()
 
@@ -2587,6 +2592,24 @@ export const getAccessRequirementAcl = (
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
+  )
+}
+
+/**
+ * Search for access requirements
+ *
+ * See http://rest-docs.synapse.org/rest/POST/accessRequirement/search.html
+ */
+export const searchAccessRequirements = (
+  accessToken: string | undefined,
+  request: AccessRequirementSearchRequest,
+): Promise<AccessRequirementSearchResponse> => {
+  return doPost<AccessRequirementSearchResponse>(
+    ACCESS_REQUIREMENT_SEARCH,
+    request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
