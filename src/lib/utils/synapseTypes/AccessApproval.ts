@@ -1,4 +1,4 @@
-import { SortDirection } from '../../containers/FavoritesPage'
+export type SortDirection = 'ASC' | 'DESC'
 
 export enum ApprovalState {
   APPROVED = 'APPROVED',

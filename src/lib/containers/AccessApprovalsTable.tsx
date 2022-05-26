@@ -1,23 +1,18 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Table } from 'react-bootstrap'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
-import { useSynapseContext } from '../utils/SynapseContext'
 import {
   AccessApprovalSearchRequest,
-  AccessApprovalSearchResponse,
-  AccessApprovalSearchResult,
   AccessApprovalSearchSort,
   AccessApprovalSortField,
+  SortDirection,
 } from '../utils/synapseTypes'
-import { searchAccessApprovals } from '../utils/SynapseClient'
 import Typography from '../utils/typography/Typography'
 import IconSvg from './IconSvg'
 import UserCard from './UserCard'
-import { displayToast } from './ToastMessage'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { SynapseSpinner } from './LoadingScreen'
-import { SortDirection } from './FavoritesPage'
+import { useSearchAccessApprovalsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'
 
 export type AccessApprovalsTableProps = {
   accessorId: string
@@ -26,91 +21,29 @@ export type AccessApprovalsTableProps = {
 export const AccessApprovalsTable: React.FunctionComponent<
   AccessApprovalsTableProps
 > = ({ accessorId, accessRequirementId }) => {
-  const { accessToken } = useSynapseContext()
-  const [searchResult, setSearchResult] =
-    useState<AccessApprovalSearchResponse>()
-  const [isLoading, setIsLoading] = useState(false)
   const [isDescending, setIsDescending] = useState(false)
-  const [arList, setArList] = useState<AccessApprovalSearchResult[]>()
+  const [sort, setSort] = useState<AccessApprovalSearchSort[]>()
 
-  const getApprovals = async () => {
-    try {
-      const searchRequest: AccessApprovalSearchRequest = {
-        accessorId,
-        accessRequirementId,
-      }
-      const approvalResponse = await searchAccessApprovals(
-        searchRequest,
-        accessToken,
-      )
-      setSearchResult(approvalResponse)
-      setArList(approvalResponse.results)
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    }
+  const searchRequest: AccessApprovalSearchRequest = {
+    accessorId,
+    accessRequirementId,
+    sort,
   }
 
-  const onLoadMore = async () => {
-    setIsLoading(true)
-    try {
-      const searchRequest: AccessApprovalSearchRequest = {
-        accessorId,
-        accessRequirementId,
-        nextPageToken: searchResult?.nextPageToken,
-      }
-      const approvalResponse = await searchAccessApprovals(
-        searchRequest,
-        accessToken,
-      )
-      setSearchResult(approvalResponse)
-      if (arList) {
-        setArList([...arList, ...approvalResponse.results])
-      }
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
-    }
+  const { data } = useSearchAccessApprovalsInfinite(searchRequest)
+
+  const accessApprovals = data?.pages.flatMap(page => page.results) ?? []
+
+  const onSort = (field: AccessApprovalSortField, isDescending: boolean) => {
+    const direction: SortDirection = isDescending
+      ? ('DESC' as SortDirection)
+      : ('ASC' as SortDirection)
+    setSort([{ field, direction }])
+    setIsDescending(!isDescending)
   }
 
-  useEffect(() => {
-    getApprovals()
-  }, [accessToken, accessorId, accessRequirementId])
-
-  const sortColumn = async (
-    field: AccessApprovalSortField,
-    isDescending: boolean,
-  ) => {
-    try {
-      const direction = isDescending
-        ? ('DESC' as SortDirection)
-        : ('ASC' as SortDirection)
-      const sort: AccessApprovalSearchSort[] = [
-        {
-          field,
-          direction,
-        },
-      ]
-      const searchRequest: AccessApprovalSearchRequest = {
-        accessorId,
-        accessRequirementId,
-        sort,
-      }
-      const sortRequest = await searchAccessApprovals(
-        searchRequest,
-        accessToken,
-      )
-      setSearchResult(sortRequest)
-      if (arList) {
-        setArList([...arList, ...sortRequest.results])
-      }
-      setIsDescending(!isDescending)
-    } catch (err) {
-      console.error(err)
-    }
-  }
   return (
-    <div className="AccessApprovalsTable">
+    <div className="AccessApprovalsTable bootstrap-4-backport">
       <Typography style={{ padding: '12px' }} variant="headline3">
         Status in Access Requirements
       </Typography>
@@ -128,10 +61,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
               <button
                 style={{ float: 'right' }}
                 onClick={() =>
-                  sortColumn(
-                    'MODIFIED_ON' as AccessApprovalSortField,
-                    isDescending,
-                  )
+                  onSort(AccessApprovalSortField.MODIFIED_ON, isDescending)
                 }
               >
                 <IconSvg
@@ -146,10 +76,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
               <button
                 style={{ float: 'right' }}
                 onClick={() =>
-                  sortColumn(
-                    'EXPIRED_ON' as AccessApprovalSortField,
-                    isDescending,
-                  )
+                  onSort(AccessApprovalSortField.EXPIRED_ON, isDescending)
                 }
               >
                 <IconSvg
@@ -162,7 +89,8 @@ export const AccessApprovalsTable: React.FunctionComponent<
           </tr>
         </thead>
         <tbody>
-          {searchResult?.results.map(item => {
+          {''}
+          {accessApprovals.map(item => {
             let modifiedOn = moment(item.modifiedOn).format('L LT')
             let expiredOn = moment(item.expiredOn).format('L LT')
             return (
@@ -194,14 +122,6 @@ export const AccessApprovalsTable: React.FunctionComponent<
           })}
         </tbody>
       </Table>
-      {searchResult?.nextPageToken &&
-        (isLoading ? (
-          <SynapseSpinner size={30} />
-        ) : (
-          <button className="load-more-button" onClick={onLoadMore}>
-            Show More
-          </button>
-        ))}
     </div>
   )
 }

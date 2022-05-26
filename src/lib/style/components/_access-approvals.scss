@@ -5,14 +5,13 @@
 
     .access-approval-header {
         background-color: map.get(SRC.$colors, 'gray-200');
-    }
-
-    .thead-cell {
-        vertical-align: middle;
-    }
-
-    .button-cell {
-        padding-top: 14px;
+        .thead-cell {
+            vertical-align: middle;
+        }
+    
+        .button-cell {
+            padding-top: 18px;
+        }
     }
 
     .remove-border {
@@ -23,11 +22,4 @@
         color: map.get(SRC.$colors, 'gray-700')
     }
 
-    .load-more-button {
-        border: 1px solid #395979;
-        padding: 6px 12px;
-        font-family: Lato;
-        font-weight: 900;
-        color: #395979;
-    }
 }
