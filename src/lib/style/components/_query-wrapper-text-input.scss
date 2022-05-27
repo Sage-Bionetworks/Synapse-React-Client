@@ -33,6 +33,9 @@
       display: inline-block;
       border: none;
       background: #f9f9f9;
+      &:focus {
+        box-shadow: none;
+      }
     }
     &__clearbutton {
       flex: 1;

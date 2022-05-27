@@ -1,7 +1,9 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, memoize } from 'lodash-es'
 import * as React from 'react'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import useDeepCompareEffect from 'use-deep-compare-effect'
+import useDeepCompareEffect, {
+  useDeepCompareMemoize,
+} from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
@@ -23,6 +25,8 @@ export type QueryContextType = {
   entity: Table | undefined
   /** The query results, which will be undefined while initially fetching a new bundle, but will not be unloaded when fetching new pages */
   data: QueryResultBundle | undefined
+  /** A deep clone of the current query bundle request */
+  lastQueryRequest: QueryBundleRequest
   /** Returns a deep clone of the current query bundle request */
   getLastQueryRequest: () => QueryBundleRequest
   /** Returns a deep clone of the initial query bundle request */
@@ -255,7 +259,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
   }, [])
 
   /**
-   * Pass down a deep clone (so no side affects on the child's part) of the
+   * Pass down a deep clone (so no side effects on the child's part) of the
    * last query request made
    *
    * @returns
@@ -264,6 +268,9 @@ export function QueryWrapper(props: QueryWrapperProps) {
   const getLastQueryRequest = React.useCallback(() => {
     return cloneDeep(lastQueryRequest)
   }, [lastQueryRequest])
+
+  const memoizedLastQueryCopy: QueryBundleRequest =
+    useDeepCompareMemoize(lastQueryRequest)
 
   /**
    * Pass down a deep clone (so no side affects on the child's part) of the
@@ -341,6 +348,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     hasNextPage: !!hasNextPage,
     hasPreviousPage: !!hasPreviousPage,
     isLoadingNewBundle: isLoadingNewBundle,
+    lastQueryRequest: memoizedLastQueryCopy,
     getLastQueryRequest,
     getInitQueryRequest,
     error: error,
