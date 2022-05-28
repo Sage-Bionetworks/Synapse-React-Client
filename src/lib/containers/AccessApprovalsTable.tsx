@@ -1,6 +1,6 @@
 import moment from 'moment'
 import React, { useState } from 'react'
-import { Table } from 'react-bootstrap'
+import { Button, Table } from 'react-bootstrap'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import {
   AccessApprovalSearchRequest,
@@ -13,6 +13,7 @@ import IconSvg from './IconSvg'
 import UserCard from './UserCard'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useSearchAccessApprovalsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'
+import { SynapseSpinner } from './LoadingScreen'
 
 export type AccessApprovalsTableProps = {
   accessorId: string
@@ -30,10 +31,10 @@ export const AccessApprovalsTable: React.FunctionComponent<
     sort,
   }
 
-  const { data } = useSearchAccessApprovalsInfinite(searchRequest)
+  const { data, hasNextPage, fetchNextPage, isFetching } =
+    useSearchAccessApprovalsInfinite(searchRequest)
 
   const accessApprovals = data?.pages.flatMap(page => page.results) ?? []
-
   const onSort = (field: AccessApprovalSortField, isDescending: boolean) => {
     const direction: SortDirection = isDescending
       ? ('DESC' as SortDirection)
@@ -41,7 +42,6 @@ export const AccessApprovalsTable: React.FunctionComponent<
     setSort([{ field, direction }])
     setIsDescending(!isDescending)
   }
-
   return (
     <div className="AccessApprovalsTable bootstrap-4-backport">
       <Typography style={{ padding: '12px' }} variant="headline3">
@@ -89,7 +89,6 @@ export const AccessApprovalsTable: React.FunctionComponent<
           </tr>
         </thead>
         <tbody>
-          {''}
           {accessApprovals.map(item => {
             let modifiedOn = moment(item.modifiedOn).format('L LT')
             let expiredOn = moment(item.expiredOn).format('L LT')
@@ -122,6 +121,13 @@ export const AccessApprovalsTable: React.FunctionComponent<
           })}
         </tbody>
       </Table>
+      {hasNextPage && isFetching ? (
+        <SynapseSpinner size={40} />
+      ) : (
+        <Button variant="outline" onClick={() => fetchNextPage}>
+          Show More
+        </Button>
+      )}
     </div>
   )
 }
