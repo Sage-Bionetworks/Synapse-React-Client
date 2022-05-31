@@ -100,7 +100,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
             value={searchText}
             type="text"
           />
-          {searchText.length > 0 && (
+          {searchText.length > 0 ? (
             <button
               className="QueryWrapperSearchInput__searchbar__clearbutton"
               type="button"
@@ -113,14 +113,16 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
                 icon="times"
               />
             </button>
+          ) : (
+            <div className="QueryWrapperSearchInput__searchbar__helpbutton">
+              <HelpPopover
+                markdownText={helpMessage}
+                helpUrl={helpUrl}
+                placement="left"
+              />
+            </div>
           )}
         </form>
-        <HelpPopover
-          className="SRC-margin-left-5"
-          markdownText={helpMessage}
-          helpUrl={helpUrl}
-          placement="left"
-        />
       </Collapse>
     </div>
   )

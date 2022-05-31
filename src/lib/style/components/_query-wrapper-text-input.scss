@@ -39,6 +39,12 @@
       flex-grow: 0;
       flex-shrink: 0;
     }
+    &__helpbutton {
+      flex: 1;
+      flex-grow: 0;
+      flex-shrink: 0;
+      margin-right: 10px;
+    }
   }
   &__form-container {
     position: relative;
