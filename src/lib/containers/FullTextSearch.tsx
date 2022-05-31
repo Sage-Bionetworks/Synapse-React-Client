@@ -10,6 +10,7 @@ import {
 } from './QueryWrapper'
 import { useQueryContext } from './QueryWrapper'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { HelpPopover } from './HelpPopover'
 
 library.add(faSearch)
 library.add(faTimes)
@@ -17,7 +18,15 @@ library.add(faTimes)
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
 
-export function FullTextSearch() {
+export type FullTextSearchProps = {
+  helpMessage?: string
+  helpUrl?: string
+}
+
+export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
+  helpMessage = 'This search bar is powered by MySQL Full Text Search.',
+  helpUrl,
+}: FullTextSearchProps) => {
   const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
   const {
     topLevelControlsState: { showSearchBar, showFacetFilter },
@@ -106,6 +115,12 @@ export function FullTextSearch() {
             </button>
           )}
         </form>
+        <HelpPopover
+          className="SRC-margin-left-5"
+          markdownText={helpMessage}
+          helpUrl={helpUrl}
+          placement="left"
+        />
       </Collapse>
     </div>
   )
