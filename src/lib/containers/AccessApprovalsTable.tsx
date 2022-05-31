@@ -121,7 +121,9 @@ export const AccessApprovalsTable: React.FunctionComponent<
           })}
         </tbody>
       </Table>
-      {hasNextPage && isFetching ? (
+      {!hasNextPage ? (
+        ''
+      ) : isFetching ? (
         <SynapseSpinner size={40} />
       ) : (
         <Button variant="outline" onClick={() => fetchNextPage}>
