@@ -8,7 +8,10 @@ export default function AccessApprovalCheckMark({
   isCompleted,
 }: CheckMarkProps) {
   return (
-    <div className={`check-mark-container ${isCompleted ? 'green' : 'orange'}`}>
+    <div
+      data-testid={`AccessApprovalCheckMark-${isCompleted}`}
+      className={`check-mark-container ${isCompleted ? 'green' : 'orange'}`}
+    >
       {isCompleted ? <CheckTwoTone /> : <LockTwoTone />}
     </div>
   )

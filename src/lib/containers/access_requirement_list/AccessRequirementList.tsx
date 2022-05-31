@@ -78,6 +78,36 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
   }
 }
 
+export const sortAccessRequirementByCompletion = async (
+  accessToken: string | undefined,
+  requirements: Array<AccessRequirement>,
+): Promise<Array<AccessRequirementAndStatus>> => {
+  const statuses = requirements.map(req => {
+    return SynapseClient.getAccessRequirementStatus(accessToken, req.id)
+  })
+  const accessRequirementStatuses = await Promise.all(statuses)
+
+  const requirementsAndStatuses = requirements.map(req => {
+    return {
+      accessRequirement: req,
+      accessRequirementStatus: accessRequirementStatuses.find(
+        el => Number(el.accessRequirementId) === req.id,
+      )!,
+    }
+  })
+
+  const sortedRequirementsAndStatuses = sortBy(
+    requirementsAndStatuses,
+    reqAndStatus => {
+      // if its true then it should come first, which means that it should be higher in the list
+      // which is sorted ascendingly
+      return -1 * Number(reqAndStatus.accessRequirementStatus.isApproved)
+    },
+  )
+
+  return sortedRequirementsAndStatuses
+}
+
 export default function AccessRequirementList({
   entityId,
   onHide,
@@ -110,35 +140,6 @@ export default function AccessRequirementList({
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
-    const sortAccessRequirementByCompletion = async (
-      requirements: Array<AccessRequirement>,
-    ): Promise<Array<AccessRequirementAndStatus>> => {
-      const statuses = requirements.map(req => {
-        return SynapseClient.getAccessRequirementStatus(accessToken, req.id)
-      })
-      const accessRequirementStatuses = await Promise.all(statuses)
-
-      const requirementsAndStatuses = requirements.map(req => {
-        return {
-          accessRequirement: req,
-          accessRequirementStatus: accessRequirementStatuses.find(
-            el => Number(el.accessRequirementId) === req.id,
-          )!,
-        }
-      })
-
-      const sortedRequirementsAndStatuses = sortBy(
-        requirementsAndStatuses,
-        reqAndStatus => {
-          // if its true then it should come first, which means that it should be higher in the list
-          // which is sorted ascendingly
-          return -1 * Number(reqAndStatus.accessRequirementStatus.isApproved)
-        },
-      )
-
-      return sortedRequirementsAndStatuses
-    }
-
     const getAccessRequirements = async () => {
       try {
         if (!shouldUpdateData) {
@@ -150,11 +151,14 @@ export default function AccessRequirementList({
             entityId,
           )
           const sortedAccessRequirements =
-            await sortAccessRequirementByCompletion(requirements)
+            await sortAccessRequirementByCompletion(accessToken, requirements)
           setAccessRequirements(sortedAccessRequirements)
         } else {
           const sortedAccessRequirements =
-            await sortAccessRequirementByCompletion(accessRequirementFromProps!)
+            await sortAccessRequirementByCompletion(
+              accessToken,
+              accessRequirementFromProps!,
+            )
           setAccessRequirements(sortedAccessRequirements)
         }
 
