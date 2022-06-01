@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import {
@@ -7,7 +7,6 @@ import {
   AccessApprovalSearchSort,
   AccessApprovalSortField,
   Direction,
-  SortDirection,
 } from '../utils/synapseTypes'
 import Typography from '../utils/typography/Typography'
 import UserCard from './UserCard'
@@ -16,6 +15,7 @@ import { useSearchAccessApprovalsInfinite } from '../utils/hooks/SynapseAPI/data
 import { SynapseSpinner } from './LoadingScreen'
 import SortIcon from '../assets/icons/Sort'
 import { formatDate } from '../utils/functions/DateFormatter'
+import { upperFirst } from 'lodash-es'
 
 export type AccessApprovalsTableProps = {
   accessorId: string
@@ -24,24 +24,34 @@ export type AccessApprovalsTableProps = {
 export const AccessApprovalsTable: React.FunctionComponent<
   AccessApprovalsTableProps
 > = ({ accessorId, accessRequirementId }) => {
-  const [isDescending, setIsDescending] = useState(false)
-  const [sort, setSort] = useState<AccessApprovalSearchSort[]>()
+  const [sort, setSort] = useState<AccessApprovalSearchSort>({
+    field: AccessApprovalSortField.MODIFIED_ON,
+    direction: Direction.DESC,
+  })
 
-  const searchRequest: AccessApprovalSearchRequest = {
-    accessorId,
-    accessRequirementId,
-    sort,
-  }
+  const searchRequest: AccessApprovalSearchRequest = useMemo(
+    () => ({
+      accessorId,
+      accessRequirementId,
+      sort: [sort],
+    }),
+    [accessorId, accessRequirementId, sort],
+  )
 
   const { data, hasNextPage, fetchNextPage, isFetching } =
     useSearchAccessApprovalsInfinite(searchRequest)
   const accessApprovals = data?.pages.flatMap(page => page.results) ?? []
-  const onSort = (field: AccessApprovalSortField, isDescending: boolean) => {
-    const direction: SortDirection = isDescending
-      ? ('DESC' as SortDirection)
-      : ('ASC' as SortDirection)
-    setSort([{ field, direction }])
-    setIsDescending(!isDescending)
+
+  const onSort = (field: AccessApprovalSortField) => {
+    if (sort.field === field) {
+      setSort({
+        field,
+        direction:
+          sort.direction === Direction.DESC ? Direction.ASC : Direction.DESC,
+      })
+    } else {
+      setSort({ field, direction: Direction.DESC })
+    }
   }
   return (
     <div className="AccessApprovalsTable bootstrap-4-backport">
@@ -62,17 +72,15 @@ export const AccessApprovalsTable: React.FunctionComponent<
               <SortIcon
                 role="button"
                 style={{ float: 'right' }}
-                active={false}
+                active={sort.field === AccessApprovalSortField.MODIFIED_ON}
                 direction={
-                  sort && sort[0].field === 'MODIFIED_ON'
-                    ? sort[0].direction === 'DESC'
+                  sort.field === 'MODIFIED_ON'
+                    ? sort.direction === 'DESC'
                       ? Direction.DESC
                       : Direction.ASC
                     : Direction.DESC
                 }
-                onClick={() =>
-                  onSort(AccessApprovalSortField.MODIFIED_ON, isDescending)
-                }
+                onClick={() => onSort(AccessApprovalSortField.MODIFIED_ON)}
               />
             </th>
             <th className="thead-cell remove-border">
@@ -80,17 +88,15 @@ export const AccessApprovalsTable: React.FunctionComponent<
               <SortIcon
                 role="button"
                 style={{ float: 'right' }}
-                active={false}
+                active={sort.field === AccessApprovalSortField.EXPIRED_ON}
                 direction={
-                  sort && sort[0].field === 'EXPIRED_ON'
-                    ? sort[0].direction === 'DESC'
+                  sort.field === 'EXPIRED_ON'
+                    ? sort.direction === 'DESC'
                       ? Direction.DESC
                       : Direction.ASC
                     : Direction.DESC
                 }
-                onClick={() =>
-                  onSort(AccessApprovalSortField.EXPIRED_ON, isDescending)
-                }
+                onClick={() => onSort(AccessApprovalSortField.EXPIRED_ON)}
               />
             </th>
           </tr>
@@ -113,7 +119,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
                   <UserCard size={SMALL_USER_CARD} ownerId={item.submitterId} />
                 </td>
                 <td className="remove-border">
-                  {item.state[0] + item.state.slice(1).toLocaleLowerCase()}
+                  {upperFirst(item.state.toLocaleLowerCase())}
                 </td>
                 <td className="remove-border">{modifiedOn}</td>
                 <td

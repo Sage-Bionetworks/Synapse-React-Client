@@ -39,7 +39,6 @@ import {
   VpnKeyTwoTone,
   ReplyTwoTone,
   ChatTwoTone,
-  SortTwoTone,
   FolderTwoTone,
   LinkTwoTone,
   ListTwoTone,
@@ -250,8 +249,6 @@ const getIcon = (options: IconSvgOptions) => {
       return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
     case 'accessManagement':
       return <AccessManagement style={muiSvgStyle}></AccessManagement>
-    case 'sortTwoTone':
-      return <SortTwoTone style={muiSvgStyle}></SortTwoTone>
     default:
       return <></>
   }
