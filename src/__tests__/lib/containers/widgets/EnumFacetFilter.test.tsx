@@ -18,10 +18,10 @@ const SynapseClient = require('../../../../lib/utils/SynapseClient')
 const mockCallback = jest.fn(() => null)
 const mockOnClear = jest.fn(() => null)
 
-SynapseClient.getUserProfiles = jest.fn().mockResolvedValue({
-  list: [
-    { ownerId: '123', userName: 'somename' },
-    { ownerId: '1234', userName: 'somename2' },
+SynapseClient.getGroupHeadersBatch = jest.fn().mockResolvedValue({
+  children: [
+    { ownerId: '123', userName: 'somename', isIndividual: false },
+    { ownerId: '1234', userName: 'somename2', isIndividual: true },
   ],
 })
 

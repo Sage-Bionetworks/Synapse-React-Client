@@ -8,7 +8,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
 import { SynapseConstants } from '../../../utils'
 import useGetInfoFromIds from '../../../utils/hooks/useGetInfoFromIds'
-import { UserProfile, ColumnType } from '../../../utils/synapseTypes'
+import { ColumnType, UserGroupHeader } from '../../../utils/synapseTypes'
 import { EntityHeader } from '../../../utils/synapseTypes/EntityHeader'
 import {
   FacetColumnResultValueCount,
@@ -36,7 +36,7 @@ function valueToId(value: string): string {
 
 function valueToLabel(
   facet: FacetColumnResultValueCount,
-  profiles: UserProfile[] = [],
+  profiles: UserGroupHeader[] = [],
   entityHeaders: EntityHeader[] = [],
 ): string {
   const { value } = facet
@@ -113,7 +113,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     columnModel?.columnType === ColumnType.USERID_LIST
       ? facetValues.map(facet => facet.value)
       : []
-  const userProfiles = useGetInfoFromIds<UserProfile>({
+  const userGroupHeaders = useGetInfoFromIds<UserGroupHeader>({
     ids: userIds,
     type: 'USER_PROFILE',
   })
@@ -144,7 +144,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
     } else {
       // display only facet values that contain text from the text input field
       const filtered = facetValues.filter(obj => {
-        const label = valueToLabel(obj, userProfiles, entityHeaders)
+        const label = valueToLabel(obj, userGroupHeaders, entityHeaders)
         return label.toLowerCase().indexOf(inputValue.trim().toLowerCase()) > -1
           ? obj
           : null
@@ -243,7 +243,7 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               key={`checkLabel${index}`}
               id={valueToId(facet.value)}
               index={index}
-              label={valueToLabel(facet, userProfiles, entityHeaders)}
+              label={valueToLabel(facet, userGroupHeaders, entityHeaders)}
               count={facet.count}
               isDropdown={isDropdown}
               initialIsSelected={facet.isSelected}

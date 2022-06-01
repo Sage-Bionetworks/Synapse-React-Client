@@ -891,7 +891,7 @@ export const getUserGroupHeaders = (
  */
 export const getGroupHeadersBatch = (
   ids: string[],
-  accessToken: string | undefined,
+  accessToken?: string,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
