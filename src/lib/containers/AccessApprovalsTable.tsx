@@ -103,8 +103,6 @@ export const AccessApprovalsTable: React.FunctionComponent<
         </thead>
         <tbody>
           {accessApprovals.map(item => {
-            let modifiedOn = formatDate(moment(item.modifiedOn))
-            let expiredOn = formatDate(moment(item.expiredOn))
             return (
               <tr key={item.id}>
                 <td className="remove-border">
@@ -121,13 +119,16 @@ export const AccessApprovalsTable: React.FunctionComponent<
                 <td className="remove-border">
                   {upperFirst(item.state.toLocaleLowerCase())}
                 </td>
-                <td className="remove-border">{modifiedOn}</td>
+                <td className="remove-border">
+                  {formatDate(moment(item.modifiedOn))}
+                </td>
                 <td
                   className={`${
-                    new Date() > new Date(expiredOn) ? 'expired' : ''
+                    item.expiredOn &&
+                    (new Date() > new Date(item.expiredOn) ? 'expired' : '')
                   } remove-border`}
                 >
-                  {expiredOn}
+                  {item.expiredOn ? formatDate(moment(item.expiredOn)) : <></>}
                 </td>
               </tr>
             )
