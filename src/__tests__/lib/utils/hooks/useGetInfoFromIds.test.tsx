@@ -31,9 +31,11 @@ describe('useGetInfoFromIds hook works', () => {
     container = null
   })
 
-  const pkg = require('../../../../lib/utils/functions/getUserData')
-  const mockFn = jest.fn().mockResolvedValueOnce({ list: [{ ownerId: 'aaa' }] })
-  pkg.getUserProfileWithProfilePicAttached = mockFn
+  const SynapseClient = require('../../../../lib/utils/SynapseClient')
+  const mockFn = jest
+    .fn()
+    .mockResolvedValueOnce({ children: [{ ownerId: 'aaa' }] })
+  SynapseClient.getGroupHeadersBatch = mockFn
 
   it('gets initial data', async () => {
     const props: UseGetInfoFromIdsProps = {
