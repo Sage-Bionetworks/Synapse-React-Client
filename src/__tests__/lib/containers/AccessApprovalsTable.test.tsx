@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { rest, server } from '../../../mocks/msw/server'
+import { server } from '../../../mocks/msw/server'
 import { render, screen } from '@testing-library/react'
+import { AccessApprovalSearchResult } from '../../../lib/utils/synapseTypes'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
@@ -9,13 +10,27 @@ import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
 import {
   mockApprovalSearchResponse,
-  mockAccessApprovalSearchResult,
+  mockAccessApprovalSearchResult2,
 } from '../../../mocks/MockAccessApprovals'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '../../../lib/utils/functions/getEndpoint'
+
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { useSearchAccessApprovalsInfinite } from '../../../lib/utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'
+import userEvent from '@testing-library/user-event'
+
+jest.mock(
+  '../../../lib/utils/hooks/SynapseAPI/dataaccess/useAccessApprovals',
+  () => {
+    return {
+      useSearchAccessApprovalsInfinite: jest.fn(),
+    }
+  },
+)
+
+const mockFetchNextPage = jest.fn()
+const mockSearchAccessApprovalsInfinite =
+  useSearchAccessApprovalsInfinite as jest.Mock
+
+const page2: AccessApprovalSearchResult = mockAccessApprovalSearchResult2
 
 function renderComponent(props: AccessApprovalsTableProps) {
   render(<AccessApprovalsTable {...props} />, {
@@ -23,23 +38,28 @@ function renderComponent(props: AccessApprovalsTableProps) {
   })
 }
 
-const onServerRecievedPost = jest.fn()
-
 describe('AccessApprovalsTable tests', () => {
   beforeAll(() => {
     server.listen()
-    server.use(
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}/repo/v1/accessApproval/search`,
-        async (req, res, ctx) => {
-          onServerRecievedPost(req.body)
-          console.log(res)
-          return res(ctx.status(200), ctx.json(mockApprovalSearchResponse))
-        },
-      ),
-    )
+    mockSearchAccessApprovalsInfinite.mockReturnValue({
+      data: {
+        pages: [
+          {
+            results: mockApprovalSearchResponse.results,
+            nextTokenPage: mockApprovalSearchResponse.nextPageToken,
+          },
+          {
+            results: page2,
+            nextPageToken: null,
+          },
+        ],
+        pageParams: [],
+      },
+      fetchNextPage: mockFetchNextPage,
+      hasNextPage: true,
+      isLoading: false,
+      isSuccess: true,
+    })
   })
   afterEach(() => {
     server.restoreHandlers()
@@ -65,8 +85,24 @@ describe('AccessApprovalsTable tests', () => {
       accessorId: MOCK_USER_ID.toString(),
     })
     mockAllIsIntersecting(true)
-    await screen.findAllByText(
-      mockAccessApprovalSearchResult.accessRequirementName,
-    )
+    expect(
+      await screen.findAllByText(
+        mockAccessApprovalSearchResult2.accessRequirementId,
+      ),
+    ).toHaveLength(51)
+  })
+
+  it('Renders show more button when it has a next page', async () => {
+    mockAllIsIntersecting(true)
+    renderComponent({
+      accessorId: MOCK_USER_ID.toString(),
+    })
+    const moreButton = screen.queryByRole('button', { name: 'Show More' })
+    expect(
+      screen.queryByRole('button', { name: 'Show More' }),
+    ).toBeInTheDocument()
+    userEvent.click(moreButton!)
+    const item2 = await screen.findAllByText('Access Requirement2')
+    expect(item2).toHaveLength(1)
   })
 })

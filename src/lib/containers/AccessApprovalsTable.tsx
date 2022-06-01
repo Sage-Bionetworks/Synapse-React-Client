@@ -6,14 +6,16 @@ import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchSort,
   AccessApprovalSortField,
+  Direction,
   SortDirection,
 } from '../utils/synapseTypes'
 import Typography from '../utils/typography/Typography'
-import IconSvg from './IconSvg'
 import UserCard from './UserCard'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useSearchAccessApprovalsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useAccessApprovals'
 import { SynapseSpinner } from './LoadingScreen'
+import SortIcon from '../assets/icons/Sort'
+import { formatDate } from '../utils/functions/DateFormatter'
 
 export type AccessApprovalsTableProps = {
   accessorId: string
@@ -33,7 +35,6 @@ export const AccessApprovalsTable: React.FunctionComponent<
 
   const { data, hasNextPage, fetchNextPage, isFetching } =
     useSearchAccessApprovalsInfinite(searchRequest)
-
   const accessApprovals = data?.pages.flatMap(page => page.results) ?? []
   const onSort = (field: AccessApprovalSortField, isDescending: boolean) => {
     const direction: SortDirection = isDescending
@@ -56,42 +57,48 @@ export const AccessApprovalsTable: React.FunctionComponent<
             </th>
             <th className="thead-cell remove-border">Submitter</th>
             <th className="thead-cell remove-border">Status</th>
-            <th className="thead-cell remove-border button-cell">
+            <th className="thead-cell remove-border">
               Modified Date
-              <button
+              <SortIcon
+                role="button"
                 style={{ float: 'right' }}
+                active={false}
+                direction={
+                  sort && sort[0].field === 'MODIFIED_ON'
+                    ? sort[0].direction === 'DESC'
+                      ? Direction.DESC
+                      : Direction.ASC
+                    : Direction.DESC
+                }
                 onClick={() =>
                   onSort(AccessApprovalSortField.MODIFIED_ON, isDescending)
                 }
-              >
-                <IconSvg
-                  options={{
-                    icon: 'sortTwoTone',
-                  }}
-                />
-              </button>
+              />
             </th>
-            <th className="thead-cell remove-border button-cell">
+            <th className="thead-cell remove-border">
               Expires
-              <button
+              <SortIcon
+                role="button"
                 style={{ float: 'right' }}
+                active={false}
+                direction={
+                  sort && sort[0].field === 'EXPIRED_ON'
+                    ? sort[0].direction === 'DESC'
+                      ? Direction.DESC
+                      : Direction.ASC
+                    : Direction.DESC
+                }
                 onClick={() =>
                   onSort(AccessApprovalSortField.EXPIRED_ON, isDescending)
                 }
-              >
-                <IconSvg
-                  options={{
-                    icon: 'sortTwoTone',
-                  }}
-                />
-              </button>
+              />
             </th>
           </tr>
         </thead>
         <tbody>
           {accessApprovals.map(item => {
-            let modifiedOn = moment(item.modifiedOn).format('L LT')
-            let expiredOn = moment(item.expiredOn).format('L LT')
+            let modifiedOn = formatDate(moment(item.modifiedOn))
+            let expiredOn = formatDate(moment(item.expiredOn))
             return (
               <tr key={item.id}>
                 <td className="remove-border">
