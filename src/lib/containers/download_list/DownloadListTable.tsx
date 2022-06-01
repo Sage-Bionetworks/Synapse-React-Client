@@ -26,7 +26,7 @@ import {
   FileHandleAssociation,
   PaginatedResults,
   Reference,
-  UserProfile,
+  UserGroupHeader,
 } from '../../utils/synapseTypes'
 import HasAccess, {
   getDownloadTypeForFileHandle,
@@ -118,7 +118,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     ownerIds.push(...ownerIdsFromHeaders)
   }
   // use bang operator because filter function guarentee's that file handle will be defined
-  const userProfiles = useGetInfoFromIds<UserProfile>({
+  const userProfiles = useGetInfoFromIds<UserGroupHeader>({
     ids: ownerIds,
     type: 'USER_PROFILE',
   })
@@ -504,7 +504,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 createdOn = requestedFile?.createdOn
               }
               createdOn = moment(createdOn).format('L LT')
-              const userProfile = userProfiles.find(
+              const userGroupHeader = userProfiles.find(
                 el => el.ownerId === createdBy,
               )
               return (
@@ -529,14 +529,13 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     />
                   </td>
                   <td>
-                    {userProfile && (
+                    {userGroupHeader && (
                       <UserCard
                         size={'SMALL USER CARD'}
-                        userProfile={userProfile}
-                        preSignedURL={userProfile.clientPreSignedURL}
+                        ownerId={userGroupHeader.ownerId}
                       />
                     )}
-                    {canDownload && !userProfile && (
+                    {canDownload && !userGroupHeader && (
                       <span className="spinner" />
                     )}
                   </td>

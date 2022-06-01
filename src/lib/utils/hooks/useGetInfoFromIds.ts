@@ -1,12 +1,15 @@
+import { chunk, uniq, without } from 'lodash-es'
 import { useState } from 'react'
-import { EntityHeader, Reference, ReferenceList } from '../synapseTypes'
-import { getEntityHeaders } from '../SynapseClient'
-import { getUserProfileWithProfilePicAttached } from '../functions/getUserData'
-import { UserProfile } from '../synapseTypes'
-import { SynapseConstants } from '..'
-import { without, chunk, uniq } from 'lodash-es'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import { SynapseConstants } from '..'
+import { getEntityHeaders, getGroupHeadersBatch } from '../SynapseClient'
 import { useSynapseContext } from '../SynapseContext'
+import {
+  EntityHeader,
+  Reference,
+  ReferenceList,
+  UserGroupHeader,
+} from '../synapseTypes'
 
 export type HookType = 'ENTITY_HEADER' | 'USER_PROFILE'
 export type UseGetInfoFromIdsProps = {
@@ -16,11 +19,12 @@ export type UseGetInfoFromIdsProps = {
 
 type LookupRequestType = string | Reference
 
-const UserProfileTemplate: UserProfile = {
+const UserGroupHeaderTemplate: UserGroupHeader = {
   ownerId: '', // A foreign key to the ID of the 'principal' object for the user
   firstName: 'Unknown', // This person's given name (forename)
   lastName: 'Unknown', // This person's family name (surname)
   userName: 'Unknown', // A name chosen by the user that uniquely identifies them
+  isIndividual: false,
 }
 
 const entityHeaderTemplate: EntityHeader = {
@@ -53,27 +57,27 @@ const getEntityHeaderItems = async (
   return [...newData.results, ...notFoundPlaceholders]
 }
 
-const getUserProfileItems = async (
+const getUserGroupHeaderItems = async (
   lookupList: string[],
-): Promise<UserProfile[]> => {
-  const newData = await getUserProfileWithProfilePicAttached(lookupList)
+): Promise<UserGroupHeader[]> => {
+  const newData = (await getGroupHeadersBatch(lookupList)).children
   const notFound = lookupList.filter(
-    item => newData.list.map(item => item.ownerId).indexOf(item) === -1,
+    item => newData.map(item => item.ownerId).indexOf(item) === -1,
   )
   const notFoundPlaceholders = notFound.map(item => ({
-    ...UserProfileTemplate,
+    ...UserGroupHeaderTemplate,
     ownerId: item,
     name: `Unknown User (${item})`,
   }))
 
-  return [...newData.list, ...notFoundPlaceholders]
+  return [...newData, ...notFoundPlaceholders]
 }
 
 // React hook to get user profiles or entities
 //******************************************************************************************* */
-export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
-  props: UseGetInfoFromIdsProps,
-) {
+export default function useGetInfoFromIds<
+  T extends EntityHeader | UserGroupHeader,
+>(props: UseGetInfoFromIdsProps): T[] {
   const { ids, type } = props
   const { accessToken } = useSynapseContext()
 
@@ -138,7 +142,7 @@ export default function useGetInfoFromIds<T extends EntityHeader | UserProfile>(
           for (const newReferences of newReferencesChunks) {
             const newData =
               type === 'USER_PROFILE'
-                ? await getUserProfileItems(newReferences as string[])
+                ? await getUserGroupHeaderItems(newReferences as string[])
                 : await getEntityHeaderItems(
                     newReferences as ReferenceList,
                     accessToken,
