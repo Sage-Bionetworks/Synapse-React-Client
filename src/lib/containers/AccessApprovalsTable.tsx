@@ -59,45 +59,45 @@ export const AccessApprovalsTable: React.FunctionComponent<
         Status in Access Requirements
       </Typography>
       <Table striped borderless bordered={false}>
-        <thead className="access-approval-header">
+        <thead>
           <tr>
-            <th className="thead-cell remove-border">AR ID</th>
-            <th className="thead-cell remove-border">
-              Access Requirement Name
+            <th>AR ID</th>
+            <th>Access Requirement Name</th>
+            <th>Submitter</th>
+            <th>Status</th>
+            <th>
+              <span className="SRC-split">
+                <span>Modified Date</span>
+                <SortIcon
+                  role="button"
+                  active={sort.field === AccessApprovalSortField.MODIFIED_ON}
+                  direction={
+                    sort.field === 'MODIFIED_ON'
+                      ? sort.direction === 'DESC'
+                        ? Direction.DESC
+                        : Direction.ASC
+                      : Direction.DESC
+                  }
+                  onClick={() => onSort(AccessApprovalSortField.MODIFIED_ON)}
+                />
+              </span>
             </th>
-            <th className="thead-cell remove-border">Submitter</th>
-            <th className="thead-cell remove-border">Status</th>
-            <th className="thead-cell remove-border">
-              Modified Date
-              <SortIcon
-                role="button"
-                style={{ float: 'right' }}
-                active={sort.field === AccessApprovalSortField.MODIFIED_ON}
-                direction={
-                  sort.field === 'MODIFIED_ON'
-                    ? sort.direction === 'DESC'
-                      ? Direction.DESC
-                      : Direction.ASC
-                    : Direction.DESC
-                }
-                onClick={() => onSort(AccessApprovalSortField.MODIFIED_ON)}
-              />
-            </th>
-            <th className="thead-cell remove-border">
-              Expires
-              <SortIcon
-                role="button"
-                style={{ float: 'right' }}
-                active={sort.field === AccessApprovalSortField.EXPIRED_ON}
-                direction={
-                  sort.field === 'EXPIRED_ON'
-                    ? sort.direction === 'DESC'
-                      ? Direction.DESC
-                      : Direction.ASC
-                    : Direction.DESC
-                }
-                onClick={() => onSort(AccessApprovalSortField.EXPIRED_ON)}
-              />
+            <th>
+              <span className="SRC-split">
+                <span>Expires</span>
+                <SortIcon
+                  role="button"
+                  active={sort.field === AccessApprovalSortField.EXPIRED_ON}
+                  direction={
+                    sort.field === 'EXPIRED_ON'
+                      ? sort.direction === 'DESC'
+                        ? Direction.DESC
+                        : Direction.ASC
+                      : Direction.DESC
+                  }
+                  onClick={() => onSort(AccessApprovalSortField.EXPIRED_ON)}
+                />
+              </span>
             </th>
           </tr>
         </thead>
@@ -105,23 +105,19 @@ export const AccessApprovalsTable: React.FunctionComponent<
           {accessApprovals.map(item => {
             return (
               <tr key={item.id}>
-                <td className="remove-border">
+                <td>
                   <a
                     href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.accessRequirementId}`}
                   >
                     {item.accessRequirementId}
                   </a>
                 </td>
-                <td className="remove-border">{item.accessRequirementName}</td>
-                <td className="remove-border">
+                <td>{item.accessRequirementName}</td>
+                <td>
                   <UserCard size={SMALL_USER_CARD} ownerId={item.submitterId} />
                 </td>
-                <td className="remove-border">
-                  {upperFirst(item.state.toLocaleLowerCase())}
-                </td>
-                <td className="remove-border">
-                  {formatDate(moment(item.modifiedOn))}
-                </td>
+                <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
+                <td>{formatDate(moment(item.modifiedOn))}</td>
                 <td
                   className={`${
                     item.expiredOn

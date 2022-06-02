@@ -139,13 +139,15 @@ describe('Access Requirement Table tests', () => {
       ),
     )
 
-    // Check each column header
+    // Check each column header -- the sortable columns use a regex because the sort button label appears in the name
     screen.getByRole('columnheader', { name: 'AR ID' })
-    screen.getByRole('columnheader', { name: 'Access Requirement Name' })
+    screen.getByRole('columnheader', {
+      name: /^Access Requirement Name/,
+    })
     screen.getByRole('columnheader', { name: 'Related to Projects' })
     screen.getByRole('columnheader', { name: 'Reviewer' })
     screen.getByRole('columnheader', { name: 'Last Modified' })
-    screen.getByRole('columnheader', { name: 'Created On' })
+    screen.getByRole('columnheader', { name: /^Created On/ })
 
     // check the first row of data
     screen.getByRole('cell', { name: mockSearchResults.results[0].id })

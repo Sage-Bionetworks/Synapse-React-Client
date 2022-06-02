@@ -67,13 +67,7 @@ export default function AccessRequirementTable(
 
   return (
     <div className="bootstrap-4-backport">
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <div className="SRC-split">
         <Typography variant="headline3" style={{ marginBottom: 0 }}>
           Access Requirements
         </Typography>
@@ -92,37 +86,35 @@ export default function AccessRequirementTable(
         <Table striped borderless bordered={false}>
           <thead className="access-requirements-header">
             <tr>
-              <th className="thead-cell remove-border">AR ID</th>
-              <th className="thead-cell remove-border button-cell">
-                Access Requirement Name
-                <button
-                  style={{ float: 'right' }}
-                  onClick={() => onSort('NAME')}
-                >
+              <th>AR ID</th>
+              <th>
+                <span className="SRC-split">
+                  <span>Access Requirement Name</span>
                   <SortIcon
+                    role="button"
+                    onClick={() => onSort('NAME')}
                     aria-label="Sort by Name"
                     active={sort.field === 'NAME'}
                     direction={sort.field === 'NAME' ? sort.direction : 'DESC'}
                   />
-                </button>
+                </span>
               </th>
-              <th className="thead-cell remove-border">Related to Projects</th>
-              <th className="thead-cell remove-border">Reviewer</th>
-              <th className="thead-cell remove-border">Last Modified</th>
-              <th className="thead-cell remove-border">
-                Created On
-                <button
-                  style={{ float: 'right' }}
-                  onClick={() => onSort('CREATED_ON')}
-                >
+              <th>Related to Projects</th>
+              <th>Reviewer</th>
+              <th>Last Modified</th>
+              <th>
+                <span className="SRC-split">
+                  <span>Created On</span>
                   <SortIcon
+                    role="button"
+                    onClick={() => onSort('CREATED_ON')}
                     active={sort.field === 'CREATED_ON'}
                     aria-label="Sort by Created On"
                     direction={
                       sort.field === 'CREATED_ON' ? sort.direction : 'DESC'
                     }
                   />
-                </button>
+                </span>
               </th>
             </tr>
           </thead>
@@ -130,20 +122,20 @@ export default function AccessRequirementTable(
             {accessRequirements.map(ar => {
               return (
                 <tr key={ar.id}>
-                  <td className="remove-border">
+                  <td>
                     <a
                       href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${ar.id}`}
                     >
                       {ar.id}
                     </a>
                   </td>
-                  <td className="remove-border">{ar.name}</td>
-                  <td className="remove-border">
+                  <td>{ar.name}</td>
+                  <td>
                     {ar.relatedProjectIds.map(projectId => (
                       <EntityLink key={projectId} entity={projectId} />
                     ))}
                   </td>
-                  <td className="remove-border">
+                  <td>
                     {ar.reviewerIds.length === 0 ? (
                       <UserOrTeamBadge principalId={ACT_TEAM_ID} />
                     ) : (
@@ -155,12 +147,8 @@ export default function AccessRequirementTable(
                       ))
                     )}
                   </td>
-                  <td className="remove-border">
-                    {formatDate(moment(ar.modifiedOn))}
-                  </td>
-                  <td className="remove-border">
-                    {formatDate(moment(ar.createdOn))}
-                  </td>
+                  <td>{formatDate(moment(ar.modifiedOn))}</td>
+                  <td>{formatDate(moment(ar.createdOn))}</td>
                 </tr>
               )
             })}
