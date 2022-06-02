@@ -8,6 +8,7 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import { Entity, EntityHeader } from '../utils/synapseTypes/'
 import { EntityTypeIcon } from './EntityIcon'
+import { ErrorBanner } from './ErrorBanner'
 
 type EntityLinkProps = {
   entity: string | EntityHeader | Entity
@@ -36,7 +37,7 @@ export const EntityLink = (props: EntityLinkProps) => {
     entityId = entityOrId
   }
 
-  const { data: fetchedEntity } = useGetEntity(entityId, versionNumber, {
+  const { data: fetchedEntity, error } = useGetEntity(entityId, versionNumber, {
     enabled: !!entityId && typeof entityOrId === 'string',
   })
 
@@ -75,9 +76,9 @@ export const EntityLink = (props: EntityLinkProps) => {
         </p>
       )
     }
+  } else if (error) {
+    return <ErrorBanner error={error} />
   } else {
-    // Entity has not been fetched yet
-    // TODO: Handle not found, unauthorized
     return <Skeleton variant="rect" width="100" />
   }
 }

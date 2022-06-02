@@ -92,7 +92,7 @@ export const mockSearchResults: AccessRequirementSearchResponse = {
       modifiedOn: '2021-01-15T17:13:06.767Z',
       name: 'Another AR',
       version: '3',
-      relatedProjectIds: ['syn18599653'],
+      relatedProjectIds: [],
       reviewerIds: [],
     },
     {

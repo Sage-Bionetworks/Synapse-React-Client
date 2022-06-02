@@ -3,7 +3,7 @@ import { SortOrder } from '@sage-bionetworks/react-base-table'
 import { Direction } from '../../utils/synapseTypes'
 
 type SortIconProps = {
-  direction: Direction | SortOrder
+  direction: Direction | SortOrder | 'ASC' | 'DESC'
   active: boolean
 }
 
