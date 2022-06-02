@@ -198,6 +198,10 @@ import {
 import { Team } from './synapseTypes/Team'
 import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import {
+  AccessApprovalSearchRequest,
+  AccessApprovalSearchResponse,
+} from './synapseTypes/AccessApproval'
 
 const cookies = new UniversalCookies()
 
@@ -3644,6 +3648,27 @@ export const forumSearch = (
   return doPost<DiscussionSearchResponse>(
     `/repo/v1/forum/${forumId}/search`,
     discussionSearchRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Search through the history of access approvals filtering by accessor/submitter
+ * and optional by access requirement id. The caller must be a member of the ACT.
+ * https://rest-docs.synapse.org/rest/POST/accessApproval/search.html
+ * @param accessApprovalSearchRequest
+ * @param accessToken
+ */
+
+export const searchAccessApprovals = (
+  accessApprovalSearchRequest: AccessApprovalSearchRequest | undefined,
+  accessToken: string | undefined,
+) => {
+  return doPost<AccessApprovalSearchResponse>(
+    '/repo/v1/accessApproval/search',
+    accessApprovalSearchRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
