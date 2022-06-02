@@ -17,6 +17,7 @@ type UserOrTeamBadgeProps = {
 }
 
 export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
+  let isMounted = true
   let principalId = props.principalId
   const {
     disableHref,
@@ -39,10 +40,15 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
         [principalId!.toString()],
         accessToken,
       )
-      setUserGroupHeader(headers.children[0])
+      if (isMounted) {
+        setUserGroupHeader(headers.children[0])
+      }
     }
     if (principalId && userGroupHeader == undefined) {
       getUserGroupHeader()
+    }
+    return () => {
+      isMounted = false
     }
   }, [accessToken, principalId, userGroupHeader])
 

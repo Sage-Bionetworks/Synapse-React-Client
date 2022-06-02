@@ -1,4 +1,9 @@
-import { useQuery, UseQueryOptions } from 'react-query'
+import {
+  UseInfiniteQueryOptions,
+  useInfiniteQuery,
+  useQuery,
+  UseQueryOptions,
+} from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClient'
 import { useSynapseContext } from '../../../SynapseContext'
@@ -7,6 +12,10 @@ import {
   AccessRequirement,
   WikiPageKey,
 } from '../../../synapseTypes'
+import {
+  AccessRequirementSearchRequest,
+  AccessRequirementSearchResponse,
+} from '../../../synapseTypes/AccessRequirement/AccessRequirementSearch'
 
 export default function useGetAccessRequirement<T extends AccessRequirement>(
   accessRequirementId: string | number,
@@ -51,5 +60,28 @@ export function useGetAccessRequirementACL(
     () =>
       SynapseClient.getAccessRequirementAcl(accessToken, accessRequirementId),
     options,
+  )
+}
+
+export function useSearchAccessRequirementsInfinite(
+  params: Omit<AccessRequirementSearchRequest, 'nextPageToken'>,
+  options?: UseInfiniteQueryOptions<
+    AccessRequirementSearchResponse,
+    SynapseClientError
+  >,
+) {
+  const { accessToken } = useSynapseContext()
+  return useInfiniteQuery<AccessRequirementSearchResponse, SynapseClientError>(
+    ['accessRequirement', 'search', params],
+    async context => {
+      return await SynapseClient.searchAccessRequirements(accessToken, {
+        ...params,
+        nextPageToken: context.pageParam,
+      })
+    },
+    {
+      ...options,
+      getNextPageParam: page => page.nextPageToken,
+    },
   )
 }
