@@ -15,7 +15,10 @@
     }
 
     .expired {
-        color: map.get(SRC.$colors, 'gray-700')
+        color: map.get(SRC.$colors, 'gray-700');
     }
-
+    .non-expire {
+        color: map.get(SRC.$colors, 'gray-700');
+        font-style: italic;
+    }
 }

@@ -124,11 +124,16 @@ export const AccessApprovalsTable: React.FunctionComponent<
                 </td>
                 <td
                   className={`${
-                    item.expiredOn &&
-                    (new Date() > new Date(item.expiredOn) ? 'expired' : '')
+                    item.expiredOn
+                      ? new Date() > new Date(item.expiredOn)
+                        ? 'expired'
+                        : ''
+                      : 'non-expire'
                   } remove-border`}
                 >
-                  {item.expiredOn ? formatDate(moment(item.expiredOn)) : <></>}
+                  {item.expiredOn
+                    ? formatDate(moment(item.expiredOn))
+                    : 'Never'}
                 </td>
               </tr>
             )
