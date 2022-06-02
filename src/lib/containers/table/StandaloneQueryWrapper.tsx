@@ -156,7 +156,9 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                       {entity &&
                       isTableEntity(entity) &&
                       entity.isSearchEnabled ? (
-                        <FullTextSearch />
+                        <FullTextSearch
+                          helpUrl={searchConfiguration?.fullTextSearchHelpURL}
+                        />
                       ) : (
                         <SearchV2
                           {...searchConfiguration}

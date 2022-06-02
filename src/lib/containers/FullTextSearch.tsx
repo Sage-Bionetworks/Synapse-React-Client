@@ -10,6 +10,7 @@ import {
 } from './QueryWrapper'
 import { useQueryContext } from './QueryWrapper'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
+import { HelpPopover } from './HelpPopover'
 
 library.add(faSearch)
 library.add(faTimes)
@@ -17,7 +18,15 @@ library.add(faTimes)
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
 
-export function FullTextSearch() {
+export type FullTextSearchProps = {
+  helpMessage?: string
+  helpUrl?: string
+}
+
+export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
+  helpMessage = 'This search bar is powered by MySQL Full Text Search.',
+  helpUrl,
+}: FullTextSearchProps) => {
   const { executeQueryRequest, getLastQueryRequest } = useQueryContext()
   const {
     topLevelControlsState: { showSearchBar, showFacetFilter },
@@ -77,35 +86,47 @@ export function FullTextSearch() {
       }`}
     >
       <Collapse in={showSearchBar} timeout={{ enter: 300, exit: 300 }}>
-        <form className="QueryWrapperSearchInput__searchbar" onSubmit={search}>
-          <FontAwesomeIcon
-            className="QueryWrapperSearchInput__searchbar__searchicon"
-            size={'sm'}
-            icon={'search'}
-          />
-          <input
-            ref={searchInputRef}
-            minLength={MIN_SEARCH_QUERY_LENGTH}
-            onChange={handleChange}
-            placeholder="Enter Search Terms"
-            value={searchText}
-            type="text"
-          />
-          {searchText.length > 0 && (
-            <button
-              className="QueryWrapperSearchInput__searchbar__clearbutton"
-              type="button"
-              onClick={() => {
-                setSearchText('')
-              }}
-            >
-              <FontAwesomeIcon
-                className="SRC-primary-text-color"
-                icon="times"
-              />
-            </button>
-          )}
-        </form>
+        <div className="QueryWrapperSearchInput__helppopoverwrapper">
+          <form
+            className="QueryWrapperSearchInput__searchbar"
+            onSubmit={search}
+          >
+            <FontAwesomeIcon
+              className="QueryWrapperSearchInput__searchbar__searchicon"
+              size={'sm'}
+              icon={'search'}
+            />
+            <input
+              ref={searchInputRef}
+              minLength={MIN_SEARCH_QUERY_LENGTH}
+              onChange={handleChange}
+              placeholder="Enter Search Terms"
+              value={searchText}
+              type="text"
+            />
+            {searchText.length > 0 && (
+              <button
+                className="QueryWrapperSearchInput__searchbar__clearbutton"
+                type="button"
+                onClick={() => {
+                  setSearchText('')
+                }}
+              >
+                <FontAwesomeIcon
+                  className="SRC-primary-text-color"
+                  icon="times"
+                />
+              </button>
+            )}
+          </form>
+          <div className="QueryWrapperSearchInput__helppopover">
+            <HelpPopover
+              markdownText={helpMessage}
+              helpUrl={helpUrl}
+              placement="left"
+            />
+          </div>
+        </div>
       </Collapse>
     </div>
   )
