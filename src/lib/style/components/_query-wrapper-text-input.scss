@@ -2,6 +2,13 @@
 
 .QueryWrapperSearchInput,
 .QueryWrapperSqlEditorInput {
+  &__helppopoverwrapper {
+    display: grid;
+    grid-template-columns: auto 25px;
+  }
+  &__helppopover {
+    place-self: center;
+  }
   &__searchbar {
     height: 50px;
     background: #f9f9f9;

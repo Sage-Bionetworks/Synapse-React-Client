@@ -9,6 +9,10 @@ Configured to show cards:
   defaultShowFacetVisualization={false}
   defaultShowSearchBox={true}
   shouldDeepLink={true}
+  searchConfiguration={{
+    fullTextSearchHelpURL:
+      'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
+  }}
   cardConfiguration={{
     type: GENERIC_CARD,
     titleLinkConfig: {

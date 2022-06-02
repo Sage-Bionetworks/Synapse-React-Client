@@ -186,7 +186,9 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           <QueryWrapperErrorBanner />
                         </div>
                         {isFullTextSearchEnabled ? (
-                          <FullTextSearch />
+                          <FullTextSearch
+                            helpUrl={searchConfiguration?.fullTextSearchHelpURL}
+                          />
                         ) : (
                           <SearchV2
                             {...searchConfiguration}

@@ -55,6 +55,7 @@ export type SearchV2Props = {
   defaultColumn?: string
   searchable?: SearchableColumnsV2
   lockedFacet?: LockedFacet
+  fullTextSearchHelpURL?: string
 }
 
 type InternalSearchProps = SearchV2Props
