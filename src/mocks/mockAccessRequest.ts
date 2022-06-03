@@ -25,47 +25,5 @@ export const mockSubmissionSearchResponse: SubmissionSearchResponse = {
       ],
       accessRequirementReviewerIds: [ACT_TEAM_ID.toString()],
     },
-    {
-      id: '9603055',
-      createdOn: '2017-08-23T18:48:20.892Z',
-      modifiedOn: '2022-05-20T22:26:44.406Z',
-      accessRequirementName: 'Access Requirement',
-      accessRequirementVersion: '269',
-      accessRequirementId: '1234321',
-      submitterId: '456',
-      state: SubmissionState.APPROVED,
-      accessorChanges: [
-        {
-          userId: '456',
-          type: AccessType.GAIN_ACCESS,
-        },
-      ],
-      accessRequirementReviewerIds: ['12345', '52642'],
-    },
-    {
-      id: '9606455',
-      createdOn: '2013-07-23T18:48:20.892Z',
-      modifiedOn: '2022-05-29T22:26:44.406Z',
-      accessRequirementName: 'Another Access Requirement',
-      accessRequirementVersion: '2',
-      accessRequirementId: '894',
-      submitterId: '5326',
-      state: SubmissionState.APPROVED,
-      accessorChanges: [
-        {
-          userId: '456',
-          type: AccessType.GAIN_ACCESS,
-        },
-        {
-          userId: '5326',
-          type: AccessType.RENEW_ACCESS,
-        },
-        {
-          userId: '999',
-          type: AccessType.GAIN_ACCESS,
-        },
-      ],
-      accessRequirementReviewerIds: ['12345', '4214'],
-    },
   ],
 }
