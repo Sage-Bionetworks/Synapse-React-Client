@@ -108,7 +108,7 @@ import {
   ReferenceList,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
-  Submission,
+  Submission as EvaluationSubmission,
   SynapseVersion,
   UserBundle,
   UserGroupHeaderResponsePage,
@@ -202,6 +202,7 @@ import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
 } from './synapseTypes/AccessApproval'
+import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
 
 const cookies = new UniversalCookies()
 
@@ -2002,7 +2003,7 @@ export const createACL = (
  * https://rest-docs.synapse.org/rest/POST/evaluation/submission.html
  */
 export const submitToEvaluation = (
-  submission: Submission,
+  submission: EvaluationSubmission,
   etag: string,
   accessToken: string | undefined,
 ) => {
@@ -3116,6 +3117,20 @@ export const cancelDataAccessRequest = (
   return doPut<ACTSubmissionStatus>(
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+// http://rest-docs.synapse.org/rest/GET/dataAccessSubmission/submissionId.html
+// Fetch a submission by its id. If the user is a not part of the ACT they must be validated and assigned as reviewers of the AR submissions in order to fetch the submission.
+export const getSubmissionById = (
+  submissionId: string | number,
+  accessToken: string,
+) => {
+  return doGet<DataAccessSubmission>(
+    `/repo/v1/dataAccessSubmission/${submissionId}`,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

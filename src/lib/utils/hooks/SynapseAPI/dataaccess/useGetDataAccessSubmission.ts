@@ -1,4 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query'
+import { SynapseClient } from '../../..'
 import {
   mockApprovedSubmission,
   mockSubmittedSubmission,
@@ -6,6 +7,7 @@ import {
   mockDemoSubmission,
 } from '../../../../../mocks/dataaccess/MockSubmission'
 import { delay, SynapseClientError } from '../../../SynapseClient'
+import { useSynapseContext } from '../../../SynapseContext'
 import { Submission } from '../../../synapseTypes/AccessRequirement/Submission'
 
 const submissions: Submission[] = [
@@ -19,21 +21,11 @@ export default function useGetDataAccessSubmission(
   submissionId: string | number,
   options?: UseQueryOptions<Submission, SynapseClientError>,
 ) {
-  //   const { accessToken } = useSynapseContext()
+  const { accessToken } = useSynapseContext()
 
   return useQuery<Submission, SynapseClientError>(
     ['dataAccessSubmission', submissionId],
-    async () => {
-      // TODO: Replace with SynapseClient, PLFM-7314
-
-      const match = submissions.find(s => s.id === submissionId.toString())
-      if (match) {
-        await delay(200)
-        return match
-      } else {
-        throw new SynapseClientError(404, 'Submission not found')
-      }
-    },
+    () => SynapseClient.getSubmissionById(submissionId, accessToken),
     options,
   )
 }

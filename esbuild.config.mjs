@@ -7,7 +7,7 @@ import GlobalsPlugin from 'esbuild-plugin-globals'
 const globals = {
   react: 'React',
   'react-dom': 'ReactDOM',
-  'react-router-dom': 'ReactRouterDom',
+  'react-router-dom': 'ReactRouterDOM',
   'react-transition-group': 'ReactTransitionGroup',
   'react-bootstrap': 'ReactBootstrap',
   'react-plotly.js/factory': 'createPlotlyComponent',

@@ -42,6 +42,7 @@ import {
   FolderTwoTone,
   LinkTwoTone,
   ListTwoTone,
+  HistoryTwoTone,
   StorageTwoTone,
 } from '@material-ui/icons'
 
@@ -151,6 +152,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
     case 'searchTwoTone':
       return <SearchTwoTone style={muiSvgStyle}></SearchTwoTone>
+    case 'history':
+      return <HistoryTwoTone style={muiSvgStyle}></HistoryTwoTone>
     case 'time':
       return <WatchLater style={muiSvgStyle}></WatchLater>
     case 'login':

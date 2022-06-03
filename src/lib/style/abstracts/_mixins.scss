@@ -100,15 +100,18 @@
     flex-grow: 1;
     padding: 5px 0px;
     transition: border-bottom 300ms ease-in;
+    border-bottom: 3px solid transparent;
   }
-  > *[aria-selected='true'] {
-    border-bottom: 3px solid $active-color;
+  > *[aria-selected='true'],
+  > *[aria-current='page'] {
+    border-color: $active-color;
     color: SRC.$active-tab-text;
     svg {
       color: SRC.$secondary-action-color;
     }
   }
-  > *[aria-selected='false'] {
+  > *[aria-selected='false'],
+  > *[aria-current='false'] {
     color: SRC.$inactive-tab-text;
     border-bottom: 3px solid $inactive-color;
   }

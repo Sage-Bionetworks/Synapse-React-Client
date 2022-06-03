@@ -47,6 +47,7 @@ import {
 import { DatasetItemsEditor } from './containers/table/datasets/DatasetItemsEditor'
 import { EntityTypeIcon } from './containers/EntityIcon'
 import { SkeletonButton } from './assets/skeletons/SkeletonButton'
+import ReviewerDashboard from './containers/dataaccess/ReviewerDashboard'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -97,6 +98,7 @@ const SynapseComponents = {
   StandaloneQueryWrapper,
   ChangePassword,
   ForumSearch,
+  ReviewerDashboard,
 }
 
 export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
