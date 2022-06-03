@@ -12,11 +12,11 @@ import {
   SubmissionSearchSort,
   SubmissionSortField,
 } from '../utils/synapseTypes/AccessSubmission'
-import Typography from '../utils/typography/Typography'
 import UserOrTeamBadge from './UserOrTeamBadge'
-import { ACT_TEAM_ID } from '../utils/SynapseConstants'
+import { ACT_TEAM_ID, SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { SynapseSpinner } from './LoadingScreen'
+import UserCard from './UserCard'
 
 export type AccessRequestSubmissionTableProps = {
   showSubmitter: boolean
@@ -78,114 +78,103 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
   }
 
   return (
-    <div className="bootstrap-4-backport">
-      <div className="SRC-split">
-        {accessorId ? (
-          <Typography variant="headline3" style={{ marginBottom: 0 }}>
-            Submissions including <UserOrTeamBadge principalId={accessorId} />
-          </Typography>
-        ) : (
-          <Typography variant="headline3" style={{ marginBottom: 0 }}>
-            Access Request Submissions
-          </Typography>
-        )}
-      </div>
-
-      <div className="AccessSubmissionTable">
-        <Table striped borderless bordered={false}>
-          <thead>
-            <tr>
-              <th>REQUEST</th>
-              <th>Access Requirement Name</th>
-              {showSubmitter && <th>Submitter</th>}
-              {showStatus && <th>Status</th>}
-              {showRequestors && <th>Requestors</th>}
-              <th>Reviewer(s)</th>
-              <th>
-                Created Date
-                <SortIcon
-                  role="button"
-                  style={{ float: 'right' }}
-                  active={sort.field === 'CREATED_ON'}
-                  aria-label="Sort by Created On"
-                  direction={
-                    sort.field === 'CREATED_ON'
-                      ? sort.direction === 'DESC'
-                        ? 'DESC'
-                        : 'ASC'
-                      : 'DESC'
-                  }
-                  onClick={() => onSort(SubmissionSortField.CREATED_ON)}
-                />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {accessSubmissions.map(item => {
-              return (
-                <tr key={item.id}>
+    <div className="bootstrap-4-backport AccessSubmissionTable">
+      <Table striped borderless bordered={false}>
+        <thead>
+          <tr>
+            <th>REQUEST</th>
+            <th>Access Requirement Name</th>
+            {showSubmitter && <th>Submitter</th>}
+            {showStatus && <th>Status</th>}
+            {showRequestors && <th>Requestors</th>}
+            <th>Reviewer(s)</th>
+            <th>
+              Created Date
+              <SortIcon
+                role="button"
+                style={{ float: 'right' }}
+                active={sort.field === 'CREATED_ON'}
+                aria-label="Sort by Created On"
+                direction={
+                  sort.field === 'CREATED_ON'
+                    ? sort.direction === 'DESC'
+                      ? 'DESC'
+                      : 'ASC'
+                    : 'DESC'
+                }
+                onClick={() => onSort(SubmissionSortField.CREATED_ON)}
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {accessSubmissions.map(item => {
+            return (
+              <tr key={item.id}>
+                <td>
+                  <a
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.id}`}
+                  >
+                    {item.id}
+                  </a>
+                </td>
+                <td>{item.accessRequirementName}</td>
+                {showSubmitter && (
                   <td>
-                    <a
-                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.id}`}
-                    >
-                      {item.id}
-                    </a>
+                    <UserOrTeamBadge principalId={item.submitterId} />
                   </td>
-                  <td>{item.accessRequirementName}</td>
-                  {showSubmitter && (
-                    <td>
-                      <UserOrTeamBadge principalId={item.submitterId} />
-                    </td>
-                  )}
-                  {showStatus && (
-                    <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
-                  )}
-                  {showRequestors && (
-                    <td>
-                      <UserOrTeamBadge principalId={item.submitterId} />
-                      {item.accessorChanges
-                        .filter(user => item.submitterId !== user.userId)
-                        .map(requestor => (
-                          <UserOrTeamBadge
-                            key={requestor.userId}
-                            principalId={requestor.userId}
+                )}
+                {showStatus && (
+                  <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
+                )}
+                {showRequestors && (
+                  <td>
+                    <UserOrTeamBadge principalId={item.submitterId} />
+                    {item.accessorChanges
+                      .filter(user => item.submitterId !== user.userId)
+                      .map(requestor => (
+                        <li key={requestor.userId}>
+                          <UserCard
+                            size={SMALL_USER_CARD}
+                            ownerId={requestor.userId}
+                            className="requestor"
                           />
-                        ))}
-                    </td>
-                  )}
-                  <td>
-                    {item.accessRequirementReviewerIds.length === 0 ? (
-                      <UserOrTeamBadge principalId={ACT_TEAM_ID} />
-                    ) : (
-                      item.accessRequirementReviewerIds.map(reviewerId => (
-                        <UserOrTeamBadge
-                          key={reviewerId}
-                          principalId={reviewerId}
-                        />
-                      ))
-                    )}
+                        </li>
+                      ))}
                   </td>
-                  <td>{formatDate(moment(item.createdOn))}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </Table>
-        {!hasNextPage ? (
-          <></>
-        ) : isFetching ? (
-          <SynapseSpinner size={40} />
-        ) : (
-          <Button
-            variant="outline"
-            onClick={() => {
-              fetchNextPage()
-            }}
-          >
-            Show More
-          </Button>
-        )}
-      </div>
+                )}
+                <td>
+                  {item.accessRequirementReviewerIds.length === 0 ? (
+                    <UserOrTeamBadge principalId={ACT_TEAM_ID} />
+                  ) : (
+                    item.accessRequirementReviewerIds.map(reviewerId => (
+                      <UserOrTeamBadge
+                        key={reviewerId}
+                        principalId={reviewerId}
+                      />
+                    ))
+                  )}
+                </td>
+                <td>{formatDate(moment(item.createdOn))}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </Table>
+      {!hasNextPage ? (
+        <></>
+      ) : isFetching ? (
+        <SynapseSpinner size={40} />
+      ) : (
+        <Button
+          variant="outline"
+          onClick={() => {
+            fetchNextPage()
+          }}
+        >
+          Show More
+        </Button>
+      )}
     </div>
   )
 }
