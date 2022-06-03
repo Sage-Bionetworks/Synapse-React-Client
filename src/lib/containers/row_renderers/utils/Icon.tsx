@@ -42,6 +42,7 @@ import {
 } from '../../../utils/SynapseConstants'
 
 import { ReactComponent as Data2Svg } from '../../../assets/icons/Data2.svg'
+import { ReactComponent as DatasetSvg } from '../../../assets/icons/Dataset.svg'
 import { ReactComponent as studyActiveSvg } from '../../../assets/icons/study-active.svg'
 import { ReactComponent as studyCompleteSvg } from '../../../assets/icons/study-complete.svg'
 import { ReactComponent as DNA_TwoSvg } from '../../../assets/icons/DNA_Two.svg'
@@ -89,7 +90,7 @@ type IconProps = {
 
 const defaultIcons = {
   [DATABASE]: Database, // this returns svg tag
-  [DATASET]: Data2Svg, // this returns img tag link to svg
+  [DATASET]: DatasetSvg, // this returns img tag link to svg
   [FUNDER]: Data2Svg,
   [TOOL]: DNA_TwoSvg,
   [STUDY_ACTIVE]: studyActiveSvg,
