@@ -4,6 +4,7 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import { PROVIDERS } from '../containers/Login'
 import {
+  ACCESS_REQUEST_SUBMISSION_SEARCH,
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
@@ -202,6 +203,10 @@ import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResponse,
 } from './synapseTypes/AccessApproval'
+import {
+  SubmissionSearchRequest,
+  SubmissionSearchResponse,
+} from './synapseTypes/AccessSubmission'
 
 const cookies = new UniversalCookies()
 
@@ -3669,6 +3674,19 @@ export const searchAccessApprovals = (
   return doPost<AccessApprovalSearchResponse>(
     '/repo/v1/accessApproval/search',
     accessApprovalSearchRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const searchAccessSubmission = (
+  submissionSearchRequest: SubmissionSearchRequest,
+  accessToken: string | undefined,
+) => {
+  return doPost<SubmissionSearchResponse>(
+    ACCESS_REQUEST_SUBMISSION_SEARCH,
+    submissionSearchRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
