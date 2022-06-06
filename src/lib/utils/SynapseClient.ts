@@ -256,11 +256,13 @@ export type SynapseError = {
 export class SynapseClientError extends Error {
   public status: number
   public reason: string
+  public url: string
 
-  constructor(status: number, reason: string) {
+  constructor(status: number, reason: string, url: string) {
     super(reason)
     this.status = status
     this.reason = reason
+    this.url = url
   }
 }
 
@@ -324,11 +326,16 @@ const fetchWithExponentialTimeout = async <TResponse>(
   if (response.ok) {
     return responseObject as TResponse
   } else if (typeof responseObject === 'object' && 'reason' in responseObject) {
-    throw new SynapseClientError(response.status, responseObject.reason)
+    throw new SynapseClientError(
+      response.status,
+      responseObject.reason,
+      url.toString(),
+    )
   } else {
     throw new SynapseClientError(
       response.status,
       JSON.stringify(responseObject),
+      url.toString(),
     )
   }
 }
