@@ -698,7 +698,7 @@ export default class MarkdownSynapse extends React.Component<
     return (
       <IDUReport
         key={JSON.stringify(widgetparamsMapped)}
-        accessRestrictionId={widgetparamsMapped.accessRestrictionId}
+        accessRequirementId={widgetparamsMapped.accessRestrictionId}
       />
     )
   }
