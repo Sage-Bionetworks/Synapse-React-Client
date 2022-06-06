@@ -64,7 +64,12 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
           <div ref={ref} />
         </div>
       )}
-      {isLoading && <LoadingSubmissionInfoCard />}
+      {(isLoading || isFetchingNextPage) && (
+        <>
+          <LoadingSubmissionInfoCard />
+          <LoadingSubmissionInfoCard />
+        </>
+      )}
     </>
   )
 }

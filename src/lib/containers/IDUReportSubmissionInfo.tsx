@@ -49,10 +49,8 @@ export const SubmissionInfoCard: React.FunctionComponent<
 export const LoadingSubmissionInfoCard: React.FunctionComponent = () => {
   return (
     <p className="SubmissionInfoCard">
-      <SkeletonTable numCols={2} numRows={3} />
-      <Skeleton width={320} />
-      <Skeleton variant="rect" width={160} height={33} />
-      <SkeletonTable numCols={2} numRows={2} />
+      <SkeletonTable numCols={1} numRows={4} />
+      <Skeleton variant="rect" width={'100%'} height={80} />
     </p>
   )
 }
