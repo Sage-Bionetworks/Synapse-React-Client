@@ -1,6 +1,7 @@
 Hard-coded markdown:
 
 ```jsx
+<MarkdownSynapse markdown=" ${iduReport?accessRestrictionId=4314327} " />
 <MarkdownSynapse markdown="*markdown* given to the **component**" />
 ```
 
