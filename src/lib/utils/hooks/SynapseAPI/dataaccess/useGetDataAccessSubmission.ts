@@ -31,7 +31,11 @@ export default function useGetDataAccessSubmission(
         await delay(200)
         return match
       } else {
-        throw new SynapseClientError(404, 'Submission not found')
+        throw new SynapseClientError(
+          404,
+          'Submission not found',
+          'dataAccessSubmissionUrl',
+        )
       }
     },
     options,

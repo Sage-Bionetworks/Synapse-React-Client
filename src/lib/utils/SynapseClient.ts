@@ -4,6 +4,7 @@ import UniversalCookies from 'universal-cookie'
 import { SynapseConstants } from '.'
 import { PROVIDERS } from '../containers/Login'
 import {
+  ACCESS_REQUEST_SUBMISSION_SEARCH,
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
@@ -198,6 +199,14 @@ import {
 import { Team } from './synapseTypes/Team'
 import { TYPE_FILTER } from './synapseTypes/UserGroupHeader'
 import { VersionInfo } from './synapseTypes/VersionInfo'
+import {
+  AccessApprovalSearchRequest,
+  AccessApprovalSearchResponse,
+} from './synapseTypes/AccessApproval'
+import {
+  SubmissionSearchRequest,
+  SubmissionSearchResponse,
+} from './synapseTypes/AccessSubmission'
 
 const cookies = new UniversalCookies()
 
@@ -247,11 +256,13 @@ export type SynapseError = {
 export class SynapseClientError extends Error {
   public status: number
   public reason: string
+  public url: string
 
-  constructor(status: number, reason: string) {
+  constructor(status: number, reason: string, url: string) {
     super(reason)
     this.status = status
     this.reason = reason
+    this.url = url
   }
 }
 
@@ -315,11 +326,16 @@ const fetchWithExponentialTimeout = async <TResponse>(
   if (response.ok) {
     return responseObject as TResponse
   } else if (typeof responseObject === 'object' && 'reason' in responseObject) {
-    throw new SynapseClientError(response.status, responseObject.reason)
+    throw new SynapseClientError(
+      response.status,
+      responseObject.reason,
+      url.toString(),
+    )
   } else {
     throw new SynapseClientError(
       response.status,
       JSON.stringify(responseObject),
+      url.toString(),
     )
   }
 }
@@ -3644,6 +3660,40 @@ export const forumSearch = (
   return doPost<DiscussionSearchResponse>(
     `/repo/v1/forum/${forumId}/search`,
     discussionSearchRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Search through the history of access approvals filtering by accessor/submitter
+ * and optional by access requirement id. The caller must be a member of the ACT.
+ * https://rest-docs.synapse.org/rest/POST/accessApproval/search.html
+ * @param accessApprovalSearchRequest
+ * @param accessToken
+ */
+
+export const searchAccessApprovals = (
+  accessApprovalSearchRequest: AccessApprovalSearchRequest | undefined,
+  accessToken: string | undefined,
+) => {
+  return doPost<AccessApprovalSearchResponse>(
+    '/repo/v1/accessApproval/search',
+    accessApprovalSearchRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export const searchAccessSubmission = (
+  submissionSearchRequest: SubmissionSearchRequest,
+  accessToken: string | undefined,
+) => {
+  return doPost<SubmissionSearchResponse>(
+    ACCESS_REQUEST_SUBMISSION_SEARCH,
+    submissionSearchRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

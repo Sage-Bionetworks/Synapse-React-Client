@@ -78,6 +78,7 @@ import {
 } from '../../../assets/themed_icons'
 
 import { KeyValue } from '../../../utils/functions/sqlFunctions'
+import IconSvg from '../../IconSvg'
 
 type IconProps = {
   type: string
@@ -87,9 +88,12 @@ type IconProps = {
   cssClass?: string
 }
 
+const iconSvgMapping = {
+  [DATASET]: <IconSvg options={{ icon: 'dataset' }} />,
+}
+
 const defaultIcons = {
   [DATABASE]: Database, // this returns svg tag
-  [DATASET]: Data2Svg, // this returns img tag link to svg
   [FUNDER]: Data2Svg,
   [TOOL]: DNA_TwoSvg,
   [STUDY_ACTIVE]: studyActiveSvg,
@@ -138,26 +142,24 @@ const Icon: React.FunctionComponent<IconProps> = ({
   iconOptions,
   cssClass,
 }) => {
+  const IconSvg = iconSvgMapping[value] || iconSvgMapping[type]
+  if (IconSvg) return IconSvg
+
   const iconSet = { ...defaultIcons, ...iconOptions }
   // see if the value has a corresponding icon, e.g. 'Active' in a studies table
   // or if the type of card has a corresponding icon, e.g. 'Publication'
-  const Icon = iconSet[value] || iconSet[type]
-  // TODO: get rid of dataset icon class, none of the icons should be special cased
-  const datasetCustomStyle =
-    value === DATASET || type === DATASET ? { height: '55px' } : {}
-
+  const IconDefinition = iconSet[value] || iconSet[type]
   const className = `iconImg ${cssClass ?? ''}`
-
-  if (Icon == null) {
+  if (IconDefinition == null) {
     console.warn('Icon type not found:', type)
     return <></>
   }
-  if (typeof Icon === 'string') {
-    return <img src={Icon} className={className} />
+  if (typeof IconDefinition === 'string') {
+    return <img src={IconDefinition} className={className} />
   }
   return (
     <span>
-      <Icon className={className} style={datasetCustomStyle} />
+      <IconDefinition className={className} />
     </span>
   )
 }

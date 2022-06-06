@@ -1,0 +1,35 @@
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.AccessApprovalsTable,
+.AccessSubmissionTable,
+.AccessRequirementsTable {
+  margin-top: 20px;
+
+  thead {
+    background-color: map.get(SRC.$colors, 'gray-200');
+    th {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+  }
+
+  th,
+  td {
+    border: none;
+  }
+  li {
+    list-style: none;
+  }
+  .requestor {
+    font-style: italic;
+    color: map.get(SRC.$colors, 'gray-700') !important;
+  }
+  .expired {
+    color: map.get(SRC.$colors, 'gray-700');
+  }
+  .non-expire {
+    color: map.get(SRC.$colors, 'gray-700');
+    font-style: italic;
+  }
+}

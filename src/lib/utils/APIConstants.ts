@@ -82,6 +82,7 @@ export const SIGN_TERMS_OF_USE = `${AUTH}/termsOfUse2`
 export const VERIFICATION_SUBMISSION = `${REPO}/verificationSubmission`
 
 export const ACCESS_REQUIREMENT_SEARCH = `${REPO}/accessRequirement/search`
+export const ACCESS_REQUEST_SUBMISSION_SEARCH = `${REPO}/dataAccessSubmission/search`
 
 export const ACCESS_REQUIREMENT_BY_ID = (id: string | number) =>
   `${REPO}/accessRequirement/${id}`
