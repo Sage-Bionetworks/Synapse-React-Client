@@ -28,15 +28,9 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
     isFetchingNextPage,
     fetchNextPage,
     isError,
-    error: newError,
-  } = useGetApprovedSubmissionInfoInfinite(accessRequirementId)
-
-  useEffect(() => {
-    if (isError && newError) {
-      handleError(newError)
-    }
-  }, [isError, newError, handleError])
-
+  } = useGetApprovedSubmissionInfoInfinite(accessRequirementId, {
+      useErrorBoundary: true
+  })
   useEffect(() => {
     if (
       status === 'success' &&
