@@ -33,3 +33,27 @@
     font-style: italic;
   }
 }
+
+.AccessRequirementDashboard {
+  .InputPanel {
+    display: grid;
+    grid-template-columns: 40% 25% auto;
+    gap: 25px;
+    > * {
+      flex-grow: 1;
+    }
+
+    input {
+      margin-bottom: 0;
+    }
+
+    .styled-svg-wrapper {
+      position: absolute;
+      right: 5px;
+      z-index: 5;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
