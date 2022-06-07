@@ -53,7 +53,7 @@ export default function AccessRequirementTable(
       [nameContains, relatedProjectId, reviewerId, accessType, sort],
     )
 
-  const { data, hasNextPage, fetchNextPage, isFetching } =
+  const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessRequirementsInfinite(searchRequest)
 
   const accessRequirements = data?.pages.flatMap(page => page.results) ?? []
@@ -154,10 +154,18 @@ export default function AccessRequirementTable(
             })}
           </tbody>
         </Table>
+        {isLoading && (
+          <div className="SRC-center-text">
+            <SynapseSpinner size={40} />
+          </div>
+        )}
+        {!isLoading && accessRequirements.length === 0 && (
+          <Typography className="SRC-center-text" variant="body1">
+            No Results
+          </Typography>
+        )}
         {!hasNextPage ? (
           <></>
-        ) : isFetching ? (
-          <SynapseSpinner size={40} />
         ) : (
           <Button
             variant="outline"

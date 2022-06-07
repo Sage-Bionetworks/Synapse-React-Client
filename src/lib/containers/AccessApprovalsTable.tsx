@@ -38,7 +38,7 @@ export const AccessApprovalsTable: React.FunctionComponent<
     [accessorId, accessRequirementId, sort],
   )
 
-  const { data, hasNextPage, fetchNextPage, isFetching } =
+  const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessApprovalsInfinite(searchRequest)
   const accessApprovals = data?.pages.flatMap(page => page.results) ?? []
 
@@ -136,10 +136,18 @@ export const AccessApprovalsTable: React.FunctionComponent<
           })}
         </tbody>
       </Table>
+      {isLoading && (
+        <div className="SRC-center-text">
+          <SynapseSpinner size={40} />
+        </div>
+      )}
+      {!isLoading && accessApprovals.length === 0 && (
+        <Typography className="SRC-center-text" variant="body1">
+          No Results
+        </Typography>
+      )}
       {!hasNextPage ? (
         ''
-      ) : isFetching ? (
-        <SynapseSpinner size={40} />
       ) : (
         <Button variant="outline" onClick={() => fetchNextPage}>
           Show More
