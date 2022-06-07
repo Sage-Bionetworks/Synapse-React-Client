@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import React from 'react'
 import { Skeleton } from '@material-ui/lab'
 import { SubmissionInfo } from '../utils/synapseTypes/SubmissionInfo'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
@@ -19,8 +18,9 @@ export const SubmissionInfoCard: React.FunctionComponent<
     <>
       {info && (
         <p className="SubmissionInfoCard">
-          <strong> Project Lead: </strong> {info.projectLead} <br />
-          <strong> Institution: </strong> {info.institution} <br />
+          <strong> Project Lead: </strong> <span>{info.projectLead}</span>{' '}
+          <br />
+          <strong> Institution: </strong> <span>{info.institution}</span> <br />
           <strong> Data Access Request Submitted By: </strong>{' '}
           <UserCard ownerId={info.submittedBy} size={SMALL_USER_CARD} /> <br />
           <strong>
