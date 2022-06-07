@@ -44,7 +44,7 @@ import AccessRequirementList, {
 } from './access_requirement_list/AccessRequirementList'
 import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 import { SynapseContext } from '../utils/SynapseContext'
-import IconSvg from './IconSvg'
+import IconSvg, { Icon } from './IconSvg'
 import { ThemeContext } from '../utils/hooks/useTheme'
 
 library.add(faDatabase)
@@ -296,7 +296,7 @@ export default class HasAccess extends React.Component<
       })
   }
 
-  renderIconSvg(icon: string, color: string) {
+  renderIconSvg(icon: Icon, color: string) {
     return (
       <IconSvg
         options={{

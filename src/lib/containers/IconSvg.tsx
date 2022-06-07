@@ -42,6 +42,7 @@ import {
   FolderTwoTone,
   LinkTwoTone,
   ListTwoTone,
+  HistoryTwoTone,
   StorageTwoTone,
 } from '@material-ui/icons'
 
@@ -67,8 +68,73 @@ import Docker from '../assets/mui_components/Docker'
 import AccessManagement from '../assets/mui_components/AccessManagement'
 import { EntityType } from '../utils/synapseTypes/EntityType'
 
+export type Icon =
+  | 'accessOpen'
+  | 'accessClosed'
+  | 'arrowBack'
+  | 'arrowForward'
+  | 'check'
+  | 'clear'
+  | 'cart'
+  | 'code'
+  | 'dashboard'
+  | 'delete'
+  | 'addToCart'
+  | 'addCircleOutline'
+  | 'addCircleTwoTone'
+  | 'reload'
+  | 'team'
+  | 'photoCamera'
+  | 'info'
+  | 'favTwoTone'
+  | 'fav'
+  | 'peopleTwoTone'
+  | 'challengesTwoTone'
+  | 'download'
+  | 'searchOutlined'
+  | 'searchTwoTone'
+  | 'history'
+  | 'time'
+  | 'login'
+  | 'helpOutlined'
+  | 'expandLess'
+  | 'expandMore'
+  | 'rat'
+  | 'chromatin'
+  | 'clinical'
+  | 'contentCopy'
+  | 'data'
+  | 'dataLocked'
+  | 'geneExpression'
+  | 'geneVariants'
+  | 'imaging'
+  | 'lineGraph'
+  | 'kinomics'
+  | 'proteomics'
+  | 'packagableFile'
+  | 'other'
+  | 'wiki'
+  | 'file'
+  | 'folder'
+  | 'link'
+  | 'table'
+  | 'entityview'
+  | 'submissionview'
+  | 'challenge'
+  | 'discussion'
+  | 'dataset'
+  | 'docker'
+  | 'accountCertified'
+  | 'accountRegistered'
+  | 'accountValidated'
+  | 'warningOutlined'
+  | 'removeCircle'
+  | 'replyTwoTone'
+  | 'chatTwoTone'
+  | 'accessManagement'
+
 export type IconSvgOptions = {
-  icon: string
+  icon: Icon
   color?: string // If no color is provided, it should inherit current color
   size?: string
   padding?: 'left' | 'right'
@@ -151,6 +217,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
     case 'searchTwoTone':
       return <SearchTwoTone style={muiSvgStyle}></SearchTwoTone>
+    case 'history':
+      return <HistoryTwoTone style={muiSvgStyle}></HistoryTwoTone>
     case 'time':
       return <WatchLater style={muiSvgStyle}></WatchLater>
     case 'login':
