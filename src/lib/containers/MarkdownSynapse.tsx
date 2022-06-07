@@ -10,6 +10,7 @@ import { ErrorBanner } from './ErrorBanner'
 import { SynapseClientError } from '../utils/SynapseClient'
 import { Button } from 'react-bootstrap'
 import { SynapseContext } from '../utils/SynapseContext'
+import IDUReport from './IDUReport'
 
 const TOC_CLASS = {
   1: 'toc-indent1',
@@ -562,6 +563,8 @@ export default class MarkdownSynapse extends React.Component<
         return this.renderSynapseTOC(originalMarkup)
       case 'badge':
         return this.renderUserBadge(widgetparamsMapped)
+      case 'iduReport':
+        return this.renderIntendedDataUseReport(widgetparamsMapped)
       case 'video':
       case 'vimeo':
       case 'youtube':
@@ -687,6 +690,15 @@ export default class MarkdownSynapse extends React.Component<
         key={JSON.stringify(widgetparamsMapped)}
         size={SynapseConstants.SMALL_USER_CARD}
         alias={widgetparamsMapped.alias}
+      />
+    )
+  }
+
+  public renderIntendedDataUseReport(widgetparamsMapped: any) {
+    return (
+      <IDUReport
+        key={JSON.stringify(widgetparamsMapped)}
+        accessRequirementId={widgetparamsMapped.accessRestrictionId}
       />
     )
   }
