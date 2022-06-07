@@ -17,16 +17,19 @@ import { ACT_TEAM_ID, SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { SynapseSpinner } from './LoadingScreen'
 import UserCard from './UserCard'
+import Typography from '../utils/typography/Typography'
 
 export type AccessRequestSubmissionTableProps = {
-  showSubmitter: boolean
-  showStatus: boolean
-  showRequestors: boolean
+  showSubmitter?: boolean
+  showStatus?: boolean
+  showRequestors?: boolean
   accessorId?: string
   accessRequirementId?: string
   reviewerId?: string
   submissionState?: SubmissionState
   reviewerFilterType?: SubmissionReviewerFilterType
+  arName?: string
+  requesterId?: string
 }
 
 export const AccessRequestSubmissionTable: React.FunctionComponent<
@@ -40,6 +43,8 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
   reviewerId,
   submissionState,
   reviewerFilterType,
+  arName,
+  requesterId,
 }) => {
   const [sort, setSort] = useState<SubmissionSearchSort>({
     field: SubmissionSortField.CREATED_ON,
@@ -65,7 +70,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
     ],
   )
 
-  const { data, hasNextPage, fetchNextPage, isFetching } =
+  const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessSubmissionsInfinite(searchRequest)
 
   const accessSubmissions = data?.pages.flatMap(page => page.results) ?? []
@@ -108,70 +113,84 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
           </tr>
         </thead>
         <tbody>
-          {accessSubmissions.map(item => {
-            return (
-              <tr key={item.id}>
-                <td>
-                  <a
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.id}`}
-                  >
-                    {item.id}
-                  </a>
-                </td>
-                <td>{item.accessRequirementName}</td>
-                {showSubmitter && (
-                  <td>
-                    <UserOrTeamBadge principalId={item.submitterId} />
-                  </td>
-                )}
-                {showStatus && (
-                  <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
-                )}
-                {showRequestors && (
-                  <td>
-                    <UserOrTeamBadge principalId={item.submitterId} />
-                    {item.accessorChanges
-                      .filter(user => item.submitterId !== user.userId)
-                      .map(requestor => (
-                        <li key={requestor.userId}>
-                          <UserCard
-                            size={SMALL_USER_CARD}
-                            ownerId={requestor.userId}
-                            className="requestor"
-                          />
-                        </li>
-                      ))}
-                  </td>
-                )}
-                <td>
-                  {item.accessRequirementReviewerIds.length === 0 ? (
-                    <UserOrTeamBadge principalId={ACT_TEAM_ID} />
-                  ) : (
-                    item.accessRequirementReviewerIds.map(reviewerId => (
-                      <UserOrTeamBadge
-                        key={reviewerId}
-                        principalId={reviewerId}
-                      />
-                    ))
-                  )}
-                </td>
-                <td>{formatDate(moment(item.createdOn))}</td>
-              </tr>
+          {accessSubmissions
+            .filter(
+              ar => arName == null || ar.accessRequirementName.includes(arName),
             )
-          })}
+            .filter(
+              ar =>
+                requesterId == null ||
+                ar.accessorChanges.some(
+                  accessorChange => accessorChange.userId === requesterId,
+                ),
+            )
+            .map(item => {
+              return (
+                <tr key={item.id}>
+                  <td>
+                    <a
+                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.id}`}
+                    >
+                      {item.id}
+                    </a>
+                  </td>
+                  <td>{item.accessRequirementName}</td>
+                  {showSubmitter && (
+                    <td>
+                      <UserOrTeamBadge principalId={item.submitterId} />
+                    </td>
+                  )}
+                  {showStatus && (
+                    <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
+                  )}
+                  {showRequestors && (
+                    <td>
+                      <UserOrTeamBadge principalId={item.submitterId} />
+                      {item.accessorChanges
+                        .filter(user => item.submitterId !== user.userId)
+                        .map(requestor => (
+                          <li key={requestor.userId}>
+                            <UserCard
+                              size={SMALL_USER_CARD}
+                              ownerId={requestor.userId}
+                              className="requestor"
+                            />
+                          </li>
+                        ))}
+                    </td>
+                  )}
+                  <td>
+                    {item.accessRequirementReviewerIds.length === 0 ? (
+                      <UserOrTeamBadge principalId={ACT_TEAM_ID} />
+                    ) : (
+                      item.accessRequirementReviewerIds.map(reviewerId => (
+                        <UserOrTeamBadge
+                          key={reviewerId}
+                          principalId={reviewerId}
+                        />
+                      ))
+                    )}
+                  </td>
+                  <td>{formatDate(moment(item.createdOn))}</td>
+                </tr>
+              )
+            })}
         </tbody>
       </Table>
+      {isLoading && (
+        <div className="SRC-center-text">
+          <SynapseSpinner size={40} />
+        </div>
+      )}
+      {!isLoading && accessSubmissions.length == 0 && (
+        <Typography className="SRC-center-text" variant="body1">
+          No Results
+        </Typography>
+      )}
       {!hasNextPage ? (
-        <></>
-      ) : isFetching ? (
-        <SynapseSpinner size={40} />
+        ''
       ) : (
-        <Button
-          variant="outline"
-          onClick={() => {
-            fetchNextPage()
-          }}
-        >
+        <Button variant="outline" onClick={() => fetchNextPage}>
           Show More
         </Button>
       )}
