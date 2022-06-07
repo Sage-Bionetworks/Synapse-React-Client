@@ -10,7 +10,6 @@ import Playground from './playground/Playground'
 import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
 import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import { SynapseClient } from '../../lib/utils/'
-import { RouteChildrenProps } from 'react-router'
 import { Alert } from 'react-bootstrap'
 import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
 
@@ -170,13 +169,12 @@ export default class App extends React.Component<{}, AppState> {
                 </Link>
               </li>
             </ul>
-            <Route exact={true} path="/" component={Demo} />
-            <Route
-              path="/Playground"
-              component={(props: RouteChildrenProps) => (
-                <Playground {...props} token={token} />
-              )}
-            />
+            <Route exact={true} path="/">
+              <Demo />
+            </Route>
+            <Route path="/Playground">
+              <Playground />
+            </Route>
             <Route
               exact={true}
               path="/drugUploadTool"
