@@ -39,7 +39,6 @@ export const SubmissionInfoCard: React.FunctionComponent<
                 {accessorChange.type}
               </div>
             ))}
-          <hr />
         </p>
       )}
     </>

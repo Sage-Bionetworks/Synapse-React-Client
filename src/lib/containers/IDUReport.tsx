@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { useGetApprovedSubmissionInfoInfinite } from '../utils/hooks/SynapseAPI/useGetApprovedSubmissionInfo'
 import { SubmissionInfo } from '../utils/synapseTypes/SubmissionInfo'
@@ -16,7 +15,6 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
   props: IDUReportProps,
 ) => {
   const { accessRequirementId } = props
-  const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
 
@@ -27,9 +25,8 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    isError,
   } = useGetApprovedSubmissionInfoInfinite(accessRequirementId, {
-      useErrorBoundary: true
+    useErrorBoundary: true,
   })
   useEffect(() => {
     if (
@@ -51,8 +48,13 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
         <div className="IDUReport">
           {allRows.map((item: SubmissionInfo) => {
             if (item) {
-              return <SubmissionInfoCard info={item} />
-            } else return <React.Fragment key={'...'} />
+              return (
+                <React.Fragment key={JSON.stringify(item)}>
+                  <SubmissionInfoCard info={item} />
+                  <hr />
+                </React.Fragment>
+              )
+            } else return <></>
           })}
           {/* To trigger loading the next page */}
           <div ref={ref} />
