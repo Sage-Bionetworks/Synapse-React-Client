@@ -23,7 +23,12 @@
   "rules": {
     "react/prop-types": [0],
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        "additionalHooks": "useDebouncedEffect"
+      }
+    ],
     "no-extra-semi": "off",
     "prefer-const": "warn",
     "jest/expect-expect": "off",
