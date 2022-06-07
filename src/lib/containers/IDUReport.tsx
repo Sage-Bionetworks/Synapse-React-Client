@@ -47,14 +47,12 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
       {allRows.length > 0 && (
         <div className="IDUReport">
           {allRows.map((item: SubmissionInfo) => {
-            if (item) {
-              return (
-                <React.Fragment key={JSON.stringify(item)}>
-                  <SubmissionInfoCard info={item} />
-                  <hr />
-                </React.Fragment>
-              )
-            } else return <></>
+            return (
+              <React.Fragment key={JSON.stringify(item)}>
+                <SubmissionInfoCard info={item} />
+                <hr />
+              </React.Fragment>
+            )
           })}
           {/* To trigger loading the next page */}
           <div ref={ref} />
