@@ -18,7 +18,6 @@ import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWra
 import SynapseFormSubmissionsGrid from './containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
 import CardContainerLogic from './containers/CardContainerLogic'
 import ModalDownload from './containers/ModalDownload'
-import ShowDownload from './containers/download_list/ShowDownload'
 import DownloadListTable from './containers/download_list/DownloadListTable'
 import Goals from './containers/home_page/goals/Goals'
 import Programs from './containers/home_page/programs/Programs'
@@ -89,7 +88,6 @@ const SynapseComponents = {
   HasAccess,
   DownloadListTable,
   ThemesPlot,
-  ShowDownload,
   QueryWrapperPlotNav,
   ExternalFileHandleLink,
   Programs,

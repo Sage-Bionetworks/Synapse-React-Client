@@ -1,104 +1,81 @@
 import * as React from 'react'
-import { Link, Route } from 'react-router-dom'
+import { Link, Route, Switch } from 'react-router-dom'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
-import ShowDownloadDemo from './ShowDownloadDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
 import DownloadListTable from '../../../lib/containers/download_list/DownloadListTable'
 import { WidgetDemo } from './WidgetDemo'
-import { RouteChildrenProps } from 'react-router'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
 import Resources from '../../../lib/containers/home_page/resources/Resources'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from '../../../lib/containers/ExternalFileHandleLink'
 import ColorPaletteInspector from './ColorPaletteInspector'
+import { useRouteMatch } from 'react-router'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
  */
-const App = ({
-  match,
-}: {
-  match?: RouteChildrenProps['match']
-  token: string
-}) => {
-  if (!match) {
-    return <div />
-  }
+const App = () => {
+  const { url } = useRouteMatch()
   return (
     <div>
       <h2>Links to components under development </h2>
       <ul>
         <li>
-          <Link to={`${match.url}/ColorPalette`}>Inspect Color Palette</Link>
+          <Link to={`${url}/ColorPalette`}>Inspect Color Palette</Link>
         </li>
         <li>
-          <Link to={`${match.url}/CardContainerLogicDemo`}>
+          <Link to={`${url}/CardContainerLogicDemo`}>
             CardContainerLogicDemo
           </Link>
         </li>
         <li>
-          <Link to={`${match.url}/FormServicesIntegrationDemo`}>
+          <Link to={`${url}/FormServicesIntegrationDemo`}>
             FormServicesIntegrationDemo
           </Link>
         </li>
         <li>
-          <Link to={`${match.url}/ModalDownloadDemo`}>ModalDownload</Link>
+          <Link to={`${url}/ModalDownloadDemo`}>ModalDownload</Link>
         </li>
         <li>
-          <Link to={`${match.url}/DownloadListTableDemo`}>
-            DownloadListTableDemo
-          </Link>
+          <Link to={`${url}/DownloadListTableDemo`}>DownloadListTableDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/WidgetDemo`}>WidgetDemo</Link>
+          <Link to={`${url}/WidgetDemo`}>WidgetDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/AccessRequirementDemo`}>
-            AccessRequirementDemo
-          </Link>
+          <Link to={`${url}/AccessRequirementDemo`}>AccessRequirementDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/TemplateComponentDemo`}>
-            TemplateComponentDemo
-          </Link>
+          <Link to={`${url}/TemplateComponentDemo`}>TemplateComponentDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/ShowDownloadDemo`}>ShowDownloadDemo</Link>
+          <Link to={`${url}/SynapsePlotDemo`}>SynapsePlotDemo</Link>
         </li>
         <li>
-          <Link to={`${match.url}/SynapsePlotDemo`}>SynapsePlotDemo</Link>
-        </li>
-        <li>
-          <Link to={`${match.url}/ExternalFileHandleLink`}>
+          <Link to={`${url}/ExternalFileHandleLink`}>
             ExternalFileHandleLink
           </Link>
         </li>
       </ul>
 
-      <Route
-        exact={true}
-        path={`${match.url}/CardContainerLogicDemo`}
-        component={CardContainerLogicDemo}
-      />
+      <Switch>
+        <Route exact={true} path={`${url}/CardContainerLogicDemo`}>
+          <CardContainerLogicDemo />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/FormServicesIntegrationDemo`}
-        component={() => <FormServicesIntegrationDemo />}
-      />
-      <Route
-        exact={true}
-        path={`${match.url}/ModalDownloadDemo`}
-        component={() => <ModalDownloadDemo />}
-      />
+        <Route exact={true} path={`${url}/FormServicesIntegrationDemo`}>
+          <FormServicesIntegrationDemo />
+        </Route>
+        <Route
+          exact={true}
+          path={`${url}/ModalDownloadDemo`}
+          component={() => <ModalDownloadDemo />}
+        ></Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/DownloadListTableDemo`}
-        component={() => (
+        <Route exact={true} path={`${url}/DownloadListTableDemo`}>
           <div className="container download-list-demo">
             <div className="col-xs-10">
               <DownloadListTable
@@ -108,63 +85,38 @@ const App = ({
               />
             </div>
           </div>
-        )}
-      />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/WidgetDemo`}
-        component={() => <WidgetDemo />}
-      />
+        <Route exact={true} path={`${url}/WidgetDemo`}>
+          <WidgetDemo />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/AccessRequirementDemo`}
-        component={() => <AccessRequirementDemo />}
-      />
+        <Route exact={true} path={`${url}/AccessRequirementDemo`}>
+          <AccessRequirementDemo />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/TemplateComponentDemo`}
-        component={() => <TemplateComponentDemo />}
-      />
+        <Route exact={true} path={`${url}/TemplateComponentDemo`}>
+          <TemplateComponentDemo />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/ShowDownloadDemo`}
-        component={() => <ShowDownloadDemo />}
-      />
+        <Route exact={true} path={`${url}/SynapsePlotDemo`}>
+          <SynapsePlotDemo />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/SynapsePlotDemo`}
-        component={() => <SynapsePlotDemo />}
-      />
-
-      <Route
-        exact={true}
-        path={`${match.url}/ResourcesDemo`}
-        component={() => (
+        <Route exact={true} path={`${url}/ResourcesDemo`}>
           <div className="container">
-            {' '}
-            <Resources entityId="syn22311127" />{' '}
+            <Resources entityId="syn22311127" />
           </div>
-        )}
-      />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/ExternalFileHandleLink`}
-        component={() => <ExternalFileHandleLink synId={'syn22276050'} />}
-      />
+        <Route exact={true} path={`${url}/ExternalFileHandleLink`}>
+          <ExternalFileHandleLink synId={'syn22276050'} />
+        </Route>
 
-      <Route
-        exact={true}
-        path={`${match.url}/ColorPalette`}
-        component={() => <ColorPaletteInspector />}
-      />
-
-      <Route exact={true} path={match.path} component={() => <div />} />
+        <Route exact={true} path={`${url}/ColorPalette`}>
+          <ColorPaletteInspector />
+        </Route>
+      </Switch>
     </div>
   )
 }
