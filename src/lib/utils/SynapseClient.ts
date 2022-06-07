@@ -3127,7 +3127,7 @@ export const cancelDataAccessRequest = (
 // Fetch a submission by its id. If the user is a not part of the ACT they must be validated and assigned as reviewers of the AR submissions in order to fetch the submission.
 export const getSubmissionById = (
   submissionId: string | number,
-  accessToken: string,
+  accessToken?: string,
 ) => {
   return doGet<DataAccessSubmission>(
     `/repo/v1/dataAccessSubmission/${submissionId}`,

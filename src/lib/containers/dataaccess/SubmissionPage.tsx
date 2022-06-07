@@ -273,7 +273,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           {submission ? (
             submission.accessorChanges.map(accessorChange => (
               <React.Fragment key={accessorChange.userId}>
-                <Typography className="Key" variant="smallText1">
+                <Typography className="Key DataAccessor" variant="smallText1">
                   <span style={{ whiteSpace: 'nowrap' }}>
                     <UserCard
                       key={accessorChange.userId}
@@ -282,7 +282,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                     />
                   </span>
                 </Typography>
-                <Typography className="Value" variant="smallText1">
+                <Typography className="Value DataAccessor" variant="smallText1">
                   {upperFirst(
                     toLower(
                       accessorChange.type.substring(

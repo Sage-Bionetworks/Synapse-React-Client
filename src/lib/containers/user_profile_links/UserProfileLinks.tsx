@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useGetUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
 import Typography from '../../utils/typography/Typography'
 import { SynapseErrorBoundary } from '../ErrorBanner'
-import IconSvg from '../IconSvg'
+import IconSvg, { Icon } from '../IconSvg'
 import UserChallenges from './UserChallenges'
 import UserProjects from './UserProjects'
 import UserTeams from './UserTeams'
@@ -24,7 +24,7 @@ function UserProfileLinks({ userId }: UserProfileLinksProps) {
   )
   const { data: userProfile } = useGetUserProfile(userId)
 
-  function getIconName(currentTab: UserProfileLinksTabs): string {
+  function getIconName(currentTab: UserProfileLinksTabs): Icon {
     switch (currentTab) {
       case UserProfileLinksTabs.PROJECTS:
         return 'dashboard'

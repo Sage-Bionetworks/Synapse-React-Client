@@ -1,3 +1,5 @@
 ```jsx
-return <ReviewerDashboard />
+return (
+  <ReviewerDashboard routerBaseName="#!/Other Components/ReviewerDashboard" />
+)
 ```
