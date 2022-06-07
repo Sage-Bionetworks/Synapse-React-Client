@@ -52,7 +52,7 @@ export const IDUReport: React.FunctionComponent<IDUReportProps> = (
           {allRows.map((item: SubmissionInfo) => {
             if (item) {
               return <SubmissionInfoCard info={item} />
-            } else return false
+            } else return <React.Fragment key={'...'} />
           })}
           {/* To trigger loading the next page */}
           <div ref={ref} />
