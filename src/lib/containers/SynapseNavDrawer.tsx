@@ -1,6 +1,6 @@
 import { Drawer, List, ListItem } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
-import IconSvg from './IconSvg'
+import IconSvg, { Icon } from './IconSvg'
 import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient, SynapseConstants } from '../utils'
@@ -19,7 +19,7 @@ export type SynapseNavDrawerProps = {
 
 type MenuItemParams = {
   tooltip: string
-  iconName?: string
+  iconName?: Icon
   onClickOpenNavMenu?: NavItem
   onClickGoToUrl?: string
   additionalChildren?: JSX.Element
