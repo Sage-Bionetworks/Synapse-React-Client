@@ -71,12 +71,13 @@ describe('IDUReport tests', () => {
     })
   })
   it('loads more when inView', async () => {
-    mockAllIsIntersecting(true)
-
     renderComponent()
 
     const submissionInfo1 = await screen.findAllByText('Prof. Farnsworth')
     expect(submissionInfo1).toHaveLength(1)
+    
+    mockAllIsIntersecting(true)
+    
     const submissionInfo2 = await screen.findAllByText('Wong')
     expect(submissionInfo2).toHaveLength(1)
   })
