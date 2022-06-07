@@ -22,7 +22,7 @@ import Typography from '../utils/typography/Typography'
 export type AccessRequestSubmissionTableProps = {
   showSubmitter?: boolean
   showStatus?: boolean
-  showRequestors?: boolean
+  showRequesters?: boolean
   accessorId?: string
   accessRequirementId?: string
   reviewerId?: string
@@ -37,7 +37,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
 > = ({
   showSubmitter,
   showStatus,
-  showRequestors,
+  showRequesters,
   accessorId,
   accessRequirementId,
   reviewerId,
@@ -73,7 +73,24 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessSubmissionsInfinite(searchRequest)
 
-  const accessSubmissions = data?.pages.flatMap(page => page.results) ?? []
+  const accessSubmissions =
+    data?.pages
+      .flatMap(page => page.results)
+      .filter(
+        ar =>
+          arName == null ||
+          ar.accessRequirementName
+            .toLocaleLowerCase()
+            .includes(arName.toLocaleLowerCase()),
+      )
+      .filter(
+        ar =>
+          requesterId == null ||
+          ar.accessorChanges.some(
+            accessorChange => accessorChange.userId === requesterId,
+          ),
+      ) ?? []
+
   const onSort = (field: SubmissionSortField) => {
     if (sort.field === field) {
       setSort({ field, direction: sort.direction === 'DESC' ? 'ASC' : 'DESC' })
@@ -91,7 +108,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
             <th>Access Requirement Name</th>
             {showSubmitter && <th>Submitter</th>}
             {showStatus && <th>Status</th>}
-            {showRequestors && <th>Requestors</th>}
+            {showRequesters && <th>Requesters</th>}
             <th>Reviewer(s)</th>
             <th>
               Created Date
@@ -113,68 +130,57 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
           </tr>
         </thead>
         <tbody>
-          {accessSubmissions
-            .filter(
-              ar => arName == null || ar.accessRequirementName.includes(arName),
-            )
-            .filter(
-              ar =>
-                requesterId == null ||
-                ar.accessorChanges.some(
-                  accessorChange => accessorChange.userId === requesterId,
-                ),
-            )
-            .map(item => {
-              return (
-                <tr key={item.id}>
+          {accessSubmissions.map(item => {
+            return (
+              <tr key={item.id}>
+                <td>
+                  <a
+                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.id}`}
+                  >
+                    {item.id}
+                  </a>
+                </td>
+                <td>{item.accessRequirementName}</td>
+                {showSubmitter && (
                   <td>
-                    <a
-                      href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.id}`}
-                    >
-                      {item.id}
-                    </a>
+                    <UserOrTeamBadge principalId={item.submitterId} />
                   </td>
-                  <td>{item.accessRequirementName}</td>
-                  {showSubmitter && (
-                    <td>
-                      <UserOrTeamBadge principalId={item.submitterId} />
-                    </td>
-                  )}
-                  {showStatus && (
-                    <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
-                  )}
-                  {showRequestors && (
-                    <td>
-                      <UserOrTeamBadge principalId={item.submitterId} />
-                      {item.accessorChanges
-                        .filter(user => item.submitterId !== user.userId)
-                        .map(requestor => (
-                          <li key={requestor.userId}>
-                            <UserCard
-                              size={SMALL_USER_CARD}
-                              ownerId={requestor.userId}
-                              className="requestor"
-                            />
-                          </li>
-                        ))}
-                    </td>
-                  )}
+                )}
+                {showStatus && (
+                  <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
+                )}
+                {showRequesters && (
                   <td>
-                    {item.accessRequirementReviewerIds.length === 0 ? (
-                      <UserOrTeamBadge principalId={ACT_TEAM_ID} />
-                    ) : (
-                      item.accessRequirementReviewerIds.map(reviewerId => (
-                        <UserOrTeamBadge
-                          key={reviewerId}
-                          principalId={reviewerId}
-                        />
-                      ))
-                    )}
+                    <UserOrTeamBadge principalId={item.submitterId} />
+                    {item.accessorChanges
+                      .filter(user => item.submitterId !== user.userId)
+                      .map(requester => (
+                        <li key={requester.userId}>
+                          <UserCard
+                            size={SMALL_USER_CARD}
+                            ownerId={requester.userId}
+                            className="requester"
+                          />
+                        </li>
+                      ))}
                   </td>
-                  <td>{formatDate(moment(item.createdOn))}</td>
-                </tr>
-              )
-            })}
+                )}
+                <td>
+                  {item.accessRequirementReviewerIds.length === 0 ? (
+                    <UserOrTeamBadge principalId={ACT_TEAM_ID} />
+                  ) : (
+                    item.accessRequirementReviewerIds.map(reviewerId => (
+                      <UserOrTeamBadge
+                        key={reviewerId}
+                        principalId={reviewerId}
+                      />
+                    ))
+                  )}
+                </td>
+                <td>{formatDate(moment(item.createdOn))}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </Table>
       {isLoading && (

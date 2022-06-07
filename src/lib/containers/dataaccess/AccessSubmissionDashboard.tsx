@@ -1,5 +1,7 @@
-import React, { useCallback, useState } from 'react'
+import { omitBy } from 'lodash-es'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FormControl, FormLabel, InputGroup } from 'react-bootstrap'
+import { useHistory, useLocation } from 'react-router'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import Typography from '../../utils/typography/Typography'
 import {
@@ -21,9 +23,21 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
       arName,
       requesterId,
       reviewerId,
-      showRequestors: true,
+      showRequesters: true,
     })
 
+  const location = useLocation()
+  const history = useHistory()
+  const initialParams = new URLSearchParams(location.search as string)
+
+  useEffect(() => {
+    const initializeFromSearchParam = () => {
+      setArName(initialParams.get('arName') ?? undefined)
+      setRequesterId(initialParams.get('requesterId') ?? undefined)
+      setReviewerId(initialParams.get('reviewerId') ?? undefined)
+    }
+    initializeFromSearchParam()
+  }, [])
   const onRequesterChange = useCallback((selected: string | null) => {
     if (selected) {
       setRequesterId(selected)
@@ -42,12 +56,35 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
 
   useDebouncedEffect(
     () => {
+      const updateQueryParams = (
+        arName: string | undefined,
+        requesterId: string | undefined,
+        reviewerId: string | undefined,
+      ) => {
+        const params = new URLSearchParams(
+          omitBy(
+            {
+              arName,
+              requesterId,
+              reviewerId,
+            },
+            item => item === undefined || item === '',
+          ) as Record<string, string>,
+        )
+        console.log(params)
+        history.replace({
+          pathname: location.pathname,
+          search: params.toString(),
+        })
+      }
+
       setTableProps({
         arName,
         requesterId,
         reviewerId,
-        showRequestors: true,
+        showRequesters: true,
       })
+      updateQueryParams(arName, requesterId, reviewerId)
     },
     [arName, requesterId, reviewerId],
     500,
