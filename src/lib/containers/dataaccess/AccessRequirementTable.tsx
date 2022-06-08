@@ -25,9 +25,7 @@ export type AccessRequirementTableProps = {
   onCreateNewAccessRequirementClicked?: () => void
 }
 
-export default function AccessRequirementTable(
-  props: AccessRequirementTableProps,
-) {
+export function AccessRequirementTable(props: AccessRequirementTableProps) {
   const {
     nameContains,
     relatedProjectId,

@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event'
 import moment from 'moment'
 import React from 'react'
 import { QueryClient } from 'react-query'
-import AccessRequirementTable, {
+import {
+  AccessRequirementTable,
   AccessRequirementTableProps,
 } from '../../../../lib/containers/dataaccess/AccessRequirementTable'
 import { createWrapperAndQueryClient } from '../../../../lib/testutils/TestingLibraryUtils'

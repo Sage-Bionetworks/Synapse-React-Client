@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import {
   FAVORITES,
+  USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
   USER_ID_BUNDLE,
   USER_PROFILE,
@@ -101,6 +102,24 @@ export const userProfileHandlers = [
       const responsePage: UserGroupHeaderResponsePage = {
         children: mockUserData
           .filter(userData => ids.includes(userData.id.toString()))
+          .map(userData => userData.userGroupHeader),
+      }
+      return res(ctx.status(200), ctx.json(responsePage))
+    },
+  ),
+
+  /**
+   * Get userGroupHeaders by prefix
+   */
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_GROUP_HEADERS}`,
+    async (req, res, ctx) => {
+      const prefix = req.url.searchParams.get('prefix')
+      const responsePage: UserGroupHeaderResponsePage = {
+        children: mockUserData
+          .filter(userData =>
+            userData.userGroupHeader.userName.startsWith(prefix ?? ''),
+          )
           .map(userData => userData.userGroupHeader),
       }
       return res(ctx.status(200), ctx.json(responsePage))
