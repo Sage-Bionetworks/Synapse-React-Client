@@ -38,7 +38,7 @@
       grid-row: 1 / span 1;
       justify-self: end;
       padding-bottom: 6px;
-      color: #878E95;
+      color: map.get(SRC.$colors, 'gray-700');
     }
     @media (min-width: 992px) {
       grid-template-rows: auto;
