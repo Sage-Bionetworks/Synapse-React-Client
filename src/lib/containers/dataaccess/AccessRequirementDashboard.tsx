@@ -20,6 +20,9 @@ export type AccessRequirementDashboardProps = {
 export function AccessRequirementDashboard(
   props: AccessRequirementDashboardProps,
 ) {
+  // Amount of time to wait after an input value changes before sending a new request
+  const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
+
   const { onCreateNewAccessRequirementClicked } = props
 
   const location = useLocation()
@@ -39,7 +42,7 @@ export function AccessRequirementDashboard(
       setReviewerId(initialParams.get('reviewerId') ?? undefined)
     }
     initializeFromSearchParams()
-  }, [])
+  }, [location.search])
 
   const [showEntityFinder, setShowEntityFinder] = useState(false)
 
@@ -62,16 +65,19 @@ export function AccessRequirementDashboard(
         relatedProjectId: string | undefined,
         reviewerId: string | undefined,
       ) {
-        const paramsObject = new URLSearchParams(
-          omitBy(
-            {
-              nameContains,
-              relatedProjectId,
-              reviewerId,
-            },
-            item => item === undefined || item === '',
-          ) as Record<string, string>,
-        )
+        // Don't include undefined/empty parameters
+        const params = omitBy(
+          {
+            nameContains,
+            relatedProjectId,
+            reviewerId,
+          },
+          item => item === undefined || item === '',
+        ) as Record<string, string>
+
+        // Add the new params to the URL
+        // Replace history because intuitively, the user has not navigated to a new page
+        const paramsObject = new URLSearchParams(params)
         history.replace({
           pathname: location.pathname,
           search: paramsObject.toString(),
@@ -94,7 +100,7 @@ export function AccessRequirementDashboard(
       history,
       location,
     ],
-    500,
+    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
   const onReviewerChange = useCallback((selected: string | null) => {
