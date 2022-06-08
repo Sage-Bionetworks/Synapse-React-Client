@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/Synapse-React-Client/build/bundle.19fa9dbe.js",
-    "main.css": "/Synapse-React-Client/static/css/main.47f03b96.css",
+    "main.js": "/Synapse-React-Client/build/bundle.eec5211f.js",
+    "main.css": "/Synapse-React-Client/static/css/main.7cd49131.css",
     "static/media/json-form-tool-no-submissions.svg": "/Synapse-React-Client/static/media/json-form-tool-no-submissions.fec08af7d31dc589a0aae87aeb81f6c5.svg",
     "static/media/Data2.svg": "/Synapse-React-Client/static/media/Data2.e6c377472cce05af7f16f64c513a3e4c.svg",
     "static/media/maintenance.svg": "/Synapse-React-Client/static/media/maintenance.e4904e61c027f1344d0815e0b0412c32.svg",
@@ -29,7 +29,7 @@
     "static/media/chart2.svg": "/Synapse-React-Client/static/media/chart2.e4b5d61ed9ee4e10a0d6aeecede76d5e.svg"
   },
   "entrypoints": [
-    "build/bundle.19fa9dbe.js",
-    "static/css/main.47f03b96.css"
+    "build/bundle.eec5211f.js",
+    "static/css/main.7cd49131.css"
   ]
 }
