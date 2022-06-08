@@ -52,21 +52,19 @@ export const EntityLink = (props: EntityLinkProps) => {
 
     if (link) {
       return (
-        <p className={className}>
-          <a
-            className={className}
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${
-              versionNumber ? `.${versionNumber}` : ''
-            }`}
-          >
-            {showIcon && (
-              <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
-            )}
-            {entity[displayTextField]}
-          </a>
-        </p>
+        <a
+          className={className}
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id!}${
+            versionNumber ? `.${versionNumber}` : ''
+          }`}
+        >
+          {showIcon && (
+            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
+          )}
+          {entity[displayTextField]}
+        </a>
       )
     } else {
       return (
