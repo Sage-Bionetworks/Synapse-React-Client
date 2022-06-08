@@ -157,7 +157,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         />
         <ButtonFromConfig
           config={primaryButtonConfig}
-          variant="primary"
+          variant="sds-primary"
           className="primaryButton"
         />
         {onClose && (
