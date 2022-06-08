@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { Button, Alert, AlertProps } from 'react-bootstrap'
 import {
-  InfoOutlined,
-  ErrorOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
+  InfoTwoTone,
+  ErrorTwoTone,
+  CheckCircleTwoTone,
+  HighlightOffTwoTone,
   Clear,
 } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
@@ -41,13 +41,13 @@ export interface FullWidthAlertProps extends AlertProps {
 function getIcon(variant?: string) {
   switch (variant) {
     case 'warning':
-      return <WarningOutlined className="text-warning" fontSize={'large'} />
+      return <ErrorTwoTone className="text-warning" fontSize={'large'} />
     case 'info':
-      return <InfoOutlined className="text-info" fontSize={'large'} />
+      return <InfoTwoTone className="text-info" fontSize={'large'} />
     case 'danger':
-      return <ErrorOutlined className="text-danger" fontSize={'large'} />
+      return <HighlightOffTwoTone className="text-danger" fontSize={'large'} />
     case 'success':
-      return <CheckCircleOutlined className="text-success" fontSize={'large'} />
+      return <CheckCircleTwoTone className="text-success" fontSize={'large'} />
     default:
       return <></>
   }
@@ -55,7 +55,7 @@ function getIcon(variant?: string) {
 
 function ButtonFromConfig(props: {
   config?: AlertButtonConfig
-  className: string
+  className?: string
   variant: string
 }) {
   const { config, variant, className } = props
@@ -150,16 +150,8 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           <Typography variant="headline3">{title}</Typography>
           <Typography variant="body1">{description}</Typography>
         </span>
-        <ButtonFromConfig
-          config={secondaryButtonConfig}
-          variant="tertiary"
-          className="secondaryButton"
-        />
-        <ButtonFromConfig
-          config={primaryButtonConfig}
-          variant="secondary"
-          className="primaryButton"
-        />
+        <ButtonFromConfig config={secondaryButtonConfig} variant="tertiary" />
+        <ButtonFromConfig config={primaryButtonConfig} variant="sds-primary" />
         {onClose && (
           <button className="closeAlert" onClick={onClose}>
             <Clear fontSize={'large'} />
