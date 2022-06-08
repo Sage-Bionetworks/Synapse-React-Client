@@ -15,8 +15,8 @@ const KNOWN_SYNAPSE_ORG_URLS = [
   'tst.synapse.org',
   'portal-dev.dev.sagebase.org',
   '127.0.0.1',
-  'localhost',
 ]
+
 export const getSynapsePortalEndpoint = (hostname: string): string => {
   return KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase())
     ? '/'

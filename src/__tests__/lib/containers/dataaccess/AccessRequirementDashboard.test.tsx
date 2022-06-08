@@ -116,6 +116,7 @@ describe('AccessRequirementDashboard tests', () => {
   it('Updates the URL search parameters when updating reviewerId', async () => {
     const { history } = renderComponent()
     const reviewerInput = (await screen.findAllByRole('textbox'))[2]
+    userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
     selectEvent.select(reviewerInput, '@' + MOCK_USER_NAME)
 
     await waitFor(() =>
