@@ -1,5 +1,5 @@
 @use '../abstracts/variables' as SRC;
-@use 'sass:color';
+@use 'sass:map';
 
 .FullWidthAlert[role='alert'] {
   &.global {

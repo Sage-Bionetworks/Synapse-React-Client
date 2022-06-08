@@ -55,7 +55,7 @@ function getIcon(variant?: string) {
 
 function ButtonFromConfig(props: {
   config?: AlertButtonConfig
-  className: string
+  className?: string
   variant: string
 }) {
   const { config, variant, className } = props
@@ -150,16 +150,8 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           <Typography variant="headline3">{title}</Typography>
           <Typography variant="body1">{description}</Typography>
         </span>
-        <ButtonFromConfig
-          config={secondaryButtonConfig}
-          variant="tertiary"
-          className="secondaryButton"
-        />
-        <ButtonFromConfig
-          config={primaryButtonConfig}
-          variant="sds-primary"
-          className="primaryButton"
-        />
+        <ButtonFromConfig config={secondaryButtonConfig} variant="tertiary" />
+        <ButtonFromConfig config={primaryButtonConfig} variant="sds-primary" />
         {onClose && (
           <button className="closeAlert" onClick={onClose}>
             <Clear fontSize={'large'} />
