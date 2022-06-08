@@ -98,13 +98,15 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     const synId = `syn${rowId.toString()}`
     if (Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, synId)) {
       return (
-        <EntityLink
-          entity={mapEntityIdToHeader[synId]}
-          versionNumber={rowVersionNumber}
-          className={`${isBold}`}
-          showIcon={false}
-          displayTextField={columnName}
-        />
+        <p>
+          <EntityLink
+            entity={mapEntityIdToHeader[synId]}
+            versionNumber={rowVersionNumber}
+            className={`${isBold}`}
+            showIcon={false}
+            displayTextField={columnName}
+          />
+        </p>
       )
     }
   }
@@ -115,11 +117,13 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         Object.prototype.hasOwnProperty.call(mapEntityIdToHeader, columnValue)
       ) {
         return (
-          <EntityLink
-            entity={mapEntityIdToHeader[columnValue]}
-            className={`${isBold}`}
-            displayTextField={'name'}
-          />
+          <p>
+            <EntityLink
+              entity={mapEntityIdToHeader[columnValue]}
+              className={`${isBold}`}
+              displayTextField={'name'}
+            />
+          </p>
         )
       }
       break

@@ -1,5 +1,14 @@
 @use '../abstracts/variables' as SRC;
-@use 'sass:color';
+@use 'sass:map';
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+  -o-border-radius: $radius;
+  -khtml-border-radius: $radius;
+}
 
 .FullWidthAlert[role='alert'] {
   &.global {
@@ -11,6 +20,45 @@
   }
   padding: 14px;
   z-index: 500;
+  
+  // Set up default FullWidthAlert styles for all portals
+  color: #323131;
+  @include border-radius(0px);
+  box-shadow: none;
+  margin: 10px 0px;
+  border: none;
+  .alert-link {
+    color: inherit;
+  }
+  &.alert-info {
+    background: #d9ebf2;
+    border-left: 10px solid #017FA5;
+    .iconBackground {
+      color: #017FA5;
+    }
+  }
+  &.alert-danger {
+    background: #f7e0dc;
+    border-left: 10px solid #C13415;
+    .iconBackground {
+      color: #C13415;
+    }
+  }
+  &.alert-warning {
+    background: #f8f1d9;
+    border-left: 10px solid #CC9F00;
+    .iconBackground {
+      color: #CC9F00;
+    }
+  }
+  &.alert-success {
+    background: #e0f1e0;
+    border-left: 10px solid #32A330;
+    .iconBackground {
+      color: #32A330;
+    }
+  }
+  
   .gridContainer {
     display: grid;
     grid-template-columns: 50px auto 150px 200px;
@@ -38,6 +86,7 @@
       grid-row: 1 / span 1;
       justify-self: end;
       padding-bottom: 6px;
+      color: map.get(SRC.$colors, 'gray-700');
     }
     @media (min-width: 992px) {
       grid-template-rows: auto;

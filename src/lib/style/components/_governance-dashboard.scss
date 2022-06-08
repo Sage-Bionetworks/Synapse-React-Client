@@ -25,6 +25,7 @@
     font-style: italic;
     color: map.get(SRC.$colors, 'gray-700') !important;
   }
+  .InlineLabel,
   .expired {
     color: map.get(SRC.$colors, 'gray-700');
   }
