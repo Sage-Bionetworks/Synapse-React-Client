@@ -1,8 +1,7 @@
 import { omitBy } from 'lodash-es'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, FormControl, FormLabel, InputGroup } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { EntityType } from '../../utils/synapseTypes'
 import { EntityFinderModal } from '../entity_finder/EntityFinderModal'
@@ -153,7 +152,7 @@ export function AccessRequirementDashboard(
         </div>
         <div>
           <FormLabel htmlFor="project-id-filter">Filter by Project</FormLabel>
-          <div style={{ display: 'flex', gap: '5px' }}>
+          <div className="ProjectIdInputGroup">
             <FormControl
               id="project-id-filter"
               type="text"
@@ -165,9 +164,6 @@ export function AccessRequirementDashboard(
                   setRelatedProjectId(undefined)
                 } else {
                   setRelatedProjectId(newValue)
-                  if (!newValue.match(SYNAPSE_ENTITY_ID_REGEX)) {
-                    console.log('not a syn id')
-                  }
                 }
               }}
             />

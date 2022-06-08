@@ -37,14 +37,16 @@
 .AccessRequirementDashboard {
   .InputPanel {
     display: grid;
-    grid-template-columns: 40% 25% auto;
+    grid-template-columns: auto 265px auto;
     gap: 25px;
-    > * {
-      flex-grow: 1;
-    }
 
     input {
       margin-bottom: 0;
+    }
+
+    .ProjectIdInputGroup {
+      display: flex;
+      gap: 5px;
     }
 
     .styled-svg-wrapper {

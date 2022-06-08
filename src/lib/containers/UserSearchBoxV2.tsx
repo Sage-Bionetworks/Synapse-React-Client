@@ -5,7 +5,6 @@ import AsyncSelect from 'react-select/async'
 import { SelectComponents } from 'react-select/src/components'
 import { SynapseClient } from '../utils'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
-import useTraceUpdate from '../utils/hooks/useTraceUpdate'
 import { UserGroupHeader } from '../utils/synapseTypes'
 import { TYPE_FILTER } from '../utils/synapseTypes/UserGroupHeader'
 import UserOrTeamBadge from './UserOrTeamBadge'
@@ -49,11 +48,24 @@ const customSelectComponents: Partial<
       />
     )
   },
+  SingleValue: props => {
+    const { data } = props
+    return (
+      <div {...props}>
+        <UserOrTeamBadge
+          userGroupHeader={data.header}
+          disableHref={true}
+          showFullName={true}
+        />
+      </div>
+    )
+  },
   Option: props => {
     const { data, selectOption } = props
     return (
       <div
         {...props}
+        key={data.id}
         onClick={() => selectOption(data)}
         style={{ padding: '5px 10px' }}
       >
@@ -76,15 +88,6 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     typeFilter,
     placeholder,
   } = props
-
-  useTraceUpdate({
-    htmlId,
-    defaultValue,
-    onChange,
-    filterPredicate,
-    typeFilter,
-    placeholder,
-  })
 
   const [defaultUserGroupHeader = undefined] =
     useGetInfoFromIds<UserGroupHeader>({
@@ -122,21 +125,28 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
   return (
     <AsyncSelect
       className="bootstrap-4-backport"
-      defaultInputValue={
-        defaultValue ? defaultUserGroupHeader!.userName : undefined
+      defaultValue={
+        defaultValue
+          ? {
+              id: defaultValue,
+              value: defaultValue,
+              label: defaultUserGroupHeader!.userName,
+              header: defaultUserGroupHeader!,
+            }
+          : undefined
       }
-      // defaultOptions={
-      //   defaultValue
-      //     ? [
-      //         {
-      //           id: defaultUserGroupHeader!.ownerId.toString(),
-      //           value: defaultUserGroupHeader!.ownerId.toString(),
-      //           label: defaultUserGroupHeader!.userName,
-      //           header: defaultUserGroupHeader!,
-      //         },
-      //       ]
-      //     : true
-      // }
+      defaultOptions={
+        defaultValue
+          ? [
+              {
+                id: defaultValue,
+                value: defaultValue,
+                label: defaultUserGroupHeader!.userName,
+                header: defaultUserGroupHeader!,
+              },
+            ]
+          : false
+      }
       id={htmlId}
       cacheOptions
       isClearable
