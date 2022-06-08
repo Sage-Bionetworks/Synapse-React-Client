@@ -28,16 +28,18 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
 
   const location = useLocation()
   const history = useHistory()
-  const initialParams = new URLSearchParams(location.search as string)
+  const INPUT_CHANGE_DEBOUNCE_DELAY_MS = 500
 
   useEffect(() => {
     const initializeFromSearchParam = () => {
+      const initialParams = new URLSearchParams(location.search)
       setArName(initialParams.get('arName') ?? undefined)
       setRequesterId(initialParams.get('requesterId') ?? undefined)
       setReviewerId(initialParams.get('reviewerId') ?? undefined)
     }
     initializeFromSearchParam()
-  }, [])
+  }, [location.search])
+
   const onRequesterChange = useCallback((selected: string | null) => {
     if (selected) {
       setRequesterId(selected)
@@ -71,40 +73,51 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
             item => item === undefined || item === '',
           ) as Record<string, string>,
         )
-        console.log(params)
         history.replace({
           pathname: location.pathname,
           search: params.toString(),
         })
       }
 
+      updateQueryParams(arName, requesterId, reviewerId)
       setTableProps({
         arName,
         requesterId,
         reviewerId,
         showRequesters: true,
       })
-      updateQueryParams(arName, requesterId, reviewerId)
     },
-    [arName, requesterId, reviewerId],
-    500,
+    [arName, requesterId, reviewerId, history, location],
+    INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
   return (
-    <div className="bootstrap-4-backport">
-      <div className="InputPanel">
+    <div className="AccessSubmissionDashboard bootstrap-4-backport">
+      <div className="InputPanel SubmissionGrid">
         <div>
-          <FormLabel htmlFor="ar-name-filter">
+          <FormLabel htmlFor="arName-filter">
             Filter by Access Requirement Name
           </FormLabel>
           <InputGroup>
             <FormControl
-              id="ar-name-filter"
+              id="arName-filter"
               type="text"
               placeholder="Search for an Access Requirement Name"
               value={arName}
-              onChange={e => setArName(e.target.value)}
+              onChange={e => {
+                const tempVal = e.target.value
+                tempVal === '' ? setArName(undefined) : setArName(tempVal)
+              }}
             />
+            {arName && (
+              <button
+                onClick={() => setArName('')}
+                className="styled-svg-wrapper"
+                style={{ right: '30px' }}
+              >
+                <IconSvg options={{ icon: 'clear' }} />
+              </button>
+            )}
             <IconSvg options={{ icon: 'searchOutlined' }} />
           </InputGroup>
         </div>
