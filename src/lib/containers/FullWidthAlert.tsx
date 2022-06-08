@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react'
 import { Button, Alert, AlertProps } from 'react-bootstrap'
 import {
-  InfoOutlined,
-  ErrorOutlined,
-  WarningOutlined,
-  CheckCircleOutlined,
+  InfoTwoTone,
+  ErrorTwoTone,
+  CheckCircleTwoTone,
   Clear,
 } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
@@ -41,13 +40,13 @@ export interface FullWidthAlertProps extends AlertProps {
 function getIcon(variant?: string) {
   switch (variant) {
     case 'warning':
-      return <WarningOutlined className="text-warning" fontSize={'large'} />
+      return <ErrorTwoTone className="text-warning" fontSize={'large'} />
     case 'info':
-      return <InfoOutlined className="text-info" fontSize={'large'} />
+      return <InfoTwoTone className="text-info" fontSize={'large'} />
     case 'danger':
-      return <ErrorOutlined className="text-danger" fontSize={'large'} />
+      return <ErrorTwoTone className="text-danger" fontSize={'large'} />
     case 'success':
-      return <CheckCircleOutlined className="text-success" fontSize={'large'} />
+      return <CheckCircleTwoTone className="text-success" fontSize={'large'} />
     default:
       return <></>
   }
@@ -157,7 +156,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         />
         <ButtonFromConfig
           config={primaryButtonConfig}
-          variant="secondary"
+          variant="primary"
           className="primaryButton"
         />
         {onClose && (
