@@ -4,6 +4,7 @@ import {
   InfoTwoTone,
   ErrorTwoTone,
   CheckCircleTwoTone,
+  HighlightOffTwoTone,
   Clear,
 } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
@@ -44,7 +45,7 @@ function getIcon(variant?: string) {
     case 'info':
       return <InfoTwoTone className="text-info" fontSize={'large'} />
     case 'danger':
-      return <ErrorTwoTone className="text-danger" fontSize={'large'} />
+      return <HighlightOffTwoTone className="text-danger" fontSize={'large'} />
     case 'success':
       return <CheckCircleTwoTone className="text-success" fontSize={'large'} />
     default:
