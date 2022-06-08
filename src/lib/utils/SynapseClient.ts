@@ -207,6 +207,10 @@ import {
   SubmissionSearchRequest,
   SubmissionSearchResponse,
 } from './synapseTypes/AccessSubmission'
+import {
+  SubmissionInfoPage,
+  SubmissionInfoPageRequest,
+} from './synapseTypes/SubmissionInfo'
 
 const cookies = new UniversalCookies()
 
@@ -3694,6 +3698,22 @@ export const searchAccessSubmission = (
   return doPost<SubmissionSearchResponse>(
     ACCESS_REQUEST_SUBMISSION_SEARCH,
     submissionSearchRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/POST/accessRequirement/requirementId/approvedSubmissionInfo.html
+ */
+export const getApprovedSubmissionInfo = (
+  submissionInfoPageRequest: SubmissionInfoPageRequest,
+  accessToken: string | undefined,
+) => {
+  return doPost<SubmissionInfoPage>(
+    `/repo/v1/accessRequirement/${submissionInfoPageRequest.accessRequirementId}/approvedSubmissionInfo`,
+    submissionInfoPageRequest,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
