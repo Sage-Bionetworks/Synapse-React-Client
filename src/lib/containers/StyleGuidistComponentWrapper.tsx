@@ -1,5 +1,5 @@
 import React from 'react'
-import { MemoryRouter } from 'react-router'
+import { MemoryRouter } from 'react-router-dom'
 import { SynapseContextProvider } from '../utils/SynapseContext'
 import RenderIfInView from './RenderIfInView'
 import { SynapseClient } from '../utils'

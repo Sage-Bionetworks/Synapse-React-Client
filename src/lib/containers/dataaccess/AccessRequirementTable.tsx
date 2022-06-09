@@ -130,7 +130,11 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
                   <td>{ar.name}</td>
                   <td>
                     {ar.relatedProjectIds.map(projectId => (
-                      <EntityLink key={projectId} entity={projectId} />
+                      <React.Fragment key={projectId}>
+                        <EntityLink entity={projectId} />{' '}
+                        <span className="InlineLabel">({projectId})</span>
+                        <br />
+                      </React.Fragment>
                     ))}
                   </td>
                   <td>

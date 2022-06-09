@@ -22,6 +22,7 @@
   }
   .SubmissionSummary {
     margin-bottom: 15px;
+    min-width: 320px;
     .SubmissionSummaryGrid {
       display: grid;
       column-gap: 10px;
@@ -33,10 +34,6 @@
 
       .Value {
         grid-column: 2;
-      }
-
-      > * {
-        white-space: nowrap;
       }
 
       .DataAccessor {

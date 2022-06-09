@@ -1,5 +1,33 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SrcMixins;
 @use 'sass:map';
+
+.ReviewerDashboard {
+  .Breadcrumb {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .Tabs {
+    @include SrcMixins.underline-tabs();
+    justify-content: flex-start;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+    .Tab {
+      @include SrcMixins.ignoreLink();
+      flex-grow: 0;
+      height: 45px;
+      padding-left: 30px;
+      padding-right: 30px;
+
+      display: flex;
+      align-items: center;
+    }
+  }
+  .TabContentContainer {
+    margin: 20px 30px;
+  }
+}
 
 .AccessApprovalsTable,
 .AccessSubmissionTable,
@@ -25,6 +53,7 @@
     font-style: italic;
     color: map.get(SRC.$colors, 'gray-700') !important;
   }
+  .InlineLabel,
   .expired {
     color: map.get(SRC.$colors, 'gray-700');
   }

@@ -16,7 +16,7 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
   let mounted: boolean = true
 
   useEffect(() => {
-    if (mounted && inView) {
+    if (inView) {
       getEntityTypes()
     }
     return () => {
@@ -29,12 +29,16 @@ const EntityIdList: React.FC<EntityIdListProps> = props => {
 
     getEntityHeadersByIds(entityIdList, accessToken)
       .then(entity => {
-        const newEntityList = entity.results.map(el => {
-          return (
-            <EntityLink entity={el} key={el.id} displayTextField={'name'} />
-          )
-        })
-        setEntityLinkArray(newEntityList)
+        if (mounted) {
+          const newEntityList = entity.results.map(el => {
+            return (
+              <p key={el.id}>
+                <EntityLink entity={el} displayTextField={'name'} />
+              </p>
+            )
+          })
+          setEntityLinkArray(newEntityList)
+        }
       })
       .catch(e => {
         console.log('EntityIdList: Error getting entity headers', e)

@@ -3,7 +3,16 @@ import { SynapseClient } from '../..'
 import { getProfilePic, UserProfileAndImg } from '../../functions/getUserData'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
-import { NotificationEmail, UserProfile } from '../../synapseTypes'
+import { NotificationEmail, UserBundle, UserProfile } from '../../synapseTypes'
+import {
+  USER_BUNDLE_MASK_USER_PROFILE,
+  USER_BUNDLE_MASK_ORCID,
+  USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
+  USER_BUNDLE_MASK_IS_CERTIFIED,
+  USER_BUNDLE_MASK_IS_VERIFIED,
+  USER_BUNDLE_MASK_IS_ACT_MEMBER,
+  USER_BUNDLE_MASK_IS_AR_REVIEWER,
+} from '../../SynapseConstants'
 
 export function useGetNotificationEmail(
   options?: UseQueryOptions<NotificationEmail, SynapseClientError>,
@@ -20,11 +29,36 @@ export function useGetCurrentUserProfile(
   options?: UseQueryOptions<UserProfile, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  const queryKey = ['user', 'current', 'profile']
+  const queryKey = ['user', 'current', 'profile', accessToken]
 
   return useQuery<UserProfile, SynapseClientError>(
     queryKey,
     () => SynapseClient.getUserProfile(accessToken),
+    options,
+  )
+}
+
+export function useGetCurrentUserBundle(
+  mask?: number,
+  options?: UseQueryOptions<UserBundle, SynapseClientError>,
+) {
+  const ALL_USER_BUNDLE_FIELDS =
+    USER_BUNDLE_MASK_USER_PROFILE |
+    USER_BUNDLE_MASK_ORCID |
+    USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
+    USER_BUNDLE_MASK_IS_CERTIFIED |
+    USER_BUNDLE_MASK_IS_VERIFIED |
+    USER_BUNDLE_MASK_IS_ACT_MEMBER |
+    USER_BUNDLE_MASK_IS_AR_REVIEWER
+
+  const requestMask = mask ?? ALL_USER_BUNDLE_FIELDS
+
+  const { accessToken } = useSynapseContext()
+  const queryKey = ['user', 'current', 'bundle', requestMask, accessToken]
+
+  return useQuery<UserBundle, SynapseClientError>(
+    queryKey,
+    () => SynapseClient.getMyUserBundle(requestMask, accessToken),
     options,
   )
 }
