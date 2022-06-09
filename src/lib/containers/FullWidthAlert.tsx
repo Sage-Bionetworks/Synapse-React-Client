@@ -69,6 +69,7 @@ function ButtonFromConfig(props: {
       >
         <Button
           variant={variant}
+          size={'sm'}
           disabled={config.isDisabled}
           onClick={e => {
             if ('onClick' in config) {
@@ -147,8 +148,9 @@ function FullWidthAlert(props: FullWidthAlertProps) {
       >
         <span className="iconArea">{iconContent}</span>
         <span className="messageArea">
-          <Typography variant="headline3">{title}</Typography>
-          <Typography variant="body1">{description}</Typography>
+          <Typography variant="smallText2">{title}</Typography>
+          {title && description && <div className="SRC-marginBottomTen" />}
+          <Typography variant="smallText1">{description}</Typography>
         </span>
         <ButtonFromConfig config={secondaryButtonConfig} variant="tertiary" />
         <ButtonFromConfig config={primaryButtonConfig} variant="sds-primary" />
