@@ -260,7 +260,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 getListItem({
                   tooltip: 'Data Access Management',
                   iconName: 'accessManagement',
-                  onClickGoToUrl: '/#!DataAccessManagement:default',
+                  onClickGoToUrl: '/#!DataAccessManagement:default/Submissions',
                 })}
             </>
           )}
