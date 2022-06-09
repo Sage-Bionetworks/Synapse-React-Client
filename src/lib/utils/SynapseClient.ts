@@ -3146,7 +3146,7 @@ export const getSubmissionById = (
   accessToken?: string,
 ) => {
   return doGet<DataAccessSubmission>(
-    `/repo/v1/dataAccessSubmission/${submissionId}`,
+    DATA_ACCESS_SUBMISSION_BY_ID(submissionId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
