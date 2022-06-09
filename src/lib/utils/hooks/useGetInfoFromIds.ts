@@ -73,8 +73,12 @@ const getUserGroupHeaderItems = async (
   return [...newData, ...notFoundPlaceholders]
 }
 
-// React hook to get user profiles or entities
-//******************************************************************************************* */
+/**
+ * React hook to get user profiles or entities. Utilizes a custom cache in sessionStorage.
+ *
+ * For fetching just one entity or usergroup, see useGetEntity/useGetUserGroupHeader hooks powered by react-query
+ * @returns
+ */
 export default function useGetInfoFromIds<
   T extends EntityHeader | UserGroupHeader,
 >(props: UseGetInfoFromIdsProps): T[] {
