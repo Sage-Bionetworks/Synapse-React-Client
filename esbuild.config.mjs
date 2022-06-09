@@ -7,6 +7,7 @@ import GlobalsPlugin from 'esbuild-plugin-globals'
 const globals = {
   react: 'React',
   'react-dom': 'ReactDOM',
+  'react-router': 'ReactRouter',
   'react-router-dom': 'ReactRouterDOM',
   'react-transition-group': 'ReactTransitionGroup',
   'react-bootstrap': 'ReactBootstrap',
@@ -58,6 +59,7 @@ const esBuildOptions = {
     'react-dom',
     'sanitize-html',
     'prop-types',
+    'react-router',
     'react-router-dom',
     'react-measure',
     'react-bootstrap',

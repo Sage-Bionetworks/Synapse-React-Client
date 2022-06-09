@@ -44,6 +44,7 @@ import {
   ListTwoTone,
   HistoryTwoTone,
   StorageTwoTone,
+  ChevronRight,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -132,6 +133,7 @@ export type Icon =
   | 'replyTwoTone'
   | 'chatTwoTone'
   | 'accessManagement'
+  | 'chevronRight'
 
 export type IconSvgOptions = {
   icon: Icon
@@ -317,6 +319,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <ChatTwoTone style={muiSvgStyle}></ChatTwoTone>
     case 'accessManagement':
       return <AccessManagement style={muiSvgStyle}></AccessManagement>
+    case 'chevronRight':
+      return <ChevronRight style={muiSvgStyle}></ChevronRight>
     default:
       return <></>
   }
