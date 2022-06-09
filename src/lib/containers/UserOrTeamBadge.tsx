@@ -1,6 +1,6 @@
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useState } from 'react'
-import { SynapseClient } from '../utils'
+import { useGetUserGroupHeader } from '../utils/hooks/SynapseAPI/useUserGroupHeader'
 import { SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { UserGroupHeader } from '../utils/synapseTypes'
@@ -17,7 +17,6 @@ type UserOrTeamBadgeProps = {
 }
 
 export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
-  let isMounted = true
   let principalId = props.principalId
   const {
     disableHref,
@@ -34,23 +33,18 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     UserGroupHeader | undefined
   >(providedUserGroupHeader)
 
+  const { data: fetchedUserGroupHeader } = useGetUserGroupHeader(
+    (principalId ?? '').toString(),
+    {
+      enabled: !providedUserGroupHeader,
+    },
+  )
+
   useEffect(() => {
-    async function getUserGroupHeader() {
-      const headers = await SynapseClient.getGroupHeadersBatch(
-        [principalId!.toString()],
-        accessToken,
-      )
-      if (isMounted) {
-        setUserGroupHeader(headers.children[0])
-      }
+    if (principalId && userGroupHeader == undefined && fetchedUserGroupHeader) {
+      setUserGroupHeader(fetchedUserGroupHeader)
     }
-    if (principalId && userGroupHeader == undefined) {
-      getUserGroupHeader()
-    }
-    return () => {
-      isMounted = false
-    }
-  }, [accessToken, principalId, userGroupHeader])
+  }, [accessToken, principalId, userGroupHeader, fetchedUserGroupHeader])
 
   if (principalId == null && providedUserGroupHeader == null) {
     console.error(
@@ -58,7 +52,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     )
     return <></>
   } else if (userGroupHeader === undefined) {
-    return <Skeleton width={150} />
+    return <Skeleton width={125} height={30} />
   } else if (userGroupHeader.isIndividual) {
     return (
       <UserCard

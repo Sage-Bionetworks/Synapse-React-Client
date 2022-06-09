@@ -23,6 +23,7 @@ import {
 import {
   mockApprovedSubmission,
   mockRejectedSubmission,
+  mockSubmissions,
   mockSubmittedSubmission,
 } from '../../../../mocks/dataaccess/MockSubmission'
 import { mockManagedACTAccessRequirement } from '../../../../mocks/mockAccessRequirements'
@@ -67,6 +68,20 @@ describe('Submission Page tests', () => {
 
     // Configure MSW
     server.use(
+      // Return submission based on ID
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
+
+        async (req, res, ctx) => {
+          const submission = mockSubmissions.find(
+            submission => req.params.id === submission.id,
+          )
+          return res(ctx.status(200), ctx.json(submission))
+        },
+      ),
+
       // Return a mocked access requirement
       rest.get(
         `${getEndpoint(
