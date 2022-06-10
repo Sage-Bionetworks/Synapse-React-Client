@@ -11,7 +11,7 @@ type Stack = 'production' | 'staging' | 'development'
 const STACK_MAP: Record<Stack, EndpointObject> = {
   production: {
     REPO: 'https://repo-prod.prod.sagebase.org',
-    PORTAL: 'https://synapse.org/',
+    PORTAL: 'https://www.synapse.org/',
   },
   staging: {
     REPO: 'https://repo-staging.prod.sagebase.org',
