@@ -53,27 +53,25 @@ const StackChanger: React.FC = () => {
   }, [createStyleguideStackCookie, stack])
 
   return (
-    <span className={'experimental-mode-wrapper'}>
-      <RadioGroup
-        id={`stack-changer-radio-group`}
-        value={stack}
-        options={[
-          {
-            label: 'Production (synapse.org)',
-            value: 'production',
-          },
-          {
-            label: 'Staging (staging.synapse.org)',
-            value: 'staging',
-          },
-          {
-            label: 'Development (portal-dev.dev.sagebase.org)',
-            value: 'development',
-          },
-        ]}
-        onChange={(value: string) => setStack(value as Stack)}
-      />
-    </span>
+    <RadioGroup
+      id={`stack-changer-radio-group`}
+      value={stack}
+      options={[
+        {
+          label: 'Production (synapse.org)',
+          value: 'production',
+        },
+        {
+          label: 'Staging (staging.synapse.org)',
+          value: 'staging',
+        },
+        {
+          label: 'Development (portal-dev.dev.sagebase.org)',
+          value: 'development',
+        },
+      ]}
+      onChange={(value: string) => setStack(value as Stack)}
+    />
   )
 }
 
