@@ -41,6 +41,7 @@ import {
 import { dispatchDownloadListChangeEvent } from './functions/dispatchDownloadListChangeEvent'
 import {
   BackendDestinationEnum,
+  EndpointObject,
   getEndpoint,
   PRODUCTION_ENDPOINT_CONFIG,
 } from './functions/getEndpoint'
@@ -1358,6 +1359,10 @@ export const getPresignedUrlForWikiAttachment = (
 export const isInSynapseExperimentalMode = (): boolean => {
   // bang bang, you're a boolean!
   return !!cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
+}
+
+export const getStyleguideStack = (): EndpointObject | null => {
+  return cookies.get(SynapseConstants.STYLEGUIDE_STACK_COOKIE)
 }
 
 /**
