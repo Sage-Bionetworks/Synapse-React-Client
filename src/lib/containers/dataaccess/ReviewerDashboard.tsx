@@ -106,7 +106,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
                   <AccessRequestSubmissionTable
                     showSubmitter={true}
                     showStatus={false}
-                    showRequestors={true}
+                    showRequesters={true}
                     submissionState={SubmissionState.SUBMITTED}
                   />
                 </Route>

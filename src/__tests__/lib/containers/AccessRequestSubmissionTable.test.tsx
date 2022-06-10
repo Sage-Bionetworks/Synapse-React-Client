@@ -110,7 +110,7 @@ describe('Access Request Submission Table tests', () => {
     const props = {
       showSubmitter: true,
       showStatus: true,
-      showRequestors: true,
+      showRequesters: true,
       accessorId: accessorId,
       accessRequirementId: accessRequirementId,
       submissionState: submissionState,
@@ -127,7 +127,7 @@ describe('Access Request Submission Table tests', () => {
     renderComponent({
       showSubmitter: true,
       showStatus: true,
-      showRequestors: true,
+      showRequesters: true,
     })
     await screen.findByRole('table')
     await waitFor(() =>
@@ -140,7 +140,7 @@ describe('Access Request Submission Table tests', () => {
     screen.getByRole('columnheader', { name: 'Access Requirement Name' })
     screen.getByRole('columnheader', { name: 'Submitter' })
     screen.getByRole('columnheader', { name: 'Status' })
-    screen.getByRole('columnheader', { name: 'Requestors' })
+    screen.getByRole('columnheader', { name: 'Requesters' })
     screen.getByRole('columnheader', { name: 'Reviewer(s)' })
     screen.getByRole('columnheader', { name: /^Created Date/ })
 
@@ -169,7 +169,7 @@ describe('Access Request Submission Table tests', () => {
     renderComponent({
       showSubmitter: true,
       showStatus: true,
-      showRequestors: true,
+      showRequesters: true,
     })
     await screen.findByRole('table')
     await waitFor(() =>
@@ -214,7 +214,7 @@ describe('Access Request Submission Table tests', () => {
     renderComponent({
       showSubmitter: true,
       showStatus: true,
-      showRequestors: true,
+      showRequesters: true,
     })
 
     await waitFor(() => expect(onServiceRecievedRequest).toHaveBeenCalled())
