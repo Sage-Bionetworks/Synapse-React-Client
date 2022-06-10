@@ -135,7 +135,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
     fetchNextPage,
     isFetchingNextPage,
     isLoading: queryIsLoading,
-    refetch,
     error,
     isPreviousData: newQueryIsFetching,
     remove,
@@ -310,8 +309,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
      */
     remove()
     // end TODO
-
-    refetch()
   }
 
   /**
@@ -319,7 +316,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  function removeLockedFacetData() {
+  const dataWithLockedFacetRemoved = useMemo(() => {
     const lockedFacet = props.lockedFacet?.facet
     if (lockedFacet && data) {
       // for details page, return data without the "locked" facet
@@ -333,10 +330,10 @@ export function QueryWrapper(props: QueryWrapperProps) {
       // for other pages, just return the data
       return data
     }
-  }
+  }, [data, props.lockedFacet?.facet])
 
   const context: QueryContextType = {
-    data: removeLockedFacetData(),
+    data: dataWithLockedFacetRemoved,
     isLoadingNewPage: isFetchingNextPage,
     hasNextPage: !!hasNextPage,
     hasPreviousPage: !!hasPreviousPage,

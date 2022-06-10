@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.0.20",
+  "version": "3.0.21",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -71,7 +71,7 @@
     "react-plotly.js": "^2.5.1",
     "react-plotlyjs-ts": "^2.2.1",
     "react-popper": "^2.2.5",
-    "react-query": "3.33.1",
+    "react-query": "3.39.1",
     "react-reflex": "^4.0.0",
     "react-router-dom": "^5.3.3",
     "react-select": "^4.3.1",
