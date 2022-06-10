@@ -20,6 +20,10 @@ import {
 } from '../../../synapseTypes'
 import { entityQueryKeys } from './queryKeys'
 
+const sharedQueryDefaults = {
+  refetchOnWindowFocus: false,
+}
+
 export default function useGetQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
@@ -29,7 +33,10 @@ export default function useGetQueryResultBundle(
   return useQuery<QueryResultBundle, SynapseClientError>(
     entityQueryKeys.tableQueryResult(queryBundleRequest, false),
     () => SynapseClient.getQueryTableResults(queryBundleRequest, accessToken),
-    options,
+    {
+      ...sharedQueryDefaults,
+      ...options,
+    },
   )
 }
 
@@ -44,7 +51,6 @@ export function useInfiniteQueryResultBundle(
   ) => void,
 ) {
   const { accessToken } = useSynapseContext()
-
   return useInfiniteQuery<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError
@@ -75,6 +81,7 @@ export function useInfiniteQueryResultBundle(
       )
     },
     {
+      ...sharedQueryDefaults,
       ...options,
       select: data => {
         /**
