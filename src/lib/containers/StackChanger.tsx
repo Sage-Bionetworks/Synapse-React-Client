@@ -28,7 +28,6 @@ const StackChanger: React.FC = () => {
   const [stack, setStack] = useState<Stack>('production')
 
   useEffect(() => {
-    console.log(getStyleguideStack())
     const stackFromCookie = Object.entries(STACK_MAP).find(entry => {
       const endpointConfig = entry[1]
       return isEqual(endpointConfig, getStyleguideStack())
