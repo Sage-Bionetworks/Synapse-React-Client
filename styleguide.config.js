@@ -84,6 +84,11 @@ module.exports = {
       components: 'src/lib/containers/**/ExperimentalMode.tsx',
     },
     {
+      name: 'Stack Changer',
+      description: 'To change the Synapse Stack you are using',
+      components: 'src/lib/containers/**/StackChanger.tsx',
+    },
+    {
       name: 'Home Page',
       //   content: 'docs/homepage.md'
       description: 'Collection of components used in portal home pages',
