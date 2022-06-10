@@ -4,7 +4,7 @@ export enum BackendDestinationEnum {
 }
 
 // Encodes the portal and repo service destinations
-type EndpointObject = {
+export type EndpointObject = {
   REPO: string
   PORTAL: string
 }
