@@ -17,7 +17,7 @@ import {
   OBSERVATION_CARD,
   EXPERIMENTAL_TOOL,
   DATASET,
-  STYLEGUIDE_STACK_COOKIE,
+  STYLEGUIDE_STACK_LOCAL_STORAGE_KEY,
 } from './src/lib/utils/SynapseConstants'
 import { ReactComponent as brainSvg } from './src/demo/containers/playground/icons/brain.svg'
 import { ReactComponent as circleSvg } from './src/demo/containers/playground/icons/circle.svg'
@@ -36,10 +36,10 @@ import {
 } from './src/lib/containers/ToastMessage'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import UniversalCookies from 'universal-cookie'
 
-const cookies = new UniversalCookies()
-const stackCookie = cookies.get(STYLEGUIDE_STACK_COOKIE)
+const stackCookie = JSON.parse(
+  window.localStorage.getItem(STYLEGUIDE_STACK_LOCAL_STORAGE_KEY) ?? 'null',
+)
 if (stackCookie) {
   window.SRC = {
     OVERRIDE_ENDPOINT_CONFIG: stackCookie,

@@ -1362,7 +1362,11 @@ export const isInSynapseExperimentalMode = (): boolean => {
 }
 
 export const getStyleguideStack = (): EndpointObject | null => {
-  return cookies.get(SynapseConstants.STYLEGUIDE_STACK_COOKIE)
+  return JSON.parse(
+    window.localStorage.getItem(
+      SynapseConstants.STYLEGUIDE_STACK_LOCAL_STORAGE_KEY,
+    ) ?? 'null',
+  )
 }
 
 /**

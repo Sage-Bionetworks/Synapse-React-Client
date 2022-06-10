@@ -96,7 +96,8 @@ export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS'
 export const _TIME_DELAY = 75
 export const SRC_SIGN_IN_CLASS = 'SRC-SIGN-IN-CLASS'
 export const EXPERIMENTAL_MODE_COOKIE = 'SynapseTestWebsite'
-export const STYLEGUIDE_STACK_COOKIE = 'SynapseReactClientStyleGuideStack'
+export const STYLEGUIDE_STACK_LOCAL_STORAGE_KEY =
+  'SynapseReactClientStyleGuideStack'
 
 // UserBundle constants
 export const USER_BUNDLE_MASK_USER_PROFILE = 0x1
