@@ -103,6 +103,7 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
             Filter by Access Requirement Name
           </FormLabel>
           <AccessRequirementSearchBox
+            htmlId="arId-filter"
             onChange={setAccessRequirementId}
             placeholder="Search for an Access Requirement Name "
           />
