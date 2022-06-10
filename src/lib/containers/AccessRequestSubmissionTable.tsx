@@ -28,8 +28,6 @@ export type AccessRequestSubmissionTableProps = {
   reviewerId?: string
   submissionState?: SubmissionState
   reviewerFilterType?: SubmissionReviewerFilterType
-  arName?: string
-  requesterId?: string
 }
 
 export const AccessRequestSubmissionTable: React.FunctionComponent<
@@ -43,8 +41,6 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
   reviewerId,
   submissionState,
   reviewerFilterType,
-  arName,
-  requesterId,
 }) => {
   const [sort, setSort] = useState<SubmissionSearchSort>({
     field: SubmissionSortField.CREATED_ON,
@@ -73,23 +69,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
   const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessSubmissionsInfinite(searchRequest)
 
-  const accessSubmissions =
-    data?.pages
-      .flatMap(page => page.results)
-      .filter(
-        ar =>
-          arName == null ||
-          ar.accessRequirementName
-            .toLocaleLowerCase()
-            .includes(arName.toLocaleLowerCase()),
-      )
-      .filter(
-        ar =>
-          requesterId == null ||
-          ar.accessorChanges.some(
-            accessorChange => accessorChange.userId === requesterId,
-          ),
-      ) ?? []
+  const accessSubmissions = data?.pages.flatMap(page => page.results) ?? []
 
   const onSort = (field: SubmissionSortField) => {
     if (sort.field === field) {
@@ -98,7 +78,6 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
       setSort({ field, direction: 'DESC' })
     }
   }
-
   return (
     <div className="bootstrap-4-backport AccessSubmissionTable">
       <Table striped borderless bordered={false}>

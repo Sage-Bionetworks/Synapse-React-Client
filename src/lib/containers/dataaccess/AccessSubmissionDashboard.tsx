@@ -1,6 +1,6 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
-import { FormControl, FormLabel, InputGroup } from 'react-bootstrap'
+import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import Typography from '../../utils/typography/Typography'
@@ -8,20 +8,22 @@ import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
 } from '../AccessRequestSubmissionTable'
-import IconSvg from '../IconSvg'
 import UserSearchBoxV2 from '../UserSearchBoxV2'
+import AccessRequirementSearchBox from './AccessRequirementSearchBox'
 
 export type DataAccessSubmissionDashboardProps = {}
 export const DataAccessSubmissionDashboard: React.FunctionComponent<
   DataAccessSubmissionDashboardProps
 > = () => {
-  const [arName, setArName] = useState<string | undefined>()
-  const [requesterId, setRequesterId] = useState<string | undefined>()
+  const [accessRequirementId, setAccessRequirementId] = useState<
+    string | undefined
+  >()
+  const [accessorId, setAccessorId] = useState<string | undefined>()
   const [reviewerId, setReviewerId] = useState<string | undefined>()
   const [tableProps, setTableProps] =
     useState<AccessRequestSubmissionTableProps>({
-      arName,
-      requesterId,
+      accessRequirementId,
+      accessorId,
       reviewerId,
       showRequesters: true,
     })
@@ -33,8 +35,10 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
   useEffect(() => {
     const initializeFromSearchParam = () => {
       const initialParams = new URLSearchParams(location.search)
-      setArName(initialParams.get('arName') ?? undefined)
-      setRequesterId(initialParams.get('requesterId') ?? undefined)
+      setAccessRequirementId(
+        initialParams.get('accessRequirementId') ?? undefined,
+      )
+      setAccessorId(initialParams.get('accessorId') ?? undefined)
       setReviewerId(initialParams.get('reviewerId') ?? undefined)
     }
     initializeFromSearchParam()
@@ -42,9 +46,9 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
 
   const onRequesterChange = useCallback((selected: string | null) => {
     if (selected) {
-      setRequesterId(selected)
+      setAccessorId(selected)
     } else {
-      setRequesterId(undefined)
+      setAccessorId(undefined)
     }
   }, [])
 
@@ -59,15 +63,15 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
   useDebouncedEffect(
     () => {
       const updateQueryParams = (
-        arName: string | undefined,
-        requesterId: string | undefined,
+        accessRequirementId: string | undefined,
+        accessorId: string | undefined,
         reviewerId: string | undefined,
       ) => {
         const params = new URLSearchParams(
           omitBy(
             {
-              arName,
-              requesterId,
+              accessRequirementId,
+              accessorId,
               reviewerId,
             },
             item => item === undefined || item === '',
@@ -79,15 +83,15 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
         })
       }
 
-      updateQueryParams(arName, requesterId, reviewerId)
+      updateQueryParams(accessRequirementId, accessorId, reviewerId)
       setTableProps({
-        arName,
-        requesterId,
+        accessRequirementId,
+        accessorId,
         reviewerId,
         showRequesters: true,
       })
     },
-    [arName, requesterId, reviewerId, history, location],
+    [accessRequirementId, accessorId, reviewerId, history, location],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
@@ -95,38 +99,20 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
     <div className="AccessSubmissionDashboard bootstrap-4-backport">
       <div className="InputPanel SubmissionGrid">
         <div>
-          <FormLabel htmlFor="arName-filter">
+          <FormLabel htmlFor="arId-filter">
             Filter by Access Requirement Name
           </FormLabel>
-          <InputGroup>
-            <FormControl
-              id="arName-filter"
-              type="text"
-              placeholder="Search for an Access Requirement Name"
-              value={arName}
-              onChange={e => {
-                const tempVal = e.target.value
-                tempVal === '' ? setArName(undefined) : setArName(tempVal)
-              }}
-            />
-            {arName && (
-              <button
-                onClick={() => setArName('')}
-                className="styled-svg-wrapper"
-                style={{ right: '30px' }}
-              >
-                <IconSvg options={{ icon: 'clear' }} />
-              </button>
-            )}
-            <IconSvg options={{ icon: 'searchOutlined' }} />
-          </InputGroup>
+          <AccessRequirementSearchBox
+            onChange={setAccessRequirementId}
+            placeholder="Search for an Access Requirement Name "
+          />
         </div>
         <div>
           <FormLabel htmlFor="requester-filter">Filter by Requester</FormLabel>
           <UserSearchBoxV2
             htmlId="requester-filter"
             placeholder="Search for a user or team name"
-            defaultValue={requesterId}
+            defaultValue={accessorId}
             onChange={onRequesterChange}
           />
         </div>

@@ -9,14 +9,27 @@ import {
   DataAccessSubmissionDashboardProps,
 } from '../../../../lib/containers/dataaccess/AccessSubmissionDashboard'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
-import { server } from '../../../../mocks/msw/server'
+import { rest, server } from '../../../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../../../mocks/user/mock_user_profile'
+import {
+  mockManagedACTAccessRequirement as mockAccessRequirement,
+  mockSearchResults,
+} from '../../../../mocks/mockAccessRequirements'
+import { getOptionLabel } from '../../../../lib/containers/dataaccess/AccessRequirementSearchBox'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../../lib/utils/functions/getEndpoint'
+import {
+  ACCESS_REQUIREMENT_BY_ID,
+  ACCESS_REQUIREMENT_SEARCH,
+} from '../../../../lib/utils/APIConstants'
 
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
-const AR_NAME = 'abc'
+const MOCK_AR_ID = '12321'
 
 jest.mock('../../../../lib/containers/AccessRequestSubmissionTable', () => ({
   AccessRequestSubmissionTable: jest.fn().mockImplementation(() => {
@@ -27,6 +40,8 @@ jest.mock('../../../../lib/containers/AccessRequestSubmissionTable', () => ({
 const {
   AccessRequestSubmissionTable: mockAccessRequestSubmissionTable,
 } = require('../../../../lib/containers/AccessRequestSubmissionTable')
+
+const onServiceRecievedRequest = jest.fn()
 
 function renderComponent(
   props?: DataAccessSubmissionDashboardProps,
@@ -48,7 +63,33 @@ function renderComponent(
 }
 
 describe('AccessSubmissionDashboard tests', () => {
-  beforeAll(() => server.listen())
+  beforeAll(() => {
+    server.listen()
+
+    server.use(
+      rest.post(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ACCESS_REQUIREMENT_SEARCH}`,
+
+        async (req, res, ctx) => {
+          onServiceRecievedRequest(req.body)
+          return res(ctx.status(200), ctx.json(mockSearchResults))
+        },
+      ),
+      // Return an access requirement specified by ID
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
+
+        async (req, res, ctx) => {
+          onServiceRecievedRequest(req.body)
+          return res(ctx.status(200), ctx.json(mockAccessRequirement))
+        },
+      ),
+    )
+  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
@@ -59,8 +100,8 @@ describe('AccessSubmissionDashboard tests', () => {
     await screen.findByTestId(SUBMISSION_TABLE_TEST_ID)
     expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
       expect.objectContaining({
-        arName: undefined,
-        requesterId: undefined,
+        accessRequirementId: undefined,
+        accessorId: undefined,
         reviewerId: undefined,
       }),
       expect.anything(),
@@ -70,20 +111,27 @@ describe('AccessSubmissionDashboard tests', () => {
   it('Updates the passed props and URLSearchParams when updating arName', async () => {
     const { history } = renderComponent()
     const arNameInput = (await screen.findAllByRole('textbox'))[0]
-    userEvent.type(arNameInput, AR_NAME)
+    userEvent.type(arNameInput, mockAccessRequirement.name)
+    selectEvent.select(
+      arNameInput,
+      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+    )
 
     await waitFor(() =>
       expect(
-        new URLSearchParams(history.location.search).get('arName'),
-      ).toEqual(AR_NAME),
+        new URLSearchParams(history.location.search).get('accessRequirementId'),
+      ).toEqual(mockAccessRequirement.id.toString()),
     )
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        arName: AR_NAME,
-        requesterId: undefined,
-        reviewerId: undefined,
-      }),
-      expect.anything(),
+
+    await waitFor(() =>
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          accessRequirementId: mockAccessRequirement.id.toString(),
+          accessorId: undefined,
+          reviewerId: undefined,
+        }),
+        expect.anything(),
+      ),
     )
   })
 
@@ -95,13 +143,13 @@ describe('AccessSubmissionDashboard tests', () => {
 
     await waitFor(() =>
       expect(
-        new URLSearchParams(history.location.search).get('requesterId'),
+        new URLSearchParams(history.location.search).get('accessorId'),
       ).toEqual(MOCK_USER_ID.toString()),
     )
     expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
       expect.objectContaining({
-        arName: undefined,
-        requesterId: MOCK_USER_ID.toString(),
+        accessRequirementId: undefined,
+        accessorId: MOCK_USER_ID.toString(),
         reviewerId: undefined,
       }),
       expect.anything(),
@@ -121,8 +169,8 @@ describe('AccessSubmissionDashboard tests', () => {
     )
     expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
       expect.objectContaining({
-        arName: undefined,
-        requesterId: undefined,
+        accessRequirementId: undefined,
+        accessorId: undefined,
         reviewerId: MOCK_USER_ID.toString(),
       }),
       expect.anything(),
@@ -132,8 +180,8 @@ describe('AccessSubmissionDashboard tests', () => {
   it('Auto-fills the inputs with search parameter values', async () => {
     renderComponent(undefined, history => {
       const searchParams = new URLSearchParams('')
-      searchParams.set('arName', AR_NAME)
-      searchParams.set('requesterId', MOCK_USER_ID.toString())
+      searchParams.set('accessRequirementId', MOCK_AR_ID.toString())
+      searchParams.set('accessorId', MOCK_USER_ID.toString())
       searchParams.set('reviewerId', MOCK_USER_ID.toString())
       history.push('?' + searchParams.toString())
     })
@@ -141,8 +189,8 @@ describe('AccessSubmissionDashboard tests', () => {
     await waitFor(() =>
       expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
         expect.objectContaining({
-          arName: AR_NAME,
-          requesterId: MOCK_USER_ID.toString(),
+          accessRequirementId: MOCK_AR_ID.toString(),
+          accessorId: MOCK_USER_ID.toString(),
           reviewerId: MOCK_USER_ID.toString(),
         }),
         expect.anything(),
