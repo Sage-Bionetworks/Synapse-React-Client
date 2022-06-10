@@ -468,8 +468,9 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 </a>
                 <a
                   className="SRC-whiteText"
-                  href="mailto:synapseinfo@sagebionetworks.org"
+                  href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
                   rel="noopener noreferrer"
+                  target="_blank"
                 >
                   Contact Us
                 </a>

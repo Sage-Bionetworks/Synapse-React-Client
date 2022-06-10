@@ -38,7 +38,13 @@ const ErrorPage: React.FunctionComponent<ErrorPageProps> = props => {
               <a href={PRODUCTION_ENDPOINT_CONFIG.PORTAL}>Synapse Home</a>
             </li>
             <li>
-              <a href={'mailto:synapseInfo@sagebionetworks.org'}>Contact Us</a>
+              <a
+                href={
+                  'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
+                }
+              >
+                Contact Us
+              </a>
             </li>
             <li>
               <a href={'http://status.synapse.org/'}>Status</a>
