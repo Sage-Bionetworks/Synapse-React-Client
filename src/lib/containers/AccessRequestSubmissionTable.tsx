@@ -175,7 +175,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
       {!hasNextPage ? (
         ''
       ) : (
-        <Button variant="outline" onClick={() => fetchNextPage}>
+        <Button variant="outline" onClick={() => fetchNextPage()}>
           Show More
         </Button>
       )}
