@@ -940,7 +940,7 @@ export default class SynapseTable extends React.Component<
     if (isShowingAddToV2DownloadListColumn) {
       tableColumnHeaderElements.unshift(
         <th
-          data-testId="AddToDownloadListV2ColumnHeader"
+          data-testid="AddToDownloadListV2ColumnHeader"
           key="addToV2DownloadListColumn"
         >
           <div className="SRC-centerContent">&nbsp;</div>

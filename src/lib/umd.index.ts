@@ -47,6 +47,7 @@ import {
 import { DatasetItemsEditor } from './containers/table/datasets/DatasetItemsEditor'
 import { EntityTypeIcon } from './containers/EntityIcon'
 import { SkeletonButton } from './assets/skeletons/SkeletonButton'
+import { ReviewerDashboard } from './containers/dataaccess/ReviewerDashboard'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -97,6 +98,17 @@ const SynapseComponents = {
   StandaloneQueryWrapper,
   ChangePassword,
   ForumSearch,
+  ReviewerDashboard,
 }
 
-export { SynapseComponents, SynapseConstants, SynapseClient, SynapseContext }
+// Include the version in the build
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+const SynapseReactClientVersion = require('../../package.json').version
+
+export {
+  SynapseReactClientVersion,
+  SynapseComponents,
+  SynapseConstants,
+  SynapseClient,
+  SynapseContext,
+}

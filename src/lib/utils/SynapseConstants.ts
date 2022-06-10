@@ -96,6 +96,8 @@ export const AUTHENTICATED_USERS = 'AUTHENTICATED_USERS'
 export const _TIME_DELAY = 75
 export const SRC_SIGN_IN_CLASS = 'SRC-SIGN-IN-CLASS'
 export const EXPERIMENTAL_MODE_COOKIE = 'SynapseTestWebsite'
+export const STYLEGUIDE_STACK_LOCAL_STORAGE_KEY =
+  'SynapseReactClientStyleGuideStack'
 
 // UserBundle constants
 export const USER_BUNDLE_MASK_USER_PROFILE = 0x1
@@ -103,7 +105,7 @@ export const USER_BUNDLE_MASK_ORCID = 0x2
 export const USER_BUNDLE_MASK_VERIFICATION_SUBMISSION = 0x4
 export const USER_BUNDLE_MASK_IS_CERTIFIED = 0x8
 export const USER_BUNDLE_MASK_IS_VERIFIED = 0x10
-export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0x2
+export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0x20
 export const USER_BUNDLE_MASK_IS_AR_REVIEWER = 0x40
 // SessionStorage keys for info from ids
 export const USER_PROFILE_STORAGE_KEY = 'INFO_FROM_IDS_USER_PROFILE'

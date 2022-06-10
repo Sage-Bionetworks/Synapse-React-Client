@@ -172,3 +172,10 @@ export const mockDemoSubmission: Submission = {
   subjectId: 'syn12156790',
   subjectType: RestrictableObjectType.ENTITY,
 }
+
+export const mockSubmissions: Submission[] = [
+  mockApprovedSubmission,
+  mockRejectedSubmission,
+  mockSubmittedSubmission,
+  mockDemoSubmission,
+]

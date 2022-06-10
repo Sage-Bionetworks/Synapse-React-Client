@@ -35,7 +35,7 @@ type Props = {
  *
  *  To support Google SSO in your portal, you must add your domain to the Authorized Redirect URIs
  *  for Synapse authentication.
- *  This can be done by contacting synapseInfo@sagebionetworks.org to form a collaboration.
+ *  This can be done by visiting https://sagebionetworks.jira.com/servicedesk/customer/portal/9 to set up a collaboration.
  *  Synapse engineers must add your redirect URL in the Google API console found at https://console.cloud.google.com/ for this functionality to work.
  *
  * @class Login
