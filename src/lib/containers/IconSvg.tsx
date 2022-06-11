@@ -62,6 +62,7 @@ import {
   AccessTimeTwoTone,
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
+  OpenInNewTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -98,6 +99,7 @@ export type Icon =
   | 'cart'
   | 'clock'
   | 'code'
+  | 'openInNewWindow'
   | 'dashboard'
   | 'delete'
   | 'addToCart'
@@ -240,6 +242,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <DashboardTwoTone style={muiSvgStyle}></DashboardTwoTone>
     case 'delete':
       return <DeleteTwoTone style={muiSvgStyle} />
+    case 'openInNewWindow':
+      return <OpenInNewTwoTone style={muiSvgStyle} />
     case 'phone':
       return <PhoneTwoTone style={muiSvgStyle} />
     case 'people':
