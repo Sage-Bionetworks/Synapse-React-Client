@@ -3,7 +3,6 @@ import _ from 'lodash-es'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
 import Columns from '../../../../lib/assets/icons/columns'
-import { faCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 const mockCallback = jest.fn()
 type ElementWithTooltipProps = React.ComponentProps<typeof ElementWithTooltip>
@@ -14,7 +13,7 @@ function createTestProps(
   overrides?: ElementWithTooltipProps,
 ): ElementWithTooltipProps {
   return {
-    image: faCheck,
+    image: { icon: 'check' },
     callbackFn: mockCallback,
     tooltipText: 'my tooltip',
     idForToolTip: 'someId',

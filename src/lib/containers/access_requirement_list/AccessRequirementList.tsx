@@ -22,9 +22,6 @@ import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../utils/hooks/useGetInfoFromIds'
 import AccessApprovalCheckMark from './AccessApprovalCheckMark'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile } from '@fortawesome/free-solid-svg-icons'
 import { sortBy } from 'lodash-es'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
 import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
@@ -34,8 +31,7 @@ import RequestDataAccessSuccess from './managedACTAccess/RequestDataAccessSucces
 import Login from '../Login'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-
-library.add(faFile)
+import IconSvg from '../IconSvg'
 
 type AccessRequirementAndStatus = {
   accessRequirement: AccessRequirement
@@ -274,11 +270,7 @@ export default function AccessRequirementList({
             Access For:
           </h4>
           <span className="AccessRequirementList__file-icon-container">
-            <FontAwesomeIcon
-              size="lg"
-              icon="file"
-              className="AccessRequirementList__file"
-            />
+            <IconSvg options={{ icon: 'file', size: '30px' }} />
           </span>
           &nbsp;
           {numberOfFilesAffected && (

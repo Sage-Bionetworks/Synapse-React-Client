@@ -266,7 +266,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
           )}
           {getListItem({
             tooltip: 'Search',
-            iconName: 'searchTwoTone',
+            iconName: 'search',
             onClickGoToUrl: '/#!Search:',
           })}
         </List>

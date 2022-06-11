@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { EntityBundle, EntityType } from '../utils/synapseTypes'
 import {
-  faAlignLeft,
-  faCheck,
-  faComment,
-  faGlobeAmericas,
-  faLock,
-  faTag,
-  faUnlink,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+  FormatAlignLeftTwoTone,
+  CheckTwoTone,
+  ChatBubbleTwoTone,
+  PublicTwoTone,
+  LockTwoTone,
+  LocalOfferTwoTone,
+  LinkOffTwoTone,
+} from '@material-ui/icons'
 import { isEmpty } from 'lodash-es'
 import sanitizeHtml from 'sanitize-html'
 import ReactTooltip from 'react-tooltip'
@@ -235,22 +234,20 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
             />
           </div>
           {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
-            <FontAwesomeIcon
+            <PublicTwoTone
               aria-hidden={false}
               role="img"
               className="EntityBadge__Badge"
-              icon={faGlobeAmericas}
               data-for={ownTooltipId}
               data-tip={'Public'}
               data-testid={'is-public-icon'}
             />
           ) : null}
           {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
-            <FontAwesomeIcon
+            <LockTwoTone
               aria-hidden={false}
               role="img"
               className="EntityBadge__Badge"
-              icon={faLock}
               data-for={ownTooltipId}
               data-tip={'Private'}
               data-testid={'is-private-icon'}
@@ -259,11 +256,10 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
           {showHasLocalSharingSettings &&
           bundle.benefactorAcl &&
           entityId === bundle.benefactorAcl!.id ? (
-            <FontAwesomeIcon
+            <CheckTwoTone
               aria-hidden={false}
               role="img"
               className="EntityBadge__Badge"
-              icon={faCheck}
               data-for={ownTooltipId}
               data-tip="Sharing Settings have been set"
               data-testid={'sharing-settings-icon'}
@@ -272,13 +268,12 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
 
           {showHasAnnotations &&
             !!(annotationsCount || schemaValidationResults) && (
-              <FontAwesomeIcon
+              <LocalOfferTwoTone
                 aria-hidden={false}
                 role={canOpenModal ? 'button' : 'img'}
                 className={`EntityBadge__Badge ${schemaConformance}`}
                 style={canOpenModal ? { cursor: 'pointer' } : undefined}
                 onClick={canOpenModal ? () => setShowModal(true) : undefined}
-                icon={faTag}
                 data-for={ownTooltipId}
                 data-tip={sanitizeHtml(annotationsHtml)}
                 data-html={true}
@@ -286,12 +281,10 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
               />
             )}
           {showHasWiki && bundle.rootWikiId && (
-            <FontAwesomeIcon
+            <FormatAlignLeftTwoTone
               aria-hidden={false}
               role="img"
-              //   style={{ maxWidth: '20px', maxHeight: '20px' }}
               className="EntityBadge__Badge"
-              icon={faAlignLeft} // faNewspaper is ugly
               data-for={ownTooltipId}
               data-tip="Has a wiki"
               data-testid={'wiki-icon'}
@@ -300,11 +293,10 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
           {showHasDiscussionThread &&
             !!bundle.threadCount &&
             !!(bundle.threadCount > 0) && (
-              <FontAwesomeIcon
+              <ChatBubbleTwoTone
                 aria-hidden={false}
                 role="img"
                 className="EntityBadge__Badge"
-                icon={faComment}
                 data-for={ownTooltipId}
                 data-tip="Has been mentioned in discussion"
                 data-testid={'discussion-icon'}
@@ -313,7 +305,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
           {showUnlink &&
             bundle.entityType === EntityType.LINK &&
             bundle.permissions?.canDelete && (
-              <FontAwesomeIcon
+              <LinkOffTwoTone
                 aria-hidden={false}
                 role="button"
                 onClick={() => {
@@ -322,7 +314,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                     .catch(error => onUnlinkError(error))
                 }}
                 className="EntityBadge__Badge Unlink"
-                icon={faUnlink}
                 data-for={ownTooltipId}
                 data-tip="Remove this link"
                 data-testid={'unlink-icon'}

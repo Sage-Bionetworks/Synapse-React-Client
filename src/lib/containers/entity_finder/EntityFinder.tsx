@@ -1,6 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Map } from 'immutable'
 import React, {
   useCallback,
@@ -34,8 +31,7 @@ import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { FinderScope, EntityTree } from './tree/EntityTree'
 import pluralize from 'pluralize'
 import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
-
-library.add(faTimes, faSearch)
+import IconSvg from '../IconSvg'
 
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
@@ -272,7 +268,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   searchInputRef!.current!.focus()
                 }}
               >
-                <FontAwesomeIcon size={'sm'} icon={faSearch} />
+                <IconSvg options={{ icon: 'search' }} />
                 {selectableTypes.length === 1
                   ? `Search for ${pluralize(
                       entityTypeToFriendlyName(selectableTypes[0]),
@@ -280,11 +276,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   : 'Search all of Synapse'}
               </Button>
             )}
-            <FontAwesomeIcon
-              size={'sm'}
-              icon={faSearch}
-              className="SearchIcon"
-            />
+            <span className="SearchIcon">
+              <IconSvg options={{ icon: 'search' }} />
+            </span>
             {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
             <input
               role="textbox"
@@ -308,17 +302,15 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               }}
             />
             {searchInput && (
-              <FontAwesomeIcon
-                size={'sm'}
-                icon={faTimes}
-                role="button"
-                title="Clear Search"
+              <span
                 className="ClearSearchIcon"
                 onClick={() => {
                   setSearchInput('')
                   setSearchTerms(undefined)
                 }}
-              />
+              >
+                <IconSvg options={{ icon: 'close', label: 'Clear Search' }} />
+              </span>
             )}
           </>
         </div>

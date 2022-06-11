@@ -1,4 +1,3 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { noop } from 'lodash-es'
 import React from 'react'
 import { isEntityView, isDataset } from '../../utils/functions/EntityTypeUtils'
@@ -23,6 +22,7 @@ import EntityIdList from '../EntityIdList'
 import { EntityLink } from '../EntityLink'
 import EvaluationIdRenderer from '../EvaluationIdRenderer'
 import { SynapseCardLabel } from '../GenericCard'
+import IconSvg, { Icon } from '../IconSvg'
 import { useQueryContext } from '../QueryWrapper'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import UserCard from '../UserCard'
@@ -213,12 +213,12 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         const { ownerId, userName } = mapUserIdToHeader[columnValue]
         if (mapUserIdToHeader[columnValue].isIndividual === false) {
           // isUserGroupHeader
-          const icon =
-            userName === AUTHENTICATED_USERS ? 'globe-americas' : 'users'
+          const icon: Icon =
+            userName === AUTHENTICATED_USERS ? 'public' : 'people'
           if (userName === AUTHENTICATED_USERS) {
             return (
               <span>
-                <FontAwesomeIcon icon={icon} /> All registered Synapse users
+                <IconSvg options={{ icon }} /> All registered Synapse users
               </span>
             )
           }
@@ -228,7 +228,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
               rel="noopener noreferrer"
               href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Team:${ownerId}`}
             >
-              <FontAwesomeIcon icon={icon} /> {userName}
+              <IconSvg options={{ icon }} /> {userName}
             </a>
           )
         } else {

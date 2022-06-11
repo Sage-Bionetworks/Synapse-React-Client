@@ -1,16 +1,6 @@
 import * as React from 'react'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCircle,
-  faEllipsisV,
-  faCopy,
-} from '@fortawesome/free-solid-svg-icons'
 import CertifiedUserIcon from '../assets/icons/CertifiedUser'
 import { UserProfile } from '../utils/synapseTypes/'
-
-library.add(faCircle)
-library.add(faEllipsisV)
-library.add(faCopy)
 
 type UserCardLargeProps = {
   userProfile: UserProfile

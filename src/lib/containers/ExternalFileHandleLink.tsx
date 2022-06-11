@@ -8,13 +8,9 @@ import {
   isFileEntity,
 } from '../utils/synapseTypes'
 import { SynapseClient } from '../utils/'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { OpenInNewTwoTone } from '@material-ui/icons'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { AssertionError } from 'assert'
-
-library.add(faExternalLinkAlt)
 
 export type ExternalFileHandleLinkProps = {
   synId: string
@@ -78,7 +74,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
     >
       <span>
         {fileEntity?.name}
-        <FontAwesomeIcon style={{ marginLeft: 5 }} icon="external-link-alt" />
+        <OpenInNewTwoTone style={{ marginLeft: 5 }} />
       </span>
     </a>
   ) : (

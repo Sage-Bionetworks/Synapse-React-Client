@@ -14,10 +14,6 @@
  * is returned, the success for failure result can be saved in the parent state.
  * See SynapseTable.tsx as an example.
  */
-
-import { IconProp, library } from '@fortawesome/fontawesome-svg-core'
-import { faCircle, faDatabase, faLink } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../utils'
@@ -46,9 +42,6 @@ import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 import { SynapseContext } from '../utils/SynapseContext'
 import IconSvg, { Icon } from './IconSvg'
 import { ThemeContext } from '../utils/hooks/useTheme'
-
-library.add(faDatabase)
-library.add(faCircle)
 
 export type HasAccessProps = {
   onHide?: () => void
@@ -307,26 +300,6 @@ export default class HasAccess extends React.Component<
     )
   }
 
-  renderFontAwesomeIcon = (iconProp: IconProp, classColor: string) => {
-    return (
-      <span className="fa-layers fa-fw">
-        <FontAwesomeIcon
-          icon={faCircle}
-          className={classColor}
-          size="1x"
-          style={{ fontSize: '24px' }}
-        />
-        <FontAwesomeIcon
-          icon={iconProp}
-          className="SRC-whiteText"
-          size="1x"
-          transform={{ x: 4.5, y: -0.5 }}
-          style={{ fontSize: '13px' }}
-        />
-      </span>
-    )
-  }
-
   renderIcon = (
     downloadType: FileHandleDownloadTypeEnum | string,
     restrictionInformation?: RestrictionInformationResponse,
@@ -343,9 +316,17 @@ export default class HasAccess extends React.Component<
       // fileHandle available
       case FileHandleDownloadTypeEnum.ExternalFileLink:
       case FileHandleDownloadTypeEnum.ExternalCloudFile:
-        return this.renderFontAwesomeIcon(faLink, 'SRC-warning-color')
+        return (
+          <ThemeContext.Consumer>
+            {theme => this.renderIconSvg('link', theme.colors.warning)}
+          </ThemeContext.Consumer>
+        )
       case FileHandleDownloadTypeEnum.TooLarge:
-        return this.renderFontAwesomeIcon(faDatabase, 'SRC-danger-color')
+        return (
+          <ThemeContext.Consumer>
+            {theme => this.renderIconSvg('database', theme.colors.error)}
+          </ThemeContext.Consumer>
+        )
       // was FileEntity, but no fileHandle was available
       case FileHandleDownloadTypeEnum.AccessBlockedByACL:
       case FileHandleDownloadTypeEnum.AccessBlockedToAnonymous:
@@ -355,8 +336,8 @@ export default class HasAccess extends React.Component<
           </ThemeContext.Consumer>
         )
       // was a FileEntity, and fileHandle was available
-      case FileHandleDownloadTypeEnum.Accessible:
       // or was not a FileEntity, but no unmet access restrictions
+      case FileHandleDownloadTypeEnum.Accessible:
       case FileHandleDownloadTypeEnum.NoFileHandle:
         return (
           <ThemeContext.Consumer>

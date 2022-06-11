@@ -1,13 +1,9 @@
 import React, { FunctionComponent } from 'react'
-import {
-  FontAwesomeIcon,
-  FontAwesomeIconProps,
-} from '@fortawesome/react-fontawesome'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { Dropdown } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
+import IconSvg, { IconSvgOptions } from '../IconSvg'
 
 type CustomImageProps = {
   svgImg: React.ComponentElement<any, any>
@@ -30,7 +26,7 @@ export type TooltipVisualProps = {
  */
 
 type ElementWithTooltipProps = {
-  image?: IconDefinition | CustomImageProps
+  image?: IconSvgOptions | CustomImageProps
   imageColor?: string
   idForToolTip: string
   tooltipText: string
@@ -38,25 +34,19 @@ type ElementWithTooltipProps = {
   className?: string
   tooltipVisualProps?: TooltipVisualProps
   darkTheme?: boolean
-  size?: FontAwesomeIconProps['size']
+  size?: string
   icon?: string
 }
 
 function getTooltipTriggerContents(
-  image: IconDefinition | CustomImageProps,
+  image: IconSvgOptions | CustomImageProps,
   imageColor: string | undefined,
-  size: FontAwesomeIconProps['size'] | undefined,
+  size: IconSvgOptions['size'] | undefined,
 ): JSX.Element {
   if ('svgImg' in image) {
     return image.svgImg
   } else {
-    return (
-      <FontAwesomeIcon
-        size={size ?? '1x'}
-        color={imageColor || 'white'}
-        icon={image}
-      />
-    )
+    return <IconSvg options={{ size, color: imageColor, ...image }} />
   }
 }
 

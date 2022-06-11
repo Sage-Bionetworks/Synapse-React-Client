@@ -1,6 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import Form, { IChangeEvent } from '@rjsf/core'
@@ -11,6 +8,7 @@ import {
   SortItem,
   QueryBundleRequest,
 } from '../utils/synapseTypes/'
+
 import {
   csvOption,
   formSchemaArray,
@@ -20,8 +18,7 @@ import {
 } from './ModalDownload.FormSchema'
 import { parseEntityIdFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { SynapseContext } from '../utils/SynapseContext'
-
-library.add(faTimes)
+import IconSvg from './IconSvg'
 
 export type ModalDownloadState = {
   isLoading: boolean
@@ -148,7 +145,7 @@ export default class ModalDownload extends React.Component<
       >
         <Modal.Body>
           <button style={closeBtn} onClick={this.props.onClose}>
-            <FontAwesomeIcon style={{ fontSize: '21px' }} icon="times" />
+            <IconSvg options={{ icon: 'close' }} />
           </button>
           <Form
             schema={formSchemaArray[this.state.step]}

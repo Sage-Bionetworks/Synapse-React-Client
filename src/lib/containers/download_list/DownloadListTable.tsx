@@ -1,10 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faTrash,
-  faSortAmountDown,
-  faSortAmountUp,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import React, { useEffect, useState, useCallback } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
@@ -40,8 +33,7 @@ import AccessRequirementList, {
 } from '../access_requirement_list/AccessRequirementList'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-
-library.add(faTrash)
+import IconSvg from '../IconSvg'
 
 type DownloadListTableData = {
   references?: PaginatedResults<EntityHeader>
@@ -379,15 +371,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     sortColumn('file')
                   }}
                 >
-                  <FontAwesomeIcon
-                    icon={
-                      sortedColumn.column === 'file'
-                        ? sortedColumn.isDescending === false
-                          ? faSortAmountDown
-                          : faSortAmountUp
-                        : faSortAmountDown
-                    }
-                    color={sortedColumn.column === 'file' ? 'white' : ''}
+                  <IconSvg
+                    options={{
+                      icon:
+                        sortedColumn.column === 'file'
+                          ? sortedColumn.isDescending === false
+                            ? 'arrowDropDown'
+                            : 'arrowDropUp'
+                          : 'arrowDropDown',
+                      color: sortedColumn.column === 'file' ? 'white' : '',
+                    }}
                   />
                 </button>
               </th>
@@ -404,15 +397,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     sortColumn('createdBy')
                   }}
                 >
-                  <FontAwesomeIcon
-                    icon={
-                      sortedColumn.column === 'createdBy'
-                        ? sortedColumn.isDescending === false
-                          ? faSortAmountDown
-                          : faSortAmountUp
-                        : faSortAmountDown
-                    }
-                    color={sortedColumn.column === 'createdBy' ? 'white' : ''}
+                  <IconSvg
+                    options={{
+                      icon:
+                        sortedColumn.column === 'createdBy'
+                          ? sortedColumn.isDescending === false
+                            ? 'arrowDropDown'
+                            : 'arrowDropUp'
+                          : 'arrowDropDown',
+                      color: sortedColumn.column === 'createdBy' ? 'white' : '',
+                    }}
                   />
                 </button>
               </th>
@@ -428,15 +422,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     sortColumn('createdOn')
                   }}
                 >
-                  <FontAwesomeIcon
-                    icon={
-                      sortedColumn.column === 'createdOn'
-                        ? sortedColumn.isDescending === false
-                          ? faSortAmountDown
-                          : faSortAmountUp
-                        : faSortAmountDown
-                    }
-                    color={sortedColumn.column === 'createdOn' ? 'white' : ''}
+                  <IconSvg
+                    options={{
+                      icon:
+                        sortedColumn.column === 'createdOn'
+                          ? sortedColumn.isDescending === false
+                            ? 'arrowDropDown'
+                            : 'arrowDropUp'
+                          : 'arrowDropDown',
+                      color: sortedColumn.column === 'createdOn' ? 'white' : '',
+                    }}
                   />
                 </button>
               </th>
@@ -452,15 +447,16 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                     sortColumn('size')
                   }}
                 >
-                  <FontAwesomeIcon
-                    icon={
-                      sortedColumn.column === 'size'
-                        ? sortedColumn.isDescending === false
-                          ? faSortAmountDown
-                          : faSortAmountUp
-                        : faSortAmountDown
-                    }
-                    color={sortedColumn.column === 'size' ? 'white' : ''}
+                  <IconSvg
+                    options={{
+                      icon:
+                        sortedColumn.column === 'size'
+                          ? sortedColumn.isDescending === false
+                            ? 'arrowDropDown'
+                            : 'arrowDropUp'
+                          : 'arrowDropDown',
+                      color: sortedColumn.column === 'size' ? 'white' : '',
+                    }}
                   />
                 </button>
               </th>
@@ -552,10 +548,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                           : undefined
                       }
                     >
-                      <FontAwesomeIcon
-                        className="SRC-primary-text-color"
-                        icon="trash"
-                      />
+                      <span className="SRC-primary-text-color">
+                        <IconSvg options={{ icon: 'delete' }} />
+                      </span>
                     </button>
                   </td>
                 </tr>
@@ -604,7 +599,7 @@ export default function DownloadListTable(props: DownloadListTableProps) {
       >
         <ReactBootstrap.Modal.Header>
           <button style={closeBtn} onClick={onHideModal}>
-            <FontAwesomeIcon style={{ fontSize: '21px' }} icon="times" />
+            <IconSvg options={{ icon: 'close', size: '21px' }} />
           </button>
         </ReactBootstrap.Modal.Header>
         {content}

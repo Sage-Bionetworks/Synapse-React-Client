@@ -1,8 +1,3 @@
-import {
-  faExclamationTriangle,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
@@ -12,6 +7,7 @@ import { SynapseClient } from '../../utils/'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
+import IconSvg from '../IconSvg'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 
 export type AccessTokenCardProps = {
@@ -78,14 +74,13 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
           <ReactTooltip delayShow={100} />
           <span className={'SRC-blackText'}>{accessToken.name}</span>
           {isExpired && (
-            <span>
-              <FontAwesomeIcon
-                data-tip={
-                  'This token has expired. It no longer works and can only be deleted.'
-                }
-                icon={faExclamationTriangle}
-                aria-hidden="true"
-              />
+            <span
+              data-tip={
+                'This token has expired. It no longer works and can only be deleted.'
+              }
+              aria-hidden="true"
+            >
+              <IconSvg options={{ icon: 'warning' }} />
             </span>
           )}
         </div>
@@ -130,7 +125,7 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
             }
           }}
         >
-          <FontAwesomeIcon icon={faTrash} aria-hidden="true" />
+          <IconSvg options={{ icon: 'delete' }} aria-hidden="true" />
         </Button>
       </div>
     </div>

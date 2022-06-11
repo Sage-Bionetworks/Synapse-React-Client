@@ -6,14 +6,13 @@ import {
 } from '../../utils/SynapseClient'
 import { Evaluation } from '../../utils/synapseTypes'
 import { Button, Card, Col, Dropdown, Row } from 'react-bootstrap'
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { ErrorBanner } from '../ErrorBanner'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { UserEvaluationPermissions } from '../../utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { RequiredProperties } from '../../utils'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import IconSvg from '../IconSvg'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,
@@ -164,7 +163,7 @@ const EvaluationCardDropdown: React.FunctionComponent<
       )}
       <Dropdown className="float-right">
         <Dropdown.Toggle variant="link" className="dropdown-no-caret">
-          <FontAwesomeIcon icon={faEllipsisV} />
+          <IconSvg options={{ icon: 'verticalEllipsis' }} />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           {permissions.canEdit && (

@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile, faDatabase, faClock } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import ReactTooltip from 'react-tooltip'
@@ -9,10 +6,7 @@ import moment from 'moment'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SkeletonInlineBlock } from '../../assets/skeletons/SkeletonInlineBlock'
-
-library.add(faFile)
-library.add(faDatabase)
-library.add(faClock)
+import IconSvg from '../IconSvg'
 
 export type DownloadDetailsProps = {
   numFiles: number
@@ -71,7 +65,9 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   return (
     <span className="download-details-container">
       <span>
-        <FontAwesomeIcon className={fileCountIconClass} icon="file" />
+        <span className={fileCountIconClass}>
+          <IconSvg options={{ icon: 'file' }} />
+        </span>
         {isZeroFiles ? (
           <SkeletonInlineBlock width={50} />
         ) : (
@@ -91,7 +87,9 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
             effect="solid"
             id={numBytesTooltipId}
           />
-          <FontAwesomeIcon className={timeEstimateIconClass} icon="database" />
+          <span className={timeEstimateIconClass}>
+            <IconSvg options={{ icon: 'database' }} />
+          </span>
           {isTimeEstimateLoading ? (
             <SkeletonInlineBlock width={50} />
           ) : (
@@ -112,7 +110,9 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
             effect="solid"
             id={friendlyTimeTooltipId}
           />
-          <FontAwesomeIcon className={timeEstimateIconClass} icon="clock" />
+          <span className={timeEstimateIconClass}>
+            <IconSvg options={{ icon: 'clock' }} />
+          </span>
           {isLoading && numFiles > 0 ? (
             <SkeletonInlineBlock width={50} />
           ) : (

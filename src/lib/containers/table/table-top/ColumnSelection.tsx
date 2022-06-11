@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { SelectColumn } from '../../../utils/synapseTypes/'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { unCamelCase } from '../../../utils/functions/unCamelCase'
+import IconSvg from '../../IconSvg'
 
 type ColumnSelectionProps = {
   headers?: SelectColumn[]
@@ -90,11 +90,9 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
               onClick={() => toggleColumnSelection(name)}
               key={name}
             >
-              <FontAwesomeIcon
-                style={iconStyle}
-                className={maybeShowPrimaryColor}
-                icon="check"
-              />
+              <span className={maybeShowPrimaryColor} style={iconStyle}>
+                <IconSvg options={{ icon: 'check' }} />
+              </span>
               {unCamelCase(name, facetAliases)}
             </Dropdown.Item>
           )
