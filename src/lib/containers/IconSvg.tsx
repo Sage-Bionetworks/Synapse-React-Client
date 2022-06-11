@@ -186,15 +186,17 @@ export type SVGStyleProps = {
   color?: string
   verticalAlign?: string
   fill?: string
+  width?: string
 }
 
 const getIcon = (options: IconSvgOptions) => {
-  const { icon, color } = options
+  const { icon, color, size } = options
 
   // Styles for svg imported from mui
   const muiSvgStyle: SVGStyleProps = {
     color: color,
     verticalAlign: 'middle',
+    width: size,
   }
   // Styles for custom svg missing from mui
   const customSvgStyle: SVGStyleProps = {

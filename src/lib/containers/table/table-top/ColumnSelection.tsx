@@ -91,7 +91,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
               key={name}
             >
               <span className={maybeShowPrimaryColor} style={iconStyle}>
-                <IconSvg options={{ icon: 'check' }} />
+                <IconSvg options={{ icon: 'check', size: '14px' }} />
               </span>
               {unCamelCase(name, facetAliases)}
             </Dropdown.Item>
