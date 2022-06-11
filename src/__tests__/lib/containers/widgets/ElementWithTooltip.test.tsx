@@ -3,6 +3,7 @@ import _ from 'lodash-es'
 import { render, fireEvent, cleanup } from '@testing-library/react'
 import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
 import Columns from '../../../../lib/assets/icons/columns'
+import { Icon, IconSvgOptions } from '../../../../lib/containers/IconSvg'
 
 const mockCallback = jest.fn()
 type ElementWithTooltipProps = React.ComponentProps<typeof ElementWithTooltip>
@@ -46,9 +47,9 @@ describe('basic function', () => {
 
   it('should render with correct properties for icon and custom image', () => {
     expect(
-      imageButton.getElementsByTagName('svg').item(0)!.attributes['data-icon']
-        .value,
-    ).toBe((props.image as IconDefinition).iconName)
+      imageButton.getElementsByClassName('styled-svg-wrapper').item(0)!
+        .attributes['data-svg'].value,
+    ).toBe((props.image as IconSvgOptions).icon)
     expect(imageButton.getElementsByTagName('img')).toHaveLength(0)
 
     const props_: ElementWithTooltipProps = {

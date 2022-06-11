@@ -149,8 +149,8 @@ describe('basic tests', () => {
       fileHandle: externalFileHandle,
     })
     const icons = wrapper.find(IconSvg)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.options.icon).toEqual('link')
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('link')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalFileLink]
@@ -185,8 +185,8 @@ describe('basic tests', () => {
       fileHandle: cloudFileHandle,
     })
     const icons = wrapper.find(IconSvg)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.options.icon).toEqual('link')
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('link')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalCloudFile]
@@ -203,8 +203,8 @@ describe('basic tests', () => {
       fileHandle: tooLargeFileHandle,
     })
     const icons = wrapper.find(IconSvg)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.options.icon).toEqual('database')
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('database')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[FileHandleDownloadTypeEnum.TooLarge]
