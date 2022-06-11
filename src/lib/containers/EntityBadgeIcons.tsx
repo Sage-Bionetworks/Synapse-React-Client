@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { EntityBundle, EntityType } from '../utils/synapseTypes'
 import {
-  FormatAlignLeftTwoTone,
+  DescriptionTwoTone,
   CheckTwoTone,
   ChatBubbleTwoTone,
   PublicTwoTone,
@@ -281,7 +281,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
               />
             )}
           {showHasWiki && bundle.rootWikiId && (
-            <FormatAlignLeftTwoTone
+            <DescriptionTwoTone
               aria-hidden={false}
               role="img"
               className="EntityBadge__Badge"
