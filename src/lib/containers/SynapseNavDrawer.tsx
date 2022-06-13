@@ -109,9 +109,8 @@ export const SynapseNavDrawer: React.FunctionComponent<
 
   const { data: currentUserBundle } = useGetCurrentUserBundle()
 
-  const { userProfile: currentUserProfile } = currentUserBundle ?? {
-    userProfile: undefined,
-  }
+  const currentUserProfile =
+    isLoggedIn && currentUserBundle ? currentUserBundle.userProfile : undefined
 
   const { data: downloadListStatistics } = useGetDownloadListStatistics({
     enabled: isLoggedIn,
@@ -430,7 +429,9 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 </a>
                 <a
                   className="SRC-whiteText"
-                  onClick={signOut}
+                  onClick={() => {
+                    signOut()
+                  }}
                   rel="noopener noreferrer"
                 >
                   Sign Out
