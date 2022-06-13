@@ -1,6 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Collapse } from '@material-ui/core'
 import React, { useRef, useState } from 'react'
 import { TextMatchesQueryFilter } from '../utils/synapseTypes/Table/QueryFilter'
@@ -11,9 +8,7 @@ import {
 import { useQueryContext } from './QueryWrapper'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { HelpPopover } from './HelpPopover'
-
-library.add(faSearch)
-library.add(faTimes)
+import IconSvg from './IconSvg'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
@@ -91,11 +86,9 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
             className="QueryWrapperSearchInput__searchbar"
             onSubmit={search}
           >
-            <FontAwesomeIcon
-              className="QueryWrapperSearchInput__searchbar__searchicon"
-              size={'sm'}
-              icon={'search'}
-            />
+            <span className="QueryWrapperSearchInput__searchbar__searchicon">
+              <IconSvg options={{ icon: 'search' }} />
+            </span>
             <input
               ref={searchInputRef}
               minLength={MIN_SEARCH_QUERY_LENGTH}
@@ -112,10 +105,7 @@ export const FullTextSearch: React.FunctionComponent<FullTextSearchProps> = ({
                   setSearchText('')
                 }}
               >
-                <FontAwesomeIcon
-                  className="SRC-primary-text-color"
-                  icon="times"
-                />
+                <IconSvg options={{ icon: 'close' }} />
               </button>
             )}
           </form>

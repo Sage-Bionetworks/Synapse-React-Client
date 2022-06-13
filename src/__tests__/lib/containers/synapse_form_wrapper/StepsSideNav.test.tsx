@@ -5,7 +5,7 @@ import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import StepsSideNav, {
   StepsSideNavProps,
 } from '../../../../lib/containers/synapse_form_wrapper/StepsSideNav'
-
+import IconSvg from '../../../../lib/containers/IconSvg'
 import { stepsWithChildren } from '../../../../mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(stepsWithChildren)
@@ -42,11 +42,12 @@ describe('basic tests', () => {
 
   it('should display status icons correctly', () => {
     const { wrapper } = createShallowComponent(props)
-    const icons = wrapper.render().find('svg')
-    expect(icons[0].attribs.class).toContain('fa-circle')
-    expect(icons[1].attribs.class).toContain('fa-exclamation-circle')
-    expect(icons[2].attribs.class).toContain('fa-check-circle')
-    expect(icons[3].attribs.class).toContain('fa-ban')
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(4)
+    expect(icons.get(0).props.options.icon).toEqual('circle')
+    expect(icons.get(1).props.options.icon).toEqual('errorOutlined')
+    expect(icons.get(2).props.options.icon).toEqual('checkCircle')
+    expect(icons.get(3).props.options.icon).toEqual('block')
   })
 
   it('should call calback function with appropriate params', () => {

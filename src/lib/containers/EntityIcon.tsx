@@ -1,49 +1,9 @@
 import * as React from 'react'
 import { EntityType } from '../utils/synapseTypes'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faLink,
-  faFolder,
-  faFile,
-  faListAlt,
-  faServer,
-  faTable,
-  faThList,
-  IconDefinition,
-  faTh,
-} from '@fortawesome/free-solid-svg-icons'
-import { faDocker } from '@fortawesome/free-brands-svg-icons'
-import {
-  FontAwesomeIcon,
-  FontAwesomeIconProps,
-} from '@fortawesome/react-fontawesome'
 import { entityTypeToFriendlyName } from '../utils/functions/EntityTypeUtils'
+import IconSvg, { Icon, IconSvgOptions, type2SvgIconName } from './IconSvg'
 
-library.add(
-  faLink,
-  faFolder,
-  faFile,
-  faListAlt,
-  faServer,
-  faTable,
-  faThList,
-  faDocker,
-)
-
-const _ENTITY_TYPE_ICON_MAP = new Map<EntityType, IconDefinition>([
-  [EntityType.PROJECT, faListAlt],
-  [EntityType.FOLDER, faFolder],
-  [EntityType.FILE, faFile],
-  [EntityType.TABLE, faTable],
-  [EntityType.LINK, faLink],
-  [EntityType.ENTITY_VIEW, faThList],
-  [EntityType.MATERIALIZED_VIEW, faThList],
-  [EntityType.DOCKER_REPO, faDocker],
-  [EntityType.SUBMISSION_VIEW, faServer],
-  [EntityType.DATASET, faTh],
-])
-
-const getIconTypeForEntity = (type: EntityType): IconDefinition | '' => {
+const getIconTypeForEntity = (type: EntityType): Icon | '' => {
   switch (type) {
     case EntityType.PROJECT:
     case EntityType.FOLDER:
@@ -55,7 +15,7 @@ const getIconTypeForEntity = (type: EntityType): IconDefinition | '' => {
     case EntityType.SUBMISSION_VIEW:
     case EntityType.DATASET:
     case EntityType.MATERIALIZED_VIEW:
-      return _ENTITY_TYPE_ICON_MAP.get(type)!
+      return type2SvgIconName[type]!
     default:
       return ''
   }
@@ -63,12 +23,14 @@ const getIconTypeForEntity = (type: EntityType): IconDefinition | '' => {
 
 type EntityTypeIconProps = {
   type: EntityType
+  style?: React.CSSProperties
+  className?: string
 }
 
 export const EntityTypeIcon: React.FC<
-  Omit<FontAwesomeIconProps, 'icon'> & EntityTypeIconProps
+  Omit<IconSvgOptions, 'icon'> & EntityTypeIconProps
 > = props => {
-  const { type } = props
+  const { type, style, className } = props
   if (!type) {
     return <></>
   }
@@ -78,10 +40,14 @@ export const EntityTypeIcon: React.FC<
     return <React.Fragment />
   }
   return (
-    <FontAwesomeIcon
-      title={entityTypeToFriendlyName(type)}
-      {...props}
-      icon={iconType}
-    />
+    <span style={style} className={className}>
+      <IconSvg
+        options={{
+          icon: iconType,
+          label: entityTypeToFriendlyName(type),
+          ...props,
+        }}
+      />
+    </span>
   )
 }

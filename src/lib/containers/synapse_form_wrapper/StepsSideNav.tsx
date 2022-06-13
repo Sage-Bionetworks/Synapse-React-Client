@@ -1,14 +1,6 @@
 import * as React from 'react'
+import IconSvg, { Icon } from '../IconSvg'
 import { Step, StepStateEnum } from './types'
-
-import { FlipProp, IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCheckCircle,
-  faCircle,
-  faBan,
-  faExclamationCircle,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export type StepsSideNavProps = {
   stepList: Step[]
@@ -24,25 +16,22 @@ export default function StepsSideNav(props: StepsSideNavProps) {
     isExcluded: boolean | undefined,
     isStatic: boolean | undefined,
     isSubmit: boolean | undefined,
-  ): { iconDef: IconDefinition; flip: FlipProp | undefined } => {
-    let iconDef: IconDefinition = faCircle
-    let flip: FlipProp | undefined = undefined
+  ): { iconDef: Icon } => {
+    let iconDef: Icon = 'circle'
     if (isStatic || isSubmit) {
       return {
         iconDef,
-        flip,
       }
     }
 
     if (isExcluded) {
-      iconDef = faBan
-      flip = 'horizontal'
+      iconDef = 'block'
     } else if (state === StepStateEnum.COMPLETED) {
-      iconDef = faCheckCircle
+      iconDef = 'checkCircle'
     } else if (state === StepStateEnum.ERROR) {
-      iconDef = faExclamationCircle
+      iconDef = 'errorOutlined'
     }
-    return { iconDef, flip }
+    return { iconDef }
   }
 
   const getItemClass = (
@@ -87,7 +76,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
 
     return (
       <div className={itemClass}>
-        <FontAwesomeIcon icon={icon.iconDef} flip={icon.flip} />
+        <IconSvg options={{ icon: icon.iconDef }} />
         {renderStepName(step, isWizard, props.onStepChange)}
       </div>
     )

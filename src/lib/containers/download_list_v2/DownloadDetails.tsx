@@ -1,13 +1,8 @@
 import React from 'react'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faFile, faDatabase } from '@fortawesome/free-solid-svg-icons'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import IconSvg from '../IconSvg'
-
-library.add(faFile)
-library.add(faDatabase)
 
 export type DownloadDetailsProps = {
   numFiles: number

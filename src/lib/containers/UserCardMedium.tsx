@@ -1,10 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCircle,
-  faCopy,
-  faEllipsisV,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { SynapseClient, SynapseConstants } from '../utils'
@@ -18,10 +11,7 @@ import { UserCardLarge } from './UserCardLarge'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { Skeleton } from '@material-ui/lab'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
-
-library.add(faCircle)
-library.add(faEllipsisV)
-library.add(faCopy)
+import IconSvg from './IconSvg'
 
 export type UserCardMediumProps = {
   userProfile: UserProfile
@@ -268,15 +258,15 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             onClick={toggleContextMenu}
             onKeyPress={toggleContextMenu}
           >
-            <FontAwesomeIcon
+            <span
               className={
                 isContextMenuOpen || isLarge
                   ? 'SRC-whiteText'
                   : 'SRC-primary-text-color'
               }
-              icon="ellipsis-v"
-              fixedWidth={true}
-            />
+            >
+              <IconSvg options={{ icon: 'verticalEllipsis' }} />
+            </span>
           </span>
           {isContextMenuOpen && (
             <UserCardContextMenu

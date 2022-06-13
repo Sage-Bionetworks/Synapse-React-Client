@@ -1,11 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCaretDown,
-  faCaretUp,
-  faSearch,
-  faTimes,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Collapse } from '@material-ui/core'
 import React from 'react'
 import { CSSTransition } from 'react-transition-group'
@@ -27,11 +19,7 @@ import {
   QUERY_FILTERS_EXPANDED_CSS,
 } from './QueryWrapper'
 import { QueryContextType } from './QueryWrapper'
-
-library.add(faCaretDown)
-library.add(faCaretUp)
-library.add(faSearch)
-library.add(faTimes)
+import IconSvg from './IconSvg'
 
 type SearchState = {
   show: boolean
@@ -270,11 +258,9 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
             }}
             ref={this.searchFormRef}
           >
-            <FontAwesomeIcon
-              className="QueryWrapperSearchInput__searchbar__searchicon"
-              size={'sm'}
-              icon={'search'}
-            />
+            <span className="QueryWrapperSearchInput__searchbar__searchicon">
+              <IconSvg options={{ icon: 'search' }} />
+            </span>
             <input
               onChange={this.handleChange}
               onClick={() => {
@@ -296,10 +282,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
                   })
                 }}
               >
-                <FontAwesomeIcon
-                  className="SRC-primary-text-color"
-                  icon="times"
-                />
+                <IconSvg options={{ icon: 'close' }} />
               </button>
             )}
           </form>

@@ -7,8 +7,6 @@ import {
   StatusEnum,
   ListResponse,
 } from '../../utils/synapseTypes/'
-import { faTrash, faPhone } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WarningModal from './WarningModal'
 import { Button } from 'react-bootstrap'
 import { Modal } from 'react-bootstrap'
@@ -16,6 +14,7 @@ import { Modal } from 'react-bootstrap'
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
 import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
+import IconSvg from '../IconSvg'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
@@ -360,10 +359,10 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                             )
                           }
                         >
-                          <FontAwesomeIcon
-                            icon={faTrash}
+                          <IconSvg
+                            options={{ icon: 'delete' }}
                             aria-hidden="true"
-                          ></FontAwesomeIcon>
+                          />
                         </button>
                       </td>
                     </tr>
@@ -388,10 +387,10 @@ export default class SynapseFormSubmissionGrid extends React.Component<
                             this.setState({ isShowInfoModal: true })
                           }
                         >
-                          <FontAwesomeIcon
-                            icon={faPhone}
+                          <IconSvg
+                            options={{ icon: 'phone' }}
                             aria-hidden="true"
-                          ></FontAwesomeIcon>
+                          />
                         </button>
                       </td>
                     </tr>

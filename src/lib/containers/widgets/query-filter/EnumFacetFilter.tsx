@@ -1,6 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Collapse } from '@material-ui/core'
 import React, { useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
@@ -14,10 +11,9 @@ import {
   FacetColumnResultValueCount,
   SelectColumn,
 } from '../../../utils/synapseTypes/Table'
+import IconSvg from '../../IconSvg'
 import { Checkbox } from '../Checkbox'
 import { FacetFilterHeader } from './FacetFilterHeader'
-
-library.add(faArrowLeft)
 
 export type EnumFacetFilterProps = {
   facetValues: FacetColumnResultValueCount[]
@@ -175,10 +171,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
               setIsShowAll(false)
             }}
           >
-            <FontAwesomeIcon
-              className="EnumFacetFilter__previous"
-              icon={faArrowLeft}
-            />
+            <span className="EnumFacetFilter__previous">
+              <IconSvg options={{ icon: 'arrowBack' }} />
+            </span>
           </button>
           {searchTerm.length > 0 && (
             <button // Clear Search Filter Text Button
@@ -188,10 +183,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 textInput.current?.focus()
               }}
             >
-              <FontAwesomeIcon
-                className="EnumFacetFilter__reset"
-                icon={'times'}
-              />
+              <span className="EnumFacetFilter__reset">
+                <IconSvg options={{ icon: 'close' }} />
+              </span>
             </button>
           )}
           <input // Search Filter Text
@@ -224,10 +218,9 @@ export const EnumFacetFilter: React.FunctionComponent<EnumFacetFilterProps> = ({
                 textInput.current?.focus()
               }}
             >
-              <FontAwesomeIcon
-                className="EnumFacetFilter__searchicon"
-                icon={'search'}
-              />
+              <span className="EnumFacetFilter__searchicon">
+                <IconSvg options={{ icon: 'search' }} />
+              </span>
             </button>
           </div>
         )}

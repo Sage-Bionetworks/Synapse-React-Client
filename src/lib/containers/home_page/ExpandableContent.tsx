@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import IconSvg from '../IconSvg'
 
 export type ExpandableContentProps = {
   title: JSX.Element
@@ -20,10 +20,9 @@ export default function ExpandableContent({
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <span>{title}</span>
-          <FontAwesomeIcon
-            className="SRC-primary-action-color"
-            icon={isExpanded ? 'times' : 'plus'}
-          />
+          <span className="SRC-primary-action-color">
+            <IconSvg options={{ icon: isExpanded ? 'close' : 'add' }} />
+          </span>
         </button>
       </div>
       <div
