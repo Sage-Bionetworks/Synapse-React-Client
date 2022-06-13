@@ -3174,8 +3174,8 @@ export const getSubmissionById = (
 export const updateSubmissionStatus = (
   request: SubmissionStateChangeRequest,
   accessToken?: string,
-) => {
-  return doPut<void>(
+): Promise<DataAccessSubmission> => {
+  return doPut<DataAccessSubmission>(
     DATA_ACCESS_SUBMISSION_BY_ID(request.submissionId),
     request,
     accessToken,

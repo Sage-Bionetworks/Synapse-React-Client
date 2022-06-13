@@ -1,16 +1,20 @@
-import { Drawer, List, ListItem } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
-import IconSvg, { Icon } from './IconSvg'
-import SynapseLogoName from '../assets/icons/SynapseLogoName'
-import ReactTooltip from 'react-tooltip'
-import { SynapseClient, SynapseConstants } from '../utils'
-import { UserBundle, UserProfile } from '../utils/synapseTypes'
-import { useSynapseContext } from '../utils/SynapseContext'
-import { Avatar } from './Avatar'
+import { Badge, Drawer, List, ListItem } from '@material-ui/core'
+import React, { useState } from 'react'
 import { Form } from 'react-bootstrap'
+import ReactTooltip from 'react-tooltip'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
+import SynapseLogoName from '../assets/icons/SynapseLogoName'
+import { SynapseClient } from '../utils'
+import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useSearchAccessSubmissionsInfinite'
+import { useGetDownloadListStatistics } from '../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
+import { useGetCurrentUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
+import { useSynapseContext } from '../utils/SynapseContext'
+import { Direction, SubmissionState } from '../utils/synapseTypes'
+import { SubmissionSortField } from '../utils/synapseTypes/AccessSubmission'
+import { Avatar } from './Avatar'
 import { CreateProjectModal } from './CreateProjectModal'
+import IconSvg, { Icon } from './IconSvg'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -23,6 +27,7 @@ type MenuItemParams = {
   onClickOpenNavMenu?: NavItem
   onClickGoToUrl?: string
   additionalChildren?: JSX.Element
+  badgeContent?: string | number
 }
 
 export enum NavItem {
@@ -93,31 +98,49 @@ const projectSearchJson = {
 export const SynapseNavDrawer: React.FunctionComponent<
   SynapseNavDrawerProps
 > = ({ initIsOpen = false, signoutCallback }) => {
-  const { accessToken } = useSynapseContext()
   const [isOpen, setOpen] = useState(initIsOpen)
   const [selectedItem, setSelectedItem] = useState<NavItem>()
-  const [currentUserProfile, setUserProfile] = useState<UserProfile>()
-  const [currentUserBundle, setUserBundle] = useState<UserBundle>()
   const [projectSearchText, setProjectSearchText] = useState<string>('')
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
 
-  useEffect(() => {
-    async function getUserProfile() {
-      const mask =
-        SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
-        SynapseConstants.USER_BUNDLE_MASK_IS_AR_REVIEWER
-      const userBundle = await SynapseClient.getMyUserBundle(mask, accessToken)
-      setUserProfile(userBundle.userProfile)
-      setUserBundle(userBundle)
-    }
-    if (accessToken) {
-      getUserProfile()
-    } else {
-      setUserProfile(undefined)
-    }
-  }, [accessToken])
+  const { accessToken } = useSynapseContext()
+  const isLoggedIn = !!accessToken
+
+  const { data: currentUserBundle } = useGetCurrentUserBundle()
+
+  // If the user is logged out, the UserBundle provides an "anonymous" user profile, so override that case with undefined
+  const currentUserProfile =
+    isLoggedIn && currentUserBundle ? currentUserBundle.userProfile : undefined
+
+  const { data: downloadListStatistics } = useGetDownloadListStatistics({
+    enabled: isLoggedIn,
+  })
+
+  const numberOfFilesInDownloadList = downloadListStatistics?.totalNumberOfFiles
+
+  const { data: openSubmissionData } = useSearchAccessSubmissionsInfinite(
+    {
+      submissionState: SubmissionState.SUBMITTED,
+      sort: [
+        {
+          field: SubmissionSortField.CREATED_ON,
+          direction: Direction.DESC,
+        },
+      ],
+    },
+    {
+      enabled:
+        currentUserBundle?.isACTMember || currentUserBundle?.isARReviewer,
+    },
+  )
+
+  let countOfOpenSubmissionsForReview: number | string =
+    openSubmissionData?.pages[0].results.length ?? 0
+  if (openSubmissionData?.pages[0].nextPageToken) {
+    countOfOpenSubmissionsForReview = `${countOfOpenSubmissionsForReview}+`
+  }
 
   const signOut = async () => {
     if (signoutCallback) {
@@ -139,13 +162,14 @@ export const SynapseNavDrawer: React.FunctionComponent<
     setOpen(false)
     setSelectedItem(undefined)
   }
-  const getListItem = (params: MenuItemParams) => {
+  const NavDrawerListItem = (params: MenuItemParams) => {
     const {
       tooltip,
       iconName,
       onClickOpenNavMenu,
       onClickGoToUrl,
       additionalChildren,
+      badgeContent,
     } = params
     const isCurrentlySelectedItem =
       typeof selectedItem === 'undefined'
@@ -183,7 +207,9 @@ export const SynapseNavDrawer: React.FunctionComponent<
           effect="solid"
           id={`${tooltip}Link`}
         />
-        {item}
+        <Badge badgeContent={badgeContent} color="secondary">
+          {item}
+        </Badge>
       </ListItem>
     )
 
@@ -208,12 +234,6 @@ export const SynapseNavDrawer: React.FunctionComponent<
     )}`
   }
 
-  const downloadListItem = getListItem({
-    tooltip: 'Download Cart',
-    iconName: 'download',
-    onClickGoToUrl: '/#!DownloadCart:0',
-  })
-
   return (
     <div className="SynapseNavDrawer">
       <Drawer
@@ -226,71 +246,81 @@ export const SynapseNavDrawer: React.FunctionComponent<
           </a>
         </div>
         <List>
-          {currentUserProfile && (
+          {isLoggedIn && currentUserProfile && (
             <>
-              {getListItem({
-                tooltip: 'Projects',
-                iconName: 'dashboard',
-                onClickOpenNavMenu: NavItem.PROJECTS,
-              })}
-              {getListItem({
-                tooltip: 'Favorites',
-                iconName: 'favTwoTone',
-                onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/favorites`,
-              })}
-              {getListItem({
-                tooltip: 'Teams',
-                iconName: 'peopleTwoTone',
-                onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/teams`,
-              })}
-              {getListItem({
-                tooltip: 'Challenges',
-                iconName: 'challengesTwoTone',
-                onClickGoToUrl: `/#!Profile:${currentUserProfile.ownerId}/challenges`,
-              })}
-              {downloadListItem}
+              <NavDrawerListItem
+                tooltip="Projects"
+                iconName="dashboard"
+                onClickOpenNavMenu={NavItem.PROJECTS}
+              />
+              <NavDrawerListItem
+                tooltip="Favorites"
+                iconName="favTwoTone"
+                onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/favorites`}
+              />
+              <NavDrawerListItem
+                tooltip="Teams"
+                iconName="peopleTwoTone"
+                onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/teams`}
+              />
+              <NavDrawerListItem
+                tooltip="Challenges"
+                iconName="challengesTwoTone"
+                onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/challenges`}
+              />
+              <NavDrawerListItem
+                tooltip="Download Cart"
+                iconName="download"
+                onClickGoToUrl="/#!DownloadCart:0"
+                badgeContent={numberOfFilesInDownloadList}
+              />
+              {isInSynapseExperimentalMode() && (
+                <NavDrawerListItem
+                  tooltip="Trash Can"
+                  iconName="delete"
+                  onClickGoToUrl="/#!Trash:0"
+                />
+              )}
               {isInSynapseExperimentalMode() &&
-                getListItem({
-                  tooltip: 'Trash Can',
-                  iconName: 'delete',
-                  onClickGoToUrl: '/#!Trash:0',
-                })}
-              {isInSynapseExperimentalMode() &&
-                currentUserBundle?.isARReviewer &&
-                getListItem({
-                  tooltip: 'Data Access Management',
-                  iconName: 'accessManagement',
-                  onClickGoToUrl: '/#!DataAccessManagement:default/Submissions',
-                })}
+                currentUserBundle?.isARReviewer && (
+                  <NavDrawerListItem
+                    tooltip="Data Access Management"
+                    iconName="accessManagement"
+                    onClickGoToUrl="/#!DataAccessManagement:default/Submissions"
+                    badgeContent={countOfOpenSubmissionsForReview}
+                  />
+                )}
             </>
           )}
-          {getListItem({
-            tooltip: 'Search',
-            iconName: 'search',
-            onClickGoToUrl: '/#!Search:',
-          })}
+          <NavDrawerListItem
+            tooltip="Search"
+            iconName="search"
+            onClickGoToUrl="/#!Search:"
+          />
         </List>
         <div className="filler" />
         <List>
-          {currentUserProfile &&
-            getListItem({
-              tooltip: 'Your Account',
-              onClickOpenNavMenu: NavItem.PROFILE,
-              additionalChildren: (
+          {isLoggedIn && currentUserProfile && (
+            <NavDrawerListItem
+              tooltip="Your Account"
+              onClickOpenNavMenu={NavItem.PROFILE}
+              additionalChildren={
                 <Avatar userProfile={currentUserProfile} avatarSize="SMALL" />
-              ),
-            })}
-          {!currentUserProfile &&
-            getListItem({
-              tooltip: 'Sign in',
-              iconName: 'login',
-              onClickGoToUrl: '/#!LoginPlace:0',
-            })}
-          {getListItem({
-            tooltip: 'Help',
-            iconName: 'helpOutlined',
-            onClickOpenNavMenu: NavItem.HELP,
-          })}
+              }
+            />
+          )}
+          {!isLoggedIn && (
+            <NavDrawerListItem
+              tooltip="Sign in"
+              iconName="login"
+              onClickGoToUrl="/#!LoginPlace:0"
+            />
+          )}
+          <NavDrawerListItem
+            tooltip="Help"
+            iconName="helpOutlined"
+            onClickOpenNavMenu={NavItem.HELP}
+          />
         </List>
       </Drawer>
       <Drawer
@@ -407,7 +437,9 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 </a>
                 <a
                   className="SRC-whiteText"
-                  onClick={signOut}
+                  onClick={() => {
+                    signOut()
+                  }}
                   rel="noopener noreferrer"
                 >
                   Sign Out

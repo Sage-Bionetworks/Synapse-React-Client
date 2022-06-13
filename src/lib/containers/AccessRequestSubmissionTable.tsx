@@ -1,10 +1,12 @@
 import { upperFirst } from 'lodash-es'
 import moment from 'moment'
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import SortIcon from '../assets/icons/Sort'
 import { formatDate } from '../utils/functions/DateFormatter'
-import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useAccessSubmission'
+import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useSearchAccessSubmissionsInfinite'
+import { ACT_TEAM_ID, SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { Direction, SubmissionState } from '../utils/synapseTypes'
 import {
   SubmissionReviewerFilterType,
@@ -12,12 +14,10 @@ import {
   SubmissionSearchSort,
   SubmissionSortField,
 } from '../utils/synapseTypes/AccessSubmission'
-import UserOrTeamBadge from './UserOrTeamBadge'
-import { ACT_TEAM_ID, SMALL_USER_CARD } from '../utils/SynapseConstants'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { SynapseSpinner } from './LoadingScreen'
 import UserCard from './UserCard'
 import Typography from '../utils/typography/Typography'
+import UserOrTeamBadge from './UserOrTeamBadge'
 
 export type AccessRequestSubmissionTableProps = {
   showSubmitter?: boolean
@@ -113,11 +113,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
             return (
               <tr key={item.id}>
                 <td>
-                  <a
-                    href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!AccessRequirement:AR_ID=${item.id}`}
-                  >
-                    {item.id}
-                  </a>
+                  <Link to={`/Submissions/${item.id}`}>{item.id}</Link>
                 </td>
                 <td>{item.accessRequirementName}</td>
                 {showSubmitter && (

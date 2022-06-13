@@ -1,20 +1,19 @@
 import React, { useCallback } from 'react'
 import {
   BrowserRouter,
-  MemoryRouter,
   Link,
+  MemoryRouter,
   NavLink,
   Route,
   Switch,
   useParams,
 } from 'react-router-dom'
 import { useGetCurrentUserBundle } from '../../utils/hooks/SynapseAPI/useUserBundle'
-import { SubmissionState } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
-import { AccessRequestSubmissionTable } from '../AccessRequestSubmissionTable'
 import IconSvg, { Icon } from '../IconSvg'
 import { SynapseSpinner } from '../LoadingScreen'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
+import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import SubmissionPage from './SubmissionPage'
 
 function LinkTab(props: {
@@ -41,12 +40,15 @@ type ReviewerDashboardProps = {
   routerBaseName?: string
   /** If true use a MemoryRouter, which prevents the browser URL from updating. For demo purposes only. */
   useMemoryRouter?: boolean
+  /** Used to show the reject submission dialog */
+  onRejectSubmissionClicked: (onReject: (reason: string) => void) => void
 }
 
 export function ReviewerDashboard(props: ReviewerDashboardProps) {
   const {
     routerBaseName = '#!DataAccessManagement:default',
     useMemoryRouter = false,
+    onRejectSubmissionClicked,
   } = props
 
   const { data: userBundle, isLoading } = useGetCurrentUserBundle()
@@ -100,19 +102,13 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
             {hasReviewerPermissions && (
               <>
                 <Route exact path="/Submissions">
-                  <Typography variant="headline1">
-                    Inputs coming soon!
-                  </Typography>
-                  <AccessRequestSubmissionTable
-                    showSubmitter={true}
-                    showStatus={false}
-                    showRequesters={true}
-                    submissionState={SubmissionState.SUBMITTED}
-                  />
+                  <DataAccessSubmissionDashboard />
                 </Route>
 
                 <Route path="/Submissions/:id">
-                  <SubmissionPageRouteRenderer />
+                  <SubmissionPageRouteRenderer
+                    onRejectSubmissionClicked={onRejectSubmissionClicked}
+                  />
                 </Route>
               </>
             )}
@@ -128,7 +124,9 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
   )
 }
 
-function SubmissionPageRouteRenderer() {
+function SubmissionPageRouteRenderer(props: {
+  onRejectSubmissionClicked: (onReject: (reason: string) => void) => void
+}) {
   const { id } = useParams<{ id: string }>()
   return (
     <>
@@ -158,9 +156,7 @@ function SubmissionPageRouteRenderer() {
 
       <SubmissionPage
         submissionId={id}
-        onRejectClicked={function (): void {
-          throw new Error('Function not implemented.')
-        }}
+        onRejectClicked={props.onRejectSubmissionClicked}
       />
     </>
   )
