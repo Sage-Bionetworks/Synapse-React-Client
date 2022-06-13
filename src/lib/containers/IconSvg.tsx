@@ -404,7 +404,7 @@ const getIcon = (options: IconSvgOptions) => {
 }
 
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { options } = props
+  const { options, ...rest } = props
   const { icon, color, padding, label } = options
   let mounted = true
 
@@ -439,6 +439,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         data-for={`icon-${icon}`}
         data-tip={label}
         role={'img'}
+        {...rest}
       >
         {getIcon(options)}
       </span>
