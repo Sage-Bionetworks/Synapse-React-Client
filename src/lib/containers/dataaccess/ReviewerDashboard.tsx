@@ -24,7 +24,7 @@ function LinkTab(props: {
 }) {
   const { href, children, icon } = props
   return (
-    <NavLink className="Tab textDecorationNone" role="tab" to={href}>
+    <NavLink className="Tab" role="tab" to={href}>
       <IconSvg
         options={{
           icon: icon,

@@ -109,6 +109,7 @@ export const SynapseNavDrawer: React.FunctionComponent<
 
   const { data: currentUserBundle } = useGetCurrentUserBundle()
 
+  // If the user is logged out, the UserBundle provides an "anonymous" user profile, so override that case with undefined
   const currentUserProfile =
     isLoggedIn && currentUserBundle ? currentUserBundle.userProfile : undefined
 
