@@ -1,8 +1,9 @@
 import { omitBy } from 'lodash-es'
 import React, { useCallback, useEffect, useState } from 'react'
 import { FormLabel } from 'react-bootstrap'
-import { useHistory, useLocation } from 'react-router'
+import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
+import { SubmissionState } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import {
   AccessRequestSubmissionTable,
@@ -11,10 +12,7 @@ import {
 import UserSearchBoxV2 from '../UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox'
 
-export type DataAccessSubmissionDashboardProps = {}
-export const DataAccessSubmissionDashboard: React.FunctionComponent<
-  DataAccessSubmissionDashboardProps
-> = () => {
+export const DataAccessSubmissionDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<
     string | undefined
   >()
@@ -26,6 +24,7 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
       accessorId,
       reviewerId,
       showRequesters: true,
+      submissionState: SubmissionState.SUBMITTED,
     })
 
   const location = useLocation()
@@ -89,6 +88,7 @@ export const DataAccessSubmissionDashboard: React.FunctionComponent<
         accessorId,
         reviewerId,
         showRequesters: true,
+        submissionState: SubmissionState.SUBMITTED,
       })
     },
     [accessRequirementId, accessorId, reviewerId, history, location],

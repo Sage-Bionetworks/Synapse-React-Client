@@ -5,12 +5,13 @@ import ReactTooltip from 'react-tooltip'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
 import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import { SynapseClient } from '../utils'
-import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useAccessSubmission'
+import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useSearchAccessSubmissionsInfinite'
 import { useGetDownloadListStatistics } from '../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import { useGetCurrentUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { SubmissionState } from '../utils/synapseTypes'
+import { Direction, SubmissionState } from '../utils/synapseTypes'
+import { SubmissionSortField } from '../utils/synapseTypes/AccessSubmission'
 import { Avatar } from './Avatar'
 import { CreateProjectModal } from './CreateProjectModal'
 import IconSvg, { Icon } from './IconSvg'
@@ -122,6 +123,12 @@ export const SynapseNavDrawer: React.FunctionComponent<
   const { data: openSubmissionData } = useSearchAccessSubmissionsInfinite(
     {
       submissionState: SubmissionState.SUBMITTED,
+      sort: [
+        {
+          field: SubmissionSortField.CREATED_ON,
+          direction: Direction.DESC,
+        },
+      ],
     },
     {
       enabled:
