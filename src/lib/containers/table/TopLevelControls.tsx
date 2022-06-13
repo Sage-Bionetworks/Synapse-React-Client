@@ -1,4 +1,3 @@
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
@@ -46,7 +45,7 @@ type CustomControl = {
   buttonText: string
   onClick: (event: CustomControlCallbackData) => void
   classNames?: string
-  icon?: IconDefinition
+  icon?: string
 }
 
 const controls: Control[] = [

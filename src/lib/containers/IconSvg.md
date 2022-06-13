@@ -62,7 +62,7 @@
       'challengesTwoTone',
       'download',
       'searchOutlined',
-      'searchTwoTone',
+      'search',
       'time',
       'login',
       'helpOutlined',

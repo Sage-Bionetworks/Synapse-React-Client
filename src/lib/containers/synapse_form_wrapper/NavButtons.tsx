@@ -1,11 +1,6 @@
 import * as React from 'react'
+import IconSvg from '../IconSvg'
 import { Step, NavActionEnum } from './types'
-import {
-  faChevronLeft,
-  faChevronRight,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 export interface NavButtonsProps {
   isWizardMode?: boolean
   previousStepIds: string[]
@@ -38,7 +33,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
       onClick={e => props.onNavAction(NavActionEnum.PREVIOUS)}
       className="btn btn-link nav-link prev"
     >
-      <FontAwesomeIcon icon={faChevronLeft} />
+      <IconSvg options={{ icon: 'chevronLeft' }} />
     </button>
   ) : (
     <></>
@@ -50,7 +45,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
       onClick={e => props.onNavAction(NavActionEnum.NEXT)}
       className="btn btn-link nav-link next"
     >
-      <FontAwesomeIcon icon={faChevronRight} />
+      <IconSvg options={{ icon: 'chevronRight' }} />
     </button>
   ) : (
     <></>
@@ -85,7 +80,7 @@ export function NextStepLink(props: NextStepLinkProps): JSX.Element {
   return (
     <span className="nav-link">
       <a onClick={e => props.onNavAction(nextStep)}>{nextStep.title}</a>
-      <FontAwesomeIcon icon={faChevronRight}></FontAwesomeIcon>
+      <IconSvg options={{ icon: 'chevronRight' }} />
     </span>
   )
 }

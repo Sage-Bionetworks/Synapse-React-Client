@@ -23,7 +23,10 @@
       .EntityIcon {
         text-align: center;
         grid-column: icon / span 1;
-        margin-bottom: 3px;
+        margin: 2px 3px 1px 3px;
+        svg {
+          width: 15px;
+        }
       }
     }
     .Node.SelectNode[aria-selected='true'] {

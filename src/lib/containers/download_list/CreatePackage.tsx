@@ -1,10 +1,3 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faCheck,
-  faDownload,
-  faFolder,
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 import * as ReactBoostrap from 'react-bootstrap'
 import {
@@ -19,10 +12,7 @@ import {
   FileDownloadStatus,
   ZipFileFormat,
 } from '../../utils/synapseTypes/'
-
-library.add(faCheck)
-library.add(faDownload)
-library.add(faFolder)
+import IconSvg from '../IconSvg'
 
 export type CreatePackageProps = {
   children?: JSX.Element
@@ -157,7 +147,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
                   onClick={createPackageHandler}
                   type="button"
                 >
-                  <FontAwesomeIcon icon="folder" />
+                  <IconSvg options={{ icon: 'folder' }} />
                   Create Package
                 </ReactBoostrap.Button>
               </>
@@ -165,7 +155,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
             {bulkFileDownloadResponse && (
               <>
                 <div className="package-created">
-                  <FontAwesomeIcon icon="check" color="green" />
+                  <IconSvg options={{ icon: 'check', color: 'green' }} />
                   <span className="create-package-text">
                     Package created! Ready for download.
                   </span>
@@ -175,7 +165,7 @@ export const CreatePackage = (props: CreatePackageProps) => {
                   className="pill-xl"
                   onClick={downloadPackageHandler}
                 >
-                  <FontAwesomeIcon icon="download" color="white" />
+                  <IconSvg options={{ icon: 'download', color: 'white' }} />
                   Download Package
                 </ReactBoostrap.Button>
               </>

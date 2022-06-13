@@ -9,11 +9,10 @@ import {
 } from '../../utils/SynapseClient'
 import { ErrorBanner } from '../ErrorBanner'
 import { Evaluation } from '../../utils/synapseTypes/Evaluation/Evaluation'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import IconSvg from '../IconSvg'
 
 export type EvaluationEditorProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
@@ -231,7 +230,7 @@ const EvaluationEditorDropdown: React.FunctionComponent<
       )}
       <Dropdown className="float-right">
         <Dropdown.Toggle variant="link" className="dropdown-no-caret">
-          <FontAwesomeIcon icon={faEllipsisV} />
+          <IconSvg options={{ icon: 'verticalEllipsis' }} />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           <Dropdown.Item onClick={onClick}>Save</Dropdown.Item>
