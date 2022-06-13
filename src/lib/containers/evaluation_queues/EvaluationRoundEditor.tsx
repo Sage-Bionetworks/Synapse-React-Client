@@ -13,8 +13,6 @@ import {
 import moment, { Moment } from 'moment'
 import { CalendarWithIconFormGroup } from './CalendarWithIconFormGroup'
 import { EvaluationRoundLimitOptionsList } from './round_limits/EvaluationRoundLimitOptionsList'
-import { faClipboardCheck, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useListState } from '../../utils/hooks/useListState'
 import {
   convertEvaluationRoundToInput,
@@ -29,8 +27,8 @@ import {
 } from '../../utils/SynapseClient'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import IconSvg, { IconSvgOptions } from '../IconSvg'
 
 export type EvaluationRoundEditorProps = {
   evaluationRoundInput: EvaluationRoundInput
@@ -48,7 +46,7 @@ const determineRoundStatus = (
   roundEnd: Moment | string,
 ) => {
   let className: string
-  let icon: IconDefinition | undefined
+  let icon: IconSvgOptions | undefined
   let status: string
   const now = moment()
   // based off of start/end datetime from props so that users making
@@ -56,11 +54,11 @@ const determineRoundStatus = (
   if (now.isSameOrAfter(roundStart)) {
     if (now.isBefore(roundEnd)) {
       className = 'status-in-progress'
-      icon = faSyncAlt
+      icon = { icon: 'sync' }
       status = 'IN PROGRESS'
     } else {
       className = 'status-completed'
-      icon = faClipboardCheck
+      icon = { icon: 'clipboardCheck' }
       status = 'COMPLETED'
     }
   } else {
@@ -72,7 +70,7 @@ const determineRoundStatus = (
   return (
     <div className={className}>
       <div className="status">
-        {icon && <FontAwesomeIcon icon={icon} />}
+        {icon && <IconSvg options={icon} />}
         <span>{status}</span>
       </div>
     </div>

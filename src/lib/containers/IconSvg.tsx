@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import {
+  Block,
   ArrowBackIos,
   ArrowForwardIos,
   Check,
@@ -12,7 +13,6 @@ import {
   InfoOutlined,
   AddShoppingCart,
   ShoppingCartOutlined,
-  Delete,
   ExpandMore,
   ExpandLess,
   DashboardTwoTone,
@@ -45,6 +45,24 @@ import {
   HistoryTwoTone,
   StorageTwoTone,
   ChevronRight,
+  LayersTwoTone,
+  CloseTwoTone,
+  MoreVertTwoTone,
+  SyncTwoTone,
+  AssignmentTurnedInTwoTone,
+  AddTwoTone,
+  WarningTwoTone,
+  DeleteTwoTone,
+  ChevronLeft,
+  RadioButtonUncheckedTwoTone,
+  CheckCircleTwoTone,
+  ErrorOutlined,
+  PhoneTwoTone,
+  PublicTwoTone,
+  AccessTimeTwoTone,
+  ArrowDropDownTwoTone,
+  ArrowDropUpTwoTone,
+  OpenInNewTwoTone,
 } from '@material-ui/icons'
 
 import AccountCertified from '../assets/mui_components/AccountCertified'
@@ -74,10 +92,14 @@ export type Icon =
   | 'accessClosed'
   | 'arrowBack'
   | 'arrowForward'
+  | 'arrowDropUp'
+  | 'arrowDropDown'
   | 'check'
   | 'clear'
   | 'cart'
+  | 'clock'
   | 'code'
+  | 'openInNewWindow'
   | 'dashboard'
   | 'delete'
   | 'addToCart'
@@ -93,7 +115,7 @@ export type Icon =
   | 'challengesTwoTone'
   | 'download'
   | 'searchOutlined'
-  | 'searchTwoTone'
+  | 'search'
   | 'history'
   | 'time'
   | 'login'
@@ -119,6 +141,8 @@ export type Icon =
   | 'folder'
   | 'link'
   | 'table'
+  | 'public'
+  | 'people'
   | 'entityview'
   | 'submissionview'
   | 'challenge'
@@ -134,6 +158,19 @@ export type Icon =
   | 'chatTwoTone'
   | 'accessManagement'
   | 'chevronRight'
+  | 'chevronLeft'
+  | 'database'
+  | 'close'
+  | 'verticalEllipsis'
+  | 'sync'
+  | 'clipboardCheck'
+  | 'add'
+  | 'warning'
+  | 'circle'
+  | 'block'
+  | 'checkCircle'
+  | 'errorOutlined'
+  | 'phone'
 
 export type IconSvgOptions = {
   icon: Icon
@@ -151,15 +188,17 @@ export type SVGStyleProps = {
   color?: string
   verticalAlign?: string
   fill?: string
+  width?: string
 }
 
 const getIcon = (options: IconSvgOptions) => {
-  const { icon, color } = options
+  const { icon, color, size } = options
 
   // Styles for svg imported from mui
   const muiSvgStyle: SVGStyleProps = {
     color: color,
     verticalAlign: 'middle',
+    width: size,
   }
   // Styles for custom svg missing from mui
   const customSvgStyle: SVGStyleProps = {
@@ -173,22 +212,42 @@ const getIcon = (options: IconSvgOptions) => {
       return <LockOpenTwoTone style={customSvgStyle} />
     case 'accessClosed':
       return <VpnKeyTwoTone style={customSvgStyle} />
+    case 'add':
+      return <AddTwoTone style={muiSvgStyle} />
     case 'arrowBack':
       return <ArrowBackIos style={muiSvgStyle} />
     case 'arrowForward':
       return <ArrowForwardIos style={muiSvgStyle} />
+    case 'arrowDropUp':
+      return <ArrowDropUpTwoTone style={muiSvgStyle} />
+    case 'arrowDropDown':
+      return <ArrowDropDownTwoTone style={muiSvgStyle} />
+    case 'block':
+      return <Block style={muiSvgStyle} />
     case 'check':
       return <Check style={muiSvgStyle}></Check>
     case 'clear':
       return <Clear style={muiSvgStyle}></Clear>
     case 'cart':
       return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
+    case 'clock':
+      return <AccessTimeTwoTone style={muiSvgStyle} />
     case 'code':
       return <Code style={muiSvgStyle}></Code>
+    case 'circle':
+      return <RadioButtonUncheckedTwoTone style={muiSvgStyle} />
+    case 'checkCircle':
+      return <CheckCircleTwoTone style={muiSvgStyle} />
     case 'dashboard':
       return <DashboardTwoTone style={muiSvgStyle}></DashboardTwoTone>
     case 'delete':
-      return <Delete style={muiSvgStyle}></Delete>
+      return <DeleteTwoTone style={muiSvgStyle} />
+    case 'openInNewWindow':
+      return <OpenInNewTwoTone style={muiSvgStyle} />
+    case 'phone':
+      return <PhoneTwoTone style={muiSvgStyle} />
+    case 'people':
+      return <PeopleTwoTone style={muiSvgStyle} />
     case 'addToCart':
       return <AddShoppingCart style={muiSvgStyle}></AddShoppingCart>
     case 'addCircleOutline':
@@ -201,6 +260,14 @@ const getIcon = (options: IconSvgOptions) => {
       return <Group style={muiSvgStyle}></Group>
     case 'photoCamera':
       return <PhotoCameraOutlined style={muiSvgStyle}></PhotoCameraOutlined>
+    case 'verticalEllipsis':
+      return <MoreVertTwoTone style={muiSvgStyle} />
+    case 'sync':
+      return <SyncTwoTone style={muiSvgStyle} />
+    case 'public':
+      return <PublicTwoTone style={muiSvgStyle} />
+    case 'clipboardCheck':
+      return <AssignmentTurnedInTwoTone style={muiSvgStyle} />
     case 'info':
       return (
         <InfoOutlined fontSize={'small'} style={muiSvgStyle}></InfoOutlined>
@@ -215,9 +282,11 @@ const getIcon = (options: IconSvgOptions) => {
       return <AssessmentTwoTone style={muiSvgStyle}></AssessmentTwoTone>
     case 'download':
       return <GetAppTwoTone style={muiSvgStyle}></GetAppTwoTone>
+    case 'errorOutlined':
+      return <ErrorOutlined style={muiSvgStyle} />
     case 'searchOutlined':
       return <SearchOutlined style={muiSvgStyle}></SearchOutlined>
-    case 'searchTwoTone':
+    case 'search':
       return <SearchTwoTone style={muiSvgStyle}></SearchTwoTone>
     case 'history':
       return <HistoryTwoTone style={muiSvgStyle}></HistoryTwoTone>
@@ -227,6 +296,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <Login fill={color} style={customSvgStyle}></Login>
     case 'helpOutlined':
       return <HelpOutlined style={muiSvgStyle}></HelpOutlined>
+    case 'close':
+      return <CloseTwoTone style={muiSvgStyle} />
     case 'expandLess':
       return <ExpandLess fontSize={'small'} style={muiSvgStyle}></ExpandLess>
     case 'expandMore':
@@ -299,6 +370,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <QuestionAnswerTwoTone style={muiSvgStyle} />
     case 'dataset':
       return <GridOnTwoTone style={muiSvgStyle} />
+    case 'database':
+      return <LayersTwoTone style={muiSvgStyle} />
     case 'docker':
       return (
         <Docker fill={color ? color : 'currentColor'} style={customSvgStyle} />
@@ -311,6 +384,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <AccountValidated></AccountValidated>
     case 'warningOutlined':
       return <ReportProblemOutlined style={muiSvgStyle}></ReportProblemOutlined>
+    case 'warning':
+      return <WarningTwoTone style={muiSvgStyle} />
     case 'removeCircle':
       return <RemoveCircleTwoTone style={muiSvgStyle}></RemoveCircleTwoTone>
     case 'replyTwoTone':
@@ -320,14 +395,16 @@ const getIcon = (options: IconSvgOptions) => {
     case 'accessManagement':
       return <AccessManagement style={muiSvgStyle}></AccessManagement>
     case 'chevronRight':
-      return <ChevronRight style={muiSvgStyle}></ChevronRight>
+      return <ChevronRight style={muiSvgStyle} />
+    case 'chevronLeft':
+      return <ChevronLeft style={muiSvgStyle} />
     default:
       return <></>
   }
 }
 
 const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
-  const { options } = props
+  const { options, ...rest } = props
   const { icon, color, padding, label } = options
   let mounted = true
 
@@ -362,6 +439,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         data-for={`icon-${icon}`}
         data-tip={label}
         role={'img'}
+        {...rest}
       >
         {getIcon(options)}
       </span>
@@ -380,7 +458,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
 /**
  * Map entity type values to appropriate icon values supported by IconSvg.
  */
-export const type2SvgIconName: Record<EntityType, string> = {
+export const type2SvgIconName: Record<EntityType, Icon> = {
   file: 'file',
   project: 'dashboard',
   folder: 'folder',

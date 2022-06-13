@@ -5,8 +5,8 @@ import {
 } from '../../utils/synapseTypes'
 import React, { useEffect, useState } from 'react'
 import { SynapseConstants, SynapseClient } from '../../utils'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useSynapseContext } from '../../utils/SynapseContext'
+import IconSvg from '../IconSvg'
 
 type FileHandleLinkProps = {
   fileHandleAssociation: FileHandleAssociation
@@ -73,9 +73,7 @@ export const FileHandleLink = (props: FileHandleLinkProps) => {
       style={{ padding: 0 }}
     >
       {displayValue ?? fileName ?? fileHandleAssociation.fileHandleId}
-      {showDownloadIcon && (
-        <FontAwesomeIcon style={{ marginLeft: 5 }} icon="download" />
-      )}
+      {showDownloadIcon && <IconSvg options={{ icon: 'download' }} />}
     </button>
   )
 }

@@ -1,13 +1,18 @@
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
+import { components } from 'react-select'
 import AsyncSelect from 'react-select/async'
+import { SelectComponents } from 'react-select/src/components'
 import { SynapseClient } from '../../utils'
 import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type AccessRequirementSearchBoxProps = {
+  /* id for the input tag */
+  htmlId?: string
   initialId?: string | number
   onChange: (accessRequirementId?: string | undefined) => void
+  placeholder?: string
 }
 
 export function getOptionLabel(id: string | number, name: string) {
@@ -18,10 +23,30 @@ export function getOptionLabel(id: string | number, name: string) {
   }
 }
 
+const customSelectComponents: Partial<
+  SelectComponents<
+    {
+      id: string | number
+      value: string | number
+      label: string
+    },
+    false
+  >
+> = {
+  Control: props => {
+    return (
+      <components.Control
+        {...props}
+        className={`form-control ${props.className ?? ''}`}
+      />
+    )
+  },
+}
+
 export default function AccessRequirementSearchBox(
   props: AccessRequirementSearchBoxProps,
 ) {
-  const { initialId: initialId, onChange } = props
+  const { htmlId, initialId: initialId, onChange, placeholder } = props
   const { accessToken } = useSynapseContext()
   const { data: initialAccessRequirement, isLoading: isLoadingInitialAR } =
     useGetAccessRequirement(initialId!, {
@@ -64,6 +89,7 @@ export default function AccessRequirementSearchBox(
 
   return (
     <AsyncSelect
+      className="bootstrap-4-backport"
       defaultInputValue={
         initialId
           ? getOptionLabel(
@@ -86,12 +112,19 @@ export default function AccessRequirementSearchBox(
             ]
           : true
       }
+      id={htmlId}
       cacheOptions
       isClearable
+      styles={{
+        // Bootstrap's form-control class overrides the display value, manually set to flex (the default without Bootstrap)
+        control: styles => ({ ...styles, display: 'flex !important' }),
+      }}
+      components={customSelectComponents}
       loadOptions={loadOptions}
       onChange={option => {
         onChange(option?.id.toString())
       }}
+      placeholder={placeholder}
     />
   )
 }

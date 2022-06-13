@@ -17,11 +17,12 @@ import { ACT_TEAM_ID, SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { SynapseSpinner } from './LoadingScreen'
 import UserCard from './UserCard'
+import Typography from '../utils/typography/Typography'
 
 export type AccessRequestSubmissionTableProps = {
-  showSubmitter: boolean
-  showStatus: boolean
-  showRequestors: boolean
+  showSubmitter?: boolean
+  showStatus?: boolean
+  showRequesters?: boolean
   accessorId?: string
   accessRequirementId?: string
   reviewerId?: string
@@ -34,7 +35,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
 > = ({
   showSubmitter,
   showStatus,
-  showRequestors,
+  showRequesters,
   accessorId,
   accessRequirementId,
   reviewerId,
@@ -65,10 +66,11 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
     ],
   )
 
-  const { data, hasNextPage, fetchNextPage, isFetching } =
+  const { data, hasNextPage, fetchNextPage, isLoading } =
     useSearchAccessSubmissionsInfinite(searchRequest)
 
   const accessSubmissions = data?.pages.flatMap(page => page.results) ?? []
+
   const onSort = (field: SubmissionSortField) => {
     if (sort.field === field) {
       setSort({ field, direction: sort.direction === 'DESC' ? 'ASC' : 'DESC' })
@@ -76,7 +78,6 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
       setSort({ field, direction: 'DESC' })
     }
   }
-
   return (
     <div className="bootstrap-4-backport AccessSubmissionTable">
       <Table striped borderless bordered={false}>
@@ -86,7 +87,7 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
             <th>Access Requirement Name</th>
             {showSubmitter && <th>Submitter</th>}
             {showStatus && <th>Status</th>}
-            {showRequestors && <th>Requestors</th>}
+            {showRequesters && <th>Requesters</th>}
             <th>Reviewer(s)</th>
             <th>
               Created Date
@@ -127,17 +128,17 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
                 {showStatus && (
                   <td>{upperFirst(item.state.toLocaleLowerCase())}</td>
                 )}
-                {showRequestors && (
+                {showRequesters && (
                   <td>
                     <UserOrTeamBadge principalId={item.submitterId} />
                     {item.accessorChanges
                       .filter(user => item.submitterId !== user.userId)
-                      .map(requestor => (
-                        <li key={requestor.userId}>
+                      .map(requester => (
+                        <li key={requester.userId}>
                           <UserCard
                             size={SMALL_USER_CARD}
-                            ownerId={requestor.userId}
-                            className="requestor"
+                            ownerId={requester.userId}
+                            className="requester"
                           />
                         </li>
                       ))}
@@ -161,17 +162,20 @@ export const AccessRequestSubmissionTable: React.FunctionComponent<
           })}
         </tbody>
       </Table>
+      {isLoading && (
+        <div className="SRC-center-text">
+          <SynapseSpinner size={40} />
+        </div>
+      )}
+      {!isLoading && accessSubmissions.length == 0 && (
+        <Typography className="SRC-center-text" variant="body1">
+          No Results
+        </Typography>
+      )}
       {!hasNextPage ? (
-        <></>
-      ) : isFetching ? (
-        <SynapseSpinner size={40} />
+        ''
       ) : (
-        <Button
-          variant="outline"
-          onClick={() => {
-            fetchNextPage()
-          }}
-        >
+        <Button variant="outline" onClick={() => fetchNextPage()}>
           Show More
         </Button>
       )}

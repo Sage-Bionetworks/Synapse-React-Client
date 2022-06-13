@@ -104,7 +104,7 @@ const ForumSearch = (props: ForumSearchProps) => {
     <div className="bootstrap-4-backport ForumSearch">
       <div>
         <span className="SearchIcon">
-          <IconSvg options={{ icon: 'searchTwoTone' }} />
+          <IconSvg options={{ icon: 'search' }} />
         </span>
         <input
           role="textbox"

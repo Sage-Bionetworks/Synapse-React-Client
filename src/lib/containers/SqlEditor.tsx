@@ -1,6 +1,5 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { SearchTwoTone } from '@material-ui/icons'
+
 import { Collapse } from '@material-ui/core'
 import React, { useEffect, useRef, useState } from 'react'
 import { HelpPopover } from './HelpPopover'
@@ -10,8 +9,6 @@ import {
   QUERY_FILTERS_EXPANDED_CSS,
 } from './QueryWrapper'
 import { useQueryContext } from './QueryWrapper'
-
-library.add(faSearch)
 
 export type SqlEditorProps = {
   helpMessage?: string
@@ -72,11 +69,7 @@ export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
             className="QueryWrapperSqlEditorInput__searchbar"
             onSubmit={search}
           >
-            <FontAwesomeIcon
-              className="QueryWrapperSqlEditorInput__searchbar__searchicon"
-              size={'sm'}
-              icon={'search'}
-            />
+            <SearchTwoTone className="QueryWrapperSqlEditorInput__searchbar__searchicon" />
             <input
               ref={inputRef}
               onChange={handleChange}

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Icon } from './row_renderers/utils'
 import {
   BatchFileRequest,
   FileEntity,
@@ -189,7 +188,7 @@ const DirectDownload: React.FunctionComponent<
             href={externalURL}
             target="_blank"
           >
-            <Icon type="externallink" />
+            <IconSvg options={{ icon: 'openInNewWindow' }} />
           </a>
         </button>
       )

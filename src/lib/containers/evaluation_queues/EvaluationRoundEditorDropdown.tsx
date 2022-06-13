@@ -1,8 +1,7 @@
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
 import { Dropdown } from 'react-bootstrap'
 import React, { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
+import IconSvg from '../IconSvg'
 
 export type EvaluationRoundEditorDropdownProps = {
   onDelete: () => void
@@ -37,7 +36,7 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<
           variant="link"
           className="dropdown-no-caret evaluation-round-editor-dropdown"
         >
-          <FontAwesomeIcon icon={faEllipsisV} />
+          <IconSvg options={{ icon: 'verticalEllipsis' }} />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           <Dropdown.Item onClick={onSave}>Save</Dropdown.Item>

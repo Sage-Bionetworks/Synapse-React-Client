@@ -3715,6 +3715,13 @@ export const searchAccessApprovals = (
   )
 }
 
+/**
+ * Performs a search through access submissions that are reviewable by the user and
+ * that match the criteria in the given request.
+ * @param submissionSearchRequest
+ * @param accessToken
+ * https://rest-docs.synapse.org/rest/POST/dataAccessSubmission/search.html
+ */
 export const searchAccessSubmission = (
   submissionSearchRequest: SubmissionSearchRequest,
   accessToken: string | undefined,

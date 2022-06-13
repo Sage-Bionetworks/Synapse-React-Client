@@ -1,5 +1,3 @@
-import { faDatabase, faLink } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { mount } from 'enzyme'
 import {
   FileHandle,
@@ -150,9 +148,9 @@ describe('basic tests', () => {
       ...props,
       fileHandle: externalFileHandle,
     })
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faLink)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('link')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalFileLink]
@@ -186,9 +184,9 @@ describe('basic tests', () => {
       ...props,
       fileHandle: cloudFileHandle,
     })
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faLink)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('link')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[FileHandleDownloadTypeEnum.ExternalCloudFile]
@@ -204,9 +202,9 @@ describe('basic tests', () => {
       ...props,
       fileHandle: tooLargeFileHandle,
     })
-    const icons = wrapper.find(FontAwesomeIcon)
-    expect(icons).toHaveLength(2)
-    expect(icons.get(1).props.icon).toEqual(faDatabase)
+    const icons = wrapper.find(IconSvg)
+    expect(icons).toHaveLength(1)
+    expect(icons.get(0).props.options.icon).toEqual('database')
     const tooltipSpan = wrapper.find(
       `[data-tip="${
         HasAccess.tooltipText[FileHandleDownloadTypeEnum.TooLarge]
