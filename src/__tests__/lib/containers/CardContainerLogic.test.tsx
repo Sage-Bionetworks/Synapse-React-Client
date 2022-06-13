@@ -1,68 +1,102 @@
-import { shallow } from 'enzyme'
+import { render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { SynapseConstants } from '../../../lib'
 import CardContainer from '../../../lib/containers/CardContainer'
 import CardContainerLogic, {
   CardContainerLogicProps,
 } from '../../../lib/containers/CardContainerLogic'
-import syn16787123Json from '../../../mocks/query/syn16787123'
+import { QueryVisualizationWrapper } from '../../../lib/containers/QueryVisualizationWrapper'
+import { QueryWrapper } from '../../../lib/containers/QueryWrapper'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
-const createShallowComponent = async (
-  props: CardContainerLogicProps,
-  disableLifecycleMethods: boolean = false,
-) => {
-  const wrapper = await shallow(<CardContainerLogic {...props} />)
-  const instance = wrapper.instance() as CardContainerLogic
-  return { wrapper, instance }
+const renderComponent = (props: CardContainerLogicProps) => {
+  return render(<CardContainerLogic {...props} />, { wrapper: createWrapper() })
 }
+
+jest.mock('../../../lib/containers/CardContainer', () => ({
+  __esModule: true,
+  default: jest.fn(props => {
+    return <div data-testid="CardContainer"></div>
+  }),
+}))
+
+jest.mock('../../../lib/containers/QueryWrapper', () => ({
+  QueryWrapper: jest.fn().mockImplementation(props => {
+    return <div data-testid="QueryWrapper">{props.children}</div>
+  }),
+  QueryContextConsumer: jest.fn().mockImplementation(props => {
+    return <div data-testid="QueryContextConsumer">{props.children}</div>
+  }),
+}))
+
+jest.mock('../../../lib/containers/QueryVisualizationWrapper', () => ({
+  QueryVisualizationWrapper: jest.fn().mockImplementation(props => {
+    return <div data-testid="QueryVisualizationWrapper">{props.children}</div>
+  }),
+}))
 
 describe('it performs basic functionality', () => {
   const sql = 'SELECT * FROM syn16787123'
-  const SynapseClient = require('../../../lib/utils/SynapseClient')
 
-  SynapseClient.getQueryTableResults = jest.fn(() =>
-    Promise.resolve(syn16787123Json),
-  )
-  const props = {
+  const props: CardContainerLogicProps = {
     sql,
     limit: 5,
     unitDescription: 'files',
     type: SynapseConstants.STUDY,
+    rgbIndex: 2,
+    facetAliases: { facetName: 'alias' },
   }
 
   it('renders without crashing', async () => {
-    const { wrapper } = await createShallowComponent(props, true)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(CardContainer)).toHaveLength(1)
+    const { container } = renderComponent(props)
+    expect(container).toBeDefined()
+    await screen.findByTestId('CardContainer')
+    await screen.findByTestId('QueryVisualizationWrapper')
+    await screen.findByTestId('QueryWrapper')
   })
 
   it('passes down props correctly', async () => {
-    const { wrapper } = await createShallowComponent(props, true)
+    renderComponent(props)
 
-    const QueryWrapper = wrapper.find('QueryWrapper')
-    expect(QueryWrapper.props()).toEqual(
-      expect.objectContaining({
-        initQueryRequest: expect.objectContaining({
-          concreteType:
-            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-          entityId: 'syn16787123',
-          partMask:
-            SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-            SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-            SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-            SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
-            SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-            SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
-            SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
-            SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
-          query: {
-            sql: props.sql,
-            limit: props.limit,
-          },
+    await waitFor(() =>
+      expect(QueryWrapper).toHaveBeenCalledWith(
+        expect.objectContaining({
+          initQueryRequest: expect.objectContaining({
+            concreteType:
+              'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+            entityId: 'syn16787123',
+            partMask:
+              SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+              SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+              SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+              SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+              SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+              SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+              SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+              SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
+            query: {
+              sql: props.sql,
+              limit: props.limit,
+            },
+          }),
         }),
-      }),
+        expect.anything(),
+      ),
     )
-    const CardContainer = wrapper.find('CardContainer')
-    expect(CardContainer.props()).toEqual(props)
+
+    await waitFor(() =>
+      expect(QueryVisualizationWrapper).toHaveBeenCalledWith(
+        expect.objectContaining({
+          rgbIndex: props.rgbIndex,
+          unitDescription: props.unitDescription,
+          facetAliases: props.facetAliases,
+        }),
+        expect.anything(),
+      ),
+    )
+
+    await waitFor(() =>
+      expect(CardContainer).toHaveBeenCalledWith(props, expect.anything()),
+    )
   })
 })
