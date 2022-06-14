@@ -164,6 +164,10 @@
   }
 }
 
+.DownloadListActionsRequired {
+  padding-top: 40px;
+}
+
 .actionRequiredCard {
   display: grid;
   padding: 20px 35px;
@@ -171,6 +175,10 @@
   grid-template-columns: 160px auto 160px;
   &.RequestDownloadCart {
     grid-template-columns: 160px auto 200px;
+    .iconImg {
+      margin-top: 10px;
+      margin-left: 30px;
+    }
     .contactAdminNote {
       color: map.get(SRC.$colors, 'gray-700');
       text-align: center;
@@ -190,6 +198,9 @@
   }
   .fileCount {
     color: map.get(SRC.$colors, 'gray-700');
+  }
+  .description {
+    margin-right: 10px;
   }
   .startButton {
     width: 100%;
