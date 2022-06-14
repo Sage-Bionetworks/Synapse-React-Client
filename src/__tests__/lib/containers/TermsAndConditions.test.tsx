@@ -1,4 +1,4 @@
-import { mount } from 'enzyme'
+import { render } from '@testing-library/react'
 import * as React from 'react'
 import TermsAndConditions from '../../../lib/containers/TermsAndConditions'
 
@@ -8,14 +8,14 @@ describe('Terms And Conditions: basic functionality', () => {
   }
   const checkboxCount = 8
 
-  it('render terms and condition without crashing', async () => {
-    const wrapper = mount(<TermsAndConditions {...props} />)
-    expect(wrapper).toBeDefined()
+  it('renders terms and condition without crashing', () => {
+    const { container } = render(<TermsAndConditions {...props} />)
+    expect(container).toBeDefined()
   })
 
-  it('should render all checkboxes', async () => {
-    const wrapper = mount(<TermsAndConditions {...props} />)
-    const li = wrapper.find('.term-list > li')
+  it('should render all checkboxes', () => {
+    const { container } = render(<TermsAndConditions {...props} />)
+    const li = container.querySelectorAll('.term-list > li')
     expect(li.length).toEqual(checkboxCount)
   })
 })
