@@ -1,14 +1,11 @@
-import { shallow } from 'enzyme'
-import CopyToClipboardInput from '../../../../lib/containers/CopyToClipboardInput'
-import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import * as React from 'react'
 import {
   CreateAccessTokenModal,
   CreateAccessTokenModalProps,
 } from '../../../../lib/containers/personal_access_token/CreateAccessTokenModal'
-import { Checkbox } from '../../../../lib/containers/widgets/Checkbox'
-import * as React from 'react'
-import { Button, Modal } from 'react-bootstrap'
-import { act } from 'react-dom/test-utils'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../../lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
@@ -18,15 +15,17 @@ const SynapseClient = require('../../../../lib/utils/SynapseClient')
 const mockOnClose = jest.fn(() => null)
 const mockOnCreate = jest.fn(() => null)
 
-const clickEvent: any = {
-  preventDefault: () => {},
-}
-
 SynapseClient.createPersonalAccessToken = jest.fn().mockResolvedValue({
   token: EXAMPLE_PAT,
 })
 
-describe('basic functionality', () => {
+function renderComponent(props: CreateAccessTokenModalProps) {
+  return render(<CreateAccessTokenModal {...props} />, {
+    wrapper: createWrapper(),
+  })
+}
+
+describe('CreateAccessTokenModal tests', () => {
   const props: CreateAccessTokenModalProps = {
     onClose: mockOnClose,
     onCreate: mockOnCreate,
@@ -39,93 +38,65 @@ describe('basic functionality', () => {
       .mockImplementation(() => MOCK_CONTEXT_VALUE)
   })
 
-  // Skiping travis build failed test. See https://sagebionetworks.jira.com/browse/PORTALS-1984
-  it.skip('displays the token after successful creation', async () => {
+  it('displays the token after successful creation', async () => {
     const tokenName = 'Token Name'
-    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
+    renderComponent(props)
 
     // Fill out the form
-    await act(async () => {
-      wrapper.find('FormControl').simulate('change', {
-        target: {
-          value: tokenName,
-        },
-      })
-      await wrapper.find(Checkbox).at(0).prop('onChange')()
-      await wrapper.find(Checkbox).at(1).prop('onChange')()
-      await wrapper.find(Checkbox).at(2).prop('onChange')()
-      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
-    })
+    userEvent.type(screen.getByRole('textbox'), tokenName)
+    userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
+    userEvent.click(screen.getByRole('checkbox', { name: 'Modify' }))
+    userEvent.click(screen.getByRole('checkbox', { name: 'Download' }))
 
-    expect(mockOnCreate).toHaveBeenCalled()
+    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+
+    await waitFor(() => expect(mockOnCreate).toHaveBeenCalled())
     expect(SynapseClient.createPersonalAccessToken).toHaveBeenCalled()
 
-    expect(wrapper.find(CopyToClipboardInput).props().value).toEqual(
+    expect((await screen.findByRole('textbox')).getAttribute('value')).toBe(
       EXAMPLE_PAT,
     )
 
     // Close the modal using the 'Close' button
-    expect(wrapper.find(Button).text().includes('Close')).toBe(true)
-    wrapper.find(Button).prop('onClick')!(clickEvent)
+    userEvent.click(
+      (await screen.findAllByRole('button', { name: 'Close' }))[1],
+    )
 
-    expect(mockOnClose).toHaveBeenCalled()
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
   })
 
-  it.skip('requires a token name and at least one permission before dispatching the request', async () => {
-    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
-    expect(wrapper.find(ErrorBanner).length).toBe(0)
+  it('requires a token name and at least one permission before dispatching the request', async () => {
+    renderComponent(props)
+    expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
 
     // Try to create with no name or permissions
-    await act(async () => {
-      await wrapper.find(Checkbox).at(0).prop('onChange')()
-      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
-        true,
-      )
-      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
-    })
+    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
+
+    await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
-    expect(wrapper.find(ErrorBanner).length).toBe(1)
 
     // Add a name
-    await act(async () => {
-      wrapper.find('FormControl').simulate('change', {
-        target: {
-          value: 'some name',
-        },
-      })
-      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
-        true,
-      )
-      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
-    })
-
+    userEvent.type(screen.getByRole('textbox'), 'some name')
+    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
-    expect(wrapper.find(ErrorBanner).length).toBe(1)
 
     // Remove name, add a permission
-    await act(async () => {
-      wrapper.find('FormControl').simulate('change', {
-        target: {
-          value: '',
-        },
-      })
-      await wrapper.find(Checkbox).at(0).prop('onChange')()
-      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
-        true,
-      )
-      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
-    })
+    userEvent.clear(screen.getByRole('textbox'))
+    userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
 
+    // Submit and verify that an error is shown
+    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
-    expect(wrapper.find(ErrorBanner).length).toBe(1)
   })
 
-  // This test fails in Travis CI with error message "cannot read property 'body' of null, but working locally.
-  it.skip('gracefully handles an error from the backend', async () => {
-    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
+  it('handles an error from the backend', async () => {
+    renderComponent(props)
 
     const errorReason = 'Malformed input'
     SynapseClient.createPersonalAccessToken = jest.fn().mockRejectedValue({
@@ -134,27 +105,20 @@ describe('basic functionality', () => {
     })
 
     // Fill out the form and send the request
-    await act(async () => {
-      wrapper.find('FormControl').simulate('change', {
-        target: {
-          value: 'token name',
-        },
-      })
-      expect(wrapper.find(Button).at(1).text().includes('Create Token')).toBe(
-        true,
-      )
-      wrapper.find(Button).at(1).prop('onClick')!(clickEvent)
-    })
+    userEvent.type(screen.getByRole('textbox'), 'some name')
+    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
 
-    expect(wrapper.find(ErrorBanner).length).toBe(1)
-    expect(wrapper.find(ErrorBanner).props().error).toEqual(errorReason)
+    await screen.findByTestId('ErrorBanner')
+    screen.getByText(errorReason)
   })
 
   it('calls onClose when closing via Modal prop', async () => {
-    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
+    renderComponent(props)
 
     // Close the modal using the prop
-    wrapper.find(Modal).prop('onHide')!()
+    userEvent.click(
+      await screen.findByRole('button', { name: 'Close', exact: false }),
+    )
 
     expect(mockOnClose).toHaveBeenCalled()
 
@@ -163,11 +127,10 @@ describe('basic functionality', () => {
   })
 
   it('calls onClose when closing via cancel button', async () => {
-    const wrapper = shallow(<CreateAccessTokenModal {...props} />)
+    renderComponent(props)
 
     // Close the modal using the prop
-    expect(wrapper.find(Button).at(0).text().includes('Cancel')).toBe(true)
-    wrapper.find(Button).at(0).prop('onClick')!(clickEvent)
+    userEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
 
     expect(mockOnClose).toHaveBeenCalled()
 

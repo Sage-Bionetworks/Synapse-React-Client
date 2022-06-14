@@ -65,7 +65,7 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
     stringError = error
   }
   return (
-    <div className="Error bootstrap-4-backport">
+    <div data-testid="ErrorBanner" className="Error bootstrap-4-backport">
       <Alert
         dismissible={false}
         show={true}
