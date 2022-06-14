@@ -13,7 +13,14 @@ import {
 } from './MeetAccessRequirementCard'
 import { RequestDownloadCard } from './RequestDownloadCard'
 
-export default function DownloadListActionsRequired() {
+export type DownloadListActionsRequiredProps = {
+  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
+  onViewSharingSettingsClicked: (benefactorId: string) => void
+}
+
+export const DownloadListActionsRequired: React.FunctionComponent<
+  DownloadListActionsRequiredProps
+> = props => {
   const handleError = useErrorHandler()
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()
@@ -74,6 +81,7 @@ export default function DownloadListActionsRequired() {
             key={requestDownloadAction.benefactorId}
             entityId={`syn${requestDownloadAction.benefactorId}`}
             count={actionRequiredCount.count}
+            onViewSharingSettingsClicked={props.onViewSharingSettingsClicked}
           />
         )
       }

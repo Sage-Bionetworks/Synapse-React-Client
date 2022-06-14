@@ -82,6 +82,8 @@ export const EXTERNALLINK: string = 'externallink'
 export const EASY_DIFFICULTY: string = 'easy-difficulty'
 export const MEDIUM_DIFFICULTY: string = 'medium-difficulty'
 export const VARIABLE_DIFFICULTY: string = 'variable-difficulty'
+export const DOWNLOAD_PERMISSION_REQUIRED: string =
+  'download-permission-required'
 
 export const DEFAULT_PAGE_SIZE: number = 25
 // For User Profile Cards
