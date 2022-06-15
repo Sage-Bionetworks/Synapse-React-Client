@@ -1,38 +1,37 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
-import { getAllAccessRequirements } from '../../utils/SynapseClient'
-import { SynapseConstants, SynapseClient } from '../../utils/'
-import useCompare from '../../utils/hooks/useCompare'
+import { sortBy } from 'lodash-es'
+import React, { useEffect, useState } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
-import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
-import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponentNew from './managedACTAccess/ManagedACTAccessRequirement'
-import ACTAccessRequirementComponent from './ACTAccessRequirement'
-import {
-  UserProfile,
-  EntityHeader,
-  ACTAccessRequirement,
-  ManagedACTAccessRequirement,
-  TermsOfUseAccessRequirement,
-  SelfSignAccessRequirement,
-  AccessRequirementStatus,
-  RequestInterface,
-} from '../../utils/synapseTypes'
+import { SynapseClient, SynapseConstants } from '../../utils/'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
+import useCompare from '../../utils/hooks/useCompare'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../utils/hooks/useGetInfoFromIds'
-import AccessApprovalCheckMark from './AccessApprovalCheckMark'
-import { sortBy } from 'lodash-es'
+import { getAllAccessRequirements } from '../../utils/SynapseClient'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import {
+  AccessRequirementStatus,
+  ACTAccessRequirement,
+  EntityHeader,
+  ManagedACTAccessRequirement,
+  RequestInterface,
+  SelfSignAccessRequirement,
+  TermsOfUseAccessRequirement,
+} from '../../utils/synapseTypes'
+import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import IconSvg from '../IconSvg'
+import Login from '../Login'
+import AccessApprovalCheckMark from './AccessApprovalCheckMark'
+import ACTAccessRequirementComponent from './ACTAccessRequirement'
+import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
+import ManagedACTAccessRequirementComponentNew from './managedACTAccess/ManagedACTAccessRequirement'
 import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
-import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 import RequestDataAccessSuccess from './managedACTAccess/RequestDataAccessSuccess'
-import Login from '../Login'
-import { useSynapseContext } from '../../utils/SynapseContext'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import IconSvg from '../IconSvg'
-import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
+import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
+import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 
 type AccessRequirementAndStatus = {
   accessRequirement: AccessRequirement
