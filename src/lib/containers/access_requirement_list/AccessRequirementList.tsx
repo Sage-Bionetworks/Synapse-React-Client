@@ -115,7 +115,6 @@ export default function AccessRequirementList({
   renderAsModal,
   numberOfFilesAffected,
 }: AccessRequirementListProps) {
-  const isMounted = useRef(true)
   const { accessToken } = useSynapseContext()
 
   const [accessRequirements, setAccessRequirements] = useState<
@@ -141,6 +140,8 @@ export default function AccessRequirementList({
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
   useEffect(() => {
+    let isCancelled = false
+
     const getAccessRequirements = async () => {
       try {
         if (!shouldUpdateData) {
@@ -153,16 +154,16 @@ export default function AccessRequirementList({
           )
           const sortedAccessRequirements =
             await sortAccessRequirementByCompletion(accessToken, requirements)
-          if (isMounted.current) {
+          if (!isCancelled) {
             setAccessRequirements(sortedAccessRequirements)
           }
         } else {
           const sortedAccessRequirements =
             await sortAccessRequirementByCompletion(
               accessToken,
-              accessRequirementFromProps!,
+              accessRequirementFromProps,
             )
-          if (isMounted.current) {
+          if (!isCancelled) {
             setAccessRequirements(sortedAccessRequirements)
           }
         }
@@ -180,7 +181,7 @@ export default function AccessRequirementList({
     getAccessRequirements()
 
     return () => {
-      isMounted.current = false
+      isCancelled = true
     }
   }, [accessToken, entityId, accessRequirementFromProps, shouldUpdateData])
 
