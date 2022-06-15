@@ -143,10 +143,12 @@ $link-underline-color-default: adjust-color(
   text-decoration-color: $color;
 }
 
-@mixin disabled() {
+@mixin disabled($ignoreLink: false) {
   color: map.get(SRC.$colors, 'gray-600');
   &:hover {
-    @include underline($link-underline-color-default, 1px, 4px);
+    @if not $ignoreLink {
+      @include underline($link-underline-color-default, 1px, 4px);
+    }
     cursor: default;
   }
 }
@@ -189,6 +191,6 @@ $link-underline-color-default: adjust-color(
     margin-bottom: unset;
   }
   &.disabled {
-    @include disabled;
+    @include disabled($ignoreLink: true);
   }
 }
