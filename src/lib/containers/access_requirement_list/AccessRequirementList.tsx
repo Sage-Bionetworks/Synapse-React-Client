@@ -32,6 +32,7 @@ import Login from '../Login'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
+import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
 
 type AccessRequirementAndStatus = {
   accessRequirement: AccessRequirement
@@ -121,7 +122,6 @@ export default function AccessRequirementList({
     Array<AccessRequirementAndStatus> | undefined
   >(undefined)
 
-  const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
   const [managedACTAccessRequirement, setManagedACTAccessRequirement] =
     useState<ManagedACTAccessRequirement>()
@@ -138,6 +138,8 @@ export default function AccessRequirementList({
   const shouldUpdateData = hasTokenChanged || !accessRequirements
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
+
+  const { data: user } = useGetCurrentUserProfile()
 
   useEffect(() => {
     let isCancelled = false
@@ -167,9 +169,6 @@ export default function AccessRequirementList({
             setAccessRequirements(sortedAccessRequirements)
           }
         }
-
-        const userProfile = await SynapseClient.getUserProfile(accessToken)
-        setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
         // because we want react hooks to update without a dependency on accessRequirements
