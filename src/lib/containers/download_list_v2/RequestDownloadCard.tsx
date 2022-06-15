@@ -3,20 +3,26 @@ import { useErrorHandler } from 'react-error-boundary'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI/entity/useGetEntityHeaders'
 import { EntityHeader } from '../../utils/synapseTypes'
 import { Icon } from '../row_renderers/utils'
-import { VARIABLE_DIFFICULTY } from '../../utils/SynapseConstants'
+import { DOWNLOAD_PERMISSION_REQUIRED } from '../../utils/SynapseConstants'
 import { Button } from 'react-bootstrap'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { LoadingAccessRequirementCard } from './MeetAccessRequirementCard'
+import Typography from '../../utils/typography/Typography'
 
 export type RequestDownloadCardProps = {
   entityId: string
   count: number
+  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
+  onViewSharingSettingsClicked: (benefactorId: string) => void
 }
 
-export const REQUEST_DOWNLOAD_TITLE = 'Requires Download Permission'
+export const REQUEST_DOWNLOAD_TITLE = 'Download Permission Required'
 export const RequestDownloadCard: React.FunctionComponent<
   RequestDownloadCardProps
-> = ({ entityId, count }: RequestDownloadCardProps) => {
+> = ({
+  entityId,
+  count,
+  onViewSharingSettingsClicked,
+}: RequestDownloadCardProps) => {
   const handleError = useErrorHandler()
   const {
     data,
@@ -35,9 +41,11 @@ export const RequestDownloadCard: React.FunctionComponent<
     <>
       {!isError && !isLoading && (
         <div className="RequestDownloadCart actionRequiredCard">
-          <Icon type={VARIABLE_DIFFICULTY} />
+          <Icon type={DOWNLOAD_PERMISSION_REQUIRED} />
           <div className="metadata">
-            <div className="title">{REQUEST_DOWNLOAD_TITLE}</div>
+            <Typography variant="headline3" className="title">
+              {REQUEST_DOWNLOAD_TITLE}
+            </Typography>
             <div className="fileCount">{count} File(s)</div>
             <div className="description">
               You must be granted the download permission on{' '}
@@ -45,16 +53,20 @@ export const RequestDownloadCard: React.FunctionComponent<
               set of files.
             </div>
           </div>
-          <a
-            className="startButtonContainer"
-            href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityHeader?.id}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button className="startButton" variant="secondary">
-              Start
+          <div className="startButtonContainer">
+            <Typography variant="smallText1" className="contactAdminNote">
+              Contact an administrator to request download permission
+            </Typography>
+            <Button
+              className="startButton"
+              variant="outline-primary"
+              onClick={() => {
+                onViewSharingSettingsClicked(entityId)
+              }}
+            >
+              View Sharing Settings
             </Button>
-          </a>
+          </div>
         </div>
       )}
       {isLoading && <LoadingAccessRequirementCard />}

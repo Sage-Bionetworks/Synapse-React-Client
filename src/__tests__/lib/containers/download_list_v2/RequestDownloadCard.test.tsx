@@ -13,11 +13,14 @@ import {
   RequestDownloadCardProps,
   REQUEST_DOWNLOAD_TITLE,
 } from '../../../../lib/containers/download_list_v2/RequestDownloadCard'
+import userEvent from '@testing-library/user-event'
 
 const ENTITY_ID = 'syn29218'
+const onViewSharingSettingsClicked = jest.fn()
 const defaultProps: RequestDownloadCardProps = {
   entityId: ENTITY_ID,
   count: 10,
+  onViewSharingSettingsClicked,
 }
 const mockEntityHeaderResult = { results: [{ id: ENTITY_ID }] }
 const setupEntityHeaderResponse = () => {
@@ -45,5 +48,12 @@ describe('RequestDownloadCard tests', () => {
     setupEntityHeaderResponse()
     renderComponent()
     await screen.findByText(REQUEST_DOWNLOAD_TITLE)
+
+    const viewSharingSettingsButton = screen.queryByRole('button', {
+      name: 'View Sharing Settings',
+    })
+    expect(viewSharingSettingsButton).toBeInTheDocument()
+    userEvent.click(viewSharingSettingsButton!)
+    expect(onViewSharingSettingsClicked).toHaveBeenLastCalledWith(ENTITY_ID)
   })
 })

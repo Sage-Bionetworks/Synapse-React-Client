@@ -1,5 +1,6 @@
 @use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SrcMixins;
+@use 'sass:map';
 
 .DownloadCartPage {
   .description {
@@ -163,11 +164,29 @@
   }
 }
 
+.DownloadListActionsRequired {
+  padding-top: 40px;
+}
+
 .actionRequiredCard {
   display: grid;
   padding: 20px 35px;
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
   grid-template-columns: 160px auto 160px;
+  &.RequestDownloadCart {
+    grid-template-columns: 160px auto 200px;
+    .iconImg {
+      margin-top: 10px;
+      margin-left: 30px;
+    }
+    .contactAdminNote {
+      color: map.get(SRC.$colors, 'gray-700');
+      text-align: center;
+    }
+  }
+  .title {
+    margin-bottom: 5px;
+  }
   .metadata,
   .startButtonContainer {
     align-self: center;
@@ -178,7 +197,10 @@
     line-height: 40px;
   }
   .fileCount {
-    font-weight: bold;
+    color: map.get(SRC.$colors, 'gray-700');
+  }
+  .description {
+    margin-right: 10px;
   }
   .startButton {
     width: 100%;

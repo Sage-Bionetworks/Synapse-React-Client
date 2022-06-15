@@ -1,3 +1,4 @@
+import { createTheme, MuiThemeProvider } from '@material-ui/core'
 import { merge } from 'lodash-es'
 import React, { useContext, useMemo } from 'react'
 import DeepPartial from '../types/DeepPartial'
@@ -8,6 +9,12 @@ import DeepPartial from '../types/DeepPartial'
 
 export const defaultSynapseTheme: SynapseTheme = {
   colors: {
+    primary: {
+      main: '#407ba0',
+    },
+    secondary: {
+      main: '#469285',
+    },
     success: '#32a330',
     info: '#017fa5',
     warning: '#cc9f00',
@@ -17,6 +24,12 @@ export const defaultSynapseTheme: SynapseTheme = {
 
 export type SynapseTheme = {
   colors: {
+    primary: {
+      main: string
+    }
+    secondary: {
+      main: string
+    }
     success: string
     info: string
     warning: string
@@ -44,9 +57,22 @@ export const ThemeProvider: React.FunctionComponent<ThemeProviderProps> = ({
   children,
 }) => {
   const mergedTheme = useMemo(() => mergeTheme(theme), [theme])
+  const muiTheme = createTheme({
+    palette: {
+      primary: {
+        main: mergedTheme.colors.primary.main,
+      },
+      secondary: {
+        main: mergedTheme.colors.secondary.main,
+      },
+    },
+    typography: {
+      fontFamily: ['Lato', 'sans-serif'].join(','),
+    },
+  })
   return (
     <ThemeContext.Provider value={mergedTheme}>
-      {children}
+      <MuiThemeProvider theme={muiTheme}>{children}</MuiThemeProvider>
     </ThemeContext.Provider>
   )
 }

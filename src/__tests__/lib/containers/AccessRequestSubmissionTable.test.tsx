@@ -26,12 +26,19 @@ import {
 import { upperFirst } from 'lodash-es'
 import { formatDate } from '../../../lib/utils/functions/DateFormatter'
 import moment from 'moment'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
 
 function renderComponent(props: AccessRequestSubmissionTableProps) {
   const { wrapperFn } = createWrapperAndQueryClient()
-  render(<AccessRequestSubmissionTable {...props} />, {
-    wrapper: wrapperFn,
-  })
+  render(
+    <Router history={createMemoryHistory()}>
+      <AccessRequestSubmissionTable {...props} />
+    </Router>,
+    {
+      wrapper: wrapperFn,
+    },
+  )
 }
 
 const onServiceRecievedRequest = jest.fn()

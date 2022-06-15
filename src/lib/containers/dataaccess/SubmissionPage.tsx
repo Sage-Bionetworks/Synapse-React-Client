@@ -1,18 +1,18 @@
 import { Skeleton } from '@material-ui/lab'
-import { upperFirst, toLower } from 'lodash-es'
+import { toLower, upperFirst } from 'lodash-es'
 import moment from 'moment'
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
-import { SynapseClient } from '../../utils'
 import { formatDate } from '../../utils/functions/DateFormatter'
+import useGetDataAccessSubmission, {
+  useUpdateDataAccessSubmissionState,
+} from '../../utils/hooks/SynapseAPI/dataaccess/useDataAccessSubmission'
 import useGetAccessRequirement, {
   useGetAccessRequirementACL,
   useGetAccessRequirementWikiPageKey,
 } from '../../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
-import useGetDataAccessSubmission from '../../utils/hooks/SynapseAPI/dataaccess/useGetDataAccessSubmission'
 import { ACT_TEAM_ID } from '../../utils/SynapseConstants'
-import { useSynapseContext } from '../../utils/SynapseContext'
 import {
   FileHandleAssociateType,
   ManagedACTAccessRequirement,
@@ -30,8 +30,8 @@ import { FileHandleLink } from '../widgets/FileHandleLink'
 export type SubmissionPageProps = {
   /** The ID of the submission to view */
   submissionId: string | number
-  /** Invoked when a reviewer clicks "Reject". Note that the web request to reject the submission is not sent. We do this to continue using the existing rejection dialog written in SWC */
-  onRejectClicked: () => void
+  /** Invoked when a reviewer clicks "Reject". Provides a parameter for an external component to provide a reason for rejection, which will reject the submission when invoked. */
+  onRejectClicked: (onReject: (rejectedReason: string) => void) => void
 }
 
 function DataAccessSubmissionFileHandleLink(props: {
@@ -90,11 +90,12 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const { submissionId, onRejectClicked } = props
 
   const handleError = useErrorHandler()
-  const { accessToken } = useSynapseContext()
   const { data: submission, refetch } = useGetDataAccessSubmission(
     submissionId,
     { useErrorBoundary: true },
   )
+
+  const { mutateAsync } = useUpdateDataAccessSubmissionState()
 
   const { data: accessRequirement } =
     useGetAccessRequirement<ManagedACTAccessRequirement>(
@@ -114,14 +115,19 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const [showApprovalConfirmation, setShowApprovalConfirmation] =
     useState(false)
 
-  async function approveSubmission() {
-    return await SynapseClient.updateSubmissionStatus(
-      {
-        submissionId: submission?.id ?? '',
-        newState: SubmissionState.APPROVED,
-      },
-      accessToken,
-    )
+  function approveSubmission() {
+    return mutateAsync({
+      submissionId: submission?.id ?? '',
+      newState: SubmissionState.APPROVED,
+    })
+  }
+
+  function rejectSubmission(reason: string) {
+    return mutateAsync({
+      submissionId: submission?.id ?? '',
+      newState: SubmissionState.REJECTED,
+      rejectedReason: reason,
+    })
   }
 
   return (
@@ -158,7 +164,14 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               >
                 Approve
               </Button>
-              <Button onClick={onRejectClicked} variant="danger">
+              <Button
+                onClick={() => {
+                  onRejectClicked(reason => {
+                    rejectSubmission(reason)
+                  })
+                }}
+                variant="danger"
+              >
                 Reject
               </Button>
             </div>
