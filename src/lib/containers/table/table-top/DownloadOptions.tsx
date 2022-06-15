@@ -50,13 +50,6 @@ export const DownloadOptions: React.FunctionComponent<
 
   return (
     <React.Fragment>
-      <ReactTooltip
-        delayShow={300}
-        place="left"
-        type="dark"
-        effect="solid"
-        id={TOOLTIP_ID}
-      />
       <Dropdown as="span">
         <ElementWithTooltip
           idForToolTip={tooltipDownloadId}
@@ -67,11 +60,15 @@ export const DownloadOptions: React.FunctionComponent<
         ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
-          onClick={() => {
-            ReactTooltip.rebuild()
-          }}
           alignRight={true}
         >
+          <ReactTooltip
+            delayShow={300}
+            place="left"
+            type="dark"
+            effect="solid"
+            id={TOOLTIP_ID}
+          />
           <Dropdown.Item
             onClick={() => {
               setShowExportMetadata(true)
