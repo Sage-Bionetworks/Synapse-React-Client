@@ -7,10 +7,14 @@ import {
   EntityHeader,
   EntityJson,
   EntityType,
+  EntityView,
+  ENTITY_VIEW_TYPE_MASK_FILE,
+  ENTITY_VIEW_TYPE_MASK_PROJECT,
   FileEntity,
   ObjectType,
   PaginatedResults,
   RestrictionLevel,
+  TableEntity,
 } from '../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
 import {
@@ -27,6 +31,9 @@ export const MOCK_PROJECT_ID = 'syn12345'
 export const MOCK_PROJECT_NAME = 'A Mock Project'
 export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'
 export const MOCK_DATASET_ENTITY_ID = 'syn234'
+export const MOCK_TABLE_ENTITY_ID = 'syn345'
+export const MOCK_FILE_VIEW_ENTITY_ID = 'syn456'
+export const MOCK_PROJECT_VIEW_ENTITY_ID = 'syn567'
 // TODO: Create a mock wiki
 const MOCK_WIKI_ID = '45745485'
 
@@ -370,6 +377,44 @@ export const mockProjectEntityBundle: EntityBundle = {
     restrictionLevel: RestrictionLevel.OPEN,
     hasUnmetAccessRequirement: false,
   },
+}
+
+export const mockTableEntity: TableEntity = {
+  id: MOCK_TABLE_ENTITY_ID,
+  parentId: MOCK_PROJECT_ID,
+  name: MOCK_FILE_NAME,
+  concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+  createdBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
+  etag: '00000000-0000-0000-0000-000000000000',
+  columnIds: [],
+  isSearchEnabled: true,
+}
+
+export const mockFileViewEntity: EntityView = {
+  id: MOCK_FILE_VIEW_ENTITY_ID,
+  parentId: MOCK_PROJECT_ID,
+  name: MOCK_FILE_NAME,
+  concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+  createdBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
+  etag: '00000000-0000-0000-0000-000000000000',
+  columnIds: [],
+  viewTypeMask: ENTITY_VIEW_TYPE_MASK_FILE,
+  scopeIds: [MOCK_PROJECT_ID],
+}
+
+export const mockProjectViewEntity: EntityView = {
+  id: MOCK_PROJECT_VIEW_ENTITY_ID,
+  parentId: MOCK_PROJECT_ID,
+  name: MOCK_FILE_NAME,
+  concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+  createdBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
+  etag: '00000000-0000-0000-0000-000000000000',
+  columnIds: [],
+  viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
+  scopeIds: [MOCK_PROJECT_ID],
 }
 
 export const mockDatasetEntity: Dataset = {

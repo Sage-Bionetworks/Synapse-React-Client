@@ -1,29 +1,23 @@
-import { DownloadLoginModal } from './DownloadLoginModal'
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
-import {
-  QueryResultBundle,
-  QueryBundleRequest,
-} from '../../../utils/synapseTypes'
-import ProgrammaticTableDownload from './ProgrammaticTableDownload'
+import ReactTooltip from 'react-tooltip'
 import ModalDownload from '../../../containers/ModalDownload'
-import { useSynapseContext } from '../../../utils/SynapseContext'
-import { useQueryContext } from '../../QueryWrapper'
 import {
   isDataset,
   isEntityView,
   isFileView,
 } from '../../../utils/functions/EntityTypeUtils'
-import ReactTooltip from 'react-tooltip'
+import { useSynapseContext } from '../../../utils/SynapseContext'
+import { useQueryContext } from '../../QueryWrapper'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
+import { DownloadLoginModal } from './DownloadLoginModal'
+import ProgrammaticTableDownload from './ProgrammaticTableDownload'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
-type DownloadOptionsProps = {
+export type DownloadOptionsProps = {
   onDownloadFiles: () => void
   darkTheme?: boolean
-  queryResultBundle?: QueryResultBundle
-  queryBundleRequest: QueryBundleRequest
 }
 
 export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download Cart'
@@ -33,17 +27,17 @@ export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
 > = props => {
   const { accessToken } = useSynapseContext()
-  const { entity } = useQueryContext()
+  const {
+    entity,
+    data: queryResultBundle,
+    getLastQueryRequest,
+  } = useQueryContext()
+  const queryBundleRequest = getLastQueryRequest()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] =
     React.useState(false)
-  const {
-    onDownloadFiles,
-    queryResultBundle,
-    queryBundleRequest,
-    darkTheme = true,
-  } = props
+  const { onDownloadFiles, darkTheme = true } = props
 
   const isFileViewOrDataset =
     entity &&
