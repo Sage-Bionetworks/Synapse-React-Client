@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from 'react'
+import { Button } from 'react-bootstrap'
+import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
+import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
+import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
+import { EvaluationRoundLimitInput } from '../input_models/models'
 import {
   EvaluationRoundLimitOptions,
   LIMIT_TYPE_DISPLAY_NAME,
 } from './EvaluationRoundLimitOptions'
-import { EvaluationRoundLimitType } from '../../../utils/synapseTypes/Evaluation'
-import { ReactComponent as IconPlusSquareFilled } from '../../../assets/icons/icon_plus_square_filled.svg'
-import { ReactComponent as IconTimes } from '../../../assets/icons/icon_times.svg'
-import { EvaluationRoundLimitInput } from '../input_models/models'
-import { Button } from 'react-bootstrap'
 
 const AVAILABLE_LIMIT_TYPES = Object.keys(LIMIT_TYPE_DISPLAY_NAME)
 
@@ -67,6 +67,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
             <Button
               // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
               variant=""
+              aria-label="Remove"
               className="remove-button"
               onClick={handleDeleteLimit(index)}
             >
@@ -82,6 +83,7 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
                   <Button
                     // use an invalid variant, we just want the basic bootstrap 4 "btn" class behavior
                     variant=""
+                    aria-label="Add"
                     onClick={addNewLimit}
                     className="add-button"
                   >

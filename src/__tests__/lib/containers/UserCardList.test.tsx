@@ -1,17 +1,16 @@
-import * as React from 'react'
-import { shallow } from 'enzyme'
+import { render } from '@testing-library/react'
+import React from 'react'
 import UserCardList, {
   UserCardListProps,
 } from '../../../lib/containers/UserCardList'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../lib/utils'
 
-const createShallowComponent = async (props: UserCardListProps) => {
-  const wrapper = await shallow<UserCardList>(<UserCardList {...props} />)
-  const instance = wrapper.instance() as UserCardList
-  return { wrapper, instance }
+function renderComponent(props: UserCardListProps) {
+  return render(<UserCardList {...props} />, { wrapper: createWrapper() })
 }
 
-describe('UserCardList functions correctly ', () => {
+describe('UserCardList tests', () => {
   const getUserData = require('../../../lib/utils/functions/getUserData')
   const userOneId = '1'
   const userTwoId = '2'
@@ -55,26 +54,27 @@ describe('UserCardList functions correctly ', () => {
 
   getUserData.getUserProfileWithProfilePicAttached = mockImplementation
 
-  it('renders without crashing', async () => {
-    const { wrapper } = await createShallowComponent(propsInitial)
-    expect(wrapper).toBeDefined()
+  it('renders without crashing', () => {
+    const { container } = renderComponent(propsInitial)
+    expect(container).toBeDefined()
   })
 
-  it('updates state correctly', async () => {
+  it('updates state correctly', () => {
     const spyOnUpdate = jest.spyOn(UserCardList.prototype, 'update')
-    const { wrapper } = await createShallowComponent(propsInitial)
+    const { rerender } = renderComponent(propsInitial)
     expect(spyOnUpdate).toHaveBeenLastCalledWith(propsInitial.list)
 
     // it should see that it was updated with a new ownerId not already contained
     spyOnUpdate.mockClear()
     mockImplementation = jest.fn(() => Promise.resolve(mockedDataSecondCall))
-    wrapper.setProps(propsSecond)
+    rerender(<UserCardList {...propsSecond} />)
+
     expect(spyOnUpdate).toHaveBeenLastCalledWith([userThreeId])
 
     // it should see that it was updated with a new ownerId that was contained already
     spyOnUpdate.mockClear()
     mockImplementation = jest.fn() // mock no longer matters
-    wrapper.setProps(propsLast)
+    rerender(<UserCardList {...propsLast} />)
     expect(spyOnUpdate).not.toHaveBeenCalled()
     spyOnUpdate.mockClear()
   })

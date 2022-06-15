@@ -3,7 +3,6 @@ import { Link, Route, Switch } from 'react-router-dom'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
-import DownloadListTable from '../../../lib/containers/download_list/DownloadListTable'
 import { WidgetDemo } from './WidgetDemo'
 import { AccessRequirementDemo } from './AccessRequirementDemo'
 import TemplateComponentDemo from './TemplateComponentDemo'
@@ -40,9 +39,6 @@ const App = () => {
           <Link to={`${url}/ModalDownloadDemo`}>ModalDownload</Link>
         </li>
         <li>
-          <Link to={`${url}/DownloadListTableDemo`}>DownloadListTableDemo</Link>
-        </li>
-        <li>
           <Link to={`${url}/WidgetDemo`}>WidgetDemo</Link>
         </li>
         <li>
@@ -74,18 +70,6 @@ const App = () => {
           path={`${url}/ModalDownloadDemo`}
           component={() => <ModalDownloadDemo />}
         ></Route>
-
-        <Route exact={true} path={`${url}/DownloadListTableDemo`}>
-          <div className="container download-list-demo">
-            <div className="col-xs-10">
-              <DownloadListTable
-                listUpdatedCallback={() => {
-                  console.log('DownloadList updated')
-                }}
-              />
-            </div>
-          </div>
-        </Route>
 
         <Route exact={true} path={`${url}/WidgetDemo`}>
           <WidgetDemo />

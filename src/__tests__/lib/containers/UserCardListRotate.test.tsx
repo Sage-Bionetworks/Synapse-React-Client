@@ -1,19 +1,16 @@
-import * as React from 'react'
-import { mount, shallow } from 'enzyme'
-// import { SynapseClient } from '../../../lib/utils'
+import { render } from '@testing-library/react'
+import React from 'react'
 import UserCardListRotate, {
-  UserCardListRotateProps,
   getDisplayIds,
+  UserCardListRotateProps,
 } from '../../../lib/containers/UserCardListRotate'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
 const STORED_UID_KEY = 'sage_rotate_uids'
-const createShallowComponent = async (props: UserCardListRotateProps) => {
-  const wrapper = await mount(<UserCardListRotate {...props} />, {
-    wrappingComponent: SynapseTestContext,
+function renderComponent(props: UserCardListRotateProps) {
+  return render(<UserCardListRotate {...props} />, {
+    wrapper: createWrapper(),
   })
-  const instance = wrapper.instance()
-  return { wrapper, instance }
 }
 
 describe('UserCardListRotate Component Testing', () => {
@@ -31,9 +28,9 @@ describe('UserCardListRotate Component Testing', () => {
     localStorage.removeItem(storage_name)
   })
 
-  it('Should create the component', async () => {
-    const { wrapper } = await createShallowComponent(prop)
-    expect(wrapper).toBeDefined()
+  it('Should create the component', () => {
+    const { container } = renderComponent(prop)
+    expect(container).toBeDefined()
   })
 
   it('Should save the correct ids in storage', () => {

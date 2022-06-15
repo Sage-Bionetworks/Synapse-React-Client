@@ -1,52 +1,101 @@
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import { render, act } from '@testing-library/react'
-import AccessApprovalCheckMark, {
-  CheckMarkProps,
-} from '../../../lib/containers/access_requirement_list/AccessApprovalCheckMark'
 import AcceptedRequirements, {
   AcceptedRequirementsProps,
 } from '../../../lib/containers/access_requirement_list/AcceptedRequirements'
+import AccessApprovalCheckMark, {
+  CheckMarkProps,
+} from '../../../lib/containers/access_requirement_list/AccessApprovalCheckMark'
 import AccessRequirementList, {
   AccessRequirementListProps,
+  sortAccessRequirementByCompletion,
 } from '../../../lib/containers/access_requirement_list/AccessRequirementList'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { ACCESS_REQUIREMENT_STATUS } from '../../../lib/utils/APIConstants'
 import {
-  UserProfile,
-  WikiPageKey,
-  ObjectType,
-  AccessRequirement,
-  ACCESS_TYPE,
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../lib/utils/functions/getEndpoint'
+import {
   AccessApproval,
-  ApprovalState,
+  AccessRequirement,
   AccessRequirementStatus,
+  ACCESS_TYPE,
+  ApprovalState,
+  ObjectType,
+  WikiPageKey,
 } from '../../../lib/utils/synapseTypes/'
-import { mount, ReactWrapper } from 'enzyme'
-import SelfSignAccessRequirementComponent from '../../../lib/containers/access_requirement_list/SelfSignAccessRequirement'
-import TermsOfUseAccessRequirementComponent from '../../../lib/containers/access_requirement_list/TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponent from '../../../lib/containers/access_requirement_list/ManagedACTAccessRequirement'
-import ACTAccessRequirementComponent from '../../../lib/containers/access_requirement_list/ACTAccessRequirement'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
+import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockEntity'
+import { rest, server } from '../../../mocks/msw/server'
+import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
+
+const SynapseClient = require('../../../lib/utils/SynapseClient')
 
 describe('Access Requirement List works as expect', () => {
-  let container: HTMLElement
-  let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
+  beforeAll(() => {
+    server.listen()
+    server.use(
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${ACCESS_REQUIREMENT_STATUS(':id')}`,
 
-  async function init(props: AccessRequirementListProps) {
-    await act(async () => {
-      wrapper = await mount(<AccessRequirementList {...props} />, {
-        wrappingComponent: SynapseTestContext,
-      })
-      container = await render(
-        <SynapseTestContext>
-          <AccessRequirementList {...props} />
-        </SynapseTestContext>,
-      )
-    })
+        async (req, res, ctx) => {
+          let responseCode = 404
+          const statuses: AccessRequirementStatus[] = [
+            {
+              accessRequirementId: '1',
+              concreteType:
+                'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
+              isApproved: true,
+              expiredOn: '-',
+            },
+            {
+              accessRequirementId: '2',
+              concreteType:
+                'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
+              isApproved: false,
+              expiredOn: '-',
+            },
+            {
+              accessRequirementId: '3',
+              concreteType:
+                'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+              isApproved: true,
+              expiredOn: '-',
+            },
+            {
+              accessRequirementId: '4',
+              concreteType:
+                'org.sagebionetworks.repo.model.ACTAccessRequirement',
+              isApproved: false,
+              expiredOn: '-',
+            },
+          ]
+
+          let responseBody = statuses.find(
+            status => req.params.id === status.accessRequirementId,
+          )
+          if (responseBody) {
+            responseCode = 200
+          }
+
+          return res(ctx.status(responseCode), ctx.json(responseBody))
+        },
+      ),
+    )
+  })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
+  function init(props: AccessRequirementListProps) {
+    render(<AccessRequirementList {...props} />, { wrapper: createWrapper() })
   }
 
-  const SynpaseClient = require('../../../lib/utils/SynapseClient')
-  const list = require('../../../lib/containers/access_requirement_list/AccessRequirementList')
   const accessRequirements: Array<AccessRequirement> = [
     {
+      name: 'SelfSignAccessRequirement',
       versionNumber: 1,
       id: 1,
       etag: '_',
@@ -59,8 +108,9 @@ describe('Access Requirement List works as expect', () => {
       concreteType: 'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
     },
     {
+      name: 'TermsOfUseAccessRequirement',
       versionNumber: 2,
-      id: 1,
+      id: 2,
       etag: '_',
       createdOn: '_',
       modifiedOn: '_',
@@ -72,8 +122,9 @@ describe('Access Requirement List works as expect', () => {
         'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
     },
     {
+      name: 'ManagedACTAccessRequirement',
       versionNumber: 3,
-      id: 1,
+      id: 3,
       etag: '_',
       createdOn: '_',
       modifiedOn: '_',
@@ -85,8 +136,9 @@ describe('Access Requirement List works as expect', () => {
         'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
     },
     {
+      name: 'ACTAccessRequirement',
       versionNumber: 4,
-      id: 1,
+      id: 4,
       etag: '_',
       createdOn: '_',
       modifiedOn: '_',
@@ -104,117 +156,40 @@ describe('Access Requirement List works as expect', () => {
     onHide: jest.fn(),
   }
 
-  it('Redners a Access Requirements List with valid props', async () => {
-    await init(props)
-    expect(container.innerHTML).not.toEqual('')
-    expect(wrapper.find(TermsOfUseAccessRequirementComponent)).toHaveLength(1)
-    expect(wrapper.find(SelfSignAccessRequirementComponent)).toHaveLength(1)
-    expect(wrapper.find(ManagedACTAccessRequirementComponent)).toHaveLength(1)
-    expect(wrapper.find(ACTAccessRequirementComponent)).toHaveLength(1)
+  it('Renders a Access Requirements List with valid props', async () => {
+    init(props)
+    // The ManagedACTAccessRequirementComponent renders as "RequestDataAccess"
+    await screen.findByTestId('RequestDataAccess')
+    // The other three access requirements render as "AcceptedRequirements"
+    expect(await screen.findAllByTestId('AcceptedRequirements')).toHaveLength(3)
   })
 
-  it.only('Renders a Access Requirements List with completion order', async () => {
-    const accessRequirementsMock: Array<AccessRequirement> = [
-      {
-        versionNumber: 1,
-        id: 1,
-        etag: '_',
-        createdOn: '_',
-        modifiedOn: '_',
-        createdBy: '_',
-        modifiedBy: '_',
-        subjectIds: [],
-        accessType: ACCESS_TYPE.CREATE,
-        concreteType: 'org.sagebionetworks.repo.model.ACTAccessRequirement',
-      },
-      {
-        versionNumber: 2,
-        id: 1,
-        etag: '_',
-        createdOn: '_',
-        modifiedOn: '_',
-        createdBy: '_',
-        modifiedBy: '_',
-        subjectIds: [],
-        accessType: ACCESS_TYPE.CREATE,
-        concreteType:
-          'org.sagebionetworks.repo.model.TermsOfUseAccessRequirement',
-      },
-      {
-        versionNumber: 3,
-        id: 1,
-        etag: '_',
-        createdOn: '_',
-        modifiedOn: '_',
-        createdBy: '_',
-        modifiedBy: '_',
-        subjectIds: [],
-        accessType: ACCESS_TYPE.CREATE,
-        concreteType:
-          'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
-      },
-      {
-        versionNumber: 4,
-        id: 1,
-        etag: '_',
-        createdOn: '_',
-        modifiedOn: '_',
-        createdBy: '_',
-        modifiedBy: '_',
-        subjectIds: [],
-        accessType: ACCESS_TYPE.CREATE,
-        concreteType:
-          'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
-      },
-    ]
-    await init(props)
+  it('Renders a Access Requirements List with completion order', async () => {
+    init(props)
 
-    const stauses: AccessRequirementStatus[] = [
-      {
-        accessRequirementId: '_',
-        concreteType:
-          'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
-        isApproved: true,
-        expiredOn: '-',
-      },
-      {
-        accessRequirementId: '_',
-        concreteType:
-          'org.sagebionetworks.repo.model.SelfSignAccessRequirement',
-        isApproved: true,
-        expiredOn: '-',
-      },
-    ]
-
-    SynpaseClient.getAccessRequirementStatus = jest
-      .fn()
-      .mockResolvedValue(stauses)
-    await act(
-      (list.sortAccessRequirementByCompletion = jest
-        .fn()
-        .mockResolvedValue(accessRequirementsMock)),
+    const sorted = await sortAccessRequirementByCompletion(
+      '',
+      accessRequirements,
     )
+
+    // There are 4 ARs
+    expect(sorted).toHaveLength(4)
+
+    // The first two in the sorted list should have approved statuses
+    expect(sorted[0].accessRequirementStatus.isApproved).toBe(true)
+    expect(sorted[1].accessRequirementStatus.isApproved).toBe(true)
+
+    // The latter two should not
+    expect(sorted[2].accessRequirementStatus.isApproved).toBeFalsy()
+    expect(sorted[3].accessRequirementStatus.isApproved).toBeFalsy()
   })
 })
 
 describe('Accepted Requirements works as expect', () => {
-  let container: HTMLElement
-  let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
-
-  async function init(prop: AcceptedRequirementsProps) {
-    await act(async () => {
-      wrapper = await mount(<AcceptedRequirements {...prop} />)
-      container = await render(<AcceptedRequirements {...prop} />).container
+  function init(props: AcceptedRequirementsProps) {
+    return render(<AcceptedRequirements {...props} />, {
+      wrapper: createWrapper(),
     })
-  }
-
-  const SynapseClient = require('../../../lib/utils/SynapseClient')
-
-  const user: UserProfile = {
-    firstName: 'Syanpase',
-    lastName: 'SageBase',
-    ownerId: '_',
-    userName: 'Synapse.SageBase',
   }
 
   const wikiPage: WikiPageKey = {
@@ -224,6 +199,7 @@ describe('Accepted Requirements works as expect', () => {
   }
 
   const accessRequirement: AccessRequirement = {
+    name: '_',
     versionNumber: 1,
     id: 5,
     etag: '_',
@@ -236,9 +212,9 @@ describe('Accepted Requirements works as expect', () => {
     concreteType: '_',
   }
 
-  const props = {
-    user: user,
-    token: '_',
+  const props: AcceptedRequirementsProps = {
+    user: mockUserProfileData,
+    entityId: MOCK_FILE_ENTITY_ID,
     wikiPage: wikiPage,
     accessRequirement: accessRequirement,
     accessRequirementStatus: {
@@ -250,15 +226,14 @@ describe('Accepted Requirements works as expect', () => {
     onHide: jest.fn(),
   }
 
-  it('Redners a AccessRequirements with valid props', async () => {
-    await init(props)
-    expect(container.innerHTML).not.toEqual('')
+  it('Renders a AccessRequirements with valid props', () => {
+    init(props)
+    screen.getByTestId('AcceptedRequirements')
   })
 
-  it('Render AccessRequirements correctly if user is already accepted requirements', async () => {
-    await init(props)
-    expect(wrapper.find(AccessApprovalCheckMark).prop('isCompleted')).toBe(true)
-    expect(wrapper.find('.button-container.hide')).toHaveLength(1)
+  it('Render AccessRequirements correctly if user is already accepted requirements', () => {
+    init(props)
+    screen.getByTestId('AccessApprovalCheckMark-true')
   })
 
   const accessApprovalMock: AccessApproval = {
@@ -269,43 +244,42 @@ describe('Accepted Requirements works as expect', () => {
   }
 
   it('Render AccessRequirements correctly when user click accept button', async () => {
-    await init(props)
+    const { container } = init(props)
 
     SynapseClient.postAccessApproval = jest
       .fn()
       .mockResolvedValue(accessApprovalMock)
 
-    await act(async () => {
-      await wrapper.find('button.accept-button').simulate('click')
-    })
+    userEvent.click(
+      await screen.findByRole('button', { name: 'I Accept Terms of Use' }),
+    )
 
-    expect(wrapper.find(AccessApprovalCheckMark).prop('isCompleted')).toBe(true)
-    expect(wrapper.find('.button-container.hide')).toHaveLength(1)
+    await screen.findByTestId('AccessApprovalCheckMark-true')
+
+    expect(container.querySelector('.button-container.hide')).not.toBeNull()
   })
 })
 
 describe('Check Mark works as expect', () => {
-  let container: HTMLElement
-
   function init(prop: CheckMarkProps) {
-    container = render(<AccessApprovalCheckMark {...prop} />).container
+    return render(<AccessApprovalCheckMark {...prop} />).container
   }
 
-  it('Check Marks color turns into green if isCompleted is true ', () => {
+  it('Check Marks color turns into green if isCompleted is true', () => {
     const props = {
       isCompleted: true,
     }
-    init(props)
+    const container = init(props)
     expect(container.querySelectorAll('div')[0].className).toMatch(
       'check-mark-container green',
     )
   })
 
-  it('Check Marks color turns into orange if isCompleted is false ', () => {
+  it('Check Marks color turns into orange if isCompleted is false', () => {
     const props = {
       isCompleted: false,
     }
-    init(props)
+    const container = init(props)
     expect(container.querySelectorAll('div')[0].className).toMatch(
       'check-mark-container orange',
     )

@@ -59,7 +59,7 @@ export const CardContainer = (props: CardContainerProps) => {
       case OBSERVATION_CARD:
         return <ObservationCard {...props} />
       default:
-        return <div /> // this should never happen
+        return <div key={props.key} /> // this should never happen
     }
   }
 

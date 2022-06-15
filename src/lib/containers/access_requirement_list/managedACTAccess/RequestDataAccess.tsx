@@ -265,7 +265,7 @@ const RequestDataAccess: React.FC<RequestDataAccessProps> = props => {
     : 'You have accepted the terms of use.'
   return (
     <>
-      <div className="requirement-container">
+      <div data-testid="RequestDataAccess" className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isApproved} />
         <div className="terms-of-use-content">
           {isApproved ? (

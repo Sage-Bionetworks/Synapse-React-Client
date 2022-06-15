@@ -1,5 +1,6 @@
-import { mount } from 'enzyme'
-import * as React from 'react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
 import { ChatBubblesIcon } from '../../../lib/assets/icons/terms/ChatBubblesIcon'
 import TermsAndConditionsItem from '../../../lib/containers/TermsAndConditionsItem'
 
@@ -11,8 +12,8 @@ describe('Terms and Conditions Item: basic functionality', () => {
   }
   const onChange = jest.fn()
 
-  it('render component without crashing', async () => {
-    const wrapper = mount(
+  it('render component without crashing', () => {
+    const { container } = render(
       <TermsAndConditionsItem
         id={1}
         enabled={true}
@@ -21,11 +22,11 @@ describe('Terms and Conditions Item: basic functionality', () => {
         onChange={onChange}
       />,
     )
-    expect(wrapper).toBeDefined()
+    expect(container).toBeDefined()
   })
 
-  it('should populate the right content', async () => {
-    const wrapper = mount(
+  it('should populate the right content', () => {
+    render(
       <TermsAndConditionsItem
         id={1}
         enabled={true}
@@ -34,11 +35,12 @@ describe('Terms and Conditions Item: basic functionality', () => {
         onChange={onChange}
       />,
     )
-    expect(wrapper.find('.terms-desc label').text()).toEqual(mockItem.label)
+
+    screen.getByLabelText(mockItem.label)
   })
 
-  it('should display show more link when there is description', async () => {
-    const wrapper = mount(
+  it('should display show more link when there is description', () => {
+    render(
       <TermsAndConditionsItem
         id={1}
         enabled={true}
@@ -47,11 +49,12 @@ describe('Terms and Conditions Item: basic functionality', () => {
         onChange={onChange}
       />,
     )
-    expect(wrapper.find('.terms-show-desc').text()).toEqual('Show More')
+
+    screen.getByText('Show More')
   })
 
-  it('should display show less link when show more link is clicked', async () => {
-    const wrapper = mount(
+  it('should display show less link when show more link is clicked', () => {
+    render(
       <TermsAndConditionsItem
         id={1}
         enabled={true}
@@ -60,12 +63,14 @@ describe('Terms and Conditions Item: basic functionality', () => {
         onChange={onChange}
       />,
     )
-    wrapper.find('.terms-show-desc').simulate('click')
-    expect(wrapper.find('.terms-show-desc').text()).toEqual('Show Less')
+
+    userEvent.click(screen.getByText('Show More'))
+    userEvent.click(screen.getByText('Show Less'))
+    screen.getByText('Show More')
   })
 
-  it('should call event handler when checkbox is checked', async () => {
-    const wrapper = mount(
+  it('should call event handler when checkbox is checked', () => {
+    render(
       <TermsAndConditionsItem
         id={1}
         enabled={true}
@@ -74,7 +79,7 @@ describe('Terms and Conditions Item: basic functionality', () => {
         onChange={onChange}
       />,
     )
-    wrapper.find('.terms-circle').simulate('click')
+    userEvent.click(screen.getByLabelText(mockItem.label))
     expect(onChange).toHaveBeenCalledTimes(1)
   })
 })

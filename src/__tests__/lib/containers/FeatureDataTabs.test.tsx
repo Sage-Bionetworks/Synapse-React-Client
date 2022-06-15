@@ -1,22 +1,23 @@
+import { render } from '@testing-library/react'
 import * as React from 'react'
-import { shallow } from 'enzyme'
-import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
-import syn16787123Json from '../../../mocks/query/syn16787123'
 import FeaturedDataTabs, {
   FeaturedDataTabsProps,
 } from '../../../lib/containers/home_page/featured-data/FeaturedDataTabs'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
+import syn16787123Json from '../../../mocks/query/syn16787123'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 const data = syn16787123Json as QueryResultBundle
 const token: string = '123444'
 
-const createShallowComponent = async (props: FeaturedDataTabsProps) => {
-  const wrapper = shallow(<FeaturedDataTabs {...props} />)
-  const instance = wrapper.instance()
-  return { wrapper, instance }
+const renderComponent = (props: FeaturedDataTabsProps) => {
+  return render(<FeaturedDataTabs {...props} />, {
+    wrapper: createWrapper(),
+  })
 }
 
-describe('basic tests', () => {
+describe('FeaturedDataTabs tests', () => {
   const props: FeaturedDataTabsProps = {
     rgbIndex: 0,
     token,
@@ -56,9 +57,9 @@ describe('basic tests', () => {
     )
   })
 
-  it('displays plot', async () => {
-    const { wrapper } = await createShallowComponent(props)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(FeaturedDataTabs)).toBeDefined()
+  it('Renders without crashing', () => {
+    const { container } = renderComponent(props)
+
+    expect(container.querySelector('.FeaturedDataTabs')).toBeDefined()
   })
 })
