@@ -38,6 +38,7 @@ import {
   EASY_DIFFICULTY,
   MEDIUM_DIFFICULTY,
   VARIABLE_DIFFICULTY,
+  DOWNLOAD_PERMISSION_REQUIRED,
   SQL_EDITOR,
 } from '../../../utils/SynapseConstants'
 
@@ -135,6 +136,8 @@ const defaultIcons = {
     'https://s3.amazonaws.com/static.synapse.org/images/medium.svg',
   [VARIABLE_DIFFICULTY]:
     'https://s3.amazonaws.com/static.synapse.org/images/variable.svg',
+  [DOWNLOAD_PERMISSION_REQUIRED]:
+    'https://s3.amazonaws.com/static.synapse.org/images/downloadPermissionRequired.svg',
 }
 const Icon: React.FunctionComponent<IconProps> = ({
   type,

@@ -13,6 +13,7 @@ import AccessRequirementList, {
   SUPPORTED_ACCESS_REQUIREMENTS,
 } from '../access_requirement_list/AccessRequirementList'
 import { Skeleton } from '@material-ui/lab'
+import Typography from '../../utils/typography/Typography'
 
 export type MeetAccessRequirementCardProps = {
   accessRequirementId: number
@@ -86,14 +87,16 @@ export const MeetAccessRequirementCard: React.FunctionComponent<
         <div className="MeetAccessRequirementCard actionRequiredCard">
           <Icon type={iconType} />
           <div className="metadata">
-            <div className="title">{title}</div>
+            <Typography variant="headline3" className="title">
+              {title}
+            </Typography>
             <div className="fileCount">{count} File(s)</div>
             <div className="description">{description}</div>
           </div>
           <div className="startButtonContainer">
             <Button
               className="startButton"
-              variant="secondary"
+              variant="primary"
               onClick={() => setIsShowingAccessRequirement(true)}
             >
               Start
