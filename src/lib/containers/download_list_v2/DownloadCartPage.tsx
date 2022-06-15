@@ -3,7 +3,10 @@ import { useState, useEffect } from 'react'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
-import DownloadListActionsRequired from './DownloadListActionsRequired'
+import {
+  DownloadListActionsRequired,
+  DownloadListActionsRequiredProps,
+} from './DownloadListActionsRequired'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import IconSvg from '../IconSvg'
@@ -14,14 +17,12 @@ import Typography from '../../utils/typography/Typography'
 import ReactTooltip from 'react-tooltip'
 import { HelpPopover } from '../HelpPopover'
 
-export type DownloadCartPageProps = Record<string, never>
-
 /**
  * Show the Download Cart page.
  */
 export const DownloadCartPage: React.FunctionComponent<
-  DownloadCartPageProps
-> = () => {
+  DownloadListActionsRequiredProps
+> = props => {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
@@ -131,24 +132,8 @@ export const DownloadCartPage: React.FunctionComponent<
         <div>
           {data.numberOfFilesRequiringAction > 0 && (
             <div>
-              <div className="subSectionOverview">
-                <div className="container">
-                  <div className="subSectionContainer">
-                    <Typography
-                      className="actionsRequiredTitle"
-                      variant={'headline3'}
-                    >
-                      You Have Files Which Require Actions Before Downloading
-                    </Typography>
-                  </div>
-                  <Typography variant={'body1'}>
-                    The items in this category require different actions in
-                    order to download them. Select Start to complete the action.
-                  </Typography>
-                </div>
-              </div>
               <div className="actionsRequiredContainer container">
-                <DownloadListActionsRequired />
+                <DownloadListActionsRequired {...props} />
               </div>
             </div>
           )}
