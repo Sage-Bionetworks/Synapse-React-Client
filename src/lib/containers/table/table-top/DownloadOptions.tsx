@@ -15,6 +15,7 @@ import {
   isEntityView,
   isFileView,
 } from '../../../utils/functions/EntityTypeUtils'
+import ReactTooltip from 'react-tooltip'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
@@ -48,8 +49,20 @@ export const DownloadOptions: React.FunctionComponent<
     entity &&
     ((isEntityView(entity) && isFileView(entity)) || isDataset(entity))
 
+  // SWC-5878 - Disable downloading a "Draft" dataset
+  const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
+
+  const TOOLTIP_ID = `download-menu-tooltip-${entity?.id}`
+
   return (
     <React.Fragment>
+      <ReactTooltip
+        delayShow={300}
+        place="left"
+        type="dark"
+        effect="solid"
+        id={TOOLTIP_ID}
+      />
       <Dropdown as="span">
         <ElementWithTooltip
           idForToolTip={tooltipDownloadId}
@@ -60,6 +73,9 @@ export const DownloadOptions: React.FunctionComponent<
         ></ElementWithTooltip>
         <Dropdown.Menu
           className="SRC-primary-color-hover-dropdown"
+          onClick={() => {
+            ReactTooltip.rebuild()
+          }}
           alignRight={true}
         >
           <Dropdown.Item
@@ -71,6 +87,13 @@ export const DownloadOptions: React.FunctionComponent<
           </Dropdown.Item>
           {isFileViewOrDataset && (
             <Dropdown.Item
+              className={disableDownload ? 'ignoreLink' : undefined}
+              data-for={TOOLTIP_ID}
+              data-tip="A draft version of a dataset cannot be added to the Download Cart"
+              data-tip-disable={!disableDownload}
+              disabled={disableDownload}
+              // If disabled, add pointer-events-auto so the tooltip still works
+              style={disableDownload ? { pointerEvents: 'auto' } : {}}
               onClick={() =>
                 accessToken ? onDownloadFiles() : setShowLoginModal(true)
               }
@@ -78,7 +101,16 @@ export const DownloadOptions: React.FunctionComponent<
               {DOWNLOAD_FILES_MENU_TEXT}
             </Dropdown.Item>
           )}
-          <Dropdown.Item onClick={() => setShowProgrammaticOptions(true)}>
+          <Dropdown.Item
+            className={disableDownload ? 'ignoreLink' : undefined}
+            data-for={TOOLTIP_ID}
+            data-tip="A draft version of a dataset cannot be downloaded programmatically"
+            data-tip-disable={!disableDownload}
+            disabled={disableDownload}
+            // If disabled, add pointer-events-auto so the tooltip still works
+            style={disableDownload ? { pointerEvents: 'auto' } : {}}
+            onClick={() => setShowProgrammaticOptions(true)}
+          >
             Programmatic Options
           </Dropdown.Item>
         </Dropdown.Menu>
