@@ -112,7 +112,7 @@ export const DataAccessSubmissionDashboard = () => {
           <FormLabel htmlFor="requester-filter">Filter by Requester</FormLabel>
           <UserSearchBoxV2
             htmlId="requester-filter"
-            placeholder="Search for a user or team name"
+            placeholder="Search for a user name"
             defaultValue={accessorId}
             onChange={onRequesterChange}
           />

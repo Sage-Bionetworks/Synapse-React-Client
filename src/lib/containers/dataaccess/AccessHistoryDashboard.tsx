@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
+import { TYPE_FILTER } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import {
   AccessApprovalsTable,
@@ -15,7 +16,6 @@ import {
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import UserSearchBoxV2 from '../UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox'
-import NoSearchResult from '../../assets/icons/NoSearchResultSmile'
 
 export const UserHistoryDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<
@@ -98,7 +98,11 @@ export const UserHistoryDashboard = () => {
   const NoSearchResultComponent = () => {
     return (
       <div className="text-center">
-        {NoSearchResult}
+        <img
+          className="SearchPlaceholderImage"
+          alt="Begin searching"
+          src="https://s3.amazonaws.com/static.synapse.org/images/search-happy.svg"
+        />
         <Typography variant="body2">
           Enter a user or team name in the search field above to view their data
           access history
@@ -111,14 +115,15 @@ export const UserHistoryDashboard = () => {
     <div className="UserHistoryDashboard bootstrap-4-backport">
       <div className="InputPanel SubmissionGrid">
         <div>
-          <FormLabel htmlFor="user-team-filter">
-            Select a user or team name to view their access history
+          <FormLabel htmlFor="user-filter">
+            Select a user to view their access history
           </FormLabel>
           <UserSearchBoxV2
-            htmlId="user-team-filter"
+            htmlId="user-filter"
             onChange={onAccessorChange}
             defaultValue={accessorId}
-            placeholder="Search for a user or team name"
+            placeholder="Search for a user name"
+            typeFilter={TYPE_FILTER.USERS_ONLY}
           />
         </div>
 
