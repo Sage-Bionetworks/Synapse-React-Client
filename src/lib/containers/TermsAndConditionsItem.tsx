@@ -49,7 +49,10 @@ const TermsAndConditionsItem: React.FunctionComponent<
     <>
       <span className="terms-icon">{item.icon}</span>
       <span className="terms-desc">
-        <label dangerouslySetInnerHTML={{ __html: item.label }} />
+        <label
+          id={`toc-item-${id}`}
+          dangerouslySetInnerHTML={{ __html: item.label }}
+        />
         {showDesc && item.description && (
           <div
             className="terms-desc-content"
@@ -70,6 +73,7 @@ const TermsAndConditionsItem: React.FunctionComponent<
       </span>
       <span className="terms-checkbox">
         <span
+          aria-labelledby={`toc-item-${id}`}
           className={isChecked ? 'terms-circle terms-checked' : 'terms-circle'}
           onClick={handleCheckboxClick}
         >

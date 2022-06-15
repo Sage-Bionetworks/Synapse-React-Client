@@ -147,7 +147,7 @@ export default function AcceptedRequirements({
     : 'You have accepted the terms of use.'
   return (
     <>
-      <div className="requirement-container">
+      <div data-testid="AcceptedRequirements" className="requirement-container">
         <AccessApprovalCheckMark isCompleted={isApproved} />
         <div className="terms-of-use-content">
           {isApproved ? (

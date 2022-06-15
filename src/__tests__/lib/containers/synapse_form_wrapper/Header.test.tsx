@@ -1,12 +1,11 @@
 import * as React from 'react'
-import { mount } from 'enzyme'
 import Header, {
   HeaderProps,
 } from '../../../../lib/containers/synapse_form_wrapper/Header'
+import { render, screen } from '@testing-library/react'
 
-const createMountedComponent = (props: HeaderProps) => {
-  const wrapper = mount(<Header {...props} />)
-  return { wrapper }
+const renderComponent = (props: HeaderProps) => {
+  render(<Header {...props} />)
 }
 
 const submittedText = 'Your information has been submitted'
@@ -19,19 +18,15 @@ describe('basic tests - not submitted', () => {
   }
 
   it('should display the correct bodyText as html', () => {
-    const { wrapper } = createMountedComponent(props)
-    const bodyDiv = wrapper.find('div > div')
-    expect(bodyDiv.get(0).props.dangerouslySetInnerHTML.__html).toBe(
-      props.bodyText,
-    )
+    renderComponent(props)
+    screen.getByText('Some bodyText')
+    screen.getByText('html test')
   })
 
   it('should not crash without bodyText param', () => {
     props.bodyText = undefined
-    const { wrapper } = createMountedComponent(props)
-    const bodyDiv = wrapper.find('div > div')
-    expect(bodyDiv).toHaveLength(0)
-    expect(wrapper.find('hr')).toHaveLength(1)
+    renderComponent(props)
+    screen.getByRole('separator')
   })
 })
 
@@ -44,17 +39,14 @@ describe('basic tests - submitted', () => {
 
   it('should display that it has been submitted', () => {
     const _props = { ...props, ...{ isSubmitted: true } }
-    const { wrapper } = createMountedComponent(_props)
-    const bodyDiv = wrapper.find('div > div')
-    expect(bodyDiv.get(0).props.dangerouslySetInnerHTML).toBe(undefined)
-    expect(bodyDiv.text()).toBe(submittedText)
+    renderComponent(_props)
+
+    screen.getByText(submittedText)
   })
 
   it('should not crash without bodyText param', () => {
     const _props = { ...props, ...{ isSubmitted: true, bodyText: undefined } }
-    const { wrapper } = createMountedComponent(_props)
-    const bodyDiv = wrapper.find('div > div')
-    expect(bodyDiv).toHaveLength(1)
-    expect(bodyDiv.text()).toBe(submittedText)
+    renderComponent(_props)
+    screen.getByText(submittedText)
   })
 })

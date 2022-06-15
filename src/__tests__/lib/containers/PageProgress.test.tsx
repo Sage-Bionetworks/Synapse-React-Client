@@ -1,4 +1,5 @@
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import PageProgress, {
   PageProgressProps,
@@ -19,52 +20,57 @@ describe('Page Progress: basic functionality', () => {
   const canGoNextProps: PageProgressProps = { ...props }
   canGoNextProps.forwardBtnActive = true
 
-  it('render component without crashing', async () => {
-    const wrapper = mount(<PageProgress {...props} />)
-    expect(wrapper).toBeDefined()
+  it('render component without crashing', () => {
+    const { container } = render(<PageProgress {...props} />)
+    expect(container).toBeDefined()
   })
 
-  it('should render progress bar with correct width', async () => {
-    const wrapper = mount(<PageProgress {...props} />)
-    expect(wrapper.find('.page-progress-percent').prop('style')).toHaveProperty(
-      'width',
-      '30%',
-    )
+  it('should render progress bar with correct width', () => {
+    const { container } = render(<PageProgress {...props} />)
+    expect(
+      container.querySelector('.page-progress-percent')?.getAttribute('style'),
+    ).toBe('width: 30%;')
   })
 
-  it('should render button with correct labels', async () => {
-    const wrapper = mount(<PageProgress {...props} />)
-    expect(wrapper.find('button.btn-progress-back').text()).toEqual('Go back')
-    expect(wrapper.find('button.btn-progress-next').text()).toEqual(
-      'Go forward',
-    )
+  it('should render button with correct labels', () => {
+    render(<PageProgress {...props} />)
+
+    expect(
+      screen
+        .getByRole('button', { name: 'Go back' })
+        .classList.contains('btn-progress-back'),
+    ).toBe(true)
+    expect(
+      screen
+        .getByRole('button', { name: 'Go forward' })
+        .classList.contains('btn-progress-next'),
+    ).toBe(true)
   })
 
-  it('should have correct css class for forward button', async () => {
-    const wrapper = mount(<PageProgress {...props} />)
-    expect(wrapper.find('button.btn-progress-back')).toBeDefined()
-
-    const wrapper2 = mount(<PageProgress {...canGoNextProps} />)
-    expect(wrapper2.find('button.btn-progress-next-active').text()).toEqual(
-      'Go forward',
-    )
+  it('should have correct css class for forward button', () => {
+    render(<PageProgress {...canGoNextProps} />)
+    expect(
+      screen
+        .getByRole('button', { name: 'Go forward' })
+        .classList.contains('btn-progress-next-active'),
+    ).toBe(true)
   })
 
-  it('should call back button callback when clicked', async () => {
-    const wrapper = mount(<PageProgress {...props} />)
-    wrapper.find('button.btn-progress-back').simulate('click')
+  it('should call back button callback when clicked', () => {
+    render(<PageProgress {...props} />)
+    userEvent.click(screen.getByRole('button', { name: 'Go back' }))
     expect(onBackButtonClicked).toHaveBeenCalledTimes(1)
   })
 
-  it('should not call forward button callback when it is not active', async () => {
-    const wrapper = mount(<PageProgress {...props} />)
-    wrapper.find('button.btn-progress-back').simulate('click')
+  it('should not call forward button callback when it is not active', () => {
+    render(<PageProgress {...props} />)
+    userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
     expect(onNextButtonClicked).toHaveBeenCalledTimes(0)
   })
 
-  it('should call forward button callback when it is active', async () => {
-    const wrapper = mount(<PageProgress {...canGoNextProps} />)
-    wrapper.find('button.btn-progress-next-active').simulate('click')
+  it('should call forward button callback when it is active', () => {
+    render(<PageProgress {...canGoNextProps} />)
+    userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
     expect(onNextButtonClicked).toHaveBeenCalledTimes(1)
   })
 })

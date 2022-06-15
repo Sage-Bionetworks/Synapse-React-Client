@@ -5,7 +5,6 @@ import LoginPage from './containers/LoginPage'
 import StatisticsPlot from './containers/StatisticsPlot'
 import EntityForm from './containers/EntityForm'
 import HasAccess from './containers/HasAccess'
-import DownloadListTable from './containers/download_list/DownloadListTable'
 import './style/main.scss'
 import { SynapseConstants, SynapseClient } from './utils'
 import { EvaluationCard } from './containers/evaluation_queues/EvaluationCard'
@@ -62,7 +61,6 @@ const SynapseComponents = {
   UserCard,
   StatisticsPlot,
   HasAccess,
-  DownloadListTable,
   EvaluationCard,
   EvaluationEditorPage,
   AccessTokenPage,

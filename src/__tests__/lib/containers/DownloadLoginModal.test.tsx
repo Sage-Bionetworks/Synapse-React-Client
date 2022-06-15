@@ -1,9 +1,11 @@
-import { ReactWrapper, mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
 import {
   DownloadLoginModal,
   DownloadLoginModalProps,
 } from '../../../lib/containers/table/table-top/DownloadLoginModal'
+import { SRC_SIGN_IN_CLASS } from '../../../lib/utils/SynapseConstants'
 
 const mockCallback = jest.fn()
 
@@ -17,27 +19,32 @@ function createTestProps(
   }
 }
 
-let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
 let props: DownloadLoginModalProps
 
-function init(overrides?: DownloadLoginModalProps) {
+function renderComponent(overrides?: DownloadLoginModalProps) {
   props = createTestProps(overrides)
-  wrapper = mount(<DownloadLoginModal {...props} />)
+  return render(<DownloadLoginModal {...props} />)
 }
 
-beforeEach(() => init())
+describe('DownloadLoginModal tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
-describe('basic function', () => {
-  it('should render with explanatory links and without login', () => {
-    expect(wrapper.find('ModalHeader')).toHaveLength(1)
-    expect(wrapper.find('ModalFooter').find('button')).toHaveLength(2)
-    expect(wrapper.find('ModalFooter').find('button').at(0).text()).toBe(
-      'CANCEL',
-    )
-    expect(wrapper.find('ModalFooter').find('button').at(1).text()).toBe(
-      'Sign in',
-    )
-    expect(wrapper.find('a')).toHaveLength(2)
-    expect(wrapper.find('Login')).toHaveLength(0)
+  it('Has cancel button', () => {
+    renderComponent()
+    const cancelButton = screen.getByRole('button', { name: 'CANCEL' })
+
+    userEvent.click(cancelButton)
+
+    expect(mockCallback).toHaveBeenCalledTimes(1)
+  })
+  it('Has sign in button', () => {
+    renderComponent()
+    const signInButton = screen.getByRole('button', { name: 'Sign in' })
+    expect(signInButton.classList.contains(SRC_SIGN_IN_CLASS)).toBe(true)
+    userEvent.click(signInButton)
+
+    expect(mockCallback).toHaveBeenCalledTimes(1)
   })
 })

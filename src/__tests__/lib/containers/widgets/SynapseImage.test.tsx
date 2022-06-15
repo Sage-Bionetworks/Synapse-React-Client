@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { shallow } from 'enzyme'
 import SynapseImage from '../../../../lib/containers/widgets/SynapseImage'
+import { render } from '@testing-library/react'
 
 it('renders without failing', () => {
-  const tree = shallow(
+  const { container } = render(
     <SynapseImage
       params={{
         align: '',
@@ -13,5 +13,5 @@ it('renders without failing', () => {
       }}
     />,
   )
-  expect(tree).toBeDefined()
+  expect(container).toBeDefined()
 })
