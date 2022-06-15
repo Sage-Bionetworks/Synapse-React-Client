@@ -4,10 +4,7 @@ import { createMemoryHistory, MemoryHistory } from 'history'
 import React from 'react'
 import { Router } from 'react-router-dom'
 import selectEvent from 'react-select-event'
-import {
-  DataAccessSubmissionDashboard,
-  DataAccessSubmissionDashboardProps,
-} from '../../../../lib/containers/dataaccess/AccessSubmissionDashboard'
+import { DataAccessSubmissionDashboard } from '../../../../lib/containers/dataaccess/AccessSubmissionDashboard'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
@@ -43,17 +40,14 @@ const {
 
 const onServiceRecievedRequest = jest.fn()
 
-function renderComponent(
-  props?: DataAccessSubmissionDashboardProps,
-  modifyHistory?: (history: MemoryHistory) => void,
-) {
+function renderComponent(modifyHistory?: (history: MemoryHistory) => void) {
   const history = createMemoryHistory()
   if (modifyHistory) {
     modifyHistory(history)
   }
   const renderResult = render(
     <Router history={history}>
-      <DataAccessSubmissionDashboard {...props} />
+      <DataAccessSubmissionDashboard />
     </Router>,
     {
       wrapper: createWrapper(),
@@ -178,7 +172,7 @@ describe('AccessSubmissionDashboard tests', () => {
   })
 
   it('Auto-fills the inputs with search parameter values', async () => {
-    renderComponent(undefined, history => {
+    renderComponent(history => {
       const searchParams = new URLSearchParams('')
       searchParams.set('accessRequirementId', MOCK_AR_ID.toString())
       searchParams.set('accessorId', MOCK_USER_ID.toString())

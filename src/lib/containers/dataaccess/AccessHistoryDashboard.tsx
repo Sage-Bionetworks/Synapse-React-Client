@@ -17,11 +17,7 @@ import UserSearchBoxV2 from '../UserSearchBoxV2'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox'
 import NoSearchResult from '../../assets/icons/NoSearchResultSmile'
 
-export type UserHistoryDashboardProps = {}
-
-export const UserHistoryDashboard: React.FunctionComponent<
-  UserHistoryDashboardProps
-> = () => {
+export const UserHistoryDashboard = () => {
   const [accessRequirementId, setAccessRequirementId] = useState<
     string | undefined
   >()
