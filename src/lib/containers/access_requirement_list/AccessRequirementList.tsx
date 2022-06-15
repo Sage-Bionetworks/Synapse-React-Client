@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { getAllAccessRequirements } from '../../utils/SynapseClient'
 import { SynapseConstants, SynapseClient } from '../../utils/'
@@ -115,6 +115,7 @@ export default function AccessRequirementList({
   renderAsModal,
   numberOfFilesAffected,
 }: AccessRequirementListProps) {
+  const isMounted = useRef(true)
   const { accessToken } = useSynapseContext()
 
   const [accessRequirements, setAccessRequirements] = useState<
@@ -152,14 +153,18 @@ export default function AccessRequirementList({
           )
           const sortedAccessRequirements =
             await sortAccessRequirementByCompletion(accessToken, requirements)
-          setAccessRequirements(sortedAccessRequirements)
+          if (isMounted.current) {
+            setAccessRequirements(sortedAccessRequirements)
+          }
         } else {
           const sortedAccessRequirements =
             await sortAccessRequirementByCompletion(
               accessToken,
               accessRequirementFromProps!,
             )
-          setAccessRequirements(sortedAccessRequirements)
+          if (isMounted.current) {
+            setAccessRequirements(sortedAccessRequirements)
+          }
         }
 
         const userProfile = await SynapseClient.getUserProfile(accessToken)
@@ -173,6 +178,10 @@ export default function AccessRequirementList({
     }
 
     getAccessRequirements()
+
+    return () => {
+      isMounted.current = false
+    }
   }, [accessToken, entityId, accessRequirementFromProps, shouldUpdateData])
 
   // Using Boolean(value) converts undefined,null, 0,'',false -> false
