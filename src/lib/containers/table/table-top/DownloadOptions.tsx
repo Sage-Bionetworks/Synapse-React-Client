@@ -67,6 +67,7 @@ export const DownloadOptions: React.FunctionComponent<
             place="left"
             type="dark"
             effect="solid"
+            multiline={true}
             id={TOOLTIP_ID}
           />
           <Dropdown.Item
@@ -80,7 +81,7 @@ export const DownloadOptions: React.FunctionComponent<
             <Dropdown.Item
               className={disableDownload ? 'ignoreLink' : undefined}
               data-for={TOOLTIP_ID}
-              data-tip="A draft version of a dataset cannot be added to the Download Cart"
+              data-tip="A draft version of a dataset cannot<br />be added to the Download Cart"
               data-tip-disable={!disableDownload}
               disabled={disableDownload}
               // If disabled, add pointer-events-auto so the tooltip still works
@@ -95,7 +96,7 @@ export const DownloadOptions: React.FunctionComponent<
           <Dropdown.Item
             className={disableDownload ? 'ignoreLink' : undefined}
             data-for={TOOLTIP_ID}
-            data-tip="A draft version of a dataset cannot be downloaded programmatically"
+            data-tip="A draft version of a dataset cannot<br />be downloaded programmatically"
             data-tip-disable={!disableDownload}
             disabled={disableDownload}
             // If disabled, add pointer-events-auto so the tooltip still works
