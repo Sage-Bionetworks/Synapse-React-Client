@@ -117,10 +117,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { data: path } = useGetEntityPath(entityId)
   const projectId = path?.path[1]?.id
 
-  useEffect(() => {
-    fetchedDataset
-  })
-
   const mutation = useUpdateEntity<Dataset>({
     onSuccess: () => {
       if (onSave) {
