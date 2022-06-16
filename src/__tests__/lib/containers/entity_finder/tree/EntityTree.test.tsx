@@ -1,12 +1,13 @@
 import '@testing-library/jest-dom'
 import { act, render, waitFor, screen } from '@testing-library/react'
-import React from 'react'
+import React, { useState } from 'react'
 import { SynapseClient } from '../../../../../lib'
 import { EntityDetailsListDataConfigurationType } from '../../../../../lib/containers/entity_finder/details/EntityDetailsList'
 import {
   FinderScope,
   EntityTree,
   EntityTreeProps,
+  EntityTreeContainer,
 } from '../../../../../lib/containers/entity_finder/tree/EntityTree'
 import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle'
@@ -180,14 +181,27 @@ const entityPath: EntityPath = {
 }
 
 function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
+  function EntityTreeWithCurrentContainer() {
+    const [currentContainer, setCurrentContainer] =
+      useState<EntityTreeContainer>(propOverrides?.initialContainer ?? null)
+    return (
+      <EntityTree
+        {...defaultProps}
+        {...propOverrides}
+        currentContainer={currentContainer}
+        setCurrentContainer={setCurrentContainer}
+      />
+    )
+  }
+
   return render(
     <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <EntityTree {...defaultProps} {...propOverrides} />
+      <EntityTreeWithCurrentContainer />
     </SynapseContextProvider>,
   )
 }
 
-describe('TreeView tests', () => {
+describe('EntityTree tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
@@ -256,7 +270,7 @@ describe('TreeView tests', () => {
   })
 
   describe('Dropdown selection tests', () => {
-    it('cannot select `Current Project` if project ID is not provided', async () => {
+    it('cannot select `Current Project` if project ID is not provided', () => {
       renderComponent({
         initialScope: FinderScope.ALL_PROJECTS,
         projectId: undefined,
@@ -266,7 +280,7 @@ describe('TreeView tests', () => {
       expect(() => screen.getAllByLabelText('Current Project')).toThrowError()
     })
 
-    it('can select `Current Project` if initial container is provided', async () => {
+    it('can select `Current Project` if initial container is provided', () => {
       renderComponent({
         initialScope: FinderScope.ALL_PROJECTS,
         projectId: 'syn123',
@@ -306,6 +320,7 @@ describe('TreeView tests', () => {
     it('Configures to get all projects when the root node is selected with a scope of all projects', async () => {
       renderComponent({
         initialContainer: 'root',
+        currentContainer: 'root',
         initialScope: FinderScope.ALL_PROJECTS,
       })
 
