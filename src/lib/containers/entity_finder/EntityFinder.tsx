@@ -345,6 +345,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               toggleSelection={toggleSelection}
               enableSelectAll={selectMultiple}
               latestVersionText={latestVersionText}
+              // Intentionally do not pass "setCurrentContainer" -- search does not use the tree so it has nothing to update
+              setCurrentContainer={undefined}
             />
           )}
           {

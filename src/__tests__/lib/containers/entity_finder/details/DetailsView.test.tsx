@@ -556,8 +556,20 @@ describe('DetailsView tests', () => {
       )
     })
 
+    it('does not render a link to update the currentContainer when setCurrentContainer is undefined', () => {
+      // For example, when we are searching, we have no "currentContainer" to update
+      renderComponent({
+        selectableTypes: [EntityType.PROJECT, EntityType.FILE],
+        visibleTypes: [EntityType.PROJECT, EntityType.FILE],
+        setCurrentContainer: undefined,
+      })
+
+      // No links should be rendered because navigation is not possible
+      expect(screen.queryByRole('link')).not.toBeInTheDocument()
+    })
+
     describe('renders the correct checkbox state', () => {
-      it('rendered checkbox is checked if selected', async () => {
+      it('rendered checkbox is checked if selected', () => {
         renderComponent({
           selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
           selectColumnType: 'checkbox',
@@ -565,7 +577,7 @@ describe('DetailsView tests', () => {
         expect(screen.getAllByRole('checkbox')[0]).toHaveAttribute('checked')
       })
 
-      it('no checkbox button is created for a disabled row', async () => {
+      it('no checkbox button is created for a disabled row', () => {
         renderComponent({
           enableSelectAll: false,
           hasNextPage: false,
