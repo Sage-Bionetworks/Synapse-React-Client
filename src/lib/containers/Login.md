@@ -1,7 +1,7 @@
 ```jsx
 <Login
   sessionCallback={() => {
-    location.reload()
+    sessionChangeHandler()
   }}
   // ssoRedirectUrl="https://sage-bionetworks.github.io/Synapse-React-Client/?provider="
 />
