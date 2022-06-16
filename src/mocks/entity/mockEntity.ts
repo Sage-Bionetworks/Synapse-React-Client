@@ -10,6 +10,7 @@ import {
   FileEntity,
   ObjectType,
   PaginatedResults,
+  ProjectHeader,
   RestrictionLevel,
 } from '../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
@@ -18,7 +19,7 @@ import {
   mockPreviewFileHandle,
   MOCK_FILE_HANDLE_ID,
 } from '../mock_file_handle'
-import { MOCK_USER_ID } from '../user/mock_user_profile'
+import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 
 export const MOCK_FILE_ENTITY_ID = 'syn123'
 export const MOCK_FILE_NAME = 'My mock file entity'
@@ -42,6 +43,8 @@ export const mockFileEntity: FileEntity = {
   versionNumber: 3,
   versionLabel: '3',
   isLatestVersion: true,
+  createdOn: '2021-03-02T15:05:34.973Z',
+  modifiedOn: '2021-03-05T11:31:24.521Z',
 }
 
 /**
@@ -198,10 +201,10 @@ export const mockFileEntityHeader: EntityHeader = {
   versionNumber: 1,
   versionLabel: 'Version label',
   benefactorId: 123,
-  createdOn: '',
-  modifiedOn: '',
-  createdBy: '', // TODO: Replace with a valid mock user ID
-  modifiedBy: '',
+  createdOn: mockFileEntity.createdOn!,
+  modifiedOn: mockFileEntity.modifiedOn!,
+  createdBy: MOCK_USER_ID.toString(), // TODO: Replace with a valid mock user ID
+  modifiedBy: MOCK_USER_ID_2.toString(),
 }
 
 export const mockFolderEntity: Entity = {
@@ -239,6 +242,14 @@ export const mockProjectEntity: Entity = {
   modifiedBy: `${MOCK_USER_ID}`,
   parentId: 'syn4489',
   concreteType: 'org.sagebionetworks.repo.model.Project',
+}
+
+export const mockProjectHeader: ProjectHeader = {
+  id: mockProjectEntity.id!,
+  name: mockProjectEntity.name,
+  lastActivity: '2022-02-03T12:44:35.457Z',
+  modifiedOn: mockProjectEntity.modifiedOn!,
+  modifiedBy: MOCK_USER_ID,
 }
 
 export const mockProjectEntityBundle: EntityBundle = {
