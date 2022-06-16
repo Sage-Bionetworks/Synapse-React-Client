@@ -4,6 +4,7 @@ import { FormLabel } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { useDebouncedEffect } from '../../utils/hooks/useDebouncedEffect'
 import { SubmissionState } from '../../utils/synapseTypes'
+import { TYPE_FILTER } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import {
   AccessRequestSubmissionTable,
@@ -115,6 +116,7 @@ export const DataAccessSubmissionDashboard = () => {
             placeholder="Search for a user name"
             defaultValue={accessorId}
             onChange={onRequesterChange}
+            typeFilter={TYPE_FILTER.USERS_ONLY}
           />
         </div>
         <div>
