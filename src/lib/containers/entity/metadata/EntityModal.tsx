@@ -51,6 +51,8 @@ export const EntityModal: React.FC<EntityModalProps> = ({
 
   const [currentTab, setCurrentTab] = useState<EntityModalTabs>(initialTab)
   const [isInEditMode, setIsInEditMode] = useState(false)
+  const [hasClickedCancel, setHasClickedCancel] = useState(false)
+
   const { data: entityBundle } = useGetEntityBundle(
     entityId,
     undefined,
@@ -102,9 +104,14 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       }
       secondaryActions = [
         {
-          copy: 'Cancel',
+          copy: hasClickedCancel
+            ? 'Are you sure? Unsaved changes will be lost'
+            : 'Cancel',
           onClick: () => {
-            setIsInEditMode(false)
+            if (hasClickedCancel) {
+              setIsInEditMode(false)
+            }
+            setHasClickedCancel(!hasClickedCancel)
           },
         },
       ]
