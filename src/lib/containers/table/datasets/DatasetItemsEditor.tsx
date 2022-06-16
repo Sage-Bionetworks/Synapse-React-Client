@@ -3,7 +3,7 @@ import BaseTable, {
   AutoResizer,
   ColumnShape,
 } from '@sage-bionetworks/react-base-table'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
@@ -71,6 +71,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
+  const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
 
   // Disable updating the entity after the initial fetch because we don't want to replace edits that the user makes.
   const [datasetToUpdate, _setDatasetToUpdate] =
@@ -84,7 +85,23 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     _setDatasetToUpdate(dataset)
   }
 
-  const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
+  const { data: fetchedDataset, refetch } = useGetEntity<
+    RequiredProperties<Dataset, 'items'>
+  >(entityId, undefined, {
+    enabled: !datasetToUpdate,
+  })
+
+  useEffect(() => {
+    // Don't update when we already have datasetToUpdate
+    if (!datasetToUpdate && fetchedDataset) {
+      // SWC-5876: Dataset Items may be undefined. This has the same inherent meaning as the empty list, so we'll just change it to save us some null checks.
+      if (fetchedDataset.items == null) {
+        fetchedDataset.items = []
+      }
+      setDatasetToUpdate(fetchedDataset)
+      setHasChangedSinceLastSave(false)
+    }
+  }, [fetchedDataset, datasetToUpdate])
 
   const {
     set: selectedIds,
@@ -100,21 +117,9 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { data: path } = useGetEntityPath(entityId)
   const projectId = path?.path[1]?.id
 
-  const { refetch } = useGetEntity<RequiredProperties<Dataset, 'items'>>(
-    entityId,
-    undefined,
-    {
-      enabled: !datasetToUpdate,
-      onSuccess: dataset => {
-        // SWC-5876: Dataset Items may be undefined. This has the same inherent meaning as the empty list, so we'll just change it to save us some null checks.
-        if (dataset.items == null) {
-          dataset.items = []
-        }
-        setDatasetToUpdate(dataset)
-        setHasChangedSinceLastSave(false)
-      },
-    },
-  )
+  useEffect(() => {
+    fetchedDataset
+  })
 
   const mutation = useUpdateEntity<Dataset>({
     onSuccess: () => {
