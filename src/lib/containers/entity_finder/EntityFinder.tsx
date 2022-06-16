@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, FormControl } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
@@ -260,7 +260,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   setSearchTerms(undefined)
                 }}
               >
-                <Arrow arrowDirection="left" style={{ height: '18px' }} />
+                <Arrow arrowDirection="left" style={{ height: '16px' }} />
                 Back to Browse
               </Button>
             ) : (
@@ -283,8 +283,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             <span className="SearchIcon">
               <IconSvg options={{ icon: 'search' }} />
             </span>
-            {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
-            <input
+            <FormControl
               role="textbox"
               ref={searchInputRef}
               aria-hidden={!searchActive}

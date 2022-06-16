@@ -44,14 +44,14 @@ $-splitter-width: 12px;
     height: 38px;
     .SearchIcon {
       position: relative;
-      left: 22px;
+      left: 27px;
       top: 1px;
     }
     .ClearSearchIcon {
       color: map.get(SRC.$primary-color-palette, 500);
       cursor: pointer;
       position: relative;
-      left: -20px;
+      left: -30px;
       margin-right: -8px;
     }
     button.btn {
