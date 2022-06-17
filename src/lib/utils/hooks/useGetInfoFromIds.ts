@@ -133,6 +133,7 @@ export default function useGetInfoFromIds<
   // Michael TODO: There's a bug where the data held in useGetInfoFromIds will be stale if the user token changes,
   // this can be solved by using the useCompare hook on the token to track when it changes
   useDeepCompareEffect(() => {
+    let isCancelled = false
     const getData = async () => {
       if (newValues.length > 0) {
         try {
@@ -153,7 +154,9 @@ export default function useGetInfoFromIds<
                   )
             totalData.push(...(newData as T[]))
           }
-          setData(oldData => oldData.concat(...(totalData as T[])))
+          if (!isCancelled) {
+            setData(oldData => oldData.concat(...(totalData as T[])))
+          }
         } catch (error) {
           console.error('Error on data retrieval', error)
         }
@@ -161,6 +164,9 @@ export default function useGetInfoFromIds<
       saveToSessionStorage(data, type)
     }
     getData()
+    return () => {
+      isCancelled = true
+    }
   }, [accessToken, type, newValues])
   return data
 }
