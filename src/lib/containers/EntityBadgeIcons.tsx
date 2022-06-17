@@ -1,32 +1,32 @@
-import React, { useState } from 'react'
-import { EntityBundle, EntityType } from '../utils/synapseTypes'
 import {
-  DescriptionTwoTone,
-  CheckTwoTone,
   ChatBubbleTwoTone,
-  PublicTwoTone,
-  LockTwoTone,
-  LocalOfferTwoTone,
+  CheckTwoTone,
+  DescriptionTwoTone,
   LinkOffTwoTone,
+  LocalOfferTwoTone,
+  LockTwoTone,
+  PublicTwoTone,
 } from '@material-ui/icons'
 import { isEmpty } from 'lodash-es'
-import sanitizeHtml from 'sanitize-html'
+import React, { useEffect, useState } from 'react'
+import { useInView } from 'react-intersection-observer'
 import ReactTooltip from 'react-tooltip'
-import { SynapseClient } from '../utils'
-import { useSynapseContext } from '../utils/SynapseContext'
-import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  ANONYMOUS_PRINCIPAL_ID,
-} from '../utils/SynapseConstants'
+import sanitizeHtml from 'sanitize-html'
+import { useDeleteEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import {
   useGetSchemaBinding,
   useGetValidationResults,
 } from '../utils/hooks/SynapseAPI/entity/useEntityBoundSchema'
-import { useEffect } from 'react'
-import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
 import useGetEntityBundle from '../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { useInView } from 'react-intersection-observer'
+import {
+  ANONYMOUS_PRINCIPAL_ID,
+  AUTHENTICATED_PRINCIPAL_ID,
+  PUBLIC_PRINCIPAL_ID,
+} from '../utils/SynapseConstants'
+import { useSynapseContext } from '../utils/SynapseContext'
+import { EntityBundle, EntityType } from '../utils/synapseTypes'
+import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
+import WarningModal from './synapse_form_wrapper/WarningModal'
 
 const isPublic = (bundle: EntityBundle): boolean => {
   return bundle.benefactorAcl!.resourceAccess.some(ra => {
@@ -67,7 +67,7 @@ export type EntityBadgeIconsProps = {
   showUnlink?: boolean
   /* Invoked after the entity is unlinked/deleted in case there is cleanup to do. Returns the entityId */
   onUnlink?: (entityId: string) => void
-  onUnlinkError?: (error: Error) => void
+  onUnlinkError?: (error: unknown) => void
   /** Whether or not the badges (e.g. Annotations) can trigger opening a modal on click */
   canOpenModal: boolean
   /** Whether this component should render a ReactTooltip or if an external component is managing it */
@@ -122,18 +122,20 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
     },
   )
   const [showModal, setShowModal] = useState(false)
+  const [showUnlinkConfirmModal, setShowUnlinkConfirmModal] = useState(false)
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,
   )
 
-  const { accessToken, isInExperimentalMode } = useSynapseContext()
+  const { isInExperimentalMode } = useSynapseContext()
 
-  const { data: schemaValidationResults } = useGetValidationResults(entityId, {
+  const { data: boundSchema } = useGetSchemaBinding(entityId, {
     enabled: isInExperimentalMode && inView,
     staleTime: 60 * 1000, // 60 seconds
   })
-  const { data: boundSchema } = useGetSchemaBinding(entityId, {
-    enabled: isInExperimentalMode && inView,
+
+  const { data: schemaValidationResults } = useGetValidationResults(entityId, {
+    enabled: isInExperimentalMode && inView && !!boundSchema,
     staleTime: 60 * 1000, // 60 seconds
   })
 
@@ -168,6 +170,13 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
     SchemaConformanceState.INVALID,
     SchemaConformanceState.ANNOTATIONS_MISSING,
   ])
+
+  const { mutate: unlinkEntity } = useDeleteEntity({
+    onSuccess: (_, entityId) => {
+      onUnlink(entityId)
+    },
+    onError: onUnlinkError,
+  })
 
   /**
    * Convert the list of annotations to a string of <tr>...anno1</tr><tr>...anno2</tr>...
@@ -305,19 +314,33 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
           {showUnlink &&
             bundle.entityType === EntityType.LINK &&
             bundle.permissions?.canDelete && (
-              <LinkOffTwoTone
-                aria-hidden={false}
-                role="button"
-                onClick={() => {
-                  SynapseClient.deleteEntity(accessToken, entityId)
-                    .then(() => onUnlink(entityId))
-                    .catch(error => onUnlinkError(error))
-                }}
-                className="EntityBadge__Badge Unlink"
-                data-for={ownTooltipId}
-                data-tip="Remove this link"
-                data-testid={'unlink-icon'}
-              />
+              <>
+                <WarningModal
+                  show={showUnlinkConfirmModal}
+                  title="Confirm Unlink"
+                  modalBody={
+                    'Are you sure you want to remove this link? The original object will not be changed.'
+                  }
+                  confirmButtonText="Unlink"
+                  confirmButtonVariant="danger"
+                  onConfirm={() => {
+                    unlinkEntity(entityId)
+                    setShowUnlinkConfirmModal(false)
+                  }}
+                  onCancel={() => {
+                    setShowUnlinkConfirmModal(false)
+                  }}
+                />
+                <LinkOffTwoTone
+                  aria-hidden={false}
+                  role="button"
+                  onClick={() => setShowUnlinkConfirmModal(true)}
+                  className="EntityBadge__Badge Unlink"
+                  data-for={ownTooltipId}
+                  data-tip="Remove this link"
+                  data-testid={'unlink-icon'}
+                />
+              </>
             )}
         </>
       )}
