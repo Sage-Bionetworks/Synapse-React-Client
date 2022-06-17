@@ -145,7 +145,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
                 header: defaultUserGroupHeader!,
               },
             ]
-          : false
+          : true
       }
       id={htmlId}
       cacheOptions

@@ -19,6 +19,7 @@ import {
   SubmissionState,
 } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
+import { SynapseErrorBoundary } from '../ErrorBanner'
 import MarkdownSynapse from '../MarkdownSynapse'
 import WarningModal, {
   WarningModalProps,
@@ -83,6 +84,35 @@ function ApproveConfirmationModal(
   )
 }
 
+type AccessRequirementWikiType = {
+  accessRequirementId: string
+}
+
+function AccessRequirementWiki(props: AccessRequirementWikiType) {
+  const { data: wikiPageKey } = useGetAccessRequirementWikiPageKey(
+    props.accessRequirementId,
+    {
+      useErrorBoundary: true,
+    },
+  )
+
+  return wikiPageKey ? (
+    <div className="AccessRequirementWikiContainer">
+      <div className="AccessRequirementWikiContent">
+        <Typography variant="headline1">Access Requirement</Typography>
+        <hr />
+        <MarkdownSynapse
+          wikiId={wikiPageKey?.wikiPageId}
+          ownerId={wikiPageKey?.ownerObjectId}
+          objectType={wikiPageKey?.ownerObjectType}
+        />
+      </div>
+    </div>
+  ) : (
+    <Skeleton width={'100%'} height={'600px'} />
+  )
+}
+
 /**
  * Page for a Data Access Submission that a designated reviewer can view, and choose to approve or reject.
  */
@@ -104,10 +134,6 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     )
 
   const { data: acl } = useGetAccessRequirementACL(
-    submission?.accessRequirementId!,
-    { enabled: !!submission, useErrorBoundary: true },
-  )
-  const { data: wikiPageKey } = useGetAccessRequirementWikiPageKey(
     submission?.accessRequirementId!,
     { enabled: !!submission, useErrorBoundary: true },
   )
@@ -333,17 +359,15 @@ export default function SubmissionPage(props: SubmissionPageProps) {
         </div>
       </div>
       <div className="SubmissionRightPane">
-        <div className="AccessRequirementWikiContainer">
-          <div className="AccessRequirementWikiContent">
-            <Typography variant="headline1">Access Requirement</Typography>
-            <hr />
-            <MarkdownSynapse
-              wikiId={wikiPageKey?.wikiPageId}
-              ownerId={wikiPageKey?.ownerObjectId}
-              objectType={wikiPageKey?.ownerObjectType}
+        <SynapseErrorBoundary>
+          {submission ? (
+            <AccessRequirementWiki
+              accessRequirementId={submission.accessRequirementId}
             />
-          </div>
-        </div>
+          ) : (
+            <></>
+          )}
+        </SynapseErrorBoundary>
         <div>
           {submission?.rejectedReason && (
             <>
