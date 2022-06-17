@@ -21,9 +21,14 @@ import {
   EntityHeader,
   EntityType,
   PaginatedResults,
+  ProjectHeader,
   SortBy,
 } from '../../../../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
+import {
+  mockFileEntityHeader,
+  mockProjectHeader,
+} from '../../../../../mocks/entity/mockEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
 
 // Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
@@ -53,31 +58,9 @@ function generateFileHeader(id: number): EntityHeader {
   }
 }
 
-const entityHeaders: EntityHeader[] = [
-  {
-    id: 'syn123',
-    name: 'My File',
-    modifiedOn: 'today',
-    modifiedBy: '100000',
-    type: 'org.sagebionetworks.repo.model.FileEntity',
-    versionNumber: 5,
-    versionLabel: 'label',
-    benefactorId: 456,
-    createdOn: '',
-    createdBy: '',
-  },
-  {
-    id: 'syn456',
-    name: 'My Project',
-    modifiedOn: 'today',
-    modifiedBy: '100000',
-    type: 'org.sagebionetworks.repo.model.Project',
-    versionNumber: 1,
-    versionLabel: 'label',
-    benefactorId: 456,
-    createdOn: '',
-    createdBy: '',
-  },
+const entityHeaders: (EntityHeader | ProjectHeader)[] = [
+  mockFileEntityHeader,
+  mockProjectHeader,
 ]
 
 const versionResult: PaginatedResults<VersionInfo> = {
@@ -114,6 +97,8 @@ const versionResult: PaginatedResults<VersionInfo> = {
 const FILE_INDEX = 0
 const PROJECT_INDEX = 1
 
+const mockSetCurrentContainer = jest.fn()
+
 const defaultProps: DetailsViewProps = {
   showVersionSelection: true,
   selectColumnType: 'none',
@@ -131,6 +116,7 @@ const defaultProps: DetailsViewProps = {
   noResultsPlaceholder: <></>,
   mustSelectVersionNumber: false,
   enableSelectAll: true,
+  setCurrentContainer: mockSetCurrentContainer,
 }
 
 function renderComponent(
@@ -179,7 +165,7 @@ describe('DetailsView tests', () => {
     })
 
     describe('Determines correct row appearance', () => {
-      it('Creates a row with the default appearance', async () => {
+      it('Creates a row with the default appearance', () => {
         renderComponent({
           selected: Map(),
           visibleTypes: Object.values(EntityType),
@@ -197,7 +183,7 @@ describe('DetailsView tests', () => {
         expect(rows[PROJECT_INDEX]).not.toBeDisabled()
       })
 
-      it('Creates a row with the selected appearance', async () => {
+      it('Creates a row with the selected appearance', () => {
         renderComponent({
           selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]), // !
           visibleTypes: Object.values(EntityType),
@@ -214,7 +200,7 @@ describe('DetailsView tests', () => {
         expect(rows[PROJECT_INDEX]).toHaveAttribute('aria-disabled', 'false')
       })
 
-      it('Creates a row with the disabled appearance', async () => {
+      it('Creates a row with the disabled appearance', () => {
         renderComponent({
           selected: Map(),
           visibleTypes: Object.values(EntityType),
@@ -548,8 +534,42 @@ describe('DetailsView tests', () => {
       expect(mockToggleSelection).not.toBeCalled()
     })
 
+    it('renders a link to update the currentContainer for container entities', () => {
+      renderComponent({
+        selectableTypes: [EntityType.PROJECT, EntityType.FILE],
+        visibleTypes: [EntityType.PROJECT, EntityType.FILE],
+      })
+
+      // One link to navigate to the project should be visible (you can't navigate inside of a folder)
+      expect(screen.queryAllByRole('link')).toHaveLength(1)
+      userEvent.click(
+        screen.getByRole('link', { name: entityHeaders[PROJECT_INDEX].name }),
+      )
+
+      // Navigating should not toggle selection
+      expect(mockToggleSelection).not.toBeCalled()
+
+      // Setting the container should have occurred with the project ID
+      expect(mockSetCurrentContainer).toHaveBeenCalledTimes(1)
+      expect(mockSetCurrentContainer).toHaveBeenCalledWith(
+        entityHeaders[PROJECT_INDEX].id,
+      )
+    })
+
+    it('does not render a link to update the currentContainer when setCurrentContainer is undefined', () => {
+      // For example, when we are searching, we have no "currentContainer" to update
+      renderComponent({
+        selectableTypes: [EntityType.PROJECT, EntityType.FILE],
+        visibleTypes: [EntityType.PROJECT, EntityType.FILE],
+        setCurrentContainer: undefined,
+      })
+
+      // No links should be rendered because navigation is not possible
+      expect(screen.queryByRole('link')).not.toBeInTheDocument()
+    })
+
     describe('renders the correct checkbox state', () => {
-      it('rendered checkbox is checked if selected', async () => {
+      it('rendered checkbox is checked if selected', () => {
         renderComponent({
           selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
           selectColumnType: 'checkbox',
@@ -557,7 +577,7 @@ describe('DetailsView tests', () => {
         expect(screen.getAllByRole('checkbox')[0]).toHaveAttribute('checked')
       })
 
-      it('no checkbox button is created for a disabled row', async () => {
+      it('no checkbox button is created for a disabled row', () => {
         renderComponent({
           enableSelectAll: false,
           hasNextPage: false,

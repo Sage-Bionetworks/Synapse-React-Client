@@ -1,5 +1,12 @@
 import { Map } from 'immutable'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Dropdown } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { SynapseClient } from '../../../utils'
@@ -50,12 +57,22 @@ function getScopeOptionNodeName(scope: FinderScope): string {
       return 'Favorites'
   }
 }
+
+/**
+ * Indicates which container is selected when the tree is used to control another component. If 'root', then the top-level entities
+ * should be shown in the other component. If a synID, then that entity's children should be shown in the other component. If null,
+ * then a selection has not been made.
+ */
+export type EntityTreeContainer = string | 'root' | null
+
 // if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
 export type EntityTreeProps = {
   initialScope?: FinderScope
   /** To show the current project, projectId must be defined */
   projectId?: string
-  initialContainer: string | 'root' | null
+  initialContainer: EntityTreeContainer
+  currentContainer: EntityTreeContainer
+  setCurrentContainer: Dispatch<SetStateAction<EntityTreeContainer>>
   showDropdown: boolean
   selectedEntities: Map<string, number>
   visibleTypes?: EntityType[]
@@ -76,19 +93,23 @@ export type EntityTreeProps = {
  *
  * The tree view currently can only be used to drive a DetailsView using the `setDetailsViewConfiguration` property.
  */
-export const EntityTree: React.FunctionComponent<EntityTreeProps> = ({
-  initialScope = FinderScope.CURRENT_PROJECT,
-  projectId,
-  initialContainer = null,
-  visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
-  toggleSelection,
-  selectedEntities,
-  setDetailsViewConfiguration,
-  setBreadcrumbItems,
-  showScopeAsRootNode = true,
-  treeNodeType,
-  selectableTypes,
-}: EntityTreeProps) => {
+export function EntityTree(props: EntityTreeProps) {
+  const {
+    initialScope = FinderScope.CURRENT_PROJECT,
+    projectId,
+    initialContainer = null,
+    currentContainer,
+    setCurrentContainer,
+    visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
+    toggleSelection,
+    selectedEntities,
+    setDetailsViewConfiguration,
+    setBreadcrumbItems,
+    showScopeAsRootNode = true,
+    treeNodeType,
+    selectableTypes,
+  } = props
+
   const DEFAULT_CONFIGURATION: EntityDetailsListDataConfiguration = {
     type: EntityDetailsListDataConfigurationType.PROMPT,
   }
@@ -101,10 +122,6 @@ export const EntityTree: React.FunctionComponent<EntityTreeProps> = ({
   >([])
   const [scope, setScope] = useState(initialScope)
   const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
-
-  const [currentContainer, setCurrentContainer] = useState<
-    string | 'root' | null
-  >(initialContainer)
 
   const handleError = useErrorHandler()
 
@@ -122,7 +139,7 @@ export const EntityTree: React.FunctionComponent<EntityTreeProps> = ({
       }
       setCurrentContainer(entityId)
     },
-    [toggleSelection],
+    [setCurrentContainer, toggleSelection],
   )
 
   // For these scopes, use the `useGetProjectsInfinite` hook
@@ -314,6 +331,7 @@ export const EntityTree: React.FunctionComponent<EntityTreeProps> = ({
     setBreadcrumbItems,
     currentContainerBundle,
     isSuccessBundle,
+    setCurrentContainer,
   ])
 
   const rootNodeConfiguration: RootNodeConfiguration = useMemo(

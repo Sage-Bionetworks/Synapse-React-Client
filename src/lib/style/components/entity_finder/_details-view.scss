@@ -4,7 +4,7 @@
 @use '../../../template_style/form' as Form;
 
 $table-prefix: DetailsViewTable;
-$table-font-size: 16px;
+$table-font-size: 14px;
 $header-background-color: white;
 $row-hovered-background-color: unset;
 @import '@sage-bionetworks/react-base-table/es/BaseTable';
@@ -60,8 +60,6 @@ $row-hovered-background-color: unset;
 
   &[aria-selected='true'] {
     background-color: $-selected-background-color;
-    .UserCardSmall {
-    }
   }
 
   &[aria-disabled='true'] {
@@ -74,5 +72,13 @@ $row-hovered-background-color: unset;
 
   &[aria-hidden='true'] {
     display: none;
+  }
+
+  .EntityFinderTableCellContainerLink {
+    @include SrcMixins.normalLink();
+  }
+
+  .EntityFinderTableCellEntityIcon svg {
+    width: 20px;
   }
 }

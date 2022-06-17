@@ -16,11 +16,13 @@
   &__Row {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+    margin: 5px 0px;
 
     .EntityIcon {
-      margin: 10px 10px 10px 0px;
-      width: 15px;
+      margin-right: 5px;
+      svg {
+        width: 18px;
+      }
     }
 
     &__EntityName {

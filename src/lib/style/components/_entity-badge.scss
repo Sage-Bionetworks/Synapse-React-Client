@@ -5,9 +5,9 @@
   width: 100%;
   flex-direction: row-reverse;
   &__Badge {
-    margin: 2px;
-    max-width: 10px;
-    max-height: 10px;
+    margin: 1px;
+    max-width: 16px;
+    max-height: 16px;
 
     &.Unlink {
       color: SRC.$red-delete;

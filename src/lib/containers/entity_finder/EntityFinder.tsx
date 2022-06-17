@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import pluralize from 'pluralize'
 import React, {
   useCallback,
   useEffect,
@@ -7,19 +8,21 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, FormControl } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
 import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
+import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
 import { KeyValue } from '../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../ErrorBanner'
+import IconSvg from '../IconSvg'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
   EntityDetailsList,
@@ -27,11 +30,8 @@ import {
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
 import { SelectionPane } from './SelectionPane'
+import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
-import { FinderScope, EntityTree } from './tree/EntityTree'
-import pluralize from 'pluralize'
-import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
-import IconSvg from '../IconSvg'
 
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
@@ -87,7 +87,7 @@ export type EntityFinderProps = {
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   initialScope,
   projectId,
-  initialContainer,
+  initialContainer = null,
   selectMultiple,
   onSelectedChange,
   showVersionSelection = true,
@@ -126,6 +126,10 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     () => [...visibleTypesInList, ...selectableTypes],
     [visibleTypesInList, selectableTypes],
   )
+
+  // For dual-pane, this state variable indicates which container is selected in the tree view and should be shown in the table view
+  const [currentContainer, setCurrentContainer] =
+    useState<EntityTreeContainer>(initialContainer)
 
   const handleError = useErrorHandler()
 
@@ -256,12 +260,12 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                   setSearchTerms(undefined)
                 }}
               >
-                <Arrow arrowDirection="left" style={{ height: '18px' }} />
+                <Arrow arrowDirection="left" style={{ height: '16px' }} />
                 Back to Browse
               </Button>
             ) : (
               <Button
-                variant="gray-primary-500"
+                variant="sds-primary"
                 className="EntityFinder__Search__SearchButton"
                 onClick={() => {
                   setSearchActive(true)
@@ -279,8 +283,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
             <span className="SearchIcon">
               <IconSvg options={{ icon: 'search' }} />
             </span>
-            {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
-            <input
+            <FormControl
               role="textbox"
               ref={searchInputRef}
               aria-hidden={!searchActive}
@@ -342,6 +345,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               toggleSelection={toggleSelection}
               enableSelectAll={selectMultiple}
               latestVersionText={latestVersionText}
+              // Intentionally do not pass "setCurrentContainer" -- search does not use the tree so it has nothing to update
+              setCurrentContainer={undefined}
             />
           )}
           {
@@ -356,6 +361,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                     selectedEntities={selectedEntities}
                     projectId={projectId}
                     initialContainer={initialContainer}
+                    currentContainer={currentContainer}
+                    setCurrentContainer={setCurrentContainer}
                     showScopeAsRootNode={false}
                     treeNodeType={EntityTreeNodeType.SINGLE_PANE}
                     selectableTypes={selectableTypes}
@@ -382,6 +389,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             initialScope={initialScope}
                             projectId={projectId}
                             initialContainer={initialContainer}
+                            currentContainer={currentContainer}
+                            setCurrentContainer={setCurrentContainer}
                             treeNodeType={EntityTreeNodeType.DUAL_PANE}
                             setBreadcrumbItems={setBreadcrumbs}
                             selectableTypes={visibleTypesInTree}
@@ -402,6 +411,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             toggleSelection={toggleSelection}
                             enableSelectAll={selectMultiple}
                             latestVersionText={latestVersionText}
+                            setCurrentContainer={setCurrentContainer}
                           />
                           <Breadcrumbs {...breadcrumbsProps} />
                         </ReflexElement>

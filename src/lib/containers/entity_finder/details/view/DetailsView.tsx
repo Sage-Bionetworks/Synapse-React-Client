@@ -2,43 +2,45 @@ import BaseTable, {
   AutoResizer,
   Column,
 } from '@sage-bionetworks/react-base-table'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import ReactTooltip from 'react-tooltip'
 import {
   getEntityTypeFromHeader,
+  isContainerType,
   isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
+import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
 import { getEntityVersions } from '../../../../utils/SynapseClient'
 import { useSynapseContext } from '../../../../utils/SynapseContext'
 import {
   Direction,
-  EntityHeader,
   EntityChildrenRequest,
+  EntityHeader,
   EntityType,
   ProjectHeader,
   SortBy,
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
 import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../../EntityBadgeIcons'
+import { HelpPopover } from '../../../HelpPopover'
 import { BlockingLoader } from '../../../LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import {
   BadgeIconsRenderer,
-  DetailsViewCheckboxRenderer,
   CreatedOnRenderer,
   CustomSortIndicator,
+  DetailsViewCheckboxRenderer,
+  DetailsViewVersionRenderer,
   EmptyRenderer,
+  EntityFinderTableCellRendererProps,
   LoadingRenderer,
   ModifiedByRenderer,
   ModifiedOnRenderer,
   TypeIconRenderer,
-  DetailsViewVersionRenderer,
 } from './DetailsViewTableRenderers'
-import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
-import { HelpPopover } from '../../../HelpPopover'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -67,7 +69,11 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
 /**
  * Describes the shape of the data passed to the BaseTable
  */
-export type DetailsViewRowData = (EntityHeader | ProjectHeader | Hit) & {
+export type EntityFinderTableViewRowData = (
+  | EntityHeader
+  | ProjectHeader
+  | Hit
+) & {
   entityId: string
   versionNumber?: number
   entityType: EntityType
@@ -107,6 +113,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   latestVersionText = 'Always Latest Version',
   getChildrenInfiniteRequestObject,
   totalEntities,
+  setCurrentContainer,
 }) => {
   const queryClient = useQueryClient()
 
@@ -249,7 +256,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   ])
 
   const tableData = entities.reduce(
-    (entities: DetailsViewRowData[], entity) => {
+    (entities: EntityFinderTableViewRowData[], entity) => {
       const appearance = determineRowAppearance(entity)
       if (appearance !== 'hidden') {
         // only include entities that should not be hidden
@@ -312,6 +319,28 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     visibleTypes,
   ])
 
+  const NameRenderer = useCallback(
+    (props: EntityFinderTableCellRendererProps) => {
+      if (setCurrentContainer && isContainerType(props.rowData.entityType)) {
+        return (
+          <span
+            role="link"
+            className="EntityFinderTableCellContainerLink"
+            onClick={e => {
+              e.stopPropagation()
+              setCurrentContainer(props.rowData.id)
+            }}
+          >
+            {props.rowData.name}
+          </span>
+        )
+      } else {
+        return props.rowData.name
+      }
+    },
+    [setCurrentContainer],
+  )
+
   const sortState = {}
   if (sort) {
     sortState[sort.sortBy] = sort.sortDirection.toLowerCase()
@@ -333,7 +362,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
       />
       <AutoResizer className="DetailsViewAutosizer" onResize={rebuildTooltip}>
         {({ height, width }: { height: number; width: number }) => (
-          <BaseTable
+          <BaseTable<EntityFinderTableViewRowData>
             classPrefix="DetailsViewTable"
             data={tableData}
             height={height}
@@ -419,7 +448,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
             }
           >
             {showSelectColumn && (
-              <Column<DetailsViewRowData>
+              <Column<EntityFinderTableViewRowData>
                 key="isSelected"
                 title=""
                 minWidth={50}
@@ -430,24 +459,25 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 cellRenderer={DetailsViewCheckboxRenderer}
               />
             )}
-            <Column<DetailsViewRowData>
+            <Column<EntityFinderTableViewRowData>
               key="type"
               title=""
               minWidth={45}
               maxWidth={45}
               width={45}
               dataKey="entityType"
+              align="center"
               cellRenderer={TypeIconRenderer}
             />
-            <Column<DetailsViewRowData>
+            <Column<EntityFinderTableViewRowData>
               key={SortBy.NAME}
               title="Name"
               width={800}
-              dataKey="name"
               sortable={sort != null}
               resizable={true}
+              cellRenderer={NameRenderer}
             />
-            <Column<DetailsViewRowData>
+            <Column<EntityFinderTableViewRowData>
               key="badge"
               title=""
               width={75}
@@ -456,7 +486,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               cellRenderer={BadgeIconsRenderer}
             />
 
-            <Column<DetailsViewRowData>
+            <Column<EntityFinderTableViewRowData>
               key="id"
               width={130}
               dataKey="id"
@@ -464,7 +494,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               minWidth={130}
             />
             {showVersionSelection && (
-              <Column<DetailsViewRowData>
+              <Column<EntityFinderTableViewRowData>
                 key="version"
                 minWidth={150}
                 width={500}
@@ -496,7 +526,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 }}
               />
             )}
-            <Column<DetailsViewRowData>
+            <Column<EntityFinderTableViewRowData>
               key={SortBy.CREATED_ON}
               sortable={sort != null}
               title="Created On"
@@ -504,7 +534,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               minWidth={170}
               cellRenderer={CreatedOnRenderer}
             />
-            <Column<DetailsViewRowData>
+            <Column<EntityFinderTableViewRowData>
               key={SortBy.MODIFIED_ON}
               title="Modified On"
               width={220}
@@ -512,7 +542,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               sortable={sort != null}
               cellRenderer={ModifiedOnRenderer}
             />
-            <Column<DetailsViewRowData>
+            <Column<EntityFinderTableViewRowData>
               key="modifiedBy"
               title="Modified By"
               width={500}
