@@ -32,7 +32,7 @@
     white-space: normal;
     max-width: 350px;
     td {
-      width: unset;
+      width: unset !important;
       padding: 4px;
     }
   }

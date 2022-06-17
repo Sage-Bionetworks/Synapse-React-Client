@@ -269,6 +269,10 @@ describe('EntityBadgeIcons tests', () => {
 
       userEvent.click(unlinkButton)
 
+      // Confirmation modal appears
+      await screen.findByText('Confirm Unlink')
+      userEvent.click(await screen.findByRole('button', { name: 'Unlink' }))
+
       await waitFor(() =>
         expect(defaultProps.onUnlink).toBeCalledWith(MOCK_FILE_ENTITY_ID),
       )
@@ -311,6 +315,10 @@ describe('EntityBadgeIcons tests', () => {
       const unlinkButton = await screen.findByTestId('unlink-icon')
 
       userEvent.click(unlinkButton)
+
+      // Confirmation modal appears
+      await screen.findByText('Confirm Unlink')
+      userEvent.click(await screen.findByRole('button', { name: 'Unlink' }))
 
       await waitFor(() => expect(defaultProps.onUnlinkError).toBeCalled())
     })
