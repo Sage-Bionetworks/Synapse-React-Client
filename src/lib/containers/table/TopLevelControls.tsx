@@ -207,8 +207,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   key={key}
                   darkTheme={true}
                   onDownloadFiles={() => setControlState(key)}
-                  queryResultBundle={data}
-                  queryBundleRequest={getLastQueryRequest()}
                 />
               )
             }

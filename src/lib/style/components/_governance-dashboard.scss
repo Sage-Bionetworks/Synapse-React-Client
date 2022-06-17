@@ -64,7 +64,8 @@
 }
 
 .AccessRequirementDashboard,
-.AccessSubmissionDashboard {
+.AccessSubmissionDashboard,
+.UserHistoryDashboard {
   .InputPanel {
     display: grid;
     grid-template-columns: auto 265px auto;

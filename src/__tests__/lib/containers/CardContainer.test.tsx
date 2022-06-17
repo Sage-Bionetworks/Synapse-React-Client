@@ -1,5 +1,6 @@
-import { mount } from 'enzyme'
-import * as React from 'react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
 import { SynapseConstants } from '../../../lib'
 import CardContainer, {
   CardContainerProps,
@@ -12,22 +13,21 @@ import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../lib/containers/QueryWrapper'
-import TotalQueryResults from '../../../lib/containers/TotalQueryResults'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes/'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 
-const mountComponent = (
+const renderComponent = (
   props: CardContainerProps,
-  queryContext: QueryContextType,
+  queryContext: Partial<QueryContextType>,
 ) => {
   const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
     {}
 
-  const wrapper = mount(
+  return render(
     <QueryContextProvider queryContext={queryContext}>
       <QueryVisualizationContextProvider
         queryVisualizationContext={defaultQueryVisualizationContext}
@@ -36,14 +36,12 @@ const mountComponent = (
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     {
-      wrappingComponent: SynapseTestContext,
+      wrapper: createWrapper(),
     },
   )
-  const instance = wrapper.instance()
-  return { wrapper, instance }
 }
 
-describe('it performs all functionality', () => {
+describe('CardContainer tests', () => {
   // for our purposes its okay to return the same data again
   const getNextPageOfData = jest.fn(() => {})
   const sql = 'SELECT * FROM syn16787123'
@@ -82,28 +80,29 @@ describe('it performs all functionality', () => {
   const queryVisualizationContext: Partial<QueryVisualizationContextType> = {}
 
   it('renders without crashing', () => {
-    const tree = mountComponent(props, queryContext)
+    const tree = renderComponent(props, queryContext)
     expect(tree).toBeDefined()
   })
 
   it('Renders total and RowContainer correctly with a faceted view', () => {
     // inject filter prop
-    const { wrapper } = mountComponent(props, queryContext)
-    expect(wrapper.find('Button').text()).toEqual('View More')
-    expect(wrapper.find(TotalQueryResults)).toHaveLength(1)
-    expect(wrapper.find('Button').text()).toEqual('View More')
+    const { container } = renderComponent(props, queryContext)
+    screen.getByRole('button', { name: 'View More' })
+    expect(container.querySelector('.TotalQueryResults')).toBeDefined()
   })
 
   it('Renders with a title', () => {
     const title = 'HelloWorld'
-    const { wrapper } = mountComponent({ ...props, title }, queryContext)
-    expect(wrapper.find('h2.SRC-card-overview-title').text()).toEqual(title)
+    renderComponent({ ...props, title }, queryContext)
+
+    screen.getByText(title)
   })
 
   it('handleViewMore works', () => {
-    const { wrapper } = mountComponent(props, queryContext)
+    renderComponent(props, queryContext)
     // go through calling handle view more
-    wrapper.find('Button').simulate('click')
+    const viewMoreButton = screen.getByRole('button', { name: 'View More' })
+    userEvent.click(viewMoreButton)
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
   })
@@ -113,7 +112,9 @@ describe('it performs all functionality', () => {
       ...queryContext,
       hasNextPage: false,
     }
-    const { wrapper } = mountComponent(props, queryContextWithHasNextPageFalse)
-    expect(wrapper.find('Button')).toHaveLength(0)
+    renderComponent(props, queryContextWithHasNextPageFalse)
+    expect(
+      screen.queryByRole('button', { name: 'View More' }),
+    ).not.toBeInTheDocument()
   })
 })

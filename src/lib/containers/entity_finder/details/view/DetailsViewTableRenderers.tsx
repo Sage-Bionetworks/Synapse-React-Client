@@ -33,7 +33,7 @@ import { DatasetItemsEditorTableData } from '../../../table/datasets/DatasetItem
 import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
-import { DetailsViewRowData } from './DetailsView'
+import { EntityFinderTableViewRowData } from './DetailsView'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
 
@@ -67,7 +67,8 @@ export type EntityIdAndVersionRendererProps =
 /**
  * Props for cellRenderer components within the BaseTable
  */
-export type DetailsViewRendererProps = CellRendererProps<DetailsViewRowData>
+export type EntityFinderTableCellRendererProps =
+  CellRendererProps<EntityFinderTableViewRowData>
 
 export const CustomSortIndicator = ({
   className,
@@ -229,7 +230,7 @@ export function LoadingRenderer() {
 
 export function DetailsViewCheckboxRenderer({
   rowData,
-}: DetailsViewRendererProps) {
+}: EntityFinderTableCellRendererProps) {
   const { isSelected, isDisabled } = rowData
   return (
     !isDisabled && (
@@ -245,8 +246,15 @@ export function DetailsViewCheckboxRenderer({
   )
 }
 
-export function TypeIconRenderer({ cellData }: DetailsViewRendererProps) {
-  return <EntityTypeIcon type={cellData as EntityType} />
+export function TypeIconRenderer({
+  cellData,
+}: EntityFinderTableCellRendererProps) {
+  return (
+    <EntityTypeIcon
+      className="EntityFinderTableCellEntityIcon"
+      type={cellData as EntityType}
+    />
+  )
 }
 
 export function EmptyRenderer({
@@ -346,7 +354,7 @@ export const DetailsViewVersionRenderer = ({
   mustSelectVersionNumber,
   latestVersionText,
   toggleSelection,
-}: DetailsViewRendererProps & {
+}: EntityFinderTableCellRendererProps & {
   mustSelectVersionNumber: boolean
   latestVersionText: string
   toggleSelection: (entity: Reference | Reference[]) => void

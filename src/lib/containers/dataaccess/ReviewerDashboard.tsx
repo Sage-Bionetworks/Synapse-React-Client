@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import {
   BrowserRouter,
-  Link,
   MemoryRouter,
   NavLink,
   Route,
@@ -10,8 +9,10 @@ import {
 } from 'react-router-dom'
 import { useGetCurrentUserBundle } from '../../utils/hooks/SynapseAPI/useUserBundle'
 import Typography from '../../utils/typography/Typography'
+import { SynapseErrorBoundary } from '../ErrorBanner'
 import IconSvg, { Icon } from '../IconSvg'
 import { SynapseSpinner } from '../LoadingScreen'
+import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import SubmissionPage from './SubmissionPage'
@@ -93,31 +94,31 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
           )}
         </div>
         <div className="TabContentContainer">
-          <Switch>
-            {hasActPermissions && (
-              <Route path="/AccessRequirements">
-                <AccessRequirementDashboard />
-              </Route>
-            )}
-            {hasReviewerPermissions && (
-              <>
-                <Route exact path="/Submissions">
-                  <DataAccessSubmissionDashboard />
+          <SynapseErrorBoundary>
+            <Switch>
+              {hasActPermissions && (
+                <Route path="/AccessRequirements">
+                  <AccessRequirementDashboard />
                 </Route>
+              )}
+              {hasReviewerPermissions && [
+                <Route exact path="/Submissions" key="/Submissions">
+                  <DataAccessSubmissionDashboard />
+                </Route>,
 
-                <Route path="/Submissions/:id">
+                <Route path="/Submissions/:id" key="/Submissions/:id">
                   <SubmissionPageRouteRenderer
                     onRejectSubmissionClicked={onRejectSubmissionClicked}
                   />
+                </Route>,
+              ]}
+              {
+                <Route exact path="/UserAccessHistory">
+                  <UserHistoryDashboard />
                 </Route>
-              </>
-            )}
-            {hasActPermissions && (
-              <Route path="/UserAccessHistory">
-                <Typography variant="headline1">Coming soon!</Typography>
-              </Route>
-            )}
-          </Switch>
+              }
+            </Switch>
+          </SynapseErrorBoundary>
         </div>
       </div>
     </Router>
@@ -129,36 +130,10 @@ function SubmissionPageRouteRenderer(props: {
 }) {
   const { id } = useParams<{ id: string }>()
   return (
-    <>
-      <div className="Breadcrumb">
-        <Typography variant="breadcrumb1">
-          <IconSvg
-            options={{
-              icon: 'accessManagement',
-            }}
-          />
-          <IconSvg
-            options={{
-              icon: 'chevronRight',
-            }}
-          />
-          <Link to="/Submissions">
-            <span>Submissions</span>
-          </Link>
-          <IconSvg
-            options={{
-              icon: 'chevronRight',
-            }}
-          />
-          <span>{id}</span>
-        </Typography>
-      </div>
-
-      <SubmissionPage
-        submissionId={id}
-        onRejectClicked={props.onRejectSubmissionClicked}
-      />
-    </>
+    <SubmissionPage
+      submissionId={id}
+      onRejectClicked={props.onRejectSubmissionClicked}
+    />
   )
 }
 

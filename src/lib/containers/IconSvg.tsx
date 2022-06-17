@@ -447,6 +447,7 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
         <ReactTooltip
           className={'icon-svg-tooltip'}
           delayShow={TOOLTIP_DELAY_SHOW}
+          effect="solid"
           id={`icon-${icon}`}
           place={'top'}
         />

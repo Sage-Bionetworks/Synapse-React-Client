@@ -8,6 +8,7 @@ import {
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
+  ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ALIAS_AVAILABLE,
   ASYNCHRONOUS_JOB_TOKEN,
@@ -2653,9 +2654,8 @@ export const getAccessRequirementStatus = (
   accessToken: string | undefined,
   requirementId: string | number,
 ): Promise<AccessRequirementStatus | ManagedACTAccessRequirementStatus> => {
-  const url = `/repo/v1/accessRequirement/${requirementId}/status`
   return doGet(
-    url,
+    ACCESS_REQUIREMENT_STATUS(requirementId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

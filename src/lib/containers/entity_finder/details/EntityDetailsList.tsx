@@ -1,5 +1,5 @@
 import { Map } from 'immutable'
-import React, { useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   EntityHeader,
@@ -15,6 +15,7 @@ import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { DetailsView } from './view/DetailsView'
+import { EntityTreeContainer } from '../tree/EntityTree'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
@@ -51,6 +52,7 @@ export type EntityDetailsListSharedProps = {
   selectableTypes: EntityType[]
   toggleSelection: (entity: Reference | Reference[]) => void
   latestVersionText?: string
+  setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
 }
 
 export type EntityDetailsListProps = EntityDetailsListSharedProps & {

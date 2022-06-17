@@ -15,64 +15,6 @@
     margin-right: 4px;
   }
 }
-.DownloadListTable {
-  .create-package-text {
-    font-size: 17px;
-    margin: 0px;
-  }
-
-  .download-list-table-top {
-    align-items: center;
-    height: 40px;
-    padding-left: 5px;
-    * {
-      color: white;
-    }
-  }
-
-  .btn {
-    margin-left: 15px;
-  }
-
-  .download-list-table {
-    td {
-      vertical-align: middle !important;
-    }
-  }
-}
-.sort {
-  padding-left: 5px;
-}
-.create-package-container {
-  display: flex;
-  padding: 8px;
-  flex-flow: row wrap;
-  align-items: center;
-  & > :first-child {
-    flex: 3;
-  }
-  & > :last-child {
-    flex: 5;
-  }
-  input {
-    padding: 8px;
-  }
-  svg {
-    margin-right: 8px;
-  }
-}
-
-.zip-extension {
-  font-size: 18px;
-  color: #666666;
-  margin-left: 5px;
-}
-
-.download-list-table {
-  td {
-    vertical-align: middle !important;
-  }
-}
 
 .has-access-tooltip-width {
   max-width: 250px;

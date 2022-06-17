@@ -1,28 +1,23 @@
-import { DownloadLoginModal } from './DownloadLoginModal'
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
-import {
-  QueryResultBundle,
-  QueryBundleRequest,
-} from '../../../utils/synapseTypes'
-import ProgrammaticTableDownload from './ProgrammaticTableDownload'
+import ReactTooltip from 'react-tooltip'
 import ModalDownload from '../../../containers/ModalDownload'
-import { useSynapseContext } from '../../../utils/SynapseContext'
-import { useQueryContext } from '../../QueryWrapper'
 import {
   isDataset,
   isEntityView,
   isFileView,
 } from '../../../utils/functions/EntityTypeUtils'
+import { useSynapseContext } from '../../../utils/SynapseContext'
+import { useQueryContext } from '../../QueryWrapper'
+import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
+import { DownloadLoginModal } from './DownloadLoginModal'
+import ProgrammaticTableDownload from './ProgrammaticTableDownload'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
-type DownloadOptionsProps = {
+export type DownloadOptionsProps = {
   onDownloadFiles: () => void
   darkTheme?: boolean
-  queryResultBundle?: QueryResultBundle
-  queryBundleRequest: QueryBundleRequest
 }
 
 export const DOWNLOAD_FILES_MENU_TEXT = 'Add To Download Cart'
@@ -32,21 +27,26 @@ export const DownloadOptions: React.FunctionComponent<
   DownloadOptionsProps
 > = props => {
   const { accessToken } = useSynapseContext()
-  const { entity } = useQueryContext()
+  const {
+    entity,
+    data: queryResultBundle,
+    getLastQueryRequest,
+  } = useQueryContext()
+  const queryBundleRequest = getLastQueryRequest()
   const [showLoginModal, setShowLoginModal] = React.useState(false)
   const [showExportMetadata, setShowExportMetadata] = React.useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] =
     React.useState(false)
-  const {
-    onDownloadFiles,
-    queryResultBundle,
-    queryBundleRequest,
-    darkTheme = true,
-  } = props
+  const { onDownloadFiles, darkTheme = true } = props
 
   const isFileViewOrDataset =
     entity &&
     ((isEntityView(entity) && isFileView(entity)) || isDataset(entity))
+
+  // SWC-5878 - Disable downloading a "Draft" dataset
+  const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
+
+  const TOOLTIP_ID = `download-menu-tooltip-${entity?.id}`
 
   return (
     <React.Fragment>
@@ -62,6 +62,14 @@ export const DownloadOptions: React.FunctionComponent<
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
         >
+          <ReactTooltip
+            delayShow={300}
+            place="left"
+            type="dark"
+            effect="solid"
+            multiline={true}
+            id={TOOLTIP_ID}
+          />
           <Dropdown.Item
             onClick={() => {
               setShowExportMetadata(true)
@@ -71,6 +79,13 @@ export const DownloadOptions: React.FunctionComponent<
           </Dropdown.Item>
           {isFileViewOrDataset && (
             <Dropdown.Item
+              className={disableDownload ? 'ignoreLink' : undefined}
+              data-for={TOOLTIP_ID}
+              data-tip="A draft version of a dataset cannot<br />be added to the Download Cart"
+              data-tip-disable={!disableDownload}
+              disabled={disableDownload}
+              // If disabled, add pointer-events-auto so the tooltip still works
+              style={disableDownload ? { pointerEvents: 'auto' } : {}}
               onClick={() =>
                 accessToken ? onDownloadFiles() : setShowLoginModal(true)
               }
@@ -78,7 +93,16 @@ export const DownloadOptions: React.FunctionComponent<
               {DOWNLOAD_FILES_MENU_TEXT}
             </Dropdown.Item>
           )}
-          <Dropdown.Item onClick={() => setShowProgrammaticOptions(true)}>
+          <Dropdown.Item
+            className={disableDownload ? 'ignoreLink' : undefined}
+            data-for={TOOLTIP_ID}
+            data-tip="A draft version of a dataset cannot<br />be downloaded programmatically"
+            data-tip-disable={!disableDownload}
+            disabled={disableDownload}
+            // If disabled, add pointer-events-auto so the tooltip still works
+            style={disableDownload ? { pointerEvents: 'auto' } : {}}
+            onClick={() => setShowProgrammaticOptions(true)}
+          >
             Programmatic Options
           </Dropdown.Item>
         </Dropdown.Menu>

@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
-import { getAllAccessRequirements } from '../../utils/SynapseClient'
-import { SynapseConstants, SynapseClient } from '../../utils/'
-import useCompare from '../../utils/hooks/useCompare'
+import { sortBy } from 'lodash-es'
+import React, { useEffect, useState } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
-import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
-import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
-import ManagedACTAccessRequirementComponentNew from './managedACTAccess/ManagedACTAccessRequirement'
-import ACTAccessRequirementComponent from './ACTAccessRequirement'
-import {
-  UserProfile,
-  EntityHeader,
-  ACTAccessRequirement,
-  ManagedACTAccessRequirement,
-  TermsOfUseAccessRequirement,
-  SelfSignAccessRequirement,
-  AccessRequirementStatus,
-  RequestInterface,
-} from '../../utils/synapseTypes'
+import { SynapseClient, SynapseConstants } from '../../utils/'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
+import useCompare from '../../utils/hooks/useCompare'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../utils/hooks/useGetInfoFromIds'
-import AccessApprovalCheckMark from './AccessApprovalCheckMark'
-import { sortBy } from 'lodash-es'
+import { getAllAccessRequirements } from '../../utils/SynapseClient'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import {
+  AccessRequirementStatus,
+  ACTAccessRequirement,
+  EntityHeader,
+  ManagedACTAccessRequirement,
+  RequestInterface,
+  SelfSignAccessRequirement,
+  TermsOfUseAccessRequirement,
+} from '../../utils/synapseTypes'
+import { AccessRequirement } from '../../utils/synapseTypes/AccessRequirement/AccessRequirement'
 import { ManagedACTAccessRequirementStatus } from '../../utils/synapseTypes/AccessRequirement/ManagedACTAccessRequirementStatus'
+import IconSvg from '../IconSvg'
+import Login from '../Login'
+import AccessApprovalCheckMark from './AccessApprovalCheckMark'
+import ACTAccessRequirementComponent from './ACTAccessRequirement'
+import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
+import ManagedACTAccessRequirementComponentNew from './managedACTAccess/ManagedACTAccessRequirement'
 import RequestDataAccessStep1 from './managedACTAccess/RequestDataAccessStep1'
 import RequestDataAccessStep2 from './managedACTAccess/RequestDataAccessStep2'
-import CancelRequestDataAccess from './managedACTAccess/CancelRequestDataAccess'
 import RequestDataAccessSuccess from './managedACTAccess/RequestDataAccessSuccess'
-import Login from '../Login'
-import { useSynapseContext } from '../../utils/SynapseContext'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import IconSvg from '../IconSvg'
+import SelfSignAccessRequirementComponent from './SelfSignAccessRequirement'
+import TermsOfUseAccessRequirementComponent from './TermsOfUseAccessRequirement'
 
 type AccessRequirementAndStatus = {
   accessRequirement: AccessRequirement
@@ -78,6 +78,36 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
   }
 }
 
+export const sortAccessRequirementByCompletion = async (
+  accessToken: string | undefined,
+  requirements: Array<AccessRequirement>,
+): Promise<Array<AccessRequirementAndStatus>> => {
+  const statuses = requirements.map(req => {
+    return SynapseClient.getAccessRequirementStatus(accessToken, req.id)
+  })
+  const accessRequirementStatuses = await Promise.all(statuses)
+
+  const requirementsAndStatuses = requirements.map(req => {
+    return {
+      accessRequirement: req,
+      accessRequirementStatus: accessRequirementStatuses.find(
+        el => Number(el.accessRequirementId) === req.id,
+      )!,
+    }
+  })
+
+  const sortedRequirementsAndStatuses = sortBy(
+    requirementsAndStatuses,
+    reqAndStatus => {
+      // if its true then it should come first, which means that it should be higher in the list
+      // which is sorted ascendingly
+      return -1 * Number(reqAndStatus.accessRequirementStatus.isApproved)
+    },
+  )
+
+  return sortedRequirementsAndStatuses
+}
+
 export default function AccessRequirementList({
   entityId,
   onHide,
@@ -91,7 +121,6 @@ export default function AccessRequirementList({
     Array<AccessRequirementAndStatus> | undefined
   >(undefined)
 
-  const [user, setUser] = useState<UserProfile>()
   const [requestDataStep, setRequestDataStep] = useState<number>()
   const [managedACTAccessRequirement, setManagedACTAccessRequirement] =
     useState<ManagedACTAccessRequirement>()
@@ -109,35 +138,10 @@ export default function AccessRequirementList({
 
   const entityInformation = useGetInfoFromIds<EntityHeader>(entityHeaderProps)
 
+  const { data: user } = useGetCurrentUserProfile()
+
   useEffect(() => {
-    const sortAccessRequirementByCompletion = async (
-      requirements: Array<AccessRequirement>,
-    ): Promise<Array<AccessRequirementAndStatus>> => {
-      const statuses = requirements.map(req => {
-        return SynapseClient.getAccessRequirementStatus(accessToken, req.id)
-      })
-      const accessRequirementStatuses = await Promise.all(statuses)
-
-      const requirementsAndStatuses = requirements.map(req => {
-        return {
-          accessRequirement: req,
-          accessRequirementStatus: accessRequirementStatuses.find(
-            el => Number(el.accessRequirementId) === req.id,
-          )!,
-        }
-      })
-
-      const sortedRequirementsAndStatuses = sortBy(
-        requirementsAndStatuses,
-        reqAndStatus => {
-          // if its true then it should come first, which means that it should be higher in the list
-          // which is sorted ascendingly
-          return -1 * Number(reqAndStatus.accessRequirementStatus.isApproved)
-        },
-      )
-
-      return sortedRequirementsAndStatuses
-    }
+    let isCancelled = false
 
     const getAccessRequirements = async () => {
       try {
@@ -150,16 +154,20 @@ export default function AccessRequirementList({
             entityId,
           )
           const sortedAccessRequirements =
-            await sortAccessRequirementByCompletion(requirements)
-          setAccessRequirements(sortedAccessRequirements)
+            await sortAccessRequirementByCompletion(accessToken, requirements)
+          if (!isCancelled) {
+            setAccessRequirements(sortedAccessRequirements)
+          }
         } else {
           const sortedAccessRequirements =
-            await sortAccessRequirementByCompletion(accessRequirementFromProps!)
-          setAccessRequirements(sortedAccessRequirements)
+            await sortAccessRequirementByCompletion(
+              accessToken,
+              accessRequirementFromProps,
+            )
+          if (!isCancelled) {
+            setAccessRequirements(sortedAccessRequirements)
+          }
         }
-
-        const userProfile = await SynapseClient.getUserProfile(accessToken)
-        setUser(userProfile)
 
         // we use a functional update below https://reactjs.org/docs/hooks-reference.html#functional-updates
         // because we want react hooks to update without a dependency on accessRequirements
@@ -169,6 +177,10 @@ export default function AccessRequirementList({
     }
 
     getAccessRequirements()
+
+    return () => {
+      isCancelled = true
+    }
   }, [accessToken, entityId, accessRequirementFromProps, shouldUpdateData])
 
   // Using Boolean(value) converts undefined,null, 0,'',false -> false

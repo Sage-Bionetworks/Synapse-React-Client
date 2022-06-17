@@ -55,9 +55,6 @@ export const AccessApprovalsTable: React.FunctionComponent<
   }
   return (
     <div className="AccessApprovalsTable bootstrap-4-backport">
-      <Typography style={{ padding: '12px' }} variant="headline3">
-        Status in Access Requirements
-      </Typography>
       <Table striped borderless bordered={false}>
         <thead>
           <tr>
