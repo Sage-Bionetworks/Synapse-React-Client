@@ -19,6 +19,7 @@ import {
 import {
   ENTITY_BUNDLE_V2,
   ENTITY_ID,
+  ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
 } from '../../../lib/utils/APIConstants'
 import {
@@ -26,7 +27,10 @@ import {
   AUTHENTICATED_PRINCIPAL_ID,
 } from '../../../lib/utils/SynapseConstants'
 import { EntityType } from '../../../lib/utils/synapseTypes'
-import { mockSchemaValidationResults } from '../../../mocks/mockSchema'
+import {
+  mockSchemaBinding,
+  mockSchemaValidationResults,
+} from '../../../mocks/mockSchema'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 
 const defaultProps: EntityBadgeIconsProps = {
@@ -330,6 +334,15 @@ describe('EntityBadgeIcons tests', () => {
         rest.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
+
+          async (req, res, ctx) => {
+            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          },
+        ),
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
           async (req, res, ctx) => {
@@ -339,78 +352,154 @@ describe('EntityBadgeIcons tests', () => {
       )
 
       renderComponent({ isInExperimentalMode: true, utcTime: true })
-      const icon = await screen.findByTestId('annotations-icon')
-      userEvent.hover(icon)
+      let icon: HTMLElement
+      await waitFor(() => {
+        icon = screen.getByTestId('annotations-icon')
+        expect(icon.classList.contains('Valid')).toBe(true)
+      })
+
+      userEvent.hover(icon!)
       await screen.findByText('Valid Annotations')
     })
-  })
 
-  it('Displays that the annotations are invalid w.r.t the schema', async () => {
-    server.use(
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
+    it('Displays that the annotations are invalid w.r.t the schema', async () => {
+      server.use(
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockSchemaValidationResults,
-              isValid: false, // !
-            }),
-          )
-        },
-      ),
-    )
+          async (req, res, ctx) => {
+            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          },
+        ),
 
-    renderComponent({ isInExperimentalMode: true, utcTime: true })
-    const icon = await screen.findByTestId('annotations-icon')
-    userEvent.hover(icon)
-    await screen.findByText('Invalid Annotations')
-  })
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-  it('Missing annotations with schema', async () => {
-    server.use(
-      // The entity must have no annotations
-      rest.post(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
-          ':entityId',
-        )}`,
+          async (req, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                ...mockSchemaValidationResults,
+                isValid: false, // !
+              }),
+            )
+          },
+        ),
+      )
 
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockFileEntityBundle,
-              annotations: {
-                annotations: {}, // !
-              },
-            }),
-          )
-        },
-      ),
-      // The entity's annotations are invalid
-      rest.get(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
+      renderComponent({ isInExperimentalMode: true, utcTime: true })
+      let icon: HTMLElement
+      await waitFor(() => {
+        icon = screen.getByTestId('annotations-icon')
+        expect(icon.classList.contains('Invalid')).toBe(true)
+      })
 
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockSchemaValidationResults,
-              isValid: false,
-            }),
-          )
-        },
-      ),
-    )
+      userEvent.hover(icon!)
+      await screen.findByText('Invalid Annotations')
+    })
 
-    renderComponent({ isInExperimentalMode: true, utcTime: true })
-    const icon = await screen.findByTestId('annotations-icon')
-    userEvent.hover(icon)
-    await screen.findByText('Missing Annotations')
+    it('Missing annotations with schema', async () => {
+      server.use(
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
+
+          async (req, res, ctx) => {
+            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          },
+        ),
+
+        // The entity must have no annotations
+        rest.post(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_BUNDLE_V2(':entityId')}`,
+
+          async (req, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                ...mockFileEntityBundle,
+                annotations: {
+                  annotations: {}, // !
+                },
+              }),
+            )
+          },
+        ),
+        // The entity's annotations are invalid
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
+
+          async (req, res, ctx) => {
+            return res(
+              ctx.status(200),
+              ctx.json({
+                ...mockSchemaValidationResults,
+                isValid: false,
+              }),
+            )
+          },
+        ),
+      )
+
+      renderComponent({ isInExperimentalMode: true, utcTime: true })
+      let icon: HTMLElement
+      await waitFor(() => {
+        icon = screen.getByTestId('annotations-icon')
+        expect(icon.classList.contains('Missing')).toBe(true)
+      })
+
+      userEvent.hover(icon!)
+      await screen.findByText('Missing Annotations')
+    })
+
+    it('Does not fetch validation results if there is no bound schema', () => {
+      const onSchemaValidationFetched = jest.fn()
+
+      server.use(
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
+
+          async (req, res, ctx) => {
+            return res(
+              ctx.status(404),
+              ctx.json({ reason: 'No JSON Schema found' }),
+            )
+          },
+        ),
+
+        // This service should never be called.
+        // To verify, see if we invoke a mock function that is called in the mocked service
+        rest.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
+
+          async (req, res, ctx) => {
+            onSchemaValidationFetched()
+            return res(
+              ctx.status(200),
+              ctx.json({
+                ...mockSchemaValidationResults,
+                isValid: false,
+              }),
+            )
+          },
+        ),
+      )
+
+      renderComponent({ isInExperimentalMode: true, utcTime: true })
+      expect(onSchemaValidationFetched).not.toHaveBeenCalled()
+    })
   })
 })
