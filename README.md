@@ -119,7 +119,7 @@ Note there are a number of CDNs required to finish this functionality-
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js"></script>
-<script src="https://unpkg.com/markdown-it-synapse@1.1.9/dist/markdown-it-synapse.min.js"></script>
+<script src="https://unpkg.com/markdown-it-synapse@1.1.10/dist/markdown-it-synapse.min.js"></script>
 <script src="https://unpkg.com/markdown-it-center-text@1.0.4/dist/markdown-it-center-text.min.js"></script>
 <script src="https://unpkg.com/markdown-it-synapse-heading@1.0.1/dist/markdown-it-synapse-heading.min.js"></script>
 <script src="https://unpkg.com/markdown-it-synapse-table@1.0.6/dist/markdown-it-synapse-table.min.js"></script>

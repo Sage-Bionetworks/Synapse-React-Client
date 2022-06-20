@@ -136,7 +136,7 @@ module.exports = {
           src: 'https://cdn.jsdelivr.net/npm/markdown-it@8.4.2/dist/markdown-it.min.js',
         },
         {
-          src: 'https://unpkg.com/markdown-it-synapse@1.1.9/dist/markdown-it-synapse.min.js',
+          src: 'https://unpkg.com/markdown-it-synapse@1.1.10/dist/markdown-it-synapse.min.js',
         },
         {
           src: 'https://unpkg.com/markdown-it-center-text@1.0.4/dist/markdown-it-center-text.min.js',
