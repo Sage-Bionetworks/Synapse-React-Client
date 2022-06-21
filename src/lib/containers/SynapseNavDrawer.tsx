@@ -1,5 +1,5 @@
 import { Badge, Drawer, List, ListItem } from '@material-ui/core'
-import React, { useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Form } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
@@ -12,9 +12,9 @@ import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Direction, SubmissionState } from '../utils/synapseTypes'
 import { SubmissionSortField } from '../utils/synapseTypes/AccessSubmission'
-import { Avatar } from './Avatar'
 import { CreateProjectModal } from './CreateProjectModal'
 import IconSvg, { Icon } from './IconSvg'
+import UserCard from './UserCard'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -28,6 +28,9 @@ type MenuItemParams = {
   onClickGoToUrl?: string
   additionalChildren?: JSX.Element
   badgeContent?: string | number
+  isCurrentlySelectedItem?: boolean
+  handleDrawerClose: () => void
+  handleDrawerOpen: () => void
 }
 
 export enum NavItem {
@@ -92,6 +95,66 @@ const projectSearchJson = {
   size: 30,
 }
 
+const NavDrawerListItem = (props: MenuItemParams) => {
+  const {
+    tooltip,
+    iconName,
+    onClickOpenNavMenu,
+    onClickGoToUrl,
+    additionalChildren,
+    badgeContent,
+    isCurrentlySelectedItem = false,
+    handleDrawerClose,
+    handleDrawerOpen,
+  } = props
+  const handler =
+    isCurrentlySelectedItem || onClickGoToUrl
+      ? handleDrawerClose
+      : () => {
+          handleDrawerOpen(onClickOpenNavMenu)
+        }
+  const item = iconName ? (
+    <>
+      <IconSvg options={{ icon: iconName }} /> {additionalChildren}{' '}
+    </>
+  ) : (
+    additionalChildren
+  )
+
+  useEffect(() => {
+    ReactTooltip.rebuild()
+  }, [])
+
+  const listItem = (
+    <ListItem
+      button
+      key={iconName}
+      data-tip={tooltip}
+      data-for={`SynapseNavDrawerTooltipId`}
+      data-testid={`${tooltip}`}
+      onClick={handler}
+      className="SRC-whiteText"
+      selected={isCurrentlySelectedItem}
+    >
+      <Badge badgeContent={badgeContent} color="secondary">
+        {item}
+      </Badge>
+    </ListItem>
+  )
+
+  return onClickGoToUrl ? (
+    <a
+      href={onClickGoToUrl}
+      rel="noopener noreferrer"
+      className="SRC-whiteText"
+    >
+      {listItem}
+    </a>
+  ) : (
+    listItem
+  )
+}
+
 /**
  * Displays the Synapse navigational drawer on the left side of the page.  Has links to various areas if logged in.
  */
@@ -153,78 +216,15 @@ export const SynapseNavDrawer: React.FunctionComponent<
     }
   }
 
-  const handleDrawerOpen = (navItem?: NavItem) => {
+  const handleDrawerOpen = useCallback((navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
-  }
+  }, [])
 
-  const handleDrawerClose = () => {
+  const handleDrawerClose = useCallback(() => {
     setOpen(false)
     setSelectedItem(undefined)
-  }
-  const NavDrawerListItem = (params: MenuItemParams) => {
-    const {
-      tooltip,
-      iconName,
-      onClickOpenNavMenu,
-      onClickGoToUrl,
-      additionalChildren,
-      badgeContent,
-    } = params
-    const isCurrentlySelectedItem =
-      typeof selectedItem === 'undefined'
-        ? false
-        : selectedItem == onClickOpenNavMenu
-    const handler =
-      isCurrentlySelectedItem || onClickGoToUrl
-        ? handleDrawerClose
-        : () => {
-            handleDrawerOpen(onClickOpenNavMenu)
-          }
-    const item = iconName ? (
-      <>
-        <IconSvg options={{ icon: iconName }} /> {additionalChildren}{' '}
-      </>
-    ) : (
-      additionalChildren
-    )
-
-    const listItem = (
-      <ListItem
-        button
-        key={iconName}
-        data-tip={tooltip}
-        data-for={`${tooltip}Link`}
-        data-testid={`${tooltip}`}
-        onClick={handler}
-        className="SRC-whiteText"
-        selected={isCurrentlySelectedItem}
-      >
-        <ReactTooltip
-          delayShow={300}
-          place="right"
-          type="dark"
-          effect="solid"
-          id={`${tooltip}Link`}
-        />
-        <Badge badgeContent={badgeContent} color="secondary">
-          {item}
-        </Badge>
-      </ListItem>
-    )
-
-    return onClickGoToUrl ? (
-      <a
-        href={onClickGoToUrl}
-        rel="noopener noreferrer"
-        className="SRC-whiteText"
-      >
-        {listItem}
-      </a>
-    ) : (
-      listItem
-    )
-  }
+  }, [])
 
   const onProjectSearch = (searchTerm: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -236,6 +236,14 @@ export const SynapseNavDrawer: React.FunctionComponent<
 
   return (
     <div className="SynapseNavDrawer">
+      <ReactTooltip
+        delayShow={300}
+        place="right"
+        type="dark"
+        effect="solid"
+        id={`SynapseNavDrawerTooltipId`}
+      />
+
       <Drawer
         variant="permanent"
         className={`SynapseNavDrawerMenu ${isOpen ? 'tempDrawerOpen' : ''}`}
@@ -252,33 +260,46 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 tooltip="Projects"
                 iconName="dashboard"
                 onClickOpenNavMenu={NavItem.PROJECTS}
+                isCurrentlySelectedItem={selectedItem == NavItem.PROJECTS}
+                handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
               />
               <NavDrawerListItem
                 tooltip="Favorites"
                 iconName="favTwoTone"
                 onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/favorites`}
+                handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
               />
               <NavDrawerListItem
                 tooltip="Teams"
                 iconName="peopleTwoTone"
                 onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/teams`}
+                handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
               />
               <NavDrawerListItem
                 tooltip="Challenges"
                 iconName="challengesTwoTone"
                 onClickGoToUrl={`/#!Profile:${currentUserProfile.ownerId}/challenges`}
+                handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
               />
               <NavDrawerListItem
                 tooltip="Download Cart"
                 iconName="download"
                 onClickGoToUrl="/#!DownloadCart:0"
                 badgeContent={numberOfFilesInDownloadList}
+                handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
               />
               {isInSynapseExperimentalMode() && (
                 <NavDrawerListItem
                   tooltip="Trash Can"
                   iconName="delete"
                   onClickGoToUrl="/#!Trash:0"
+                  handleDrawerClose={handleDrawerClose}
+                  handleDrawerOpen={handleDrawerOpen}
                 />
               )}
               {isInSynapseExperimentalMode() &&
@@ -288,6 +309,8 @@ export const SynapseNavDrawer: React.FunctionComponent<
                     iconName="accessManagement"
                     onClickGoToUrl="/#!DataAccessManagement:default/Submissions"
                     badgeContent={countOfOpenSubmissionsForReview}
+                    handleDrawerClose={handleDrawerClose}
+                    handleDrawerOpen={handleDrawerOpen}
                   />
                 )}
             </>
@@ -296,6 +319,8 @@ export const SynapseNavDrawer: React.FunctionComponent<
             tooltip="Search"
             iconName="search"
             onClickGoToUrl="/#!Search:"
+            handleDrawerClose={handleDrawerClose}
+            handleDrawerOpen={handleDrawerOpen}
           />
         </List>
         <div className="filler" />
@@ -305,8 +330,15 @@ export const SynapseNavDrawer: React.FunctionComponent<
               tooltip="Your Account"
               onClickOpenNavMenu={NavItem.PROFILE}
               additionalChildren={
-                <Avatar userProfile={currentUserProfile} avatarSize="SMALL" />
+                <UserCard
+                  userProfile={currentUserProfile}
+                  size="AVATAR"
+                  avatarSize="SMALL"
+                />
               }
+              isCurrentlySelectedItem={selectedItem == NavItem.PROFILE}
+              handleDrawerClose={handleDrawerClose}
+              handleDrawerOpen={handleDrawerOpen}
             />
           )}
           {!isLoggedIn && (
@@ -314,12 +346,17 @@ export const SynapseNavDrawer: React.FunctionComponent<
               tooltip="Sign in"
               iconName="login"
               onClickGoToUrl="/#!LoginPlace:0"
+              handleDrawerClose={handleDrawerClose}
+              handleDrawerOpen={handleDrawerOpen}
             />
           )}
           <NavDrawerListItem
             tooltip="Help"
             iconName="helpOutlined"
             onClickOpenNavMenu={NavItem.HELP}
+            isCurrentlySelectedItem={selectedItem == NavItem.HELP}
+            handleDrawerClose={handleDrawerClose}
+            handleDrawerOpen={handleDrawerOpen}
           />
         </List>
       </Drawer>
