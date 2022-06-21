@@ -1,6 +1,5 @@
 import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
-import { getProfilePic, UserProfileAndImg } from '../../functions/getUserData'
 import { SynapseClientError } from '../../SynapseClient'
 import { useSynapseContext } from '../../SynapseContext'
 import { NotificationEmail, UserBundle, UserProfile } from '../../synapseTypes'
@@ -88,27 +87,6 @@ export function useGetUserProfile(
       onSuccess: profile => {
         sessionStorage.setItem(sessionStorageCacheKey, JSON.stringify(profile))
       },
-    },
-  )
-}
-
-export function useGetUserProfileWithProfilePic(
-  principalId: string,
-  options?: UseQueryOptions<UserProfileAndImg, SynapseClientError>,
-) {
-  const queryKey = ['user', principalId, 'profile', 'withPic']
-
-  const { data: userProfile } = useGetUserProfile(principalId, {
-    enabled: options?.enabled ?? true,
-  })
-
-  // TODO: create useGetFile hook with careful configuration to prevent serving expired pre-signed URLs
-  return useQuery<UserProfileAndImg, SynapseClientError>(
-    queryKey,
-    () => getProfilePic(userProfile!),
-    {
-      ...options,
-      enabled: !!userProfile,
     },
   )
 }

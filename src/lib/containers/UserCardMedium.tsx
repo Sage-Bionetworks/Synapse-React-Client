@@ -24,6 +24,7 @@ export type UserCardMediumProps = {
   disableLink?: boolean
   isCertified?: boolean
   isValidated?: boolean
+  isLoadingAvatar?: boolean
 }
 
 /**
@@ -59,6 +60,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
   openLinkInNewTab = false,
   isValidated,
   isCertified,
+  isLoadingAvatar,
 }) => {
   const [showModal, setShowModal] = useState(false)
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
@@ -136,6 +138,7 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
       userProfile={userProfile}
       imageURL={imageURL}
       avatarSize={'LARGE'}
+      isLoadingAvatar={isLoadingAvatar}
     />
   )
   const mediumCard = (

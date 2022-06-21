@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { Avatar, AvatarSize } from './Avatar'
-import UserCardMedium from './UserCardMedium'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { SynapseClient, SynapseConstants } from '../utils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { useOverlay } from '../utils/hooks/useOverlay'
 import { UserBundle, UserProfile } from '../utils/synapseTypes/'
-import { SynapseClient, SynapseConstants } from '../utils'
+import { Avatar, AvatarSize } from './Avatar'
 import IconSvg from './IconSvg'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import UserCardMedium from './UserCardMedium'
 
 export type UserCardSmallProps = {
   userProfile: UserProfile
@@ -16,6 +16,7 @@ export type UserCardSmallProps = {
   openLinkInNewTab?: boolean
   withAvatar?: boolean
   avatarSize?: AvatarSize
+  isLoadingAvatar?: boolean
   imageURL?: string
   className?: string
   showFullName?: boolean
@@ -24,64 +25,81 @@ export type UserCardSmallProps = {
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
 
-export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
-  userProfile,
-  showCardOnHover = true,
-  disableLink,
-  link,
-  showAccountLevelIcon = false,
-  openLinkInNewTab,
-  withAvatar = false,
-  avatarSize = 'SMALL',
-  imageURL,
-  className,
-  showFullName = false,
-  ...rest
-}) => {
+export const UserCardSmall = (props: UserCardSmallProps) => {
+  const {
+    userProfile,
+    showCardOnHover = true,
+    disableLink,
+    showAccountLevelIcon = false,
+    openLinkInNewTab,
+    withAvatar = false,
+    avatarSize = 'SMALL',
+    imageURL,
+    className,
+    showFullName = false,
+    isLoadingAvatar,
+    ...rest
+  } = props
+  let { link } = props
+
   const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
   const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(
     <IconSvg options={{ icon: 'accountRegistered' }} />,
   )
   const target = useRef(null)
 
-  let mounted = true
-
   useEffect(() => {
-    if (mounted) {
-      if (showAccountLevelIcon) {
-        getUserAccountLevelIcon()
+    let isMounted = true
+    const getUserAccountLevelIcon = async () => {
+      try {
+        const certificationOrVerification =
+          SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
+          SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
+
+        const bundle: UserBundle = await SynapseClient.getUserBundle(
+          userProfile.ownerId,
+          certificationOrVerification,
+          undefined,
+        )
+        if (isMounted) {
+          if (userBundle?.isCertified) {
+            setAccountLevelIcon(
+              <IconSvg options={{ icon: 'accountCertified' }} />,
+            )
+          }
+          if (userBundle?.isVerified) {
+            setAccountLevelIcon(
+              <IconSvg options={{ icon: 'accountValidated' }} />,
+            )
+          }
+          setUserBundle(bundle)
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.log('getUserAccountLevelIcon', err)
+        }
       }
+    }
+
+    if (showAccountLevelIcon) {
+      getUserAccountLevelIcon()
     }
     return () => {
-      mounted = false
+      console.log('UserCardSmall is rerendering/unmounting')
+      isMounted = false
     }
-  }, [])
+  }, [
+    showAccountLevelIcon,
+    userBundle?.isCertified,
+    userBundle?.isVerified,
+    userProfile.ownerId,
+  ])
 
-  const getUserAccountLevelIcon = async () => {
-    try {
-      const certificationOrVerification =
-        SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-        SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
-
-      const bundle: UserBundle = await SynapseClient.getUserBundle(
-        userProfile.ownerId,
-        certificationOrVerification,
-        undefined,
-      )
-      if (userBundle?.isCertified) {
-        setAccountLevelIcon(<IconSvg options={{ icon: 'accountCertified' }} />)
-      }
-      if (userBundle?.isVerified) {
-        setAccountLevelIcon(<IconSvg options={{ icon: 'accountValidated' }} />)
-      }
-      setUserBundle(bundle)
-    } catch (err) {
-      console.log('getUserAccountLevelIcon', err)
-    }
-  }
-
-  const mediumUserCard = (
-    <UserCardMedium userProfile={userProfile} imageURL={imageURL} {...rest} />
+  const mediumUserCard = useMemo(
+    () => (
+      <UserCardMedium userProfile={userProfile} imageURL={imageURL} {...rest} />
+    ),
+    [imageURL, rest, userProfile],
   )
 
   if (link == null) {
@@ -101,6 +119,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
         userProfile={userProfile}
         avatarSize={avatarSize}
         imageURL={imageURL}
+        isLoadingAvatar={isLoadingAvatar}
       />
     </span>
   ) : (
@@ -118,8 +137,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
 
   return showCardOnHover ? (
     <>
-      {OverlayComponent}
-
+      <OverlayComponent />
       <a
         ref={target}
         href={disableLink ? undefined : link}
@@ -134,7 +152,7 @@ export const UserCardSmall: React.FunctionComponent<UserCardSmallProps> = ({
           }
           window.open(link, '_blank')
         }}
-        className={`SRC-userCard UserCardSmall ${className}`}
+        className={`SRC-userCard UserCardSmall ${className ?? ''}`}
         style={{ whiteSpace: 'nowrap' }}
       >
         {avatar}
