@@ -30,7 +30,7 @@ type MenuItemParams = {
   badgeContent?: string | number
   isCurrentlySelectedItem?: boolean
   handleDrawerClose: () => void
-  handleDrawerOpen: () => void
+  handleDrawerOpen: (navItem?: NavItem) => void
 }
 
 export enum NavItem {
