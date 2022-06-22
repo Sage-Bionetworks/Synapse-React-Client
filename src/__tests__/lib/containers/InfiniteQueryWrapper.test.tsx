@@ -1,12 +1,8 @@
 import * as React from 'react'
 import {
-  QueryWrapper,
-  QueryWrapperProps,
-} from '../../../lib/containers/QueryWrapper'
-// import {
-//   InfiniteQueryWrapper,
-//   InfiniteQueryWrapperProps,
-// } from '../../../lib/containers/InfiniteQueryWrapper'
+  InfiniteQueryWrapper,
+  InfiniteQueryWrapperProps,
+} from '../../../lib/containers/InfiniteQueryWrapper'
 import {
   useQueryContext,
   QueryContextType,
@@ -34,12 +30,12 @@ const QueryContextReciever = jest.fn((props: any) => {
 })
 
 // utility function
-const renderComponent = (props: Partial<QueryWrapperProps>) => {
+const renderComponent = (props: Partial<InfiniteQueryWrapperProps>) => {
   render(
     <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <QueryWrapper {...props}>
+      <InfiniteQueryWrapper {...props}>
         <QueryContextReciever></QueryContextReciever>
-      </QueryWrapper>
+      </InfiniteQueryWrapper>
     </SynapseContextProvider>,
   )
 }
@@ -80,7 +76,7 @@ describe('basic functionality', () => {
     expect(providedContext).toEqual(
       expect.objectContaining({
         data: syn16787123Json,
-        // hasNextPage: true,
+        hasNextPage: true,
       }),
     )
   })
