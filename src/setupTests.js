@@ -28,10 +28,9 @@ configure({ adapter: new Adapter() })
 // Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)
 jest.setTimeout(30000)
 
-// Line below is used because plotly has a dependency on mapbox-gl
-// which requires a browser env and doesn't provide support for headless
-// js testing, so we shim the function below.
-// View - https://github.com/mapbox/mapbox-gl-js/issues/3436
-window.URL.createObjectURL = function () {}
-// TODO: Mock synapse api calls possibly, instead of individually
-// in each test file
+// JSDOM doesn't support createObjectURL and revokeObjectURL, so we shim them
+// https://github.com/jsdom/jsdom/issues/1721
+window.URL.createObjectURL = jest
+  .fn()
+  .mockReturnValue('blob:mockBlobUrlConfiguredInTestSetup')
+window.URL.revokeObjectURL = jest.fn()
