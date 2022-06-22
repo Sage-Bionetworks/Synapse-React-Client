@@ -1,5 +1,4 @@
-import { waitFor } from '@testing-library/react'
-import { renderHook } from '@testing-library/react-hooks'
+import { cleanup, renderHook } from '@testing-library/react-hooks'
 import usePreFetchResource from '../../../../lib/utils/hooks/usePreFetchResource'
 import { rest, server } from '../../../../mocks/msw/server'
 
@@ -17,10 +16,8 @@ describe('usePreFetchResource tests', () => {
   })
 
   it('Returns undefined when passed URL is undefined', () => {
-    const {
-      result: { current: resourceURL },
-    } = renderHook(() => usePreFetchResource(undefined))
-    expect(resourceURL).toBe(undefined)
+    const { result } = renderHook(() => usePreFetchResource(undefined))
+    expect(result.current).toBe(undefined)
   })
 
   it('Returns a local URL when passed a presigned URL', async () => {
@@ -39,11 +36,17 @@ describe('usePreFetchResource tests', () => {
       ),
     )
 
-    const {
-      result: { current: resourceURL },
-    } = renderHook(() => usePreFetchResource(PRESIGNED_URL))
+    const { result, waitForNextUpdate } = renderHook(() =>
+      usePreFetchResource(PRESIGNED_URL),
+    )
 
-    await waitFor(() => expect(onRecievedRequest).toHaveBeenCalled())
-    await waitFor(() => expect(resourceURL).toBeDefined())
+    await waitForNextUpdate()
+    expect(onRecievedRequest).toHaveBeenCalled()
+    expect(URL.createObjectURL).toHaveBeenCalled()
+    expect(result.current).toBeDefined()
+
+    cleanup()
+
+    expect(URL.revokeObjectURL).toHaveBeenCalled()
   })
 })
