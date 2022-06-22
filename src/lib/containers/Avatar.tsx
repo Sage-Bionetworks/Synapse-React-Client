@@ -66,6 +66,14 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
     return <Skeleton className={sizeClass} variant="circle" />
   }
 
+  let content: JSX.Element | string = <></>
+
+  if (!hasProfileImage) {
+    content = userProfile.firstName
+      ? userProfile.firstName[0]
+      : userProfile.userName[0]
+  }
+
   return (
     <>
       {showCardOnHover && <OverlayComponent />}
@@ -86,12 +94,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
           ...conditionalStyles,
         }}
       >
-        {!hasProfileImage ? (
-          userProfile.firstName &&
-          (userProfile.firstName[0] || userProfile.userName[0])
-        ) : (
-          <></>
-        )}
+        {content}
       </div>
     </>
   )

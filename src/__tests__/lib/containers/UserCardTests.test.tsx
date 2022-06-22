@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import UserCard, { UserCardProps } from '../../../lib/containers/UserCard'
 import UserCardContextMenu, {
@@ -111,6 +112,21 @@ describe('it creates the correct UI for the avatar', () => {
     const imageElement = await screen.findByRole('img')
     // No profile pic fetched, so the avatar should have the first initial
     await screen.findByText(firstName[0])
+    expect(imageElement.classList.contains('SRC-userImgSmall')).toBe(true)
+    expect(imageElement.style.backgroundImage).toBe('')
+  })
+
+  it('avatar text pulls from username if no first name', async () => {
+    const userWithNoFirstName = cloneDeep(mockUserProfileData)
+    userWithNoFirstName.firstName = ''
+    renderAvatar({
+      ...props,
+      userProfile: userWithNoFirstName,
+      avatarSize: 'SMALL',
+    })
+    const imageElement = await screen.findByRole('img')
+    // No profile pic fetched, so the avatar should have the first initial
+    await screen.findByText(mockUserProfileData.userName[0])
     expect(imageElement.classList.contains('SRC-userImgSmall')).toBe(true)
     expect(imageElement.style.backgroundImage).toBe('')
   })
