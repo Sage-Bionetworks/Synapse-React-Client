@@ -1,16 +1,16 @@
+import { render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { shallow } from 'enzyme'
 import StatisticsPlot, {
   StatisticsPlotProps,
 } from '../../../lib/containers/StatisticsPlot'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import {
+  MonthlyFilesStatistics,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
-  MonthlyFilesStatistics,
 } from '../../../lib/utils/synapseTypes/'
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 
-const token: string = '123444'
 const projectFilesStatsRequest: ProjectFilesStatisticsRequest = {
   concreteType:
     'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
@@ -73,21 +73,12 @@ const projectFilesStatsResponse: ProjectFilesStatisticsResponse = {
   fileUploads,
 }
 
-const createShallowComponent = async (
-  props: StatisticsPlotProps,
-  disableLifecycleMethods: boolean = false,
-) => {
-  const wrapper = await shallow<StatisticsPlot>(<StatisticsPlot {...props} />, {
-    disableLifecycleMethods,
-  })
-
-  const instance = wrapper.instance()
-  return { wrapper, instance }
+function renderComponent(props: StatisticsPlotProps) {
+  return render(<StatisticsPlot {...props} />, { wrapper: createWrapper() })
 }
 
 describe('basic tests', () => {
   const props: StatisticsPlotProps = {
-    token,
     request: projectFilesStatsRequest,
   }
 
@@ -98,10 +89,11 @@ describe('basic tests', () => {
   })
 
   it('displays plot', async () => {
-    const { wrapper, instance } = await createShallowComponent(props)
-    await instance.componentDidMount()
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(StatisticsPlot)).toBeDefined()
+    const { container } = renderComponent(props)
+    await waitFor(() =>
+      expect(SynapseClient.getProjectStatistics).toHaveBeenCalled(),
+    )
+    expect(container.querySelector('.js-plotly-plot')).not.toBeNull()
   })
 
   it('not shown when statistics unavailable', async () => {
@@ -121,9 +113,11 @@ describe('basic tests', () => {
     SynapseClient.getProjectStatistics = jest.fn(() =>
       Promise.resolve(emptyProjectFilesStatsResponse),
     )
-    const { wrapper, instance } = await createShallowComponent(props)
-    await instance.componentDidMount()
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(StatisticsPlot)).toHaveLength(0)
+    const { container } = renderComponent(props)
+
+    await waitFor(() =>
+      expect(SynapseClient.getProjectStatistics).toHaveBeenCalled(),
+    )
+    expect(container.querySelector('.js-plotly-plot')).toBeNull()
   })
 })
