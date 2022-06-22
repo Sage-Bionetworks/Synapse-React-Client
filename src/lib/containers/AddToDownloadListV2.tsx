@@ -4,6 +4,7 @@ import IconSvg from './IconSvg'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { displayToast } from './ToastMessage'
 import ReactTooltip from 'react-tooltip'
+import { useGetDownloadListStatistics } from '../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 
 export type AddToDownloadListV2Props = {
   entityId: string
@@ -15,12 +16,24 @@ const AddToDownloadListV2: React.FunctionComponent<
 > = props => {
   const { entityId, entityVersionNumber } = props
   const { accessToken } = useSynapseContext()
+  const { refetch } = useGetDownloadListStatistics({
+    enabled: !!accessToken,
+  })
+
   if (!accessToken) {
     return <></>
   }
   const addToDownloadListV2 = async () => {
     try {
-      await addFileToDownloadListV2(entityId, entityVersionNumber, accessToken)
+      const response = await addFileToDownloadListV2(
+        entityId,
+        entityVersionNumber,
+        accessToken,
+      )
+      // PORTALS-2222: refetch download statistics after items have been added
+      if (response.numberOfFilesAdded > 0) {
+        refetch()
+      }
       const entity = await getEntity(
         accessToken,
         entityId,
