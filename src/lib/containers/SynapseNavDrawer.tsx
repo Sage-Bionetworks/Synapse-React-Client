@@ -1,10 +1,10 @@
 import { Badge, Drawer, List, ListItem } from '@material-ui/core'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Form } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
 import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import { SynapseClient } from '../utils'
+import Tooltip from '../utils/tooltip/Tooltip'
 import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useSearchAccessSubmissionsInfinite'
 import { useGetDownloadListStatistics } from '../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import { useGetCurrentUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
@@ -121,25 +121,23 @@ const NavDrawerListItem = (props: MenuItemParams) => {
     additionalChildren
   )
 
-  useEffect(() => {
-    ReactTooltip.rebuild()
-  }, [])
-
   const listItem = (
-    <ListItem
-      button
-      key={iconName}
-      data-tip={tooltip}
-      data-for={`SynapseNavDrawerTooltipId`}
-      data-testid={`${tooltip}`}
-      onClick={handler}
-      className="SRC-whiteText"
-      selected={isCurrentlySelectedItem}
-    >
-      <Badge badgeContent={badgeContent} color="secondary">
-        {item}
-      </Badge>
-    </ListItem>
+    <Tooltip title={tooltip} placement="right">
+      <ListItem
+        button
+        key={iconName}
+        data-tip={tooltip}
+        data-for={`SynapseNavDrawerTooltipId`}
+        data-testid={`${tooltip}`}
+        onClick={handler}
+        className="SRC-whiteText"
+        selected={isCurrentlySelectedItem}
+      >
+        <Badge badgeContent={badgeContent} color="secondary">
+          {item}
+        </Badge>
+      </ListItem>
+    </Tooltip>
   )
 
   return onClickGoToUrl ? (
@@ -216,10 +214,10 @@ export const SynapseNavDrawer: React.FunctionComponent<
     }
   }
 
-  const handleDrawerOpen = useCallback((navItem?: NavItem) => {
+  const handleDrawerOpen = (navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
-  }, [])
+  }
 
   const handleDrawerClose = useCallback(() => {
     setOpen(false)
@@ -236,14 +234,6 @@ export const SynapseNavDrawer: React.FunctionComponent<
 
   return (
     <div className="SynapseNavDrawer">
-      <ReactTooltip
-        delayShow={300}
-        place="right"
-        type="dark"
-        effect="solid"
-        id={`SynapseNavDrawerTooltipId`}
-      />
-
       <Drawer
         variant="permanent"
         className={`SynapseNavDrawerMenu ${isOpen ? 'tempDrawerOpen' : ''}`}
@@ -365,6 +355,14 @@ export const SynapseNavDrawer: React.FunctionComponent<
         open={isOpen}
         className={`SynapseNavContentDrawer`}
         onClose={handleDrawerClose}
+        ModalProps={{
+          BackdropProps: {
+            onClick: e => {
+              e.stopPropagation()
+              handleDrawerClose()
+            },
+          },
+        }}
       >
         <div className="synapseLogoNameContainer">
           <SynapseLogoName />
@@ -373,24 +371,19 @@ export const SynapseNavDrawer: React.FunctionComponent<
           {selectedItem == NavItem.PROJECTS && (
             <>
               <div className="header projectHeader">Projects</div>
-              <a
-                className="createProjectLink"
-                data-for="createProjectTooltipId"
-                data-tip="Create a New Project"
-                onClick={() => {
-                  setIsShowingCreateProjectModal(true)
-                  handleDrawerClose()
-                }}
-              >
-                <ReactTooltip
-                  delayShow={300}
-                  place="right"
-                  type="dark"
-                  effect="solid"
-                  id="createProjectTooltipId"
-                />
-                <IconSvg options={{ icon: 'addCircleOutline' }} />
-              </a>
+              <Tooltip title="Create a New Project" placement="right">
+                <a
+                  className="createProjectLink"
+                  data-for="createProjectTooltipId"
+                  data-tip="Create a New Project"
+                  onClick={() => {
+                    setIsShowingCreateProjectModal(true)
+                    handleDrawerClose()
+                  }}
+                >
+                  <IconSvg options={{ icon: 'addCircleOutline' }} />
+                </a>
+              </Tooltip>
               <div className="searchInputWithIcon">
                 <IconSvg options={{ icon: 'searchOutlined' }} />
                 <Form.Control
