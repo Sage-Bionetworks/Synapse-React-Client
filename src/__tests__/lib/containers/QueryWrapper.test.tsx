@@ -1,10 +1,12 @@
 import * as React from 'react'
 import {
   QueryWrapper,
-  QueryContextType,
   QueryWrapperProps,
-  useQueryContext,
 } from '../../../lib/containers/QueryWrapper'
+import {
+  useQueryContext,
+  QueryContextType,
+} from '../../../lib/containers/QueryContext'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 import { SynapseConstants } from '../../../lib/utils/'
 import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'

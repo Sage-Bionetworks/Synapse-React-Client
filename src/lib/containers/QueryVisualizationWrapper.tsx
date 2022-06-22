@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useQueryContext } from './QueryWrapper'
+import { useQueryContext } from './QueryContext'
 
 export type QueryVisualizationContextType = {
   topLevelControlsState: TopLevelControlsState

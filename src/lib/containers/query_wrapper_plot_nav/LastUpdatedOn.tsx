@@ -3,7 +3,7 @@ import React from 'react'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import Typography from '../../utils/typography/Typography'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useQueryContext } from '../QueryWrapper'
+import { useQueryContext } from '../QueryContext'
 
 export default function LastUpdatedOn() {
   const { data } = useQueryContext()

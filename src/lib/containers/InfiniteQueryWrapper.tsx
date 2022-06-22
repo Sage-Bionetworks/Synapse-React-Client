@@ -1,13 +1,13 @@
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
+// import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
-import { useGetQueryResultBundleWithAsyncStatus } from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
-import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
+import { useInfiniteQueryResultBundle } from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,
@@ -15,15 +15,15 @@ import {
   Table,
 } from '../utils/synapseTypes'
 import {
+  InfiniteQueryContextType,
   LockedFacet,
-  PaginatedQueryContextType,
   QueryContextProvider,
 } from './QueryContext'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 
-export type QueryWrapperProps = {
+export type InfiniteQueryWrapperProps = {
   children: React.ReactNode | React.ReactNode[]
   initQueryRequest: QueryBundleRequest
   componentIndex?: number //used for deep linking
@@ -42,7 +42,7 @@ export type SearchQuery = {
  * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
  * either `useQueryContext` or `QueryContextConsumer`.
  */
-export function QueryWrapper(props: QueryWrapperProps) {
+export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
   const { initQueryRequest, onQueryChange, onQueryResultBundleChange } = props
   const [lastQueryRequest, setLastQueryRequest] =
     useState<QueryBundleRequest>(initQueryRequest)
@@ -50,12 +50,16 @@ export function QueryWrapper(props: QueryWrapperProps) {
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle> | undefined
   >(undefined)
   const {
-    data: asyncJobStatus,
+    data: infiniteData,
+    hasNextPage,
+    fetchPreviousPage,
+    fetchNextPage,
+    isFetchingNextPage,
     isLoading: queryIsLoading,
     error,
     isPreviousData: newQueryIsFetching,
     remove,
-  } = useGetQueryResultBundleWithAsyncStatus(
+  } = useInfiniteQueryResultBundle(
     lastQueryRequest,
     {
       // We use `keepPreviousData` because we don't want to clear out the current data when the query is modified via the UI
@@ -63,10 +67,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
     },
     setCurrentAsyncStatus,
   )
-
-  const data = asyncJobStatus?.responseBody
-
-  const isFetchingNextPage = false
 
   // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
   const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
@@ -79,13 +79,69 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const [currentPage, setCurrentPage] = useState<number | 'ALL'>(0)
 
-  const goToPage = async (pageNum: number) => {
-    const lastQueryRequestDeepClone = getLastQueryRequest()
-    lastQueryRequestDeepClone.query.offset =
-      (pageNum - 1) * (lastQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE)
-    executeQueryRequest(lastQueryRequestDeepClone)
-    setCurrentPage(pageNum - 1)
+  async function appendNextPageToResults(): Promise<void> {
+    if (!hasNextPage) {
+      throw new Error(
+        'Called appendNextPageToResults when there is no next page',
+      )
+    }
+    await fetchNextPage()
+    setCurrentPage('ALL')
   }
+
+  async function goToNextPage(): Promise<void> {
+    if (!hasNextPage) {
+      throw new Error('Called goToNextPage when there is no next page')
+    }
+    if (currentPage === 'ALL') {
+      throw new Error('Cannot go to next page when all pages are displayed')
+    }
+    await fetchNextPage()
+    setCurrentPage(currentPage + 1)
+  }
+
+  const hasPreviousPage = currentPage !== 'ALL' && currentPage > 0
+
+  async function goToPreviousPage(): Promise<void> {
+    if (currentPage === 'ALL') {
+      throw new Error('Cannot go to previous page when all pages are displayed')
+    }
+    if (!hasPreviousPage) {
+      throw new Error('Called goToNextPage when there is no next page')
+    }
+
+    await fetchPreviousPage()
+    setCurrentPage(currentPage - 1)
+  }
+
+  const data: QueryResultBundle | undefined = useMemo(() => {
+    if (
+      infiniteData == null ||
+      infiniteData.pages.length === 0 ||
+      infiniteData.pages[0].responseBody == null
+    ) {
+      return undefined
+    }
+
+    if (currentPage === 'ALL') {
+      // Modify the first page so the result is the concatenation of all of the fetched rows.
+      return {
+        ...infiniteData?.pages[0].responseBody,
+        queryResult: {
+          ...infiniteData?.pages[0].responseBody?.queryResult,
+          queryResults: {
+            ...infiniteData?.pages[0].responseBody?.queryResult?.queryResults,
+            rows:
+              infiniteData.pages.flatMap(
+                page => page.responseBody!.queryResult.queryResults.rows,
+              ) ?? [],
+          },
+        },
+      }
+    }
+
+    return infiniteData?.pages[currentPage].responseBody
+  }, [currentPage, infiniteData])
 
   useDeepCompareEffect(() => {
     if (onQueryChange) {
@@ -197,9 +253,11 @@ export function QueryWrapper(props: QueryWrapperProps) {
     }
   }, [data, props.lockedFacet?.facet])
 
-  const context: PaginatedQueryContextType = {
+  const context: InfiniteQueryContextType = {
     data: dataWithLockedFacetRemoved,
     isLoadingNewPage: isFetchingNextPage,
+    hasNextPage: !!hasNextPage,
+    hasPreviousPage: !!hasPreviousPage,
     isLoadingNewBundle: isLoadingNewBundle,
     getLastQueryRequest,
     getInitQueryRequest,
@@ -208,7 +266,9 @@ export function QueryWrapper(props: QueryWrapperProps) {
     executeQueryRequest,
     isFacetsAvailable,
     asyncJobStatus: currentAsyncStatus,
-    goToPage,
+    appendNextPageToResults: appendNextPageToResults,
+    goToNextPage,
+    goToPreviousPage,
   }
   /**
    * Render the children without any formatting
