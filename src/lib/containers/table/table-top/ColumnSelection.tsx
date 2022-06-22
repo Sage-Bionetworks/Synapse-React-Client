@@ -61,7 +61,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
     >
       <ElementWithTooltip
         idForToolTip={tooltipColumnSelectionId}
-        tooltipText={'Add / Remove Table Columns'}
+        tooltipText={'Show/Hide Columns'}
         icon={darkTheme ? 'columnsdark' : 'columns'}
         darkTheme={darkTheme}
       ></ElementWithTooltip>
