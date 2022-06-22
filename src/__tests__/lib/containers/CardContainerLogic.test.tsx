@@ -6,7 +6,7 @@ import CardContainerLogic, {
   CardContainerLogicProps,
 } from '../../../lib/containers/CardContainerLogic'
 import { QueryVisualizationWrapper } from '../../../lib/containers/QueryVisualizationWrapper'
-import { QueryWrapper } from '../../../lib/containers/QueryWrapper'
+import { InfiniteQueryWrapper } from '../../../lib/containers/InfiniteQueryWrapper'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 
 const renderComponent = (props: CardContainerLogicProps) => {
@@ -20,9 +20,9 @@ jest.mock('../../../lib/containers/CardContainer', () => ({
   }),
 }))
 
-jest.mock('../../../lib/containers/QueryWrapper', () => ({
-  QueryWrapper: jest.fn().mockImplementation(props => {
-    return <div data-testid="QueryWrapper">{props.children}</div>
+jest.mock('../../../lib/containers/InfiniteQueryWrapper', () => ({
+  InfiniteQueryWrapper: jest.fn().mockImplementation(props => {
+    return <div data-testid="InfiniteQueryWrapper">{props.children}</div>
   }),
   QueryContextConsumer: jest.fn().mockImplementation(props => {
     return <div data-testid="QueryContextConsumer">{props.children}</div>
@@ -52,14 +52,14 @@ describe('it performs basic functionality', () => {
     expect(container).toBeDefined()
     await screen.findByTestId('CardContainer')
     await screen.findByTestId('QueryVisualizationWrapper')
-    await screen.findByTestId('QueryWrapper')
+    await screen.findByTestId('InfiniteQueryWrapper')
   })
 
   it('passes down props correctly', async () => {
     renderComponent(props)
 
     await waitFor(() =>
-      expect(QueryWrapper).toHaveBeenCalledWith(
+      expect(InfiniteQueryWrapper).toHaveBeenCalledWith(
         expect.objectContaining({
           initQueryRequest: expect.objectContaining({
             concreteType:

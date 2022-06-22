@@ -8,7 +8,7 @@ import { QueryVisualizationContextType } from '../../../lib/containers/QueryVisu
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../lib/containers/QueryWrapper'
+} from '../../../lib/containers/QueryContext'
 import {
   SynapseTableCell,
   SynapseTableCellProps,
@@ -89,6 +89,7 @@ const lastQueryRequest: QueryBundleRequest = {
 const getLastQueryRequest = jest.fn(() => cloneDeep(lastQueryRequest))
 const executeQueryRequest = jest.fn()
 
+// const queryContext: Partial<QueryContextType> = {
 const queryContext: Partial<QueryContextType> = {
   data: queryResultBundle,
   entity: {
