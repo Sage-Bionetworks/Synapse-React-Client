@@ -1,21 +1,23 @@
-import { mount, shallow } from 'enzyme'
-import Carousel from '../../../../lib/containers/Carousel'
-import { resolveAllPending } from '../../../../lib/testutils/EnzymeHelpers'
+import { render } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { act } from 'react-dom/test-utils'
 import SizeMe from 'react-sizeme'
+import Carousel, { CarouselProps } from '../../../../lib/containers/Carousel'
 SizeMe.noPlaceholders = true
 
-describe('basic functionality', () => {
-  it('renders a loading spinner isLoading is true', async () => {
-    const emptyCarouselWrapper = shallow(
-      <Carousel isLoading={true}>{[]}</Carousel>,
-    )
-    expect(emptyCarouselWrapper.find('div.spinner')).toHaveLength(1)
+function renderComponent(props: CarouselProps) {
+  return render(<Carousel {...props} />)
+}
 
-    // No loading spinner
-    const carouselWrapper = shallow(<Carousel isLoading={false}>{[]}</Carousel>)
-    expect(carouselWrapper.find('div.spinner')).toHaveLength(0)
+describe('basic functionality', () => {
+  it('renders a loading spinner when isLoading is true', () => {
+    const { container } = renderComponent({ isLoading: true, children: [] })
+    expect(container.querySelector('div.spinner')).not.toBeNull()
+  })
+
+  it('Does not show a spinner when isLoading is false', () => {
+    const { container } = renderComponent({ isLoading: false, children: [] })
+    expect(container.querySelector('div.spinner')).toBeNull()
   })
 
   it('applies the correct classes to components based on index', async () => {
@@ -24,43 +26,29 @@ describe('basic functionality', () => {
       <div className="child1" key={1} />,
       <div className="child2" key={2} />,
     ]
-    const wrapper = mount(<Carousel isLoading={false}>{children}</Carousel>)
-    await resolveAllPending(wrapper)
+    const { container } = renderComponent({ isLoading: false, children })
 
-    // Cards that map to the first child should have the 'Selected' class
-    expect(wrapper.find('div.child0').length).toBeGreaterThan(0)
-    wrapper.find('div.child0').forEach(child => {
-      expect(child.hasClass('SRC-Carousel__SelectedCard')).toBe(true)
-    })
-    expect(wrapper.find('div.child1').length).toBeGreaterThan(0)
-    wrapper.find('div.child1').forEach(child => {
-      expect(child.hasClass('SRC-Carousel__UnselectedCard')).toBe(true)
-    })
-    expect(wrapper.find('div.child2').length).toBeGreaterThan(0)
-    wrapper.find('div.child2').forEach(child => {
-      expect(child.hasClass('SRC-Carousel__UnselectedCard')).toBe(true)
-    })
+    function assertAllMatchesHaveClass(query: string, className: string): void {
+      const matches = container.querySelectorAll(query)
+      expect(matches.length).toBeGreaterThan(0)
+      matches.forEach(match => {
+        expect(match.classList.contains(className)).toBe(true)
+      })
+    }
+
+    // Cards that map to the first child should have the 'Selected' class, second and third child should be unselected
+    assertAllMatchesHaveClass('div.child0', 'SRC-Carousel__SelectedCard')
+    assertAllMatchesHaveClass('div.child1', 'SRC-Carousel__UnselectedCard')
+    assertAllMatchesHaveClass('div.child2', 'SRC-Carousel__UnselectedCard')
 
     // Click the right arrow
-    await act(async () => {
-      await wrapper
-        .find('div.BrainhubCarousel__custom-arrowRight')
-        .simulate('click')
-    })
-    await resolveAllPending(wrapper)
+    userEvent.click(
+      container.querySelector('div.BrainhubCarousel__custom-arrowRight')!,
+    )
 
-    // Cards that map to the second child should have the 'Selected' class
-    expect(wrapper.find('div.child0').length).toBeGreaterThan(0)
-    wrapper.find('div.child0').forEach(child => {
-      expect(child.hasClass('SRC-Carousel__UnselectedCard')).toBe(true)
-    })
-    expect(wrapper.find('div.child1').length).toBeGreaterThan(0)
-    wrapper.find('div.child1').forEach(child => {
-      expect(child.hasClass('SRC-Carousel__SelectedCard')).toBe(true)
-    })
-    expect(wrapper.find('div.child2').length).toBeGreaterThan(0)
-    wrapper.find('div.child2').forEach(child => {
-      expect(child.hasClass('SRC-Carousel__UnselectedCard')).toBe(true)
-    })
+    // Cards that map to the second child should have the 'Selected' class, others unselected
+    assertAllMatchesHaveClass('div.child0', 'SRC-Carousel__UnselectedCard')
+    assertAllMatchesHaveClass('div.child1', 'SRC-Carousel__SelectedCard')
+    assertAllMatchesHaveClass('div.child2', 'SRC-Carousel__UnselectedCard')
   })
 })
