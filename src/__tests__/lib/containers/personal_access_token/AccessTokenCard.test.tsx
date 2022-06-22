@@ -1,12 +1,11 @@
-import { shallow } from 'enzyme'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import * as React from 'react'
 import {
   AccessTokenCard,
   AccessTokenCardProps,
 } from '../../../../lib/containers/personal_access_token/AccessTokenCard'
-import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
-import * as React from 'react'
-import { Button } from 'react-bootstrap'
-import { act } from 'react-dom/test-utils'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import * as SynapseContext from '../../../../lib/utils/SynapseContext'
 import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
@@ -43,7 +42,11 @@ const expiredTokenProps: AccessTokenCardProps = {
   onDelete: mockOnDelete,
 }
 
-describe('basic functionality', () => {
+function renderComponent(props: AccessTokenCardProps) {
+  return render(<AccessTokenCard {...props} />, { wrapper: createWrapper() })
+}
+
+describe('Personal Access Token Card tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     jest
@@ -51,64 +54,73 @@ describe('basic functionality', () => {
       .mockImplementation(() => MOCK_CONTEXT_VALUE)
   })
 
-  it('correctly styles when expired', async () => {
-    const wrapperActive = shallow(<AccessTokenCard {...activeTokenProps} />)
+  it('Does not have warning style for an active token', () => {
+    const { container } = renderComponent(activeTokenProps)
     expect(
-      wrapperActive.find('div.PersonalAccessTokenCard').hasClass('bg-warning'),
+      container
+        .querySelector('div.PersonalAccessTokenCard')!
+        .classList.contains('bg-warning'),
     ).toBe(false)
+  })
 
-    const wrapperExpired = shallow(<AccessTokenCard {...expiredTokenProps} />)
+  it('Has warning style for an expired token', () => {
+    const { container } = renderComponent(expiredTokenProps)
     expect(
-      wrapperExpired.find('div.PersonalAccessTokenCard').hasClass('bg-warning'),
+      container
+        .querySelector('div.PersonalAccessTokenCard')!
+        .classList.contains('bg-warning'),
     ).toBe(true)
   })
 
   it('modal pops up and sends request on delete', async () => {
-    const wrapper = shallow(<AccessTokenCard {...activeTokenProps} />)
-
-    expect(wrapper.find(WarningModal).props().show).toBe(false)
+    renderComponent(activeTokenProps)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     // Click delete button to open modal
-    await act(async () => {
-      await wrapper.find(Button).simulate('click')
-    })
+    const deleteButton = screen.getByRole('button', { name: 'delete' })
+    userEvent.click(deleteButton)
 
-    expect(wrapper.find(WarningModal).props().show).toBe(true)
+    expect(await screen.findByRole('dialog')).toBeVisible()
 
     // Click 'Delete'
-    await act(async () => {
-      await wrapper.find(WarningModal).props().onConfirm()
-    })
+    userEvent.click(screen.getByRole('button', { name: 'Delete Token' }))
 
-    expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled()
-    expect(mockOnDelete).toHaveBeenCalled()
+    await waitFor(() =>
+      expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled(),
+    )
+    await waitFor(() => expect(mockOnDelete).toHaveBeenCalled())
   })
 
   it('does not delete when modal is canceled', async () => {
-    const wrapper = shallow(<AccessTokenCard {...activeTokenProps} />)
+    renderComponent(activeTokenProps)
 
     // Click delete button to open modal
-    wrapper.find(Button).simulate('click')
+    const deleteButton = screen.getByRole('button', { name: 'delete' })
+    userEvent.click(deleteButton)
+
+    expect(await screen.findByRole('dialog')).toBeVisible()
 
     // Click 'Cancel'
-    await act(async () => {
-      await wrapper.find(WarningModal).props().onCancel()
-    })
+    userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
     expect(SynapseClient.deletePersonalAccessToken).not.toHaveBeenCalled()
     expect(mockOnDelete).not.toHaveBeenCalled()
   })
 
   it('sends request on delete with no modal when expired', async () => {
-    const wrapper = shallow(<AccessTokenCard {...expiredTokenProps} />)
+    renderComponent(expiredTokenProps)
 
     // Click delete button -- no modal should open, because the token has expired.
-    await act(async () => {
-      await wrapper.find(Button).simulate('click')
-    })
+    const deleteButton = screen.getByRole('button', { name: 'delete' })
+    userEvent.click(deleteButton)
 
-    expect(wrapper.find(WarningModal).props().show).toBe(false)
-    expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled()
-    expect(mockOnDelete).toHaveBeenCalled()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await waitFor(() =>
+      expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled(),
+    )
+    await waitFor(() => expect(mockOnDelete).toHaveBeenCalled())
   })
 })
