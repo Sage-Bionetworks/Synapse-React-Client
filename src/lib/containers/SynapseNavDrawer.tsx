@@ -219,10 +219,10 @@ export const SynapseNavDrawer: React.FunctionComponent<
     setSelectedItem(navItem)
   }
 
-  const handleDrawerClose = useCallback(() => {
+  const handleDrawerClose = () => {
     setOpen(false)
     setSelectedItem(undefined)
-  }, [])
+  }
 
   const onProjectSearch = (searchTerm: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -355,14 +355,6 @@ export const SynapseNavDrawer: React.FunctionComponent<
         open={isOpen}
         className={`SynapseNavContentDrawer`}
         onClose={handleDrawerClose}
-        ModalProps={{
-          BackdropProps: {
-            onClick: e => {
-              e.stopPropagation()
-              handleDrawerClose()
-            },
-          },
-        }}
       >
         <div className="synapseLogoNameContainer">
           <SynapseLogoName />
