@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { SynapseClient, SynapseConstants } from '../utils'
+import { SynapseConstants } from '../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { useGetUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
 import { useOverlay } from '../utils/hooks/useOverlay'
-import { UserBundle, UserProfile } from '../utils/synapseTypes/'
+import { UserProfile } from '../utils/synapseTypes/'
 import { Avatar, AvatarSize } from './Avatar'
 import IconSvg from './IconSvg'
 import UserCardMedium from './UserCardMedium'
@@ -42,58 +43,27 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
   } = props
   let { link } = props
 
-  const [userBundle, setUserBundle] = useState<UserBundle | undefined>()
   const [accountLevelIcon, setAccountLevelIcon] = useState<JSX.Element>(
     <IconSvg options={{ icon: 'accountRegistered' }} />,
   )
   const target = useRef(null)
+  const certificationOrVerification =
+    SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
+    SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
+
+  const { data: userBundle } = useGetUserBundle(
+    userProfile.ownerId,
+    certificationOrVerification,
+  )
 
   useEffect(() => {
-    let isMounted = true
-    const getUserAccountLevelIcon = async () => {
-      try {
-        const certificationOrVerification =
-          SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-          SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
-
-        const bundle: UserBundle = await SynapseClient.getUserBundle(
-          userProfile.ownerId,
-          certificationOrVerification,
-          undefined,
-        )
-        if (isMounted) {
-          if (userBundle?.isCertified) {
-            setAccountLevelIcon(
-              <IconSvg options={{ icon: 'accountCertified' }} />,
-            )
-          }
-          if (userBundle?.isVerified) {
-            setAccountLevelIcon(
-              <IconSvg options={{ icon: 'accountValidated' }} />,
-            )
-          }
-          setUserBundle(bundle)
-        }
-      } catch (err) {
-        if (isMounted) {
-          console.log('getUserAccountLevelIcon', err)
-        }
-      }
+    if (userBundle?.isCertified) {
+      setAccountLevelIcon(<IconSvg options={{ icon: 'accountCertified' }} />)
     }
-
-    if (showAccountLevelIcon) {
-      getUserAccountLevelIcon()
+    if (userBundle?.isVerified) {
+      setAccountLevelIcon(<IconSvg options={{ icon: 'accountValidated' }} />)
     }
-    return () => {
-      console.log('UserCardSmall is rerendering/unmounting')
-      isMounted = false
-    }
-  }, [
-    showAccountLevelIcon,
-    userBundle?.isCertified,
-    userBundle?.isVerified,
-    userProfile.ownerId,
-  ])
+  }, [showAccountLevelIcon, userBundle?.isCertified, userBundle?.isVerified])
 
   const mediumUserCard = useMemo(
     () => (

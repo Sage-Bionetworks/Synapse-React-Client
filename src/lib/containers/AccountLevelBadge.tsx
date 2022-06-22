@@ -1,10 +1,9 @@
-import { UserBundle } from '../utils/synapseTypes'
 import * as React from 'react'
-import { useState, useEffect } from 'react'
-import { SynapseClient, SynapseConstants } from '../utils'
-import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
 import { ReactComponent as Certified } from '../assets/icons/account-certified.svg'
+import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
 import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
+import { SynapseConstants } from '../utils'
+import { useGetUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
 import { ErrorBanner } from './ErrorBanner'
 
 export type AccountLevelBadgeProps = {
@@ -15,39 +14,19 @@ export const accountLevelRegisteredLabel: string = 'Registered'
 export const accountLevelCertifiedLabel: string = 'Certified'
 export const accountLevelVerifiedLabel: string = 'Validated'
 
+const CERTIFICATION_AND_VERIFICATION_BUNDLE_MASK =
+  SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
+  SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
+
 export const AccountLevelBadge: React.FunctionComponent<
   AccountLevelBadgeProps
 > = ({ userId }: AccountLevelBadgeProps) => {
-  const [error, setError] = useState()
-  const [userBundle, setUserBundle] = useState<UserBundle | undefined>(
-    undefined,
-  )
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const {
+    data: userBundle,
+    isLoading,
+    error,
+  } = useGetUserBundle(userId, CERTIFICATION_AND_VERIFICATION_BUNDLE_MASK)
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        setIsLoading(true)
-
-        const certificationOrVerification =
-          SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-          SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
-
-        const bundle: UserBundle = await SynapseClient.getUserBundle(
-          userId,
-          certificationOrVerification,
-          undefined,
-        )
-        setUserBundle(bundle)
-      } catch (err) {
-        setError(err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    getData()
-  }, [userId])
   if (isLoading) {
     return <></>
   }

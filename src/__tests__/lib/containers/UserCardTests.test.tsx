@@ -62,7 +62,7 @@ afterEach(() => server.restoreHandlers())
 afterAll(() => server.close())
 
 beforeEach(() => {
-  jest.useFakeTimers()
+  jest.useRealTimers()
 })
 
 describe('it renders the different sized cards without failing', () => {
@@ -70,9 +70,9 @@ describe('it renders the different sized cards without failing', () => {
     userProfile: mockUserProfileData,
   }
 
-  it('renders an avatar', () => {
+  it('renders an avatar', async () => {
     renderAvatar(props)
-    screen.getByRole('img')
+    await screen.findByRole('img')
   })
 
   it('renders a small card', () => {
@@ -86,7 +86,9 @@ describe('it renders the different sized cards without failing', () => {
       mockUserProfileData.firstName + ' ' + mockUserProfileData.lastName,
       { exact: false },
     )
-    await screen.findByText('ORCID', { exact: false })
+    await waitFor(() => {
+      screen.getByText('ORCID', { exact: false })
+    })
   })
 
   it('renders a large card', async () => {
@@ -106,7 +108,7 @@ describe('it creates the correct UI for the avatar', () => {
 
   it('creates a small avatar', async () => {
     renderAvatar({ ...props, avatarSize: 'SMALL' })
-    const imageElement = screen.getByRole('img')
+    const imageElement = await screen.findByRole('img')
     // No profile pic fetched, so the avatar should have the first initial
     await screen.findByText(firstName[0])
     expect(imageElement.classList.contains('SRC-userImgSmall')).toBe(true)
@@ -115,7 +117,7 @@ describe('it creates the correct UI for the avatar', () => {
 
   it('creates a large avatar', async () => {
     renderAvatar({ ...props, avatarSize: 'LARGE' })
-    const imageElement = screen.getByRole('img')
+    const imageElement = await screen.findByRole('img')
     // No profile pic fetched, so the avatar should have the first initial
     await screen.findByText(firstName[0])
     expect(imageElement.classList.contains('SRC-userImg')).toBe(true)
@@ -175,6 +177,8 @@ describe('it creates the correct UI for the small card', () => {
   })
 
   it('shows a medium user card when mouse enters', async () => {
+    jest.useFakeTimers()
+
     renderSmallUserCard(props)
 
     const smallUserCard = await screen.findByText(
@@ -321,7 +325,7 @@ describe('it creates the correct UI for the large card', () => {
     size: SynapseConstants.LARGE_USER_CARD,
   }
 
-  it("displays the user's information", async () => {
+  it("displays the user's information", () => {
     const { container } = renderLargeUserCard({ ...props })
     expect(container.querySelector('div.SRC-cardMetaData')).not.toBeNull()
     // only two fields are set for the mock profile, so there should only be two

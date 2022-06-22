@@ -127,6 +127,9 @@ export const userProfileHandlers = [
     },
   ),
 
+  /**
+   * Return a 404 when fetching the profile image
+   */
   rest.get(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,

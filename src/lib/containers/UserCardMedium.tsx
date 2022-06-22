@@ -1,17 +1,18 @@
+import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useRef, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
-import { SynapseClient, SynapseConstants } from '../utils'
 import IconCopy from '../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
-import { UserBundle, UserProfile } from '../utils/synapseTypes/'
+import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
+import { SynapseConstants } from '../utils'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
+import { useGetUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
+import { UserProfile } from '../utils/synapseTypes/'
 import { Avatar } from './Avatar'
+import IconSvg from './IconSvg'
 import { ToastMessage } from './ToastMessage'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
-import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { Skeleton } from '@material-ui/lab'
-import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
-import IconSvg from './IconSvg'
 
 export type UserCardMediumProps = {
   userProfile: UserProfile
@@ -64,7 +65,6 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
 }) => {
   const [showModal, setShowModal] = useState(false)
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false)
-  const [ORCIDHref, setORCIDHref] = useState<string | undefined>(undefined)
 
   const copyToClipboardRef = useRef<HTMLParagraphElement>(null)
 
@@ -99,21 +99,12 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
     }
   }, [])
 
-  useEffect(() => {
-    async function updateOrcID() {
-      // PORTALS-1893: Add ORCID to medium/large card
-      if (!ORCIDHref) {
-        const { ownerId } = userProfile
-        const bundle: UserBundle = await SynapseClient.getUserBundle(
-          ownerId,
-          SynapseConstants.USER_BUNDLE_MASK_ORCID,
-          undefined,
-        )
-        setORCIDHref(bundle.ORCID)
-      }
-    }
-    updateOrcID()
-  }, [userProfile])
+  const { data: userBundle } = useGetUserBundle(
+    userProfile.ownerId,
+    SynapseConstants.USER_BUNDLE_MASK_ORCID,
+  )
+
+  const ORCID = userBundle?.ORCID
 
   const toggleContextMenu = (_event: any) => {
     setIsContextMenuOpen(isOpen => !isOpen)
@@ -234,9 +225,9 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             <IconCopy />
           </p>
         )}
-        {ORCIDHref && (
+        {ORCID && (
           <a
-            href={ORCIDHref}
+            href={ORCID}
             target="_blank"
             rel="noopener noreferrer"
             style={{ width: 'fit-content' }}
