@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react'
 
+export async function preFetchResource(url: string) {
+  const response = await fetch(url)
+  const blob = await response.blob()
+  return URL.createObjectURL(blob)
+}
+
+export function releaseResourceUrl(resourceUrl: string) {
+  URL.revokeObjectURL(resourceUrl)
+}
+
 /**
  * Custom hook for retrieving a resource and assigning it a localhost URL. This is useful for
  * fetching resources from URLs that may expire before the resource renders.
@@ -15,11 +25,9 @@ export default function usePreFetchResource(
     let isMounted = true
     const getData = async (url: string) => {
       try {
-        const response = await fetch(url)
-        const blob = await response.blob()
+        const resourceUrl = await preFetchResource(url)
         if (isMounted) {
-          const blobURL = URL.createObjectURL(blob)
-          setResourceURL(blobURL)
+          setResourceURL(resourceUrl)
         }
       } catch (e) {
         console.error(
@@ -41,7 +49,7 @@ export default function usePreFetchResource(
       // When we no longer need the object, we release it.
       // See https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
       if (resourceURL) {
-        URL.revokeObjectURL(resourceURL)
+        releaseResourceUrl(resourceURL)
       }
     }
   }, [resourceURL])

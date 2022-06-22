@@ -65,18 +65,20 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
   const { accessToken } = useSynapseContext()
   const [principalId, setPrincipalId] = useState(ownerId)
   const [isLoading, setIsLoading] = useState(true)
+  // if null, the user has no profile image. if undefined, the profile image is still being fetched
   const [fetchedPresignedUrl, setFetchedPresignedUrl] = useState<
     string | null | undefined
   >(undefined)
 
+  // If we weren't provided an initialProfile, fetch from Synapse
   const { data: fetchedProfile } = useGetUserProfile(principalId!, {
     enabled: !!principalId && !initialProfile,
   })
-
   const userProfile = initialProfile ?? fetchedProfile
 
   useEffect(() => {
     let isCanceled = false
+    // If we weren't provided an inital presigned URL for the image, fetch from Synapse.
     if (!initialPreSignedURL && (ownerId || userProfile?.ownerId)) {
       SynapseClient.getProfilePicPreviewPresignedUrl(
         (ownerId ?? userProfile?.ownerId)!,
@@ -92,13 +94,12 @@ export const UserCard: React.FunctionComponent<UserCardProps> = (
   }, [initialPreSignedURL, ownerId, userProfile?.ownerId])
 
   const presignedUrl = initialPreSignedURL ?? fetchedPresignedUrl
-  const hasProfileImage = presignedUrl !== null
 
+  const mayHaveProfileImage = presignedUrl !== null
   const imageURL = usePreFetchResource(
-    hasProfileImage ? presignedUrl : undefined,
+    mayHaveProfileImage ? presignedUrl : undefined,
   )
-
-  const isLoadingAvatar = hasProfileImage && !imageURL
+  const isLoadingAvatar = mayHaveProfileImage && !imageURL
 
   useEffect(() => {
     let isCanceled = false
