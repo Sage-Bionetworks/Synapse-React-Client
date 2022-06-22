@@ -10,12 +10,10 @@ export type TooltipProps = MuiTooltipProps
 
 const useTooltipStyle = makeStyles(theme => ({
   arrow: {
-    // gray-700
-    color: '#878E95',
+    color: theme.palette.common.black,
   },
   tooltip: {
-    // gray-700
-    backgroundColor: '#878E95',
+    backgroundColor: theme.palette.common.black,
     fontSize: '14px',
     borderRadius: '2px',
   },
