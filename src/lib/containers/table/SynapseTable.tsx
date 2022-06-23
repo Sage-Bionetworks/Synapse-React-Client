@@ -31,7 +31,7 @@ import {
 import AddToDownloadListV2 from '../AddToDownloadListV2'
 import { LabelLinkConfig } from '../CardContainerLogic'
 import DirectDownload from '../DirectDownload'
-import HasAccess from '../HasAccess'
+import { HasAccessV2 } from '../HasAccessV2'
 import loadingScreen from '../LoadingScreen'
 import ModalDownload from '../ModalDownload'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
@@ -739,11 +739,11 @@ export default class SynapseTable extends React.Component<
       if (isShowingAccessColumn) {
         rowContent.unshift(
           <td key={rowSynapseId} className="SRC_noBorderTop">
-            <HasAccess
+            <HasAccessV2
               key={rowSynapseId}
               entityId={rowSynapseId}
               entityVersionNumber={entityVersionNumber}
-            ></HasAccess>
+            />
           </td>,
         )
       }

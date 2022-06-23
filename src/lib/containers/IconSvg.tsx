@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react'
-import ReactTooltip from 'react-tooltip'
-import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import {
   Block,
   ArrowBackIos,
@@ -86,6 +84,7 @@ import PackagableFile from '../assets/mui_components/PackagableFile'
 import Docker from '../assets/mui_components/Docker'
 import AccessManagement from '../assets/mui_components/AccessManagement'
 import { EntityType } from '../utils/synapseTypes/EntityType'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 export type Icon =
   | 'accessOpen'
@@ -430,29 +429,18 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   }, [icon, color])
 
   return (
-    <>
+    <Tooltip placement="top" title={label ?? ''}>
       <span
         data-svg={icon}
         className="styled-svg-wrapper"
         style={wrapperCss}
         id={`icon-${icon}`}
-        data-for={`icon-${icon}`}
-        data-tip={label}
         role={'img'}
         {...rest}
       >
         {getIcon(options)}
       </span>
-      {label && (
-        <ReactTooltip
-          className={'icon-svg-tooltip'}
-          delayShow={TOOLTIP_DELAY_SHOW}
-          effect="solid"
-          id={`icon-${icon}`}
-          place={'top'}
-        />
-      )}
-    </>
+    </Tooltip>
   )
 }
 
