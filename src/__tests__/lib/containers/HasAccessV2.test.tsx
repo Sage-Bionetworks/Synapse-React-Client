@@ -46,23 +46,6 @@ const props: HasAccessProps = {
 
 const onGetRestrictionInformation = jest.fn()
 
-/**
- * Cases:
- * - Unauthorized
- *  - Can view, but not download
- *  - Cannot view
- * - File handle is accessible
- * - No file handle
- *  - Entity is not a FileEntity
- *  - Entity does not have a dataFileHandleId
- *
- * Access Requirement states:
- *  - No access requirements
- *  - Meet all access requirements
- *  - Do not meet all access requirements
- *  - Do not meet all access requirements, and AR type is not supported by this component
- */
-
 function useMswEntityBundle(entityBundle: EntityBundle) {
   server.use(
     rest.post(
