@@ -102,7 +102,6 @@ export const CardContainer = (props: CardContainerProps) => {
       </Button>
     </div>
   )
-
   let cards
   if (type === MEDIUM_USER_CARD) {
     // Hard coding ownerId as a column name containing the user profile ownerId

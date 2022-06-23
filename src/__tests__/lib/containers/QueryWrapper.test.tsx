@@ -3,10 +3,6 @@ import {
   QueryWrapper,
   QueryWrapperProps,
 } from '../../../lib/containers/QueryWrapper'
-// import {
-//   InfiniteQueryWrapper,
-//   InfiniteQueryWrapperProps,
-// } from '../../../lib/containers/InfiniteQueryWrapper'
 import {
   useQueryContext,
   QueryContextType,
