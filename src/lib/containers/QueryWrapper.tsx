@@ -77,14 +77,11 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
 
-  const [currentPage, setCurrentPage] = useState<number | 'ALL'>(0)
-
   const goToPage = async (pageNum: number) => {
     const lastQueryRequestDeepClone = getLastQueryRequest()
     lastQueryRequestDeepClone.query.offset =
       (pageNum - 1) * (lastQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE)
     executeQueryRequest(lastQueryRequestDeepClone)
-    setCurrentPage(pageNum - 1)
   }
 
   useDeepCompareEffect(() => {
@@ -149,7 +146,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
     const clonedQueryRequest = cloneDeep(queryRequest)
 
     setLastQueryRequest(clonedQueryRequest)
-    setCurrentPage(0)
 
     if (clonedQueryRequest.query) {
       const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
