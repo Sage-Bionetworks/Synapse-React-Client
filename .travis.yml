@@ -1,9 +1,6 @@
-env:
-  global:
-    - NODE_OPTIONS=--max-old-space-size=3072
 language: node_js
 node_js:
   - 14
 script:
-  - yarn test:coverage
+  - yarn test:ci
   - yarn build
