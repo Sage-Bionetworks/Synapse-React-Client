@@ -1,6 +1,6 @@
 env:
   global:
-    - NODE_OPTIONS=--max_old_space_size=4096
+    - NODE_OPTIONS=--max-old-space-size=3072
 language: node_js
 node_js:
   - 14
