@@ -34,3 +34,17 @@ window.URL.createObjectURL = jest
   .fn()
   .mockReturnValue('blob:mockBlobUrlConfiguredInTestSetup')
 window.URL.revokeObjectURL = jest.fn()
+
+/**
+ * Jest is very leaky...
+ * see
+ * - https://github.com/facebook/jest/issues/7311
+ * - https://github.com/facebook/jest/issues/7874
+ *
+ * Note that global.gc will only be exposed if node is passed --expose-gc
+ */
+afterEach(() => {
+  if (global.gc) {
+    global.gc()
+  }
+})
