@@ -23,6 +23,7 @@ import {
   ENTITY_SCHEMA_VALIDATION,
   FAVORITES,
   NOTIFICATION_EMAIL,
+  PROFILE_IMAGE_PREVIEW,
   REGISTERED_SCHEMA_ID,
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
@@ -3748,5 +3749,23 @@ export const getApprovedSubmissionInfo = (
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns the presigned URL for a user's profile pic. Note that the presigned URL
+ * expires after a short time, so it should be used immediately.
+ * @param userId
+ * @returns A presigned URL that can be used to fetch the profile preview image, or null if the user
+ *   does not have a profile image
+ */
+export function getProfilePicPreviewPresignedUrl(userId: string) {
+  return allowNotFoundError(() =>
+    doGet<string>(
+      PROFILE_IMAGE_PREVIEW(userId) + `?redirect=false`,
+      undefined,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }

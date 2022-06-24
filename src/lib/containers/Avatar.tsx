@@ -3,6 +3,7 @@ import { getColor } from '../utils/functions/getUserData'
 import { UserProfile } from '../utils/synapseTypes'
 import UserCardMedium from './UserCardMedium'
 import { useOverlay } from '../utils/hooks/useOverlay'
+import { Skeleton } from '@material-ui/lab'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
@@ -14,6 +15,7 @@ export type AvatarProps = {
   avatarSize?: AvatarSize
   imageURL?: string
   showCardOnHover?: boolean
+  isLoadingAvatar?: boolean
 }
 
 export const Avatar: React.FunctionComponent<AvatarProps> = ({
@@ -21,6 +23,7 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
   avatarSize = 'LARGE',
   imageURL,
   showCardOnHover = false,
+  isLoadingAvatar = false,
 }) => {
   const target = useRef(null)
 
@@ -51,44 +54,48 @@ export const Avatar: React.FunctionComponent<AvatarProps> = ({
 
   const cursorStyle = showCardOnHover ? 'pointer' : 'unset'
 
+  const hasProfileImage = !!imageURL
+
+  const conditionalStyles: React.CSSProperties = hasProfileImage
+    ? {
+        backgroundImage: `url(${imageURL})`,
+      }
+    : { background: getColor(userProfile.userName) }
+
+  if (isLoadingAvatar) {
+    return <Skeleton className={sizeClass} variant="circle" />
+  }
+
+  let content: JSX.Element | string = <></>
+
+  if (!hasProfileImage) {
+    content = userProfile.firstName
+      ? userProfile.firstName[0]
+      : userProfile.userName[0]
+  }
+
   return (
     <>
-      {showCardOnHover && OverlayComponent}
-      {imageURL ? (
-        <div
-          ref={target}
-          onMouseEnter={() => toggleShow()}
-          onMouseLeave={() => toggleHide()}
-          onClick={event => {
-            if (showCardOnHover) {
-              event.stopPropagation()
-            }
-            isShowingOverlay ? toggleHide(false) : toggleShow(false)
-          }}
-          style={{ backgroundImage: `url(${imageURL})`, cursor: cursorStyle }}
-          className={sizeClass}
-        />
-      ) : (
-        <div
-          ref={target}
-          onMouseEnter={() => toggleShow()}
-          onMouseLeave={() => toggleHide()}
-          onClick={event => {
-            if (showCardOnHover) {
-              event.stopPropagation()
-            }
-            isShowingOverlay ? toggleHide(false) : toggleShow(false)
-          }}
-          style={{
-            background: getColor(userProfile.userName),
-            cursor: cursorStyle,
-          }}
-          className={`${sizeClass} SRC-centerContentInline`}
-        >
-          {userProfile.firstName &&
-            (userProfile.firstName[0] || userProfile.userName[0])}
-        </div>
-      )}
+      {showCardOnHover && <OverlayComponent />}
+      <div
+        ref={target}
+        role="img"
+        onMouseEnter={() => toggleShow()}
+        onMouseLeave={() => toggleHide()}
+        onClick={event => {
+          if (showCardOnHover) {
+            event.stopPropagation()
+          }
+          isShowingOverlay ? toggleHide(false) : toggleShow(false)
+        }}
+        className={`${sizeClass} SRC-centerContentInline`}
+        style={{
+          cursor: cursorStyle,
+          ...conditionalStyles,
+        }}
+      >
+        {content}
+      </div>
     </>
   )
 }
