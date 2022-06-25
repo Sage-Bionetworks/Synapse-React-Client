@@ -42,15 +42,15 @@ import {
   SQL_EDITOR,
 } from '../../../utils/SynapseConstants'
 
-import { ReactComponent as Data2Svg } from '../../../assets/icons/Data2.svg'
-import { ReactComponent as studyActiveSvg } from '../../../assets/icons/study-active.svg'
-import { ReactComponent as studyCompleteSvg } from '../../../assets/icons/study-complete.svg'
-import { ReactComponent as DNA_TwoSvg } from '../../../assets/icons/DNA_Two.svg'
-import { ReactComponent as organizationsSvg } from '../../../assets/icons/organizations.svg'
-import { ReactComponent as personSvg } from '../../../assets/icons/person.svg'
-import { ReactComponent as mouseSvg } from '../../../assets/icons/mouse.svg'
-import { ReactComponent as chart2Svg } from '../../../assets/icons/chart2.svg'
-import { ReactComponent as fileSvg } from '../../../assets/icons/file.svg'
+import Data2Svg from '../../../assets/icons/Data2.svg'
+import studyActiveSvg from '../../../assets/icons/study-active.svg'
+import studyCompleteSvg from '../../../assets/icons/study-complete.svg'
+import DNA_TwoSvg from '../../../assets/icons/DNA_Two.svg'
+import organizationsSvg from '../../../assets/icons/organizations.svg'
+import personSvg from '../../../assets/icons/person.svg'
+import mouseSvg from '../../../assets/icons/mouse.svg'
+import chart2Svg from '../../../assets/icons/chart2.svg'
+import fileSvg from '../../../assets/icons/file.svg'
 
 import {
   Project,
