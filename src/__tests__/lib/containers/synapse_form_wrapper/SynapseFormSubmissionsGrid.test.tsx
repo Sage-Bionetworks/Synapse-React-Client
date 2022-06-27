@@ -74,7 +74,8 @@ describe('basic tests', () => {
     await instance.componentDidMount()
     expect(wrapper).toBeDefined()
     expect(wrapper.find('table')).toHaveLength(0)
-    expect(wrapper.find('img').length).toBe(1)
+    // In test, SVG import becomes 'ReactComponent'. Handled by SVGR when built
+    expect(wrapper.find('ReactComponent').length).toBe(1)
   })
 
   it('should modify the modal state when clicking "delete"', async () => {

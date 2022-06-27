@@ -5,12 +5,12 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
-    "target": "ES6",
+    "target": "es5",
     "lib": ["es2019", "dom"],
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",
-    "rootDir": "./",
+    "rootDir": "src",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -27,6 +27,8 @@
     "useUnknownInCatchVariables": false
   },
   "exclude": [
+    ".storybook",
+    "storybook-static",
     "esbuild.config.mjs",
     "node_modules",
     "build",
@@ -37,5 +39,6 @@
     "webpack",
     "jest",
     "setupTests.js"
-  ]
+  ],
+  "include": ["src"]
 }

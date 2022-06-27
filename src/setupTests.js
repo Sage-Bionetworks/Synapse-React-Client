@@ -4,7 +4,7 @@ import 'raf/polyfill' // polyfill for requestAnimationFrame
 import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 import '@testing-library/jest-dom/extend-expect'
-
+import crypto from 'crypto'
 // MarkdownSynapse dependencies below --
 // When using the component in production it relies on these imports being globals,
 // however, the testing environment doesn't have a browser loading CDNs, so we
@@ -34,3 +34,13 @@ window.URL.createObjectURL = jest
   .fn()
   .mockReturnValue('blob:mockBlobUrlConfiguredInTestSetup')
 window.URL.revokeObjectURL = jest.fn()
+
+// crypto.getRandomValues polyfill for JSDOM
+Object.defineProperty(global.self, 'crypto', {
+  value: {
+    getRandomValues: arr => crypto.randomBytes(arr.length),
+  },
+})
+//  RUNS  src/__tests__/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid.test.tsx
+//  RUNS  src/__tests__/lib/containers/ModalDownload.test.tsx
+//  RUNS  src/__tests__/lib/containers/Login.test.tsx
