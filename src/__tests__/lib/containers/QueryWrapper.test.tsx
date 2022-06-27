@@ -76,7 +76,6 @@ describe('basic functionality', () => {
     expect(providedContext).toEqual(
       expect.objectContaining({
         data: syn16787123Json,
-        // hasNextPage: true,
       }),
     )
   })

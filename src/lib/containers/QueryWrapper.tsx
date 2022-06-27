@@ -66,8 +66,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const data = asyncJobStatus?.responseBody
 
-  const isFetchingNextPage = false
-
   // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
   const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
 
@@ -77,10 +75,20 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
 
+  const pageSize = lastQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
+  const currentPage = Math.ceil(
+    ((lastQueryRequest.query.offset ?? 0) + Number(pageSize)) / pageSize,
+  )
+
+  const setPageSize = (pageSize: number) => {
+    const lastQueryRequestDeepClone = getLastQueryRequest()
+    lastQueryRequestDeepClone.query.limit = pageSize
+    executeQueryRequest(lastQueryRequestDeepClone)
+  }
+
   const goToPage = async (pageNum: number) => {
     const lastQueryRequestDeepClone = getLastQueryRequest()
-    lastQueryRequestDeepClone.query.offset =
-      (pageNum - 1) * (lastQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE)
+    lastQueryRequestDeepClone.query.offset = (pageNum - 1) * pageSize
     executeQueryRequest(lastQueryRequestDeepClone)
   }
 
@@ -195,7 +203,9 @@ export function QueryWrapper(props: QueryWrapperProps) {
 
   const context: PaginatedQueryContextType = {
     data: dataWithLockedFacetRemoved,
-    isLoadingNewPage: isFetchingNextPage,
+    currentPage,
+    pageSize,
+    setPageSize,
     isLoadingNewBundle: isLoadingNewBundle,
     getLastQueryRequest,
     getInitQueryRequest,
@@ -210,8 +220,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
    * Render the children without any formatting
    */
   const { children } = props
-  const loadingCursorClass =
-    isLoadingNewBundle || isFetchingNextPage ? 'SRC-logo-cursor' : ''
+  const loadingCursorClass = isLoadingNewBundle ? 'SRC-logo-cursor' : ''
   return (
     <QueryContextProvider queryContext={context}>
       <div

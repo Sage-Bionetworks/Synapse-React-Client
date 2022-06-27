@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Pagination } from '@material-ui/lab'
 import { usePaginatedQueryContext } from '../QueryContext'
 import Typography from '../../utils/typography/Typography'
 
 export const TablePagination = () => {
-  const [pageSize, setPageSize] = useState(25)
-  const [page, setPage] = useState(1)
-
-  const { executeQueryRequest, getLastQueryRequest, data, goToPage } =
+  const { data, goToPage, pageSize, setPageSize, currentPage } =
     usePaginatedQueryContext()
   const queryCount = data?.queryCount
 
   const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value)
-    goToPage(page)
+    goToPage(value)
   }
 
   const handlePageSize = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -21,17 +17,10 @@ export const TablePagination = () => {
     setPageSize(value)
   }
 
-  useEffect(() => {
-    const lastQueryRequestDeepClone = getLastQueryRequest()
-    lastQueryRequestDeepClone.query.offset = (page - 1) * pageSize
-    lastQueryRequestDeepClone.query.limit = pageSize
-    executeQueryRequest(lastQueryRequestDeepClone)
-  }, [pageSize, page])
-
   return (
     <div>
       <Pagination
-        page={page}
+        page={currentPage}
         count={Math.ceil(queryCount! / pageSize)}
         color="secondary"
         onChange={handlePage}

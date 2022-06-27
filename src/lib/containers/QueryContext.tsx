@@ -33,15 +33,13 @@ export type QueryContextType = {
   getInitQueryRequest: () => QueryBundleRequest
   /** Updates the current query with the passed request */
   executeQueryRequest: (param: QueryBundleRequest) => void
-  /** Returns true when loading a new page of query results */
-  isLoadingNewPage: boolean
   /** Returns true when loading a brand new query result bundle. Will not be true when just loading the next page of query results. */
   isLoadingNewBundle: boolean
   /** The error returned by the query request, if one is encountered */
   error: SynapseClientError | null
   /** The status of the asynchronous job. */
   asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
-  /** Whether or not facets are available to be filtered upon based on the current data */
+  /** Whether or not facgit ets are available to be filtered upon based on the current data */
   isFacetsAvailable: boolean
   /**
    * A facet may be "locked" so that it is not modifiable by the user, for example when showing only data relevant to a particular facet value on a Details Page.
@@ -51,11 +49,19 @@ export type QueryContextType = {
 }
 
 export type PaginatedQueryContextType = QueryContextType & {
-  /** Navigates to a particular page */
+  /** Navigates to a particular page, where the first page has value 1 */
   goToPage: (pageNum: number) => Promise<void>
+  /** The current page number, where page 1 is the first page. */
+  currentPage: number
+  /** Updates the page size */
+  setPageSize: (pageSize: number) => void
+  /** The current page size. */
+  pageSize: number
 }
 
 export type InfiniteQueryContextType = QueryContextType & {
+  /** Returns true when loading a new page of query results */
+  isLoadingNewPage: boolean
   /** Whether or not the query result bundle has a next page */
   hasNextPage: boolean
   /** Invoke this method to fetch and append the next page of rows to the data  */
