@@ -39,7 +39,7 @@ export type QueryContextType = {
   error: SynapseClientError | null
   /** The status of the asynchronous job. */
   asyncJobStatus?: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>
-  /** Whether or not facgit ets are available to be filtered upon based on the current data */
+  /** Whether or not facets are available to be filtered upon based on the current data */
   isFacetsAvailable: boolean
   /**
    * A facet may be "locked" so that it is not modifiable by the user, for example when showing only data relevant to a particular facet value on a Details Page.
