@@ -104,3 +104,6 @@ export const USER_GROUP_HEADERS_BATCH = `${REPO}/userGroupHeaders/batch`
 
 export const DATA_ACCESS_SUBMISSION_BY_ID = (id: string | number) =>
   `${REPO}/dataAccessSubmission/${id}`
+
+export const PROFILE_IMAGE_PREVIEW = (userId: string) =>
+  `${REPO}/userProfile/${userId}/image/preview`

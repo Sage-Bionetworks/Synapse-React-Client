@@ -14,7 +14,6 @@ import {
   useUpdateEntity,
 } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { useSet } from '../../../utils/hooks/useSet'
-import useTraceUpdate from '../../../utils/hooks/useTraceUpdate'
 import {
   Dataset,
   DatasetItem,
@@ -281,7 +280,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
   const SelectAllCheckboxRenderer = (props: SelectAllCheckboxRendererProps) => {
     const { datasetToUpdate, clearSelectedIds, addSelectedId } = props
-    useTraceUpdate(props)
     const isChecked = allItemsAreSelected
 
     return datasetToUpdate ? (
