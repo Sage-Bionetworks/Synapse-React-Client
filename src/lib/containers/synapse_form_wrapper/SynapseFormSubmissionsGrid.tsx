@@ -419,7 +419,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     if (inProgress.fileList.length === 0 && submitted.fileList.length === 0) {
       return (
         <div className="text-center">
-          <img src={NoSubmissionsIcon} alt="no submissions"></img>
+          <NoSubmissionsIcon title="no submissions" />
           <p className="padding-full">You have no submissions</p>
         </div>
       )

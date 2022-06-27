@@ -1,5 +1,6 @@
 import { mergeConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
+import legacy from '@vitejs/plugin-legacy'
 
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -18,7 +19,18 @@ module.exports = {
   async viteFinal(config, { configType }) {
     // return the customized config
     return mergeConfig(config, {
-      plugins: [svgr()],
+      plugins: [
+        svgr(),
+        legacy({
+          modernPolyfills: ['es.array.includes'],
+          renderLegacyChunks: false,
+        }),
+      ],
+      build: {
+        rollupOptions: {
+          external: ['sql-parser', '@sage-bionetworks/rjsf-core', '@rjsf/core'],
+        },
+      },
     })
   },
 }

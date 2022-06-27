@@ -41,11 +41,11 @@ export default function SynapseVideo({ params }: Props) {
         const videoKey =
           params.oggSynapseId || params.mp4SynapseId || params.webmSynapseId
 
-        getEntity<FileEntity>(accessToken, videoKey).then(
+        getEntity<FileEntity>(accessToken, videoKey!).then(
           (data: FileEntity) => {
             const fileHandleAssociationList: FileHandleAssociation[] = [
               {
-                associateObjectId: videoKey,
+                associateObjectId: videoKey!,
                 associateObjectType: FileHandleAssociateType.FileEntity,
                 fileHandleId: data.dataFileHandleId,
               },

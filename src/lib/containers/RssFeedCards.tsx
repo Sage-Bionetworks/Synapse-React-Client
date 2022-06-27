@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Parser from 'rss-parser'
 import moment from 'moment'
-import { ReactComponent as subscribePlus } from '../assets/icons/subscribe_plus.svg'
+import { ReactComponent as SubscribePlus } from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import { LockedFacet } from './QueryWrapper'
 import NoData from '../assets/icons/NoData'
@@ -96,13 +96,13 @@ export default class RssFeedCards extends React.Component<
                 className="FeedSubscribeToNewsLink SRC-no-border-bottom-imp"
                 onClick={this.onClickSubscribe}
               >
-                <img src={subscribePlus} alt="Subscribe to News" />
+                <SubscribePlus title="Subscribe to News" />
                 Subscribe to News
               </a>
             )}
             {this.state.isShowingSubscribeUI && (
               <div className="MailchimpSubscribeContainer">
-                <img src={subscribePlus} alt="Subscribe to News" />
+                <SubscribePlus title="Subscribe to News" />
                 <p>
                   Subscribe to receive the {this.props.mailChimpListName} by
                   e-mail, which provides information and updates related to the
