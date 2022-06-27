@@ -12,7 +12,15 @@ import { SynapseConstants } from '../../utils/'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type Props = {
-  params: any
+  params: {
+    width?: string
+    height?: string
+    videoId?: string
+    vimeoId?: string
+    oggSynapseId?: string
+    mp4SynapseId?: string
+    webmSynapseId?: string
+  }
 }
 
 export default function SynapseVideo({ params }: Props) {

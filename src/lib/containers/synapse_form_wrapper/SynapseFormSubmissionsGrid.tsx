@@ -13,7 +13,7 @@ import { Modal } from 'react-bootstrap'
 
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
+import { ReactComponent as NoSubmissionsIcon } from '../../assets/icons/json-form-tool-no-submissions.svg'
 import IconSvg from '../IconSvg'
 
 /**

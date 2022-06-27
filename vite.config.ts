@@ -1,22 +1,25 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import svgLoader from 'vite-svg-loader'
-const reactSvgPlugin = require('vite-plugin-react-svg')
+import svgr from 'vite-plugin-svgr'
 const SERVER = 'http://localhost:8080'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 
-// import Buffer from 'buffer'
 export default defineConfig({
-  plugins: [react(), reactSvgPlugin()],
+  plugins: [
+    react(),
+    svgr({
+      svgrOptions: {
+        ref: true,
+      },
+    }),
+  ],
   define: {
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),
     'process.env': {},
     sql: {},
-    // global: 'globalThis',
-    // Buffer: Buffer,
   },
   server: {
     proxy: {

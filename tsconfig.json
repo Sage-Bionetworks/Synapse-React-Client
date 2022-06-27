@@ -10,7 +10,7 @@
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",
-    "rootDir": "src",
+    "rootDir": "./",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -37,6 +37,5 @@
     "webpack",
     "jest",
     "setupTests.js"
-  ],
-  "include": ["src"]
+  ]
 }

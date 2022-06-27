@@ -1,7 +1,7 @@
 import * as React from 'react'
 import Parser from 'rss-parser'
 import moment from 'moment'
-import subscribePlus from '../assets/icons/subscribe_plus.svg'
+import { ReactComponent as subscribePlus } from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
 import { LockedFacet } from './QueryWrapper'
 import NoData from '../assets/icons/NoData'

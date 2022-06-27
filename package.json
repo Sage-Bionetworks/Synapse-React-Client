@@ -88,7 +88,8 @@
     "tslib": "^2.3.1",
     "ua-parser-js": "^1.0.2",
     "universal-cookie": "^4.0.3",
-    "use-deep-compare-effect": "^1.3.1"
+    "use-deep-compare-effect": "^1.3.1",
+    "vite-plugin-svgr": "^2.2.0"
   },
   "peerDependencies": {
     "react": "^16.14.0",
@@ -106,11 +107,17 @@
     "@babel/preset-typescript": "^7.14.5",
     "@babel/runtime": "^7.14.6",
     "@babel/types": "^7.14.5",
-    "@craco/craco": "^6.4.3",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
     "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
     "@sage-bionetworks/esbuild-plugin-svgr": "^0.0.4",
+    "@storybook/addon-actions": "^6.5.9",
+    "@storybook/addon-essentials": "^6.5.9",
+    "@storybook/addon-interactions": "^6.5.9",
+    "@storybook/addon-links": "^6.5.9",
+    "@storybook/builder-vite": "^0.1.37",
+    "@storybook/react": "^6.5.9",
+    "@storybook/testing-library": "^0.0.13",
     "@testing-library/dom": "^8.1.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
@@ -148,6 +155,7 @@
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "@vitejs/plugin-react": "^1.3.2",
+    "babel-loader": "^8.2.5",
     "browserify-fs": "^1.0.0",
     "buffer": "^6.0.3",
     "core-js": "^3.1.4",
@@ -175,7 +183,6 @@
     "postcss-normalize": "^10.0.1",
     "prettier": "^2.6.2",
     "process": "^0.11.10",
-    "react-scripts": "^5.0.0",
     "react-select-event": "^5.3.0",
     "react-styleguidist": "^11.2.0",
     "sinon": "^7.2.2",
@@ -184,8 +191,6 @@
     "timers-browserify": "^2.0.12",
     "typescript": "4.4.3",
     "vite": "^2.9.12",
-    "vite-plugin-react-svg": "^0.2.0",
-    "vite-svg-loader": "^3.4.0",
     "yarn": "^1.22.17"
   },
   "jest": {
@@ -221,7 +226,9 @@
     "build:docs": "yarn run build:css && npx styleguidist build",
     "link-src": "yarn link && cd ./node_modules/react && yarn link && cd ../react-router && yarn link && cd ../react-router-dom && yarn link && cd ../../",
     "unlink-src": "yarn unlink && cd ./node_modules/react && yarn unlink && cd ../react-router && yarn unlink && cd ../react-router-dom && yarn unlink && cd ../../",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "resolutions": {
     "js-yaml": "3.13.1",
