@@ -8,7 +8,7 @@ import {
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../lib/containers/QueryWrapper'
+} from '../../../lib/containers/QueryContext'
 import TotalQueryResults, {
   TotalQueryResultsProps,
 } from '../../../lib/containers/TotalQueryResults'

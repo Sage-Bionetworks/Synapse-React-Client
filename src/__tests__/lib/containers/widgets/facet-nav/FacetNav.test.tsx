@@ -15,7 +15,7 @@ import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../../../lib/containers/QueryWrapper'
+} from '../../../../../lib/containers/QueryContext'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,

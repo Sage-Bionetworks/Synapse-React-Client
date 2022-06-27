@@ -24,6 +24,15 @@ const sharedQueryDefaults = {
   refetchOnWindowFocus: false,
 }
 
+/**
+ *
+ * @param queryBundleRequest
+ * @param options
+ * @returns
+ *
+ * @deprecated - use useGetQueryResultBundleWithAsyncStatus. That hook can be renamed and this can be removed
+ *  when all cases are using useGetQueryResultBundleWithAsyncStatus
+ */
 export default function useGetQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<QueryResultBundle, SynapseClientError>,
@@ -40,6 +49,35 @@ export default function useGetQueryResultBundle(
   )
 }
 
+export function useGetQueryResultBundleWithAsyncStatus(
+  queryBundleRequest: QueryBundleRequest,
+  options?: UseQueryOptions<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+    SynapseClientError
+  >,
+  setCurrentAsyncStatus?: (
+    status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  ) => void,
+) {
+  const { accessToken } = useSynapseContext()
+
+  return useQuery<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+    SynapseClientError
+  >(
+    entityQueryKeys.tableQueryResultWithAsyncStatus(queryBundleRequest, false),
+    () =>
+      SynapseClient.getQueryTableAsyncJobResults(
+        queryBundleRequest,
+        accessToken,
+        setCurrentAsyncStatus,
+      ),
+    {
+      ...sharedQueryDefaults,
+      ...options,
+    },
+  )
+}
 export function useInfiniteQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
   options?: UseInfiniteQueryOptions<

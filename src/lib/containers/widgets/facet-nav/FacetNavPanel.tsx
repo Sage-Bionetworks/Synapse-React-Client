@@ -20,7 +20,7 @@ import {
 } from '../../../utils/synapseTypes'
 import loadingScreen from '../../LoadingScreen'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
-import { useQueryContext } from '../../QueryWrapper'
+import { useQueryContext } from '../../QueryContext'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter'
 import {
   applyChangesToValuesColumn,

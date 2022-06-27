@@ -12,7 +12,8 @@ import { ErrorBanner } from './ErrorBanner'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { IconSvgOptions } from './IconSvg'
 import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
-import { QueryContextConsumer, QueryWrapper } from './QueryWrapper'
+import { QueryContextConsumer } from './QueryContext'
+import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -132,7 +133,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
   }
 
   return (
-    <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
+    <InfiniteQueryWrapper {...props} initQueryRequest={initQueryRequest}>
       <QueryVisualizationWrapper
         rgbIndex={props.rgbIndex}
         unitDescription={props.unitDescription}
@@ -143,7 +144,7 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
           {queryContext => <ErrorBanner error={queryContext?.error} />}
         </QueryContextConsumer>
       </QueryVisualizationWrapper>
-    </QueryWrapper>
+    </InfiniteQueryWrapper>
   )
 }
 

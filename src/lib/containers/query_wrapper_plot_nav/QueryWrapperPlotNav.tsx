@@ -17,7 +17,9 @@ import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper'
-import { QueryWrapper, QueryContextConsumer } from '../QueryWrapper'
+import { QueryWrapper as PaginatedQueryWrapper } from '../QueryWrapper'
+import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
+import { QueryContextConsumer } from '../QueryContext'
 import { QueryWrapperErrorBanner } from '../QueryWrapperErrorBanner'
 import SearchV2, { SearchV2Props } from '../SearchV2'
 import SqlEditor from '../SqlEditor'
@@ -135,6 +137,10 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
     query,
   }
+  const QueryWrapper = !!tableConfiguration
+    ? PaginatedQueryWrapper
+    : InfiniteQueryWrapper
+
   return (
     <div className="QueryWrapperPlotNav">
       <QueryWrapper {...props} initQueryRequest={initQueryRequest}>

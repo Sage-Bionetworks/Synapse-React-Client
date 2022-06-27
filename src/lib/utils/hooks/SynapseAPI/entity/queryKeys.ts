@@ -82,6 +82,18 @@ export const entityQueryKeys = {
     },
   ],
 
+  tableQueryResultWithAsyncStatus: (
+    queryBundleRequest: QueryBundleRequest,
+    infinite: boolean,
+  ) => [
+    {
+      ...entityQueryKeys.entity(queryBundleRequest.entityId)[0],
+      scope: 'tableQueryResultWithAsyncStatus',
+      isInfinite: infinite,
+      tableQueryBundleRequest: queryBundleRequest,
+    },
+  ],
+
   boundJSONSchema: (id: string) => [
     {
       ...entityQueryKeys.entity(id)[0],

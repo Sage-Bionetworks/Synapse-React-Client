@@ -3,7 +3,7 @@ import Parser from 'rss-parser'
 import moment from 'moment'
 import subscribePlus from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
-import { LockedFacet } from './QueryWrapper'
+import { LockedFacet } from './QueryContext'
 import NoData from '../assets/icons/NoData'
 import { Button } from 'react-bootstrap'
 

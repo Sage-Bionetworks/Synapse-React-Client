@@ -8,7 +8,7 @@ import { QueryVisualizationContextType } from '../../../lib/containers/QueryVisu
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../lib/containers/QueryWrapper'
+} from '../../../lib/containers/QueryContext'
 import {
   SynapseTableCell,
   SynapseTableCellProps,
