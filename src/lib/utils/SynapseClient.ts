@@ -322,11 +322,14 @@ const fetchWithExponentialTimeout = async <TResponse>(
     response = await fetch(url, options)
   }
 
+  const contentType = response.headers.get('Content-Type')
   const responseBody = await response.text()
   let responseObject: TResponse | SynapseError | string = responseBody
   try {
     // try to parse it as json
-    responseObject = JSON.parse(responseBody) as TResponse | SynapseError
+    if (contentType && contentType.includes('application/json')) {
+      responseObject = JSON.parse(responseBody) as TResponse | SynapseError
+    }
   } catch (error) {
     console.warn('Failed to parse response as JSON', responseBody)
   }
