@@ -40,7 +40,7 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
     >
       <MemoryRouter>
         <SynapseToastContainer />
-        <main className="bootstrap-4-backport">{props.children}</main>
+        <main>{props.children}</main>
       </MemoryRouter>
     </SynapseContextProvider>
   )

@@ -21,7 +21,7 @@ LoginDemo.args = {
   sessionCallback: () => {
     sessionChangeHandler().then(profile => {
       displayToast(
-        `You are currently logged in as ${profile.userName} (last authenticated at ${date})`,
+        `You are currently logged in as ${profile.userName}`,
         'info',
         { autoCloseInMs: 5000 },
       )

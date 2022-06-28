@@ -1,6 +1,6 @@
-import { mergeConfig } from 'vite'
+import { mergeConfig, defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
-import legacy from '@vitejs/plugin-legacy'
+import { viteExternalsPlugin } from 'vite-plugin-externals'
 
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -17,20 +17,28 @@ module.exports = {
     storyStoreV7: true,
   },
   async viteFinal(config, { configType }) {
-    // return the customized config
-    return mergeConfig(config, {
+    let base = undefined
+    // Fix deployment to github pages
+    if (configType === 'PRODUCTION') {
+      base = './'
+    }
+
+    const customStorybookConfig = defineConfig({
+      base,
       plugins: [
         svgr(),
-        legacy({
-          modernPolyfills: ['es.array.includes'],
-          renderLegacyChunks: false,
+        viteExternalsPlugin({
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          'sql-parser/browser/sql-parser': 'SQLParser',
+          '@sage-bionetworks/rjsf-core': 'JSONSchemaForm',
+          '@rjsf/core': 'JSONSchemaForm',
         }),
       ],
-      build: {
-        rollupOptions: {
-          external: ['sql-parser', '@sage-bionetworks/rjsf-core', '@rjsf/core'],
-        },
-      },
     })
+
+    // return the customized config
+
+    return mergeConfig(config, customStorybookConfig)
   },
 }

@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 import { defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
-const SERVER = 'http://localhost:8080'
 
 export default defineConfig({
   plugins: [
@@ -20,11 +19,6 @@ export default defineConfig({
     __DEV__: JSON.stringify(false),
     'process.env': {},
     sql: {},
-  },
-  server: {
-    proxy: {
-      '/api': `http://${SERVER}`,
-    },
   },
   optimizeDeps: {
     esbuildOptions: {

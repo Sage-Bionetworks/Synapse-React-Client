@@ -1,0 +1,23 @@
+name: 'Publish Storybook'
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: yarn install
+      - name: Build docs
+        run: yarn build:docs
+      - name: Deploy docs to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.3.4
+        with:
+          branch: gh-pages
+          folder: styleguide

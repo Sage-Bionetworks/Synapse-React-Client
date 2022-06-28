@@ -197,14 +197,14 @@
     "ts-jest": "^28.0.5",
     "typescript": "4.7.4",
     "vite": "^2.9.12",
+    "vite-plugin-externals": "^0.5.0",
     "yarn": "^1.22.17"
   },
   "scripts": {
     "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
-    "predeploy": "yarn run build-gh && cp styleguide/index.html styleguide/404.html && cp favicon.png styleguide/favicon.png",
     "build-gh": "yarn run build:docs",
-    "deploy": "gh-pages -d styleguide && gh-pages -d styleguide -o upstream",
-    "deploy:origin": "yarn install && yarn run predeploy && gh-pages -d styleguide && gh-pages -d styleguide -o origin",
+    "deploy": "gh-pages -t -d storybook-static -o upstream",
+    "deploy:origin": "yarn install && yarn run build-storybook && gh-pages -t -d storybook-static -o origin",
     "watch:css": "yarn run build:css && sass src --watch --load-path=node_modules",
     "start-js": "vite",
     "start": "yarn storybook",
@@ -218,12 +218,12 @@
     "build:copy-assets": "cd src/lib && find . -name '*.scss' -o -name '*.css' -o -name '*.svg' | cpio -pdm ../../dist/",
     "build:esbuild": "node esbuild.config.mjs && cp -r src/umd dist/",
     "serve:docs": "yarn run storybook",
-    "build:docs": "yarn run build:css && yarn run build-storybook",
+    "build:docs": "yarn run build-storybook",
+    "build:storybook": "build-storybook && touch storybook-static/.nojekyll",
     "link-src": "yarn link && cd ./node_modules/react && yarn link && cd ../react-router && yarn link && cd ../react-router-dom && yarn link && cd ../../",
     "unlink-src": "yarn unlink && cd ./node_modules/react && yarn unlink && cd ../react-router && yarn unlink && cd ../react-router-dom && yarn unlink && cd ../../",
     "prepare": "husky install",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "start-storybook -p 6060"
   },
   "resolutions": {
     "js-yaml": "3.13.1",

@@ -1,4 +1,5 @@
 import React from 'react'
+import '../src/demo/style/DemoStyle.scss'
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

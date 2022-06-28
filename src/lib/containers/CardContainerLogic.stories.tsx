@@ -1,12 +1,11 @@
+import { ComponentMeta, ComponentStory } from '@storybook/react'
 import React from 'react'
-import { ComponentStory, ComponentMeta } from '@storybook/react'
-
-import CardContainerLogic from './CardContainerLogic'
 import {
   GENERIC_CARD,
   OBSERVATION_CARD,
   PUBLICATION,
 } from '../utils/SynapseConstants'
+import CardContainerLogic from './CardContainerLogic'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -24,7 +23,6 @@ const Template: ComponentStory<typeof CardContainerLogic> = args => (
 export const GenericCard = Template.bind({})
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 GenericCard.args = {
-  name: 'Publications',
   sql: 'SELECT * FROM syn22095937.4 order by authors asc',
   limit: 2,
   type: GENERIC_CARD,
@@ -39,7 +37,6 @@ GenericCard.args = {
 
 export const EmptyResults = Template.bind({})
 EmptyResults.args = {
-  name: 'Publications',
   sql: "SELECT * FROM syn22095937.4 WHERE study='not a study value'",
   type: GENERIC_CARD,
   genericCardSchema: {
@@ -53,7 +50,6 @@ EmptyResults.args = {
 
 export const ObservationCard = Template.bind({})
 ObservationCard.args = {
-  name: 'Publications',
   sql: `SELECT "Observation Submitter Name" as "submitterName", Synapse_id as "submitterUserId", "Observation Time" as "time", "Observation Time Units" as "timeUnits", "Observation Text" as "text", "Observation Type" as "tag" FROM syn26344832 WHERE "Observation Time" IS NOT NULL`,
   type: OBSERVATION_CARD,
   limit: 3,
