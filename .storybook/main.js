@@ -30,7 +30,6 @@ module.exports = {
         viteExternalsPlugin({
           react: 'React',
           'react-dom': 'ReactDOM',
-          'sql-parser/browser/sql-parser': 'SQLParser',
           '@sage-bionetworks/rjsf-core': 'JSONSchemaForm',
           '@rjsf/core': 'JSONSchemaForm',
         }),

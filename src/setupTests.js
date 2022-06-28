@@ -41,6 +41,3 @@ Object.defineProperty(global.self, 'crypto', {
     getRandomValues: arr => crypto.randomBytes(arr.length),
   },
 })
-//  RUNS  src/__tests__/lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid.test.tsx
-//  RUNS  src/__tests__/lib/containers/ModalDownload.test.tsx
-//  RUNS  src/__tests__/lib/containers/Login.test.tsx
