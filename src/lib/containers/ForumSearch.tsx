@@ -38,7 +38,7 @@ const ForumSearch = (props: ForumSearchProps) => {
       const searchResponse = await forumSearch(
         {
           searchString: searchInput,
-          nextPageToken: searchResult?.nextPageToken ?? undefined,
+          nextPageToken: undefined,
         },
         props.forumId,
         accessToken,
