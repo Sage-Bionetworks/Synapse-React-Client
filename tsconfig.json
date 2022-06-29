@@ -27,6 +27,8 @@
     "useUnknownInCatchVariables": false
   },
   "exclude": [
+    ".storybook",
+    "storybook-static",
     "esbuild.config.mjs",
     "node_modules",
     "build",
