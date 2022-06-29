@@ -5,6 +5,7 @@ import {
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
+  UseQueryResult,
 } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClient'
@@ -179,7 +180,7 @@ export function useGetQueryResultBundleWithAsyncStatus(
     data:
       // Don't return a result until we have both rows and stats
       rowResult.data && statsResult.data
-        ? {
+        ? ({
             ...rowResult.data,
             responseBody: rowResult.data.responseBody
               ? {
@@ -188,9 +189,12 @@ export function useGetQueryResultBundleWithAsyncStatus(
                   queryResult: rowResult.data.responseBody.queryResult,
                 }
               : undefined,
-          }
+          } as AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>)
         : undefined,
-  }
+  } as UseQueryResult<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+    SynapseClient.SynapseClientError
+  >
   return resultObject
 }
 export function useInfiniteQueryResultBundle(
