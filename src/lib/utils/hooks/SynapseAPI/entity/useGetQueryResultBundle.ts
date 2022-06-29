@@ -172,15 +172,19 @@ export function useGetQueryResultBundleWithAsyncStatus(
     setCurrentAsyncStatus,
   )
 
+  // construct a result object using the two results
   const resultObject = {
+    // For the query status, use the rowResult data since it may be changing/updated more often
     ...rowResult,
     data:
+      // Don't return a result until we have both rows and stats
       rowResult.data && statsResult.data
         ? {
             ...rowResult.data,
             responseBody: rowResult.data.responseBody
               ? {
                   ...statsResult.data?.responseBody,
+                  // Append the rows to the stats result.
                   queryResult: rowResult.data.responseBody.queryResult,
                 }
               : undefined,
