@@ -49,7 +49,7 @@ export default function useGetQueryResultBundle(
   )
 }
 
-export function useGetQueryResultBundleWithAsyncStatus(
+function _useGetQueryResultBundleWithAsyncStatus(
   queryBundleRequest: QueryBundleRequest,
   options?: UseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
@@ -77,6 +77,117 @@ export function useGetQueryResultBundleWithAsyncStatus(
       ...options,
     },
   )
+}
+
+function useGetQueryRows(
+  queryBundleRequest: QueryBundleRequest,
+  options?: UseQueryOptions<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+    SynapseClientError
+  >,
+  setCurrentAsyncStatus?: (
+    status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  ) => void,
+) {
+  // Get the request for just the rows
+  const queryRowsBundleRequestMask =
+    queryBundleRequest.partMask & BUNDLE_MASK_QUERY_RESULTS
+  const rowsOnlyQueryBundleRequest: QueryBundleRequest = {
+    ...queryBundleRequest,
+    partMask: queryRowsBundleRequestMask,
+  }
+
+  const enableQuery = queryRowsBundleRequestMask > 0 ? options?.enabled : false
+
+  return _useGetQueryResultBundleWithAsyncStatus(
+    rowsOnlyQueryBundleRequest,
+    {
+      ...options,
+      enabled: enableQuery,
+    },
+    setCurrentAsyncStatus,
+  )
+}
+
+function useGetQueryStats(
+  queryBundleRequest: QueryBundleRequest,
+  options?: UseQueryOptions<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+    SynapseClientError
+  >,
+  setCurrentAsyncStatus?: (
+    status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  ) => void,
+) {
+  // Bitwise remove the query result flag from the mask
+  const queryStatsMask =
+    queryBundleRequest.partMask & ~BUNDLE_MASK_QUERY_RESULTS
+  const queryStatsRequest: QueryBundleRequest = {
+    ...queryBundleRequest,
+    query: {
+      ...queryBundleRequest.query,
+      // Remove query fields that don't affect the results.
+      offset: undefined,
+      limit: undefined,
+      sort: undefined,
+    },
+    partMask: queryStatsMask,
+  }
+
+  const enableQuery = queryStatsMask > 0 ? options?.enabled : false
+
+  return _useGetQueryResultBundleWithAsyncStatus(
+    queryStatsRequest,
+    {
+      ...options,
+      enabled: enableQuery,
+    },
+    setCurrentAsyncStatus,
+  )
+}
+
+export function useGetQueryResultBundleWithAsyncStatus(
+  queryBundleRequest: QueryBundleRequest,
+  options?: UseQueryOptions<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+    SynapseClientError
+  >,
+  setCurrentAsyncStatus?: (
+    status: AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+  ) => void,
+) {
+  /**
+   * Separate the query into two parts
+   *  - Query result rows, which will change each page
+   *  - Everything else, which does not change each page
+   */
+  const rowResult = useGetQueryRows(
+    queryBundleRequest,
+    options,
+    setCurrentAsyncStatus,
+  )
+  const statsResult = useGetQueryStats(
+    queryBundleRequest,
+    options,
+    setCurrentAsyncStatus,
+  )
+
+  const resultObject = {
+    ...rowResult,
+    data:
+      rowResult.data && statsResult.data
+        ? {
+            ...rowResult.data,
+            responseBody: rowResult.data.responseBody
+              ? {
+                  ...statsResult.data?.responseBody,
+                  queryResult: rowResult.data.responseBody.queryResult,
+                }
+              : undefined,
+          }
+        : undefined,
+  }
+  return resultObject
 }
 export function useInfiniteQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
