@@ -9,7 +9,7 @@ import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type AccessRequirementSearchBoxProps = {
   /* id for the input tag */
-  htmlId?: string
+  inputId?: string
   initialId?: string | number
   onChange: (accessRequirementId?: string | undefined) => void
   placeholder?: string
@@ -46,7 +46,7 @@ const customSelectComponents: Partial<
 export default function AccessRequirementSearchBox(
   props: AccessRequirementSearchBoxProps,
 ) {
-  const { htmlId, initialId: initialId, onChange, placeholder } = props
+  const { inputId, initialId, onChange, placeholder } = props
   const { accessToken } = useSynapseContext()
   const { data: initialAccessRequirement, isLoading: isLoadingInitialAR } =
     useGetAccessRequirement(initialId!, {
@@ -112,7 +112,7 @@ export default function AccessRequirementSearchBox(
             ]
           : true
       }
-      id={htmlId}
+      inputId={inputId}
       cacheOptions
       isClearable
       styles={{
