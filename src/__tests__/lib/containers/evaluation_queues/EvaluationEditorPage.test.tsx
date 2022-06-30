@@ -1,63 +1,83 @@
-import { shallow } from 'enzyme'
+import { render, screen, act } from '@testing-library/react'
+import React from 'react'
+import { EvaluationEditor as mockEvaluationEditor } from '../../../../lib/containers/evaluation_queues/EvaluationEditor'
 import {
   EvaluationEditorPage,
-  HelpersToTest,
+  EvaluationEditorPageProps,
 } from '../../../../lib/containers/evaluation_queues/EvaluationEditorPage'
-import React from 'react'
-import { EvaluationRoundEditorList } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorList'
-import { EvaluationEditor } from '../../../../lib/containers/evaluation_queues/EvaluationEditor'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
+
+jest.mock(
+  '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorList',
+  () => ({
+    EvaluationRoundEditorList: jest.fn(props => (
+      <div data-testid="EvaluationRoundEditorList" />
+    )),
+  }),
+)
+
+jest.mock(
+  '../../../../lib/containers/evaluation_queues/EvaluationEditor',
+  () => ({
+    EvaluationEditor: jest.fn(props => <div data-testid="EvaluationEditor" />),
+  }),
+)
+
+function renderComponent(props: EvaluationEditorPageProps) {
+  return render(<EvaluationEditorPage {...props} />, {
+    wrapper: createWrapper(),
+  })
+}
 
 describe('test EvaluationEditorPage', () => {
   let mockOnDeleteSuccess: () => void
-  const accessToken = 'fake access token'
 
   beforeEach(() => {
     mockOnDeleteSuccess = jest.fn()
   })
 
   it('Test creating new Evaluation page -- no EvaluationRoundEditorList shown', () => {
-    const wrapper = shallow(
-      <EvaluationEditorPage
-        entityId="syn123"
-        onDeleteSuccess={mockOnDeleteSuccess}
-        accessToken={accessToken}
-        utc={false}
-      />,
-    )
+    renderComponent({
+      entityId: 'syn123',
+      onDeleteSuccess: mockOnDeleteSuccess,
+    })
 
-    expect(wrapper.find(EvaluationRoundEditorList).exists()).toBe(false)
     expect(
-      wrapper.find(HelpersToTest.FakeEvaluationRoundEditorList).exists(),
-    ).toBe(true)
+      screen.queryByTestId('EvaluationRoundEditorList'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('FakeEvaluationRoundEditorList'),
+    ).toBeInTheDocument()
 
     //simulate a successful "save" (i.e. creation of Evaluation)
     const fakeEvaluationId = '123456'
-    const onSaveSuccessCallback = wrapper
-      .find(EvaluationEditor)
-      .invoke('onSaveSuccess')
+    const onSaveSuccessCallback = (mockEvaluationEditor as jest.Mock).mock
+      .calls[0][0].onSaveSuccess
     expect(onSaveSuccessCallback).not.toBeNull()
-    onSaveSuccessCallback!(fakeEvaluationId)
+    act(() => {
+      onSaveSuccessCallback(fakeEvaluationId)
+    })
 
     // now that the Evaluation has been "saved", we should be able to edit its Evaluation Rounds
-    expect(wrapper.find(EvaluationRoundEditorList).exists()).toBe(true)
     expect(
-      wrapper.find(HelpersToTest.FakeEvaluationRoundEditorList).exists(),
-    ).toBe(false)
+      screen.queryByTestId('EvaluationRoundEditorList'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('FakeEvaluationRoundEditorList'),
+    ).not.toBeInTheDocument()
   })
 
   it('Test editing existing Evaluation page -- EvaluationRoundEditorList is shown', () => {
-    const wrapper = shallow(
-      <EvaluationEditorPage
-        evaluationId="1122334455"
-        onDeleteSuccess={mockOnDeleteSuccess}
-        accessToken={accessToken}
-        utc={false}
-      />,
-    )
+    renderComponent({
+      evaluationId: '1122334455',
+      onDeleteSuccess: mockOnDeleteSuccess,
+    })
 
-    expect(wrapper.find(EvaluationRoundEditorList).exists()).toBe(true)
     expect(
-      wrapper.find(HelpersToTest.FakeEvaluationRoundEditorList).exists(),
-    ).toBe(false)
+      screen.queryByTestId('EvaluationRoundEditorList'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('FakeEvaluationRoundEditorList'),
+    ).not.toBeInTheDocument()
   })
 })
