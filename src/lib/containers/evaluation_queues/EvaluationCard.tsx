@@ -162,22 +162,32 @@ const EvaluationCardDropdown: React.FunctionComponent<
         />
       )}
       <Dropdown className="float-right">
-        <Dropdown.Toggle variant="link" className="dropdown-no-caret">
+        <Dropdown.Toggle
+          role="menu"
+          aria-label="Options"
+          variant="link"
+          className="dropdown-no-caret"
+        >
           <IconSvg options={{ icon: 'verticalEllipsis' }} />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
           {permissions.canEdit && (
-            <Dropdown.Item onClick={onEdit}>Edit</Dropdown.Item>
+            <Dropdown.Item role="menuitem" onClick={onEdit}>
+              Edit
+            </Dropdown.Item>
           )}
           {permissions.canChangePermissions && (
-            <Dropdown.Item onClick={onModifyAccess}>
+            <Dropdown.Item role="menuitem" onClick={onModifyAccess}>
               Modify Access
             </Dropdown.Item>
           )}
           {permissions.canDelete && (
             <>
               <Dropdown.Divider />
-              <Dropdown.Item onClick={() => setDeleteWarningShow(true)}>
+              <Dropdown.Item
+                role="menuitem"
+                onClick={() => setDeleteWarningShow(true)}
+              >
                 Delete
               </Dropdown.Item>{' '}
             </>
