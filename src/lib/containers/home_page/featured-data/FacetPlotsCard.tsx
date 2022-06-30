@@ -23,7 +23,7 @@ import {
 } from '../../widgets/facet-nav/FacetNavPanel'
 import { getFacets } from '../../widgets/facet-nav/FacetNav'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import { useQueryContext } from '../../QueryWrapper'
+import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
 const Plot = createPlotlyComponent(Plotly)

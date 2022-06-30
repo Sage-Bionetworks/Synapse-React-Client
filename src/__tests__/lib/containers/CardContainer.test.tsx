@@ -12,7 +12,7 @@ import {
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../lib/containers/QueryWrapper'
+} from '../../../lib/containers/QueryContext'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,

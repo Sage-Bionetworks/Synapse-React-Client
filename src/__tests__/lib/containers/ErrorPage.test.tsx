@@ -12,7 +12,7 @@ describe('DirectDownload: basic functionality', () => {
   it('should render the correct content', () => {
     render(<ErrorPage {...propsNoAccess} />)
     // Should actually be an image, but our test platform doesn't currently load SVGs imported as React Components
-    screen.getByText('no-access.svg')
+    expect(screen.getByRole('img').getAttribute('title')).toBe('noAccess')
     screen.getByRole('heading', { name: propsNoAccess.title })
     screen.getByText(propsNoAccess.message)
   })

@@ -3,10 +3,10 @@ import CardContainerLogic, {
   CardConfiguration,
 } from '../../../lib/containers/CardContainerLogic'
 import { SynapseConstants } from '../../../lib'
-import brainSvg from './icons/brain.svg'
-import circleSvg from './icons/circle.svg'
-import mouseSvg from './icons/mouse.svg'
-import resilienceadSvg from './icons/resiliencead.svg'
+import { ReactComponent as brainSvg } from './icons/brain.svg'
+import { ReactComponent as circleSvg } from './icons/circle.svg'
+import { ReactComponent as mouseSvg } from './icons/mouse.svg'
+import { ReactComponent as resilienceadSvg } from './icons/resiliencead.svg'
 
 type State = {
   tabIndex: Number

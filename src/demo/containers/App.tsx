@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
 import Login from '../../lib/containers/Login'
-import logoSvg from '../../images/logo.svg'
+import { ReactComponent as LogoSvg } from '../../images/logo.svg'
 import '../style/App.css'
 import '../style/DemoStyle.css'
 import Demo from './Demo'
@@ -128,7 +128,7 @@ export default class App extends React.Component<{}, AppState> {
       return (
         <div>
           <div className="App-header text-center">
-            <img src={logoSvg} className="App-logo" alt="logo" />
+            <LogoSvg className="App-logo" title="logo" />
             <h4 className="white-text">Synapse React Client Demo</h4>
           </div>
           {alert}
@@ -147,7 +147,7 @@ export default class App extends React.Component<{}, AppState> {
         <Router basename={process.env.PUBLIC_URL}>
           <div>
             <div className="App-header text-center">
-              <img src={logoSvg} className="App-logo" alt="logo" />
+              <LogoSvg className="App-logo" title="logo" />
               <h4 className="white-text">Synapse React Client Demo</h4>
             </div>
             {alert}

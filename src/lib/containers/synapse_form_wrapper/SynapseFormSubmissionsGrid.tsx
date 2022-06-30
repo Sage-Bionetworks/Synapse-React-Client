@@ -13,7 +13,7 @@ import { Modal } from 'react-bootstrap'
 
 import moment from 'moment'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import NoSubmissionsIcon from '../../assets/icons/json-form-tool-no-submissions.svg'
+import { ReactComponent as NoSubmissionsIcon } from '../../assets/icons/json-form-tool-no-submissions.svg'
 import IconSvg from '../IconSvg'
 
 /**
@@ -419,7 +419,7 @@ export default class SynapseFormSubmissionGrid extends React.Component<
     if (inProgress.fileList.length === 0 && submitted.fileList.length === 0) {
       return (
         <div className="text-center">
-          <img src={NoSubmissionsIcon} alt="no submissions"></img>
+          <NoSubmissionsIcon title="no submissions" />
           <p className="padding-full">You have no submissions</p>
         </div>
       )
