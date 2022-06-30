@@ -2,7 +2,7 @@ import { Map } from 'immutable'
 import { useEffect, useState } from 'react'
 import { FetchNextPageOptions, InfiniteQueryObserverResult } from 'react-query'
 import { getEntityTypeFromHeader } from '../functions/EntityTypeUtils'
-import { SynapseClientError } from '../SynapseClient'
+import { SynapseClientError } from '../SynapseClientError'
 import { EntityHeader, EntityType, ProjectHeader } from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
 

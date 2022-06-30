@@ -23,8 +23,8 @@ import {
   updateEvaluationRound,
   createEvaluationRound,
   deleteEvaluationRound,
-  SynapseClientError,
 } from '../../utils/SynapseClient'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 import { EvaluationRoundEditorDropdown } from './EvaluationRoundEditorDropdown'
 import { ErrorBanner } from '../ErrorBanner'
 import { useSynapseContext } from '../../utils/SynapseContext'

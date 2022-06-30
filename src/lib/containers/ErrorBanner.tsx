@@ -5,7 +5,7 @@ import {
   ErrorBoundaryPropsWithComponent,
   FallbackProps,
 } from 'react-error-boundary'
-import { SynapseClientError } from '../utils/SynapseClient'
+import { SynapseClientError } from '../utils/SynapseClientError'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Optional } from '../utils/types/Optional'
 import { useJiraIssueCollector } from './JiraIssueCollector'

@@ -1,18 +1,16 @@
+import { SynapseClient } from '../../../lib/utils'
+import { ASYNCHRONOUS_JOB_TOKEN } from '../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
+import { FunctionReturningPaginatedResults } from '../../../lib/utils/SynapseClient'
+import { SynapseClientError } from '../../../lib/utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
   PaginatedResults,
 } from '../../../lib/utils/synapseTypes'
-import { SynapseClient } from '../../../lib/utils'
-import {
-  FunctionReturningPaginatedResults,
-  SynapseClientError,
-} from '../../../lib/utils/SynapseClient'
 import { rest, server } from '../../../mocks/msw/server'
-import { ASYNCHRONOUS_JOB_TOKEN } from '../../../lib/utils/APIConstants'
 
 describe('SynapseClient tests', () => {
   describe('SynapseClient integration tests', () => {
@@ -259,13 +257,6 @@ describe('SynapseClient tests', () => {
         expect(mockFn).toHaveBeenNthCalledWith(1, 50, 0)
         expect(mockFn).toHaveBeenNthCalledWith(2, 50, 50)
       })
-    })
-  })
-
-  describe('SynapseClientError tests', () => {
-    it('Includes the class in the prototype chain', () => {
-      const error = new SynapseClientError(404, 'Not found!', 'some-url')
-      expect(error instanceof SynapseClientError).toBe(true)
     })
   })
 })
