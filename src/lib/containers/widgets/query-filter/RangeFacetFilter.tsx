@@ -21,7 +21,7 @@ export enum RadioValuesEnum {
 export type RangeFacetFilterProps = {
   facetResult: FacetColumnResultRange
   columnModel: SelectColumn
-  onChange: Function
+  onChange: (range: (RadioValuesEnum | number | string | undefined)[]) => void
   facetAliases?: Record<string, string>
   collapsed?: boolean
 }
@@ -67,7 +67,9 @@ export const RangeFacetFilter: React.FunctionComponent<
 
   const handleRadioGroupChange = (
     radioValue: RadioValuesEnum,
-    onChangeCallback: Function,
+    onChangeCallback: (
+      range: (RadioValuesEnum | number | string | undefined)[],
+    ) => void,
   ) => {
     setRadioValue(radioValue)
 

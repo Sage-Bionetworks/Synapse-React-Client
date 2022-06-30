@@ -1,14 +1,42 @@
+import { Collapse as MockCollapse } from '@material-ui/core'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as React from 'react'
-import { mount, ReactWrapper, shallow } from 'enzyme'
 import {
   RangeFacetFilter,
   RangeFacetFilterProps,
 } from '../../../../lib/containers/widgets/query-filter/RangeFacetFilter'
-import {
-  FacetColumnResultRange,
-  ColumnModel,
-} from '../../../../lib/utils/synapseTypes'
+import { Range } from '../../../../lib/containers/widgets/Range'
+import { RangeSlider } from '../../../../lib/containers/widgets/RangeSlider'
 import { VALUE_NOT_SET } from '../../../../lib/utils/SynapseConstants'
+import {
+  ColumnModel,
+  ColumnType,
+  FacetColumnResultRange,
+} from '../../../../lib/utils/synapseTypes'
+
+let capturedOnChange:
+  | ((range: { min: string | number; max: string | number }) => void)
+  | undefined
+
+jest.mock('../../../../lib/containers/widgets/Range', () => ({
+  Range: jest.fn((props: any) => {
+    capturedOnChange = props.onChange
+    return <div data-testid="Range"></div>
+  }),
+}))
+jest.mock('../../../../lib/containers/widgets/RangeSlider', () => ({
+  RangeSlider: jest.fn((props: any) => {
+    capturedOnChange = props.onChange
+    return <div data-testid="RangeSlider"></div>
+  }),
+}))
+
+jest.mock('@material-ui/core', () => ({
+  Collapse: jest.fn(props => (
+    <div data-testid="Collapse">{props.children}</div>
+  )),
+}))
 
 const mockCallback = jest.fn(() => null)
 const intFacetResult: FacetColumnResultRange = {
@@ -53,83 +81,74 @@ function createTestProps(
   }
 }
 
-let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
-let props: RangeFacetFilterProps
-
-function init(overrides?: RangeFacetFilterProps) {
-  props = createTestProps(overrides)
-  wrapper = mount(<RangeFacetFilter {...props} />)
-}
-
-beforeEach(() => init())
-
-describe('basic function', () => {
+describe('RangeFacetFilter tests', () => {
+  let props: RangeFacetFilterProps
+  function init(overrides?: RangeFacetFilterProps) {
+    props = createTestProps(overrides)
+    return render(<RangeFacetFilter {...props} />)
+  }
   describe('setting correct range value', () => {
     it('should set for any', () => {
-      const radios = wrapper.find('input[type="radio"]')
+      init()
+      const radios = screen.getAllByRole('radio')
       expect(radios).toHaveLength(3)
-      expect(radios.at(1).props().checked).toBe(true)
-
-      const radioLabels = wrapper.find('input[type="radio"] + label')
-      expect(radioLabels).toHaveLength(3)
-      expect(radioLabels.at(1).text()).toBe('Any')
+      const anyOption = screen.getByLabelText<HTMLInputElement>('Any')
+      expect(anyOption.checked).toBe(true)
     })
 
     it('should set for Unannotated', () => {
       init({ ...props, facetResult: notSetFacetResult })
-      const radios = wrapper.find('input[type="radio"]')
-      expect(radios.at(0).props().checked).toBe(true)
-
-      const radioLabels = wrapper.find('input[type="radio"] + label')
-      expect(radioLabels).toHaveLength(3)
-      expect(radioLabels.at(0).text()).toBe('Not Assigned')
+      const notAssignedOption =
+        screen.getByLabelText<HTMLInputElement>('Not Assigned')
+      expect(notAssignedOption.checked).toBe(true)
     })
 
     it('interval', () => {
       init({ ...props, facetResult: rangeFacetResult })
-      const radios = wrapper.find('input[type="radio"]')
-      expect(radios.at(2).props().checked).toBe(true)
-
-      const radioLabels = wrapper.find('input[type="radio"] + label')
-      expect(radioLabels).toHaveLength(3)
-      expect(radioLabels.at(2).text()).toBe('Range')
+      const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
+      expect(rangeOption.checked).toBe(true)
     })
   })
 
   describe('collapsible', () => {
     it('should hide content when toggled', () => {
       init({ ...props, collapsed: false })
-      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
-        'in',
-        true,
+
+      expect(MockCollapse).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          in: true,
+        }),
+        expect.anything(),
       )
 
       // toggle collapse via button
-      wrapper
-        .find('button.FacetFilterHeader__collapseToggleBtn')
-        .simulate('click')
+      userEvent.click(screen.getByRole('button', { name: 'Collapse Menu' }))
 
-      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
-        'in',
-        false,
+      expect(MockCollapse).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          in: false,
+        }),
+        expect.anything(),
       )
     })
 
     it('should start collapsed when specified via prop', () => {
       init({ ...props, collapsed: true })
-      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
-        'in',
-        false,
+      expect(MockCollapse).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          in: false,
+        }),
+        expect.anything(),
       )
 
       // toggle collapse via button
-      wrapper
-        .find('button.FacetFilterHeader__collapseToggleBtn')
-        .simulate('click')
+      userEvent.click(screen.getByRole('button', { name: 'Expand Menu' }))
 
-      expect(wrapper.childAt(0).childAt(1).get(0).props).toHaveProperty(
-        'in',
-        true,
+      expect(MockCollapse).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          in: true,
+        }),
+        expect.anything(),
       )
     })
   })
@@ -137,25 +156,31 @@ describe('basic function', () => {
   describe('displaying  correct range control', () => {
     const dateColumnModel: ColumnModel = {
       ...columnModel,
-      columnType: 'DATE',
+      columnType: ColumnType.DATE,
     }
     const doubleColumnModel: ColumnModel = {
       ...columnModel,
-      columnType: 'DOUBLE',
+      columnType: ColumnType.DOUBLE,
     }
     it('should set for integer', () => {
       init({ ...props, facetResult: rangeFacetResult })
-      const slider = wrapper.find('.RangeSlider')
-      expect(slider).toHaveLength(1)
+      screen.getByTestId('RangeSlider')
     })
-    it('should set for date', async () => {
+
+    it('should set for date', () => {
       init({
         ...props,
         facetResult: rangeFacetResult,
         columnModel: dateColumnModel,
       })
-      const doubleRange = wrapper.find('.range input[type="date"]')
-      expect(doubleRange).toHaveLength(2)
+      screen.getByTestId('Range')
+
+      expect(Range).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          type: 'date',
+        }),
+        {},
+      )
     })
 
     it('should set for double', () => {
@@ -164,50 +189,63 @@ describe('basic function', () => {
         facetResult: rangeFacetResult,
         columnModel: doubleColumnModel,
       })
-      const doubleRange = wrapper.find('.range input[type="number"]')
-      expect(doubleRange).toHaveLength(2)
+      screen.getByTestId('Range')
+
+      expect(Range).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          type: 'number',
+        }),
+        {},
+      )
     })
   })
 
   describe('communicating the change corectly', () => {
-    it('should update from enum', () => {
-      let radios = wrapper.find('input[type="radio"]')
-      //2nd radio selected
-      expect(radios.at(1).props().checked).toBe(true)
+    it('should update from enum', async () => {
+      init()
+      // "Any" should be checked at the beginning
+      const anyOption = await screen.findByLabelText<HTMLInputElement>('Any')
+      expect(anyOption.checked).toBe(true)
       mockCallback.mockClear()
-      // click first radio
-      radios.at(0).simulate('click')
+
+      // Click "Not Assigned"
+      const notAssignedOption =
+        screen.getByLabelText<HTMLInputElement>('Not Assigned')
+      userEvent.click(notAssignedOption)
       expect(mockCallback).toHaveBeenCalledWith([VALUE_NOT_SET, VALUE_NOT_SET])
       expect(mockCallback).toBeCalledTimes(1)
+
       //get updated wrapper and clear mocks
       mockCallback.mockClear()
-      wrapper = wrapper.update()
-      radios = wrapper.find('input[type="radio"]')
-      expect(radios.at(1).props().checked).toBe(false)
-      expect(radios.at(0).props().checked).toBe(true)
-      //click the third radio
-      radios.at(2).simulate('click')
+      expect(anyOption.checked).toBe(false)
+      expect(notAssignedOption.checked).toBe(true)
+
+      // Click "Range"
+      const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
+      userEvent.click(rangeOption)
       expect(mockCallback).not.toHaveBeenCalled()
-      expect(wrapper.find('.RangeSlider')).toHaveLength(1)
+      screen.getByTestId('RangeSlider')
+
       //get updated wrapper and clear mocks
       mockCallback.mockClear()
-      wrapper = wrapper.update()
-      radios = wrapper.find('input[type="radio"]')
-      expect(radios.at(0).props().checked).toBe(false)
-      expect(radios.at(2).props().checked).toBe(true)
-      //click the third radio
-      radios.at(1).simulate('click')
+      expect(anyOption.checked).toBe(false)
+      expect(notAssignedOption.checked).toBe(false)
+      expect(rangeOption.checked).toBe(true)
+
+      // Click "Any"
+      userEvent.click(anyOption)
       expect(mockCallback).toHaveBeenCalledWith(['', ''])
-      expect(wrapper.find('.RangeSlider')).toHaveLength(0)
-      wrapper = wrapper.update()
-      radios = wrapper.find('input[type="radio"]')
-      expect(radios.at(1).props().checked).toBe(true)
+      expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
+      expect(anyOption.checked).toBe(true)
+      expect(notAssignedOption.checked).toBe(false)
+      expect(rangeOption.checked).toBe(false)
     })
 
-    it('should update from a range control', () => {
+    it('should update from a range control', async () => {
+      capturedOnChange = undefined
       const dateColumnModel: ColumnModel = {
         ...columnModel,
-        columnType: 'DATE',
+        columnType: ColumnType.DATE,
       }
 
       const updatedProps = {
@@ -215,20 +253,19 @@ describe('basic function', () => {
         facetResult: rangeFacetResult,
         columnModel: dateColumnModel,
       }
-
       init(updatedProps)
-      const wrapperShallow = shallow(<RangeFacetFilter {...updatedProps} />)
-      const range = wrapperShallow.find('Range')
-      range.simulate('change', { min: '22', max: '23' })
+      await waitFor(() => expect(Range).toHaveBeenCalled())
+      await waitFor(() => expect(capturedOnChange).toBeDefined())
+      capturedOnChange!({ min: '22', max: '23' })
       expect(mockCallback).toHaveBeenCalledWith(['22', '23'])
     })
 
-    it('should update from a range  slider control', () => {
-      const wrapperShallow = shallow(
-        <RangeFacetFilter {...{ ...props, facetResult: rangeFacetResult }} />,
-      )
-      const slider = wrapperShallow.find('RangeSlider')
-      slider.simulate('change', { min: '22', max: '23' })
+    it('should update from a range slider control', async () => {
+      capturedOnChange = undefined
+      init({ facetResult: rangeFacetResult })
+      await waitFor(() => expect(RangeSlider).toHaveBeenCalled())
+      await waitFor(() => expect(capturedOnChange).toBeDefined())
+      capturedOnChange!({ min: '22', max: '23' })
       expect(mockCallback).toHaveBeenCalledWith(['22', '23'])
     })
   })
