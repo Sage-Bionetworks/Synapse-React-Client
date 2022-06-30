@@ -1,8 +1,36 @@
 import { EvaluationRoundLimitInput } from '../../../../../lib/containers/evaluation_queues/input_models/models'
 import { EvaluationRoundLimitType } from '../../../../../lib/utils/synapseTypes/Evaluation'
-import { shallow } from 'enzyme'
-import { EvaluationRoundLimitOptions } from '../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
-import React from 'react'
+import {
+  EvaluationRoundLimitOptions,
+  EvaluationRoundLimitOptionsProps,
+} from '../../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptions'
+import React, { useState } from 'react'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
+import userEvent from '@testing-library/user-event'
+
+const onChangeSpy = jest.fn()
+
+function renderComponent(
+  props: Omit<EvaluationRoundLimitOptionsProps, 'onChange'>,
+) {
+  function StatefulTestWrapper(
+    props: Omit<EvaluationRoundLimitOptionsProps, 'onChange'>,
+  ) {
+    const [limitInput, setLimitInput] = useState(props.limitInput)
+    onChangeSpy.mockImplementation(setLimitInput)
+    return (
+      <EvaluationRoundLimitOptions
+        {...props}
+        limitInput={limitInput}
+        onChange={onChangeSpy}
+      />
+    )
+  }
+  return render(<StatefulTestWrapper {...props} />, {
+    wrapper: createWrapper(),
+  })
+}
 
 describe('test evaluation round limit option', () => {
   const limitInput: EvaluationRoundLimitInput = {
@@ -10,22 +38,19 @@ describe('test evaluation round limit option', () => {
     maxSubmissionString: '34',
   }
 
-  const mockOnChange = jest.fn()
-
   it('no limit options disabled', () => {
     const emptySelectedTypes = new Set<EvaluationRoundLimitType>()
-    const wrapper = shallow(
-      <EvaluationRoundLimitOptions
-        limitInput={limitInput}
-        onChange={mockOnChange}
-        allSelectedTypes={emptySelectedTypes}
-      />,
-    )
+    renderComponent({
+      limitInput,
+      allSelectedTypes: emptySelectedTypes,
+    })
 
-    const select = wrapper.find('FormControl[as="select"]')
-    expect(select.children()).toHaveLength(3)
-    select.children().forEach(option => {
-      expect(option.prop('disabled')).toBe(false)
+    const select = screen.getByRole('combobox')
+    const options = within(select).getAllByRole('option')
+    expect(options).toHaveLength(3)
+
+    options.forEach(option => {
+      expect(option).not.toBeDisabled()
     })
   })
 
@@ -34,30 +59,23 @@ describe('test evaluation round limit option', () => {
       'MONTHLY',
       'WEEKLY',
     ])
-    const wrapper = shallow(
-      <EvaluationRoundLimitOptions
-        limitInput={limitInput}
-        onChange={mockOnChange}
-        allSelectedTypes={selectedTypes}
-      />,
-    )
+    renderComponent({
+      limitInput,
+      allSelectedTypes: selectedTypes,
+    })
 
-    const select = wrapper.find('FormControl[as="select"]')
-
-    expect(select.children()).toHaveLength(3)
+    const select = screen.getByRole('combobox')
+    const options = within(select).getAllByRole<HTMLOptionElement>('option')
 
     // the same type as the initial display won't be disabled
     expect(
-      select.children().find('option[value="MONTHLY"]').prop('disabled'),
-    ).toBe(false)
+      options.find(option => option.value === 'MONTHLY'),
+    ).not.toBeDisabled()
     //was never in the set
-    expect(
-      select.children().find('option[value="DAILY"]').prop('disabled'),
-    ).toBe(false)
+    expect(options.find(option => option.value === 'DAILY')).not.toBeDisabled()
+
     //was in the set and not the initial display
-    expect(
-      select.children().find('option[value="WEEKLY"]').prop('disabled'),
-    ).toBe(true)
+    expect(options.find(option => option.value === 'WEEKLY')).toBeDisabled()
   })
 
   it('onChange limit type', () => {
@@ -65,45 +83,41 @@ describe('test evaluation round limit option', () => {
       'MONTHLY',
       'WEEKLY',
     ])
-    const wrapper = shallow(
-      <EvaluationRoundLimitOptions
-        limitInput={limitInput}
-        onChange={mockOnChange}
-        allSelectedTypes={emptySelectedTypes}
-      />,
-    )
+    renderComponent({
+      limitInput,
+      allSelectedTypes: emptySelectedTypes,
+    })
 
-    const select = wrapper.find('FormControl[as="select"]')
-    expect(select.children()).toHaveLength(3)
+    const select = screen.getByRole('combobox')
+    userEvent.selectOptions(select, 'DAILY')
 
-    select.simulate('change', { target: { value: 'DAILY' } })
-
-    expect(mockOnChange).toBeCalledWith({
+    expect(onChangeSpy).toBeCalledWith({
       type: 'DAILY',
       maxSubmissionString: '34',
     })
   })
 
-  it('onChange max submissions', () => {
+  it('onChange max submissions', async () => {
     const emptySelectedTypes = new Set<EvaluationRoundLimitType>([
       'MONTHLY',
       'WEEKLY',
     ])
-    const wrapper = shallow(
-      <EvaluationRoundLimitOptions
-        limitInput={limitInput}
-        onChange={mockOnChange}
-        allSelectedTypes={emptySelectedTypes}
-      />,
-    )
-
-    const textInput = wrapper.find('FormControl[type="text"]')
-    expect(textInput.prop('value')).toBe('34')
-    textInput.simulate('change', { target: { value: '999' } })
-
-    expect(mockOnChange).toBeCalledWith({
-      type: 'MONTHLY',
-      maxSubmissionString: '999',
+    renderComponent({
+      limitInput,
+      allSelectedTypes: emptySelectedTypes,
     })
+
+    const textInput = screen.getByRole<HTMLInputElement>('textbox')
+    expect(textInput.value).toBe('34')
+
+    userEvent.clear(textInput)
+    userEvent.type(textInput, '999')
+
+    await waitFor(() =>
+      expect(onChangeSpy).toBeCalledWith({
+        type: 'MONTHLY',
+        maxSubmissionString: '999',
+      }),
+    )
   })
 })
