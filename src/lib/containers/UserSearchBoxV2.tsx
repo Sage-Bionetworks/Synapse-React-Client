@@ -11,7 +11,7 @@ import UserOrTeamBadge from './UserOrTeamBadge'
 
 export type UserSearchBoxProps = {
   /* id for the input tag */
-  htmlId?: string
+  inputId?: string
   /* The initial principal ID */
   defaultValue?: string
   onChange?: (
@@ -81,7 +81,7 @@ const customSelectComponents: Partial<
 
 const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
   const {
-    htmlId,
+    inputId,
     defaultValue = null,
     onChange,
     filterPredicate,
@@ -147,7 +147,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
             ]
           : true
       }
-      id={htmlId}
+      inputId={inputId}
       cacheOptions
       isClearable
       styles={{

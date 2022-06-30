@@ -111,7 +111,8 @@ describe('AccessHistoryDashboard tests', () => {
     userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     selectEvent.select(userInput, '@' + MOCK_USER_NAME)
 
-    await waitFor(() => expect(screen.getAllByRole('textbox')).toHaveLength(2))
+    await screen.findByLabelText('Select a user to view their access history')
+    await screen.findByLabelText('Filter by Access Requirement Name')
 
     await screen.findByTestId(SUBMISSION_TABLE_TEST_ID)
     expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
@@ -172,8 +173,10 @@ describe('AccessHistoryDashboard tests', () => {
     userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     selectEvent.select(userInput, '@' + MOCK_USER_NAME)
 
-    await waitFor(() => expect(screen.getAllByRole('textbox')).toHaveLength(2))
-    const arNameInput = await waitFor(() => screen.getAllByRole('textbox')[1])
+    await screen.findByLabelText('Select a user to view their access history')
+    const arNameInput = await screen.findByLabelText(
+      'Filter by Access Requirement Name',
+    )
 
     userEvent.type(arNameInput, mockAccessRequirement.name)
     selectEvent.select(

@@ -119,7 +119,7 @@ export const UserHistoryDashboard = () => {
             Select a user to view their access history
           </FormLabel>
           <UserSearchBoxV2
-            htmlId="user-filter"
+            inputId="user-filter"
             onChange={onAccessorChange}
             defaultValue={accessorId}
             placeholder="Search for a user name"
@@ -133,7 +133,7 @@ export const UserHistoryDashboard = () => {
               Filter by Access Requirement Name
             </FormLabel>
             <AccessRequirementSearchBox
-              htmlId="arName-filter"
+              inputId="arName-filter"
               placeholder="Search for an Access Requirement Name "
               onChange={setAccessRequirementId}
             />
