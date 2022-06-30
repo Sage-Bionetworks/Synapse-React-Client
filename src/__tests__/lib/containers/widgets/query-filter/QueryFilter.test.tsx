@@ -1,15 +1,16 @@
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
 import * as React from 'react'
 import { act } from 'react-dom/test-utils'
 import {
-  QueryVisualizationContextProvider,
-  QueryVisualizationContextProviderProps,
-} from '../../../../../lib/containers/QueryVisualizationWrapper'
-import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../../../lib/containers/QueryContext'
+import {
+  QueryVisualizationContextProvider,
+  QueryVisualizationContextType,
+} from '../../../../../lib/containers/QueryVisualizationWrapper'
 import {
   QueryFilter,
   QueryFilterProps,
@@ -18,6 +19,46 @@ import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
 import { QueryResultBundle } from '../../../../../lib/utils/synapseTypes'
 import mockQueryResponseData from '../../../../../mocks/mockQueryResponseData.json'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
+
+let capturedOnChange: Function | undefined
+let capturedOnClear: Function | undefined
+
+const captureHandlers = (facetFilterElement: HTMLElement) => {
+  userEvent.click(facetFilterElement)
+}
+
+const MockFacetFilter = props => {
+  return (
+    <div
+      data-testid={props.testid}
+      data-collapsed={props.collapsed}
+      onClick={() => {
+        // There's no good way to capture passed callbacks passed to a component when the same mock could appear multiple times on one page.
+        // So we'll capture the callbacks via a click handler.
+        capturedOnChange = props.onChange
+        capturedOnClear = props.onClear
+      }}
+    ></div>
+  )
+}
+
+jest.mock(
+  '../../../../../lib/containers/widgets/query-filter/EnumFacetFilter',
+  () => ({
+    EnumFacetFilter: jest.fn(props => (
+      <MockFacetFilter {...props} testid="EnumFacetFilter" />
+    )),
+  }),
+)
+
+jest.mock(
+  '../../../../../lib/containers/widgets/query-filter/RangeFacetFilter',
+  () => ({
+    RangeFacetFilter: jest.fn(props => (
+      <MockFacetFilter {...props} testid="RangeFacetFilter" />
+    )),
+  }),
+)
 
 const lastQueryRequestResult = {
   partMask: 53,
@@ -61,7 +102,7 @@ const defaultQueryContext: Partial<QueryContextType> = {
   isLoadingNewBundle: false,
 }
 
-const defaultQueryVisualizationContext: Partial<QueryVisualizationContextProviderProps> =
+const defaultQueryVisualizationContext: Partial<QueryVisualizationContextType> =
   {
     topLevelControlsState: {
       showColumnFilter: true,
@@ -70,19 +111,19 @@ const defaultQueryVisualizationContext: Partial<QueryVisualizationContextProvide
       showSearchBar: false,
       showDownloadConfirmation: false,
       showColumnSelectDropdown: false,
+      showSqlEditor: false,
     },
   }
 
 let props: QueryFilterProps
-
 function init(overrides?: QueryFilterProps) {
   jest.clearAllMocks()
   props = createTestProps(overrides)
-  return mount(<QueryFilter {...props} />, {
-    wrappingComponent: ({ synapseContext, queryContext, children }) => {
+  return render(<QueryFilter {...props} />, {
+    wrapper: ({ children }) => {
       return (
-        <SynapseContextProvider synapseContext={synapseContext}>
-          <QueryContextProvider queryContext={queryContext}>
+        <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+          <QueryContextProvider queryContext={defaultQueryContext}>
             <QueryVisualizationContextProvider
               queryVisualizationContext={defaultQueryVisualizationContext}
             >
@@ -92,122 +133,124 @@ function init(overrides?: QueryFilterProps) {
         </SynapseContextProvider>
       )
     },
-    wrappingComponentProps: {
-      synapseContext: MOCK_CONTEXT_VALUE,
-      queryContext: defaultQueryContext,
-    },
   })
 }
 
-describe('initialization', () => {
-  it('should initiate selected items correctly', async () => {
-    const wrapper = init()
+describe('QueryFilter tests', () => {
+  it('should initiate selected items correctly', () => {
+    init()
     const enumFacets = mockQueryResponseData.facets.filter(
       facet => facet.facetType === 'enumeration',
     )
     const rangeFacets = mockQueryResponseData.facets.filter(
       facet => facet.facetType === 'range',
     )
-    expect(wrapper.find('EnumFacetFilter')).toHaveLength(enumFacets.length)
-    expect(wrapper.find('RangeFacetFilter')).toHaveLength(rangeFacets.length)
+    expect(screen.getAllByTestId('EnumFacetFilter')).toHaveLength(
+      enumFacets.length,
+    )
+    expect(screen.getAllByTestId('RangeFacetFilter')).toHaveLength(
+      rangeFacets.length,
+    )
   })
 
-  it('should only expand the first three collapsible facets', async () => {
-    const wrapper = init()
-
-    const facets = wrapper.children()
-    facets.forEach((facet, index) => {
-      if (index === 0) return // title
-      if (index > 0 && index < 4) {
-        expect(facet.childAt(0).props().collapsed).toEqual(false)
+  it('should only expand the first three collapsible facets', () => {
+    init()
+    const facetFilters = screen.getAllByTestId(/(Enum|Range)FacetFilter/)
+    expect(facetFilters).toHaveLength(mockQueryResponseData.facets.length)
+    facetFilters.forEach((facet, index) => {
+      if (index < 3) {
+        expect(facet.getAttribute('data-collapsed')).toBe('false')
       } else {
-        expect(facet.childAt(0).props().collapsed).toEqual(true)
+        expect(facet.getAttribute('data-collapsed')).toBe('true')
       }
     })
   })
 
-  it('should respect facetsToFilter', async () => {
+  it('should respect facetsToFilter', () => {
     // set facetsToFilter to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
-    const wrapper = init({ facetsToFilter: ['Year'] })
-    expect(wrapper.find('EnumFacetFilter').exists()).toBeFalsy()
-    expect(wrapper.find('RangeFacetFilter').exists()).toBeTruthy()
-  })
-})
-
-describe('handling child component callbacks', () => {
-  it('should propagate enum update correctly', async () => {
-    const wrapper = init()
-
-    const expectedResult = [
-      {
-        columnName: 'Make',
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        facetValues: ['Honda', 'Chevy', 'Ford'],
-      },
-      {
-        columnName: 'Year',
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-        max: 1999,
-        min: 1997,
-      },
-    ]
-
-    const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    act(() => {
-      enumWrapper.props()['onChange']({ Ford: true })
-    })
-    const expected = _.cloneDeep(lastQueryRequestResult)
-    expected.query = { ...expected.query, selectedFacets: expectedResult }
-    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+    init({ facetsToFilter: ['Year'] })
+    expect(screen.queryByTestId('EnumFacetFilter')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('RangeFacetFilter')).toBeInTheDocument()
   })
 
-  it('should propagate enum clear correctly', async () => {
-    const wrapper = init()
+  describe('handling child component callbacks', () => {
+    it('should propagate enum update correctly', () => {
+      init()
 
-    const expectedResult = [
-      {
-        columnName: 'Year',
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-        max: 1999,
-        min: 1997,
-      },
-    ]
-    const enumWrapper = wrapper.find('EnumFacetFilter').at(0)
-    act(() => {
-      enumWrapper.props()['onClear']()
+      const expectedResult = [
+        {
+          columnName: 'Make',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          facetValues: ['Honda', 'Chevy', 'Ford'],
+        },
+        {
+          columnName: 'Year',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          max: 1999,
+          min: 1997,
+        },
+      ]
+      const enumFacetFilter = screen.getAllByTestId('EnumFacetFilter')[0]
+      captureHandlers(enumFacetFilter)
+      act(() => {
+        capturedOnChange!({ Ford: true })
+      })
+      const expected = _.cloneDeep(lastQueryRequestResult)
+      expected.query = { ...expected.query, selectedFacets: expectedResult }
+      expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
     })
-    const expected = _.cloneDeep(lastQueryRequestResult)
-    expected.query = { ...expected.query, selectedFacets: expectedResult }
-    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
-  })
 
-  it('should propagate range correctly', async () => {
-    const wrapper = init()
+    it('should propagate enum clear correctly', () => {
+      init()
 
-    const expectedResult = [
-      {
-        columnName: 'Make',
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        facetValues: ['Honda', 'Chevy'],
-      },
-      {
-        columnName: 'Year',
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
-        max: '1998',
-        min: '1997',
-      },
-    ]
-    const enumWrapper = wrapper.find('RangeFacetFilter').at(0)
-    act(() => {
-      enumWrapper.props()['onChange'](['1997', '1998'])
+      const expectedResult = [
+        {
+          columnName: 'Year',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          max: 1999,
+          min: 1997,
+        },
+      ]
+
+      const enumFacetFilter = screen.getAllByTestId('EnumFacetFilter')[0]
+      captureHandlers(enumFacetFilter)
+      act(() => {
+        capturedOnClear!()
+      })
+      const expected = _.cloneDeep(lastQueryRequestResult)
+      expected.query = { ...expected.query, selectedFacets: expectedResult }
+      expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
     })
-    const expected = _.cloneDeep(lastQueryRequestResult)
-    expected.query = { ...expected.query, selectedFacets: expectedResult }
-    expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+
+    it('should propagate range correctly', () => {
+      init()
+
+      const expectedResult = [
+        {
+          columnName: 'Make',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          facetValues: ['Honda', 'Chevy'],
+        },
+        {
+          columnName: 'Year',
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+          max: '1998',
+          min: '1997',
+        },
+      ]
+      const rangeFacetFilter = screen.getAllByTestId('RangeFacetFilter')[0]
+      captureHandlers(rangeFacetFilter)
+      act(() => {
+        capturedOnChange!(['1997', '1998'])
+      })
+      const expected = _.cloneDeep(lastQueryRequestResult)
+      expected.query = { ...expected.query, selectedFacets: expectedResult }
+      expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+    })
   })
 })
