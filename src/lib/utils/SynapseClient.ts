@@ -271,6 +271,8 @@ export class SynapseClientError extends Error {
     this.status = status
     this.reason = reason
     this.url = url
+    // See https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-2.html#support-for-newtarget
+    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
