@@ -1,4 +1,8 @@
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import JestMockPromise from 'jest-mock-promise'
 import moment, { Moment } from 'moment'
+import React from 'react'
 import {
   EvaluationRoundEditor,
   EvaluationRoundEditorProps,
@@ -8,20 +12,10 @@ import {
   EvaluationRoundInput,
   EvaluationRoundLimitInput,
 } from '../../../../lib/containers/evaluation_queues/input_models/models'
-import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
-import { mount, ReactWrapper, shallow } from 'enzyme'
-import React from 'react'
-import { EvaluationRoundLimitOptionsList } from '../../../../lib/containers/evaluation_queues/round_limits/EvaluationRoundLimitOptionsList'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../../lib/utils/'
-import JestMockPromise from 'jest-mock-promise'
-import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
-import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
-import * as SynapseContext from '../../../../lib/utils/SynapseContext'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-  mockUseSynapseContext,
-} from '../../../../mocks/MockSynapseContext'
+import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
+import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
 describe('test EvaluationRoundEditor', () => {
   let props: EvaluationRoundEditorProps
@@ -85,22 +79,24 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   it('test clicking advanced limits link', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
     //initially not shown
-    expect(wrapper.find(EvaluationRoundLimitOptionsList).exists()).toBe(false)
+    expect(
+      screen.queryByTestId('EvaluationRoundLimitOptionsList'),
+    ).not.toBeInTheDocument()
 
     // first click enables the advanced limits list
-    wrapper.find('.advanced-limits-link').simulate('click')
-    expect(wrapper.find(EvaluationRoundLimitOptionsList).exists()).toBe(true)
+    userEvent.click(screen.getByRole('button', { name: 'Advanced Limits' }))
+    expect(
+      screen.queryByTestId('EvaluationRoundLimitOptionsList'),
+    ).toBeInTheDocument()
 
     // click again disables the advanced limits list
-    wrapper.find('.advanced-limits-link').simulate('click')
-    expect(wrapper.find(EvaluationRoundLimitOptionsList).exists()).toBe(false)
+    userEvent.click(screen.getByRole('button', { name: 'Advanced Limits' }))
+    expect(
+      screen.queryByTestId('EvaluationRoundLimitOptionsList'),
+    ).not.toBeInTheDocument()
   })
 
   it('test remove advanced RoundLimit: 1 item left in list should disable advanced Mode', () => {
@@ -109,81 +105,68 @@ describe('test EvaluationRoundEditor', () => {
       { type: 'DAILY', maxSubmissionString: '36' },
     ]
 
-    // this requires interaction from a child component so we must use mount() to render it
-    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationRoundEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
     //enable rendering of the advanced limits list
-    wrapper.find('button.advanced-limits-link').simulate('click')
-    expect(wrapper.find(EvaluationRoundLimitOptionsList).exists()).toBe(true)
+    userEvent.click(screen.getByRole('button', { name: 'Advanced Limits' }))
+    expect(
+      screen.queryByTestId('EvaluationRoundLimitOptionsList'),
+    ).toBeInTheDocument()
 
     //we have 2 advanced limits so 2 buttons
-    let removeLimitButtons = wrapper.find('button.remove-button')
+    let removeLimitButtons = screen.getAllByRole('button', { name: 'Remove' })
     expect(removeLimitButtons).toHaveLength(2)
 
     // click on one button should remove one, but the EvaluationRoundLimitOptionsList is still shown
-    removeLimitButtons.at(0).simulate('click')
-    expect(wrapper.find(EvaluationRoundLimitOptionsList).exists()).toBe(true)
+    userEvent.click(removeLimitButtons[0])
+    expect(
+      screen.queryByTestId('EvaluationRoundLimitOptionsList'),
+    ).toBeInTheDocument()
 
     // after 1 remove was clicked there should only be 1 more remove button left
-    removeLimitButtons = wrapper.find('button.remove-button')
+    removeLimitButtons = screen.getAllByRole('button', { name: 'Remove' })
     expect(removeLimitButtons).toHaveLength(1)
 
     // once we click this button, we expect the EvaluationRoundLimitOptionsList to stop being shown at all
-    removeLimitButtons.at(0).simulate('click')
-    expect(wrapper.find(EvaluationRoundLimitOptionsList).exists()).toBe(false)
+    userEvent.click(removeLimitButtons[0])
+    expect(
+      screen.queryByTestId('EvaluationRoundLimitOptionsList'),
+    ).not.toBeInTheDocument()
   })
 
   it('test start date input: disabled when current time past start', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     const roundStartInPast = moment().subtract(1, 'day')
     const roundEnd = moment().add(1, 'day')
     props.evaluationRoundInput.roundStart = roundStartInPast.toJSON()
     props.evaluationRoundInput.roundEnd = roundEnd.toJSON()
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    expect(
-      wrapper
-        .find("CalendarWithIconFormGroup[label='Round Start']")
-        .prop('disabled'),
-    ).toBe(true)
+    const roundStartInput = screen.getByLabelText('Round Start')
+    expect(roundStartInput).toBeDisabled()
   })
 
   it('test start date input: enabled when current time not past start', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     const roundStartInFuture = moment().add(1, 'day')
     const roundEnd = moment().add(2, 'day')
     props.evaluationRoundInput.roundStart = roundStartInFuture.toJSON()
     props.evaluationRoundInput.roundEnd = roundEnd.toJSON()
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    expect(
-      wrapper
-        .find("CalendarWithIconFormGroup[label='Round Start']")
-        .prop('disabled'),
-    ).toBe(false)
+    const roundStartInput = screen.getByLabelText('Round Start')
+    expect(roundStartInput).not.toBeDisabled()
   })
 
   it('test save: no id in props => create new EvaluationRound', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     // remove the id
     delete props.evaluationRoundInput.id
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    wrapper.find('.save-button').simulate('click')
+    userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     const expectedConvertedEvaulationRound: EvaluationRound = {
       etag: undefined,
@@ -202,25 +185,19 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockOnSave).toBeCalled()
 
-    expect(wrapper.find(<h5>ROUND STATUS</h5>).exists())
-    //no error is shown
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
+    screen.getByRole('heading', { name: 'ROUND STATUS' })
+    within(screen.getByRole('alert')).getByText('Successfully saved.')
   })
 
   it('test save: existing id in props => update EvaluationRound', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     const id = '1234'
     const etag = 'eeeeeeeee'
     props.evaluationRoundInput.id = id
     props.evaluationRoundInput.etag = etag
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    wrapper.find('.save-button').simulate('click')
+    userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     const expectedConvertedEvaulationRound: EvaluationRound = {
       etag: etag,
@@ -239,17 +216,11 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockOnSave).toBeCalled()
 
-    expect(wrapper.find(<h5>ROUND STATUS (1234)</h5>).exists())
-    //no error is shown
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
+    screen.getByRole('heading', { name: 'ROUND STATUS (1234)' })
+    within(screen.getByRole('alert')).getByText('Successfully saved.')
   })
 
   it('test save: Error occur', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     //make the SynapseClient call throw an error
     mockUpdateEvaluationRound.mockImplementation(
       () =>
@@ -263,9 +234,9 @@ describe('test EvaluationRoundEditor', () => {
     props.evaluationRoundInput.id = id
     props.evaluationRoundInput.etag = etag
 
-    const wrapper = shallow(<EvaluationRoundEditor {...props} />)
+    render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    wrapper.find('.save-button').simulate('click')
+    userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     const expectedConvertedEvaulationRound: EvaluationRound = {
       etag: etag,
@@ -284,39 +255,32 @@ describe('test EvaluationRoundEditor', () => {
 
     expect(mockOnSave).not.toBeCalled()
 
-    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
+    within(screen.getByRole('alert')).getByText('oops! you got a fake error')
   })
 
-  function simulateDeleteClick(
-    wrapper: ReactWrapper<any, React.Component['state'], React.Component>,
-  ) {
-    //Simulate a deletion
-    expect(wrapper.find('Dropdown').exists()).toBe(true)
-    // simulate a click on the dropdown button to display the menu
-    wrapper.find('DropdownToggle').simulate('click')
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(2)
+  function simulateDeleteClick() {
+    // Open the dropdown menu
+    userEvent.click(screen.getByRole('button', { name: 'Round Options' }))
 
-    //simulate a click on the "delete" option in the dropdown menu
-    const deleteOption = dropdownItems.at(1)
-    expect(deleteOption.text()).toBe('Delete')
-    deleteOption.simulate('click')
+    // Click the delete button in the dropdown menu
+    userEvent.click(screen.getByRole('button', { name: 'Delete' }))
 
-    //simulate click delete on the button inside the warning modal
-    const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
-    deleteWarningModal.find('.btn-danger').simulate('click')
+    // Click delete on the button inside the warning modal
+    const dialog = screen.getByRole('dialog')
+    const confirmDeleteButton = within(dialog).getByRole('button', {
+      name: 'Delete',
+    })
+    userEvent.click(confirmDeleteButton)
   }
 
   it('test delete: no id', () => {
     delete props.evaluationRoundInput.id
     delete props.evaluationRoundInput.etag
 
-    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationRoundEditor {...props} />, {
+      wrapper: createWrapper(),
     })
-    simulateDeleteClick(wrapper)
+    simulateDeleteClick()
 
     expect(mockOnDelete).toBeCalledWith()
     expect(mockDeleteEvaluationRound).not.toBeCalled()
@@ -328,12 +292,12 @@ describe('test EvaluationRoundEditor', () => {
     props.evaluationRoundInput.id = id
     props.evaluationRoundInput.etag = etag
 
-    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationRoundEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
     //Simulate a deletion
-    simulateDeleteClick(wrapper)
+    simulateDeleteClick()
 
     expect(mockOnDelete).toBeCalledWith()
     expect(mockDeleteEvaluationRound).toBeCalledWith(
@@ -356,12 +320,12 @@ describe('test EvaluationRoundEditor', () => {
         ),
     )
 
-    const wrapper = mount(<EvaluationRoundEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationRoundEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
     //Simulate a deletion
-    simulateDeleteClick(wrapper)
+    simulateDeleteClick()
 
     expect(mockDeleteEvaluationRound).toBeCalledWith(
       props.evaluationRoundInput.evaluationId,
@@ -373,52 +337,39 @@ describe('test EvaluationRoundEditor', () => {
     expect(mockOnDelete).not.toBeCalled()
 
     //error should be shown
-    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
+    within(screen.getByRole('alert')).getByText('oops! you got a fake error')
   })
 })
 
 describe('test determineRoundStatus helper', () => {
   it('status: in progress', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     const roundStart = moment().subtract(1, 'day')
     const roundEnd = moment().add(1, 'day')
     expect(
-      shallow(
+      render(
         HelpersToTest.determineRoundStatus(roundStart, roundEnd),
-      ).hasClass('status-in-progress'),
-    ).toBe(true)
+      ).container.querySelector('.status-in-progress'),
+    ).toBeDefined()
   })
 
   it('status: completed', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     const roundStart = moment().subtract(2, 'day')
     const roundEnd = moment().subtract(1, 'day')
     expect(
-      shallow(
+      render(
         HelpersToTest.determineRoundStatus(roundStart, roundEnd),
-      ).hasClass('status-completed'),
-    ).toBe(true)
+      ).container.querySelector('.status-completed'),
+    ).toBeDefined()
   })
 
   it('status: not yet started', () => {
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
-
     const roundStart = moment().add(1, 'day')
     const roundEnd = moment().add(2, 'day')
     expect(
-      shallow(
+      render(
         HelpersToTest.determineRoundStatus(roundStart, roundEnd),
-      ).hasClass('status-not-yet-started'),
-    ).toBe(true)
+      ).container.querySelector('.status-not-yet-started'),
+    ).toBeDefined()
   })
 })
 
