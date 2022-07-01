@@ -8,7 +8,7 @@ import {
   UseQueryOptions,
 } from 'react-query'
 import { SynapseClient } from '../../..'
-import { SynapseClientError } from '../../../SynapseClient'
+import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { Submission } from '../../../synapseTypes/AccessRequirement/Submission'
 import { SubmissionStateChangeRequest } from '../../../synapseTypes/AccessRequirement/SubmissionStateChangeRequest'

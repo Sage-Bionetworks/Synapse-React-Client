@@ -8,7 +8,7 @@ import {
   UseQueryResult,
 } from 'react-query'
 import { SynapseClient } from '../../..'
-import { SynapseClientError } from '../../../SynapseClient'
+import { SynapseClientError } from '../../../SynapseClientError'
 import {
   BUNDLE_MASK_QUERY_RESULTS,
   DEFAULT_PAGE_SIZE,
@@ -193,7 +193,7 @@ export function useGetQueryResultBundleWithAsyncStatus(
         : undefined,
   } as UseQueryResult<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClient.SynapseClientError
+    SynapseClientError
   >
   return resultObject
 }

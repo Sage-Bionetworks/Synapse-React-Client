@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import {
   deleteEvaluation,
   getEvaluationPermissions,
-  SynapseClientError,
 } from '../../utils/SynapseClient'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 import { Evaluation } from '../../utils/synapseTypes'
 import { Button, Card, Col, Dropdown, Row } from 'react-bootstrap'
 import { ErrorBanner } from '../ErrorBanner'
