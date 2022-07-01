@@ -156,7 +156,7 @@ function renderTableCell(
 jest.mock('../../../lib/containers/HasAccessV2', () => ({
   HasAccessV2: function MockHasAccess() {
     return <div data-testid="HasAccess"></div>
-  },
+  }
 }))
 
 jest.mock('../../../lib/containers/EntityLink', () => {

@@ -15,7 +15,6 @@ export const ProjectViewCard: React.FunctionComponent<
   return (
     <div
       {...domProps}
-      role="article"
       className={`cardContainer ProjectViewCard bootstrap-4-backport ${
         domProps.className ?? ''
       }`}
