@@ -149,11 +149,7 @@ describe('it creates the correct UI for the avatar', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${PROFILE_IMAGE_PREVIEW(':userId')}`,
         async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.set('Content-Type', 'text/plain'),
-            ctx.text(IMAGE_URL),
-          )
+          return res(ctx.status(200), ctx.text(IMAGE_URL))
         },
       ),
       // Handler for the "presigned" URL itself:

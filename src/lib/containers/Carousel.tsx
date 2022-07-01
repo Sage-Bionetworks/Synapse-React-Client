@@ -68,7 +68,7 @@ export const Carousel: React.FunctionComponent<CarouselProps> = ({
   return isLoading ? (
     <div className="spinner" style={{ display: 'block' }} />
   ) : (
-    <div role="feed" className="SRC-Carousel">
+    <div className="SRC-Carousel">
       <SizeMe refreshMode="debounce" noPlaceholder={true}>
         {({ size }) => (
           <BrainhubCarousel
