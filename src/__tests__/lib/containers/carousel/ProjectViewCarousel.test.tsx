@@ -1,4 +1,3 @@
-import { mount } from 'enzyme'
 import Carousel from '../../../../lib/containers/Carousel'
 import { ProjectViewCard } from '../../../../lib/containers/home_page/project_view_carousel/ProjectViewCard'
 import ProjectViewCarousel, {
@@ -9,6 +8,8 @@ import React from 'react'
 import { mockQueryResult } from '../../../../mocks/query/mockProjectViewQueryResults'
 import SizeMe from 'react-sizeme'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
+import { render, screen, waitFor } from '@testing-library/react'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 SizeMe.noPlaceholders = true
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
@@ -35,27 +36,32 @@ describe('basic functionality', () => {
   })
 
   it('retrieves project data and images and inserts cards into carousel', async () => {
-    const wrapper = mount(<ProjectViewCarousel {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    const { container } = render(<ProjectViewCarousel {...props} />, {
+      wrapper: createWrapper(),
     })
-    await resolveAllPending(wrapper)
 
-    expect(SynapseClient.getQueryTableResults).toHaveBeenCalledTimes(1)
+    await waitFor(() =>
+      expect(SynapseClient.getQueryTableResults).toHaveBeenCalledTimes(1),
+    )
 
     // There are 5 results, but only 4 have an image specified
-    expect(SynapseClient.getWikiPageKeyForEntity).toHaveBeenCalledTimes(4)
-    expect(
-      SynapseClient.getPresignedUrlForWikiAttachment,
-    ).toHaveBeenCalledTimes(4)
+    await waitFor(() =>
+      expect(SynapseClient.getWikiPageKeyForEntity).toHaveBeenCalledTimes(4),
+    )
+    await waitFor(() =>
+      expect(
+        SynapseClient.getPresignedUrlForWikiAttachment,
+      ).toHaveBeenCalledTimes(4),
+    )
 
-    await resolveAllPending(wrapper)
-
-    expect(wrapper.find(Carousel).length).toEqual(1)
-    expect(wrapper.find(ProjectViewCard).length).toBeGreaterThan(0)
+    expect(screen.getByRole('feed')).toBeVisible()
+    expect(screen.getAllByRole('article').length).toBeGreaterThan(0)
 
     // Check that the currently selected card (card 0) contains an image element with the correct src
     expect(
-      wrapper.find('.SRC-Carousel__SelectedCard img').at(0).prop('src'),
+      container
+        .querySelectorAll('.SRC-Carousel__SelectedCard img')[0]
+        .getAttribute('src'),
     ).toEqual(PRESIGNED_URL)
   })
 })

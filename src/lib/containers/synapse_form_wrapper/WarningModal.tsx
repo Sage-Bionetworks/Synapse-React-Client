@@ -36,9 +36,9 @@ export function WarningModal(props: WarningModalProps) {
       backdrop="static"
     >
       <Modal.Header closeButton={true} onHide={() => onCancel()}>
-        <Modal.Title>{title}</Modal.Title>
+        <Modal.Title role="heading">{title}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>{modalBody}</Modal.Body>
+      <Modal.Body role="article">{modalBody}</Modal.Body>
       <Modal.Footer>
         <div>
           <Button variant="outline" onClick={() => onCancel()}>
