@@ -180,16 +180,19 @@ const entityPath: EntityPath = {
   ],
 }
 
+const setCurrentContainerSpy = jest.fn()
+
 function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
   function EntityTreeWithCurrentContainer() {
     const [currentContainer, setCurrentContainer] =
       useState<EntityTreeContainer>(propOverrides?.initialContainer ?? null)
+    setCurrentContainerSpy.mockImplementation(setCurrentContainer)
     return (
       <EntityTree
         {...defaultProps}
         {...propOverrides}
         currentContainer={currentContainer}
-        setCurrentContainer={setCurrentContainer}
+        setCurrentContainer={setCurrentContainerSpy}
       />
     )
   }
@@ -270,23 +273,31 @@ describe('EntityTree tests', () => {
   })
 
   describe('Dropdown selection tests', () => {
-    it('cannot select `Current Project` if project ID is not provided', () => {
+    it('cannot select Current Project if project ID is not provided', async () => {
       renderComponent({
         initialScope: FinderScope.ALL_PROJECTS,
         projectId: undefined,
       })
 
       userEvent.click(screen.getByRole('button'))
-      expect(() => screen.getAllByLabelText('Current Project')).toThrowError()
+      await waitFor(() =>
+        expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
+      )
+
+      expect(screen.queryByLabelText('Current Project')).not.toBeInTheDocument()
     })
 
-    it('can select `Current Project` if initial container is provided', () => {
+    it('can select Current Project if initial container is provided', async () => {
       renderComponent({
         initialScope: FinderScope.ALL_PROJECTS,
         projectId: 'syn123',
       })
 
       userEvent.click(screen.getByRole('button'))
+      await waitFor(() =>
+        expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
+      )
+
       expect(screen.getAllByText('Current Project').length).toBe(1)
     })
 
@@ -300,6 +311,8 @@ describe('EntityTree tests', () => {
       userEvent.click(screen.getByText('My Favorites'))
 
       await waitFor(() => expect(mockGetUserFavorites).toBeCalled())
+      // SWC-5593 - When switching to favorites, the container should be 'root'
+      expect(setCurrentContainerSpy).toHaveBeenLastCalledWith('root')
     })
   })
 

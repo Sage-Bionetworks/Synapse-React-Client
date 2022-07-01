@@ -1,6 +1,6 @@
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClient'
+import { SynapseClientError } from '../../SynapseClientError'
 import { useSynapseContext } from '../../SynapseContext'
 import {
   SubmissionInfoPage,

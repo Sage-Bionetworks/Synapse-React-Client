@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SynapseContextProvider } from '../utils/SynapseContext'
 import { SynapseClient } from '../utils'
 import { SynapseToastContainer } from './ToastMessage'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import moment from 'moment'
 import {
   detectSSOCode,
@@ -39,6 +40,7 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
       }}
     >
       <MemoryRouter>
+        <ReactQueryDevtools />
         <SynapseToastContainer />
         <main>{props.children}</main>
       </MemoryRouter>

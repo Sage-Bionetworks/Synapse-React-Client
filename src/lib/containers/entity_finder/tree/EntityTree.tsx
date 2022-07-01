@@ -47,6 +47,19 @@ export enum FinderScope {
   FAVORITES = 'My Favorites',
 }
 
+function getScopeOptionDefaultContainer(
+  scope: FinderScope,
+): EntityTreeContainer {
+  switch (scope) {
+    case FinderScope.FAVORITES:
+      return 'root'
+    case FinderScope.CURRENT_PROJECT:
+    case FinderScope.ALL_PROJECTS:
+    case FinderScope.CREATED_BY_ME:
+      return null
+  }
+}
+
 function getScopeOptionNodeName(scope: FinderScope): string {
   switch (scope) {
     case FinderScope.CURRENT_PROJECT:
@@ -401,7 +414,9 @@ export function EntityTree(props: EntityTreeProps) {
                       e.stopPropagation()
                       if (scope !== scopeOption) {
                         setScope(scopeOption)
-                        setCurrentContainer(null)
+                        setCurrentContainer(
+                          getScopeOptionDefaultContainer(scopeOption),
+                        )
                       }
                     }}
                   >
