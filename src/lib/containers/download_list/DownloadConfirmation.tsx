@@ -54,11 +54,11 @@ async function addToDownload(
     }
     await SynapseClient.addFilesToDownloadListV2(req, token)
     displayToast(
-      'File(s) were successfully added to your Download List.',
+      'File(s) were successfully added to your Download Cart.',
       'success',
       {
         primaryButtonConfig: {
-          text: 'View Download List',
+          text: 'View Download Cart',
           onClick: goToDownloadListFn,
         },
       },
@@ -84,7 +84,7 @@ type UiStateDictionary = {
 const StatusConstruct: UiStateDictionary = {
   [StatusEnum.INFO]: {
     className: 'alert-info',
-    infoText: 'Would you like to add all files to the download list?',
+    infoText: 'Would you like to add all files to the download cart?',
     closeText: 'Cancel',
   },
   [StatusEnum.INFO_ITEMS_IN_LIST]: {
@@ -92,9 +92,9 @@ const StatusConstruct: UiStateDictionary = {
     infoText: (
       <>
         Note: Files that you add will be mixed in with the files already in your
-        download list.
+        download cart.
         <br />
-        If you don’t want to mix these files, clear your download list before
+        If you don’t want to mix these files, clear your download cart before
         continuing.
       </>
     ),
@@ -117,7 +117,7 @@ const StatusConstruct: UiStateDictionary = {
     infoText: (
       <>
         Please <SignInButton style={{ color: '#337ab7' }} /> to add files to
-        your download list.
+        your download cart.
       </>
     ),
   },
