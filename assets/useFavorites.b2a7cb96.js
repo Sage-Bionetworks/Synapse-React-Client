@@ -1,0 +1,2 @@
+import{c as i,a as r}from"./useUserBundle.39ae2965.js";import{u}from"./useInfiniteQuery.797facb2.js";import{b3 as n}from"./index.584d54bf.js";function I(e){const{accessToken:s}=r();return i(["favorites"],()=>n(s),e)}function g(e){const{accessToken:a}=r();return u(["favorites","infinite"],async t=>n(a,t.pageParam,10),{...e,getNextPageParam:(t,o)=>{if(t.results.length>0)return o.length*10}})}export{I as a,g as u};
+//# sourceMappingURL=useFavorites.b2a7cb96.js.map
