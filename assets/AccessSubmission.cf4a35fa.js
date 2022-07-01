@@ -1,0 +1,2 @@
+import{a as r}from"./useUserBundle.f30873b3.js";import{u as t}from"./useInfiniteQuery.a7b01b77.js";import{b4 as c}from"./index.ccc9dd97.js";function f(e,a){const{accessToken:n}=r();return t(["accessSubmissionSearch",e],async s=>await c({...e,nextPageToken:s.pageParam},n),{...a,getNextPageParam:s=>s.nextPageToken})}var o=(e=>(e.MODIFIED_ON="MODIFIED_ON",e.CREATED_ON="CREATED_ON",e))(o||{});export{o as S,f as u};
+//# sourceMappingURL=AccessSubmission.cf4a35fa.js.map
