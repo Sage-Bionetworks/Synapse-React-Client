@@ -225,8 +225,8 @@ export const DownloadCartPage: React.FunctionComponent<
                           Python, CLI)
                         </li>
                         <li>
-                          No limit to the file size or number of files that can
-                          be downloaded
+                          No limit to the file size or the size of the package
+                          that can be downloaded
                         </li>
                         <li>
                           Will include files which are hosted on and off Synapse
