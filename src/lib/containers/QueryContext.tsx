@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { createContext, useContext } from 'react'
-import { SynapseClientError } from '../utils/SynapseClient'
+import { SynapseClientError } from '../utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,

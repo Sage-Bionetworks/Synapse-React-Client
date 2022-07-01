@@ -1,18 +1,16 @@
+import { SynapseClient } from '../../../lib/utils'
+import { ASYNCHRONOUS_JOB_TOKEN } from '../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
+import { FunctionReturningPaginatedResults } from '../../../lib/utils/SynapseClient'
+import { SynapseClientError } from '../../../lib/utils/SynapseClientError'
 import {
   AsynchronousJobStatus,
   PaginatedResults,
 } from '../../../lib/utils/synapseTypes'
-import { SynapseClient } from '../../../lib/utils'
-import {
-  FunctionReturningPaginatedResults,
-  SynapseClientError,
-} from '../../../lib/utils/SynapseClient'
 import { rest, server } from '../../../mocks/msw/server'
-import { ASYNCHRONOUS_JOB_TOKEN } from '../../../lib/utils/APIConstants'
 
 describe('SynapseClient tests', () => {
   describe('SynapseClient integration tests', () => {

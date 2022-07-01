@@ -4,9 +4,9 @@ import {
   createEvaluation,
   deleteEvaluation,
   getEvaluation,
-  SynapseClientError,
   updateEvaluation,
 } from '../../utils/SynapseClient'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 import { ErrorBanner } from '../ErrorBanner'
 import { Evaluation } from '../../utils/synapseTypes/Evaluation/Evaluation'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
