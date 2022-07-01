@@ -201,10 +201,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           toastMessageTitle += ` to Dataset`
         }
 
-        displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
-          title: toastMessageTitle,
-        })
-
         const items = [
           ...unchangedItems,
           ...updatedItems.map(item => ({
@@ -216,10 +212,20 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
             versionNumber: item.targetVersionNumber!,
           })),
         ]
-        return {
+
+        const updatedDataSet = {
           ...datasetToUpdate,
           items: items,
         }
+        displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
+          title: toastMessageTitle,
+          primaryButtonConfig: {
+            text: 'Save changes to Draft',
+            onClick: () => mutation.mutate(updatedDataSet),
+          },
+        })
+
+        return updatedDataSet
       } else {
         console.warn(
           'Cannot add items to the Dataset because it is undefined. The Dataset may not have been fetched yet.',
@@ -231,17 +237,25 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
 
   function removeSelectedItemsFromDataset() {
-    setDatasetToUpdate(dataset => ({
-      ...dataset!,
-      items: dataset!.items.filter(
-        datasetItem => !selectedIds.has(datasetItem.entityId),
-      ),
-    }))
+    setDatasetToUpdate(dataset => {
+      const updatedDataSet = {
+        ...dataset!,
+        items: dataset!.items.filter(
+          datasetItem => !selectedIds.has(datasetItem.entityId),
+        ),
+      }
 
-    displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
-      title: `${selectedIds.size} Item${
-        selectedIds.size === 1 ? '' : 's'
-      } removed from the Dataset`,
+      displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
+        title: `${selectedIds.size} Item${
+          selectedIds.size === 1 ? '' : 's'
+        } removed from the Dataset`,
+        primaryButtonConfig: {
+          text: 'Save changes to Draft',
+          onClick: () => mutation.mutate(updatedDataSet),
+        },
+      })
+
+      return updatedDataSet
     })
 
     clearSelectedIds()
