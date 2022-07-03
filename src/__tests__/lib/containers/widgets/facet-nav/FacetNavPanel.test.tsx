@@ -11,7 +11,7 @@ import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../../../lib/containers/QueryWrapper'
+} from '../../../../../lib/containers/QueryContext'
 import { QueryVisualizationContextProvider } from '../../../../../lib/containers/QueryVisualizationWrapper'
 
 const mockApplyCallback = jest.fn(() => null)

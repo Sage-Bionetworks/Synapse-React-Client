@@ -1,6 +1,6 @@
 import React from 'react'
 import { ErrorBanner } from './ErrorBanner'
-import { useQueryContext } from './QueryWrapper'
+import { useQueryContext } from './QueryContext'
 
 /**
  * Error banner that automatically pulls the error from QueryContext.

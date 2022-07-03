@@ -1,10 +1,35 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { SynapseContextProvider } from '../utils/SynapseContext'
-import RenderIfInView from './RenderIfInView'
 import { SynapseClient } from '../utils'
+import { SynapseToastContainer } from './ToastMessage'
+import { ReactQueryDevtools } from 'react-query/devtools'
+import moment from 'moment'
+import {
+  detectSSOCode,
+  getAccessTokenFromCookie,
+  getUserProfile,
+  getAuthenticatedOn,
+} from '../utils/SynapseClient'
+
+export async function sessionChangeHandler() {
+  detectSSOCode()
+  const accessToken = await getAccessTokenFromCookie()
+  global.accessToken = accessToken
+  const profile = await getUserProfile(accessToken)
+  global.currentUserProfile = profile
+  if (accessToken) {
+    getAuthenticatedOn(accessToken).then(authenticatedOn => {
+      const date = moment(authenticatedOn.authenticatedOn).format('L LT')
+    })
+  }
+  return profile
+}
 
 export const StyleGuidistComponentWrapper: React.FC = props => {
+  useEffect(() => {
+    sessionChangeHandler()
+  }, [])
   return (
     <SynapseContextProvider
       synapseContext={{
@@ -15,7 +40,9 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
       }}
     >
       <MemoryRouter>
-        <RenderIfInView>{props.children}</RenderIfInView>
+        <ReactQueryDevtools />
+        <SynapseToastContainer />
+        <main>{props.children}</main>
       </MemoryRouter>
     </SynapseContextProvider>
   )

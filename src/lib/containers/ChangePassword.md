@@ -1,5 +1,0 @@
-Change Password:
-
-```jsx
-<ChangePassword />
-```

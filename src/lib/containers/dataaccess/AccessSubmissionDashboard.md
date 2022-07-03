@@ -1,3 +1,0 @@
-```jsx
-return <DataAccessSubmissionDashboard />
-```

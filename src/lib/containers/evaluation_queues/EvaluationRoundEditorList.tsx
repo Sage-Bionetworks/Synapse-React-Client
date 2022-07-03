@@ -6,10 +6,8 @@ import {
   convertEvaluationRoundToInput,
   EvaluationRoundInput,
 } from './input_models/models'
-import {
-  getEvaluationRoundsList,
-  SynapseClientError,
-} from '../../utils/SynapseClient'
+import { getEvaluationRoundsList } from '../../utils/SynapseClient'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 import shortid from 'shortid'
 import { EvaluationRoundListResponse } from '../../utils/synapseTypes/Evaluation/EvaluationRoundListResponse'
 import { ErrorBanner } from '../ErrorBanner'

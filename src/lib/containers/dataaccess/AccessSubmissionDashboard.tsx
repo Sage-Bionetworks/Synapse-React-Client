@@ -104,7 +104,7 @@ export const DataAccessSubmissionDashboard = () => {
             Filter by Access Requirement Name
           </FormLabel>
           <AccessRequirementSearchBox
-            htmlId="arId-filter"
+            inputId="arId-filter"
             onChange={setAccessRequirementId}
             placeholder="Search for an Access Requirement Name "
           />
@@ -112,7 +112,7 @@ export const DataAccessSubmissionDashboard = () => {
         <div>
           <FormLabel htmlFor="requester-filter">Filter by Requester</FormLabel>
           <UserSearchBoxV2
-            htmlId="requester-filter"
+            inputId="requester-filter"
             placeholder="Search for a user name"
             defaultValue={accessorId}
             onChange={onRequesterChange}
@@ -122,7 +122,7 @@ export const DataAccessSubmissionDashboard = () => {
         <div>
           <FormLabel htmlFor="reviewer-filter">Filter by Reviewer</FormLabel>
           <UserSearchBoxV2
-            htmlId="reviewer-filter"
+            inputId="reviewer-filter"
             placeholder="Search for a user or team name"
             defaultValue={reviewerId}
             onChange={onReviewerChange}

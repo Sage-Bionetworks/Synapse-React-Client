@@ -85,90 +85,93 @@ import Rat from '../assets/mui_components/Rat'
 import { EntityType } from '../utils/synapseTypes/EntityType'
 import Tooltip from '../utils/tooltip/Tooltip'
 
-export type Icon =
-  | 'accessOpen'
-  | 'accessClosed'
-  | 'arrowBack'
-  | 'arrowForward'
-  | 'arrowDropUp'
-  | 'arrowDropDown'
-  | 'check'
-  | 'clear'
-  | 'cart'
-  | 'clock'
-  | 'code'
-  | 'openInNewWindow'
-  | 'dashboard'
-  | 'delete'
-  | 'addToCart'
-  | 'addCircleOutline'
-  | 'addCircleTwoTone'
-  | 'reload'
-  | 'team'
-  | 'photoCamera'
-  | 'info'
-  | 'favTwoTone'
-  | 'fav'
-  | 'peopleTwoTone'
-  | 'challengesTwoTone'
-  | 'download'
-  | 'searchOutlined'
-  | 'search'
-  | 'history'
-  | 'time'
-  | 'login'
-  | 'helpOutlined'
-  | 'expandLess'
-  | 'expandMore'
-  | 'rat'
-  | 'chromatin'
-  | 'clinical'
-  | 'contentCopy'
-  | 'data'
-  | 'dataLocked'
-  | 'geneExpression'
-  | 'geneVariants'
-  | 'imaging'
-  | 'lineGraph'
-  | 'kinomics'
-  | 'proteomics'
-  | 'packagableFile'
-  | 'other'
-  | 'wiki'
-  | 'file'
-  | 'folder'
-  | 'link'
-  | 'table'
-  | 'public'
-  | 'people'
-  | 'entityview'
-  | 'submissionview'
-  | 'challenge'
-  | 'discussion'
-  | 'dataset'
-  | 'docker'
-  | 'accountCertified'
-  | 'accountRegistered'
-  | 'accountValidated'
-  | 'warningOutlined'
-  | 'removeCircle'
-  | 'replyTwoTone'
-  | 'chatTwoTone'
-  | 'accessManagement'
-  | 'chevronRight'
-  | 'chevronLeft'
-  | 'database'
-  | 'close'
-  | 'verticalEllipsis'
-  | 'sync'
-  | 'clipboardCheck'
-  | 'add'
-  | 'warning'
-  | 'circle'
-  | 'block'
-  | 'checkCircle'
-  | 'errorOutlined'
-  | 'phone'
+export const IconStrings = [
+  'accessOpen',
+  'accessClosed',
+  'arrowBack',
+  'arrowForward',
+  'arrowDropUp',
+  'arrowDropDown',
+  'check',
+  'clear',
+  'cart',
+  'clock',
+  'code',
+  'openInNewWindow',
+  'dashboard',
+  'delete',
+  'addToCart',
+  'addCircleOutline',
+  'addCircleTwoTone',
+  'reload',
+  'team',
+  'photoCamera',
+  'info',
+  'favTwoTone',
+  'fav',
+  'peopleTwoTone',
+  'challengesTwoTone',
+  'download',
+  'searchOutlined',
+  'search',
+  'history',
+  'time',
+  'login',
+  'helpOutlined',
+  'expandLess',
+  'expandMore',
+  'rat',
+  'chromatin',
+  'clinical',
+  'contentCopy',
+  'data',
+  'dataLocked',
+  'geneExpression',
+  'geneVariants',
+  'imaging',
+  'lineGraph',
+  'kinomics',
+  'proteomics',
+  'packagableFile',
+  'other',
+  'wiki',
+  'file',
+  'folder',
+  'link',
+  'table',
+  'public',
+  'people',
+  'entityview',
+  'submissionview',
+  'challenge',
+  'discussion',
+  'dataset',
+  'docker',
+  'accountCertified',
+  'accountRegistered',
+  'accountValidated',
+  'warningOutlined',
+  'removeCircle',
+  'replyTwoTone',
+  'chatTwoTone',
+  'accessManagement',
+  'chevronRight',
+  'chevronLeft',
+  'database',
+  'close',
+  'verticalEllipsis',
+  'sync',
+  'clipboardCheck',
+  'add',
+  'warning',
+  'circle',
+  'block',
+  'checkCircle',
+  'errorOutlined',
+  'phone',
+] as const
+
+export type Icon = typeof IconStrings[number]
 
 export type IconSvgOptions = {
   icon: Icon
@@ -458,5 +461,9 @@ export const type2SvgIconName: Record<EntityType, Icon> = {
   submissionview: 'submissionview',
   dataset: 'dataset',
 }
+
+export const IconSvgDemo = (props: IconSvgOptions) => (
+  <IconSvg options={props} />
+)
 
 export default IconSvg

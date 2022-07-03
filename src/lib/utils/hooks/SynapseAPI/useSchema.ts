@@ -5,7 +5,7 @@
 import { JSONSchema7 } from 'json-schema'
 import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClient'
+import { SynapseClientError } from '../../SynapseClientError'
 
 export function useGetSchema(
   schema$id: string,

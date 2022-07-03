@@ -9,7 +9,7 @@ import {
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../../../lib/containers/QueryWrapper'
+} from '../../../../../lib/containers/QueryContext'
 import {
   QueryFilter,
   QueryFilterProps,

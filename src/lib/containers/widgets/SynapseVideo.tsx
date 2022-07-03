@@ -12,7 +12,15 @@ import { SynapseConstants } from '../../utils/'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
 export type Props = {
-  params: any
+  params: {
+    width?: string
+    height?: string
+    videoId?: string
+    vimeoId?: string
+    oggSynapseId?: string
+    mp4SynapseId?: string
+    webmSynapseId?: string
+  }
 }
 
 export default function SynapseVideo({ params }: Props) {
@@ -33,11 +41,11 @@ export default function SynapseVideo({ params }: Props) {
         const videoKey =
           params.oggSynapseId || params.mp4SynapseId || params.webmSynapseId
 
-        getEntity<FileEntity>(accessToken, videoKey).then(
+        getEntity<FileEntity>(accessToken, videoKey!).then(
           (data: FileEntity) => {
             const fileHandleAssociationList: FileHandleAssociation[] = [
               {
-                associateObjectId: videoKey,
+                associateObjectId: videoKey!,
                 associateObjectType: FileHandleAssociateType.FileEntity,
                 fileHandleId: data.dataFileHandleId,
               },

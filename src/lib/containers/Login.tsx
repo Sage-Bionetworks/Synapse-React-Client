@@ -204,7 +204,7 @@ class Login extends React.Component<Props, State> {
           <a href={resetPasswordUrl}>Forgot password?</a>
           <Button
             variant="primary-500"
-            onSubmit={this.handleLogin}
+            onClick={this.handleLogin}
             type="submit"
             className="SRC-login-button SRC-marginBottomTen"
           >

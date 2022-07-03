@@ -1,7 +1,7 @@
 import ColumnResizer from 'column-resizer'
 import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
-import { Button, Modal } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
 import NoData from '../../assets/icons/NoData'
 import { SynapseClient } from '../../utils'
 import {
@@ -35,7 +35,7 @@ import { HasAccessV2 } from '../HasAccessV2'
 import loadingScreen from '../LoadingScreen'
 import ModalDownload from '../ModalDownload'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
-import { QueryContextType } from '../QueryWrapper'
+import { QueryContextType } from '../QueryContext'
 import { Icon } from '../row_renderers/utils'
 import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
 import TotalQueryResults from '../TotalQueryResults'
@@ -54,6 +54,7 @@ import {
   getSqlUnderlyingDataForRow,
   getUniqueEntities,
 } from './SynapseTableUtils'
+import { TablePagination } from './TablePagination'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -67,10 +68,6 @@ export const EMPTY_HEADER: EntityHeader = {
   modifiedBy: '',
   modifiedOn: '',
 }
-
-// Hold constants for next and previous button actions
-const NEXT = 'NEXT'
-const PREVIOUS = 'PREVIOUS'
 
 type Direction = '' | 'ASC' | 'DESC'
 export const SORT_STATE: Direction[] = ['', 'DESC', 'ASC']
@@ -125,7 +122,6 @@ export default class SynapseTable extends React.Component<
     this.componentDidUpdate = this.componentDidUpdate.bind(this)
     this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this)
     this.handleColumnSortPress = this.handleColumnSortPress.bind(this)
-    this.handlePaginationClick = this.handlePaginationClick.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
     this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
     this.advancedSearch = this.advancedSearch.bind(this)
@@ -369,7 +365,6 @@ export default class SynapseTable extends React.Component<
     const { isExpanded, isExportTableDownloadOpen } = this.state
     const queryRequest = this.props.queryContext.getLastQueryRequest()
     const { showFacetFilter } = topLevelControlsState
-
     let className = ''
     const hasResults = data.queryResult.queryResults.rows.length > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
@@ -494,46 +489,11 @@ export default class SynapseTable extends React.Component<
     // handle displaying the previous button -- if offset is zero then it
     // shouldn't be displayed
     const {
-      queryContext: { entity, hasNextPage, hasPreviousPage },
+      queryContext: { entity },
       showAccessColumn,
       showDownloadColumn,
       isRowSelectionVisible,
     } = this.props
-
-    const nextBtn = (
-      <Button
-        variant="secondary"
-        className="pill-xl"
-        onClick={this.handlePaginationClick(NEXT)}
-        style={{
-          marginRight: 0,
-          marginBottom: '20px',
-          display: 'inline-flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        type="button"
-      >
-        Next
-      </Button>
-    )
-    const previousBtn = (
-      <Button
-        variant="secondary"
-        className="pill-xl"
-        onClick={this.handlePaginationClick(PREVIOUS)}
-        type="button"
-        style={{
-          marginRight: !hasNextPage && hasPreviousPage ? 0 : '10px',
-          marginBottom: '20px',
-          display: 'inline-flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        Previous
-      </Button>
-    )
 
     /**
      * i.e. the view may have FileEntities in it
@@ -594,28 +554,12 @@ export default class SynapseTable extends React.Component<
           </tbody>
         </table>
         <div className="bootstrap-4-backport" style={{ textAlign: 'right' }}>
-          {hasPreviousPage && previousBtn}
-          {hasNextPage && nextBtn}
+          <TablePagination />
         </div>
       </div>
     )
   }
 
-  /**
-   * Handle a click on next or previous
-   *
-   * @memberof SynapseTable
-   */
-  private handlePaginationClick =
-    (eventType: string) => (_event: React.MouseEvent<HTMLButtonElement>) => {
-      const { goToNextPage, goToPreviousPage } = this.props.queryContext
-      if (eventType === PREVIOUS) {
-        goToPreviousPage()
-      }
-      if (eventType === NEXT) {
-        goToNextPage()
-      }
-    }
   /**
    * Handle a column having been selected
    *

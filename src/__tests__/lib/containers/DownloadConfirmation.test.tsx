@@ -158,18 +158,18 @@ describe('DownloadConfirmation', () => {
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith(
-        'File(s) were successfully added to your Download List.',
+        'File(s) were successfully added to your Download Cart.',
         'success',
         expect.objectContaining({
           primaryButtonConfig: expect.objectContaining({
-            text: 'View Download List',
+            text: 'View Download Cart',
           }),
         }),
       ),
     )
   })
 
-  it('displays a warning when files are already in the download list', async () => {
+  it('displays a warning when files are already in the download cart', async () => {
     getDownloadListStatisticsResultsFn.mockResolvedValue({
       ...filesStatisticsResponse,
       totalNumberOfFiles: 1,
@@ -179,7 +179,7 @@ describe('DownloadConfirmation', () => {
 
     await waitFor(() =>
       screen.getByText(
-        'Files that you add will be mixed in with the files already in your download list',
+        'Files that you add will be mixed in with the files already in your download cart',
         {
           exact: false,
         },

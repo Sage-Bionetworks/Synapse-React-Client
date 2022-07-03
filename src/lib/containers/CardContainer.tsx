@@ -12,7 +12,7 @@ import { EntityHeader, Row, ColumnType } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
-import { useQueryContext } from './QueryWrapper'
+import { useInfiniteQueryContext } from './QueryContext'
 import { Dataset, Funder } from './row_renderers'
 import {
   LoadingObservationCard,
@@ -42,12 +42,11 @@ export const CardContainer = (props: CardContainerProps) => {
     title,
     ...rest
   } = props
-  const queryContext = useQueryContext()
+  const infiniteQueryContext = useInfiniteQueryContext()
   const { data, getLastQueryRequest, appendNextPageToResults, hasNextPage } =
-    queryContext
+    infiniteQueryContext
 
   const queryRequest = getLastQueryRequest()
-
   const renderCard = (props: any, type: string) => {
     switch (type) {
       case DATASET:
@@ -55,7 +54,7 @@ export const CardContainer = (props: CardContainerProps) => {
       case FUNDER:
         return <Funder {...props} />
       case GENERIC_CARD:
-        return <GenericCard {...props} queryContext={queryContext} />
+        return <GenericCard {...props} queryContext={infiniteQueryContext} />
       case OBSERVATION_CARD:
         return <ObservationCard {...props} />
       default:

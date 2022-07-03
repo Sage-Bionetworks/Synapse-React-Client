@@ -5,7 +5,7 @@ import {
   useInfiniteQuery,
 } from 'react-query'
 import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClient'
+import { SynapseClientError } from '../../SynapseClientError'
 import { useSynapseContext } from '../../SynapseContext'
 import { EntityHeader, PaginatedResults } from '../../synapseTypes'
 
