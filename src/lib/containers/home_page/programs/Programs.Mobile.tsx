@@ -14,7 +14,9 @@ export default function ProgramsMobile({
 }: ProgramsDataProps) {
   const titleElement = (
     <div className="Programs__Mobile__Header">
-      <ImageFileHandle fileHandleAssociation={fileHandleAssociation!} />
+      <span className="Programs__Card__header__icon">
+        <ImageFileHandle fileHandleAssociation={fileHandleAssociation!} />
+      </span>
       <span className="Programs__Mobile__Header__Title"> {title} </span>
     </div>
   )
