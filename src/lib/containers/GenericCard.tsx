@@ -18,7 +18,6 @@ import {
   FileHandleAssociateType,
   FileHandleAssociation,
   SelectColumn,
-  Table,
 } from '../utils/synapseTypes'
 import {
   CardLink,
