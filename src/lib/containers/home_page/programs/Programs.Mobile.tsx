@@ -15,7 +15,9 @@ export default function ProgramsMobile({
   const titleElement = (
     <div className="Programs__Mobile__Header">
       <span className="Programs__Card__header__icon">
-        <ImageFileHandle fileHandleAssociation={fileHandleAssociation!} />
+        {fileHandleAssociation && (
+          <ImageFileHandle fileHandleAssociation={fileHandleAssociation} />
+        )}
       </span>
       <span className="Programs__Mobile__Header__Title"> {title} </span>
     </div>

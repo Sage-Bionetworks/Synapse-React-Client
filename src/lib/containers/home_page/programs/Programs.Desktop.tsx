@@ -18,7 +18,9 @@ export default function ProgramsDesktop({
         style={{ backgroundColor: color.replace(')', ',.05)') }}
       >
         <div className="Programs__Card__header__icon">
-          <ImageFileHandle fileHandleAssociation={fileHandleAssociation!} />
+          {fileHandleAssociation && (
+            <ImageFileHandle fileHandleAssociation={fileHandleAssociation} />
+          )}
         </div>
         <div className="Programs__Card__header__info">
           <span className="Programs__Card__header__info__title"> {title} </span>
