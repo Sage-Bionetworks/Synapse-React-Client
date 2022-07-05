@@ -1,15 +1,14 @@
 import React from 'react'
 import { ProgramsDataProps } from './Programs'
-import { Icon } from '../../../containers/row_renderers/utils'
 import { Button } from 'react-bootstrap'
+import { ImageFileHandle } from '../../widgets/ImageFileHandle'
 
 export default function ProgramsDesktop({
   link,
   summary,
   title,
   color,
-  iconValue,
-  iconOptions,
+  fileHandleAssociation,
   exploreLink,
 }: ProgramsDataProps) {
   return (
@@ -19,7 +18,7 @@ export default function ProgramsDesktop({
         style={{ backgroundColor: color.replace(')', ',.05)') }}
       >
         <div className="Programs__Card__header__icon">
-          <Icon type={iconValue} iconOptions={iconOptions} />
+          <ImageFileHandle fileHandleAssociation={fileHandleAssociation!} />
         </div>
         <div className="Programs__Card__header__info">
           <span className="Programs__Card__header__info__title"> {title} </span>
