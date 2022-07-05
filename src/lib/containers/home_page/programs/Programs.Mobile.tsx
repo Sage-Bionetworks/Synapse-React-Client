@@ -1,21 +1,24 @@
 import React from 'react'
 import { ProgramsDataProps } from './Programs'
 import ExpandableContent from '../ExpandableContent'
-import { Icon } from '../../../containers/row_renderers/utils'
 import { Button } from 'react-bootstrap'
+import { ImageFileHandle } from '../../widgets/ImageFileHandle'
 
 export default function ProgramsMobile({
   link,
   summary,
   title,
   color,
-  iconValue,
-  iconOptions,
+  fileHandleAssociation,
   exploreLink,
 }: ProgramsDataProps) {
   const titleElement = (
     <div className="Programs__Mobile__Header">
-      <Icon type={iconValue} iconOptions={iconOptions} />
+      <span className="Programs__Card__header__icon">
+        {fileHandleAssociation && (
+          <ImageFileHandle fileHandleAssociation={fileHandleAssociation} />
+        )}
+      </span>
       <span className="Programs__Mobile__Header__Title"> {title} </span>
     </div>
   )

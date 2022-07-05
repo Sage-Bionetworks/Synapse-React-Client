@@ -32,7 +32,7 @@
       background: SRC.$primary-action-color;
       display: flex;
       align-items: center;
-      .iconImg {
+      &__icon img{
         width: 50px;
       }
       p {

@@ -7,13 +7,6 @@ import { ReactComponent as resilienceadSvg } from '../../../../demo/containers/p
 
 import Programs from './Programs'
 
-const iconOptions = {
-  'AMP-AD': circleSvg,
-  'M2OVE-AD': brainSvg,
-  'MODEL-AD': mouseSvg,
-  'Resilience-AD': resilienceadSvg,
-}
-
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: 'Home Page/Programs',
@@ -32,8 +25,7 @@ ProgramsDemo.args = {
   titleColumnName: 'Program',
   summaryColumnName: 'Short Description',
   linkColumnName: 'Website',
-  iconColumnName: 'Program',
-  iconOptions,
+  imageFileHandleColumnName: 'Homepage Image',
   linkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Programs/DetailsPage',
