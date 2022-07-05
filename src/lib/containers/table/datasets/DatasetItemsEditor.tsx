@@ -3,6 +3,7 @@ import BaseTable, {
   AutoResizer,
   ColumnShape,
 } from '@sage-bionetworks/react-base-table'
+import { isEqual } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import ReactTooltip from 'react-tooltip'
@@ -71,9 +72,11 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
   const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
-
+  const [toastMessageTitle, setToastMessageTitle] = useState('')
   // Disable updating the entity after the initial fetch because we don't want to replace edits that the user makes.
   const [datasetToUpdate, _setDatasetToUpdate] =
+    useState<RequiredProperties<Dataset, 'items'>>()
+  const [previousDatasetToUpdate, setPreviousDatasetToUpdate] =
     useState<RequiredProperties<Dataset, 'items'>>()
   const setDatasetToUpdate = (
     dataset: React.SetStateAction<
@@ -111,6 +114,23 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const allItemsAreSelected = !!(
     datasetToUpdate && datasetToUpdate.items.length === selectedIds.size
   )
+
+  useEffect(() => {
+    if (
+      previousDatasetToUpdate &&
+      datasetToUpdate &&
+      !isEqual(previousDatasetToUpdate, datasetToUpdate)
+    ) {
+      displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
+        title: toastMessageTitle,
+        primaryButtonConfig: {
+          text: 'Save changes to Draft',
+          onClick: () => mutation.mutate(datasetToUpdate),
+        },
+      })
+    }
+    setPreviousDatasetToUpdate(datasetToUpdate)
+  }, [setDatasetToUpdate])
 
   // We get the project ID to show the "Current Project" context in the Entity Finder.
   const { data: path } = useGetEntityPath(entityId)
@@ -187,18 +207,18 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         )
 
         // "X item(s) added"
-        let toastMessageTitle = `${newItems.length} Item${
+        let toastTitle = `${newItems.length} Item${
           newItems.length === 1 ? '' : 's'
         } added`
 
         // "and Y item(s) updated", only shown if there are updated items
         if (updatedItems.length > 0) {
-          toastMessageTitle += ` and ${updatedItems.length} Item${
+          toastTitle += ` and ${updatedItems.length} Item${
             updatedItems.length === 1 ? '' : 's'
           } updated`
         } else {
           // if no items were updated, title = "X items(s) added" + " to Dataset"
-          toastMessageTitle += ` to Dataset`
+          toastTitle += ` to Dataset`
         }
 
         const items = [
@@ -213,19 +233,11 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           })),
         ]
 
-        const updatedDataSet = {
+        setToastMessageTitle(toastTitle)
+        return {
           ...datasetToUpdate,
           items: items,
         }
-        displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
-          title: toastMessageTitle,
-          primaryButtonConfig: {
-            text: 'Save changes to Draft',
-            onClick: () => mutation.mutate(updatedDataSet),
-          },
-        })
-
-        return updatedDataSet
       } else {
         console.warn(
           'Cannot add items to the Dataset because it is undefined. The Dataset may not have been fetched yet.',
@@ -237,27 +249,17 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
 
   function removeSelectedItemsFromDataset() {
-    setDatasetToUpdate(dataset => {
-      const updatedDataSet = {
-        ...dataset!,
-        items: dataset!.items.filter(
-          datasetItem => !selectedIds.has(datasetItem.entityId),
-        ),
-      }
-
-      displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
-        title: `${selectedIds.size} Item${
-          selectedIds.size === 1 ? '' : 's'
-        } removed from the Dataset`,
-        primaryButtonConfig: {
-          text: 'Save changes to Draft',
-          onClick: () => mutation.mutate(updatedDataSet),
-        },
-      })
-
-      return updatedDataSet
-    })
-
+    setDatasetToUpdate(dataset => ({
+      ...dataset!,
+      items: dataset!.items.filter(
+        datasetItem => !selectedIds.has(datasetItem.entityId),
+      ),
+    }))
+    setToastMessageTitle(
+      `${selectedIds.size} Item${
+        selectedIds.size === 1 ? '' : 's'
+      } removed from the Dataset`,
+    )
     clearSelectedIds()
   }
 
