@@ -1,2 +1,0 @@
-import{g as i,b as o}from"./_getTag.260cb500.js";import{i as e,d as n,f,h as p,b as a}from"./_Uint8Array.692793fe.js";import{i as y}from"./isArray.949e1480.js";var g="[object Map]",m="[object Set]",c=Object.prototype,b=c.hasOwnProperty;function P(r){if(r==null)return!0;if(e(r)&&(y(r)||typeof r=="string"||typeof r.splice=="function"||n(r)||f(r)||p(r)))return!r.length;var t=i(r);if(t==g||t==m)return!r.size;if(a(r))return!o(r).length;for(var s in r)if(b.call(r,s))return!1;return!0}export{P as i};
-//# sourceMappingURL=isEmpty.12a3904b.js.map
