@@ -14,6 +14,7 @@ import { SynapseContext } from '../utils/SynapseContext'
 import {
   ColumnModel,
   ColumnType,
+  Entity,
   FileHandleAssociateType,
   FileHandleAssociation,
   SelectColumn,
@@ -103,9 +104,9 @@ export const getCutoff = (summary: string) => {
 }
 
 export const getFileHandleAssociation = (
-  table?: Table,
+  table?: Entity,
   fileHandleId?: string,
-  rowSynapseId?: string,
+  rowSynapseId?: string, // only applicable if this is an EntityView
 ) => {
   let fileHandleAssociation: FileHandleAssociation | undefined = undefined
   if (table && fileHandleId) {

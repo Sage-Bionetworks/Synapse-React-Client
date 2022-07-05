@@ -46,7 +46,7 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
     rgbIndex,
   } = props
   const showDesktop = useShowDesktop()
-  const table = useGetEntity(entityId) as unknown as Table
+  const entity = useGetEntity(entityId)
   const color: string = getColorPalette(rgbIndex ?? 0, 2).colorPalette[0]
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -88,7 +88,7 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
         const matchValue = values[matchColIndex]
 
         const fileHandleAssociation = getFileHandleAssociation(
-          table,
+          entity.data,
           iconFileHandleIdValue,
           `syn${el.rowId}`,
         )
