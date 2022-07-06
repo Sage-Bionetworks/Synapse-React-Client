@@ -219,7 +219,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     if (deletedItems.length > 0) {
       toastTitle += `${deletedItems.length} Item${
         deletedItems.length === 1 ? '' : 's'
-      } deleted`
+      } removed from Dataset`
     } else {
       // "Y item(s) added"
       toastTitle += `${newItems.length} Item${
@@ -232,8 +232,9 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           updatedItems.length === 1 ? '' : 's'
         } updated`
       }
+      toastTitle += ` to Dataset`
     }
-    return (toastTitle += ` to Dataset`)
+    return toastTitle
   }
 
   function addItemsToDataset(itemsToAdd: Reference[]) {
