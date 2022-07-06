@@ -372,7 +372,7 @@ describe('EntityFinder tests', () => {
       await screen.findByText('Search for Folders')
     })
 
-    it('Updates the search button text to tables when selectable type is a table', async () => {
+    it('Updates the search button text when only table types are selectable', async () => {
       // Datasets and entity views are table types
       renderComponent({
         selectableTypes: [EntityType.DATASET, EntityType.ENTITY_VIEW],
