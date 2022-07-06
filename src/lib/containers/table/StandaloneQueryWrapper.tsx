@@ -178,6 +178,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                         showAccessColumn={showAccessColumn}
                         title={title}
                         data-testid="SynapseTable"
+                        {...rest}
                       />
                       <LastUpdatedOn />
                     </>
