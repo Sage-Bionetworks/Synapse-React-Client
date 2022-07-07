@@ -187,38 +187,40 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     newDataSet: DatasetItem[],
   ) {
     const unchangedItems = oldDataSet.filter(
-      item => !newDataSet.find(newItem => newItem.entityId === item.entityId),
-    )
-    const updatedItems = newDataSet.filter(newItem =>
-      oldDataSet.find(
-        existingItem => existingItem.entityId === newItem.entityId,
-      ),
-    )
-    const newItems = newDataSet.filter(
-      newItem =>
-        !oldDataSet.find(
-          existingItem => existingItem.entityId === newItem.entityId,
-        ),
-    )
-    const deletedItems = oldDataSet.filter(
       oldItem =>
         !newDataSet.find(newItem => newItem.entityId === oldItem.entityId),
     )
 
-    return { unchangedItems, updatedItems, newItems, deletedItems }
+    const { updatedItems, newItems } = newDataSet.reduce(
+      (results, result) => {
+        if (oldDataSet.find(old => old.entityId === result.entityId)) {
+          results['updatedItems'].push(result)
+        }
+        if (!oldDataSet.find(old => old.entityId === result.entityId)) {
+          results['newItems'].push(result)
+        }
+        return results
+      },
+      { updatedItems: [], newItems: [] } as {
+        updatedItems: DatasetItem[]
+        newItems: DatasetItem[]
+      },
+    )
+
+    return { unchangedItems, updatedItems, newItems }
   }
 
   function getToastMessageTitle() {
-    const { updatedItems, newItems, deletedItems } = getDataSetDifference(
+    const { updatedItems, newItems, unchangedItems } = getDataSetDifference(
       previousDatasetToUpdate?.items!,
       datasetToUpdate?.items!,
     )
     let toastTitle = ''
 
     // "X items(s) deleted"
-    if (deletedItems.length > 0) {
-      toastTitle += `${deletedItems.length} Item${
-        deletedItems.length === 1 ? '' : 's'
+    if (unchangedItems.length > 0) {
+      toastTitle += `${unchangedItems.length} Item${
+        unchangedItems.length === 1 ? '' : 's'
       } removed from Dataset`
     } else {
       // "Y item(s) added"
