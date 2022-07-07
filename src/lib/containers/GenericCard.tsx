@@ -14,6 +14,7 @@ import { SynapseContext } from '../utils/SynapseContext'
 import {
   ColumnModel,
   ColumnType,
+  Entity,
   FileHandleAssociateType,
   FileHandleAssociation,
   SelectColumn,
@@ -99,6 +100,32 @@ export const getCutoff = (summary: string) => {
   }
   previewText = previewText.trim()
   return { previewText }
+}
+
+export const getFileHandleAssociation = (
+  table?: Entity,
+  fileHandleId?: string,
+  rowSynapseId?: string, // only applicable if this is an EntityView
+) => {
+  let fileHandleAssociation: FileHandleAssociation | undefined = undefined
+  if (table && fileHandleId) {
+    if (isTableEntity(table)) {
+      // The file handle is in the table
+      fileHandleAssociation = {
+        fileHandleId,
+        associateObjectId: table?.id ?? '',
+        associateObjectType: FileHandleAssociateType.TableEntity,
+      }
+    } else if (rowSynapseId) {
+      // We're looking at a view, so the FileEntity (whose ID matches the row ID) gives permission to download the file handle
+      fileHandleAssociation = {
+        fileHandleId,
+        associateObjectId: rowSynapseId,
+        associateObjectType: FileHandleAssociateType.FileEntity,
+      }
+    }
+  }
+  return fileHandleAssociation
 }
 
 export const getValueOrMultiValue = ({
@@ -600,24 +627,11 @@ export default class GenericCard extends React.Component<
     /**
      * To show a direct download link to a file, we need to determine the association that gives permission to download the file.
      */
-    let fileHandleAssociation: FileHandleAssociation | undefined = undefined
-    if (table) {
-      if (isTableEntity(table)) {
-        // The file handle is in the table
-        fileHandleAssociation = {
-          fileHandleId,
-          associateObjectId: table?.id ?? '',
-          associateObjectType: FileHandleAssociateType.TableEntity,
-        }
-      } else {
-        // We're looking at a view, so the FileEntity (whose ID matches the row ID) gives permission to download the file handle
-        fileHandleAssociation = {
-          fileHandleId,
-          associateObjectId: data[schema.id],
-          associateObjectType: FileHandleAssociateType.FileEntity,
-        }
-      }
-    }
+    const fileHandleAssociation = getFileHandleAssociation(
+      table,
+      fileHandleId,
+      data[schema.id],
+    )
 
     const showFooter = values.length > 0
 

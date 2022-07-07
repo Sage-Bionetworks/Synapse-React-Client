@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.0.27",
+  "version": "3.0.28",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -201,7 +201,7 @@
     "yarn": "^1.22.17"
   },
   "scripts": {
-    "prepublishOnly": "yarn install && yarn run build && yarn run test:noPrompt",
+    "prepublishOnly": "yarn install && yarn run build && yarn run test:ci",
     "build-gh": "yarn run build:docs",
     "deploy": "yarn install && yarn build:storybook && gh-pages -t -d storybook-static -o upstream",
     "deploy:origin": "yarn install && yarn build:storybook && gh-pages -t -d storybook-static -o origin",
