@@ -15,6 +15,12 @@ export const WithoutTopLevelControls = Template.bind({})
 WithoutTopLevelControls.args = {
   title: 'Data Files',
   sql: `SELECT * FROM syn21994970.5 where dhPortalIndex = 'TRUE' LIMIT 10`,
+  columnLinks: [
+    {
+      matchColumnName: 'studyOrProject',
+      isMarkdown: true,
+    },
+  ],
 }
 
 export const TopLevelControls = Template.bind({})

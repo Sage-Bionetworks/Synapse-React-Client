@@ -57,6 +57,7 @@ import {
   StorageTwoTone,
   SyncTwoTone,
   TableChartTwoTone,
+  ViewAgendaTwoTone,
   VpnKeyTwoTone,
   WarningTwoTone,
   WatchLater,
@@ -92,6 +93,7 @@ export const IconStrings = [
   'arrowForward',
   'arrowDropUp',
   'arrowDropDown',
+  'cards',
   'check',
   'clear',
   'cart',
@@ -231,6 +233,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <Clear style={muiSvgStyle}></Clear>
     case 'cart':
       return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
+    case 'cards':
+      return <ViewAgendaTwoTone style={muiSvgStyle}></ViewAgendaTwoTone>
     case 'clock':
       return <AccessTimeTwoTone style={muiSvgStyle} />
     case 'code':
