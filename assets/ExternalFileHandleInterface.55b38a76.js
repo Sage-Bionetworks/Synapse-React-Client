@@ -1,2 +1,0 @@
-import"./assert.85e7f902.js";var r=(e=>(e.ProxyFileHandle="org.sagebionetworks.repo.model.file.ProxyFileHandle",e.ExternalObjectStoreFileHandle="org.sagebionetworks.repo.model.file.ExternalObjectStoreFileHandle",e.ExternalFileHandle="org.sagebionetworks.repo.model.file.ExternalFileHandle",e))(r||{});function o(e){return Object.values(r).includes(e.concreteType)}export{r as E,o as i};
-//# sourceMappingURL=ExternalFileHandleInterface.55b38a76.js.map
