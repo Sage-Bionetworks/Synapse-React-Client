@@ -1,8 +1,8 @@
 import { useQuery, UseQueryOptions } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClientError'
-import { useSynapseContext } from '../../SynapseContext'
-import { FilesStatisticsResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClientError'
+import { useSynapseContext } from '../../../SynapseContext'
+import { FilesStatisticsResponse } from '../../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetDownloadListStatistics(
   options?: UseQueryOptions<

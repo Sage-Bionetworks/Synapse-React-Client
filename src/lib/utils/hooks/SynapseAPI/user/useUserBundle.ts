@@ -1,8 +1,12 @@
 import { useQuery, UseQueryOptions } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClientError'
-import { useSynapseContext } from '../../SynapseContext'
-import { NotificationEmail, UserBundle, UserProfile } from '../../synapseTypes'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClientError'
+import { useSynapseContext } from '../../../SynapseContext'
+import {
+  NotificationEmail,
+  UserBundle,
+  UserProfile,
+} from '../../../synapseTypes'
 import {
   USER_BUNDLE_MASK_USER_PROFILE,
   USER_BUNDLE_MASK_ORCID,
@@ -11,7 +15,7 @@ import {
   USER_BUNDLE_MASK_IS_VERIFIED,
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
-} from '../../SynapseConstants'
+} from '../../../SynapseConstants'
 
 export function useGetNotificationEmail(
   options?: UseQueryOptions<NotificationEmail, SynapseClientError>,

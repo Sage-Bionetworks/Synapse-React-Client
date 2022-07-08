@@ -3,7 +3,7 @@ import React from 'react'
 import {
   useGetProjects,
   useGetProjectsInfinite,
-} from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
+} from '../../../../../lib/utils/hooks/SynapseAPI/user/useProjects'
 import {
   EntityChildrenRequest,
   EntityType,

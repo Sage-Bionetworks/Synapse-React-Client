@@ -9,7 +9,7 @@ import {
   EntityTreeProps,
   EntityTreeContainer,
 } from '../../../../../lib/containers/entity_finder/tree/EntityTree'
-import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/useProjects'
+import { useGetProjectsInfinite } from '../../../../../lib/utils/hooks/SynapseAPI/user/useProjects'
 import useGetEntityBundle from '../../../../../lib/utils/hooks/SynapseAPI/entity/useEntityBundle'
 import {
   EntityHeader,
@@ -41,7 +41,7 @@ VirtualizedTree.VirtualizedTree = jest
 
 const mockTreePresenter = VirtualizedTree.VirtualizedTree
 
-jest.mock('../../../../../lib/utils/hooks/SynapseAPI/useProjects', () => {
+jest.mock('../../../../../lib/utils/hooks/SynapseAPI/user/useProjects', () => {
   return {
     useGetProjectsInfinite: jest.fn(),
   }

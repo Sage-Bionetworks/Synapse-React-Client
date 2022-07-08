@@ -62,7 +62,7 @@ export const CardContainer = (props: CardContainerProps) => {
     }
   }
 
-  const ids = data?.queryResult.queryResults.tableId
+  const ids = data?.queryResult!.queryResults.tableId
     ? [data?.queryResult.queryResults.tableId]
     : []
   const tableEntityConcreteType = useGetInfoFromIds<EntityHeader>({
@@ -77,7 +77,7 @@ export const CardContainer = (props: CardContainerProps) => {
         {isLoading && type !== OBSERVATION_CARD && loadingScreen}
       </div>
     )
-  } else if (data && data.queryResult.queryResults.rows.length === 0) {
+  } else if (data && data.queryResult!.queryResults.rows.length === 0) {
     // data was retrieved from the backend but there is none to show.
     if (queryRequest.query.additionalFilters) {
       return <SearchResultsNotFound />
@@ -86,7 +86,7 @@ export const CardContainer = (props: CardContainerProps) => {
     return <NoContentAvailable />
   }
   const schema = {}
-  data.queryResult.queryResults.headers.forEach((element, index) => {
+  data.queryResult!.queryResults.headers.forEach((element, index) => {
     schema[element.name] = index
   })
   const showViewMoreButton = hasNextPage && (
@@ -106,7 +106,7 @@ export const CardContainer = (props: CardContainerProps) => {
   if (type === MEDIUM_USER_CARD) {
     // Hard coding ownerId as a column name containing the user profile ownerId
     // for each row, grab the column with the ownerId
-    const userIdColumnIndex = data.queryResult.queryResults.headers.findIndex(
+    const userIdColumnIndex = data.queryResult!.queryResults.headers.findIndex(
       el => el.columnType === ColumnType.USERID,
     )
     if (userIdColumnIndex === -1) {
@@ -114,13 +114,13 @@ export const CardContainer = (props: CardContainerProps) => {
         'Type MEDIUM_USER_CARD specified but no columnType USERID found',
       )
     }
-    const listIds = data.queryResult.queryResults.rows.map(
+    const listIds = data.queryResult!.queryResults.rows.map(
       el => el.values[userIdColumnIndex],
     )
     cards = <UserCardList data={data} list={listIds} size={MEDIUM_USER_CARD} />
   } else {
     // render the cards
-    const cardsData = data.queryResult.queryResults.rows
+    const cardsData = data.queryResult!.queryResults.rows
     cards = cardsData.length ? (
       cardsData.map((rowData: Row) => {
         const key = JSON.stringify(rowData.values)
@@ -135,7 +135,7 @@ export const CardContainer = (props: CardContainerProps) => {
           columnModels: data.columnModels,
           tableEntityConcreteType:
             tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
-          tableId: data?.queryResult.queryResults.tableId,
+          tableId: data?.queryResult!.queryResults.tableId,
           ...rest,
         }
         return renderCard(propsForCard, type)

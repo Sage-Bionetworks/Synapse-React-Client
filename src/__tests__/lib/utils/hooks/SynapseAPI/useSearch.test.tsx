@@ -3,7 +3,7 @@ import React from 'react'
 import {
   useSearch,
   useSearchInfinite,
-} from '../../../../../lib/utils/hooks/SynapseAPI/useSearch'
+} from '../../../../../lib/utils/hooks/SynapseAPI/search/useSearch'
 import { EntityType } from '../../../../../lib/utils/synapseTypes'
 import {
   SearchQuery,

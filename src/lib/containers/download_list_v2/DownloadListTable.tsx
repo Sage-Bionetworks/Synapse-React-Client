@@ -3,7 +3,7 @@ import { useErrorHandler } from 'react-error-boundary'
 import { DownloadListItemResult } from '../../utils/synapseTypes/DownloadListV2/DownloadListItemResult'
 import { Dropdown, Table } from 'react-bootstrap'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
+import { useGetAvailableFilesToDownloadInfinite } from '../../utils/hooks/SynapseAPI/download/useGetAvailableFilesToDownload'
 import { useInView } from 'react-intersection-observer'
 import {
   AvailableFilter,

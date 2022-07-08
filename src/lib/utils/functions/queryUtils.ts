@@ -45,10 +45,10 @@ export const getNextPageOfData = async (
       const oldData: QueryResultBundle = cloneDeep(data)!
       // push on the new data retrieved from the API call
       const hasMoreData =
-        newData.queryResult.queryResults.rows.length ===
+        newData.queryResult!.queryResults.rows.length ===
           queryRequest.query.limit ?? SynapseConstants.DEFAULT_PAGE_SIZE
-      oldData.queryResult.queryResults.rows.push(
-        ...newData.queryResult.queryResults.rows,
+      oldData.queryResult!.queryResults.rows.push(
+        ...newData.queryResult!.queryResults.rows,
       )
       const newState: PartialStateObject = {
         hasMoreData,

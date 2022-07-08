@@ -1,6 +1,6 @@
 import Skeleton from '@material-ui/lab/Skeleton'
 import React, { useState } from 'react'
-import { useGetUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetUserProfile } from '../../utils/hooks/SynapseAPI/user/useUserBundle'
 import Typography from '../../utils/typography/Typography'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import IconSvg, { Icon } from '../IconSvg'

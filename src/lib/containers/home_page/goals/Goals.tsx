@@ -64,7 +64,7 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
           queryResultBundle,
         )
         const assets =
-          queryResultBundle?.queryResult.queryResults.rows.map(
+          queryResultBundle?.queryResult!.queryResults.rows.map(
             el => el.values[assetColumnIndex],
           ) ?? []
         if (assets.length === 0) {
@@ -123,7 +123,7 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
   return (
     <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
       {error && <ErrorBanner error={error} />}
-      {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
+      {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
         const values = el.values
         const tableId =
           tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined

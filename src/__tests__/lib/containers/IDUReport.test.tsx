@@ -2,13 +2,13 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { useGetApprovedSubmissionInfoInfinite } from '../../../lib/utils/hooks/SynapseAPI/useGetApprovedSubmissionInfo'
+import { useGetApprovedSubmissionInfoInfinite } from '../../../lib/utils/hooks/SynapseAPI/dataaccess/useGetApprovedSubmissionInfo'
 import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 import { SubmissionInfo } from '../../../lib/utils/synapseTypes/SubmissionInfo'
 import IDUReport from '../../../lib/containers/IDUReport'
 
 jest.mock(
-  '../../../lib/utils/hooks/SynapseAPI/useGetApprovedSubmissionInfo',
+  '../../../lib/utils/hooks/SynapseAPI/dataaccess/useGetApprovedSubmissionInfo',
   () => {
     return {
       useGetApprovedSubmissionInfoInfinite: jest.fn(),
@@ -75,9 +75,9 @@ describe('IDUReport tests', () => {
 
     const submissionInfo1 = await screen.findAllByText('Prof. Farnsworth')
     expect(submissionInfo1).toHaveLength(1)
-    
+
     mockAllIsIntersecting(true)
-    
+
     const submissionInfo2 = await screen.findAllByText('Wong')
     expect(submissionInfo2).toHaveLength(1)
   })

@@ -6,7 +6,7 @@ import { mockUserProfileData } from '../../../../mocks/user/mock_user_profile'
 import { mockFileStatistics } from '../../../../mocks/mock_file_statistics'
 import userEvent from '@testing-library/user-event'
 import DownloadListTableV2 from '../../../../lib/containers/download_list_v2/DownloadListTable'
-import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload'
+import { useGetAvailableFilesToDownloadInfinite } from '../../../../lib/utils/hooks/SynapseAPI/download/useGetAvailableFilesToDownload'
 import { DownloadListItemResult } from '../../../../lib/utils/synapseTypes/DownloadListV2/DownloadListItemResult'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
@@ -21,7 +21,7 @@ jest.mock('../../../../lib/utils/SynapseClient', () => {
   }
 })
 jest.mock(
-  '../../../../lib/utils/hooks/SynapseAPI/useGetAvailableFilesToDownload',
+  '../../../../lib/utils/hooks/SynapseAPI/download/useGetAvailableFilesToDownload',
   () => {
     return {
       useGetAvailableFilesToDownloadInfinite: jest.fn(),

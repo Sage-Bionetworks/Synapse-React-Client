@@ -51,7 +51,7 @@ import UserCardListRotate from './containers/UserCardListRotate'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import SynapsePlot from './containers/widgets/SynapsePlot'
 import ThemesPlot from './containers/widgets/themes-plot/ThemesPlot'
-import { SynapseClient, SynapseConstants } from './utils'
+import { SynapseClient, SynapseConstants, SynapseQueries } from './utils'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
@@ -129,4 +129,5 @@ export {
   SynapseComponents,
   SynapseContext,
   Typography,
+  SynapseQueries,
 }

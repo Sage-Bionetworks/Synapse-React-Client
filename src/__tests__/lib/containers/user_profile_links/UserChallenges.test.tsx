@@ -3,15 +3,18 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserChallenges from '../../../../lib/containers/user_profile_links/UserChallenges'
-import { useGetUserChallengesInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetUserChallenges'
+import { useGetUserChallengesInfinite } from '../../../../lib/utils/hooks/SynapseAPI/user/useGetUserChallenges'
 import { ChallengeWithProjectHeader } from '../../../../lib/utils/synapseTypes/ChallengePagedResults'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
-jest.mock('../../../../lib/utils/hooks/SynapseAPI/useGetUserChallenges', () => {
-  return {
-    useGetUserChallengesInfinite: jest.fn(),
-  }
-})
+jest.mock(
+  '../../../../lib/utils/hooks/SynapseAPI/user/useGetUserChallenges',
+  () => {
+    return {
+      useGetUserChallengesInfinite: jest.fn(),
+    }
+  },
+)
 
 const mockFetchNextPage = jest.fn()
 const mockUseGetUserChallengesInfinite =

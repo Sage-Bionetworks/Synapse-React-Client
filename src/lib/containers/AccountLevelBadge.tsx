@@ -3,7 +3,7 @@ import { ReactComponent as Certified } from '../assets/icons/account-certified.s
 import { ReactComponent as Registered } from '../assets/icons/account-registered.svg'
 import { ReactComponent as Validated } from '../assets/icons/account-validated.svg'
 import { SynapseConstants } from '../utils'
-import { useGetUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetUserBundle } from '../utils/hooks/SynapseAPI/user/useUserBundle'
 import { ErrorBanner } from './ErrorBanner'
 
 export type AccountLevelBadgeProps = {
