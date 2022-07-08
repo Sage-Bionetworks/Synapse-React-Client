@@ -14,8 +14,8 @@ import { CreatePackageV2 } from './CreatePackageV2'
 import FullWidthAlert from '../FullWidthAlert'
 import { ErrorBanner } from '../ErrorBanner'
 import Typography from '../../utils/typography/Typography'
-import ReactTooltip from 'react-tooltip'
 import { HelpPopover } from '../HelpPopover'
+import Tooltip from '../../utils/tooltip/Tooltip'
 
 /**
  * Show the Download Cart page.
@@ -63,29 +63,28 @@ export const DownloadCartPage: React.FunctionComponent<
         <div className="pageHeader">
           <div className="grid">
             <h3 className="pageHeaderTitle">Your Download Cart</h3>
-            <a
-              className="clearDownloadListLink"
-              onClick={clearDownloadList}
-              data-tip="Immediately removes all items from your download list"
-              data-for="clearDownloadListTooltip"
+            <Tooltip
+              title="Immediately removes all items from your download list"
+              enterNextDelay={300}
+              placement="right"
+              id="clearDownloadListTooltip"
             >
-              <ReactTooltip
-                delayShow={300}
-                place="right"
-                type="dark"
-                effect="solid"
-                id="clearDownloadListTooltip"
-              />
-              <span>
-                <IconSvg
-                  options={{
-                    icon: 'delete',
-                    padding: 'right',
-                  }}
-                />
-              </span>
-              Clear Your Download Cart
-            </a>
+              <a
+                className="clearDownloadListLink"
+                onClick={clearDownloadList}
+                data-for="clearDownloadListTooltip"
+              >
+                <span>
+                  <IconSvg
+                    options={{
+                      icon: 'delete',
+                      padding: 'right',
+                    }}
+                  />
+                </span>
+                Clear Your Download Cart
+              </a>
+            </Tooltip>
           </div>
           <Typography className="description" variant="body1">
             You may find your added files in the tabs below. Any files which
@@ -192,21 +191,19 @@ export const DownloadCartPage: React.FunctionComponent<
                       )}
                       {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging ==
                         0 && (
-                        <a
-                          className="highlight-link disabled"
-                          data-for="downloadZipPackagesUnavailable"
-                          data-tip="You cannot create a .zip package<br />because there are no eligible files."
+                        <Tooltip
+                          title="You cannot create a .zip package because there are no eligible files."
+                          enterNextDelay={300}
+                          placement="top"
+                          id="downloadZipPackagesUnavailable"
                         >
-                          <ReactTooltip
-                            delayShow={300}
-                            multiline={true}
-                            place="top"
-                            type="dark"
-                            effect="solid"
-                            id="downloadZipPackagesUnavailable"
-                          />
-                          Download As .ZIP packages
-                        </a>
+                          <a
+                            className="highlight-link disabled"
+                            data-for="downloadZipPackagesUnavailable"
+                          >
+                            Download As .ZIP packages
+                          </a>
+                        </Tooltip>
                       )}
                     </span>
                   </div>
@@ -239,24 +236,22 @@ export const DownloadCartPage: React.FunctionComponent<
                       </ul>
                     </Typography>
                     <span>
-                      <a
-                        className="highlight-link"
-                        rel="noreferrer"
-                        data-for="downloadProgrammaticallyTooltipId"
-                        data-tip="This feature is coming soon.<br />Click here to learn how to download<br />programmatically using other methods"
-                        target="_blank"
-                        href="https://help.synapse.org/docs/API-Clients.1985446128.html"
+                      <Tooltip
+                        title="This feature is coming soon. Click here to learn how to download programmatically using other methods"
+                        enterNextDelay={300}
+                        placement="top"
+                        id="downloadProgrammaticallyTooltipId"
                       >
-                        <ReactTooltip
-                          delayShow={300}
-                          multiline={true}
-                          place="top"
-                          type="dark"
-                          effect="solid"
-                          id="downloadProgrammaticallyTooltipId"
-                        />
-                        Create Programmatic Package (Coming soon)
-                      </a>
+                        <a
+                          className="highlight-link"
+                          rel="noreferrer"
+                          data-for="downloadProgrammaticallyTooltipId"
+                          target="_blank"
+                          href="https://help.synapse.org/docs/API-Clients.1985446128.html"
+                        >
+                          Create Programmatic Package (Coming soon)
+                        </a>
+                      </Tooltip>
                     </span>
                   </div>
                 </div>

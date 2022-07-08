@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { testDownloadSpeed } from '../../utils/functions/testDownloadSpeed'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import ReactTooltip from 'react-tooltip'
 import moment from 'moment'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SkeletonInlineBlock } from '../../assets/skeletons/SkeletonInlineBlock'
 import IconSvg from '../IconSvg'
+import Tooltip from '../../utils/tooltip/Tooltip'
 
 export type DownloadDetailsProps = {
   numFiles: number
@@ -75,50 +75,45 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         )}
       </span>
       {numBytes && (
-        <span
-          data-for={numBytesTooltipId}
-          data-tip="This is the total size of all files. Zipped package(s) will likely be smaller."
-          data-testid="numBytesUI"
+        <Tooltip
+          title="This is the total size of all files. Zipped package(s) will likely be smaller."
+          enterNextDelay={TOOLTIP_DELAY_SHOW}
+          placement="top"
+          id={numBytesTooltipId}
         >
-          <ReactTooltip
-            delayShow={TOOLTIP_DELAY_SHOW}
-            place="top"
-            type="dark"
-            effect="solid"
-            id={numBytesTooltipId}
-          />
-          <span className={timeEstimateIconClass}>
-            <IconSvg options={{ icon: 'database' }} />
+          <span data-for={numBytesTooltipId} data-testid="numBytesUI">
+            <span className={timeEstimateIconClass}>
+              <IconSvg options={{ icon: 'database' }} />
+            </span>
+            {isTimeEstimateLoading ? (
+              <SkeletonInlineBlock width={50} />
+            ) : (
+              calculateFriendlyFileSize(numBytes)
+            )}
           </span>
-          {isTimeEstimateLoading ? (
-            <SkeletonInlineBlock width={50} />
-          ) : (
-            calculateFriendlyFileSize(numBytes)
-          )}
-        </span>
+        </Tooltip>
       )}
       {numBytes && (
-        <span
-          data-for={friendlyTimeTooltipId}
-          data-tip="This is an estimate of how long package download will take."
-          data-testid="downloadTimeEstimateUI"
+        <Tooltip
+          title="This is an estimate of how long package download will take."
+          enterNextDelay={TOOLTIP_DELAY_SHOW}
+          placement="top"
+          id={friendlyTimeTooltipId}
         >
-          <ReactTooltip
-            delayShow={TOOLTIP_DELAY_SHOW}
-            place="top"
-            type="dark"
-            effect="solid"
-            id={friendlyTimeTooltipId}
-          />
-          <span className={timeEstimateIconClass}>
-            <IconSvg options={{ icon: 'clock' }} />
+          <span
+            data-for={friendlyTimeTooltipId}
+            data-testid="downloadTimeEstimateUI"
+          >
+            <span className={timeEstimateIconClass}>
+              <IconSvg options={{ icon: 'clock' }} />
+            </span>
+            {isLoading && numFiles > 0 ? (
+              <SkeletonInlineBlock width={50} />
+            ) : (
+              friendlyTime
+            )}
           </span>
-          {isLoading && numFiles > 0 ? (
-            <SkeletonInlineBlock width={50} />
-          ) : (
-            friendlyTime
-          )}
-        </span>
+        </Tooltip>
       )}
     </span>
   )

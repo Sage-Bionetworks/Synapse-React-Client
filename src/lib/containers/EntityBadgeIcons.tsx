@@ -10,7 +10,6 @@ import {
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import ReactTooltip from 'react-tooltip'
 import sanitizeHtml from 'sanitize-html'
 import { useDeleteEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import {
@@ -149,7 +148,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   useEffect(() => {
     if (isInExperimentalMode && schemaValidationResults) {
       // Because we may not know to render an icon until after fetching data (i.e. after a delay), we have to rebuild the tooltip to ensure it appears
-      ReactTooltip.rebuild()
 
       if (schemaValidationResults.isValid) {
         setSchemaConformance(SchemaConformanceState.VALID)
@@ -224,15 +222,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
     <div className="EntityBadge" ref={ref} style={{ flexWrap, justifyContent }}>
       {bundle && (
         <>
-          {renderTooltipComponent && (
-            <ReactTooltip
-              id={ownTooltipId}
-              className="EntityBadgeTooltip"
-              delayShow={100}
-              place={'right'}
-              effect={'solid'}
-            />
-          )}
           <div onClick={e => e.stopPropagation()}>
             <EntityModal
               entityId={entityId}

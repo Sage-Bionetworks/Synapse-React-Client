@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Dropdown, Modal } from 'react-bootstrap'
 import createPlotlyComponent from 'react-plotly.js/factory'
 import { SizeMe } from 'react-sizeme'
-import ReactTooltip from 'react-tooltip'
 import { SkeletonInlineBlock } from '../../../assets/skeletons/SkeletonInlineBlock'
 import getColorPalette from '../../../containers/ColorGradient'
 import { ElementWithTooltip } from '../../../containers/widgets/ElementWithTooltip'
@@ -26,6 +25,7 @@ import {
   applyChangesToValuesColumn,
   applyMultipleChangesToValuesColumn,
 } from '../query-filter/QueryFilter'
+import Tooltip from '../../../utils/tooltip/Tooltip'
 
 const Plot = createPlotlyComponent(Plotly)
 
@@ -533,14 +533,15 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
                 />
-                <ReactTooltip id={TOOLTIP_ID} effect="solid" event="click" />
-                <InfoOutlined
-                  data-for={TOOLTIP_ID}
-                  data-tip={
-                    'Selecting items in this dropdown will affect all facets on the Explore page.'
-                  }
-                  className="SRC-hand-cursor SRC-secondary-text-color"
-                />
+                <Tooltip
+                  title="Selecting items in this dropdown will affect all facets on the Explore page."
+                  id={TOOLTIP_ID}
+                >
+                  <InfoOutlined
+                    data-for={TOOLTIP_ID}
+                    className="SRC-hand-cursor SRC-secondary-text-color"
+                  />
+                </Tooltip>
               </div>
               <ChartSelectionToggle />
             </>

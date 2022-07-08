@@ -1,6 +1,5 @@
 import { Clear } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
-import ReactTooltip from 'react-tooltip'
 import useGetEntityBundle from '../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { Reference } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
@@ -8,6 +7,8 @@ import { EntityTypeIcon } from '../EntityIcon'
 import { NO_VERSION_NUMBER } from './EntityFinder'
 import { Map } from 'immutable'
 import { Skeleton } from '@material-ui/lab'
+import Tooltip from '../../utils/tooltip/Tooltip'
+import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 
 export type SelectionPaneProps = {
   title: string | ((count: number) => string)
@@ -99,16 +100,19 @@ const EntityPathDisplay: React.FunctionComponent<{
 
   return (
     <div className="EntityFinderSelectionPane__Row">
-      <ReactTooltip id={ENTITY_PATH_TOOLTIP_ID} delayShow={500} place={'top'} />
       {bundle && (
         <EntityTypeIcon className="EntityIcon" type={bundle.entityType!} />
       )}
-      <span
-        data-for={ENTITY_PATH_TOOLTIP_ID}
-        data-tip={`${fullPath}/${entityName}`}
+      <Tooltip
+        title={`${fullPath}/${entityName}`}
+        id={ENTITY_PATH_TOOLTIP_ID}
+        enterNextDelay={TOOLTIP_DELAY_SHOW}
+        placement="top"
       >
-        {displayedPath ? displayedPath + '/' : ''}
-      </span>
+        <span data-for={ENTITY_PATH_TOOLTIP_ID}>
+          {displayedPath ? displayedPath + '/' : ''}
+        </span>
+      </Tooltip>
       {entityName ? (
         <span className="EntityFinderSelectionPane__Row__EntityName">
           {entityName}

@@ -15,7 +15,6 @@
  * See SynapseTable.tsx as an example.
  */
 import * as React from 'react'
-import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../utils'
 import {
   BackendDestinationEnum,
@@ -42,6 +41,7 @@ import { SRC_SIGN_IN_CLASS } from '../utils/SynapseConstants'
 import { SynapseContext } from '../utils/SynapseContext'
 import IconSvg, { Icon } from './IconSvg'
 import { ThemeContext } from '../utils/hooks/useTheme'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 export type HasAccessProps = {
   onHide?: () => void
@@ -486,9 +486,16 @@ export default class HasAccess extends React.Component<
           {icon}
         </button>
       ) : (
-        <span tabIndex={0} data-for={entityId} data-tip={tooltipText}>
-          {icon}
-        </span>
+        <Tooltip
+          title={tooltipText}
+          id={entityId}
+          enterNextDelay={TOOLTIP_DELAY_SHOW}
+          placement="top"
+        >
+          <span tabIndex={0} data-for={entityId}>
+            {icon}
+          </span>
+        </Tooltip>
       )
 
     return (
@@ -496,14 +503,6 @@ export default class HasAccess extends React.Component<
         {tooltipText && (
           <>
             {iconContainer}
-            <ReactTooltip
-              delayShow={TOOLTIP_DELAY_SHOW}
-              place="top"
-              type="dark"
-              effect="solid"
-              id={entityId}
-              className="has-access-tooltip-width"
-            />
             {viewARsLink}
           </>
         )}

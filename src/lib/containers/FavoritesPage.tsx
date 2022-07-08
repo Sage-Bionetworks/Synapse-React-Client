@@ -11,11 +11,11 @@ import {
   convertToEntityType,
   entityTypeToFriendlyName,
 } from '../utils/functions/EntityTypeUtils'
-import ReactTooltip from 'react-tooltip'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 import { EntityTypeIcon } from './EntityIcon'
 import { Form } from 'react-bootstrap'
 import { ErrorBanner } from './ErrorBanner'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 // Local types used for client-side sorting
 export type SortField = 'name' | 'type'
@@ -169,25 +169,24 @@ export default function FavoritesPage() {
                   return (
                     <tr key={item.id}>
                       <td>
-                        <a
-                          data-tip="Click the star to remove this item from your favorites"
-                          data-for={`${item.id}-Tooltip`}
-                          onClick={() => {
-                            removeFavorite(item)
-                          }}
-                          className="ignoreLink"
+                        <Tooltip
+                          title="Click the star to remove this item from your favorites"
+                          enterNextDelay={300}
+                          placement="right"
+                          id={`${item.id}-Tooltip`}
                         >
-                          <ReactTooltip
-                            delayShow={300}
-                            place="right"
-                            type="dark"
-                            effect="solid"
-                            id={`${item.id}-Tooltip`}
-                          />
-                          <IconSvg
-                            options={{ icon: 'fav', color: '#EDC766' }}
-                          />
-                        </a>
+                          <a
+                            data-for={`${item.id}-Tooltip`}
+                            onClick={() => {
+                              removeFavorite(item)
+                            }}
+                            className="ignoreLink"
+                          >
+                            <IconSvg
+                              options={{ icon: 'fav', color: '#EDC766' }}
+                            />
+                          </a>
+                        </Tooltip>
                       </td>
                       <td>
                         <a

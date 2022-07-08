@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
-import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { useErrorHandler } from 'react-error-boundary'
 import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
 import IconSvg from '../IconSvg'
+import Tooltip from '../../utils/tooltip/Tooltip'
 
 export type ShowDownloadV2Props = {
   to: string
@@ -43,7 +43,12 @@ function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
     return <></>
   }
   const content = (
-    <>
+    <Tooltip
+      title={tooltipText}
+      id={idForToolTip}
+      placement="bottom"
+      enterNextDelay={TOOLTIP_DELAY_SHOW}
+    >
       <span id={idForToolTip} data-for={idForToolTip} data-tip={tooltipText}>
         <span className="SRC-primary-text-color">
           <IconSvg
@@ -54,15 +59,7 @@ function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
         </span>
         <span className={`download-cart-size`}>{size}</span>
       </span>
-      <ReactTooltip
-        delayShow={TOOLTIP_DELAY_SHOW}
-        place={'bottom'}
-        type={'dark'}
-        effect={'solid'}
-        border={true}
-        id={idForToolTip}
-      />
-    </>
+    </Tooltip>
   )
   return (
     <a

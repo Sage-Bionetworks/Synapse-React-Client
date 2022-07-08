@@ -21,6 +21,7 @@ import {
   EntityType,
   Reference,
 } from '../../../../utils/synapseTypes'
+import Tooltip from '../../../../utils/tooltip/Tooltip'
 import {
   EntityBadgeIcons,
   ENTITY_BADGE_ICONS_TOOLTIP_ID,
@@ -471,13 +472,20 @@ export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
     return <></>
   } else {
     return (
-      <div
-        className="EntityErrorRenderer"
-        data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-        data-tip={message}
+      <Tooltip
+        title={message ?? ''}
+        id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+        placement="right"
+        className="EntityBadgeTooltip"
       >
-        <IconSvg options={{ icon: 'warningOutlined' }} />
-      </div>
+        <div
+          className="EntityErrorRenderer"
+          data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
+          data-tip={message}
+        >
+          <IconSvg options={{ icon: 'warningOutlined' }} />
+        </div>
+      </Tooltip>
     )
   }
 }

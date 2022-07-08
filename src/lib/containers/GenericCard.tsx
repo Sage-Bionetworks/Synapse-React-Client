@@ -1,6 +1,5 @@
 import { isEmpty, uniqueId } from 'lodash-es'
 import React from 'react'
-import ReactTooltip from 'react-tooltip'
 import { SynapseConstants } from '../utils'
 import { isTableEntity } from '../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
@@ -19,6 +18,7 @@ import {
   FileHandleAssociation,
   SelectColumn,
 } from '../utils/synapseTypes'
+import Tooltip from '../utils/tooltip/Tooltip'
 import {
   CardLink,
   ColumnSpecifiedLink,
@@ -384,10 +384,9 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     // wrap in a tooltip
     const id = uniqueId('GenericCardLabelTooltip-')
     return (
-      <span data-tip={labelLink.tooltipText} data-for={id}>
-        <ReactTooltip delayShow={300} type="dark" effect="solid" id={id} />
-        {labelContent}
-      </span>
+      <Tooltip title={labelLink.tooltipText} enterNextDelay={300} id={id}>
+        <span data-for={id}>{labelContent}</span>
+      </Tooltip>
     )
   } else {
     return labelContent

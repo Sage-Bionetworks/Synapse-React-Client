@@ -1,9 +1,9 @@
 import { ObjectFieldTemplateProps, utils } from '@sage-bionetworks/rjsf-core'
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import AddToList from '../../../assets/icons/AddToList'
+import Tooltip from '../../../utils/tooltip/Tooltip'
 import { displayToast } from '../../ToastMessage'
 
 /**
@@ -71,11 +71,6 @@ export function CustomObjectFieldTemplate(
 
   return (
     <fieldset id={props.idSchema.$id}>
-      <ReactTooltip
-        id={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
-        place="top"
-        effect="solid"
-      />
       {(props.uiSchema['ui:title'] || props.title) && (
         <TitleField
           id={`${props.idSchema.$id}__title`}
@@ -94,17 +89,22 @@ export function CustomObjectFieldTemplate(
       })}
       {utils.canExpand(props.schema, props.uiSchema, props.formData) && (
         <div className="container-fluid">
-          <Button
-            variant="gray"
-            className="object-property-expand"
-            onClick={props.onAddClick(props.schema)}
-            disabled={props.disabled || props.readonly}
-            data-for={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
-            data-tip={`Add a new custom field`}
-            aria-label={'Add Custom Field'}
+          <Tooltip
+            title="Add a new custom field"
+            id={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
+            placement="top"
           >
-            <AddToList />
-          </Button>
+            <Button
+              variant="gray"
+              className="object-property-expand"
+              onClick={props.onAddClick(props.schema)}
+              disabled={props.disabled || props.readonly}
+              data-for={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
+              aria-label={'Add Custom Field'}
+            >
+              <AddToList />
+            </Button>
+          </Tooltip>
         </div>
       )}
     </fieldset>

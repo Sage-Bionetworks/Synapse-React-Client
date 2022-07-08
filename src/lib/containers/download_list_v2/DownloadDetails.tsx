@@ -1,8 +1,8 @@
 import React from 'react'
 import { calculateFriendlyFileSize } from '../../utils/functions/calculateFriendlyFileSize'
-import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import IconSvg from '../IconSvg'
+import Tooltip from '../../utils/tooltip/Tooltip'
 
 export type DownloadDetailsProps = {
   numFiles: number
@@ -28,20 +28,16 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         )}
       </span>
       {numBytes > 0 && (
-        <span
-          data-for={numBytesTooltipId}
-          data-tip="This is the total size of all files in the Download Cart that are available to download."
-          className="item"
+        <Tooltip
+          title="This is the total size of all files in the Download Cart that are available to download."
+          enterNextDelay={TOOLTIP_DELAY_SHOW}
+          placement="top"
+          id={numBytesTooltipId}
         >
-          <ReactTooltip
-            delayShow={TOOLTIP_DELAY_SHOW}
-            place="top"
-            type="dark"
-            effect="solid"
-            id={numBytesTooltipId}
-          />
-          {calculateFriendlyFileSize(numBytes)}
-        </span>
+          <span data-for={numBytesTooltipId} className="item">
+            {calculateFriendlyFileSize(numBytes)}
+          </span>
+        </Tooltip>
       )}
       {numIneligibleFiles > 0 && (
         <span className="item">

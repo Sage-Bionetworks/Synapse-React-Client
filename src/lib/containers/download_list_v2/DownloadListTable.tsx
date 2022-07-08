@@ -19,7 +19,6 @@ import { Direction, FileHandleAssociateType } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import IconSvg from '../IconSvg'
-import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 import DirectDownload from '../DirectDownload'
@@ -27,6 +26,7 @@ import { displayToast } from '../ToastMessage'
 import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import { BlockingLoader } from '../LoadingScreen'
+import Tooltip from '../../utils/tooltip/Tooltip'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -173,33 +173,30 @@ export default function DownloadListTable(props: DownloadListTableProps) {
 
   const InteractiveCopyIdsIcon = () => {
     return (
-      <span
-        data-for="copy-syn-ids-tooltip"
-        data-tip="Copy IDs to the clipboard"
+      <Tooltip
+        title="Copy IDs to the clipboard"
+        enterNextDelay={TOOLTIP_DELAY_SHOW}
+        placement="right"
+        id="copy-syn-ids-tooltip"
       >
-        <ReactTooltip
-          delayShow={TOOLTIP_DELAY_SHOW}
-          place="right"
-          type="dark"
-          effect="solid"
-          id="copy-syn-ids-tooltip"
-        />
-        <button
-          data-testid="copySynIdsButton"
-          onClick={() => {
-            // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
-            setCopyingAllSynapseIDs(true)
-          }}
-        >
-          <span style={{ height: 15, marginTop: -1 }}>
-            <IconSvg
-              options={{
-                icon: 'contentCopy',
-              }}
-            />
-          </span>
-        </button>
-      </span>
+        <span data-for="copy-syn-ids-tooltip">
+          <button
+            data-testid="copySynIdsButton"
+            onClick={() => {
+              // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
+              setCopyingAllSynapseIDs(true)
+            }}
+          >
+            <span style={{ height: 15, marginTop: -1 }}>
+              <IconSvg
+                options={{
+                  icon: 'contentCopy',
+                }}
+              />
+            </span>
+          </button>
+        </span>
+      </Tooltip>
     )
   }
 
@@ -289,45 +286,42 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                         }
                       >
                         {item.isEligibleForPackaging && (
-                          <span
-                            data-for={`${item.fileEntityId}-eligible-tooltip`}
-                            data-tip="Eligible for packaging"
-                            className="eligibileIcon"
+                          <Tooltip
+                            title="Eligible for packaging"
+                            enterNextDelay={TOOLTIP_DELAY_SHOW}
+                            placement="right"
+                            id={`${item.fileEntityId}-eligible-tooltip`}
                           >
-                            <ReactTooltip
-                              delayShow={TOOLTIP_DELAY_SHOW}
-                              place="right"
-                              type="dark"
-                              effect="solid"
-                              id={`${item.fileEntityId}-eligible-tooltip`}
-                            />
-                            <IconSvg
-                              options={{
-                                icon: 'packagableFile',
-                              }}
-                            />
-                          </span>
+                            <span
+                              data-for={`${item.fileEntityId}-eligible-tooltip`}
+                              className="eligibileIcon"
+                            >
+                              <IconSvg
+                                options={{
+                                  icon: 'packagableFile',
+                                }}
+                              />
+                            </span>
+                          </Tooltip>
                         )}
                         {!item.isEligibleForPackaging && (
-                          <span
-                            data-for={`${item.fileEntityId}-ineligible-tooltip`}
-                            data-tip="This file is ineligible for Web packaging <br />because it is >100MB, or it is an external link,<br />or it is not stored on Synapse native storage"
-                            className="ineligibileIcon"
+                          <Tooltip
+                            title="This file is ineligible for Web packaging because it is >100MB, or it is an external link, or it is not stored on Synapse native storage"
+                            enterNextDelay={TOOLTIP_DELAY_SHOW}
+                            placement="right"
+                            id={`${item.fileEntityId}-ineligible-tooltip`}
                           >
-                            <ReactTooltip
-                              delayShow={TOOLTIP_DELAY_SHOW}
-                              place="right"
-                              type="dark"
-                              effect="solid"
-                              multiline={true}
-                              id={`${item.fileEntityId}-ineligible-tooltip`}
-                            />
-                            <IconSvg
-                              options={{
-                                icon: 'warningOutlined',
-                              }}
-                            />
-                          </span>
+                            <span
+                              data-for={`${item.fileEntityId}-ineligible-tooltip`}
+                              className="ineligibileIcon"
+                            >
+                              <IconSvg
+                                options={{
+                                  icon: 'warningOutlined',
+                                }}
+                              />
+                            </span>
+                          </Tooltip>
                         )}
                       </td>
                       <td>
@@ -384,38 +378,37 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                               version={item.versionNumber}
                             />
                           </span>
-                          <span
-                            className="removeItem"
-                            data-for={`${item.fileEntityId}-removeitem-tooltip`}
-                            data-tip="Remove from Download List"
+                          <Tooltip
+                            title="Remove from Download List"
+                            placement="left"
+                            id={`${item.fileEntityId}-removeitem-tooltip`}
+                            enterNextDelay={TOOLTIP_DELAY_SHOW}
                           >
-                            <ReactTooltip
-                              delayShow={TOOLTIP_DELAY_SHOW}
-                              place="left"
-                              type="dark"
-                              effect="solid"
-                              id={`${item.fileEntityId}-removeitem-tooltip`}
-                            />
-                            <button
-                              className={TESTING_TRASH_BTN_CLASS}
-                              onClick={() => {
-                                removeItem(
-                                  {
-                                    fileEntityId: item.fileEntityId,
-                                    versionNumber: item.versionNumber,
-                                  },
-                                  item.fileName,
-                                  'File Removed',
-                                )
-                              }}
+                            <span
+                              className="removeItem"
+                              data-for={`${item.fileEntityId}-removeitem-tooltip`}
                             >
-                              <IconSvg
-                                options={{
-                                  icon: 'removeCircle',
+                              <button
+                                className={TESTING_TRASH_BTN_CLASS}
+                                onClick={() => {
+                                  removeItem(
+                                    {
+                                      fileEntityId: item.fileEntityId,
+                                      versionNumber: item.versionNumber,
+                                    },
+                                    item.fileName,
+                                    'File Removed',
+                                  )
                                 }}
-                              />
-                            </button>
-                          </span>
+                              >
+                                <IconSvg
+                                  options={{
+                                    icon: 'removeCircle',
+                                  }}
+                                />
+                              </button>
+                            </span>
+                          </Tooltip>
                         </div>
                       </td>
                     </tr>

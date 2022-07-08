@@ -8,8 +8,8 @@ import {
   Clear,
 } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
-import ReactTooltip from 'react-tooltip'
 import { rebuildTooltip } from '../utils/functions/TooltipUtils'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 export type AlertButtonConfig = {
   text: string
@@ -61,29 +61,35 @@ function ButtonFromConfig(props: {
   const { config, variant, className } = props
   if (config && ('onClick' in config || 'href' in config)) {
     return (
-      <span // See https://github.com/wwayne/react-tooltip/issues/304
-        className={className}
-        data-tip={config.tooltipText}
-        data-for={FULL_WIDTH_ALERT_TOOLTIP_ID}
-        data-tip-disable={false}
+      <Tooltip
+        title={config.tooltipText ?? ''}
+        id={FULL_WIDTH_ALERT_TOOLTIP_ID}
+        enterNextDelay={300}
       >
-        <Button
-          variant={variant}
-          size={'sm'}
-          disabled={config.isDisabled}
-          onClick={e => {
-            if ('onClick' in config) {
-              e.preventDefault()
-              config.onClick!(e)
-            } else if ('href' in config) {
-              e.preventDefault()
-              window.open(config.href, '_blank', 'noopener')
-            }
-          }}
+        <span // See https://github.com/wwayne/react-tooltip/issues/304
+          className={className}
+          data-tip={config.tooltipText}
+          data-for={FULL_WIDTH_ALERT_TOOLTIP_ID}
+          data-tip-disable={false}
         >
-          {config.text}
-        </Button>
-      </span>
+          <Button
+            variant={variant}
+            size={'sm'}
+            disabled={config.isDisabled}
+            onClick={e => {
+              if ('onClick' in config) {
+                e.preventDefault()
+                config.onClick!(e)
+              } else if ('href' in config) {
+                e.preventDefault()
+                window.open(config.href, '_blank', 'noopener')
+              }
+            }}
+          >
+            {config.text}
+          </Button>
+        </span>
+      </Tooltip>
     )
   }
   return null
@@ -136,11 +142,6 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         isGlobal ? 'global' : ''
       } ${additionalAlertVariantClass}`}
     >
-      <ReactTooltip
-        id={FULL_WIDTH_ALERT_TOOLTIP_ID}
-        delayShow={300}
-        effect="solid"
-      />
       <div
         className={`gridContainer ${hasActions ? '' : 'noActions'} ${
           onClose ? 'hasCloseButton' : ''
