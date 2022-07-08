@@ -678,8 +678,8 @@ export const getFullQueryTableResults = async (
   data = response
   // we are done if we return less than a max pagesize that the backend is willing to return.
   let isDone =
-    response.queryResult.queryResults.rows.length < data.maxRowsPerPage!
-  offset += response.queryResult.queryResults.rows.length
+    response.queryResult!.queryResults.rows.length < data.maxRowsPerPage!
+  offset += response.queryResult!.queryResults.rows.length
   queryRequest.query.limit = data.maxRowsPerPage // set the limit to the actual max rows per page
 
   while (!isDone) {
@@ -687,12 +687,12 @@ export const getFullQueryTableResults = async (
     // update the maxPageSize to the largest possible value after the first page is complete.  This is a no-op after the second page.
 
     const response = await getQueryTableResults(queryRequest, accessToken)
-    data.queryResult.queryResults.rows.push(
-      ...response.queryResult.queryResults.rows, // ... spread operator to push all elements on
+    data.queryResult!.queryResults.rows.push(
+      ...response.queryResult!.queryResults.rows, // ... spread operator to push all elements on
     )
     isDone =
-      response.queryResult.queryResults.rows.length < queryRequest.query.limit!
-    offset += response.queryResult.queryResults.rows.length
+      response.queryResult!.queryResults.rows.length < queryRequest.query.limit!
+    offset += response.queryResult!.queryResults.rows.length
   }
   return data
 }

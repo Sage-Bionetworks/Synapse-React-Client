@@ -78,19 +78,19 @@ export default class UserCardList extends React.Component<
    * @memberof UserCardList
    */
   manuallyExtractData(data: QueryResultBundle) {
-    const firstNameIndex = data.queryResult.queryResults.headers.findIndex(
+    const firstNameIndex = data.queryResult!.queryResults.headers.findIndex(
       el => el.name === 'firstName',
     )
-    const lastNameIndex = data.queryResult.queryResults.headers.findIndex(
+    const lastNameIndex = data.queryResult!.queryResults.headers.findIndex(
       el => el.name === 'lastName',
     )
-    const institutionIndex = data.queryResult.queryResults.headers.findIndex(
+    const institutionIndex = data.queryResult!.queryResults.headers.findIndex(
       el => el.name === 'institution',
     )
-    const ownerId = data.queryResult.queryResults.headers.findIndex(
+    const ownerId = data.queryResult!.queryResults.headers.findIndex(
       el => el.columnType === ColumnType.USERID,
     )
-    const nullOwnerIdsRows = data.queryResult.queryResults.rows.filter(
+    const nullOwnerIdsRows = data.queryResult!.queryResults.rows.filter(
       el => !el.values[ownerId],
     )
     return nullOwnerIdsRows.map<UserProfile>(el => {
