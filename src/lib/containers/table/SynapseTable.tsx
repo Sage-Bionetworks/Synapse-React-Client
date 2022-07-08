@@ -55,6 +55,7 @@ import {
   getUniqueEntities,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
+import NoContentAvailable from './NoContentAvailable'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -109,6 +110,7 @@ export type SynapseTableProps = {
    * Note that this is very brittle and only supports one column at a time. See SWC-6075 for more information. Default false.
    */
   linkCountToDisaggregatedQuery?: boolean
+  showNoContentAvailableWhenEmpty?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -356,6 +358,7 @@ export default class SynapseTable extends React.Component<
     const {
       queryContext: { data },
       queryVisualizationContext: { topLevelControlsState, unitDescription },
+      showNoContentAvailableWhenEmpty,
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { queryResults } = queryResult
@@ -372,14 +375,18 @@ export default class SynapseTable extends React.Component<
       if (queryRequest.query.additionalFilters) {
         return <SearchResultsNotFound />
       } else {
-        return (
-          <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-            {NoData}
-            <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
-              This table is currently empty
+        if (showNoContentAvailableWhenEmpty) {
+          return <NoContentAvailable />
+        } else {
+          return (
+            <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+              {NoData}
+              <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+                This table is currently empty
+              </div>
             </div>
-          </div>
-        )
+          )
+        }
       }
     }
     const table = (
