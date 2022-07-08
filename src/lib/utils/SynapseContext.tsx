@@ -1,16 +1,22 @@
 import React, { useContext } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import {
+  QueryClient,
+  QueryClientConfig,
+  QueryClientProvider,
+} from 'react-query'
 import { SynapseErrorBoundary } from '../containers/ErrorBanner'
 import { SynapseTheme, ThemeProvider } from './hooks/useTheme'
 
-const defaultQueryClient = new QueryClient({
+export const defaultQueryClientConfig: QueryClientConfig = {
   defaultOptions: {
     queries: {
       staleTime: 60 * 1000, // 60s
       retry: false, // SynapseClient knows which queries to retry
     },
   },
-})
+}
+
+const defaultQueryClient = new QueryClient(defaultQueryClientConfig)
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
