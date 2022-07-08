@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { useGetApprovedSubmissionInfoInfinite } from '../utils/hooks/SynapseAPI/useGetApprovedSubmissionInfo'
+import { useGetApprovedSubmissionInfoInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useGetApprovedSubmissionInfo'
 import { SubmissionInfo } from '../utils/synapseTypes/SubmissionInfo'
 import {
   LoadingSubmissionInfoCard,

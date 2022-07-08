@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { SynapseConstants } from '../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { useGetUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetUserBundle } from '../utils/hooks/SynapseAPI/user/useUserBundle'
 import { useOverlay } from '../utils/hooks/useOverlay'
 import { UserProfile } from '../utils/synapseTypes/'
 import { Avatar, AvatarSize } from './Avatar'

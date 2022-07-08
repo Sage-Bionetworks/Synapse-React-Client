@@ -4,15 +4,15 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClientError'
-import { useSynapseContext } from '../../SynapseContext'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClientError'
+import { useSynapseContext } from '../../../SynapseContext'
 import {
   AvailableFilesRequest,
   AvailableFilter,
   Sort,
-} from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
-import { AvailableFilesResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
+} from '../../../synapseTypes/DownloadListV2/QueryRequestDetails'
+import { AvailableFilesResponse } from '../../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetAvailableFilesToDownload(
   request: AvailableFilesRequest,
