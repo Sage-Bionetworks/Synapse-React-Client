@@ -134,10 +134,12 @@ svg.SRC-hoverBox {
   .tool-icon {
     display: flex;
   }
-  .SRC-primary-background-color-hover:hover {
-    svg,
-    path {
-      fill: #fff;
+  .SRC-primary-background-color-hover {
+    &:hover, &[aria-expanded="true"] {
+      svg,
+      path {
+        fill: #fff;
+      }
     }
   }
 }
@@ -579,7 +581,8 @@ div.SRC-logo-cursor * {
   UserCard Styling
 */
 
-.SRC-userImg {
+.SRC-userImg,
+.SRC-userImg.MuiSkeleton-circle {
   text-transform: uppercase;
   border-radius: 50%;
   height: 80px;
@@ -595,7 +598,8 @@ div.SRC-logo-cursor * {
   color: SRC.$primary-action-color;
 }
 
-.SRC-userImgSmall {
+.SRC-userImgSmall,
+.SRC-userImgSmall.MuiSkeleton-circle {
   font-size: 12px;
   border-radius: 50%;
   width: 20px;
@@ -608,7 +612,8 @@ div.SRC-logo-cursor * {
   color: white;
 }
 
-.SRC-userImgMedium {
+.SRC-userImgMedium,
+.SRC-userImgMedium.MuiSkeleton-circle {
   font-size: 18px;
   border-radius: 50%;
   width: 30px;

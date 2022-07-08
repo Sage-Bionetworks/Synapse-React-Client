@@ -23,6 +23,7 @@ import {
   ENTITY_SCHEMA_VALIDATION,
   FAVORITES,
   NOTIFICATION_EMAIL,
+  PROFILE_IMAGE_PREVIEW,
   REGISTERED_SCHEMA_ID,
   REGISTER_ACCOUNT_STEP_1,
   REGISTER_ACCOUNT_STEP_2,
@@ -214,6 +215,7 @@ import {
   SubmissionInfoPageRequest,
 } from './synapseTypes/SubmissionInfo'
 import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
+import { SynapseClientError } from './SynapseClientError'
 
 const cookies = new UniversalCookies()
 
@@ -254,23 +256,6 @@ export function delay(t: number) {
  */
 export type SynapseError = {
   reason: string
-}
-
-/**
- * Error message returned by the Synapse backend joined with the
- * HTTP status code.
- */
-export class SynapseClientError extends Error {
-  public status: number
-  public reason: string
-  public url: string
-
-  constructor(status: number, reason: string, url: string) {
-    super(reason)
-    this.status = status
-    this.reason = reason
-    this.url = url
-  }
 }
 
 /**
@@ -321,11 +306,14 @@ const fetchWithExponentialTimeout = async <TResponse>(
     response = await fetch(url, options)
   }
 
+  const contentType = response.headers.get('Content-Type')
   const responseBody = await response.text()
   let responseObject: TResponse | SynapseError | string = responseBody
   try {
     // try to parse it as json
-    responseObject = JSON.parse(responseBody) as TResponse | SynapseError
+    if (contentType && contentType.includes('application/json')) {
+      responseObject = JSON.parse(responseBody) as TResponse | SynapseError
+    }
   } catch (error) {
     console.warn('Failed to parse response as JSON', responseBody)
   }
@@ -3748,5 +3736,23 @@ export const getApprovedSubmissionInfo = (
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns the presigned URL for a user's profile pic. Note that the presigned URL
+ * expires after a short time, so it should be used immediately.
+ * @param userId
+ * @returns A presigned URL that can be used to fetch the profile preview image, or null if the user
+ *   does not have a profile image
+ */
+export function getProfilePicPreviewPresignedUrl(userId: string) {
+  return allowNotFoundError(() =>
+    doGet<string>(
+      PROFILE_IMAGE_PREVIEW(userId) + `?redirect=false`,
+      undefined,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
   )
 }

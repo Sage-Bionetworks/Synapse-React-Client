@@ -1,7 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../..'
-import { getProfilePic, UserProfileAndImg } from '../../functions/getUserData'
-import { SynapseClientError } from '../../SynapseClient'
+import { SynapseClientError } from '../../SynapseClientError'
 import { useSynapseContext } from '../../SynapseContext'
 import { NotificationEmail, UserBundle, UserProfile } from '../../synapseTypes'
 import {
@@ -34,6 +33,32 @@ export function useGetCurrentUserProfile(
   return useQuery<UserProfile, SynapseClientError>(
     queryKey,
     () => SynapseClient.getUserProfile(accessToken),
+    options,
+  )
+}
+
+export function useGetUserBundle(
+  userId: string,
+  mask?: number,
+  options?: UseQueryOptions<UserBundle, SynapseClientError>,
+) {
+  const ALL_USER_BUNDLE_FIELDS =
+    USER_BUNDLE_MASK_USER_PROFILE |
+    USER_BUNDLE_MASK_ORCID |
+    USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
+    USER_BUNDLE_MASK_IS_CERTIFIED |
+    USER_BUNDLE_MASK_IS_VERIFIED |
+    USER_BUNDLE_MASK_IS_ACT_MEMBER |
+    USER_BUNDLE_MASK_IS_AR_REVIEWER
+
+  const requestMask = mask ?? ALL_USER_BUNDLE_FIELDS
+
+  const { accessToken } = useSynapseContext()
+  const queryKey = ['user', userId, 'bundle', requestMask, accessToken]
+
+  return useQuery<UserBundle, SynapseClientError>(
+    queryKey,
+    () => SynapseClient.getUserBundle(userId, requestMask, accessToken),
     options,
   )
 }
@@ -88,27 +113,6 @@ export function useGetUserProfile(
       onSuccess: profile => {
         sessionStorage.setItem(sessionStorageCacheKey, JSON.stringify(profile))
       },
-    },
-  )
-}
-
-export function useGetUserProfileWithProfilePic(
-  principalId: string,
-  options?: UseQueryOptions<UserProfileAndImg, SynapseClientError>,
-) {
-  const queryKey = ['user', principalId, 'profile', 'withPic']
-
-  const { data: userProfile } = useGetUserProfile(principalId, {
-    enabled: options?.enabled ?? true,
-  })
-
-  // TODO: create useGetFile hook with careful configuration to prevent serving expired pre-signed URLs
-  return useQuery<UserProfileAndImg, SynapseClientError>(
-    queryKey,
-    () => getProfilePic(userProfile!),
-    {
-      ...options,
-      enabled: !!userProfile,
     },
   )
 }

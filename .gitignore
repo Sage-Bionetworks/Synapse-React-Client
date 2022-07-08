@@ -37,5 +37,5 @@ jsconfig.json
 # dist/build folders created to either deploy to npm or
 # to gh-pages
 /dist
-
+/storybook-static
 src/umd

@@ -8,7 +8,7 @@ import {
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../lib/containers/QueryWrapper'
+} from '../../../lib/containers/QueryContext'
 import SqlEditor from '../../../lib/containers/SqlEditor'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 

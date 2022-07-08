@@ -1,176 +1,179 @@
-import React, { useEffect } from 'react'
-import ReactTooltip from 'react-tooltip'
-import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import {
-  Block,
-  ArrowBackIos,
-  ArrowForwardIos,
-  Check,
-  Clear,
-  PhotoCameraOutlined,
-  Cached,
-  Group,
-  InfoOutlined,
-  AddShoppingCart,
-  ShoppingCartOutlined,
-  ExpandMore,
-  ExpandLess,
-  DashboardTwoTone,
-  Star,
-  PeopleTwoTone,
-  SearchOutlined,
-  HelpOutlined,
-  AddCircleOutline,
-  LanguageTwoTone,
-  InsertDriveFileTwoTone,
-  TableChartTwoTone,
-  QuestionAnswerTwoTone,
-  AssessmentTwoTone,
-  GetAppTwoTone,
-  StarTwoTone,
-  SearchTwoTone,
-  WatchLater,
-  AddCircleTwoTone,
-  ReportProblemOutlined,
-  Code,
-  GridOnTwoTone,
-  RemoveCircleTwoTone,
-  LockOpenTwoTone,
-  VpnKeyTwoTone,
-  ReplyTwoTone,
-  ChatTwoTone,
-  FolderTwoTone,
-  LinkTwoTone,
-  ListTwoTone,
-  HistoryTwoTone,
-  StorageTwoTone,
-  ChevronRight,
-  LayersTwoTone,
-  CloseTwoTone,
-  MoreVertTwoTone,
-  SyncTwoTone,
-  AssignmentTurnedInTwoTone,
-  AddTwoTone,
-  WarningTwoTone,
-  DeleteTwoTone,
-  ChevronLeft,
-  RadioButtonUncheckedTwoTone,
-  CheckCircleTwoTone,
-  ErrorOutlined,
-  PhoneTwoTone,
-  PublicTwoTone,
   AccessTimeTwoTone,
+  AddCircleOutline,
+  AddCircleTwoTone,
+  AddShoppingCart,
+  AddTwoTone,
+  ArrowBackIos,
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
+  ArrowForwardIos,
+  AssessmentTwoTone,
+  AssignmentTurnedInTwoTone,
+  Block,
+  Cached,
+  ChatTwoTone,
+  Check,
+  CheckCircleTwoTone,
+  ChevronLeft,
+  ChevronRight,
+  Clear,
+  CloseTwoTone,
+  Code,
+  DashboardTwoTone,
+  DeleteTwoTone,
+  ErrorOutlined,
+  ExpandLess,
+  ExpandMore,
+  FolderTwoTone,
+  GetAppTwoTone,
+  GridOnTwoTone,
+  Group,
+  HelpOutlined,
+  HistoryTwoTone,
+  InfoOutlined,
+  InsertDriveFileTwoTone,
+  LanguageTwoTone,
+  LayersTwoTone,
+  LinkTwoTone,
+  ListTwoTone,
+  LockOpenTwoTone,
+  MoreVertTwoTone,
   OpenInNewTwoTone,
+  PeopleTwoTone,
+  PhoneTwoTone,
+  PhotoCameraOutlined,
+  PublicTwoTone,
+  QuestionAnswerTwoTone,
+  RadioButtonUncheckedTwoTone,
+  RemoveCircleTwoTone,
+  ReplyTwoTone,
+  ReportProblemOutlined,
+  SearchOutlined,
+  SearchTwoTone,
+  ShoppingCartOutlined,
+  Star,
+  StarTwoTone,
+  StorageTwoTone,
+  SyncTwoTone,
+  TableChartTwoTone,
+  ViewAgendaTwoTone,
+  VpnKeyTwoTone,
+  WarningTwoTone,
+  WatchLater,
 } from '@material-ui/icons'
-
+import React, { useEffect } from 'react'
+import AccessManagement from '../assets/mui_components/AccessManagement'
 import AccountCertified from '../assets/mui_components/AccountCertified'
 import AccountRegistered from '../assets/mui_components/AccountRegistered'
 import AccountValidated from '../assets/mui_components/AccountValidated'
 import Chromatin from '../assets/mui_components/Chromatin'
+import Clinical from '../assets/mui_components/Clinical'
 import ContentCopy from '../assets/mui_components/ContentCopy'
 import Data from '../assets/mui_components/Data'
 import DataLocked from '../assets/mui_components/DataLocked'
+import Docker from '../assets/mui_components/Docker'
 import GeneExpression from '../assets/mui_components/GeneExpression'
 import GeneVariants from '../assets/mui_components/GeneVariants'
-import Clinical from '../assets/mui_components/Clinical'
 import Imaging from '../assets/mui_components/Imaging'
-import LineGraph from '../assets/mui_components/LineGraph'
-import Rat from '../assets/mui_components/Rat'
 import Kinomics from '../assets/mui_components/Kinomics'
+import LineGraph from '../assets/mui_components/LineGraph'
 import Login from '../assets/mui_components/Login'
-import Proteomics from '../assets/mui_components/Proteomics'
 import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
-import Docker from '../assets/mui_components/Docker'
-import AccessManagement from '../assets/mui_components/AccessManagement'
+import Proteomics from '../assets/mui_components/Proteomics'
+import Rat from '../assets/mui_components/Rat'
 import { EntityType } from '../utils/synapseTypes/EntityType'
+import Tooltip from '../utils/tooltip/Tooltip'
 
-export type Icon =
-  | 'accessOpen'
-  | 'accessClosed'
-  | 'arrowBack'
-  | 'arrowForward'
-  | 'arrowDropUp'
-  | 'arrowDropDown'
-  | 'check'
-  | 'clear'
-  | 'cart'
-  | 'clock'
-  | 'code'
-  | 'openInNewWindow'
-  | 'dashboard'
-  | 'delete'
-  | 'addToCart'
-  | 'addCircleOutline'
-  | 'addCircleTwoTone'
-  | 'reload'
-  | 'team'
-  | 'photoCamera'
-  | 'info'
-  | 'favTwoTone'
-  | 'fav'
-  | 'peopleTwoTone'
-  | 'challengesTwoTone'
-  | 'download'
-  | 'searchOutlined'
-  | 'search'
-  | 'history'
-  | 'time'
-  | 'login'
-  | 'helpOutlined'
-  | 'expandLess'
-  | 'expandMore'
-  | 'rat'
-  | 'chromatin'
-  | 'clinical'
-  | 'contentCopy'
-  | 'data'
-  | 'dataLocked'
-  | 'geneExpression'
-  | 'geneVariants'
-  | 'imaging'
-  | 'lineGraph'
-  | 'kinomics'
-  | 'proteomics'
-  | 'packagableFile'
-  | 'other'
-  | 'wiki'
-  | 'file'
-  | 'folder'
-  | 'link'
-  | 'table'
-  | 'public'
-  | 'people'
-  | 'entityview'
-  | 'submissionview'
-  | 'challenge'
-  | 'discussion'
-  | 'dataset'
-  | 'docker'
-  | 'accountCertified'
-  | 'accountRegistered'
-  | 'accountValidated'
-  | 'warningOutlined'
-  | 'removeCircle'
-  | 'replyTwoTone'
-  | 'chatTwoTone'
-  | 'accessManagement'
-  | 'chevronRight'
-  | 'chevronLeft'
-  | 'database'
-  | 'close'
-  | 'verticalEllipsis'
-  | 'sync'
-  | 'clipboardCheck'
-  | 'add'
-  | 'warning'
-  | 'circle'
-  | 'block'
-  | 'checkCircle'
-  | 'errorOutlined'
-  | 'phone'
+export const IconStrings = [
+  'accessOpen',
+  'accessClosed',
+  'arrowBack',
+  'arrowForward',
+  'arrowDropUp',
+  'arrowDropDown',
+  'cards',
+  'check',
+  'clear',
+  'cart',
+  'clock',
+  'code',
+  'openInNewWindow',
+  'dashboard',
+  'delete',
+  'addToCart',
+  'addCircleOutline',
+  'addCircleTwoTone',
+  'reload',
+  'team',
+  'photoCamera',
+  'info',
+  'favTwoTone',
+  'fav',
+  'peopleTwoTone',
+  'challengesTwoTone',
+  'download',
+  'searchOutlined',
+  'search',
+  'history',
+  'time',
+  'login',
+  'helpOutlined',
+  'expandLess',
+  'expandMore',
+  'rat',
+  'chromatin',
+  'clinical',
+  'contentCopy',
+  'data',
+  'dataLocked',
+  'geneExpression',
+  'geneVariants',
+  'imaging',
+  'lineGraph',
+  'kinomics',
+  'proteomics',
+  'packagableFile',
+  'other',
+  'wiki',
+  'file',
+  'folder',
+  'link',
+  'table',
+  'public',
+  'people',
+  'entityview',
+  'submissionview',
+  'challenge',
+  'discussion',
+  'dataset',
+  'docker',
+  'accountCertified',
+  'accountRegistered',
+  'accountValidated',
+  'warningOutlined',
+  'removeCircle',
+  'replyTwoTone',
+  'chatTwoTone',
+  'accessManagement',
+  'chevronRight',
+  'chevronLeft',
+  'database',
+  'close',
+  'verticalEllipsis',
+  'sync',
+  'clipboardCheck',
+  'add',
+  'warning',
+  'circle',
+  'block',
+  'checkCircle',
+  'errorOutlined',
+  'phone',
+] as const
+
+export type Icon = typeof IconStrings[number]
 
 export type IconSvgOptions = {
   icon: Icon
@@ -230,6 +233,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <Clear style={muiSvgStyle}></Clear>
     case 'cart':
       return <ShoppingCartOutlined style={muiSvgStyle}></ShoppingCartOutlined>
+    case 'cards':
+      return <ViewAgendaTwoTone style={muiSvgStyle}></ViewAgendaTwoTone>
     case 'clock':
       return <AccessTimeTwoTone style={muiSvgStyle} />
     case 'code':
@@ -430,29 +435,18 @@ const IconSvg: React.FunctionComponent<IconSvgProps> = props => {
   }, [icon, color])
 
   return (
-    <>
+    <Tooltip placement="top" title={label ?? ''}>
       <span
         data-svg={icon}
         className="styled-svg-wrapper"
         style={wrapperCss}
         id={`icon-${icon}`}
-        data-for={`icon-${icon}`}
-        data-tip={label}
         role={'img'}
         {...rest}
       >
         {getIcon(options)}
       </span>
-      {label && (
-        <ReactTooltip
-          className={'icon-svg-tooltip'}
-          delayShow={TOOLTIP_DELAY_SHOW}
-          effect="solid"
-          id={`icon-${icon}`}
-          place={'top'}
-        />
-      )}
-    </>
+    </Tooltip>
   )
 }
 
@@ -471,5 +465,9 @@ export const type2SvgIconName: Record<EntityType, Icon> = {
   submissionview: 'submissionview',
   dataset: 'dataset',
 }
+
+export const IconSvgDemo = (props: IconSvgOptions) => (
+  <IconSvg options={props} />
+)
 
 export default IconSvg

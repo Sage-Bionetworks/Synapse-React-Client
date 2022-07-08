@@ -5,11 +5,13 @@ import {
   UseQueryOptions,
 } from 'react-query'
 import { SynapseClient } from '../../..'
-import { SynapseClientError } from '../../../SynapseClient'
+import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import {
   AccessControlList,
   AccessRequirement,
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
   WikiPageKey,
 } from '../../../synapseTypes'
 import {
@@ -83,5 +85,17 @@ export function useSearchAccessRequirementsInfinite(
       ...options,
       getNextPageParam: page => page.nextPageToken,
     },
+  )
+}
+
+export function useGetRestrictionInformation(
+  request: RestrictionInformationRequest,
+  options?: UseQueryOptions<RestrictionInformationResponse, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+  return useQuery<RestrictionInformationResponse, SynapseClientError>(
+    ['restrictionInformation', request],
+    () => SynapseClient.getRestrictionInformation(request, accessToken),
+    options,
   )
 }

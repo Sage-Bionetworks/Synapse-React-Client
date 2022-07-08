@@ -186,7 +186,7 @@ export function AccessRequirementDashboard(
         <div>
           <FormLabel htmlFor="reviewer-filter">Filter by Reviewer</FormLabel>
           <UserSearchBoxV2
-            htmlId="reviewer-filter"
+            inputId="reviewer-filter"
             placeholder="Search for a username or team name"
             defaultValue={reviewerId}
             onChange={onReviewerChange}

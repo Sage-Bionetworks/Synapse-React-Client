@@ -13,11 +13,11 @@ export type ErrorPageProps = {
 const getImage = (image: string) => {
   switch (image) {
     case 'maintenance':
-      return <MaintenanceSvg />
+      return <MaintenanceSvg role="img" title={image} />
     case 'noAccess':
-      return <NoAccessSvg />
+      return <NoAccessSvg role="img" title={image} />
     case 'unavailable':
-      return <UnavailableSvg />
+      return <UnavailableSvg role="img" title={image} />
     default:
       return <></>
   }

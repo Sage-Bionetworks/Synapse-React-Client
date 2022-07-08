@@ -9,7 +9,7 @@ import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import {
   QueryContextProvider,
   QueryContextType,
-} from '../../../../../lib/containers/QueryWrapper'
+} from '../../../../../lib/containers/QueryContext'
 import {
   mockDatasetEntity,
   mockFileViewEntity,

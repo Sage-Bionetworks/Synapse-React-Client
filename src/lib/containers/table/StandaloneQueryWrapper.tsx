@@ -8,7 +8,8 @@ import {
 import SynapseTable, { SynapseTableProps } from './SynapseTable'
 import { QueryBundleRequest } from '../../utils/synapseTypes'
 import { SynapseConstants } from '../../utils'
-import { QueryWrapper, QueryContextConsumer } from '../QueryWrapper'
+import { QueryWrapper } from '../QueryWrapper'
+import { QueryContextConsumer } from '../QueryContext'
 import TopLevelControls, { TopLevelControlsProps } from './TopLevelControls'
 import FullTextSearch from '../FullTextSearch'
 import SearchV2, { SearchV2Props } from '../SearchV2'
@@ -177,6 +178,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                         showAccessColumn={showAccessColumn}
                         title={title}
                         data-testid="SynapseTable"
+                        {...rest}
                       />
                       <LastUpdatedOn />
                     </>

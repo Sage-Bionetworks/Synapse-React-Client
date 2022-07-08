@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import {
   FAVORITES,
+  PROFILE_IMAGE_PREVIEW,
   USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
   USER_ID_BUNDLE,
@@ -123,6 +124,21 @@ export const userProfileHandlers = [
           .map(userData => userData.userGroupHeader),
       }
       return res(ctx.status(200), ctx.json(responsePage))
+    },
+  ),
+
+  /**
+   * Return a 404 when fetching the profile image
+   */
+  rest.get(
+    `${getEndpoint(
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )}${PROFILE_IMAGE_PREVIEW(':userId')}`,
+    async (req, res, ctx) => {
+      return res(
+        ctx.status(404),
+        ctx.json({ reason: 'user has no profile image' }),
+      )
     },
   ),
 ]

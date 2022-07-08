@@ -16,6 +16,8 @@ jest.mock('../../../../lib/utils/SynapseClient', () => {
     getUserProfileById: jest
       .fn()
       .mockImplementation(() => Promise.resolve(mockUserProfileData)),
+
+    getProfilePicPreviewPresignedUrl: jest.fn().mockResolvedValue(null),
   }
 })
 jest.mock(
@@ -36,8 +38,8 @@ const page1: Partial<DownloadListItemResult>[] = [
   {
     fileEntityId: 'syn1',
     versionNumber: 1,
-    createdOn: 'yesterday',
-    addedOn: 'today',
+    createdOn: '2021-07-08T19:53:58.000Z',
+    addedOn: '2022-07-08T19:53:58.000Z',
     fileName: 'file1.txt',
     fileSizeBytes: 1,
     projectId: 'syn200',
@@ -50,8 +52,8 @@ const page2: Partial<DownloadListItemResult>[] = [
   {
     fileEntityId: 'syn2',
     versionNumber: 3,
-    createdOn: 'yesterday',
-    addedOn: 'today',
+    createdOn: '2021-07-08T19:53:58.000Z',
+    addedOn: '2022-07-08T19:53:58.000Z',
     fileName: 'file2.txt',
     fileSizeBytes: 2,
     projectId: 'syn200',

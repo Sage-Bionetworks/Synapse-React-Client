@@ -14,7 +14,7 @@ import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../../QueryWrapper'
-import { useQueryContext } from '../../QueryWrapper'
+import { useQueryContext } from '../../QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
 

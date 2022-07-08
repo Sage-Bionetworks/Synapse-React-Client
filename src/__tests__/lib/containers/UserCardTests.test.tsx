@@ -1,77 +1,60 @@
-import * as React from 'react'
-import { mount, shallow } from 'enzyme'
-import { SynapseConstants } from '../../../lib/utils'
-import UserCard, { UserCardProps } from '../../../lib/containers/UserCard'
-import {
-  UserCardSmall,
-  UserCardSmallProps,
-} from '../../../lib/containers/UserCardSmall'
-import UserCardMedium, {
-  UserCardMediumProps,
-} from '../../../lib/containers/UserCardMedium'
-import { UserCardLarge } from '../../../lib/containers/UserCardLarge'
-import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
-import UserCardContextMenu, {
-  UserCardContextMenuProps,
-  MenuAction,
-} from '../../../lib/containers/UserCardContextMenu'
-import { SEPERATOR } from '../../../lib/utils/SynapseConstants'
-import { Avatar, AvatarProps } from '../../../lib/containers/Avatar'
-import { render, waitFor, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
-import { server } from '../../../mocks/msw/server'
+import { cloneDeep } from 'lodash-es'
+import * as React from 'react'
+import UserCard, { UserCardProps } from '../../../lib/containers/UserCard'
+import UserCardContextMenu, {
+  MenuAction,
+  UserCardContextMenuProps,
+} from '../../../lib/containers/UserCardContextMenu'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
-
-jest.mock('../../../lib/utils/hooks/usePreFetchImage', () => {
-  return {
-    __esModule: true,
-    default: jest.fn().mockResolvedValue(''),
-  }
-})
+import { SynapseConstants } from '../../../lib/utils'
+import { PROFILE_IMAGE_PREVIEW } from '../../../lib/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../lib/utils/functions/getEndpoint'
+import {
+  AVATAR,
+  LARGE_USER_CARD,
+  MEDIUM_USER_CARD,
+  SEPERATOR,
+  SMALL_USER_CARD,
+} from '../../../lib/utils/SynapseConstants'
+import { rest, server } from '../../../mocks/msw/server'
+import {
+  mockUserProfileData,
+  MOCK_USER_NAME,
+} from '../../../mocks/user/mock_user_profile'
 
 const { firstName } = mockUserProfileData
 
-const createUserCardContextMenu = (props: UserCardContextMenuProps) => {
-  const wrapper = shallow(<UserCardContextMenu {...props} />)
-  return { wrapper }
-}
-
-const createLargeComponent = (props: UserCardMediumProps) => {
-  const wrapper = shallow<UserCardMedium>(
-    <UserCardMedium {...props} isLarge={true} />,
-  )
-  const instance = wrapper.instance()
-  return { wrapper, instance }
-}
-
-const createMediumComponent = (props: UserCardMediumProps) => {
-  const wrapper = mount<UserCardMedium>(<UserCardMedium {...props} />, {
-    wrappingComponent: SynapseTestContext,
+const renderUserCard = (props: UserCardProps) => {
+  return render(<UserCard {...props} />, {
+    wrapper: createWrapper(),
   })
-  const instance = wrapper.find(UserCardMedium).instance()
-  return { wrapper, instance }
 }
 
-const createSmallComponent = (props: UserCardSmallProps) => {
-  const wrapper = shallow(<UserCardSmall {...props} />)
-  const instance = wrapper.instance()
-  return { wrapper, instance }
-}
-
-const createAvatarComponent = (props: AvatarProps) => {
-  const wrapper = shallow(<Avatar {...props} />)
-  const instance = wrapper.instance()
-  return { wrapper, instance }
-}
-
-// need mount because of the deep render of the children
-const createMountedComponent = (props: UserCardProps) => {
-  const wrapper = mount(<UserCard {...props} />, {
-    wrappingComponent: SynapseTestContext,
+const renderUserCardContextMenu = (props: UserCardContextMenuProps) => {
+  return render(<UserCardContextMenu {...props} />, {
+    wrapper: createWrapper(),
   })
-  const instance = wrapper.instance()
-  return { wrapper, instance }
+}
+
+const renderSmallUserCard = (props: Omit<UserCardProps, 'size'>) => {
+  return renderUserCard({ ...props, size: SMALL_USER_CARD })
+}
+
+const renderMediumUserCard = (props: Omit<UserCardProps, 'size'>) => {
+  return renderUserCard({ ...props, size: MEDIUM_USER_CARD })
+}
+
+const renderLargeUserCard = (props: Omit<UserCardProps, 'size'>) => {
+  return renderUserCard({ ...props, size: LARGE_USER_CARD })
+}
+
+const renderAvatar = (props: Omit<UserCardProps, 'size'>) => {
+  return renderUserCard({ ...props, size: AVATAR })
 }
 
 // Handle the msw lifecycle:
@@ -79,148 +62,200 @@ beforeAll(() => server.listen())
 afterEach(() => server.restoreHandlers())
 afterAll(() => server.close())
 
+beforeEach(() => {
+  jest.useRealTimers()
+})
+
 describe('it renders the different sized cards without failing', () => {
-  const props = {
+  const props: Omit<UserCardProps, 'size'> = {
     userProfile: mockUserProfileData,
   }
 
-  it('renders an avatar', () => {
-    const size = SynapseConstants.AVATAR
-    const { wrapper } = createMountedComponent({ ...props, size })
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(Avatar)).toHaveLength(1)
+  it('renders an avatar', async () => {
+    renderAvatar(props)
+    await screen.findByRole('img')
   })
 
   it('renders a small card', () => {
-    const size = SynapseConstants.SMALL_USER_CARD
-    const { wrapper } = createMountedComponent({ ...props, size })
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(UserCardSmall)).toHaveLength(1)
+    renderSmallUserCard(props)
+    screen.getByText('@' + MOCK_USER_NAME)
   })
 
   it('renders a medium card', async () => {
-    const size = SynapseConstants.MEDIUM_USER_CARD
-    render(<UserCard {...props} size={size} />, { wrapper: createWrapper() })
-    // This is the final uncancellable async request that gets sent in the medium and large cards
-    // We wait for this explicitly to prevent the "not wrapped in act(...)" warning
-    await waitFor(() => screen.getByText('ORCID', { exact: false }))
+    renderMediumUserCard(props)
+    await screen.findByText(
+      mockUserProfileData.firstName + ' ' + mockUserProfileData.lastName,
+      { exact: false },
+    )
+    await waitFor(() => {
+      screen.getByText('ORCID', { exact: false })
+    })
   })
 
   it('renders a large card', async () => {
-    const size = SynapseConstants.LARGE_USER_CARD
-    render(<UserCard {...props} size={size} />, { wrapper: createWrapper() })
-    // This is the final uncancellable async request that gets sent in the medium and large cards
-    // We wait for this explicitly to prevent the "not wrapped in act(...)" warning
-    await waitFor(() => screen.getByText('ORCID', { exact: false }))
+    renderLargeUserCard(props)
+    await screen.findByText(
+      mockUserProfileData.firstName + ' ' + mockUserProfileData.lastName,
+      { exact: false },
+    )
+    await screen.findByText('ORCID', { exact: false })
   })
 })
+
 describe('it creates the correct UI for the avatar', () => {
-  const props = {
+  const props: Omit<UserCardProps, 'size'> = {
     userProfile: mockUserProfileData,
   }
 
-  it('creates a small avatar', () => {
-    const { wrapper } = createAvatarComponent({ ...props, avatarSize: 'SMALL' })
-    // one svg is for the clipboard icon, the other is for the user
-    expect(wrapper.find('div.SRC-userImgSmall')).toHaveLength(1)
-    expect(wrapper.find('div.SRC-userImgSmall').text()).toEqual(firstName[0])
+  it('creates a small avatar', async () => {
+    renderAvatar({ ...props, avatarSize: 'SMALL' })
+    const imageElement = await screen.findByRole('img')
+    // No profile pic fetched, so the avatar should have the first initial
+    await screen.findByText(firstName[0])
+    expect(imageElement.classList.contains('SRC-userImgSmall')).toBe(true)
+    expect(imageElement.style.backgroundImage).toBe('')
   })
 
-  it('creates a large avatar', () => {
-    const { wrapper } = createAvatarComponent({ ...props, avatarSize: 'LARGE' })
-    // one svg is for the clipboard icon, the other is for the user
-    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
-    expect(wrapper.find('div.SRC-userImg').text()).toEqual(firstName[0])
-  })
-
-  it('displays an svg for a user without an img', () => {
-    const { wrapper } = createAvatarComponent({ ...props, imageURL: undefined })
-    // one svg is for the clipboard icon, the other is for the user
-    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
-    expect(wrapper.find('div.SRC-userImg').text()).toEqual(firstName[0])
-  })
-
-  it('displays an img for a user with an img set', () => {
-    const { wrapper } = createAvatarComponent({
+  it('avatar text pulls from username if no first name', async () => {
+    const userWithNoFirstName = cloneDeep(mockUserProfileData)
+    userWithNoFirstName.firstName = ''
+    renderAvatar({
       ...props,
-      imageURL: 'my-img-url',
+      userProfile: userWithNoFirstName,
+      avatarSize: 'SMALL',
     })
-    expect(wrapper.find('div.SRC-userImg')).toHaveLength(1)
+    const imageElement = await screen.findByRole('img')
+    // No profile pic fetched, so the avatar should have the first initial
+    await screen.findByText(mockUserProfileData.userName[0])
+    expect(imageElement.classList.contains('SRC-userImgSmall')).toBe(true)
+    expect(imageElement.style.backgroundImage).toBe('')
+  })
+
+  it('creates a large avatar', async () => {
+    renderAvatar({ ...props, avatarSize: 'LARGE' })
+    const imageElement = await screen.findByRole('img')
+    // No profile pic fetched, so the avatar should have the first initial
+    await screen.findByText(firstName[0])
+    expect(imageElement.classList.contains('SRC-userImg')).toBe(true)
+    expect(imageElement.style.backgroundImage).toBe('')
+  })
+
+  it('displays an img for a user with an img set', async () => {
+    const IMAGE_URL = 'http://some-image-url.notarealurl/image.jpg'
+    server.use(
+      // Synapse provides the presigned URL for the profile image
+      rest.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${PROFILE_IMAGE_PREVIEW(':userId')}`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(200),
+            ctx.set('Content-Type', 'text/plain'),
+            ctx.text(IMAGE_URL),
+          )
+        },
+      ),
+      // Handler for the "presigned" URL itself:
+      rest.get(IMAGE_URL, async (req, res, ctx) => {
+        return res(
+          ctx.status(200),
+          ctx.set('Content-Type', 'image/jpeg'),
+          ctx.body('abcdef'),
+        )
+      }),
+    )
+    renderAvatar({
+      ...props,
+    })
+
+    const imageElement = await screen.findByRole('img')
+
+    // No first initial when profile pic exists
+    await waitFor(() =>
+      expect(screen.queryByText(firstName[0])).not.toBeInTheDocument(),
+    )
+
+    await waitFor(() =>
+      expect(getComputedStyle(imageElement).backgroundImage).toBeTruthy(),
+    )
   })
 })
+
 describe('it creates the correct UI for the small card', () => {
-  const props = {
+  const props: Omit<UserCardProps, 'size'> = {
     userProfile: mockUserProfileData,
-    size: SynapseConstants.SMALL_USER_CARD,
     showCardOnHover: true,
   }
 
-  it('displays a anchor with text for a user without an img', () => {
-    const { wrapper } = createSmallComponent({ ...props })
-    expect(wrapper.find('a.UserCardSmall')).not.toBeNull()
-    expect(wrapper.find('a.UserCardSmall').text()).toEqual(
-      `@${mockUserProfileData.userName}`,
-    )
+  it('displays a anchor with text for a user without an img', async () => {
+    const { container } = renderSmallUserCard({ ...props })
+    expect(container.querySelector('a.UserCardSmall')).not.toBeNull()
+
+    await screen.findByText(`@${mockUserProfileData.userName}`)
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
   })
 
   it('shows a medium user card when mouse enters', async () => {
-    render(<UserCard {...props} />, { wrapper: createWrapper() })
-    await waitFor(() => screen.getByText(`@${props.userProfile.userName}`))
+    jest.useFakeTimers()
+
+    renderSmallUserCard(props)
+
+    const smallUserCard = await screen.findByText(
+      `@${mockUserProfileData.userName}`,
+    )
 
     // There is no medium user card, so we shouldn't be able to find the full name anywhere
-    expect(() =>
-      screen.getAllByText(
-        `${props.userProfile.firstName} ${props.userProfile.lastName}`,
+    expect(
+      screen.queryByText(
+        `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
       ),
-    ).toThrowError()
+    ).not.toBeInTheDocument()
 
     // Hover over the username
-    userEvent.hover(screen.getByText(`@${props.userProfile.userName}`))
+    userEvent.hover(smallUserCard)
+    jest.advanceTimersByTime(1000)
 
     // The card should appear, which would let us see first/last name
-    // we have to wrap in a waitFor because of the delay
-    await waitFor(() =>
-      screen.getAllByText(
-        `${props.userProfile.firstName} ${props.userProfile.lastName}`,
-      ),
+    await screen.findByText(
+      `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
     )
-    await waitFor(() => screen.getByText('ORCID', { exact: false }))
 
     // Unhover and confirm that the card disappears (we will no longer see a full name anywhere)
-    userEvent.unhover(screen.getByText(`@${props.userProfile.userName}`))
+    userEvent.unhover(smallUserCard)
+    jest.advanceTimersByTime(1000)
+
     await waitFor(() =>
-      expect(() =>
-        screen.getAllByText(
-          `${props.userProfile.firstName} ${props.userProfile.lastName}`,
+      expect(
+        screen.queryByText(
+          `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
         ),
-      ).toThrowError(),
+      ).not.toBeInTheDocument(),
     )
   })
 
-  it('creates an anchor link when showCardOnHover is false', () => {
+  it('creates an anchor link when showCardOnHover is false', async () => {
     const link = 'someweblink.domain'
-    const { wrapper } = createSmallComponent({
+    renderSmallUserCard({
       ...props,
       showCardOnHover: false,
       link,
     })
-    expect(wrapper.find('a.UserCardSmall')).toHaveLength(1)
-    expect(wrapper.find('a.UserCardSmall').text()).toEqual(
+    const smallUserCard = await screen.findByText(
       `@${mockUserProfileData.userName}`,
     )
-    expect(wrapper.find('a.UserCardSmall').prop('href')).toEqual(link)
+    expect(smallUserCard.getAttribute('href')).toEqual(link)
   })
 
-  it('just shows the username when showCardOnHover is false and disableLink is true', () => {
-    const { wrapper } = createSmallComponent({
+  it('just shows the username when showCardOnHover is false and disableLink is true', async () => {
+    const { container } = renderSmallUserCard({
       ...props,
       showCardOnHover: false,
       disableLink: true,
     })
-    expect(wrapper.find('span.UserCardSmall')).toHaveLength(1)
-    expect(wrapper.find('span.UserCardSmall').text()).toEqual(
-      `@${mockUserProfileData.userName}`,
-    )
+
+    await screen.findByText(`@${mockUserProfileData.userName}`)
+    expect(container.querySelector('span.UserCardSmall')).not.toBeNull()
   })
 })
 
@@ -230,19 +265,21 @@ describe('it creates the correct UI for the medium card', () => {
     size: SynapseConstants.MEDIUM_USER_CARD,
   }
 
-  it('shows an avatar', () => {
-    const { wrapper } = createMediumComponent({ ...props })
-    expect(wrapper.find(Avatar)).toHaveLength(1)
+  it('shows an avatar', async () => {
+    renderMediumUserCard({ ...props })
+    await screen.findByRole('img')
   })
 
-  it("doesn't hide user email by default", () => {
-    const { wrapper } = createMediumComponent({ ...props })
-    expect(wrapper.render().find('p.SRC-emailText')).toHaveLength(1)
+  it("doesn't hide user email by default", async () => {
+    renderMediumUserCard({ ...props })
+    await screen.findByText(mockUserProfileData.userName + '@synapse.org')
   })
 
   it("hide's user email by when hideEmail set", () => {
-    const { wrapper } = createMediumComponent({ ...props, hideEmail: true })
-    expect(wrapper.render().find('p.SRC-emailText')).toHaveLength(0)
+    renderMediumUserCard({ ...props, hideEmail: true })
+    expect(
+      screen.queryByText(mockUserProfileData.userName + '@synapse.org'),
+    ).not.toBeInTheDocument()
   })
 
   it('displays the context menu on toggle', async () => {
@@ -252,9 +289,7 @@ describe('it creates the correct UI for the medium card', () => {
         callback: () => {},
       },
     ] as MenuAction[]
-    render(<UserCardMedium {...props} menuActions={menuActions} />, {
-      wrapper: createWrapper(),
-    })
+    renderMediumUserCard({ ...props, menuActions })
     await waitFor(() => screen.getByText('ORCID', { exact: false }))
     userEvent.click(screen.getByRole('menu'))
     expect(screen.getAllByRole('menuitem')).toHaveLength(1)
@@ -273,10 +308,10 @@ describe('it creates the correct UI for the UserCardContextMenu', () => {
         callback: () => {},
       },
     ] as MenuAction[]
-    const { wrapper } = createUserCardContextMenu({ ...props, menuActions })
+    const { container } = renderUserCardContextMenu({ ...props, menuActions })
     // one svg is for the clipboard icon, one for the ellipsis,
     // and one is for the user svg
-    expect(wrapper).toBeDefined()
+    expect(container).toBeDefined()
   })
 
   it('renders a break with SEPERATOR in menuActions', () => {
@@ -294,10 +329,11 @@ describe('it creates the correct UI for the UserCardContextMenu', () => {
         callback: () => {},
       },
     ] as MenuAction[]
-    const { wrapper } = createUserCardContextMenu({ ...props, menuActions })
-    expect(wrapper.find('hr.SRC-break')).toHaveLength(1)
+    const { container } = renderUserCardContextMenu({ ...props, menuActions })
+    expect(container.querySelector('hr.SRC-break')).not.toBeNull()
   })
 })
+
 describe('it creates the correct UI for the large card', () => {
   const props = {
     userProfile: {
@@ -309,13 +345,13 @@ describe('it creates the correct UI for the large card', () => {
     size: SynapseConstants.LARGE_USER_CARD,
   }
 
-  it("displays the user's information", async () => {
-    const { wrapper } = createLargeComponent({ ...props })
-    expect(wrapper.render().find('div.SRC-cardMetaData')).toHaveLength(1)
+  it("displays the user's information", () => {
+    const { container } = renderLargeUserCard({ ...props })
+    expect(container.querySelector('div.SRC-cardMetaData')).not.toBeNull()
     // only two fields are set for the mock profile, so there should only be two
     // fields shown
     expect(
-      wrapper.render().find('div.SRC-cardMetaData-scroll').children(),
+      container.querySelector('div.SRC-cardMetaData-scroll')!.children,
     ).toHaveLength(2)
   })
 })

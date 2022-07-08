@@ -6,6 +6,7 @@ import {
   accountLevelRegisteredLabel,
   accountLevelVerifiedLabel,
 } from '../../../lib/containers/AccountLevelBadge'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { UserBundle } from '../../../lib/utils/synapseTypes'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
@@ -31,6 +32,12 @@ describe('basic functionality', () => {
     userId: '1234',
   }
 
+  function renderComponent() {
+    return render(<AccountLevelBadge {...props} />, {
+      wrapper: createWrapper(),
+    })
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -40,7 +47,7 @@ describe('basic functionality', () => {
       .fn()
       .mockResolvedValueOnce(mockRegistered)
 
-    render(<AccountLevelBadge {...props} />)
+    renderComponent()
 
     // find account level label
     await screen.findByText(accountLevelRegisteredLabel)
@@ -50,7 +57,7 @@ describe('basic functionality', () => {
   it('certified user', async () => {
     SynapseClient.getUserBundle = jest.fn().mockResolvedValueOnce(mockCertified)
 
-    render(<AccountLevelBadge {...props} />)
+    renderComponent()
 
     // find account level label
     await screen.findByText(accountLevelCertifiedLabel)
@@ -60,7 +67,7 @@ describe('basic functionality', () => {
   it('verified user', async () => {
     SynapseClient.getUserBundle = jest.fn().mockResolvedValueOnce(mockVerified)
 
-    render(<AccountLevelBadge {...props} />)
+    renderComponent()
 
     // find account level label
     await screen.findByText(accountLevelVerifiedLabel)
