@@ -71,7 +71,7 @@ export const FeaturedToolsList: React.FunctionComponent<
         const dateColumnIndex = getFieldIndex(dateColumnName, queryResultBundle)
 
         const tools: ToolData[] =
-          queryResultBundle?.queryResult.queryResults.rows.map(row => {
+          queryResultBundle?.queryResult!.queryResults.rows.map(row => {
             return {
               name: row.values[nameColumnIndex],
               description: row.values[descriptionColumnIndex],

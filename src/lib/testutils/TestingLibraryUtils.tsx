@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import { QueryClient } from 'react-query'
 import { MOCK_CONTEXT_VALUE } from '../../mocks/MockSynapseContext'
 import {
+  defaultQueryClientConfig,
   SynapseContextProvider,
   SynapseContextType,
 } from '../utils/SynapseContext'
@@ -19,14 +20,7 @@ export const createWrapperAndQueryClient = (props?: SynapseContextType) => {
   // cache could be shared across tests.
   // This is also easier/more reliable than clearing the queryCache after each test.
   // See https://github.com/tannerlinsley/react-query/discussions/1441
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 30 * 1000, // 30s
-        retry: false, // SynapseClient knows which queries to retry
-      },
-    },
-  })
+  const queryClient = new QueryClient(defaultQueryClientConfig)
   const wrapperProps = props ?? MOCK_CONTEXT_VALUE
   return {
     wrapperFn: function RtlWrapper({ children }: RtlWrapperProps) {

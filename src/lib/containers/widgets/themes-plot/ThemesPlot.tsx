@@ -126,7 +126,7 @@ function fetchData(
 
   return getFullQueryTableResults(queryRequest, token).then(
     (data: QueryResultBundle) => {
-      return data.queryResult.queryResults
+      return data.queryResult!.queryResults
     },
   )
 }

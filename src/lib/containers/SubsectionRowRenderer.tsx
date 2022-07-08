@@ -82,8 +82,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
         accessToken,
       )
       setIsLoading(false)
-      const { queryResult } = queryResultBundle
-      const { queryResults } = queryResult
+      const queryResults = queryResultBundle?.queryResult?.queryResults
       if (queryResults) {
         if (mounted) {
           setRowSet(queryResults)

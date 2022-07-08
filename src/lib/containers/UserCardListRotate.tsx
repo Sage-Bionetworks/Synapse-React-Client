@@ -114,7 +114,7 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         accessToken,
       )
       const { queryResult } = queryResultBundle
-      if (queryResult.queryResults.rows) {
+      if (queryResult?.queryResults.rows) {
         // find the column that has the USER_ID in it.
         const ownerIdColumnIndex = queryResult.queryResults.headers.findIndex(
           el => el.columnType === ColumnType.USERID,

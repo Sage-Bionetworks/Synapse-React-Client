@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/useSearch'
+import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/search/useSearch'
 import { SearchQuery } from '../../../../utils/synapseTypes/Search'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'

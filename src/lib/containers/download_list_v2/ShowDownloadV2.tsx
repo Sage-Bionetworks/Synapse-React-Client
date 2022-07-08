@@ -3,7 +3,7 @@ import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
+import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/download/useGetDownloadListStatistics'
 import IconSvg from '../IconSvg'
 
 export type ShowDownloadV2Props = {

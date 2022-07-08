@@ -5,7 +5,7 @@ import SortIcon from '../assets/icons/Sort'
 import { Direction, EntityHeader } from '../utils/synapseTypes'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { SynapseSpinner } from './LoadingScreen'
-import { useGetFavorites } from '../utils/hooks/SynapseAPI/useFavorites'
+import { useGetFavorites } from '../utils/hooks/SynapseAPI/user/useFavorites'
 import IconSvg from './IconSvg'
 import {
   convertToEntityType,

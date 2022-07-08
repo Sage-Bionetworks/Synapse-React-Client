@@ -91,7 +91,7 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         const caseInsensitiveSetNames = {}
         // caseInsensitiveSetNames looks like { 'RNASEQ': 'rnaSeq', 'NOMe-SEQ': 'NOMe-seq'}.
 
-        for (const row of queryResult.queryResults.rows) {
+        for (const row of queryResult?.queryResults.rows ?? []) {
           for (let j = 1; j < row.values.length; j += 1) {
             const rowValues: string[] = row.values
             const key = rowValues[0]

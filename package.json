@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.0.28",
+  "version": "3.0.29",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -45,7 +45,7 @@
     "markdown-it-strikethrough-alt": "^1.0.0",
     "markdown-it-sub-alt": "^1.0.0",
     "markdown-it-sup-alt": "^1.0.2",
-    "markdown-it-synapse": "^1.1.8",
+    "markdown-it-synapse": "^1.1.10",
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
@@ -250,6 +250,6 @@
     ]
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,yml,css,md}": "prettier --write"
+    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --write"
   }
 }

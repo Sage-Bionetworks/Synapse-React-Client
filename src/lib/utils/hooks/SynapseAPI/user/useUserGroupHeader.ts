@@ -1,8 +1,8 @@
 import { useQuery, UseQueryOptions } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClientError'
-import { useSynapseContext } from '../../SynapseContext'
-import { UserGroupHeader } from '../../synapseTypes'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClientError'
+import { useSynapseContext } from '../../../SynapseContext'
+import { UserGroupHeader } from '../../../synapseTypes'
 
 export function useGetUserGroupHeader(
   principalId: string,

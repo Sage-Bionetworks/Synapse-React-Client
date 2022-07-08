@@ -81,7 +81,7 @@ export const ProjectViewCarousel: React.FunctionComponent<
         )
 
         const projects: ProjectData[] =
-          queryResultBundle?.queryResult.queryResults.rows.map(row => {
+          queryResultBundle?.queryResult!.queryResults.rows.map(row => {
             return {
               projectName:
                 row.values[displayNameColumnIndex] ??

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetUserTeamsInfinite } from '../../utils/hooks/SynapseAPI/useGetUserTeams'
+import { useGetUserTeamsInfinite } from '../../utils/hooks/SynapseAPI/user/useGetUserTeams'
 import { Team } from '../../utils/synapseTypes/Team'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 

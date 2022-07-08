@@ -8,7 +8,7 @@ import {
   MEDIUM_USER_CARD,
   SMALL_USER_CARD,
 } from '../utils/SynapseConstants'
-import { useGetCurrentUserProfile } from '../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetCurrentUserProfile } from '../utils/hooks/SynapseAPI/user/useUserBundle'
 
 export default {
   title: 'UI/UserCard',

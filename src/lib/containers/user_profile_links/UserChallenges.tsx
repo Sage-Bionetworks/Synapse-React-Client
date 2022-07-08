@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { useInView } from 'react-intersection-observer'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/useGetUserChallenges'
+import { useGetUserChallengesInfinite } from '../../utils/hooks/SynapseAPI/user/useGetUserChallenges'
 import { ChallengeWithProjectHeader } from '../../utils/synapseTypes/ChallengePagedResults'
 import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 

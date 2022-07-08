@@ -246,6 +246,24 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     ? 'MainPanelSinglePane'
     : 'MainPanelDualPane'
 
+  let searchButtonText
+  const tableArray = [
+    'table',
+    'entityview',
+    'materializedview',
+    'submissionview',
+    'dataset',
+  ]
+  if (selectableTypes.length === 1) {
+    searchButtonText = `Search for ${pluralize(
+      entityTypeToFriendlyName(selectableTypes[0]),
+    )}`
+  } else if (selectableTypes.every(element => tableArray.includes(element))) {
+    searchButtonText = 'Search for Tables'
+  } else {
+    searchButtonText = 'Search all of Synapse'
+  }
+
   return (
     <SynapseErrorBoundary>
       <div className="bootstrap-4-backport EntityFinder">
@@ -273,11 +291,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                 }}
               >
                 <IconSvg options={{ icon: 'search' }} />
-                {selectableTypes.length === 1
-                  ? `Search for ${pluralize(
-                      entityTypeToFriendlyName(selectableTypes[0]),
-                    )}`
-                  : 'Search all of Synapse'}
+                {searchButtonText}
               </Button>
             )}
             <span className="SearchIcon">

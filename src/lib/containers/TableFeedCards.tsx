@@ -39,7 +39,7 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
           partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
         }
         SynapseClient.getQueryTableResults(request, accessToken).then(data => {
-          setRowSet(data.queryResult.queryResults)
+          setRowSet(data.queryResult?.queryResults)
         })
       }
     }

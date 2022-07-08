@@ -2,7 +2,7 @@ import * as React from 'react'
 import { useState, useEffect } from 'react'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import DownloadListStats from './DownloadListStats'
-import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
+import { useGetDownloadListStatistics } from '../../utils/hooks/SynapseAPI/download/useGetDownloadListStatistics'
 import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,

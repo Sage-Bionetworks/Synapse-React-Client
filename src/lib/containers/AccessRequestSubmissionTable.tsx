@@ -5,7 +5,7 @@ import { Button, Table } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import SortIcon from '../assets/icons/Sort'
 import { formatDate } from '../utils/functions/DateFormatter'
-import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useSearchAccessSubmissionsInfinite'
+import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useDataAccessSubmission'
 import { ACT_TEAM_ID, SMALL_USER_CARD } from '../utils/SynapseConstants'
 import { Direction, SubmissionState } from '../utils/synapseTypes'
 import {

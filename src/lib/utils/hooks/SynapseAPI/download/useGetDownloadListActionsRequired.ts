@@ -4,11 +4,11 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClientError'
-import { useSynapseContext } from '../../SynapseContext'
-import { ActionRequiredRequest } from '../../synapseTypes/DownloadListV2/QueryRequestDetails'
-import { ActionRequiredResponse } from '../../synapseTypes/DownloadListV2/QueryResponseDetails'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClientError'
+import { useSynapseContext } from '../../../SynapseContext'
+import { ActionRequiredRequest } from '../../../synapseTypes/DownloadListV2/QueryRequestDetails'
+import { ActionRequiredResponse } from '../../../synapseTypes/DownloadListV2/QueryResponseDetails'
 
 export function useGetDownloadListActionsRequired(
   options?: UseQueryOptions<

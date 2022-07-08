@@ -7,7 +7,7 @@ import {
   Switch,
   useParams,
 } from 'react-router-dom'
-import { useGetCurrentUserBundle } from '../../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetCurrentUserBundle } from '../../utils/hooks/SynapseAPI/user/useUserBundle'
 import Typography from '../../utils/typography/Typography'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import IconSvg, { Icon } from '../IconSvg'
