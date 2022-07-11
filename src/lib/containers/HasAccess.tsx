@@ -486,25 +486,25 @@ export default class HasAccess extends React.Component<
           {icon}
         </button>
       ) : (
-        <Tooltip
-          title={tooltipText}
-          id={entityId}
-          enterNextDelay={TOOLTIP_DELAY_SHOW}
-          placement="top"
-        >
-          <span tabIndex={0} data-for={entityId}>
-            {icon}
-          </span>
-        </Tooltip>
+        <span tabIndex={0} data-for={entityId} data-tip={tooltipText}>
+          {icon}
+        </span>
       )
 
     return (
       <span style={{ whiteSpace: 'nowrap' }}>
         {tooltipText && (
-          <>
-            {iconContainer}
-            {viewARsLink}
-          </>
+          <Tooltip
+            title={tooltipText}
+            id={entityId}
+            enterNextDelay={TOOLTIP_DELAY_SHOW}
+            placement="top"
+          >
+            <>
+              {iconContainer}
+              {viewARsLink}
+            </>
+          </Tooltip>
         )}
         {!tooltipText && (
           <>

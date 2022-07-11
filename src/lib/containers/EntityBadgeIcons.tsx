@@ -26,6 +26,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import { EntityBundle, EntityType } from '../utils/synapseTypes'
 import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
 import WarningModal from './synapse_form_wrapper/WarningModal'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 const isPublic = (bundle: EntityBundle): boolean => {
   return bundle.benefactorAcl!.resourceAccess.some(ra => {
@@ -218,6 +219,64 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
           : ''
       }`
 
+  const annotationsTableRowsY = (
+    <>
+      {bundle
+        ? Object.entries(bundle.annotations?.annotations ?? []).reduce(
+            (previous, current, index) => {
+              if (
+                index < maxAnnosToShow ||
+                (index === maxAnnosToShow &&
+                  maxAnnosToShow === annotationsCount)
+              ) {
+                return (
+                  <>
+                    {previous}
+                    <tr>
+                      <td>
+                        <b>{current[0]}</b>
+                      </td>
+                      <td>{current[1].value.join(', ')}</td>
+                    </tr>
+                  </>
+                )
+              } else {
+                return previous
+              }
+            },
+            <></>,
+          )
+        : ''}
+    </>
+  )
+  const valiationSchemaTableRowZ = (
+    <>
+      {isInExperimentalMode && boundSchema ? (
+        <tr>
+          <td>
+            <b>Validation Schema</b>
+          </td>
+          <td>{boundSchema.jsonSchemaVersionInfo.schemaName}</td>
+        </tr>
+      ) : (
+        ''
+      )}
+    </>
+  )
+  const annotationsHtmlX = (
+    <div className="EntityBadgeTooltip">
+      {schemaValidationResults ? <p>{schemaConformance} Annotations</p> : ''}
+      <table>
+        {annotationsTableRowsY ? annotationsTableRowsY : ''}
+        {valiationSchemaTableRowZ}
+      </table>
+      {annotationsCount > maxAnnosToShow ? (
+        <p>and {annotationsCount - maxAnnosToShow} more</p>
+      ) : (
+        ''
+      )}
+    </div>
+  )
   return (
     <div className="EntityBadge" ref={ref} style={{ flexWrap, justifyContent }}>
       {bundle && (
@@ -232,73 +291,97 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
             />
           </div>
           {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
-            <PublicTwoTone
-              aria-hidden={false}
-              role="img"
-              className="EntityBadge__Badge"
-              data-for={ownTooltipId}
-              data-tip={'Public'}
-              data-testid={'is-public-icon'}
-            />
-          ) : null}
-          {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
-            <LockTwoTone
-              aria-hidden={false}
-              role="img"
-              className="EntityBadge__Badge"
-              data-for={ownTooltipId}
-              data-tip={'Private'}
-              data-testid={'is-private-icon'}
-            />
-          ) : null}
-          {showHasLocalSharingSettings &&
-          bundle.benefactorAcl &&
-          entityId === bundle.benefactorAcl!.id ? (
-            <CheckTwoTone
-              aria-hidden={false}
-              role="img"
-              className="EntityBadge__Badge"
-              data-for={ownTooltipId}
-              data-tip="Sharing Settings have been set"
-              data-testid={'sharing-settings-icon'}
-            />
-          ) : null}
-
-          {showHasAnnotations &&
-            !!(annotationsCount || schemaValidationResults) && (
-              <LocalOfferTwoTone
-                aria-hidden={false}
-                role={canOpenModal ? 'button' : 'img'}
-                className={`EntityBadge__Badge ${schemaConformance}`}
-                style={canOpenModal ? { cursor: 'pointer' } : undefined}
-                onClick={canOpenModal ? () => setShowModal(true) : undefined}
-                data-for={ownTooltipId}
-                data-tip={sanitizeHtml(annotationsHtml)}
-                data-html={true}
-                data-testid={'annotations-icon'}
-              />
-            )}
-          {showHasWiki && bundle.rootWikiId && (
-            <DescriptionTwoTone
-              aria-hidden={false}
-              role="img"
-              className="EntityBadge__Badge"
-              data-for={ownTooltipId}
-              data-tip="Has a wiki"
-              data-testid={'wiki-icon'}
-            />
-          )}
-          {showHasDiscussionThread &&
-            !!bundle.threadCount &&
-            !!(bundle.threadCount > 0) && (
-              <ChatBubbleTwoTone
+            <Tooltip title="Public" enterNextDelay={100} placement="right">
+              <PublicTwoTone
                 aria-hidden={false}
                 role="img"
                 className="EntityBadge__Badge"
                 data-for={ownTooltipId}
-                data-tip="Has been mentioned in discussion"
-                data-testid={'discussion-icon'}
+                data-tip={'Public'}
+                data-testid={'is-public-icon'}
               />
+            </Tooltip>
+          ) : null}
+          {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
+            <Tooltip title="Private" enterNextDelay={100} placement="right">
+              <LockTwoTone
+                aria-hidden={false}
+                role="img"
+                className="EntityBadge__Badge"
+                data-for={ownTooltipId}
+                data-tip={'Private'}
+                data-testid={'is-private-icon'}
+              />
+            </Tooltip>
+          ) : null}
+          {showHasLocalSharingSettings &&
+          bundle.benefactorAcl &&
+          entityId === bundle.benefactorAcl!.id ? (
+            <Tooltip
+              title="Sharing Settings have been set"
+              enterNextDelay={100}
+              placement="right"
+            >
+              <CheckTwoTone
+                aria-hidden={false}
+                role="img"
+                className="EntityBadge__Badge"
+                data-for={ownTooltipId}
+                data-tip="Sharing Settings have been set"
+                data-testid={'sharing-settings-icon'}
+              />
+            </Tooltip>
+          ) : null}
+
+          {showHasAnnotations &&
+            !!(annotationsCount || schemaValidationResults) && (
+              <Tooltip
+                title={annotationsHtmlX}
+                enterNextDelay={100}
+                placement="right"
+              >
+                <LocalOfferTwoTone
+                  aria-hidden={false}
+                  role={canOpenModal ? 'button' : 'img'}
+                  className={`EntityBadge__Badge ${schemaConformance}`}
+                  style={canOpenModal ? { cursor: 'pointer' } : undefined}
+                  onClick={canOpenModal ? () => setShowModal(true) : undefined}
+                  data-for={ownTooltipId}
+                  data-tip={sanitizeHtml(annotationsHtml)}
+                  data-html={true}
+                  data-testid={'annotations-icon'}
+                />
+              </Tooltip>
+            )}
+          {showHasWiki && bundle.rootWikiId && (
+            <Tooltip title="Has a wiki" enterNextDelay={100} placement="right">
+              <DescriptionTwoTone
+                aria-hidden={false}
+                role="img"
+                className="EntityBadge__Badge"
+                data-for={ownTooltipId}
+                data-tip="Has a wiki"
+                data-testid={'wiki-icon'}
+              />
+            </Tooltip>
+          )}
+          {showHasDiscussionThread &&
+            !!bundle.threadCount &&
+            !!(bundle.threadCount > 0) && (
+              <Tooltip
+                title="Has been mentioned in discussion"
+                enterNextDelay={100}
+                placement="right"
+              >
+                <ChatBubbleTwoTone
+                  aria-hidden={false}
+                  role="img"
+                  className="EntityBadge__Badge"
+                  data-for={ownTooltipId}
+                  data-tip="Has been mentioned in discussion"
+                  data-testid={'discussion-icon'}
+                />
+              </Tooltip>
             )}
           {showUnlink &&
             bundle.entityType === EntityType.LINK &&
@@ -320,15 +403,21 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                     setShowUnlinkConfirmModal(false)
                   }}
                 />
-                <LinkOffTwoTone
-                  aria-hidden={false}
-                  role="button"
-                  onClick={() => setShowUnlinkConfirmModal(true)}
-                  className="EntityBadge__Badge Unlink"
-                  data-for={ownTooltipId}
-                  data-tip="Remove this link"
-                  data-testid={'unlink-icon'}
-                />
+                <Tooltip
+                  title="Remove this link"
+                  enterNextDelay={100}
+                  placement="right"
+                >
+                  <LinkOffTwoTone
+                    aria-hidden={false}
+                    role="button"
+                    onClick={() => setShowUnlinkConfirmModal(true)}
+                    className="EntityBadge__Badge Unlink"
+                    data-for={ownTooltipId}
+                    data-tip="Remove this link"
+                    data-testid={'unlink-icon'}
+                  />
+                </Tooltip>
               </>
             )}
         </>

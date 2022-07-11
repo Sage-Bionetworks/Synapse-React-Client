@@ -76,45 +76,32 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   let tooltipTrigger: JSX.Element
   if (!children) {
     tooltipTrigger = callbackFn ? (
-      <Tooltip
-        title={tooltipText}
-        enterNextDelay={TOOLTIP_DELAY_SHOW}
-        placement={place}
+      <button
+        tabIndex={0}
         id={idForToolTip}
+        data-for={idForToolTip}
+        data-tip={tooltipText}
+        className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
+          darkTheme ? 'dark-theme' : ''
+        } `}
+        onKeyPress={() => callbackFn()}
+        onClick={() => callbackFn()}
+        aria-label={tooltipText}
       >
-        <button
-          tabIndex={0}
-          id={idForToolTip}
-          data-for={idForToolTip}
-          className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
-            darkTheme ? 'dark-theme' : ''
-          } `}
-          onKeyPress={() => callbackFn()}
-          onClick={() => callbackFn()}
-          aria-label={tooltipText}
-        >
-          {tooltipTriggerContents}
-        </button>
-      </Tooltip>
+        {tooltipTriggerContents}
+      </button>
     ) : (
-      <Tooltip
-        title={tooltipText}
-        enterNextDelay={TOOLTIP_DELAY_SHOW}
-        placement={place}
+      <Dropdown.Toggle
+        data-for={idForToolTip}
         id={idForToolTip}
+        className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
+          darkTheme ? 'dark-theme' : ''
+        } `}
+        variant={'light'}
+        aria-label={tooltipText}
       >
-        <Dropdown.Toggle
-          data-for={idForToolTip}
-          id={idForToolTip}
-          className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
-            darkTheme ? 'dark-theme' : ''
-          } `}
-          variant={'light'}
-          aria-label={tooltipText}
-        >
-          {tooltipTriggerContents}
-        </Dropdown.Toggle>
-      </Tooltip>
+        {tooltipTriggerContents}
+      </Dropdown.Toggle>
     )
   } else {
     const outerChild = children as JSX.Element
@@ -126,5 +113,15 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
     })
   }
 
-  return <>{tooltipTrigger}</>
+  return (
+    <Tooltip
+      title={tooltipText}
+      enterNextDelay={TOOLTIP_DELAY_SHOW}
+      placement={place}
+      id={idForToolTip}
+      data-testid="ElementTooltip"
+    >
+      {tooltipTrigger}
+    </Tooltip>
+  )
 }
