@@ -468,6 +468,7 @@ export const type2SvgIconName: Record<EntityType, Icon> = {
   dockerrepo: 'docker',
   submissionview: 'submissionview',
   dataset: 'dataset',
+  datasetcollection: 'datasetcollection',
 }
 
 export const IconSvgDemo = (props: IconSvgOptions) => (
