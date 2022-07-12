@@ -64,8 +64,6 @@ const EntityPathDisplay: React.FunctionComponent<{
   entity: Reference
   toggleSelection: (entity: Reference) => void
 }> = ({ entity, toggleSelection }) => {
-  const ENTITY_PATH_TOOLTIP_ID = `EntityPathDisplayReactTooltip_${entity.targetId}`
-
   const { data: bundle } = useGetEntityBundle(
     entity.targetId,
     undefined,
@@ -105,13 +103,10 @@ const EntityPathDisplay: React.FunctionComponent<{
       )}
       <Tooltip
         title={`${fullPath}/${entityName}`}
-        id={ENTITY_PATH_TOOLTIP_ID}
         enterNextDelay={TOOLTIP_DELAY_SHOW}
         placement="top"
       >
-        <span data-for={ENTITY_PATH_TOOLTIP_ID}>
-          {displayedPath ? displayedPath + '/' : ''}
-        </span>
+        <span>{displayedPath ? displayedPath + '/' : ''}</span>
       </Tooltip>
       {entityName ? (
         <span className="EntityFinderSelectionPane__Row__EntityName">

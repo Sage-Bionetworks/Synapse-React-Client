@@ -32,11 +32,8 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           title="This is the total size of all files in the Download Cart that are available to download."
           enterNextDelay={TOOLTIP_DELAY_SHOW}
           placement="top"
-          id={numBytesTooltipId}
         >
-          <span data-for={numBytesTooltipId} className="item">
-            {calculateFriendlyFileSize(numBytes)}
-          </span>
+          <span className="item">{calculateFriendlyFileSize(numBytes)}</span>
         </Tooltip>
       )}
       {numIneligibleFiles > 0 && (

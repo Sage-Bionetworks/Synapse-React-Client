@@ -183,12 +183,9 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             <Tooltip
               title="This user profile has been validated."
               placement="bottom"
-              id={validatedUserProfileTooltipId}
               enterNextDelay={300}
             >
-              <span data-for={validatedUserProfileTooltipId}>
-                {ValidatedProfileIcon}
-              </span>
+              <span>{ValidatedProfileIcon}</span>
             </Tooltip>
           )}
         </p>

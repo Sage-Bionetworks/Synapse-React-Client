@@ -362,8 +362,6 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
 
   const plotTitle = unCamelCase(facetToPlot.columnName, facetAliases)
 
-  const TOOLTIP_ID = 'facet-nav-panel-tooltip'
-
   const getColumnType = useCallback(
     (): ColumnType | undefined =>
       data?.columnModels?.find(
@@ -533,14 +531,8 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
                 />
-                <Tooltip
-                  title="Selecting items in this dropdown will affect all facets on the Explore page."
-                  id={TOOLTIP_ID}
-                >
-                  <InfoOutlined
-                    data-for={TOOLTIP_ID}
-                    className="SRC-hand-cursor SRC-secondary-text-color"
-                  />
+                <Tooltip title="Selecting items in this dropdown will affect all facets on the Explore page.">
+                  <InfoOutlined className="SRC-hand-cursor SRC-secondary-text-color" />
                 </Tooltip>
               </div>
               <ChartSelectionToggle />

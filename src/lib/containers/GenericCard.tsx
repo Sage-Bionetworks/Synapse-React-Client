@@ -1,4 +1,4 @@
-import { isEmpty, uniqueId } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import React from 'react'
 import { SynapseConstants } from '../utils'
 import { isTableEntity } from '../utils/functions/EntityTypeUtils'
@@ -382,10 +382,9 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
 
   if (labelLink.tooltipText) {
     // wrap in a tooltip
-    const id = uniqueId('GenericCardLabelTooltip-')
     return (
-      <Tooltip title={labelLink.tooltipText} enterNextDelay={300} id={id}>
-        <span data-for={id}>{labelContent}</span>
+      <Tooltip title={labelLink.tooltipText} enterNextDelay={300}>
+        <span>{labelContent}</span>
       </Tooltip>
     )
   } else {

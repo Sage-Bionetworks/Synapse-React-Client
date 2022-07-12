@@ -47,12 +47,10 @@ const AddToDownloadListV2: React.FunctionComponent<
       <Tooltip
         title="Add this file to your Download Cart"
         placement="right"
-        id={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
         enterNextDelay={300}
       >
         <a
           data-testid="AddToDownloadListV2"
-          data-for={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
           onClick={addToDownloadListV2}
           className="ignoreLink"
         >

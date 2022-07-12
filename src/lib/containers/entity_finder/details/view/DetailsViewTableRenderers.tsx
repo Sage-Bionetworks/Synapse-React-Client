@@ -22,10 +22,7 @@ import {
   Reference,
 } from '../../../../utils/synapseTypes'
 import Tooltip from '../../../../utils/tooltip/Tooltip'
-import {
-  EntityBadgeIcons,
-  ENTITY_BADGE_ICONS_TOOLTIP_ID,
-} from '../../../EntityBadgeIcons'
+import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'
 import IconSvg from '../../../IconSvg'
@@ -474,14 +471,10 @@ export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
     return (
       <Tooltip
         title={message ?? ''}
-        id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
         placement="right"
         className="EntityBadgeTooltip"
       >
-        <div
-          className="EntityErrorRenderer"
-          data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-        >
+        <div className="EntityErrorRenderer">
           <IconSvg options={{ icon: 'warningOutlined' }} />
         </div>
       </Tooltip>

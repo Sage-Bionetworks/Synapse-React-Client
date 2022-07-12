@@ -10,7 +10,6 @@ import {
 import { isEmpty } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import sanitizeHtml from 'sanitize-html'
 import { useDeleteEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import {
   useGetSchemaBinding,
@@ -97,11 +96,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
       /* noop */
     },
     canOpenModal,
-    renderTooltipComponent,
   } = props
-  const ownTooltipId =
-    ENTITY_BADGE_ICONS_TOOLTIP_ID +
-    (renderTooltipComponent ? `-${entityId}` : '')
 
   enum SchemaConformanceState {
     NO_SCHEMA = '', // or not in experimental mode
@@ -181,45 +176,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
    * Convert the list of annotations to a string of <tr>...anno1</tr><tr>...anno2</tr>...
    * If there are no annotations, this is the empty string ('')
    */
-  const annotationsTableRows = bundle
-    ? `${Object.entries(bundle.annotations?.annotations ?? []).reduce(
-        (previous, current, index) => {
-          if (
-            index < maxAnnosToShow ||
-            (index === maxAnnosToShow && maxAnnosToShow === annotationsCount)
-          ) {
-            return `${previous}<tr><td><b>${
-              current[0]
-            }</b></td><td>${current[1].value.join(', ')}</td></tr>`
-          } else {
-            return previous
-          }
-        },
-        '',
-      )}`
-    : ''
-
-  // We also show the schema name if there is one (and we're in experimental mode)
-  const valiationSchemaTableRow =
-    isInExperimentalMode && boundSchema
-      ? `<tr><td><b>Validation Schema</b></td><td>${boundSchema.jsonSchemaVersionInfo.schemaName}</td></tr>`
-      : ''
-
-  // Format it all as an html table
-  const annotationsHtml = `
-      ${
-        schemaValidationResults ? `<p>${schemaConformance} Annotations</p>` : ''
-      }
-      <table>
-      ${annotationsTableRows ? annotationsTableRows : ''}
-      ${valiationSchemaTableRow}
-      </table>${
-        annotationsCount > maxAnnosToShow
-          ? `<p>and ${annotationsCount - maxAnnosToShow} more</p>`
-          : ''
-      }`
-
-  const annotationsTableRowsY = (
+  const annotationsTableRows = (
     <>
       {bundle
         ? Object.entries(bundle.annotations?.annotations ?? []).reduce(
@@ -249,7 +206,8 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
         : ''}
     </>
   )
-  const valiationSchemaTableRowZ = (
+  // We also show the schema name if there is one (and we're in experimental mode)
+  const valiationSchemaTableRow = (
     <>
       {isInExperimentalMode && boundSchema ? (
         <tr>
@@ -263,12 +221,12 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
       )}
     </>
   )
-  const annotationsHtmlX = (
+  const annotationsHtml = (
     <div className="EntityBadgeTooltip">
       {schemaValidationResults ? <p>{schemaConformance} Annotations</p> : ''}
       <table>
-        {annotationsTableRowsY ? annotationsTableRowsY : ''}
-        {valiationSchemaTableRowZ}
+        {annotationsTableRows ? annotationsTableRows : ''}
+        {valiationSchemaTableRow}
       </table>
       {annotationsCount > maxAnnosToShow ? (
         <p>and {annotationsCount - maxAnnosToShow} more</p>
@@ -296,8 +254,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                 aria-hidden={false}
                 role="img"
                 className="EntityBadge__Badge"
-                data-for={ownTooltipId}
-                data-tip={'Public'}
                 data-testid={'is-public-icon'}
               />
             </Tooltip>
@@ -308,8 +264,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                 aria-hidden={false}
                 role="img"
                 className="EntityBadge__Badge"
-                data-for={ownTooltipId}
-                data-tip={'Private'}
                 data-testid={'is-private-icon'}
               />
             </Tooltip>
@@ -326,8 +280,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                 aria-hidden={false}
                 role="img"
                 className="EntityBadge__Badge"
-                data-for={ownTooltipId}
-                data-tip="Sharing Settings have been set"
                 data-testid={'sharing-settings-icon'}
               />
             </Tooltip>
@@ -336,7 +288,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
           {showHasAnnotations &&
             !!(annotationsCount || schemaValidationResults) && (
               <Tooltip
-                title={annotationsHtmlX}
+                title={annotationsHtml}
                 enterNextDelay={100}
                 placement="right"
               >
@@ -346,8 +298,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                   className={`EntityBadge__Badge ${schemaConformance}`}
                   style={canOpenModal ? { cursor: 'pointer' } : undefined}
                   onClick={canOpenModal ? () => setShowModal(true) : undefined}
-                  data-for={ownTooltipId}
-                  data-tip={sanitizeHtml(annotationsHtml)}
                   data-html={true}
                   data-testid={'annotations-icon'}
                 />
@@ -359,8 +309,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                 aria-hidden={false}
                 role="img"
                 className="EntityBadge__Badge"
-                data-for={ownTooltipId}
-                data-tip="Has a wiki"
                 data-testid={'wiki-icon'}
               />
             </Tooltip>
@@ -377,8 +325,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                   aria-hidden={false}
                   role="img"
                   className="EntityBadge__Badge"
-                  data-for={ownTooltipId}
-                  data-tip="Has been mentioned in discussion"
                   data-testid={'discussion-icon'}
                 />
               </Tooltip>
@@ -413,8 +359,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                     role="button"
                     onClick={() => setShowUnlinkConfirmModal(true)}
                     className="EntityBadge__Badge Unlink"
-                    data-for={ownTooltipId}
-                    data-tip="Remove this link"
                     data-testid={'unlink-icon'}
                   />
                 </Tooltip>

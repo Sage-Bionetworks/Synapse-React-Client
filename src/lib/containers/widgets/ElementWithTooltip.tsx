@@ -92,8 +92,6 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
       </button>
     ) : (
       <Dropdown.Toggle
-        data-for={idForToolTip}
-        id={idForToolTip}
         className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
           darkTheme ? 'dark-theme' : ''
         } `}
@@ -118,7 +116,6 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
       title={tooltipText}
       enterNextDelay={TOOLTIP_DELAY_SHOW}
       placement={place}
-      id={idForToolTip}
       data-testid="ElementTooltip"
     >
       {tooltipTrigger}

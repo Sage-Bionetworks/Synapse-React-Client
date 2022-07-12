@@ -18,7 +18,6 @@ export type ShowDownloadV2Props = {
 function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
   const { accessToken } = useSynapseContext()
   const handleError = useErrorHandler()
-  const idForToolTip = 'SHOW_DOWNLOAD_TOOLTIP'
   const tooltipText = 'Click to view items in your download cart.'
 
   const {
@@ -45,11 +44,10 @@ function ShowDownloadV2({ to, className = '' }: ShowDownloadV2Props) {
   const content = (
     <Tooltip
       title={tooltipText}
-      id={idForToolTip}
       placement="bottom"
       enterNextDelay={TOOLTIP_DELAY_SHOW}
     >
-      <span id={idForToolTip} data-for={idForToolTip} data-tip={tooltipText}>
+      <span>
         <span className="SRC-primary-text-color">
           <IconSvg
             options={{

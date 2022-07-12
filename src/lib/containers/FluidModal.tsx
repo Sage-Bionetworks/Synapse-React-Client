@@ -37,7 +37,6 @@ function ModalActionButton(props: ModalAction) {
       title={rest['data-tip'] ?? ''}
       placement="top"
       enterNextDelay={300}
-      id="entityModalTooltip"
     >
       <Button {...rest}>{copy}</Button>
     </Tooltip>

@@ -173,10 +173,8 @@ export default function FavoritesPage() {
                           title="Click the star to remove this item from your favorites"
                           enterNextDelay={300}
                           placement="right"
-                          id={`${item.id}-Tooltip`}
                         >
                           <a
-                            data-for={`${item.id}-Tooltip`}
                             onClick={() => {
                               removeFavorite(item)
                             }}

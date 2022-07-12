@@ -46,8 +46,6 @@ export const DownloadOptions: React.FunctionComponent<
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
 
-  const TOOLTIP_ID = `download-menu-tooltip-${entity?.id}`
-
   return (
     <React.Fragment>
       <Dropdown as="span">
@@ -72,14 +70,12 @@ export const DownloadOptions: React.FunctionComponent<
           {isFileViewOrDataset && (
             <Tooltip
               title="A draft version of a dataset cannot be added to the Download Cart"
-              id={TOOLTIP_ID}
               placement="left"
               enterNextDelay={300}
               disableHoverListener={!disableDownload}
             >
               <Dropdown.Item
                 className={disableDownload ? 'ignoreLink' : undefined}
-                data-for={TOOLTIP_ID}
                 disabled={disableDownload}
                 // If disabled, add pointer-events-auto so the tooltip still works
                 style={disableDownload ? { pointerEvents: 'auto' } : {}}
@@ -93,14 +89,12 @@ export const DownloadOptions: React.FunctionComponent<
           )}
           <Tooltip
             title="A draft version of a dataset cannot be downloaded programmatically"
-            id={TOOLTIP_ID}
             placement="left"
             enterNextDelay={300}
             disableHoverListener={!disableDownload}
           >
             <Dropdown.Item
               className={disableDownload ? 'ignoreLink' : undefined}
-              data-for={TOOLTIP_ID}
               disabled={disableDownload}
               // If disabled, add pointer-events-auto so the tooltip still works
               style={disableDownload ? { pointerEvents: 'auto' } : {}}

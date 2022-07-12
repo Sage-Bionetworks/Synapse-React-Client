@@ -67,13 +67,8 @@ export const DownloadCartPage: React.FunctionComponent<
               title="Immediately removes all items from your download list"
               enterNextDelay={300}
               placement="right"
-              id="clearDownloadListTooltip"
             >
-              <a
-                className="clearDownloadListLink"
-                onClick={clearDownloadList}
-                data-for="clearDownloadListTooltip"
-              >
+              <a className="clearDownloadListLink" onClick={clearDownloadList}>
                 <span>
                   <IconSvg
                     options={{
@@ -195,12 +190,8 @@ export const DownloadCartPage: React.FunctionComponent<
                           title="You cannot create a .zip package because there are no eligible files."
                           enterNextDelay={300}
                           placement="top"
-                          id="downloadZipPackagesUnavailable"
                         >
-                          <a
-                            className="highlight-link disabled"
-                            data-for="downloadZipPackagesUnavailable"
-                          >
+                          <a className="highlight-link disabled">
                             Download As .ZIP packages
                           </a>
                         </Tooltip>
@@ -240,12 +231,10 @@ export const DownloadCartPage: React.FunctionComponent<
                         title="This feature is coming soon. Click here to learn how to download programmatically using other methods"
                         enterNextDelay={300}
                         placement="top"
-                        id="downloadProgrammaticallyTooltipId"
                       >
                         <a
                           className="highlight-link"
                           rel="noreferrer"
-                          data-for="downloadProgrammaticallyTooltipId"
                           target="_blank"
                           href="https://help.synapse.org/docs/API-Clients.1985446128.html"
                         >

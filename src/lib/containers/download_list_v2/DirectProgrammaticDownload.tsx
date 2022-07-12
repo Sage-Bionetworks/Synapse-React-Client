@@ -46,9 +46,8 @@ filepath = ${entityId}.path`
         title="Programmatic download options"
         enterNextDelay={TOOLTIP_DELAY_SHOW}
         placement="left"
-        id={`${entityId}-direct-programmatic-download-tooltip`}
       >
-        <span data-for={`${entityId}-direct-programmatic-download-tooltip`}>
+        <span>
           <button
             className={'btn-download-icon'}
             onClick={() => setIsShowingModal(true)}

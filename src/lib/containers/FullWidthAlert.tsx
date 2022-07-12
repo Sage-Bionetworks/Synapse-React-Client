@@ -25,8 +25,6 @@ export type AlertButtonConfig = {
   | { href?: string }
 )
 
-const FULL_WIDTH_ALERT_TOOLTIP_ID = 'FullWidthAlertTooltip'
-
 export interface FullWidthAlertProps extends AlertProps {
   variant: string
   title?: string
@@ -61,15 +59,9 @@ function ButtonFromConfig(props: {
   const { config, variant, className } = props
   if (config && ('onClick' in config || 'href' in config)) {
     return (
-      <Tooltip
-        title={config.tooltipText ?? ''}
-        id={FULL_WIDTH_ALERT_TOOLTIP_ID}
-        enterNextDelay={300}
-      >
+      <Tooltip title={config.tooltipText ?? ''} enterNextDelay={300}>
         <span // See https://github.com/wwayne/react-tooltip/issues/304
           className={className}
-          data-tip={config.tooltipText}
-          data-for={FULL_WIDTH_ALERT_TOOLTIP_ID}
           data-tip-disable={false}
         >
           <Button

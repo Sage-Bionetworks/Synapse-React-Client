@@ -17,7 +17,6 @@ export function CustomObjectFieldTemplate(
   props: ObjectFieldTemplateProps<Record<string, unknown>>,
 ) {
   const { TitleField, DescriptionField } = props
-  const CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID = `CustomObjectFieldTooltip-${props.idSchema.$id}`
 
   const [previousSchemaDefinedProperties, setPreviousSchemaDefinedProperties] =
     useState<Set<string>>(new Set())
@@ -89,17 +88,12 @@ export function CustomObjectFieldTemplate(
       })}
       {utils.canExpand(props.schema, props.uiSchema, props.formData) && (
         <div className="container-fluid">
-          <Tooltip
-            title="Add a new custom field"
-            id={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
-            placement="top"
-          >
+          <Tooltip title="Add a new custom field" placement="top">
             <Button
               variant="gray"
               className="object-property-expand"
               onClick={props.onAddClick(props.schema)}
               disabled={props.disabled || props.readonly}
-              data-for={CUSTOM_OBJECT_FIELD_TEMPLATE_TOOLTIP_ID}
               aria-label={'Add Custom Field'}
             >
               <AddToList />

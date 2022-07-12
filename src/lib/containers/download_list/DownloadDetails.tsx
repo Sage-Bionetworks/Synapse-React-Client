@@ -51,8 +51,6 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const friendlyTime = isTimeEstimateLoading
     ? ''
     : moment.duration(timeEstimateInSeconds, 'seconds').humanize()
-  const numBytesTooltipId = 'num_bytes_id'
-  const friendlyTimeTooltipId = 'friendly_time_id'
 
   const isZeroFiles = numFiles === 0
   const fileCountIconClass = isZeroFiles
@@ -79,9 +77,8 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           title="This is the total size of all files. Zipped package(s) will likely be smaller."
           enterNextDelay={TOOLTIP_DELAY_SHOW}
           placement="top"
-          id={numBytesTooltipId}
         >
-          <span data-for={numBytesTooltipId} data-testid="numBytesUI">
+          <span data-testid="numBytesUI">
             <span className={timeEstimateIconClass}>
               <IconSvg options={{ icon: 'database' }} />
             </span>
@@ -98,12 +95,8 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
           title="This is an estimate of how long package download will take."
           enterNextDelay={TOOLTIP_DELAY_SHOW}
           placement="top"
-          id={friendlyTimeTooltipId}
         >
-          <span
-            data-for={friendlyTimeTooltipId}
-            data-testid="downloadTimeEstimateUI"
-          >
+          <span data-testid="downloadTimeEstimateUI">
             <span className={timeEstimateIconClass}>
               <IconSvg options={{ icon: 'clock' }} />
             </span>

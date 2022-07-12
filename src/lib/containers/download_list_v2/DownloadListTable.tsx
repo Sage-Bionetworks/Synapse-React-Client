@@ -177,9 +177,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
         title="Copy IDs to the clipboard"
         enterNextDelay={TOOLTIP_DELAY_SHOW}
         placement="right"
-        id="copy-syn-ids-tooltip"
       >
-        <span data-for="copy-syn-ids-tooltip">
+        <span>
           <button
             data-testid="copySynIdsButton"
             onClick={() => {
@@ -290,12 +289,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             title="Eligible for packaging"
                             enterNextDelay={TOOLTIP_DELAY_SHOW}
                             placement="right"
-                            id={`${item.fileEntityId}-eligible-tooltip`}
                           >
-                            <span
-                              data-for={`${item.fileEntityId}-eligible-tooltip`}
-                              className="eligibileIcon"
-                            >
+                            <span className="eligibileIcon">
                               <IconSvg
                                 options={{
                                   icon: 'packagableFile',
@@ -309,12 +304,8 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                             title="This file is ineligible for Web packaging because it is >100MB, or it is an external link, or it is not stored on Synapse native storage"
                             enterNextDelay={TOOLTIP_DELAY_SHOW}
                             placement="right"
-                            id={`${item.fileEntityId}-ineligible-tooltip`}
                           >
-                            <span
-                              data-for={`${item.fileEntityId}-ineligible-tooltip`}
-                              className="ineligibileIcon"
-                            >
+                            <span className="ineligibileIcon">
                               <IconSvg
                                 options={{
                                   icon: 'warningOutlined',
@@ -381,13 +372,9 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                           <Tooltip
                             title="Remove from Download List"
                             placement="left"
-                            id={`${item.fileEntityId}-removeitem-tooltip`}
                             enterNextDelay={TOOLTIP_DELAY_SHOW}
                           >
-                            <span
-                              className="removeItem"
-                              data-for={`${item.fileEntityId}-removeitem-tooltip`}
-                            >
+                            <span className="removeItem">
                               <button
                                 className={TESTING_TRASH_BTN_CLASS}
                                 onClick={() => {

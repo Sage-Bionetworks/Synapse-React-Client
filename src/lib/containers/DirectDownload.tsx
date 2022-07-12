@@ -213,14 +213,8 @@ const DirectDownload: React.FunctionComponent<
       }
       enterNextDelay={TOOLTIP_DELAY_SHOW}
       placement="left"
-      id={`${associatedObjectId}-direct-download-tooltip`}
     >
-      <span
-        ref={ref}
-        data-for={`${associatedObjectId}-direct-download-tooltip`}
-      >
-        {getIcon()}
-      </span>
+      <span ref={ref}>{getIcon()}</span>
     </Tooltip>
   )
 }
