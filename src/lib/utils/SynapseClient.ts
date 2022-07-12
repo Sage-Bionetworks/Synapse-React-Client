@@ -1374,10 +1374,10 @@ export const setAccessTokenCookie = async (
       // See - https://github.com/reactivestack/cookies/issues/189
       await delay(100)
     } else {
-      // sets cookie
+      // set's cookie in session storage
       cookies.set(ACCESS_TOKEN_COOKIE_KEY, token, {
-        // expires in 10 days (see SWC-6190)
-        maxAge: 60 * 60 * 24 * 10,
+        // expires in a day
+        maxAge: 60 * 60 * 24,
         path: '/',
       })
     }
