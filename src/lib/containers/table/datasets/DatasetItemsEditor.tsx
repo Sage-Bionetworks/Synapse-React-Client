@@ -186,18 +186,33 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     oldDataSet: DatasetItem[],
     newDataSet: DatasetItem[],
   ) {
-    const unchangedItems = oldDataSet.filter(
+    let unchangedItems = oldDataSet.filter(
       oldItem =>
         !newDataSet.find(newItem => newItem.entityId === oldItem.entityId),
     )
-
+    const deletedItems = [...unchangedItems]
     const { updatedItems, newItems } = newDataSet.reduce(
       (results, result) => {
-        if (oldDataSet.find(old => old.entityId === result.entityId)) {
+        if (
+          oldDataSet.find(
+            old =>
+              old.entityId === result.entityId &&
+              old.versionNumber !== result.versionNumber,
+          )
+        ) {
           results['updatedItems'].push(result)
         }
         if (!oldDataSet.find(old => old.entityId === result.entityId)) {
           results['newItems'].push(result)
+        }
+        if (
+          oldDataSet.find(
+            old =>
+              old.entityId === result.entityId &&
+              old.versionNumber === result.versionNumber,
+          )
+        ) {
+          unchangedItems.push(result)
         }
         return results
       },
@@ -207,20 +222,20 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       },
     )
 
-    return { unchangedItems, updatedItems, newItems }
+    return { unchangedItems, updatedItems, newItems, deletedItems }
   }
 
   function getToastMessageTitle() {
-    const { updatedItems, newItems, unchangedItems } = getDataSetDifference(
+    const { updatedItems, newItems, deletedItems } = getDataSetDifference(
       previousDatasetToUpdate?.items!,
       datasetToUpdate?.items!,
     )
     let toastTitle = ''
 
     // "X items(s) deleted"
-    if (unchangedItems.length > 0) {
-      toastTitle += `${unchangedItems.length} Item${
-        unchangedItems.length === 1 ? '' : 's'
+    if (deletedItems.length > 0) {
+      toastTitle += `${deletedItems.length} Item${
+        deletedItems.length === 1 ? '' : 's'
       } removed from Dataset`
     } else {
       // "Y item(s) added"
