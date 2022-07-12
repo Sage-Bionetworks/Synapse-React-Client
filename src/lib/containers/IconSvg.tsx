@@ -72,6 +72,8 @@ import Clinical from '../assets/mui_components/Clinical'
 import ContentCopy from '../assets/mui_components/ContentCopy'
 import Data from '../assets/mui_components/Data'
 import DataLocked from '../assets/mui_components/DataLocked'
+import Dataset from '../assets/mui_components/Dataset'
+import DatasetCollection from '../assets/mui_components/DatasetCollection'
 import Docker from '../assets/mui_components/Docker'
 import GeneExpression from '../assets/mui_components/GeneExpression'
 import GeneVariants from '../assets/mui_components/GeneVariants'
@@ -148,6 +150,7 @@ export const IconStrings = [
   'challenge',
   'discussion',
   'dataset',
+  'datasetcollection',
   'docker',
   'accountCertified',
   'accountRegistered',
@@ -374,7 +377,9 @@ const getIcon = (options: IconSvgOptions) => {
     case 'discussion':
       return <QuestionAnswerTwoTone style={muiSvgStyle} />
     case 'dataset':
-      return <GridOnTwoTone style={muiSvgStyle} />
+      return <Dataset fill={color} style={customSvgStyle} />
+    case 'datasetcollection':
+      return <DatasetCollection fill={color} style={customSvgStyle} />
     case 'database':
       return <LayersTwoTone style={muiSvgStyle} />
     case 'docker':
