@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import React from 'react'
 import MissingQueryResultsWarning from '../../../lib/containers/MissingQueryResultsWarning'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
-import { DatasetItem, Table } from '../../../lib/utils/synapseTypes'
+import { EntityRef, Table } from '../../../lib/utils/synapseTypes'
 import { mockDatasetEntity } from '../../../mocks/entity/mockEntity'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../../mocks/msw/server'
@@ -14,7 +14,7 @@ function renderComponent<T extends Table>(entity: T) {
   })
 }
 
-const allDatasetItems: DatasetItem[] = [
+const allDatasetItems: EntityRef[] = [
   { entityId: 'syn123', versionNumber: 5 },
   { entityId: 'syn456', versionNumber: 1 },
   { entityId: 'syn789', versionNumber: 2 },

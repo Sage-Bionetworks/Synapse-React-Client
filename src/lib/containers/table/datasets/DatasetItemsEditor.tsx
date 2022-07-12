@@ -16,7 +16,7 @@ import {
 import { useSet } from '../../../utils/hooks/useSet'
 import {
   Dataset,
-  DatasetItem,
+  EntityRef,
   EntityType,
   Reference,
 } from '../../../utils/synapseTypes'
@@ -57,7 +57,7 @@ export type DatasetItemsEditorProps = {
   onClose?: () => void
 }
 
-export type DatasetItemsEditorTableData = DatasetItem & {
+export type DatasetItemsEditorTableData = EntityRef & {
   isSelected: boolean
   setSelected: (value: boolean) => void
 }
@@ -150,7 +150,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     },
   })
 
-  const tableData = datasetToUpdate?.items.map((item: DatasetItem) => {
+  const tableData = datasetToUpdate?.items.map((item: EntityRef) => {
     return {
       ...item,
       isSelected: selectedIds.has(item.entityId),

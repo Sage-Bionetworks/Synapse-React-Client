@@ -55,6 +55,7 @@ export function isContainerType(type: EntityType): boolean {
     case EntityType.SUBMISSION_VIEW:
     case EntityType.ENTITY_VIEW:
     case EntityType.DATASET:
+    case EntityType.DATASET_COLLECTION:
     case EntityType.MATERIALIZED_VIEW:
       return false
     default:
@@ -82,6 +83,8 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
       return 'Submission View'
     case EntityType.DATASET:
       return 'Dataset'
+    case EntityType.DATASET_COLLECTION:
+      return 'Dataset Collection'
     case EntityType.MATERIALIZED_VIEW:
       return 'Materialized View'
     default:
@@ -121,6 +124,9 @@ export function convertToEntityType(
     case EntityType.DATASET:
     case 'org.sagebionetworks.repo.model.table.Dataset':
       return EntityType.DATASET
+    case EntityType.DATASET_COLLECTION:
+    case 'org.sagebionetworks.repo.model.table.DatasetCollection':
+      return EntityType.DATASET_COLLECTION
     case EntityType.MATERIALIZED_VIEW:
     case 'org.sagebionetworks.repo.model.table.MaterializedView':
       return EntityType.MATERIALIZED_VIEW
@@ -147,6 +153,7 @@ export function isVersionableEntityType(type: EntityType): boolean {
     case EntityType.SUBMISSION_VIEW:
     case EntityType.ENTITY_VIEW:
     case EntityType.DATASET:
+    case EntityType.DATASET_COLLECTION:
       return true
     default:
       throw new Error(`Unknown entity type: ${type}`)

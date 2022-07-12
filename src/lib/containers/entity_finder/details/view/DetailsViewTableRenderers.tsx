@@ -17,7 +17,7 @@ import {
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import {
-  DatasetItem,
+  EntityRef,
   EntityType,
   Reference,
 } from '../../../../utils/synapseTypes'
@@ -273,7 +273,7 @@ export const DatasetEditorVersionRenderer = ({
   rowData,
   toggleSelection,
 }: CellRendererProps<DatasetItemsEditorTableData> & {
-  toggleSelection: (entity: DatasetItem) => void
+  toggleSelection: (entity: EntityRef) => void
 }) => {
   const { entityId, versionNumber } = rowData
 

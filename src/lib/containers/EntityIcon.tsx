@@ -14,6 +14,7 @@ const getIconTypeForEntity = (type: EntityType): Icon | '' => {
     case EntityType.DOCKER_REPO:
     case EntityType.SUBMISSION_VIEW:
     case EntityType.DATASET:
+    case EntityType.DATASET_COLLECTION:
     case EntityType.MATERIALIZED_VIEW:
       return type2SvgIconName[type]!
     default:
