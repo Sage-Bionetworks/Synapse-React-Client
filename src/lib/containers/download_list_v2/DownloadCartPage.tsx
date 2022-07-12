@@ -16,6 +16,14 @@ import { ErrorBanner } from '../ErrorBanner'
 import Typography from '../../utils/typography/Typography'
 import ReactTooltip from 'react-tooltip'
 import { HelpPopover } from '../HelpPopover'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
+
+const pythonDownloadCode = `import synapseclient
+syn = synapseclient.login()
+
+dl_list_file_entities = syn.get_download_list()`
+
+const cliDownloadCode = `synapse get-download-list`
 
 /**
  * Show the Download Cart page.
@@ -27,6 +35,7 @@ export const DownloadCartPage: React.FunctionComponent<
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
     useState<boolean>(false)
+  const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] =
     useState(false)
   const [error, setError] = useState<Error>()
@@ -242,20 +251,9 @@ export const DownloadCartPage: React.FunctionComponent<
                       <a
                         className="highlight-link"
                         rel="noreferrer"
-                        data-for="downloadProgrammaticallyTooltipId"
-                        data-tip="This feature is coming soon.<br />Click here to learn how to download<br />programmatically using other methods"
-                        target="_blank"
-                        href="https://help.synapse.org/docs/API-Clients.1985446128.html"
+                        onClick={() => setIsShowingModal(true)}
                       >
-                        <ReactTooltip
-                          delayShow={300}
-                          multiline={true}
-                          place="top"
-                          type="dark"
-                          effect="solid"
-                          id="downloadProgrammaticallyTooltipId"
-                        />
-                        Create Programmatic Package (Coming soon)
+                        Create Programmatic Package
                       </a>
                     </span>
                   </div>
@@ -304,6 +302,16 @@ export const DownloadCartPage: React.FunctionComponent<
           setIsShowingDownloadSuccessAlert(false)
         }}
       />
+      {isShowingModal && (
+        <ProgrammaticInstructionsModal
+          show={true}
+          onClose={() => setIsShowingModal(false)}
+          title="Download Programmatically"
+          pythonCode={pythonDownloadCode}
+          cliCode={cliDownloadCode}
+          // rCode={rDownloadCode}
+        />
+      )}
     </div>
   )
 }
