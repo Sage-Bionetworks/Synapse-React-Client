@@ -143,8 +143,6 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
 
   useEffect(() => {
     if (isInExperimentalMode && schemaValidationResults) {
-      // Because we may not know to render an icon until after fetching data (i.e. after a delay), we have to rebuild the tooltip to ensure it appears
-
       if (schemaValidationResults.isValid) {
         setSchemaConformance(SchemaConformanceState.VALID)
       } else if (annotationsCount) {

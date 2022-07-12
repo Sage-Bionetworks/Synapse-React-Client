@@ -13,7 +13,6 @@ export type DownloadDetailsProps = {
 export default function DownloadDetails(props: DownloadDetailsProps) {
   const { numFiles, numPackagableFiles, numBytes } = props
   const numIneligibleFiles = numFiles - numPackagableFiles
-  const numBytesTooltipId = 'num_bytes_id'
   const isInactive = numFiles === 0
   const iconClassName = isInactive ? 'SRC-inactive' : 'SRC-primary-text-color'
   return (

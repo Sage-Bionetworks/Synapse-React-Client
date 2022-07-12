@@ -110,7 +110,6 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
     setIsContextMenuOpen(isOpen => !isOpen)
   }
 
-  const validatedUserProfileTooltipId = `${userName}-tooltip`
   let name = ''
   const linkLocation = link
     ? link
