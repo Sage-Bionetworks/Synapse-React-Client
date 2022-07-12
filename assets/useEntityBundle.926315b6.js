@@ -1,2 +1,0 @@
-import{t as r,H as c,J as s,bB as l}from"./index.fe051f0b.js";const o={includeEntity:!0,includeEntityPath:!0,includeAnnotations:!0,includePermissions:!0,includeHasChildren:!0,includeAccessControlList:!0,includeFileHandles:!0,includeTableBundle:!0,includeRootWikiId:!0,includeBenefactorACL:!0,includeDOIAssociation:!0,includeFileName:!0,includeThreadCount:!0,includeRestrictionInformation:!0};function a(e,t=o,n,u){const{accessToken:i}=r();return c(s.bundle(e,n,t),()=>l(e,t,n,i),u)}export{a as u};
-//# sourceMappingURL=useEntityBundle.926315b6.js.map
