@@ -1,9 +1,9 @@
 import * as React from 'react'
 import _ from 'lodash-es'
-import { render, fireEvent, cleanup } from '@testing-library/react'
+import { render, fireEvent, cleanup, screen } from '@testing-library/react'
 import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
 import Columns from '../../../../lib/assets/icons/columns'
-import { Icon, IconSvgOptions } from '../../../../lib/containers/IconSvg'
+import { IconSvgOptions } from '../../../../lib/containers/IconSvg'
 
 const mockCallback = jest.fn()
 type ElementWithTooltipProps = React.ComponentProps<typeof ElementWithTooltip>
@@ -37,9 +37,9 @@ beforeEach(() => init())
 
 describe('basic function', () => {
   it('should render with correct tooltip properties', () => {
-    expect(container.children.length).toBe(2)
+    expect(container.children.length).toBe(1)
     expect(imageButton.attributes['data-for'].value).toBe(
-      container.getElementsByTagName('div').item(0)!.id,
+      screen.getByTestId('ElementTooltip').id,
     )
     expect(imageButton.attributes['data-tip'].value).toBe(props.tooltipText)
     expect(imageButton.classList.contains('dropdown-toggle')).toBe(false)

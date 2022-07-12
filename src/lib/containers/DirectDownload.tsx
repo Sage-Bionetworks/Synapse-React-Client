@@ -11,9 +11,9 @@ import { getFiles, getFileResult, getEntity } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
 import { useInView } from 'react-intersection-observer'
 import { useSynapseContext } from '../utils/SynapseContext'
-import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from './table/SynapseTableConstants'
 import { UAParser } from 'ua-parser-js'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string
@@ -205,24 +205,17 @@ const DirectDownload: React.FunctionComponent<
   }
 
   return (
-    <span
-      ref={ref}
-      data-for={`${associatedObjectId}-direct-download-tooltip`}
-      data-tip={
+    <Tooltip
+      title={
         isExternalFile
           ? 'Navigate to external link'
           : 'Download this file individually'
       }
+      enterNextDelay={TOOLTIP_DELAY_SHOW}
+      placement="left"
     >
-      <ReactTooltip
-        delayShow={TOOLTIP_DELAY_SHOW}
-        place="left"
-        type="dark"
-        effect="solid"
-        id={`${associatedObjectId}-direct-download-tooltip`}
-      />
-      {getIcon()}
-    </span>
+      <span ref={ref}>{getIcon()}</span>
+    </Tooltip>
   )
 }
 

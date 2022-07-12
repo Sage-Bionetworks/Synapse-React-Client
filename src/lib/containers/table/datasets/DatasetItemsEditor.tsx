@@ -5,7 +5,6 @@ import BaseTable, {
 } from '@sage-bionetworks/react-base-table'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
 import {
@@ -22,7 +21,6 @@ import {
 } from '../../../utils/synapseTypes'
 import { RequiredProperties } from '../../../utils/types/RequiredProperties'
 import Typography from '../../../utils/typography/Typography'
-import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../EntityBadgeIcons'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
@@ -535,13 +533,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
             rowHeight={`${ROW_HEIGHT}px`}
           />
         )}
-        <ReactTooltip
-          id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-          className="EntityBadgeTooltip"
-          delayShow={100}
-          place={'right'}
-          effect={'solid'}
-        />
       </div>
       <div className="DatasetEditorTopBottomPanel">
         <Button

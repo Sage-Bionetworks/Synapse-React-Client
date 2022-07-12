@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ReactTooltip from 'react-tooltip'
+import Tooltip from '../../utils/tooltip/Tooltip'
 import IconSvg from '../IconSvg'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
@@ -42,24 +42,20 @@ filepath = ${entityId}.path`
 
   return (
     <>
-      <span
-        data-for={`${entityId}-direct-programmatic-download-tooltip`}
-        data-tip="Programmatic download options"
+      <Tooltip
+        title="Programmatic download options"
+        enterNextDelay={TOOLTIP_DELAY_SHOW}
+        placement="left"
       >
-        <ReactTooltip
-          delayShow={TOOLTIP_DELAY_SHOW}
-          place="left"
-          type="dark"
-          effect="solid"
-          id={`${entityId}-direct-programmatic-download-tooltip`}
-        />
-        <button
-          className={'btn-download-icon'}
-          onClick={() => setIsShowingModal(true)}
-        >
-          <IconSvg options={{ icon: 'code' }} />
-        </button>
-      </span>
+        <span>
+          <button
+            className={'btn-download-icon'}
+            onClick={() => setIsShowingModal(true)}
+          >
+            <IconSvg options={{ icon: 'code' }} />
+          </button>
+        </span>
+      </Tooltip>
       {isShowingModal && (
         <ProgrammaticInstructionsModal
           show={true}

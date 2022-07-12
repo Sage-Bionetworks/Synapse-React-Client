@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Dropdown } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import ModalDownload from '../../../containers/ModalDownload'
 import {
   isDataset,
@@ -8,6 +7,7 @@ import {
   isFileView,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
+import Tooltip from '../../../utils/tooltip/Tooltip'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
@@ -46,8 +46,6 @@ export const DownloadOptions: React.FunctionComponent<
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
 
-  const TOOLTIP_ID = `download-menu-tooltip-${entity?.id}`
-
   return (
     <React.Fragment>
       <Dropdown as="span">
@@ -62,14 +60,6 @@ export const DownloadOptions: React.FunctionComponent<
           className="SRC-primary-color-hover-dropdown"
           alignRight={true}
         >
-          <ReactTooltip
-            delayShow={300}
-            place="left"
-            type="dark"
-            effect="solid"
-            multiline={true}
-            id={TOOLTIP_ID}
-          />
           <Dropdown.Item
             onClick={() => {
               setShowExportMetadata(true)
@@ -78,33 +68,41 @@ export const DownloadOptions: React.FunctionComponent<
             Export Table
           </Dropdown.Item>
           {isFileViewOrDataset && (
+            <Tooltip
+              title="A draft version of a dataset cannot be added to the Download Cart"
+              placement="left"
+              enterNextDelay={300}
+              disableHoverListener={!disableDownload}
+            >
+              <Dropdown.Item
+                className={disableDownload ? 'ignoreLink' : undefined}
+                disabled={disableDownload}
+                // If disabled, add pointer-events-auto so the tooltip still works
+                style={disableDownload ? { pointerEvents: 'auto' } : {}}
+                onClick={() =>
+                  accessToken ? onDownloadFiles() : setShowLoginModal(true)
+                }
+              >
+                {DOWNLOAD_FILES_MENU_TEXT}
+              </Dropdown.Item>
+            </Tooltip>
+          )}
+          <Tooltip
+            title="A draft version of a dataset cannot be downloaded programmatically"
+            placement="left"
+            enterNextDelay={300}
+            disableHoverListener={!disableDownload}
+          >
             <Dropdown.Item
               className={disableDownload ? 'ignoreLink' : undefined}
-              data-for={TOOLTIP_ID}
-              data-tip="A draft version of a dataset cannot<br />be added to the Download Cart"
-              data-tip-disable={!disableDownload}
               disabled={disableDownload}
               // If disabled, add pointer-events-auto so the tooltip still works
               style={disableDownload ? { pointerEvents: 'auto' } : {}}
-              onClick={() =>
-                accessToken ? onDownloadFiles() : setShowLoginModal(true)
-              }
+              onClick={() => setShowProgrammaticOptions(true)}
             >
-              {DOWNLOAD_FILES_MENU_TEXT}
+              Programmatic Options
             </Dropdown.Item>
-          )}
-          <Dropdown.Item
-            className={disableDownload ? 'ignoreLink' : undefined}
-            data-for={TOOLTIP_ID}
-            data-tip="A draft version of a dataset cannot<br />be downloaded programmatically"
-            data-tip-disable={!disableDownload}
-            disabled={disableDownload}
-            // If disabled, add pointer-events-auto so the tooltip still works
-            style={disableDownload ? { pointerEvents: 'auto' } : {}}
-            onClick={() => setShowProgrammaticOptions(true)}
-          >
-            Programmatic Options
-          </Dropdown.Item>
+          </Tooltip>
         </Dropdown.Menu>
       </Dropdown>
       {showLoginModal && (
