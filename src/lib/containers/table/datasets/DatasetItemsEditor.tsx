@@ -36,6 +36,7 @@ import {
 import { EntityFinderModal } from '../../entity_finder/EntityFinderModal'
 import { FinderScope } from '../../entity_finder/tree/EntityTree'
 import IconSvg from '../../IconSvg'
+import { BlockingLoader } from '../../LoadingScreen'
 import WarningModal from '../../synapse_form_wrapper/WarningModal'
 import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
@@ -69,7 +70,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
   const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
-
   // Disable updating the entity after the initial fetch because we don't want to replace edits that the user makes.
   const [datasetToUpdate, _setDatasetToUpdate] =
     useState<RequiredProperties<Dataset, 'items'>>()
@@ -466,6 +466,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       />
 
       <div className="DatasetEditorTopBottomPanel">
+        <BlockingLoader show={mutation.isLoading} />
         <div className="ItemCount">
           {datasetToUpdate ? (
             <Typography variant="headline3">
