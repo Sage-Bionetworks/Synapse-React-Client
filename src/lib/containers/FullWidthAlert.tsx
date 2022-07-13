@@ -106,8 +106,6 @@ function FullWidthAlert(props: FullWidthAlertProps) {
   } = props
   const iconContent = getIcon(variant)
 
-  const hasActions = primaryButtonConfig || secondaryButtonConfig
-
   useEffect(() => {
     rebuildTooltip()
   }, [primaryButtonConfig, secondaryButtonConfig])
@@ -134,19 +132,31 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         isGlobal ? 'global' : ''
       } ${additionalAlertVariantClass}`}
     >
-      <div
-        className={`gridContainer ${hasActions ? '' : 'noActions'} ${
-          onClose ? 'hasCloseButton' : ''
-        }`}
-      >
+      <div className={`gridContainer ${onClose ? 'hasCloseButton' : ''}`}>
         <span className="iconArea">{iconContent}</span>
-        <span className="messageArea">
-          <Typography variant="smallText2">{title}</Typography>
-          {title && description && <div className="SRC-marginBottomTen" />}
-          <Typography variant="smallText1">{description}</Typography>
+        <span className="mainContent">
+          <span className="messageArea">
+            <Typography variant="smallText2">{title}</Typography>
+            {title && description && <div className="SRC-marginBottomTen" />}
+            <Typography variant="smallText1">{description}</Typography>
+          </span>
+          <span className="buttonArea">
+            {secondaryButtonConfig && (
+              <ButtonFromConfig
+                className="secondaryButton"
+                config={secondaryButtonConfig}
+                variant="tertiary"
+              />
+            )}
+            {primaryButtonConfig && (
+              <ButtonFromConfig
+                className="primaryButton"
+                config={primaryButtonConfig}
+                variant="sds-primary"
+              />
+            )}
+          </span>
         </span>
-        <ButtonFromConfig config={secondaryButtonConfig} variant="tertiary" />
-        <ButtonFromConfig config={primaryButtonConfig} variant="sds-primary" />
         {onClose && (
           <button className="closeAlert" onClick={onClose}>
             <Clear fontSize={'large'} />
