@@ -113,7 +113,7 @@
       color: map.get(SRC.$colors, 'gray-700');
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
       .mainContent {
         flex-direction: column;
       }
