@@ -67,9 +67,11 @@
 .AccessSubmissionDashboard,
 .UserHistoryDashboard {
   .InputPanel {
-    display: grid;
-    grid-template-columns: auto 265px auto;
-    gap: 25px;
+    display: flex;
+    justify-content: space-between;
+    > * {
+      flex: 0 0 32%;
+    }
 
     input {
       margin-bottom: 0;
@@ -89,8 +91,12 @@
       align-items: center;
     }
   }
+}
 
-  .SubmissionGrid {
-    grid-template-columns: auto auto auto;
+.UserHistoryDashboard {
+  .InputPanel {
+    // UserHistoryDashboard only has two inputs, so use flex-start instead of space-between
+    justify-content: flex-start;
+    gap: 10px;
   }
 }

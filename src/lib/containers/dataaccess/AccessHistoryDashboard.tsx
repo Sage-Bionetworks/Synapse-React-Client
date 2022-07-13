@@ -113,7 +113,7 @@ export const UserHistoryDashboard = () => {
 
   return (
     <div className="UserHistoryDashboard bootstrap-4-backport">
-      <div className="InputPanel SubmissionGrid">
+      <div className="InputPanel">
         <div>
           <FormLabel htmlFor="user-filter">
             Select a user to view their access history
