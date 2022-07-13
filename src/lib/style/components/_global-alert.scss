@@ -20,7 +20,7 @@
   }
   padding: 14px;
   z-index: 500;
-  
+
   // Set up default FullWidthAlert styles for all portals
   color: #323131;
   @include border-radius(0px);
@@ -32,37 +32,39 @@
   }
   &.alert-info {
     background: #d9ebf2;
-    border-left: 10px solid #017FA5;
+    border-left: 10px solid #017fa5;
     .iconBackground {
-      color: #017FA5;
+      color: #017fa5;
     }
   }
   &.alert-danger {
     background: #f7e0dc;
-    border-left: 10px solid #C13415;
+    border-left: 10px solid #c13415;
     .iconBackground {
-      color: #C13415;
+      color: #c13415;
     }
   }
   &.alert-warning {
     background: #f8f1d9;
-    border-left: 10px solid #CC9F00;
+    border-left: 10px solid #cc9f00;
     .iconBackground {
-      color: #CC9F00;
+      color: #cc9f00;
     }
   }
   &.alert-success {
     background: #e0f1e0;
-    border-left: 10px solid #32A330;
+    border-left: 10px solid #32a330;
     .iconBackground {
-      color: #32A330;
+      color: #32a330;
     }
   }
-  
+
   .gridContainer {
     display: grid;
-    grid-template-columns: 50px auto 120px 170px;
-    column-gap: 10px;
+    grid-template-columns: 50px auto;
+    &.hasCloseButton {
+      grid-template-columns: 50px auto 50px;
+    }
     align-items: center;
     justify-items: start;
     .iconArea {
@@ -70,11 +72,33 @@
       grid-column: 1 / span 1;
       grid-row: 1 / span 1;
       min-width: 50px;
+      margin-right: 10px;
+    }
+    .mainContent {
+      grid-row: 1 / span 1;
+      grid-column: 2 / span 1;
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+    }
+    .buttonArea {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      flex-direction: row;
+      button {
+        white-space: nowrap;
+        margin-right: 15px;
+      }
     }
     .messageArea {
-      grid-row: 1 / span 1;
+      width: 100%;
+      flex-grow: 1;
       p {
         margin-bottom: 0px;
+        margin-right: 15px;
       }
     }
     .iconForeground {
@@ -82,62 +106,28 @@
     }
     .closeAlert {
       font-size: 29px;
-      grid-column: 4 / span 1;
+      grid-column: 3 / span 1;
       grid-row: 1 / span 1;
       justify-self: end;
       padding-bottom: 6px;
       color: map.get(SRC.$colors, 'gray-700');
     }
-    @media (min-width: 992px) {
-      grid-template-rows: auto;
-      .messageArea {
-        grid-column: 2 / span 1;
-      }
-      .secondaryButton {
-        grid-column: 3 / span 1;
-        grid-row: 1 / span 1;
-        justify-self: end;
-      }
-      .primaryButton {
-        grid-column: 4 / span 1;
-        grid-row: 1 / span 1;
-        justify-self: end;
-      }
-    }
-    @media (max-width: 992px) {
-      grid-template-rows: auto 75px;
-      .messageArea {
-        grid-column: 2 / span 3;
-      }
-      .secondaryButton {
-        grid-column: 4 / span 1;
-        grid-row: 2 / span 1;
-      }
-      .primaryButton {
-        grid-column: 2 / span 2;
-        grid-row: 2 / span 1;
-      }
-    }
-  }
 
-  .gridContainer.hasCloseButton {
-    @media (min-width: 992px) {
-      grid-template-columns: 50px auto 150px 200px 50px;
-      .closeAlert {
-        grid-column: 5 / span 1;
+    @media (max-width: 768px) {
+      .mainContent {
+        flex-direction: column;
       }
-    }
-  }
-
-  .gridContainer.noActions {
-    grid-template-rows: auto;
-    grid-template-columns: 50px auto 50px;
-    .closeAlert {
-      grid-column: 3 / span 1;
-    }
-    .messageArea {
-      grid-column: 2 / span 1;
-      max-width: unset;
+      .buttonArea {
+        margin-top: 20px;
+        justify-content: space-between;
+        width: 100%;
+        .primaryButton {
+          order: 1;
+        }
+        .secondaryButton {
+          order: 2;
+        }
+      }
     }
   }
 }

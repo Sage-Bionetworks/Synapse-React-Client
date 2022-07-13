@@ -2,7 +2,6 @@ import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
 import FullWidthAlert from './FullWidthAlert'
-import { displayToast } from './ToastMessage'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -45,4 +44,18 @@ DownloadListPackageCreation.args = {
   description:
     'The files contained in this zip file have been removed from your list.',
   isGlobal: false,
+}
+
+export const SuccessAlertWithPrimaryButtonOnly = Template.bind({})
+SuccessAlertWithPrimaryButtonOnly.args = {
+  variant: 'success',
+  show: true,
+  title: 'Success',
+  description: 'Lorem ipsum dolor sit amet',
+  primaryButtonConfig: {
+    text: 'Accept and Continue',
+    onClick: () => alert('Accepted'),
+  },
+  isGlobal: true,
+  onClose: undefined,
 }
