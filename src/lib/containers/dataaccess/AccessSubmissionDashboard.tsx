@@ -98,7 +98,7 @@ export const DataAccessSubmissionDashboard = () => {
 
   return (
     <div className="AccessSubmissionDashboard bootstrap-4-backport">
-      <div className="InputPanel SubmissionGrid">
+      <div className="InputPanel">
         <div>
           <FormLabel htmlFor="arId-filter">
             Filter by Access Requirement Name
