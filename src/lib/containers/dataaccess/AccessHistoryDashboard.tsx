@@ -91,7 +91,7 @@ export const UserHistoryDashboard = () => {
         accessRequirementId,
       })
     },
-    [accessRequirementId, accessorId, history, location],
+    [accessRequirementId, accessorId, history, location.pathname],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 

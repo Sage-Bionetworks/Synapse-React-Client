@@ -98,7 +98,7 @@ export function AccessRequirementDashboard(
       reviewerId,
       onCreateNewAccessRequirementClicked,
       history,
-      location,
+      location.pathname,
     ],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
