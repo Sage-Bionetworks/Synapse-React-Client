@@ -42,7 +42,9 @@
         text-overflow: ellipsis;
       }
     }
-
+    .Node[aria-disabled='false'][aria-selected='false'] {
+      cursor: pointer;
+    }
     .Node[aria-disabled='true'] {
       opacity: 0.5;
       > .NodeContent {
