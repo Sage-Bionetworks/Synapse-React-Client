@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import React, { useState } from 'react'
 import { useGetEntityChildrenInfinite } from '../../../../utils/hooks/SynapseAPI/entity/useGetEntityChildren'
 import { Direction, SortBy } from '../../../../utils/synapseTypes'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -15,7 +14,6 @@ export const EntityChildrenDetails: React.FunctionComponent<
 > = ({ parentContainerId, ...sharedProps }) => {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME)
   const [sortDirection, setSortDirection] = useState<Direction>(Direction.ASC)
-  const handleError = useErrorHandler()
 
   const getChildrenInfiniteRequestObject = {
     parentId: parentContainerId,
@@ -24,15 +22,10 @@ export const EntityChildrenDetails: React.FunctionComponent<
     sortBy: sortBy,
     sortDirection: sortDirection,
   }
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isError,
-    error,
-  } = useGetEntityChildrenInfinite(getChildrenInfiniteRequestObject)
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useGetEntityChildrenInfinite(getChildrenInfiniteRequestObject, {
+      useErrorBoundary: true,
+    })
   const entities = data?.pages.flatMap(page => page.page) ?? []
   const totalEntities = data?.pages[0].totalChildCount
 
@@ -44,12 +37,6 @@ export const EntityChildrenDetails: React.FunctionComponent<
     fetchNextPage,
     isFetchingNextPage,
   )
-
-  useEffect(() => {
-    if (isError && error) {
-      handleError(error)
-    }
-  }, [isError, error, handleError])
 
   return (
     <DetailsView
