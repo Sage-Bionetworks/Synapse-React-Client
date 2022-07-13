@@ -135,7 +135,8 @@ svg.SRC-hoverBox {
     display: flex;
   }
   .SRC-primary-background-color-hover {
-    &:hover, &[aria-expanded="true"] {
+    &:hover,
+    &[aria-expanded='true'] {
       svg,
       path {
         fill: #fff;
@@ -1273,6 +1274,15 @@ main,
       &:hover {
         color: white;
       }
+    }
+  }
+
+  .bootstrap-4-backport .btn.btn-tertiary {
+    @include SRC_Mixins.highlightLink;
+    &:visited,
+    &:active,
+    &:link {
+      @include SRC_Mixins.highlightLink;
     }
   }
 
