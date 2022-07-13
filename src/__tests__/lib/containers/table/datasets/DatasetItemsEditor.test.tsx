@@ -46,6 +46,11 @@ const mockFileReference: Reference = {
   targetVersionNumber: 3,
 }
 
+const mockDatasetItem: DatasetItem = {
+  entityId: mockFileEntity.id!,
+  versionNumber: 1,
+}
+
 function referenceToDatasetItem(reference: Reference): DatasetItem {
   return {
     entityId: reference.targetId,
@@ -584,5 +589,78 @@ describe('Dataset Items Editor tests', () => {
         screen.queryByText(NO_FILES_IN_THIS_DATASET, { exact: false }),
       ).toBeInTheDocument(),
     )
+  })
+
+  describe('SWC-6177 - Gets difference when item is added/updated/changed', () => {
+    it('Shows no changes when same item with same version is added', async () => {
+      // Render dataset editor with item
+      const mockItem = { entityId: mockFileEntity.id!, versionNumber: 3 }
+      const getDatasetHandler = getDatasetHandlerWithItems([mockItem])
+      server.use(getDatasetHandler, successfulUpdateHandler)
+      await renderComponent()
+
+      // Add same item with same version to dataset
+      mockEntityFinderToAddItems([mockFileReference])
+      addItemsViaEntityFinder()
+
+      // Verify toast showing change is not called
+      expect(mockToastFn).not.toBeCalled()
+    })
+
+    it('Shows item has updated when same item with different version is added', async () => {
+      const getDatasetHandler = getDatasetHandlerWithItems([mockDatasetItem])
+      server.use(getDatasetHandler, successfulUpdateHandler)
+      await renderComponent()
+
+      // Add identical item to existing dataset with different version
+      mockEntityFinderToAddItems([mockFileReference])
+      addItemsViaEntityFinder()
+
+      // Verify toast shows no item has been added and 1 has updated
+      expect(mockToastFn).toBeCalledWith(
+        expect.anything(),
+        'info',
+        expect.objectContaining({
+          title: '0 Items added and 1 Item updated to Dataset',
+        }),
+      )
+    })
+
+    it('Shows item has been added', async () => {
+      const getDatasetHandler = getDatasetHandlerWithItems([])
+      server.use(getDatasetHandler, successfulUpdateHandler)
+      await renderComponent()
+
+      // Add item to dataset
+      mockEntityFinderToAddItems([mockFileReference])
+      addItemsViaEntityFinder()
+
+      // Verify one item has been added to dataset
+      expect(mockToastFn).toBeCalledWith(
+        expect.anything(),
+        'info',
+        expect.objectContaining({
+          title: '1 Item added to Dataset',
+        }),
+      )
+    })
+
+    it('Shows item has been removed', async () => {
+      const getDatasetHandler = getDatasetHandlerWithItems([mockDatasetItem])
+      server.use(getDatasetHandler, successfulUpdateHandler)
+      await renderComponent()
+
+      // Remove item from dataset
+      await removeItem(mockDatasetItem.entityId)
+
+      // Verify item has been removed from dataset
+      expect(mockToastFn).toBeCalledWith(
+        expect.anything(),
+        'info',
+        expect.objectContaining({
+          title: '1 Item removed from Dataset',
+        }),
+      )
+    })
   })
 })
