@@ -621,7 +621,7 @@ describe('Dataset Items Editor tests', () => {
         expect.anything(),
         'info',
         expect.objectContaining({
-          title: '0 Items added and 1 Item updated to Dataset',
+          title: '0 Items added and 1 Item updated',
         }),
       )
     })
@@ -640,7 +640,7 @@ describe('Dataset Items Editor tests', () => {
         expect.anything(),
         'info',
         expect.objectContaining({
-          title: '1 Item added to Dataset',
+          title: '1 Item added',
         }),
       )
     })
@@ -658,7 +658,7 @@ describe('Dataset Items Editor tests', () => {
         expect.anything(),
         'info',
         expect.objectContaining({
-          title: '1 Item removed from Dataset',
+          title: '1 Item removed',
         }),
       )
     })

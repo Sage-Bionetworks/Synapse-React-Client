@@ -182,35 +182,24 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
   function getDataSetDifference(
     oldDataSet: EntityRef[],
-    newDataSet: EntityRef[],
+    changedItems: EntityRef[],
   ) {
     let unchangedItems = oldDataSet.filter(
       oldItem =>
-        !newDataSet.find(newItem => newItem.entityId === oldItem.entityId),
+        !changedItems.find(newItem => newItem.entityId === oldItem.entityId),
     )
     const deletedItems = [...unchangedItems]
-    const { updatedItems, newItems } = newDataSet.reduce(
+    const { updatedItems, newItems } = changedItems.reduce(
       (results, result) => {
-        if (
-          oldDataSet.find(
-            old =>
-              old.entityId === result.entityId &&
-              old.versionNumber !== result.versionNumber,
-          )
-        ) {
-          results['updatedItems'].push(result)
-        }
-        if (!oldDataSet.find(old => old.entityId === result.entityId)) {
+        const oldItem = oldDataSet.find(old => old.entityId === result.entityId)
+        if (oldItem) {
+          if (result.versionNumber !== oldItem.versionNumber) {
+            results['updatedItems'].push(result)
+          } else {
+            unchangedItems.push(result)
+          }
+        } else {
           results['newItems'].push(result)
-        }
-        if (
-          oldDataSet.find(
-            old =>
-              old.entityId === result.entityId &&
-              old.versionNumber === result.versionNumber,
-          )
-        ) {
-          unchangedItems.push(result)
         }
         return results
       },
@@ -234,7 +223,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     if (deletedItems.length > 0) {
       toastTitle += `${deletedItems.length} Item${
         deletedItems.length === 1 ? '' : 's'
-      } removed from Dataset`
+      } removed`
     } else {
       // "Y item(s) added"
       toastTitle += `${newItems.length} Item${
@@ -247,7 +236,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           updatedItems.length === 1 ? '' : 's'
         } updated`
       }
-      toastTitle += ` to Dataset`
     }
     return toastTitle
   }
