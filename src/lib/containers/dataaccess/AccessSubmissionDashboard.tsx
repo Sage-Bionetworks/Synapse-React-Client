@@ -92,7 +92,7 @@ export const DataAccessSubmissionDashboard = () => {
         submissionState: SubmissionState.SUBMITTED,
       })
     },
-    [accessRequirementId, accessorId, reviewerId, history, location],
+    [accessRequirementId, accessorId, reviewerId, history, location.pathname],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
