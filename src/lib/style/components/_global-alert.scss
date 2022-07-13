@@ -34,7 +34,7 @@
     background: #d9ebf2;
     border-left: 10px solid map.get(SRC.$colors, 'info');
     .iconBackground {
-      color: #017fa5;
+      color: map.get(SRC.$colors, 'info');
     }
   }
   &.alert-danger {
