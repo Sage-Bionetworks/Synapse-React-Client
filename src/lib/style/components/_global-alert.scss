@@ -32,30 +32,30 @@
   }
   &.alert-info {
     background: #d9ebf2;
-    border-left: 10px solid #017fa5;
+    border-left: 10px solid map.get(SRC.$colors, 'info');
     .iconBackground {
       color: #017fa5;
     }
   }
   &.alert-danger {
     background: #f7e0dc;
-    border-left: 10px solid #c13415;
+    border-left: 10px solid map.get(SRC.$colors, 'error');
     .iconBackground {
-      color: #c13415;
+      color: map.get(SRC.$colors, 'error');
     }
   }
   &.alert-warning {
     background: #f8f1d9;
-    border-left: 10px solid #cc9f00;
+    border-left: 10px solid map.get(SRC.$colors, 'warning');
     .iconBackground {
-      color: #cc9f00;
+      color: map.get(SRC.$colors, 'warning');
     }
   }
   &.alert-success {
     background: #e0f1e0;
-    border-left: 10px solid #32a330;
+    border-left: 10px solid map.get(SRC.$colors, 'success');
     .iconBackground {
-      color: #32a330;
+      color: map.get(SRC.$colors, 'success');
     }
   }
 

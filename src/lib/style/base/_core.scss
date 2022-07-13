@@ -1277,15 +1277,6 @@ main,
     }
   }
 
-  .bootstrap-4-backport .btn.btn-tertiary {
-    @include SRC_Mixins.highlightLink;
-    &:visited,
-    &:active,
-    &:link {
-      @include SRC_Mixins.highlightLink;
-    }
-  }
-
   .markdown a,
   .SRC-userCardName a,
   a.highlight-link,

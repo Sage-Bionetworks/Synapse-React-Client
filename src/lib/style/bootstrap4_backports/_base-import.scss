@@ -215,12 +215,18 @@
       $active-background: rgba(255, 255, 255, 0),
       $active-border: map.get(SRC.$primary-color-palette, 700)
     );
-    @include SrcMixins.normalLink();
     border: none;
     font-weight: 900;
     white-space: normal; // Since this appears more like a link, line breaks are ok
     &:hover {
       box-shadow: none;
+    }
+
+    @include SrcMixins.highlightLink;
+    &:visited,
+    &:active,
+    &:link {
+      @include SrcMixins.highlightLink;
     }
   }
 }
