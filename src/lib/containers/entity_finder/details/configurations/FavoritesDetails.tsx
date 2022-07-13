@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetFavoritesInfinite } from '../../../../utils/hooks/SynapseAPI/useFavorites'
+import { useGetFavoritesInfinite } from '../../../../utils/hooks/SynapseAPI/user/useFavorites'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'

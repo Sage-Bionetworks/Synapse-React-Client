@@ -62,6 +62,11 @@ const allEntityTypes = [
     friendlyName: 'Dataset',
   },
   {
+    type: EntityType.DATASET_COLLECTION,
+    concreteType: 'org.sagebionetworks.repo.model.table.DatasetCollection',
+    friendlyName: 'Dataset Collection',
+  },
+  {
     type: EntityType.MATERIALIZED_VIEW,
     concreteType: 'org.sagebionetworks.repo.model.table.MaterializedView',
     friendlyName: 'Materialized View',

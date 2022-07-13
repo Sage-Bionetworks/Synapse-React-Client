@@ -3,7 +3,6 @@ import { JSONSchema7 } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useEffect, useRef } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import AddToList from '../../../assets/icons/AddToList'
 import {
   BackendDestinationEnum,
@@ -14,7 +13,7 @@ import {
   useUpdateViaJson,
 } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI/entity/useEntityBoundSchema'
-import { useGetSchema } from '../../../utils/hooks/SynapseAPI/useSchema'
+import { useGetSchema } from '../../../utils/hooks/SynapseAPI/entity/useSchema'
 import { SynapseClientError } from '../../../utils/SynapseClientError'
 import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
@@ -92,8 +91,6 @@ export const SchemaDrivenAnnotationEditor = (
 
   const [showConfirmation, setShowConfirmation] = React.useState(false)
 
-  const ANNOTATION_EDITOR_TOOLTIP_ID = 'AnnotationEditorTooltip'
-
   const { entityMetadata: entityJson, annotations } = useGetJson(entityId!, {
     enabled: !!entityId && !formData, // once we have data, don't refetch. it would overwrite the user's entries
     useErrorBoundary: true,
@@ -156,7 +153,6 @@ export const SchemaDrivenAnnotationEditor = (
         </div>
       ) : (
         <>
-          <ReactTooltip id={ANNOTATION_EDITOR_TOOLTIP_ID} />
           {entityJson && schema && (
             <Alert
               dismissible={false}

@@ -10,11 +10,11 @@ export type AsynchronousJobStatus<TRequest, TResponse> = {
   startedByUserId: number // The ID of the user that started the job
   startedOn: string // The date-time when the status of this table last changed to PROCESSING.
   changedOn: string // The date-time when the status of this table last changed.
-  progressMessage: string // The current message of the progress tracker.
-  progressCurrent: number // The progress current value indicates how much progress has been made. For example: If progressTotal = 100; and progressCurrent = 50; then the work is 50% complete.
-  progressTotal: number // The progress total indicates the total amount of work to complete. For example: If progressTotal = 100; and progressCurrent = 50; then the work is 50% complete.
-  exception: string // The exception that needs to be thrown
-  errorMessage: string // When processing fails, this is a one line error message.
-  errorDetails: string // When processing fails, this is the full stack trace of the error.
+  progressMessage?: string // The current message of the progress tracker.
+  progressCurrent?: number // The progress current value indicates how much progress has been made. For example: If progressTotal = 100; and progressCurrent = 50; then the work is 50% complete.
+  progressTotal?: number // The progress total indicates the total amount of work to complete. For example: If progressTotal = 100; and progressCurrent = 50; then the work is 50% complete.
+  exception?: string // The exception that needs to be thrown
+  errorMessage?: string // When processing fails, this is a one line error message.
+  errorDetails?: string // When processing fails, this is the full stack trace of the error.
   runtimeMS: number // The number of milliseconds from the start to completion of this job.
 }

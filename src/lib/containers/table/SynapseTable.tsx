@@ -55,6 +55,7 @@ import {
   getUniqueEntities,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
+import NoContentAvailable from './NoContentAvailable'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -109,6 +110,7 @@ export type SynapseTableProps = {
    * Note that this is very brittle and only supports one column at a time. See SWC-6075 for more information. Default false.
    */
   linkCountToDisaggregatedQuery?: boolean
+  showNoContentAvailableWhenEmpty?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -259,9 +261,7 @@ export default class SynapseTable extends React.Component<
     )
     // also include row entity ids if this is a view (it's possible that the ID column was not selected)
     if (this.isEntityViewOrDataset() && this.allRowsHaveId()) {
-      const { queryResult } = data
-      const { queryResults } = queryResult
-      const { rows } = queryResults
+      const rows = data.queryResult?.queryResults?.rows ?? []
       rows.forEach((row: Row) => {
         const rowSynapseId = `syn${row.rowId}`
         distinctEntityIds.add(rowSynapseId)
@@ -356,32 +356,37 @@ export default class SynapseTable extends React.Component<
     const {
       queryContext: { data },
       queryVisualizationContext: { topLevelControlsState, unitDescription },
+      showNoContentAvailableWhenEmpty,
     } = this.props
     const { queryResult, columnModels = [] } = data
-    const { queryResults } = queryResult
-    const { rows } = queryResults
-    const { headers } = queryResults
     const { facets = [] } = data
     const { isExpanded, isExportTableDownloadOpen } = this.state
     const queryRequest = this.props.queryContext.getLastQueryRequest()
     const { showFacetFilter } = topLevelControlsState
     let className = ''
-    const hasResults = data.queryResult.queryResults.rows.length > 0
+    const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
     if (!hasResults && queryRequest.query.offset === 0) {
       if (queryRequest.query.additionalFilters) {
         return <SearchResultsNotFound />
       } else {
-        return (
-          <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-            {NoData}
-            <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
-              This table is currently empty
+        if (showNoContentAvailableWhenEmpty) {
+          return <NoContentAvailable />
+        } else {
+          return (
+            <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
+              {NoData}
+              <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
+                This table is currently empty
+              </div>
             </div>
-          </div>
-        )
+          )
+        }
       }
     }
+
+    const { rows, headers } = queryResult!.queryResults
+
     const table = (
       <div>{this.renderTable(headers, columnModels, facets, rows)}</div>
     )
@@ -453,7 +458,7 @@ export default class SynapseTable extends React.Component<
       queryContext: { data },
     } = this.props
     return (
-      data?.queryResult.queryResults.rows.every(row => !!row.rowId) ?? false
+      data?.queryResult?.queryResults.rows.every(row => !!row.rowId) ?? false
     )
   }
 
@@ -936,7 +941,7 @@ export default class SynapseTable extends React.Component<
 
   private getLengthOfPropsData() {
     const { data } = this.props.queryContext
-    return data!.queryResult.queryResults.headers.length
+    return data?.queryResult?.queryResults.headers.length ?? 0
   }
   /**
    * Handles the toggle of a column select, this will cause the table to

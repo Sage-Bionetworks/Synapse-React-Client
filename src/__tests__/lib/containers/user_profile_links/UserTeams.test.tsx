@@ -3,11 +3,11 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserTeams from '../../../../lib/containers/user_profile_links/UserTeams'
-import { useGetUserTeamsInfinite } from '../../../../lib/utils/hooks/SynapseAPI/useGetUserTeams'
+import { useGetUserTeamsInfinite } from '../../../../lib/utils/hooks/SynapseAPI/user/useGetUserTeams'
 import { Team } from '../../../../lib/utils/synapseTypes/Team'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
-jest.mock('../../../../lib/utils/hooks/SynapseAPI/useGetUserTeams', () => {
+jest.mock('../../../../lib/utils/hooks/SynapseAPI/user/useGetUserTeams', () => {
   return {
     useGetUserTeamsInfinite: jest.fn(),
   }

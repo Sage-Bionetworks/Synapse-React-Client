@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
-import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/useProjects'
+import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/user/useProjects'
 import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'

@@ -132,11 +132,11 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
             ...infiniteData?.pages[0].responseBody?.queryResult?.queryResults,
             rows:
               infiniteData.pages.flatMap(
-                page => page.responseBody!.queryResult.queryResults.rows,
+                page => page.responseBody!.queryResult?.queryResults.rows,
               ) ?? [],
           },
         },
-      }
+      } as QueryResultBundle
     }
 
     return infiniteData?.pages[currentPage].responseBody

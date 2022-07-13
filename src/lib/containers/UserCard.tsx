@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { SynapseClient, SynapseConstants } from '../utils/'
-import { useGetUserProfile } from '../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetUserProfile } from '../utils/hooks/SynapseAPI/user/useUserBundle'
 import usePreFetchResource from '../utils/hooks/usePreFetchResource'
 import { getPrincipalAliasRequest } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'

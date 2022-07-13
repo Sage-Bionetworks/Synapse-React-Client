@@ -21,7 +21,7 @@ import {
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
-import { DatasetItem, Reference } from '../../../../../lib/utils/synapseTypes'
+import { EntityRef, Reference } from '../../../../../lib/utils/synapseTypes'
 import {
   mockDatasetEntity,
   mockFileEntity,
@@ -46,12 +46,12 @@ const mockFileReference: Reference = {
   targetVersionNumber: 3,
 }
 
-const mockDatasetItem: DatasetItem = {
+const mockDatasetItem: EntityRef = {
   entityId: mockFileEntity.id!,
   versionNumber: 1,
 }
 
-function referenceToDatasetItem(reference: Reference): DatasetItem {
+function referenceToDatasetItem(reference: Reference): EntityRef {
   return {
     entityId: reference.targetId,
     versionNumber: reference.targetVersionNumber!,
@@ -199,7 +199,7 @@ describe('Dataset Items Editor tests', () => {
   })
   afterAll(() => server.close())
 
-  function getDatasetHandlerWithItems(items?: Array<DatasetItem>) {
+  function getDatasetHandlerWithItems(items?: Array<EntityRef>) {
     return rest.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
         ':entityId',

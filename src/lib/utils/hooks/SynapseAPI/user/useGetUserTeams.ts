@@ -1,9 +1,9 @@
 import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClientError'
-import { useSynapseContext } from '../../SynapseContext'
-import { PaginatedResults } from '../../synapseTypes'
-import { Team } from '../../synapseTypes/Team'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClientError'
+import { useSynapseContext } from '../../../SynapseContext'
+import { PaginatedResults } from '../../../synapseTypes'
+import { Team } from '../../../synapseTypes/Team'
 
 export function useGetUserTeamsInfinite(
   userId: string,

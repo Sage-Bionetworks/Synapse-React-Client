@@ -4,9 +4,9 @@ import { Form } from 'react-bootstrap'
 import SynapseIconWhite from '../assets/icons/SynapseIconWhite'
 import SynapseLogoName from '../assets/icons/SynapseLogoName'
 import { SynapseClient } from '../utils'
-import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useSearchAccessSubmissionsInfinite'
-import { useGetDownloadListStatistics } from '../utils/hooks/SynapseAPI/useGetDownloadListStatistics'
-import { useGetCurrentUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
+import { useSearchAccessSubmissionsInfinite } from '../utils/hooks/SynapseAPI/dataaccess/useDataAccessSubmission'
+import { useGetDownloadListStatistics } from '../utils/hooks/SynapseAPI/download/useGetDownloadListStatistics'
+import { useGetCurrentUserBundle } from '../utils/hooks/SynapseAPI/user/useUserBundle'
 import { isInSynapseExperimentalMode } from '../utils/SynapseClient'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { Direction, SubmissionState } from '../utils/synapseTypes'
@@ -126,8 +126,6 @@ const NavDrawerListItem = (props: MenuItemParams) => {
       <ListItem
         button
         key={iconName}
-        data-tip={tooltip}
-        data-for={`SynapseNavDrawerTooltipId`}
         data-testid={`${tooltip}`}
         onClick={handler}
         className="SRC-whiteText"
@@ -366,8 +364,6 @@ export const SynapseNavDrawer: React.FunctionComponent<
               <Tooltip title="Create a New Project" placement="right">
                 <a
                   className="createProjectLink"
-                  data-for="createProjectTooltipId"
-                  data-tip="Create a New Project"
                   onClick={() => {
                     setIsShowingCreateProjectModal(true)
                     handleDrawerClose()

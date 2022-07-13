@@ -78,7 +78,7 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
         showDesktop ? '__Desktop' : ''
       }`}
     >
-      {queryResultBundle?.queryResult.queryResults.rows.map((el, index) => {
+      {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
         const values = el.values
         const title = values[titleColumnIndex]
         const summary = values[summaryColumnIndex]

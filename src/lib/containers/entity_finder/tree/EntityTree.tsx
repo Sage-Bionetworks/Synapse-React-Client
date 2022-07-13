@@ -13,7 +13,7 @@ import { SynapseClient } from '../../../utils'
 import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/useProjects'
+import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/user/useProjects'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import {
   EntityHeader,

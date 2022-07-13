@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks'
 import React from 'react'
-import { useGetFavorites } from '../../../../../lib/utils/hooks/SynapseAPI/useFavorites'
+import { useGetFavorites } from '../../../../../lib/utils/hooks/SynapseAPI/user/useFavorites'
 import {
   EntityHeader,
   PaginatedResults,

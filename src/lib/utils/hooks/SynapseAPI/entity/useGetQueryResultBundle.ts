@@ -1,3 +1,4 @@
+import { merge } from 'lodash-es'
 import {
   QueryFunctionContext,
   QueryKey,
@@ -5,7 +6,6 @@ import {
   UseInfiniteQueryOptions,
   useQuery,
   UseQueryOptions,
-  UseQueryResult,
 } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
@@ -173,29 +173,26 @@ export function useGetQueryResultBundleWithAsyncStatus(
     setCurrentAsyncStatus,
   )
 
-  // construct a result object using the two results
-  const resultObject = {
-    // For the query status, use the rowResult data since it may be changing/updated more often
-    ...rowResult,
-    data:
-      // Don't return a result until we have both rows and stats
-      rowResult.data && statsResult.data
-        ? ({
-            ...rowResult.data,
-            responseBody: rowResult.data.responseBody
-              ? {
-                  ...statsResult.data?.responseBody,
-                  // Append the rows to the stats result.
-                  queryResult: rowResult.data.responseBody.queryResult,
-                }
-              : undefined,
-          } as AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>)
-        : undefined,
-  } as UseQueryResult<
-    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
-    SynapseClientError
-  >
-  return resultObject
+  // If either query is in error, return the error
+  if (rowResult.status === 'error') {
+    return rowResult
+  } else if (statsResult.status === 'error') {
+    return statsResult
+  } else if (rowResult.status === 'loading') {
+    // if either query is loading, return the loading status
+    return rowResult
+  } else if (statsResult.status === 'loading') {
+    return statsResult
+  } else {
+    // Otherwise, both queries are successful or idle, Merge the results into a single object
+    if (rowResult.status === 'idle') {
+      // If the row result is idle, apply the stats result last to override the idle status
+      return merge({}, rowResult, statsResult)
+    } else {
+      // Otherwise, always apply the rowResult last, since it is likely have been fetched more recently than the stats.
+      return merge({}, statsResult, rowResult)
+    }
+  }
 }
 export function useInfiniteQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,
@@ -285,7 +282,7 @@ export function useInfiniteQueryResultBundle(
             return undefined
           }
         }
-        return page.responseBody!.queryResult.queryResults.rows.length ===
+        return page.responseBody!.queryResult?.queryResults.rows.length ===
           pageSize
           ? (request.query.offset ?? 0) + pageSize
           : undefined

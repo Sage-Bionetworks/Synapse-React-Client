@@ -2,6 +2,7 @@ import { Skeleton } from '@material-ui/lab'
 import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { ButtonVariant } from 'react-bootstrap/esm/types'
+import Tooltip from '../utils/tooltip/Tooltip'
 import Typography from '../utils/typography/Typography'
 import { HelpPopover, HelpPopoverProps } from './HelpPopover'
 
@@ -31,8 +32,15 @@ function ModalActionButton(props: ModalAction) {
   if (props.skeleton) {
     return <Skeleton variant="rect" width={150} />
   }
-
-  return <Button {...rest}>{copy}</Button>
+  return (
+    <Tooltip
+      title={rest['data-tip'] ?? ''}
+      placement="top"
+      enterNextDelay={300}
+    >
+      <Button {...rest}>{copy}</Button>
+    </Tooltip>
+  )
 }
 
 /**

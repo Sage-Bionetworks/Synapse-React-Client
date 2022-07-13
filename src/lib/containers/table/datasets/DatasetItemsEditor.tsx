@@ -6,7 +6,6 @@ import BaseTable, {
 import { isEqual } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
-import ReactTooltip from 'react-tooltip'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
 import {
@@ -17,13 +16,12 @@ import {
 import { useSet } from '../../../utils/hooks/useSet'
 import {
   Dataset,
-  DatasetItem,
+  EntityRef,
   EntityType,
   Reference,
 } from '../../../utils/synapseTypes'
 import { RequiredProperties } from '../../../utils/types/RequiredProperties'
 import Typography from '../../../utils/typography/Typography'
-import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../EntityBadgeIcons'
 import {
   BadgeIconsRenderer,
   CellRendererProps,
@@ -58,7 +56,7 @@ export type DatasetItemsEditorProps = {
   onClose?: () => void
 }
 
-export type DatasetItemsEditorTableData = DatasetItem & {
+export type DatasetItemsEditorTableData = EntityRef & {
   isSelected: boolean
   setSelected: (value: boolean) => void
 }
@@ -170,7 +168,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     },
   })
 
-  const tableData = datasetToUpdate?.items.map((item: DatasetItem) => {
+  const tableData = datasetToUpdate?.items.map((item: EntityRef) => {
     return {
       ...item,
       isSelected: selectedIds.has(item.entityId),
@@ -183,8 +181,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   })
 
   function getDataSetDifference(
-    oldDataSet: DatasetItem[],
-    newDataSet: DatasetItem[],
+    oldDataSet: EntityRef[],
+    newDataSet: EntityRef[],
   ) {
     let unchangedItems = oldDataSet.filter(
       oldItem =>
@@ -217,8 +215,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         return results
       },
       { updatedItems: [], newItems: [] } as {
-        updatedItems: DatasetItem[]
-        newItems: DatasetItem[]
+        updatedItems: EntityRef[]
+        newItems: EntityRef[]
       },
     )
 
@@ -579,13 +577,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
             rowHeight={`${ROW_HEIGHT}px`}
           />
         )}
-        <ReactTooltip
-          id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-          className="EntityBadgeTooltip"
-          delayShow={100}
-          place={'right'}
-          effect={'solid'}
-        />
       </div>
       <div className="DatasetEditorTopBottomPanel">
         <Button

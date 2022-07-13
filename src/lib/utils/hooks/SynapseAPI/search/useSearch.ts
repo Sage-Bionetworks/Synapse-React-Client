@@ -5,10 +5,10 @@ import {
   useQuery,
   UseQueryOptions,
 } from 'react-query'
-import { SynapseClient } from '../..'
-import { SynapseClientError } from '../../SynapseClientError'
-import { useSynapseContext } from '../../SynapseContext'
-import { SearchQuery, SearchResults } from '../../synapseTypes/Search'
+import { SynapseClient } from '../../..'
+import { SynapseClientError } from '../../../SynapseClientError'
+import { useSynapseContext } from '../../../SynapseContext'
+import { SearchQuery, SearchResults } from '../../../synapseTypes/Search'
 
 export function useSearch(
   query: SearchQuery,

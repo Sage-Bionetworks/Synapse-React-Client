@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import * as ReactBootstrap from 'react-bootstrap'
 import { SynapseClient, SynapseConstants } from '../../utils/'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetCurrentUserProfile } from '../../utils/hooks/SynapseAPI/user/useUserBundle'
 import useCompare from '../../utils/hooks/useCompare'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,

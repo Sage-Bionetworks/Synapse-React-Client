@@ -43,7 +43,7 @@ export const Resources: React.FC<ResourcesProps> = (props: ResourcesProps) => {
   const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResultBundle)
   const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResultBundle)
   const data: Data =
-    queryResultBundle?.queryResult.queryResults.rows.map(el => {
+    queryResultBundle?.queryResult?.queryResults.rows.map(el => {
       const values = el.values
       const name = values[nameIndex]
       const wikiValue = values[wikiIndex] ?? ''

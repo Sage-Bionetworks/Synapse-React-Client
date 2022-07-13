@@ -1,13 +1,13 @@
 import { Skeleton } from '@material-ui/lab'
 import React, { useEffect, useRef, useState } from 'react'
-import ReactTooltip from 'react-tooltip'
 import IconCopy from '../assets/icons/IconCopy'
 import ValidatedProfileIcon from '../assets/icons/ValidatedProfile'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { SynapseConstants } from '../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
-import { useGetUserBundle } from '../utils/hooks/SynapseAPI/useUserBundle'
+import { useGetUserBundle } from '../utils/hooks/SynapseAPI/user/useUserBundle'
 import { UserProfile } from '../utils/synapseTypes/'
+import Tooltip from '../utils/tooltip/Tooltip'
 import { Avatar } from './Avatar'
 import IconSvg from './IconSvg'
 import { ToastMessage } from './ToastMessage'
@@ -110,7 +110,6 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
     setIsContextMenuOpen(isOpen => !isOpen)
   }
 
-  const validatedUserProfileTooltipId = `${userName}-tooltip`
   let name = ''
   const linkLocation = link
     ? link
@@ -180,19 +179,13 @@ export const UserCardMedium: React.FC<UserCardMediumProps> = ({
             </a>
           )}
           {isValidated && (
-            <span
-              data-for={validatedUserProfileTooltipId}
-              data-tip="This user profile has been validated."
+            <Tooltip
+              title="This user profile has been validated."
+              placement="bottom"
+              enterNextDelay={300}
             >
-              <ReactTooltip
-                delayShow={300}
-                place="bottom"
-                type="dark"
-                effect="solid"
-                id={validatedUserProfileTooltipId}
-              />
-              {ValidatedProfileIcon}
-            </span>
+              <span>{ValidatedProfileIcon}</span>
+            </Tooltip>
           )}
         </p>
         {(position || company) && (
