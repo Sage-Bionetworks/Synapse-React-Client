@@ -41,9 +41,12 @@ import {
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../mocks/msw/server'
 import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
+import fileViewQueryResultBundleJson from '../../../mocks/query/syn20337467.json'
 
 const queryResultBundle: QueryResultBundle =
   queryResultBundleJson as QueryResultBundle
+const fileViewQueryResultBundle: QueryResultBundle =
+  fileViewQueryResultBundleJson as QueryResultBundle
 
 const title = 'studies'
 const totalColumns = 13
@@ -320,6 +323,42 @@ describe('SynapseTable tests', () => {
         }),
       )
     })
+  })
+
+  it('should call clipboard.writeText with the expected Synapse IDs', async () => {
+    const mockWriteText = jest.fn()
+    mockWriteText.mockResolvedValue('copied')
+    const mockClipboard = {
+      writeText: mockWriteText,
+    }
+    Object.assign(navigator, {
+      clipboard: mockClipboard,
+    })
+
+    const testQueryContext = cloneDeep(queryContext)
+    testQueryContext.data = fileViewQueryResultBundle
+
+    const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
+      columnsToShowInTable: ['id'],
+      topLevelControlsState: {
+        showColumnFilter: false,
+        showFacetFilter: false,
+        showFacetVisualization: false,
+        showSearchBar: false,
+        showDownloadConfirmation: false,
+        showColumnSelectDropdown: false,
+        showSqlEditor: false,
+      },
+    }
+    renderTable({ ...props, queryVisualizationContext }, testQueryContext)
+
+    const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
+    userEvent.click(copySynIDsButton)
+
+    expect(mockWriteText).toHaveBeenCalled()
+    expect(mockWriteText).toHaveBeenCalledWith(
+      'syn20336604\nsyn20336605\nsyn20803101\nsyn20833959\nsyn20834046\nsyn20834059\nsyn21262174\nsyn22273980\nsyn22275054\nsyn24988882\nsyn25127078\nsyn25281516\nsyn26010239\nsyn26433712',
+    )
   })
 
   it('Shows add to download cart column for an Entity View that contains files', async () => {
