@@ -14,7 +14,6 @@
     justify-content: flex-start;
     box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
     .Tab {
-      @include SrcMixins.ignoreLink();
       flex-grow: 0;
       height: 45px;
       padding-left: 30px;
@@ -22,6 +21,7 @@
 
       display: flex;
       align-items: center;
+      text-decoration: none !important;
     }
   }
   .TabContentContainer {
