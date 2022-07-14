@@ -98,7 +98,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     }
   }, [onQueryChange, lastQueryRequest.query])
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (data && onQueryResultBundleChange) {
       onQueryResultBundleChange(JSON.stringify(data))
     }
