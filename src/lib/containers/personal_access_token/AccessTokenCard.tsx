@@ -1,12 +1,12 @@
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { useErrorHandler } from 'react-error-boundary'
-import ReactTooltip from 'react-tooltip'
 import { SynapseClient } from '../../utils/'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
 import { scopeDescriptions } from '../../utils/synapseTypes/AccessToken/ScopeDescriptions'
+import Tooltip from '../../utils/tooltip/Tooltip'
 import IconSvg from '../IconSvg'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 
@@ -25,12 +25,6 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
   const handleError = useErrorHandler()
 
   const isExpired = accessToken.state === 'EXPIRED'
-
-  useEffect(() => {
-    // For reasons unknown, the tooltips in this component would not load in Synapse.org without this
-    // see https://github.com/wwayne/react-tooltip/issues/344
-    ReactTooltip.rebuild()
-  }, [])
 
   return (
     <div
@@ -71,17 +65,16 @@ export const AccessTokenCard: React.FunctionComponent<AccessTokenCardProps> = ({
 
       <div className="SRC-cardContent">
         <div className="SRC-eqHeightRow SRC-userCardName">
-          <ReactTooltip delayShow={100} />
           <span className={'SRC-blackText'}>{accessToken.name}</span>
           {isExpired && (
-            <span
-              data-tip={
-                'This token has expired. It no longer works and can only be deleted.'
-              }
-              aria-hidden="true"
+            <Tooltip
+              title="This token has expired. It no longer works and can only be deleted."
+              enterNextDelay={100}
             >
-              <IconSvg options={{ icon: 'warning' }} />
-            </span>
+              <span aria-hidden="true">
+                <IconSvg options={{ icon: 'warning' }} />
+              </span>
+            </Tooltip>
           )}
         </div>
 

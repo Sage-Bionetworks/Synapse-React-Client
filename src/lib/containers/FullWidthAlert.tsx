@@ -8,8 +8,8 @@ import {
   Clear,
 } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
-import ReactTooltip from 'react-tooltip'
 import { rebuildTooltip } from '../utils/functions/TooltipUtils'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 export type AlertButtonConfig = {
   text: string
@@ -24,8 +24,6 @@ export type AlertButtonConfig = {
     }
   | { href?: string }
 )
-
-const FULL_WIDTH_ALERT_TOOLTIP_ID = 'FullWidthAlertTooltip'
 
 export interface FullWidthAlertProps extends AlertProps {
   variant: string
@@ -61,29 +59,29 @@ function ButtonFromConfig(props: {
   const { config, variant, className } = props
   if (config && ('onClick' in config || 'href' in config)) {
     return (
-      <span // See https://github.com/wwayne/react-tooltip/issues/304
-        className={className}
-        data-tip={config.tooltipText}
-        data-for={FULL_WIDTH_ALERT_TOOLTIP_ID}
-        data-tip-disable={false}
-      >
-        <Button
-          variant={variant}
-          size={'sm'}
-          disabled={config.isDisabled}
-          onClick={e => {
-            if ('onClick' in config) {
-              e.preventDefault()
-              config.onClick!(e)
-            } else if ('href' in config) {
-              e.preventDefault()
-              window.open(config.href, '_blank', 'noopener')
-            }
-          }}
+      <Tooltip title={config.tooltipText ?? ''} enterNextDelay={300}>
+        <span // See https://github.com/wwayne/react-tooltip/issues/304
+          className={className}
+          data-tip-disable={false}
         >
-          {config.text}
-        </Button>
-      </span>
+          <Button
+            variant={variant}
+            size={'sm'}
+            disabled={config.isDisabled}
+            onClick={e => {
+              if ('onClick' in config) {
+                e.preventDefault()
+                config.onClick!(e)
+              } else if ('href' in config) {
+                e.preventDefault()
+                window.open(config.href, '_blank', 'noopener')
+              }
+            }}
+          >
+            {config.text}
+          </Button>
+        </span>
+      </Tooltip>
     )
   }
   return null
@@ -107,8 +105,6 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     isGlobal = true,
   } = props
   const iconContent = getIcon(variant)
-
-  const hasActions = primaryButtonConfig || secondaryButtonConfig
 
   useEffect(() => {
     rebuildTooltip()
@@ -136,24 +132,31 @@ function FullWidthAlert(props: FullWidthAlertProps) {
         isGlobal ? 'global' : ''
       } ${additionalAlertVariantClass}`}
     >
-      <ReactTooltip
-        id={FULL_WIDTH_ALERT_TOOLTIP_ID}
-        delayShow={300}
-        effect="solid"
-      />
-      <div
-        className={`gridContainer ${hasActions ? '' : 'noActions'} ${
-          onClose ? 'hasCloseButton' : ''
-        }`}
-      >
+      <div className={`gridContainer ${onClose ? 'hasCloseButton' : ''}`}>
         <span className="iconArea">{iconContent}</span>
-        <span className="messageArea">
-          <Typography variant="smallText2">{title}</Typography>
-          {title && description && <div className="SRC-marginBottomTen" />}
-          <Typography variant="smallText1">{description}</Typography>
+        <span className="mainContent">
+          <span className="messageArea">
+            <Typography variant="smallText2">{title}</Typography>
+            {title && description && <div className="SRC-marginBottomTen" />}
+            <Typography variant="smallText1">{description}</Typography>
+          </span>
+          <span className="buttonArea">
+            {secondaryButtonConfig && (
+              <ButtonFromConfig
+                className="secondaryButton"
+                config={secondaryButtonConfig}
+                variant="tertiary"
+              />
+            )}
+            {primaryButtonConfig && (
+              <ButtonFromConfig
+                className="primaryButton"
+                config={primaryButtonConfig}
+                variant="sds-primary"
+              />
+            )}
+          </span>
         </span>
-        <ButtonFromConfig config={secondaryButtonConfig} variant="tertiary" />
-        <ButtonFromConfig config={primaryButtonConfig} variant="sds-primary" />
         {onClose && (
           <button className="closeAlert" onClick={onClose}>
             <Clear fontSize={'large'} />

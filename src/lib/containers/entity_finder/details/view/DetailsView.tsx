@@ -4,7 +4,6 @@ import BaseTable, {
 } from '@sage-bionetworks/react-base-table'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryClient } from 'react-query'
-import ReactTooltip from 'react-tooltip'
 import {
   getEntityTypeFromHeader,
   isContainerType,
@@ -22,7 +21,6 @@ import {
   SortBy,
 } from '../../../../utils/synapseTypes'
 import { Hit } from '../../../../utils/synapseTypes/Search'
-import { ENTITY_BADGE_ICONS_TOOLTIP_ID } from '../../../EntityBadgeIcons'
 import { HelpPopover } from '../../../HelpPopover'
 import { BlockingLoader } from '../../../LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
@@ -552,13 +550,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           </BaseTable>
         )}
       </AutoResizer>
-      <ReactTooltip
-        id={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-        className="EntityBadgeTooltip"
-        delayShow={100}
-        place={'right'}
-        effect={'solid'}
-      />
     </div>
   )
 }

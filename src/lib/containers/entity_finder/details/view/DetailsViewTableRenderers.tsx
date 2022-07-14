@@ -17,14 +17,12 @@ import {
 import useGetEntityBundle from '../../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { SMALL_USER_CARD } from '../../../../utils/SynapseConstants'
 import {
-  DatasetItem,
+  EntityRef,
   EntityType,
   Reference,
 } from '../../../../utils/synapseTypes'
-import {
-  EntityBadgeIcons,
-  ENTITY_BADGE_ICONS_TOOLTIP_ID,
-} from '../../../EntityBadgeIcons'
+import Tooltip from '../../../../utils/tooltip/Tooltip'
+import { EntityBadgeIcons } from '../../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../../EntityIcon'
 import { EntityLink } from '../../../EntityLink'
 import IconSvg from '../../../IconSvg'
@@ -273,7 +271,7 @@ export const DatasetEditorVersionRenderer = ({
   rowData,
   toggleSelection,
 }: CellRendererProps<DatasetItemsEditorTableData> & {
-  toggleSelection: (entity: DatasetItem) => void
+  toggleSelection: (entity: EntityRef) => void
 }) => {
   const { entityId, versionNumber } = rowData
 
@@ -471,13 +469,15 @@ export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
     return <></>
   } else {
     return (
-      <div
-        className="EntityErrorRenderer"
-        data-for={ENTITY_BADGE_ICONS_TOOLTIP_ID}
-        data-tip={message}
+      <Tooltip
+        title={message ?? ''}
+        placement="right"
+        className="EntityBadgeTooltip"
       >
-        <IconSvg options={{ icon: 'warningOutlined' }} />
-      </div>
+        <div className="EntityErrorRenderer">
+          <IconSvg options={{ icon: 'warningOutlined' }} />
+        </div>
+      </Tooltip>
     )
   }
 }

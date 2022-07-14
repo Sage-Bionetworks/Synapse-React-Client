@@ -92,13 +92,13 @@ export const DataAccessSubmissionDashboard = () => {
         submissionState: SubmissionState.SUBMITTED,
       })
     },
-    [accessRequirementId, accessorId, reviewerId, history, location],
+    [accessRequirementId, accessorId, reviewerId, history, location.pathname],
     INPUT_CHANGE_DEBOUNCE_DELAY_MS,
   )
 
   return (
     <div className="AccessSubmissionDashboard bootstrap-4-backport">
-      <div className="InputPanel SubmissionGrid">
+      <div className="InputPanel">
         <div>
           <FormLabel htmlFor="arId-filter">
             Filter by Access Requirement Name

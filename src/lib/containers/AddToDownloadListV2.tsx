@@ -3,8 +3,8 @@ import { addFileToDownloadListV2, getEntity } from '../utils/SynapseClient'
 import IconSvg from './IconSvg'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { displayToast } from './ToastMessage'
-import ReactTooltip from 'react-tooltip'
 import { useQueryClient } from 'react-query'
+import Tooltip from '../utils/tooltip/Tooltip'
 
 export type AddToDownloadListV2Props = {
   entityId: string
@@ -44,22 +44,19 @@ const AddToDownloadListV2: React.FunctionComponent<
 
   return (
     <>
-      <a
-        data-testid="AddToDownloadListV2"
-        data-tip="Add this file to your Download Cart"
-        data-for={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
-        onClick={addToDownloadListV2}
-        className="ignoreLink"
+      <Tooltip
+        title="Add this file to your Download Cart"
+        placement="right"
+        enterNextDelay={300}
       >
-        <ReactTooltip
-          delayShow={300}
-          place="right"
-          type="dark"
-          effect="solid"
-          id={`${entityId}_${entityVersionNumber}_download-list-v2-button`}
-        />
-        <IconSvg options={{ icon: 'addToCart' }} />
-      </a>
+        <a
+          data-testid="AddToDownloadListV2"
+          onClick={addToDownloadListV2}
+          className="ignoreLink"
+        >
+          <IconSvg options={{ icon: 'addToCart' }} />
+        </a>
+      </Tooltip>
     </>
   )
 }

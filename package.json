@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.0.29",
+  "version": "3.0.30",
   "private": false,
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -49,7 +49,7 @@
     "markdown-it-synapse-heading": "^1.0.1",
     "markdown-it-synapse-math": "^3.0.4",
     "markdown-it-synapse-table": "^1.0.6",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "moment-timezone": "^0.5.34",
     "plotly.js-basic-dist": "^2.11.1",
     "pluralize": "^8.0.0",

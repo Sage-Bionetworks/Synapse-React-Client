@@ -16,7 +16,6 @@ import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotat
 import { SynapseErrorBoundary } from '../../ErrorBanner'
 import { VersionableEntity } from '../../../utils/synapseTypes'
 import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
-import ReactTooltip from 'react-tooltip'
 import { FluidModal } from '../../FluidModal'
 import { displayToast } from '../../ToastMessage'
 import Form from '@rjsf/core'
@@ -150,14 +149,6 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         secondaryActions={secondaryActions}
       >
         <>
-          <ReactTooltip
-            id="entityModalTooltip"
-            delayShow={300}
-            type="dark"
-            effect="solid"
-            className="SRC-tooltip"
-          />
-
           {showTabs && !isInEditMode ? (
             <div className="Tabs">
               {Object.keys(EntityModalTabs).map((tabName: string) => {

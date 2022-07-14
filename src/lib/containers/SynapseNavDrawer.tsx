@@ -126,8 +126,6 @@ const NavDrawerListItem = (props: MenuItemParams) => {
       <ListItem
         button
         key={iconName}
-        data-tip={tooltip}
-        data-for={`SynapseNavDrawerTooltipId`}
         data-testid={`${tooltip}`}
         onClick={handler}
         className="SRC-whiteText"
@@ -366,8 +364,6 @@ export const SynapseNavDrawer: React.FunctionComponent<
               <Tooltip title="Create a New Project" placement="right">
                 <a
                   className="createProjectLink"
-                  data-for="createProjectTooltipId"
-                  data-tip="Create a New Project"
                   onClick={() => {
                     setIsShowingCreateProjectModal(true)
                     handleDrawerClose()

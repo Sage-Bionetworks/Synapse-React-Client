@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react'
-import ReactTooltip from 'react-tooltip'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { Dropdown } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
 import IconSvg, { IconSvgOptions } from '../IconSvg'
+import Tooltip from '../../utils/tooltip/Tooltip'
 
 type CustomImageProps = {
   svgImg: React.ComponentElement<any, any>
@@ -57,13 +57,13 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   tooltipText,
   className = '',
   imageColor,
-  tooltipVisualProps = { place: 'top', type: 'dark', effect: 'solid' },
+  tooltipVisualProps = { place: 'top' },
   children,
   darkTheme,
   size,
   icon,
 }) => {
-  const { place, type, effect, border } = tooltipVisualProps
+  const { place } = tooltipVisualProps
   const iconComponent = icon ? <Icon type={icon}></Icon> : undefined
   const tooltipTriggerContents = iconComponent
     ? iconComponent
@@ -92,9 +92,6 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
       </button>
     ) : (
       <Dropdown.Toggle
-        data-for={idForToolTip}
-        data-tip={tooltipText}
-        id={idForToolTip}
         className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
           darkTheme ? 'dark-theme' : ''
         } `}
@@ -115,16 +112,13 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   }
 
   return (
-    <>
+    <Tooltip
+      title={tooltipText}
+      enterNextDelay={TOOLTIP_DELAY_SHOW}
+      placement={place}
+      data-testid="ElementTooltip"
+    >
       {tooltipTrigger}
-      <ReactTooltip
-        delayShow={TOOLTIP_DELAY_SHOW}
-        place={place}
-        type={type}
-        effect={effect}
-        border={border ? true : false}
-        id={idForToolTip}
-      />
-    </>
+    </Tooltip>
   )
 }
