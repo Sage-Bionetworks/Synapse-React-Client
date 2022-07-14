@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import React from 'react'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/search/useSearch'
 import { SearchQuery } from '../../../../utils/synapseTypes/Search'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
@@ -13,24 +12,11 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   searchQuery,
   ...sharedProps
 }) => {
-  const {
-    data,
-    isLoading,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-    error,
-    isError,
-  } = useSearchInfinite(searchQuery, {
-    enabled: !!searchQuery.queryTerm,
-  })
-  const handleError = useErrorHandler()
-
-  useEffect(() => {
-    if (isError && error) {
-      handleError(error)
-    }
-  }, [isError, error, handleError])
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useSearchInfinite(searchQuery, {
+      enabled: !!searchQuery.queryTerm,
+      useErrorBoundary: true,
+    })
 
   if (searchQuery.queryTerm) {
     return (

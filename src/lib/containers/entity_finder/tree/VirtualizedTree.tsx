@@ -162,7 +162,6 @@ export const getNodeData = (config: {
 
   const id = isRootNodeConfiguration(node) ? 'root' : node.id
 
-  const isOpenByDefault = autoExpand(id)
   const isSelected =
     treeNodeType === EntityTreeNodeType.SINGLE_PANE
       ? selected.has(id)
@@ -170,6 +169,8 @@ export const getNodeData = (config: {
   const isDisabled =
     !isRootNodeConfiguration(node) &&
     !selectableTypes.includes(getEntityTypeFromHeader(node))
+
+  const isOpenByDefault = autoExpand(id)
   /*
    * If the node is open by default and we haven't fetched its children,
    * fetch the first page (otherwise we won't fetch unless re-toggled)
@@ -239,14 +240,7 @@ export function Node(
     }
   }, [node, inView, getNextPageOfChildren])
 
-  /**
-   * If the height is 0, the node is purposefully hidden. Just render a fragment.
-   */
-  if ('height' in style && style.height === 0) {
-    return <></>
-  }
-
-  async function toggleExpand() {
+  const toggleExpand = useCallback(async () => {
     if (hasMoreChildren(node)) {
       setLoading(true)
       await getNextPageOfChildren()
@@ -255,6 +249,28 @@ export function Node(
     } else {
       await setOpen(!isOpen)
     }
+  }, [getNextPageOfChildren, node, isOpen, setOpen])
+
+  /**
+   * If in the dual-pane view, expand a node when it becomes selected
+   */
+  useEffect(() => {
+    if (
+      treeNodeType === EntityTreeNodeType.DUAL_PANE &&
+      isSelected &&
+      !isOpen
+    ) {
+      toggleExpand()
+    }
+    // Intentionally only toggle the expanded state when isSelected changes, otherwise the node cannot be un-expanded
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSelected])
+
+  /**
+   * If the height is 0, the node is purposefully hidden. Just render a fragment.
+   */
+  if ('height' in style && style.height === 0) {
+    return <></>
   }
 
   return (
@@ -266,17 +282,10 @@ export function Node(
       }`}
       aria-selected={isSelected}
       aria-disabled={isDisabled}
-      onClick={async event => {
+      onClick={event => {
         event.stopPropagation()
         if (!isDisabled) {
           setSelectedId(id)
-        }
-        if (
-          treeNodeType === EntityTreeNodeType.DUAL_PANE &&
-          !isOpen &&
-          !isSelected
-        ) {
-          await toggleExpand()
         }
       }}
       style={{
@@ -288,9 +297,9 @@ export function Node(
         <button
           className="ExpandButton"
           type="button"
-          onClick={async event => {
+          onClick={event => {
             event.stopPropagation()
-            await toggleExpand()
+            toggleExpand()
           }}
         >
           {isLoading ? <SynapseSpinner size={10} /> : isOpen ? '▾' : '▸'}
@@ -418,7 +427,7 @@ export type VirtualizedTreeProps = Readonly<{
   rootNodeConfiguration: RootNodeConfiguration
   setSelectedId: (entityId: string) => void
   selected: Map<string, number>
-  /* currentContainer is the container whose contents are shown on in the right pane in dual-pane configuration, and may only be defined when NodeAppearance is BROWSE */
+  /* currentContainer is the container whose contents are shown on in the right pane in dual-pane configuration, and may only be defined when treeNodeType is DUAL_PANE */
   currentContainer?: string | 'root' | null
   autoExpand: (entityId: string) => boolean
   selectableTypes: EntityType[]
