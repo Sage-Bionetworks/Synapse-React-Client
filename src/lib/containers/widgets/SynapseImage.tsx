@@ -10,7 +10,7 @@ import {
   FileHandleAssociation,
 } from '../../utils/synapseTypes/'
 
-type SynapseImageProps = {
+export type SynapseImageProps = {
   wikiId?: string
   synapseId?: string
   fileName?: string
