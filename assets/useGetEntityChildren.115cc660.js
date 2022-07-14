@@ -1,0 +1,2 @@
+import{W as u,bj as i,bz as s,aY as l,w as r}from"./index.225142e7.js";function c(e,a){const{accessToken:t}=r();return l(s.children(e,!1),()=>i(e,t),a)}function y(e,a){const{accessToken:t}=r();return u(s.children(e,!0),async n=>await i({...e,includeTotalChildCount:n.pageParam?!1:e.includeTotalChildCount,nextPageToken:n.pageParam},t,n.signal),{...a,getNextPageParam:n=>n.nextPageToken})}export{c as a,y as u};
+//# sourceMappingURL=useGetEntityChildren.115cc660.js.map
