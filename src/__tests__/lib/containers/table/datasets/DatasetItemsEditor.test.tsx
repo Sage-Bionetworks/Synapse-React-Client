@@ -24,10 +24,12 @@ import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
 import { EntityRef, Reference } from '../../../../../lib/utils/synapseTypes'
 import {
   mockDatasetEntity,
-  mockFileEntity,
   MOCK_DATASET_ENTITY_ID,
 } from '../../../../../mocks/entity/mockEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
+import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
+
+const mockFileEntity = mockFileEntityData.entity
 
 // Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
 jest.mock(

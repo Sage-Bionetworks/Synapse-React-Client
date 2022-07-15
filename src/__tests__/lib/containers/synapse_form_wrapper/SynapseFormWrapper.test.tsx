@@ -6,7 +6,7 @@ import SynapseFormWrapper, {
 } from '../../../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
 
 import { SynapseFormProps } from '../../../../lib/containers/synapse_form_wrapper/SynapseForm'
-import { mockFileEntity } from '../../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
 import { mockFileHandle } from '../../../../mocks/mock_file_handle'
 import {
   mockFileEntityWithVersion,
@@ -15,6 +15,7 @@ import {
 } from '../../../../mocks/mock_drug_tool_data'
 import _ from 'lodash-es'
 
+const mockFileEntity = mockFileEntityData.entity
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 const token: string = '123444'
 const formSchemaEntityId = 'syn9988882982'

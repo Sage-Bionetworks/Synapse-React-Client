@@ -7,8 +7,10 @@ import {
   ACCESS_TYPE,
 } from '../lib/utils/synapseTypes'
 import { AccessRequirementSearchResponse } from '../lib/utils/synapseTypes/AccessRequirement/AccessRequirementSearch'
-import { MOCK_PROJECT_ID } from './entity/mockEntity'
+import mockProjectData from './entity/mockProject'
 import { MOCK_USER_ID } from './user/mock_user_profile'
+
+const MOCK_PROJECT_ID = mockProjectData.id
 
 const defaultAccessRequirement = {
   id: 1,

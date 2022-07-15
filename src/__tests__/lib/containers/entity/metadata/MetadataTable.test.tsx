@@ -6,14 +6,14 @@ import {
 } from '../../../../../lib/containers/entity/metadata/MetadataTable'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
-import {
-  mockProjectEntityBundle,
-  MOCK_FILE_ENTITY_ID,
-  MOCK_PROJECT_ID,
-} from '../../../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { server } from '../../../../../mocks/msw/server'
 import { mockUserProfileData } from '../../../../../mocks/user/mock_user_profile'
+import mockProjectEntityData from '../../../../../mocks/entity/mockProject'
 
+const { id: MOCK_FILE_ENTITY_ID } = mockFileEntityData
+const { id: MOCK_PROJECT_ID, bundle: mockProjectEntityBundle } =
+  mockProjectEntityData
 const defaultProps: MetadataTableProps = {
   entityId: MOCK_PROJECT_ID,
 }

@@ -5,7 +5,7 @@ import FacetNavPanel, {
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
 import { render, screen } from '@testing-library/react'
 import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
-import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
+import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets'
 import { SynapseConstants } from '../../../../../lib/utils'
 import {
   QueryContextProvider,

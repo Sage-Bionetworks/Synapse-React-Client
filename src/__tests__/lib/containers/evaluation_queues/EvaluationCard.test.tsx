@@ -2,7 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
 import React from 'react'
-import { SynapseClient } from '../../../../lib'
+import { SynapseClient } from '../../../../lib/utils'
 import {
   EvaluationCard,
   EvaluationCardProps,
@@ -10,6 +10,7 @@ import {
 } from '../../../../lib/containers/evaluation_queues/EvaluationCard'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { UserEvaluationPermissions } from '../../../../lib/utils/synapseTypes/Evaluation/UserEvaluationPermissions'
+import { server } from '../../../../mocks/msw/server'
 
 describe('test Evaluation Card', () => {
   let permissions: UserEvaluationPermissions
@@ -23,7 +24,7 @@ describe('test Evaluation Card', () => {
   let mockOnModifyAccess: jest.Mock
   let mockOnSubmit: jest.Mock
   let mockOnDeleteSuccess: jest.Mock
-
+  beforeAll(() => server.listen())
   beforeEach(() => {
     evaluation = {
       id: '1234',
@@ -80,8 +81,10 @@ describe('test Evaluation Card', () => {
   })
 
   afterEach(() => {
+    server.restoreHandlers()
     jest.clearAllMocks()
   })
+  afterAll(() => server.close())
 
   test('retrieve evaluation permissions - failure', () => {
     mockGetEvaluationPermissions.mockImplementation(() => {

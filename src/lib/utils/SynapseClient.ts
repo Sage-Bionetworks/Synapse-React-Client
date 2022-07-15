@@ -1037,19 +1037,13 @@ export const getEntity = <T extends Entity>(
   )
 }
 
-/**
- * Get a list of entity headers given by entity ids
- * http://rest-docs.synapse.org/rest/GET/entity/type.html
- */
-export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>>(
+export const getEntityHeadersByIds = (
   entityIds: string[],
   accessToken?: string,
 ) => {
-  return doGet<T>(
-    `/repo/v1/entity/type?batch=${entityIds.join(',')}`,
+  return getEntityHeaders(
+    entityIds.map(id => ({ targetId: id })),
     accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 

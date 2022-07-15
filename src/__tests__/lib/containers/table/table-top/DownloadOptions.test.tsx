@@ -1,5 +1,10 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../../../../../lib/containers/QueryContext'
 import { DownloadOptions } from '../../../../../lib/containers/table/table-top'
 import {
   DownloadOptionsProps,
@@ -7,18 +12,10 @@ import {
 } from '../../../../../lib/containers/table/table-top/DownloadOptions'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import {
-  QueryContextProvider,
-  QueryContextType,
-} from '../../../../../lib/containers/QueryContext'
-import {
   mockDatasetEntity,
   mockFileViewEntity,
   mockTableEntity,
-  MOCK_DATASET_ENTITY_ID,
-  MOCK_TABLE_ENTITY_ID,
 } from '../../../../../mocks/entity/mockEntity'
-import { SignalCellularConnectedNoInternet0Bar } from '@material-ui/icons'
-import userEvent from '@testing-library/user-event'
 
 function renderComponent(
   props: DownloadOptionsProps,

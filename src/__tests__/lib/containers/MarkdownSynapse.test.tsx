@@ -5,16 +5,12 @@ import MarkdownSynapse, {
 } from '../../../lib/containers/MarkdownSynapse'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../lib/utils'
-import { ENTITY_BUNDLE_V2 } from '../../../lib/utils/APIConstants'
 import {
-  getEndpoint,
   BackendDestinationEnum,
+  getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
-import { delay } from '../../../lib/utils/SynapseClient'
-import { _TIME_DELAY } from '../../../lib/utils/SynapseConstants'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
-import { EntityType, WikiPage } from '../../../lib/utils/synapseTypes'
-import { mockFileEntityBundle } from '../../../mocks/entity/mockEntity'
+import { WikiPage } from '../../../lib/utils/synapseTypes'
 import { rest, server } from '../../../mocks/msw/server'
 
 jest.mock('../../../lib/containers/widgets/SynapsePlot', () => {

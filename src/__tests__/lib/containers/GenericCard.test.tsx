@@ -26,6 +26,7 @@ import {
   ShowMore,
 } from '../../../lib/containers/row_renderers/utils'
 import IconSvg from '../../../lib/containers/IconSvg'
+import { server } from '../../../mocks/msw/server'
 
 const renderComponent = (props: GenericCardProps) => {
   const wrapper = mount(<GenericCard {...props} />, {
@@ -38,6 +39,10 @@ const renderComponent = (props: GenericCardProps) => {
 mockAllIsIntersecting(true)
 
 describe('it renders the UI correctly', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   const tableId = 'TABLE_ID_MOCK'
 
   const iconOptions = {

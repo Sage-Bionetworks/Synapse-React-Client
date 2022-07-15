@@ -4,8 +4,10 @@ import {
 } from '../lib/utils/synapseTypes/Schema/JsonSchemaObjectBinding'
 import { ObjectType } from '../lib/utils/synapseTypes/Schema/ObjectType'
 import { ValidationResults } from '../lib/utils/synapseTypes/Schema/ValidationResults'
-import { mockFileEntity } from './entity/mockEntity'
+import mockFileEntityData from './entity/mockFileEntity'
 import { JSONSchema7 } from 'json-schema'
+
+const mockFileEntity = mockFileEntityData.entity
 
 export const mockSchemaBinding: JsonSchemaObjectBinding = {
   jsonSchemaVersionInfo: {

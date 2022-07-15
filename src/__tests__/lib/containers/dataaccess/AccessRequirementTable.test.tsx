@@ -19,13 +19,13 @@ import {
   AccessRequirementSearchRequest,
   AccessRequirementSearchResponse,
 } from '../../../../lib/utils/synapseTypes/AccessRequirement/AccessRequirementSearch'
-import {
-  MOCK_PROJECT_ID,
-  MOCK_PROJECT_NAME,
-} from '../../../../mocks/entity/mockEntity'
+import mockProjectData from '../../../../mocks/entity/mockProject'
 import { mockSearchResults } from '../../../../mocks/mockAccessRequirements'
 import { rest, server } from '../../../../mocks/msw/server'
 import { MOCK_USER_NAME } from '../../../../mocks/user/mock_user_profile'
+
+const MOCK_PROJECT_ID = mockProjectData.id
+const MOCK_PROJECT_NAME = mockProjectData.name
 
 const mockOnCreateNewAR = jest.fn()
 let queryClient: QueryClient

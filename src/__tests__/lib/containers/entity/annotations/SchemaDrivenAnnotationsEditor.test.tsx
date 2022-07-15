@@ -24,10 +24,7 @@ import {
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
-import {
-  mockFileEntityJson,
-  MOCK_FILE_ENTITY_ID,
-} from '../../../../../mocks/entity/mockEntity'
+import mockFileEntity from '../../../../../mocks/entity/mockFileEntity'
 import {
   mockSchemaBinding,
   mockValidationSchema,
@@ -48,7 +45,7 @@ const mockOnSuccessFn = jest.fn()
 const updatedJsonCaptor = jest.fn()
 
 const defaultProps: SchemaDrivenAnnotationEditorProps = {
-  entityId: MOCK_FILE_ENTITY_ID,
+  entityId: mockFileEntity.id,
   liveValidate: false,
   onSuccess: mockOnSuccessFn,
 }
@@ -100,7 +97,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntityJson
+      const response = mockFileEntity.json
       // Delete the annotation keys in the mock--we aren't using them in this suite
       delete response.myStringKey
       delete response.myIntegerKey
@@ -115,7 +112,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntityJson
+      const response = mockFileEntity.json
       // Delete the other annotation keys
       delete response.myStringKey
       delete response.myIntegerKey
@@ -135,7 +132,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntityJson
+      const response = mockFileEntity.json
       // Delete the other annotation keys
       delete response.myStringKey
       delete response.myIntegerKey
@@ -155,7 +152,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntityJson
+      const response = mockFileEntity.json
       // Delete the other annotation keys
       delete response.myStringKey
       delete response.myIntegerKey

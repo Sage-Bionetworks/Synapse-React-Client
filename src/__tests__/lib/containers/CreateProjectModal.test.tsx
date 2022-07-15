@@ -6,11 +6,11 @@ import {
 } from '../../../lib/containers/CreateProjectModal'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
-import {
-  MOCK_INVALID_PROJECT_NAME,
-  MOCK_PROJECT_NAME,
-} from '../../../mocks/entity/mockEntity'
+import { MOCK_INVALID_PROJECT_NAME } from '../../../mocks/entity/mockEntity'
+import mockProjectEntityData from '../../../mocks/entity/mockProject'
 import { server } from '../../../mocks/msw/server'
+
+const MOCK_PROJECT_NAME = mockProjectEntityData.name
 
 const defaultProps: CreateProjectModalProps = {
   isShowingModal: true,
