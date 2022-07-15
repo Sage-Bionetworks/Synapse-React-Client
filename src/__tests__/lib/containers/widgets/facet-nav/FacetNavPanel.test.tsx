@@ -3,16 +3,16 @@ import FacetNavPanel, {
   FacetNavPanelProps,
   truncate,
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNavPanel'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { FacetColumnResultValues } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
-import { SynapseConstants } from '../../../../../lib'
-import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
+import { SynapseConstants } from '../../../../../lib/utils'
 import {
   QueryContextProvider,
   QueryContextType,
 } from '../../../../../lib/containers/QueryContext'
 import { QueryVisualizationContextProvider } from '../../../../../lib/containers/QueryVisualizationWrapper'
+import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 
 const mockApplyCallback = jest.fn(() => null)
 const mockHideCallback = jest.fn(() => null)
@@ -56,7 +56,6 @@ const defaultQueryContext: Partial<QueryContextType> = {
   isLoadingNewBundle: false,
 }
 
-let container: HTMLElement
 let props: FacetNavPanelProps
 
 function init(
@@ -64,25 +63,25 @@ function init(
   queryContextProps?: Partial<QueryContextType>,
 ) {
   props = createTestProps(overrides)
-  container = render(
-    <SynapseTestContext>
-      <QueryContextProvider
-        queryContext={{
-          ...defaultQueryContext,
-          ...queryContextProps,
-        }}
-      >
-        <QueryVisualizationContextProvider queryVisualizationContext={{}}>
-          <FacetNavPanel {...props} />
-        </QueryVisualizationContextProvider>
-      </QueryContextProvider>
-    </SynapseTestContext>,
-  ).container
+  return render(
+    <QueryContextProvider
+      queryContext={{
+        ...defaultQueryContext,
+        ...queryContextProps,
+      }}
+    >
+      <QueryVisualizationContextProvider queryVisualizationContext={{}}>
+        <FacetNavPanel {...props} />
+      </QueryVisualizationContextProvider>
+    </QueryContextProvider>,
+    { wrapper: createWrapper() },
+  )
 }
 
-describe('initialization', () => {
+describe('FacetNavPanel tests', () => {
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
-    init()
+    const { container } = init()
+    await screen.findByRole('graphics-document')
     const panel = container.querySelectorAll<HTMLElement>('div.FacetNavPanel')
     expect(panel).toHaveLength(1)
 
@@ -104,11 +103,12 @@ describe('initialization', () => {
 
   it('should initiate the panel with correct buttons and class when expanded', async () => {
     //when expanded the onCollapse callback is passed but onExpand is not
-    init({
+    const { container } = init({
       ...props,
       onSetPlotType: mockSetPlotTypeCallback,
       isModalView: true,
     })
+    await screen.findByRole('graphics-document')
     const panel = container.querySelectorAll<HTMLElement>(
       'div.FacetNavPanel--expanded',
     )

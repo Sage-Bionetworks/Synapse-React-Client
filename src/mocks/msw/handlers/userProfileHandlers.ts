@@ -1,6 +1,7 @@
 import { rest } from 'msw'
 import {
   FAVORITES,
+  NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
   USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
@@ -18,7 +19,11 @@ import {
   UserProfile,
 } from '../../../lib/utils/synapseTypes'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
-import { mockUserData, mockUserProfileData } from '../../user/mock_user_profile'
+import {
+  mockUserBundle,
+  mockUserData,
+  mockUserProfileData,
+} from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 
 export const userProfileHandlers = [
@@ -138,6 +143,16 @@ export const userProfileHandlers = [
       return res(
         ctx.status(404),
         ctx.json({ reason: 'user has no profile image' }),
+      )
+    },
+  ),
+
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${NOTIFICATION_EMAIL}`,
+    async (req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json({ email: mockUserBundle.userProfile?.email }),
       )
     },
   ),

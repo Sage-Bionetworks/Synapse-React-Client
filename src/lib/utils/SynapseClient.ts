@@ -11,6 +11,7 @@ import {
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   ALIAS_AVAILABLE,
+  APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
   DATA_ACCESS_SUBMISSION_BY_ID,
   ENTITY,
@@ -21,6 +22,8 @@ import {
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
+  EVALUATION,
+  EVALUATION_BY_ID,
   FAVORITES,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
@@ -2057,7 +2060,7 @@ export const getEvaluation = (
     return Promise.reject(new Error('evalId is empty'))
   }
   return doGet<Evaluation>(
-    `/repo/v1/evaluation/${evalId}`,
+    EVALUATION_BY_ID(evalId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2078,7 +2081,7 @@ export const updateEvaluation = (
     return Promise.reject(new Error('evaluation does not have an ID'))
   }
   return doPut<Evaluation>(
-    `/repo/v1/evaluation/${evaluation.id}`,
+    EVALUATION_BY_ID(evaluation.id),
     evaluation,
     accessToken,
     undefined,
@@ -2095,7 +2098,7 @@ export const createEvaluation = (
   accessToken: string | undefined,
 ): Promise<Evaluation> => {
   return doPost<Evaluation>(
-    '/repo/v1/evaluation/',
+    EVALUATION,
     evaluation,
     accessToken,
     undefined,
@@ -3749,7 +3752,7 @@ export const getApprovedSubmissionInfo = (
   accessToken: string | undefined,
 ) => {
   return doPost<SubmissionInfoPage>(
-    `/repo/v1/accessRequirement/${submissionInfoPageRequest.accessRequirementId}/approvedSubmissionInfo`,
+    APPROVED_SUBMISSION_INFO(submissionInfoPageRequest.accessRequirementId),
     submissionInfoPageRequest,
     accessToken,
     undefined,

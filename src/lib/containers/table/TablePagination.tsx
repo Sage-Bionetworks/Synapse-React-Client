@@ -33,11 +33,10 @@ export const TablePagination = () => {
         name="page size"
         onChange={handlePageSize}
         style={{ padding: '4px', marginLeft: '4px' }}
+        value={pageSize}
       >
         <option value={10}>10 per page</option>
-        <option selected value={25}>
-          25 per page
-        </option>
+        <option value={25}>25 per page</option>
         <option value={100}>100 per page</option>
         <option value={500}>500 per page</option>
       </select>

@@ -3,7 +3,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { when } from 'jest-when'
 import React from 'react'
-import { SynapseClient } from '../../../../lib'
+import { SynapseClient } from '../../../../lib/utils'
 import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,

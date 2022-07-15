@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { SynapseConstants } from '../../../lib'
+import { SynapseConstants } from '../../../lib/utils'
 import { QueryVisualizationContextType } from '../../../lib/containers/QueryVisualizationWrapper'
 import {
   QueryContextProvider,
@@ -200,7 +200,7 @@ describe('SynapseTable tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('Does not renders HasAccess when the entity type is EntityView', async () => {
+  it('Does not render HasAccess when the entity type is EntityView', async () => {
     renderTable(
       {
         ...props,

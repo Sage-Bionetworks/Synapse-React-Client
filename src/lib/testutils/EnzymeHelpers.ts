@@ -10,7 +10,6 @@ export async function resolveAllPending(
 ) {
   await act(async (): Promise<any> => {
     await Promise.resolve(wrapper)
-    await new Promise(resolve => setImmediate(resolve))
     wrapper.update()
     return wrapper
   })

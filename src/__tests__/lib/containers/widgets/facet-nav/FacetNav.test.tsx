@@ -3,15 +3,14 @@ import FacetNav, {
 } from '../../../../../lib/containers/widgets/facet-nav/FacetNav'
 import * as React from 'react'
 import { cloneDeep } from 'lodash-es'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import {
   QueryResultBundle,
   QueryBundleRequest,
 } from '../../../../../lib/utils/synapseTypes'
 import testData from '../../../../../mocks/mockQueryResponseDataWithManyEnumFacets.json'
-import { SynapseConstants } from '../../../../../lib'
+import { SynapseConstants } from '../../../../../lib/utils'
 import userEvent from '@testing-library/user-event'
-import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 import {
   QueryContextProvider,
   QueryContextType,
@@ -20,6 +19,7 @@ import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
 } from '../../../../../lib/containers/QueryVisualizationWrapper'
+import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -85,7 +85,7 @@ function init(
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     {
-      wrapper: SynapseTestContext,
+      wrapper: createWrapper(),
     },
   )
 }
@@ -93,12 +93,13 @@ function init(
 describe('facets display hide/show', () => {
   it("should display 2 facets with 'show more' button", async () => {
     init()
-    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
     screen.getByRole('button', { name: 'View All Charts' })
   })
 
   it('shows all facet plots when show more is clicked', async () => {
     init()
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
 
     const showMoreButton = screen.getByRole('button', {
       name: 'View All Charts',
@@ -110,7 +111,7 @@ describe('facets display hide/show', () => {
       facet => facet.facetType === 'enumeration',
     ).length
 
-    expect((await screen.findAllByRole('graphics-document')).length).toBe(
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(
       expectedLength,
     )
 
@@ -123,6 +124,8 @@ describe('facets display hide/show', () => {
     init(undefined, {
       data: data,
     })
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
+
     expect(() => screen.getByText('View All Charts')).toThrowError()
   })
 
@@ -132,36 +135,33 @@ describe('facets display hide/show', () => {
     })
 
     // Only two plots are shown and the button is hidden
-    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
     expect(() => screen.getByText('View All Charts')).toThrowError()
   })
 
   it('hiding facet should hide it from facet grid', async () => {
     init()
 
-    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
 
     const closeFacetPlotButton = getButtonOnFacet('Hide graph', 0)!
     userEvent.click(closeFacetPlotButton)
-
-    await waitFor(() => {
-      expect(screen.getAllByRole('graphics-document').length).toBe(1)
-    })
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(1)
   })
 
   it('expanding facet should additionally show the facet in a modal', async () => {
     init()
-    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
 
     expect(() => screen.getByRole('dialog')).toThrowError()
     const expandButton = getButtonOnFacet('expand', 1)!
     userEvent.click(expandButton)
 
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(1)
     screen.getByRole('dialog')
-    expect(screen.getAllByRole('graphics-document').length).toBe(1)
 
     // Close the modal
     userEvent.click(screen.getByRole('button', { name: 'Close' }))
-    expect(screen.getAllByRole('graphics-document').length).toBe(2)
+    expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
   })
 })

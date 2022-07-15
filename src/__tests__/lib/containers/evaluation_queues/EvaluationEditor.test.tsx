@@ -1,19 +1,22 @@
-import { Evaluation } from '../../../../lib/utils/synapseTypes'
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
 import {
   EvaluationEditor,
   EvaluationEditorProps,
 } from '../../../../lib/containers/evaluation_queues/EvaluationEditor'
-import JestMockPromise from 'jest-mock-promise'
-import { SynapseClient } from '../../../../lib/utils'
-import { mount } from 'enzyme'
-import React from 'react'
-import { Form } from 'react-bootstrap'
-import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
-import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../../mocks/MockSynapseContext'
+  EVALUATION,
+  EVALUATION_BY_ID,
+} from '../../../../lib/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '../../../../lib/utils/functions/getEndpoint'
+import { Evaluation } from '../../../../lib/utils/synapseTypes'
+import { rest, server } from '../../../../mocks/msw/server'
+import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
 
 describe('test EvaluationEditor', () => {
   const evaluationId = '1234'
@@ -21,29 +24,26 @@ describe('test EvaluationEditor', () => {
   let evaluation: Evaluation
   let props: EvaluationEditorProps
 
-  let mockOnDeleteSuccess: jest.Mock
+  const mockOnSaveSuccess = jest.fn()
+  const mockOnDeleteSuccess = jest.fn()
 
-  let mockGetEvaluation: jest.Mock
-  let mockCreateEvaluation: jest.Mock
-  let mockUpdateEvaluation: jest.Mock
-  let mockDeleteEvaluation: jest.Mock
-  let mockOnSaveSuccess: jest.Mock
+  const onCreateEvaluation = jest.fn()
+  const onUpdateEvaluation = jest.fn()
+  const onDeleteEvaluation = jest.fn()
 
+  beforeAll(() => server.listen())
   beforeEach(() => {
     evaluation = {
       id: evaluationId,
       etag: 'eeeeeeeeeeeeeeeee',
       name: 'E V A L U A T I O N',
       description: 'This is an awesome queue',
-      ownerId: '1231231321',
+      ownerId: MOCK_USER_ID.toString(),
       createdOn: '2020-09-18T09:44:04.939Z',
       contentSource: entityId,
       submissionInstructionsMessage: "no you can't just make a submission",
       submissionReceiptMessage: 'haha submission go brrrrrrrr',
     }
-
-    mockOnDeleteSuccess = jest.fn()
-    mockOnSaveSuccess = jest.fn()
 
     props = {
       evaluationId: evaluationId,
@@ -51,266 +51,294 @@ describe('test EvaluationEditor', () => {
       onSaveSuccess: mockOnSaveSuccess,
     }
 
-    mockGetEvaluation = jest.fn(
-      () => new JestMockPromise(resolve => resolve(evaluation)),
-    )
-    jest
-      .spyOn(SynapseClient, 'getEvaluation')
-      .mockImplementation(mockGetEvaluation)
+    server.use(
+      // getEvaluation
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
+          ':evalId',
+        )}`,
+        async (req, res, ctx) => {
+          return res(ctx.status(200), ctx.json(evaluation))
+        },
+      ),
+      // updateEvaluation
+      rest.put(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
+          ':evalId',
+        )}`,
+        async (req, res, ctx) => {
+          onUpdateEvaluation()
+          return res(ctx.status(200), ctx.json(evaluation))
+        },
+      ),
 
-    mockUpdateEvaluation = jest.fn(
-      () => new JestMockPromise(resolve => resolve(evaluation)),
-    )
-    jest
-      .spyOn(SynapseClient, 'updateEvaluation')
-      .mockImplementation(mockUpdateEvaluation)
+      // createEvaluation
+      rest.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION}`,
+        async (req, res, ctx) => {
+          onCreateEvaluation()
+          return res(ctx.status(201), ctx.json(evaluation))
+        },
+      ),
 
-    mockCreateEvaluation = jest.fn(
-      () => new JestMockPromise(resolve => resolve(evaluation)),
+      // deleteEvaluation
+      rest.delete(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
+          ':evalId',
+        )}`,
+        async (req, res, ctx) => {
+          onDeleteEvaluation()
+          return res(ctx.status(202))
+        },
+      ),
     )
-    jest
-      .spyOn(SynapseClient, 'createEvaluation')
-      .mockImplementation(mockCreateEvaluation)
-
-    mockDeleteEvaluation = jest.fn(
-      () => new JestMockPromise(resolve => resolve()),
-    )
-    jest
-      .spyOn(SynapseClient, 'deleteEvaluation')
-      .mockImplementation(mockDeleteEvaluation)
   })
-
   afterEach(() => {
+    server.restoreHandlers()
     jest.clearAllMocks()
   })
-
-  test('retrieve evaluation from API if evaluationId is provided', () => {
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
-    })
-
-    expect(wrapper.find('h4').text()).toBe('Edit Evaluation Queue')
-    expect(mockGetEvaluation).toBeCalledWith(
-      evaluationId,
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+  afterAll(() => {
+    server.close()
   })
 
-  test('do not retrieve evaluation from API if id is not provided', () => {
+  test('retrieve evaluation from API if evaluationId is provided', async () => {
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
+    })
+
+    await screen.findByText('Edit Evaluation Queue')
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  test('do not retrieve evaluation from API if id is not provided', async () => {
     props = { ...props, entityId, evaluationId: undefined }
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('h4').text()).toBe('Create Evaluation Queue')
-    expect(mockGetEvaluation).not.toBeCalled()
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+    await screen.findByText('Create Evaluation Queue')
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
-  test('retrieve evaluation from API failed', () => {
-    mockGetEvaluation.mockImplementation(
-      () =>
-        new JestMockPromise((resolve, reject) =>
-          reject(new Error('GetEvaluation error')),
-        ),
+  test('retrieve evaluation from API failed', async () => {
+    server.use(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
+          ':evalId',
+        )}`,
+        async (req, res, ctx) => {
+          return res(
+            ctx.status(400),
+            ctx.json({ reason: 'GetEvaluation error' }),
+          )
+        },
+      ),
     )
 
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(mockGetEvaluation).toBeCalledWith(
-      evaluationId,
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
+    within(await screen.findByRole('alert')).getByText('GetEvaluation error')
   })
 
   test('error thrown when using both evaluationId and entityId', () => {
     props = { ...props, entityId, evaluationId }
 
-    jest.spyOn(console, 'error')
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() =>
-      mount(<EvaluationEditor {...props} />, {
-        wrappingComponent: SynapseTestContext,
+      render(<EvaluationEditor {...props} />, {
+        wrapper: createWrapper(),
       }),
     ).toThrow(Error)
+
+    consoleSpy.mockRestore()
   })
 
-  test('save button clicked when using entityId creates new evaluation', () => {
+  test('save button clicked when using entityId creates new evaluation', async () => {
     props = { ...props, entityId, evaluationId: undefined }
 
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    const nameInputBox = wrapper.find(Form.Control).at(0)
-    expect(nameInputBox.prop('value')).toBe('')
-    nameInputBox.simulate('change', {
-      target: { value: 'E V A L U A T I O N' },
-    })
+    const nameInputBox = await screen.findByLabelText('Name')
+    userEvent.type(nameInputBox, 'E V A L U A T I O N')
 
-    wrapper.find('Button.save-button').simulate('click')
+    let saveButton = screen.getByRole('button', { name: 'Save' })
+    userEvent.click(saveButton)
 
-    expect(mockCreateEvaluation).toBeCalledWith(
-      {
-        contentSource: 'syn1111111',
-        description: '',
-        name: 'E V A L U A T I O N',
-        submissionInstructionsMessage: '',
-        submissionReceiptMessage: '',
-      },
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    expect(mockUpdateEvaluation).not.toBeCalled()
+    await waitFor(() => expect(onCreateEvaluation).toBeCalled())
+    expect(onUpdateEvaluation).not.toBeCalled()
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
 
     //clicking save button again after the first time should call update instead
-    wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(
-      evaluation,
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
+    saveButton = screen.getByRole('button', { name: 'Save' })
+    userEvent.click(saveButton)
+    await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveClass('save-success-alert')
   })
 
-  test('save button clicked when using evaluationId updates evaluation', () => {
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+  test('save button clicked when using evaluationId updates evaluation', async () => {
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
-
+    await screen.findByText('Edit Evaluation Queue')
     //clicking save button again after the first time should call update instead
-    wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(
-      evaluation,
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    expect(mockCreateEvaluation).not.toBeCalled()
-    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(true)
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    userEvent.click(saveButton)
+    await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
+    expect(onCreateEvaluation).not.toBeCalled()
+    await waitFor(() => expect(mockOnSaveSuccess).toBeCalledWith(evaluationId))
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveClass('save-success-alert')
   })
 
-  test('save button clicked - save failure', () => {
-    mockUpdateEvaluation.mockImplementation(
-      () =>
-        new JestMockPromise((resolve, reject) =>
-          reject(new Error('UpdateEvaluation error')),
-        ),
+  test('save button clicked - save failure', async () => {
+    server.use(
+      rest.put(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
+          ':evalId',
+        )}`,
+        async (req, res, ctx) => {
+          onUpdateEvaluation()
+          return res(
+            ctx.status(404),
+            ctx.json({ reason: 'UpdateEvaluation error' }),
+          )
+        },
+      ),
     )
 
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
+    await screen.findByText('Edit Evaluation Queue')
+
     //clicking save button again after the first time should call update instead
-    wrapper.find('Button.save-button').simulate('click')
-    expect(mockUpdateEvaluation).toBeCalledWith(
-      evaluation,
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    expect(mockCreateEvaluation).not.toBeCalled()
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    userEvent.click(saveButton)
+
+    await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
+    expect(onCreateEvaluation).not.toBeCalled()
+    const alert = await screen.findByRole('alert')
+    expect(alert).not.toHaveClass('save-success-alert')
+    within(alert).getByText('UpdateEvaluation error')
     expect(mockOnSaveSuccess).not.toBeCalled()
-    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
   })
 
-  test('dropdown menu evaluation has no id - hide delete option', () => {
+  test('dropdown menu evaluation has no id - hide delete option', async () => {
     props = { ...props, entityId, evaluationId: undefined }
 
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    wrapper.find('DropdownToggle').simulate('click')
+    const dropdownToggle = await screen.findByRole('button', { name: '' })
+    userEvent.click(dropdownToggle)
 
     // the warning modal for delete should not be instantiated at all
-    expect(wrapper.find(WarningModal).exists()).toBe(false)
+    const dropdownItems = await screen.findAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(1)
 
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(1)
+    const saveOption = dropdownItems[0]
+    within(saveOption).getByText('Save')
+    userEvent.click(saveOption)
 
-    const saveOption = dropdownItems.at(0)
-    expect(saveOption.text()).toBe('Save')
-    saveOption.simulate('click')
-    expect(mockCreateEvaluation).toBeCalled()
-    expect(mockUpdateEvaluation).not.toBeCalled()
+    await waitFor(() => expect(onCreateEvaluation).toBeCalled())
+    expect(onUpdateEvaluation).not.toBeCalled()
   })
 
-  test('dropdown menu evaluation has id - delete successful', () => {
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+  test('dropdown menu evaluation has id - delete successful', async () => {
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    wrapper.find('DropdownToggle').simulate('click')
+    await screen.findByText('Edit Evaluation Queue')
 
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(2)
+    const dropdownToggle = await screen.findByRole('button', { name: '' })
+    userEvent.click(dropdownToggle)
 
-    const saveOption = dropdownItems.at(0)
-    expect(saveOption.text()).toBe('Save')
-    saveOption.simulate('click')
-    expect(mockCreateEvaluation).not.toBeCalled()
-    expect(mockUpdateEvaluation).toBeCalled()
+    const dropdownItems = await screen.findAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(2)
 
-    const deleteOption = dropdownItems.at(1)
-    expect(deleteOption.text()).toBe('Delete')
-    deleteOption.simulate('click')
+    const saveOption = dropdownItems[0]
+    within(saveOption).getByText('Save')
+    userEvent.click(saveOption)
+    await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
+    expect(onCreateEvaluation).not.toBeCalled()
 
-    const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
+    const deleteOption = dropdownItems[1]
+    within(deleteOption).getByText('Delete')
+    userEvent.click(deleteOption)
+
+    const warningModal = await screen.findByRole('dialog')
 
     //simulate the warning button click
-    deleteWarningModal.find('.btn-danger').simulate('click')
-
-    expect(mockDeleteEvaluation).toBeCalled()
-    expect(mockOnDeleteSuccess).toBeCalled()
-
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+    const deleteButton = await within(warningModal).findByRole('button', {
+      name: 'Delete',
+    })
+    userEvent.click(deleteButton)
+    await waitFor(() => expect(onDeleteEvaluation).toBeCalled())
+    await waitFor(() => expect(mockOnDeleteSuccess).toBeCalled())
   })
 
-  test('dropdown menu evaluation has id - delete failed', () => {
-    mockDeleteEvaluation.mockImplementation(
-      () =>
-        new JestMockPromise((resolve, reject) =>
-          reject(new Error('GetEvaluation error')),
-        ),
+  test('dropdown menu evaluation has id - delete failed', async () => {
+    server.use(
+      rest.delete(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
+          ':evalId',
+        )}`,
+        async (req, res, ctx) => {
+          onDeleteEvaluation()
+          return res(
+            ctx.status(400),
+            ctx.json({ reason: 'DeleteEvaluation error' }),
+          )
+        },
+      ),
     )
-
-    const wrapper = mount(<EvaluationEditor {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationEditor {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    wrapper.find('DropdownToggle').simulate('click')
+    await screen.findByText('Edit Evaluation Queue')
 
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(2)
+    const dropdownToggle = await screen.findByRole('button', { name: '' })
+    userEvent.click(dropdownToggle)
 
-    const saveOption = dropdownItems.at(0)
-    expect(saveOption.text()).toBe('Save')
-    saveOption.simulate('click')
-    expect(mockCreateEvaluation).not.toBeCalled()
-    expect(mockUpdateEvaluation).toBeCalled()
+    const dropdownItems = await screen.findAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(2)
+
+    const saveOption = dropdownItems[0]
+    within(saveOption).getByText('Save')
+    userEvent.click(saveOption)
+    await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
+    expect(onCreateEvaluation).not.toBeCalled()
 
     //delete should exist, but clicking it is predestined to fail
-    const deleteOption = dropdownItems.at(1)
-    expect(deleteOption.text()).toBe('Delete')
-    deleteOption.simulate('click')
+    const deleteOption = dropdownItems[1]
+    within(deleteOption).getByText('Delete')
+    userEvent.click(deleteOption)
 
-    const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
+    const dialog = await screen.findByRole('dialog')
 
     //simulate the warning button click
-    deleteWarningModal.find('.btn-danger').simulate('click')
+    const deleteButton = within(dialog).getByRole('button', { name: 'Delete' })
+    userEvent.click(deleteButton)
 
-    expect(mockDeleteEvaluation).toBeCalled()
+    await screen.findByText('DeleteEvaluation error')
+    expect(onDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).not.toBeCalled()
 
-    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
-    expect(wrapper.find('Alert.save-success-alert').exists()).toBe(false)
+    const alert = await screen.findByRole('alert')
+    expect(alert).not.toHaveClass('save-success-alert')
   })
 })
