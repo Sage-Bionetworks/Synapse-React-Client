@@ -9,7 +9,6 @@ import {
   isContainerType,
   isVersionableEntityType,
 } from '../../../../utils/functions/EntityTypeUtils'
-import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
 import { getEntityVersions } from '../../../../utils/SynapseClient'
 import { useSynapseContext } from '../../../../utils/SynapseContext'
 import {
@@ -358,7 +357,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
         headlineText={'Fetching selected items'}
         onCancel={cancelQuery}
       />
-      <AutoResizer className="DetailsViewAutosizer" onResize={rebuildTooltip}>
+      <AutoResizer className="DetailsViewAutosizer">
         {({ height, width }: { height: number; width: number }) => (
           <BaseTable<EntityFinderTableViewRowData>
             classPrefix="DetailsViewTable"
@@ -398,8 +397,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 )
               }
             }}
-            onRowsRendered={rebuildTooltip}
-            onScroll={rebuildTooltip}
             rowEventHandlers={{
               onClick: ({ rowData }) => {
                 const { id, isDisabled, isVersionableEntity } = rowData

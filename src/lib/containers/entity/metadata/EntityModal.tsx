@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react'
+import Skeleton from '@material-ui/lab/Skeleton'
+import Form from '@rjsf/core'
+import React, { useRef, useState } from 'react'
 import { Modal } from 'react-bootstrap'
 import {
   entityTypeToFriendlyName,
@@ -9,16 +11,13 @@ import {
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
-import { AnnotationsTable } from './AnnotationsTable'
-import { MetadataTable } from './MetadataTable'
-import Skeleton from '@material-ui/lab/Skeleton'
-import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
-import { SynapseErrorBoundary } from '../../ErrorBanner'
 import { VersionableEntity } from '../../../utils/synapseTypes'
-import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
+import { SynapseErrorBoundary } from '../../ErrorBanner'
 import { FluidModal } from '../../FluidModal'
 import { displayToast } from '../../ToastMessage'
-import Form from '@rjsf/core'
+import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
+import { AnnotationsTable } from './AnnotationsTable'
+import { MetadataTable } from './MetadataTable'
 
 export enum EntityModalTabs {
   METADATA = 'METADATA', // non-annotation metadata about the entity
@@ -65,10 +64,6 @@ export const EntityModal: React.FC<EntityModalProps> = ({
 
   const isLatestVersion =
     isVersionable && (entityBundle.entity as VersionableEntity).isLatestVersion!
-
-  useEffect(() => {
-    rebuildTooltip()
-  })
 
   let primaryAction
   let secondaryActions
