@@ -9,7 +9,6 @@ import React, { SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
-import { rebuildTooltip } from '../../../../utils/functions/TooltipUtils'
 import {
   useGetEntity,
   useGetVersionsInfinite,
@@ -451,11 +450,7 @@ export function DatasetEditorCheckboxRenderer(
 
 export const EntityErrorRenderer = (props: EntityIdAndVersionRendererProps) => {
   const { entityId, versionNumber } = props.rowData
-  const { error, isError } = useGetEntity(entityId, versionNumber, {
-    onError: () => {
-      rebuildTooltip()
-    },
-  })
+  const { error, isError } = useGetEntity(entityId, versionNumber)
 
   let message = error?.reason
 
