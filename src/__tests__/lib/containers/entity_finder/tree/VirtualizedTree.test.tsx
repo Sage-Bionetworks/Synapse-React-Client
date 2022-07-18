@@ -2,6 +2,7 @@ import '@testing-library/jest-dom'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
+import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { VariableSizeNodePublicState } from 'react-vtree'
@@ -666,6 +667,54 @@ describe('VirtualizedTree tests', () => {
         wrapper: createWrapper(),
       })
       await screen.findByText(nodeProps.data.node.nodeText)
+    })
+
+    it('Expands the node when selected in Dual Pane mode', async () => {
+      const mockFetchNextPage = jest.fn()
+      const mockSetOpen = jest.fn()
+      const nodeProps: NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      > = {
+        style: { height: 50 },
+        data: {
+          id: 'root-pagination',
+          isOpenByDefault: false,
+          defaultHeight: 50,
+          node: {
+            show: true,
+            nodeText: 'My Favorites',
+            children: [],
+            fetchNextPage: async () => {},
+            hasNextPage: false,
+          },
+          getNextPageOfChildren: mockFetchNextPage,
+          isLeaf: false,
+          nestingLevel: 0,
+          setSelectedId: id => {},
+          treeNodeType: EntityTreeNodeType.DUAL_PANE,
+          isSelected: false,
+          isDisabled: false,
+        },
+        setOpen: mockSetOpen,
+        isOpen: false,
+        height: 50,
+        resize: (height: number) => {},
+      }
+      const { rerender } = render(<Node {...nodeProps} />, {
+        wrapper: createWrapper(),
+      })
+
+      // Should start in unexpanded state
+      await screen.findByText('▸')
+
+      // `isSelected` changes. This could happen via props, see SWC-6205
+      const newProps = cloneDeep(nodeProps)
+      newProps.data.isSelected = true
+      rerender(<Node {...newProps} />)
+
+      // Should have called to be expanded
+      await waitFor(() => expect(mockSetOpen).toBeCalledWith(true))
     })
   })
 })

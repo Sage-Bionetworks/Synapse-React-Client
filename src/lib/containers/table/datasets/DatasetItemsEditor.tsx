@@ -7,7 +7,6 @@ import { isEqual } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
-import { rebuildTooltip } from '../../../utils/functions/TooltipUtils'
 import {
   useGetEntity,
   useGetEntityPath,
@@ -534,7 +533,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           datasetToUpdate.items.length === 0 ? (
             <NoItemsPlaceholder></NoItemsPlaceholder>
           ) : (
-            <AutoResizer height={TABLE_HEIGHT} onResize={rebuildTooltip}>
+            <AutoResizer height={TABLE_HEIGHT}>
               {({ height, width }: { height: number; width: number }) => (
                 <BaseTable
                   classPrefix="DatasetEditorTable"
@@ -553,8 +552,6 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
                   headerCellProps={{
                     role: 'columnheader',
                   }}
-                  onRowsRendered={rebuildTooltip}
-                  onScroll={rebuildTooltip}
                 ></BaseTable>
               )}
             </AutoResizer>

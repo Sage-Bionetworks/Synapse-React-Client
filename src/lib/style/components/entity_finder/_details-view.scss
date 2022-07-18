@@ -76,6 +76,8 @@ $row-hovered-background-color: unset;
 
   .EntityFinderTableCellContainerLink {
     @include SrcMixins.normalLink();
+    // Add cursor: pointer in case the link is in a disabled (unselectable) row
+    cursor: pointer;
   }
 
   .EntityFinderTableCellEntityIcon svg {

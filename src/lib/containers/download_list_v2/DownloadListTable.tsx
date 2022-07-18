@@ -27,6 +27,7 @@ import { FilesStatisticsResponse } from '../../utils/synapseTypes/DownloadListV2
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import { BlockingLoader } from '../LoadingScreen'
 import Tooltip from '../../utils/tooltip/Tooltip'
+import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 export const TESTING_CLEAR_BTN_CLASS = 'TESTING_CLEAR_BTN_CLASS'
 
@@ -171,34 +172,6 @@ export default function DownloadListTable(props: DownloadListTableProps) {
     )
   }
 
-  const InteractiveCopyIdsIcon = () => {
-    return (
-      <Tooltip
-        title="Copy IDs to the clipboard"
-        enterNextDelay={TOOLTIP_DELAY_SHOW}
-        placement="right"
-      >
-        <span>
-          <button
-            data-testid="copySynIdsButton"
-            onClick={() => {
-              // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
-              setCopyingAllSynapseIDs(true)
-            }}
-          >
-            <span style={{ height: 15, marginTop: -1 }}>
-              <IconSvg
-                options={{
-                  icon: 'contentCopy',
-                }}
-              />
-            </span>
-          </button>
-        </span>
-      </Tooltip>
-    )
-  }
-
   const availableFiltersArray: AvailableFilter[] = [
     undefined,
     'eligibleForPackaging',
@@ -248,7 +221,12 @@ export default function DownloadListTable(props: DownloadListTableProps) {
                 </th>
                 <th>
                   SynID
-                  <InteractiveCopyIdsIcon />
+                  <InteractiveCopyIdsIcon
+                    onCopy={() => {
+                      // trigger loading all pages of the download list table, and then copy all IDs to the clipboard
+                      setCopyingAllSynapseIDs(true)
+                    }}
+                  />
                   <InteractiveSortIcon columnSortBy="synId" />
                 </th>
                 <th>

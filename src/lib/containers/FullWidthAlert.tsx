@@ -8,7 +8,6 @@ import {
   Clear,
 } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
-import { rebuildTooltip } from '../utils/functions/TooltipUtils'
 import Tooltip from '../utils/tooltip/Tooltip'
 
 export type AlertButtonConfig = {
@@ -105,10 +104,6 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     isGlobal = true,
   } = props
   const iconContent = getIcon(variant)
-
-  useEffect(() => {
-    rebuildTooltip()
-  }, [primaryButtonConfig, secondaryButtonConfig])
 
   useEffect(() => {
     let timer: NodeJS.Timeout

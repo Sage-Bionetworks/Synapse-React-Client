@@ -1,4 +1,5 @@
 import { merge } from 'lodash-es'
+import { useMemo } from 'react'
 import {
   QueryFunctionContext,
   QueryKey,
@@ -173,26 +174,30 @@ export function useGetQueryResultBundleWithAsyncStatus(
     setCurrentAsyncStatus,
   )
 
-  // If either query is in error, return the error
-  if (rowResult.status === 'error') {
-    return rowResult
-  } else if (statsResult.status === 'error') {
-    return statsResult
-  } else if (rowResult.status === 'loading') {
-    // if either query is loading, return the loading status
-    return rowResult
-  } else if (statsResult.status === 'loading') {
-    return statsResult
-  } else {
-    // Otherwise, both queries are successful or idle, Merge the results into a single object
-    if (rowResult.status === 'idle') {
-      // If the row result is idle, apply the stats result last to override the idle status
-      return merge({}, rowResult, statsResult)
+  const mergedBundle = useMemo(() => {
+    // If either query is in error, return the error
+    if (rowResult.status === 'error') {
+      return rowResult
+    } else if (statsResult.status === 'error') {
+      return statsResult
+    } else if (rowResult.status === 'loading') {
+      // if either query is loading, return the loading status
+      return rowResult
+    } else if (statsResult.status === 'loading') {
+      return statsResult
     } else {
-      // Otherwise, always apply the rowResult last, since it is likely have been fetched more recently than the stats.
-      return merge({}, statsResult, rowResult)
+      // Otherwise, both queries are successful or idle, Merge the results into a single object
+      if (rowResult.status === 'idle') {
+        // If the row result is idle, apply the stats result last to override the idle status
+        return merge({}, rowResult, statsResult)
+      } else {
+        // Otherwise, always apply the rowResult last, since it is likely have been fetched more recently than the stats.
+        return merge({}, statsResult, rowResult)
+      }
     }
-  }
+  }, [rowResult, statsResult])
+
+  return mergedBundle
 }
 export function useInfiniteQueryResultBundle(
   queryBundleRequest: QueryBundleRequest,

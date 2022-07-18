@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react'
-import { useErrorHandler } from 'react-error-boundary'
+import React from 'react'
 import { useGetProjectsInfinite } from '../../../../utils/hooks/SynapseAPI/user/useProjects'
+import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { GetProjectsParameters } from '../../../../utils/synapseTypes/GetProjectsParams'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
-import useGetIsAllSelectedFromInfiniteList from '../../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 
 type ProjectListDetailsProps = EntityDetailsListSharedProps & {
   projectsParams: GetProjectsParameters
@@ -13,16 +12,8 @@ type ProjectListDetailsProps = EntityDetailsListSharedProps & {
 export const ProjectListDetails: React.FunctionComponent<
   ProjectListDetailsProps
 > = ({ projectsParams, ...sharedProps }) => {
-  const {
-    data,
-    isLoading,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    isError,
-    error,
-  } = useGetProjectsInfinite(projectsParams)
-  const handleError = useErrorHandler()
+  const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useGetProjectsInfinite(projectsParams, { useErrorBoundary: true })
 
   const projects = data?.pages.flatMap(page => page.results) ?? []
 
@@ -34,12 +25,6 @@ export const ProjectListDetails: React.FunctionComponent<
     fetchNextPage,
     isFetchingNextPage,
   )
-
-  useEffect(() => {
-    if (isError && error) {
-      handleError(error)
-    }
-  }, [isError, error, handleError])
 
   return (
     <DetailsView

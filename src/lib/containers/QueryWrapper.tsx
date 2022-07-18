@@ -1,7 +1,9 @@
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { useEffect, useMemo, useState } from 'react'
-import useDeepCompareEffect from 'use-deep-compare-effect'
+import useDeepCompareEffect, {
+  useDeepCompareEffectNoCheck,
+} from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { isFacetAvailable } from '../utils/functions/queryUtils'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
@@ -98,7 +100,8 @@ export function QueryWrapper(props: QueryWrapperProps) {
     }
   }, [onQueryChange, lastQueryRequest.query])
 
-  useEffect(() => {
+  // data is sometimes undefined, which useDeepCompareEffect doesn't like
+  useDeepCompareEffectNoCheck(() => {
     if (data && onQueryResultBundleChange) {
       onQueryResultBundleChange(JSON.stringify(data))
     }

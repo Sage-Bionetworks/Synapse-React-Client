@@ -16,6 +16,7 @@ import { SearchDetails } from './configurations/SearchDetails'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { DetailsView } from './view/DetailsView'
 import { EntityTreeContainer } from '../tree/EntityTree'
+import { SynapseErrorBoundary } from '../../ErrorBanner'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
@@ -141,5 +142,5 @@ export const EntityDetailsList: React.FunctionComponent<
     setComponent(getComponentFromConfiguration(configuration))
   }, [configuration, sharedProps])
 
-  return component
+  return <SynapseErrorBoundary>{component}</SynapseErrorBoundary>
 }
