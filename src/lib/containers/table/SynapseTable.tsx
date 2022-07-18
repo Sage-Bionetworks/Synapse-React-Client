@@ -846,6 +846,7 @@ export default class SynapseTable extends React.Component<
           const isLockedFacetColumn =
             column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase() // used in details page to disable filter the column
           const isEntityIDColumn =
+            columnModel &&
             columnModel.name == 'id' &&
             columnModel.columnType == ColumnType.ENTITYID
           return (
