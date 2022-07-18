@@ -216,6 +216,7 @@ import {
 } from './synapseTypes/SubmissionInfo'
 import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
 import { SynapseClientError } from './SynapseClientError'
+import { OAuthClientList } from './synapseTypes/OAuthClient'
 
 const cookies = new UniversalCookies()
 
@@ -2262,6 +2263,23 @@ export const getOAuth2Client = (
   return doGet(
     `/auth/v1/oauth2/client/${clientId}`,
     undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ List the OAuth 2.0 clients created by the current user.
+ */
+export const getOAuth2 = (
+  accessToken: string,
+  nextPageToken?: string,
+): Promise<OAuthClientList> => {
+  return doGet(
+    `/auth/v1/oauth2/client${
+      nextPageToken ? '?nextPageToken=' + nextPageToken : ''
+    }`,
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
