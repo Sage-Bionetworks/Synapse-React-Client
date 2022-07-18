@@ -23,6 +23,12 @@ WithoutTopLevelControls.args = {
   ],
 }
 
+export const WithColumnAlias = Template.bind({})
+WithColumnAlias.args = {
+  title: 'With column alias',
+  sql: `SELECT count(ownerID) as Sagers FROM syn23564971 WHERE institution has ('Sage Bionetworks')`,
+}
+
 export const TopLevelControls = Template.bind({})
 TopLevelControls.args = {
   title: 'Data Files',
