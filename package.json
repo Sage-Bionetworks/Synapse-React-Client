@@ -22,7 +22,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@popperjs/core": "^2.10.2",
     "@rjsf/core": "^4.0.1",
-    "@sage-bionetworks/react-base-table": "^1.12.3",
+    "@sage-bionetworks/react-base-table": "^1.13.2",
     "@sage-bionetworks/rjsf-core": "^3.1.4",
     "@types/ua-parser-js": "^0.7.36",
     "@upsetjs/react": "^1.6.2",

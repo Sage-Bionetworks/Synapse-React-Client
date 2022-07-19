@@ -2033,10 +2033,10 @@
   dependencies:
     "@svgr/core" "^6.1.2"
 
-"@sage-bionetworks/react-base-table@^1.12.3":
-  version "1.12.3"
-  resolved "https://registry.yarnpkg.com/@sage-bionetworks/react-base-table/-/react-base-table-1.12.3.tgz#9dada81093e3fc0c6b66e9e5cd3d4dccc6ea99e0"
-  integrity sha512-LP45+ZhUWlAMnMKl/DveQ5VvjryasXTjpAnrbYnoi1c/k4dST/AKewKm833GLnKTCGd8J1+0TTo9Szo8+LmUzA==
+"@sage-bionetworks/react-base-table@^1.13.2":
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/@sage-bionetworks/react-base-table/-/react-base-table-1.13.2.tgz#23eda2daca2b4e7387c7b065eb61d880298a1ff0"
+  integrity sha512-qMAk5qdZ25q59yY9GJtmQ/It9nExCDjSAzLltj1x/4DAfZa08bXMPw0NbRla2ibt2KrCf0YqlycLRBR2oV5+tA==
   dependencies:
     "@babel/runtime" "^7.0.0"
     classnames "^2.2.5"
