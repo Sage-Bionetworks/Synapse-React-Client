@@ -12,10 +12,12 @@ import {
 } from '../../../../../lib/containers/table/table-top/DownloadOptions'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import {
-  mockDatasetEntity,
   mockFileViewEntity,
   mockTableEntity,
 } from '../../../../../mocks/entity/mockEntity'
+import mockDatasetData from '../../../../../mocks/entity/mockDataset'
+
+const mockDatasetEntity = mockDatasetData.entity
 
 function renderComponent(
   props: DownloadOptionsProps,

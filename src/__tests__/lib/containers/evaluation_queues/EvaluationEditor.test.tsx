@@ -173,7 +173,7 @@ describe('test EvaluationEditor', () => {
 
     await waitFor(() => expect(onCreateEvaluation).toBeCalled())
     expect(onUpdateEvaluation).not.toBeCalled()
-    expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
+    await waitFor(() => expect(mockOnSaveSuccess).toBeCalledWith(evaluationId))
 
     //clicking save button again after the first time should call update instead
     saveButton = screen.getByRole('button', { name: 'Save' })

@@ -19,6 +19,7 @@ import {
   EntityBundle,
   EntityHeader,
   EntityJson,
+  EntityPath,
   PaginatedResults,
   Reference,
   VersionableEntity,
@@ -30,29 +31,6 @@ import { mockSchemaBinding } from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
 
 export const entityHandlers = [
-  // rest.get(
-  //   `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY}/type`,
-
-  //   async (req, res, ctx) => {
-  //     let status = 404
-  //     let response: SynapseApiResponse<PaginatedResults<EntityHeader>> = {
-  //       reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.batch}`,
-  //     }
-
-  //     const referenceList = (req.params.batch as string).split(',')
-
-  //     const entityData = mockEntities
-  //       .filter(entity => referenceList.find(ref => ref === entity.id))
-  //       .map(entity => entity.entityHeader)
-
-  //     if (entityData) {
-  //       response = { results: entityData }
-  //       status = 200
-  //     }
-
-  //     return res(ctx.status(status), ctx.json(response))
-  //   },
-  // ),
   /**
    * Create a new entity
    */
@@ -260,6 +238,27 @@ export const entityHandlers = [
 
       if (entityData) {
         response = { results: entityData }
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+      ':entityId',
+    )}/path`,
+
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<EntityPath> = {
+        reason: `Mock Service worker could not find a mock entity path using ID ${req.params.entityId}`,
+      }
+      const entityData = mockEntities.find(e => req.params.entityId === e.id)
+
+      if (entityData && entityData.path) {
+        response = entityData.path
         status = 200
       }
 

@@ -4,6 +4,7 @@ import {
   EntityBundle,
   EntityHeader,
   ProjectHeader,
+  EntityPath,
 } from '../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
 
@@ -14,10 +15,11 @@ export type MockEntityData<T extends Entity = Entity> = {
   id: string
   name: string
   entity: T
-  json: EntityJson
-  bundle: EntityBundle
+  json?: EntityJson
+  bundle?: EntityBundle
+  path?: EntityPath
   versions?: Record<number, T>
   versionInfo?: VersionInfo[]
-  entityHeader: EntityHeader
+  entityHeader?: EntityHeader
   projectHeader?: ProjectHeader
 }

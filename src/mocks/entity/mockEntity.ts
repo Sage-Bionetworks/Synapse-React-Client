@@ -20,7 +20,6 @@ const mockFileEntityHeader = mockFile.entityHeader
 
 export const MOCK_FOLDER_ID = 'syn1234'
 export const MOCK_INVALID_PROJECT_NAME = 'A $@*#$% terribly named Project'
-export const MOCK_DATASET_ENTITY_ID = 'syn234'
 export const MOCK_TABLE_ENTITY_ID = 'syn345'
 export const MOCK_FILE_VIEW_ENTITY_ID = 'syn456'
 export const MOCK_PROJECT_VIEW_ENTITY_ID = 'syn567'
@@ -94,16 +93,4 @@ export const mockProjectViewEntity: EntityView = {
   columnIds: [],
   viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
   scopeIds: [MOCK_PROJECT_ID],
-}
-
-export const mockDatasetEntity: Dataset = {
-  id: MOCK_DATASET_ENTITY_ID,
-  parentId: MOCK_PROJECT_ID,
-  name: MOCK_FILE_NAME,
-  concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
-  createdBy: MOCK_USER_ID.toString(),
-  modifiedBy: MOCK_USER_ID.toString(),
-  etag: '00000000-0000-0000-0000-000000000000',
-  items: [],
-  columnIds: [],
 }

@@ -4,9 +4,11 @@ import React from 'react'
 import MissingQueryResultsWarning from '../../../lib/containers/MissingQueryResultsWarning'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { EntityRef, Table } from '../../../lib/utils/synapseTypes'
-import { mockDatasetEntity } from '../../../mocks/entity/mockEntity'
+import mockDatasetEntityData from '../../../mocks/entity/mockDataset'
 import { getHandlersForTableQuery } from '../../../mocks/msw/handlers/tableQueryHandlers'
 import { server } from '../../../mocks/msw/server'
+
+const mockDatasetEntity = mockDatasetEntityData.entity
 
 function renderComponent<T extends Table>(entity: T) {
   render(<MissingQueryResultsWarning entity={entity} />, {

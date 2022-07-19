@@ -4,6 +4,7 @@ import {
   EntityBundle,
   EntityHeader,
   EntityJson,
+  EntityPath,
   EntityType,
   FileEntity,
 } from '../../lib/utils/synapseTypes'
@@ -98,6 +99,26 @@ const mockFileEntityVersions: Record<number, FileEntity> = {
   },
 }
 
+const filePath: EntityPath = {
+  path: [
+    {
+      name: 'root',
+      id: 'syn4489',
+      type: 'org.sagebionetworks.repo.model.Folder',
+    },
+    {
+      name: projectName,
+      id: parentId,
+      type: 'org.sagebionetworks.repo.model.Project',
+    },
+    {
+      name: MOCK_FILE_NAME,
+      id: MOCK_FILE_ENTITY_ID,
+      type: 'org.sagebionetworks.repo.model.FileEntity',
+    },
+  ],
+}
+
 const mockFileEntityBundle: EntityBundle = {
   entity: mockFileEntity,
   entityType: EntityType.FILE,
@@ -150,25 +171,7 @@ const mockFileEntityBundle: EntityBundle = {
     ],
   },
   threadCount: 5,
-  path: {
-    path: [
-      {
-        name: 'root',
-        id: 'syn4489',
-        type: 'org.sagebionetworks.repo.model.Folder',
-      },
-      {
-        name: projectName,
-        id: parentId,
-        type: 'org.sagebionetworks.repo.model.Project',
-      },
-      {
-        name: MOCK_FILE_NAME,
-        id: MOCK_FILE_ENTITY_ID,
-        type: 'org.sagebionetworks.repo.model.FileEntity',
-      },
-    ],
-  },
+  path: filePath,
 }
 
 const mockFileEntityJson: EntityJson = {
@@ -208,6 +211,7 @@ const mockFileEntityData: MockEntityData<FileEntity> = {
   versions: mockFileEntityVersions,
   versionInfo: mockFileEntityVersionInfo,
   entityHeader: mockFileEntityHeader,
+  path: filePath,
 }
 
 export default mockFileEntityData
