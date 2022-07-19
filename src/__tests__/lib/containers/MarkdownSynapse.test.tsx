@@ -249,26 +249,19 @@ describe('MarkdownSynapse tests', () => {
         markdown: '# header [text](https://synapse.org)',
       })
       expect(container).toMatchSnapshot()
-      //       const expectedValue = `<div class="markdown"><span><h1 id="SRC-header-1" toc="true"> header  <a href="https://synapse.org" target="_blank"> text </a></h1>
-      //  </span></div>`
-      //       expect(wrapper.html()).toEqual(expectedValue)
     })
-    it('works with a br statement and loose text', async () => {
+    it('works with a br statement and loose text', () => {
       const { container } = renderComponent({
         markdown: 'some more free \n# header\nloose text',
       })
       expect(container).toMatchSnapshot()
-      // const expectedValue = `<div class="markdown"><span><p> some more free </p> \n <h1 id="SRC-header-1" toc="true"> header </h1> \n <p> loose text </p> \n </span></div>`
-      // expect(wrapper.html()).toEqual(expectedValue)
     })
-    it('works with two inline widgets', async () => {
+    it('works with two inline widgets', () => {
       const { container } = renderComponent({
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })
       expect(container).toMatchSnapshot()
-      // const expectedValue = `<div class="markdown"><span><p><span class="bootstrap-4-backport"><a href="#/Help/How It Works" class="pill-xl  btn btn-secondary">sometext</a></span><span class="bootstrap-4-backport"><a href="#/Apply" class="pill-xl  btn btn-secondary">APPLY</a></span></p> \n </span></div>`
-      // expect(wrapper.html()).toEqual(expectedValue)
     })
   })
 })
