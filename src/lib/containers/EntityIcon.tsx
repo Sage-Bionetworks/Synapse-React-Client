@@ -26,12 +26,13 @@ type EntityTypeIconProps = {
   type: EntityType
   style?: React.CSSProperties
   className?: string
+  includeTooltip?: boolean
 }
 
 export const EntityTypeIcon: React.FC<
   Omit<IconSvgOptions, 'icon'> & EntityTypeIconProps
 > = props => {
-  const { type, style, className } = props
+  const { type, style, className, includeTooltip = true } = props
   if (!type) {
     return <></>
   }
@@ -40,12 +41,15 @@ export const EntityTypeIcon: React.FC<
     console.warn('Could not retrieve icon for Entity with type: ', type)
     return <React.Fragment />
   }
+
+  const label = includeTooltip ? entityTypeToFriendlyName(type) : undefined
+
   return (
     <span style={style} className={className}>
       <IconSvg
         options={{
           icon: iconType,
-          label: entityTypeToFriendlyName(type),
+          label,
           ...props,
         }}
       />
