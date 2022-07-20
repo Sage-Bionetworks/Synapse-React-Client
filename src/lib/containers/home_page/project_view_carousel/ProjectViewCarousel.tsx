@@ -57,6 +57,7 @@ export const ProjectViewCarousel: React.FunctionComponent<
   } = useGetQueryResultBundle(queryBundleRequest)
 
   useEffect(() => {
+    let isMounted = true
     const getData = async () => {
       try {
         const entityIdIndex = getFieldIndex(
@@ -100,35 +101,41 @@ export const ProjectViewCarousel: React.FunctionComponent<
         }
 
         for (const project of projects) {
-          try {
-            if (project.imageFileName) {
-              const wikiPageKey = await SynapseClient.getWikiPageKeyForEntity(
-                accessToken,
-                project.entityId,
-              )
-
-              project.imageUrl =
-                await SynapseClient.getPresignedUrlForWikiAttachment(
+          if (isMounted) {
+            try {
+              if (project.imageFileName) {
+                const wikiPageKey = await SynapseClient.getWikiPageKeyForEntity(
                   accessToken,
                   project.entityId,
-                  wikiPageKey.wikiPageId,
-                  project.imageFileName!,
                 )
+
+                project.imageUrl =
+                  await SynapseClient.getPresignedUrlForWikiAttachment(
+                    accessToken,
+                    project.entityId,
+                    wikiPageKey.wikiPageId,
+                    project.imageFileName!,
+                  )
+              }
+            } catch (err) {
+              // Don't break the whole component just because we can't find an image.
+              // The user will just see the placeholder.
+              console.error(err)
             }
-          } catch (err) {
-            // Don't break the whole component just because we can't find an image.
-            // The user will just see the placeholder.
-            console.error(err)
           }
         }
-
-        setProjects(projects)
+        if (isMounted) {
+          setProjects(projects)
+        }
       } catch (error) {
         console.error(error)
         setError(error)
       }
     }
     getData()
+    return () => {
+      isMounted = false
+    }
   }, [entityId, accessToken, queryResultBundle, queryError])
 
   return error ? (
