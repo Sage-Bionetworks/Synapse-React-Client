@@ -54,10 +54,11 @@ function getSelectableTypes(entity: EntityRefCollectionView) {
   } else if (isDatasetCollection(entity)) {
     return [EntityType.DATASET]
   } else {
-    throw new Error(
+    console.error(
       'Cannot determine selectable types for entity type: ' +
         entity.concreteType,
     )
+    return []
   }
 }
 
