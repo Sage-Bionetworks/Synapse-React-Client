@@ -4,9 +4,16 @@ import BaseTable, {
   ColumnShape,
 } from '@sage-bionetworks/react-base-table'
 import { isEqual } from 'lodash-es'
-import React, { useEffect, useState } from 'react'
+import pluralize from 'pluralize'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from 'react-bootstrap'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+  isDataset,
+  isDatasetCollection,
+} from '../../../utils/functions/EntityTypeUtils'
 import {
   useGetEntity,
   useGetEntityPath,
@@ -14,8 +21,8 @@ import {
 } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { useSet } from '../../../utils/hooks/useSet'
 import {
-  Dataset,
   EntityRef,
+  EntityRefCollectionView,
   EntityType,
   Reference,
 } from '../../../utils/synapseTypes'
@@ -41,16 +48,59 @@ import WarningModal from '../../synapse_form_wrapper/WarningModal'
 import { displayToast } from '../../ToastMessage'
 import { Checkbox } from '../../widgets/Checkbox'
 
-export const ADD_FILES = 'Add Files'
-export const REMOVE_FILES = 'Remove Files'
-export const NO_FILES_IN_THIS_DATASET = 'No files in this Dataset'
-export const SAVE_THE_DATASET_TO_CONTINUE = 'Save the Dataset to continue.'
-export const CREATE_VERSION_TO_FREEZE =
-  'Create a Version of this Dataset to freeze it in its current state'
-export const DATASET_SAVED = 'Dataset Saved'
+function getSelectableTypes(entity: EntityRefCollectionView) {
+  if (isDataset(entity)) {
+    return [EntityType.FILE]
+  } else if (isDatasetCollection(entity)) {
+    return [EntityType.DATASET]
+  } else {
+    throw new Error(
+      'Cannot determine selectable types for entity type: ' +
+        entity.concreteType,
+    )
+  }
+}
+
+export function getCopy(entity?: EntityRefCollectionView) {
+  const displayName = entity
+    ? entityTypeToFriendlyName(convertToEntityType(entity.concreteType))
+    : 'Collection'
+  let itemName = 'Item'
+  let currentVersionName = 'Current Version'
+  if (entity && isDataset(entity)) {
+    itemName = entityTypeToFriendlyName(EntityType.FILE)
+    currentVersionName = 'Draft'
+  } else if (entity && isDatasetCollection(entity)) {
+    itemName = entityTypeToFriendlyName(EntityType.DATASET)
+  }
+
+  return {
+    ADD_ITEMS: `Add ${pluralize(itemName)}`,
+    ADD_ITEMS_TO: `Add ${pluralize(itemName)} + to ${displayName}`,
+    REMOVE_ITEMS: `Remove ${pluralize(itemName)}`,
+    NO_ITEMS_IN_THIS_DATASET: `No ${pluralize(
+      itemName,
+    )} in this ${displayName}`,
+    SAVE_TO_CONTINUE: `Save the ${displayName} to continue`,
+    CREATE_VERSION_TO_FREEZE: `Create a Version of this ${displayName} to freeze it in its current state`,
+    ENTITY_SAVED: `${displayName} Saved`,
+    SAVE_CHANGES: `Save changes to ${currentVersionName}`,
+    ENTITY_FINDER_POPOVER: `Use the left pane to browse to find ${pluralize(
+      itemName,
+    )} to add to this ${displayName}. You can also use Search to find and select ${pluralize(
+      itemName,
+    )}.`,
+    ENTITY_FINDER_PROMPT: `Find ${pluralize(
+      itemName,
+    )} to add to the ${displayName}.`,
+    PRECONDITION_FAILED_MESSAGE: `Re-retrieve the ${displayName} to get the latest changes. Your current changes will be lost.`,
+    PRECONDITION_FAILED_TITLE: `${displayName} updated since last fetched`,
+    PRECONDITION_FAILED_ACTION: `Retrieve ${displayName}`,
+  }
+}
 
 export type DatasetItemsEditorProps = {
-  /* The synId of the Dataset to modify */
+  /* The synId of the EntityRefCollectionView to modify */
   entityId: string
   onSave?: () => void
   onClose?: () => void
@@ -72,12 +122,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
   // Disable updating the entity after the initial fetch because we don't want to replace edits that the user makes.
   const [datasetToUpdate, _setDatasetToUpdate] =
-    useState<RequiredProperties<Dataset, 'items'>>()
+    useState<RequiredProperties<EntityRefCollectionView, 'items'>>()
   const [previousDatasetToUpdate, setPreviousDatasetToUpdate] =
-    useState<RequiredProperties<Dataset, 'items'>>()
+    useState<RequiredProperties<EntityRefCollectionView, 'items'>>()
   const setDatasetToUpdate = (
     dataset: React.SetStateAction<
-      RequiredProperties<Dataset, 'items'> | undefined
+      RequiredProperties<EntityRefCollectionView, 'items'> | undefined
     >,
   ) => {
     setHasChangedSinceLastSave(true)
@@ -85,10 +135,26 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
 
   const { data: fetchedDataset, refetch } = useGetEntity<
-    RequiredProperties<Dataset, 'items'>
+    RequiredProperties<EntityRefCollectionView, 'items'>
   >(entityId, undefined, {
     enabled: !datasetToUpdate,
   })
+
+  const {
+    ADD_ITEMS,
+    ADD_ITEMS_TO,
+    REMOVE_ITEMS,
+    NO_ITEMS_IN_THIS_DATASET,
+    SAVE_TO_CONTINUE,
+    CREATE_VERSION_TO_FREEZE,
+    ENTITY_SAVED,
+    SAVE_CHANGES,
+    PRECONDITION_FAILED_TITLE,
+    PRECONDITION_FAILED_MESSAGE,
+    PRECONDITION_FAILED_ACTION,
+    ENTITY_FINDER_POPOVER,
+    ENTITY_FINDER_PROMPT,
+  } = useMemo(() => getCopy(fetchedDataset), [fetchedDataset])
 
   useEffect(() => {
     // Don't update when we already have datasetToUpdate
@@ -119,10 +185,10 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
       !isEqual(previousDatasetToUpdate, datasetToUpdate)
     ) {
       const toastMessageTitle = getToastMessageTitle()
-      displayToast(SAVE_THE_DATASET_TO_CONTINUE, 'info', {
+      displayToast(SAVE_TO_CONTINUE, 'info', {
         title: toastMessageTitle,
         primaryButtonConfig: {
-          text: 'Save changes to Draft',
+          text: SAVE_CHANGES,
           onClick: () => mutation.mutate(datasetToUpdate),
         },
       })
@@ -134,32 +200,28 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   const { data: path } = useGetEntityPath(entityId)
   const projectId = path?.path[1]?.id
 
-  const mutation = useUpdateEntity<Dataset>({
+  const mutation = useUpdateEntity<EntityRefCollectionView>({
     onSuccess: () => {
       if (onSave) {
         onSave()
       } else {
         // If onSave isn't specified, push a generic toast message.
         displayToast(CREATE_VERSION_TO_FREEZE, 'success', {
-          title: DATASET_SAVED,
+          title: ENTITY_SAVED,
         })
       }
     },
     onError: error => {
       if (error.status === 412) {
-        displayToast(
-          'Re-retrieve the dataset to get the latest changes. Your current changes will be lost.',
-          'warning',
-          {
-            title: 'Dataset Updated since Last Fetched',
-            primaryButtonConfig: {
-              text: 'Retrieve Dataset',
-              onClick: () => {
-                refetch()
-              },
+        displayToast(PRECONDITION_FAILED_MESSAGE, 'warning', {
+          title: PRECONDITION_FAILED_TITLE,
+          primaryButtonConfig: {
+            text: PRECONDITION_FAILED_ACTION,
+            onClick: () => {
+              refetch()
             },
           },
-        )
+        })
       } else {
         displayToast(error.reason, 'danger', {
           title: 'An Error Occurred',
@@ -259,7 +321,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         }
       } else {
         console.warn(
-          'Cannot add items to the Dataset because it is undefined. The Dataset may not have been fetched yet.',
+          'Cannot add items to the Collection because it is undefined. The Collection may not have been fetched yet.',
         )
         return datasetToUpdate
       }
@@ -302,7 +364,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
 
   type SelectAllCheckboxRendererProps = {
-    datasetToUpdate: RequiredProperties<Dataset, 'items'>
+    datasetToUpdate: RequiredProperties<EntityRefCollectionView, 'items'>
     selectedIds: Omit<Set<string>, 'add' | 'delete' | 'clear'>
     addSelectedId: (...items: string[]) => void
     clearSelectedIds: () => void
@@ -439,7 +501,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     return (
       <div className="NoItemsPlaceholder">
         <Typography variant={'headline3'}>
-          {NO_FILES_IN_THIS_DATASET}
+          {NO_ITEMS_IN_THIS_DATASET}
         </Typography>
         <Button
           className="AddItemsButton"
@@ -447,11 +509,19 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           onClick={() => setShowEntityFinder(true)}
         >
           <IconSvg options={{ icon: 'addCircleTwoTone' }} />
-          <span>{ADD_FILES}</span>
+          <span>{ADD_ITEMS}</span>
         </Button>
       </div>
     )
   }
+
+  const selectableTypes = useMemo(() => {
+    if (fetchedDataset) {
+      return getSelectableTypes(fetchedDataset)
+    } else {
+      return undefined
+    }
+  }, [fetchedDataset])
 
   return (
     <div className="DatasetEditor bootstrap-4-backport">
@@ -459,23 +529,22 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         configuration={{
           projectId: projectId,
           selectMultiple: true,
-          initialScope: FinderScope.ALL_PROJECTS,
-          initialContainer: null,
-          selectableTypes: [EntityType.FILE],
+          initialScope: FinderScope.CURRENT_PROJECT,
+          initialContainer: projectId ?? null,
+          selectableTypes: selectableTypes,
           mustSelectVersionNumber: true,
         }}
         titlePopoverProps={{
-          markdownText:
-            'Use the left pane to browse Projects and Folders to find Files to add to this Dataset. Files in a Dataset can be added from multiple folders. You can also use Search to find and select Files.',
+          markdownText: ENTITY_FINDER_POPOVER,
           helpUrl: 'https://help.synapse.org/docs/Datasets.2611281979.html',
         }}
-        promptCopy="Find Files located across one or more Folders to add to the Dataset."
+        promptCopy={ENTITY_FINDER_PROMPT}
         show={showEntityFinder}
         onClose={() => {
           setShowEntityFinder(false)
         }}
-        title={ADD_FILES + ' to Dataset'}
-        confirmButtonCopy={ADD_FILES}
+        title={ADD_ITEMS_TO}
+        confirmButtonCopy={ADD_ITEMS}
         onConfirm={items => {
           addItemsToDataset(items)
           setShowEntityFinder(false)
@@ -518,14 +587,14 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           disabled={datasetToUpdate == null}
           onClick={() => setShowEntityFinder(true)}
         >
-          {ADD_FILES}
+          {ADD_ITEMS}
         </Button>
         <Button
           disabled={selectedIds.size === 0}
           variant="outline"
           onClick={removeSelectedItemsFromDataset}
         >
-          {REMOVE_FILES}
+          {REMOVE_ITEMS}
         </Button>
       </div>
       <div className="DatasetEditorTableContainer">

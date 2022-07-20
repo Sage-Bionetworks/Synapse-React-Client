@@ -253,6 +253,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     'materializedview',
     'submissionview',
     'dataset',
+    'datasetcollection',
   ]
   if (selectableTypes.length === 1) {
     searchButtonText = `Search for ${pluralize(
