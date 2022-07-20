@@ -22,12 +22,11 @@ import {
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
 import { EntityRef, Reference } from '../../../../../lib/utils/synapseTypes'
-import {
-  mockDatasetEntity,
-  mockFileEntity,
-  MOCK_DATASET_ENTITY_ID,
-} from '../../../../../mocks/entity/mockEntity'
+import mockDatasetEntityData from '../../../../../mocks/entity/mockDataset'
 import { rest, server } from '../../../../../mocks/msw/server'
+import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
+
+const mockFileEntity = mockFileEntityData.entity
 
 // Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
 jest.mock(
@@ -135,7 +134,7 @@ const mockOnCloseFn = jest.fn()
 const updatedEntityCaptor = jest.fn()
 
 const defaultProps: DatasetItemsEditorProps = {
-  entityId: MOCK_DATASET_ENTITY_ID,
+  entityId: mockDatasetEntityData.id,
   onSave: mockOnSaveFn,
   onClose: mockOnCloseFn,
 }
@@ -206,8 +205,8 @@ describe('Dataset Items Editor tests', () => {
       )}`,
 
       async (req, res, ctx) => {
-        const response = mockDatasetEntity
-        mockDatasetEntity.items = items
+        const response = mockDatasetEntityData.entity
+        mockDatasetEntityData.entity.items = items
         return res(ctx.status(200), ctx.json(response))
       },
     )

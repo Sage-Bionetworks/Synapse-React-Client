@@ -371,6 +371,7 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
   )
 
   useEffect(() => {
+    let isMounted = true
     if (!facetToPlot) {
       return
     } else {
@@ -380,7 +381,14 @@ const FacetNavPanel: React.FunctionComponent<FacetNavPanelProps> = (
         index,
         plotType,
         accessToken,
-      ).then(plotData => setPlotData(plotData))
+      ).then(plotData => {
+        if (isMounted) {
+          setPlotData(plotData)
+        }
+      })
+    }
+    return () => {
+      isMounted = false
     }
   }, [facetToPlot, data, index, plotType, accessToken, getColumnType])
 

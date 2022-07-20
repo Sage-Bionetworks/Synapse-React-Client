@@ -9,14 +9,14 @@ import {
   SynapseTestContext,
 } from '../../../mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
-import { mockFileEntityHeader } from '../../../mocks/entity/mockEntity'
+import mockFileEntity from '../../../mocks/entity/mockFileEntity'
 import { getEntityHeadersByIds } from '../../../lib/utils/SynapseClient'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
 
 SynapseClient.getEntityHeadersByIds = jest
   .fn()
-  .mockResolvedValue({ results: [mockFileEntityHeader] })
+  .mockResolvedValue({ results: [mockFileEntity.entityHeader] })
 
 describe('EntityIdList: basic functionality', () => {
   const props: EntityIdListProps = {
@@ -36,6 +36,6 @@ describe('EntityIdList: basic functionality', () => {
         MOCK_CONTEXT_VALUE.accessToken,
       ),
     )
-    screen.getByText(mockFileEntityHeader.name)
+    screen.getByText(mockFileEntity.entityHeader.name)
   })
 })

@@ -14,12 +14,14 @@ import {
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
-import {
-  mockFileEntity,
-  mockFileEntityBundle,
-  MOCK_FILE_ENTITY_ID,
-} from '../../../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
+
+const {
+  id: MOCK_FILE_ENTITY_ID,
+  entity: mockFileEntity,
+  bundle: mockFileEntityBundle,
+} = mockFileEntityData
 
 const defaultProps: EntityModalProps = {
   show: true,

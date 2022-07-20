@@ -1,11 +1,6 @@
 import { Alert, Button, Col, Dropdown, Form, Row } from 'react-bootstrap'
 import React, { useEffect, useState } from 'react'
-import {
-  createEvaluation,
-  deleteEvaluation,
-  getEvaluation,
-  updateEvaluation,
-} from '../../utils/SynapseClient'
+import { SynapseClient } from '../../utils'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { ErrorBanner } from '../ErrorBanner'
 import { Evaluation } from '../../utils/synapseTypes/Evaluation/Evaluation'
@@ -74,7 +69,7 @@ export const EvaluationEditor: React.FunctionComponent<
     if (evaluationId) {
       //clear error
       setError(undefined)
-      getEvaluation(evaluationId, accessToken)
+      SynapseClient.getEvaluation(evaluationId, accessToken)
         .then(retrievedEvaluation => {
           setEvaluation(retrievedEvaluation)
         })
@@ -95,8 +90,8 @@ export const EvaluationEditor: React.FunctionComponent<
     }
 
     const promise = newOrUpdatedEvaluation.id
-      ? updateEvaluation(newOrUpdatedEvaluation, accessToken)
-      : createEvaluation(newOrUpdatedEvaluation, accessToken)
+      ? SynapseClient.updateEvaluation(newOrUpdatedEvaluation, accessToken)
+      : SynapseClient.createEvaluation(newOrUpdatedEvaluation, accessToken)
 
     promise
       .then(evaluation => {
@@ -113,7 +108,7 @@ export const EvaluationEditor: React.FunctionComponent<
   const onDelete = evaluation?.id
     ? () => {
         setError(undefined)
-        deleteEvaluation(evaluation.id!, accessToken)
+        SynapseClient.deleteEvaluation(evaluation.id!, accessToken)
           .then(onDeleteSuccess)
           .catch(error => setError(error))
       }
@@ -132,8 +127,9 @@ export const EvaluationEditor: React.FunctionComponent<
         </Row>
         <Form>
           <Form.Group>
-            <Form.Label>Name</Form.Label>
+            <Form.Label htmlFor="evaluation-name">Name</Form.Label>
             <Form.Control
+              id="evaluation-name"
               type="text"
               value={name}
               onChange={event => setName(event.target.value)}
@@ -141,8 +137,11 @@ export const EvaluationEditor: React.FunctionComponent<
           </Form.Group>
 
           <Form.Group>
-            <Form.Label>Description</Form.Label>
+            <Form.Label htmlFor="evaluation-description">
+              Description
+            </Form.Label>
             <Form.Control
+              id="evaluation-description"
               as="textarea"
               value={description}
               rows={2}
@@ -150,9 +149,12 @@ export const EvaluationEditor: React.FunctionComponent<
             />
           </Form.Group>
           <Form.Group>
-            <Form.Label>Submission Instructions</Form.Label>
+            <Form.Label htmlFor="evaluation-submissioninstructions">
+              Submission Instructions
+            </Form.Label>
             <Form.Control
               as="textarea"
+              id="evaluation-submissioninstructions"
               value={submissionInstructionsMessage}
               rows={2}
               onChange={event =>
@@ -161,8 +163,11 @@ export const EvaluationEditor: React.FunctionComponent<
             />
           </Form.Group>
           <Form.Group>
-            <Form.Label>Submission Receipt Message</Form.Label>
+            <Form.Label htmlFor="evaluation-receiptmessage">
+              Submission Receipt Message
+            </Form.Label>
             <Form.Control
+              id="evaluation-receiptmessage"
               type="text"
               value={submissionReceiptMessage}
               onChange={event =>
@@ -233,11 +238,16 @@ const EvaluationEditorDropdown: React.FunctionComponent<
           <IconSvg options={{ icon: 'verticalEllipsis' }} />
         </Dropdown.Toggle>
         <Dropdown.Menu alignRight={true}>
-          <Dropdown.Item onClick={onClick}>Save</Dropdown.Item>
+          <Dropdown.Item role="menuitem" onClick={onClick}>
+            Save
+          </Dropdown.Item>
           {onDelete && (
             <>
               <Dropdown.Divider />
-              <Dropdown.Item onClick={() => setDeleteWarningShow(true)}>
+              <Dropdown.Item
+                role="menuitem"
+                onClick={() => setDeleteWarningShow(true)}
+              >
                 Delete
               </Dropdown.Item>
             </>

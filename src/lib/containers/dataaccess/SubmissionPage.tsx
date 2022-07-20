@@ -384,7 +384,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             Contents of the Access Request
           </Typography>
           <hr />
-          {submission?.researchProjectSnapshot.intendedDataUseStatement && (
+          {submission?.researchProjectSnapshot?.intendedDataUseStatement && (
             <>
               <Typography variant="headline2">
                 Intended Data Use Statement
@@ -419,14 +419,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             <>
               <Typography variant="smallText2">Other Attachments</Typography>
               {submission.attachments.map(fileHandleId => (
-                <>
+                <React.Fragment key={fileHandleId}>
                   <DataAccessSubmissionFileHandleLink
-                    key={fileHandleId}
                     submissionId={submission.id}
                     fileHandleId={fileHandleId}
                   />
                   <br />
-                </>
+                </React.Fragment>
               ))}
             </>
           )}

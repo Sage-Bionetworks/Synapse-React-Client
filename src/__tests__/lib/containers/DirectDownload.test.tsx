@@ -14,12 +14,12 @@ import {
   FileHandleAssociateType,
 } from '../../../lib/utils/synapseTypes'
 import { CloudProviderFileHandleConcreteTypeEnum } from '../../../lib/utils/synapseTypes/CloudProviderFileHandle'
-import {
-  mockFileEntity,
-  MOCK_FILE_ENTITY_ID,
-} from '../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
+
+const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
+const mockFileEntity = mockFileEntityData.entity
 
 describe('DirectDownload: basic functionality', () => {
   const props: DirectFileDownloadProps = {

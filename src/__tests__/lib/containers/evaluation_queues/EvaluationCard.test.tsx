@@ -1,17 +1,16 @@
-import { UserEvaluationPermissions } from '../../../../lib/utils/synapseTypes/Evaluation/UserEvaluationPermissions'
-import React from 'react'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
-import { SynapseClient } from '../../../../lib'
-import { mount } from 'enzyme'
+import React from 'react'
+import { SynapseClient } from '../../../../lib/utils'
 import {
   EvaluationCard,
   EvaluationCardProps,
   ExistingEvaluation,
 } from '../../../../lib/containers/evaluation_queues/EvaluationCard'
-import { CreatedOnByUserDiv } from '../../../../lib/containers/evaluation_queues/CreatedOnByUserDiv'
-import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
-import WarningModal from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
-import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
+import { UserEvaluationPermissions } from '../../../../lib/utils/synapseTypes/Evaluation/UserEvaluationPermissions'
+import { server } from '../../../../mocks/msw/server'
 
 describe('test Evaluation Card', () => {
   let permissions: UserEvaluationPermissions
@@ -25,7 +24,7 @@ describe('test Evaluation Card', () => {
   let mockOnModifyAccess: jest.Mock
   let mockOnSubmit: jest.Mock
   let mockOnDeleteSuccess: jest.Mock
-
+  beforeAll(() => server.listen())
   beforeEach(() => {
     evaluation = {
       id: '1234',
@@ -82,48 +81,50 @@ describe('test Evaluation Card', () => {
   })
 
   afterEach(() => {
+    server.restoreHandlers()
     jest.clearAllMocks()
   })
+  afterAll(() => server.close())
 
-  test('test retrieve evaluation permissions - failure', () => {
+  test('retrieve evaluation permissions - failure', () => {
     mockGetEvaluationPermissions.mockImplementation(() => {
       return new JestMockPromise((resolve, reject) => {
         reject(new Error("OOPS! It's a error getting EvaluationPermission"))
       })
     })
 
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
-    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
-    expect(wrapper.find(ErrorBanner).text()).toBe(
+
+    within(screen.getByRole('alert')).getByText(
       "OOPS! It's a error getting EvaluationPermission",
     )
   })
 
-  test('test all retrieve calls happy case', () => {
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+  test('all retrieve calls happy case', () => {
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
-    expect(wrapper.contains(<h4>E V A L U A T I O N (1234)</h4>)).toBe(true)
-    expect(
-      wrapper.contains(<p>no you can&apos;t just make a submission</p>),
-    ).toBe(true)
-    expect(wrapper.contains(<p>This is an awesome queue</p>)).toBe(true)
-    expect(wrapper.find(CreatedOnByUserDiv).exists()).toBe(true)
-    expect(wrapper.find('Button.submit-button').exists()).toBe(true)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    screen.getByRole('heading', { name: 'E V A L U A T I O N (1234)' })
+    screen.getByText("no you can't just make a submission")
+    screen.getByText('This is an awesome queue')
+    screen.getByText(/Created on .+ by/)
+    screen.getByRole('button', { name: 'Submit' })
   })
 
-  test('test submit button not shown when user does not have permission', () => {
+  test('submit button not shown when user does not have permission', () => {
     permissions.canSubmit = false
 
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('Button.submit-button').exists()).toBe(false)
+    expect(
+      screen.queryByRole('button', { name: 'Submit' }),
+    ).not.toBeInTheDocument()
   })
 
   test('no permissions for any dropdown option - no dropdown shown', () => {
@@ -131,42 +132,44 @@ describe('test Evaluation Card', () => {
     permissions.canChangePermissions = false
     permissions.canDelete = false
 
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('Dropdown').exists()).toBe(false)
+    expect(
+      screen.queryByRole('button', { name: 'Options' }),
+    ).not.toBeInTheDocument()
   })
 
   test('no permissions for edit dropdown option - hide option', () => {
     permissions.canEdit = false
 
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('Dropdown').exists()).toBe(true)
-    // simulate a click
-    wrapper.find('DropdownToggle').simulate('click')
+    // Open the dropdown menu
+    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    userEvent.click(dropdown)
 
-    //simulate a dropdown menu click
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(2)
+    const dropdownItems = screen.getAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(2)
 
-    const modifyAccessOption = dropdownItems.at(0)
-    expect(modifyAccessOption.text()).toBe('Modify Access')
-    modifyAccessOption.simulate('click')
+    // Click "Modify Access"
+    const modifyAccessOption = dropdownItems[0]
+    within(modifyAccessOption).getByText('Modify Access')
+    userEvent.click(modifyAccessOption)
     expect(mockOnModifyAccess).toBeCalled()
 
-    const deleteOption = dropdownItems.at(1)
-    expect(deleteOption.text()).toBe('Delete')
-    deleteOption.simulate('click')
+    // Click "Delete"
+    const deleteOption = dropdownItems[1]
+    within(deleteOption).getByText('Delete')
+    userEvent.click(deleteOption)
 
-    const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
-
-    //simulate the warning button click
-    deleteWarningModal.find('.btn-danger').simulate('click')
+    // Confirm delete
+    const modal = screen.getByRole('dialog')
+    const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
+    userEvent.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
@@ -175,35 +178,32 @@ describe('test Evaluation Card', () => {
   test('no permissions for modify access dropdown option - hide option', () => {
     permissions.canChangePermissions = false
 
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('Dropdown').exists()).toBe(true)
-    // simulate a click
-    wrapper.find('DropdownToggle').simulate('click')
+    // Open the dropdown menu
+    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    userEvent.click(dropdown)
 
-    //simulate a dropdown menu click
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(2)
+    const dropdownItems = screen.getAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(2)
 
-    const editOption = dropdownItems.at(0)
-    expect(editOption.text()).toBe('Edit')
-    editOption.simulate('click')
+    // Click "Edit"
+    const editOption = dropdownItems[0]
+    within(editOption).getByText('Edit')
+    userEvent.click(editOption)
     expect(mockOnEdit).toBeCalled()
 
-    //a menu separator exists for delete
-    expect(wrapper.find('DropdownDivider').exists()).toBe(true)
+    // Click "Delete"
+    const deleteOption = dropdownItems[1]
+    within(deleteOption).getByText('Delete')
+    userEvent.click(deleteOption)
 
-    const deleteOption = dropdownItems.at(1)
-    expect(deleteOption.text()).toBe('Delete')
-    deleteOption.simulate('click')
-
-    const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
-
-    //simulate the warning button click
-    deleteWarningModal.find('.btn-danger').simulate('click')
+    // Confirm delete
+    const modal = screen.getByRole('dialog')
+    const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
+    userEvent.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
@@ -212,67 +212,63 @@ describe('test Evaluation Card', () => {
   test('no permissions for delete dropdown option - hide option', () => {
     permissions.canDelete = false
 
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('Dropdown').exists()).toBe(true)
-    // simulate a click
-    wrapper.find('DropdownToggle').simulate('click')
+    // Open the dropdown menu
+    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    userEvent.click(dropdown)
 
-    //simulate a dropdown menu click
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(2)
+    const dropdownItems = screen.getAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(2)
 
-    const editOption = dropdownItems.at(0)
-    expect(editOption.text()).toBe('Edit')
-    editOption.simulate('click')
+    // Click "Edit"
+    const editOption = dropdownItems[0]
+    within(editOption).getByText('Edit')
+    userEvent.click(editOption)
     expect(mockOnEdit).toBeCalled()
 
-    const modifyAccessOption = dropdownItems.at(1)
-    expect(modifyAccessOption.text()).toBe('Modify Access')
-    modifyAccessOption.simulate('click')
+    // Click "Modify Access"
+    const modifyAccessOption = dropdownItems[1]
+    within(modifyAccessOption).getByText('Modify Access')
+    userEvent.click(modifyAccessOption)
     expect(mockOnModifyAccess).toBeCalled()
-
-    // a menu separator shod not be created because the delete option does not exist
-    expect(wrapper.find('DropdownDivider').exists()).toBe(false)
   })
 
   test('permissions for all dropdown options', () => {
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('Dropdown').exists()).toBe(true)
-    // simulate a click
-    wrapper.find('DropdownToggle').simulate('click')
+    // Open the dropdown menu
+    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    userEvent.click(dropdown)
 
-    //simulate a dropdown menu click
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(3)
+    const dropdownItems = screen.getAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(3)
 
-    const editOption = dropdownItems.at(0)
-    expect(editOption.text()).toBe('Edit')
-    editOption.simulate('click')
+    // Click "Edit"
+    const editOption = dropdownItems[0]
+    within(editOption).getByText('Edit')
+    userEvent.click(editOption)
     expect(mockOnEdit).toBeCalled()
 
-    const modifyAccessOption = dropdownItems.at(1)
-    expect(modifyAccessOption.text()).toBe('Modify Access')
-    modifyAccessOption.simulate('click')
+    // Click "Modify Access"
+    const modifyAccessOption = dropdownItems[1]
+    within(modifyAccessOption).getByText('Modify Access')
+    userEvent.click(modifyAccessOption)
     expect(mockOnModifyAccess).toBeCalled()
 
-    //a menu separator exists for delete
-    expect(wrapper.find('DropdownDivider').exists()).toBe(true)
+    // Click "Delete"
+    const deleteOption = dropdownItems[2]
+    within(deleteOption).getByText('Delete')
+    userEvent.click(deleteOption)
 
-    const deleteOption = dropdownItems.at(2)
-    expect(deleteOption.text()).toBe('Delete')
-    deleteOption.simulate('click')
-
-    const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
-
-    //simulate the warning button click
-    deleteWarningModal.find('.btn-danger').simulate('click')
+    // Confirm delete
+    const modal = screen.getByRole('dialog')
+    const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
+    userEvent.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
@@ -285,27 +281,26 @@ describe('test Evaluation Card', () => {
       })
     })
 
-    const wrapper = mount(<EvaluationCard {...props} />, {
-      wrappingComponent: SynapseTestContext,
+    render(<EvaluationCard {...props} />, {
+      wrapper: createWrapper(),
     })
 
-    expect(wrapper.find('Dropdown').exists()).toBe(true)
-    // simulate a click
-    wrapper.find('DropdownToggle').simulate('click')
+    // Open the dropdown menu
+    const dropdown = screen.getByRole('menu', { name: 'Options' })
+    userEvent.click(dropdown)
 
-    //simulate a dropdown menu click
-    const dropdownItems = wrapper.find('DropdownMenu').find('DropdownItem')
-    expect(dropdownItems.length).toBe(3)
+    const dropdownItems = screen.getAllByRole('menuitem')
+    expect(dropdownItems).toHaveLength(3)
 
-    const deleteOption = dropdownItems.at(2)
-    expect(deleteOption.text()).toBe('Delete')
-    deleteOption.simulate('click')
+    // Click "Delete"
+    const deleteOption = dropdownItems[2]
+    within(deleteOption).getByText('Delete')
+    userEvent.click(deleteOption)
 
-    const deleteWarningModal = wrapper.find(WarningModal)
-    expect(deleteWarningModal.prop('show')).toBe(true)
-
-    //simulate the warning button click
-    deleteWarningModal.find('.btn-danger').simulate('click')
+    // Confirm delete
+    const modal = screen.getByRole('dialog')
+    const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
+    userEvent.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).not.toBeCalled()

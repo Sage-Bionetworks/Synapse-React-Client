@@ -3,10 +3,8 @@ import React from 'react'
 import FavoritesPage from '../../../lib/containers/FavoritesPage'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
-import {
-  mockFolderEntityHeader,
-  mockFileEntityHeader,
-} from '../../../mocks/entity/mockEntity'
+import { mockFolderEntityHeader } from '../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { server } from '../../../mocks/msw/server'
 
 function renderComponent(wrapperProps?: SynapseContextType) {
@@ -25,6 +23,6 @@ describe('FavoritesPage tests', () => {
     renderComponent()
 
     await screen.findByText(mockFolderEntityHeader.name)
-    await screen.findByText(mockFileEntityHeader.name)
+    await screen.findByText(mockFileEntityData.name)
   })
 })

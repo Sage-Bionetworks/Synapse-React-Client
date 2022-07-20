@@ -1,7 +1,9 @@
 import { rest } from 'msw'
+import { StringDecoder } from 'string_decoder'
 import {
   ENTITY,
   ENTITY_BUNDLE_V2,
+  ENTITY_HEADERS,
   ENTITY_ID,
   ENTITY_ID_VERSION,
   ENTITY_ID_VERSIONS,
@@ -15,25 +17,17 @@ import {
 import {
   Entity,
   EntityBundle,
+  EntityHeader,
+  EntityJson,
+  EntityPath,
   PaginatedResults,
+  Reference,
   VersionableEntity,
 } from '../../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../../lib/utils/synapseTypes/VersionInfo'
+import mockEntities from '../../entity'
+import { MOCK_INVALID_PROJECT_NAME } from '../../entity/mockEntity'
 import { mockSchemaBinding } from '../../mockSchema'
-import {
-  mockFileEntity,
-  mockFileEntityBundle,
-  mockFileEntityJson,
-  mockFileEntityVersionInfo,
-  mockFileEntityVersions,
-  mockProjectEntity,
-  mockProjectEntityBundle,
-  MOCK_FILE_ENTITY_ID,
-  MOCK_FILE_NAME,
-  MOCK_INVALID_PROJECT_NAME,
-  MOCK_PROJECT_ID,
-  MOCK_PROJECT_NAME,
-} from '../../entity/mockEntity'
 import { SynapseApiResponse } from '../handlers'
 
 export const entityHandlers = [
@@ -51,12 +45,13 @@ export const entityHandlers = [
       }
       if (req.body) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const requestBody = req.body as any
-        if (requestBody.name === MOCK_FILE_NAME) {
-          response = mockFileEntity
-          status = 200
-        } else if (requestBody.name === MOCK_PROJECT_NAME) {
-          response = mockProjectEntity
+        const requestBody = req.body as Entity
+
+        const entityData = mockEntities.find(
+          entity => entity.name === requestBody.name,
+        )
+        if (entityData) {
+          response = entityData.entity
           status = 200
         } else if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
           response.reason = 'Invalid project name'
@@ -80,11 +75,12 @@ export const entityHandlers = [
       let response: SynapseApiResponse<Entity> = {
         reason: `Mock Service worker could not find a mock entity with ID ${req.params.entityId}`,
       }
-      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
-        response = mockFileEntity
-        status = 200
-      } else if (req.params.entityId === MOCK_PROJECT_ID) {
-        response = mockProjectEntity
+
+      const entityData = mockEntities.find(
+        entity => entity.id === req.params.entityId,
+      )
+      if (entityData) {
+        response = entityData.entity
         status = 200
       }
       return res(ctx.status(status), ctx.json(response))
@@ -100,8 +96,12 @@ export const entityHandlers = [
       let response: SynapseApiResponse<PaginatedResults<VersionInfo>> = {
         reason: `Mock Service worker could not find mock entity versions for ID ${req.params.entityId}`,
       }
-      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
-        response = { results: mockFileEntityVersionInfo }
+
+      const entityData = mockEntities.find(
+        entity => entity.id === req.params.entityId,
+      )
+      if (entityData && entityData.versionInfo) {
+        response = { results: entityData.versionInfo }
         status = 200
       }
       return res(ctx.status(status), ctx.json(response))
@@ -117,19 +117,23 @@ export const entityHandlers = [
       let status = 404
       const entityId = req.params.entityId
       const versionNumber = req.params.versionNumber.toString()
+      const requestedVersionNumber = parseInt(versionNumber)
 
       let response: SynapseApiResponse<VersionableEntity> = {
         reason: `Mock Service worker could not find a mock versioned entity with ID ${entityId}.${versionNumber}`,
       }
-      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
-        const requestedVersionNumber = parseInt(versionNumber)
-        const versionableEntity = mockFileEntityVersions.find(
-          (entity: VersionableEntity) =>
-            entity.versionNumber === requestedVersionNumber,
-        )
-        if (versionableEntity) {
-          response = versionableEntity
-        }
+
+      const entityData = mockEntities.find(
+        entity => entity.id === req.params.entityId,
+      )
+      if (
+        entityData &&
+        entityData.versions &&
+        entityData.versions[requestedVersionNumber]
+      ) {
+        response = entityData.versions[
+          requestedVersionNumber
+        ] as VersionableEntity
         status = 200
       }
       return res(ctx.status(status), ctx.json(response))
@@ -145,11 +149,11 @@ export const entityHandlers = [
       let response: SynapseApiResponse<EntityBundle> = {
         reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
       }
-      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
-        response = mockFileEntityBundle
-        status = 200
-      } else if (req.params.entityId === MOCK_PROJECT_ID) {
-        response = mockProjectEntityBundle
+      const entityData = mockEntities.find(
+        entity => entity.id === req.params.entityId,
+      )
+      if (entityData) {
+        response = entityData.bundle
         status = 200
       }
       return res(ctx.status(status), ctx.json(response))
@@ -163,24 +167,25 @@ export const entityHandlers = [
     )}`,
     async (req, res, ctx) => {
       const entityId = req.params.entityId
-      const versionNumber = req.params.versionNumber.toString()
+      const versionNumber = parseInt(req.params.versionNumber as string)
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
         reason: `Mock Service worker could not find a mock entity bundle with ID ${entityId}`,
       }
-      if (req.params.entityId === MOCK_FILE_ENTITY_ID) {
-        response = mockFileEntityBundle
-        if (req.params.versionNumber) {
-          response.entity = mockFileEntityVersions.find(
-            (entity: VersionableEntity) =>
-              entity.versionNumber === parseInt(versionNumber),
-          )
+      const entityData = mockEntities.find(entity => entity.id === entityId)
+      if (entityData) {
+        const bundle = entityData.bundle
+        if (entityData.versions && entityData.versions[versionNumber]) {
+          response = {
+            ...bundle,
+            entity: entityData.versions[versionNumber],
+          }
+        } else {
+          response = bundle
         }
         status = 200
-      } else if (req.params.entityId === MOCK_PROJECT_ID) {
-        response = mockProjectEntityBundle
-        status = 200
       }
+
       return res(ctx.status(status), ctx.json(response))
     },
   ),
@@ -198,8 +203,66 @@ export const entityHandlers = [
     )}`,
 
     async (req, res, ctx) => {
-      const response = mockFileEntityJson
-      return res(ctx.status(200), ctx.json(response))
+      let status = 404
+      let response: SynapseApiResponse<EntityJson> = {
+        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+      }
+      const entityData = mockEntities.find(
+        entity => entity.id === req.params.entityId,
+      )
+      if (entityData) {
+        response = entityData.json
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.post(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
+
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<PaginatedResults<EntityHeader>> = {
+        reason: `Mock Service worker could not find a mock entity bundle with ID ${req.params.entityId}`,
+      }
+
+      const referenceList = req.body as { references: Reference[] }
+
+      const entityData = mockEntities
+        .filter(entity =>
+          referenceList.references.find(ref => ref.targetId === entity.id),
+        )
+        .map(entity => entity.entityHeader)
+
+      if (entityData) {
+        response = { results: entityData }
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
+    },
+  ),
+
+  rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+      ':entityId',
+    )}/path`,
+
+    async (req, res, ctx) => {
+      let status = 404
+      let response: SynapseApiResponse<EntityPath> = {
+        reason: `Mock Service worker could not find a mock entity path using ID ${req.params.entityId}`,
+      }
+      const entityData = mockEntities.find(e => req.params.entityId === e.id)
+
+      if (entityData && entityData.path) {
+        response = entityData.path
+        status = 200
+      }
+
+      return res(ctx.status(status), ctx.json(response))
     },
   ),
 ]

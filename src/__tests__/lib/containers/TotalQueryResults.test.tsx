@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import * as React from 'react'
-import { SynapseConstants } from '../../../lib'
+import { SynapseConstants } from '../../../lib/utils'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,

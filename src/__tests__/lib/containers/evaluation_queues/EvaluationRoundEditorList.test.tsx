@@ -1,14 +1,12 @@
-import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
-import { SynapseClient } from '../../../../lib/utils'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
-import { mount } from 'enzyme'
-import { EvaluationRoundEditorList } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorList'
 import React from 'react'
-import { ErrorBanner } from '../../../../lib/containers/ErrorBanner'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../../mocks/MockSynapseContext'
+import { EvaluationRoundEditorList } from '../../../../lib/containers/evaluation_queues/EvaluationRoundEditorList'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
+import { SynapseClient } from '../../../../lib/utils'
+import { EvaluationRound } from '../../../../lib/utils/synapseTypes'
+import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 
 describe('test EvaluationRoundEditorList', () => {
   const evaluationId = '123123123'
@@ -88,24 +86,18 @@ describe('test EvaluationRoundEditorList', () => {
       }),
     )
 
-    const wrapper = mount(
-      <EvaluationRoundEditorList evaluationId={evaluationId} />,
-      {
-        wrappingComponent: SynapseTestContext,
-      },
-    )
+    render(<EvaluationRoundEditorList evaluationId={evaluationId} />, {
+      wrapper: createWrapper(),
+    })
 
-    expect(wrapper.find('.evaluation-round-editor').exists()).toBe(false)
-    expect(wrapper.find(ErrorBanner).exists()).toBe(true)
+    expect(screen.queryByRole('form')).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).toBeInTheDocument()
   })
 
   it('fetched pages', () => {
-    const wrapper = mount(
-      <EvaluationRoundEditorList evaluationId={evaluationId} />,
-      {
-        wrappingComponent: SynapseTestContext,
-      },
-    )
+    render(<EvaluationRoundEditorList evaluationId={evaluationId} />, {
+      wrapper: createWrapper(),
+    })
 
     expect(mockGetEvaulationsList).toBeCalledWith(
       evaluationId,
@@ -118,24 +110,21 @@ describe('test EvaluationRoundEditorList', () => {
       MOCK_CONTEXT_VALUE.accessToken,
     )
 
-    expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+    expect(screen.getAllByRole('form')).toHaveLength(3)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('add round button', () => {
-    const wrapper = mount(
-      <EvaluationRoundEditorList evaluationId={evaluationId} />,
-      {
-        wrappingComponent: SynapseTestContext,
-      },
-    )
+    render(<EvaluationRoundEditorList evaluationId={evaluationId} />, {
+      wrapper: createWrapper(),
+    })
 
-    expect(wrapper.find('.evaluation-round-editor')).toHaveLength(3)
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+    expect(screen.getAllByRole('form')).toHaveLength(3)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
-    wrapper.find('button.add-round-button').simulate('click')
+    userEvent.click(screen.getByRole('button', { name: 'Add Round' }))
 
-    expect(wrapper.find('.evaluation-round-editor')).toHaveLength(4)
-    expect(wrapper.find(ErrorBanner).exists()).toBe(false)
+    expect(screen.getAllByRole('form')).toHaveLength(4)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })

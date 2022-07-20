@@ -107,3 +107,10 @@ export const DATA_ACCESS_SUBMISSION_BY_ID = (id: string | number) =>
 
 export const PROFILE_IMAGE_PREVIEW = (userId: string) =>
   `${REPO}/userProfile/${userId}/image/preview`
+
+export const APPROVED_SUBMISSION_INFO = (
+  accessRequirementId: string | number,
+) => ACCESS_REQUIREMENT_BY_ID(accessRequirementId) + `/approvedSubmissionInfo`
+
+export const EVALUATION = `${REPO}/evaluation`
+export const EVALUATION_BY_ID = (id: string | number) => EVALUATION + `/${id}`

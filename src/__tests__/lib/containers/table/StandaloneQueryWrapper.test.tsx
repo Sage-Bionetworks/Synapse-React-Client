@@ -1,15 +1,12 @@
-import * as React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
-import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '../../../../lib/utils/synapseTypes'
-import syn20337467Json from '../../../../mocks/query/syn20337467.json'
-import { SynapseContextType } from '../../../../lib/utils/SynapseContext'
+import * as React from 'react'
 import StandaloneQueryWrapper, {
   StandaloneQueryWrapperProps,
 } from '../../../../lib/containers/table/StandaloneQueryWrapper'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '../../../../lib/utils/SynapseContext'
+import { QueryResultBundle } from '../../../../lib/utils/synapseTypes'
+import syn20337467Json from '../../../../mocks/query/syn20337467.json'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
-import { SynapseConstants } from '../../../lib'
+import { SynapseConstants } from '../../../lib/utils'
 import CardContainer, {
   CardContainerProps,
 } from '../../../lib/containers/CardContainer'

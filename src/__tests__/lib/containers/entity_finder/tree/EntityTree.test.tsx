@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import { act, render, waitFor, screen } from '@testing-library/react'
 import React, { useState } from 'react'
-import { SynapseClient } from '../../../../../lib'
+import { SynapseClient } from '../../../../../lib/utils'
 import { EntityDetailsListDataConfigurationType } from '../../../../../lib/containers/entity_finder/details/EntityDetailsList'
 import {
   FinderScope,

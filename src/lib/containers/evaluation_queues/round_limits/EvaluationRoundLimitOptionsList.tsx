@@ -53,7 +53,10 @@ export const EvaluationRoundLimitOptionsList: React.FunctionComponent<
   }, [limitInputs, addNewLimit])
 
   return (
-    <div className="advanced-limits-grid">
+    <div
+      data-testid="EvaluationRoundLimitOptionsList"
+      className="advanced-limits-grid"
+    >
       {limitInputs.map((limit, index) => {
         return (
           <React.Fragment key={limit.type}>

@@ -6,10 +6,7 @@ import {
 } from '../../../lib/containers/EntityBadgeIcons'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
-import {
-  mockFileEntityBundle,
-  MOCK_FILE_ENTITY_ID,
-} from '../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
 import userEvent from '@testing-library/user-event'
 import {
@@ -32,6 +29,9 @@ import {
   mockSchemaValidationResults,
 } from '../../../mocks/mockSchema'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+
+const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
+const mockFileEntityBundle = mockFileEntityData.bundle
 
 const defaultProps: EntityBadgeIconsProps = {
   entityId: MOCK_FILE_ENTITY_ID,
