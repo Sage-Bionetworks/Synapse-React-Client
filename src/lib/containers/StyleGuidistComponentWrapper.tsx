@@ -15,25 +15,27 @@ import {
 export async function sessionChangeHandler() {
   detectSSOCode()
   const accessToken = await getAccessTokenFromCookie()
-  global.accessToken = accessToken
   const profile = await getUserProfile(accessToken)
-  global.currentUserProfile = profile
+  let date
   if (accessToken) {
     getAuthenticatedOn(accessToken).then(authenticatedOn => {
-      const date = moment(authenticatedOn.authenticatedOn).format('L LT')
+      date = moment(authenticatedOn.authenticatedOn).format('L LT')
     })
   }
-  return profile
+  return { accessToken, profile, authenticatedOn: date }
 }
 
 export const StyleGuidistComponentWrapper: React.FC = props => {
+  const [accessToken, setAccessToken] = React.useState(undefined)
   useEffect(() => {
-    sessionChangeHandler()
-  }, [])
+    sessionChangeHandler().then(data => {
+      setAccessToken(data.accessToken)
+    })
+  })
   return (
     <SynapseContextProvider
       synapseContext={{
-        accessToken: (global as any).accessToken,
+        accessToken: accessToken,
         isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
         utcTime: SynapseClient.getUseUtcTimeFromCookie(),
         withErrorBoundary: true,

@@ -45,9 +45,12 @@ export const CopyToClipboardInput: React.FunctionComponent<
         show={showModal}
         autohide={true}
       ></ToastMessage>
-      <div className="SRC-copyToClipboardInputContainer" ref={ref}>
+      <div
+        className="SRC-copyToClipboardInputContainer SRC-marginBottomTop"
+        ref={ref}
+      >
         <FormControl
-          className="SRC-marginBottomTop SRC-copyToClipboardInput"
+          className="SRC-copyToClipboardInput"
           type="text"
           style={{
             width: inputWidth,
