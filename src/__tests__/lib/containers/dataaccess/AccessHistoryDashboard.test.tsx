@@ -179,7 +179,7 @@ describe('AccessHistoryDashboard tests', () => {
     )
 
     userEvent.type(arNameInput, mockAccessRequirement.name)
-    selectEvent.select(
+    await selectEvent.select(
       arNameInput,
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
     )
