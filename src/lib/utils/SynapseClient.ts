@@ -1403,7 +1403,7 @@ export const setAccessTokenCookie = async (
  */
 export const getAccessTokenFromCookie = async () => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
-    return cookies.get(ACCESS_TOKEN_COOKIE_KEY)
+    return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
     'Portal/sessioncookie?validate=true',
