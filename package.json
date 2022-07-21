@@ -59,6 +59,7 @@
     "react-compound-slider": "^2.5.0",
     "react-datetime": "^3.0.4",
     "react-error-boundary": "^3.1.1",
+    "react-flow-renderer": "^10.3.11",
     "react-hot-toast": "^2.1.0",
     "react-intersection-observer": "^8.31.0",
     "react-mailchimp-subscribe": "^2.1.0",
