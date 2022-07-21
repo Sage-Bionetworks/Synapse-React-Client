@@ -5,6 +5,7 @@ export type ProvenanceProps = {
   /** The entity (and version) whose provenance should be shown */
   entityId: string
   version: number
+  depth: number
 }
 
 /**
@@ -12,7 +13,7 @@ export type ProvenanceProps = {
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
-  const { entityId, version } = props
+  const { entityId, version, depth = 1 } = props
 
   const [nodes, setNodes] = React.useState<Node<any>[]>([])
   const [edges, setEdges] = React.useState<Edge<any>[]>([])

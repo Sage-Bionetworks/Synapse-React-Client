@@ -10,10 +10,12 @@ import {
   ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  ACTIVITY_FOR_ENTITY,
   ALIAS_AVAILABLE,
   APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
   DATA_ACCESS_SUBMISSION_BY_ID,
+  ENTITIES_GENERATED_BY_ACTIVITY,
   ENTITY,
   ENTITY_ACCESS,
   ENTITY_BUNDLE_V2,
@@ -112,6 +114,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   QueryTableResults,
+  Reference,
   ReferenceList,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
@@ -220,6 +223,7 @@ import {
 import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
 import { SynapseClientError } from './SynapseClientError'
 import { OAuthClientList } from './synapseTypes/OAuthClient'
+import { Activity } from './synapseTypes/Provenance/Provenance'
 
 const cookies = new UniversalCookies()
 
@@ -3769,5 +3773,40 @@ export function getProfilePicPreviewPresignedUrl(userId: string) {
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
+  )
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
+ */
+export const getEntitiesGeneratedByActivity = (
+  activityId: string,
+  limit: number = 50,
+  offset: number = 0,
+  accessToken?: string,
+): Promise<PaginatedResults<Reference>> => {
+  const url = ENTITIES_GENERATED_BY_ACTIVITY(activityId, limit, offset)
+  return doGet<PaginatedResults<Reference>>(
+    url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
+ */
+export const getActivityForEntity = (
+  entityId: string,
+  versionNumber?: string,
+  accessToken?: string,
+): Promise<Activity> => {
+  const url = ACTIVITY_FOR_ENTITY(entityId, versionNumber)
+  return doGet<Activity>(
+    url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
