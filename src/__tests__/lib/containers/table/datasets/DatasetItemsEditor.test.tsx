@@ -1,17 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
-  EntityFinderModal,
-  EntityFinderModalProps,
-} from '../../../../../lib/containers/entity_finder/EntityFinderModal'
-import {
   DatasetItemsEditor,
   DatasetItemsEditorProps,
-  ADD_FILES,
-  NO_FILES_IN_THIS_DATASET,
-  REMOVE_FILES,
+  getCopy,
 } from '../../../../../lib/containers/table/datasets/DatasetItemsEditor'
 import { displayToast } from '../../../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
@@ -21,12 +16,23 @@ import {
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
-import { EntityRef, Reference } from '../../../../../lib/utils/synapseTypes'
+import {
+  EntityRef,
+  EntityType,
+  Reference,
+} from '../../../../../lib/utils/synapseTypes'
 import mockDatasetEntityData from '../../../../../mocks/entity/mockDataset'
-import { rest, server } from '../../../../../mocks/msw/server'
+import mockDatasetCollectionData from '../../../../../mocks/entity/mockDatasetCollection'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
+import { rest, server } from '../../../../../mocks/msw/server'
+import * as EntityFinderModal from '../../../../../lib/containers/entity_finder/EntityFinderModal'
 
+const mockDatasetEntity = mockDatasetEntityData.entity
+const mockDatasetCollectionEntity = mockDatasetCollectionData.entity
 const mockFileEntity = mockFileEntityData.entity
+
+const datasetCopy = getCopy(mockDatasetEntity)
+const datasetCollectionCopy = getCopy(mockDatasetCollectionEntity)
 
 // Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
 jest.mock(
@@ -50,6 +56,11 @@ const mockDatasetItem: EntityRef = {
   versionNumber: 1,
 }
 
+const mockDatasetReference: Reference = {
+  targetId: mockDatasetEntity.id!,
+  targetVersionNumber: 2,
+}
+
 function referenceToDatasetItem(reference: Reference): EntityRef {
   return {
     entityId: reference.targetId,
@@ -57,17 +68,10 @@ function referenceToDatasetItem(reference: Reference): EntityRef {
   }
 }
 // The Entity Finder is complicated to use and would require setting up a lot of API mocks, so we'll just mock the component.
-jest.mock(
-  '../../../../../lib/containers/entity_finder/EntityFinderModal',
-  () => {
-    return {
-      EntityFinderModal: jest.fn(() => <></>),
-    }
-  },
-)
-const mockEntityFinder = EntityFinderModal as unknown as jest.Mock<
-  (props: Partial<EntityFinderModalProps>) => JSX.Element
->
+const mockEntityFinder = jest
+  .spyOn(EntityFinderModal, 'EntityFinderModal')
+  .mockImplementation(() => <></>)
+
 const mockEntityFinderButtonText = 'Add Items From Entity Finder'
 function mockEntityFinderToAddItems(items: Array<Reference>) {
   mockEntityFinder.mockImplementation(({ show, onConfirm }) => {
@@ -88,7 +92,7 @@ function mockEntityFinderToAddItems(items: Array<Reference>) {
 function addItemsViaEntityFinder() {
   const addItemsButton = screen.getAllByRole('button', {
     exact: false,
-    name: ADD_FILES,
+    name: /Add (File|Dataset)s/,
   })[0]
   // Mocked entity finder is not visible
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -120,7 +124,7 @@ function clickRemove() {
   userEvent.click(
     screen.getByRole('button', {
       exact: true,
-      name: REMOVE_FILES,
+      name: /Remove (File|Dataset)s/,
     }),
   )
 }
@@ -149,7 +153,7 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
     expect(
       screen.getAllByRole('button', {
         exact: false,
-        name: ADD_FILES,
+        name: /Add (File|Dataset)s/,
       })[0],
     ).not.toBeDisabled(),
   )
@@ -178,11 +182,58 @@ async function verifyNoneSelected() {
     expect(
       screen.getByRole('button', {
         exact: false,
-        name: REMOVE_FILES,
+        name: /Remove (File|Dataset)s/,
       }),
     ).toBeDisabled(),
   )
 }
+
+function getDatasetHandlerWithItems(
+  type: 'dataset' | 'datasetcollection',
+  items?: Array<EntityRef>,
+) {
+  return rest.get(
+    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+      ':entityId',
+    )}`,
+
+    async (req, res, ctx) => {
+      const response = cloneDeep(
+        type === 'dataset'
+          ? mockDatasetEntityData.entity
+          : mockDatasetCollectionData.entity,
+      )
+      response.items = items
+      return res(ctx.status(200), ctx.json(response))
+    },
+  )
+}
+
+const successfulUpdateHandler = rest.put(
+  `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+    ':entityId',
+  )}`,
+  async (req, res, ctx) => {
+    updatedEntityCaptor(req.body)
+    return res(ctx.status(200), ctx.json(req.body))
+  },
+)
+
+const unsuccessfulUpdateHandler = rest.put(
+  `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
+    ':entityId',
+  )}`,
+  async (req, res, ctx) => {
+    const status = 500
+    return res(
+      ctx.status(status),
+      ctx.json({
+        status: status,
+        reason: 'Server error occurred',
+      }),
+    )
+  },
+)
 
 describe('Dataset Items Editor tests', () => {
   // Handle the msw lifecycle:
@@ -193,66 +244,29 @@ describe('Dataset Items Editor tests', () => {
 
   afterEach(() => {
     jest.clearAllMocks()
-    server.restoreHandlers()
-    updatedEntityCaptor.mockClear()
+    server.resetHandlers()
   })
   afterAll(() => server.close())
 
-  function getDatasetHandlerWithItems(items?: Array<EntityRef>) {
-    return rest.get(
-      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
-        ':entityId',
-      )}`,
-
-      async (req, res, ctx) => {
-        const response = mockDatasetEntityData.entity
-        mockDatasetEntityData.entity.items = items
-        return res(ctx.status(200), ctx.json(response))
-      },
-    )
-  }
-
-  const successfulUpdateHandler = rest.put(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
-      ':entityId',
-    )}`,
-    async (req, res, ctx) => {
-      updatedEntityCaptor(req.body)
-      return res(ctx.status(200), ctx.json(req.body))
-    },
-  )
-
-  const unsuccessfulUpdateHandler = rest.put(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
-      ':entityId',
-    )}`,
-    async (req, res, ctx) => {
-      const status = 500
-      return res(
-        ctx.status(status),
-        ctx.json({
-          status: status,
-          reason: 'Server error occurred',
-        }),
-      )
-    },
-  )
-
   it('Displays call to action when there are no items', async () => {
-    const getEmptyDatasetHandler = getDatasetHandlerWithItems([])
+    const { ADD_ITEMS, NO_ITEMS_IN_THIS_DATASET } = datasetCopy
+
+    const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
     server.use(getEmptyDatasetHandler)
 
     await renderComponent()
-    await screen.findByText(NO_FILES_IN_THIS_DATASET, { exact: true })
+    await screen.findByText(NO_ITEMS_IN_THIS_DATASET, { exact: true })
     const addItemsButtons = await screen.findAllByRole('button', {
       exact: false,
-      name: ADD_FILES,
+      name: ADD_ITEMS,
     })
     expect(addItemsButtons.length).toBe(2)
   })
 
   it('Opens the Entity Finder modal when Add Items is clicked', async () => {
-    const getEmptyDatasetHandler = getDatasetHandlerWithItems([])
+    const { ADD_ITEMS } = datasetCopy
+
+    const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
     server.use(getEmptyDatasetHandler)
     mockEntityFinderToAddItems([mockFileReference])
 
@@ -261,7 +275,7 @@ describe('Dataset Items Editor tests', () => {
       expect(
         screen.getAllByRole('button', {
           exact: false,
-          name: ADD_FILES,
+          name: ADD_ITEMS,
         })[0],
       ).not.toBeDisabled(),
     )
@@ -271,8 +285,10 @@ describe('Dataset Items Editor tests', () => {
   })
 
   it('Updates the entity when Save is clicked', async () => {
+    const { ADD_ITEMS } = datasetCopy
+
     // Start with empty dataset
-    const getEmptyDatasetHandler = getDatasetHandlerWithItems([])
+    const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
     server.use(getEmptyDatasetHandler, successfulUpdateHandler)
     mockEntityFinderToAddItems([mockFileReference])
 
@@ -281,7 +297,7 @@ describe('Dataset Items Editor tests', () => {
       expect(
         screen.getAllByRole('button', {
           exact: false,
-          name: ADD_FILES,
+          name: ADD_ITEMS,
         })[1],
       ).not.toBeDisabled(),
     )
@@ -304,6 +320,7 @@ describe('Dataset Items Editor tests', () => {
   describe('Select All', () => {
     it('Selects all when none are selected', async () => {
       const getDatasetHandler = getDatasetHandlerWithItems(
+        'dataset',
         [mockFileReference, { targetId: 'syn999', targetVersionNumber: 1 }].map(
           referenceToDatasetItem,
         ),
@@ -327,6 +344,7 @@ describe('Dataset Items Editor tests', () => {
 
     it('Selects all when some are selected', async () => {
       const getDatasetHandler = getDatasetHandlerWithItems(
+        'dataset',
         [mockFileReference, { targetId: 'syn999', targetVersionNumber: 1 }].map(
           referenceToDatasetItem,
         ),
@@ -355,6 +373,7 @@ describe('Dataset Items Editor tests', () => {
 
     it('Selects none when all are selected', async () => {
       const getDatasetHandler = getDatasetHandlerWithItems(
+        'dataset',
         [mockFileReference, { targetId: 'syn999', targetVersionNumber: 1 }].map(
           referenceToDatasetItem,
         ),
@@ -373,7 +392,7 @@ describe('Dataset Items Editor tests', () => {
   })
 
   it('Displays the correct number of files in the dataset', async () => {
-    const getEmptyDatasetHandler = getDatasetHandlerWithItems([])
+    const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
     server.use(getEmptyDatasetHandler)
 
     const itemsToAdd: Array<Reference> = [
@@ -400,8 +419,10 @@ describe('Dataset Items Editor tests', () => {
 
   describe('Remove Items', () => {
     it('Disables the remove button until an item has been selected', async () => {
+      const { REMOVE_ITEMS } = datasetCopy
+
       // Start with one item
-      const getDatasetHandler = getDatasetHandlerWithItems([
+      const getDatasetHandler = getDatasetHandlerWithItems('dataset', [
         referenceToDatasetItem(mockFileReference),
       ])
       server.use(getDatasetHandler)
@@ -413,7 +434,7 @@ describe('Dataset Items Editor tests', () => {
         expect(
           screen.getByRole('button', {
             exact: false,
-            name: REMOVE_FILES,
+            name: REMOVE_ITEMS,
           }),
         ).toBeDisabled(),
       )
@@ -425,7 +446,7 @@ describe('Dataset Items Editor tests', () => {
         expect(
           screen.getByRole('button', {
             exact: false,
-            name: REMOVE_FILES,
+            name: REMOVE_ITEMS,
           }),
         ).not.toBeDisabled(),
       )
@@ -433,7 +454,7 @@ describe('Dataset Items Editor tests', () => {
 
     it('Removes selected items when the button is clicked', async () => {
       // Start with one item
-      const getDatasetHandler = getDatasetHandlerWithItems([
+      const getDatasetHandler = getDatasetHandlerWithItems('dataset', [
         referenceToDatasetItem(mockFileReference),
       ])
       server.use(getDatasetHandler, successfulUpdateHandler)
@@ -458,6 +479,7 @@ describe('Dataset Items Editor tests', () => {
 
   it('Allows selecting versions and updates the selected version when a new one is picked', async () => {
     const getDatasetHandler = getDatasetHandlerWithItems(
+      'dataset',
       [mockFileReference].map(referenceToDatasetItem),
     )
     server.use(getDatasetHandler, successfulUpdateHandler)
@@ -490,7 +512,7 @@ describe('Dataset Items Editor tests', () => {
    * We're calling resetHandlers and clearAllMocks, so I have no idea why it isn't working.
    */
   it.skip('Handles an error on Save by displaying a toast and not calling the callback', async () => {
-    const getDatasetHandler = getDatasetHandlerWithItems([])
+    const getDatasetHandler = getDatasetHandlerWithItems('dataset', [])
     server.use(getDatasetHandler, unsuccessfulUpdateHandler)
 
     await renderComponent()
@@ -515,7 +537,7 @@ describe('Dataset Items Editor tests', () => {
 
   describe('Cancel', () => {
     it('Calls the correct callback when onCancel is called', async () => {
-      const getEmptyDatasetHandler = getDatasetHandlerWithItems([])
+      const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
       server.use(getEmptyDatasetHandler)
       await renderComponent()
 
@@ -525,7 +547,7 @@ describe('Dataset Items Editor tests', () => {
     })
 
     it('Displays a warning when cancelling without making changes', async () => {
-      const getEmptyDatasetHandler = getDatasetHandlerWithItems([])
+      const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
       server.use(getEmptyDatasetHandler)
       mockEntityFinderToAddItems([mockFileReference])
 
@@ -550,7 +572,7 @@ describe('Dataset Items Editor tests', () => {
     })
 
     it('Click through the warning after making changes', async () => {
-      const getEmptyDatasetHandler = getDatasetHandlerWithItems([])
+      const getEmptyDatasetHandler = getDatasetHandlerWithItems('dataset', [])
       server.use(getEmptyDatasetHandler)
       mockEntityFinderToAddItems([mockFileReference])
 
@@ -578,14 +600,16 @@ describe('Dataset Items Editor tests', () => {
   })
 
   it('SWC-5876 - Handles a dataset with undefined items', async () => {
-    const getDatasetHandler = getDatasetHandlerWithItems(undefined)
+    const { NO_ITEMS_IN_THIS_DATASET } = datasetCopy
+
+    const getDatasetHandler = getDatasetHandlerWithItems('dataset', undefined)
     server.use(getDatasetHandler, successfulUpdateHandler)
     await renderComponent()
 
     // Verify that the dataset is empty and no error was thrown.
     await waitFor(() =>
       expect(
-        screen.queryByText(NO_FILES_IN_THIS_DATASET, { exact: false }),
+        screen.queryByText(NO_ITEMS_IN_THIS_DATASET, { exact: false }),
       ).toBeInTheDocument(),
     )
   })
@@ -594,7 +618,9 @@ describe('Dataset Items Editor tests', () => {
     it('Shows no changes when same item with same version is added', async () => {
       // Render dataset editor with item
       const mockItem = { entityId: mockFileEntity.id!, versionNumber: 3 }
-      const getDatasetHandler = getDatasetHandlerWithItems([mockItem])
+      const getDatasetHandler = getDatasetHandlerWithItems('dataset', [
+        mockItem,
+      ])
       server.use(getDatasetHandler, successfulUpdateHandler)
       await renderComponent()
 
@@ -607,7 +633,9 @@ describe('Dataset Items Editor tests', () => {
     })
 
     it('Shows item has updated when same item with different version is added', async () => {
-      const getDatasetHandler = getDatasetHandlerWithItems([mockDatasetItem])
+      const getDatasetHandler = getDatasetHandlerWithItems('dataset', [
+        mockDatasetItem,
+      ])
       server.use(getDatasetHandler, successfulUpdateHandler)
       await renderComponent()
 
@@ -626,7 +654,7 @@ describe('Dataset Items Editor tests', () => {
     })
 
     it('Shows item has been added', async () => {
-      const getDatasetHandler = getDatasetHandlerWithItems([])
+      const getDatasetHandler = getDatasetHandlerWithItems('dataset', [])
       server.use(getDatasetHandler, successfulUpdateHandler)
       await renderComponent()
 
@@ -645,7 +673,9 @@ describe('Dataset Items Editor tests', () => {
     })
 
     it('Shows item has been removed', async () => {
-      const getDatasetHandler = getDatasetHandlerWithItems([mockDatasetItem])
+      const getDatasetHandler = getDatasetHandlerWithItems('dataset', [
+        mockDatasetItem,
+      ])
       server.use(getDatasetHandler, successfulUpdateHandler)
       await renderComponent()
 
@@ -660,6 +690,55 @@ describe('Dataset Items Editor tests', () => {
           title: '1 Item removed',
         }),
       )
+    })
+  })
+
+  describe('Dataset Collections support', () => {
+    it('Can add items to and update a dataset collection', async () => {
+      const { ADD_ITEMS } = datasetCollectionCopy
+
+      // Start with empty dataset
+      const getEmptyDatasetHandler = getDatasetHandlerWithItems(
+        'datasetcollection',
+        [],
+      )
+      server.use(getEmptyDatasetHandler, successfulUpdateHandler)
+      mockEntityFinderToAddItems([mockDatasetReference])
+
+      await renderComponent()
+      await waitFor(() =>
+        expect(
+          screen.getAllByRole('button', {
+            exact: false,
+            name: ADD_ITEMS,
+          })[1],
+        ).not.toBeDisabled(),
+      )
+
+      addItemsViaEntityFinder()
+      // Verify that the Entity Finder is configured to select Datasets
+      expect(mockEntityFinder).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          configuration: expect.objectContaining({
+            selectableTypes: [EntityType.DATASET],
+          }),
+        }),
+        expect.anything(),
+      )
+
+      await clickSave()
+
+      // Verify that items were added to the collection and passed to the update API
+      const expectedDatasetCollectionItems = [mockDatasetReference].map(
+        referenceToDatasetItem,
+      )
+      await waitFor(() =>
+        expect(updatedEntityCaptor).toBeCalledWith(
+          expect.objectContaining({ items: expectedDatasetCollectionItems }),
+        ),
+      )
+
+      await waitFor(() => expect(mockOnSaveFn).toBeCalled())
     })
   })
 })
