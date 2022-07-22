@@ -125,6 +125,7 @@
     "@testing-library/react-hooks": "^7.0.1",
     "@testing-library/user-event": "13.0.16",
     "@types/brainhubeu__react-carousel": "1.15.0",
+    "@types/dagre": "^0.7.47",
     "@types/enzyme": "^3.10.8",
     "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/jest": "^28.1.3",

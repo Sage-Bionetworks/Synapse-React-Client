@@ -43,5 +43,5 @@ export type Activity = {
   modifiedOn: string //	The date this object was last modified.
   createdBy: string //	The user that created this object.
   modifiedBy: string //	The user that last modified this object.
-  used: Used[] //The entities used by this Activity.
+  used?: Used[] //The entities used by this Activity.
 }

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo, useRef } from 'react'
+import React from 'react'
 import ReactFlow, { MiniMap, Controls, Node, Edge } from 'react-flow-renderer'
 import { getProvenanceNode, NodeType } from './ProvenanceUtils'
+import dagre from 'dagre'
 
 export type ProvenanceProps = {
   /** The entity (and version) whose provenance should be shown */
@@ -20,9 +21,23 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     getProvenanceNode({
       id: '1',
       type: NodeType.ENTITY,
-      data: { entityId: 'syn13363290', versionNumber: '9' },
+      data: { targetId: 'syn13363290', targetVersionNumber: 9 },
     }),
-    { id: '2', data: { label: 'Node 2' }, position: { x: 100, y: 200 } },
+    getProvenanceNode({
+      id: '2',
+      type: NodeType.ACTIVITY,
+      data: {
+        id: '12345',
+        name: 'fake activity',
+        description: 'activity description',
+        etag: 'fake etag',
+        createdOn: '12345',
+        modifiedOn: '12345',
+        createdBy: '10129484',
+        modifiedBy: '10129484',
+        used: [],
+      },
+    }),
   ]
   const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }]
   const [nodes, setNodes] = React.useState<Node<any>[]>(initialNodes)
