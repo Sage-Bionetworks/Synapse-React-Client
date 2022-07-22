@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo, useRef } from 'react'
 import ReactFlow, { MiniMap, Controls, Node, Edge } from 'react-flow-renderer'
-import { EntityNode } from './EntityNode'
+import { getProvenanceNode, NodeType } from './ProvenanceUtils'
 
 export type ProvenanceProps = {
   /** The entity (and version) whose provenance should be shown */
@@ -17,11 +17,11 @@ export type ProvenanceProps = {
 export const ProvenanceGraph = (props: ProvenanceProps) => {
   // const { entityId, version, depth = 1 } = props
   const initialNodes: Node[] = [
-    {
+    getProvenanceNode({
       id: '1',
-      data: { label: <EntityNode entityId="syn13363290" versionNumber="9" /> },
-      position: { x: 100, y: 100 },
-    },
+      type: NodeType.ENTITY,
+      data: { entityId: 'syn13363290', versionNumber: '9' },
+    }),
     { id: '2', data: { label: 'Node 2' }, position: { x: 100, y: 200 } },
   ]
   const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }]
