@@ -11,6 +11,7 @@ import ReactFlow, {
 import { getProvenanceNode, NodeType } from './ProvenanceUtils'
 import dagre from 'dagre'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import { UsedEntity } from '../../utils/synapseTypes/Provenance/Provenance'
 
 export type ProvenanceProps = {
   /** The entity (and version) whose provenance should be shown */
@@ -36,15 +37,21 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       id: '2',
       type: NodeType.ACTIVITY,
       data: {
-        id: '12345',
-        name: 'fake activity',
-        description: 'activity description',
-        etag: 'fake etag',
-        createdOn: '12345',
-        modifiedOn: '12345',
-        createdBy: '10129484',
-        modifiedBy: '10129484',
-        used: [],
+        id: '10006327',
+        name: 'Copied file',
+        etag: 'f9cfea64-71f2-4615-8836-044097e6b632',
+        createdOn: '2018-07-18T21:18:49.287Z',
+        modifiedOn: '2018-07-18T21:18:49.287Z',
+        createdBy: '3323072',
+        modifiedBy: '3323072',
+        used: [
+          {
+            wasExecuted: false,
+            concreteType:
+              'org.sagebionetworks.repo.model.provenance.UsedEntity',
+            reference: { targetId: 'syn11180450', targetVersionNumber: 4 },
+          } as UsedEntity,
+        ],
       },
     }),
   ]

@@ -1,4 +1,3 @@
-import { Node } from 'react-flow-renderer'
 import { Reference } from '../ReferenceList'
 
 /**
@@ -6,6 +5,7 @@ import { Reference } from '../ReferenceList'
  */
 export interface Used {
   wasExecuted: boolean // The enclosed entity was used and also executed in the Activity
+  concreteType: USED_URL_CONCRETE_TYPE | USED_ENTITY_CONCRETE_TYPE
 }
 
 export const USED_URL_CONCRETE_TYPE_VALUE =
@@ -27,7 +27,7 @@ export type USED_ENTITY_CONCRETE_TYPE = typeof USED_ENTITY_CONCRETE_TYPE_VALUE
  * http://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/provenance/UsedEntity.html
  */
 export interface UsedEntity extends Used {
-  concreteType: USED_URL_CONCRETE_TYPE
+  concreteType: USED_ENTITY_CONCRETE_TYPE
   reference: Reference
 }
 
@@ -37,7 +37,7 @@ export interface UsedEntity extends Used {
 export type Activity = {
   id: string //	The unique immutable ID
   name: string //	A name for this Activity.
-  description: string // A description of this Activity.
+  description?: string // A description of this Activity.
   etag: string //	Synapse employs an Optimistic Concurrency Control (OCC) scheme to handle concurrent updates. Since the E-Tag changes every time an entity is updated it is used to detect when a client's current representation of an object is out-of-date.
   createdOn: string //	The date this object was created.
   modifiedOn: string //	The date this object was last modified.
