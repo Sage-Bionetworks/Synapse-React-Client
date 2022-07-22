@@ -106,7 +106,7 @@ describe('AccessSubmissionDashboard tests', () => {
     const { history } = renderComponent()
     const arNameInput = (await screen.findAllByRole('textbox'))[0]
     userEvent.type(arNameInput, mockAccessRequirement.name)
-    selectEvent.select(
+    await selectEvent.select(
       arNameInput,
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
     )
@@ -133,7 +133,7 @@ describe('AccessSubmissionDashboard tests', () => {
     const { history } = renderComponent()
     const requesterInput = (await screen.findAllByRole('textbox'))[1]
     userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
-    selectEvent.select(requesterInput, '@' + MOCK_USER_NAME)
+    await selectEvent.select(requesterInput, '@' + MOCK_USER_NAME)
 
     await waitFor(() =>
       expect(
@@ -154,7 +154,7 @@ describe('AccessSubmissionDashboard tests', () => {
     const { history } = renderComponent()
     const reviewerInput = (await screen.findAllByRole('textbox'))[2]
     userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
-    selectEvent.select(reviewerInput, '@' + MOCK_USER_NAME)
+    await selectEvent.select(reviewerInput, '@' + MOCK_USER_NAME)
 
     await waitFor(() =>
       expect(
