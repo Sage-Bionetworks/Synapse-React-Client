@@ -44,7 +44,7 @@
     flex-direction: column;
 
     .AddItemsButton {
-      width: 150px;
+      min-width: 150px;
       span {
         margin: 5px;
       }
