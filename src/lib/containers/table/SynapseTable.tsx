@@ -7,6 +7,7 @@ import { SynapseClient } from '../../utils'
 import {
   hasFilesInView,
   isDataset,
+  isDatasetCollection,
   isEntityView,
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
@@ -263,7 +264,11 @@ export default class SynapseTable extends React.Component<
       entityIdColumnIndicies,
     )
     // also include row entity ids if this is a view (it's possible that the ID column was not selected)
-    if (this.isEntityViewOrDataset() && this.allRowsHaveId()) {
+    if (
+      (this.isEntityViewOrDataset() ||
+        (entity && isDatasetCollection(entity))) &&
+      this.allRowsHaveId()
+    ) {
       const rows = data.queryResult?.queryResults?.rows ?? []
       rows.forEach((row: Row) => {
         const rowSynapseId = `syn${row.rowId}`
@@ -513,8 +518,6 @@ export default class SynapseTable extends React.Component<
     rows: Row[],
   ) => {
     const lastQueryRequest = this.props.queryContext.getLastQueryRequest?.()!
-    // handle displaying the previous button -- if offset is zero then it
-    // shouldn't be displayed
     const {
       queryContext: { entity },
       showAccessColumn,

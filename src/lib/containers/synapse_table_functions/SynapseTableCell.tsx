@@ -1,6 +1,10 @@
 import { noop } from 'lodash-es'
 import React from 'react'
-import { isEntityView, isDataset } from '../../utils/functions/EntityTypeUtils'
+import {
+  isEntityView,
+  isDataset,
+  isDatasetCollection,
+} from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import {
@@ -90,7 +94,9 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   // contains the row Synapse ID, then auto-link.
   if (
     entity &&
-    (isEntityView(entity) || isDataset(entity)) &&
+    (isEntityView(entity) ||
+      isDataset(entity) ||
+      isDatasetCollection(entity)) &&
     (columnName === 'id' || columnName === 'name') &&
     rowId &&
     rowVersionNumber
