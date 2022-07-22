@@ -1,3 +1,4 @@
+import { Node } from 'react-flow-renderer'
 import { Reference } from '../ReferenceList'
 
 /**

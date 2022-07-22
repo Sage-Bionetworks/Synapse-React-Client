@@ -18,8 +18,8 @@ const Template: ComponentStory<typeof ProvenanceGraph> = args => (
   </div>
 )
 
-export const ComplexSchema = Template.bind({})
-ComplexSchema.args = {
+export const TestProvenanceGraph = Template.bind({})
+TestProvenanceGraph.args = {
   entityId: 'syn13363290',
   version: 9,
 }

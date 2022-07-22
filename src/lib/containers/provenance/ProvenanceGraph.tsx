@@ -1,5 +1,7 @@
-import React, { useEffect, useRef } from 'react'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useMemo, useRef } from 'react'
 import ReactFlow, { MiniMap, Controls, Node, Edge } from 'react-flow-renderer'
+import { EntityNode } from './EntityNode'
 
 export type ProvenanceProps = {
   /** The entity (and version) whose provenance should be shown */
@@ -13,13 +15,24 @@ export type ProvenanceProps = {
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
-  const { entityId, version, depth = 1 } = props
-
-  const [nodes, setNodes] = React.useState<Node<any>[]>([])
-  const [edges, setEdges] = React.useState<Edge<any>[]>([])
+  // const { entityId, version, depth = 1 } = props
+  const initialNodes: Node[] = [
+    {
+      id: '1',
+      data: { label: <EntityNode entityId="syn13363290" versionNumber="9" /> },
+      position: { x: 100, y: 100 },
+    },
+    { id: '2', data: { label: 'Node 2' }, position: { x: 100, y: 200 } },
+  ]
+  const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }]
+  const [nodes, setNodes] = React.useState<Node<any>[]>(initialNodes)
+  const [edges, setEdges] = React.useState<Edge<any>[]>(initialEdges)
 
   return (
-    <div className="bootstrap-4-backport ProvenanceWidget">
+    <div
+      className="bootstrap-4-backport ProvenanceWidget"
+      style={{ width: '100%', height: '200px' }}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -30,7 +43,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         <MiniMap />
         <Controls />
       </ReactFlow>
-      )
     </div>
   )
 }
