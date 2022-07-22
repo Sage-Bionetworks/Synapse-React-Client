@@ -109,13 +109,27 @@ FileView.args = {
 export const Dataset = Template.bind({})
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
 Dataset.args = {
+  sql: 'SELECT * FROM syn26302617',
   tableConfiguration: {
     showAccessColumn: true,
     showDownloadColumn: true,
   },
   name: 'Dataset Demo',
   sqlOperator: '=',
-  sql: 'SELECT * FROM syn26302617',
+  downloadCartPageUrl: '#/Other%20Components?id=downloadcartpage',
+  hideSqlEditorControl: false,
+  shouldDeepLink: false,
+}
+
+export const DatasetCollection = Template.bind({})
+DatasetCollection.args = {
+  sql: 'SELECT * FROM syn33199585',
+  tableConfiguration: {
+    showAccessColumn: true,
+    showDownloadColumn: true,
+  },
+  name: 'Dataset Collection Demo',
+  sqlOperator: '=',
   downloadCartPageUrl: '#/Other%20Components?id=downloadcartpage',
   hideSqlEditorControl: false,
   shouldDeepLink: false,
