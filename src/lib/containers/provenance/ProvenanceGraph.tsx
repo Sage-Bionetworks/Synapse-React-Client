@@ -41,9 +41,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     containerHeight = '200px',
     depth = 1,
   } = props
-  const [layoutedNodes, setLayoutedNodes] = React.useState<Node<any>[]>([])
-  const [layoutedEdges, setLayoutedEdges] = React.useState<Edge<any>[]>([])
-
   const rootNodeProps = useMemo(
     () => ({
       type: NodeType.ENTITY,
@@ -51,28 +48,29 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     }),
     [entityId, versionNumber],
   )
-
-  const [nodes, setNodes] = React.useState<Node<any>[]>([
+  const [layoutedNodes, setLayoutedNodes] = React.useState<Node<any>[]>([
     getProvenanceNode(rootNodeProps),
   ])
+  const [layoutedEdges, setLayoutedEdges] = React.useState<Edge<any>[]>([])
+  const [nodes, setNodes] = React.useState<Node<any>[]>([])
   const [edges, setEdges] = React.useState<Edge<any>[]>([])
 
   const { data: rootActivity } = useGetActivityForEntity(
     entityId,
     versionNumber,
   )
+
   useEffect(() => {
-    debugger
-    if (rootActivity) {
+    if (rootActivity && edges.length == 0) {
       // add activity node, and all associated used nodes
-      const newNodes = [...nodes]
-      const newEdges = [...edges]
       const rootActivityNodeProps = {
         type: NodeType.ACTIVITY,
         data: rootActivity,
       }
+      const newNodes: Node[] = [getProvenanceNode(rootNodeProps)]
+      const newEdges: Edge[] = []
       newNodes.push(getProvenanceNode(rootActivityNodeProps))
-      newEdges.push(getProvenanceEdge(rootNodeProps, rootActivityNodeProps))
+      newEdges.push(getProvenanceEdge(rootActivityNodeProps, rootNodeProps))
 
       // go through Activity.used array to add these nodes/edges
       if (rootActivity.used) {
@@ -94,14 +92,13 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         })
         usedNodesProps.forEach(usedNodeProps => {
           newNodes.push(getProvenanceNode(usedNodeProps))
-          newEdges.push(getProvenanceEdge(rootActivityNodeProps, usedNodeProps))
+          newEdges.push(getProvenanceEdge(usedNodeProps, rootActivityNodeProps))
         })
       }
-
       setNodes(newNodes)
       setEdges(newEdges)
     }
-  }, [edges, nodes, rootActivity, rootNodeProps])
+  }, [nodes, edges, rootActivity, rootNodeProps])
 
   // layout
   const dagreGraph = new dagre.graphlib.Graph()
