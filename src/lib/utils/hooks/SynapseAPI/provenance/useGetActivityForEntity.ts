@@ -6,7 +6,7 @@ import { Activity } from '../../../synapseTypes/Provenance/Provenance'
 
 export function useGetActivityForEntity(
   entityId: string,
-  versionNumber?: string,
+  versionNumber: number,
   options?: UseQueryOptions<Activity, SynapseClientError, Activity>,
 ) {
   const { accessToken } = useSynapseContext()

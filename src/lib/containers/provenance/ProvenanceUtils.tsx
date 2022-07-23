@@ -1,4 +1,5 @@
 import React from 'react'
+import { Edge, MarkerType } from 'react-flow-renderer'
 import { ActivityNodeLabel, ActivityNodeLabelProps } from './ActivityNodeLabel'
 import { EntityNodeLabel, EntityNodeLabelProps } from './EntityNodeLabel'
 import {
@@ -23,13 +24,12 @@ type ProvenanceNodeNodeLabelProps =
   | ExternalGraphNodeLabelProps
   | ExpandGraphNodeLabelProps
 type ProvenanceNodeProps = {
-  id: string
   type: NodeType
   data: ProvenanceNodeNodeLabelProps
 }
 
 export const getProvenanceNode = (props: ProvenanceNodeProps) => {
-  const { id, type, data } = props
+  const { type, data } = props
   let nodeLabel: JSX.Element = <></>
   switch (type) {
     case NodeType.ENTITY:
@@ -53,10 +53,44 @@ export const getProvenanceNode = (props: ProvenanceNodeProps) => {
       break
   }
   return {
-    id,
+    id: getNodeId(props),
     position: { x: 100, y: 100 }, // hard coded, let graph layout library figure this out
     data: { label: nodeLabel },
     connectable: false,
     draggable: false,
+  }
+}
+
+export const getProvenanceEdge = (
+  node1Props: ProvenanceNodeProps,
+  node2Props: ProvenanceNodeProps,
+) => {
+  const node1Id = getNodeId(node1Props)
+  const node2Id = getNodeId(node2Props)
+  return {
+    id: `${node1Id}-${node2Id}`,
+    source: node1Id,
+    target: node2Id,
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+    },
+  }
+}
+
+export const getNodeId = (props: ProvenanceNodeProps) => {
+  const { type, data } = props
+  switch (type) {
+    case NodeType.ENTITY:
+      return `${(data as EntityNodeLabelProps).targetId}.${
+        (data as EntityNodeLabelProps).targetVersionNumber
+      }`
+    case NodeType.EXTERNAL:
+      return `${(data as ExternalGraphNodeLabelProps).url}`
+    case NodeType.ACTIVITY:
+      return `${(data as ActivityNodeLabelProps).id}`
+    case NodeType.EXPAND_NODE:
+      return `${(data as ExpandGraphNodeLabelProps).targetId}.${
+        (data as ExpandGraphNodeLabelProps).targetVersionNumber
+      }`
   }
 }

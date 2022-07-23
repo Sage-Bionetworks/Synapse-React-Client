@@ -1,36 +1,28 @@
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { useInfiniteQuery, UseInfiniteQueryOptions } from 'react-query'
+import { useQuery, UseQueryOptions } from 'react-query'
 import { PaginatedResults, Reference } from '../../../synapseTypes'
 
-export function useGetEntitiesGeneratedByActivityInfinite(
+export function useGetEntitiesGeneratedByActivity(
   activityId: string,
-  options?: UseInfiniteQueryOptions<
+  options?: UseQueryOptions<
     PaginatedResults<Reference>,
     SynapseClientError,
     PaginatedResults<Reference>
   >,
 ) {
   const { accessToken } = useSynapseContext()
-
-  return useInfiniteQuery<PaginatedResults<Reference>, SynapseClientError>(
-    ['entitiesGeneratedByActivity', activityId],
-    async context => {
-      return SynapseClient.getEntitiesGeneratedByActivity(
+  return useQuery<PaginatedResults<Reference>, SynapseClientError>(
+    ['entitiesGeneratedByActivity', accessToken],
+    () =>
+      // SWC implementation has always asked for Integer.MAX_VALUE!
+      SynapseClient.getEntitiesGeneratedByActivity(
         activityId,
-        50, // limit
-        context.pageParam, // pass the context.pageParam for the new offset
+        Number.MAX_SAFE_INTEGER,
+        0,
         accessToken,
-      )
-    },
-    {
-      ...options,
-      getNextPageParam: (lastPage, pages) => {
-        if (lastPage.results.length > 0)
-          return pages.length * 50 //set the new offset to (page * limit)
-        else return undefined
-      },
-    },
+      ),
+    options,
   )
 }

@@ -1,22 +1,32 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import ReactFlow, {
-  MiniMap,
   Controls,
   Node,
   Edge,
   Position,
   ConnectionLineType,
 } from 'react-flow-renderer'
-import { getProvenanceNode, NodeType } from './ProvenanceUtils'
+import {
+  getProvenanceEdge,
+  getProvenanceNode,
+  NodeType,
+} from './ProvenanceUtils'
 import dagre from 'dagre'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { UsedEntity } from '../../utils/synapseTypes/Provenance/Provenance'
+import {
+  Used,
+  UsedEntity,
+  UsedURL,
+  USED_ENTITY_CONCRETE_TYPE_VALUE,
+} from '../../utils/synapseTypes/Provenance/Provenance'
+import { useGetActivityForEntity } from '../../utils/hooks/SynapseAPI/provenance/useGetActivityForEntity'
 
 export type ProvenanceProps = {
   /** The entity (and version) whose provenance should be shown */
   entityId: string
-  version: number
+  versionNumber: number
+  containerHeight: string
   depth: number
 }
 
@@ -25,41 +35,73 @@ export type ProvenanceProps = {
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
-  const { entityId, version, depth = 1 } = props
-
-  const initialNodes: Node[] = [
-    getProvenanceNode({
-      id: '1',
-      type: NodeType.ENTITY,
-      data: { targetId: entityId, targetVersionNumber: version },
-    }),
-    getProvenanceNode({
-      id: '2',
-      type: NodeType.ACTIVITY,
-      data: {
-        id: '10006327',
-        name: 'Copied file',
-        etag: 'f9cfea64-71f2-4615-8836-044097e6b632',
-        createdOn: '2018-07-18T21:18:49.287Z',
-        modifiedOn: '2018-07-18T21:18:49.287Z',
-        createdBy: '3323072',
-        modifiedBy: '3323072',
-        used: [
-          {
-            wasExecuted: false,
-            concreteType:
-              'org.sagebionetworks.repo.model.provenance.UsedEntity',
-            reference: { targetId: 'syn11180450', targetVersionNumber: 4 },
-          } as UsedEntity,
-        ],
-      },
-    }),
-  ]
-  const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }]
-  const [nodes, setNodes] = React.useState<Node<any>[]>(initialNodes)
-  const [edges, setEdges] = React.useState<Edge<any>[]>(initialEdges)
+  const {
+    entityId,
+    versionNumber,
+    containerHeight = '200px',
+    depth = 1,
+  } = props
   const [layoutedNodes, setLayoutedNodes] = React.useState<Node<any>[]>([])
   const [layoutedEdges, setLayoutedEdges] = React.useState<Edge<any>[]>([])
+
+  const rootNodeProps = useMemo(
+    () => ({
+      type: NodeType.ENTITY,
+      data: { targetId: entityId, targetVersionNumber: versionNumber },
+    }),
+    [entityId, versionNumber],
+  )
+
+  const [nodes, setNodes] = React.useState<Node<any>[]>([
+    getProvenanceNode(rootNodeProps),
+  ])
+  const [edges, setEdges] = React.useState<Edge<any>[]>([])
+
+  const { data: rootActivity } = useGetActivityForEntity(
+    entityId,
+    versionNumber,
+  )
+  useEffect(() => {
+    debugger
+    if (rootActivity) {
+      // add activity node, and all associated used nodes
+      const newNodes = [...nodes]
+      const newEdges = [...edges]
+      const rootActivityNodeProps = {
+        type: NodeType.ACTIVITY,
+        data: rootActivity,
+      }
+      newNodes.push(getProvenanceNode(rootActivityNodeProps))
+      newEdges.push(getProvenanceEdge(rootNodeProps, rootActivityNodeProps))
+
+      // go through Activity.used array to add these nodes/edges
+      if (rootActivity.used) {
+        const usedNodesProps = rootActivity.used.map((usedItem: Used) => {
+          if (usedItem.concreteType == USED_ENTITY_CONCRETE_TYPE_VALUE) {
+            const usedEntityItem = usedItem as UsedEntity
+            return {
+              type: NodeType.ENTITY,
+              data: { ...usedEntityItem.reference },
+            }
+          } else {
+            // UsedURL
+            const usedUrlItem = usedItem as UsedURL
+            return {
+              type: NodeType.EXTERNAL,
+              data: { ...usedUrlItem },
+            }
+          }
+        })
+        usedNodesProps.forEach(usedNodeProps => {
+          newNodes.push(getProvenanceNode(usedNodeProps))
+          newEdges.push(getProvenanceEdge(rootActivityNodeProps, usedNodeProps))
+        })
+      }
+
+      setNodes(newNodes)
+      setEdges(newEdges)
+    }
+  }, [edges, nodes, rootActivity, rootNodeProps])
 
   // layout
   const dagreGraph = new dagre.graphlib.Graph()
@@ -115,7 +157,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   return (
     <div
       className="bootstrap-4-backport ProvenanceWidget"
-      style={{ width: '100%', height: '200px' }}
+      style={{ width: '100%', height: containerHeight }}
     >
       <ReactFlow
         nodes={layoutedNodes}
@@ -126,7 +168,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         connectionLineType={ConnectionLineType.SmoothStep}
         fitView
       >
-        <MiniMap />
+        {/* <MiniMap /> */}
         <Controls />
       </ReactFlow>
     </div>

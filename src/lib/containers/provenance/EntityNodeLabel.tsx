@@ -11,6 +11,7 @@ export type EntityNodeLabelProps = Reference
 export const EntityNodeLabel = (data: EntityNodeLabelProps) => {
   const { targetId, targetVersionNumber } = data
   const { data: entity } = useGetEntity(targetId, targetVersionNumber)
+
   const entityType: EntityType = entity?.concreteType
     ? convertToEntityType(entity?.concreteType)
     : EntityType.FILE
