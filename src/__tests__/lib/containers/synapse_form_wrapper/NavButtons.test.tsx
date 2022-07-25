@@ -1,27 +1,26 @@
-import * as React from 'react'
-import { shallow } from 'enzyme'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as _ from 'lodash-es'
-import {
-  Step,
-  NavActionEnum,
-} from '../../../../lib/containers/synapse_form_wrapper/types'
+import React from 'react'
 import {
   NavButtons,
   NavButtonsProps,
   NextStepLink,
   NextStepLinkProps,
 } from '../../../../lib/containers/synapse_form_wrapper/NavButtons'
+import {
+  NavActionEnum,
+  Step,
+} from '../../../../lib/containers/synapse_form_wrapper/types'
 import { steps } from '../../../../mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(steps)
 
-const createShallowNavButtonsComponent = (props: NavButtonsProps) => {
-  const wrapper = shallow(<NavButtons {...props} />)
-  return { wrapper }
+const renderNavButtonsComponent = (props: NavButtonsProps) => {
+  return render(<NavButtons {...props} />)
 }
-const createShallowNextStepLinkComponent = (props: NextStepLinkProps) => {
-  const wrapper = shallow(<NextStepLink {...props} />)
-  return { wrapper }
+const renderNextStepLinkComponent = (props: NextStepLinkProps) => {
+  return render(<NextStepLink {...props} />)
 }
 
 const mock = {
@@ -38,49 +37,86 @@ describe('NavButtons tests', () => {
   }
 
   describe('previous button', () => {
-    it('if wizard, only display if previousStepIds array is not empty', () => {
+    test('if wizard, display if previousStepIds array is not empty', () => {
       const _props = { ...props, ...{ isWizardMode: true } }
-      let { wrapper } = createShallowNavButtonsComponent(_props)
-      expect(wrapper.find('button.prev')).toHaveLength(1)
+      renderNavButtonsComponent(_props)
+      const buttons = screen.getAllByRole('button')
+      expect(
+        buttons.filter(button => button.classList.contains('prev')),
+      ).toHaveLength(1)
+    })
+
+    test('if wizard, do not display if previousStepIds array is empty', () => {
+      const _props = { ...props, ...{ isWizardMode: true } }
       _props.previousStepIds = []
-      wrapper = createShallowNavButtonsComponent(_props).wrapper
-      expect(wrapper.find('button.prev')).toHaveLength(0)
+      renderNavButtonsComponent(_props)
+      const buttons = screen.getAllByRole('button')
+      expect(
+        buttons.filter(button => button.classList.contains('prev')),
+      ).toHaveLength(0)
     })
 
-    it('if not wizard, only display if not the first step', () => {
-      let { wrapper } = createShallowNavButtonsComponent(props)
-      expect(wrapper.find('button.prev')).toHaveLength(1)
+    test('if not wizard, display if not the first step', () => {
+      renderNavButtonsComponent(props)
+      const buttons = screen.getAllByRole('button')
+      expect(
+        buttons.filter(button => button.classList.contains('prev')),
+      ).toHaveLength(1)
+    })
+
+    test('if not wizard, do not display if on first step', () => {
       const _props = { ...props, ...{ currentStep: stepsArray[0] } }
-      wrapper = createShallowNavButtonsComponent(_props).wrapper
-      expect(wrapper.find('button.prev')).toHaveLength(0)
+      renderNavButtonsComponent(_props)
+      const buttons = screen.getAllByRole('button')
+      expect(
+        buttons.filter(button => button.classList.contains('prev')),
+      ).toHaveLength(0)
     })
 
-    it('should callback with correct params', async () => {
+    it('should callback with correct params', () => {
       const spy = jest.spyOn(mock, 'onNavActionFn')
-      const { wrapper } = createShallowNavButtonsComponent(props)
-      wrapper.find('button.prev').simulate('click')
+      renderNavButtonsComponent(props)
+      const buttons = screen.getAllByRole('button')
+      const prevButton = buttons.find(button =>
+        button.classList.contains('prev'),
+      )
+      userEvent.click(prevButton!)
       expect(spy).toHaveBeenCalledWith(NavActionEnum.PREVIOUS)
     })
   })
 
   describe('next and save buttons', () => {
-    it('only display next if step is not final and display save on all steps', () => {
-      let { wrapper } = createShallowNavButtonsComponent(props)
-      expect(wrapper.find('button.next')).toHaveLength(1)
-      expect(wrapper.find('button.save')).toHaveLength(1)
-      const _props = { ...props, ...{ currentStep: stepsArray[2] } }
-      expect(_props.currentStep.final).toBe(true)
-      wrapper = createShallowNavButtonsComponent(_props).wrapper
-      expect(wrapper.find('button.next')).toHaveLength(0)
-      expect(wrapper.find('button.save')).toHaveLength(1)
+    test('display next if step is not final and display save on all steps', () => {
+      renderNavButtonsComponent(props)
+      const buttons = screen.getAllByRole('button')
+      expect(
+        buttons.filter(button => button.classList.contains('next')),
+      ).toHaveLength(1)
+      screen.getByRole('button', { name: 'SAVE' })
     })
 
-    it('should callback with correct params', () => {
+    test('do not display next if step is final and display save on all steps', () => {
+      const _props = { ...props, ...{ currentStep: stepsArray[2] } }
+      expect(_props.currentStep.final).toBe(true)
+      renderNavButtonsComponent(_props)
+      const buttons = screen.getAllByRole('button')
+      expect(
+        buttons.filter(button => button.classList.contains('next')),
+      ).toHaveLength(0)
+      screen.getByRole('button', { name: 'SAVE' })
+    })
+
+    test('should callback with correct params', () => {
       const spy = jest.spyOn(mock, 'onNavActionFn')
-      const { wrapper } = createShallowNavButtonsComponent(props)
-      wrapper.find('button.next').simulate('click')
+      renderNavButtonsComponent(props)
+      const buttons = screen.getAllByRole('button')
+      const nextButton = buttons.find(button =>
+        button.classList.contains('next'),
+      )
+      userEvent.click(nextButton!)
       expect(spy).toHaveBeenCalledWith(NavActionEnum.NEXT)
-      wrapper.find('button.save').simulate('click')
+      const saveButton = screen.getByRole('button', { name: 'SAVE' })
+      userEvent.click(saveButton)
       expect(spy).toHaveBeenCalledWith(NavActionEnum.SAVE)
     })
   })
@@ -93,16 +129,18 @@ describe('NextLink tests', () => {
     nextStepId: 'acute_dosing',
   }
 
-  it('should display step name correctly', () => {
-    const { wrapper } = createShallowNextStepLinkComponent(props)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find('span.nav-link').text()).toContain('Acute Dosing')
+  test('should display step name correctly', () => {
+    const { container } = renderNextStepLinkComponent(props)
+    const navLink = container.querySelector('span.nav-link')!
+    within(navLink).getByText('Acute Dosing')
   })
 
-  it('should call calback function with appropriate params', () => {
+  test('should call calback function with appropriate params', () => {
     const spy = jest.spyOn(mock, 'onNavActionFn')
-    const { wrapper } = createShallowNextStepLinkComponent(props)
-    wrapper.find('span.nav-link a').simulate('click')
+    const { container } = renderNextStepLinkComponent(props)
+    const link = container.querySelector('span.nav-link a')!
+
+    userEvent.click(link)
     expect(spy).toHaveBeenCalledWith(stepsArray[2])
   })
 })
