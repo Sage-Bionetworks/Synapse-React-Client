@@ -1,21 +1,20 @@
-import * as React from 'react'
-import { shallow } from 'enzyme'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import * as _ from 'lodash-es'
-import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
+import React from 'react'
 import StepsSideNav, {
   StepsSideNavProps,
 } from '../../../../lib/containers/synapse_form_wrapper/StepsSideNav'
-import IconSvg from '../../../../lib/containers/IconSvg'
+import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import { stepsWithChildren } from '../../../../mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(stepsWithChildren)
 
-const createShallowComponent = (props: StepsSideNavProps) => {
-  const wrapper = shallow(<StepsSideNav {...props} />)
-  return { wrapper }
+function renderComponent(props: StepsSideNavProps) {
+  return render(<StepsSideNav {...props} />)
 }
 
-describe('basic tests', () => {
+describe('StepsSideNav', () => {
   const mock = {
     onStepChangeFn: jest.fn(() => 'ok'),
   }
@@ -24,44 +23,45 @@ describe('basic tests', () => {
     onStepChange: mock.onStepChangeFn,
   }
 
-  it('should display correct class for the inProgress step', () => {
-    const { wrapper } = createShallowComponent(props)
-    expect(wrapper.find('ul')).toHaveLength(2)
-    expect(wrapper.find('div.subMenu ul li')).toHaveLength(2)
-    expect(wrapper.find('.json-forms-menu > ul > li')).toHaveLength(2)
+  test('should display correct class for the inProgress step', () => {
+    const { container } = renderComponent(props)
+    expect(container.querySelectorAll('ul')).toHaveLength(2)
+    expect(container.querySelectorAll('div.subMenu ul li')).toHaveLength(2)
+    expect(
+      container.querySelectorAll('.json-forms-menu > ul > li'),
+    ).toHaveLength(2)
     expect(props.stepList[0].inProgress).toBe(true)
-    const firstLi = wrapper
-      .find('.json-forms-menu > ul')
-      .first()
-      .find('li>div')
-      .first()
-    expect(firstLi.find('div').hasClass('static')).toBe(true)
-    expect(firstLi.hasClass('pointed')).toBe(true)
-    expect(wrapper.find('.pointed')).toHaveLength(1)
+    const firstLi = container
+      .querySelectorAll('.json-forms-menu > ul')[0]
+      .querySelectorAll('li>div')[0]
+    expect(firstLi.classList.contains('static')).toBe(true)
+    expect(firstLi.classList.contains('pointed')).toBe(true)
+    expect(container.querySelectorAll('.pointed')).toHaveLength(1)
   })
 
-  it('should display status icons correctly', () => {
-    const { wrapper } = createShallowComponent(props)
-    const icons = wrapper.find(IconSvg)
+  test('should display status icons correctly', () => {
+    const { container } = renderComponent(props)
+    const icons = container.querySelectorAll('span.styled-svg-wrapper')
     expect(icons).toHaveLength(4)
-    expect(icons.get(0).props.options.icon).toEqual('circle')
-    expect(icons.get(1).props.options.icon).toEqual('errorOutlined')
-    expect(icons.get(2).props.options.icon).toEqual('checkCircle')
-    expect(icons.get(3).props.options.icon).toEqual('block')
+    expect(icons[0].getAttribute('data-svg')).toEqual('circle')
+    expect(icons[1].getAttribute('data-svg')).toEqual('errorOutlined')
+    expect(icons[2].getAttribute('data-svg')).toEqual('checkCircle')
+    expect(icons[3].getAttribute('data-svg')).toEqual('block')
   })
 
-  it('should call calback function with appropriate params', () => {
+  test('should call callback function with appropriate params', () => {
     const spy = jest.spyOn(mock, 'onStepChangeFn')
-    const { wrapper } = createShallowComponent(props)
+    renderComponent(props)
     //steps in progress will not have links so link#2 corresponds to step#3
-    expect(wrapper.find('button').at(2).text()).toEqual(stepsArray[3].title)
-    wrapper.find('button').at(2).simulate('click')
+    const button = screen.getAllByRole('button')[2]
+    within(button).getByText(stepsArray[3].title)
+    userEvent.click(button)
     expect(spy).toHaveBeenCalledWith(stepsArray[3])
   })
 
-  it('should have unclickable steps if in a wizard mode', () => {
+  test('should have unclickable steps if in a wizard mode', () => {
     const _props = { ...props, ...{ isWizardMode: true } }
-    const { wrapper } = createShallowComponent(_props)
-    expect(wrapper.find('button')).toHaveLength(0)
+    renderComponent(_props)
+    expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 })
