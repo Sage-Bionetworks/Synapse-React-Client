@@ -10,6 +10,8 @@ import {
   ExternalGraphNodeLabel,
   ExternalGraphNodeLabelProps,
 } from './ExternalGraphNodeLabel'
+import dagre from 'dagre'
+import ReactFlow, { Node, Position } from 'react-flow-renderer'
 
 export enum NodeType {
   ENTITY,
@@ -93,4 +95,46 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
         (data as ExpandGraphNodeLabelProps).targetVersionNumber
       }`
   }
+}
+
+// layout
+const dagreGraph = new dagre.graphlib.Graph()
+const nodeWidth = 172
+const nodeHeight = 36
+dagreGraph.setDefaultEdgeLabel(() => ({}))
+
+export const getLayoutedElements = (
+  nodes: Node[],
+  edges: Edge[],
+  direction: string,
+) => {
+  const isHorizontal = direction === 'LR'
+  dagreGraph.setGraph({ rankdir: direction })
+
+  nodes.forEach(node => {
+    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight })
+  })
+
+  edges.forEach(edge => {
+    dagreGraph.setEdge(edge.source, edge.target)
+  })
+
+  dagre.layout(dagreGraph)
+
+  nodes.forEach(node => {
+    const nodeWithPosition = dagreGraph.node(node.id)
+    node.targetPosition = isHorizontal ? Position.Left : Position.Top
+    node.sourcePosition = isHorizontal ? Position.Right : Position.Bottom
+
+    // We are shifting the dagre node position (anchor=center center) to the top left
+    // so it matches the React Flow node anchor point (top left).
+    node.position = {
+      x: nodeWithPosition.x - nodeWidth / 2,
+      y: nodeWithPosition.y - nodeHeight / 2,
+    }
+
+    return node
+  })
+
+  return { nodes, edges }
 }
