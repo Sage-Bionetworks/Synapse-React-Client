@@ -62,13 +62,20 @@ export const Carousel: React.FunctionComponent<CarouselProps> = ({
     } else {
       childClass += ' SRC-Carousel__UnselectedCard'
     }
-    return React.cloneElement(child, { className: childClass })
+    return React.cloneElement(child, {
+      className: childClass,
+      role: 'listitem',
+    })
   })
 
   return isLoading ? (
     <div className="spinner" style={{ display: 'block' }} />
   ) : (
-    <div className="SRC-Carousel">
+    <div
+      className="SRC-Carousel"
+      role={'marquee'}
+      aria-roledescription="carousel"
+    >
       <SizeMe refreshMode="debounce" noPlaceholder={true}>
         {({ size }) => (
           <BrainhubCarousel
