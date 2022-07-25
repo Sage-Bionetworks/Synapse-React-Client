@@ -398,6 +398,140 @@ type ValueOrMultiValue = {
   columnModelType?: ColumnType
 }
 
+export function getCardLinkHref(
+  cardLink: CardLink | undefined,
+  data: string[] | undefined,
+  schema: Record<string, number> | undefined,
+): string | undefined {
+  if (cardLink) {
+    if (!data || !schema) {
+      throw Error('Must specify CardLink and data for linking to work')
+    }
+    const { matchColumnName, URLColumnName, overrideLinkURLColumnName } =
+      cardLink
+
+    // PORTALS-2088:  Return the link, unless...
+    // an overrideLinkURLColumnName has been set and it's value is defined.
+    // In this case, just use the overrideLinkURLColumnName value
+    if (overrideLinkURLColumnName && schema[overrideLinkURLColumnName]) {
+      const indexOfOverrideLinkURLColumnName = schema[overrideLinkURLColumnName]
+      const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
+      if (overrideLinkValue) {
+        return overrideLinkValue
+      }
+    }
+
+    const indexInData = schema[matchColumnName]
+    if (indexInData === undefined) {
+      console.error(
+        `Could not find match for data: ${data} with columnName ${matchColumnName}`,
+      )
+    } else {
+      const value = data[indexInData]
+      if (value) {
+        // value is defined!
+        return `/${cardLink.baseURL}?${URLColumnName}=${value}`
+      }
+    }
+  }
+  return undefined
+}
+
+export function getLinkParams(
+  link: string,
+  cardLinkConfig: CardLink | undefined,
+  data: string[] | undefined,
+  schema: any | undefined,
+) {
+  link = link.trim()
+  let href = link
+  let target = '_self'
+  if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
+    // its a synId
+    href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`
+  } else if (link.match(DOI_REGEX)) {
+    target = '_blank'
+    href = `https://dx.doi.org/${link}`
+  } else if (!cardLinkConfig) {
+    target = '_blank'
+  } else if (cardLinkConfig) {
+    href = getCardLinkHref(cardLinkConfig, data, schema) ?? ''
+  }
+  return { href, target }
+}
+
+export function LongDescription(props: {
+  description: string
+  hasClickedShowMore: boolean
+  descriptionSubTitle: any
+  descriptionConfig?: DescriptionConfig
+}) {
+  const {
+    description,
+    hasClickedShowMore,
+    descriptionSubTitle,
+    descriptionConfig,
+  } = props
+  let content: JSX.Element | string = description
+  if (descriptionConfig?.isMarkdown) {
+    content = <MarkdownSynapse markdown={content} />
+  }
+  const show =
+    hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
+  return (
+    <div className={show ? '' : 'SRC-hidden'}>
+      <span
+        data-search-handle={descriptionSubTitle}
+        className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}
+      >
+        {content}
+      </span>
+    </div>
+  )
+}
+
+export function ShortDescription(props: {
+  description: string
+  hasClickedShowMore: boolean
+  descriptionSubTitle: any
+  descriptionConfig?: DescriptionConfig
+  toggleShowMore: () => void
+}) {
+  const {
+    description,
+    hasClickedShowMore,
+    descriptionSubTitle,
+    descriptionConfig,
+    toggleShowMore,
+  } = props
+  if (descriptionConfig?.showFullDescriptionByDefault) {
+    return <></>
+  }
+  return (
+    <div className={hasClickedShowMore ? 'SRC-hidden' : ''}>
+      <span
+        data-search-handle={descriptionSubTitle}
+        className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}
+      >
+        {getCutoff(description).previewText}
+      </span>
+      {description.length >= CHAR_COUNT_CUTOFF && (
+        <a
+          style={{
+            fontSize: '16px',
+            cursor: 'pointer',
+            marginLeft: '5px',
+          }}
+          className="highlight-link"
+          onClick={toggleShowMore}
+        >
+          ...Show More
+        </a>
+      )}
+    </div>
+  )
+}
+
 /**
  * Renders a card from a table query
  */
@@ -412,76 +546,6 @@ export default class GenericCard extends React.Component<
     this.state = {
       hasClickedShowMore: false,
     }
-    this.getLinkParams = this.getLinkParams.bind(this)
-    this.getCardLinkHref = this.getCardLinkHref.bind(this)
-    this.renderLongDescription = this.renderLongDescription.bind(this)
-    this.renderShortDescription = this.renderShortDescription.bind(this)
-  }
-
-  public getLinkParams(
-    link: string,
-    cardLinkConfig: CardLink | undefined,
-    data: string[] | undefined,
-    schema: any | undefined,
-  ): {
-    href: string
-    target: string
-  } {
-    link = link.trim()
-    let href = link
-    let target = '_self'
-    if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
-      // its a synId
-      href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`
-    } else if (link.match(DOI_REGEX)) {
-      target = '_blank'
-      href = `https://dx.doi.org/${link}`
-    } else if (!cardLinkConfig) {
-      target = '_blank'
-    } else if (cardLinkConfig) {
-      href = this.getCardLinkHref(cardLinkConfig, data, schema) ?? ''
-    }
-    return { href, target }
-  }
-
-  public getCardLinkHref(
-    cardLink: CardLink | undefined,
-    data: string[] | undefined,
-    schema: Record<string, number> | undefined,
-  ): string | undefined {
-    if (cardLink) {
-      if (!data || !schema) {
-        throw Error('Must specify CardLink and data for linking to work')
-      }
-      const { matchColumnName, URLColumnName, overrideLinkURLColumnName } =
-        cardLink
-
-      // PORTALS-2088:  Return the link, unless...
-      // an overrideLinkURLColumnName has been set and it's value is defined.
-      // In this case, just use the overrideLinkURLColumnName value
-      if (overrideLinkURLColumnName && schema[overrideLinkURLColumnName]) {
-        const indexOfOverrideLinkURLColumnName =
-          schema[overrideLinkURLColumnName]
-        const overrideLinkValue = data[indexOfOverrideLinkURLColumnName]
-        if (overrideLinkValue) {
-          return overrideLinkValue
-        }
-      }
-
-      const indexInData = schema[matchColumnName]
-      if (indexInData === undefined) {
-        console.error(
-          `Could not find match for data: ${data} with columnName ${matchColumnName}`,
-        )
-      } else {
-        const value = data[indexInData]
-        if (value) {
-          // value is defined!
-          return `/${cardLink.baseURL}?${URLColumnName}=${value}`
-        }
-      }
-    }
-    return undefined
   }
 
   getCutoff = (summary: string) => {
@@ -580,7 +644,7 @@ export default class GenericCard extends React.Component<
     const titleColumnType = titleColumnModel?.columnType
     // wrap link in parens because undefined would throw an error
     const linkValue: string = data[schema[link]] || ''
-    const { href, target } = this.getLinkParams(
+    const { href, target } = getLinkParams(
       linkValue,
       titleLinkConfig,
       data,
@@ -604,15 +668,17 @@ export default class GenericCard extends React.Component<
           const labelLink = labelLinkConfig?.find(
             el => el.matchColumnName === columnName,
           )
-          value = SynapseCardLabel({
-            value,
-            columnName,
-            labelLink,
-            isHeader,
-            selectColumns,
-            columnModels,
-            rowData: data,
-          })
+          value = (
+            <SynapseCardLabel
+              value={value}
+              columnName={columnName}
+              labelLink={labelLink}
+              isHeader={isHeader}
+              selectColumns={selectColumns}
+              columnModels={columnModels}
+              rowData={data}
+            />
+          )
           columnDisplayName = unCamelCase(columnName, facetAliases)
         }
         const keyValue = [columnDisplayName, value, columnName]
@@ -706,7 +772,7 @@ export default class GenericCard extends React.Component<
       ctaTarget: string | undefined = undefined
     if (ctaLinkConfig) {
       const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
-      const { href: newCtaHref, target: newCtaTarget } = this.getLinkParams(
+      const { href: newCtaHref, target: newCtaTarget } = getLinkParams(
         ctaLinkValue,
         undefined, //card link config
         data,
@@ -772,20 +838,23 @@ export default class GenericCard extends React.Component<
               html elements outside of the React DOM which if detected would break the app,
               but as written below this avoids that reconcilliation process.
             */}
-            {description &&
-              this.renderShortDescription(
-                description,
-                hasClickedShowMore,
-                descriptionSubTitle,
-                descriptionConfig,
-              )}
-            {description &&
-              this.renderLongDescription(
-                description,
-                hasClickedShowMore,
-                descriptionSubTitle,
-                descriptionConfig,
-              )}
+            {description && (
+              <ShortDescription
+                description={description}
+                hasClickedShowMore={hasClickedShowMore}
+                descriptionSubTitle={descriptionSubTitle}
+                descriptionConfig={descriptionConfig}
+                toggleShowMore={this.toggleShowMore}
+              />
+            )}
+            {description && (
+              <LongDescription
+                description={description}
+                hasClickedShowMore={hasClickedShowMore}
+                descriptionSubTitle={descriptionSubTitle}
+                descriptionConfig={descriptionConfig}
+              />
+            )}
             {ctaLinkConfig && ctaHref && ctaTarget && (
               <div className="SRC-portalCardCTALink bootstrap-4-backport">
                 <a target={ctaTarget} rel="noopener noreferrer" href={ctaHref}>
@@ -803,64 +872,6 @@ export default class GenericCard extends React.Component<
             columnIconOptions={columnIconOptions}
             className={`${imageFileHandleIdValue ? 'hasImage' : 'hasIcon'}`}
           />
-        )}
-      </div>
-    )
-  }
-
-  public renderLongDescription(
-    description: string,
-    hasClickedShowMore: boolean,
-    descriptionSubTitle: any,
-    descriptionConfig?: DescriptionConfig,
-  ): React.ReactNode {
-    let content: JSX.Element | string = description
-    if (descriptionConfig?.isMarkdown) {
-      content = <MarkdownSynapse markdown={content} />
-    }
-    const show =
-      hasClickedShowMore || descriptionConfig?.showFullDescriptionByDefault
-    return (
-      <div className={show ? '' : 'SRC-hidden'}>
-        <span
-          data-search-handle={descriptionSubTitle}
-          className={`SRC-font-size-base ${CARD_LONG_DESCRIPTION_CSS}`}
-        >
-          {content}
-        </span>
-      </div>
-    )
-  }
-
-  public renderShortDescription(
-    description: string,
-    hasClickedShowMore: boolean,
-    descriptionSubTitle: any,
-    descriptionConfig?: DescriptionConfig,
-  ): React.ReactNode {
-    if (descriptionConfig?.showFullDescriptionByDefault) {
-      return <></>
-    }
-    return (
-      <div className={hasClickedShowMore ? 'SRC-hidden' : ''}>
-        <span
-          data-search-handle={descriptionSubTitle}
-          className={`SRC-font-size-base ${CARD_SHORT_DESCRIPTION_CSS} SRC-short-description`}
-        >
-          {getCutoff(description).previewText}
-        </span>
-        {description.length >= CHAR_COUNT_CUTOFF && (
-          <a
-            style={{
-              fontSize: '16px',
-              cursor: 'pointer',
-              marginLeft: '5px',
-            }}
-            className="highlight-link"
-            onClick={this.toggleShowMore}
-          >
-            ...Show More
-          </a>
         )}
       </div>
     )
