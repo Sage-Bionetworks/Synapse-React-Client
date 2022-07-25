@@ -6,6 +6,8 @@ import ReactFlow, {
   Edge,
   Position,
   ConnectionLineType,
+  useNodesState,
+  useEdgesState,
 } from 'react-flow-renderer'
 import {
   getProvenanceEdge,
@@ -52,8 +54,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     getProvenanceNode(rootNodeProps),
   ])
   const [layoutedEdges, setLayoutedEdges] = React.useState<Edge<any>[]>([])
-  const [nodes, setNodes] = React.useState<Node<any>[]>([])
-  const [edges, setEdges] = React.useState<Edge<any>[]>([])
+  const [nodes, setNodes, onNodesChange] = useNodesState([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
   const { data: rootActivity } = useGetActivityForEntity(
     entityId,
@@ -98,7 +100,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       setNodes(newNodes)
       setEdges(newEdges)
     }
-  }, [nodes, edges, rootActivity, rootNodeProps])
+  }, [nodes, edges, rootActivity, rootNodeProps, setNodes, setEdges])
 
   // layout
   const dagreGraph = new dagre.graphlib.Graph()
@@ -159,8 +161,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       <ReactFlow
         nodes={layoutedNodes}
         edges={layoutedEdges}
-        // onNodesChange={onNodesChange}
-        // onEdgesChange={onEdgesChange}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
         // onConnect={onConnect}
         connectionLineType={ConnectionLineType.SmoothStep}
         fitView
