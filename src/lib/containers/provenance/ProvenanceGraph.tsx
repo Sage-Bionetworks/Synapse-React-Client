@@ -54,7 +54,9 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     getProvenanceNode(rootNodeProps),
   ])
   const [layoutedEdges, setLayoutedEdges] = React.useState<Edge<any>[]>([])
-  const [nodes, setNodes, onNodesChange] = useNodesState([])
+  const [nodes, setNodes, onNodesChange] = useNodesState([
+    getProvenanceNode(rootNodeProps),
+  ])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
 
   const { data: rootActivity } = useGetActivityForEntity(
@@ -69,8 +71,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         type: NodeType.ACTIVITY,
         data: rootActivity,
       }
-      const newNodes: Node[] = [getProvenanceNode(rootNodeProps)]
-      const newEdges: Edge[] = []
+      const newNodes: Node[] = [...nodes]
+      const newEdges: Edge[] = [...edges]
       newNodes.push(getProvenanceNode(rootActivityNodeProps))
       newEdges.push(getProvenanceEdge(rootActivityNodeProps, rootNodeProps))
 
@@ -165,7 +167,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         onEdgesChange={onEdgesChange}
         // onConnect={onConnect}
         connectionLineType={ConnectionLineType.SmoothStep}
-        fitView
       >
         {/* <MiniMap /> */}
         <Controls />
