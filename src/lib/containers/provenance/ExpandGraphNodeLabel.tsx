@@ -1,18 +1,26 @@
-import React from 'react'
-import { Handle, Position } from 'react-flow-renderer'
+import React, { useMemo } from 'react'
 import { Reference } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
 
-export type ExpandGraphNodeLabelProps = Reference
+export type ExpandGraphNodeLabelProps = {
+  entityReference: Reference
+  onExpandEntity: (entityReference: Reference) => void
+}
 
 export const ExpandGraphNodeLabel = (data: ExpandGraphNodeLabelProps) => {
-  return (
-    <>
-      <Handle type="target" position={Position.Top} isConnectable={false} />
-      <Typography variant="headline3">Expand node</Typography>
-      <div>{data.targetId}</div>
-      <div>{data.targetVersionNumber}</div>
-      <Handle type="source" position={Position.Bottom} isConnectable={false} />
-    </>
+  const { entityReference, onExpandEntity } = data
+  return useMemo(
+    () => (
+      <>
+        <a
+          rel="noopener noreferrer"
+          onClick={() => {
+            onExpandEntity(entityReference)
+          }}
+        >
+          ...
+        </a>
+      </>
+    ),
+    [entityReference, onExpandEntity],
   )
 }

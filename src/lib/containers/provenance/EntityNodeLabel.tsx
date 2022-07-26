@@ -1,5 +1,4 @@
-import React from 'react'
-import { Handle, Position } from 'react-flow-renderer'
+import React, { useMemo } from 'react'
 import { convertToEntityType } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI'
@@ -17,16 +16,17 @@ export const EntityNodeLabel = (data: EntityNodeLabelProps) => {
     : EntityType.FILE
   const entityVersionString =
     entity && 'versionNumber' in entity ? `.${entity['versionNumber']}` : ''
-  return (
-    <>
-      <Handle type="target" position={Position.Top} isConnectable={false} />
-      <EntityTypeIcon type={entityType} includeTooltip={false} />
-      <a
-        href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity?.id}${entityVersionString}`}
-      >
-        {entity?.name}
-      </a>
-      <Handle type="source" position={Position.Bottom} isConnectable={false} />
-    </>
+  return useMemo(
+    () => (
+      <>
+        <EntityTypeIcon type={entityType} includeTooltip={false} />
+        <a
+          href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity?.id}${entityVersionString}`}
+        >
+          {entity?.name}
+        </a>
+      </>
+    ),
+    [entity?.id, entity?.name, entityType, entityVersionString],
   )
 }

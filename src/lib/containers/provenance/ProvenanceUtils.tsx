@@ -1,5 +1,11 @@
 import React from 'react'
-import { Edge, MarkerType } from 'react-flow-renderer'
+import {
+  Node,
+  Position,
+  ConnectionLineType,
+  Edge,
+  MarkerType,
+} from 'react-flow-renderer'
 import { ActivityNodeLabel, ActivityNodeLabelProps } from './ActivityNodeLabel'
 import { EntityNodeLabel, EntityNodeLabelProps } from './EntityNodeLabel'
 import {
@@ -11,13 +17,12 @@ import {
   ExternalGraphNodeLabelProps,
 } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
-import ReactFlow, { Node, Position } from 'react-flow-renderer'
 
 export enum NodeType {
-  ENTITY,
-  EXTERNAL,
-  ACTIVITY,
-  EXPAND_NODE,
+  ENTITY = 'EntityNode',
+  EXTERNAL = 'ExternalNode',
+  ACTIVITY = 'ActivityNode',
+  EXPAND = 'ExpandNode',
 }
 
 type ProvenanceNodeNodeLabelProps =
@@ -30,9 +35,9 @@ type ProvenanceNodeProps = {
   data: ProvenanceNodeNodeLabelProps
 }
 
-export const getProvenanceNode = (props: ProvenanceNodeProps) => {
+export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
   const { type, data } = props
-  let nodeLabel: JSX.Element = <></>
+  let nodeLabel: JSX.Element
   switch (type) {
     case NodeType.ENTITY:
       nodeLabel = <EntityNodeLabel {...(data as EntityNodeLabelProps)} />
@@ -45,7 +50,7 @@ export const getProvenanceNode = (props: ProvenanceNodeProps) => {
     case NodeType.ACTIVITY:
       nodeLabel = <ActivityNodeLabel {...(data as ActivityNodeLabelProps)} />
       break
-    case NodeType.EXPAND_NODE:
+    case NodeType.EXPAND:
       nodeLabel = (
         <ExpandGraphNodeLabel {...(data as ExpandGraphNodeLabelProps)} />
       )
@@ -60,19 +65,23 @@ export const getProvenanceNode = (props: ProvenanceNodeProps) => {
     data: { label: nodeLabel },
     connectable: false,
     draggable: false,
+    // selectable: false, // like to make unselectable, but node contents become non-interactive
+    className: `${type}`,
   }
 }
 
 export const getProvenanceEdge = (
   node1Props: ProvenanceNodeProps,
   node2Props: ProvenanceNodeProps,
-) => {
+): Edge => {
   const node1Id = getNodeId(node1Props)
   const node2Id = getNodeId(node2Props)
   return {
     id: `${node1Id}-${node2Id}`,
     source: node1Id,
     target: node2Id,
+    // animated: true,
+    type: ConnectionLineType.SmoothStep,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -90,9 +99,11 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
       return `${(data as ExternalGraphNodeLabelProps).url}`
     case NodeType.ACTIVITY:
       return `${(data as ActivityNodeLabelProps).id}`
-    case NodeType.EXPAND_NODE:
-      return `${(data as ExpandGraphNodeLabelProps).targetId}.${
-        (data as ExpandGraphNodeLabelProps).targetVersionNumber
+    case NodeType.EXPAND:
+      return `expand.node.${
+        (data as ExpandGraphNodeLabelProps).entityReference.targetId
+      }.${
+        (data as ExpandGraphNodeLabelProps).entityReference.targetVersionNumber
       }`
   }
 }

@@ -1,4 +1,29 @@
-.react-flow__node {
-  text-overflow: ellipsis;
-  overflow: clip;
+@use '../abstracts/variables' as SRC;
+@use 'sass:map';
+
+.react-flow {
+  &__attribution a {
+    color: map.get(SRC.$colors, 'gray-400') !important;
+    text-decoration-color: map.get(SRC.$colors, 'gray-400') !important;
+  }
+  &__node {
+    text-overflow: ellipsis;
+    overflow: clip;
+    &:hover {
+      cursor: default;
+    }
+
+    &.ExternalNode,
+    &.EntityNode,
+    &.ExpandNode {
+      border: none;
+      &:hover {
+        box-shadow: none !important;
+      }
+    }
+  }
+  &__handle {
+    // hide handles (important to override inline style applied to handle element by react-flow)
+    height: 0px !important;
+  }
 }
