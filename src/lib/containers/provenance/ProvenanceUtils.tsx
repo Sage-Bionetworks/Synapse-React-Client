@@ -62,7 +62,7 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
   return {
     id: getNodeId(props),
     position: { x: 100, y: 100 }, // hard coded, let graph layout library figure this out
-    data: { label: nodeLabel, props: data },
+    data: { label: nodeLabel, props: data, type: type },
     connectable: false,
     draggable: false,
     // selectable: false, // like to make unselectable, but node contents become non-interactive

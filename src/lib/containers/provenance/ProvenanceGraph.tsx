@@ -158,24 +158,22 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   )
 
   useEffect(() => {
-    if (clickedNode && clickedNode.className == NodeType.EXPAND) {
-      if (clickedNode.data.props) {
-        const expandNodeProps = clickedNode.data
-          .props as ExpandGraphNodeLabelProps
-        // remove clicked node
-        const nodesWithoutExpandNode = tempNodes.filter(
-          node => node.id != clickedNode.id,
-        )
-        const edgeToRemove = getConnectedEdges([clickedNode], tempEdges)[0]
-        const edgesWithoutExpandEdge = tempEdges.filter(
-          edge => edge != edgeToRemove,
-        )
-        onExpandEntity(
-          expandNodeProps.entityReference,
-          nodesWithoutExpandNode,
-          edgesWithoutExpandEdge,
-        )
-      }
+    if (clickedNode?.data?.type == NodeType.EXPAND) {
+      const expandNodeProps = clickedNode.data
+        .props as ExpandGraphNodeLabelProps
+      // remove clicked node
+      const nodesWithoutExpandNode = tempNodes.filter(
+        node => node.id != clickedNode.id,
+      )
+      const edgeToRemove = getConnectedEdges([clickedNode], tempEdges)[0]
+      const edgesWithoutExpandEdge = tempEdges.filter(
+        edge => edge != edgeToRemove,
+      )
+      onExpandEntity(
+        expandNodeProps.entityReference,
+        nodesWithoutExpandNode,
+        edgesWithoutExpandEdge,
+      )
       setClickedNode(undefined)
     }
   }, [clickedNode, tempNodes, tempEdges, onExpandEntity])
