@@ -6,7 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "target": "es5",
-    "lib": ["es2019", "dom"],
+    "lib": ["es2020", "dom"],
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",
