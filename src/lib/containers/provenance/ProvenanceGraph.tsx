@@ -68,24 +68,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
 
-  const findExpandNode = (
-    entityRef: Reference,
-    n: Node[],
-  ): Node | undefined => {
-    const targetId = getNodeId({
-      type: NodeType.EXPAND,
-      data: {
-        entityReference: entityRef,
-      },
-    })
-    const expandNodes = n.filter(node => node.id == targetId)
-    if (expandNodes.length > 0) {
-      return expandNodes[0]
-    } else {
-      return undefined
-    }
-  }
-
   const onClickNode = useCallback((_event: React.MouseEvent, node: Node) => {
     setClickedNode(node)
   }, [])
@@ -174,7 +156,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   useEffect(() => {
     if (clickedNode && clickedNode.className == NodeType.EXPAND) {
       if (clickedNode.data.props) {
-        debugger
         const expandNodeProps = clickedNode.data
           .props as ExpandGraphNodeLabelProps
         // remove clicked node
