@@ -156,7 +156,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         edgesCopy,
       })
     },
-    [],
+    [addNodeAndEdge],
   )
 
   const addExternalNode = useCallback(
@@ -182,7 +182,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         edgesCopy,
       })
     },
-    [],
+    [addNodeAndEdge],
   )
 
   const addEntityNode = useCallback(
@@ -395,8 +395,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         onNodeClick={onClickNode}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        // onConnect={onConnect}
-        // attributionPosition="top-right"
+        attributionPosition="bottom-right"
+        onConnect={undefined}
       >
         <Controls />
       </ReactFlow>

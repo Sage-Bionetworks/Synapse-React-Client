@@ -57,9 +57,7 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
       nodeLabel = <ActivityNodeLabel {...(data as ActivityNodeLabelProps)} />
       break
     case NodeType.EXPAND:
-      nodeLabel = (
-        <ExpandGraphNodeLabel {...(data as ExpandGraphNodeLabelProps)} />
-      )
+      nodeLabel = <ExpandGraphNodeLabel />
       break
     default:
       nodeLabel = <p>Unrecognized node type: {type}</p>

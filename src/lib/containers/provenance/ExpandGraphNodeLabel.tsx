@@ -5,14 +5,13 @@ export type ExpandGraphNodeLabelProps = {
   entityReference: Reference
 }
 
-export const ExpandGraphNodeLabel = (data: ExpandGraphNodeLabelProps) => {
-  const { entityReference } = data
+export const ExpandGraphNodeLabel = () => {
   return useMemo(
     () => (
       <>
         <a rel="noopener noreferrer">&hellip;</a>
       </>
     ),
-    [entityReference],
+    [],
   )
 }
