@@ -3,24 +3,16 @@ import { Reference } from '../../utils/synapseTypes'
 
 export type ExpandGraphNodeLabelProps = {
   entityReference: Reference
-  onExpandEntity: (entityReference: Reference) => void
 }
 
 export const ExpandGraphNodeLabel = (data: ExpandGraphNodeLabelProps) => {
-  const { entityReference, onExpandEntity } = data
+  const { entityReference } = data
   return useMemo(
     () => (
       <>
-        <a
-          rel="noopener noreferrer"
-          onClick={() => {
-            onExpandEntity(entityReference)
-          }}
-        >
-          ...
-        </a>
+        <a rel="noopener noreferrer">...</a>
       </>
     ),
-    [entityReference, onExpandEntity],
+    [entityReference],
   )
 }

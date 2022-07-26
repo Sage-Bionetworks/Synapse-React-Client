@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import ReactFlow, {
   Controls,
   Node,
   Edge,
   useNodesState,
   useEdgesState,
+  getConnectedEdges,
 } from 'react-flow-renderer'
 import {
   getLayoutedElements,
+  getNodeId,
   getProvenanceEdge,
   getProvenanceNode,
   NodeType,
@@ -23,6 +25,8 @@ import {
 import { Reference } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
+import _ from 'lodash-es'
+import { ExpandGraphNodeLabelProps } from './ExpandGraphNodeLabel'
 
 export type ProvenanceProps = {
   /** The entity (and version) whose provenance should be shown */
@@ -62,86 +66,140 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const [tempEdges, setTempEdges] = React.useState<Edge<any>[]>([])
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const [clickedNode, setClickedNode] = useState<Node>()
 
-  // keep track of all references to detect and avoid cycles in the graph
-  const [allReferences, setAllReferences] = React.useState<Reference[]>([])
+  const findExpandNode = (
+    entityRef: Reference,
+    n: Node[],
+  ): Node | undefined => {
+    const targetId = getNodeId({
+      type: NodeType.EXPAND,
+      data: {
+        entityReference: entityRef,
+      },
+    })
+    const expandNodes = n.filter(node => node.id == targetId)
+    if (expandNodes.length > 0) {
+      return expandNodes[0]
+    } else {
+      return undefined
+    }
+  }
 
-  const onExpandEntity = (entityRef: Reference) => {
-    SynapseClient.getActivityForEntity(
-      entityRef.targetId,
-      entityRef.targetVersionNumber!,
-      accessToken,
-    )
-      .then(activity => {
-        const activityNodeProps = {
-          type: NodeType.ACTIVITY,
-          data: activity,
-        }
-        const newAllReferences = [...allReferences]
-        const newNodes: Node[] = [...tempNodes]
-        const newEdges: Edge[] = [...tempEdges]
-        const entityNodeProps = {
-          type: NodeType.ENTITY,
-          data: entityRef,
-        }
-        newNodes.push(getProvenanceNode(activityNodeProps))
-        newEdges.push(getProvenanceEdge(activityNodeProps, entityNodeProps))
+  const onClickNode = useCallback((_event: React.MouseEvent, node: Node) => {
+    setClickedNode(node)
+  }, [])
 
-        // go through Activity.used array to add these nodes/edges
-        if (activity.used) {
-          const usedNodesProps = activity.used.map((usedItem: Used) => {
-            if (usedItem.concreteType == USED_ENTITY_CONCRETE_TYPE_VALUE) {
-              const usedEntityItem = usedItem as UsedEntity
-              if (!allReferences.includes(usedEntityItem.reference)) {
-                newAllReferences.push(usedEntityItem.reference)
-                return {
+  const onExpandEntity = useCallback(
+    (entityRef: Reference, allNodes: Node[], allEdges: Edge[]) => {
+      SynapseClient.getActivityForEntity(
+        entityRef.targetId,
+        entityRef.targetVersionNumber!,
+        accessToken,
+      )
+        .then(activity => {
+          const activityNodeProps = {
+            type: NodeType.ACTIVITY,
+            data: activity,
+          }
+          const newNodes: Node[] = [...allNodes]
+          const newEdges: Edge[] = [...allEdges]
+
+          const entityNodeProps = {
+            type: NodeType.ENTITY,
+            data: entityRef,
+          }
+          newNodes.push(getProvenanceNode(activityNodeProps))
+          newEdges.push(getProvenanceEdge(activityNodeProps, entityNodeProps))
+          // go through Activity.used array to add these nodes/edges
+          if (activity.used) {
+            const usedNodesProps = activity.used.map((usedItem: Used) => {
+              if (usedItem.concreteType == USED_ENTITY_CONCRETE_TYPE_VALUE) {
+                const usedEntityItem = usedItem as UsedEntity
+                const newEntityNodeProps = {
                   type: NodeType.ENTITY,
                   data: usedEntityItem.reference,
                 }
-              } else {
-                return undefined
-              }
-            } else {
-              // UsedURL
-              const usedUrlItem = usedItem as UsedURL
-              return {
-                type: NodeType.EXTERNAL,
-                data: usedUrlItem,
-              }
-            }
-          })
-          usedNodesProps.forEach(usedNodeProps => {
-            if (usedNodeProps) {
-              newNodes.push(getProvenanceNode(usedNodeProps))
-              newEdges.push(getProvenanceEdge(usedNodeProps, activityNodeProps))
-
-              // also create expand nodes for all used entity nodes
-              if (usedNodeProps.type === NodeType.ENTITY) {
-                const expandNodeProps = {
-                  type: NodeType.EXPAND,
-                  data: {
-                    entityReference: usedNodeProps.data as Reference,
-                    onExpandEntity,
-                  },
+                const foundRef = newNodes.find(node => {
+                  return node.id === getNodeId(newEntityNodeProps)
+                })
+                if (foundRef === undefined) {
+                  return newEntityNodeProps
+                } else {
+                  return undefined
                 }
-                newNodes.push(getProvenanceNode(expandNodeProps))
-                newEdges.push(getProvenanceEdge(expandNodeProps, usedNodeProps))
+              } else {
+                // UsedURL
+                const usedUrlItem = usedItem as UsedURL
+                return {
+                  type: NodeType.EXTERNAL,
+                  data: usedUrlItem,
+                }
               }
-            }
-          })
-        }
-        setTempNodes(newNodes)
-        setTempEdges(newEdges)
-        setAllReferences(newAllReferences)
-      })
-      .catch(e => {
-        // if not found, remove associated expand node (and edge that connects to the expand node)
-      })
-  }
+            })
+            usedNodesProps.forEach(usedNodeProps => {
+              if (usedNodeProps) {
+                newNodes.push(getProvenanceNode(usedNodeProps))
+                newEdges.push(
+                  getProvenanceEdge(usedNodeProps, activityNodeProps),
+                )
 
-  if (allReferences.length == 0) {
-    onExpandEntity(rootNodeEntityRef)
-  }
+                // also create expand nodes for all used entity nodes
+                if (usedNodeProps.type === NodeType.ENTITY) {
+                  const expandNodeProps = {
+                    type: NodeType.EXPAND,
+                    data: {
+                      entityReference: usedNodeProps.data as Reference,
+                    },
+                  }
+                  newNodes.push(getProvenanceNode(expandNodeProps))
+                  newEdges.push(
+                    getProvenanceEdge(expandNodeProps, usedNodeProps),
+                  )
+                }
+              }
+            })
+          }
+          setTempNodes(newNodes)
+          setTempEdges(newEdges)
+        })
+        .catch(e => {
+          // if not found, remove associated expand node (and edge that connects to the expand node)
+          // TODO:
+        })
+    },
+    [accessToken],
+  )
+
+  useEffect(() => {
+    if (clickedNode && clickedNode.className == NodeType.EXPAND) {
+      if (clickedNode.data.props) {
+        debugger
+        const expandNodeProps = clickedNode.data
+          .props as ExpandGraphNodeLabelProps
+        // remove clicked node
+        const nodesWithoutExpandNode = tempNodes.filter(
+          node => node.id != clickedNode.id,
+        )
+        const edgeToRemove = getConnectedEdges([clickedNode], tempEdges)[0]
+        const edgesWithoutExpandEdge = tempEdges.filter(
+          edge => edge != edgeToRemove,
+        )
+        onExpandEntity(
+          expandNodeProps.entityReference,
+          nodesWithoutExpandNode,
+          edgesWithoutExpandEdge,
+        )
+      }
+      setClickedNode(undefined)
+    }
+  }, [clickedNode, tempNodes, tempEdges, onExpandEntity])
+
+  useEffect(() => {
+    if (tempNodes.length == 1) {
+      onExpandEntity(rootNodeEntityRef, tempNodes, tempEdges)
+    }
+  }, [rootNodeEntityRef, tempEdges, tempNodes, onExpandEntity])
 
   useDeepCompareEffect(() => {
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
@@ -161,6 +219,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onNodeClick={onClickNode}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         // onConnect={onConnect}
