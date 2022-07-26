@@ -25,14 +25,20 @@ export enum NodeType {
   EXPAND = 'ExpandNode',
 }
 
-type ProvenanceNodeNodeLabelProps =
+type ProvenanceNodeLabelProps =
   | EntityNodeLabelProps
   | ActivityNodeLabelProps
   | ExternalGraphNodeLabelProps
   | ExpandGraphNodeLabelProps
 type ProvenanceNodeProps = {
   type: NodeType
-  data: ProvenanceNodeNodeLabelProps
+  data: ProvenanceNodeLabelProps
+}
+
+export type ProvenanceNodeData = {
+  label: JSX.Element
+  props: ProvenanceNodeLabelProps
+  type: NodeType
 }
 
 export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
@@ -59,10 +65,15 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
       nodeLabel = <p>Unrecognized node type: {type}</p>
       break
   }
+  const nodeData: ProvenanceNodeData = {
+    label: nodeLabel,
+    props: data,
+    type: type,
+  }
   return {
     id: getNodeId(props),
     position: { x: 100, y: 100 }, // hard coded, let graph layout library figure this out
-    data: { label: nodeLabel, props: data, type: type },
+    data: nodeData,
     connectable: false,
     draggable: false,
     // selectable: false, // like to make unselectable, but node contents become non-interactive
@@ -93,7 +104,7 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
   switch (type) {
     case NodeType.ENTITY:
       return `${(data as EntityNodeLabelProps).targetId}.${
-        (data as EntityNodeLabelProps).targetVersionNumber
+        (data as EntityNodeLabelProps).targetVersionNumber ?? 'latest'
       }`
     case NodeType.EXTERNAL:
       return `${(data as ExternalGraphNodeLabelProps).url}`
@@ -103,7 +114,8 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
       return `expand.node.${
         (data as ExpandGraphNodeLabelProps).entityReference.targetId
       }.${
-        (data as ExpandGraphNodeLabelProps).entityReference.targetVersionNumber
+        (data as ExpandGraphNodeLabelProps).entityReference
+          .targetVersionNumber ?? 'latest'
       }`
   }
 }
@@ -113,10 +125,12 @@ const dagreGraph = new dagre.graphlib.Graph()
 dagreGraph.setDefaultEdgeLabel(() => ({}))
 
 const getNodeHeight = (node: Node) => {
-  return node.data?.type == NodeType.EXPAND ? 30 : 100
+  const nodeData: ProvenanceNodeData = node.data as ProvenanceNodeData
+  return nodeData.type == NodeType.EXPAND ? 30 : 100
 }
 const getNodeWidth = (node: Node) => {
-  return node.data?.type == NodeType.EXPAND ? 30 : 172
+  const nodeData: ProvenanceNodeData = node.data as ProvenanceNodeData
+  return nodeData.type == NodeType.EXPAND ? 30 : 172
 }
 
 export const getLayoutedElements = (
