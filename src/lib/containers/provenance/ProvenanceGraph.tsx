@@ -40,8 +40,7 @@ export type ProvenanceProps = {
 }
 
 /**
- * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
- * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
+ * Renders a Provenance Graph for a given entity.
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
   const { entityId, versionNumber, containerHeight = '200px' } = props
@@ -50,17 +49,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     () => ({ targetId: entityId, targetVersionNumber: versionNumber }),
     [entityId, versionNumber],
   )
-
-  const rootNodeProps = useMemo(
-    () => ({
-      type: NodeType.ENTITY,
-      data: rootNodeEntityRef,
-    }),
-    [rootNodeEntityRef],
-  )
-  const [tempNodes, setTempNodes] = React.useState<Node[]>([
-    getProvenanceNode(rootNodeProps),
-  ])
+  const [tempNodes, setTempNodes] = React.useState<Node[]>([])
   const [tempEdges, setTempEdges] = React.useState<Edge[]>([])
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
@@ -70,23 +59,61 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     setClickedNode(node)
   }, [])
 
+  /**
+   * Given the node properties, will return true if this node is already in the nodesCopy array.
+   */
   const isNodeNotFound = (
     nodeProps: ProvenanceNodeProps,
     nodesCopy: Node[],
   ) => {
-    const foundRef = nodesCopy.find(node => {
+    const foundNode = nodesCopy.find(node => {
       return node.id === getNodeId(nodeProps)
     })
-    return foundRef === undefined
+    return foundNode === undefined
+  }
+  /**
+   * Given the node properties, will return true if this edge is already in the edgesCopy array.
+   */
+  const isEdgeNotFound = (
+    nodeProps1: ProvenanceNodeProps,
+    nodeProps2: ProvenanceNodeProps,
+    edgesCopy: Edge[],
+  ) => {
+    const foundEdge = edgesCopy.find(edge => {
+      return (
+        edge.source === getNodeId(nodeProps1) &&
+        edge.target === getNodeId(nodeProps2)
+      )
+    })
+    return foundEdge === undefined
   }
 
+  const addNodeAndEdge = useCallback(
+    (params: {
+      newNodeProps: ProvenanceNodeProps
+      existingNodeProps: ProvenanceNodeProps
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { newNodeProps, existingNodeProps, nodesCopy, edgesCopy } = params
+      if (isNodeNotFound(newNodeProps, nodesCopy)) {
+        nodesCopy.push(getProvenanceNode(newNodeProps))
+      }
+      if (isEdgeNotFound(newNodeProps, existingNodeProps, edgesCopy)) {
+        edgesCopy.push(getProvenanceEdge(newNodeProps, existingNodeProps))
+      }
+    },
+    [],
+  )
+
   const addActivityNode = useCallback(
-    (
-      activity: Activity,
-      entityRef: Reference,
-      nodesCopy: Node[],
-      edgesCopy: Edge[],
-    ) => {
+    (params: {
+      activity: Activity
+      entityRef: Reference
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { activity, entityRef, nodesCopy, edgesCopy } = params
       const activityNodeProps = {
         type: NodeType.ACTIVITY,
         data: activity,
@@ -95,16 +122,23 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         type: NodeType.ENTITY,
         data: entityRef,
       }
-      if (isNodeNotFound(activityNodeProps, nodesCopy)) {
-        nodesCopy.push(getProvenanceNode(activityNodeProps))
-        edgesCopy.push(getProvenanceEdge(activityNodeProps, entityNodeProps))
-      }
+      addNodeAndEdge({
+        newNodeProps: activityNodeProps,
+        existingNodeProps: entityNodeProps,
+        nodesCopy,
+        edgesCopy,
+      })
     },
-    [],
+    [addNodeAndEdge],
   )
 
   const addExpandNode = useCallback(
-    (entityRef: Reference, nodesCopy: Node[], edgesCopy: Edge[]) => {
+    (params: {
+      entityRef: Reference
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { entityRef, nodesCopy, edgesCopy } = params
       const expandNodeProps = {
         type: NodeType.EXPAND,
         data: {
@@ -115,21 +149,24 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         type: NodeType.ENTITY,
         data: entityRef,
       }
-      if (isNodeNotFound(expandNodeProps, nodesCopy)) {
-        nodesCopy.push(getProvenanceNode(expandNodeProps))
-        edgesCopy.push(getProvenanceEdge(expandNodeProps, entityNodeProps))
-      }
+      addNodeAndEdge({
+        newNodeProps: expandNodeProps,
+        existingNodeProps: entityNodeProps,
+        nodesCopy,
+        edgesCopy,
+      })
     },
     [],
   )
 
   const addExternalNode = useCallback(
-    (
-      usedURL: UsedURL,
-      activity: Activity,
-      nodesCopy: Node[],
-      edgesCopy: Edge[],
-    ) => {
+    (params: {
+      usedURL: UsedURL
+      activity: Activity
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { usedURL, activity, nodesCopy, edgesCopy } = params
       const activityNodeProps = {
         type: NodeType.ACTIVITY,
         data: activity,
@@ -138,21 +175,24 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         type: NodeType.EXTERNAL,
         data: usedURL,
       }
-      if (isNodeNotFound(externalNodeProps, nodesCopy)) {
-        nodesCopy.push(getProvenanceNode(externalNodeProps))
-        edgesCopy.push(getProvenanceEdge(externalNodeProps, activityNodeProps))
-      }
+      addNodeAndEdge({
+        newNodeProps: externalNodeProps,
+        existingNodeProps: activityNodeProps,
+        nodesCopy,
+        edgesCopy,
+      })
     },
     [],
   )
 
   const addEntityNode = useCallback(
-    (
-      entityRef: Reference,
-      activity: Activity | undefined,
-      nodesCopy: Node[],
-      edgesCopy: Edge[],
-    ) => {
+    (params: {
+      entityRef: Reference
+      activity: Activity | undefined
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { entityRef, activity, nodesCopy, edgesCopy } = params
       const entityNodeProps = {
         type: NodeType.ENTITY,
         data: entityRef,
@@ -173,16 +213,27 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   )
 
   /**
-   * Will add new nodes and edges to the input arrays
+   * Called when we have a new entity to add to the graph.  This will result in adding
+   * a new Entity Node to the nodesCopy, a link from the usedInActivity to the new Entity Node,
+   * AND it will look for an Activity associated with the new entity.  If an Activity is found,
+   * it will add an Expand Node for the user to click (to expand to see this Activity!).
+   * If this is the root node (starting entity node), then we automatically add the Activity Node
+   * and process it.
    */
   const addEntity = useCallback(
-    async (
-      entityRef: Reference,
-      nodesCopy: Node[],
-      edgesCopy: Edge[],
-      usedInActivity?: Activity,
-    ) => {
-      addEntityNode(entityRef, usedInActivity, nodesCopy, edgesCopy)
+    async (params: {
+      entityRef: Reference
+      usedInActivity?: Activity
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { entityRef, nodesCopy, edgesCopy, usedInActivity } = params
+      addEntityNode({
+        entityRef,
+        activity: usedInActivity,
+        nodesCopy,
+        edgesCopy,
+      })
       //look for Activity
       try {
         const activity = await SynapseClient.getActivityForEntity(
@@ -193,9 +244,9 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         // if this is the root node, then add the activity immediately.
         // otherwise, add an expand node and we'll add this later
         if (entityRef == rootNodeEntityRef) {
-          addActivityNode(activity, entityRef, nodesCopy, edgesCopy)
+          addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
         } else {
-          addExpandNode(entityRef, nodesCopy, edgesCopy)
+          addExpandNode({ entityRef, nodesCopy, edgesCopy })
         }
       } catch (e) {
         // Activity is not accessible
@@ -211,15 +262,24 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     ],
   )
 
+  /**
+   * This is called when the user clicks on an Expand Node.  It will add the associated Activity
+   * and all "used" items (entities and urls) to the graph by adding items to the nodesCopy and edgesCopy arrays.
+   */
   const onExpandEntity = useCallback(
-    async (entityRef: Reference, nodesCopy: Node[], edgesCopy: Edge[]) => {
+    async (params: {
+      entityRef: Reference
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { entityRef, nodesCopy, edgesCopy } = params
       try {
         const activity = await SynapseClient.getActivityForEntity(
           entityRef.targetId,
           entityRef.targetVersionNumber!,
           accessToken,
         )
-        addActivityNode(activity, entityRef, nodesCopy, edgesCopy)
+        addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
 
         // go through Activity.used array to add these nodes/edges
         const addEntityPromises: Promise<void>[] = []
@@ -228,17 +288,17 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
             if (usedItem.concreteType == USED_ENTITY_CONCRETE_TYPE_VALUE) {
               const usedEntityItem = usedItem as UsedEntity
               addEntityPromises.push(
-                addEntity(
-                  usedEntityItem.reference,
+                addEntity({
+                  entityRef: usedEntityItem.reference,
                   nodesCopy,
                   edgesCopy,
-                  activity,
-                ),
+                  usedInActivity: activity,
+                }),
               )
             } else {
               // UsedURL
-              const usedUrlItem = usedItem as UsedURL
-              addExternalNode(usedUrlItem, activity, nodesCopy, edgesCopy)
+              const usedURL = usedItem as UsedURL
+              addExternalNode({ usedURL, activity, nodesCopy, edgesCopy })
             }
           })
           await Promise.all(addEntityPromises)
@@ -246,14 +306,45 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       } catch (e) {
         // Activity is not accessible
         console.error(e)
-      } finally {
-        setTempNodes(nodesCopy)
-        setTempEdges(edgesCopy)
       }
     },
     [accessToken, addActivityNode, addEntity, addExternalNode],
   )
 
+  /**
+   * This effect code executes when no nodes have been added.
+   * It will add the root node, and attempt to expand the root node, when this component is mounted.
+   */
+  useEffect(() => {
+    if (tempNodes.length == 0) {
+      const nodesCopy = [...tempNodes]
+      const edgesCopy = [...tempEdges]
+      const addAndExpandPromises: Promise<void>[] = []
+      const addEntityPromise = addEntity({
+        entityRef: rootNodeEntityRef,
+        nodesCopy,
+        edgesCopy,
+      })
+      const expandEntityPromise = onExpandEntity({
+        entityRef: rootNodeEntityRef,
+        nodesCopy,
+        edgesCopy,
+      })
+
+      addAndExpandPromises.push(addEntityPromise)
+      addAndExpandPromises.push(expandEntityPromise)
+      Promise.all(addAndExpandPromises).then(() => {
+        setTempNodes(nodesCopy)
+        setTempEdges(edgesCopy)
+      })
+    }
+  }, [addEntity, onExpandEntity, rootNodeEntityRef, tempEdges, tempNodes])
+
+  /**
+   * This effect code executes when a node is clicked.
+   * We check to see if it is an expand node.  If it is, then we remove the expand node (and associated edge)
+   * and ask for the Activity and associated "used" nodes (entities and URLs)
+   */
   useEffect(() => {
     const nodeData: ProvenanceNodeData = clickedNode?.data as ProvenanceNodeData
     if (clickedNode && nodeData?.type == NodeType.EXPAND) {
@@ -266,39 +357,23 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       const edgesWithoutExpandEdge = tempEdges.filter(
         edge => edge != edgeToRemove,
       )
-      onExpandEntity(
-        expandNodeProps.entityReference,
-        nodesWithoutExpandNode,
-        edgesWithoutExpandEdge,
-      )
+      onExpandEntity({
+        entityRef: expandNodeProps.entityReference,
+        nodesCopy: nodesWithoutExpandNode,
+        edgesCopy: edgesWithoutExpandEdge,
+      }).then(() => {
+        setTempNodes(nodesWithoutExpandNode)
+        setTempEdges(edgesWithoutExpandEdge)
+      })
       setClickedNode(undefined)
     }
   }, [clickedNode, tempNodes, tempEdges, onExpandEntity])
 
-  useEffect(() => {
-    if (tempNodes.length == 1) {
-      const nodesCopy = [...tempNodes]
-      const edgesCopy = [...tempEdges]
-      const addAndExpandPromises: Promise<void>[] = []
-      const addEntityPromise = addEntity(
-        rootNodeEntityRef,
-        nodesCopy,
-        edgesCopy,
-      )
-      const expandEntityPromise = onExpandEntity(
-        rootNodeEntityRef,
-        nodesCopy,
-        edgesCopy,
-      )
-      addAndExpandPromises.push(addEntityPromise)
-      addAndExpandPromises.push(expandEntityPromise)
-      Promise.all(addAndExpandPromises).then(() => {
-        setTempNodes(nodesCopy)
-        setTempEdges(edgesCopy)
-      })
-    }
-  }, [addEntity, onExpandEntity, rootNodeEntityRef, tempEdges, tempNodes])
-
+  /**
+   * This effect code is run when the graph nodes or edges change.
+   * It feeds the nodes and edges into our layout library to figure out where they should be positioned.
+   * The result is saved in the state variable "nodes" and "edges".
+   */
   useDeepCompareEffect(() => {
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       tempNodes,
