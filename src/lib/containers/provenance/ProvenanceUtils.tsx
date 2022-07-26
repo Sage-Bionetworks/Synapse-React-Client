@@ -30,7 +30,7 @@ type ProvenanceNodeLabelProps =
   | ActivityNodeLabelProps
   | ExternalGraphNodeLabelProps
   | ExpandGraphNodeLabelProps
-type ProvenanceNodeProps = {
+export type ProvenanceNodeProps = {
   type: NodeType
   data: ProvenanceNodeLabelProps
 }

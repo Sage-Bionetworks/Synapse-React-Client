@@ -15,6 +15,7 @@ import {
   getProvenanceNode,
   NodeType,
   ProvenanceNodeData,
+  ProvenanceNodeProps,
 } from './ProvenanceUtils'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
@@ -69,6 +70,16 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     setClickedNode(node)
   }, [])
 
+  const isNodeNotFound = (
+    nodeProps: ProvenanceNodeProps,
+    nodesCopy: Node[],
+  ) => {
+    const foundRef = nodesCopy.find(node => {
+      return node.id === getNodeId(nodeProps)
+    })
+    return foundRef === undefined
+  }
+
   const addActivityNode = (
     activity: Activity,
     entityRef: Reference,
@@ -83,8 +94,10 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       type: NodeType.ENTITY,
       data: entityRef,
     }
-    nodesCopy.push(getProvenanceNode(activityNodeProps))
-    edgesCopy.push(getProvenanceEdge(activityNodeProps, entityNodeProps))
+    if (isNodeNotFound(activityNodeProps, nodesCopy)) {
+      nodesCopy.push(getProvenanceNode(activityNodeProps))
+      edgesCopy.push(getProvenanceEdge(activityNodeProps, entityNodeProps))
+    }
   }
 
   const addExpandNode = (
@@ -102,8 +115,10 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       type: NodeType.ENTITY,
       data: entityRef,
     }
-    nodesCopy.push(getProvenanceNode(expandNodeProps))
-    edgesCopy.push(getProvenanceEdge(expandNodeProps, entityNodeProps))
+    if (isNodeNotFound(expandNodeProps, nodesCopy)) {
+      nodesCopy.push(getProvenanceNode(expandNodeProps))
+      edgesCopy.push(getProvenanceEdge(expandNodeProps, entityNodeProps))
+    }
   }
 
   const addExternalNode = (
@@ -120,8 +135,10 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       type: NodeType.EXTERNAL,
       data: usedURL,
     }
-    nodesCopy.push(getProvenanceNode(externalNodeProps))
-    edgesCopy.push(getProvenanceEdge(externalNodeProps, activityNodeProps))
+    if (isNodeNotFound(externalNodeProps, nodesCopy)) {
+      nodesCopy.push(getProvenanceNode(externalNodeProps))
+      edgesCopy.push(getProvenanceEdge(externalNodeProps, activityNodeProps))
+    }
   }
 
   const addEntityNode = (
@@ -134,11 +151,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       type: NodeType.ENTITY,
       data: entityRef,
     }
-    const foundRef = nodesCopy.find(node => {
-      return node.id === getNodeId(entityNodeProps)
-    })
-    if (foundRef === undefined) {
-      // Ok, add the new entity node
+    if (isNodeNotFound(entityNodeProps, nodesCopy)) {
+      // add the new entity node
       nodesCopy.push(getProvenanceNode(entityNodeProps))
       if (activity) {
         const activityNodeProps = {
@@ -180,7 +194,13 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         console.error(e)
       }
     },
-    [accessToken, rootNodeEntityRef],
+    [
+      accessToken,
+      addActivityNode,
+      addEntityNode,
+      addExpandNode,
+      rootNodeEntityRef,
+    ],
   )
 
   const onExpandEntity = useCallback(
@@ -223,7 +243,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         setTempEdges(edgesCopy)
       }
     },
-    [accessToken, addEntity],
+    [accessToken, addActivityNode, addEntity, addExternalNode],
   )
 
   useEffect(() => {
