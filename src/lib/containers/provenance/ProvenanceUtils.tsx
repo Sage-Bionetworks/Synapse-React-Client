@@ -81,7 +81,7 @@ export const getProvenanceEdge = (
     source: node1Id,
     target: node2Id,
     // animated: true,
-    type: ConnectionLineType.SmoothStep,
+    type: ConnectionLineType.SimpleBezier,
     markerEnd: {
       type: MarkerType.ArrowClosed,
     },
@@ -110,9 +110,14 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
 
 // layout
 const dagreGraph = new dagre.graphlib.Graph()
-const nodeWidth = 172
-const nodeHeight = 100
 dagreGraph.setDefaultEdgeLabel(() => ({}))
+
+const getNodeHeight = (node: Node) => {
+  return node.data?.type == NodeType.EXPAND ? 30 : 100
+}
+const getNodeWidth = (node: Node) => {
+  return node.data?.type == NodeType.EXPAND ? 30 : 172
+}
 
 export const getLayoutedElements = (
   nodes: Node[],
@@ -123,7 +128,10 @@ export const getLayoutedElements = (
   dagreGraph.setGraph({ rankdir: direction })
 
   nodes.forEach(node => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight })
+    dagreGraph.setNode(node.id, {
+      width: getNodeWidth(node),
+      height: getNodeHeight(node),
+    })
   })
 
   edges.forEach(edge => {
@@ -140,8 +148,8 @@ export const getLayoutedElements = (
     // We are shifting the dagre node position (anchor=center center) to the top left
     // so it matches the React Flow node anchor point (top left).
     node.position = {
-      x: nodeWithPosition.x - nodeWidth / 2,
-      y: nodeWithPosition.y - nodeHeight / 2,
+      x: nodeWithPosition.x - getNodeWidth(node) / 2,
+      y: nodeWithPosition.y - getNodeHeight(node) / 2,
     }
 
     return node

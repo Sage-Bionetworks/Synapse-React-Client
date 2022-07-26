@@ -41,12 +41,7 @@ export type ProvenanceProps = {
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
-  const {
-    entityId,
-    versionNumber,
-    containerHeight = '200px',
-    depth = 1,
-  } = props
+  const { entityId, versionNumber, containerHeight = '200px' } = props
   const { accessToken } = useSynapseContext()
   const rootNodeEntityRef = useMemo(
     () => ({ targetId: entityId, targetVersionNumber: versionNumber }),
