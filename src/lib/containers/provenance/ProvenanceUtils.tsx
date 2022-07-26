@@ -111,7 +111,7 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
 // layout
 const dagreGraph = new dagre.graphlib.Graph()
 const nodeWidth = 172
-const nodeHeight = 36
+const nodeHeight = 100
 dagreGraph.setDefaultEdgeLabel(() => ({}))
 
 export const getLayoutedElements = (

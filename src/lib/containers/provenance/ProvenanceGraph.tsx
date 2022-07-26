@@ -146,8 +146,12 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           setTempEdges(newEdges)
         })
         .catch(e => {
-          // if not found, remove associated expand node (and edge that connects to the expand node)
-          // TODO:
+          // remove associated expand node (and edge that connects to the expand node)
+          console.error(e)
+          const newNodes: Node[] = [...allNodes]
+          const newEdges: Edge[] = [...allEdges]
+          setTempNodes(newNodes)
+          setTempEdges(newEdges)
         })
     },
     [accessToken],

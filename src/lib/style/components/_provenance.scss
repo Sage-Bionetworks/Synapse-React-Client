@@ -9,6 +9,7 @@
   &__node {
     text-overflow: ellipsis;
     overflow: clip;
+    white-space: nowrap;
     &:hover {
       cursor: default;
     }
@@ -17,9 +18,7 @@
     &.EntityNode,
     &.ExpandNode {
       border: none;
-      &:hover {
-        box-shadow: none !important;
-      }
+      box-shadow: none !important;
     }
   }
   &__handle {
