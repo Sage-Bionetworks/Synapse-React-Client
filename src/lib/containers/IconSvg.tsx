@@ -60,6 +60,7 @@ import {
   VpnKeyTwoTone,
   WarningTwoTone,
   WatchLater,
+  GitHub,
 } from '@material-ui/icons'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -131,6 +132,7 @@ export const IconStrings = [
   'dataLocked',
   'geneExpression',
   'geneVariants',
+  'github',
   'imaging',
   'lineGraph',
   'kinomics',
@@ -283,6 +285,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <StarTwoTone style={muiSvgStyle}></StarTwoTone>
     case 'fav':
       return <Star style={muiSvgStyle}></Star>
+    case 'github':
+      return <GitHub style={muiSvgStyle} />
     case 'peopleTwoTone':
       return <PeopleTwoTone style={muiSvgStyle}></PeopleTwoTone>
     case 'challengesTwoTone':

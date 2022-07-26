@@ -1,33 +1,32 @@
 import React, { useMemo } from 'react'
-import {
-  convertToEntityType,
-  isVersionableEntity,
-} from '../../utils/functions/EntityTypeUtils'
+import { isVersionableEntity } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { useGetEntity } from '../../utils/hooks/SynapseAPI'
-import { EntityType, Reference } from '../../utils/synapseTypes'
+import { Reference } from '../../utils/synapseTypes'
 import Tooltip from '../../utils/tooltip/Tooltip'
-import { EntityTypeIcon } from '../EntityIcon'
+import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'
 
 export type EntityNodeLabelProps = Reference
 
 export const EntityNodeLabel = (data: EntityNodeLabelProps) => {
   const { targetId, targetVersionNumber } = data
   const { data: entity } = useGetEntity(targetId, targetVersionNumber)
-  const entityType: EntityType = entity?.concreteType
-    ? convertToEntityType(entity?.concreteType)
-    : EntityType.FILE
-  const entityVersionString = `${targetId}.${targetVersionNumber}`
+  const targetVersionNumberString = targetVersionNumber
+    ? `.${targetVersionNumber}`
+    : ''
+  const entityVersionString = `${targetId}${targetVersionNumberString}`
   return useMemo(
     () => (
       <>
-        <EntityTypeIcon type={entityType} includeTooltip={false} />
+        <div>
+          <ProvenanceEntityIcon entity={entity} />
+        </div>
         {entity ? (
           <>
             <div>
               <Tooltip title={entity.name} placement="top" enterNextDelay={300}>
                 <a
-                  href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entity.id}${entityVersionString}`}
+                  href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityVersionString}`}
                 >
                   {entity.name}
                 </a>
@@ -45,6 +44,6 @@ export const EntityNodeLabel = (data: EntityNodeLabelProps) => {
         )}
       </>
     ),
-    [entity, entityType, entityVersionString],
+    [entity, entityVersionString],
   )
 }
