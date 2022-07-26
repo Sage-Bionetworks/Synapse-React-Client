@@ -1,16 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import moment from 'moment'
 import { Button } from 'react-bootstrap'
 import { useGetOAuthClientInfinite } from '../../utils/hooks/SynapseAPI'
+import { CreateOAuthModal } from './CreateOAuthClient'
+import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
 
 export const OAuthManagement: React.FunctionComponent = () => {
+  const [isShowingCreateClientModal, setIsShowingCreateClientModal] =
+    useState(false)
+  const [isEdit, setIsEdit] = useState<boolean>(false)
+  const [selectedClient, setSelectedClient] = useState<OAuthClient>()
+  const [isShowingConfirmModal, setIsShowingConfirmModal] = useState(false)
+
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
   const oAuthClientList = data?.pages.flatMap(page => page.results) ?? []
 
   return (
-    <div className="bootstrap-4-backport">
+    <div className="bootstrap-4-backport OAuthEditor">
+      <Button
+        onClick={() => {
+          setIsShowingCreateClientModal(true)
+          setIsEdit(false)
+        }}
+      >
+        Create New Client
+      </Button>
       <Table striped>
         <thead>
           <tr>
@@ -33,7 +49,17 @@ export const OAuthManagement: React.FunctionComponent = () => {
                   {item.verified ? 'Yes' : 'SUBMIT_VERIFICATION_PLACE_HOLDER'}
                 </td>
                 <td>GENERATE_PLACEHOLDER</td>
-                <td>ACTIONS_PLACEHOLDER</td>
+                <td>
+                  <button
+                    onClick={() => {
+                      setIsShowingCreateClientModal(true)
+                      setSelectedClient(item)
+                      setIsEdit(true)
+                    }}
+                  >
+                    EDIT
+                  </button>
+                </td>
               </tr>
             )
           })}
@@ -45,6 +71,20 @@ export const OAuthManagement: React.FunctionComponent = () => {
             Load more
           </Button>
         </div>
+      )}
+
+      {(isShowingCreateClientModal || isShowingConfirmModal) && (
+        <CreateOAuthModal
+          onClose={() => {
+            setIsShowingCreateClientModal(false)
+          }}
+          isShowingModal={isShowingCreateClientModal}
+          client={isEdit ? selectedClient : undefined}
+          isEdit={isEdit}
+          setSelectedClient={setSelectedClient}
+          setIsShowingConfirmModal={setIsShowingConfirmModal}
+          isShowingConfirmModal={isShowingConfirmModal}
+        />
       )}
     </div>
   )
