@@ -10,7 +10,7 @@ export const ExpandGraphNodeLabel = (data: ExpandGraphNodeLabelProps) => {
   return useMemo(
     () => (
       <>
-        <a rel="noopener noreferrer">...</a>
+        <a rel="noopener noreferrer">&hellip;</a>
       </>
     ),
     [entityReference],
