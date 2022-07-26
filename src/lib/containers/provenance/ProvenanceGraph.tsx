@@ -80,89 +80,97 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     return foundRef === undefined
   }
 
-  const addActivityNode = (
-    activity: Activity,
-    entityRef: Reference,
-    nodesCopy: Node[],
-    edgesCopy: Edge[],
-  ) => {
-    const activityNodeProps = {
-      type: NodeType.ACTIVITY,
-      data: activity,
-    }
-    const entityNodeProps = {
-      type: NodeType.ENTITY,
-      data: entityRef,
-    }
-    if (isNodeNotFound(activityNodeProps, nodesCopy)) {
-      nodesCopy.push(getProvenanceNode(activityNodeProps))
-      edgesCopy.push(getProvenanceEdge(activityNodeProps, entityNodeProps))
-    }
-  }
-
-  const addExpandNode = (
-    entityRef: Reference,
-    nodesCopy: Node[],
-    edgesCopy: Edge[],
-  ) => {
-    const expandNodeProps = {
-      type: NodeType.EXPAND,
-      data: {
-        entityReference: entityRef,
-      },
-    }
-    const entityNodeProps = {
-      type: NodeType.ENTITY,
-      data: entityRef,
-    }
-    if (isNodeNotFound(expandNodeProps, nodesCopy)) {
-      nodesCopy.push(getProvenanceNode(expandNodeProps))
-      edgesCopy.push(getProvenanceEdge(expandNodeProps, entityNodeProps))
-    }
-  }
-
-  const addExternalNode = (
-    usedURL: UsedURL,
-    activity: Activity,
-    nodesCopy: Node[],
-    edgesCopy: Edge[],
-  ) => {
-    const activityNodeProps = {
-      type: NodeType.ACTIVITY,
-      data: activity,
-    }
-    const externalNodeProps = {
-      type: NodeType.EXTERNAL,
-      data: usedURL,
-    }
-    if (isNodeNotFound(externalNodeProps, nodesCopy)) {
-      nodesCopy.push(getProvenanceNode(externalNodeProps))
-      edgesCopy.push(getProvenanceEdge(externalNodeProps, activityNodeProps))
-    }
-  }
-
-  const addEntityNode = (
-    entityRef: Reference,
-    activity: Activity | undefined,
-    nodesCopy: Node[],
-    edgesCopy: Edge[],
-  ) => {
-    const entityNodeProps = {
-      type: NodeType.ENTITY,
-      data: entityRef,
-    }
-    if (isNodeNotFound(entityNodeProps, nodesCopy)) {
-      // add the new entity node
-      nodesCopy.push(getProvenanceNode(entityNodeProps))
-      if (activity) {
-        const activityNodeProps = {
-          type: NodeType.ACTIVITY,
-          data: activity,
-        }
-        edgesCopy.push(getProvenanceEdge(entityNodeProps, activityNodeProps))
+  const addActivityNode = useCallback(
+    (
+      activity: Activity,
+      entityRef: Reference,
+      nodesCopy: Node[],
+      edgesCopy: Edge[],
+    ) => {
+      const activityNodeProps = {
+        type: NodeType.ACTIVITY,
+        data: activity,
       }
-    }
-  }
+      const entityNodeProps = {
+        type: NodeType.ENTITY,
+        data: entityRef,
+      }
+      if (isNodeNotFound(activityNodeProps, nodesCopy)) {
+        nodesCopy.push(getProvenanceNode(activityNodeProps))
+        edgesCopy.push(getProvenanceEdge(activityNodeProps, entityNodeProps))
+      }
+    },
+    [],
+  )
+
+  const addExpandNode = useCallback(
+    (entityRef: Reference, nodesCopy: Node[], edgesCopy: Edge[]) => {
+      const expandNodeProps = {
+        type: NodeType.EXPAND,
+        data: {
+          entityReference: entityRef,
+        },
+      }
+      const entityNodeProps = {
+        type: NodeType.ENTITY,
+        data: entityRef,
+      }
+      if (isNodeNotFound(expandNodeProps, nodesCopy)) {
+        nodesCopy.push(getProvenanceNode(expandNodeProps))
+        edgesCopy.push(getProvenanceEdge(expandNodeProps, entityNodeProps))
+      }
+    },
+    [],
+  )
+
+  const addExternalNode = useCallback(
+    (
+      usedURL: UsedURL,
+      activity: Activity,
+      nodesCopy: Node[],
+      edgesCopy: Edge[],
+    ) => {
+      const activityNodeProps = {
+        type: NodeType.ACTIVITY,
+        data: activity,
+      }
+      const externalNodeProps = {
+        type: NodeType.EXTERNAL,
+        data: usedURL,
+      }
+      if (isNodeNotFound(externalNodeProps, nodesCopy)) {
+        nodesCopy.push(getProvenanceNode(externalNodeProps))
+        edgesCopy.push(getProvenanceEdge(externalNodeProps, activityNodeProps))
+      }
+    },
+    [],
+  )
+
+  const addEntityNode = useCallback(
+    (
+      entityRef: Reference,
+      activity: Activity | undefined,
+      nodesCopy: Node[],
+      edgesCopy: Edge[],
+    ) => {
+      const entityNodeProps = {
+        type: NodeType.ENTITY,
+        data: entityRef,
+      }
+      if (isNodeNotFound(entityNodeProps, nodesCopy)) {
+        // add the new entity node
+        nodesCopy.push(getProvenanceNode(entityNodeProps))
+        if (activity) {
+          const activityNodeProps = {
+            type: NodeType.ACTIVITY,
+            data: activity,
+          }
+          edgesCopy.push(getProvenanceEdge(entityNodeProps, activityNodeProps))
+        }
+      }
+    },
+    [],
+  )
 
   /**
    * Will add new nodes and edges to the input arrays
