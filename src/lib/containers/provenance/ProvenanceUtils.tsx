@@ -80,7 +80,7 @@ export const getProvenanceEdge = (
     id: `${node1Id}-${node2Id}`,
     source: node1Id,
     target: node2Id,
-    // animated: true,
+    animated: true,
     type: ConnectionLineType.SimpleBezier,
     markerEnd: {
       type: MarkerType.ArrowClosed,
