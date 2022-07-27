@@ -13,6 +13,7 @@ import { TrashedEntity } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
 import { Checkbox } from '../widgets/Checkbox'
 
 type TrashCanListItemProps = {
@@ -70,6 +71,7 @@ function toSynapseClientErrorList(
 export function TrashCanList() {
   const isMounted = useRef(true)
   const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [errors, setErrors] = useState<SynapseClientError[]>([])
 
   useEffect(() => {
@@ -128,12 +130,30 @@ export function TrashCanList() {
         show={isMutating}
         headlineText={isLoadingPurge ? 'Deleting...' : 'Restoring...'}
       />
-      <Typography variant="smallText1">
+      <Typography variant="body1">
         The trash can contains items that were recently deleted. You can recover
         deleted items in the trash can by clicking &quot;Restore&quot;. Items
         will remain in the trash can for 30 days before being automatically
         purged.
       </Typography>
+      <WarningModal
+        title="Delete selected items from your Trash?"
+        modalBody={
+          <Typography variant="body1">
+            You can&apos;t undo this action.
+          </Typography>
+        }
+        confirmButtonText="Delete"
+        confirmButtonVariant="danger"
+        onConfirm={() => {
+          purge(selected)
+          setShowDeleteConfirmation(false)
+        }}
+        onCancel={() => {
+          setShowDeleteConfirmation(false)
+        }}
+        show={showDeleteConfirmation}
+      />
       {isLoading && <SynapseSpinner />}
       {!isLoading && items.length === 0 && (
         <Typography variant="body1">Trash Can is currently empty.</Typography>
@@ -221,7 +241,7 @@ export function TrashCanList() {
               variant="danger"
               disabled={selected.size === 0}
               onClick={() => {
-                purge(selected)
+                setShowDeleteConfirmation(true)
               }}
             >
               Delete Selected

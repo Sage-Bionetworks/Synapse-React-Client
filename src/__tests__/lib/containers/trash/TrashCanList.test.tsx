@@ -319,6 +319,13 @@ describe('TrashCanList', () => {
     })
     userEvent.click(restoreButton)
 
+    // Confirmation modal appears
+    const confirmationModal = screen.getByRole('dialog')
+    const confirmDelete = within(confirmationModal).getByRole('button', {
+      name: 'Delete',
+    })
+    userEvent.click(confirmDelete)
+
     // Purge should have been called for each item
     await waitFor(() => {
       expect(onServerReceivedPurge).toHaveBeenCalledWith(
