@@ -16,8 +16,9 @@ export const FavoritesDetails: React.FunctionComponent<
 
   const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     entities,
-    sharedProps.selected,
-    sharedProps.selectableTypes,
+    sharedProps.selected.size,
+    sharedProps.isIdSelected,
+    sharedProps.isSelectable,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
