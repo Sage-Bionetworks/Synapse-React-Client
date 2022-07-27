@@ -1,6 +1,7 @@
 import { Map } from 'immutable'
-import React, { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import {
   EntityHeader,
   EntityType,
@@ -9,15 +10,13 @@ import {
 } from '../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
 import { SearchQuery } from '../../../utils/synapseTypes/Search'
+import { SynapseErrorBoundary } from '../../ErrorBanner'
+import { EntityTreeContainer } from '../tree/EntityTree'
 import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
-import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { DetailsView } from './view/DetailsView'
-import { EntityTreeContainer } from '../tree/EntityTree'
-import { SynapseErrorBoundary } from '../../ErrorBanner'
-import { getEntityTypeFromHeader } from '../../../utils/functions/EntityTypeUtils'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
