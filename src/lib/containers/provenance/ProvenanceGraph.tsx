@@ -30,7 +30,6 @@ import {
 import { Reference } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
-import { ExpandGraphNodeLabelProps } from './ExpandGraphNodeLabel'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -187,9 +186,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       const { entityRef, nodesCopy, edgesCopy } = params
       const expandNodeProps = {
         type: NodeType.EXPAND,
-        data: {
-          entityReference: entityRef,
-        },
+        data: entityRef,
       }
       const entityNodeProps = {
         type: NodeType.ENTITY,
@@ -197,6 +194,31 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       }
       addNodeAndEdge({
         newNodeProps: expandNodeProps,
+        existingNodeProps: entityNodeProps,
+        nodesCopy,
+        edgesCopy,
+      })
+    },
+    [addNodeAndEdge],
+  )
+
+  const addDummyNode = useCallback(
+    (params: {
+      entityRef: Reference
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { entityRef, nodesCopy, edgesCopy } = params
+      const dummyNodeProps = {
+        type: NodeType.DUMMY,
+        data: entityRef,
+      }
+      const entityNodeProps = {
+        type: NodeType.ENTITY,
+        data: entityRef,
+      }
+      addNodeAndEdge({
+        newNodeProps: dummyNodeProps,
         existingNodeProps: entityNodeProps,
         nodesCopy,
         edgesCopy,
@@ -297,6 +319,10 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       } catch (e) {
         // Activity is not accessible
         console.error(e)
+        if (isRootEntity(entityRef)) {
+          // add a dummy node
+          addDummyNode({ entityRef, nodesCopy, edgesCopy })
+        }
       }
     },
     [accessToken, addActivityNode, addEntityNode, addExpandNode, isRootEntity],
@@ -420,7 +446,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   useEffect(() => {
     const nodeData: ProvenanceNodeData = clickedNode?.data as ProvenanceNodeData
     if (clickedNode && nodeData?.type == NodeType.EXPAND) {
-      const expandNodeProps = nodeData.props as ExpandGraphNodeLabelProps
+      const expandNodeEntityRef = nodeData.props as Reference
       // remove clicked node
       const nodesWithoutExpandNode = tempNodes.filter(
         node => node.id != clickedNode.id,
@@ -430,7 +456,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         edge => edge != edgeToRemove,
       )
       onExpandEntity({
-        entityRef: expandNodeProps.entityReference,
+        entityRef: expandNodeEntityRef,
         nodesCopy: nodesWithoutExpandNode,
         edgesCopy: edgesWithoutExpandEdge,
       }).finally(() => {

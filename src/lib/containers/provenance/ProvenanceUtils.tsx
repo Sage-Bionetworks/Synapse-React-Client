@@ -7,30 +7,30 @@ import {
   MarkerType,
 } from 'react-flow-renderer'
 import { ActivityNodeLabel, ActivityNodeLabelProps } from './ActivityNodeLabel'
-import { EntityNodeLabel, EntityNodeLabelProps } from './EntityNodeLabel'
-import {
-  ExpandGraphNodeLabel,
-  ExpandGraphNodeLabelProps,
-} from './ExpandGraphNodeLabel'
+import { EntityNodeLabel } from './EntityNodeLabel'
+import { ExpandGraphNodeLabel } from './ExpandGraphNodeLabel'
 import {
   ExternalGraphNodeLabel,
   ExternalGraphNodeLabelProps,
 } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
 import _ from 'lodash'
+import { DummyNodeLabel } from './DummyNodeLabel'
+import { Reference } from '../../utils/synapseTypes'
 
 export enum NodeType {
   ENTITY = 'EntityNode',
   EXTERNAL = 'ExternalNode',
   ACTIVITY = 'ActivityNode',
   EXPAND = 'ExpandNode',
+  DUMMY = 'DummyNode',
 }
 
 type ProvenanceNodeLabelProps =
-  | EntityNodeLabelProps
   | ActivityNodeLabelProps
   | ExternalGraphNodeLabelProps
-  | ExpandGraphNodeLabelProps
+  | Reference
+
 export type ProvenanceNodeProps = {
   type: NodeType
   data: ProvenanceNodeLabelProps
@@ -47,7 +47,7 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
   let nodeLabel: JSX.Element
   switch (type) {
     case NodeType.ENTITY:
-      nodeLabel = <EntityNodeLabel {...(data as EntityNodeLabelProps)} />
+      nodeLabel = <EntityNodeLabel {...(data as Reference)} />
       break
     case NodeType.EXTERNAL:
       nodeLabel = (
@@ -59,6 +59,9 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
       break
     case NodeType.EXPAND:
       nodeLabel = <ExpandGraphNodeLabel />
+      break
+    case NodeType.DUMMY:
+      nodeLabel = <DummyNodeLabel />
       break
     default:
       nodeLabel = <p>Unrecognized node type: {type}</p>
@@ -102,19 +105,20 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
   const { type, data } = props
   switch (type) {
     case NodeType.ENTITY:
-      return `${(data as EntityNodeLabelProps).targetId}.${
-        (data as EntityNodeLabelProps).targetVersionNumber ?? 'latest'
+      return `${(data as Reference).targetId}.${
+        (data as Reference).targetVersionNumber ?? 'latest'
       }`
     case NodeType.EXTERNAL:
       return `${(data as ExternalGraphNodeLabelProps).url}`
     case NodeType.ACTIVITY:
       return `${(data as ActivityNodeLabelProps).id}`
     case NodeType.EXPAND:
-      return `expand.node.${
-        (data as ExpandGraphNodeLabelProps).entityReference.targetId
-      }.${
-        (data as ExpandGraphNodeLabelProps).entityReference
-          .targetVersionNumber ?? 'latest'
+      return `expand.node.${(data as Reference).targetId}.${
+        (data as Reference).targetVersionNumber ?? 'latest'
+      }`
+    case NodeType.DUMMY:
+      return `dummy.node.${(data as Reference).targetId}.${
+        (data as Reference).targetVersionNumber ?? 'latest'
       }`
   }
 }

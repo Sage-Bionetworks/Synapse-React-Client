@@ -43,3 +43,14 @@ DavesProvenanceGraph.args = {
   ],
   containerHeight: '500px',
 }
+
+export const NoProvenanceGraph = Template.bind({})
+NoProvenanceGraph.args = {
+  entityRefs: [
+    {
+      targetId: 'syn8075918',
+      targetVersionNumber: undefined,
+    },
+  ],
+  containerHeight: '500px',
+}

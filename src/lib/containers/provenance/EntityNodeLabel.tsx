@@ -6,9 +6,7 @@ import { Reference } from '../../utils/synapseTypes'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'
 
-export type EntityNodeLabelProps = Reference
-
-export const EntityNodeLabel = (data: EntityNodeLabelProps) => {
+export const EntityNodeLabel = (data: Reference) => {
   const { targetId, targetVersionNumber } = data
   const { data: entity } = useGetEntity(targetId, targetVersionNumber)
   const targetVersionNumberString = targetVersionNumber
