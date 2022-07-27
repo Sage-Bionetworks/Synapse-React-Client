@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { Table } from 'react-bootstrap'
+import { Button, Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import moment from 'moment'
-import { Button } from 'react-bootstrap'
 import { useGetOAuthClientInfinite } from '../../utils/hooks/SynapseAPI'
 import { CreateOAuthModal } from './CreateOAuthClient'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
@@ -50,15 +49,17 @@ export const OAuthManagement: React.FunctionComponent = () => {
                 </td>
                 <td>GENERATE_PLACEHOLDER</td>
                 <td>
-                  <button
+                  <Button
+                    variant="outline"
                     onClick={() => {
-                      setIsShowingCreateClientModal(true)
                       setSelectedClient(item)
                       setIsEdit(true)
+                      setIsShowingCreateClientModal(true)
                     }}
+                    size="sm"
                   >
                     EDIT
-                  </button>
+                  </Button>
                 </td>
               </tr>
             )

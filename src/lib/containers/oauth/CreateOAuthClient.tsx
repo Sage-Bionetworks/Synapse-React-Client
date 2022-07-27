@@ -4,9 +4,14 @@ import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { displayToast } from '../ToastMessage'
 import Typography from '../../utils/typography/Typography'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
-import { useMutateOAuthClient } from '../../utils/hooks/SynapseAPI'
+import {
+  useDeleteOAuthClient,
+  useMutateOAuthClient,
+} from '../../utils/hooks/SynapseAPI'
 import IconSvg from '../IconSvg'
-import { ConfirmModal } from './OAuthConfirmationModal'
+import { WarningModal } from '../synapse_form_wrapper/WarningModal'
+import { HelpOutlineTwoTone } from '@material-ui/icons'
+import Tooltip from '../../utils/tooltip/Tooltip'
 
 export type CreateOAuthModalProps = {
   isShowingModal: boolean
@@ -40,6 +45,10 @@ export const CreateOAuthModal: React.FunctionComponent<
   const [isDelete, setIsDelete] = useState<boolean>(false)
   const [updatedClient, setUpdatedClient] = useState<OAuthClient>()
 
+  const warningHeader = 'Are you absolutely sure?'
+  const warningBody =
+    'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.'
+  const uriHelpMessage = 'URIs should be separated by a comma.'
   useEffect(() => {
     setClientName(client?.client_name ?? '')
     setRedirectUris(client?.redirect_uris.toString() ?? undefined)
@@ -67,10 +76,26 @@ export const CreateOAuthModal: React.FunctionComponent<
     onClose()
   }
 
+  const hideConfirmModal = () => {
+    setIsShowingConfirmModal(false)
+    setIsDelete(false)
+    setSelectedClient(undefined)
+  }
+
   const { mutate } = useMutateOAuthClient({
     onSuccess: () => {
       displayToast(`Successfully saved`, 'success')
       hide()
+    },
+    onError: (err: any) => {
+      displayToast(err.reason as string, 'danger')
+    },
+  })
+
+  const deleteClient = useDeleteOAuthClient({
+    onSuccess: () => {
+      displayToast('Successfully deleted', 'success')
+      onClose()
     },
   })
 
@@ -108,7 +133,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   }
 
   return (
-    <div>
+    <div className="bootstrap-4-backport">
       <Modal
         show={isShowingModal}
         animation={false}
@@ -141,23 +166,27 @@ export const CreateOAuthModal: React.FunctionComponent<
           <Row>
             <Col lg={6} md={6} sm={12} xs={12}>
               <Form.Group className="required">
-                <Form.Label>Client Name</Form.Label>
+                <Form.Label htmlFor="clientName">Client Name</Form.Label>
                 <Form.Control
                   required
                   onChange={e => setClientName(e.target.value)}
                   placeholder="Client Name"
                   type="text"
                   value={clientName}
+                  id="clientName"
                 />
               </Form.Group>
             </Col>
             <Col lg={6} md={6} sm={12} xs={12}>
-              <Form.Label className="required">Client Homepage</Form.Label>
+              <Form.Label className="required" htmlFor="clientUri">
+                Client Homepage
+              </Form.Label>
               <Form.Control
                 onChange={e => setClientUri(e.target.value)}
                 placeholder="https://"
                 type="text"
                 value={clientUri}
+                id="clientUri"
               />
             </Col>
           </Row>
@@ -166,12 +195,19 @@ export const CreateOAuthModal: React.FunctionComponent<
               <>
                 <Col lg={6} md={6} sm={12} xs={12}>
                   <Form.Group className="required">
-                    <Form.Label>Redirect URI(s)</Form.Label>
+                    <Form.Label htmlFor="redirectUri">
+                      Redirect URI(s)
+                    </Form.Label>
+                    <Tooltip title={uriHelpMessage} placement="top">
+                      <HelpOutlineTwoTone className={`HelpButton`} />
+                    </Tooltip>
+
                     <Form.Control
                       required
                       onChange={e => setRedirectUris(e.target.value)}
                       placeholder="https://"
                       type="text"
+                      id="redirectUri"
                     />
                   </Form.Group>
                 </Col>
@@ -222,13 +258,17 @@ export const CreateOAuthModal: React.FunctionComponent<
               </Typography>
               <Row>
                 <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label>Redirect URI(s)</Form.Label>
+                  <Form.Label htmlFor="redirectUri">Redirect URI(s)</Form.Label>
+                  <Tooltip title={uriHelpMessage} placement="top">
+                    <HelpOutlineTwoTone className={`HelpButton`} />
+                  </Tooltip>
+
                   <Form.Control
                     required
                     onChange={e => setRedirectUris(e.target.value)}
                     placeholder="https://"
                     type="text"
-                    value={redirectUris}
+                    id="redirectUri"
                   />
                 </Col>
                 <Col lg={6} md={6} sm={12} xs={12}>
@@ -265,15 +305,17 @@ export const CreateOAuthModal: React.FunctionComponent<
           </Button>
         </Modal.Footer>
       </Modal>
-      <ConfirmModal
-        onClose={() => {
-          setIsShowingConfirmModal(false)
-          setIsDelete(false)
-          setSelectedClient(undefined)
+      <WarningModal
+        show={isShowingConfirmModal}
+        title={warningHeader}
+        modalBody={warningBody}
+        onCancel={hideConfirmModal}
+        onConfirm={() => {
+          isDelete
+            ? deleteClient.mutate(client?.client_id!)
+            : mutate({ action: 'UPDATE', client: updatedClient! })
+          hideConfirmModal()
         }}
-        isDelete={isDelete}
-        showModal={isShowingConfirmModal}
-        client={isDelete ? client! : updatedClient!}
       />
     </div>
   )

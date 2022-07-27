@@ -1,13 +1,6 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:map';
 
-.OAuthEditor {
-  td {
-    button {
-      color: #2b688f;
-    }
-  }
-}
 .OAuthDialog {
   .row {
     margin-top: 8px;

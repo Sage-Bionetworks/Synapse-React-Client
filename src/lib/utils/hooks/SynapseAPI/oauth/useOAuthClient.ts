@@ -6,22 +6,16 @@ import {
   useQueryClient,
 } from 'react-query'
 import { SynapseClient } from '../../..'
-import { displayToast } from '../../../../containers/ToastMessage'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { OAuthClient, OAuthClientList } from '../../../synapseTypes/OAuthClient'
-
-const oAuthQueryKeys = {
-  all: (accessToken: string) => ['oAuthClient', accessToken],
-  edit: (accessToken: string, id: string) => ['oAuthClient', accessToken, id],
-}
 
 export function useGetOAuthClientInfinite(
   options?: UseInfiniteQueryOptions<OAuthClientList, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
   return useInfiniteQuery<OAuthClientList, SynapseClientError>(
-    oAuthQueryKeys.all(accessToken!),
+    ['oAuthclient', accessToken],
     async context =>
       await SynapseClient.getOAuth2(accessToken!, context.pageParam),
     {
@@ -43,11 +37,7 @@ export function useDeleteOAuthClient(
     {
       ...options,
       onSuccess: async (updatedClient, clientId, ctx) => {
-        await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
-        queryClient.setQueryData(
-          oAuthQueryKeys.edit(accessToken!, clientId),
-          updatedClient,
-        )
+        await queryClient.invalidateQueries()
         if (options?.onSuccess) {
           await options.onSuccess(updatedClient, clientId, ctx)
         }
@@ -79,18 +69,10 @@ export function useMutateOAuthClient(
 
   return useMutation(update, {
     onSuccess: async (updatedClient, variables, ctx) => {
-      const clientId = updatedClient.client_id
-      queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
-      queryClient.setQueryData(
-        oAuthQueryKeys.edit(accessToken!, clientId!),
-        updatedClient,
-      )
+      await queryClient.invalidateQueries()
       if (options?.onSuccess) {
         await options.onSuccess(updatedClient, variables.client, ctx)
       }
-    },
-    onError: (err: any) => {
-      displayToast(err.reason as string, 'danger')
     },
   })
 }

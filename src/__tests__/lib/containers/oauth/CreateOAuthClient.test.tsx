@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
@@ -13,18 +13,21 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../lib/utils/functions/getEndpoint'
-import { ConfirmModal } from '../../../../lib/containers/oauth/OAuthConfirmationModal'
+import { WarningModal } from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
 
 jest.mock('../../../../lib/containers/ToastMessage', () => {
   return { displayToast: jest.fn() }
 })
-jest.mock('../../../../lib/containers/oauth/OAuthConfirmationModal', () => ({
-  ConfirmModal: jest.fn().mockImplementation(() => {
-    return <div></div>
+jest.mock(
+  '../../../../lib/containers/synapse_form_wrapper/WarningModal',
+  () => ({
+    WarningModal: jest.fn().mockImplementation(() => {
+      return <div></div>
+    }),
   }),
-}))
+)
 
-const mockConfirmModal = ConfirmModal
+const mockWarningModal = WarningModal
 const mockToastFn = displayToast
 
 const updatedClient = jest.fn()
@@ -44,7 +47,7 @@ function renderComponent(props: CreateOAuthModalProps = defaultProps) {
   })
 }
 
-describe('Create 0Auth Client', () => {
+describe('Create OAuth Client', () => {
   beforeAll(() => server.listen())
   afterEach(() => {
     jest.clearAllMocks()
@@ -71,11 +74,11 @@ describe('Create 0Auth Client', () => {
       ),
     )
     renderComponent()
-    const inputName = (await screen.findAllByRole('textbox'))[0]
-    const inputHomePage = (await screen.findAllByRole('textbox'))[1]
-    const inputRedirectURI = (await screen.findAllByRole('textbox'))[2]
+    const inputName = await screen.findByLabelText('Client Name')
+    const inputHomePage = await screen.findByLabelText('Client Homepage')
+    const inputRedirectURI = await screen.findByLabelText('Redirect URI(s)')
 
-    const saveButton = screen.queryByRole('button', { name: 'Save' })
+    const saveButton = screen.getByRole('button', { name: 'Save' })
 
     userEvent.type(inputName, mockClient.client_name)
     userEvent.type(inputHomePage, mockClient.client_uri!)
@@ -96,14 +99,14 @@ describe('Create 0Auth Client', () => {
 
   it('Shows a warning modal when deleteing a client', async () => {
     renderComponent({ ...defaultProps, isEdit: true, client: mockClient })
-    const deleteButton = screen.queryByRole('button', { name: 'DELETE CLIENT' })
+    const deleteButton = screen.getByRole('button', { name: 'DELETE CLIENT' })
     userEvent.click(deleteButton!)
 
-    // await screen.findByText('Are you absolutely sure?')
-    expect(mockConfirmModal).toHaveBeenLastCalledWith(
+    expect(mockWarningModal).toBeCalledWith(
       expect.objectContaining({
-        client: mockClient,
-        isDelete: true,
+        title: 'Are you absolutely sure?',
+        modalBody:
+          'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.',
       }),
       expect.anything(),
     )
@@ -128,11 +131,15 @@ describe('Create 0Auth Client', () => {
       isEdit: true,
       client: mockClient,
     })
-    const inputName = (await screen.findAllByRole('textbox'))[0]
-    const saveButton = screen.queryByRole('button', { name: 'Save' })
-    fireEvent.change(inputName, { target: { value: 'rename' } })
+    const inputName = await screen.findByRole('textbox', {
+      name: 'Client Name',
+    })
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    userEvent.type(inputName, 'rename')
 
-    await waitFor(() => expect(inputName).toHaveValue('rename'))
+    await waitFor(() =>
+      expect(inputName).toHaveValue(`${mockClient.client_name}rename`),
+    )
     userEvent.click(saveButton!)
 
     await waitFor(() =>
@@ -142,28 +149,19 @@ describe('Create 0Auth Client', () => {
 
   it('Shows a warning modal when changing redirect uri', async () => {
     renderComponent({ ...defaultProps, isEdit: true, client: mockClient })
-    const inputRedirectURI = (await screen.findAllByRole('textbox'))[4]
-    const saveButton = screen.queryByRole('button', { name: 'Save' })
+    const inputRedirectURI = await screen.findByRole('textbox', {
+      name: 'Redirect URI(s)',
+    })
+    const saveButton = screen.getByRole('button', { name: 'Save' })
 
     userEvent.type(inputRedirectURI, 'xxx')
-    await waitFor(() =>
-      expect(inputRedirectURI).toHaveValue('https://sagebase.orgxxx'),
-    )
-    userEvent.click(saveButton!)
+    expect(inputRedirectURI).toHaveValue('xxx'), userEvent.click(saveButton!)
 
-    expect(mockConfirmModal).toHaveBeenCalledWith(
+    expect(mockWarningModal).toBeCalledWith(
       expect.objectContaining({
-        client: {
-          client_id: '999',
-          client_name: 'First',
-          client_uri: 'https://sagebase.org',
-          etag: undefined,
-          policy_uri: 'https://sagebase.org',
-          redirect_uris: ['https://sagebase.orgxxx'],
-          sector_identifier_uri: 'https://sagebase.org',
-          tos_uri: 'https://sagebase.org',
-        },
-        isDelete: false,
+        title: 'Are you absolutely sure?',
+        modalBody:
+          'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.',
       }),
       expect.anything(),
     )
