@@ -7,8 +7,7 @@ import Tooltip from '../../utils/tooltip/Tooltip'
 import Typography from '../../utils/typography/Typography'
 import { UserCardSmall } from '../UserCardSmall'
 
-export type ActivityNodeLabelProps = Activity
-export const ActivityNodeLabel = (data: ActivityNodeLabelProps) => {
+export const ActivityNodeLabel = (data: Activity) => {
   const { data: userProfile } = useGetUserProfile(data.modifiedBy)
   const friendlyModifiedOn = formatDate(moment(data.modifiedOn))
   const { name, description } = data

@@ -3,9 +3,7 @@ import { UsedURL } from '../../utils/synapseTypes/Provenance/Provenance'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import { ProvenanceExternalIcon } from './ProvenanceExternalIcon'
 
-export type ExternalGraphNodeLabelProps = UsedURL
-
-export const ExternalGraphNodeLabel = (data: ExternalGraphNodeLabelProps) => {
+export const ExternalGraphNodeLabel = (data: UsedURL) => {
   return useMemo(
     () => (
       <>

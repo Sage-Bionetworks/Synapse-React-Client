@@ -1,10 +1,19 @@
+import pluralize from 'pluralize'
 import React, { useMemo } from 'react'
+import { Reference } from '../../utils/synapseTypes'
 
-export const ExpandGraphNodeLabel = () => {
+export type ExpandGraphNodeDataProps = {
+  entityRef: Reference
+  itemCount: number
+}
+export const ExpandGraphNodeLabel = (props: ExpandGraphNodeDataProps) => {
+  const { itemCount } = props
   return useMemo(
     () => (
       <>
-        <a rel="noopener noreferrer">&hellip;</a>
+        <a rel="noopener noreferrer">
+          Show {itemCount} {pluralize('item', itemCount)}&hellip;
+        </a>
       </>
     ),
     [],

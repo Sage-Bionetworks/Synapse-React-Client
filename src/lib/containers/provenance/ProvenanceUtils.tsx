@@ -6,30 +6,35 @@ import {
   Edge,
   MarkerType,
 } from 'react-flow-renderer'
-import { ActivityNodeLabel, ActivityNodeLabelProps } from './ActivityNodeLabel'
+import { ActivityNodeLabel } from './ActivityNodeLabel'
 import { EntityNodeLabel } from './EntityNodeLabel'
-import { ExpandGraphNodeLabel } from './ExpandGraphNodeLabel'
 import {
-  ExternalGraphNodeLabel,
-  ExternalGraphNodeLabelProps,
-} from './ExternalGraphNodeLabel'
+  ExpandGraphNodeDataProps,
+  ExpandGraphNodeLabel,
+} from './ExpandGraphNodeLabel'
+import { ExternalGraphNodeLabel } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
 import _ from 'lodash'
-import { DummyNodeLabel } from './DummyNodeLabel'
+import { UndefinedNodeLabel } from './UndefinedNodeLabel'
 import { Reference } from '../../utils/synapseTypes'
+import {
+  Activity,
+  UsedURL,
+} from '../../utils/synapseTypes/Provenance/Provenance'
 
 export enum NodeType {
   ENTITY = 'EntityNode',
   EXTERNAL = 'ExternalNode',
   ACTIVITY = 'ActivityNode',
   EXPAND = 'ExpandNode',
-  DUMMY = 'DummyNode',
+  UNDEFINED = 'UndefinedNode',
 }
 
 type ProvenanceNodeLabelProps =
-  | ActivityNodeLabelProps
-  | ExternalGraphNodeLabelProps
+  | UsedURL
   | Reference
+  | Activity
+  | ExpandGraphNodeDataProps
 
 export type ProvenanceNodeProps = {
   type: NodeType
@@ -50,18 +55,18 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
       nodeLabel = <EntityNodeLabel {...(data as Reference)} />
       break
     case NodeType.EXTERNAL:
-      nodeLabel = (
-        <ExternalGraphNodeLabel {...(data as ExternalGraphNodeLabelProps)} />
-      )
+      nodeLabel = <ExternalGraphNodeLabel {...(data as UsedURL)} />
       break
     case NodeType.ACTIVITY:
-      nodeLabel = <ActivityNodeLabel {...(data as ActivityNodeLabelProps)} />
+      nodeLabel = <ActivityNodeLabel {...(data as Activity)} />
       break
     case NodeType.EXPAND:
-      nodeLabel = <ExpandGraphNodeLabel />
+      nodeLabel = (
+        <ExpandGraphNodeLabel {...(data as ExpandGraphNodeDataProps)} />
+      )
       break
-    case NodeType.DUMMY:
-      nodeLabel = <DummyNodeLabel />
+    case NodeType.UNDEFINED:
+      nodeLabel = <UndefinedNodeLabel />
       break
     default:
       nodeLabel = <p>Unrecognized node type: {type}</p>
@@ -109,15 +114,18 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
         (data as Reference).targetVersionNumber ?? 'latest'
       }`
     case NodeType.EXTERNAL:
-      return `${(data as ExternalGraphNodeLabelProps).url}`
+      return `${(data as UsedURL).url}`
     case NodeType.ACTIVITY:
-      return `${(data as ActivityNodeLabelProps).id}`
+      return `${(data as Activity).id}`
     case NodeType.EXPAND:
-      return `expand.node.${(data as Reference).targetId}.${
-        (data as Reference).targetVersionNumber ?? 'latest'
+      return `expand.node.${
+        (data as ExpandGraphNodeDataProps).entityRef.targetId
+      }.${
+        (data as ExpandGraphNodeDataProps).entityRef.targetVersionNumber ??
+        'latest'
       }`
-    case NodeType.DUMMY:
-      return `dummy.node.${(data as Reference).targetId}.${
+    case NodeType.UNDEFINED:
+      return `undefined.dummy.node.${(data as Reference).targetId}.${
         (data as Reference).targetVersionNumber ?? 'latest'
       }`
   }

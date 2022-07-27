@@ -30,6 +30,8 @@ import {
 import { Reference } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
+import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
+import { displayToast } from '../ToastMessage'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -38,6 +40,7 @@ export type ProvenanceProps = {
 }
 
 const DEFAULT_ZOOM = 0.85
+const MAX_ACTIVITY_EXPAND_NODES = 200
 
 /**
  * Renders a Provenance Graph for a given entity.
@@ -180,13 +183,17 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const addExpandNode = useCallback(
     (params: {
       entityRef: Reference
+      itemCount: number | undefined
       nodesCopy: Node[]
       edgesCopy: Edge[]
     }) => {
-      const { entityRef, nodesCopy, edgesCopy } = params
+      const { entityRef, itemCount = 0, nodesCopy, edgesCopy } = params
       const expandNodeProps = {
         type: NodeType.EXPAND,
-        data: entityRef,
+        data: {
+          itemCount,
+          entityRef,
+        },
       }
       const entityNodeProps = {
         type: NodeType.ENTITY,
@@ -202,15 +209,15 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     [addNodeAndEdge],
   )
 
-  const addDummyNode = useCallback(
+  const addUndefinedNode = useCallback(
     (params: {
       entityRef: Reference
       nodesCopy: Node[]
       edgesCopy: Edge[]
     }) => {
       const { entityRef, nodesCopy, edgesCopy } = params
-      const dummyNodeProps = {
-        type: NodeType.DUMMY,
+      const undefinedNodeProps = {
+        type: NodeType.UNDEFINED,
         data: entityRef,
       }
       const entityNodeProps = {
@@ -218,7 +225,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         data: entityRef,
       }
       addNodeAndEdge({
-        newNodeProps: dummyNodeProps,
+        newNodeProps: undefinedNodeProps,
         existingNodeProps: entityNodeProps,
         nodesCopy,
         edgesCopy,
@@ -309,23 +316,28 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           entityRef.targetVersionNumber,
           accessToken,
         )
-        // if this is the root node, then add the activity immediately.
-        // otherwise, add an expand node and we'll add this later
-        if (isRootEntity(entityRef)) {
-          addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
-        } else {
-          addExpandNode({ entityRef, nodesCopy, edgesCopy })
+        // if this is not a root node (or there are too many items to show), add an expand node
+        if (
+          !isRootEntity(entityRef) ||
+          (activity.used && activity.used.length >= MAX_ACTIVITY_EXPAND_NODES)
+        ) {
+          addExpandNode({
+            entityRef,
+            itemCount: activity.used?.length,
+            nodesCopy,
+            edgesCopy,
+          })
         }
       } catch (e) {
         // Activity is not accessible
         console.error(e)
         if (isRootEntity(entityRef)) {
-          // add a dummy node
-          addDummyNode({ entityRef, nodesCopy, edgesCopy })
+          // add provenance undefined node
+          addUndefinedNode({ entityRef, nodesCopy, edgesCopy })
         }
       }
     },
-    [accessToken, addActivityNode, addEntityNode, addExpandNode, isRootEntity],
+    [accessToken, addUndefinedNode, addEntityNode, addExpandNode, isRootEntity],
   )
 
   /**
@@ -378,7 +390,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
         // go through Activity.used array to add these nodes/edges
         const addEntityPromises: Promise<void>[] = []
-        if (activity.used) {
+        if (activity.used && activity.used.length < MAX_ACTIVITY_EXPAND_NODES) {
           activity.used.forEach((usedItem: Used) => {
             if (usedItem.concreteType == USED_ENTITY_CONCRETE_TYPE_VALUE) {
               const usedEntityItem = usedItem as UsedEntity
@@ -446,23 +458,31 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   useEffect(() => {
     const nodeData: ProvenanceNodeData = clickedNode?.data as ProvenanceNodeData
     if (clickedNode && nodeData?.type == NodeType.EXPAND) {
-      const expandNodeEntityRef = nodeData.props as Reference
-      // remove clicked node
-      const nodesWithoutExpandNode = tempNodes.filter(
-        node => node.id != clickedNode.id,
-      )
-      const edgeToRemove = getConnectedEdges([clickedNode], tempEdges)[0]
-      const edgesWithoutExpandEdge = tempEdges.filter(
-        edge => edge != edgeToRemove,
-      )
-      onExpandEntity({
-        entityRef: expandNodeEntityRef,
-        nodesCopy: nodesWithoutExpandNode,
-        edgesCopy: edgesWithoutExpandEdge,
-      }).finally(() => {
-        setTempNodes(nodesWithoutExpandNode)
-        setTempEdges(edgesWithoutExpandEdge)
-      })
+      const expandNodeDataProps = nodeData.props as ExpandGraphNodeDataProps
+      if (expandNodeDataProps.itemCount > MAX_ACTIVITY_EXPAND_NODES) {
+        displayToast(
+          'Web visualization does not support expanding this many items at this time.',
+          'danger',
+        )
+        return
+      } else {
+        // remove clicked node
+        const nodesWithoutExpandNode = tempNodes.filter(
+          node => node.id != clickedNode.id,
+        )
+        const edgeToRemove = getConnectedEdges([clickedNode], tempEdges)[0]
+        const edgesWithoutExpandEdge = tempEdges.filter(
+          edge => edge != edgeToRemove,
+        )
+        onExpandEntity({
+          entityRef: expandNodeDataProps.entityRef,
+          nodesCopy: nodesWithoutExpandNode,
+          edgesCopy: edgesWithoutExpandEdge,
+        }).finally(() => {
+          setTempNodes(nodesWithoutExpandNode)
+          setTempEdges(edgesWithoutExpandEdge)
+        })
+      }
       setClickedNode(undefined)
     }
   }, [clickedNode, tempNodes, tempEdges, onExpandEntity])
