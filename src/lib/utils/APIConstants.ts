@@ -114,3 +114,8 @@ export const APPROVED_SUBMISSION_INFO = (
 
 export const EVALUATION = `${REPO}/evaluation`
 export const EVALUATION_BY_ID = (id: string | number) => EVALUATION + `/${id}`
+
+export const TRASHCAN = `${REPO}/trashcan`
+export const TRASHCAN_VIEW = `${TRASHCAN}/view`
+export const TRASHCAN_RESTORE = (id: string) => `${TRASHCAN}/restore/${id}`
+export const TRASHCAN_PURGE = (id: string) => `${TRASHCAN}/purge/${id}`

@@ -35,6 +35,9 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TRASHCAN_PURGE,
+  TRASHCAN_RESTORE,
+  TRASHCAN_VIEW,
   USER_BUNDLE,
   USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
@@ -117,6 +120,7 @@ import {
   RestrictionInformationResponse,
   Submission as EvaluationSubmission,
   SynapseVersion,
+  TrashedEntity,
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
@@ -3769,5 +3773,44 @@ export function getProfilePicPreviewPresignedUrl(userId: string) {
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
+  )
+}
+
+export function getItemsInTrashCan(
+  accessToken: string | undefined,
+  offset = 0,
+  limit = 2,
+) {
+  return doGet<PaginatedResults<TrashedEntity>>(
+    TRASHCAN_VIEW + `?offset=${offset}&limit=${limit}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export function restoreFromTrashCan(
+  entityId: string,
+  accessToken: string | undefined,
+) {
+  return doPut<void>(
+    TRASHCAN_RESTORE(entityId),
+    undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export function purgeFromTrashCan(
+  entityId: string,
+  accessToken: string | undefined,
+) {
+  return doPut<void>(
+    TRASHCAN_PURGE(entityId),
+    undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
