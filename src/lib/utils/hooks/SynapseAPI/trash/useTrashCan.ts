@@ -1,5 +1,4 @@
 import {
-  QueryClient,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -10,10 +9,6 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { PaginatedResults, TrashedEntity } from '../../../synapseTypes'
-import {
-  invalidateAllQueriesForEntity,
-  entityQueryKeys,
-} from '../entity/queryKeys'
 
 export function useGetItemsInTrashCanInfinite(
   options?: UseInfiniteQueryOptions<
