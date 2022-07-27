@@ -50,7 +50,6 @@ function TrashCanListItem(props: TrashCanListItemProps) {
           Restore
         </Button>
       </td>
-      {/* <td>DeleteButtonPlaceholder</td> */}
     </tr>
   )
 }
@@ -156,7 +155,6 @@ export function TrashCanList() {
                 <th>Location</th>
                 <th>Deleted On</th>
                 <th></th>
-                {/* <th>DeleteButtonPlaceholder</th> */}
               </tr>
             </thead>
             <tbody>

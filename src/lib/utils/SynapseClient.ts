@@ -3779,7 +3779,7 @@ export function getProfilePicPreviewPresignedUrl(userId: string) {
 export function getItemsInTrashCan(
   accessToken: string | undefined,
   offset = 0,
-  limit = 2,
+  limit = 25,
 ) {
   return doGet<PaginatedResults<TrashedEntity>>(
     TRASHCAN_VIEW + `?offset=${offset}&limit=${limit}`,
