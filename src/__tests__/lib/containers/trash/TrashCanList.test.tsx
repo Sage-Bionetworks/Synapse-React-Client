@@ -1,32 +1,25 @@
+import { render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import React from 'react'
-import {
-  findAllByRole,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react'
 import { TrashCanList } from '../../../../lib/containers/trash/TrashCanList'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
-import { rest, server } from '../../../../mocks/msw/server'
 import {
-  PROFILE_IMAGE_PREVIEW,
   TRASHCAN_PURGE,
   TRASHCAN_RESTORE,
   TRASHCAN_VIEW,
 } from '../../../../lib/utils/APIConstants'
 import {
-  getEndpoint,
   BackendDestinationEnum,
+  getEndpoint,
 } from '../../../../lib/utils/functions/getEndpoint'
 import {
   PaginatedResults,
   TrashedEntity,
 } from '../../../../lib/utils/synapseTypes'
-import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
 import mockDatasetData from '../../../../mocks/entity/mockDataset'
+import mockFileEntityData from '../../../../mocks/entity/mockFileEntity'
+import { rest, server } from '../../../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../../../mocks/user/mock_user_profile'
-import userEvent from '@testing-library/user-event'
 
 function renderComponent() {
   return render(<TrashCanList />, { wrapper: createWrapper() })
