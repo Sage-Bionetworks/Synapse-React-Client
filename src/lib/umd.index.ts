@@ -38,6 +38,7 @@ import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
 import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
 import TermsAndConditions from './containers/TermsAndConditions'
 import { displayToast, SynapseToastContainer } from './containers/ToastMessage'
+import { TrashCanList } from './containers/trash/TrashCanList'
 import UserCard from './containers/UserCard'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import './style/main.scss'
@@ -97,6 +98,7 @@ const SynapseComponents = {
   ChangePassword,
   ForumSearch,
   ReviewerDashboard,
+  TrashCanList,
 }
 
 // Include the version in the build
