@@ -92,7 +92,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     },
   })
 
-  const deleteClient = useDeleteOAuthClient({
+  const { mutate: deleteClient } = useDeleteOAuthClient({
     onSuccess: () => {
       displayToast('Successfully deleted', 'success')
       onClose()
@@ -312,7 +312,7 @@ export const CreateOAuthModal: React.FunctionComponent<
         onCancel={hideConfirmModal}
         onConfirm={() => {
           isDelete
-            ? deleteClient.mutate(client?.client_id!)
+            ? deleteClient(client?.client_id!)
             : mutate({ action: 'UPDATE', client: updatedClient! })
           hideConfirmModal()
         }}

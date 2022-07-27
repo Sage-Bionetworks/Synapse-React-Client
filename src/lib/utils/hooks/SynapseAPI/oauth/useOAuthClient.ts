@@ -10,12 +10,16 @@ import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { OAuthClient, OAuthClientList } from '../../../synapseTypes/OAuthClient'
 
+const oAuthQueryKeys = {
+  all: (accessToken: string) => ['oAuthClient', accessToken],
+}
+
 export function useGetOAuthClientInfinite(
   options?: UseInfiniteQueryOptions<OAuthClientList, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
   return useInfiniteQuery<OAuthClientList, SynapseClientError>(
-    ['oAuthclient', accessToken],
+    oAuthQueryKeys.all(accessToken!),
     async context =>
       await SynapseClient.getOAuth2(accessToken!, context.pageParam),
     {
@@ -37,7 +41,7 @@ export function useDeleteOAuthClient(
     {
       ...options,
       onSuccess: async (updatedClient, clientId, ctx) => {
-        await queryClient.invalidateQueries()
+        await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
         if (options?.onSuccess) {
           await options.onSuccess(updatedClient, clientId, ctx)
         }
@@ -69,7 +73,7 @@ export function useMutateOAuthClient(
 
   return useMutation(update, {
     onSuccess: async (updatedClient, variables, ctx) => {
-      await queryClient.invalidateQueries()
+      await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
       if (options?.onSuccess) {
         await options.onSuccess(updatedClient, variables.client, ctx)
       }
