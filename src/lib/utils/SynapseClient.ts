@@ -3799,10 +3799,13 @@ export const getEntitiesGeneratedByActivity = (
  */
 export const getActivityForEntity = (
   entityId: string,
-  versionNumber: number,
+  versionNumber?: number,
   accessToken?: string,
 ): Promise<Activity> => {
-  const url = ACTIVITY_FOR_ENTITY(entityId, `${versionNumber}`)
+  const url = ACTIVITY_FOR_ENTITY(
+    entityId,
+    versionNumber ? `${versionNumber}` : undefined,
+  )
   return doGet<Activity>(
     url,
     accessToken,

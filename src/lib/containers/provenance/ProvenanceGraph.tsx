@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactFlow, {
   Controls,
   Node,
@@ -31,9 +31,8 @@ import { SynapseClient } from '../../utils'
 import { ExpandGraphNodeLabelProps } from './ExpandGraphNodeLabel'
 
 export type ProvenanceProps = {
-  /** The entity (and version) whose provenance should be shown */
-  entityId: string
-  versionNumber: number
+  // what entity nodes should we start with?
+  entityRefs: Reference[]
   containerHeight: string
 }
 
@@ -41,12 +40,8 @@ export type ProvenanceProps = {
  * Renders a Provenance Graph for a given entity.
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
-  const { entityId, versionNumber, containerHeight = '200px' } = props
+  const { entityRefs: rootEntityRefs, containerHeight = '200px' } = props
   const { accessToken } = useSynapseContext()
-  const rootNodeEntityRef = useMemo(
-    () => ({ targetId: entityId, targetVersionNumber: versionNumber }),
-    [entityId, versionNumber],
-  )
   const [tempNodes, setTempNodes] = React.useState<Node[]>([])
   const [tempEdges, setTempEdges] = React.useState<Edge[]>([])
   const [nodes, setNodes, onNodesChange] = useNodesState([])
@@ -56,6 +51,22 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const onClickNode = useCallback((_event: React.MouseEvent, node: Node) => {
     setClickedNode(node)
   }, [])
+
+  /**
+   * Is one of the root Entities given by the user
+   */
+  const isRootEntity = useCallback(
+    (entityRef: Reference) => {
+      const foundNode = rootEntityRefs.find(ref => {
+        return (
+          entityRef.targetId == ref.targetId &&
+          entityRef.targetVersionNumber == ref.targetVersionNumber
+        )
+      })
+      return foundNode !== undefined
+    },
+    [rootEntityRefs],
+  )
 
   /**
    * Given the node properties, will return true if this node is already in the nodesCopy array.
@@ -236,12 +247,13 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       try {
         const activity = await SynapseClient.getActivityForEntity(
           entityRef.targetId,
-          entityRef.targetVersionNumber!,
+          entityRef.targetVersionNumber,
           accessToken,
         )
+        debugger
         // if this is the root node, then add the activity immediately.
         // otherwise, add an expand node and we'll add this later
-        if (entityRef == rootNodeEntityRef) {
+        if (isRootEntity(entityRef)) {
           addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
         } else {
           addExpandNode({ entityRef, nodesCopy, edgesCopy })
@@ -251,13 +263,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         console.error(e)
       }
     },
-    [
-      accessToken,
-      addActivityNode,
-      addEntityNode,
-      addExpandNode,
-      rootNodeEntityRef,
-    ],
+    [accessToken, addActivityNode, addEntityNode, addExpandNode, isRootEntity],
   )
 
   /**
@@ -274,7 +280,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       try {
         const activity = await SynapseClient.getActivityForEntity(
           entityRef.targetId,
-          entityRef.targetVersionNumber!,
+          entityRef.targetVersionNumber,
           accessToken,
         )
         addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
@@ -318,25 +324,28 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       const nodesCopy = [...tempNodes]
       const edgesCopy = [...tempEdges]
       const addAndExpandPromises: Promise<void>[] = []
-      const addEntityPromise = addEntity({
-        entityRef: rootNodeEntityRef,
-        nodesCopy,
-        edgesCopy,
-      })
-      const expandEntityPromise = onExpandEntity({
-        entityRef: rootNodeEntityRef,
-        nodesCopy,
-        edgesCopy,
+      rootEntityRefs.forEach(rootEntityRef => {
+        const addEntityPromise = addEntity({
+          entityRef: rootEntityRef,
+          nodesCopy,
+          edgesCopy,
+        })
+        addAndExpandPromises.push(addEntityPromise)
+
+        const expandEntityPromise = onExpandEntity({
+          entityRef: rootEntityRef,
+          nodesCopy,
+          edgesCopy,
+        })
+        addAndExpandPromises.push(expandEntityPromise)
       })
 
-      addAndExpandPromises.push(addEntityPromise)
-      addAndExpandPromises.push(expandEntityPromise)
       Promise.all(addAndExpandPromises).then(() => {
         setTempNodes(nodesCopy)
         setTempEdges(edgesCopy)
       })
     }
-  }, [addEntity, onExpandEntity, rootNodeEntityRef, tempEdges, tempNodes])
+  }, [addEntity, onExpandEntity, rootEntityRefs, tempEdges, tempNodes])
 
   /**
    * This effect code executes when a node is clicked.

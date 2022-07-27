@@ -20,7 +20,26 @@ const Template: ComponentStory<typeof ProvenanceGraph> = args => (
 
 export const TestProvenanceGraph = Template.bind({})
 TestProvenanceGraph.args = {
-  entityId: 'syn13363290',
-  versionNumber: 9,
+  entityRefs: [
+    {
+      targetId: 'syn13363290',
+      targetVersionNumber: 9,
+    },
+  ],
+  containerHeight: '500px',
+}
+
+export const DavesProvenanceGraph = Template.bind({})
+DavesProvenanceGraph.args = {
+  entityRefs: [
+    {
+      targetId: 'syn1807097',
+      targetVersionNumber: undefined,
+    },
+    {
+      targetId: 'syn1807099',
+      targetVersionNumber: undefined,
+    },
+  ],
   containerHeight: '500px',
 }
