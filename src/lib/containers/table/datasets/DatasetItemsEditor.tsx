@@ -388,7 +388,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         }}
       >
         <Checkbox
-          label=""
+          label="Select All"
+          hideLabel={true}
           className="SRC-pointer-events-none"
           checked={isChecked}
           disabled={datasetToUpdate.items.length === 0}
