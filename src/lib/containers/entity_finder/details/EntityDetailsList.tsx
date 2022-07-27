@@ -1,6 +1,7 @@
 import { Map } from 'immutable'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
+import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import {
   EntityHeader,
   EntityType,
@@ -9,14 +10,13 @@ import {
 } from '../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
 import { SearchQuery } from '../../../utils/synapseTypes/Search'
+import { SynapseErrorBoundary } from '../../ErrorBanner'
+import { EntityTreeContainer } from '../tree/EntityTree'
 import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
 import { SearchDetails } from './configurations/SearchDetails'
-import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
 import { DetailsView } from './view/DetailsView'
-import { EntityTreeContainer } from '../tree/EntityTree'
-import { SynapseErrorBoundary } from '../../ErrorBanner'
 
 export enum EntityDetailsListDataConfigurationType {
   HEADER_LIST, // simply displays one or more entity headers. incompatible with pagination
@@ -51,6 +51,8 @@ export type EntityDetailsListSharedProps = {
   visibleTypes: EntityType[]
   selected: Map<string, number>
   selectableTypes: EntityType[]
+  isIdSelected: (header: EntityHeader | ProjectHeader) => boolean
+  isSelectable: (header: EntityHeader | ProjectHeader) => boolean
   toggleSelection: (entity: Reference | Reference[]) => void
   latestVersionText?: string
   setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
@@ -98,8 +100,9 @@ export const EntityDetailsList: React.FunctionComponent<
               enableSelectAll={sharedProps.enableSelectAll}
               selectAllIsChecked={getIsAllSelectedFromInfiniteList(
                 (config.headerList as (EntityHeader | ProjectHeader)[]) ?? [],
-                sharedProps.selected,
-                sharedProps.selectableTypes,
+                sharedProps.selected.size,
+                sharedProps.isIdSelected,
+                sharedProps.isSelectable,
               )}
             />
           )
