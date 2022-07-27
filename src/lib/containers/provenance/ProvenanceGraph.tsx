@@ -19,7 +19,6 @@ import {
   ProvenanceNodeData,
   ProvenanceNodeProps,
 } from './ProvenanceUtils'
-import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   Activity,
   Used,
@@ -39,6 +38,8 @@ export type ProvenanceProps = {
   containerHeight: string
 }
 
+const DEFAULT_ZOOM = 0.85
+
 /**
  * Renders a Provenance Graph for a given entity.
  */
@@ -50,10 +51,11 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
+  const [initializedPosition, setInitializedPosition] =
+    React.useState<boolean>(false)
   // get the react flow instance so we can properly center the view after expanding
   const [reactFlowInstance, setReactFlowInstance] =
     React.useState<ReactFlowInstance>()
-  const [centerOnNode, setCenterOnNode] = useState<Node>()
 
   const onClickNode = useCallback((_event: React.MouseEvent, node: Node) => {
     setClickedNode(node)
@@ -306,8 +308,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           entityRef.targetVersionNumber,
           accessToken,
         )
-        const entityNode = getEntityNode(entityRef, nodesCopy)
-        setCenterOnNode(entityNode)
         addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
         // go through Activity.used array to add these nodes/edges
         const addEntityPromises: Promise<void>[] = []
@@ -336,7 +336,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         console.error(e)
       }
     },
-    [accessToken, addActivityNode, addEntity, addExternalNode, getEntityNode],
+    [accessToken, addActivityNode, addEntity, addExternalNode],
   )
 
   /**
@@ -368,14 +368,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         setTempNodes(nodesCopy)
         setTempEdges(edgesCopy)
       })
-      setTimeout(() => {
-        if (centerOnNode && centerOnNode.position) {
-          const x = centerOnNode.position.x + 100
-          const y = centerOnNode.position.y + 50
-          const zoom = 0.85
-          reactFlowInstance?.setCenter(x, y, { zoom, duration: 200 })
-        }
-      }, 1000)
     }
   })
 
@@ -417,20 +409,51 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
    * It feeds the nodes and edges into our layout library to figure out where they should be positioned.
    * The result is saved in the state variable "nodes" and "edges".
    */
-  useDeepCompareEffect(() => {
-    if (tempNodes.length > 0) {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
-        getLayoutedElements(tempNodes, tempEdges, 'TB')
-      // hack: ProvenanceUtils.getProvenanceNode() returns a new object every time, so check to see if
-      // there were any real changes
-      if (!isArrayEqual(layoutedNodes, nodes)) {
-        setNodes(layoutedNodes)
-      }
-      if (!isArrayEqual(layoutedEdges, edges)) {
-        setEdges(layoutedEdges)
+  useEffect(() => {
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      tempNodes,
+      tempEdges,
+      'TB',
+    )
+    // hack: ProvenanceUtils.getProvenanceNode() returns a new object every time, so check to see if
+    // there were any real changes
+    if (!isArrayEqual(layoutedNodes, nodes)) {
+      setNodes(layoutedNodes)
+      if (!initializedPosition) {
+        // center graph after layout has been determined
+        setTimeout(() => {
+          if (reactFlowInstance) {
+            const rootEntityNode = getEntityNode(rootEntityRefs[0], nodes)
+            if (rootEntityNode) {
+              const currentZoom = reactFlowInstance.getZoom()
+              const zoom =
+                currentZoom > DEFAULT_ZOOM ? DEFAULT_ZOOM : currentZoom
+              reactFlowInstance?.setCenter(
+                rootEntityNode.position.x + 150,
+                rootEntityNode.position.y - 100,
+                { zoom, duration: 200 },
+              )
+            }
+            setInitializedPosition(true)
+          }
+        })
       }
     }
-  }, [tempNodes, tempEdges])
+    if (!isArrayEqual(layoutedEdges, edges)) {
+      setEdges(layoutedEdges)
+    }
+  }, [
+    tempNodes,
+    tempEdges,
+    nodes,
+    edges,
+    setNodes,
+    setEdges,
+    initializedPosition,
+    reactFlowInstance,
+    getEntityNode,
+    rootEntityRefs,
+  ])
 
   const onInit: OnInit = useCallback(
     reactFlow => setReactFlowInstance(reactFlow),
@@ -442,6 +465,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       style={{ width: '100%', height: containerHeight }}
     >
       <ReactFlow
+        defaultZoom={DEFAULT_ZOOM}
         nodes={nodes}
         edges={edges}
         onNodeClick={onClickNode}
