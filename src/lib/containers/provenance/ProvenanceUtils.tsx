@@ -17,6 +17,7 @@ import {
   ExternalGraphNodeLabelProps,
 } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
+import _ from 'lodash'
 
 export enum NodeType {
   ENTITY = 'EntityNode',
@@ -168,4 +169,8 @@ export const getLayoutedElements = (
   })
 
   return { nodes, edges }
+}
+
+export const isArrayEqual = (x: any[], y: any[]) => {
+  return _(x).differenceWith(y, _.isEqual).isEmpty()
 }

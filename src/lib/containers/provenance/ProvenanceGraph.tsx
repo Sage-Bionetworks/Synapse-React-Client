@@ -15,6 +15,7 @@ import {
   getNodeId,
   getProvenanceEdge,
   getProvenanceNode,
+  isArrayEqual,
   NodeType,
   ProvenanceNodeData,
   ProvenanceNodeProps,
@@ -30,7 +31,6 @@ import { Reference } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import { ExpandGraphNodeLabelProps } from './ExpandGraphNodeLabel'
-import _ from 'lodash'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -42,6 +42,11 @@ const DEFAULT_ZOOM = 0.85
 
 /**
  * Renders a Provenance Graph for a given entity.
+ * New Nodes are added to tempNodes, and new Edges are added to tempEdges.
+ * On change, these are fed into the dagre js graph library to figure out the node positions,
+ * and the output stored in 'nodes' and 'edges'.  The 'nodes' and 'edges' arrays are used by the
+ * ReactFlow component.
+ *
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
   const { entityRefs: rootEntityRefs, containerHeight = '200px' } = props
@@ -53,7 +58,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const [clickedNode, setClickedNode] = useState<Node>()
   const [initializedPosition, setInitializedPosition] =
     React.useState<boolean>(false)
-  // get the react flow instance so we can properly center the view after expanding
+
+  // get the react flow instance so we attempt to properly center the view
   const [reactFlowInstance, setReactFlowInstance] =
     React.useState<ReactFlowInstance>()
 
@@ -123,6 +129,11 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     [],
   )
 
+  /**
+   * Given node properties of the new node and existing node, this function creates and adds a new node to
+   * nodesCopy, and creates an edge from the new node to the existing node.  Note, this will only create
+   * a new node or edge if these items are not found in the input nodesCopy array and edgesCopy array.
+   */
   const addNodeAndEdge = useCallback(
     (params: {
       newNodeProps: ProvenanceNodeProps
@@ -292,6 +303,36 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   )
 
   /**
+   * This effect attempts to center the graph on one of the root nodes.
+   * Only initializes after after a root node has been added to the graph.
+   */
+  useEffect(() => {
+    if (!initializedPosition && nodes.length > 0) {
+      setTimeout(() => {
+        if (reactFlowInstance) {
+          const rootEntityNode = getEntityNode(rootEntityRefs[0], nodes)
+          if (rootEntityNode) {
+            const currentZoom = reactFlowInstance.getZoom()
+            const zoom = currentZoom > DEFAULT_ZOOM ? DEFAULT_ZOOM : currentZoom
+            reactFlowInstance?.setCenter(
+              rootEntityNode.position.x + 150,
+              rootEntityNode.position.y - 100,
+              { zoom, duration: 0 },
+            )
+          }
+          setInitializedPosition(true)
+        }
+      })
+    }
+  }, [
+    getEntityNode,
+    initializedPosition,
+    nodes,
+    reactFlowInstance,
+    rootEntityRefs,
+  ])
+
+  /**
    * This is called when the user clicks on an Expand Node.  It will add the associated Activity
    * and all "used" items (entities and urls) to the graph by adding items to the nodesCopy and edgesCopy arrays.
    */
@@ -341,7 +382,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
 
   /**
    * This effect code executes when no nodes have been added.
-   * It will add the root node, and attempt to expand the root node, when this component is mounted.
+   * It will add the root nodes, and attempt to expand the root nodes.
    */
   useEffect(() => {
     if (tempNodes.length == 0) {
@@ -392,17 +433,13 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         entityRef: expandNodeProps.entityReference,
         nodesCopy: nodesWithoutExpandNode,
         edgesCopy: edgesWithoutExpandEdge,
-      }).then(() => {
+      }).finally(() => {
         setTempNodes(nodesWithoutExpandNode)
         setTempEdges(edgesWithoutExpandEdge)
       })
       setClickedNode(undefined)
     }
   }, [clickedNode, tempNodes, tempEdges, onExpandEntity])
-
-  const isArrayEqual = (x: any[], y: any[]) => {
-    return _(x).differenceWith(y, _.isEqual).isEmpty()
-  }
 
   /**
    * This effect code is run when the graph nodes or edges change.
@@ -419,25 +456,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     // there were any real changes
     if (!isArrayEqual(layoutedNodes, nodes)) {
       setNodes(layoutedNodes)
-      if (!initializedPosition) {
-        // center graph after layout has been determined
-        setTimeout(() => {
-          if (reactFlowInstance) {
-            const rootEntityNode = getEntityNode(rootEntityRefs[0], nodes)
-            if (rootEntityNode) {
-              const currentZoom = reactFlowInstance.getZoom()
-              const zoom =
-                currentZoom > DEFAULT_ZOOM ? DEFAULT_ZOOM : currentZoom
-              reactFlowInstance?.setCenter(
-                rootEntityNode.position.x + 150,
-                rootEntityNode.position.y - 100,
-                { zoom, duration: 200 },
-              )
-            }
-            setInitializedPosition(true)
-          }
-        })
-      }
     }
     if (!isArrayEqual(layoutedEdges, edges)) {
       setEdges(layoutedEdges)
