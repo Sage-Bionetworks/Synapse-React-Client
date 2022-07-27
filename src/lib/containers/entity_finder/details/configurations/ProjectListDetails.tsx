@@ -19,8 +19,9 @@ export const ProjectListDetails: React.FunctionComponent<
 
   const selectAllCheckboxState = useGetIsAllSelectedFromInfiniteList(
     projects,
-    sharedProps.selected,
-    sharedProps.selectableTypes,
+    sharedProps.selected.size,
+    sharedProps.isSelected,
+    sharedProps.isSelectable,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,

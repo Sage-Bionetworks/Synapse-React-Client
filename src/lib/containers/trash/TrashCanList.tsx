@@ -67,16 +67,26 @@ export function TrashCanList() {
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [errors, setErrors] = useState<SynapseClientError[]>([])
 
-  function onSuccessMutate(results: PromiseSettledResult<void>[]) {
-    setErrors(toSynapseClientErrorList(results))
+  /**
+   * When a mutation operation settles, update the list of errors and clear the selected set
+   */
+  function onMutateSettled(
+    results?: PromiseSettledResult<void>[],
+    error?: SynapseClientError | null,
+  ) {
+    if (results) {
+      setErrors(toSynapseClientErrorList(results))
+    } else if (error) {
+      setErrors([error])
+    }
     setSelected(new Set())
   }
 
   const { mutate: restore, isLoading: isLoadingRestore } = useRestoreEntities({
-    onSuccess: onSuccessMutate,
+    onSettled: onMutateSettled,
   })
   const { mutate: purge, isLoading: isLoadingPurge } = usePurgeEntities({
-    onSuccess: results => onSuccessMutate,
+    onSettled: onMutateSettled,
   })
 
   const isMutating = isLoadingRestore || isLoadingPurge
@@ -89,7 +99,6 @@ export function TrashCanList() {
   const items = data?.pages.flatMap(page => page.results) ?? []
 
   const isAllSelected = selected.size === items.length && !hasNextPage
-  console.log(selected.size, items.length, !hasNextPage, isAllSelected)
   const onSelectAll = () => {
     if (isAllSelected) {
       setSelected(new Set())

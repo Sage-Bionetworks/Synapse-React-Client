@@ -15,12 +15,19 @@ import 'react-reflex/styles.css'
 import { SizeMe } from 'react-sizeme'
 import Arrow from '../../assets/icons/Arrow'
 import { SynapseClient } from '../../utils'
-import { entityTypeToFriendlyName } from '../../utils/functions/EntityTypeUtils'
+import {
+  entityTypeToFriendlyName,
+  getEntityTypeFromHeader,
+} from '../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import { EntityHeader, Reference } from '../../utils/synapseTypes'
+import {
+  EntityHeader,
+  ProjectHeader,
+  Reference,
+} from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
-import { KeyValue } from '../../utils/synapseTypes/Search'
+import { Hit, KeyValue } from '../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import IconSvg from '../IconSvg'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
@@ -32,6 +39,7 @@ import {
 import { SelectionPane } from './SelectionPane'
 import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
+import { useEntitySelection } from './useEntitySelection'
 
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
@@ -142,64 +150,21 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
     [setBreadcrumbsProps],
   )
 
-  /**
-   *
-   * @param entity The entity to check selected status
-   * @param selected the list of selected entities
-   * @returns a boolean array of length equal to entities.length denoting selection status
-   */
-  function isSelected(
-    entity: Reference,
-    selected: Map<string, number>,
-  ): boolean {
-    const match = selected.get(entity.targetId)
-    if (match == null) {
-      return false
-    }
-    if (match === NO_VERSION_NUMBER) {
-      return entity.targetVersionNumber === undefined
-    }
-    return match === entity.targetVersionNumber
-  }
+  const [selectedEntities, toggleSelection] = useEntitySelection(selectMultiple)
 
-  /**
-   * Given the existing selections and a list of toggled references, return the new list of selections
-   * @param selected
-   * @param toggledReference
-   * @returns
-   */
-  function entitySelectionReducer(
-    selected: Map<string, number>,
-    toggledReferences: Reference | Reference[],
-  ): Map<string, number> {
-    const newSelected = selected.withMutations(map => {
-      // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
-      if (!Array.isArray(toggledReferences)) {
-        toggledReferences = [toggledReferences]
-      }
-      toggledReferences.forEach(toggledReference => {
-        if (isSelected(toggledReference, selected)) {
-          // remove from selection
-          map.delete(toggledReference.targetId)
-        } else {
-          // add to selection
-          if (!selectMultiple) {
-            map.clear()
-          }
-          map.set(
-            toggledReference.targetId,
-            toggledReference.targetVersionNumber ?? NO_VERSION_NUMBER,
-          )
-        }
-      })
-    })
+  const isSelected = useCallback(
+    (entity: EntityHeader | ProjectHeader | Hit) => {
+      return selectedEntities.has(entity.id)
+    },
+    [selectedEntities],
+  )
 
-    return newSelected
-  }
-
-  const [selectedEntities, toggleSelection] = useReducer(
-    entitySelectionReducer,
-    Map<string, number>(),
+  const isSelectable = useCallback(
+    (entity: EntityHeader | ProjectHeader | Hit) => {
+      const type = getEntityTypeFromHeader(entity)
+      return selectableTypes.includes(type)
+    },
+    [selectableTypes],
   )
 
   useEffect(() => {
@@ -355,6 +320,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               mustSelectVersionNumber={mustSelectVersionNumber}
               selectColumnType={selectMultiple ? 'checkbox' : 'none'}
               selected={selectedEntities}
+              isSelected={isSelected}
+              isSelectable={isSelectable}
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
@@ -418,6 +385,8 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             mustSelectVersionNumber={mustSelectVersionNumber}
                             showVersionSelection={showVersionSelection}
                             selected={selectedEntities}
+                            isSelected={isSelected}
+                            isSelectable={isSelectable}
                             visibleTypes={selectableAndVisibleTypesInList}
                             selectableTypes={selectableTypes}
                             selectColumnType={
