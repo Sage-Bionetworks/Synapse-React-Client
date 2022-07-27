@@ -129,8 +129,10 @@ export function TrashCanList() {
         headlineText={isLoadingPurge ? 'Deleting...' : 'Restoring...'}
       />
       <Typography variant="smallText1">
-        The trash can contains files that were recently deleted. Items are
-        purged from the trash can 30 days after being deleted.
+        The trash can contains items that were recently deleted. You can recover
+        deleted items in the trash can by clicking &quot;Restore&quot;. Items
+        will remain in the trash can for 30 days before being automatically
+        purged.
       </Typography>
       {isLoading && <SynapseSpinner />}
       {!isLoading && items.length === 0 && (
