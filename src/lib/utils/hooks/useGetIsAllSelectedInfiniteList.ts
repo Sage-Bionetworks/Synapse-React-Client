@@ -11,6 +11,7 @@ import { SynapseClientError } from '../SynapseClientError'
  *
  * We don't currently support an indeterminate checkbox state because that would require always fetching all pages of a given query, which does not scale.
  * @param items An arbitrary list of items that have already been fetched
+ * @param numSelected The number of items that have been selected.
  * @param isSelected A function that takes an item and returns a boolean indicating if that item is selected
  * @param isSelectable A function that takes an item and returns a boolean indicating if that item can be selected
  * @param hasNextPage Whether or not there are additional pages of items (typically supplied by useInfiniteQuery)
@@ -68,6 +69,7 @@ export function getIsAllSelectedFromInfiniteList<TItem, TFetchResult>(
  *
  * There is also a non-hook version of this function that can be called in contexts where hooks cannot be used.
  * @param items An arbitrary list of items that have already been fetched
+ * @param numSelected The number of items that have been selected.
  * @param isSelected A function that takes an item and returns a boolean indicating if that item is selected
  * @param isSelectable A function that takes an item and returns a boolean indicating if that item can be selected
  * @param hasNextPage Whether or not there are additional pages of items (typically supplied by useInfiniteQuery)
