@@ -7,6 +7,8 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   getConnectedEdges,
+  ReactFlowInstance,
+  OnInit,
 } from 'react-flow-renderer'
 import {
   getLayoutedElements,
@@ -29,6 +31,7 @@ import { Reference } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import { ExpandGraphNodeLabelProps } from './ExpandGraphNodeLabel'
+import _ from 'lodash'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -47,6 +50,10 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
+  // get the react flow instance so we can properly center the view after expanding
+  const [reactFlowInstance, setReactFlowInstance] =
+    React.useState<ReactFlowInstance>()
+  const [centerOnNode, setCenterOnNode] = useState<Node>()
 
   const onClickNode = useCallback((_event: React.MouseEvent, node: Node) => {
     setClickedNode(node)
@@ -71,31 +78,48 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   /**
    * Given the node properties, will return true if this node is already in the nodesCopy array.
    */
-  const isNodeNotFound = (
-    nodeProps: ProvenanceNodeProps,
-    nodesCopy: Node[],
-  ) => {
-    const foundNode = nodesCopy.find(node => {
-      return node.id === getNodeId(nodeProps)
-    })
-    return foundNode === undefined
-  }
+  const isNodeNotFound = useCallback(
+    (nodeProps: ProvenanceNodeProps, nodesCopy: Node[]) => {
+      const foundNode = nodesCopy.find(node => {
+        return node.id === getNodeId(nodeProps)
+      })
+      return foundNode === undefined
+    },
+    [],
+  )
+
+  const getEntityNode = useCallback(
+    (entityRef: Reference, nodesCopy: Node[]) => {
+      const nodeProps = {
+        type: NodeType.ENTITY,
+        data: entityRef,
+      }
+      return nodesCopy.find(node => {
+        return node.id === getNodeId(nodeProps)
+      })
+    },
+    [],
+  )
+
   /**
    * Given the node properties, will return true if this edge is already in the edgesCopy array.
    */
-  const isEdgeNotFound = (
-    nodeProps1: ProvenanceNodeProps,
-    nodeProps2: ProvenanceNodeProps,
-    edgesCopy: Edge[],
-  ) => {
-    const foundEdge = edgesCopy.find(edge => {
-      return (
-        edge.source === getNodeId(nodeProps1) &&
-        edge.target === getNodeId(nodeProps2)
-      )
-    })
-    return foundEdge === undefined
-  }
+  const isEdgeNotFound = useCallback(
+    (
+      nodeProps1: ProvenanceNodeProps,
+      nodeProps2: ProvenanceNodeProps,
+      edgesCopy: Edge[],
+    ) => {
+      const foundEdge = edgesCopy.find(edge => {
+        return (
+          edge.source === getNodeId(nodeProps1) &&
+          edge.target === getNodeId(nodeProps2)
+        )
+      })
+      return foundEdge === undefined
+    },
+    [],
+  )
 
   const addNodeAndEdge = useCallback(
     (params: {
@@ -112,7 +136,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         edgesCopy.push(getProvenanceEdge(newNodeProps, existingNodeProps))
       }
     },
-    [],
+    [isEdgeNotFound, isNodeNotFound],
   )
 
   const addActivityNode = useCallback(
@@ -218,7 +242,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         }
       }
     },
-    [],
+    [isNodeNotFound],
   )
 
   /**
@@ -250,7 +274,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           entityRef.targetVersionNumber,
           accessToken,
         )
-        debugger
         // if this is the root node, then add the activity immediately.
         // otherwise, add an expand node and we'll add this later
         if (isRootEntity(entityRef)) {
@@ -283,8 +306,9 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           entityRef.targetVersionNumber,
           accessToken,
         )
+        const entityNode = getEntityNode(entityRef, nodesCopy)
+        setCenterOnNode(entityNode)
         addActivityNode({ activity, entityRef, nodesCopy, edgesCopy })
-
         // go through Activity.used array to add these nodes/edges
         const addEntityPromises: Promise<void>[] = []
         if (activity.used) {
@@ -312,7 +336,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         console.error(e)
       }
     },
-    [accessToken, addActivityNode, addEntity, addExternalNode],
+    [accessToken, addActivityNode, addEntity, addExternalNode, getEntityNode],
   )
 
   /**
@@ -340,7 +364,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         addAndExpandPromises.push(expandEntityPromise)
       })
 
-      Promise.all(addAndExpandPromises).then(() => {
+      Promise.all(addAndExpandPromises).finally(() => {
         setTempNodes(nodesCopy)
         setTempEdges(edgesCopy)
       })
@@ -376,21 +400,37 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     }
   }, [clickedNode, tempNodes, tempEdges, onExpandEntity])
 
+  const isArrayEqual = (x: any[], y: any[]) => {
+    return _(x).differenceWith(y, _.isEqual).isEmpty()
+  }
+
   /**
    * This effect code is run when the graph nodes or edges change.
    * It feeds the nodes and edges into our layout library to figure out where they should be positioned.
    * The result is saved in the state variable "nodes" and "edges".
    */
   useDeepCompareEffect(() => {
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-      tempNodes,
-      tempEdges,
-      'TB',
-    )
-    setNodes(layoutedNodes)
-    setEdges(layoutedEdges)
+    if (tempNodes.length > 0) {
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
+        getLayoutedElements(tempNodes, tempEdges, 'TB')
+      // hack: ProvenanceUtils.getProvenanceNode() returns a new object every time, so check to see if
+      // there were any real changes
+      if (!isArrayEqual(layoutedNodes, nodes)) {
+        setNodes(layoutedNodes)
+      }
+      if (!isArrayEqual(layoutedEdges, edges)) {
+        setEdges(layoutedEdges)
+      }
+
+      // now that the nodes have positions, find the centerNode
+      // has this been modified?
+      // if (centerOnNode?.position.x && centerOnNode?.position.y) {
+      //   reactFlowInstance?.setCenter(centerOnNode.position.x, centerOnNode.position.y)
+      // }
+    }
   }, [tempNodes, tempEdges])
 
+  // const onInit:OnInit = useCallback((reactFlow) => setReactFlowInstance(reactFlow), [])
   return (
     <div
       className="bootstrap-4-backport ProvenanceWidget"
@@ -404,6 +444,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         onEdgesChange={onEdgesChange}
         attributionPosition="bottom-right"
         onConnect={undefined}
+        // onInit={onInit}
       >
         <Controls />
       </ReactFlow>

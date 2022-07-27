@@ -17,16 +17,20 @@ export const ActivityNodeLabel = (data: ActivityNodeLabelProps) => {
       <>
         {name && (
           <Tooltip title={name} placement="top" enterNextDelay={200}>
-            <Typography variant="smallText1" className="name">
-              {name}
-            </Typography>
+            <span>
+              <Typography variant="smallText1" className="name">
+                {name}
+              </Typography>
+            </span>
           </Tooltip>
         )}
         {description && (
           <Tooltip title={description} placement="top" enterNextDelay={200}>
-            <Typography variant="smallText1" className="description">
-              {description}
-            </Typography>
+            <span>
+              <Typography variant="smallText1" className="description">
+                {description}
+              </Typography>
+            </span>
           </Tooltip>
         )}
         {userProfile && <UserCardSmall userProfile={userProfile} />}
