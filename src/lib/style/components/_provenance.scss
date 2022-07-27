@@ -9,7 +9,7 @@
   &__node {
     cursor: default !important;
     text-overflow: ellipsis;
-    overflow: clip;
+    overflow: hidden;
     white-space: nowrap;
     &:hover {
       cursor: default;
@@ -21,6 +21,19 @@
       border: none;
       box-shadow: none !important;
       background: none !important;
+    }
+    &.ActivityNode {
+      .name,
+      .description {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .name {
+        font-size: 15px;
+      }
+      .description {
+        font-size: 12px;
+      }
     }
     &.ExpandNode {
       a {

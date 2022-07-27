@@ -28,7 +28,6 @@ import {
 import { Reference } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
-import _ from 'lodash-es'
 import { ExpandGraphNodeLabelProps } from './ExpandGraphNodeLabel'
 
 export type ProvenanceProps = {
@@ -36,7 +35,6 @@ export type ProvenanceProps = {
   entityId: string
   versionNumber: number
   containerHeight: string
-  depth: number
 }
 
 /**
