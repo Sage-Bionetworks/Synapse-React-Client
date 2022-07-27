@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 export type CheckboxProps = {
   label: string
+  hideLabel?: boolean
   checked?: boolean
   className?: string
   onChange: (newValue: boolean) => void
@@ -18,6 +19,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
 ) => {
   const {
     checked: propsChecked = false,
+    hideLabel = false,
     isSelectAll = false,
     disabled = false,
   } = props
@@ -49,6 +51,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
   return (
     <div className={className} onClick={props.onClick}>
       <input
+        aria-label={props.label}
         type="checkbox"
         checked={checked}
         id={uniqueId}
@@ -56,7 +59,7 @@ export const Checkbox: React.FunctionComponent<CheckboxProps> = (
         disabled={disabled}
         data-testid={props['data-testid']}
       />
-      <label htmlFor={uniqueId}>{props.label}</label>
+      {<label htmlFor={uniqueId}>{hideLabel ? <></> : props.label}</label>}
       {props.children ?? <></>}
     </div>
   )

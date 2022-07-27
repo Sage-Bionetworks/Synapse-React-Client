@@ -37,6 +37,10 @@ export type ProvenanceProps = {
   // what entity nodes should we start with?
   entityRefs: Reference[]
   containerHeight: string
+  initialNodes?: Node[]
+  initialEdges?: Edge[]
+  onNodesChangedListener?: (nodes: Node[]) => void
+  onEdgesChangedListener?: (edges: Edge[]) => void
 }
 
 const DEFAULT_ZOOM = 0.85
@@ -51,10 +55,17 @@ const MAX_ACTIVITY_EXPAND_NODES = 200
  *
  */
 export const ProvenanceGraph = (props: ProvenanceProps) => {
-  const { entityRefs: rootEntityRefs, containerHeight = '200px' } = props
+  const {
+    entityRefs: rootEntityRefs,
+    containerHeight = '200px',
+    initialNodes = [],
+    initialEdges = [],
+    onNodesChangedListener,
+    onEdgesChangedListener,
+  } = props
   const { accessToken } = useSynapseContext()
-  const [tempNodes, setTempNodes] = React.useState<Node[]>([])
-  const [tempEdges, setTempEdges] = React.useState<Edge[]>([])
+  const [tempNodes, setTempNodes] = React.useState<Node[]>(initialNodes)
+  const [tempEdges, setTempEdges] = React.useState<Edge[]>(initialEdges)
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
@@ -502,9 +513,15 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     // there were any real changes
     if (!isArrayEqual(layoutedNodes, nodes)) {
       setNodes(layoutedNodes)
+      if (onNodesChangedListener) {
+        onNodesChangedListener(layoutedNodes)
+      }
     }
     if (!isArrayEqual(layoutedEdges, edges)) {
       setEdges(layoutedEdges)
+      if (onEdgesChangedListener) {
+        onEdgesChangedListener(layoutedEdges)
+      }
     }
   }, [
     tempNodes,
@@ -517,6 +534,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     reactFlowInstance,
     getEntityNode,
     rootEntityRefs,
+    onNodesChangedListener,
+    onEdgesChangedListener,
   ])
 
   const onInit: OnInit = useCallback(

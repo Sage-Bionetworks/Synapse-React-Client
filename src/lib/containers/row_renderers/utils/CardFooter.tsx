@@ -142,6 +142,7 @@ class CardFooter extends React.Component<CardFooterProps, State> {
       !hasMoreValuesThanLimit || isShowMoreOn ? Infinity : secondaryLabelLimit
     return (
       <div
+        data-testid="CardFooter"
         className={`SRC-cardMetadata ${
           this.props.isHeader ? 'SRC-card-footer-header' : ''
         } ${this.props.className ?? ''}`}

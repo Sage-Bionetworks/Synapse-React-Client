@@ -296,7 +296,8 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
           }}
         >
           <Checkbox
-            label=""
+            label="Select All"
+            hideLabel={true}
             className="SRC-pointer-events-none"
             checked={selectAllIsChecked}
             disabled={!isEnabled}

@@ -37,6 +37,9 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TRASHCAN_PURGE,
+  TRASHCAN_RESTORE,
+  TRASHCAN_VIEW,
   USER_BUNDLE,
   USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
@@ -120,6 +123,7 @@ import {
   RestrictionInformationResponse,
   Submission as EvaluationSubmission,
   SynapseVersion,
+  TrashedEntity,
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
@@ -3399,7 +3403,7 @@ export const oAuthRegisterAccountStep2 = (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
-  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
   return doPost(
     '/auth/v1/oauth2/account2',
@@ -3422,7 +3426,7 @@ export const bindOAuthProviderToAccount = async (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
-  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
   // Special case.  web app may not have discovered the access token by this point in init.
   // Look for the access token ourselves before binding.
@@ -3759,24 +3763,6 @@ export const getApprovedSubmissionInfo = (
 }
 
 /**
- * Returns the presigned URL for a user's profile pic. Note that the presigned URL
- * expires after a short time, so it should be used immediately.
- * @param userId
- * @returns A presigned URL that can be used to fetch the profile preview image, or null if the user
- *   does not have a profile image
- */
-export function getProfilePicPreviewPresignedUrl(userId: string) {
-  return allowNotFoundError(() =>
-    doGet<string>(
-      PROFILE_IMAGE_PREVIEW(userId) + `?redirect=false`,
-      undefined,
-      undefined,
-      BackendDestinationEnum.REPO_ENDPOINT,
-    ),
-  )
-}
-
-/**
  * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
  */
 export const getEntitiesGeneratedByActivity = (
@@ -3808,6 +3794,63 @@ export const getActivityForEntity = (
   )
   return doGet<Activity>(
     url,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns the presigned URL for a user's profile pic. Note that the presigned URL
+ * expires after a short time, so it should be used immediately.
+ * @param userId
+ * @returns A presigned URL that can be used to fetch the profile preview image, or null if the user
+ *   does not have a profile image
+ */
+export function getProfilePicPreviewPresignedUrl(userId: string) {
+  return allowNotFoundError(() =>
+    doGet<string>(
+      PROFILE_IMAGE_PREVIEW(userId) + `?redirect=false`,
+      undefined,
+      undefined,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    ),
+  )
+}
+
+export function getItemsInTrashCan(
+  accessToken: string | undefined,
+  offset = 0,
+  limit = 25,
+) {
+  return doGet<PaginatedResults<TrashedEntity>>(
+    TRASHCAN_VIEW + `?offset=${offset}&limit=${limit}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export function restoreFromTrashCan(
+  entityId: string,
+  accessToken: string | undefined,
+) {
+  return doPut<void>(
+    TRASHCAN_RESTORE(entityId),
+    undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export function purgeFromTrashCan(
+  entityId: string,
+  accessToken: string | undefined,
+) {
+  return doPut<void>(
+    TRASHCAN_PURGE(entityId),
+    undefined,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,

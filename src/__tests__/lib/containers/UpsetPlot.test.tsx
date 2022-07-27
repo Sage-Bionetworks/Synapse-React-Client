@@ -1,37 +1,40 @@
-import * as React from 'react'
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
+import * as UpSetJsModule from '@upsetjs/react'
+import React from 'react'
 import UpsetPlot, { UpsetPlotProps } from '../../../lib/containers/UpsetPlot'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { SynapseClient } from '../../../lib/utils'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/query/syn16787123'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
 
-const SynapseClient = require('../../../lib/utils/SynapseClient')
 const data = syn16787123Json as QueryResultBundle
 
-const createShallowComponent = async (props: UpsetPlotProps) => {
-  const wrapper = mount(<UpsetPlot {...props} />, {
-    wrappingComponent: SynapseTestContext,
+function renderComponent(props: UpsetPlotProps) {
+  return render(<UpsetPlot {...props} />, {
+    wrapper: createWrapper(),
   })
-  const instance = wrapper.instance()
-  return { wrapper, instance }
 }
 
-describe('basic tests', () => {
+describe('UpsetPlot', () => {
   const props: UpsetPlotProps = {
     rgbIndex: 0,
     sql: 'select * from syn16787123',
-    loadingScreen: <div>loading...</div>,
   }
 
   beforeEach(() => {
-    SynapseClient.getFullQueryTableResults = jest.fn(() =>
-      Promise.resolve(data),
-    )
+    // Getting an OOM error when rendering the plot component, so let's just mock it.
+    jest
+      .spyOn(UpSetJsModule.default, 'render')
+      .mockImplementation(() => <div role="figure" />)
+
+    jest
+      .spyOn(SynapseClient, 'getFullQueryTableResults')
+      .mockResolvedValue(data)
   })
 
   it('displays plot', async () => {
-    const { wrapper } = await createShallowComponent(props)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(UpsetPlot)).toBeDefined()
+    renderComponent(props)
+    await screen.findByRole('figure')
+    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalled()
   })
 })

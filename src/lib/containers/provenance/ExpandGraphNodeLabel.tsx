@@ -11,11 +11,11 @@ export const ExpandGraphNodeLabel = (props: ExpandGraphNodeDataProps) => {
   return useMemo(
     () => (
       <>
-        <a rel="noopener noreferrer">
+        <a>
           Show {itemCount} {pluralize('item', itemCount)}&hellip;
         </a>
       </>
     ),
-    [],
+    [itemCount],
   )
 }
