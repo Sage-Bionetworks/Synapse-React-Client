@@ -368,8 +368,16 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         setTempNodes(nodesCopy)
         setTempEdges(edgesCopy)
       })
+      setTimeout(() => {
+        if (centerOnNode && centerOnNode.position) {
+          const x = centerOnNode.position.x + 100
+          const y = centerOnNode.position.y + 50
+          const zoom = 0.85
+          reactFlowInstance?.setCenter(x, y, { zoom, duration: 200 })
+        }
+      }, 1000)
     }
-  }, [addEntity, onExpandEntity, rootEntityRefs, tempEdges, tempNodes])
+  })
 
   /**
    * This effect code executes when a node is clicked.
@@ -421,16 +429,13 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       if (!isArrayEqual(layoutedEdges, edges)) {
         setEdges(layoutedEdges)
       }
-
-      // now that the nodes have positions, find the centerNode
-      // has this been modified?
-      // if (centerOnNode?.position.x && centerOnNode?.position.y) {
-      //   reactFlowInstance?.setCenter(centerOnNode.position.x, centerOnNode.position.y)
-      // }
     }
   }, [tempNodes, tempEdges])
 
-  // const onInit:OnInit = useCallback((reactFlow) => setReactFlowInstance(reactFlow), [])
+  const onInit: OnInit = useCallback(
+    reactFlow => setReactFlowInstance(reactFlow),
+    [],
+  )
   return (
     <div
       className="bootstrap-4-backport ProvenanceWidget"
@@ -444,7 +449,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         onEdgesChange={onEdgesChange}
         attributionPosition="bottom-right"
         onConnect={undefined}
-        // onInit={onInit}
+        onInit={onInit}
       >
         <Controls />
       </ReactFlow>
