@@ -1,13 +1,12 @@
-import * as React from 'react'
-import { mount } from 'enzyme'
+import { render, screen } from '@testing-library/react'
+import React from 'react'
 import ManagedACTAccessRequirementComponent from '../../../../../lib/containers/access_requirement_list/managedACTAccess/ManagedACTAccessRequirement'
+import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import {
   ACCESS_TYPE,
   ManagedACTAccessRequirement,
   SubmissionState,
 } from '../../../../../lib/utils/synapseTypes'
-import RequestDataAccess from '../../../../../lib/containers/access_requirement_list/managedACTAccess/RequestDataAccess'
-import { SynapseTestContext } from '../../../../../mocks/MockSynapseContext'
 
 describe('ManagedACTAccessRequirement: basic functionality', () => {
   const mockAccessRequirement: ManagedACTAccessRequirement = {
@@ -46,8 +45,8 @@ describe('ManagedACTAccessRequirement: basic functionality', () => {
     expiredOn: 'string',
   }
 
-  it('render component without crashing', async () => {
-    const wrapper = mount(
+  test('should load RequestDataAccess component', () => {
+    render(
       <ManagedACTAccessRequirementComponent
         user={undefined}
         entityId={'1'}
@@ -55,24 +54,9 @@ describe('ManagedACTAccessRequirement: basic functionality', () => {
         accessRequirementStatus={mockAccessRequirementStatus}
       />,
       {
-        wrappingComponent: SynapseTestContext,
+        wrapper: createWrapper(),
       },
     )
-    expect(wrapper).toBeDefined()
-  })
-
-  it('should load RequestDataAccess component', async () => {
-    const wrapper = mount(
-      <ManagedACTAccessRequirementComponent
-        user={undefined}
-        entityId={'1'}
-        accessRequirement={mockAccessRequirement}
-        accessRequirementStatus={mockAccessRequirementStatus}
-      />,
-      {
-        wrappingComponent: SynapseTestContext,
-      },
-    )
-    expect(wrapper.find(RequestDataAccess)).toHaveLength(1)
+    screen.getByTestId('RequestDataAccess')
   })
 })

@@ -1,16 +1,16 @@
-import * as React from 'react'
-import { shallow } from 'enzyme'
+import { render, waitFor } from '@testing-library/react'
+import React from 'react'
+import { SynapseClient } from '../../../lib'
 import StatisticsPlot, {
   StatisticsPlotProps,
 } from '../../../lib/containers/StatisticsPlot'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import {
+  MonthlyFilesStatistics,
   ProjectFilesStatisticsRequest,
   ProjectFilesStatisticsResponse,
-  MonthlyFilesStatistics,
 } from '../../../lib/utils/synapseTypes/'
-const SynapseClient = require('../../../lib/utils/SynapseClient')
 
-const token: string = '123444'
 const projectFilesStatsRequest: ProjectFilesStatisticsRequest = {
   concreteType:
     'org.sagebionetworks.repo.model.statistics.ProjectFilesStatisticsRequest',
@@ -73,38 +73,33 @@ const projectFilesStatsResponse: ProjectFilesStatisticsResponse = {
   fileUploads,
 }
 
-const createShallowComponent = async (
-  props: StatisticsPlotProps,
-  disableLifecycleMethods: boolean = false,
-) => {
-  const wrapper = await shallow<StatisticsPlot>(<StatisticsPlot {...props} />, {
-    disableLifecycleMethods,
-  })
-
-  const instance = wrapper.instance()
-  return { wrapper, instance }
+const renderComponent = (props: StatisticsPlotProps) => {
+  return render(<StatisticsPlot {...props} />, { wrapper: createWrapper() })
 }
 
-describe('basic tests', () => {
+const mockGetProjectStatistics = jest.spyOn(
+  SynapseClient,
+  'getProjectStatistics',
+)
+
+describe('StatisticsPlot', () => {
   const props: StatisticsPlotProps = {
-    token,
     request: projectFilesStatsRequest,
   }
 
   beforeEach(() => {
-    SynapseClient.getProjectStatistics = jest.fn(() =>
-      Promise.resolve(projectFilesStatsResponse),
+    mockGetProjectStatistics.mockResolvedValue(projectFilesStatsResponse)
+  })
+
+  test('displays plot', async () => {
+    const { container } = renderComponent(props)
+
+    await waitFor(() =>
+      expect(container.querySelector('.plot-container.plotly')).not.toBeNull(),
     )
   })
 
-  it('displays plot', async () => {
-    const { wrapper, instance } = await createShallowComponent(props)
-    await instance.componentDidMount()
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(StatisticsPlot)).toBeDefined()
-  })
-
-  it('not shown when statistics unavailable', async () => {
+  test('not shown when statistics unavailable', () => {
     const emptyProjectFilesStatsResponse: ProjectFilesStatisticsResponse = {
       objectId: 'syn12345',
       concreteType:
@@ -118,12 +113,8 @@ describe('basic tests', () => {
         months: [],
       },
     }
-    SynapseClient.getProjectStatistics = jest.fn(() =>
-      Promise.resolve(emptyProjectFilesStatsResponse),
-    )
-    const { wrapper, instance } = await createShallowComponent(props)
-    await instance.componentDidMount()
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find(StatisticsPlot)).toHaveLength(0)
+    mockGetProjectStatistics.mockResolvedValue(emptyProjectFilesStatsResponse)
+    const { container } = renderComponent(props)
+    expect(container.querySelector('.plot-container.plotly')).toBeNull()
   })
 })

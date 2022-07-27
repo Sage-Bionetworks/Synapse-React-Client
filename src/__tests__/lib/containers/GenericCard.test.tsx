@@ -1,174 +1,172 @@
-import * as React from 'react'
-import { mount } from 'enzyme'
-import * as GenericCardPackage from '../../../lib/containers/GenericCard'
-import GenericCard, {
-  GenericCardProps,
-  GenericCardSchema,
-  CARD_SHORT_DESCRIPTION_CSS,
-} from '../../../lib/containers/GenericCard'
+import { render, screen, within } from '@testing-library/react'
+import React from 'react'
+import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   CardLink,
   LabelLinkConfig,
 } from '../../../lib/containers/CardContainerLogic'
-import MarkdownSynapse from '../../../lib/containers/MarkdownSynapse'
+import GenericCard, {
+  CARD_SHORT_DESCRIPTION_CSS,
+  GenericCardProps,
+  GenericCardSchema,
+  getLinkParams,
+  LongDescription,
+  ShortDescription,
+  SynapseCardLabel,
+} from '../../../lib/containers/GenericCard'
+import * as IconSvg from '../../../lib/containers/IconSvg'
+import * as FileHandleLinkModule from '../../../lib/containers/widgets/FileHandleLink'
+import * as ImageFileHandleModule from '../../../lib/containers/widgets/ImageFileHandle'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import {
-  SelectColumn,
   ColumnType,
   FileHandleAssociateType,
+  SelectColumn,
 } from '../../../lib/utils/synapseTypes'
-import { FileHandleLink } from '../../../lib/containers/widgets/FileHandleLink'
-import { ImageFileHandle } from '../../../lib/containers/widgets/ImageFileHandle'
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import UserCard from '../../../lib/containers/UserCard'
-import { SynapseTestContext } from '../../../mocks/MockSynapseContext'
-import {
-  CardFooter,
-  ShowMore,
-} from '../../../lib/containers/row_renderers/utils'
-import IconSvg from '../../../lib/containers/IconSvg'
 import { server } from '../../../mocks/msw/server'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_NAME,
+} from '../../../mocks/user/mock_user_profile'
 
 const renderComponent = (props: GenericCardProps) => {
-  const wrapper = mount(<GenericCard {...props} />, {
-    wrappingComponent: SynapseTestContext,
+  return render(<GenericCard {...props} />, {
+    wrapper: createWrapper(),
   })
-  const instance = wrapper.instance() as GenericCard
-  return { wrapper, instance }
 }
 
 mockAllIsIntersecting(true)
+const mockIconSvg = jest
+  .spyOn(IconSvg, 'default')
+  .mockImplementation(() => <div data-testid="IconSvg" />)
 
-describe('it renders the UI correctly', () => {
+const mockFileHandleLink = jest
+  .spyOn(FileHandleLinkModule, 'FileHandleLink')
+  .mockImplementation(() => <div data-testid="FileHandleLink" />)
+
+const mockImageFileHandle = jest
+  .spyOn(ImageFileHandleModule, 'ImageFileHandle')
+  .mockImplementation(() => <div data-testid="ImageFileHandle" />)
+
+const tableId = 'TABLE_ID_MOCK'
+
+const iconOptions = {
+  'AMP-AD': 'MOCKED_IMG_SVG_STRING',
+}
+
+const subTitleColumnName = 'subTitle'
+const labelOneColumnName = 'labelOne'
+
+const commonProps = {
+  type: 'PROGRAM',
+  title: 'title',
+  subTitle: subTitleColumnName,
+  description: 'description',
+  icon: 'icon',
+  link: 'link',
+}
+const genericCardSchema: GenericCardSchema = {
+  ...commonProps,
+  secondaryLabels: [labelOneColumnName, 'labelTwo'],
+}
+const genericCardSchemaHeader: GenericCardSchema = {
+  ...commonProps,
+}
+const schema = {
+  title: 0,
+  subTitle: 1,
+  description: 2,
+  icon: 3,
+  labelOne: 4,
+  labelTwo: 5,
+  link: 6,
+  id: 7,
+  image: 8,
+  userIdList: 9,
+  type: 10,
+}
+
+const MOCKED_TITLE = 'MOCKED TITLE'
+const MOCKED_SUBTITLE = 'MOCKED SUBTITLE'
+const MOCKED_DESCRIPTION = 'MOCKED DESCRIPTION'
+const MOCKED_ICON = 'dataset'
+const MOCKED_LABELONE = 'MOCKED_LABELONE'
+const MOCKED_LABELTWO = 'MOCKED_LABELONE'
+const MOCKED_LINK = 'MOCKED_LINK'
+const MOCKED_ID = 'MOCKED_ID'
+const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
+const MOCKED_USER_ID = `[${MOCK_USER_ID}]`
+const MOCKED_TYPE = 'folder'
+
+const data = [
+  MOCKED_TITLE,
+  MOCKED_SUBTITLE,
+  MOCKED_DESCRIPTION,
+  MOCKED_ICON,
+  MOCKED_LABELONE,
+  MOCKED_LABELTWO,
+  MOCKED_LINK,
+  MOCKED_ID,
+  MOCKED_IMAGE_FILE_HANDLE_ID,
+  MOCKED_USER_ID,
+  MOCKED_TYPE,
+]
+
+const propsForNonHeaderMode: GenericCardProps = {
+  data,
+  genericCardSchema,
+  schema,
+  secondaryLabelLimit: 3,
+  selectColumns: [],
+  columnModels: [],
+  queryContext: {
+    entity: {
+      id: tableId,
+      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+    },
+  },
+}
+
+const propsForHeaderMode: GenericCardProps = {
+  data,
+  iconOptions,
+  schema,
+  genericCardSchema: genericCardSchemaHeader,
+  isHeader: true,
+  selectColumns: [],
+  columnModels: [],
+  queryContext: {
+    entity: {
+      id: tableId,
+      concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
+    },
+  },
+}
+
+describe('GenericCard tests', () => {
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
-
-  const tableId = 'TABLE_ID_MOCK'
-
-  const iconOptions = {
-    'AMP-AD': 'MOCKED_IMG_SVG_STRING',
-  }
-
-  const subTitleColumnName = 'subTitle'
-  const labelOneColumnName = 'labelOne'
-
-  const commonProps = {
-    type: 'PROGRAM',
-    title: 'title',
-    subTitle: subTitleColumnName,
-    description: 'description',
-    icon: 'icon',
-    link: 'link',
-  }
-  const genericCardSchema: GenericCardSchema = {
-    ...commonProps,
-    secondaryLabels: [labelOneColumnName, 'labelTwo'],
-  }
-  const genericCardSchemaHeader: GenericCardSchema = {
-    ...commonProps,
-  }
-  const schema = {
-    title: 0,
-    subTitle: 1,
-    description: 2,
-    icon: 3,
-    labelOne: 4,
-    labelTwo: 5,
-    link: 6,
-    id: 7,
-    image: 8,
-    userIdList: 9,
-    type: 10,
-  }
-
-  const MOCKED_TITLE = 'MOCKED TITLE'
-  const MOCKED_SUBTITLE = 'MOCKED SUBTITLE'
-  const MOCKED_DESCRIPTION = 'MOCKED DESCRIPTION'
-  const MOCKED_ICON = 'dataset'
-  const MOCKED_LABELONE = 'MOCKED_LABELONE'
-  const MOCKED_LABELTWO = 'MOCKED_LABELONE'
-  const MOCKED_LINK = 'MOCKED_LINK'
-  const MOCKED_ID = 'MOCKED_ID'
-  const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
-  const MOCKED_USER_ID = '[12345]'
-  const MOCKED_TYPE = 'folder'
-
-  const data = [
-    MOCKED_TITLE,
-    MOCKED_SUBTITLE,
-    MOCKED_DESCRIPTION,
-    MOCKED_ICON,
-    MOCKED_LABELONE,
-    MOCKED_LABELTWO,
-    MOCKED_LINK,
-    MOCKED_ID,
-    MOCKED_IMAGE_FILE_HANDLE_ID,
-    MOCKED_USER_ID,
-    MOCKED_TYPE,
-  ]
-
-  const propsForNonHeaderMode: GenericCardProps = {
-    data,
-    genericCardSchema,
-    schema,
-    secondaryLabelLimit: 3,
-    selectColumns: [],
-    columnModels: [],
-    queryContext: {
-      entity: {
-        id: tableId,
-        concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-      },
-    },
-  }
-
-  const propsForHeaderMode: GenericCardProps = {
-    data,
-    iconOptions,
-    schema,
-    genericCardSchema: genericCardSchemaHeader,
-    isHeader: true,
-    selectColumns: [],
-    columnModels: [],
-    queryContext: {
-      entity: {
-        id: tableId,
-        concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-      },
-    },
-  }
-
-  it('renders without crashing in non header mode', () => {
-    const { wrapper } = renderComponent(propsForNonHeaderMode)
-    expect(wrapper).toBeDefined()
+  test('renders the correct UI in non header mode', () => {
+    const { container } = renderComponent(propsForNonHeaderMode)
+    screen.getByRole('img')
+    within(container.querySelector('div.SRC-type')!).getByText(commonProps.type)
+    within(container.querySelector('a')!).getByText(data[0])
+    within(
+      container.querySelector(`.${CARD_SHORT_DESCRIPTION_CSS}`)!,
+    ).getByText(MOCKED_DESCRIPTION)
+    screen.getByTestId('CardFooter')
   })
 
-  it('renders the correct UI in non header mode', () => {
-    const { wrapper } = renderComponent(propsForNonHeaderMode)
-    expect(wrapper.find('img')).toBeDefined()
-    expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
-    expect(wrapper.find('a').text()).toEqual(data[0])
-    expect(wrapper.find(`.${CARD_SHORT_DESCRIPTION_CSS}`).text()).toEqual(
-      MOCKED_DESCRIPTION,
-    )
-    expect(wrapper.find(CardFooter)).toBeDefined()
-  })
-
-  it('renders as a Header without crashing', () => {
-    const { wrapper } = renderComponent(propsForHeaderMode)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find('div.SRC-type').text()).toEqual(commonProps.type)
-    expect(wrapper.find('h3').text()).toEqual(data[0])
-    expect(wrapper.find(ShowMore)).toHaveLength(0)
-    expect(wrapper.find('.SRC-font-size-base').text()).toEqual(data[2])
-    expect(wrapper.find(CardFooter)).toHaveLength(1)
-  })
-
-  it.skip('renders the query handles corretly', () => {
-    const { wrapper } = renderComponent(propsForHeaderMode)
-    expect(wrapper.find(`[data-search-handle]`).text()).toEqual(
-      commonProps.title,
-    )
+  test('renders as a Header without crashing', () => {
+    const { container } = renderComponent(propsForHeaderMode)
+    within(container.querySelector('div.SRC-type')!).getByText(commonProps.type)
+    within(container.querySelector('h3')!).getByText(data[0])
+    expect(
+      screen.queryByText('Show More', { exact: false }),
+    ).not.toBeInTheDocument()
+    within(container.querySelector('.SRC-font-size-base')!).getByText(data[2])
+    screen.getByTestId('CardFooter')
   })
 
   describe('Renders UserCards when a UserId_List column is present', () => {
@@ -179,8 +177,8 @@ describe('it renders the UI correctly', () => {
         name: 'userIdList',
       },
     ]
-    it('Renders a UserCard with an EntityView associate type', () => {
-      const { wrapper } = renderComponent({
+    test('Renders a UserCard with an EntityView associate type', async () => {
+      renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
@@ -196,35 +194,29 @@ describe('it renders the UI correctly', () => {
         titleLinkConfig: undefined,
         tableId,
       })
-      expect(wrapper.find(UserCard)).toHaveLength(1)
-      expect(wrapper.find(UserCard).props()).toEqual({
-        ownerId: 12345,
-        size: 'SMALL USER CARD',
-      })
+
+      await screen.findByText('@' + MOCK_USER_NAME)
     })
   })
 
-  describe('Renders expected entity type icon when useTypeColumnForIcon is set to true', () => {
-    it('Renders expected entity type icon when useTypeColumnForIcon is set to true', () => {
-      const { wrapper } = renderComponent({
-        ...propsForNonHeaderMode,
-        queryContext: {
-          entity: {
-            id: tableId,
-            concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-          },
+  test('Renders expected entity type icon when useTypeColumnForIcon is set to true', () => {
+    renderComponent({
+      ...propsForNonHeaderMode,
+      queryContext: {
+        entity: {
+          id: tableId,
+          concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
         },
-        useTypeColumnForIcon: true,
-        titleLinkConfig: undefined,
-        tableId,
-      })
-      expect(wrapper.find(IconSvg)).toHaveLength(1)
-      expect(wrapper.find(IconSvg).props()).toEqual({
-        options: {
-          icon: 'folder',
-        },
-      })
+      },
+      useTypeColumnForIcon: true,
+      titleLinkConfig: undefined,
+      tableId,
     })
+    screen.getByTestId('IconSvg')
+    expect(mockIconSvg).toHaveBeenCalledWith(
+      { options: { icon: 'folder' } },
+      expect.anything(),
+    )
   })
 
   describe('Renders a FileHandleLink when the title is a file handle', () => {
@@ -238,8 +230,11 @@ describe('it renders the UI correctly', () => {
       },
     ]
 
-    it('Renders a FileHandleLink with an EntityView associate type', () => {
-      const { wrapper } = renderComponent({
+    test('Renders a FileHandleLink with an EntityView associate type', () => {
+      const mockFileHandleLink = jest
+        .spyOn(FileHandleLinkModule, 'FileHandleLink')
+        .mockImplementation(() => <div data-testid="FileHandleLink" />)
+      renderComponent({
         ...propsForNonHeaderMode,
         queryContext: {
           entity: {
@@ -251,20 +246,23 @@ describe('it renders the UI correctly', () => {
         titleLinkConfig: undefined,
         tableId,
       })
-      expect(wrapper.find(FileHandleLink)).toHaveLength(1)
-      expect(wrapper.find(FileHandleLink).props()).toEqual({
-        showDownloadIcon: true,
-        fileHandleAssociation: {
-          fileHandleId: MOCKED_LINK,
-          associateObjectId: MOCKED_ID,
-          associateObjectType: FileHandleAssociateType.FileEntity,
+      screen.getByTestId('FileHandleLink')
+      expect(mockFileHandleLink).toHaveBeenCalledWith(
+        {
+          showDownloadIcon: true,
+          fileHandleAssociation: {
+            fileHandleId: MOCKED_LINK,
+            associateObjectId: MOCKED_ID,
+            associateObjectType: FileHandleAssociateType.FileEntity,
+          },
+          displayValue: MOCKED_TITLE,
         },
-        displayValue: MOCKED_TITLE,
-      })
+        expect.anything(),
+      )
     })
 
-    it('Renders a FileHandleLink with a table associate type', () => {
-      const { wrapper } = renderComponent({
+    test('Renders a FileHandleLink with a table associate type', () => {
+      renderComponent({
         ...propsForNonHeaderMode,
         queryContext: {
           entity: {
@@ -276,16 +274,19 @@ describe('it renders the UI correctly', () => {
         titleLinkConfig: undefined,
         tableId,
       })
-      expect(wrapper.find(FileHandleLink)).toHaveLength(1)
-      expect(wrapper.find(FileHandleLink).props()).toEqual({
-        showDownloadIcon: true,
-        fileHandleAssociation: {
-          fileHandleId: MOCKED_LINK,
-          associateObjectId: tableId,
-          associateObjectType: FileHandleAssociateType.TableEntity,
+      screen.getByTestId('FileHandleLink')
+      expect(mockFileHandleLink).toHaveBeenCalledWith(
+        {
+          showDownloadIcon: true,
+          fileHandleAssociation: {
+            fileHandleId: MOCKED_LINK,
+            associateObjectId: tableId,
+            associateObjectType: FileHandleAssociateType.TableEntity,
+          },
+          displayValue: MOCKED_TITLE,
         },
-        displayValue: MOCKED_TITLE,
-      })
+        expect.anything(),
+      )
     })
   })
 
@@ -299,8 +300,8 @@ describe('it renders the UI correctly', () => {
         name: 'image',
       },
     ]
-    it('Renders a ImageFileHandle with an EntityView associate type', () => {
-      const { wrapper } = renderComponent({
+    test('Renders a ImageFileHandle with an EntityView associate type', () => {
+      renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
@@ -316,17 +317,20 @@ describe('it renders the UI correctly', () => {
         titleLinkConfig: undefined,
         tableId,
       })
-      expect(wrapper.find(ImageFileHandle)).toHaveLength(1)
-      expect(wrapper.find(ImageFileHandle).props()).toEqual({
-        fileHandleAssociation: {
-          fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
-          associateObjectId: MOCKED_ID,
-          associateObjectType: FileHandleAssociateType.FileEntity,
+      screen.getByTestId('ImageFileHandle')
+      expect(mockImageFileHandle).toHaveBeenCalledWith(
+        {
+          fileHandleAssociation: {
+            fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+            associateObjectId: MOCKED_ID,
+            associateObjectType: FileHandleAssociateType.FileEntity,
+          },
         },
-      })
+        expect.anything(),
+      )
     })
-    it('Renders a ImageFileHandle with a table associate type', () => {
-      const { wrapper } = renderComponent({
+    test('Renders a ImageFileHandle with a table associate type', () => {
+      renderComponent({
         ...propsForNonHeaderMode,
         genericCardSchema: {
           ...genericCardSchema,
@@ -342,26 +346,28 @@ describe('it renders the UI correctly', () => {
         titleLinkConfig: undefined,
         tableId,
       })
-      expect(wrapper.find(ImageFileHandle)).toHaveLength(1)
-      expect(wrapper.find(ImageFileHandle).props()).toEqual({
-        fileHandleAssociation: {
-          fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
-          associateObjectId: tableId,
-          associateObjectType: FileHandleAssociateType.TableEntity,
+      screen.getByTestId('ImageFileHandle')
+      expect(mockImageFileHandle).toHaveBeenCalledWith(
+        {
+          fileHandleAssociation: {
+            fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+            associateObjectId: tableId,
+            associateObjectType: FileHandleAssociateType.TableEntity,
+          },
         },
-      })
+        expect.anything(),
+      )
     })
   })
 
   describe('it makes the correct URL for the title', () => {
-    const { instance } = renderComponent(propsForHeaderMode)
     const SELF = '_self'
     const BLANK = '_blank'
 
-    it('creates a link to synapse', () => {
+    test('creates a link to synapse', () => {
       const synId = 'syn12345678'
       const synLink = `https://www.synapse.org/#!Synapse:${synId}`
-      const { href, target } = instance.getLinkParams(
+      const { href, target } = getLinkParams(
         synId,
         undefined,
         undefined,
@@ -371,10 +377,10 @@ describe('it renders the UI correctly', () => {
       expect(target).toEqual(SELF)
     })
 
-    it('creates a DOI link', () => {
+    test('creates a DOI link', () => {
       const doi = '10.1093/neuonc/noy046'
       const doiLink = `https://dx.doi.org/${doi}`
-      const { href, target } = instance.getLinkParams(
+      const { href, target } = getLinkParams(
         doi,
         undefined,
         undefined,
@@ -384,10 +390,10 @@ describe('it renders the UI correctly', () => {
       expect(target).toEqual(BLANK)
     })
 
-    it('creates a DOI link PORTALS-1801', () => {
+    test('creates a DOI link PORTALS-1801', () => {
       const doi = '10.1007/s00401-020-02230-x '
       const doiLink = `https://dx.doi.org/${doi.trim()}`
-      const { href, target } = instance.getLinkParams(
+      const { href, target } = getLinkParams(
         doi,
         undefined,
         undefined,
@@ -397,7 +403,7 @@ describe('it renders the UI correctly', () => {
       expect(target).toEqual(BLANK)
     })
 
-    it('creates an internal parameterized link', () => {
+    test('creates an internal parameterized link', () => {
       const value = '1234'
       const data = [value]
       const URLColumnName = 'Grant Number'
@@ -412,242 +418,246 @@ describe('it renders the UI correctly', () => {
         URLColumnName,
       }
       const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-      const { href, target } = instance.getLinkParams(
-        '',
-        titleLinkConfig,
-        data,
-        schema,
-      )
+      const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
       expect(href).toEqual(expectedLink)
       expect(target).toEqual(SELF)
     })
   })
-})
+  describe('it makes the correct URL for the secondary labels', () => {
+    const DATASETS = 'datasets'
+    const datasetBaseURL = 'Explore/Datasets'
+    const labelLinkConfig: LabelLinkConfig = [
+      {
+        isMarkdown: false,
+        baseURL: datasetBaseURL,
+        URLColumnName: DATASETS,
+        matchColumnName: 'dataset',
+      },
+      {
+        isMarkdown: true,
+        matchColumnName: 'dataset',
+      },
+    ]
+    const selectColumns: SelectColumn[] = [
+      {
+        columnType: ColumnType.STRING,
+        id: 'a',
+        name: 'dataset',
+      },
+    ]
 
-describe('it makes the correct URL for the secondary labels', () => {
-  const renderLabel = GenericCardPackage.SynapseCardLabel
-  const DATASETS = 'datasets'
-  const datasetBaseURL = 'Explore/Datasets'
-  const labelLinkConfig: LabelLinkConfig = [
-    {
-      isMarkdown: false,
-      baseURL: datasetBaseURL,
-      URLColumnName: DATASETS,
-      matchColumnName: 'dataset',
-    },
-    {
-      isMarkdown: true,
-      matchColumnName: 'dataset',
-    },
-  ]
-  const selectColumns: SelectColumn[] = [
-    {
-      columnType: ColumnType.STRING,
-      id: 'a',
-      name: 'dataset',
-    },
-  ]
+    test('works with a single value', () => {
+      const value = 'syn1234567'
+      const { container } = render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={labelLinkConfig[0]}
+          isHeader={false}
+          selectColumns={selectColumns}
+          columnModels={undefined}
+          columnName={DATASETS}
+        />,
+        { wrapper: createWrapper() },
+      )
 
-  it('works with a single value', () => {
-    const value = 'syn1234567'
-    const wrapper = mount(
-      <>
-        {renderLabel({
-          value,
-          labelLink: labelLinkConfig[0],
-          isHeader: false,
-          selectColumns: selectColumns,
-          columnModels: undefined,
-          columnName: DATASETS,
-        })}
-      </>,
-    )
+      const link = container.querySelector('a')!
+      expect(link.getAttribute('href')).toEqual(
+        `/${datasetBaseURL}?${DATASETS}=${value}`,
+      )
+    })
 
-    const link = wrapper.find('a')
-    expect(link).toHaveLength(1)
-    expect(link.props().href).toEqual(`/${datasetBaseURL}?${DATASETS}=${value}`)
-  })
+    test('works with a header', () => {
+      const value = 'syn1234567'
+      const { container } = render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={labelLinkConfig[0]}
+          isHeader={true}
+          selectColumns={selectColumns}
+          columnModels={undefined}
+          columnName={DATASETS}
+        />,
+        { wrapper: createWrapper() },
+      )
+      const link = container.querySelector('a')!
+      expect(link).toBeDefined()
+    })
 
-  it('works with a header', () => {
-    const value = 'syn1234567'
-    const wrapper = mount(
-      <>
-        {renderLabel({
-          value,
-          labelLink: labelLinkConfig[0],
-          isHeader: true,
-          selectColumns,
-          columnModels: undefined,
-          columnName: DATASETS,
-        })}
-      </>,
-    )
-    const link = wrapper.find('a')
-    expect(link).toHaveLength(1)
-  })
-
-  it('works with a multi string value', () => {
-    // add commas to ensure its not piecing those out
-    const val1 = 'syn12,,34567'
-    const val2 = 'syn1234,568'
-    const val3 = 'syn,,12345,69'
-    const value = `["${val1}","${val2}","${val3}"]`
-    const wrapper = mount(
-      <>
-        {renderLabel({
-          value,
-          labelLink: labelLinkConfig[0],
-          isHeader: false,
-          selectColumns: [
+    test('works with a multi string value', () => {
+      // add commas to ensure its not piecing those out
+      const val1 = 'syn12,,34567'
+      const val2 = 'syn1234,568'
+      const val3 = 'syn,,12345,69'
+      const value = `["${val1}","${val2}","${val3}"]`
+      const { container } = render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={labelLinkConfig[0]}
+          isHeader={false}
+          selectColumns={[
             {
               columnType: ColumnType.STRING_LIST,
               id: 'a',
               name: DATASETS,
             },
-          ],
-          columnModels: undefined,
-          columnName: DATASETS,
-        })}
-      </>,
-    )
-    const links = wrapper.find('a')
-    expect(links).toHaveLength(3)
-    expect(links.at(0).props().href).toEqual(
-      `/${datasetBaseURL}?${DATASETS}=${val1}`,
-    )
-    expect(links.at(1).props().href).toEqual(
-      `/${datasetBaseURL}?${DATASETS}=${val2}`,
-    )
-    expect(links.at(2).props().href).toEqual(
-      `/${datasetBaseURL}?${DATASETS}=${val3}`,
-    )
+          ]}
+          columnModels={undefined}
+          columnName={DATASETS}
+        />,
+        { wrapper: createWrapper() },
+      )
+      const links = container.querySelectorAll('a')!
+      expect(links).toHaveLength(3)
+      expect(links[0].getAttribute('href')).toEqual(
+        `/${datasetBaseURL}?${DATASETS}=${val1}`,
+      )
+      expect(links[1].getAttribute('href')).toEqual(
+        `/${datasetBaseURL}?${DATASETS}=${val2}`,
+      )
+      expect(links[2].getAttribute('href')).toEqual(
+        `/${datasetBaseURL}?${DATASETS}=${val3}`,
+      )
+    })
+
+    test('works with a comma separated value', () => {
+      const val1 = 'syn1234567'
+      const val2 = 'syn1234568'
+      const val3 = 'syn1234569'
+      const value = `${val1},${val2},${val3}`
+      const { container } = render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={labelLinkConfig[0]}
+          isHeader={false}
+          selectColumns={selectColumns}
+          columnModels={undefined}
+          columnName={DATASETS}
+        />,
+        { wrapper: createWrapper() },
+      )
+      const links = container.querySelectorAll('a')
+      expect(links).toHaveLength(3)
+      expect(links[0].getAttribute('href')).toEqual(
+        `/${datasetBaseURL}?${DATASETS}=${val1}`,
+      )
+      expect(links[1].getAttribute('href')).toEqual(
+        `/${datasetBaseURL}?${DATASETS}=${val2}`,
+      )
+      expect(links[2].getAttribute('href')).toEqual(
+        `/${datasetBaseURL}?${DATASETS}=${val3}`,
+      )
+    })
+
+    test('works with a markdown link', () => {
+      const value = '[link](www.synapse.org)'
+      const { container } = render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={labelLinkConfig[1]}
+          isHeader={false}
+          selectColumns={undefined}
+          columnModels={undefined}
+          columnName=""
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      const markdown = container.querySelector('.markdown')!
+      // double check the html elements show up correctly from the markdown component
+      expect(within(markdown).queryByRole('paragraph')).not.toBeInTheDocument()
+      within(markdown).getByRole('link')
+    })
+
+    test('works with a multi string markdown link', () => {
+      const selectColumnsMultiString: SelectColumn[] = [
+        {
+          name: DATASETS,
+          id: 'a',
+          columnType: ColumnType.STRING_LIST,
+        },
+      ]
+      // make sure it doesn't parse out the extra commas
+      const value =
+        '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/#!)"]'
+      const { container } = render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={labelLinkConfig[1]}
+          isHeader={false}
+          selectColumns={selectColumnsMultiString}
+          columnModels={undefined}
+          columnName={DATASETS}
+        />,
+        { wrapper: createWrapper() },
+      )
+      const markdown = container.querySelectorAll('.markdown')
+      expect(markdown).toHaveLength(2)
+    })
+
+    it('auto-links a single Synapse ID value', () => {
+      const value = 'syn1234567'
+      render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={undefined}
+          isHeader={false}
+          selectColumns={selectColumns}
+          columnModels={undefined}
+          columnName={DATASETS}
+        />,
+        { wrapper: createWrapper() },
+      )
+      const link = screen.getByRole('link')
+      expect(link.getAttribute('href')).toEqual(
+        `https://www.synapse.org/#!Synapse:${value}`,
+      )
+    })
   })
 
-  it('works with a comma seperated value', () => {
-    const val1 = 'syn1234567'
-    const val2 = 'syn1234568'
-    const val3 = 'syn1234569'
-    const value = `${val1},${val2},${val3}`
-    const wrapper = mount(
-      <>
-        {renderLabel({
-          value,
-          labelLink: labelLinkConfig[0],
-          isHeader: false,
-          selectColumns,
-          columnModels: undefined,
-          columnName: DATASETS,
-        })}{' '}
-      </>,
-    )
-    const links = wrapper.find('a')
-    expect(links).toHaveLength(3)
-    expect(links.at(0).props().href).toEqual(
-      `/${datasetBaseURL}?${DATASETS}=${val1}`,
-    )
-    expect(links.at(1).props().href).toEqual(
-      `/${datasetBaseURL}?${DATASETS}=${val2}`,
-    )
-    expect(links.at(2).props().href).toEqual(
-      `/${datasetBaseURL}?${DATASETS}=${val3}`,
-    )
-  })
-
-  it('works with a markdown link ', async () => {
-    const value = '[link](www.synapse.org)'
-    const wrapper = await mount(
-      <>
-        {renderLabel({
-          value,
-          labelLink: labelLinkConfig[1],
-          isHeader: false,
-          selectColumns: undefined,
-          columnModels: undefined,
-          columnName: '',
-        })}{' '}
-      </>,
-    )
-    const markdown = wrapper.find(MarkdownSynapse)
-    expect(markdown).toHaveLength(1)
-    // double check the html elements show up correctly from the markdown component
-    expect(markdown.html().includes('<p>')).toBeFalsy()
-    expect(markdown.html().includes('<a href=')).toBeTruthy()
-  })
-
-  it('works with a multi string markdown link ', async () => {
-    const selectColumnsMultiString: SelectColumn[] = [
-      {
-        name: DATASETS,
-        id: 'a',
-        columnType: ColumnType.STRING_LIST,
-      },
-    ]
-    // make sure it doesn't parse out the extra commas
-    const value =
-      '["[link],,(www.synapse.org)","[link2](w,,ww.synapse.org/#!)"]'
-    const wrapper = await mount(
-      <>
-        {renderLabel({
-          value,
-          labelLink: labelLinkConfig[1],
-          isHeader: false,
-          selectColumns: selectColumnsMultiString,
-          columnModels: undefined,
-          columnName: DATASETS,
-        })}
-      </>,
-    )
-    const markdown = wrapper.find(MarkdownSynapse)
-    expect(markdown).toHaveLength(2)
-  })
-
-  it('auto-links a single Synapse ID value', () => {
-    const value = 'syn1234567'
-    const wrapper = mount(
-      <>
-        {renderLabel({
-          value,
-          labelLink: undefined,
-          isHeader: false,
-          selectColumns: selectColumns,
-          columnModels: undefined,
-          columnName: DATASETS,
-        })}
-      </>,
-    )
-    const link = wrapper.find('a')
-    expect(link).toHaveLength(1)
-    expect(link.props().href).toEqual(
-      `https://www.synapse.org/#!Synapse:${value}`,
-    )
-  })
-})
-
-describe('It renders markdown for the description', () => {
-  const renderShortDescription = GenericCard.prototype.renderShortDescription
-  const renderLongDescription = GenericCard.prototype.renderLongDescription
-  const descriptionLinkConfig = {
-    isMarkdown: true,
-  }
-  const value = '# header [website](synapse.org)'
-
-  it('hides the short description if descriptionConfig is specified', () => {
-    const wrapper = mount(
-      <>{renderShortDescription(value, false, '', descriptionLinkConfig)} </>,
-    )
-    expect(wrapper.find(<div />)).toHaveLength(0)
-  })
-  it('shows the short description if descriptionConfig is not specified', () => {
-    const wrapper = mount(
-      <>{renderShortDescription(value, false, '', undefined)} </>,
-    )
-    expect(wrapper.find('div')).toHaveLength(1)
-  })
-  it('hides the long description if descriptionConfig is specified', () => {
-    const wrapper = mount(
-      <>{renderLongDescription(value, false, '', descriptionLinkConfig)} </>,
-    )
-    expect(wrapper.find(MarkdownSynapse)).toHaveLength(1)
-    expect(wrapper.find(MarkdownSynapse).props().markdown).toEqual(value)
+  describe('It renders markdown for the description', () => {
+    const descriptionLinkConfig = {
+      isMarkdown: true,
+      showFullDescriptionByDefault: true,
+    }
+    const value = '# header [website](synapse.org)'
+    test('hides the short description if descriptionConfig is specified', () => {
+      const { container } = render(
+        <ShortDescription
+          description={value}
+          hasClickedShowMore={false}
+          descriptionSubTitle={''}
+          descriptionConfig={descriptionLinkConfig}
+          toggleShowMore={jest.fn()}
+        />,
+        { wrapper: createWrapper() },
+      )
+      expect(container.querySelectorAll('div')).toHaveLength(0)
+    })
+    test('shows the short description if descriptionConfig is not specified', () => {
+      const { container } = render(
+        <ShortDescription
+          description={value}
+          hasClickedShowMore={false}
+          descriptionSubTitle={''}
+          descriptionConfig={undefined}
+          toggleShowMore={jest.fn()}
+        />,
+        { wrapper: createWrapper() },
+      )
+      expect(container.querySelectorAll('div')).toHaveLength(1)
+    })
+    test('hides the long description if descriptionConfig is specified', () => {
+      const { container } = render(
+        <LongDescription
+          description={value}
+          hasClickedShowMore={false}
+          descriptionSubTitle={''}
+          descriptionConfig={descriptionLinkConfig}
+        />,
+        { wrapper: createWrapper() },
+      )
+      const markdown = container.querySelector('.markdown')!
+      within(markdown).getByText('header', { exact: false })
+    })
   })
 })
