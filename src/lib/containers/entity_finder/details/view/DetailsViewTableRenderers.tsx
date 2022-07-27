@@ -232,7 +232,8 @@ export function DetailsViewCheckboxRenderer({
   return (
     !isDisabled && (
       <Checkbox
-        label=""
+        label={`Select ${rowData.entityId}`}
+        hideLabel={true}
         className="SRC-pointer-events-none"
         checked={isSelected}
         onChange={() => {
@@ -438,7 +439,8 @@ export function DatasetEditorCheckboxRenderer(
       <Checkbox
         data-testid={`dataset-editor-checkbox-${entityId}`}
         disabled={isDisabled}
-        label=""
+        label={`Select ${entityId}`}
+        hideLabel={true}
         checked={isSelected}
         onChange={value => {
           setSelected(value)
