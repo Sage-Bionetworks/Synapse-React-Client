@@ -6,7 +6,7 @@ import BaseTable, {
 import { isEqual } from 'lodash-es'
 import pluralize from 'pluralize'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Alert, Button } from 'react-bootstrap'
 import { SkeletonTable } from '../../../assets/skeletons/SkeletonTable'
 import {
   convertToEntityType,
@@ -20,6 +20,7 @@ import {
   useUpdateEntity,
 } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
 import { useSet } from '../../../utils/hooks/useSet'
+import { useTheme } from '../../../utils/hooks/useTheme'
 import {
   EntityRef,
   EntityRefCollectionView,
@@ -103,6 +104,8 @@ export function getCopy(entity?: EntityRefCollectionView) {
 export type DatasetItemsEditorProps = {
   /* The synId of the EntityRefCollectionView to modify */
   entityId: string
+  /** Callback invoked when the editor changes state to contain un/saved changes. */
+  onUnsavedChangesChange?: (hasUnsavedChanges: boolean) => void
   onSave?: () => void
   onClose?: () => void
 }
@@ -116,8 +119,8 @@ const ROW_HEIGHT = 42
 const TABLE_HEIGHT = 350
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
-  const { entityId, onSave, onClose } = props
-
+  const { entityId, onSave, onClose, onUnsavedChangesChange } = props
+  const theme = useTheme()
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningModal, setShowWarningModal] = useState<boolean>(false)
   const [hasChangedSinceLastSave, setHasChangedSinceLastSave] = useState(false)
@@ -180,6 +183,12 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   )
 
   useEffect(() => {
+    if (onUnsavedChangesChange) {
+      onUnsavedChangesChange(hasChangedSinceLastSave)
+    }
+  }, [hasChangedSinceLastSave, onUnsavedChangesChange])
+
+  useEffect(() => {
     if (
       previousDatasetToUpdate &&
       datasetToUpdate &&
@@ -203,6 +212,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
   const mutation = useUpdateEntity<EntityRefCollectionView>({
     onSuccess: () => {
+      setHasChangedSinceLastSave(false)
       if (onSave) {
         onSave()
       } else {
@@ -560,6 +570,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         onConfirm={() => {
           if (onClose) {
             setShowWarningModal(false)
+            onUnsavedChangesChange && onUnsavedChangesChange(false)
             onClose()
           }
         }}
@@ -637,6 +648,25 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         )}
       </div>
       <div className="DatasetEditorTopBottomPanel">
+        {hasChangedSinceLastSave && (
+          <Alert
+            dismissible={false}
+            show={true}
+            transition={false}
+            variant="warning"
+          >
+            <IconSvg
+              options={{
+                icon: 'warning',
+                color: theme.colors.warning,
+                padding: 'right',
+              }}
+            />
+            <Typography display="inline" component="span" variant="smallText2">
+              You have unsaved changes
+            </Typography>
+          </Alert>
+        )}
         <Button
           variant={'outline'}
           onClick={() => {

@@ -107,6 +107,7 @@ function addItemsViaEntityFinder() {
 
   // The entity finder should be automatically closed.
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 }
 
 async function selectIndividualItem(id: string) {
@@ -131,6 +132,7 @@ function clickRemove() {
 
 const mockToastFn = displayToast
 
+const mockOnUnsavedChangesFn = jest.fn()
 const mockOnSaveFn = jest.fn()
 const mockOnCloseFn = jest.fn()
 
@@ -141,6 +143,7 @@ const defaultProps: DatasetItemsEditorProps = {
   entityId: mockDatasetEntityData.id,
   onSave: mockOnSaveFn,
   onClose: mockOnCloseFn,
+  onUnsavedChangesChange: mockOnUnsavedChangesFn,
 }
 
 async function renderComponent(wrapperProps?: SynapseContextType) {
@@ -315,6 +318,7 @@ describe('Dataset Items Editor tests', () => {
     )
 
     await waitFor(() => expect(mockOnSaveFn).toBeCalled())
+    expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
   })
 
   describe('Select All', () => {
@@ -739,6 +743,7 @@ describe('Dataset Items Editor tests', () => {
       )
 
       await waitFor(() => expect(mockOnSaveFn).toBeCalled())
+      expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
     })
   })
 })
