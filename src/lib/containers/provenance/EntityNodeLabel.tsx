@@ -20,33 +20,27 @@ export const EntityNodeLabel = (data: EntityHeaderIsCurrent) => {
         <div>
           <ProvenanceEntityIcon entityHeader={entityHeader} />
         </div>
-        {entityHeader ? (
-          <>
-            <div>
-              <Tooltip
-                title={entityHeader.name}
-                placement="top"
-                enterNextDelay={300}
+        <>
+          <div>
+            <Tooltip
+              title={entityHeader.name}
+              placement="top"
+              enterNextDelay={300}
+            >
+              <a
+                href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityVersionString}`}
               >
-                <a
-                  href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityVersionString}`}
-                >
-                  {entityHeader.name}
-                </a>
-              </Tooltip>
+                {entityHeader.name}
+              </a>
+            </Tooltip>
+          </div>
+          {isVersionableEntityType(convertToEntityType(entityHeader.type)) && (
+            <div>
+              <div>v.{entityHeader.versionNumber}</div>
+              {!isCurrentVersion && <div>(old version)</div>}
             </div>
-            {isVersionableEntityType(
-              convertToEntityType(entityHeader.type),
-            ) && (
-              <div>
-                <div>v.{entityHeader.versionNumber}</div>
-                {!isCurrentVersion && <div>(old version)</div>}
-              </div>
-            )}
-          </>
-        ) : (
-          <span>{entityVersionString}</span>
-        )}
+          )}
+        </>
       </>
     ),
     [entityHeader, entityVersionString, isCurrentVersion],

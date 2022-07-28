@@ -29,21 +29,6 @@ TestProvenanceGraph.args = {
   containerHeight: '500px',
 }
 
-export const DavesProvenanceGraph = Template.bind({})
-DavesProvenanceGraph.args = {
-  entityRefs: [
-    {
-      targetId: 'syn1807097',
-      targetVersionNumber: undefined,
-    },
-    {
-      targetId: 'syn1807099',
-      targetVersionNumber: undefined,
-    },
-  ],
-  containerHeight: '500px',
-}
-
 export const NoProvenanceGraph = Template.bind({})
 NoProvenanceGraph.args = {
   entityRefs: [

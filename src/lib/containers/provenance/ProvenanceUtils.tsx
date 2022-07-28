@@ -16,14 +16,16 @@ import { ExternalGraphNodeLabel } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
 import _ from 'lodash'
 import { UndefinedNodeLabel } from './UndefinedNodeLabel'
-import { EntityHeader } from '../../utils/synapseTypes'
+import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import {
   Activity,
   UsedURL,
 } from '../../utils/synapseTypes/Provenance/Provenance'
+import { EntityPlaceholderNodeLabel } from './EntityPlaceholderNodeLabel'
 
 export enum NodeType {
   ENTITY = 'EntityNode',
+  ENTITY_PLACEHOLDER = 'EntityPlaceholderNode',
   EXTERNAL = 'ExternalNode',
   ACTIVITY = 'ActivityNode',
   EXPAND = 'ExpandNode',
@@ -41,6 +43,7 @@ type ProvenanceNodeLabelProps =
   | ExpandGraphNodeDataProps
   | EntityHeaderIsCurrent
   | EntityHeader
+  | Reference
 
 export type ProvenanceNodeProps = {
   type: NodeType
@@ -59,6 +62,9 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
   switch (type) {
     case NodeType.ENTITY:
       nodeLabel = <EntityNodeLabel {...(data as EntityHeaderIsCurrent)} />
+      break
+    case NodeType.ENTITY_PLACEHOLDER:
+      nodeLabel = <EntityPlaceholderNodeLabel {...(data as Reference)} />
       break
     case NodeType.EXTERNAL:
       nodeLabel = <ExternalGraphNodeLabel {...(data as UsedURL)} />
@@ -118,6 +124,10 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
     case NodeType.ENTITY:
       return `${(data as EntityHeaderIsCurrent).entityHeader.id}.${
         (data as EntityHeaderIsCurrent).entityHeader.versionNumber ?? 'latest'
+      }`
+    case NodeType.ENTITY_PLACEHOLDER:
+      return `${(data as Reference).targetId}.${
+        (data as Reference).targetVersionNumber ?? 'latest'
       }`
     case NodeType.EXTERNAL:
       return `${(data as UsedURL).url}`

@@ -61,6 +61,7 @@ import {
   WarningTwoTone,
   WatchLater,
   GitHub,
+  InsertDriveFileOutlined,
 } from '@material-ui/icons'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -141,6 +142,7 @@ export const IconStrings = [
   'other',
   'wiki',
   'file',
+  'fileOutlined',
   'folder',
   'link',
   'table',
@@ -365,6 +367,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <LanguageTwoTone style={muiSvgStyle} />
     case 'file':
       return <InsertDriveFileTwoTone style={muiSvgStyle} />
+    case 'fileOutlined':
+      return <InsertDriveFileOutlined style={muiSvgStyle} />
     case 'folder':
       return <FolderTwoTone style={muiSvgStyle} />
     case 'link':

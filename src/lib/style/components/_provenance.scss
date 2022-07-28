@@ -16,7 +16,8 @@
 
     &.ExternalNode,
     &.EntityNode,
-    &.ExpandNode {
+    &.ExpandNode,
+    &.EntityPlaceholderNode {
       overflow: hidden;
       border: none;
       box-shadow: none !important;
@@ -26,6 +27,11 @@
       text-decoration: none !important;
     }
 
+    &.EntityPlaceholderNode {
+      svg {
+        color: map.get(SRC.$colors, 'gray-400');
+      }
+    }
     &.UndefinedNode {
       .description {
         display: inline;

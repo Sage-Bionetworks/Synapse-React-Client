@@ -28,7 +28,11 @@ import {
   UsedURL,
   USED_ENTITY_CONCRETE_TYPE_VALUE,
 } from '../../utils/synapseTypes/Provenance/Provenance'
-import { EntityHeader, ReferenceList } from '../../utils/synapseTypes'
+import {
+  EntityHeader,
+  Reference,
+  ReferenceList,
+} from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
@@ -251,6 +255,32 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     [addNodeAndEdge],
   )
 
+  const addEntityPlaceholderNode = useCallback(
+    (params: {
+      ref: Reference
+      activity: Activity
+      nodesCopy: Node[]
+      edgesCopy: Edge[]
+    }) => {
+      const { ref, activity, nodesCopy, edgesCopy } = params
+      const entityPlaceholderNodeProps = {
+        type: NodeType.ENTITY_PLACEHOLDER,
+        data: ref,
+      }
+      const activityNodeProps = {
+        type: NodeType.ACTIVITY,
+        data: activity,
+      }
+      addNodeAndEdge({
+        newNodeProps: entityPlaceholderNodeProps,
+        existingNodeProps: activityNodeProps,
+        nodesCopy,
+        edgesCopy,
+      })
+    },
+    [addNodeAndEdge],
+  )
+
   const addUndefinedNode = useCallback(
     (params: {
       entityHeader: EntityHeader
@@ -421,7 +451,9 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   ])
 
   const getEntityHeadersIsCurrent = useCallback(
-    async (params: { refs: ReferenceList }) => {
+    async (params: {
+      refs: ReferenceList
+    }): Promise<EntityHeaderIsCurrent[]> => {
       const { refs } = params
       const usedEntityHeadersPage = await SynapseClient.getEntityHeaders(refs)
       const refsWithoutVersion: ReferenceList = refs.map(ref => {
@@ -485,6 +517,17 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           })
           const entityHeadersIsCurrent = await getEntityHeadersIsCurrent({
             refs: usedEntityReferences,
+          })
+          // find refs that were not returned by the entity header call
+          const refsMissingEntityHeaders = usedEntityReferences.filter(ref => {
+            return (
+              entityHeadersIsCurrent.find(eh => {
+                return eh.entityHeader.id == ref.targetId
+              }) == undefined
+            )
+          })
+          refsMissingEntityHeaders.forEach(ref => {
+            addEntityPlaceholderNode({ ref, activity, nodesCopy, edgesCopy })
           })
           const addEntityPromises: Promise<void>[] = []
           entityHeadersIsCurrent.forEach(newEntityHeaderIsCurrent => {
