@@ -3764,25 +3764,6 @@ export const getApprovedSubmissionInfo = (
 
 /**
  * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
- * Not currently used, should it be?
- */
-export const getEntitiesGeneratedByActivity = (
-  activityId: string,
-  limit: number = Number.MAX_SAFE_INTEGER,
-  offset: number = 0,
-  accessToken?: string,
-): Promise<PaginatedResults<Reference>> => {
-  const url = ENTITIES_GENERATED_BY_ACTIVITY(activityId, limit, offset)
-  return doGet<PaginatedResults<Reference>>(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
-}
-
-/**
- * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
  */
 export const getActivityForEntity = (
   entityId: string,

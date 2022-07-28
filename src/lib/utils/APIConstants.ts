@@ -115,11 +115,6 @@ export const APPROVED_SUBMISSION_INFO = (
 export const EVALUATION = `${REPO}/evaluation`
 export const EVALUATION_BY_ID = (id: string | number) => EVALUATION + `/${id}`
 
-export const ENTITIES_GENERATED_BY_ACTIVITY = (
-  activityId: string,
-  limit: number,
-  offset: number,
-) => `${REPO}/activity/${activityId}/generated?limit=${limit}&offset=${offset}`
 export const ACTIVITY_FOR_ENTITY = (entityId: string, versionNumber?: string) =>
   versionNumber
     ? `${REPO}/entity/${entityId}/version/${versionNumber}/generatedBy`
