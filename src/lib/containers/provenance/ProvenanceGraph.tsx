@@ -421,7 +421,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       const { results: latestEntityHeaders } = latestEntityHeadersPage
       return usedEntityHeaders.map(usedEntityHeader => {
         const latestEntityHeader = latestEntityHeaders.find(currentHeader => {
-          usedEntityHeader.id == currentHeader.id
+          return usedEntityHeader.id == currentHeader.id
         })
         const isCurrent =
           latestEntityHeader?.versionNumber == usedEntityHeader.versionNumber
