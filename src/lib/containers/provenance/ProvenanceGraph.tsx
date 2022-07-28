@@ -31,8 +31,13 @@ import {
 import { EntityHeader, ReferenceList } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
-import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
+import {
+  ExpandGraphNodeDataProps,
+  ExpandGraphNodeLabel,
+} from './ExpandGraphNodeLabel'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI'
+import { Skeleton } from '@material-ui/lab'
+import { CircularProgress } from '@material-ui/core'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -531,8 +536,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   useEffect(() => {
     const nodeData: ProvenanceNodeData = clickedNode?.data as ProvenanceNodeData
     if (clickedNode && nodeData?.type == NodeType.EXPAND) {
+      nodeData.label = <CircularProgress size={30} /> // will be used outside of synapse, so non-branded spinner
       const expandNodeDataProps = nodeData.props as ExpandGraphNodeDataProps
-
       // remove clicked node
       const nodesWithoutExpandNode = tempNodes.filter(
         node => node.id != clickedNode.id,
