@@ -3,7 +3,7 @@ import BaseTable, {
   AutoResizer,
   ColumnShape,
 } from '@sage-bionetworks/react-base-table'
-import { isEqual } from 'lodash-es'
+import { isEqual, upperFirst } from 'lodash-es'
 import pluralize from 'pluralize'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Alert, Button } from 'react-bootstrap'
@@ -76,6 +76,23 @@ export function getCopy(entity?: EntityRefCollectionView) {
     itemName = entityTypeToFriendlyName(EntityType.DATASET)
   }
 
+  const entityFinderPopover =
+    entity && isDataset(entity)
+      ? `Use the left pane to browse projects and folders. Select ${pluralize(
+          itemName,
+        )} from the right pane to add to this ${displayName}. ${upperFirst(
+          pluralize(itemName),
+        )} in a ${displayName} can be added from multiple folders. You can also use Search to find and select ${pluralize(
+          itemName,
+        )}.`
+      : `Use the left pane to browse projects. Select ${pluralize(
+          itemName,
+        )} from the right pane to add to this ${displayName}. ${upperFirst(
+          pluralize(itemName),
+        )} in a ${displayName} can be added from multiple projects. You can also use Search to find and select ${pluralize(
+          itemName,
+        )}.`
+
   return {
     ADD_ITEMS: `Add ${pluralize(itemName)}`,
     ADD_ITEMS_TO: `Add ${pluralize(itemName)} + to ${displayName}`,
@@ -87,11 +104,7 @@ export function getCopy(entity?: EntityRefCollectionView) {
     CREATE_VERSION_TO_FREEZE: `Create a Version of this ${displayName} to freeze it in its current state`,
     ENTITY_SAVED: `${displayName} Saved`,
     SAVE_CHANGES: `Save changes to ${currentVersionName}`,
-    ENTITY_FINDER_POPOVER: `Use the left pane to browse to find ${pluralize(
-      itemName,
-    )} to add to this ${displayName}. You can also use Search to find and select ${pluralize(
-      itemName,
-    )}.`,
+    ENTITY_FINDER_POPOVER: entityFinderPopover,
     ENTITY_FINDER_PROMPT: `Find ${pluralize(
       itemName,
     )} to add to the ${displayName}.`,
