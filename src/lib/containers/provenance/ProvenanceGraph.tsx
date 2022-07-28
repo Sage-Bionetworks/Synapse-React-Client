@@ -31,13 +31,10 @@ import {
 import { EntityHeader, ReferenceList } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
-import {
-  ExpandGraphNodeDataProps,
-  ExpandGraphNodeLabel,
-} from './ExpandGraphNodeLabel'
+import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI'
-import { Skeleton } from '@material-ui/lab'
 import { CircularProgress } from '@material-ui/core'
+import { displayToast } from '../ToastMessage'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -48,6 +45,8 @@ export type ProvenanceProps = {
   onNodesChangedListener?: (nodes: Node[]) => void
   onEdgesChangedListener?: (edges: Edge[]) => void
 }
+
+const MAX_ACTIVITY_EXPAND_NODES = 400
 const DEFAULT_ZOOM = 0.85
 
 /**
@@ -350,8 +349,11 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           entityHeader.versionNumber,
           accessToken,
         )
-        // if this is not a root node, add an expand node
-        if (!isRootEntity(entityHeader)) {
+        // if this is not a root node (or there are too many items to show), add an expand node
+        if (
+          !isRootEntity(entityHeader) ||
+          (activity.used && activity.used.length >= MAX_ACTIVITY_EXPAND_NODES)
+        ) {
           addExpandNode({
             entityHeaderIsCurrent,
             itemCount: activity.used?.length,
@@ -457,7 +459,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           edgesCopy,
         })
         // go through Activity.used array to add these nodes/edges
-        if (activity.used) {
+        if (activity.used && activity.used.length < MAX_ACTIVITY_EXPAND_NODES) {
           const usedEntityReferences: ReferenceList = []
           activity.used.forEach((usedItem: Used) => {
             if (usedItem.concreteType == USED_ENTITY_CONCRETE_TYPE_VALUE) {
@@ -536,24 +538,33 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   useEffect(() => {
     const nodeData: ProvenanceNodeData = clickedNode?.data as ProvenanceNodeData
     if (clickedNode && nodeData?.type == NodeType.EXPAND) {
-      nodeData.label = <CircularProgress size={30} /> // will be used outside of synapse, so non-branded spinner
       const expandNodeDataProps = nodeData.props as ExpandGraphNodeDataProps
-      // remove clicked node
-      const nodesWithoutExpandNode = tempNodes.filter(
-        node => node.id != clickedNode.id,
-      )
-      const edgeToRemove = getConnectedEdges([clickedNode], tempEdges)[0]
-      const edgesWithoutExpandEdge = tempEdges.filter(
-        edge => edge != edgeToRemove,
-      )
-      onExpandEntity({
-        entityHeaderIsCurrent: expandNodeDataProps.entityHeaderIsCurrent,
-        nodesCopy: nodesWithoutExpandNode,
-        edgesCopy: edgesWithoutExpandEdge,
-      }).finally(() => {
-        setTempNodes(nodesWithoutExpandNode)
-        setTempEdges(edgesWithoutExpandEdge)
-      })
+      if (expandNodeDataProps.itemCount > MAX_ACTIVITY_EXPAND_NODES) {
+        displayToast(
+          'Web visualization does not support expanding this many items at this time.',
+          'danger',
+        )
+        return
+      } else {
+        // graph will be used outside of synapse, so show a non-branded spinner
+        nodeData.label = <CircularProgress size={30} />
+        // remove clicked node
+        const nodesWithoutExpandNode = tempNodes.filter(
+          node => node.id != clickedNode.id,
+        )
+        const edgeToRemove = getConnectedEdges([clickedNode], tempEdges)[0]
+        const edgesWithoutExpandEdge = tempEdges.filter(
+          edge => edge != edgeToRemove,
+        )
+        onExpandEntity({
+          entityHeaderIsCurrent: expandNodeDataProps.entityHeaderIsCurrent,
+          nodesCopy: nodesWithoutExpandNode,
+          edgesCopy: edgesWithoutExpandEdge,
+        }).finally(() => {
+          setTempNodes(nodesWithoutExpandNode)
+          setTempEdges(edgesWithoutExpandEdge)
+        })
+      }
       setClickedNode(undefined)
     }
   }, [clickedNode, tempNodes, tempEdges, onExpandEntity])
