@@ -35,6 +35,8 @@ import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
 import { useGetEntityHeaders } from '../../utils/hooks/SynapseAPI'
 import { CircularProgress } from '@material-ui/core'
 import { displayToast } from '../ToastMessage'
+import { SynapseErrorBoundary } from '../ErrorBanner'
+import { useErrorHandler } from 'react-error-boundary'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -71,12 +73,23 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [edges, setEdges, onEdgesChange] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
+  const handleError = useErrorHandler()
+
   const {
     data: rootEntityHeadersPage,
-    // isLoading,
-    // isError,
-    // error: newError,
+    isError,
+    error: newError,
+    isSuccess,
   } = useGetEntityHeaders(rootEntityRefs)
+  if (isError) {
+    handleError(newError)
+  }
+  if (isSuccess && rootEntityHeadersPage.totalNumberOfResults == 0) {
+    const synapseIds = rootEntityRefs.map(ref => ref.targetId).join(',')
+    handleError(
+      `Unable to load provenance for the given Synapse IDs: ${synapseIds}`,
+    )
+  }
   const rootEntityHeaders = rootEntityHeadersPage?.results
   const [initializedPosition, setInitializedPosition] =
     React.useState<boolean>(false)
@@ -374,7 +387,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         }
       }
     },
-    [accessToken, addUndefinedNode, addEntityNode, addExpandNode, isRootEntity],
+    [addEntityNode, accessToken, isRootEntity, addExpandNode, addUndefinedNode],
   )
 
   /**
@@ -474,10 +487,10 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
             refs: usedEntityReferences,
           })
           const addEntityPromises: Promise<void>[] = []
-          entityHeadersIsCurrent.map(entityHeaderIsCurrent => {
+          entityHeadersIsCurrent.forEach(newEntityHeaderIsCurrent => {
             addEntityPromises.push(
               addEntity({
-                entityHeaderIsCurrent,
+                entityHeaderIsCurrent: newEntityHeaderIsCurrent,
                 nodesCopy,
                 edgesCopy,
                 usedInActivity: activity,
@@ -491,7 +504,13 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
         console.error(e)
       }
     },
-    [accessToken, addActivityNode, addEntity, addExternalNode],
+    [
+      accessToken,
+      addActivityNode,
+      addEntity,
+      addExternalNode,
+      getEntityHeadersIsCurrent,
+    ],
   )
 
   /**
@@ -503,8 +522,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       const nodesCopy = [...tempNodes]
       const edgesCopy = [...tempEdges]
       const addAndExpandPromises: Promise<void>[] = []
-      getEntityHeadersIsCurrent({ refs: rootEntityRefs }).then(
-        entityHeadersIsCurrent => {
+      getEntityHeadersIsCurrent({ refs: rootEntityRefs })
+        .then(entityHeadersIsCurrent => {
           entityHeadersIsCurrent.forEach(entityHeaderIsCurrent => {
             const addEntityPromise = addEntity({
               entityHeaderIsCurrent,
@@ -525,8 +544,8 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
             setTempNodes(nodesCopy)
             setTempEdges(edgesCopy)
           })
-        },
-      )
+        })
+        .catch(e => handleError(e))
     }
   })
 
@@ -614,23 +633,25 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     [],
   )
   return (
-    <div
-      className="bootstrap-4-backport ProvenanceWidget"
-      style={{ width: '100%', height: containerHeight }}
-    >
-      <ReactFlow
-        defaultZoom={DEFAULT_ZOOM}
-        nodes={nodes}
-        edges={edges}
-        onNodeClick={onClickNode}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        attributionPosition="bottom-right"
-        onConnect={undefined}
-        onInit={onInit}
+    <SynapseErrorBoundary>
+      <div
+        className="bootstrap-4-backport ProvenanceWidget"
+        style={{ width: '100%', height: containerHeight }}
       >
-        <Controls />
-      </ReactFlow>
-    </div>
+        <ReactFlow
+          defaultZoom={DEFAULT_ZOOM}
+          nodes={nodes}
+          edges={edges}
+          onNodeClick={onClickNode}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          attributionPosition="bottom-right"
+          onConnect={undefined}
+          onInit={onInit}
+        >
+          <Controls />
+        </ReactFlow>
+      </div>
+    </SynapseErrorBoundary>
   )
 }
