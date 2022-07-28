@@ -1,39 +1,46 @@
 import React, { useMemo } from 'react'
-import { isVersionableEntity } from '../../utils/functions/EntityTypeUtils'
+import {
+  isVersionableEntityType,
+  convertToEntityType,
+} from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
-import { useGetEntity } from '../../utils/hooks/SynapseAPI'
-import { Reference } from '../../utils/synapseTypes'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'
+import { EntityHeaderIsCurrent } from './ProvenanceUtils'
 
-export const EntityNodeLabel = (data: Reference) => {
-  const { targetId, targetVersionNumber } = data
-  const { data: entity } = useGetEntity(targetId, targetVersionNumber)
-  const targetVersionNumberString = targetVersionNumber
-    ? `.${targetVersionNumber}`
+export const EntityNodeLabel = (data: EntityHeaderIsCurrent) => {
+  const { entityHeader, isCurrentVersion } = data
+  const targetVersionNumberString = entityHeader.versionNumber
+    ? `.${entityHeader.versionNumber}`
     : ''
-  const entityVersionString = `${targetId}${targetVersionNumberString}`
+  const entityVersionString = `${entityHeader.id}${targetVersionNumberString}`
   return useMemo(
     () => (
       <>
         <div>
-          <ProvenanceEntityIcon entity={entity} />
+          <ProvenanceEntityIcon entityHeader={entityHeader} />
         </div>
-        {entity ? (
+        {entityHeader ? (
           <>
             <div>
-              <Tooltip title={entity.name} placement="top" enterNextDelay={300}>
+              <Tooltip
+                title={entityHeader.name}
+                placement="top"
+                enterNextDelay={300}
+              >
                 <a
                   href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${entityVersionString}`}
                 >
-                  {entity.name}
+                  {entityHeader.name}
                 </a>
               </Tooltip>
             </div>
-            {isVersionableEntity(entity) && (
+            {isVersionableEntityType(
+              convertToEntityType(entityHeader.type),
+            ) && (
               <div>
-                <div>v.{entity.versionNumber}</div>
-                {!entity.isLatestVersion && <div>(old version)</div>}
+                <div>v.{entityHeader.versionNumber}</div>
+                {!isCurrentVersion && <div>(old version)</div>}
               </div>
             )}
           </>
@@ -42,6 +49,6 @@ export const EntityNodeLabel = (data: Reference) => {
         )}
       </>
     ),
-    [entity, entityVersionString],
+    [entityHeader, entityVersionString, isCurrentVersion],
   )
 }

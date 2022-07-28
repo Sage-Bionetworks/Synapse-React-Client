@@ -3764,10 +3764,11 @@ export const getApprovedSubmissionInfo = (
 
 /**
  * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
+ * Not currently used, should it be?
  */
 export const getEntitiesGeneratedByActivity = (
   activityId: string,
-  limit: number = 50,
+  limit: number = Number.MAX_SAFE_INTEGER,
   offset: number = 0,
   accessToken?: string,
 ): Promise<PaginatedResults<Reference>> => {

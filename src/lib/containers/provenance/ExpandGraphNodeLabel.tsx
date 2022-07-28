@@ -1,9 +1,9 @@
 import pluralize from 'pluralize'
 import React, { useMemo } from 'react'
-import { Reference } from '../../utils/synapseTypes'
+import { EntityHeaderIsCurrent } from './ProvenanceUtils'
 
 export type ExpandGraphNodeDataProps = {
-  entityRef: Reference
+  entityHeaderIsCurrent: EntityHeaderIsCurrent
   itemCount: number
 }
 export const ExpandGraphNodeLabel = (props: ExpandGraphNodeDataProps) => {

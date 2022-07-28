@@ -16,7 +16,7 @@ import { ExternalGraphNodeLabel } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
 import _ from 'lodash'
 import { UndefinedNodeLabel } from './UndefinedNodeLabel'
-import { Reference } from '../../utils/synapseTypes'
+import { EntityHeader } from '../../utils/synapseTypes'
 import {
   Activity,
   UsedURL,
@@ -30,11 +30,17 @@ export enum NodeType {
   UNDEFINED = 'UndefinedNode',
 }
 
+export type EntityHeaderIsCurrent = {
+  entityHeader: EntityHeader
+  isCurrentVersion?: boolean
+}
+
 type ProvenanceNodeLabelProps =
   | UsedURL
-  | Reference
   | Activity
   | ExpandGraphNodeDataProps
+  | EntityHeaderIsCurrent
+  | EntityHeader
 
 export type ProvenanceNodeProps = {
   type: NodeType
@@ -52,7 +58,7 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
   let nodeLabel: JSX.Element
   switch (type) {
     case NodeType.ENTITY:
-      nodeLabel = <EntityNodeLabel {...(data as Reference)} />
+      nodeLabel = <EntityNodeLabel {...(data as EntityHeaderIsCurrent)} />
       break
     case NodeType.EXTERNAL:
       nodeLabel = <ExternalGraphNodeLabel {...(data as UsedURL)} />
@@ -110,8 +116,8 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
   const { type, data } = props
   switch (type) {
     case NodeType.ENTITY:
-      return `${(data as Reference).targetId}.${
-        (data as Reference).targetVersionNumber ?? 'latest'
+      return `${(data as EntityHeaderIsCurrent).entityHeader.id}.${
+        (data as EntityHeaderIsCurrent).entityHeader.versionNumber ?? 'latest'
       }`
     case NodeType.EXTERNAL:
       return `${(data as UsedURL).url}`
@@ -119,14 +125,14 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
       return `${(data as Activity).id}`
     case NodeType.EXPAND:
       return `expand.node.${
-        (data as ExpandGraphNodeDataProps).entityRef.targetId
+        (data as ExpandGraphNodeDataProps).entityHeaderIsCurrent.entityHeader.id
       }.${
-        (data as ExpandGraphNodeDataProps).entityRef.targetVersionNumber ??
-        'latest'
+        (data as ExpandGraphNodeDataProps).entityHeaderIsCurrent.entityHeader
+          .versionNumber ?? 'latest'
       }`
     case NodeType.UNDEFINED:
-      return `undefined.dummy.node.${(data as Reference).targetId}.${
-        (data as Reference).targetVersionNumber ?? 'latest'
+      return `undefined.dummy.node.${(data as EntityHeader).id}.${
+        (data as EntityHeader).versionNumber ?? 'latest'
       }`
   }
 }
