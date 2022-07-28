@@ -365,7 +365,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
             const zoom = currentZoom > DEFAULT_ZOOM ? DEFAULT_ZOOM : currentZoom
             reactFlowInstance?.setCenter(
               rootEntityNode.position.x + 150,
-              rootEntityNode.position.y - 100,
+              rootEntityNode.position.y - 30,
               { zoom, duration: 0 },
             )
           }
