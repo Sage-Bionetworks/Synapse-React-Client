@@ -106,7 +106,6 @@ export const CreateOAuthModal: React.FunctionComponent<
   })
 
   const onCreateClient = () => {
-    console.log('hey')
     try {
       if (accessToken) {
         const oAuthClient: OAuthClient = {
@@ -119,7 +118,6 @@ export const CreateOAuthModal: React.FunctionComponent<
           tos_uri: tosUri,
           etag: client?.etag,
         }
-        console.log(oAuthClient)
         setUpdatedClient(oAuthClient)
         if (warnTrigger === true) {
           setIsShowingConfirmModal(true)
