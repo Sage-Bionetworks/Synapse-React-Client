@@ -10,6 +10,7 @@ import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import Typography from '../../utils/typography/Typography'
 import CopyToClipboardInput from '../CopyToClipboardInput'
+import { displayToast } from '../ToastMessage'
 
 export const OAuthManagement: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
@@ -32,14 +33,17 @@ export const OAuthManagement: React.FunctionComponent = () => {
 
   const onShowSecret = async () => {
     setIsShowingSecretWarning(false)
-    setSelectedClient(undefined)
-    setIsShowingSecret(true)
-
-    const secret = await SynapseClient.createOAuthClientSecret(
-      accessToken!,
-      selectedClient?.client_id!,
-    )
-    setSecret(secret.client_secret)
+    try {
+      const secret = await SynapseClient.createOAuthClientSecret(
+        accessToken!,
+        selectedClient?.client_id!,
+      )
+      setSelectedClient(undefined)
+      setIsShowingSecret(true)
+      setSecret(secret.client_secret)
+    } catch (err) {
+      displayToast(err.reason as string, 'danger')
+    }
   }
 
   return (
