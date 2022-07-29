@@ -1,20 +1,45 @@
 import React, { useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Button, Modal, Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import moment from 'moment'
 import { useGetOAuthClientInfinite } from '../../utils/hooks/SynapseAPI'
 import { CreateOAuthModal } from './CreateOAuthClient'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
+import WarningModal from '../synapse_form_wrapper/WarningModal'
+import { SynapseClient } from '../../utils'
+import { useSynapseContext } from '../../utils/SynapseContext'
+import Typography from '../../utils/typography/Typography'
+import CopyToClipboardInput from '../CopyToClipboardInput'
 
 export const OAuthManagement: React.FunctionComponent = () => {
+  const { accessToken } = useSynapseContext()
   const [isShowingCreateClientModal, setIsShowingCreateClientModal] =
     useState(false)
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [selectedClient, setSelectedClient] = useState<OAuthClient>()
   const [isShowingConfirmModal, setIsShowingConfirmModal] = useState(false)
+  const [isShowingSecretWarning, setIsShowingSecretWarning] = useState(false)
+  const [isShowingSecret, setIsShowingSecret] = useState(false)
+  const [secret, setSecret] = useState<string>()
 
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
   const oAuthClientList = data?.pages.flatMap(page => page.results) ?? []
+
+  const warningHeader = 'Are you absolutely sure?'
+  const warningBody =
+    'If you have an existing secret, generating a new secret will make your application invalid after generation. This action cannot be undone.'
+
+  const onShowSecret = async () => {
+    setIsShowingSecretWarning(false)
+    setSelectedClient(undefined)
+    setIsShowingSecret(true)
+
+    const secret = await SynapseClient.createOAuthClientSecret(
+      accessToken!,
+      selectedClient?.client_id!,
+    )
+    setSecret(secret.client_secret)
+  }
 
   return (
     <div className="bootstrap-4-backport OAuthEditor">
@@ -47,7 +72,18 @@ export const OAuthManagement: React.FunctionComponent = () => {
                 <td>
                   {item.verified ? 'Yes' : 'SUBMIT_VERIFICATION_PLACE_HOLDER'}
                 </td>
-                <td>GENERATE_PLACEHOLDER</td>
+                <td>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedClient(item)
+                      setIsShowingSecretWarning(true)
+                    }}
+                    size="sm"
+                  >
+                    GENERATE
+                  </Button>
+                </td>
                 <td>
                   <Button
                     variant="outline"
@@ -87,6 +123,43 @@ export const OAuthManagement: React.FunctionComponent = () => {
           isShowingConfirmModal={isShowingConfirmModal}
         />
       )}
+
+      <WarningModal
+        show={isShowingSecretWarning}
+        title={warningHeader}
+        modalBody={warningBody}
+        onCancel={() => {
+          setIsShowingSecretWarning(false)
+          setSelectedClient(undefined)
+        }}
+        onConfirm={onShowSecret}
+        confirmButtonVariant="danger"
+        confirmButtonText="Yes, Continue"
+      />
+
+      <Modal
+        show={isShowingSecret}
+        animation={false}
+        backdrop="static"
+        onHide={() => {
+          setIsShowingSecret(false)
+          setSecret(undefined)
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <Typography variant="headline1">App Secret</Typography>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            <b>This secret will not be able to be retrieved again.</b> If
+            needed, in order to generate a new secret select Generate from the
+            Client List.
+          </p>
+          <CopyToClipboardInput value={secret} inputWidth={'350px'} />
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }

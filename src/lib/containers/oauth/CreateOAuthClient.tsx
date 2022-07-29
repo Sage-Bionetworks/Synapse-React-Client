@@ -386,6 +386,8 @@ export const CreateOAuthModal: React.FunctionComponent<
             : mutate({ action: 'UPDATE', client: updatedClient! })
           hideConfirmModal()
         }}
+        confirmButtonVariant="danger"
+        confirmButtonText="Yes, Continue"
       />
     </div>
   )
