@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react'
 import { OAuthManagement } from './OAuthManagement'
 
 export default {
-  title: 'OAuth Management',
+  title: 'Synapse/OAuthManagement',
   component: OAuthManagement,
   argTypes: {},
 } as ComponentMeta<typeof OAuthManagement>
