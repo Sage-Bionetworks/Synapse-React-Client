@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Button, Table } from 'react-bootstrap'
+import { Button, Modal, Table } from 'react-bootstrap'
 import { formatDate } from '../../utils/functions/DateFormatter'
 import moment from 'moment'
 import { useGetOAuthClientInfinite } from '../../utils/hooks/SynapseAPI'
 import { CreateOAuthModal } from './CreateOAuthClient'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
+import Typography from '../../utils/typography/Typography'
 
 export const OAuthManagement: React.FunctionComponent = () => {
   const [isShowingCreateClientModal, setIsShowingCreateClientModal] =
@@ -12,6 +13,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [selectedClient, setSelectedClient] = useState<OAuthClient>()
   const [isShowingConfirmModal, setIsShowingConfirmModal] = useState(false)
+  const [isShowingVerification, setIsShowingVerification] = useState(false)
 
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
   const oAuthClientList = data?.pages.flatMap(page => page.results) ?? []
@@ -45,7 +47,17 @@ export const OAuthManagement: React.FunctionComponent = () => {
                 <td>{formatDate(moment(item.modifiedOn))}</td>
                 <td>{item.client_name}</td>
                 <td>
-                  {item.verified ? 'Yes' : 'SUBMIT_VERIFICATION_PLACE_HOLDER'}
+                  {item.verified ? (
+                    'Yes'
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsShowingVerification(true)}
+                    >
+                      SUBMIT VERIFICATION
+                    </Button>
+                  )}
                 </td>
                 <td>GENERATE_PLACEHOLDER</td>
                 <td>
@@ -87,6 +99,39 @@ export const OAuthManagement: React.FunctionComponent = () => {
           isShowingConfirmModal={isShowingConfirmModal}
         />
       )}
+      <Modal
+        show={isShowingVerification}
+        animation={false}
+        backdrop="static"
+        onHide={() => setIsShowingVerification(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <Typography variant="headline1">Submit Verification</Typography>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            In order to verify an OAuth client please send an email to{' '}
+            <a href={'mailto:synapseinfo@sagebase.org'}>
+              synapseinfo@sagebase.org
+            </a>
+            .
+          </p>
+          <b>Please list the following items in your email:</b>
+          <ul>
+            <li>Your name</li>
+            <li>
+              The ID of the client to be verified <br />
+              <i>(You can find this within Actions)</i>
+            </li>
+            <li>A description of your application</li>
+          </ul>
+          <p>
+            Verification can take up to X weeks and we will notify you via X.
+          </p>
+        </Modal.Body>
+      </Modal>
     </div>
   )
 }
