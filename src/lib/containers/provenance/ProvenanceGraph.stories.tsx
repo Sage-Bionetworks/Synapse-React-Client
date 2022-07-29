@@ -39,3 +39,14 @@ NoProvenanceGraph.args = {
   ],
   containerHeight: '500px',
 }
+
+export const InvalidSynIDProvenanceGraph = Template.bind({})
+InvalidSynIDProvenanceGraph.args = {
+  entityRefs: [
+    {
+      targetId: 'synINVALID',
+      targetVersionNumber: 1,
+    },
+  ],
+  containerHeight: '500px',
+}
