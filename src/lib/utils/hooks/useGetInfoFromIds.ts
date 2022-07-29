@@ -38,6 +38,7 @@ const entityHeaderTemplate: EntityHeader = {
   modifiedOn: 'null', //	The date this entity was last modified.
   createdBy: 'null', //	The ID of the user that created this entity.
   modifiedBy: 'null', //	The ID of the user that last modified this entity.
+  isLatestVersion: true, // If this version is the latest version of the entity
 }
 
 const getEntityHeaderItems = async (

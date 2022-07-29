@@ -24,6 +24,8 @@ export type EntityHeader = {
   createdBy: string
   /**	The ID of the user that last modified this entity. */
   modifiedBy: string
+  /** If this version is the latest version of the entity */
+  isLatestVersion: boolean
 }
 
 /**
