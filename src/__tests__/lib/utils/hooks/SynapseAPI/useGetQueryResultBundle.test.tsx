@@ -1,6 +1,5 @@
-import { renderHook } from '@testing-library/react-hooks'
-import { QueryClient } from 'react-query'
-import { SynapseClient } from '../../../../../lib'
+import { renderHook, act } from '@testing-library/react-hooks'
+import { SynapseClient } from '../../../../../lib/utils'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import useGetQueryResultBundle, {
   useGetQueryResultBundleWithAsyncStatus,
@@ -19,8 +18,6 @@ import {
 } from '../../../../../lib/utils/synapseTypes'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { MOCK_USER_ID } from '../../../../../mocks/user/mock_user_profile'
-
-const queryClient = new QueryClient()
 
 let request: QueryBundleRequest
 
@@ -72,7 +69,6 @@ const mockGetAsyncJobResults = jest.spyOn(
 
 describe('Hooks for fetching table query bundles using react-query', () => {
   beforeEach(() => {
-    queryClient.clear()
     jest.clearAllMocks()
     request = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -302,7 +298,9 @@ describe('Hooks for fetching table query bundles using react-query', () => {
           ),
         { wrapper: createWrapper() },
       )
-      await waitFor(() => result.current.isLoading)
+      await act(async () => {
+        await waitFor(() => result.current.isLoading)
+      })
 
       // Verify that two separate requests to synapse are made
       // Request for results
@@ -340,6 +338,8 @@ describe('Hooks for fetching table query bundles using react-query', () => {
       expect(result.current.data).toBeDefined()
     })
     it('Fails if one query fails', async () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+
       mockGetAsyncJobResults.mockImplementation(request => {
         if (request.partMask === BUNDLE_MASK_QUERY_COUNT) {
           return Promise.reject(new SynapseClientError(400, 'Bad request', ''))

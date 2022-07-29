@@ -223,7 +223,7 @@ export const EvaluationRoundEditor: React.FunctionComponent<
     <div className="evaluation-round-editor">
       <Card>
         <Card.Body>
-          <Form>
+          <Form role="form">
             <Row>
               <Col>
                 <h5>

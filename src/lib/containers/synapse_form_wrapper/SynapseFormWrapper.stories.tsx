@@ -4,7 +4,7 @@ import SynapseFormWrapper from './SynapseFormWrapper'
 import { SynapseContextConsumer } from '../../utils/SynapseContext'
 
 export default {
-  title: 'Synapse/AccessTokenPage',
+  title: 'Synapse/SynapseFormWrapper',
   component: SynapseFormWrapper,
 } as ComponentMeta<typeof SynapseFormWrapper>
 

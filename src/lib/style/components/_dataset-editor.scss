@@ -15,6 +15,9 @@
     align-items: center;
     padding: 15px 20px;
 
+    .alert {
+      margin-bottom: 0;
+    }
     .ItemCount {
       p {
         margin-bottom: 0;
@@ -44,7 +47,7 @@
     flex-direction: column;
 
     .AddItemsButton {
-      width: 150px;
+      min-width: 150px;
       span {
         margin: 5px;
       }

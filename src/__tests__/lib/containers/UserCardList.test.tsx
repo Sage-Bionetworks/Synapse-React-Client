@@ -5,12 +5,17 @@ import UserCardList, {
 } from '../../../lib/containers/UserCardList'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '../../../lib/utils'
+import { server } from '../../../mocks/msw/server'
 
 function renderComponent(props: UserCardListProps) {
   return render(<UserCardList {...props} />, { wrapper: createWrapper() })
 }
 
 describe('UserCardList tests', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   const getUserData = require('../../../lib/utils/functions/getUserData')
   const userOneId = '1'
   const userTwoId = '2'

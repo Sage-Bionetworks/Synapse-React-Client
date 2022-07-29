@@ -17,6 +17,8 @@ import {
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   DATASET_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
+  DatasetCollection,
+  DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
 } from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
 import {
@@ -185,6 +187,10 @@ export const isMaterializedView = isTypeViaConcreteTypeFactory<
 export const isDataset = isTypeViaConcreteTypeFactory<Dataset, Entity>(
   DATASET_CONCRETE_TYPE_VALUE,
 )
+export const isDatasetCollection = isTypeViaConcreteTypeFactory<
+  DatasetCollection,
+  Entity
+>(DATASET_COLLECTION_CONCRETE_TYPE_VALUE)
 
 export const isEntityView = isTypeViaConcreteTypeFactory<EntityView, Entity>(
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,

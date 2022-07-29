@@ -25,11 +25,11 @@ import {
   SortBy,
 } from '../../../../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
-import {
-  mockFileEntityHeader,
-  mockProjectHeader,
-} from '../../../../../mocks/entity/mockEntity'
+import { mockProjectHeader } from '../../../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
+
+const mockFileEntityHeader = mockFileEntityData.entityHeader
 
 // Having trouble mocking the AutoResizer in react-base-table. It just uses this under the hood:
 jest.mock(

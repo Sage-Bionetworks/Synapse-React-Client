@@ -33,6 +33,7 @@ export const EvaluationRoundEditorDropdown: React.FunctionComponent<
 
       <Dropdown className="float-right">
         <Dropdown.Toggle
+          aria-label="Round Options"
           variant="link"
           className="dropdown-no-caret evaluation-round-editor-dropdown"
         >

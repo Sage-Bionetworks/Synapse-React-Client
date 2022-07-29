@@ -5,9 +5,9 @@ export type VersionInfo = {
   versionLabel: string
   versionComment: string
   modifiedBy: string
-  contentSize: string
-  contentMd5: string
   modifiedByPrincipalId: string
   modifiedOn: string
   isLatestVersion: boolean
+  contentSize?: string
+  contentMd5?: string
 }

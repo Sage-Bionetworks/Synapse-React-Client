@@ -1,109 +1,114 @@
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import moment from 'moment'
 import * as React from 'react'
-import { mount, ReactWrapper } from 'enzyme'
 import { Range, RangeProps } from '../../../../lib/containers/widgets/Range'
 
 const mockCallback = jest.fn()
 
-function createTestProps(overrides?: RangeProps): RangeProps {
-  return {
-    type: 'number',
-    initialValues: { min: '2.3', max: '5' },
-    className: 'rangeClass',
-    onChange: mockCallback,
-    ...overrides,
-  }
+const defaultProps: RangeProps = {
+  type: 'number',
+  initialValues: { min: '2.3', max: '5' },
+  className: 'rangeClass',
+  onChange: mockCallback,
 }
-let wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
-let props: RangeProps
 
-function init(overrides?: RangeProps) {
-  props = createTestProps(overrides)
-  wrapper = mount(<Range {...props} />)
+function renderComponent(overrides?: Partial<RangeProps>) {
   mockCallback.mockClear()
+  return render(<Range {...defaultProps} {...overrides} />)
 }
 
-beforeEach(() => init())
-
-function updateValue(
-  wrapper: ReactWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>,
-  min: number | string,
-  max: number | string,
-) {
-  wrapper
-    .find('input')
-    .at(0)
-    .simulate('change', { target: { value: min } })
-  wrapper
-    .find('input')
-    .at(1)
-    .simulate('change', { target: { value: max } })
-  wrapper.find('button').simulate('click')
+function getInput(label: string) {
+  return screen.getByLabelText<HTMLInputElement>(label)
 }
 
-describe('number range ', () => {
+function updateValue(min: number | string, max: number | string) {
+  const minInput = getInput('min')
+  userEvent.clear(minInput)
+  userEvent.type(minInput, min.toString())
+
+  const maxInput = getInput('max')
+  userEvent.clear(maxInput)
+  userEvent.type(maxInput, max.toString())
+
+  userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+}
+
+describe('Range input test', () => {
   it('should render with correct properties', () => {
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find('input').at(0).props().value).toBe(
-      props.initialValues!.min,
-    )
-    expect(wrapper.find('input').at(1).props().value).toBe(
-      props.initialValues!.max,
-    )
-    expect(wrapper.find('div').at(0).hasClass('rangeClass')).toBe(true)
+    const { container } = renderComponent()
+    const minInput = getInput('min')
+    expect(minInput.value).toBe(defaultProps.initialValues!.min)
+    const maxInput = getInput('max')
+    expect(maxInput.value).toBe(defaultProps.initialValues!.max)
+
+    expect(container.querySelector('div.rangeClass')).toBeDefined()
   })
 
   it('should render without values specified', () => {
-    let noDefaultProps = { ...props, initialValues: undefined }
-    init(noDefaultProps)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find('input').at(0).props().value).toBeUndefined()
-
-    expect(wrapper.find('input').at(1).props().value).toBeUndefined()
+    renderComponent({ initialValues: undefined })
+    const minInput = getInput('min')
+    expect(minInput.value).toBe('')
+    const maxInput = getInput('max')
+    expect(maxInput.value).toBe('')
   })
 
   it('should call callbackFn correctly', () => {
-    updateValue(wrapper, 2, 4.9)
-    expect(mockCallback).toHaveBeenCalledWith({ min: 2, max: 4.9 })
+    renderComponent()
+    updateValue(2, 4.9)
+    expect(mockCallback).toHaveBeenCalledWith({ min: '2', max: '4.9' })
   })
+
   it('should not trigger callback for min > max and should show error', () => {
-    updateValue(wrapper, 4.9, 2)
+    renderComponent()
+    updateValue(4.9, 2)
     expect(mockCallback).not.toHaveBeenCalled()
-    expect(wrapper.find('.SRC-danger-color')).toHaveLength(1)
-  })
-})
-
-describe('date range', () => {
-  const initialValues = {
-    min: new Date(2019, 0, 4).toISOString(),
-    max: new Date(2019, 9, 3).toISOString(),
-  }
-  const updatedValues = {
-    min: new Date(2019, 7, 1).toString(),
-    max: new Date(2019, 7, 3).toString(),
-  }
-  it('should render with correct checked state', () => {
-    init({ ...props, type: 'date', initialValues: initialValues })
-    expect(wrapper.find('input').at(0).props().value).toBe('2019-01-04')
-    expect(wrapper.find('input').at(1).props().value).toBe('2019-10-03')
+    const errorMessage = screen.getByText(
+      'Min value should be less then max value',
+    )
+    expect(errorMessage.classList.contains('SRC-danger-color')).toBe(true)
   })
 
-  it('should render without values specified', () => {
-    let noDefaultProps = { ...props, initialValues: undefined }
-    init(noDefaultProps)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find('input').at(0).props().value).toBeUndefined()
+  describe('date range', () => {
+    const initialValues = {
+      min: new Date(2019, 0, 4).toISOString(),
+      max: new Date(2019, 9, 3).toISOString(),
+    }
+    const updatedValues = {
+      min: moment(new Date(2019, 7, 1)).format('YYYY-MM-DD'),
+      max: moment(new Date(2019, 7, 3)).format('YYYY-MM-DD'),
+    }
+    it('should render with correct checked state', () => {
+      renderComponent({ type: 'date', initialValues: initialValues })
+      expect(getInput('min').value).toBe('2019-01-04')
+      expect(getInput('max').value).toBe('2019-10-03')
+    })
 
-    expect(wrapper.find('input').at(1).props().value).toBeUndefined()
-  })
+    it('should render without values specified', () => {
+      renderComponent({ type: 'date', initialValues: undefined })
+      const minInput = getInput('min')
+      expect(minInput.value).toBe('')
+      const maxInput = getInput('max')
+      expect(maxInput.value).toBe('')
+    })
 
-  it('should call callbackFn correctly', async () => {
-    updateValue(wrapper, updatedValues.min, updatedValues.max)
-    expect(mockCallback).toHaveBeenCalledWith(updatedValues)
-  })
+    it('should call callbackFn correctly', async () => {
+      renderComponent({ type: 'date' })
+      updateValue(updatedValues.min, updatedValues.max)
+      await waitFor(() =>
+        expect(mockCallback).toHaveBeenCalledWith(updatedValues),
+      )
+    })
 
-  it('should not trigger callback for min > max and should show error', async () => {
-    updateValue(wrapper, updatedValues.max, updatedValues.min)
-    expect(mockCallback).not.toHaveBeenCalled()
-    expect(wrapper.find('.SRC-danger-color')).toHaveLength(1)
+    it('should not trigger callback for min > max and should show error', () => {
+      renderComponent({ type: 'date' })
+
+      updateValue(updatedValues.max, updatedValues.min)
+      expect(mockCallback).not.toHaveBeenCalled()
+      const errorMessage = screen.getByText(
+        'Min value should be less then max value',
+      )
+      expect(errorMessage.classList.contains('SRC-danger-color')).toBe(true)
+    })
   })
 })

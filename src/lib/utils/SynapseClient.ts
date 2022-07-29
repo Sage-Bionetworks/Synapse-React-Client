@@ -10,7 +10,9 @@ import {
   ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  ACTIVITY_FOR_ENTITY,
   ALIAS_AVAILABLE,
+  APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
   DATA_ACCESS_SUBMISSION_BY_ID,
   ENTITY,
@@ -21,6 +23,8 @@ import {
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
+  EVALUATION,
+  EVALUATION_BY_ID,
   FAVORITES,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
@@ -32,6 +36,9 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TRASHCAN_PURGE,
+  TRASHCAN_RESTORE,
+  TRASHCAN_VIEW,
   USER_BUNDLE,
   USER_GROUP_HEADERS,
   USER_GROUP_HEADERS_BATCH,
@@ -114,6 +121,7 @@ import {
   RestrictionInformationResponse,
   Submission as EvaluationSubmission,
   SynapseVersion,
+  TrashedEntity,
   UserBundle,
   UserGroupHeaderResponsePage,
   UserProfile,
@@ -216,6 +224,8 @@ import {
 } from './synapseTypes/SubmissionInfo'
 import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
 import { SynapseClientError } from './SynapseClientError'
+import { OAuthClient, OAuthClientList } from './synapseTypes/OAuthClient'
+import { Activity } from './synapseTypes/Provenance/Provenance'
 
 const cookies = new UniversalCookies()
 
@@ -1033,19 +1043,13 @@ export const getEntity = <T extends Entity>(
   )
 }
 
-/**
- * Get a list of entity headers given by entity ids
- * http://rest-docs.synapse.org/rest/GET/entity/type.html
- */
-export const getEntityHeadersByIds = <T extends PaginatedResults<EntityHeader>>(
+export const getEntityHeadersByIds = (
   entityIds: string[],
   accessToken?: string,
 ) => {
-  return doGet<T>(
-    `/repo/v1/entity/type?batch=${entityIds.join(',')}`,
+  return getEntityHeaders(
+    entityIds.map(id => ({ targetId: id })),
     accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 
@@ -1405,7 +1409,7 @@ export const setAccessTokenCookie = async (
  */
 export const getAccessTokenFromCookie = async () => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
-    return cookies.get(ACCESS_TOKEN_COOKIE_KEY)
+    return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
     'Portal/sessioncookie?validate=true',
@@ -2056,7 +2060,7 @@ export const getEvaluation = (
     return Promise.reject(new Error('evalId is empty'))
   }
   return doGet<Evaluation>(
-    `/repo/v1/evaluation/${evalId}`,
+    EVALUATION_BY_ID(evalId),
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -2077,7 +2081,7 @@ export const updateEvaluation = (
     return Promise.reject(new Error('evaluation does not have an ID'))
   }
   return doPut<Evaluation>(
-    `/repo/v1/evaluation/${evaluation.id}`,
+    EVALUATION_BY_ID(evaluation.id),
     evaluation,
     accessToken,
     undefined,
@@ -2094,7 +2098,7 @@ export const createEvaluation = (
   accessToken: string | undefined,
 ): Promise<Evaluation> => {
   return doPost<Evaluation>(
-    '/repo/v1/evaluation/',
+    EVALUATION,
     evaluation,
     accessToken,
     undefined,
@@ -2262,6 +2266,74 @@ export const getOAuth2Client = (
   return doGet(
     `/auth/v1/oauth2/client/${clientId}`,
     undefined,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ List the OAuth 2.0 clients created by the current user.
+ */
+export const getOAuth2 = (
+  accessToken: string,
+  nextPageToken?: string,
+): Promise<OAuthClientList> => {
+  return doGet(
+    `/auth/v1/oauth2/client${
+      nextPageToken ? '?nextPageToken=' + nextPageToken : ''
+    }`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+Create an OAuth 2.0 client.
+Note: The client name must be unique.
+Note: After creating the client one must also set the client secret and have their client verified
+https://rest-docs.synapse.org/rest/POST/oauth2/client.html
+ */
+export const createOAuthClient = (
+  request: OAuthClient,
+  accessToken: string,
+): Promise<OAuthClient> => {
+  return doPost(
+    '/auth/v1/oauth2/client',
+    request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+Delete OAuth 2.0 client
+https://rest-docs.synapse.org/rest/DELETE/oauth2/client/id.html
+ */
+export const deleteOAuthClient = (id: string, accessToken: string) => {
+  return doDelete(
+    `/auth/v1/oauth2/client/${id}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ Update the metadata for an existing OAuth 2.0 client.
+ Note: Only the creator of a client can update it.
+ Note: Changing the redirect URIs will revert the 'verified' status of the client, necessitating re-verification.
+ https://repo-prod.prod.sagebase.org/auth/v1/oauth2/client/{id}
+ */
+export const updateOAuthClient = (
+  request: OAuthClient,
+  accessToken: string,
+): Promise<OAuthClient> => {
+  return doPut(
+    `/auth/v1/oauth2/client/${request.client_id}`,
+    request,
+    accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3380,7 +3452,7 @@ export const oAuthRegisterAccountStep2 = (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
-  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
   return doPost(
     '/auth/v1/oauth2/account2',
@@ -3403,7 +3475,7 @@ export const bindOAuthProviderToAccount = async (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
-  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
   // Special case.  web app may not have discovered the access token by this point in init.
   // Look for the access token ourselves before binding.
@@ -3731,8 +3803,28 @@ export const getApprovedSubmissionInfo = (
   accessToken: string | undefined,
 ) => {
   return doPost<SubmissionInfoPage>(
-    `/repo/v1/accessRequirement/${submissionInfoPageRequest.accessRequirementId}/approvedSubmissionInfo`,
+    APPROVED_SUBMISSION_INFO(submissionInfoPageRequest.accessRequirementId),
     submissionInfoPageRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
+ */
+export const getActivityForEntity = (
+  entityId: string,
+  versionNumber?: number,
+  accessToken?: string,
+): Promise<Activity> => {
+  const url = ACTIVITY_FOR_ENTITY(
+    entityId,
+    versionNumber ? `${versionNumber}` : undefined,
+  )
+  return doGet<Activity>(
+    url,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
@@ -3754,5 +3846,44 @@ export function getProfilePicPreviewPresignedUrl(userId: string) {
       undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
+  )
+}
+
+export function getItemsInTrashCan(
+  accessToken: string | undefined,
+  offset = 0,
+  limit = 25,
+) {
+  return doGet<PaginatedResults<TrashedEntity>>(
+    TRASHCAN_VIEW + `?offset=${offset}&limit=${limit}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export function restoreFromTrashCan(
+  entityId: string,
+  accessToken: string | undefined,
+) {
+  return doPut<void>(
+    TRASHCAN_RESTORE(entityId),
+    undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+export function purgeFromTrashCan(
+  entityId: string,
+  accessToken: string | undefined,
+) {
+  return doPut<void>(
+    TRASHCAN_PURGE(entityId),
+    undefined,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }

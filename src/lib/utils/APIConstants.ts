@@ -107,3 +107,20 @@ export const DATA_ACCESS_SUBMISSION_BY_ID = (id: string | number) =>
 
 export const PROFILE_IMAGE_PREVIEW = (userId: string) =>
   `${REPO}/userProfile/${userId}/image/preview`
+
+export const APPROVED_SUBMISSION_INFO = (
+  accessRequirementId: string | number,
+) => ACCESS_REQUIREMENT_BY_ID(accessRequirementId) + `/approvedSubmissionInfo`
+
+export const EVALUATION = `${REPO}/evaluation`
+export const EVALUATION_BY_ID = (id: string | number) => EVALUATION + `/${id}`
+
+export const ACTIVITY_FOR_ENTITY = (entityId: string, versionNumber?: string) =>
+  versionNumber
+    ? `${REPO}/entity/${entityId}/version/${versionNumber}/generatedBy`
+    : `${REPO}/entity/${entityId}/generatedBy`
+
+export const TRASHCAN = `${REPO}/trashcan`
+export const TRASHCAN_VIEW = `${TRASHCAN}/view`
+export const TRASHCAN_RESTORE = (id: string) => `${TRASHCAN}/restore/${id}`
+export const TRASHCAN_PURGE = (id: string) => `${TRASHCAN}/purge/${id}`

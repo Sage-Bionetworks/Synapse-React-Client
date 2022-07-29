@@ -13,7 +13,7 @@ export type RangeProps = {
   initialValues?: RangeValues
   className?: string
   errorText?: string
-  onChange: Function
+  onChange: (newValues: RangeValues) => void
 }
 
 export const Range: React.FunctionComponent<RangeProps> = (
@@ -66,7 +66,7 @@ export const Range: React.FunctionComponent<RangeProps> = (
 
   const handleAppyChanges = (
     values: RangeValues,
-    callBackFn: Function,
+    callBackFn: (newValues: RangeValues) => void,
     type: ControlType = 'number',
   ) => {
     if (isValid(values, type)) {
@@ -78,6 +78,7 @@ export const Range: React.FunctionComponent<RangeProps> = (
     <div className={className} style={{ display: 'flex', flexWrap: 'wrap' }}>
       <div style={{ marginRight: '10px' }}>
         <input
+          aria-label="min"
           key="range_min"
           type={props.type}
           value={values.min}
@@ -87,6 +88,7 @@ export const Range: React.FunctionComponent<RangeProps> = (
         />
         <div>to</div>
         <input
+          aria-label="max"
           key="range_max"
           type={props.type}
           value={values.max}

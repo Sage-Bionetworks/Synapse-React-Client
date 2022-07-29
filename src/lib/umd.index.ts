@@ -19,8 +19,7 @@ import { EvaluationEditorPage } from './containers/evaluation_queues/EvaluationE
 import FavoritesPage from './containers/FavoritesPage'
 import ForumSearch from './containers/ForumSearch'
 import FullWidthAlert from './containers/FullWidthAlert'
-import HasAccess from './containers/HasAccess'
-import { HasAccessV2 } from './containers/HasAccessV2'
+import { HasAccessV2 as HasAccess } from './containers/HasAccessV2'
 import { HelpPopover } from './containers/HelpPopover'
 import ProjectViewCarousel from './containers/home_page/project_view_carousel/ProjectViewCarousel'
 import IconSvg from './containers/IconSvg'
@@ -39,8 +38,10 @@ import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
 import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
 import TermsAndConditions from './containers/TermsAndConditions'
 import { displayToast, SynapseToastContainer } from './containers/ToastMessage'
+import { TrashCanList } from './containers/trash/TrashCanList'
 import UserCard from './containers/UserCard'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
+import { ProvenanceGraph } from './containers/provenance/ProvenanceGraph'
 import './style/main.scss'
 import { SynapseClient, SynapseConstants } from './utils'
 import {
@@ -62,7 +63,6 @@ const SynapseComponents = {
   UserCard,
   StatisticsPlot,
   HasAccess,
-  HasAccessV2,
   EvaluationCard,
   EvaluationEditorPage,
   AccessTokenPage,
@@ -99,6 +99,8 @@ const SynapseComponents = {
   ChangePassword,
   ForumSearch,
   ReviewerDashboard,
+  ProvenanceGraph,
+  TrashCanList,
 }
 
 // Include the version in the build

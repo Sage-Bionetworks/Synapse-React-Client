@@ -1,9 +1,23 @@
 import { getIsAllSelectedFromInfiniteList } from '../../../../lib/utils/hooks/useGetIsAllSelectedInfiniteList'
 import { Map } from 'immutable'
 import { EntityHeader, EntityType } from '../../../../lib/utils/synapseTypes'
+import { getEntityTypeFromHeader } from '../../../../lib/utils/functions/EntityTypeUtils'
 
 const ALL_TYPES = Object.values(EntityType)
 const mockFetchNextPage = jest.fn()
+
+function isSelectedInMap(map: Map<string, number>) {
+  return (e: EntityHeader) => {
+    return map.has(e.id)
+  }
+}
+
+function isSelectableByEntityType(types: EntityType[]) {
+  return (e: EntityHeader) => {
+    const type = getEntityTypeFromHeader(e)
+    return types.includes(type)
+  }
+}
 
 describe('getIsAllSelectedInifiniteList tests', () => {
   beforeEach(() => {
@@ -26,8 +40,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        ALL_TYPES,
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType(ALL_TYPES),
         false,
         mockFetchNextPage,
         false,
@@ -40,8 +55,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        ALL_TYPES,
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType(ALL_TYPES),
         false,
         mockFetchNextPage,
         false,
@@ -65,8 +81,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        ALL_TYPES,
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType(ALL_TYPES),
         false,
         mockFetchNextPage,
         false,
@@ -100,8 +117,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        ALL_TYPES,
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType(ALL_TYPES),
         false,
         mockFetchNextPage,
         false,
@@ -135,8 +153,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        [EntityType.PROJECT], // can only select projects
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType([EntityType.PROJECT]), // can only select projects
         false,
         mockFetchNextPage,
         false,
@@ -170,8 +189,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        ALL_TYPES,
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType(ALL_TYPES),
         true, // There is a next page
         mockFetchNextPage,
         false,
@@ -208,8 +228,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        [EntityType.DATASET], // Can only select Datasets
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType([EntityType.DATASET]), // Can only select Datasets
         true, // There is a next page
         mockFetchNextPage,
         false,
@@ -246,8 +267,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        ALL_TYPES,
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType(ALL_TYPES),
         true, // There is a next page
         mockFetchNextPage,
         true, // isFetching
@@ -284,8 +306,9 @@ describe('getIsAllSelectedInifiniteList tests', () => {
     expect(
       getIsAllSelectedFromInfiniteList(
         fetchedEntities,
-        selectedEntities,
-        [EntityType.FILE], // Can only select Files
+        selectedEntities.size,
+        isSelectedInMap(selectedEntities),
+        isSelectableByEntityType([EntityType.FILE]), // Can only select Files
         true, // There is a next page
         mockFetchNextPage,
         false,

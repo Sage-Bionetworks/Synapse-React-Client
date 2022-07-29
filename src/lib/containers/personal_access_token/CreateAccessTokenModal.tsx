@@ -87,7 +87,7 @@ export const CreateAccessTokenModal: React.FunctionComponent<
 
   return (
     <Modal
-      className={'AccessTokenModal'}
+      className={'bootstrap-4-backport AccessTokenModal'}
       animation={false}
       show={true}
       onHide={onClose}
@@ -176,15 +176,15 @@ export const CreateAccessTokenModal: React.FunctionComponent<
         </ModalBody>
         <Modal.Footer>
           {showCreatedToken ? (
-            <Button variant="default" onClick={onClose}>
+            <Button variant="outline" onClick={onClose}>
               Close
             </Button>
           ) : (
             <>
-              <Button variant="default" onClick={onClose}>
+              <Button variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" onClick={onSubmit}>
+              <Button type="submit" variant="sds-primary" onClick={onSubmit}>
                 Create Token
               </Button>
             </>

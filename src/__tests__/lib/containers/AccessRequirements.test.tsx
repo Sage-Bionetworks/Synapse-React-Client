@@ -26,11 +26,13 @@ import {
   ObjectType,
   WikiPageKey,
 } from '../../../lib/utils/synapseTypes/'
-import { MOCK_FILE_ENTITY_ID } from '../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
 import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
 
 const SynapseClient = require('../../../lib/utils/SynapseClient')
+
+const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 
 describe('Access Requirement List works as expect', () => {
   beforeAll(() => {

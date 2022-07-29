@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import * as React from 'react'
-import { HasAccessProps } from '../../../lib/containers/HasAccess'
-import { HasAccessV2 } from '../../../lib/containers/HasAccessV2'
+import {
+  HasAccessV2,
+  HasAccessProps,
+} from '../../../lib/containers/HasAccessV2'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { ENTITY_BUNDLE_V2 } from '../../../lib/utils/APIConstants'
 import {
@@ -16,11 +18,8 @@ import {
   RestrictionInformationRequest,
   RestrictionInformationResponse,
 } from '../../../lib/utils/synapseTypes'
-import {
-  mockFileEntityBundle,
-  mockFolderEntity,
-  MOCK_FILE_ENTITY_ID,
-} from '../../../mocks/entity/mockEntity'
+import { mockFolderEntity } from '../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 import {
   mockOpenRestrictionInformation,
@@ -28,7 +27,8 @@ import {
 } from '../../../mocks/mock_has_access_data'
 import { rest, server } from '../../../mocks/msw/server'
 
-const entityId = MOCK_FILE_ENTITY_ID
+const entityId = mockFileEntityData.id
+const mockFileEntityBundle = mockFileEntityData.bundle
 const isInDownloadList: boolean = true
 
 const renderComponent = (

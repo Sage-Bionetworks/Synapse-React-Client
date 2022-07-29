@@ -17,6 +17,12 @@ export const TablePagination = () => {
     setPageSize(value)
   }
 
+  // PORTALS-2259: Special case.  If we're on the first page,
+  // and the total query count is less than the min page size, then do not show pagination UI.
+  if (currentPage == 1 && queryCount && queryCount < 10) {
+    return <></>
+  }
+
   return (
     <div>
       <Pagination
@@ -33,11 +39,10 @@ export const TablePagination = () => {
         name="page size"
         onChange={handlePageSize}
         style={{ padding: '4px', marginLeft: '4px' }}
+        value={pageSize}
       >
         <option value={10}>10 per page</option>
-        <option selected value={25}>
-          25 per page
-        </option>
+        <option value={25}>25 per page</option>
         <option value={100}>100 per page</option>
         <option value={500}>500 per page</option>
       </select>

@@ -10,7 +10,7 @@ import {
 } from '../../../../lib/utils/synapseTypes'
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
-import { SynapseConstants } from '../../../../lib'
+import { SynapseConstants } from '../../../../lib/utils'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')

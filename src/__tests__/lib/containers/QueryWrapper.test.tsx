@@ -1,23 +1,20 @@
+import { render, screen, waitFor } from '@testing-library/react'
+import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
+import { act } from 'react-dom/test-utils'
+import {
+  QueryContextType,
+  useQueryContext,
+} from '../../../lib/containers/QueryContext'
 import {
   QueryWrapper,
   QueryWrapperProps,
 } from '../../../lib/containers/QueryWrapper'
-import {
-  useQueryContext,
-  QueryContextType,
-} from '../../../lib/containers/QueryContext'
-import syn16787123Json from '../../../mocks/query/syn16787123'
 import { SynapseConstants } from '../../../lib/utils/'
-import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
-import { cloneDeep } from 'lodash-es'
 import { SynapseContextProvider } from '../../../lib/utils/SynapseContext'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
-import { render, screen, waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
+import { QueryBundleRequest } from '../../../lib/utils/synapseTypes/'
+import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import syn16787123Json from '../../../mocks/query/syn16787123'
 
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'

@@ -15,6 +15,7 @@
   $input-border-color: SRC.$border-color-gray;
   $input-border-width: 1px;
   $input-border-radius: 2px;
+  $modal-footer-margin-between: 0rem;
   @import 'bootstrap/scss/bootstrap';
 
   .alert-danger {

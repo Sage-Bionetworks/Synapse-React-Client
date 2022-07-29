@@ -1,5 +1,6 @@
-import * as React from 'react'
-import { mount } from 'enzyme'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
 import ModalDownload, {
   ModalDownloadProps,
 } from '../../../lib/containers/ModalDownload'
@@ -7,31 +8,27 @@ import {
   csvOption,
   tsvOption,
   writeHeaderOption,
-  includeRowIdAndRowVersionOption,
 } from '../../../lib/containers/ModalDownload.FormSchema'
-import {
-  MOCK_CONTEXT_VALUE,
-  SynapseTestContext,
-} from '../../../mocks/MockSynapseContext'
+import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
+import { SynapseClient } from '../../../lib/utils'
+import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
 
 const renderComponent = (props: ModalDownloadProps) => {
-  const wrapper = mount<ModalDownload>(<ModalDownload {...props} />, {
-    wrappingComponent: SynapseTestContext,
+  return render(<ModalDownload {...props} />, {
+    wrapper: createWrapper(),
   })
-  const instance = wrapper.instance()
-  return { wrapper, instance }
 }
 
 describe('it performs the expected functionality', () => {
   const mockClose = jest.fn()
-  const SynapseClient = require('../../../lib/utils/SynapseClient')
-  const mockGetDownloadFromTableRequest = jest.fn(() =>
-    Promise.resolve({
+  const mockGetDownloadFromTableRequest = jest
+    .spyOn(SynapseClient, 'getDownloadFromTableRequest')
+    .mockResolvedValue({
       resultFileHandleId: 'hello',
-    }),
-  )
-  SynapseClient.getDownloadFromTableRequest = mockGetDownloadFromTableRequest
-  SynapseClient.getFileHandleByIdURL = jest.fn(() => 'testurl')
+    })
+  const mockGetFile = jest
+    .spyOn(SynapseClient, 'getFileHandleByIdURL')
+    .mockResolvedValue('testurl')
   const props: ModalDownloadProps = {
     queryBundleRequest: {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -44,24 +41,18 @@ describe('it performs the expected functionality', () => {
     onClose: mockClose,
   }
 
-  it('renders without crashing', () => {
-    const { wrapper } = renderComponent(props)
-    expect(wrapper).toBeDefined()
-  })
-
-  /**
-   * These two skipped methods are blocked from working until this issue is resolved
-   * https://github.com/facebook/react/issues/15691
-   */
-  it.skip('generates a csv file', async () => {
-    const { wrapper } = await renderComponent(props)
-    expect(wrapper).toBeDefined()
+  test('generates a csv file', async () => {
+    renderComponent(props)
     // step 1 - select csv option
-    const csvInputElement = wrapper.find(`input[value="${csvOption}"]`)
-    await csvInputElement.simulate('change')
-    await wrapper.find('button[type="submit"]').simulate('submit')
+    const csvOptionElement = screen.getByLabelText(csvOption)
+    userEvent.click(csvOptionElement)
+
+    userEvent.click(screen.getByRole('button', { name: 'Next' }))
+
     // step 2 - verify UI has download button showing
-    expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
+    const downloadButton = await screen.findByRole('button', {
+      name: 'Download',
+    })
     expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         csvTableDescriptor: { separator: ',' },
@@ -70,23 +61,31 @@ describe('it performs the expected functionality', () => {
       }),
       MOCK_CONTEXT_VALUE.accessToken,
     )
+
+    userEvent.click(downloadButton)
+    await waitFor(() => expect(mockGetFile).toHaveBeenCalled())
+    await waitFor(() => expect(mockClose).toHaveBeenCalled())
   })
 
-  it.skip('generates a tsv file without header', async () => {
-    const { wrapper } = await renderComponent(props)
-    expect(wrapper).toBeDefined()
+  test('generates a tsv file without header', async () => {
+    renderComponent(props)
+
     // step 1 - select tsv option
-    const csvInputElement = wrapper.find(`input[value="${tsvOption}"]`)
-    // // await csvInputElement.simulate('change', {target: { checked: true }})
-    await csvInputElement.simulate('change')
-    // // step 2 - de-select write header option
-    const writerHeaderInputElement = wrapper.find(`input[type="checkbox"]`)
-    expect(writerHeaderInputElement.at(0).prop('checked')).toBe(true)
-    wrapper.find(`input[type="checkbox"]`).at(0).props().checked = false
-    expect(writerHeaderInputElement.at(0).prop('checked')).toBe(false)
-    await wrapper.find('button[type="submit"]').simulate('submit')
-    // step 2 - verify UI has download button showing
-    expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
+    const tsvOptionElement = screen.getByLabelText(tsvOption)
+    userEvent.click(tsvOptionElement)
+
+    // step 2 - de-select write header option
+    const writeHeaderOptionElement =
+      screen.getByLabelText<HTMLInputElement>(writeHeaderOption)
+    expect(writeHeaderOptionElement.checked).toBe(true)
+    userEvent.click(writeHeaderOptionElement)
+    expect(writeHeaderOptionElement.checked).toBe(false)
+    userEvent.click(screen.getByRole('button', { name: 'Next' }))
+
+    // step 3 - verify UI has download button showing
+    const downloadButton = await screen.findByRole('button', {
+      name: 'Download',
+    })
     expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         csvTableDescriptor: { separator: '\t' },
@@ -95,53 +94,8 @@ describe('it performs the expected functionality', () => {
       }),
       MOCK_CONTEXT_VALUE.accessToken,
     )
-  })
-
-  it('generates a csv file using direct method testing', async () => {
-    const { wrapper, instance } = await renderComponent(props)
-    expect(wrapper).toBeDefined()
-    // simulates having clicked csvOption on radio box
-    const formData = {
-      'File Type': csvOption,
-      Contents: [writeHeaderOption, includeRowIdAndRowVersionOption],
-    }
-    // step 1 - select csv option
-    // @ts-ignore
-    await instance.handleChange({ formData })
-    await wrapper.find('form').simulate('submit')
-    // step 2 - verify UI has download button showing
-    expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
-    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        csvTableDescriptor: { separator: ',' },
-        writeHeader: true,
-        includeRowIdAndRowVersion: true,
-      }),
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-  })
-
-  it('generates a tsv file without header using direct method testing', async () => {
-    const { wrapper, instance } = await renderComponent(props)
-    expect(wrapper).toBeDefined()
-    // this simulates having clicked one checkbox option off and selecting tsv
-    const formData = {
-      'File Type': tsvOption,
-      Contents: [includeRowIdAndRowVersionOption],
-    }
-    // step 1 - select csv option
-    // @ts-ignore
-    await instance.handleChange({ formData })
-    await wrapper.find('form').simulate('submit')
-    // step 2 - verify UI has download button showing
-    expect(wrapper.find('button[type="submit"]').text()).toEqual('Download')
-    expect(mockGetDownloadFromTableRequest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        csvTableDescriptor: { separator: '\t' },
-        writeHeader: false,
-        includeRowIdAndRowVersion: true,
-      }),
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
+    userEvent.click(downloadButton)
+    await waitFor(() => expect(mockGetFile).toHaveBeenCalled())
+    await waitFor(() => expect(mockClose).toHaveBeenCalled())
   })
 })

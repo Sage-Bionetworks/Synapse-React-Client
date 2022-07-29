@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
-import { SynapseClient } from '../../utils'
-import { useListState } from '../../utils/hooks/useListState'
-import { useSynapseContext } from '../../utils/SynapseContext'
-import { AccessTokenRecord } from '../../utils/synapseTypes/AccessToken/AccessTokenRecord'
+import { useGetPersonalAccessTokensInfinite } from '../../utils/hooks/SynapseAPI/user/usePersonalAccessToken'
 import { ErrorBanner, SynapseErrorBoundary } from '../ErrorBanner'
 import loadingScreen from '../LoadingScreen'
 import { AccessTokenCard } from './AccessTokenCard'
@@ -18,53 +15,23 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
   title,
   body,
 }: AccessTokenPageProps) => {
-  const { accessToken } = useSynapseContext()
-  const [isLoading, setIsLoading] = useState(false)
-
   const [showCreateTokenModal, setShowCreateTokenModal] = useState(false)
 
   const {
-    list: tokenRecords,
-    appendToList: appendTokenRecords,
-    setList: setTokenRecords,
-  } = useListState<AccessTokenRecord>([])
-
-  const [loadNextPage, setLoadNextPage] = useState(true)
-  const [nextPageToken, setNextPageToken] = useState<string | undefined>(
-    undefined,
-  )
-
-  const [showErrorMessage, setShowErrorMessage] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+    data: infiniteData,
+    isLoading,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+  } = useGetPersonalAccessTokensInfinite()
 
   // We rerender the list whenever a token is created or deleted to ensure we are up-to-date
   const rerenderList = () => {
-    setTokenRecords([])
-    setNextPageToken(undefined)
-    setLoadNextPage(true)
+    refetch()
   }
 
-  useEffect(() => {
-    if (loadNextPage) {
-      setLoadNextPage(false)
-      setIsLoading(true)
-      SynapseClient.getPersonalAccessTokenRecords(accessToken, nextPageToken)
-        .then(response => {
-          setIsLoading(false)
-          appendTokenRecords(...response.results)
-          if (response.nextPageToken) {
-            setNextPageToken(response.nextPageToken)
-          } else {
-            setNextPageToken(undefined)
-          }
-        })
-        .catch(err => {
-          setIsLoading(false)
-          setErrorMessage(err)
-          setShowErrorMessage(true)
-        })
-    }
-  }, [loadNextPage, accessToken, nextPageToken])
+  const tokenRecords = infiniteData?.pages.flatMap(page => page.results) ?? []
 
   return (
     <div className="PersonalAccessTokenPage bootstrap-4-backport">
@@ -75,7 +42,7 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
         </div>
         <div className="PersonalAccessTokenPage__Header__CreateButton">
           <Button
-            variant="primary"
+            variant="sds-primary"
             onClick={() => setShowCreateTokenModal(true)}
           >
             Create New Token
@@ -107,19 +74,21 @@ export const AccessTokenPage: React.FunctionComponent<AccessTokenPageProps> = ({
               )
             })}
             {isLoading && loadingScreen}
-            {!isLoading && nextPageToken && !showErrorMessage && (
+            {!isLoading && hasNextPage && !error && (
               <div className="PersonalAccessTokenPage__CardList__LoadMore">
                 <Button
                   className="PersonalAccessTokenPage__CardList__LoadMore__Button"
-                  variant="primary"
-                  onClick={() => setLoadNextPage(true)}
+                  variant="sds-primary"
+                  onClick={() => {
+                    fetchNextPage()
+                  }}
                 >
                   Load More
                 </Button>
               </div>
             )}
           </div>
-          {showErrorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
+          {error && <ErrorBanner error={error}></ErrorBanner>}
         </div>
       </SynapseErrorBoundary>
     </div>

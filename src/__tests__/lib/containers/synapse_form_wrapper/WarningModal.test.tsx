@@ -1,19 +1,17 @@
 import * as React from 'react'
-import { mount } from 'enzyme'
 import * as _ from 'lodash-es'
 
 import WarningModal, {
   WarningModalProps,
 } from '../../../../lib/containers/synapse_form_wrapper/WarningModal'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 
-const createMountedComponent = (props: WarningModalProps) => {
-  const wrapper = mount(<WarningModal {...props} />)
-
-  //const instance = wrapper.instance() as  WarningModal
-  return { wrapper /*, instance */ }
+const renderComponent = (props: WarningModalProps) => {
+  return render(<WarningModal {...props} />)
 }
 
-describe('basic tests', () => {
+describe('WarningModal', () => {
   const mock = {
     confirmFn: jest.fn(() => Promise.resolve({ value: 'ok' })),
   }
@@ -28,21 +26,21 @@ describe('basic tests', () => {
     onConfirmCallbackArgs: ['one', 'two'],
   }
 
-  it('should display the modal with correct text', async () => {
-    const { wrapper } = createMountedComponent(props)
-    expect(wrapper).toBeDefined()
-    expect(wrapper.find('.modal-title.h4').text()).toBe(props.title)
-    expect(wrapper.find('div.modal-body').text()).toBe(props.modalBody)
-    expect(wrapper.find('.btn-sds-primary').text()).toBe(
-      props.confirmButtonText,
+  test('should display the modal with correct text', () => {
+    renderComponent(props)
+    const dialog = screen.getByRole('dialog')
+    within(dialog.querySelector('.modal-title.h4')!).getByText(props.title)
+    within(dialog.querySelector('div.modal-body')!).getByText(
+      props.modalBody as string,
     )
+    screen.getByRole('button', { name: props.confirmButtonText })
   })
 
-  it('should call callback fn with correct arguments', async () => {
+  test('should call callback fn with correct arguments', () => {
     const spy = jest.spyOn(mock, 'confirmFn')
-    const { wrapper } = createMountedComponent(props)
-    const btn = wrapper.find('.btn-sds-primary')
-    btn.simulate('click')
+    renderComponent(props)
+    const btn = screen.getByRole('button', { name: props.confirmButtonText })
+    userEvent.click(btn)
     expect(spy).toHaveBeenCalledWith('one', 'two')
   })
 })

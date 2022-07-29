@@ -11,13 +11,12 @@ import {
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
-import {
-  mockFileEntityJson,
-  MOCK_FILE_ENTITY_ID,
-} from '../../../../../mocks/entity/mockEntity'
+import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { mockSchemaBinding } from '../../../../../mocks/mockSchema'
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../../mocks/msw/server'
+
+const { id: MOCK_FILE_ENTITY_ID, json: mockFileEntityJson } = mockFileEntityData
 
 const defaultProps: AnnotationsTableProps = {
   entityId: MOCK_FILE_ENTITY_ID,

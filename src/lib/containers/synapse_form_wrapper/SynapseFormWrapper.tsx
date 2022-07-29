@@ -6,9 +6,10 @@ import { Alert } from 'react-bootstrap'
 import { UiSchema } from '@rjsf/core'
 import { SynapseClient } from '../../utils'
 import { SRC_SIGN_IN_CLASS } from '../../utils/SynapseConstants'
-import { FileEntity, FormData } from '../../utils/synapseTypes/'
+import { FormData } from '../../utils/synapseTypes/'
 import SynapseForm from './SynapseForm'
 import { StatusEnum } from './types'
+import { getFileEntityData } from './SynapseFormUtils'
 
 /**
  * TODO: SWC-5612 - Replace token prop with SynapseContext.accessToken
@@ -85,52 +86,17 @@ class SynapseFormWrapper extends React.Component<
     }
   }
 
-  //gets a file entity with content
-  getFileEntityData = async (
-    token: string,
-    entityId: string,
-    versionNumber?: string,
-  ): Promise<{ version?: number; content: JSON }> => {
-    try {
-      const entity: FileEntity = await SynapseClient.getEntity(
-        token,
-        entityId,
-        versionNumber,
-      )
-      const fileHandleContent = await SynapseClient.getFileResult(
-        entity,
-        token,
-        true,
-        true,
-      )
-      const fileContent = await SynapseClient.getFileHandleContent(
-        fileHandleContent.fileHandle!,
-        fileHandleContent.preSignedURL!,
-      )
-      const content = JSON.parse(fileContent)
-      return {
-        version: entity.versionNumber,
-        content: content,
-      }
-    } catch (error) {
-      const newError = {
-        message: `${error.message}:  configuration data for ${entityId} failed to load`,
-      }
-      this.onError(newError)
-      return Promise.reject(newError)
-    }
-  }
-
   //same as above but also uses $RefParser to convert json $refs to regular json
   getFileEntityDataDereferenced = async (
     token: string,
     entityId: string,
     versionNumber?: string,
   ): Promise<{ version?: number; content: JSON }> => {
-    const { version, content } = await this.getFileEntityData(
+    const { version, content } = await getFileEntityData(
       token,
       entityId,
       versionNumber,
+      this.onError,
     )
     const derefContent = (await $RefParser.dereference(content)) as JSON
     return {
@@ -177,15 +143,17 @@ class SynapseFormWrapper extends React.Component<
           this.props.formSchemaEntityId,
           formSchemaVersion,
         ),
-        this.getFileEntityData(
+        getFileEntityData(
           token,
           this.props.formUiSchemaEntityId,
           uiSchemaVersion,
+          this.onError,
         ),
-        this.getFileEntityData(
+        getFileEntityData(
           token,
           this.props.formNavSchemaEntityId,
           navSchemaVersion,
+          this.onError,
         ),
       ]
       const configData = await Promise.all(promises)

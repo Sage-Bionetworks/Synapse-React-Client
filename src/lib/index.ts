@@ -17,7 +17,7 @@ import { ExternalFileHandleLink } from './containers/ExternalFileHandleLink'
 import FileUpload from './containers/FileUpload'
 import ForumSearch from './containers/ForumSearch'
 import FullWidthAlert from './containers/FullWidthAlert'
-import HasAccess from './containers/HasAccess'
+import { HasAccessV2 as HasAccess } from './containers/HasAccessV2'
 import FeaturedDataTabs from './containers/home_page/featured-data/FeaturedDataTabs'
 import FeaturedToolsList from './containers/home_page/featured_tools/FeaturedToolsList'
 import Goals from './containers/home_page/goals/Goals'
@@ -42,6 +42,7 @@ import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWra
 import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
 import SynapseTable from './containers/table/SynapseTable'
 import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
+import { ProvenanceGraph } from './containers/provenance/ProvenanceGraph'
 import TableFeedCards from './containers/TableFeedCards'
 import TermsAndConditions from './containers/TermsAndConditions'
 import { displayToast, SynapseToastContainer } from './containers/ToastMessage'
@@ -120,6 +121,7 @@ const SynapseComponents = {
   ProgrammaticTableDownload,
   ChangePassword,
   FileUpload,
+  ProvenanceGraph,
   ForumSearch,
 }
 
