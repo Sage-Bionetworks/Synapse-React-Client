@@ -1,29 +1,27 @@
-import * as React from 'react'
-import { mount } from 'enzyme'
+import $RefParser from '@apidevtools/json-schema-ref-parser'
+import { render, screen, within } from '@testing-library/react'
 import * as _ from 'lodash-es'
-import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
+import React from 'react'
 import SummaryTable, {
   SummaryTableProps,
 } from '../../../../lib/containers/synapse_form_wrapper/SummaryTable'
-import $RefParser from '@apidevtools/json-schema-ref-parser'
-
+import { Step } from '../../../../lib/containers/synapse_form_wrapper/types'
 import {
-  stepsWithUserData,
-  mockFormSchema as formSchema,
   mockFormData as submissionData,
+  mockFormSchema as formSchema,
   mockUiSchema as formUiSchema,
+  stepsWithUserData,
 } from '../../../../mocks/mock_drug_tool_data'
 
 const stepsArray: Step[] = _.cloneDeep(stepsWithUserData)
 
-const createShallowComponent = async (props: SummaryTableProps) => {
+const renderComponent = async (props: SummaryTableProps) => {
   const schema = await $RefParser.dereference(props.schema)
   const _props = { ...props, ...{ schema } }
-  const wrapper = mount(<SummaryTable {..._props} />)
-  return { wrapper }
+  return render(<SummaryTable {..._props} />)
 }
 
-describe('basic tests', () => {
+describe('SummaryTable', () => {
   const mock = {
     callbackFn: jest.fn(() => 'ok'),
   }
@@ -48,7 +46,7 @@ describe('basic tests', () => {
     Naming: 'Naming',
   }
 
-  it('should only display the properties that have values', async () => {
+  test('should only display the properties that have values', async () => {
     const modifiedSubmissionData = _.cloneDeep(props.formData)
     modifiedSubmissionData.basic = {
       reqtextfield: undefined,
@@ -57,14 +55,14 @@ describe('basic tests', () => {
       ...props,
       ...{ formData: modifiedSubmissionData },
     }
-    const { wrapper } = await createShallowComponent(_props)
+    const { container } = await renderComponent(_props)
     expect(_props.steps[0].title).toBe(titles.Efficacy)
     expect(
       Object.values(_props.formData.efficacy).filter(
         value => value || value === false,
       ),
     ).not.toHaveLength(0)
-    expect(wrapper.text().indexOf(titles.Efficacy)).not.toBe(-1)
+    screen.getByText(titles.Efficacy)
 
     expect(_props.steps[1].title).toBe(titles.Basic)
     expect(
@@ -72,30 +70,31 @@ describe('basic tests', () => {
         value => value || value === false,
       ),
     ).toHaveLength(0)
-    expect(wrapper.text().indexOf('Basic')).toBe(-1)
+
+    expect(screen.queryByText(titles.Basic)).not.toBeInTheDocument()
     expect(_props.steps[2].title).toBe(titles.Naming)
     expect(
       Object.values(_props.formData.naming).filter(
         value => value || value === false,
       ),
     ).not.toHaveLength(0)
-    expect(wrapper.text().indexOf('Naming')).not.toBe(-1)
+    screen.getByText(titles.Naming)
     expect(Object.keys(_props.formData.basic).indexOf('reqtextfield')).not.toBe(
       -1,
     )
     expect(_props.formData.basic.reqtextfield).toBeUndefined()
-    expect(wrapper.text().indexOf('reqtextfield')).toBe(-1)
+    expect(screen.queryByText('reqtextfield')).not.toBeInTheDocument()
 
     expect(
       Object.keys(_props.formData.naming).indexOf('chemical_name'),
     ).not.toBe(-1)
     expect(_props.formData.naming.chemical_name).not.toBeUndefined()
-    expect(wrapper.text().indexOf('Chemical Name')).not.toBe(-1)
+    screen.getByText('Chemical Name')
 
-    const firstColumns = wrapper.find('td:first-child')
+    const firstColumns = container.querySelectorAll('td:first-child')
     let result = 0
     for (let i = 0; i < firstColumns.length; i++) {
-      if (firstColumns.at(i).text() !== '') {
+      if (firstColumns[i].textContent !== '') {
         result++
       }
     }
@@ -103,33 +102,31 @@ describe('basic tests', () => {
     expect(firstColumns.length).toBeGreaterThan(2)
   })
 
-  it('should flatten nested data', async () => {
-    const { wrapper } = await createShallowComponent(props)
+  test('should flatten nested data', async () => {
+    await renderComponent(props)
 
     expect(props.formData.efficacy.cell_line_efficacy[0].cell_line).toBe(
       'Cell Line Efficacy Value',
     )
 
-    const cell1 = wrapper.findWhere(
-      n =>
-        n.html() ===
-        '<td>[1] What cell line was used for the efficacy assay?</td>',
-    )
-    const cell2 = wrapper.findWhere(
-      n => n.html() === '<td>Cell Line Efficacy Value</td>',
-    )
-
-    expect(cell1).toHaveLength(1)
-    expect(cell2).toHaveLength(1)
+    screen.getByRole('cell', {
+      name: '[1] What cell line was used for the efficacy assay?',
+    })
+    screen.getByRole('cell', { name: 'Cell Line Efficacy Value' })
   })
 
-  it('should not display delete button', async () => {
-    let { wrapper } = await createShallowComponent(props)
-    expect(wrapper.find('button')).toHaveLength(1)
-    expect(wrapper.find('button').text()).toContain('Print')
+  test('should not display delete button when isWizard is true', async () => {
+    await renderComponent(props)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(1)
+    within(buttons[0]).getByText('Print', { exact: false })
+  })
+
+  test('should not display delete button when isWizard is false', async () => {
     const _props = { ...props, ...{ isWizard: false } }
-    ;({ wrapper } = await createShallowComponent(_props))
-    expect(wrapper.find('button')).toHaveLength(1)
-    expect(wrapper.find('button').text()).toContain('Print')
+    await renderComponent(_props)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(1)
+    within(buttons[0]).getByText('Print', { exact: false })
   })
 })

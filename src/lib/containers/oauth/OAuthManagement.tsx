@@ -135,43 +135,6 @@ export const OAuthManagement: React.FunctionComponent = () => {
         />
       )}
 
-      <WarningModal
-        show={isShowingSecretWarning}
-        title={warningHeader}
-        modalBody={warningBody}
-        onCancel={() => {
-          setIsShowingSecretWarning(false)
-          setSelectedClient(undefined)
-        }}
-        onConfirm={onShowSecret}
-        confirmButtonVariant="danger"
-        confirmButtonText="Yes, Continue"
-      />
-
-      <Modal
-        show={isShowingSecret}
-        animation={false}
-        backdrop="static"
-        onHide={() => {
-          setIsShowingSecret(false)
-          setSecret(undefined)
-        }}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <Typography variant="headline1">App Secret</Typography>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            <b>This secret will not be able to be retrieved again.</b> If
-            needed, in order to generate a new secret select Generate from the
-            Client List.
-          </p>
-          <CopyToClipboardInput value={secret} inputWidth={'350px'} />
-        </Modal.Body>
-      </Modal>
-
       <Modal
         show={isShowingVerification}
         animation={false}
@@ -206,6 +169,43 @@ export const OAuthManagement: React.FunctionComponent = () => {
           {/* <p>
             Verification can take up to X weeks and we will notify you via X.
           </p> */}
+        </Modal.Body>
+      </Modal>
+
+      <WarningModal
+        show={isShowingSecretWarning}
+        title={warningHeader}
+        modalBody={warningBody}
+        onCancel={() => {
+          setIsShowingSecretWarning(false)
+          setSelectedClient(undefined)
+        }}
+        onConfirm={onShowSecret}
+        confirmButtonVariant="danger"
+        confirmButtonText="Yes, Continue"
+      />
+
+      <Modal
+        show={isShowingSecret}
+        animation={false}
+        backdrop="static"
+        onHide={() => {
+          setIsShowingSecret(false)
+          setSecret(undefined)
+        }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <Typography variant="headline1">App Secret</Typography>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            <b>This secret will not be able to be retrieved again.</b> If
+            needed, in order to generate a new secret select Generate from the
+            Client List.
+          </p>
+          <CopyToClipboardInput value={secret} inputWidth={'350px'} />
         </Modal.Body>
       </Modal>
     </div>
