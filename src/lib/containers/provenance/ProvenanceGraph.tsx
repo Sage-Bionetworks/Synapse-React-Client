@@ -81,11 +81,10 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   const [clickedNode, setClickedNode] = useState<Node>()
   const handleError = useErrorHandler()
 
-  const {
-    data: rootEntityHeadersPage,
-    isError,
-    isSuccess,
-  } = useGetEntityHeaders(rootEntityRefs, { useErrorBoundary: true })
+  const { data: rootEntityHeadersPage, isSuccess } = useGetEntityHeaders(
+    rootEntityRefs,
+    { useErrorBoundary: true },
+  )
   if (isSuccess && rootEntityHeadersPage.totalNumberOfResults == 0) {
     const synapseIds = rootEntityRefs.map(ref => ref.targetId).join(',')
     handleError(
@@ -296,7 +295,15 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         })
         .catch(e => handleError(e))
     }
-  })
+  }, [
+    addEntity,
+    handleError,
+    onExpandEntity,
+    rootEntityHeaders,
+    rootEntityRefs,
+    tempEdges,
+    tempNodes,
+  ])
 
   /**
    * This effect code executes when a node is clicked.
