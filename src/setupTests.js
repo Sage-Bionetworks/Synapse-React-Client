@@ -4,6 +4,8 @@ import { configure } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 import '@testing-library/jest-dom/extend-expect'
 import crypto from 'crypto'
+import { ResizeObserver } from '@juggle/resize-observer'
+
 // MarkdownSynapse dependencies below --
 // When using the component in production it relies on these imports being globals,
 // however, the testing environment doesn't have a browser loading CDNs, so we
@@ -22,6 +24,7 @@ global.markdownitInlineComments = require('markdown-it-inline-comments')
 global.markdownitBr = require('markdown-it-br')
 global.sanitizeHtml = require('sanitize-html')
 global.markdownitMath = require('markdown-it-synapse-math')
+global.ResizeObserver = ResizeObserver
 
 configure({ adapter: new Adapter() })
 // Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)

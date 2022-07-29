@@ -41,6 +41,7 @@ import { displayToast, SynapseToastContainer } from './containers/ToastMessage'
 import { TrashCanList } from './containers/trash/TrashCanList'
 import UserCard from './containers/UserCard'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
+import { ProvenanceGraph } from './containers/provenance/ProvenanceGraph'
 import './style/main.scss'
 import { SynapseClient, SynapseConstants } from './utils'
 import {
@@ -98,6 +99,7 @@ const SynapseComponents = {
   ChangePassword,
   ForumSearch,
   ReviewerDashboard,
+  ProvenanceGraph,
   TrashCanList,
 }
 

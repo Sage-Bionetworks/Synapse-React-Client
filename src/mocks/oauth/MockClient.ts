@@ -28,7 +28,7 @@ export const mockClientList2: OAuthClientList = {
     {
       client_id: mockUserProfileData2.ownerId,
       client_name: mockUserProfileData2.firstName,
-      verified: true,
+      verified: false,
       redirect_uris: [mockUserProfileData2.url!],
       client_uri: mockUserProfileData2.url,
       policy_uri: mockUserProfileData2.url,

@@ -71,6 +71,7 @@ export const EMPTY_HEADER: EntityHeader = {
   createdOn: '',
   modifiedBy: '',
   modifiedOn: '',
+  isLatestVersion: true,
 }
 
 type Direction = '' | 'ASC' | 'DESC'

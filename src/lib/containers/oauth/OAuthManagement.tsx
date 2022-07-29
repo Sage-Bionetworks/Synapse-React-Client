@@ -21,6 +21,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
   const [isShowingSecretWarning, setIsShowingSecretWarning] = useState(false)
   const [isShowingSecret, setIsShowingSecret] = useState(false)
   const [secret, setSecret] = useState<string>()
+  const [isShowingVerification, setIsShowingVerification] = useState(false)
 
   const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
   const oAuthClientList = data?.pages.flatMap(page => page.results) ?? []
@@ -70,7 +71,17 @@ export const OAuthManagement: React.FunctionComponent = () => {
                 <td>{formatDate(moment(item.modifiedOn))}</td>
                 <td>{item.client_name}</td>
                 <td>
-                  {item.verified ? 'Yes' : 'SUBMIT_VERIFICATION_PLACE_HOLDER'}
+                  {item.verified ? (
+                    'Yes'
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsShowingVerification(true)}
+                    >
+                      SUBMIT VERIFICATION
+                    </Button>
+                  )}
                 </td>
                 <td>
                   <Button
@@ -81,7 +92,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
                     }}
                     size="sm"
                   >
-                    GENERATE
+                    GENERATE SECRET
                   </Button>
                 </td>
                 <td>
@@ -158,6 +169,43 @@ export const OAuthManagement: React.FunctionComponent = () => {
             Client List.
           </p>
           <CopyToClipboardInput value={secret} inputWidth={'350px'} />
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={isShowingVerification}
+        animation={false}
+        backdrop="static"
+        onHide={() => setIsShowingVerification(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>
+            <Typography variant="headline1">Submit Verification</Typography>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            In order to verify an OAuth client please submit a request to the{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+            >
+              Synapse Service Desk.
+            </a>
+          </p>
+          <b>Please list the following items in your request:</b>
+          <ul>
+            <li>Your name</li>
+            <li>
+              The ID of the client to be verified <br />
+              <i>(You can find this within Actions)</i>
+            </li>
+            <li>A description of your application</li>
+          </ul>
+          {/* <p>
+            Verification can take up to X weeks and we will notify you via X.
+          </p> */}
         </Modal.Body>
       </Modal>
     </div>

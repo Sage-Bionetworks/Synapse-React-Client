@@ -10,6 +10,7 @@ import {
   ACCESS_REQUIREMENT_SEARCH,
   ACCESS_REQUIREMENT_STATUS,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  ACTIVITY_FOR_ENTITY,
   ALIAS_AVAILABLE,
   APPROVED_SUBMISSION_INFO,
   ASYNCHRONOUS_JOB_TOKEN,
@@ -228,6 +229,7 @@ import {
   OAuthClientIdAndSecret,
   OAuthClientList,
 } from './synapseTypes/OAuthClient'
+import { Activity } from './synapseTypes/Provenance/Provenance'
 
 const cookies = new UniversalCookies()
 
@@ -3473,7 +3475,7 @@ export const oAuthRegisterAccountStep2 = (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
-  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
   return doPost(
     '/auth/v1/oauth2/account2',
@@ -3496,7 +3498,7 @@ export const bindOAuthProviderToAccount = async (
   provider: string,
   authenticationCode: string | number,
   redirectUrl: string,
-  endpoint: any = BackendDestinationEnum.REPO_ENDPOINT,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
 ): Promise<LoginResponse> => {
   // Special case.  web app may not have discovered the access token by this point in init.
   // Look for the access token ourselves before binding.
@@ -3826,6 +3828,26 @@ export const getApprovedSubmissionInfo = (
   return doPost<SubmissionInfoPage>(
     APPROVED_SUBMISSION_INFO(submissionInfoPageRequest.accessRequirementId),
     submissionInfoPageRequest,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * http://rest-docs.synapse.org/rest/GET/activity/id/generated.html
+ */
+export const getActivityForEntity = (
+  entityId: string,
+  versionNumber?: number,
+  accessToken?: string,
+): Promise<Activity> => {
+  const url = ACTIVITY_FOR_ENTITY(
+    entityId,
+    versionNumber ? `${versionNumber}` : undefined,
+  )
+  return doGet<Activity>(
+    url,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
