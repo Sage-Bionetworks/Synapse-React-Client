@@ -76,11 +76,9 @@ describe('oAuthManagement tests', () => {
     )
     screen.findByText(mockClientList1.results[0].client_name)
 
-    // Currently place holders for verification / generate secret
-    // Once implemented need to update tests acoordingly
     await screen.findByText('Yes')
     await screen.findAllByRole('button', { name: 'EDIT' })
-    await screen.findAllByText('GENERATE_PLACEHOLDER')
+    await screen.findAllByRole('button', { name: 'GENERATE SECRET' })
   })
 
   it('Handles pagination', async () => {
