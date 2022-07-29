@@ -188,30 +188,31 @@ export const OAuthManagement: React.FunctionComponent = () => {
         confirmButtonVariant="danger"
         confirmButtonText="Yes, Continue"
       />
-
-      <Modal
-        show={isShowingSecret}
-        animation={false}
-        backdrop="static"
-        onHide={() => {
-          setIsShowingSecret(false)
-          setSecret(undefined)
-        }}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>
-            <Typography variant="headline1">App Secret</Typography>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>
-            <b>This secret will not be able to be retrieved again.</b> If
-            needed, in order to generate a new secret select Generate from the
-            Client List.
-          </p>
-          <CopyToClipboardInput value={secret} inputWidth={'350px'} />
-        </Modal.Body>
-      </Modal>
+      {secret && (
+        <Modal
+          show={isShowingSecret}
+          animation={false}
+          backdrop="static"
+          onHide={() => {
+            setIsShowingSecret(false)
+            setSecret(undefined)
+          }}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <Typography variant="headline1">App Secret</Typography>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              <b>This secret will not be able to be retrieved again.</b> If
+              needed, in order to generate a new secret select Generate from the
+              Client List.
+            </p>
+            <CopyToClipboardInput value={secret} inputWidth={'350px'} />
+          </Modal.Body>
+        </Modal>
+      )}
     </div>
   )
 }
