@@ -11,7 +11,7 @@ export function useGetActivityForEntity(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<Activity, SynapseClientError>(
-    ['getActivityForEntity', accessToken],
+    ['getActivityForEntity', entityId, versionNumber, accessToken],
     () =>
       SynapseClient.getActivityForEntity(entityId, versionNumber, accessToken),
     options,
