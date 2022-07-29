@@ -1,5 +1,4 @@
 import { rest } from 'msw'
-import { StringDecoder } from 'string_decoder'
 import {
   ENTITY,
   ENTITY_BUNDLE_V2,
@@ -229,7 +228,6 @@ export const entityHandlers = [
       }
 
       const referenceList = req.body as { references: Reference[] }
-
       const entityData = mockEntities
         .filter(entity =>
           referenceList.references.find(ref => ref.targetId === entity.id),

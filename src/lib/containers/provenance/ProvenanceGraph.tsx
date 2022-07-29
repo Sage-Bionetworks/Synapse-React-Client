@@ -551,6 +551,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
       accessToken,
       addActivityNode,
       addEntity,
+      addEntityPlaceholderNode,
       addExternalNode,
       getEntityHeadersIsCurrent,
     ],
@@ -679,6 +680,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     <SynapseErrorBoundary>
       <div
         className="bootstrap-4-backport ProvenanceWidget"
+        role="graphics-doc" //https://www.w3.org/wiki/SVG_Accessibility/ARIA_roles_for_charts#Document_Roles
         style={{ width: '100%', height: containerHeight }}
       >
         <ReactFlow

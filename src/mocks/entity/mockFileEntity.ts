@@ -193,7 +193,7 @@ const mockFileEntityHeader: EntityHeader = {
   id: mockFileEntity.id!,
   name: mockFileEntity.name,
   type: mockFileEntity.concreteType,
-  versionNumber: 1,
+  versionNumber: 3,
   versionLabel: 'Version label',
   benefactorId: 123,
   createdOn: mockFileEntity.createdOn!,

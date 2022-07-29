@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
-import { EntityType, Reference } from '../../utils/synapseTypes'
-import { EntityTypeIcon } from '../EntityIcon'
+import { Reference } from '../../utils/synapseTypes'
 import IconSvg from '../IconSvg'
 
 /**
