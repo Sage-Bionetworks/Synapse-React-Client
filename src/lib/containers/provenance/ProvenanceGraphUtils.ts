@@ -1,16 +1,10 @@
 import { Edge, Node } from 'react-flow-renderer'
-import { SynapseClient } from '../../utils'
-import {
-  EntityHeader,
-  Reference,
-  ReferenceList,
-} from '../../utils/synapseTypes'
+import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import {
   Activity,
   UsedURL,
 } from '../../utils/synapseTypes/Provenance/Provenance'
 import {
-  EntityHeaderIsCurrent,
   getNodeId,
   getProvenanceEdge,
   getProvenanceNode,
@@ -54,9 +48,7 @@ export const findEntityNode = (
 ) => {
   const nodeProps = {
     type: NodeType.ENTITY,
-    data: {
-      entityHeader,
-    },
+    data: entityHeader,
   }
   return nodesCopy.find(node => {
     return node.id === getNodeId(nodeProps)
@@ -102,18 +94,18 @@ export const addNodeAndEdge = (params: {
 
 export const addActivityNode = (params: {
   activity: Activity
-  entityHeaderIsCurrent: EntityHeaderIsCurrent
+  entityHeader: EntityHeader
   nodesCopy: Node[]
   edgesCopy: Edge[]
 }) => {
-  const { activity, entityHeaderIsCurrent, nodesCopy, edgesCopy } = params
+  const { activity, entityHeader, nodesCopy, edgesCopy } = params
   const activityNodeProps = {
     type: NodeType.ACTIVITY,
     data: activity,
   }
   const entityNodeProps = {
     type: NodeType.ENTITY,
-    data: entityHeaderIsCurrent,
+    data: entityHeader,
   }
   addNodeAndEdge({
     newNodeProps: activityNodeProps,
@@ -124,22 +116,22 @@ export const addActivityNode = (params: {
 }
 
 export const addExpandNode = (params: {
-  entityHeaderIsCurrent: EntityHeaderIsCurrent
+  entityHeader: EntityHeader
   itemCount: number | undefined
   nodesCopy: Node[]
   edgesCopy: Edge[]
 }) => {
-  const { entityHeaderIsCurrent, itemCount = 0, nodesCopy, edgesCopy } = params
+  const { entityHeader, itemCount = 0, nodesCopy, edgesCopy } = params
   const expandNodeProps = {
     type: NodeType.EXPAND,
     data: {
       itemCount,
-      entityHeaderIsCurrent,
+      entityHeader,
     },
   }
   const entityNodeProps = {
     type: NodeType.ENTITY,
-    data: entityHeaderIsCurrent,
+    data: entityHeader,
   }
   addNodeAndEdge({
     newNodeProps: expandNodeProps,
@@ -184,9 +176,7 @@ export const addUndefinedNode = (params: {
   }
   const entityNodeProps = {
     type: NodeType.ENTITY,
-    data: {
-      entityHeader,
-    },
+    data: entityHeader,
   }
   addNodeAndEdge({
     newNodeProps: undefinedNodeProps,
@@ -220,15 +210,15 @@ export const addExternalNode = (params: {
 }
 
 export const addEntityNode = (params: {
-  entityHeaderIsCurrent: EntityHeaderIsCurrent
+  entityHeader: EntityHeader
   activity: Activity | undefined
   nodesCopy: Node[]
   edgesCopy: Edge[]
 }) => {
-  const { entityHeaderIsCurrent, activity, nodesCopy, edgesCopy } = params
+  const { entityHeader, activity, nodesCopy, edgesCopy } = params
   const entityNodeProps = {
     type: NodeType.ENTITY,
-    data: entityHeaderIsCurrent,
+    data: entityHeader,
   }
   if (isNodeNotFound(entityNodeProps, nodesCopy)) {
     // add the new entity node
@@ -241,30 +231,4 @@ export const addEntityNode = (params: {
       edgesCopy.push(getProvenanceEdge(entityNodeProps, activityNodeProps))
     }
   }
-}
-
-export const getEntityHeadersIsCurrent = async (params: {
-  refs: ReferenceList
-}): Promise<EntityHeaderIsCurrent[]> => {
-  const { refs } = params
-  const usedEntityHeadersPage = await SynapseClient.getEntityHeaders(refs)
-  const refsWithoutVersion: ReferenceList = refs.map(ref => {
-    return { targetId: ref.targetId }
-  })
-  const latestEntityHeadersPage = await SynapseClient.getEntityHeaders(
-    refsWithoutVersion,
-  )
-  const { results: usedEntityHeaders } = usedEntityHeadersPage
-  const { results: latestEntityHeaders } = latestEntityHeadersPage
-  return usedEntityHeaders.map(usedEntityHeader => {
-    const latestEntityHeader = latestEntityHeaders.find(currentHeader => {
-      return usedEntityHeader.id == currentHeader.id
-    })
-    const isCurrent =
-      latestEntityHeader?.versionNumber == usedEntityHeader.versionNumber
-    return {
-      entityHeader: usedEntityHeader,
-      isCurrentVersion: isCurrent,
-    }
-  })
 }

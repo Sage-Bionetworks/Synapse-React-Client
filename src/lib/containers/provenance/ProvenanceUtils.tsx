@@ -32,16 +32,10 @@ export enum NodeType {
   UNDEFINED = 'UndefinedNode',
 }
 
-export type EntityHeaderIsCurrent = {
-  entityHeader: EntityHeader
-  isCurrentVersion?: boolean
-}
-
 type ProvenanceNodeLabelProps =
   | UsedURL
   | Activity
   | ExpandGraphNodeDataProps
-  | EntityHeaderIsCurrent
   | EntityHeader
   | Reference
 
@@ -61,7 +55,7 @@ export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
   let nodeLabel: JSX.Element
   switch (type) {
     case NodeType.ENTITY:
-      nodeLabel = <EntityNodeLabel {...(data as EntityHeaderIsCurrent)} />
+      nodeLabel = <EntityNodeLabel {...(data as EntityHeader)} />
       break
     case NodeType.ENTITY_PLACEHOLDER:
       nodeLabel = <EntityPlaceholderNodeLabel {...(data as Reference)} />
@@ -122,8 +116,8 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
   const { type, data } = props
   switch (type) {
     case NodeType.ENTITY:
-      return `${(data as EntityHeaderIsCurrent).entityHeader.id}.${
-        (data as EntityHeaderIsCurrent).entityHeader.versionNumber ?? 'latest'
+      return `${(data as EntityHeader).id}.${
+        (data as EntityHeader).versionNumber ?? 'latest'
       }`
     case NodeType.ENTITY_PLACEHOLDER:
       return `${(data as Reference).targetId}.${
@@ -135,10 +129,10 @@ export const getNodeId = (props: ProvenanceNodeProps) => {
       return `${(data as Activity).id}`
     case NodeType.EXPAND:
       return `expand.node.${
-        (data as ExpandGraphNodeDataProps).entityHeaderIsCurrent.entityHeader.id
+        (data as ExpandGraphNodeDataProps).entityHeader.id
       }.${
-        (data as ExpandGraphNodeDataProps).entityHeaderIsCurrent.entityHeader
-          .versionNumber ?? 'latest'
+        (data as ExpandGraphNodeDataProps).entityHeader.versionNumber ??
+        'latest'
       }`
     case NodeType.UNDEFINED:
       return `undefined.dummy.node.${(data as EntityHeader).id}.${

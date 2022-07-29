@@ -116,7 +116,6 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   QueryTableResults,
-  Reference,
   ReferenceList,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
