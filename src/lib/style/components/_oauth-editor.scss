@@ -13,6 +13,12 @@
     top: 0px;
   }
 
+  .form-control {
+    width: 90%;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
   .danger {
     background-color: rgb(178, 36, 42, 0.03);
     padding: 8px;

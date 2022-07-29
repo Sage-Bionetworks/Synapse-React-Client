@@ -36,7 +36,7 @@ export const CreateOAuthModal: React.FunctionComponent<
 }) => {
   const { accessToken } = useSynapseContext()
   const [clientName, setClientName] = useState('')
-  const [redirectUris, setRedirectUris] = useState<string | undefined>()
+  const [redirectUris, setRedirectUris] = useState([{ uri: '' }])
   const [policyUri, setPolicyUri] = useState<string>()
   const [clientUri, setClientUri] = useState<string>()
   const [sectorUri, setSectorUri] = useState<string | undefined>()
@@ -48,10 +48,12 @@ export const CreateOAuthModal: React.FunctionComponent<
   const warningHeader = 'Are you absolutely sure?'
   const warningBody =
     'Editing this detail will render your client invalid and will require you to resubmit verification. This action cannot be undone.'
-  const uriHelpMessage = 'URIs should be separated by a comma.'
+  const uriHelpMessage = 'Click Add URI to add more Redirect URIs'
   useEffect(() => {
     setClientName(client?.client_name ?? '')
-    setRedirectUris(client?.redirect_uris.toString() ?? undefined)
+    setRedirectUris(
+      client?.redirect_uris.map(str => ({ uri: str })) ?? [{ uri: '' }],
+    )
     setPolicyUri(client?.policy_uri ?? '')
     setClientUri(client?.client_uri ?? '')
     setSectorUri(client?.sector_identifier_uri ?? undefined)
@@ -59,8 +61,12 @@ export const CreateOAuthModal: React.FunctionComponent<
   }, [isShowingModal])
 
   useEffect(() => {
+    const stateArr = redirectUris?.map(str => str.uri)
+    const propArr = client?.redirect_uris
+
     client &&
-    (redirectUris != client?.redirect_uris.toString() ||
+    (stateArr?.length !== propArr?.length ||
+      !stateArr?.every(el => propArr?.includes(el)) ||
       sectorUri != client?.sector_identifier_uri)
       ? setWarnTrigger(true)
       : setWarnTrigger(false)
@@ -68,7 +74,7 @@ export const CreateOAuthModal: React.FunctionComponent<
 
   const hide = () => {
     setClientName('')
-    setRedirectUris('')
+    setRedirectUris([{ uri: '' }])
     setPolicyUri('')
     setClientUri('')
     setSectorUri('')
@@ -100,21 +106,20 @@ export const CreateOAuthModal: React.FunctionComponent<
   })
 
   const onCreateClient = () => {
+    console.log('hey')
     try {
       if (accessToken) {
-        const redirectUrisArray = redirectUris
-          ?.split(',')
-          .map(uri => uri.trim())
         const oAuthClient: OAuthClient = {
           client_id: client?.client_id,
           client_name: clientName,
-          redirect_uris: redirectUrisArray ?? [''],
+          redirect_uris: redirectUris?.map(str => str.uri) ?? [''],
           policy_uri: policyUri,
           client_uri: clientUri,
           sector_identifier_uri: sectorUri ?? '',
           tos_uri: tosUri,
           etag: client?.etag,
         }
+        console.log(oAuthClient)
         setUpdatedClient(oAuthClient)
         if (warnTrigger === true) {
           setIsShowingConfirmModal(true)
@@ -129,6 +134,29 @@ export const CreateOAuthModal: React.FunctionComponent<
       }
     } catch (err) {
       console.log(err.reason)
+    }
+  }
+
+  const handleRedirectUriAdd = () => {
+    if (redirectUris) {
+      setRedirectUris([...redirectUris, { uri: '' }])
+    }
+  }
+
+  const handleRedirectUriRemove = (index: number) => {
+    if (redirectUris) {
+      const list = [...redirectUris]
+      list.splice(index, 1)
+      setRedirectUris(list)
+    }
+  }
+
+  const handleUriChange = (e: any, index: number) => {
+    if (redirectUris) {
+      const { name, value } = e.target
+      const list = [...redirectUris]
+      list[index][name] = value
+      setRedirectUris(list)
     }
   }
 
@@ -154,8 +182,7 @@ export const CreateOAuthModal: React.FunctionComponent<
             To protect you and your users, your consent screen and application
             will need to be verified by Sage Bionetworks. Before your consent
             screen and application are verified by Sage Bionetworks, you can
-            still test your application with limitations. Learn more about how
-            your app will behave before it's verified.
+            still test your application with limitations.
           </Typography>
 
           {isEdit && (
@@ -195,20 +222,41 @@ export const CreateOAuthModal: React.FunctionComponent<
               <>
                 <Col lg={6} md={6} sm={12} xs={12}>
                   <Form.Group className="required">
-                    <Form.Label htmlFor="redirectUri">
+                    <Form.Label htmlFor="redirect-uri-0">
                       Redirect URI(s)
                     </Form.Label>
                     <Tooltip title={uriHelpMessage} placement="top">
                       <HelpOutlineTwoTone className={`HelpButton`} />
                     </Tooltip>
+                    {redirectUris?.map((singleUri, idx) => (
+                      <div key={idx}>
+                        <Form.Control
+                          name="uri"
+                          required
+                          id={`redirect-uri-${idx}`}
+                          onChange={e => handleUriChange(e, idx)}
+                          value={singleUri.uri}
+                          placeholder="https://"
+                          type="text"
+                        />
+                        {redirectUris.length > 1 && (
+                          <button onClick={() => handleRedirectUriRemove(idx)}>
+                            <IconSvg
+                              options={{ icon: 'delete', color: '#f44336' }}
+                            />
+                          </button>
+                        )}
 
-                    <Form.Control
-                      required
-                      onChange={e => setRedirectUris(e.target.value)}
-                      placeholder="https://"
-                      type="text"
-                      id="redirectUri"
-                    />
+                        {redirectUris.length - 1 === idx && (
+                          <Button
+                            onClick={handleRedirectUriAdd}
+                            disabled={singleUri.uri.length === 0}
+                          >
+                            Add URI
+                          </Button>
+                        )}
+                      </div>
+                    ))}
                   </Form.Group>
                 </Col>
                 <Col lg={6} md={6} sm={12} xs={12}>
@@ -258,18 +306,42 @@ export const CreateOAuthModal: React.FunctionComponent<
               </Typography>
               <Row>
                 <Col lg={6} md={6} sm={12} xs={12}>
-                  <Form.Label htmlFor="redirectUri">Redirect URI(s)</Form.Label>
+                  <Form.Label htmlFor="redirect-uri-0">
+                    Redirect URI(s)
+                  </Form.Label>
                   <Tooltip title={uriHelpMessage} placement="top">
                     <HelpOutlineTwoTone className={`HelpButton`} />
                   </Tooltip>
 
-                  <Form.Control
-                    required
-                    onChange={e => setRedirectUris(e.target.value)}
-                    placeholder="https://"
-                    type="text"
-                    id="redirectUri"
-                  />
+                  {redirectUris?.map((singleUri, idx) => (
+                    <div key={idx}>
+                      <Form.Control
+                        id={`redirect-uri-${idx}`}
+                        required
+                        name="uri"
+                        onChange={e => handleUriChange(e, idx)}
+                        value={singleUri.uri}
+                        placeholder="https://"
+                        type="text"
+                      />
+                      {redirectUris.length > 1 && (
+                        <button onClick={() => handleRedirectUriRemove(idx)}>
+                          <IconSvg
+                            options={{ icon: 'delete', color: '#f44336' }}
+                          />
+                        </button>
+                      )}
+
+                      {redirectUris.length - 1 === idx && (
+                        <Button
+                          onClick={handleRedirectUriAdd}
+                          disabled={singleUri.uri.length === 0}
+                        >
+                          Add Uri
+                        </Button>
+                      )}
+                    </div>
+                  ))}
                 </Col>
                 <Col lg={6} md={6} sm={12} xs={12}>
                   <Form.Label>Sector Identifier URI</Form.Label>
