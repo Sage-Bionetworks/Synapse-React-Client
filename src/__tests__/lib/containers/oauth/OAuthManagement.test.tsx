@@ -8,9 +8,9 @@ import { formatDate } from '../../../../lib/utils/functions/DateFormatter'
 import { useGetOAuthClientInfinite } from '../../../../lib/utils/hooks/SynapseAPI'
 import { server } from '../../../../mocks/msw/server'
 import {
-  mockUserProfileData,
-  mockUserProfileData2,
-} from '../../../../mocks/user/mock_user_profile'
+  mockClientList1,
+  mockClientList2,
+} from '../../../../mocks/oauth/MockClient'
 
 jest.mock('../../../../lib/utils/hooks/SynapseAPI/oauth/useOAuthClient', () => {
   return {
@@ -20,42 +20,6 @@ jest.mock('../../../../lib/utils/hooks/SynapseAPI/oauth/useOAuthClient', () => {
 
 const mockFetchNextPage = jest.fn()
 const mockGetOAuthClientInfinite = useGetOAuthClientInfinite as jest.Mock
-
-const mockClientList1 = {
-  results: [
-    {
-      client_id: mockUserProfileData.ownerId,
-      client_name: mockUserProfileData.firstName,
-      verified: false,
-      redirect_uris: [mockUserProfileData.url],
-      client_uri: mockUserProfileData.url,
-      policy_uri: mockUserProfileData.url,
-      tos_uri: mockUserProfileData.url,
-      createdOn: mockUserProfileData.createdOn,
-      modifiedOn: mockUserProfileData.createdOn,
-      createdBy: mockUserProfileData.userName,
-    },
-  ],
-  nextPageToken: '50a0',
-}
-
-const mockClientList2 = {
-  results: [
-    {
-      client_id: mockUserProfileData2.ownerId,
-      client_name: mockUserProfileData2.firstName,
-      verified: false,
-      redirect_uris: [mockUserProfileData2.url],
-      client_uri: mockUserProfileData2.url,
-      policy_uri: mockUserProfileData2.url,
-      tos_uri: mockUserProfileData2.url,
-      createdOn: mockUserProfileData2.createdOn,
-      modifiedOn: mockUserProfileData2.createdOn,
-      createdBy: mockUserProfileData2.userName,
-    },
-  ],
-  nextPageToken: null,
-}
 
 const renderComponent = () => {
   render(<OAuthManagement />, {
@@ -99,11 +63,11 @@ describe('oAuthManagement tests', () => {
     screen.findByText(formatDate(moment(mockClientList1.results[0].modifiedOn)))
     screen.findByText(mockClientList1.results[0].client_name)
 
-    // Currently place holders for verification / generate secret/ actions.
+    // Currently place holders for verification / generate secret
     // Once implemented need to update tests acoordingly
     screen.findByText('SUBMIT_VERIFICATION_PLACE_HOLDER')
     screen.findByText('GENERATE_PLACEHOLDER')
-    screen.findByText('ACTIONS_PLACEHOLDER')
+    screen.findByText('EDIT')
   })
 
   it('Handles pagination', async () => {

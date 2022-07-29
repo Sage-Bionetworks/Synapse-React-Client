@@ -223,7 +223,7 @@ import {
 } from './synapseTypes/SubmissionInfo'
 import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
 import { SynapseClientError } from './SynapseClientError'
-import { OAuthClientList } from './synapseTypes/OAuthClient'
+import { OAuthClient, OAuthClientList } from './synapseTypes/OAuthClient'
 
 const cookies = new UniversalCookies()
 
@@ -2280,6 +2280,57 @@ export const getOAuth2 = (
     `/auth/v1/oauth2/client${
       nextPageToken ? '?nextPageToken=' + nextPageToken : ''
     }`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+Create an OAuth 2.0 client.
+Note: The client name must be unique.
+Note: After creating the client one must also set the client secret and have their client verified
+https://rest-docs.synapse.org/rest/POST/oauth2/client.html
+ */
+export const createOAuthClient = (
+  request: OAuthClient,
+  accessToken: string,
+): Promise<OAuthClient> => {
+  return doPost(
+    '/auth/v1/oauth2/client',
+    request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+Delete OAuth 2.0 client
+https://rest-docs.synapse.org/rest/DELETE/oauth2/client/id.html
+ */
+export const deleteOAuthClient = (id: string, accessToken: string) => {
+  return doDelete(
+    `/auth/v1/oauth2/client/${id}`,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ Update the metadata for an existing OAuth 2.0 client.
+ Note: Only the creator of a client can update it.
+ Note: Changing the redirect URIs will revert the 'verified' status of the client, necessitating re-verification.
+ https://repo-prod.prod.sagebase.org/auth/v1/oauth2/client/{id}
+ */
+export const updateOAuthClient = (
+  request: OAuthClient,
+  accessToken: string,
+): Promise<OAuthClient> => {
+  return doPut(
+    `/auth/v1/oauth2/client/${request.client_id}`,
+    request,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
