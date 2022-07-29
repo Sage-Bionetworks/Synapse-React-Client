@@ -12,13 +12,9 @@ import ReactFlow, {
 import {
   EntityHeaderIsCurrent,
   getLayoutedElements,
-  getNodeId,
-  getProvenanceEdge,
-  getProvenanceNode,
   isArrayEqual,
   NodeType,
   ProvenanceNodeData,
-  ProvenanceNodeProps,
 } from './ProvenanceUtils'
 import {
   Activity,
@@ -27,11 +23,7 @@ import {
   UsedURL,
   USED_ENTITY_CONCRETE_TYPE_VALUE,
 } from '../../utils/synapseTypes/Provenance/Provenance'
-import {
-  EntityHeader,
-  Reference,
-  ReferenceList,
-} from '../../utils/synapseTypes'
+import { ReferenceList } from '../../utils/synapseTypes'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { SynapseClient } from '../../utils'
 import { ExpandGraphNodeDataProps } from './ExpandGraphNodeLabel'
@@ -40,6 +32,17 @@ import { CircularProgress } from '@material-ui/core'
 import { displayToast } from '../ToastMessage'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import { useErrorHandler } from 'react-error-boundary'
+import {
+  addActivityNode,
+  addEntityNode,
+  addEntityPlaceholderNode,
+  addExpandNode,
+  addExternalNode,
+  addUndefinedNode,
+  findEntityNode,
+  getEntityHeadersIsCurrent,
+  isRootEntity,
+} from './ProvenanceGraphUtils'
 
 export type ProvenanceProps = {
   // what entity nodes should we start with?
@@ -105,259 +108,6 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   }, [])
 
   /**
-   * Is one of the root Entities given by the user
-   */
-  const isRootEntity = useCallback(
-    (entityHeader: EntityHeader) => {
-      const foundNode = rootEntityHeaders?.find(header => {
-        return (
-          entityHeader.id == header.id &&
-          entityHeader.versionNumber == header.versionNumber
-        )
-      })
-      return foundNode !== undefined
-    },
-    [rootEntityHeaders],
-  )
-
-  /**
-   * Given the node properties, will return true if this node is already in the nodesCopy array.
-   */
-  const isNodeNotFound = useCallback(
-    (nodeProps: ProvenanceNodeProps, nodesCopy: Node[]) => {
-      const foundNode = nodesCopy.find(node => {
-        return node.id === getNodeId(nodeProps)
-      })
-      return foundNode === undefined
-    },
-    [],
-  )
-
-  const findEntityNode = useCallback(
-    (entityHeader: EntityHeader, nodesCopy: Node[]) => {
-      const nodeProps = {
-        type: NodeType.ENTITY,
-        data: {
-          entityHeader,
-        },
-      }
-      return nodesCopy.find(node => {
-        return node.id === getNodeId(nodeProps)
-      })
-    },
-    [],
-  )
-
-  /**
-   * Given the node properties, will return true if this edge is already in the edgesCopy array.
-   */
-  const isEdgeNotFound = useCallback(
-    (
-      nodeProps1: ProvenanceNodeProps,
-      nodeProps2: ProvenanceNodeProps,
-      edgesCopy: Edge[],
-    ) => {
-      const foundEdge = edgesCopy.find(edge => {
-        return (
-          edge.source === getNodeId(nodeProps1) &&
-          edge.target === getNodeId(nodeProps2)
-        )
-      })
-      return foundEdge === undefined
-    },
-    [],
-  )
-
-  /**
-   * Given node properties of the new node and existing node, this function creates and adds a new node to
-   * nodesCopy, and creates an edge from the new node to the existing node.  Note, this will only create
-   * a new node or edge if these items are not found in the input nodesCopy array and edgesCopy array.
-   */
-  const addNodeAndEdge = useCallback(
-    (params: {
-      newNodeProps: ProvenanceNodeProps
-      existingNodeProps: ProvenanceNodeProps
-      nodesCopy: Node[]
-      edgesCopy: Edge[]
-    }) => {
-      const { newNodeProps, existingNodeProps, nodesCopy, edgesCopy } = params
-      if (isNodeNotFound(newNodeProps, nodesCopy)) {
-        nodesCopy.push(getProvenanceNode(newNodeProps))
-      }
-      if (isEdgeNotFound(newNodeProps, existingNodeProps, edgesCopy)) {
-        edgesCopy.push(getProvenanceEdge(newNodeProps, existingNodeProps))
-      }
-    },
-    [isEdgeNotFound, isNodeNotFound],
-  )
-
-  const addActivityNode = useCallback(
-    (params: {
-      activity: Activity
-      entityHeaderIsCurrent: EntityHeaderIsCurrent
-      nodesCopy: Node[]
-      edgesCopy: Edge[]
-    }) => {
-      const { activity, entityHeaderIsCurrent, nodesCopy, edgesCopy } = params
-      const activityNodeProps = {
-        type: NodeType.ACTIVITY,
-        data: activity,
-      }
-      const entityNodeProps = {
-        type: NodeType.ENTITY,
-        data: entityHeaderIsCurrent,
-      }
-      addNodeAndEdge({
-        newNodeProps: activityNodeProps,
-        existingNodeProps: entityNodeProps,
-        nodesCopy,
-        edgesCopy,
-      })
-    },
-    [addNodeAndEdge],
-  )
-
-  const addExpandNode = useCallback(
-    (params: {
-      entityHeaderIsCurrent: EntityHeaderIsCurrent
-      itemCount: number | undefined
-      nodesCopy: Node[]
-      edgesCopy: Edge[]
-    }) => {
-      const {
-        entityHeaderIsCurrent,
-        itemCount = 0,
-        nodesCopy,
-        edgesCopy,
-      } = params
-      const expandNodeProps = {
-        type: NodeType.EXPAND,
-        data: {
-          itemCount,
-          entityHeaderIsCurrent,
-        },
-      }
-      const entityNodeProps = {
-        type: NodeType.ENTITY,
-        data: entityHeaderIsCurrent,
-      }
-      addNodeAndEdge({
-        newNodeProps: expandNodeProps,
-        existingNodeProps: entityNodeProps,
-        nodesCopy,
-        edgesCopy,
-      })
-    },
-    [addNodeAndEdge],
-  )
-
-  const addEntityPlaceholderNode = useCallback(
-    (params: {
-      ref: Reference
-      activity: Activity
-      nodesCopy: Node[]
-      edgesCopy: Edge[]
-    }) => {
-      const { ref, activity, nodesCopy, edgesCopy } = params
-      const entityPlaceholderNodeProps = {
-        type: NodeType.ENTITY_PLACEHOLDER,
-        data: ref,
-      }
-      const activityNodeProps = {
-        type: NodeType.ACTIVITY,
-        data: activity,
-      }
-      addNodeAndEdge({
-        newNodeProps: entityPlaceholderNodeProps,
-        existingNodeProps: activityNodeProps,
-        nodesCopy,
-        edgesCopy,
-      })
-    },
-    [addNodeAndEdge],
-  )
-
-  const addUndefinedNode = useCallback(
-    (params: {
-      entityHeader: EntityHeader
-      nodesCopy: Node[]
-      edgesCopy: Edge[]
-    }) => {
-      const { entityHeader, nodesCopy, edgesCopy } = params
-      const undefinedNodeProps = {
-        type: NodeType.UNDEFINED,
-        data: entityHeader,
-      }
-      const entityNodeProps = {
-        type: NodeType.ENTITY,
-        data: {
-          entityHeader,
-        },
-      }
-      addNodeAndEdge({
-        newNodeProps: undefinedNodeProps,
-        existingNodeProps: entityNodeProps,
-        nodesCopy,
-        edgesCopy,
-      })
-    },
-    [addNodeAndEdge],
-  )
-
-  const addExternalNode = useCallback(
-    (params: {
-      usedURL: UsedURL
-      activity: Activity
-      nodesCopy: Node[]
-      edgesCopy: Edge[]
-    }) => {
-      const { usedURL, activity, nodesCopy, edgesCopy } = params
-      const activityNodeProps = {
-        type: NodeType.ACTIVITY,
-        data: activity,
-      }
-      const externalNodeProps = {
-        type: NodeType.EXTERNAL,
-        data: usedURL,
-      }
-      addNodeAndEdge({
-        newNodeProps: externalNodeProps,
-        existingNodeProps: activityNodeProps,
-        nodesCopy,
-        edgesCopy,
-      })
-    },
-    [addNodeAndEdge],
-  )
-
-  const addEntityNode = useCallback(
-    (params: {
-      entityHeaderIsCurrent: EntityHeaderIsCurrent
-      activity: Activity | undefined
-      nodesCopy: Node[]
-      edgesCopy: Edge[]
-    }) => {
-      const { entityHeaderIsCurrent, activity, nodesCopy, edgesCopy } = params
-      const entityNodeProps = {
-        type: NodeType.ENTITY,
-        data: entityHeaderIsCurrent,
-      }
-      if (isNodeNotFound(entityNodeProps, nodesCopy)) {
-        // add the new entity node
-        nodesCopy.push(getProvenanceNode(entityNodeProps))
-        if (activity) {
-          const activityNodeProps = {
-            type: NodeType.ACTIVITY,
-            data: activity,
-          }
-          edgesCopy.push(getProvenanceEdge(entityNodeProps, activityNodeProps))
-        }
-      }
-    },
-    [isNodeNotFound],
-  )
-
-  /**
    * Called when we have a new entity to add to the graph.  This will result in adding
    * a new Entity Node to the nodesCopy, a link from the usedInActivity to the new Entity Node,
    * AND it will look for an Activity associated with the new entity.  If an Activity is found,
@@ -390,7 +140,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         )
         // if this is not a root node (or there are too many items to show), add an expand node
         if (
-          !isRootEntity(entityHeader) ||
+          !isRootEntity({ entityHeader, rootEntityHeaders }) ||
           (activity.used && activity.used.length >= MAX_ACTIVITY_EXPAND_NODES)
         ) {
           addExpandNode({
@@ -403,7 +153,12 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
       } catch (e) {
         // Activity is not accessible
         console.error(e)
-        if (isRootEntity(entityHeaderIsCurrent.entityHeader)) {
+        if (
+          isRootEntity({
+            entityHeader: entityHeaderIsCurrent.entityHeader,
+            rootEntityHeaders,
+          })
+        ) {
           // add provenance undefined node
           addUndefinedNode({
             entityHeader: entityHeaderIsCurrent.entityHeader,
@@ -413,7 +168,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         }
       }
     },
-    [addEntityNode, accessToken, isRootEntity, addExpandNode, addUndefinedNode],
+    [accessToken, rootEntityHeaders],
   )
 
   /**
@@ -438,42 +193,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         }
       })
     }
-  }, [
-    findEntityNode,
-    initializedPosition,
-    nodes,
-    reactFlowInstance,
-    rootEntityHeaders,
-  ])
-
-  const getEntityHeadersIsCurrent = useCallback(
-    async (params: {
-      refs: ReferenceList
-    }): Promise<EntityHeaderIsCurrent[]> => {
-      const { refs } = params
-      const usedEntityHeadersPage = await SynapseClient.getEntityHeaders(refs)
-      const refsWithoutVersion: ReferenceList = refs.map(ref => {
-        return { targetId: ref.targetId }
-      })
-      const latestEntityHeadersPage = await SynapseClient.getEntityHeaders(
-        refsWithoutVersion,
-      )
-      const { results: usedEntityHeaders } = usedEntityHeadersPage
-      const { results: latestEntityHeaders } = latestEntityHeadersPage
-      return usedEntityHeaders.map(usedEntityHeader => {
-        const latestEntityHeader = latestEntityHeaders.find(currentHeader => {
-          return usedEntityHeader.id == currentHeader.id
-        })
-        const isCurrent =
-          latestEntityHeader?.versionNumber == usedEntityHeader.versionNumber
-        return {
-          entityHeader: usedEntityHeader,
-          isCurrentVersion: isCurrent,
-        }
-      })
-    },
-    [],
-  )
+  }, [initializedPosition, nodes, reactFlowInstance, rootEntityHeaders])
 
   /**
    * This is called when the user clicks on an Expand Node.  It will add the associated Activity
@@ -543,14 +263,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         console.error(e)
       }
     },
-    [
-      accessToken,
-      addActivityNode,
-      addEntity,
-      addEntityPlaceholderNode,
-      addExternalNode,
-      getEntityHeadersIsCurrent,
-    ],
+    [accessToken, addEntity],
   )
 
   /**
@@ -662,7 +375,6 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     setEdges,
     initializedPosition,
     reactFlowInstance,
-    findEntityNode,
     rootEntityRefs,
     onNodesChangedListener,
     onEdgesChangedListener,
