@@ -112,13 +112,12 @@ export const OAuthManagement: React.FunctionComponent = () => {
         </Modal.Header>
         <Modal.Body>
           <p>
-            In order to verify an OAuth client please send an email to{' '}
-            <a href={'mailto:synapseinfo@sagebase.org'}>
-              synapseinfo@sagebase.org
+            In order to verify an OAuth client please submit a request to the{' '}
+            <a href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9">
+              Synapse Service Desk.
             </a>
-            .
           </p>
-          <b>Please list the following items in your email:</b>
+          <b>Please list the following items in your request:</b>
           <ul>
             <li>Your name</li>
             <li>
@@ -127,9 +126,9 @@ export const OAuthManagement: React.FunctionComponent = () => {
             </li>
             <li>A description of your application</li>
           </ul>
-          <p>
+          {/* <p>
             Verification can take up to X weeks and we will notify you via X.
-          </p>
+          </p> */}
         </Modal.Body>
       </Modal>
     </div>
