@@ -14,7 +14,7 @@ import {
 } from './ExpandGraphNodeLabel'
 import { ExternalGraphNodeLabel } from './ExternalGraphNodeLabel'
 import dagre from 'dagre'
-import _ from 'lodash'
+import { differenceWith, isEqual } from 'lodash-es'
 import { UndefinedNodeLabel } from './UndefinedNodeLabel'
 import { EntityHeader, Reference } from '../../utils/synapseTypes'
 import {
@@ -200,5 +200,5 @@ export const getLayoutedElements = (
 }
 
 export const isArrayEqual = (x: any[], y: any[]) => {
-  return _(x).differenceWith(y, _.isEqual).isEmpty()
+  return differenceWith(x, y, isEqual).length == 0
 }
