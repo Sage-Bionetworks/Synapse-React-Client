@@ -84,12 +84,8 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   const {
     data: rootEntityHeadersPage,
     isError,
-    error: newError,
     isSuccess,
-  } = useGetEntityHeaders(rootEntityRefs)
-  if (isError) {
-    handleError(newError)
-  }
+  } = useGetEntityHeaders(rootEntityRefs, { useErrorBoundary: true })
   if (isSuccess && rootEntityHeadersPage.totalNumberOfResults == 0) {
     const synapseIds = rootEntityRefs.map(ref => ref.targetId).join(',')
     handleError(
