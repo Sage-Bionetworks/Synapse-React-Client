@@ -32,7 +32,16 @@ describe('oAuthManagement tests', () => {
     server.listen()
     mockGetOAuthClientInfinite.mockReturnValue({
       data: {
-        pages: [mockClientList1, mockClientList2],
+        pages: [
+          {
+            results: mockClientList1.results,
+            nextTokenPage: mockClientList1.nextPageToken,
+          },
+          {
+            results: mockClientList2.results,
+            nextTokenPage: mockClientList2.nextPageToken,
+          },
+        ],
         pageParams: [],
       },
       fetchNextPage: mockFetchNextPage,
@@ -59,15 +68,19 @@ describe('oAuthManagement tests', () => {
     await screen.findByText('Actions')
 
     // Check first row of data
-    screen.findByText(formatDate(moment(mockClientList1.results[0].createdOn)))
-    screen.findByText(formatDate(moment(mockClientList1.results[0].modifiedOn)))
+    screen.findAllByText(
+      formatDate(moment(mockClientList1.results[0].createdOn)),
+    )
+    screen.findAllByText(
+      formatDate(moment(mockClientList1.results[0].modifiedOn)),
+    )
     screen.findByText(mockClientList1.results[0].client_name)
 
     // Currently place holders for verification / generate secret
     // Once implemented need to update tests acoordingly
-    screen.findByText('SUBMIT_VERIFICATION_PLACE_HOLDER')
-    screen.findByText('GENERATE_PLACEHOLDER')
-    screen.findByText('EDIT')
+    await screen.findByText('Yes')
+    await screen.findAllByRole('button', { name: 'EDIT' })
+    await screen.findAllByText('GENERATE_PLACEHOLDER')
   })
 
   it('Handles pagination', async () => {
@@ -75,7 +88,7 @@ describe('oAuthManagement tests', () => {
 
     const loadButton = screen.queryByRole('button', { name: 'Load more' })
     expect(
-      screen.queryByRole('button', { name: 'Load more' }),
+      screen.getByRole('button', { name: 'Load more' }),
     ).toBeInTheDocument()
 
     userEvent.click(loadButton!)
