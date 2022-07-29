@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react'
 import ReactFlow, {
   Controls,
@@ -7,8 +6,8 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   getConnectedEdges,
-  ReactFlowInstance,
-  OnInit,
+  ReactFlowProvider,
+  useReactFlow,
 } from 'react-flow-renderer'
 import {
   EntityHeaderIsCurrent,
@@ -62,7 +61,7 @@ const DEFAULT_ZOOM = 0.85
  * and the output stored in 'nodes' and 'edges'. The 'nodes' and 'edges' arrays are used by the
  * ReactFlow component.
  */
-export const ProvenanceGraph = (props: ProvenanceProps) => {
+const ProvenanceReactFlow = (props: ProvenanceProps) => {
   const {
     entityRefs: rootEntityRefs,
     containerHeight = '200px',
@@ -99,10 +98,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     React.useState<boolean>(false)
 
   // Get the react flow instance so we attempt to properly center the view.
-  // Could instead use useReactFlow(), but that seems to require a Zustand context.
-  // https://reactflow.dev/docs/api/react-flow-instance/
-  const [reactFlowInstance, setReactFlowInstance] =
-    React.useState<ReactFlowInstance>()
+  const reactFlowInstance = useReactFlow()
 
   const onClickNode = useCallback((_event: React.MouseEvent, node: Node) => {
     setClickedNode(node)
@@ -427,7 +423,7 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
   useEffect(() => {
     if (!initializedPosition && nodes.length > 0) {
       setTimeout(() => {
-        if (reactFlowInstance && rootEntityHeaders) {
+        if (rootEntityHeaders) {
           const rootEntityNode = findEntityNode(rootEntityHeaders[0], nodes)
           if (rootEntityNode) {
             const currentZoom = reactFlowInstance.getZoom()
@@ -672,10 +668,6 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     onEdgesChangedListener,
   ])
 
-  const onInit: OnInit = useCallback(
-    reactFlow => setReactFlowInstance(reactFlow),
-    [],
-  )
   return (
     <SynapseErrorBoundary>
       <div
@@ -692,11 +684,18 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
           onEdgesChange={onEdgesChange}
           attributionPosition="bottom-right"
           onConnect={undefined}
-          onInit={onInit}
         >
           <Controls />
         </ReactFlow>
       </div>
     </SynapseErrorBoundary>
+  )
+}
+
+export const ProvenanceGraph = (props: ProvenanceProps) => {
+  return (
+    <ReactFlowProvider>
+      <ProvenanceReactFlow {...props} />
+    </ReactFlowProvider>
   )
 }
