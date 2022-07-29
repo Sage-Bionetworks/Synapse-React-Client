@@ -113,7 +113,11 @@ export const OAuthManagement: React.FunctionComponent = () => {
         <Modal.Body>
           <p>
             In order to verify an OAuth client please submit a request to the{' '}
-            <a href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9">
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+            >
               Synapse Service Desk.
             </a>
           </p>
