@@ -30,6 +30,15 @@ export interface OAuthClient {
   etag?: string
 }
 
+/**
+ OAuth 2.0 Client ID and secret, generated when a new client is created
+https://docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClientIdAndSecret.html
+*/
+export interface OAuthClientIdAndSecret {
+  client_id: string
+  client_secret: string
+}
+
 export enum OIDCSigningAlgorithm {
   RS256 = 'RS256',
 }

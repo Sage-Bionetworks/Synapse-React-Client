@@ -224,7 +224,11 @@ import {
 } from './synapseTypes/SubmissionInfo'
 import { Submission as DataAccessSubmission } from './synapseTypes/AccessRequirement/Submission'
 import { SynapseClientError } from './SynapseClientError'
-import { OAuthClient, OAuthClientList } from './synapseTypes/OAuthClient'
+import {
+  OAuthClient,
+  OAuthClientIdAndSecret,
+  OAuthClientList,
+} from './synapseTypes/OAuthClient'
 import { Activity } from './synapseTypes/Provenance/Provenance'
 
 const cookies = new UniversalCookies()
@@ -2333,6 +2337,25 @@ export const updateOAuthClient = (
   return doPut(
     `/auth/v1/oauth2/client/${request.client_id}`,
     request,
+    accessToken,
+    undefined,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/** 
+Get a secret credential to use when requesting an access token.
+Synapse supports 'client_secret_basic' and 'client_secret_post'.
+NOTE: This request will invalidate any previously issued secrets.
+https://docs.synapse.org/rest/POST/oauth2/client/secret/id.html
+*/
+export const createOAuthClientSecret = (
+  accessToken: string,
+  id: string,
+): Promise<OAuthClientIdAndSecret> => {
+  return doPost(
+    `/auth/v1/oauth2/client/secret/${id}`,
+    undefined,
     accessToken,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
