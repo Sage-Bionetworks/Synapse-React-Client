@@ -177,7 +177,7 @@ export const DownloadCartPage: React.FunctionComponent<
                       {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging >
                         0 && (
                         <Button
-                          variant="primary"
+                          variant="sds-primary"
                           onClick={() => {
                             setIsShowingCreatePackageUI(true)
                           }}
@@ -193,7 +193,7 @@ export const DownloadCartPage: React.FunctionComponent<
                           enterNextDelay={300}
                           placement="top"
                         >
-                          <Button variant="primary" disabled>
+                          <Button variant="sds-primary" disabled>
                             <IconSvg options={{ icon: 'download' }} />
                             Download As .Zip Packages
                           </Button>
