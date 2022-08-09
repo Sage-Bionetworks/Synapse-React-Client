@@ -16,6 +16,7 @@ import { ErrorBanner } from '../ErrorBanner'
 import Typography from '../../utils/typography/Typography'
 import { HelpPopover } from '../HelpPopover'
 import Tooltip from '../../utils/tooltip/Tooltip'
+import { Button } from 'react-bootstrap'
 
 /**
  * Show the Download Cart page.
@@ -175,14 +176,15 @@ export const DownloadCartPage: React.FunctionComponent<
                     <span>
                       {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging >
                         0 && (
-                        <a
-                          className="highlight-link"
+                        <Button
+                          variant="primary"
                           onClick={() => {
                             setIsShowingCreatePackageUI(true)
                           }}
                         >
+                          <IconSvg options={{ icon: 'download' }} />
                           Download As .Zip Packages
-                        </a>
+                        </Button>
                       )}
                       {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging ==
                         0 && (
@@ -191,9 +193,10 @@ export const DownloadCartPage: React.FunctionComponent<
                           enterNextDelay={300}
                           placement="top"
                         >
-                          <a className="highlight-link disabled">
-                            Download As .ZIP packages
-                          </a>
+                          <Button variant="primary" disabled>
+                            <IconSvg options={{ icon: 'download' }} />
+                            Download As .Zip Packages
+                          </Button>
                         </Tooltip>
                       )}
                     </span>
