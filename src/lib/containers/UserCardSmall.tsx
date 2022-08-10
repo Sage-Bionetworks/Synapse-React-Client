@@ -96,64 +96,44 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
     <></>
   )
 
-  const fullName = showFullName ? (
-    <span className={'user-fullname'}>
-      &nbsp;
-      {`${userProfile.firstName ?? ''}`}&nbsp;{`${userProfile.lastName ?? ''}`}
-    </span>
-  ) : (
-    <></>
-  )
+  const fullName =
+    showFullName && (userProfile.firstName || userProfile.lastName) ? (
+      <span className={'user-fullname'}>
+        {`${userProfile.firstName ?? ''}`}&nbsp;
+        {`${userProfile.lastName ?? ''}`}
+      </span>
+    ) : null
 
-  return showCardOnHover ? (
+  const Tag = showCardOnHover || !disableLink ? 'a' : 'span'
+
+  const style: React.CSSProperties = showCardOnHover
+    ? { whiteSpace: 'nowrap' }
+    : disableLink
+    ? { cursor: 'unset' }
+    : {}
+
+  return (
     <>
-      <OverlayComponent />
-      <a
-        ref={target}
+      {showCardOnHover && <OverlayComponent />}
+      <Tag
+        className={`SRC-userCard UserCardSmall SRC-boldText ${className ?? ''}`}
+        style={style}
         href={disableLink ? undefined : link}
+        target={openLinkInNewTab ? '_blank' : ''}
+        rel={openLinkInNewTab ? 'noreferrer' : ''}
+        ref={target}
         onMouseEnter={() => toggleShow()}
         onMouseLeave={() => toggleHide()}
-        onClick={event => {
-          event.preventDefault()
-          // if someone explicitly set the disable link,
-          // we just return without going to the Synapse's user profile page
-          if (disableLink) {
-            return
-          }
-          window.open(link, '_blank')
-        }}
-        className={`SRC-userCard UserCardSmall ${className ?? ''}`}
-        style={{ whiteSpace: 'nowrap' }}
       >
         {avatar}
-        {`@${userProfile.userName}`}
         {fullName}
+        {fullName ? '\u00A0(' : ''}
+        {`@${userProfile.userName}`}
+        {fullName ? ')' : ''}
         {showAccountLevelIcon && (
           <span className={'account-level-icon'}>{accountLevelIcon}</span>
         )}
-      </a>
+      </Tag>
     </>
-  ) : disableLink ? (
-    <span
-      className="SRC-userCard UserCardSmall SRC-boldText"
-      style={{ cursor: 'unset' }}
-    >
-      {avatar}
-      {`@${userProfile.userName}`}
-      {fullName}
-    </span>
-  ) : (
-    <a>
-      {avatar}
-      {/* eslint-disable-next-line react/jsx-no-target-blank*/}
-      <a
-        className="SRC-userCard UserCardSmall"
-        target={openLinkInNewTab ? '_blank' : ''}
-        rel={openLinkInNewTab ? 'noreferrer' : ''}
-        href={link}
-      >
-        {`@${userProfile.userName}`}
-      </a>
-    </a>
   )
 }
