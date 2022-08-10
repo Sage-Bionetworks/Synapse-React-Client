@@ -99,7 +99,8 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
   const fullName =
     showFullName && (userProfile.firstName || userProfile.lastName) ? (
       <span className={'user-fullname'}>
-        {`${userProfile.firstName ?? ''}`}&nbsp;
+        {`${userProfile.firstName ?? ''}`}
+        {userProfile.firstName && userProfile.lastName ? '\u00A0' : ''}
         {`${userProfile.lastName ?? ''}`}
       </span>
     ) : null
