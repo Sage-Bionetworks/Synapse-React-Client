@@ -353,9 +353,8 @@ export const doPost = <T>(
   url: string,
   requestJsonObject: unknown,
   accessToken: string | undefined,
-  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
-  signal?: AbortSignal,
+  additionalOptions: RequestInit = {},
 ): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
@@ -366,12 +365,10 @@ export const doPost = <T>(
     },
     method: 'POST',
     mode: 'cors',
-    credentials: initCredentials,
-    signal: signal,
+    ...additionalOptions,
   }
   if (accessToken) {
-    // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers!['authorization'] = `Bearer ${accessToken}`
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
@@ -379,8 +376,8 @@ export const doPost = <T>(
 export const doGet = <T>(
   url: string,
   accessToken: string | undefined,
-  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
+  additionalOptions: RequestInit = {},
 ) => {
   const options: RequestInit = {
     headers: {
@@ -389,11 +386,10 @@ export const doGet = <T>(
     },
     method: 'GET',
     mode: 'cors',
-    credentials: initCredentials,
+    ...additionalOptions,
   }
   if (accessToken) {
-    // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers!['authorization'] = `Bearer ${accessToken}`
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
@@ -402,8 +398,8 @@ export const doGet = <T>(
 export const doDelete = (
   url: string,
   accessToken: string | undefined,
-  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
+  additionalOptions: RequestInit = {},
 ) => {
   const options: RequestInit = {
     headers: {
@@ -412,11 +408,10 @@ export const doDelete = (
     },
     method: 'DELETE',
     mode: 'cors',
-    credentials: initCredentials,
+    ...additionalOptions,
   }
   if (accessToken) {
-    // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers!['authorization'] = `Bearer ${accessToken}`
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
@@ -426,8 +421,8 @@ export const doPut = <T>(
   url: string,
   requestJsonObject: any,
   accessToken: string | undefined,
-  initCredentials: RequestInit['credentials'],
   endpoint: BackendDestinationEnum,
+  additionalOptions: RequestInit = {},
 ): Promise<T> => {
   const options: RequestInit = {
     body: JSON.stringify(requestJsonObject),
@@ -438,11 +433,10 @@ export const doPut = <T>(
     },
     method: 'PUT',
     mode: 'cors',
-    credentials: initCredentials,
+    ...additionalOptions,
   }
   if (accessToken) {
-    // @ts-ignore
-    options.headers.authorization = `Bearer ${accessToken}`
+    options.headers!['authorization'] = `Bearer ${accessToken}`
   }
   const usedEndpoint = getEndpoint(endpoint)
   return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
@@ -451,7 +445,6 @@ export const doPut = <T>(
 export const getVersion = (): Promise<SynapseVersion> => {
   return doGet<SynapseVersion>(
     '/repo/v1/version',
-    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -468,7 +461,6 @@ export const getDownloadFromTableRequest = async (
     `/repo/v1/entity/${request.entityId}/table/download/csv/async/start`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -491,7 +483,6 @@ export const getFileHandleById = (
   return doGet<FileHandle>(
     `/file/v1/fileHandle/${handleId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -512,7 +503,6 @@ export const getActualFileHandleByIdURL = (
   return doGet<string>(
     `/file/v1/file/${handleId}?fileAssociateType=${fileAssociateType}&fileAssociateId=${fileAssociateId}&redirect=${redirect}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -530,7 +520,6 @@ export const getFileHandleByIdURL = (
   return doGet<string>(
     `/file/v1/fileHandle/${handleId}/url?redirect=false`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -554,7 +543,6 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
   let response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
     ASYNCHRONOUS_JOB_TOKEN(asyncJobId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   setCurrentAsyncStatus?.(response)
@@ -563,7 +551,6 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
     response = await doGet<AsynchronousJobStatus<TRequest, TResponse>>(
       ASYNCHRONOUS_JOB_TOKEN(asyncJobId),
       accessToken,
-      undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
     setCurrentAsyncStatus?.(response)
@@ -577,7 +564,6 @@ export const getAsyncResultFromJobId = async <TRequest, TResponse>(
     const failureResponse = await doGet<TResponse>(
       responseBodyEndpoint,
       accessToken,
-      undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
     console.warn(
@@ -625,7 +611,6 @@ export const getQueryTableAsyncJobResults = async (
     TABLE_QUERY_ASYNC_START(queryBundleRequest.entityId),
     queryBundleRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultFromJobId<QueryBundleRequest, QueryResultBundle>(
@@ -650,7 +635,6 @@ export const getQueryTableResults = async (
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -729,7 +713,6 @@ export const login = (
     '/auth/v1/login2',
     { username, password, authenticationReceipt },
     undefined,
-    undefined,
     endpoint,
   )
 }
@@ -749,7 +732,6 @@ export const oAuthUrlRequest = (
   return doPost(
     '/auth/v1/oauth2/authurl',
     { provider, redirectUrl, state },
-    undefined,
     undefined,
     endpoint,
   )
@@ -772,7 +754,6 @@ export const oAuthSessionRequest = (
     '/auth/v1/oauth2/session2',
     { provider, authenticationCode, redirectUrl },
     undefined,
-    undefined,
     endpoint,
   )
 }
@@ -788,7 +769,6 @@ export const createEntity = <T extends Entity>(
     ENTITY,
     entity,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -817,7 +797,6 @@ export const getUserProfile = (accessToken: string | undefined) => {
   return doGet<UserProfile>(
     USER_PROFILE,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -833,7 +812,6 @@ export const getUserProfileById = (
   return doGet<UserProfile>(
     USER_PROFILE_ID(ownerId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -850,7 +828,6 @@ export const getUserBundle = (
   return doGet<UserBundle>(
     `${USER_ID_BUNDLE(id)}?mask=${mask}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -866,7 +843,6 @@ export const getMyUserBundle = (
   return doGet<UserBundle>(
     `${USER_BUNDLE}?mask=${mask}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -886,7 +862,6 @@ export const updateMyUserProfile = (
     url,
     profile,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -905,7 +880,6 @@ export const getUserGroupHeaders = (
     USER_GROUP_HEADERS +
       `?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
     undefined,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -921,7 +895,6 @@ export const getGroupHeadersBatch = (
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -939,7 +912,6 @@ export const getUserProfiles = (
     USER_PROFILE,
     { list },
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -957,9 +929,8 @@ export const getEntityChildren = (
     '/repo/v1/entity/children',
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
-    signal,
+    { signal },
   )
 }
 /**
@@ -974,7 +945,6 @@ export const lookupChildEntity = (
     '/repo/v1/entity/child',
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -991,7 +961,6 @@ export const getFiles = (
     '/file/v1/fileHandle/batch',
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1008,7 +977,6 @@ export const getBulkFiles = async (
     '/file/v1/file/bulk/async/start',
     bulkFileDownloadRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -1039,12 +1007,7 @@ export const getEntity = <T extends Entity>(
   const url = versionNumber
     ? `/repo/v1/entity/${entityId}/version/${versionNumber}`
     : `/repo/v1/entity/${entityId}`
-  return doGet<T>(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet<T>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 export const getEntityHeadersByIds = (
@@ -1081,7 +1044,6 @@ export const getEntityHeaders = (
     ENTITY_HEADERS,
     { references: fixedReferences },
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1094,7 +1056,6 @@ export const getEntityHeader = (entityId: string, accessToken?: string) => {
   return doGet<EntityHeader>(
     `/repo/v1/entity/${entityId}/type`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1108,7 +1069,6 @@ export const updateEntity = <T extends Entity>(
     url,
     entity,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1120,7 +1080,6 @@ export const deleteEntity = (
   return doDelete(
     ENTITY_ID(entityId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1135,7 +1094,6 @@ export const getEntityBundleV2 = (
     ENTITY_BUNDLE_V2(entityId, version),
     requestObject,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1160,12 +1118,7 @@ export const getEntityWiki = (
   const objectTypeString = getObjectTypeToString(objectType)
 
   const url = `/repo/v1/${objectTypeString?.toLocaleLowerCase()}/${ownerId}/wiki/${wikiId}`
-  return doGet<WikiPage>(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet<WikiPage>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
@@ -1182,7 +1135,6 @@ export const getUserFavorites = (
   return doGet<PaginatedResults<EntityHeader>>(
     url,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1198,7 +1150,6 @@ export const removeUserFavorite = (
   return doDelete(
     `/repo/v1/favorite/${entityId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1214,12 +1165,7 @@ export const getUserChallenges = (
   limit: string | number = 200,
 ): Promise<ChallengePagedResults> => {
   const url = `/repo/v1/challenge?participantId=${userId}&offset=${offset}&limit=${limit}`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
@@ -1234,12 +1180,7 @@ export const getUserTeamList = (
   limit: string | number = 200,
 ): Promise<PaginatedResults<Team>> => {
   const url = `/repo/v1/user/${userId}/team?offset=${offset}&limit=${limit}`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
@@ -1261,12 +1202,7 @@ export const getTeamList = (
   const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
@@ -1283,7 +1219,6 @@ export const getWikiPageKeyForEntity = (
   return doGet<WikiPageKey>(
     url,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1302,7 +1237,6 @@ export const getWikiPageKeyForAccessRequirement = (
   return doGet<WikiPageKey>(
     url,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1315,12 +1249,7 @@ export const getWikiAttachmentsFromEntity = (
 ): Promise<FileHandleResults> => {
   const objectTypeString = getObjectTypeToString(objectType)
   const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachmenthandles`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 export const getWikiAttachmentsFromEvaluation = (
   accessToken: string | undefined,
@@ -1328,12 +1257,7 @@ export const getWikiAttachmentsFromEvaluation = (
   wikiId: string | number,
 ) => {
   const url = `/repo/v1/evaluation/${id}/wiki/${wikiId}/attachmenthandles`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 export const getPresignedUrlForWikiAttachment = (
@@ -1345,12 +1269,7 @@ export const getPresignedUrlForWikiAttachment = (
 ): Promise<string> => {
   const objectTypeString = getObjectTypeToString(objectType)
   const url = `/repo/v1/${objectTypeString.toLocaleLowerCase()}/${id}/wiki2/${wikiId}/attachment?fileName=${fileName}&redirect=false`
-  return doGet(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 export const isInSynapseExperimentalMode = (): boolean => {
@@ -1396,8 +1315,8 @@ export const setAccessTokenCookie = async (
       'Portal/sessioncookie',
       { sessionToken: token },
       undefined,
-      'include',
       BackendDestinationEnum.PORTAL_ENDPOINT,
+      { credentials: 'include' },
     )
       .then(_ => {
         sessionCallback()
@@ -1411,15 +1330,15 @@ export const setAccessTokenCookie = async (
  * Get the current access token from a cookie.  Note that this will only succeed if your app is running on
  * a .synapse.org subdomain.
  */
-export const getAccessTokenFromCookie = async () => {
+export const getAccessTokenFromCookie = async (): Promise<string> => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
     'Portal/sessioncookie?validate=true',
     undefined,
-    'include',
     BackendDestinationEnum.PORTAL_ENDPOINT,
+    { credentials: 'include' },
   )
 }
 
@@ -1437,7 +1356,6 @@ export const getPrincipalAliasRequest = (
     url,
     { alias, type },
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1642,7 +1560,6 @@ const processFilePart = (
     presignedUrlUrl,
     presignedUploadUrlRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ).then(async (presignedUrlResponse: BatchPresignedUploadUrlResponse) => {
     const presignedUrl =
@@ -1670,7 +1587,6 @@ const processFilePart = (
         addPartUrl,
         undefined,
         accessToken,
-        undefined,
         BackendDestinationEnum.REPO_ENDPOINT,
       ).then((addPartResponse: AddPartResponse) => {
         if (addPartResponse.addPartState === 'ADD_SUCCESS') {
@@ -1720,7 +1636,6 @@ export const checkUploadComplete = (
       url,
       undefined,
       accessToken,
-      undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
       .then((newStatus: MultipartUploadStatus) => {
@@ -1764,7 +1679,6 @@ export const startMultipartUpload = (
     url,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
     .then((status: MultipartUploadStatus) => {
@@ -1923,7 +1837,6 @@ export const addFileToDownloadListV2 = (
     '/repo/v1/download/list/add',
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1945,7 +1858,6 @@ export const createPackageFromDownloadListV2 = async (
     `/repo/v1/download/list/package/async/start`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -1970,7 +1882,6 @@ export const createManifestFromDownloadListV2 = async (
     `/repo/v1/download/list/manifest/async/start`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -1992,7 +1903,6 @@ export const addFilesToDownloadListV2 = async (
     '/repo/v1/download/list/add/async/start',
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -2015,7 +1925,6 @@ export const createACL = (
     `/repo/v1/entity/${entityId}/acl`,
     acl,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2033,7 +1942,6 @@ export const submitToEvaluation = (
     `/repo/v1/evaluation/submission?etag=${etag}`,
     submission,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2045,7 +1953,6 @@ export const getEvaluationPermissions = (
   return doGet<UserEvaluationPermissions>(
     `/repo/v1/evaluation/${evalId}/permissions`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2066,7 +1973,6 @@ export const getEvaluation = (
   return doGet<Evaluation>(
     EVALUATION_BY_ID(evalId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2088,7 +1994,6 @@ export const updateEvaluation = (
     EVALUATION_BY_ID(evaluation.id),
     evaluation,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2105,7 +2010,6 @@ export const createEvaluation = (
     EVALUATION,
     evaluation,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2121,7 +2025,6 @@ export const deleteEvaluation = (
   return doDelete(
     `/repo/v1/evaluation/${evalId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2138,7 +2041,6 @@ export const getEvaluationRound = (
   return doGet(
     `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2156,7 +2058,6 @@ export const getEvaluationRoundsList = (
     `/repo/v1/evaluation/${evalId}/round/list`,
     evaluationRoundListRequest ?? {},
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2173,7 +2074,6 @@ export const createEvaluationRound = (
     `/repo/v1/evaluation/${evaluationRound.evaluationId}/round`,
     evaluationRound,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2190,7 +2090,6 @@ export const updateEvaluationRound = (
     `/repo/v1/evaluation/${evaluationRound.evaluationId}/round/${evaluationRound.id}`,
     evaluationRound,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2207,7 +2106,6 @@ export const deleteEvaluationRound = (
   return doDelete(
     `/repo/v1/evaluation/${evalId}/round/${evalRoundId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2223,7 +2121,6 @@ export const getEvaluationSubmissions = (
   return doGet(
     `/repo/v1/evaluation/submission/query?query=${encodeURI(query)}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2238,7 +2135,6 @@ export const getOAuth2RequestDescription = (
   return doPost(
     '/auth/v1/oauth2/description',
     oidcAuthRequest,
-    undefined, // accessToken: this is not an authenticated call
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2256,7 +2152,6 @@ export const hasUserAuthorizedOAuthClient = (
     '/auth/v1/oauth2/consentcheck',
     oidcAuthRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2269,7 +2164,6 @@ export const getOAuth2Client = (
 ): Promise<OAuthClientPublic> => {
   return doGet(
     `/auth/v1/oauth2/client/${clientId}`,
-    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2287,7 +2181,6 @@ export const getOAuth2 = (
       nextPageToken ? '?nextPageToken=' + nextPageToken : ''
     }`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2306,7 +2199,6 @@ export const createOAuthClient = (
     '/auth/v1/oauth2/client',
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2319,7 +2211,6 @@ export const deleteOAuthClient = (id: string, accessToken: string) => {
   return doDelete(
     `/auth/v1/oauth2/client/${id}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2338,7 +2229,6 @@ export const updateOAuthClient = (
     `/auth/v1/oauth2/client/${request.client_id}`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2357,7 +2247,6 @@ export const createOAuthClientSecret = (
     `/auth/v1/oauth2/client/secret/${id}`,
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2371,7 +2260,6 @@ export const getAuthenticatedOn = async (
   return doGet(
     `/auth/v1/authenticatedOn`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2390,7 +2278,6 @@ export const consentToOAuth2Request = (
     '/auth/v1/oauth2/consent',
     oidcAuthRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2414,7 +2301,6 @@ export const createFormGroup = (
     `/repo/v1/form/group?name=${encodeURI(name)}`,
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2430,7 +2316,6 @@ export const getFormACL = (
   return doGet(
     `/repo/v1/form/group/${formGroupId}/acl`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2448,7 +2333,6 @@ export const updateFormACL = (
     `/repo/v1/form/group/${formGroupId}/acl`,
     newAcl,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2475,7 +2359,6 @@ export const createFormData = (
     `/repo/v1/form/data?groupId=${formGroupId}`,
     newFormData,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2498,7 +2381,6 @@ export const updateFormData = (
     `/repo/v1/form/data/${formDataId}`,
     updatedFormData,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2514,7 +2396,6 @@ export const deleteFormData = (
   return doDelete(
     `/repo/v1/form/data/${formDataId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2531,7 +2412,6 @@ export const submitFormData = (
     `/repo/v1/form/data/${formDataId}/submit`,
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2549,7 +2429,6 @@ export const listFormData = (
     `/repo/v1/form/data/list`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2567,7 +2446,6 @@ export const listFormDataAsFormAdmin = (
     `/repo/v1/form/data/list/reviewer`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2584,7 +2462,6 @@ export const acceptFormData = (
     `/repo/v1/form/data/${formDataId}/accept`,
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2605,7 +2482,6 @@ export const rejectFormData = (
     `/repo/v1/form/data/${formDataId}/reject`,
     formRejection,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2623,7 +2499,6 @@ export const getProjectStatistics = (
     `/repo/v1/statistics`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2637,7 +2512,6 @@ export const getRestrictionInformation = (
     `/repo/v1/restrictionInformation`,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2662,7 +2536,6 @@ export const getAccessRequirement = (
   return doGet<PaginatedResults<AccessRequirement>>(
     url,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2683,7 +2556,6 @@ export const getAccessRequirementById = <T extends AccessRequirement>(
   return doGet<T>(
     ACCESS_REQUIREMENT_BY_ID(id),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2703,7 +2575,6 @@ export const getAccessRequirementAcl = (
     doGet<AccessControlList>(
       ACCESS_REQUIREMENT_ACL(id),
       accessToken,
-      undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
   )
@@ -2722,7 +2593,6 @@ export const searchAccessRequirements = (
     ACCESS_REQUIREMENT_SEARCH,
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2740,7 +2610,6 @@ export const getAccessRequirementStatus = (
   return doGet(
     ACCESS_REQUIREMENT_STATUS(requirementId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2763,7 +2632,6 @@ export const getAllAccessRequirements = (
     return doGet<PaginatedResults<AccessRequirement>>(
       url,
       accessToken,
-      undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     )
   }
@@ -2785,7 +2653,6 @@ export const getAccessApproval = async (
   return doGet<AccessApproval>(
     url,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2805,7 +2672,6 @@ export const postAccessApproval = async (
     '/repo/v1/accessApproval',
     accessApproval,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2815,7 +2681,6 @@ export const getDownloadList = (accessToken: string | undefined) => {
   return doGet<DownloadList>(
     '/file/v1/download/list',
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2830,7 +2695,6 @@ export const getDownloadOrder = (
     url,
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2879,7 +2743,6 @@ export const deleteDownloadListFiles = (
     '/file/v1/download/list/remove',
     { list },
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ).then(data => {
     dispatchDownloadListChangeEvent(data)
@@ -2892,7 +2755,6 @@ export const deleteDownloadList = (accessToken: string | undefined) => {
   return doDelete(
     '/file/v1/download/list',
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   ).then(_ => {
     dispatchDownloadListChangeEvent(undefined)
@@ -2914,7 +2776,6 @@ export const updateTable = async (
     `/repo/v1/entity/${tableUpdateRequest.entityId}/table/transaction/async/start`,
     tableUpdateRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -2930,7 +2791,6 @@ export const getTransformSqlWithFacetsRequest = (
   return doPost<SqlTransformResponse>(
     '/repo/v1/table/sql/transform',
     transformSqlWithFacetsRequest,
-    undefined, // no auth needed
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2944,7 +2804,6 @@ export const createPersonalAccessToken = (
     '/auth/v1/personalAccessToken',
     accessTokenGenerationRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2958,7 +2817,6 @@ export const getPersonalAccessTokenRecords = (
       nextPageToken ? '?nextPageToken=' + nextPageToken : ''
     }`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2970,7 +2828,6 @@ export const deletePersonalAccessToken = (
   return doDelete(
     `/auth/v1/personalAccessToken/${accessTokenId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -2986,7 +2843,6 @@ export const getMyProjects = (
   return doGet<ProjectHeaderList>(
     `/repo/v1/projects?${urlParams.toString()}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3003,7 +2859,6 @@ export const getUserProjects = (
   return doGet<ProjectHeaderList>(
     `/repo/v1/projects/user/${userId}?${urlParams.toString()}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3013,7 +2868,6 @@ export const getEntityPath = (entityId: string, accessToken?: string) => {
   return doGet<EntityPath>(
     `/repo/v1/entity/${entityId}/path`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3028,7 +2882,6 @@ export const getEntityVersions = (
   return doGet<PaginatedResults<VersionInfo>>(
     `/repo/v1/entity/${entityId}/version?offset=${offset}&limit=${limit}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3039,7 +2892,6 @@ export const searchEntities = (query: SearchQuery, accessToken?: string) => {
     '/repo/v1/search',
     query,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3057,7 +2909,6 @@ const getDownloadListJobResponse = async (
     '/repo/v1/download/list/query/async/start',
     downloadListQueryRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   const response = await getAsyncResultBodyFromJobId<DownloadListQueryResponse>(
@@ -3078,7 +2929,6 @@ export const clearDownloadListV2 = (
   return doDelete(
     '/repo/v1/download/list',
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3143,7 +2993,6 @@ export const removeItemFromDownloadListV2 = (
     '/repo/v1/download/list/remove',
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3157,7 +3006,6 @@ export const updateResearchProject = (
     '/repo/v1/researchProject',
     requestObj,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3170,7 +3018,6 @@ export const getResearchProject = (
   return doGet<ResearchProject>(
     `/repo/v1/accessRequirement/${requirementId}/researchProjectForUpdate`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3183,7 +3030,6 @@ export const getDataAccessRequestForUpdate = (
   return doGet<RequestInterface | RenewalInterface>(
     `/repo/v1/accessRequirement/${requirementId}/dataAccessRequestForUpdate`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3197,7 +3043,6 @@ export const updateDataAccessRequest = (
     `/repo/v1/dataAccessRequest`,
     requestObj,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3211,7 +3056,6 @@ export const submitDataAccessRequest = (
     `/repo/v1/dataAccessRequest/${requestObj.requestId}/submission`,
     requestObj,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3226,7 +3070,6 @@ export const cancelDataAccessRequest = (
     `/repo/v1/dataAccessSubmission/${submissionId}/cancellation`,
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3240,7 +3083,6 @@ export const getSubmissionById = (
   return doGet<DataAccessSubmission>(
     DATA_ACCESS_SUBMISSION_BY_ID(submissionId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3262,7 +3104,6 @@ export const updateSubmissionStatus = (
     DATA_ACCESS_SUBMISSION_BY_ID(request.submissionId),
     request,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3280,7 +3121,6 @@ export const getSchemaBinding = (entityId: string, accessToken?: string) => {
     doGet<JsonSchemaObjectBinding>(
       ENTITY_SCHEMA_BINDING(entityId),
       accessToken,
-      undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
   )
@@ -3300,7 +3140,6 @@ export const getSchemaValidationResults = (
   return doGet<ValidationResults>(
     ENTITY_SCHEMA_VALIDATION(entityId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3313,7 +3152,6 @@ export const getSchemaValidationResults = (
 export const getSchema = (schema$id: string) => {
   return doGet<JSONSchema7>(
     `${REGISTERED_SCHEMA_ID(schema$id)}`,
-    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3339,7 +3177,6 @@ export const getValidationSchema = async (
       $id: schema$id,
     },
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
   return getAsyncResultBodyFromJobId(
@@ -3364,7 +3201,6 @@ export const hasAccessToEntity = (
   return doGet<HasAccessResponse>(
     `${ENTITY_ACCESS(entityId)}?accessType=${accessType}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3380,7 +3216,6 @@ export const getEntityJson = (entityId: string, accessToken?: string) => {
   return doGet<EntityJson>(
     ENTITY_JSON(entityId),
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3401,7 +3236,6 @@ export const updateEntityJson = (
     ENTITY_JSON(entityId),
     json,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3416,7 +3250,6 @@ export const getNotificationEmail = (accessToken?: string) => {
   return doGet<NotificationEmail>(
     NOTIFICATION_EMAIL,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3430,7 +3263,6 @@ export const isAliasAvailable = (
     ALIAS_AVAILABLE,
     aliasCheckRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3444,7 +3276,6 @@ export const registerAccountStep1 = (
     REGISTER_ACCOUNT_STEP_1(portalEndpoint),
     newUser,
     undefined,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3456,7 +3287,6 @@ export const registerAccountStep2 = (
   return doPost(
     REGISTER_ACCOUNT_STEP_2,
     accountSetupInfo,
-    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3479,8 +3309,12 @@ export const oAuthRegisterAccountStep2 = (
 ): Promise<LoginResponse> => {
   return doPost(
     '/auth/v1/oauth2/account2',
-    { provider, authenticationCode, redirectUrl, userName },
-    undefined,
+    {
+      provider,
+      authenticationCode,
+      redirectUrl,
+      userName,
+    },
     undefined,
     endpoint,
   )
@@ -3507,7 +3341,6 @@ export const bindOAuthProviderToAccount = async (
     '/auth/v1/oauth2/alias',
     { provider, authenticationCode, redirectUrl },
     accessToken,
-    undefined,
     endpoint,
   )
 }
@@ -3527,12 +3360,7 @@ export const unbindOAuthProviderToAccount = async (
   const url = `/auth/v1/oauth2/alias?provider=${provider}&alias=${encodeURIComponent(
     alias,
   )}`
-  return doDelete(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doDelete(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 //http://rest-docs.synapse.org/rest/POST/termsOfUse2.html
@@ -3540,7 +3368,6 @@ export const signSynapseTermsOfUse = (accessToken: string) => {
   return doPost(
     SIGN_TERMS_OF_USE,
     { accessToken },
-    undefined,
     undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -3555,7 +3382,6 @@ export const createProfileVerificationSubmission = (
     VERIFICATION_SUBMISSION,
     verificationSubmission,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3569,7 +3395,6 @@ export const changePasswordWithCurrentPassword = (
     '/auth/v1/user/changePassword',
     newPassword,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3582,7 +3407,6 @@ export const changePasswordWithToken = (
     '/auth/v1/user/changePassword',
     newPassword,
     undefined,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3593,13 +3417,7 @@ export const resetPassword = (email: string) => {
   const url = `/auth/v1/user/password/reset?passwordResetEndpoint=${encodeURIComponent(
     endpoint,
   )}`
-  return doPost(
-    url,
-    { email },
-    undefined,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doPost(url, { email }, undefined, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
@@ -3619,7 +3437,6 @@ export const addEmailAddressStep1 = (
     `/repo/v1/account/${userId}/emailValidation?portalEndpoint=${portalEndpoint}`,
     { email },
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3637,7 +3454,6 @@ export const addEmailAddressStep2 = (
     `/repo/v1/email`,
     emailValidationSignedToken,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3654,7 +3470,6 @@ export const deleteEmail = (
   return doDelete(
     `/repo/v1/email?email=${email}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3672,7 +3487,6 @@ export const updateNotificationEmail = (
     '/repo/v1/notificationEmail',
     { email },
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3688,7 +3502,6 @@ export const getReply = (replyId: string, accessToken: string | undefined) => {
   return doGet<DiscussionReplyBundle>(
     `/repo/v1/reply/${replyId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3709,7 +3522,6 @@ export const getReplyMessageUrl = (
   return doGet<MessageURL>(
     `/repo/v1/reply/messageUrl?messageKey=${messageKey}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3728,7 +3540,6 @@ export const getThread = (
   return doGet<DiscussionThreadBundle>(
     `/repo/v1/thread/${threadId}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3749,7 +3560,6 @@ export const getThreadMessageUrl = (
   return doGet<MessageURL>(
     `/repo/v1/thread/messageUrl?messageKey=${messageKey}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3772,7 +3582,6 @@ export const forumSearch = (
     `/repo/v1/forum/${forumId}/search`,
     discussionSearchRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3793,7 +3602,6 @@ export const searchAccessApprovals = (
     '/repo/v1/accessApproval/search',
     accessApprovalSearchRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3813,7 +3621,6 @@ export const searchAccessSubmission = (
     ACCESS_REQUEST_SUBMISSION_SEARCH,
     submissionSearchRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3829,7 +3636,6 @@ export const getApprovedSubmissionInfo = (
     APPROVED_SUBMISSION_INFO(submissionInfoPageRequest.accessRequirementId),
     submissionInfoPageRequest,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3846,12 +3652,7 @@ export const getActivityForEntity = (
     entityId,
     versionNumber ? `${versionNumber}` : undefined,
   )
-  return doGet<Activity>(
-    url,
-    accessToken,
-    undefined,
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )
+  return doGet<Activity>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
 }
 
 /**
@@ -3866,7 +3667,6 @@ export function getProfilePicPreviewPresignedUrl(userId: string) {
     doGet<string>(
       PROFILE_IMAGE_PREVIEW(userId) + `?redirect=false`,
       undefined,
-      undefined,
       BackendDestinationEnum.REPO_ENDPOINT,
     ),
   )
@@ -3880,7 +3680,6 @@ export function getItemsInTrashCan(
   return doGet<PaginatedResults<TrashedEntity>>(
     TRASHCAN_VIEW + `?offset=${offset}&limit=${limit}`,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3893,7 +3692,6 @@ export function restoreFromTrashCan(
     TRASHCAN_RESTORE(entityId),
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -3906,7 +3704,6 @@ export function purgeFromTrashCan(
     TRASHCAN_PURGE(entityId),
     undefined,
     accessToken,
-    undefined,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
