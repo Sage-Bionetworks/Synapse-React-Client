@@ -26,6 +26,8 @@ export type UserCardSmallProps = {
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
 
+const NONBREAKING_SPACE = '\u00A0'
+
 export const UserCardSmall = (props: UserCardSmallProps) => {
   const {
     userProfile,
@@ -100,18 +102,19 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
     showFullName && (userProfile.firstName || userProfile.lastName) ? (
       <span className={'user-fullname'}>
         {`${userProfile.firstName ?? ''}`}
-        {userProfile.firstName && userProfile.lastName ? '\u00A0' : ''}
+        {userProfile.firstName && userProfile.lastName ? NONBREAKING_SPACE : ''}
         {`${userProfile.lastName ?? ''}`}
       </span>
     ) : null
 
   const Tag = showCardOnHover || !disableLink ? 'a' : 'span'
 
-  const style: React.CSSProperties = showCardOnHover
-    ? { whiteSpace: 'nowrap' }
-    : disableLink
-    ? { cursor: 'unset' }
-    : {}
+  let style: React.CSSProperties = {}
+  if (showCardOnHover) {
+    style = { whiteSpace: 'nowrap' }
+  } else if (disableLink) {
+    style = { cursor: 'unset' }
+  }
 
   return (
     <>
@@ -128,7 +131,7 @@ export const UserCardSmall = (props: UserCardSmallProps) => {
       >
         {avatar}
         {fullName}
-        {fullName ? '\u00A0(' : ''}
+        {fullName ? `${NONBREAKING_SPACE}(` : ''}
         {`@${userProfile.userName}`}
         {fullName ? ')' : ''}
         {showAccountLevelIcon && (
