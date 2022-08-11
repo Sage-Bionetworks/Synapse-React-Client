@@ -473,7 +473,7 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
       /**
        * The height of all other nodes in the tree varies depending on the tree node type.
        */
-      return treeNodeType === EntityTreeNodeType.DUAL_PANE ? 28 : 60
+      return treeNodeType === EntityTreeNodeType.DUAL_PANE ? 30 : 60
     },
     [treeNodeType, rootNodeConfiguration.show],
   )
