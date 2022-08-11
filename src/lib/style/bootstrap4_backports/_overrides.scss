@@ -40,8 +40,13 @@
     box-shadow: SRC.$box-shadow-soft;
   }
 
-  button.dropdown-toggle.btn::after {
-    font-size: 18px;
+  .dropdown-toggle {
+    &::after {
+      margin-left: 0.8em;
+      content: '›';
+      transform: rotate(90deg) scaleX(1.33);
+      font-weight: 500;
+    }
   }
 
   .dropdown-toggle.secondary-caret::after {
