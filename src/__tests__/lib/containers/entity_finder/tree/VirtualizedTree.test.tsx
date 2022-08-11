@@ -1,5 +1,11 @@
 import '@testing-library/jest-dom'
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  findByRole,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
@@ -715,6 +721,50 @@ describe('VirtualizedTree tests', () => {
 
       // Should have called to be expanded
       await waitFor(() => expect(mockSetOpen).toBeCalledWith(true))
+    })
+
+    test('Shows a tooltip for an EntityHeader node', async () => {
+      jest.useFakeTimers()
+      const mockFetchNextPage = jest.fn()
+      const nodeProps: NodeComponentProps<
+        TreeData,
+        VariableSizeNodePublicState<TreeData>
+      > = {
+        style: { height: 50 },
+        data: {
+          id: 'root-pagination',
+          isOpenByDefault: false,
+          defaultHeight: 50,
+          node: {
+            id: 'syn123',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            name: 'My Folder',
+            children: undefined,
+          },
+          getNextPageOfChildren: mockFetchNextPage,
+          isLeaf: false,
+          nestingLevel: 0,
+          setSelectedId: id => {},
+          treeNodeType: EntityTreeNodeType.SINGLE_PANE,
+          isSelected: false,
+          isDisabled: false,
+        },
+        setOpen: async (state: boolean) => {},
+        isOpen: false,
+        height: 50,
+        resize: (height: number) => {},
+      }
+      render(<Node {...nodeProps} />, {
+        wrapper: createWrapper(),
+      })
+      const nameInTree = await screen.findByText('My Folder')
+      userEvent.hover(nameInTree)
+      jest.runAllTimers()
+      const tooltip = await screen.findByRole('tooltip')
+
+      within(tooltip).getByText('My Folder', { exact: false })
+      within(tooltip).getByText('ID:', { exact: false })
+      within(tooltip).getByText('syn123', { exact: false })
     })
   })
 })

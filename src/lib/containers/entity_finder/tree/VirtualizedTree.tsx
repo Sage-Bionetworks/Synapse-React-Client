@@ -1,6 +1,7 @@
 import { Skeleton } from '@material-ui/lab'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
+import moment from 'moment'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -13,16 +14,20 @@ import {
 } from 'react-vtree'
 import { NodeComponentProps } from 'react-vtree/dist/es/Tree'
 import { SynapseClient } from '../../../utils'
+import { formatDate } from '../../../utils/functions/DateFormatter'
 import {
   getEntityTypeFromHeader,
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { EntityType } from '../../../utils/synapseTypes'
+import Tooltip from '../../../utils/tooltip/Tooltip'
 import { Writable } from '../../../utils/types/Writable'
+import Typography from '../../../utils/typography/Typography'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { SynapseSpinner } from '../../LoadingScreen'
+import { UserCard } from '../../UserCard'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 
 export enum EntityTreeNodeType {
@@ -39,7 +44,11 @@ type NodeChildren = Readonly<{
   childrenNextPageToken?: string | null
 }>
 
-type EntityHeaderNode = Pick<EntityFinderHeader, 'id' | 'name' | 'type'> &
+type EntityHeaderNode = (
+  | EntityFinderHeader
+  // Only will have a subset of fields if the node is fetched via the entity path:
+  | Pick<EntityFinderHeader, 'id' | 'name' | 'type'>
+) &
   NodeChildren
 type PaginationNode = { __paginationNode: true }
 
@@ -218,9 +227,9 @@ export function Node(
   const [isLoading, setLoading] = useState(false)
 
   const nodeText = isEntityHeaderNode(node) ? (
-    node.name
+    <span>{node.name}</span>
   ) : isRootNodeConfiguration(node) ? (
-    node.nodeText
+    <span>{node.nodeText}</span>
   ) : (
     // Pagination node
     <Skeleton width={100} />
@@ -267,6 +276,40 @@ export function Node(
     return <></>
   }
 
+  let tooltipContent: React.ReactNode = ''
+  if (isEntityHeaderNode(node)) {
+    tooltipContent = (
+      <div style={{ textAlign: 'center' }}>
+        <Typography display="inline" component="span" variant="smallText1">
+          {node.name}
+          <br />
+          <b>ID: </b>
+          {node.id}
+          {'modifiedBy' in node && (
+            <>
+              <br />
+              <b>Modified By: </b>
+              <UserCard
+                showFullName
+                disableLink
+                showCardOnHover={false}
+                size="SMALL USER CARD"
+                ownerId={node.modifiedBy.toString()}
+              />
+            </>
+          )}
+          {'modifiedOn' in node && (
+            <>
+              <br />
+              <b>Modified On: </b>
+              {formatDate(moment(node.modifiedOn))}
+            </>
+          )}
+        </Typography>
+      </div>
+    )
+  }
+
   return (
     <div
       className={`Node ${
@@ -308,8 +351,11 @@ export function Node(
       )}
 
       <div className="EntityName" ref={ref}>
-        {nodeText}
+        <Tooltip title={tooltipContent} placement="right">
+          {nodeText}
+        </Tooltip>
       </div>
+
       {treeNodeType === EntityTreeNodeType.SINGLE_PANE && (
         <EntityBadgeIcons
           entityId={id}
