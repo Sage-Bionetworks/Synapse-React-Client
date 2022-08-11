@@ -20,7 +20,7 @@ import {
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import { EntityHeader, EntityType } from '../../../utils/synapseTypes'
+import { EntityType } from '../../../utils/synapseTypes'
 import Tooltip from '../../../utils/tooltip/Tooltip'
 import { Writable } from '../../../utils/types/Writable'
 import Typography from '../../../utils/typography/Typography'
@@ -45,7 +45,8 @@ type NodeChildren = Readonly<{
 }>
 
 type EntityHeaderNode = (
-  | EntityHeader
+  | EntityFinderHeader
+  // Only will have a subset of fields if the node is fetched via the entity path:
   | Pick<EntityFinderHeader, 'id' | 'name' | 'type'>
 ) &
   NodeChildren
