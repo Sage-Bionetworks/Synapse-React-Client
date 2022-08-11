@@ -31,7 +31,7 @@ describe('UserSearchBoxV2 tests', () => {
     userEvent.type(input, MOCK_USER_NAME.substring(0, 3))
 
     // Make a selection
-    await selectEvent.select(input, '@' + MOCK_USER_NAME)
+    await selectEvent.select(input, new RegExp('@' + MOCK_USER_NAME))
 
     await waitFor(() =>
       expect(onChange).toHaveBeenLastCalledWith(

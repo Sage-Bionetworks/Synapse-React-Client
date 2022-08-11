@@ -109,7 +109,7 @@ describe('AccessHistoryDashboard tests', () => {
 
     const userInput = await screen.findByRole('textbox')
     userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await selectEvent.select(userInput, '@' + MOCK_USER_NAME)
+    await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
 
     await screen.findByLabelText('Select a user to view their access history')
     await screen.findByLabelText('Filter by Access Requirement Name')
@@ -140,7 +140,7 @@ describe('AccessHistoryDashboard tests', () => {
 
     const userInput = await screen.findByRole('textbox')
     userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await selectEvent.select(userInput, '@' + MOCK_USER_NAME)
+    await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
 
     await waitFor(() =>
       expect(
@@ -171,7 +171,7 @@ describe('AccessHistoryDashboard tests', () => {
     const { history } = renderComponent()
     const userInput = await screen.findByRole('textbox')
     userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await selectEvent.select(userInput, '@' + MOCK_USER_NAME)
+    await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
 
     await screen.findByLabelText('Select a user to view their access history')
     const arNameInput = await screen.findByLabelText(

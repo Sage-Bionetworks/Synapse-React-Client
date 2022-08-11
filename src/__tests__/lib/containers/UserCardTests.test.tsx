@@ -257,6 +257,17 @@ describe('it creates the correct UI for the small card', () => {
     await screen.findByText(`@${mockUserProfileData.userName}`)
     expect(container.querySelector('span.UserCardSmall')).not.toBeNull()
   })
+
+  test('showFullName', async () => {
+    renderSmallUserCard({
+      ...props,
+      showFullName: true,
+    })
+    await screen.findByText(
+      `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
+    )
+    await screen.findByText(`(@${mockUserProfileData.userName})`)
+  })
 })
 
 describe('it creates the correct UI for the medium card', () => {
