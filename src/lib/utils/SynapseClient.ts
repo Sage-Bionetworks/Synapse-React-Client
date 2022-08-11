@@ -1375,7 +1375,7 @@ export const getStyleguideStack = (): EndpointObject | null => {
 export const setAccessTokenCookie = async (
   token: string | undefined,
   sessionCallback: () => void,
-) => {
+): Promise<void> => {
   if (IS_OUTSIDE_SYNAPSE_ORG) {
     if (!token) {
       cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
@@ -1392,7 +1392,7 @@ export const setAccessTokenCookie = async (
     sessionCallback()
   } else {
     // will set cookie in the http header
-    doPost(
+    return doPost(
       'Portal/sessioncookie',
       { sessionToken: token },
       undefined,
