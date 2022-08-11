@@ -13,7 +13,7 @@ import { getColorPalette } from '../../../containers/ColorGradient'
 import { CardLink } from '../../../containers/CardContainerLogic'
 import { getFieldIndex } from '../../../utils/functions/queryUtils'
 import { useGetEntity } from '../../../utils/hooks/SynapseAPI/entity/useEntity'
-import { getFileHandleAssociation } from '../../GenericCard'
+import { getFileHandleAssociation, getLinkParams } from '../../GenericCard'
 
 export type ProgramsProps = {
   entityId: string
@@ -67,11 +67,6 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
     imageFileHandleColumnName,
     queryResultBundle,
   )
-  const matchColIndex = getFieldIndex(
-    linkConfig.matchColumnName,
-    queryResultBundle,
-  )
-  const baseExploreUrl = `/${linkConfig.baseURL}?${linkConfig.URLColumnName}=`
   return (
     <div
       className={`bootstrap-4-backport Programs${
@@ -82,9 +77,16 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
         const values = el.values
         const title = values[titleColumnIndex]
         const summary = values[summaryColumnIndex]
-        const link = values[linkColumnIndex]
+        const link = values[linkColumnIndex] ?? ''
         const iconFileHandleIdValue = values[iconColumnIndex]
-        const matchValue = values[matchColIndex]
+
+        const schema = {}
+        queryResultBundle?.queryResult!.queryResults.headers.forEach(
+          (header, colIndex) => {
+            schema[header.name] = colIndex
+          },
+        )
+        const { href } = getLinkParams(link, linkConfig, values, schema)
 
         const fileHandleAssociation = getFileHandleAssociation(
           entity.data,
@@ -96,7 +98,7 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
           summary,
           link,
           color,
-          exploreLink: `${baseExploreUrl}${matchValue}`,
+          exploreLink: href,
           fileHandleAssociation,
         }
         return showDesktop ? (
