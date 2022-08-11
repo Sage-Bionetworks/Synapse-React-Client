@@ -1,11 +1,25 @@
 import React from 'react'
+import { convertToConcreteEntityType } from '../../../../utils/functions/EntityTypeUtils'
 import { useSearchInfinite } from '../../../../utils/hooks/SynapseAPI/search/useSearch'
-import { SearchQuery } from '../../../../utils/synapseTypes/Search'
+import { Hit, SearchQuery } from '../../../../utils/synapseTypes/Search'
+import { EntityHeaderFromHit } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import { DetailsView } from '../view/DetailsView'
 
 type SearchDetailsProps = EntityDetailsListSharedProps & {
   searchQuery: SearchQuery
+}
+
+function toEntityHeader(hit: Hit): EntityHeaderFromHit {
+  return {
+    name: hit.name,
+    id: hit.id,
+    type: convertToConcreteEntityType(hit.node_type),
+    createdOn: hit.created_on.toString(),
+    modifiedOn: hit.modified_on.toString(),
+    createdBy: hit.created_by,
+    modifiedBy: hit.modified_by,
+  }
 }
 
 export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
@@ -21,7 +35,9 @@ export const SearchDetails: React.FunctionComponent<SearchDetailsProps> = ({
   if (searchQuery.queryTerm) {
     return (
       <DetailsView
-        entities={data?.pages.flatMap(page => page.hits) ?? []}
+        entities={
+          data?.pages.flatMap(page => page.hits).map(toEntityHeader) ?? []
+        }
         isLoading={isLoading}
         hasNextPage={hasNextPage}
         fetchNextPage={fetchNextPage}

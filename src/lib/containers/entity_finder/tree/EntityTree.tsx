@@ -15,21 +15,20 @@ import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpress
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/user/useProjects'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import {
-  EntityHeader,
-  EntityPath,
-  EntityType,
-  ProjectHeader,
-  Reference,
-} from '../../../utils/synapseTypes'
+import { EntityPath, EntityType, Reference } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { BreadcrumbItem } from '../Breadcrumbs'
+import { toEntityHeader } from '../details/configurations/ProjectListDetails'
 import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from '../details/EntityDetailsList'
-import { EntityTreeNodeType } from './VirtualizedTree'
-import { RootNodeConfiguration, VirtualizedTree } from './VirtualizedTree'
+import { EntityFinderHeader } from '../EntityFinderHeader'
+import {
+  EntityTreeNodeType,
+  RootNodeConfiguration,
+  VirtualizedTree,
+} from './VirtualizedTree'
 
 const isEntityIdInPath = (entityId: string, path: EntityPath): boolean => {
   for (const eh of path.path) {
@@ -131,7 +130,7 @@ export function EntityTree(props: EntityTreeProps) {
 
   const [isLoading, setIsLoading] = useState(false)
   const [topLevelEntities, setTopLevelEntities] = useState<
-    (Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader)[]
+    Pick<EntityFinderHeader, 'name' | 'id' | 'type'>[]
   >([])
   const [scope, setScope] = useState(initialScope)
   const [initialContainerPath, setInitialContainerPath] = useState<EntityPath>()
@@ -184,7 +183,9 @@ export function EntityTree(props: EntityTreeProps) {
   useEffect(() => {
     if (useProjectData && isSuccessProjects) {
       if (projectData?.pages) {
-        setTopLevelEntities(projectData.pages.flatMap(page => page.results))
+        setTopLevelEntities(
+          projectData.pages.flatMap(page => page.results).map(toEntityHeader),
+        )
       }
     }
   }, [useProjectData, isSuccessProjects, projectData])

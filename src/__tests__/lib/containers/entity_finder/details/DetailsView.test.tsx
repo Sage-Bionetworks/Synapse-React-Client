@@ -4,11 +4,13 @@ import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
 import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { toEntityHeader } from '../../../../../lib/containers/entity_finder/details/configurations/ProjectListDetails'
 import {
   DetailsView,
   DetailsViewProps,
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsView'
 import { NO_VERSION_NUMBER } from '../../../../../lib/containers/entity_finder/EntityFinder'
+import { EntityFinderHeader } from '../../../../../lib/containers/entity_finder/EntityFinderHeader'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import { ENTITY_ID_VERSIONS } from '../../../../../lib/utils/APIConstants'
 import {
@@ -21,13 +23,13 @@ import {
   EntityHeader,
   EntityType,
   PaginatedResults,
-  ProjectHeader,
   SortBy,
 } from '../../../../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../../../../lib/utils/synapseTypes/VersionInfo'
 import { mockProjectHeader } from '../../../../../mocks/entity/mockEntity'
 import mockFileEntityData from '../../../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../../../mocks/msw/server'
+import { MOCK_USER_ID } from '../../../../../mocks/user/mock_user_profile'
 
 const mockFileEntityHeader = mockFileEntityData.entityHeader
 
@@ -47,20 +49,21 @@ function generateFileHeader(id: number): EntityHeader {
   return {
     id: `syn${id}`,
     name: 'My File',
-    modifiedOn: 'today',
-    modifiedBy: '100000',
+    modifiedOn: '2022-07-12T20:56:38.851Z',
+    modifiedBy: MOCK_USER_ID.toString(),
     type: 'org.sagebionetworks.repo.model.FileEntity',
     versionNumber: 1,
     versionLabel: 'label',
     benefactorId: 456,
     createdOn: '',
     createdBy: '',
+    isLatestVersion: true,
   }
 }
 
-const entityHeaders: (EntityHeader | ProjectHeader)[] = [
-  mockFileEntityHeader,
-  mockProjectHeader,
+const entityHeaders: EntityFinderHeader[] = [
+  mockFileEntityHeader!,
+  toEntityHeader(mockProjectHeader),
 ]
 
 const versionResult: PaginatedResults<VersionInfo> = {
@@ -75,7 +78,7 @@ const versionResult: PaginatedResults<VersionInfo> = {
       contentSize: '100001',
       contentMd5: 'deadbeef',
       modifiedByPrincipalId: '1',
-      modifiedOn: 'today',
+      modifiedOn: '2022-07-12T20:56:38.851Z',
       isLatestVersion: true,
     },
 
@@ -88,7 +91,7 @@ const versionResult: PaginatedResults<VersionInfo> = {
       contentSize: '100000',
       contentMd5: 'abcde0123456789',
       modifiedByPrincipalId: '1',
-      modifiedOn: 'yesterday',
+      modifiedOn: '2022-07-11T20:56:38.851Z',
       isLatestVersion: false,
     },
   ],
@@ -232,7 +235,7 @@ describe('DetailsView tests', () => {
       isLoading: false,
       hasNextPage: true,
       isFetchingNextPage: false,
-      entities: Array(50).fill(manyEntities),
+      entities: manyEntities,
     })
 
     expect(mockFetchNextPage).not.toHaveBeenCalled()
@@ -246,7 +249,7 @@ describe('DetailsView tests', () => {
       isLoading: false,
       hasNextPage: true,
       isFetchingNextPage: false,
-      entities: Array(2).fill(fewEntities),
+      entities: fewEntities,
     })
 
     await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())

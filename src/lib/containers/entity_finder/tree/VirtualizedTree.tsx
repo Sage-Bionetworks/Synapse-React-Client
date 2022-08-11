@@ -18,15 +18,12 @@ import {
   isContainerType,
 } from '../../../utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '../../../utils/SynapseContext'
-import {
-  EntityHeader,
-  EntityType,
-  ProjectHeader,
-} from '../../../utils/synapseTypes'
+import { EntityType } from '../../../utils/synapseTypes'
 import { Writable } from '../../../utils/types/Writable'
 import { EntityBadgeIcons } from '../../EntityBadgeIcons'
 import { EntityTypeIcon } from '../../EntityIcon'
 import { SynapseSpinner } from '../../LoadingScreen'
+import { EntityFinderHeader } from '../EntityFinderHeader'
 
 export enum EntityTreeNodeType {
   /** The tree component's appearance and interactions will facilitate selection. Nodes will be larger and styles will indicate primary selection */
@@ -35,10 +32,6 @@ export enum EntityTreeNodeType {
   DUAL_PANE,
 }
 
-type EntityFinderHeader =
-  | Pick<EntityHeader, 'id' | 'name' | 'type'>
-  | ProjectHeader
-
 type NodeChildren = Readonly<{
   /** The node's children. If undefined, then children have not been fetched. */
   children?: EntityHeaderNode[]
@@ -46,7 +39,8 @@ type NodeChildren = Readonly<{
   childrenNextPageToken?: string | null
 }>
 
-type EntityHeaderNode = EntityFinderHeader & NodeChildren
+type EntityHeaderNode = Pick<EntityFinderHeader, 'id' | 'name' | 'type'> &
+  NodeChildren
 type PaginationNode = { __paginationNode: true }
 
 type TreeNode = EntityHeaderNode | RootNodeConfiguration | PaginationNode
