@@ -275,7 +275,7 @@ export function Node(
     return <></>
   }
 
-  let tooltipContent = ''
+  let tooltipContent: React.ReactNode = ''
   if (isEntityHeaderNode(node)) {
     tooltipContent = (
       <div style={{ textAlign: 'center' }}>
