@@ -16,14 +16,13 @@ import {
   EntityChildrenRequest,
   EntityHeader,
   EntityType,
-  ProjectHeader,
   SortBy,
 } from '../../../../utils/synapseTypes'
-import { Hit } from '../../../../utils/synapseTypes/Search'
 import { HelpPopover } from '../../../HelpPopover'
 import { BlockingLoader } from '../../../LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
+import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import {
   BadgeIconsRenderer,
@@ -43,7 +42,7 @@ const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
 
 export type DetailsViewProps = EntityDetailsListSharedProps & {
-  entities: (EntityHeader | ProjectHeader | Hit)[]
+  entities: EntityFinderHeader[]
   isLoading: boolean
   hasNextPage?: boolean
   fetchNextPage?: () => Promise<any>
@@ -66,11 +65,7 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
 /**
  * Describes the shape of the data passed to the BaseTable
  */
-export type EntityFinderTableViewRowData = (
-  | EntityHeader
-  | ProjectHeader
-  | Hit
-) & {
+export type EntityFinderTableViewRowData = EntityFinderHeader & {
   entityId: string
   versionNumber?: number
   entityType: EntityType
@@ -134,7 +129,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   type DetailsViewRowAppearance = 'hidden' | 'disabled' | 'selected' | 'default'
 
   const determineRowAppearance = (
-    entity: EntityHeader | ProjectHeader | Hit,
+    entity: EntityFinderHeader,
   ): DetailsViewRowAppearance => {
     if (!visibleTypes.includes(getEntityTypeFromHeader(entity))) {
       return 'hidden'
@@ -276,7 +271,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   )
 
   const SelectAllCheckboxRenderer = useMemo(() => {
-    // Enabled if there's at least one visble & selectable entity, OR there's a page we haven't fetched
+    // Enabled if there's at least one visible & selectable entity, OR there's a page we haven't fetched
     const isEnabled =
       hasNextPage ||
       entities.filter(

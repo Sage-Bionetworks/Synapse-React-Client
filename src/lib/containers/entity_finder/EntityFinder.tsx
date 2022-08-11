@@ -13,13 +13,9 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import {
-  EntityHeader,
-  ProjectHeader,
-  Reference,
-} from '../../utils/synapseTypes'
+import { Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
-import { Hit, KeyValue } from '../../utils/synapseTypes/Search'
+import { KeyValue } from '../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../ErrorBanner'
 import IconSvg from '../IconSvg'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
@@ -28,6 +24,7 @@ import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
 } from './details/EntityDetailsList'
+import { EntityFinderHeader } from './EntityFinderHeader'
 import { SelectionPane } from './SelectionPane'
 import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
@@ -109,7 +106,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   const [breadcrumbsProps, setBreadcrumbsProps] = useState<BreadcrumbsProps>({
     items: [],
   })
-  const [searchByIdResults, setSearchByIdResults] = useState<EntityHeader[]>([])
+  const [searchByIdResults, setSearchByIdResults] = useState<
+    EntityFinderHeader[]
+  >([])
   const [configFromTreeView, setConfigFromTreeView] =
     useState<EntityDetailsListDataConfiguration>({
       type: EntityDetailsListDataConfigurationType.PROMPT,
@@ -145,14 +144,14 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   const [selectedEntities, toggleSelection] = useEntitySelection(selectMultiple)
 
   const isIdSelected = useCallback(
-    (entity: EntityHeader | ProjectHeader | Hit) => {
+    (entity: EntityFinderHeader) => {
       return selectedEntities.has(entity.id)
     },
     [selectedEntities],
   )
 
   const isSelectable = useCallback(
-    (entity: EntityHeader | ProjectHeader | Hit) => {
+    (entity: EntityFinderHeader) => {
       const type = getEntityTypeFromHeader(entity)
       return selectableTypes.includes(type)
     },
