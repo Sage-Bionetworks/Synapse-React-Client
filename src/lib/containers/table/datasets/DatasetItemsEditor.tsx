@@ -95,7 +95,7 @@ export function getCopy(entity?: EntityRefCollectionView) {
 
   return {
     ADD_ITEMS: `Add ${pluralize(itemName)}`,
-    ADD_ITEMS_TO: `Add ${pluralize(itemName)} + to ${displayName}`,
+    ADD_ITEMS_TO: `Add ${pluralize(itemName)} to ${displayName}`,
     REMOVE_ITEMS: `Remove ${pluralize(itemName)}`,
     NO_ITEMS_IN_THIS_DATASET: `No ${pluralize(
       itemName,
