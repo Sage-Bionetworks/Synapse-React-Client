@@ -16,6 +16,7 @@ import { ErrorBanner } from '../ErrorBanner'
 import Typography from '../../utils/typography/Typography'
 import { HelpPopover } from '../HelpPopover'
 import Tooltip from '../../utils/tooltip/Tooltip'
+import { Button } from 'react-bootstrap'
 
 /**
  * Show the Download Cart page.
@@ -150,7 +151,10 @@ export const DownloadCartPage: React.FunctionComponent<
                         <IconSvg options={{ icon: 'packagableFile' }} /> Web
                         Download (.ZIP Packages)
                       </Typography>
-                      <HelpPopover markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process." />
+                      <HelpPopover
+                        markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a seperate login process."
+                        helpUrl="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
+                      />
                     </div>
                     <Typography variant={'body1'}>
                       <ul>
@@ -175,14 +179,15 @@ export const DownloadCartPage: React.FunctionComponent<
                     <span>
                       {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging >
                         0 && (
-                        <a
-                          className="highlight-link"
+                        <Button
+                          variant="sds-primary"
                           onClick={() => {
                             setIsShowingCreatePackageUI(true)
                           }}
                         >
+                          <IconSvg options={{ icon: 'download' }} />
                           Download As .Zip Packages
-                        </a>
+                        </Button>
                       )}
                       {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging ==
                         0 && (
@@ -191,9 +196,10 @@ export const DownloadCartPage: React.FunctionComponent<
                           enterNextDelay={300}
                           placement="top"
                         >
-                          <a className="highlight-link disabled">
-                            Download As .ZIP packages
-                          </a>
+                          <Button variant="sds-primary" disabled>
+                            <IconSvg options={{ icon: 'download' }} />
+                            Download As .Zip Packages
+                          </Button>
                         </Tooltip>
                       )}
                     </span>
@@ -204,7 +210,10 @@ export const DownloadCartPage: React.FunctionComponent<
                         <IconSvg options={{ icon: 'code' }} /> Programmatic
                         Download
                       </Typography>
-                      <HelpPopover markdownText="This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket).  External links will require navigation to an external site, which may require a separate login process." />
+                      <HelpPopover
+                        markdownText="This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket).  External links will require navigation to an external site, which may require a separate login process."
+                        helpUrl="https://help.synapse.org/docs/Downloading-Data-Programmatically.2003796248.html"
+                      />
                     </div>
                     <Typography variant={'body1'}>
                       <ul>

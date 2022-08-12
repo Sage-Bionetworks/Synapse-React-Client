@@ -117,7 +117,7 @@ describe('AccessRequirementDashboard tests', () => {
     const { history } = renderComponent()
     const reviewerInput = (await screen.findAllByRole('textbox'))[2]
     userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
-    await selectEvent.select(reviewerInput, '@' + MOCK_USER_NAME)
+    await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
 
     await waitFor(() =>
       expect(

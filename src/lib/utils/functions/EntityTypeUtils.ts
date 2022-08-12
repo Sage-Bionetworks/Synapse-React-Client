@@ -19,6 +19,7 @@ import {
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   DatasetCollection,
   DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
+  FILE_ENTITY_CONCRETE_TYPE_VALUE,
 } from '../synapseTypes'
 import { Hit } from '../synapseTypes/Search'
 import {
@@ -106,7 +107,7 @@ export function convertToEntityType(
     case 'org.sagebionetworks.repo.model.Folder':
       return EntityType.FOLDER
     case EntityType.FILE:
-    case 'org.sagebionetworks.repo.model.FileEntity':
+    case FILE_ENTITY_CONCRETE_TYPE_VALUE:
       return EntityType.FILE
     case EntityType.LINK:
     case 'org.sagebionetworks.repo.model.Link':
@@ -115,25 +116,56 @@ export function convertToEntityType(
     case 'org.sagebionetworks.repo.model.docker.DockerRepository':
       return EntityType.DOCKER_REPO
     case EntityType.TABLE:
-    case 'org.sagebionetworks.repo.model.table.TableEntity':
+    case TABLE_ENTITY_CONCRETE_TYPE_VALUE:
       return EntityType.TABLE
     case EntityType.SUBMISSION_VIEW:
     case 'org.sagebionetworks.repo.model.table.SubmissionView':
       return EntityType.SUBMISSION_VIEW
     case EntityType.ENTITY_VIEW:
-    case 'org.sagebionetworks.repo.model.table.EntityView':
+    case ENTITY_VIEW_CONCRETE_TYPE_VALUE:
       return EntityType.ENTITY_VIEW
     case EntityType.DATASET:
-    case 'org.sagebionetworks.repo.model.table.Dataset':
+    case DATASET_CONCRETE_TYPE_VALUE:
       return EntityType.DATASET
     case EntityType.DATASET_COLLECTION:
-    case 'org.sagebionetworks.repo.model.table.DatasetCollection':
+    case DATASET_COLLECTION_CONCRETE_TYPE_VALUE:
       return EntityType.DATASET_COLLECTION
     case EntityType.MATERIALIZED_VIEW:
-    case 'org.sagebionetworks.repo.model.table.MaterializedView':
+    case MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE:
       return EntityType.MATERIALIZED_VIEW
     default:
       throw new Error(`Unknown entity type: ${typeString}`)
+  }
+}
+
+export function convertToConcreteEntityType(
+  type: EntityType,
+): ENTITY_CONCRETE_TYPE {
+  switch (type) {
+    case EntityType.PROJECT:
+      return 'org.sagebionetworks.repo.model.Project'
+    case EntityType.FOLDER:
+      return 'org.sagebionetworks.repo.model.Folder'
+    case EntityType.FILE:
+      return 'org.sagebionetworks.repo.model.FileEntity'
+    case EntityType.LINK:
+      return 'org.sagebionetworks.repo.model.Link'
+    case EntityType.DOCKER_REPO:
+      return 'org.sagebionetworks.repo.model.docker.DockerRepository'
+    case EntityType.TABLE:
+      return 'org.sagebionetworks.repo.model.table.TableEntity'
+    case EntityType.SUBMISSION_VIEW:
+      return 'org.sagebionetworks.repo.model.table.SubmissionView'
+    case EntityType.ENTITY_VIEW:
+      return 'org.sagebionetworks.repo.model.table.EntityView'
+    case EntityType.DATASET:
+      return 'org.sagebionetworks.repo.model.table.Dataset'
+    case EntityType.DATASET_COLLECTION:
+      return 'org.sagebionetworks.repo.model.table.DatasetCollection'
+    case EntityType.MATERIALIZED_VIEW:
+      return 'org.sagebionetworks.repo.model.table.MaterializedView'
+    default:
+      throw new Error(`Unknown entity type: ${type}`)
   }
 }
 

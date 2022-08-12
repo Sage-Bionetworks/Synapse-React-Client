@@ -37,11 +37,21 @@ export interface Entity {
   uri?: string
 }
 
-type LINK_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.Link'
-type DOCKER_REPOSITORY_CONCRETE_TYPE =
+export const LINK_CONCRETE_TYPE_VALUE = 'org.sagebionetworks.repo.model.Link'
+export type LINK_CONCRETE_TYPE = typeof LINK_CONCRETE_TYPE_VALUE
+
+export const DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.docker.DockerRepository'
-type FOLDER_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.Folder'
-type PROJECT_CONCRETE_TYPE = 'org.sagebionetworks.repo.model.Project'
+export type DOCKER_REPOSITORY_CONCRETE_TYPE =
+  typeof DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE
+
+export const FOLDER_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.Folder'
+export type FOLDER_CONCRETE_TYPE = typeof FOLDER_CONCRETE_TYPE_VALUE
+
+export const PROJECT_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.Project'
+export type PROJECT_CONCRETE_TYPE = typeof PROJECT_CONCRETE_TYPE_VALUE
 
 // This is not a real object in Synapse, merely a collection of potential string values to represent the "concreteType" field on Entities
 export type ENTITY_CONCRETE_TYPE =

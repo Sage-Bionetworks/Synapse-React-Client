@@ -200,6 +200,7 @@ const mockFileEntityHeader: EntityHeader = {
   modifiedOn: mockFileEntity.modifiedOn!,
   createdBy: MOCK_USER_ID.toString(), // TODO: Replace with a valid mock user ID
   modifiedBy: MOCK_USER_ID_2.toString(),
+  isLatestVersion: true,
 }
 
 const mockFileEntityData: MockEntityData<FileEntity> = {

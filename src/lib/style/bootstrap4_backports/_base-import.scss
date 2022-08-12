@@ -16,6 +16,8 @@
   $input-border-width: 1px;
   $input-border-radius: 2px;
   $modal-footer-margin-between: 0rem;
+  // Hide the caret, we will replace it with a chevron (see .dropdown-toggle in overrides.scss)
+  $enable-caret: false;
   @import 'bootstrap/scss/bootstrap';
 
   .alert-danger {

@@ -2,15 +2,11 @@ import { Map } from 'immutable'
 import React, { Dispatch, SetStateAction, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import { getIsAllSelectedFromInfiniteList } from '../../../utils/hooks/useGetIsAllSelectedInfiniteList'
-import {
-  EntityHeader,
-  EntityType,
-  ProjectHeader,
-  Reference,
-} from '../../../utils/synapseTypes'
+import { EntityType, Reference } from '../../../utils/synapseTypes'
 import { GetProjectsParameters } from '../../../utils/synapseTypes/GetProjectsParams'
 import { SearchQuery } from '../../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../../ErrorBanner'
+import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'
 import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
@@ -30,7 +26,7 @@ export enum EntityDetailsListDataConfigurationType {
 export type EntityDetailsListDataConfiguration = {
   type: EntityDetailsListDataConfigurationType
   /** Defined if type is HEADER_LIST */
-  headerList?: (Pick<EntityHeader, 'name' | 'id' | 'type'> | ProjectHeader)[]
+  headerList?: Pick<EntityFinderHeader, 'id' | 'name' | 'type'>[]
   /** Defined if type is PARENT_CONTAINER */
   parentContainerId?: string
   /** Defined if type is USER_PROJECTS */
@@ -51,8 +47,8 @@ export type EntityDetailsListSharedProps = {
   visibleTypes: EntityType[]
   selected: Map<string, number>
   selectableTypes: EntityType[]
-  isIdSelected: (header: EntityHeader | ProjectHeader) => boolean
-  isSelectable: (header: EntityHeader | ProjectHeader) => boolean
+  isIdSelected: (header: EntityFinderHeader) => boolean
+  isSelectable: (header: EntityFinderHeader) => boolean
   toggleSelection: (entity: Reference | Reference[]) => void
   latestVersionText?: string
   setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
@@ -93,13 +89,13 @@ export const EntityDetailsList: React.FunctionComponent<
         case EntityDetailsListDataConfigurationType.HEADER_LIST:
           return (
             <DetailsView
-              entities={config.headerList as (EntityHeader | ProjectHeader)[]}
+              entities={config.headerList as EntityFinderHeader[]}
               isLoading={false}
               hasNextPage={false}
               {...sharedProps}
               enableSelectAll={sharedProps.enableSelectAll}
               selectAllIsChecked={getIsAllSelectedFromInfiniteList(
-                (config.headerList as (EntityHeader | ProjectHeader)[]) ?? [],
+                (config.headerList as EntityFinderHeader[]) ?? [],
                 sharedProps.selected.size,
                 sharedProps.isIdSelected,
                 sharedProps.isSelectable,
