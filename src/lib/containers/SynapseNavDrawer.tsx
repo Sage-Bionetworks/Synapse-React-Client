@@ -281,15 +281,13 @@ export const SynapseNavDrawer: React.FunctionComponent<
                 handleDrawerClose={handleDrawerClose}
                 handleDrawerOpen={handleDrawerOpen}
               />
-              {isInSynapseExperimentalMode() && (
-                <NavDrawerListItem
-                  tooltip="Trash Can"
-                  iconName="delete"
-                  onClickGoToUrl="/#!Trash:0"
-                  handleDrawerClose={handleDrawerClose}
-                  handleDrawerOpen={handleDrawerOpen}
-                />
-              )}
+              <NavDrawerListItem
+                tooltip="Trash Can"
+                iconName="delete"
+                onClickGoToUrl="/#!Trash:0"
+                handleDrawerClose={handleDrawerClose}
+                handleDrawerOpen={handleDrawerOpen}
+              />
               {isInSynapseExperimentalMode() &&
                 currentUserBundle?.isARReviewer && (
                   <NavDrawerListItem
