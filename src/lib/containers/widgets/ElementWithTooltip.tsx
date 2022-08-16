@@ -81,7 +81,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
         id={idForToolTip}
         data-for={idForToolTip}
         data-tip={tooltipText}
-        className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
+        className={`ElementWithTooltip SRC-hand-cursor SRC-grey-background-hover ${className} ${
           darkTheme ? 'dark-theme' : ''
         } `}
         onKeyPress={() => callbackFn()}
@@ -92,7 +92,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
       </button>
     ) : (
       <Dropdown.Toggle
-        className={`ElementWithTooltip SRC-hand-cursor SRC-primary-background-color-hover ${className} ${
+        className={`ElementWithTooltip SRC-hand-cursor SRC-grey-background-hover ${className} ${
           darkTheme ? 'dark-theme' : ''
         } `}
         variant={'light'}

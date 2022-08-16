@@ -5,8 +5,7 @@
   &__title {
     font-weight: bold;
   }
-  padding: 2rem;
-  background-color: rgba(map.get(SRC.$primary-color-palette, 500), 0.05);
+  padding-top: 12px;
   &__facet {
     margin: 2rem 0;
     &:first-child {

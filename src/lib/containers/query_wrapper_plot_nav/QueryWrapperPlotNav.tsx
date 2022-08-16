@@ -30,7 +30,6 @@ import TopLevelControls, {
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import FilterAndView from './FilterAndView'
-import QueryFilterToggleButton from './QueryFilterToggleButton'
 
 const QUERY_FILTERS_EXPANDED_CSS = 'isShowingFacetFilters'
 const QUERY_FILTERS_COLLAPSED_CSS = 'isHidingFacetFilters'
@@ -227,7 +226,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                         {isFaceted && (
                           <>
                             <QueryFilter facetsToFilter={facetsToFilter} />
-                            <QueryFilterToggleButton />
                           </>
                         )}
                         <FacetNav
