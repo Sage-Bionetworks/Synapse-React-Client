@@ -76,7 +76,7 @@ describe('QueryVisualizationWrapper', () => {
     render(<TestComponent />, { wrapper: createWrapper() })
 
     await waitFor(() => {
-      const data = onQueryContextReceived.mock.calls.at(-1)![0].data
+      const data = onQueryContextReceived.mock.lastCall[0].data
       expect(data).toBeDefined()
       expect(data!.selectColumns!.length).toBeGreaterThan(0)
     })
@@ -105,7 +105,7 @@ describe('QueryVisualizationWrapper', () => {
         }),
       )
       firstSetOfVisibleColumns =
-        onContextReceived.mock.calls.at(-1)![0].columnsToShowInTable
+        onContextReceived.mock.lastCall[0].columnsToShowInTable
     })
 
     server.use(
@@ -133,7 +133,7 @@ describe('QueryVisualizationWrapper', () => {
 
     let secondSetOfVisibleColumns
     await waitFor(() => {
-      const data = onQueryContextReceived.mock.calls.at(-1)![0].data
+      const data = onQueryContextReceived.mock.lastCall[0].data
       expect(data?.selectColumns).toEqual([
         {
           id: '123',
@@ -147,7 +147,7 @@ describe('QueryVisualizationWrapper', () => {
         }),
       )
       secondSetOfVisibleColumns =
-        onContextReceived.mock.calls.at(-1)![0].columnsToShowInTable
+        onContextReceived.mock.lastCall[0].columnsToShowInTable
     })
 
     // The select columns should have changed
@@ -159,7 +159,8 @@ describe('QueryVisualizationWrapper', () => {
 
     let firstSetOfVisibleColumns
     await waitFor(() => {
-      const data = onQueryContextReceived.mock.calls.at(-1)![0].data
+      expect(onQueryContextReceived).toHaveBeenCalled()
+      const data = onQueryContextReceived.mock.lastCall[0].data
       expect(data).toBeDefined()
       expect(onContextReceived).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -169,10 +170,10 @@ describe('QueryVisualizationWrapper', () => {
         }),
       )
       firstSetOfVisibleColumns =
-        onContextReceived.mock.calls.at(-1)![0].columnsToShowInTable
+        onContextReceived.mock.lastCall[0].columnsToShowInTable
     })
 
-    const prevData = onQueryContextReceived.mock.calls.at(-1)![0].data
+    const prevData = onQueryContextReceived.mock.lastCall[0].data
 
     // The results are different (e.g. on another page of data), but the selectColumns do not change
     server.use(
@@ -206,14 +207,14 @@ describe('QueryVisualizationWrapper', () => {
 
     // e.g. navigate to the next page of data:
     act(() => {
-      onQueryContextReceived.mock.calls.at(-1)![0].goToPage(2)
+      onQueryContextReceived.mock.lastCall[0].goToPage(2)
     })
 
     let secondSetOfVisibleColumns
 
     // Wait for the data to update.
     await waitFor(() => {
-      const data = onQueryContextReceived.mock.calls.at(-1)![0].data
+      const data = onQueryContextReceived.mock.lastCall[0].data
       expect(data).toBeDefined()
       expect(data?.queryResult?.queryResults.rows).not.toEqual(
         prevData?.queryResult?.queryResults.rows,
@@ -221,7 +222,7 @@ describe('QueryVisualizationWrapper', () => {
 
       expect(data!.queryResult!.queryResults.rows).toHaveLength(1)
       secondSetOfVisibleColumns =
-        onContextReceived.mock.calls.at(-1)![0].columnsToShowInTable
+        onContextReceived.mock.lastCall[0].columnsToShowInTable
     })
 
     // The array of visible columns should not have changed, and should have referential equality
