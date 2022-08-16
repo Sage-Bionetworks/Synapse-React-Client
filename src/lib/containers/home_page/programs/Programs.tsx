@@ -73,8 +73,13 @@ export const Programs: React.FC<ProgramsProps> = (props: ProgramsProps) => {
         showDesktop ? '__Desktop' : ''
       }`}
     >
-      {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
-        const values = el.values
+      {queryResultBundle?.queryResult!.queryResults.rows.map(el => {
+        const values = el.values as string[]
+        if (values.some(value => value === null)) {
+          // We cast values above assuming there are no null values, emit a warning just in case.
+          console.warn('Row has null value(s) when no nulls expected')
+        }
+
         const title = values[titleColumnIndex]
         const summary = values[summaryColumnIndex]
         const link = values[linkColumnIndex] ?? ''

@@ -96,11 +96,13 @@ export default class UserCardList extends React.Component<
     return nullOwnerIdsRows.map<UserProfile>(el => {
       const values = el.values
       return {
-        firstName: values[firstNameIndex],
-        lastName: values[lastNameIndex],
-        company: values[institutionIndex],
+        firstName: values[firstNameIndex] ?? '',
+        lastName: values[lastNameIndex] ?? '',
+        company: values[institutionIndex] ?? undefined,
         ownerId: '',
-        userName: values[firstNameIndex][0],
+        userName: values[firstNameIndex]
+          ? values[firstNameIndex]![0] ?? ''
+          : '',
       }
     })
   }

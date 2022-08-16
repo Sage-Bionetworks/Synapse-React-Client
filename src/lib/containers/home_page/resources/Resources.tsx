@@ -44,7 +44,11 @@ export const Resources: React.FC<ResourcesProps> = (props: ResourcesProps) => {
   const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResultBundle)
   const data: Data =
     queryResultBundle?.queryResult?.queryResults.rows.map(el => {
-      const values = el.values
+      const values = el.values as string[]
+      if (values.some(value => value === null)) {
+        console.warn('Row has null value(s) when no nulls expected')
+      }
+
       const name = values[nameIndex]
       const wikiValue = values[wikiIndex] ?? ''
       const split = wikiValue.split('/')

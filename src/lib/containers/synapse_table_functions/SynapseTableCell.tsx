@@ -11,6 +11,7 @@ import {
   ColumnModel,
   ColumnType,
   FileHandleAssociateType,
+  Row,
   SelectColumn,
   UserGroupHeader,
   UserProfile,
@@ -44,7 +45,7 @@ export type SynapseTableCellProps = {
   columnName: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
-  rowData: string[]
+  rowData: Row['values']
   rowId?: number
   rowVersionNumber?: number
 }
