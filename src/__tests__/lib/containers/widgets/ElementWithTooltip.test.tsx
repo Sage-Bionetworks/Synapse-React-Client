@@ -1,9 +1,10 @@
-import * as React from 'react'
+import { act, cleanup, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
-import { render, fireEvent, cleanup, screen } from '@testing-library/react'
-import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
+import React from 'react'
 import Columns from '../../../../lib/assets/icons/columns'
 import { IconSvgOptions } from '../../../../lib/containers/IconSvg'
+import { ElementWithTooltip } from '../../../../lib/containers/widgets/ElementWithTooltip'
 
 const mockCallback = jest.fn()
 type ElementWithTooltipProps = React.ComponentProps<typeof ElementWithTooltip>
@@ -33,15 +34,16 @@ function init(overrides?: ElementWithTooltipProps) {
   imageButton = container.getElementsByTagName('button').item(0)!
 }
 
-beforeEach(() => init())
-
-describe('basic function', () => {
-  it('should render with correct tooltip properties', () => {
-    expect(container.children.length).toBe(1)
-    expect(imageButton.attributes['data-for'].value).toBe(
-      screen.getByTestId('ElementTooltip').id,
-    )
-    expect(imageButton.attributes['data-tip'].value).toBe(props.tooltipText)
+describe('ElementWithTooltip', () => {
+  beforeEach(() => init())
+  it('should render with correct tooltip properties', async () => {
+    jest.useFakeTimers()
+    userEvent.hover(imageButton)
+    act(() => {
+      jest.runAllTimers()
+    })
+    await screen.findByText(props.tooltipText)
+    expect(imageButton.attributes['aria-label'].value).toBe(props.tooltipText)
     expect(imageButton.classList.contains('dropdown-toggle')).toBe(false)
   })
 
@@ -69,10 +71,12 @@ describe('basic function', () => {
     expect(imageButton.classList.contains('dropdown-toggle')).toBe(true)
   })
   it('should call the callback Fn', () => {
-    fireEvent.click(imageButton)
+    userEvent.click(imageButton)
     expect(mockCallback).toHaveBeenCalled()
   })
-  it('should create correctly without image as a text tooltip', () => {
+  it('should create correctly without image as a text tooltip', async () => {
+    jest.useFakeTimers()
+
     const child = <span className="my_class">hello world</span>
     init({
       ...props,
@@ -83,6 +87,12 @@ describe('basic function', () => {
     const tooltipTrigger = container.getElementsByClassName('my_class').item(0)
     expect(tooltipTrigger!.classList.contains('my_class')).toBe(true)
     expect(tooltipTrigger!.innerHTML).toBe('hello world')
-    expect(tooltipTrigger!.attributes['data-tip'].value).toBe(props.tooltipText)
+
+    userEvent.hover(tooltipTrigger!)
+
+    act(() => {
+      jest.runAllTimers()
+    })
+    await screen.findByText(props.tooltipText)
   })
 })
