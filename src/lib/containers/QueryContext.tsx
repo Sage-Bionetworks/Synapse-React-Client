@@ -50,7 +50,7 @@ export type QueryContextType = {
 
 export type PaginatedQueryContextType = QueryContextType & {
   /** Navigates to a particular page, where the first page has value 1 */
-  goToPage: (pageNum: number) => Promise<void>
+  goToPage: (pageNum: number) => void
   /** The current page number, where page 1 is the first page. */
   currentPage: number
   /** Updates the page size */

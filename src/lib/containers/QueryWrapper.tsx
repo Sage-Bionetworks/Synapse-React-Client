@@ -88,7 +88,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     executeQueryRequest(lastQueryRequestDeepClone)
   }
 
-  const goToPage = async (pageNum: number) => {
+  const goToPage = (pageNum: number) => {
     const lastQueryRequestDeepClone = getLastQueryRequest()
     lastQueryRequestDeepClone.query.offset = (pageNum - 1) * pageSize
     executeQueryRequest(lastQueryRequestDeepClone)
