@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from './QueryContext'
 
 export type QueryVisualizationContextType = {
@@ -114,15 +115,17 @@ export function QueryVisualizationWrapper(
     }
   }, [isLoadingNewBundle])
 
-  const [isColumnSelected, setIsColumnSelected] = useState<string[]>([])
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([])
   const [selectedRowIndices, setSelectedRowIndices] = useState<number[]>([])
 
   const lastQueryRequest = getLastQueryRequest()
-  const selectColumns = data?.selectColumns
+
+  // We deep-compare-memoize the selectColumns so we don't reset visible columns when the reference changes, but not the contents (e.g. on page change)
+  const selectColumns = useDeepCompareMemoize(data?.selectColumns)
 
   useEffect(() => {
     // SWC-6030: If sql changes, reset what columns are visible
-    setIsColumnSelected(
+    setVisibleColumns(
       selectColumns
         ?.slice(0, props.visibleColumnCount ?? Infinity)
         .map(el => el.name) ?? [],
@@ -132,8 +135,8 @@ export function QueryVisualizationWrapper(
   const context: QueryVisualizationContextType = {
     topLevelControlsState,
     setTopLevelControlsState,
-    columnsToShowInTable: isColumnSelected,
-    setColumnsToShowInTable: setIsColumnSelected,
+    columnsToShowInTable: visibleColumns,
+    setColumnsToShowInTable: setVisibleColumns,
     selectedRowIndices,
     setSelectedRowIndices,
 
