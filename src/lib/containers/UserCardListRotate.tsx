@@ -119,9 +119,9 @@ const UserCardListRotate: React.FunctionComponent<UserCardListRotateProps> = ({
         const ownerIdColumnIndex = queryResult.queryResults.headers.findIndex(
           el => el.columnType === ColumnType.USERID,
         )
-        const ids: string[] = queryResult.queryResults.rows.map(
-          d => d.values[ownerIdColumnIndex],
-        )
+        const ids: string[] = queryResult.queryResults.rows
+          .map(d => d.values[ownerIdColumnIndex])
+          .filter((id): id is string => id !== null)
         if (mounted) {
           const newIds = getDisplayIds(ids, count, storageUidKey)
           setUserIds(newIds)

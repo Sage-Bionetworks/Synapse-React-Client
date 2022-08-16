@@ -179,12 +179,19 @@ const SubsectionRowRenderer: React.FunctionComponent<
                       const urlColumnIndex = rowSet.headers.findIndex(
                         col => col.name == columnLink.linkColumnName,
                       )
+                      const values = row.values as string[]
+                      if (values.some(value => value === null)) {
+                        console.warn(
+                          'Row has null value(s) when no nulls expected',
+                        )
+                      }
+
                       if (urlColumnIndex > -1) {
                         renderedValue = (
                           <a
                             rel="noopener noreferrer"
                             target="_blank"
-                            href={row.values[urlColumnIndex]}
+                            href={values[urlColumnIndex]}
                           >
                             {friendlyCellValue}
                           </a>

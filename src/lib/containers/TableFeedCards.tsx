@@ -67,10 +67,14 @@ const TableFeedCards: React.FunctionComponent<TableFeedCardsProps> = ({
           if (index > itemCountShowing - 1) {
             return
           }
-          const categoriesList = JSON.parse(row.values[categoriesColIndex])
-          const dateStringTimestamp = row.values[dateColIndex]
-          const title = row.values[titleColIndex]
-          const description = row.values[descriptionColIndex]
+          const values = row.values as string[]
+          if (values.some(value => value === null)) {
+            console.warn('Row has null value(s) when no nulls expected')
+          }
+          const categoriesList = JSON.parse(values[categoriesColIndex])
+          const dateStringTimestamp = values[dateColIndex]
+          const title = values[titleColIndex]
+          const description = values[descriptionColIndex]
 
           return (
             <div className="FeedItem" key={`row-${index}`}>
