@@ -70,6 +70,7 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
           will unexpectedly render with the list going upwards instead of downwards.
         */}
       <Dropdown.Menu
+        id={`${tooltipColumnSelectionId}-dropdown`}
         className="SRC-primary-color-hover-dropdown"
         alignRight={true}
       >
@@ -86,7 +87,6 @@ export const ColumnSelection: React.FunctionComponent<ColumnSelectionProps> = (
             : ''
           return (
             <Dropdown.Item
-              // @ts-ignore
               onClick={() => toggleColumnSelection(name)}
               key={name}
             >
