@@ -144,7 +144,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     <div className="QueryWrapperPlotNav">
       <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
         <QueryVisualizationWrapper
-          unitDescription={'Results'}
+          unitDescription={name}
           rgbIndex={props.rgbIndex}
           facetAliases={props.facetAliases}
           visibleColumnCount={props.visibleColumnCount}
