@@ -10,7 +10,7 @@ export const FavoritesDetails: React.FunctionComponent<
   FavoritesDetailsProps
 > = ({ ...sharedProps }) => {
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useGetFavoritesInfinite({ useErrorBoundary: true })
+    useGetFavoritesInfinite('NAME', 'ASC', { useErrorBoundary: true })
 
   const entities = data?.pages.flatMap(page => page.results) ?? []
 

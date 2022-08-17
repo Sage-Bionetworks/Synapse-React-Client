@@ -8,8 +8,14 @@ import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { EntityHeader, PaginatedResults } from '../../../synapseTypes'
+import {
+  FavoriteSortBy,
+  FavoriteSortDirection,
+} from '../../../synapseTypes/FavoriteSortBy'
 
 export function useGetFavorites(
+  sort: FavoriteSortBy = 'FAVORITED_ON',
+  sortDirection: FavoriteSortDirection = 'DESC',
   options?: UseQueryOptions<
     PaginatedResults<EntityHeader>,
     SynapseClientError,
@@ -18,13 +24,22 @@ export function useGetFavorites(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    ['favorites'],
-    () => SynapseClient.getUserFavorites(accessToken),
+    ['favorites', sort, sortDirection],
+    () =>
+      SynapseClient.getUserFavorites(
+        accessToken,
+        undefined,
+        undefined,
+        sort,
+        sortDirection,
+      ),
     options,
   )
 }
 
 export function useGetFavoritesInfinite(
+  sort: FavoriteSortBy = 'FAVORITED_ON',
+  sortDirection: FavoriteSortDirection = 'DESC',
   options?: UseInfiniteQueryOptions<
     PaginatedResults<EntityHeader>,
     SynapseClientError
@@ -35,12 +50,15 @@ export function useGetFavoritesInfinite(
   const { accessToken } = useSynapseContext()
 
   return useInfiniteQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    ['favorites', 'infinite'],
+    ['favorites', 'infinite', sort, sortDirection],
     async context => {
       return SynapseClient.getUserFavorites(
         accessToken,
-        context.pageParam, // pass the context.pageParam for the new offset
+        // pass the context.pageParam for the new offset
+        context.pageParam,
         LIMIT,
+        sort,
+        sortDirection,
       )
     },
     {

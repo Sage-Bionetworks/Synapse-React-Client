@@ -230,6 +230,10 @@ import {
   OAuthClientList,
 } from './synapseTypes/OAuthClient'
 import { Activity } from './synapseTypes/Provenance/Provenance'
+import {
+  FavoriteSortBy,
+  FavoriteSortDirection,
+} from './synapseTypes/FavoriteSortBy'
 
 const cookies = new UniversalCookies()
 
@@ -1125,13 +1129,20 @@ export const getEntityWiki = (
  * Returns synapse user favorites list given their access token
  * https://rest-docs.synapse.org/rest/GET/favorite.html
  */
-export const getUserFavorites = (
+export function getUserFavorites(
   accessToken: string | undefined,
   offset: number = 0,
   limit: number = 200,
-) => {
-  // https://sagebionetworks.jira.com/browse/PLFM-6616
-  const url = `${FAVORITES}?offset=${offset}&limit=${limit}`
+  sort: FavoriteSortBy = 'NAME',
+  sortDirection: FavoriteSortDirection = 'DESC',
+) {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit.toString())
+  params.set('sort', sort)
+  params.set('sortDirection', sortDirection)
+
+  const url = `${FAVORITES}?${params.toString()}`
   return doGet<PaginatedResults<EntityHeader>>(
     url,
     accessToken,
