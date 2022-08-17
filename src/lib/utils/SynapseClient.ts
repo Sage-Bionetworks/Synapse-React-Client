@@ -1134,7 +1134,7 @@ export function getUserFavorites(
   offset: number = 0,
   limit: number = 200,
   sort: FavoriteSortBy = 'NAME',
-  sortDirection: FavoriteSortDirection = 'DESC',
+  sortDirection: FavoriteSortDirection = 'ASC',
 ) {
   const params = new URLSearchParams()
   params.set('offset', offset.toString())
