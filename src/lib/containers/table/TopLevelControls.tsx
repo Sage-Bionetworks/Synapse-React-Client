@@ -2,9 +2,7 @@ import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
 import { QueryResultBundle } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
 import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
-import QueryCount from '../QueryCount'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
@@ -91,13 +89,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     showNotch = false,
   } = props
 
-  const {
-    data,
-    entity,
-    getInitQueryRequest,
-    executeQueryRequest,
-    getLastQueryRequest,
-  } = useQueryContext()
+  const { data, entity, executeQueryRequest, getLastQueryRequest } =
+    useQueryContext()
 
   const {
     topLevelControlsState,

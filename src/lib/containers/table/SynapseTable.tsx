@@ -12,7 +12,6 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { isGroupByInSql } from '../../utils/functions/sqlFunctions'
 import { SynapseContextType } from '../../utils/SynapseContext'
 import {
   ColumnModel,
@@ -39,7 +38,6 @@ import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { QueryContextType } from '../QueryContext'
 import { Icon } from '../row_renderers/utils'
 import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
-import TotalQueryResults from '../TotalQueryResults'
 import { Checkbox } from '../widgets/Checkbox'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
 import {
@@ -363,7 +361,6 @@ export default class SynapseTable extends React.Component<
     // unpack all the data
     const {
       queryContext: { data },
-      queryVisualizationContext: { topLevelControlsState, unitDescription },
       showNoContentAvailableWhenEmpty,
     } = this.props
     const { queryResult, columnModels = [] } = data
