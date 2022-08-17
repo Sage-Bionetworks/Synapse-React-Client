@@ -206,7 +206,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               (key === 'showSqlEditor' && hideSqlEditorControl)
             ) {
               // needs to be a file view in order for download to make sense
-              return <></>
+              return <React.Fragment key={key}></React.Fragment>
             } else if (key === 'showDownloadConfirmation') {
               return (
                 <DownloadOptions

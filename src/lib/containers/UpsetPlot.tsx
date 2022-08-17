@@ -93,7 +93,11 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
 
         for (const row of queryResult?.queryResults.rows ?? []) {
           for (let j = 1; j < row.values.length; j += 1) {
-            const rowValues: string[] = row.values
+            const rowValues: string[] = row.values as string[]
+            if (rowValues.some(value => value === null)) {
+              console.warn('Row has null value(s) when no nulls expected')
+            }
+
             const key = rowValues[0]
             let newValue = rowValues[j]
             keyValuesMap[key] = keyValuesMap[key] || {}

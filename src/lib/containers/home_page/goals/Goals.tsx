@@ -63,10 +63,14 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
           ExpectedColumns.ASSET,
           queryResultBundle,
         )
-        const assets =
-          queryResultBundle?.queryResult!.queryResults.rows.map(
-            el => el.values[assetColumnIndex],
-          ) ?? []
+        let assets = (queryResultBundle?.queryResult!.queryResults.rows.map(
+          el => el.values[assetColumnIndex],
+        ) ?? []) as string[]
+        if (assets.some(asset => asset === null)) {
+          // We cast assets above assuming there are no null values, emit a warning just in case.
+          console.warn('Row has null value(s) when no nulls expected')
+        }
+
         if (assets.length === 0) {
           // wait for data to load
           return
@@ -124,7 +128,11 @@ export const Goals: React.FC<GoalsProps> = (props: GoalsProps) => {
     <div className={`Goals${showDesktop ? '__Desktop' : ''}`}>
       {error && <ErrorBanner error={error} />}
       {queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
-        const values = el.values
+        const values = el.values as string[]
+        if (values.some(value => value === null)) {
+          // We cast values above assuming there are no null values, emit a warning just in case.
+          console.warn('Row has null value(s) when no nulls expected')
+        }
         const tableId =
           tableIdColumnIndex > -1 ? values[tableIdColumnIndex] : undefined
         let countSql

@@ -79,8 +79,6 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
       <button
         tabIndex={0}
         id={idForToolTip}
-        data-for={idForToolTip}
-        data-tip={tooltipText}
         className={`ElementWithTooltip SRC-hand-cursor SRC-grey-background-hover ${className} ${
           darkTheme ? 'dark-theme' : ''
         } `}
@@ -102,13 +100,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
       </Dropdown.Toggle>
     )
   } else {
-    const outerChild = children as JSX.Element
-    tooltipTrigger = React.cloneElement(outerChild, {
-      className: `${outerChild.props.className} SRC-hand-cursor`,
-      id: idForToolTip,
-      'data-for': idForToolTip,
-      'data-tip': tooltipText,
-    })
+    tooltipTrigger = <div className="SRC-hand-cursor">{children}</div>
   }
 
   return (

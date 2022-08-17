@@ -72,12 +72,17 @@ export const FeaturedToolsList: React.FunctionComponent<
 
         const tools: ToolData[] =
           queryResultBundle?.queryResult!.queryResults.rows.map(row => {
+            if (row.values.some(value => value === null)) {
+              console.warn('Row has null value(s)')
+            }
+            // Cast to string, assuming there are no null values
+            const values = row.values as string[]
             return {
-              name: row.values[nameColumnIndex],
-              description: row.values[descriptionColumnIndex],
-              type: row.values[typeColumnIndex],
-              id: row.values[idIndex],
-              date: row.values[dateColumnIndex],
+              name: values[nameColumnIndex],
+              description: values[descriptionColumnIndex],
+              type: values[typeColumnIndex],
+              id: values[idIndex],
+              date: values[dateColumnIndex],
             }
           }) ?? []
         if (queryError) {

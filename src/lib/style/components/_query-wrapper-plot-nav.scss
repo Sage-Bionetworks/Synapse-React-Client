@@ -80,19 +80,24 @@
             display: none;
           }
         }
+        &.FilterAndView {
+          margin-top: 10px;
+        }
       }
     }
   }
 
-  .QueryFilter,
-  .download-confirmation,
-  .FacetNav,
-  .TotalQueryResults,
-  .QueryWrapperSearchInput,
-  .QueryWrapperSqlEditorInput,
-  .ErrorBannerWrapper,
-  .FilterAndView.isShowingFacetFilters {
-    margin-left: 15px;
+  .SRC-wrapper {
+    > .QueryFilter,
+    > .download-confirmation,
+    > .FacetNav,
+    > .TotalQueryResults,
+    > .QueryWrapperSearchInput,
+    > .QueryWrapperSqlEditorInput,
+    > .ErrorBannerWrapper,
+    > .FilterAndView {
+      margin-left: 15px;
+    }
   }
 
   .QueryWrapperTextInput {

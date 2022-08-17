@@ -129,7 +129,6 @@ export default class SynapseTable extends React.Component<
     this.shouldComponentUpdate = this.shouldComponentUpdate.bind(this)
     this.handleColumnSortPress = this.handleColumnSortPress.bind(this)
     this.findSelectionIndex = this.findSelectionIndex.bind(this)
-    this.toggleColumnSelection = this.toggleColumnSelection.bind(this)
     this.advancedSearch = this.advancedSearch.bind(this)
     this.getLengthOfPropsData = this.getLengthOfPropsData.bind(this)
     this.configureFacetDropdown = this.configureFacetDropdown.bind(this)
@@ -962,29 +961,6 @@ export default class SynapseTable extends React.Component<
   private getLengthOfPropsData() {
     const { data } = this.props.queryContext
     return data?.queryResult?.queryResults.headers.length ?? 0
-  }
-  /**
-   * Handles the toggle of a column select, this will cause the table to
-   * either show the column or hide depending on the prior state of the column
-   *
-   * @memberof SynapseTable
-   */
-  public toggleColumnSelection = (columnName: string) => {
-    const {
-      queryVisualizationContext: {
-        columnsToShowInTable,
-        setColumnsToShowInTable,
-      },
-    } = this.props
-    let columnsToShowInTableCopy = cloneDeep(columnsToShowInTable)
-    if (columnsToShowInTableCopy.includes(columnName)) {
-      columnsToShowInTableCopy = columnsToShowInTableCopy.filter(
-        el => el !== columnName,
-      )
-    } else {
-      columnsToShowInTableCopy.push(columnName)
-    }
-    setColumnsToShowInTable(columnsToShowInTableCopy)
   }
 
   /**
