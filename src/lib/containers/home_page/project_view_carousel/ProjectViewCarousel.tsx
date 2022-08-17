@@ -83,13 +83,17 @@ export const ProjectViewCarousel: React.FunctionComponent<
 
         const projects: ProjectData[] =
           queryResultBundle?.queryResult!.queryResults.rows.map(row => {
+            const values = row.values as string[]
+            if (values.some(value => value === null)) {
+              // We cast values above assuming there are no null values, emit a warning just in case.
+              console.warn('Row has null value(s) when no nulls expected')
+            }
             return {
               projectName:
-                row.values[displayNameColumnIndex] ??
-                row.values[nameColumnIndex],
-              projectDescription: row.values[descriptionColumnIndex],
-              imageFileName: row.values[imageColumnIndex],
-              entityId: row.values[entityIdIndex],
+                values[displayNameColumnIndex] ?? values[nameColumnIndex],
+              projectDescription: values[descriptionColumnIndex],
+              imageFileName: values[imageColumnIndex],
+              entityId: values[entityIdIndex],
             }
           }) ?? []
         if (queryError) {

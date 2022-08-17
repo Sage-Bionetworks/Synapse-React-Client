@@ -1,4 +1,4 @@
-import { uniqueId } from 'lodash-es'
+import { cloneDeep, uniqueId } from 'lodash-es'
 import { rest } from 'msw'
 import {
   ASYNCHRONOUS_JOB_TOKEN,
@@ -10,15 +10,50 @@ import {
   getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
 import {
+  BUNDLE_MASK_LAST_UPDATED_ON,
+  BUNDLE_MASK_QUERY_COLUMN_MODELS,
+  BUNDLE_MASK_QUERY_COUNT,
+  BUNDLE_MASK_QUERY_FACETS,
+  BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
+  BUNDLE_MASK_QUERY_RESULTS,
+  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
+  BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
+} from '../../../lib/utils/SynapseConstants'
+import {
   AsynchronousJobStatus,
   AsyncJobId,
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../lib/utils/synapseTypes'
 
+const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {
+  [BUNDLE_MASK_QUERY_RESULTS]: 'queryResult',
+  [BUNDLE_MASK_QUERY_COUNT]: 'queryCount',
+  [BUNDLE_MASK_QUERY_SELECT_COLUMNS]: 'selectColumns',
+  [BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE]: 'maxRowsPerPage',
+  [BUNDLE_MASK_QUERY_COLUMN_MODELS]: 'columnModels',
+  [BUNDLE_MASK_QUERY_FACETS]: 'facets',
+  [BUNDLE_MASK_SUM_FILES_SIZE_BYTES]: 'sumFileSizes',
+  [BUNDLE_MASK_LAST_UPDATED_ON]: 'lastUpdatedOn',
+}
+
+function removeBundleFieldsUsingMask(
+  queryResultBundle: QueryResultBundle,
+  partMask: number,
+): QueryResultBundle {
+  const result = cloneDeep(queryResultBundle)
+  Object.entries(BIT_TO_FIELD_MAP).forEach(([bit, field]) => {
+    if ((partMask & parseInt(bit)) === 0) {
+      delete result[field]
+    }
+  })
+  return result
+}
+
 export function getHandlersForTableQuery(response: QueryResultBundle) {
   const asyncJobId = uniqueId()
   let queryBundleRequest: QueryBundleRequest | undefined
+
   return [
     /**
      * Create a new entity
@@ -43,6 +78,11 @@ export function getHandlersForTableQuery(response: QueryResultBundle) {
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${ASYNCHRONOUS_JOB_TOKEN(asyncJobId)}`,
       async (req, res, ctx) => {
+        const resultBundle = removeBundleFieldsUsingMask(
+          response,
+          queryBundleRequest!.partMask,
+        )
+
         return res(
           ctx.status(201),
           ctx.json<
@@ -53,7 +93,7 @@ export function getHandlersForTableQuery(response: QueryResultBundle) {
             requestBody: queryBundleRequest!,
             etag: '00000000-0000-0000-0000-000000000000',
             jobId: asyncJobId,
-            responseBody: response,
+            responseBody: resultBundle,
             startedByUserId: 0,
             startedOn: '',
             changedOn: '',
@@ -74,7 +114,12 @@ export function getHandlersForTableQuery(response: QueryResultBundle) {
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${TABLE_QUERY_ASYNC_GET(':id', asyncJobId)}`,
       async (req, res, ctx) => {
-        return res(ctx.status(201), ctx.json<QueryResultBundle>(response))
+        const resultBundle = removeBundleFieldsUsingMask(
+          response,
+          queryBundleRequest!.partMask,
+        )
+
+        return res(ctx.status(201), ctx.json<QueryResultBundle>(resultBundle))
       },
     ),
   ]

@@ -16,6 +16,7 @@ import {
   Entity,
   FileHandleAssociateType,
   FileHandleAssociation,
+  Row,
   SelectColumn,
 } from '../utils/synapseTypes'
 import Tooltip from '../utils/tooltip/Tooltip'
@@ -213,7 +214,7 @@ type SynapseCardLabelProps = {
   columnModels: ColumnModel[] | undefined
   isHeader: boolean
   className?: string
-  rowData: string[]
+  rowData: Row['values']
 }
 
 export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
@@ -337,7 +338,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
                 return (
                   <React.Fragment key={el}>
                     <a
-                      href={href}
+                      href={href ?? undefined}
                       target="_blank"
                       rel="noopener noreferrer"
                       key={el}
