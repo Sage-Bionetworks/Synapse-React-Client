@@ -200,7 +200,13 @@ export function EntityTree(props: EntityTreeProps) {
         // See the useGetProjectsInfinite hook
         break
       case FinderScope.FAVORITES: {
-        SynapseClient.getUserFavorites(accessToken).then(({ results }) => {
+        SynapseClient.getUserFavorites(
+          accessToken,
+          undefined,
+          undefined,
+          'NAME',
+          'ASC',
+        ).then(({ results }) => {
           // TODO: https://sagebionetworks.jira.com/browse/PLFM-6652
           results = results.filter(result =>
             visibleTypes.includes(convertToEntityType(result.type)),
