@@ -17,6 +17,7 @@ import { useQueryContext } from '../QueryContext'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
+import TotalQueryResults from '../TotalQueryResults'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -27,6 +28,7 @@ export type TopLevelControlsProps = {
   hideSqlEditorControl?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
+  showNotch?: boolean
 }
 
 type Control = {
@@ -86,6 +88,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     hideQueryCount = false,
     hideSqlEditorControl = true,
     customControls,
+    showNotch = false,
   } = props
 
   const {
@@ -142,7 +145,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
-
+  const lastQueryRequest = getLastQueryRequest()
+  const hasFacetsOrFilters =
+    (lastQueryRequest?.query.selectedFacets !== undefined &&
+      lastQueryRequest.query.selectedFacets.length > 0) ||
+    (lastQueryRequest?.query.additionalFilters !== undefined &&
+      lastQueryRequest?.query.additionalFilters.length > 0)
   return (
     <div
       className={`TopLevelControls ${
@@ -152,19 +160,17 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       }`}
       data-testid="TopLevelControls"
     >
-      <h3>
+      <div>
         <div className="TopLevelControls__querycount">
           {name && (
             <>
-              <Typography variant="sectionTitle" role="heading">
-                {name}{' '}
-                {!hideQueryCount && (
-                  <QueryCount
-                    sql={getInitQueryRequest().query.sql}
-                    parens={true}
-                  />
-                )}
-              </Typography>
+              {!hideQueryCount && (
+                <TotalQueryResults
+                  frontText={''}
+                  endText={hasFacetsOrFilters ? 'Filtered By' : ''}
+                  showNotch={showNotch}
+                />
+              )}
               {!hideQueryCount && entity && (
                 <MissingQueryResultsWarning entity={entity} />
               )}
@@ -231,7 +237,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             />
           )}
         </div>
-      </h3>
+      </div>
     </div>
   )
 }

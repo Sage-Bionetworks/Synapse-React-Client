@@ -362,18 +362,18 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
                 onRemove={() => removeFacetSelection(selectedFacet)}
               />
             ))}
+            {(facetsWithSelection.length > 2 ||
+              (searchSelectionCriteriaPillProps &&
+                searchSelectionCriteriaPillProps.length > 2)) && (
+              <Button
+                onClick={clearAll}
+                variant="light"
+                className="TotalQueryResults__clearall"
+              >
+                Clear All
+              </Button>
+            )}
           </div>
-          {(facetsWithSelection.length > 0 ||
-            (searchSelectionCriteriaPillProps &&
-              searchSelectionCriteriaPillProps.length > 0)) && (
-            <Button
-              onClick={clearAll}
-              variant="light"
-              className="TotalQueryResults__clearall"
-            >
-              Clear All
-            </Button>
-          )}
         </>
       )}
     </div>

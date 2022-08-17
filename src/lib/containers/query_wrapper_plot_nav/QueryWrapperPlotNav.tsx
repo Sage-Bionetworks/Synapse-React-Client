@@ -222,16 +222,14 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           hideFacetFilterControl={!isFaceted}
                           hideVisualizationsControl={!isFaceted}
                           hideSqlEditorControl={hideSqlEditorControl}
+                          showNotch={false}
                         />
                         {isFaceted && (
                           <>
                             <QueryFilter facetsToFilter={facetsToFilter} />
                           </>
                         )}
-                        <FacetNav
-                          facetsToPlot={facetsToPlot}
-                          showNotch={false}
-                        />
+                        <FacetNav facetsToPlot={facetsToPlot} />
                         <FilterAndView
                           tableConfiguration={tableConfiguration}
                           hideDownload={hideDownload}
