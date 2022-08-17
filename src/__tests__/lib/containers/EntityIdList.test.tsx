@@ -3,7 +3,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIdList, {
   EntityIdListProps,
 } from '../../../lib/containers/EntityIdList'
-import { act } from 'react-dom/test-utils'
+import { act } from '@testing-library/react'
 import {
   MOCK_CONTEXT_VALUE,
   SynapseTestContext,

@@ -17,7 +17,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
-import { act } from 'react-dom/test-utils'
+import { act } from '@testing-library/react'
 
 const page1: SubmissionInfoPage = {
   results: [
