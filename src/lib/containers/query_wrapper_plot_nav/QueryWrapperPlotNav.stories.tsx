@@ -133,7 +133,7 @@ FileView.args = {
   rgbIndex: 1,
   name: 'Data',
   sqlOperator: '=',
-  sql: 'SELECT * FROM syn25202593',
+  sql: 'SELECT * FROM syn11346063.28',
   downloadCartPageUrl: '#/Other%20Components?id=downloadcartpage',
   hideSqlEditorControl: false,
 }
