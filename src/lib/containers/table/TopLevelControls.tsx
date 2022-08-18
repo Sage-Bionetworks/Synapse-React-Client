@@ -16,6 +16,7 @@ import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
 import Typography from '../../utils/typography/Typography'
 import QueryCount from '../QueryCount'
+import { Icon } from '../row_renderers/utils'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -57,11 +58,6 @@ const controls: Control[] = [
     icon: 'chart',
     key: 'showFacetVisualization',
     tooltipText: 'Show / Hide Visualizations',
-  },
-  {
-    icon: 'filter',
-    key: 'showFacetFilter',
-    tooltipText: 'Show / Hide Filters',
   },
   {
     icon: 'download',
@@ -163,6 +159,22 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               )}
             </Typography>
           )}
+          {!hideFacetFilterControl && (
+            <a
+              onClick={() => setControlState('showFacetFilter')}
+              className="TopLevelControls__querycount__facetFilterLink"
+            >
+              <Icon
+                type={
+                  topLevelControlsState.showFacetFilter ? 'close' : 'filter'
+                }
+              ></Icon>
+              <span className="TopLevelControls__querycount__facetFilterLink__text">
+                {topLevelControlsState.showFacetFilter ? 'Hide' : 'Show'} Facet
+                Menu
+              </span>
+            </a>
+          )}
         </div>
         <div className="TopLevelControls__actions">
           {customControls &&
@@ -189,7 +201,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             if (
               (key === 'showDownloadConfirmation' && hideDownload) ||
               (key === 'showFacetVisualization' && hideVisualizationsControl) ||
-              (key === 'showFacetFilter' && hideFacetFilterControl) ||
               (key === 'showSqlEditor' && hideSqlEditorControl)
             ) {
               // needs to be a file view in order for download to make sense
