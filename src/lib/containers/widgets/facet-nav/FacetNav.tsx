@@ -16,6 +16,7 @@ import {
 import { useQueryContext } from '../../QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
+import TotalQueryResults from '../../TotalQueryResults'
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
@@ -172,7 +173,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       colorIndex: index,
     }
   })
-
+  const hasFacetsOrFilters =
+    (lastQueryRequest?.query.selectedFacets !== undefined &&
+      lastQueryRequest.query.selectedFacets.length > 0) ||
+    (lastQueryRequest?.query.additionalFilters !== undefined &&
+      lastQueryRequest?.query.additionalFilters.length > 0)
   if (error) {
     return <></>
   } else if (!data && isLoadingNewBundle) {
@@ -189,6 +194,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   } else {
     return (
       <>
+        <TotalQueryResults
+          frontText={''}
+          endText={hasFacetsOrFilters ? 'filtered by' : ''}
+          hideIfUnfiltered={true}
+        />
         {facets.length > 0 && (
           <div
             className={`FacetNav ${showFacetVisualization ? '' : 'hidden'} ${

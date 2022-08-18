@@ -21,28 +21,28 @@
     .SRC-wrapper {
       // row
       .QueryFilter {
-        grid-row: 2 / span 100;
+        grid-row: 3 / span 100;
       }
       .TopLevelControls {
         grid-row: 1 / span 1;
       }
-      .download-confirmation {
+      .TotalQueryResults {
         grid-row: 2 / span 1;
       }
-      .QueryWrapperSearchInput {
+      .download-confirmation {
         grid-row: 3 / span 1;
-        .MuiCollapse-entered {
-          margin: 5px 0px;
-        }
       }
-      .QueryWrapperSqlEditorInput {
+      .QueryWrapperSearchInput {
         grid-row: 4 / span 1;
         .MuiCollapse-entered {
           margin: 5px 0px;
         }
       }
-      .TotalQueryResults {
+      .QueryWrapperSqlEditorInput {
         grid-row: 5 / span 1;
+        .MuiCollapse-entered {
+          margin: 5px 0px;
+        }
       }
       .ErrorBannerWrapper {
         grid-row: 6 / span 1;
@@ -64,12 +64,12 @@
         &.QueryWrapperSearchInput,
         &.QueryWrapperSqlEditorInput,
         &.ErrorBannerWrapper,
-        &.TotalQueryResults,
         &.FilterAndView {
           grid-column: 2 / span 1;
         }
 
-        &.TopLevelControls {
+        &.TopLevelControls,
+        &.TotalQueryResults {
           grid-column: 1 / span 2;
         }
       }

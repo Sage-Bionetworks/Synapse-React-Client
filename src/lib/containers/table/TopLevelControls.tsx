@@ -2,7 +2,6 @@ import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
 import { QueryResultBundle } from '../../utils/synapseTypes'
-import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
@@ -15,7 +14,8 @@ import { useQueryContext } from '../QueryContext'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
-import TotalQueryResults from '../TotalQueryResults'
+import Typography from '../../utils/typography/Typography'
+import QueryCount from '../QueryCount'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -26,7 +26,6 @@ export type TopLevelControlsProps = {
   hideSqlEditorControl?: boolean
   showColumnSelection?: boolean
   customControls?: CustomControl[]
-  showNotch?: boolean
 }
 
 type Control = {
@@ -86,11 +85,15 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     hideQueryCount = false,
     hideSqlEditorControl = true,
     customControls,
-    showNotch = false,
   } = props
 
-  const { data, entity, executeQueryRequest, getLastQueryRequest } =
-    useQueryContext()
+  const {
+    data,
+    entity,
+    executeQueryRequest,
+    getLastQueryRequest,
+    getInitQueryRequest,
+  } = useQueryContext()
 
   const {
     topLevelControlsState,
@@ -138,12 +141,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
-  const lastQueryRequest = getLastQueryRequest()
-  const hasFacetsOrFilters =
-    (lastQueryRequest?.query.selectedFacets !== undefined &&
-      lastQueryRequest.query.selectedFacets.length > 0) ||
-    (lastQueryRequest?.query.additionalFilters !== undefined &&
-      lastQueryRequest?.query.additionalFilters.length > 0)
   return (
     <div
       className={`TopLevelControls ${
@@ -156,18 +153,15 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       <div>
         <div className="TopLevelControls__querycount">
           {name && (
-            <>
+            <Typography variant="sectionTitle" role="heading">
+              {name}{' '}
               {!hideQueryCount && (
-                <TotalQueryResults
-                  frontText={''}
-                  endText={hasFacetsOrFilters ? 'Filtered By' : ''}
-                  showNotch={showNotch}
+                <QueryCount
+                  sql={getInitQueryRequest().query.sql}
+                  parens={true}
                 />
               )}
-              {!hideQueryCount && entity && (
-                <MissingQueryResultsWarning entity={entity} />
-              )}
-            </>
+            </Typography>
           )}
         </div>
         <div className="TopLevelControls__actions">

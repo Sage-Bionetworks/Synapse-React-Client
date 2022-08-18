@@ -50,7 +50,7 @@ export type TotalQueryResultsProps = {
   frontText: string
   endText?: string
   applyChanges?: (newFacets: FacetColumnRequest[]) => void
-  showNotch?: boolean
+  hideIfUnfiltered?: boolean
 }
 
 // This is a stateful component so that during load the component can hold onto the previous
@@ -60,7 +60,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   style,
   frontText,
   endText = '',
-  showNotch = false,
+  hideIfUnfiltered = false,
 }) => {
   const {
     data,
@@ -327,12 +327,16 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     [],
   )
   const showFacetFilter = topLevelControlsState?.showFacetFilter
+  const hasFilters =
+    facetsWithSelection.length > 0 ||
+    (searchSelectionCriteriaPillProps &&
+      searchSelectionCriteriaPillProps.length > 0)
   if (error) {
     return <></>
   }
   return (
     <div
-      className={`TotalQueryResults ${showNotch ? 'notch-down' : ''} ${
+      className={`TotalQueryResults ${
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
@@ -343,9 +347,11 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         <SkeletonInlineBlock width={100} />
       ) : (
         <>
-          <span className="SRC-boldText SRC-text-title SRC-centerContent">
-            {frontText} {total?.toLocaleString()} {unitDescription} {endText}
-          </span>
+          {(hasFilters || !hideIfUnfiltered) && (
+            <span className="SRC-boldText SRC-centerContent">
+              {frontText} {total?.toLocaleString()} {unitDescription} {endText}
+            </span>
+          )}
           <div className="TotalQueryResults__selections">
             {searchSelectionCriteriaPillProps &&
               searchSelectionCriteriaPillProps.map(props => (

@@ -144,7 +144,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     <div className="QueryWrapperPlotNav">
       <QueryWrapper {...props} initQueryRequest={initQueryRequest}>
         <QueryVisualizationWrapper
-          unitDescription={name}
+          unitDescription={'results'}
           rgbIndex={props.rgbIndex}
           facetAliases={props.facetAliases}
           visibleColumnCount={props.visibleColumnCount}
@@ -222,7 +222,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           hideFacetFilterControl={!isFaceted}
                           hideVisualizationsControl={!isFaceted}
                           hideSqlEditorControl={hideSqlEditorControl}
-                          showNotch={false}
                         />
                         {isFaceted && (
                           <>
