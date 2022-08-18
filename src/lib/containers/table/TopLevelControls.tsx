@@ -17,6 +17,7 @@ import { ColumnSelection } from './table-top/ColumnSelection'
 import Typography from '../../utils/typography/Typography'
 import QueryCount from '../QueryCount'
 import { Icon } from '../row_renderers/utils'
+import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -149,15 +150,20 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       <div>
         <div className="TopLevelControls__querycount">
           {name && (
-            <Typography variant="sectionTitle" role="heading">
-              {name}{' '}
-              {!hideQueryCount && (
-                <QueryCount
-                  sql={getInitQueryRequest().query.sql}
-                  parens={true}
-                />
+            <>
+              <Typography variant="sectionTitle" role="heading">
+                {name}{' '}
+                {!hideQueryCount && (
+                  <QueryCount
+                    sql={getInitQueryRequest().query.sql}
+                    parens={true}
+                  />
+                )}
+              </Typography>
+              {!hideQueryCount && entity && (
+                <MissingQueryResultsWarning entity={entity} />
               )}
-            </Typography>
+            </>
           )}
           {!hideFacetFilterControl && (
             <a

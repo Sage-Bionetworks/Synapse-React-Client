@@ -2,7 +2,7 @@ import React from 'react'
 import useGetInfoFromIds, {
   UseGetInfoFromIdsProps,
 } from '../../../../lib/utils/hooks/useGetInfoFromIds'
-import { act } from '@testing-library/react'
+import { act } from 'react-dom/test-utils'
 import ReactDOM from 'react-dom'
 import { UserProfile } from '../../../../lib/utils/synapseTypes'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
