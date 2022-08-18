@@ -6,6 +6,7 @@ import * as EntityFinderModule from '../../../../lib/containers/entity_finder/En
 import {
   EntityFinderModal,
   EntityFinderModalProps,
+  UNSAVED_CHANGES,
 } from '../../../../lib/containers/entity_finder/EntityFinderModal'
 import { FinderScope } from '../../../../lib/containers/entity_finder/tree/EntityTree'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
@@ -97,7 +98,7 @@ describe('EntityFinderModal', () => {
 
     // Unsaved Changes modal appears
     let unsavedChangedModal = await screen.findByRole('dialog')
-    within(unsavedChangedModal).findByText('Unsaved Changes')
+    within(unsavedChangedModal).findByText(UNSAVED_CHANGES)
 
     // Cancel to close the warning modal
     const cancelWarning = within(unsavedChangedModal).getByRole('button', {
@@ -115,7 +116,7 @@ describe('EntityFinderModal', () => {
     })
     userEvent.click(cancelButton)
     unsavedChangedModal = await screen.findByRole('dialog')
-    within(unsavedChangedModal).findByText('Unsaved Changes')
+    within(unsavedChangedModal).findByText(UNSAVED_CHANGES)
 
     // Confirm closing the entity finder modal and verify that the onCancel prop is called
     const confirmWarning = within(unsavedChangedModal).getByRole('button', {

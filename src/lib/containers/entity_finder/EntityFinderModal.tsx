@@ -6,6 +6,8 @@ import { HelpPopoverProps } from '../HelpPopover'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 import EntityFinder, { EntityFinderProps } from './EntityFinder'
 
+export const UNSAVED_CHANGES = 'Unsaved Changes'
+
 export type EntityFinderModalProps = {
   configuration: Omit<EntityFinderProps, 'onSelectedChange'>
   show: boolean
@@ -25,7 +27,7 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
   return (
     <>
       <WarningModal
-        title="Unsaved Changes"
+        title={UNSAVED_CHANGES}
         modalBody="Any unsaved changes will be lost. Are you sure you want to close the finder?"
         show={showUnsavedChangesWarning}
         confirmButtonText="Close Finder"
