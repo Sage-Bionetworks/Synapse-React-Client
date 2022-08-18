@@ -2,9 +2,6 @@ import { cloneDeep } from 'lodash-es'
 import React from 'react'
 import { SQL_EDITOR } from '../../utils/SynapseConstants'
 import { QueryResultBundle } from '../../utils/synapseTypes'
-import Typography from '../../utils/typography/Typography'
-import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
-import QueryCount from '../QueryCount'
 import {
   TopLevelControlsState,
   useQueryVisualizationContext,
@@ -17,6 +14,10 @@ import { useQueryContext } from '../QueryContext'
 import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 import { DownloadOptions } from './table-top'
 import { ColumnSelection } from './table-top/ColumnSelection'
+import Typography from '../../utils/typography/Typography'
+import QueryCount from '../QueryCount'
+import { Icon } from '../row_renderers/utils'
+import MissingQueryResultsWarning from '../MissingQueryResultsWarning'
 
 export type TopLevelControlsProps = {
   name?: string
@@ -60,11 +61,6 @@ const controls: Control[] = [
     tooltipText: 'Show / Hide Visualizations',
   },
   {
-    icon: 'filter',
-    key: 'showFacetFilter',
-    tooltipText: 'Show / Hide Filters',
-  },
-  {
     icon: 'download',
     key: 'showDownloadConfirmation',
     tooltipText: 'Show options for download',
@@ -91,9 +87,9 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
   const {
     data,
     entity,
-    getInitQueryRequest,
     executeQueryRequest,
     getLastQueryRequest,
+    getInitQueryRequest,
   } = useQueryContext()
 
   const {
@@ -142,7 +138,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     setColumnsToShowInTable(columnsToShowInTableCopy)
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
-
   return (
     <div
       className={`TopLevelControls ${
@@ -152,7 +147,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
       }`}
       data-testid="TopLevelControls"
     >
-      <h3>
+      <div>
         <div className="TopLevelControls__querycount">
           {name && (
             <>
@@ -169,6 +164,22 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                 <MissingQueryResultsWarning entity={entity} />
               )}
             </>
+          )}
+          {!hideFacetFilterControl && (
+            <a
+              onClick={() => setControlState('showFacetFilter')}
+              className="TopLevelControls__querycount__facetFilterLink"
+            >
+              <Icon
+                type={
+                  topLevelControlsState.showFacetFilter ? 'close' : 'filter'
+                }
+              ></Icon>
+              <span className="TopLevelControls__querycount__facetFilterLink__text">
+                {topLevelControlsState.showFacetFilter ? 'Hide' : 'Show'} Facet
+                Menu
+              </span>
+            </a>
           )}
         </div>
         <div className="TopLevelControls__actions">
@@ -196,7 +207,6 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             if (
               (key === 'showDownloadConfirmation' && hideDownload) ||
               (key === 'showFacetVisualization' && hideVisualizationsControl) ||
-              (key === 'showFacetFilter' && hideFacetFilterControl) ||
               (key === 'showSqlEditor' && hideSqlEditorControl)
             ) {
               // needs to be a file view in order for download to make sense
@@ -231,7 +241,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
             />
           )}
         </div>
-      </h3>
+      </div>
     </div>
   )
 }

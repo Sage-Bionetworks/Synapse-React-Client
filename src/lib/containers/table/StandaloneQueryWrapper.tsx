@@ -169,7 +169,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                       )}
                       <SqlEditor />
                       {showTopLevelControls && (
-                        <TotalQueryResults frontText={''} showNotch={false} />
+                        <TotalQueryResults frontText={''} />
                       )}
                       <SynapseTable
                         synapseContext={synapseContext}

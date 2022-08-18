@@ -3,7 +3,7 @@ import DownloadDetails, {
   DownloadDetailsProps,
 } from '../../../../lib/containers/download_list/DownloadDetails'
 import ReactDOM from 'react-dom'
-import { act } from 'react-dom/test-utils'
+import { act } from '@testing-library/react'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 import { screen } from '@testing-library/react'
 

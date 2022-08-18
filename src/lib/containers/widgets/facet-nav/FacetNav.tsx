@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from 'react-bootstrap'
-import TotalQueryResults from '../../../containers/TotalQueryResults'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import {
   FacetColumnRequest,
@@ -17,6 +16,7 @@ import {
 import { useQueryContext } from '../../QueryContext'
 import { applyChangesToValuesColumn } from '../query-filter/QueryFilter'
 import FacetNavPanel, { PlotType } from './FacetNavPanel'
+import TotalQueryResults from '../../TotalQueryResults'
 
 /*
 TODO: This component has a few bugs when its props are updated with new data, this should be handled
@@ -26,7 +26,6 @@ it will always mount this component.
 
 export type FacetNavProps = {
   facetsToPlot?: string[]
-  showNotch?: boolean
 }
 
 type UiFacetState = {
@@ -61,7 +60,6 @@ export function getFacets(
 
 const FacetNav: React.FunctionComponent<FacetNavProps> = ({
   facetsToPlot,
-  showNotch = false,
 }: FacetNavProps): JSX.Element => {
   const {
     data,
@@ -167,12 +165,6 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
     )
   }
 
-  const hasFacetsOrFilters =
-    (lastQueryRequest?.query.selectedFacets !== undefined &&
-      lastQueryRequest.query.selectedFacets.length > 0) ||
-    (lastQueryRequest?.query.additionalFilters !== undefined &&
-      lastQueryRequest?.query.additionalFilters.length > 0)
-
   const facets = getFacets(data, facetsToPlot)
 
   const colorTracker = getFacets(data, facetsToPlot).map((el, index) => {
@@ -181,7 +173,11 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       colorIndex: index,
     }
   })
-
+  const hasFacetsOrFilters =
+    (lastQueryRequest?.query.selectedFacets !== undefined &&
+      lastQueryRequest.query.selectedFacets.length > 0) ||
+    (lastQueryRequest?.query.additionalFilters !== undefined &&
+      lastQueryRequest?.query.additionalFilters.length > 0)
   if (error) {
     return <></>
   } else if (!data && isLoadingNewBundle) {
@@ -200,8 +196,8 @@ const FacetNav: React.FunctionComponent<FacetNavProps> = ({
       <>
         <TotalQueryResults
           frontText={''}
-          endText={hasFacetsOrFilters ? 'Filtered By' : ''}
-          showNotch={showNotch}
+          endText={hasFacetsOrFilters ? 'filtered by' : ''}
+          hideIfUnfiltered={true}
         />
         {facets.length > 0 && (
           <div
