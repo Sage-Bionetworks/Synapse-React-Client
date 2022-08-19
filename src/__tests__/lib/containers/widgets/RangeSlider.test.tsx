@@ -57,7 +57,7 @@ describe('RangeSlider', () => {
 
     /**
      * Hard to test updating values in JSDOM, so skipping this test.
-     * It would be worth coming back to this if we use an interaction testing library,
+     * It would be worth coming back to this if we use an interaction testing library that runs in a browser,
      * like Cypress or the storybook test runner.
      */
     it.todo(
