@@ -1,7 +1,5 @@
 import 'whatwg-fetch'
 import 'raf/polyfill' // polyfill for requestAnimationFrame
-import { configure } from 'enzyme'
-import Adapter from 'enzyme-adapter-react-16'
 import '@testing-library/jest-dom/extend-expect'
 import crypto from 'crypto'
 import { ResizeObserver } from '@juggle/resize-observer'
@@ -26,7 +24,6 @@ global.sanitizeHtml = require('sanitize-html')
 global.markdownitMath = require('markdown-it-synapse-math')
 global.ResizeObserver = ResizeObserver
 
-configure({ adapter: new Adapter() })
 // Synapse API calls may take longer than 5s (typically if a dependent call is taking much longer than normal)
 jest.setTimeout(30000)
 

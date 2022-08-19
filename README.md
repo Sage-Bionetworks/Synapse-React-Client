@@ -306,9 +306,8 @@ The client has its configuration file for tests in `src/setupTests.js`.
 
 Links to Resources on Testing:
 
-- Testing Framework: https://jestjs.io/
-- React Class Testing: https://enzymejs.github.io/enzyme/
-- React Hooks Testing: https://testing-library.com/docs/react-testing-library/intro
+- Jest: https://jestjs.io/
+- React Testing Library: https://testing-library.com/docs/react-testing-library/intro
 
 ### `yarn deploy`
 
@@ -324,13 +323,6 @@ Starts a style guide dev server, available at http://localhost:6060/
 #### React state isn't being updated.
 
 Wrap your code that updates the component inside [https://testing-library.com/docs/preact-testing-library/api#act](act)
-
-#### Enzyme isn't finding the component
-
-If using a class component:
-
-1. Try using [https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/mount.html](mount) - this recursively renders all child components.
-2. Try using [https://enzymejs.github.io/enzyme/docs/api/ReactWrapper/update.html](update) - this will sync the enzyme component tree snapshot with the react component tree, useful to use after running a stateful action on a component.
 
 #### Debugging the tests
 
