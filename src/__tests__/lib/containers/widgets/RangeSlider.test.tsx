@@ -1,5 +1,6 @@
-import * as React from 'react'
-import { shallow, ShallowWrapper } from 'enzyme'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
 import {
   RangeSlider,
   RangeSliderProps,
@@ -7,7 +8,9 @@ import {
 
 const mockCallback = jest.fn(() => {})
 
-function createTestProps(overrides?: RangeSliderProps): RangeSliderProps {
+function createTestProps(
+  overrides?: Partial<RangeSliderProps>,
+): RangeSliderProps {
   return {
     initialValues: { min: '1', max: '20' },
     domain: ['0', '35'],
@@ -17,46 +20,55 @@ function createTestProps(overrides?: RangeSliderProps): RangeSliderProps {
     ...overrides,
   }
 }
-let wrapper: ShallowWrapper<any, Readonly<{}>, React.Component<{}, {}, any>>
-let props: RangeSliderProps
 
-function init(overrides?: RangeSliderProps) {
-  props = createTestProps(overrides)
-  wrapper = shallow(<RangeSlider {...props} />)
+function init(overrides?: Partial<RangeSliderProps>) {
+  const props = createTestProps(overrides)
+  return render(<RangeSlider {...props} />)
 }
 
-beforeEach(() => init())
+describe('RangeSlider', () => {
+  beforeEach(() => jest.clearAllMocks())
 
-describe('initialization ', () => {
   it('should render with correct properties', () => {
-    expect(wrapper).toBeDefined()
+    const { container } = init()
+    // The initial values should be reported to the screen
+    within(container.querySelector('.RangeSlider__values')!).getByText('1 - 20')
+    const sliders = screen.getAllByRole('slider')
+    expect(sliders).toHaveLength(2)
+    expect(sliders[0].getAttribute('aria-valuenow')).toBe('1')
+    expect(sliders[0].getAttribute('aria-valuemin')).toBe('0')
+    expect(sliders[0].getAttribute('aria-valuemax')).toBe('35')
+    expect(sliders[1].getAttribute('aria-valuenow')).toBe('20')
+    expect(sliders[1].getAttribute('aria-valuemin')).toBe('0')
+    expect(sliders[1].getAttribute('aria-valuemax')).toBe('35')
 
-    expect(wrapper.find('Slider').prop('domain')).toEqual([0, 35])
-    expect(wrapper.find('Slider').prop('step')).toEqual(1)
-    expect(wrapper.find('Tracks').prop('left')).toBe(true)
-    expect(wrapper.find('Tracks').prop('right')).toBe(true)
-  })
-})
-
-describe('callbacks', () => {
-  it('should not call the callbackFn on change when doUpdateOnApply is true', () => {
-    mockCallback.mockClear()
-    wrapper.find('Slider').simulate('change', [2, 10])
-    expect(mockCallback).not.toHaveBeenCalled()
-  })
-
-  it('should call the callbackFn on change when doUpdateOnApply is false', () => {
-    init({ ...props, doUpdateOnApply: false })
-    mockCallback.mockClear()
-    wrapper.find('Slider').simulate('change', [2, 10])
-    expect(mockCallback).toHaveBeenCalledWith({ min: 2, max: 10 })
+    // Find min and max values
+    screen.getByText('0')
+    screen.getByText('35')
   })
 
-  it('should allways call callbackFn on Apply', () => {
-    init({ ...props, doUpdateOnApply: true })
-    mockCallback.mockClear()
-    wrapper.find('Slider').simulate('change', [2, 10])
-    wrapper.find('button').simulate('click')
-    expect(mockCallback).toHaveBeenCalledWith({ min: 2, max: 10 })
+  describe('callbacks', () => {
+    it('should not call the callbackFn on change when doUpdateOnApply is true', async () => {
+      init({ doUpdateOnApply: true })
+      const sliders = screen.getAllByRole('slider')
+      userEvent.click(sliders[0])
+      expect(mockCallback).not.toHaveBeenCalled()
+    })
+
+    /**
+     * Hard to test updating values in JSDOM, so skipping this test.
+     * It would be worth coming back to this if we use an interaction testing library,
+     * like Cypress or the storybook test runner.
+     */
+    it.todo(
+      'should call the callbackFn on change when doUpdateOnApply is false',
+    )
+
+    it('should always call callbackFn on Apply', () => {
+      init({ doUpdateOnApply: true })
+      const button = screen.getByRole('button', { name: 'Apply' })
+      userEvent.click(button)
+      expect(mockCallback).toHaveBeenCalledWith({ min: 1, max: 20 })
+    })
   })
 })

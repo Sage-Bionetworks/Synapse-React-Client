@@ -3,9 +3,9 @@ import moment from 'moment'
 
 type ControlType = 'number' | 'date'
 
-export type RangeValues = {
-  min?: string
-  max?: string
+export type RangeValues<T = string | number> = {
+  min?: T
+  max?: T
 }
 
 export type RangeProps = {
@@ -55,8 +55,7 @@ export const Range: React.FunctionComponent<RangeProps> = (
         setError(true)
         return false
       }
-    }
-    if (Date.parse(min) > Date.parse(max)) {
+    } else if (Date.parse(min as string) > Date.parse(max as string)) {
       setError(true)
       return false
     }
