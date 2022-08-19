@@ -8,7 +8,7 @@ import {
 import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 import { QueryClient } from 'react-query'
 import { SynapseContextProvider } from '../../../../../lib/utils/SynapseContext'
-
+import { SynapseClient } from '../../../../../lib/utils'
 const queryClient = new QueryClient()
 
 const wrapper = (props: { children: React.ReactChildren }) => (
@@ -33,12 +33,14 @@ const expected: PaginatedResults<EntityHeader> = {
       modifiedOn: 'earlier',
       createdBy: 'me',
       modifiedBy: 'you',
+      isLatestVersion: true,
     },
   ],
 }
 
-const SynapseClient = require('../../../../../lib/utils/SynapseClient')
-SynapseClient.getUserFavorites = jest.fn().mockResolvedValue(expected)
+const mockGetUserFavorites = jest
+  .spyOn(SynapseClient, 'getUserFavorites')
+  .mockResolvedValue(expected)
 
 describe('useFavorites functionality', () => {
   beforeEach(() => {
@@ -50,8 +52,12 @@ describe('useFavorites functionality', () => {
 
     await waitFor(() => result.current.isSuccess)
 
-    expect(SynapseClient.getUserFavorites).toBeCalledWith(
+    expect(mockGetUserFavorites).toBeCalledWith(
       MOCK_CONTEXT_VALUE.accessToken,
+      undefined,
+      undefined,
+      'FAVORITED_ON',
+      'DESC',
     )
     expect(result.current.data).toEqual(expected)
   })

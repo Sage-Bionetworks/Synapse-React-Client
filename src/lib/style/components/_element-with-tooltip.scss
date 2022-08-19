@@ -12,13 +12,6 @@
       fill: SRC.$primary-action-color;
     }
   }
-
-  &:hover {
-    svg,
-    path {
-      fill: #fff;
-    }
-  }
   &.dark-theme {
     svg {
       fill: SRC.$primary-action-color;
@@ -28,27 +21,6 @@
 
       path {
         fill: SRC.$primary-action-color;
-      }
-    }
-
-    &:hover {
-      svg,
-      path {
-        fill: #fff;
-      }
-    }
-  }
-}
-.show {
-  .ElementWithTooltip {
-    &.dark-theme {
-      svg {
-        fill: SRC.$primary-action-color;
-        color: white !important;
-
-        path {
-          fill: white;
-        }
       }
     }
   }

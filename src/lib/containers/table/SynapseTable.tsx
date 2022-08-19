@@ -12,7 +12,6 @@ import {
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { getUserProfileWithProfilePicAttached } from '../../utils/functions/getUserData'
-import { isGroupByInSql } from '../../utils/functions/sqlFunctions'
 import { SynapseContextType } from '../../utils/SynapseContext'
 import {
   ColumnModel,
@@ -39,7 +38,6 @@ import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { QueryContextType } from '../QueryContext'
 import { Icon } from '../row_renderers/utils'
 import { SynapseTableCell } from '../synapse_table_functions/SynapseTableCell'
-import TotalQueryResults from '../TotalQueryResults'
 import { Checkbox } from '../widgets/Checkbox'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter'
 import {
@@ -363,14 +361,12 @@ export default class SynapseTable extends React.Component<
     // unpack all the data
     const {
       queryContext: { data },
-      queryVisualizationContext: { topLevelControlsState, unitDescription },
       showNoContentAvailableWhenEmpty,
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { facets = [] } = data
     const { isExpanded, isExportTableDownloadOpen } = this.state
     const queryRequest = this.props.queryContext.getLastQueryRequest()
-    const { showFacetFilter } = topLevelControlsState
     let className = ''
     const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
@@ -411,22 +407,6 @@ export default class SynapseTable extends React.Component<
               queryBundleRequest={queryRequest}
             />
           )}
-          {!showFacetFilter &&
-            unitDescription &&
-            !isGroupByInSql(queryRequest.query.sql) && (
-              <div
-                className={`SRC-centerContent text-left`}
-                style={{ minHeight: '20px' }}
-              >
-                <TotalQueryResults
-                  style={{ fontSize: 15 }}
-                  frontText={'Showing'}
-                  applyChanges={(newFacets: FacetColumnRequest[]) =>
-                    this.applyChangesFromQueryFilter(newFacets)
-                  }
-                />
-              </div>
-            )}
           {/* FRAGILE, CHANGE WITH CAUTION, see - https://sagebionetworks.jira.com/browse/PORTALS-1539 */}
           <div>{table}</div>
         </div>

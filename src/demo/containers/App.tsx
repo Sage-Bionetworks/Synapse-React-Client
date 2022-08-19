@@ -1,17 +1,23 @@
+import $RefParser from '@apidevtools/json-schema-ref-parser'
 import * as React from 'react'
-import { Link, BrowserRouter as Router, Route } from 'react-router-dom'
-import Login from '../../lib/containers/Login'
+import { Alert } from 'react-bootstrap'
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
 import { ReactComponent as LogoSvg } from '../../images/logo.svg'
+import Login from '../../lib/containers/Login'
+import SynapseForm from '../../lib/containers/synapse_form_wrapper/SynapseForm'
+import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
+import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
+import { SynapseClient } from '../../lib/utils/'
+import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
+import {
+  mockFormSchema as formSchema,
+  mockNavSchema as formNavSchema,
+  mockUiSchema as formUiSchema,
+} from '../../mocks/mock_drug_tool_data'
 import '../style/App.css'
 import '../style/DemoStyle.css'
 import Demo from './Demo'
 import Playground from './playground/Playground'
-import SynapseFormWrapper from '../../lib/containers/synapse_form_wrapper/SynapseFormWrapper'
-import SynapseFormSubmissionsGrid from '../../lib/containers/synapse_form_wrapper/SynapseFormSubmissionsGrid'
-import { SynapseClient } from '../../lib/utils/'
-import { Alert } from 'react-bootstrap'
-import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
-
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient
  * module
@@ -22,6 +28,30 @@ type AppState = {
   getSessionCalled: boolean
 }
 export const TokenContext = React.createContext('')
+
+let dereferencedSchema
+$RefParser.dereference(formSchema).then(res => (dereferencedSchema = res))
+
+function MockForm() {
+  return dereferencedSchema ? (
+    <SynapseForm
+      schema={dereferencedSchema}
+      navSchema={formNavSchema}
+      uiSchema={formUiSchema}
+      formData={{
+        metadata: {
+          formSchemaVersion: '01',
+          uiSchemaVersion: '01',
+          navSchemaVersion: '01',
+        },
+      }}
+      onSubmit={() => {}}
+      onSave={() => {}}
+      formTitle={'title'}
+      isWizardMode={false}
+    />
+  ) : null
+}
 
 export default class App extends React.Component<{}, AppState> {
   constructor(props: any) {
@@ -164,8 +194,11 @@ export default class App extends React.Component<{}, AppState> {
               </li>
               <li>
                 <Link to="/contribReqForm">
-                  AMP-AD external data contribution{' '}
+                  AMP-AD external data contribution
                 </Link>
+              </li>
+              <li>
+                <Link to="/mockForm">Mocked form</Link>
               </li>
             </ul>
             <Route exact={true} path="/">
@@ -243,6 +276,7 @@ export default class App extends React.Component<{}, AppState> {
                 )
               }}
             />
+            <Route exact={true} path="/mockForm" render={MockForm} />
           </div>
         </Router>
       </SynapseContextProvider>

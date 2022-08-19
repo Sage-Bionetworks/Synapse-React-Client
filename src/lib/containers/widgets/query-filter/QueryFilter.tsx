@@ -171,7 +171,6 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
           : QUERY_FILTERS_COLLAPSED_CSS
       }`}
     >
-      <h4 className="QueryFilter__title">Filter By</h4>
       {isLoadingNewBundle && <div>Loading...</div>}
       {!isLoadingNewBundle &&
         facets.map((facet, index) => {

@@ -9,7 +9,7 @@ import {
   ColumnType,
 } from '../../../../lib/utils/synapseTypes'
 import { render, fireEvent, screen, waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
+import { act } from '@testing-library/react'
 import { SynapseConstants } from '../../../../lib/utils'
 import { SynapseTestContext } from '../../../../mocks/MockSynapseContext'
 

@@ -145,6 +145,13 @@ svg.SRC-hoverBox {
   }
 }
 
+.SRC-grey-background-hover {
+  &:hover,
+  &[aria-expanded='true'] {
+    background-color: map.get(SRC.$colors, 'gray-400');
+  }
+}
+
 .SRC-facets {
   padding: 4px 12px;
   border-radius: 20px;

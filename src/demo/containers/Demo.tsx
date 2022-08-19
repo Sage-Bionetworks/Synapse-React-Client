@@ -5,7 +5,7 @@ import Uploader from '../../lib/containers/Uploader'
 import FileContentDownloadUploadDemo from '../../lib/containers/FileContentDownloadUploadDemo'
 import StatisticsPlot from '../../lib/containers/StatisticsPlot'
 import { testDownloadSpeed } from '../../lib/utils/functions/testDownloadSpeed'
-import HasAccess from '../../lib/containers/HasAccess'
+import { HasAccessV2 as HasAccess } from '../../lib/containers/HasAccessV2'
 import { SynapseContextProvider } from '../../lib/utils/SynapseContext'
 
 type DemoState = {
@@ -154,37 +154,17 @@ class Demo extends React.Component<DemoProps, DemoState> {
           {
             <div className="container">
               <h5>Public Folder - HasAccess widget</h5>
-              <HasAccess
-                entityId={'syn7122428'}
-                isInDownloadList={false}
-                forceSamePage={forceSamePage}
-              />
+              <HasAccess entityId={'syn7122428'} />
               <h5>A Controlled Access Folder - HasAccess widget</h5>
-              <HasAccess
-                entityId={'syn7383419'}
-                isInDownloadList={false}
-                forceSamePage={forceSamePage}
-              />
+              <HasAccess entityId={'syn7383419'} />
               <h5>Open Data</h5>
-              <HasAccess
-                entityId={'syn5481758'}
-                isInDownloadList={false}
-                forceSamePage={forceSamePage}
-              />
+              <HasAccess entityId={'syn5481758'} />
               <h5>Acces Requirements required Data</h5>
-              <HasAccess
-                entityId={'syn2426398'}
-                isInDownloadList={false}
-                forceSamePage={forceSamePage}
-              />
+              <HasAccess entityId={'syn2426398'} />
               <h5>
                 Acces Requirements required Data without unsupported requirement
               </h5>
-              <HasAccess
-                entityId={'syn4993293'}
-                isInDownloadList={false}
-                forceSamePage={forceSamePage}
-              />
+              <HasAccess entityId={'syn4993293'} />
 
               <hr />
             </div>
