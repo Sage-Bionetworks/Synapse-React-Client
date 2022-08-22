@@ -120,7 +120,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
       }
   const entityId = parseEntityIdFromSqlStatement(query.sql)
   const { data: entity } = useGetEntity(entityId)
-  debugger
   const isFullTextSearchEnabled =
     entity && isTable(entity) && entity.isSearchEnabled
   const initQueryRequest: QueryBundleRequest = {
