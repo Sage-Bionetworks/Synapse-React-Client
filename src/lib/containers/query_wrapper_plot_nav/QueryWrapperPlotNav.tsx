@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { SynapseConstants } from '../../utils/'
-import { isTable, isTableEntity } from '../../utils/functions/EntityTypeUtils'
+import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
   insertConditionsFromSearchParams,
   parseEntityIdFromSqlStatement,
