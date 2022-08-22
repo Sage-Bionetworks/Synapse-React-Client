@@ -9,7 +9,7 @@ describe('basic functionality', () => {
     inputWidth: '500px',
   }
 
-  it('copies to clipboard when icon is clicked', () => {
+  it('copies to clipboard when icon is clicked', async () => {
     Object.assign(navigator, {
       clipboard: {
         writeText: jest.fn().mockImplementation(() => Promise.resolve()),
@@ -17,13 +17,13 @@ describe('basic functionality', () => {
     })
     render(<CopyToClipboardInput {...props} />)
     const button = screen.getByRole('button')
-    userEvent.click(button)
+    await userEvent.click(button)
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       'some value to be copied',
     )
   })
 
-  it('copies to clipboard when input field is clicked', () => {
+  it('copies to clipboard when input field is clicked', async () => {
     Object.assign(navigator, {
       clipboard: {
         writeText: jest.fn().mockImplementation(() => Promise.resolve()),
@@ -31,7 +31,7 @@ describe('basic functionality', () => {
     })
     render(<CopyToClipboardInput {...props} />)
     const inputField = screen.getByRole('textbox')
-    userEvent.click(inputField)
+    await userEvent.click(inputField)
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       'some value to be copied',
     )

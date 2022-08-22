@@ -271,8 +271,10 @@ describe('SynapseTable tests', () => {
         name: sortedColumn,
       }
 
-      userEvent.click(
-        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      await userEvent.click(
+        (
+          await screen.findAllByRole('button', { name: 'sort' })
+        )[0],
       )
       const descendingColumnObject = {
         column: sortedColumn,
@@ -292,8 +294,10 @@ describe('SynapseTable tests', () => {
       // simulate second button click
       // simulate having clicked the sort button on the first column
       // projectStatus -- this should set it to descend
-      userEvent.click(
-        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      await userEvent.click(
+        (
+          await screen.findAllByRole('button', { name: 'sort' })
+        )[0],
       )
       const ascendingColumnObject = {
         column: sortedColumn,
@@ -311,8 +315,10 @@ describe('SynapseTable tests', () => {
       // simulate having clicked the sort button on the first column
       // projectStatus -- this should set it to descend
       // it shouldn't be in the api call at all
-      userEvent.click(
-        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      await userEvent.click(
+        (
+          await screen.findAllByRole('button', { name: 'sort' })
+        )[0],
       )
       // below we match only the part of the object that we expect to have changed
       expect(executeQueryRequest).toHaveBeenCalledWith(
@@ -353,7 +359,7 @@ describe('SynapseTable tests', () => {
     renderTable({ ...props, queryVisualizationContext }, testQueryContext)
 
     const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
-    userEvent.click(copySynIDsButton)
+    await userEvent.click(copySynIDsButton)
 
     expect(mockWriteText).toHaveBeenCalled()
     expect(mockWriteText).toHaveBeenCalledWith(

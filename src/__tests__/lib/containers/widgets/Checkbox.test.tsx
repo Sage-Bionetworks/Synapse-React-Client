@@ -34,20 +34,20 @@ describe('basic function', () => {
     expect(screen.getByRole<HTMLInputElement>('checkbox').checked).toBe(false)
   })
 
-  it('should call callbackFn on change with correct params and change the value', () => {
+  it('should call callbackFn on change with correct params and change the value', async () => {
     render(<Checkbox {...props} checked={false} />)
 
-    userEvent.click(screen.getByRole('checkbox'))
+    await userEvent.click(screen.getByRole('checkbox'))
     expect(mockCallback).toHaveBeenCalledWith(true)
 
     expect(screen.getByRole<HTMLInputElement>('checkbox').checked).toBe(true)
   })
 
-  it('should be accessible via RTL', () => {
+  it('should be accessible via RTL', async () => {
     render(<Checkbox {...props} />)
     expect(() => screen.getByRole('checkbox')).not.toThrowError()
 
-    userEvent.click(screen.getByRole('checkbox'))
+    await userEvent.click(screen.getByRole('checkbox'))
     expect(mockCallback).toHaveBeenCalledWith(true)
   })
 })

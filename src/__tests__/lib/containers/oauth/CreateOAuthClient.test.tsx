@@ -79,9 +79,9 @@ describe('Create OAuth Client', () => {
     const inputRedirectURI = await screen.findByLabelText('Redirect URI(s)')
 
     const saveButton = screen.getByRole('button', { name: 'Save' })
-    userEvent.type(inputName, mockClient.client_name)
-    userEvent.type(inputHomePage, mockClient.client_uri!)
-    userEvent.type(inputRedirectURI, mockClient.redirect_uris[0]!)
+    await userEvent.type(inputName, mockClient.client_name)
+    await userEvent.type(inputHomePage, mockClient.client_uri!)
+    await userEvent.type(inputRedirectURI, mockClient.redirect_uris[0]!)
 
     await waitFor(() => {
       expect(inputName).toHaveValue(mockClient.client_name)
@@ -89,7 +89,7 @@ describe('Create OAuth Client', () => {
       expect(inputRedirectURI).toHaveValue(mockClient.redirect_uris[0])
     })
 
-    userEvent.click(saveButton!)
+    await userEvent.click(saveButton!)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith('Successfully saved', 'success'),
@@ -99,7 +99,7 @@ describe('Create OAuth Client', () => {
   it('Shows a warning modal when deleteing a client', async () => {
     renderComponent({ ...defaultProps, isEdit: true, client: mockClient })
     const deleteButton = screen.getByRole('button', { name: 'DELETE CLIENT' })
-    userEvent.click(deleteButton!)
+    await userEvent.click(deleteButton!)
 
     expect(mockWarningModal).toBeCalledWith(
       expect.objectContaining({
@@ -134,12 +134,12 @@ describe('Create OAuth Client', () => {
       name: 'Client Name',
     })
     const saveButton = screen.getByRole('button', { name: 'Save' })
-    userEvent.type(inputName, 'rename')
+    await userEvent.type(inputName, 'rename')
 
     await waitFor(() =>
       expect(inputName).toHaveValue(`${mockClient.client_name}rename`),
     )
-    userEvent.click(saveButton!)
+    await userEvent.click(saveButton!)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith('Successfully saved', 'success'),
@@ -151,8 +151,8 @@ describe('Create OAuth Client', () => {
     const inputRedirectURI = await screen.findByLabelText('Redirect URI(s)')
     const saveButton = screen.getByRole('button', { name: 'Save' })
 
-    userEvent.type(inputRedirectURI, 'xxx')
-    userEvent.click(saveButton!)
+    await userEvent.type(inputRedirectURI, 'xxx')
+    await userEvent.click(saveButton!)
 
     expect(mockWarningModal).toBeCalledWith(
       expect.objectContaining({

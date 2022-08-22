@@ -59,7 +59,7 @@ describe('MissingQueryResultsWarning tests', () => {
     await screen.findByText('1 Unavailable')
     const helpButton = await screen.findByRole('button')
 
-    userEvent.click(helpButton)
+    await userEvent.click(helpButton)
     await screen.findByText(
       'Files may be unavailable because you do not have permission to see them, they have been deleted, or the Dataset has been misconfigured.',
     )
@@ -82,7 +82,7 @@ describe('MissingQueryResultsWarning tests', () => {
     await screen.findByText('2 Unavailable')
     const helpButton = await screen.findByRole('button')
 
-    userEvent.click(helpButton)
+    await userEvent.click(helpButton)
     // Help text does not indicate that files were deleted, because the deleted file would have been captured in the snapshot
     await screen.findByText(
       'Files may be unavailable because you do not have permission to see them or the Dataset was misconfigured.',

@@ -252,7 +252,7 @@ describe('Accepted Requirements works as expect', () => {
       .fn()
       .mockResolvedValue(accessApprovalMock)
 
-    userEvent.click(
+    await userEvent.click(
       await screen.findByRole('button', { name: 'I Accept Terms of Use' }),
     )
 

@@ -53,7 +53,7 @@ describe('Terms and Conditions Item: basic functionality', () => {
     screen.getByText('Show More')
   })
 
-  it('should display show less link when show more link is clicked', () => {
+  it('should display show less link when show more link is clicked', async () => {
     render(
       <TermsAndConditionsItem
         id={1}
@@ -64,12 +64,12 @@ describe('Terms and Conditions Item: basic functionality', () => {
       />,
     )
 
-    userEvent.click(screen.getByText('Show More'))
-    userEvent.click(screen.getByText('Show Less'))
+    await userEvent.click(screen.getByText('Show More'))
+    await userEvent.click(screen.getByText('Show Less'))
     screen.getByText('Show More')
   })
 
-  it('should call event handler when checkbox is checked', () => {
+  it('should call event handler when checkbox is checked', async () => {
     render(
       <TermsAndConditionsItem
         id={1}
@@ -79,7 +79,7 @@ describe('Terms and Conditions Item: basic functionality', () => {
         onChange={onChange}
       />,
     )
-    userEvent.click(screen.getByLabelText(mockItem.label))
+    await userEvent.click(screen.getByLabelText(mockItem.label))
     expect(onChange).toHaveBeenCalledTimes(1)
   })
 })

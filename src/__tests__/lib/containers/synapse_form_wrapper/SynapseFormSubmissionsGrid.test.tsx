@@ -89,14 +89,14 @@ describe('SynapseFormSubmissionsGrid', () => {
     )[0]
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    userEvent.click(deleteButton)
+    await userEvent.click(deleteButton)
     const dialog = await screen.findByRole('dialog')
     expect(spy).not.toHaveBeenCalled()
 
     const confirmDeleteButton = within(dialog).getByRole('button', {
       name: 'OK',
     })
-    userEvent.click(confirmDeleteButton)
+    await userEvent.click(confirmDeleteButton)
     expect(spy).toHaveBeenCalledWith(
       formListDataInProgress.page[0].formDataId,
       token,
@@ -108,7 +108,7 @@ describe('SynapseFormSubmissionsGrid', () => {
     const viewMoreButton = await screen.findByRole('button', {
       name: 'more ...',
     })
-    userEvent.click(viewMoreButton)
+    await userEvent.click(viewMoreButton)
 
     await waitFor(() =>
       expect(mockListFormData).toHaveBeenCalledWith(

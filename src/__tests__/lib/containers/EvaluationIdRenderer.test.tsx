@@ -10,11 +10,11 @@ import {
 } from '../../../mocks/MockSynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
 import { mockEvaluationQueue } from '../../../mocks/entity/mockEvaluationQueue'
-import { getEvaluation } from '../../../lib/utils/SynapseClient'
+import { SynapseClient } from '../../../lib/utils'
 
-const SynapseClient = require('../../../lib/utils/SynapseClient')
-
-SynapseClient.getEvaluation = jest.fn().mockResolvedValue(mockEvaluationQueue)
+jest
+  .spyOn(SynapseClient, 'getEvaluation')
+  .mockResolvedValue(mockEvaluationQueue)
 
 describe('EvaluationIdRenderer: basic functionality', () => {
   const props: EvaluationIdRendererProps = {
@@ -29,11 +29,11 @@ describe('EvaluationIdRenderer: basic functionality', () => {
       mockAllIsIntersecting(true)
     })
     await waitFor(() =>
-      expect(getEvaluation).toBeCalledWith(
+      expect(SynapseClient.getEvaluation).toBeCalledWith(
         props.evaluationId,
         MOCK_CONTEXT_VALUE.accessToken,
       ),
     )
-    screen.getByText(mockEvaluationQueue.name!)
+    await screen.findByText(mockEvaluationQueue.name!)
   })
 })

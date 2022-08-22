@@ -53,7 +53,7 @@ describe('RequestDownloadCard tests', () => {
       name: 'View Sharing Settings',
     })
     expect(viewSharingSettingsButton).toBeInTheDocument()
-    userEvent.click(viewSharingSettingsButton!)
+    await userEvent.click(viewSharingSettingsButton!)
     expect(onViewSharingSettingsClicked).toHaveBeenLastCalledWith(ENTITY_ID)
   })
 })

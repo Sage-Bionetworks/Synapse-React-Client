@@ -199,7 +199,7 @@ describe('Submission Page tests', () => {
 
     const approveButton = await screen.findByRole('button', { name: 'Approve' })
 
-    userEvent.click(approveButton)
+    await userEvent.click(approveButton)
 
     // Modal appears
     await screen.findByText('Approve Request?')
@@ -207,7 +207,7 @@ describe('Submission Page tests', () => {
       await screen.findAllByRole('button', { name: 'Approve' })
     )[0]
 
-    userEvent.click(approveConfirmButton)
+    await userEvent.click(approveConfirmButton)
 
     await waitFor(() =>
       expect(onServerRecievedUpdate).toBeCalledWith(
@@ -226,7 +226,7 @@ describe('Submission Page tests', () => {
 
     const approveButton = await screen.findByRole('button', { name: 'Reject' })
 
-    userEvent.click(approveButton)
+    await userEvent.click(approveButton)
 
     await waitFor(() => expect(onRejectCallbackFn).toBeCalled())
     expect(onServerRecievedUpdate).not.toHaveBeenCalled()

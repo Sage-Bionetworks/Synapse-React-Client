@@ -89,7 +89,7 @@ function mockEntityFinderToAddItems(items: Array<Reference>) {
   })
 }
 
-function addItemsViaEntityFinder() {
+async function addItemsViaEntityFinder() {
   const addItemsButton = screen.getAllByRole('button', {
     exact: false,
     name: /Add (File|Dataset)s/,
@@ -97,13 +97,13 @@ function addItemsViaEntityFinder() {
   // Mocked entity finder is not visible
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
-  userEvent.click(addItemsButton)
+  await userEvent.click(addItemsButton)
 
   // Entity finder should now be visible
   expect(screen.queryByRole('dialog')).toBeInTheDocument()
 
   // Use the entity finder to add items
-  userEvent.click(screen.getByText(mockEntityFinderButtonText))
+  await userEvent.click(screen.getByText(mockEntityFinderButtonText))
 
   // The entity finder should be automatically closed.
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -113,16 +113,16 @@ function addItemsViaEntityFinder() {
 async function selectIndividualItem(id: string) {
   // Click the checkbox for the corresponding item
   const checkbox = await screen.findByTestId(`dataset-editor-checkbox-${id}`)
-  userEvent.click(checkbox)
+  await userEvent.click(checkbox)
 }
 
 async function removeItem(id: string) {
   await selectIndividualItem(id)
-  clickRemove()
+  await clickRemove()
 }
 
-function clickRemove() {
-  userEvent.click(
+async function clickRemove() {
+  await userEvent.click(
     screen.getByRole('button', {
       exact: true,
       name: /Remove (File|Dataset)s/,
@@ -166,16 +166,16 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
 
 async function clickSave() {
   const saveButton = await screen.findByRole('button', { name: 'Save' })
-  userEvent.click(saveButton)
+  await userEvent.click(saveButton)
 }
 
 async function clickCancel() {
   const saveButton = await screen.findByRole('button', { name: 'Cancel' })
-  userEvent.click(saveButton)
+  await userEvent.click(saveButton)
 }
 
 async function clickSelectAll() {
-  userEvent.click(await screen.findByTestId('Select All'))
+  await userEvent.click(await screen.findByTestId('Select All'))
 }
 
 async function verifyNoneSelected() {
@@ -284,7 +284,7 @@ describe('Dataset Items Editor tests', () => {
     )
 
     // Assertions are captured in the helper function:
-    addItemsViaEntityFinder()
+    await addItemsViaEntityFinder()
   })
 
   it('Updates the entity when Save is clicked', async () => {
@@ -305,7 +305,7 @@ describe('Dataset Items Editor tests', () => {
       ).not.toBeDisabled(),
     )
 
-    addItemsViaEntityFinder()
+    await addItemsViaEntityFinder()
 
     await clickSave()
 
@@ -334,7 +334,7 @@ describe('Dataset Items Editor tests', () => {
 
       await clickSelectAll()
 
-      clickRemove()
+      await clickRemove()
 
       await clickSave()
 
@@ -363,7 +363,7 @@ describe('Dataset Items Editor tests', () => {
       await clickSelectAll()
 
       // Verify all were selected by removing the items
-      clickRemove()
+      await clickRemove()
 
       await clickSave()
 
@@ -411,7 +411,7 @@ describe('Dataset Items Editor tests', () => {
     await screen.findByText('No Files', { exact: true })
 
     // Add two items
-    addItemsViaEntityFinder()
+    await addItemsViaEntityFinder()
 
     await screen.findByText('2 Files', { exact: true })
 
@@ -492,7 +492,7 @@ describe('Dataset Items Editor tests', () => {
     // Sanity check: the selected version should not be 1 when we start.
     expect(mockFileReference.targetVersionNumber).not.toEqual(1)
 
-    userEvent.selectOptions(await screen.findByRole('listbox'), '1')
+    await userEvent.selectOptions(await screen.findByRole('listbox'), '1')
 
     await clickSave()
 
@@ -557,7 +557,7 @@ describe('Dataset Items Editor tests', () => {
 
       await renderComponent()
 
-      addItemsViaEntityFinder()
+      await addItemsViaEntityFinder()
 
       await clickCancel()
 
@@ -568,7 +568,9 @@ describe('Dataset Items Editor tests', () => {
       })
 
       // Click the cancel button in the dialog
-      userEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Cancel' }),
+      )
 
       // Verify the dialog is gone but onClose was not called
       expect(mockOnCloseFn).not.toHaveBeenCalled()
@@ -582,7 +584,7 @@ describe('Dataset Items Editor tests', () => {
 
       await renderComponent()
 
-      addItemsViaEntityFinder()
+      await addItemsViaEntityFinder()
 
       await clickCancel()
 
@@ -593,7 +595,7 @@ describe('Dataset Items Editor tests', () => {
       })
 
       // Click the 'Close Editor' button in the dialog
-      userEvent.click(
+      await userEvent.click(
         await screen.findByRole('button', { name: 'Close Editor' }),
       )
 
@@ -630,7 +632,7 @@ describe('Dataset Items Editor tests', () => {
 
       // Add same item with same version to dataset
       mockEntityFinderToAddItems([mockFileReference])
-      addItemsViaEntityFinder()
+      await addItemsViaEntityFinder()
 
       // Verify toast showing change is not called
       expect(mockToastFn).not.toBeCalled()
@@ -645,7 +647,7 @@ describe('Dataset Items Editor tests', () => {
 
       // Add identical item to existing dataset with different version
       mockEntityFinderToAddItems([mockFileReference])
-      addItemsViaEntityFinder()
+      await addItemsViaEntityFinder()
 
       // Verify toast shows no item has been added and 1 has updated
       expect(mockToastFn).toBeCalledWith(
@@ -664,7 +666,7 @@ describe('Dataset Items Editor tests', () => {
 
       // Add item to dataset
       mockEntityFinderToAddItems([mockFileReference])
-      addItemsViaEntityFinder()
+      await addItemsViaEntityFinder()
 
       // Verify one item has been added to dataset
       expect(mockToastFn).toBeCalledWith(
@@ -719,7 +721,7 @@ describe('Dataset Items Editor tests', () => {
         ).not.toBeDisabled(),
       )
 
-      addItemsViaEntityFinder()
+      await addItemsViaEntityFinder()
       // Verify that the Entity Finder is configured to select Datasets
       expect(mockEntityFinder).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -742,8 +744,10 @@ describe('Dataset Items Editor tests', () => {
         ),
       )
 
-      await waitFor(() => expect(mockOnSaveFn).toBeCalled())
-      expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
+      await waitFor(() => {
+        expect(mockOnSaveFn).toBeCalled()
+        expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
+      })
     })
   })
 })

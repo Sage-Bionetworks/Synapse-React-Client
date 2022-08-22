@@ -126,7 +126,7 @@ describe('DownloadListTableV2 tests', () => {
       renderComponent()
 
       const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
-      userEvent.click(copySynIDsButton)
+      await userEvent.click(copySynIDsButton)
 
       expect(mockWriteText).toHaveBeenCalled()
       expect(mockWriteText).toHaveBeenCalledWith('syn1.1\nsyn2.3')

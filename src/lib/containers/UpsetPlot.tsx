@@ -11,6 +11,7 @@ import UpSetJS, {
   UpSetFontSizes,
   ISetCombinations,
   ISets,
+  ISet,
 } from '@upsetjs/react'
 import { QueryBundleRequest } from '../utils/synapseTypes'
 import { SynapseConstants, SynapseClient } from '../utils'
@@ -84,11 +85,12 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
         )
         // transform query data into plot data, and store.
         // collect all values for each key
-        const keyValuesMap = {}
+        const keyValuesMap: Record<string, { name: string; sets: string[] }> =
+          {}
         // keyValuesMap looks like { 'A': {name: 'A', sets: ['S1', 'S2'] }, 'B': { name: 'B', sets: ['S1'] }, ... }
-        // It's a little redudant, but makes the next step much easier.
+        // It's a little redundant, but makes the next step much easier.
 
-        const caseInsensitiveSetNames = {}
+        const caseInsensitiveSetNames: Record<string, string> = {}
         // caseInsensitiveSetNames looks like { 'RNASEQ': 'rnaSeq', 'NOMe-SEQ': 'NOMe-seq'}.
 
         for (const row of queryResult?.queryResults.rows ?? []) {
@@ -116,15 +118,13 @@ const UpsetPlot: React.FunctionComponent<UpsetPlotProps> = ({
           }
         }
         // now create the expected elems set
-        const elems: any[] = Object.values(keyValuesMap)
+        const elems = Object.values(keyValuesMap)
         // elems looks like [{ name: 'A', sets: ['S1', 'S2'] }, { name: 'B', sets: ['S1'] }, ...]
         const sets = extractSets(elems)
         // PORTALS-1673: sort by assay name
-        const sortedSets = (sets as any).sort(
-          (a: { name: string }, b: { name: string }) => {
-            return ('' + b.name).localeCompare(a.name)
-          },
-        )
+        const sortedSets = (sets as ISet[]).sort((a, b) => {
+          return ('' + b.name).localeCompare(a.name)
+        })
 
         const combinations = generateCombinations(sortedSets, {
           type: 'intersection',

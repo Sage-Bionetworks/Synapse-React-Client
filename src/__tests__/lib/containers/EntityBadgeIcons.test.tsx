@@ -56,7 +56,7 @@ describe('EntityBadgeIcons tests', () => {
   it('Renders annotations in a table', async () => {
     renderComponent()
     const icon = await screen.findByTestId('annotations-icon')
-    userEvent.hover(icon)
+    await userEvent.hover(icon)
     for (const annotation of Object.entries(
       mockFileEntityBundle.annotations!.annotations,
     )) {
@@ -271,11 +271,13 @@ describe('EntityBadgeIcons tests', () => {
       renderComponent()
       const unlinkButton = await screen.findByTestId('unlink-icon')
 
-      userEvent.click(unlinkButton)
+      await userEvent.click(unlinkButton)
 
       // Confirmation modal appears
       await screen.findByText('Confirm Unlink')
-      userEvent.click(await screen.findByRole('button', { name: 'Unlink' }))
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Unlink' }),
+      )
 
       await waitFor(() =>
         expect(defaultProps.onUnlink).toBeCalledWith(MOCK_FILE_ENTITY_ID),
@@ -318,11 +320,13 @@ describe('EntityBadgeIcons tests', () => {
       renderComponent()
       const unlinkButton = await screen.findByTestId('unlink-icon')
 
-      userEvent.click(unlinkButton)
+      await userEvent.click(unlinkButton)
 
       // Confirmation modal appears
       await screen.findByText('Confirm Unlink')
-      userEvent.click(await screen.findByRole('button', { name: 'Unlink' }))
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Unlink' }),
+      )
 
       await waitFor(() => expect(defaultProps.onUnlinkError).toBeCalled())
     })
@@ -358,7 +362,7 @@ describe('EntityBadgeIcons tests', () => {
         expect(icon.classList.contains('Valid')).toBe(true)
       })
 
-      userEvent.hover(icon!)
+      await userEvent.hover(icon!)
       await screen.findByText('Valid Annotations')
     })
 
@@ -398,7 +402,7 @@ describe('EntityBadgeIcons tests', () => {
         expect(icon.classList.contains('Invalid')).toBe(true)
       })
 
-      userEvent.hover(icon!)
+      await userEvent.hover(icon!)
       await screen.findByText('Invalid Annotations')
     })
 
@@ -457,7 +461,7 @@ describe('EntityBadgeIcons tests', () => {
         expect(icon.classList.contains('Missing')).toBe(true)
       })
 
-      userEvent.hover(icon!)
+      await userEvent.hover(icon!)
       await screen.findByText('Missing Annotations')
     })
 

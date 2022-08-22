@@ -166,10 +166,10 @@ describe('test EvaluationEditor', () => {
     })
 
     const nameInputBox = await screen.findByLabelText('Name')
-    userEvent.type(nameInputBox, 'E V A L U A T I O N')
+    await userEvent.type(nameInputBox, 'E V A L U A T I O N')
 
     let saveButton = screen.getByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
+    await userEvent.click(saveButton)
 
     await waitFor(() => expect(onCreateEvaluation).toBeCalled())
     expect(onUpdateEvaluation).not.toBeCalled()
@@ -177,7 +177,7 @@ describe('test EvaluationEditor', () => {
 
     //clicking save button again after the first time should call update instead
     saveButton = screen.getByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
+    await userEvent.click(saveButton)
     await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
     expect(mockOnSaveSuccess).toBeCalledWith(evaluationId)
 
@@ -192,7 +192,7 @@ describe('test EvaluationEditor', () => {
     await screen.findByText('Edit Evaluation Queue')
     //clicking save button again after the first time should call update instead
     const saveButton = screen.getByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
+    await userEvent.click(saveButton)
     await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
     expect(onCreateEvaluation).not.toBeCalled()
     await waitFor(() => expect(mockOnSaveSuccess).toBeCalledWith(evaluationId))
@@ -224,7 +224,7 @@ describe('test EvaluationEditor', () => {
 
     //clicking save button again after the first time should call update instead
     const saveButton = screen.getByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
+    await userEvent.click(saveButton)
 
     await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
     expect(onCreateEvaluation).not.toBeCalled()
@@ -242,7 +242,7 @@ describe('test EvaluationEditor', () => {
     })
 
     const dropdownToggle = await screen.findByRole('button', { name: '' })
-    userEvent.click(dropdownToggle)
+    await userEvent.click(dropdownToggle)
 
     // the warning modal for delete should not be instantiated at all
     const dropdownItems = await screen.findAllByRole('menuitem')
@@ -250,7 +250,7 @@ describe('test EvaluationEditor', () => {
 
     const saveOption = dropdownItems[0]
     within(saveOption).getByText('Save')
-    userEvent.click(saveOption)
+    await userEvent.click(saveOption)
 
     await waitFor(() => expect(onCreateEvaluation).toBeCalled())
     expect(onUpdateEvaluation).not.toBeCalled()
@@ -264,20 +264,20 @@ describe('test EvaluationEditor', () => {
     await screen.findByText('Edit Evaluation Queue')
 
     const dropdownToggle = await screen.findByRole('button', { name: '' })
-    userEvent.click(dropdownToggle)
+    await userEvent.click(dropdownToggle)
 
     const dropdownItems = await screen.findAllByRole('menuitem')
     expect(dropdownItems).toHaveLength(2)
 
     const saveOption = dropdownItems[0]
     within(saveOption).getByText('Save')
-    userEvent.click(saveOption)
+    await userEvent.click(saveOption)
     await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
     expect(onCreateEvaluation).not.toBeCalled()
 
     const deleteOption = dropdownItems[1]
     within(deleteOption).getByText('Delete')
-    userEvent.click(deleteOption)
+    await userEvent.click(deleteOption)
 
     const warningModal = await screen.findByRole('dialog')
 
@@ -285,7 +285,7 @@ describe('test EvaluationEditor', () => {
     const deleteButton = await within(warningModal).findByRole('button', {
       name: 'Delete',
     })
-    userEvent.click(deleteButton)
+    await userEvent.click(deleteButton)
     await waitFor(() => expect(onDeleteEvaluation).toBeCalled())
     await waitFor(() => expect(mockOnDeleteSuccess).toBeCalled())
   })
@@ -312,27 +312,27 @@ describe('test EvaluationEditor', () => {
     await screen.findByText('Edit Evaluation Queue')
 
     const dropdownToggle = await screen.findByRole('button', { name: '' })
-    userEvent.click(dropdownToggle)
+    await userEvent.click(dropdownToggle)
 
     const dropdownItems = await screen.findAllByRole('menuitem')
     expect(dropdownItems).toHaveLength(2)
 
     const saveOption = dropdownItems[0]
     within(saveOption).getByText('Save')
-    userEvent.click(saveOption)
+    await userEvent.click(saveOption)
     await waitFor(() => expect(onUpdateEvaluation).toBeCalled())
     expect(onCreateEvaluation).not.toBeCalled()
 
     //delete should exist, but clicking it is predestined to fail
     const deleteOption = dropdownItems[1]
     within(deleteOption).getByText('Delete')
-    userEvent.click(deleteOption)
+    await userEvent.click(deleteOption)
 
     const dialog = await screen.findByRole('dialog')
 
     //simulate the warning button click
     const deleteButton = within(dialog).getByRole('button', { name: 'Delete' })
-    userEvent.click(deleteButton)
+    await userEvent.click(deleteButton)
 
     await screen.findByText('DeleteEvaluation error')
     expect(onDeleteEvaluation).toBeCalled()

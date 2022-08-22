@@ -28,20 +28,22 @@ describe('UserSearchBoxV2 tests', () => {
     renderComponent()
     const input = screen.getByRole('textbox')
     // User typically enters the beginning of a name to populate the selections
-    userEvent.type(input, MOCK_USER_NAME.substring(0, 3))
-
+    await userEvent.type(input, MOCK_USER_NAME.substring(0, 3))
+    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     // Make a selection
     await selectEvent.select(input, new RegExp('@' + MOCK_USER_NAME))
 
-    await waitFor(() =>
-      expect(onChange).toHaveBeenLastCalledWith(
-        MOCK_USER_ID.toString(),
-        mockUserGroupHeader,
-      ),
+    await waitFor(
+      () =>
+        expect(onChange).toHaveBeenLastCalledWith(
+          MOCK_USER_ID.toString(),
+          mockUserGroupHeader,
+        ),
+      { timeout: 15000 },
     )
 
     // Clear the selection
-    selectEvent.clearFirst(input)
+    await selectEvent.clearFirst(input)
     await waitFor(() => expect(onChange).toHaveBeenLastCalledWith(null, null))
   })
 })

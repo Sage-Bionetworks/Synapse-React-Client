@@ -132,14 +132,15 @@ describe('basic functionality', () => {
     await waitFor(() => expect(providedContext).toBeDefined())
     providedContext!.executeQueryRequest(initialQueryRequest)
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect(mockOnQueryChange).toBeCalledWith(
         expect.stringContaining(initialQueryRequest.query.sql),
-      ),
-    )
-    expect(mockOnQueryResultBundleChange).toHaveBeenLastCalledWith(
-      expect.stringContaining(JSON.stringify(syn16787123Json)),
-    )
+      )
+
+      expect(mockOnQueryResultBundleChange).toHaveBeenLastCalledWith(
+        expect.stringContaining(JSON.stringify(syn16787123Json)),
+      )
+    })
   })
 })
 

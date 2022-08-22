@@ -23,8 +23,8 @@ import { MOCK_CONTEXT_VALUE } from '../../../../../mocks/MockSynapseContext'
 let capturedOnChange: Function | undefined
 let capturedOnClear: Function | undefined
 
-const captureHandlers = (facetFilterElement: HTMLElement) => {
-  userEvent.click(facetFilterElement)
+const captureHandlers = async (facetFilterElement: HTMLElement) => {
+  await userEvent.click(facetFilterElement)
 }
 
 const MockFacetFilter = props => {
@@ -174,7 +174,7 @@ describe('QueryFilter tests', () => {
   })
 
   describe('handling child component callbacks', () => {
-    it('should propagate enum update correctly', () => {
+    it('should propagate enum update correctly', async () => {
       init()
 
       const expectedResult = [
@@ -193,7 +193,7 @@ describe('QueryFilter tests', () => {
         },
       ]
       const enumFacetFilter = screen.getAllByTestId('EnumFacetFilter')[0]
-      captureHandlers(enumFacetFilter)
+      await captureHandlers(enumFacetFilter)
       act(() => {
         capturedOnChange!({ Ford: true })
       })
@@ -202,7 +202,7 @@ describe('QueryFilter tests', () => {
       expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
     })
 
-    it('should propagate enum clear correctly', () => {
+    it('should propagate enum clear correctly', async () => {
       init()
 
       const expectedResult = [
@@ -216,7 +216,7 @@ describe('QueryFilter tests', () => {
       ]
 
       const enumFacetFilter = screen.getAllByTestId('EnumFacetFilter')[0]
-      captureHandlers(enumFacetFilter)
+      await captureHandlers(enumFacetFilter)
       act(() => {
         capturedOnClear!()
       })
@@ -225,7 +225,7 @@ describe('QueryFilter tests', () => {
       expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
     })
 
-    it('should propagate range correctly', () => {
+    it('should propagate range correctly', async () => {
       init()
 
       const expectedResult = [
@@ -244,7 +244,7 @@ describe('QueryFilter tests', () => {
         },
       ]
       const rangeFacetFilter = screen.getAllByTestId('RangeFacetFilter')[0]
-      captureHandlers(rangeFacetFilter)
+      await captureHandlers(rangeFacetFilter)
       act(() => {
         capturedOnChange!(['1997', '1998'])
       })

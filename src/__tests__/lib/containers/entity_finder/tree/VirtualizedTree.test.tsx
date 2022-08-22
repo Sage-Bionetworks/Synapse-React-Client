@@ -1,11 +1,5 @@
 import '@testing-library/jest-dom'
-import {
-  findByRole,
-  render,
-  screen,
-  waitFor,
-  within,
-} from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
 import { cloneDeep } from 'lodash-es'
@@ -599,7 +593,7 @@ describe('VirtualizedTree tests', () => {
 
       expect(mockFetchNextPage).not.toHaveBeenCalled()
 
-      userEvent.click(screen.getByRole('button'))
+      await userEvent.click(screen.getByRole('button'))
 
       await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())
     })
@@ -725,6 +719,8 @@ describe('VirtualizedTree tests', () => {
 
     test('Shows a tooltip for an EntityHeader node', async () => {
       jest.useFakeTimers()
+      const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
+
       const mockFetchNextPage = jest.fn()
       const nodeProps: NodeComponentProps<
         TreeData,
@@ -758,8 +754,7 @@ describe('VirtualizedTree tests', () => {
         wrapper: createWrapper(),
       })
       const nameInTree = await screen.findByText('My Folder')
-      userEvent.hover(nameInTree)
-      jest.runAllTimers()
+      await user.hover(nameInTree)
       const tooltip = await screen.findByRole('tooltip')
 
       within(tooltip).getByText('My Folder', { exact: false })

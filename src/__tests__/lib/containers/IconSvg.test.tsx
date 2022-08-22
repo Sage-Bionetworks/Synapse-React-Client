@@ -22,7 +22,7 @@ describe('IconSvg: basic functionality', () => {
     }
     render(<IconSvg options={iconOptionsWithLabel} />)
     const iconContainer = screen.getByRole('img')
-    userEvent.hover(iconContainer)
+    await userEvent.hover(iconContainer)
     await screen.findByText(iconOptionsWithLabel.label!)
   })
 })

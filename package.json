@@ -74,7 +74,7 @@
     "react-select": "^4.3.1",
     "react-sizeme": "^2.6.12",
     "react-switch": "^5.0.1",
-    "react-test-renderer": "16.14.0",
+    "react-test-renderer": "^17.0.2",
     "react-transition-group": "4.4.2",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-vtree": "3.0.0-beta.3",
@@ -93,8 +93,8 @@
     "vite-plugin-svgr": "^2.2.0"
   },
   "peerDependencies": {
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",
@@ -120,11 +120,11 @@
     "@storybook/builder-vite": "^0.1.37",
     "@storybook/react": "^6.5.9",
     "@storybook/testing-library": "^0.0.13",
-    "@testing-library/dom": "^8.1.0",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^12.0.0",
-    "@testing-library/react-hooks": "^7.0.1",
-    "@testing-library/user-event": "13.0.16",
+    "@testing-library/dom": "^8.17.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^12.1.5",
+    "@testing-library/react-hooks": "^8.0.1",
+    "@testing-library/user-event": "^14.4.3",
     "@types/brainhubeu__react-carousel": "1.15.0",
     "@types/dagre": "^0.7.47",
     "@types/jest": "^28.1.5",
@@ -137,9 +137,9 @@
     "@types/plotly.js": "^1.54.20",
     "@types/plotly.js-basic-dist": "^1.54.0",
     "@types/pluralize": "^0.0.29",
-    "@types/react": "^16.14.23",
+    "@types/react": "^18.0.17",
     "@types/react-addons-css-transition-group": "^15.0.5",
-    "@types/react-dom": "^16.9.14",
+    "@types/react-dom": "^18.0.6",
     "@types/react-mailchimp-subscribe": "^2.0.2",
     "@types/react-measure": "^2.0.4",
     "@types/react-plotly.js": "^2.2.4",
@@ -189,8 +189,10 @@
     "postcss-normalize": "^10.0.1",
     "prettier": "^2.6.2",
     "process": "^0.11.10",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-select-event": "^5.3.0",
-    "react-test-renderer": "16.14.0",
+    "react-test-renderer": "^17.0.2",
     "sinon": "^7.2.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
@@ -230,9 +232,7 @@
   "resolutions": {
     "js-yaml": "3.13.1",
     "minimatch": "3.0.4",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "@types/react": "^16.14.23",
+    "@types/react": "^17.0.39",
     "@types/webpack": "^5.28.0"
   },
   "browser": {

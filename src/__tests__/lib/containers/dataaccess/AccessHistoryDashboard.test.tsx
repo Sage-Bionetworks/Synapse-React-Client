@@ -108,7 +108,8 @@ describe('AccessHistoryDashboard tests', () => {
     renderComponent()
 
     const userInput = await screen.findByRole('textbox')
-    userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
+    await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
+    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
 
     await screen.findByLabelText('Select a user to view their access history')
@@ -139,7 +140,8 @@ describe('AccessHistoryDashboard tests', () => {
     const { history } = renderComponent()
 
     const userInput = await screen.findByRole('textbox')
-    userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
+    await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
+    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
 
     await waitFor(() =>
@@ -170,7 +172,8 @@ describe('AccessHistoryDashboard tests', () => {
   it('Filters the passed props and URLSearchParams when updating the AR Name', async () => {
     const { history } = renderComponent()
     const userInput = await screen.findByRole('textbox')
-    userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
+    await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
+    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
 
     await screen.findByLabelText('Select a user to view their access history')
@@ -178,7 +181,10 @@ describe('AccessHistoryDashboard tests', () => {
       'Filter by Access Requirement Name',
     )
 
-    userEvent.type(arNameInput, mockAccessRequirement.name)
+    await userEvent.type(arNameInput, mockAccessRequirement.name)
+    await screen.findByText(
+      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+    )
     await selectEvent.select(
       arNameInput,
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),

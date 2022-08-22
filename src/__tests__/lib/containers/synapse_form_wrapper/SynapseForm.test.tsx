@@ -108,9 +108,13 @@ describe('SynapseForm', () => {
       // There should be a link to the next step "Measurements"
       const nextStepLink = screen.getByText('Measurements')
 
-      userEvent.click(nextStepLink)
+      await userEvent.click(nextStepLink)
 
-      await screen.findByRole('group', { name: 'Measurements' })
+      await screen.findByRole(
+        'group',
+        { name: 'Measurements' },
+        { timeout: 5000 },
+      )
     })
 
     /**

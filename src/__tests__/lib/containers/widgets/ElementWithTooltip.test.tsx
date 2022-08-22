@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
 import React from 'react'
@@ -38,10 +38,9 @@ describe('ElementWithTooltip', () => {
   beforeEach(() => init())
   it('should render with correct tooltip properties', async () => {
     jest.useFakeTimers()
-    userEvent.hover(imageButton)
-    act(() => {
-      jest.runAllTimers()
-    })
+    const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
+    await user.hover(imageButton)
+
     await screen.findByText(props.tooltipText)
     expect(imageButton.attributes['aria-label'].value).toBe(props.tooltipText)
     expect(imageButton.classList.contains('dropdown-toggle')).toBe(false)
@@ -70,13 +69,13 @@ describe('ElementWithTooltip', () => {
     init({ ...props, callbackFn: undefined })
     expect(imageButton.classList.contains('dropdown-toggle')).toBe(true)
   })
-  it('should call the callback Fn', () => {
-    userEvent.click(imageButton)
+  it('should call the callback Fn', async () => {
+    await userEvent.click(imageButton)
     expect(mockCallback).toHaveBeenCalled()
   })
   it('should create correctly without image as a text tooltip', async () => {
     jest.useFakeTimers()
-
+    const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
     const child = <span className="my_class">hello world</span>
     init({
       ...props,
@@ -88,7 +87,7 @@ describe('ElementWithTooltip', () => {
     expect(tooltipTrigger!.classList.contains('my_class')).toBe(true)
     expect(tooltipTrigger!.innerHTML).toBe('hello world')
 
-    userEvent.hover(tooltipTrigger!)
+    await user.hover(tooltipTrigger!)
 
     act(() => {
       jest.runAllTimers()

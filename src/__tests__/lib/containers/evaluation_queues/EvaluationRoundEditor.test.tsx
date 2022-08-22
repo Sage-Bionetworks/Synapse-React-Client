@@ -78,7 +78,7 @@ describe('test EvaluationRoundEditor', () => {
     jest.clearAllMocks()
   })
 
-  it('test clicking advanced limits link', () => {
+  it('test clicking advanced limits link', async () => {
     render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
     //initially not shown
@@ -87,19 +87,23 @@ describe('test EvaluationRoundEditor', () => {
     ).not.toBeInTheDocument()
 
     // first click enables the advanced limits list
-    userEvent.click(screen.getByRole('button', { name: 'Advanced Limits' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Advanced Limits' }),
+    )
     expect(
       screen.queryByTestId('EvaluationRoundLimitOptionsList'),
     ).toBeInTheDocument()
 
     // click again disables the advanced limits list
-    userEvent.click(screen.getByRole('button', { name: 'Advanced Limits' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Advanced Limits' }),
+    )
     expect(
       screen.queryByTestId('EvaluationRoundLimitOptionsList'),
     ).not.toBeInTheDocument()
   })
 
-  it('test remove advanced RoundLimit: 1 item left in list should disable advanced Mode', () => {
+  it('test remove advanced RoundLimit: 1 item left in list should disable advanced Mode', async () => {
     props.evaluationRoundInput.otherLimits = [
       { type: 'MONTHLY', maxSubmissionString: '45' },
       { type: 'DAILY', maxSubmissionString: '36' },
@@ -110,7 +114,9 @@ describe('test EvaluationRoundEditor', () => {
     })
 
     //enable rendering of the advanced limits list
-    userEvent.click(screen.getByRole('button', { name: 'Advanced Limits' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Advanced Limits' }),
+    )
     expect(
       screen.queryByTestId('EvaluationRoundLimitOptionsList'),
     ).toBeInTheDocument()
@@ -120,7 +126,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(removeLimitButtons).toHaveLength(2)
 
     // click on one button should remove one, but the EvaluationRoundLimitOptionsList is still shown
-    userEvent.click(removeLimitButtons[0])
+    await userEvent.click(removeLimitButtons[0])
     expect(
       screen.queryByTestId('EvaluationRoundLimitOptionsList'),
     ).toBeInTheDocument()
@@ -130,7 +136,7 @@ describe('test EvaluationRoundEditor', () => {
     expect(removeLimitButtons).toHaveLength(1)
 
     // once we click this button, we expect the EvaluationRoundLimitOptionsList to stop being shown at all
-    userEvent.click(removeLimitButtons[0])
+    await userEvent.click(removeLimitButtons[0])
     expect(
       screen.queryByTestId('EvaluationRoundLimitOptionsList'),
     ).not.toBeInTheDocument()
@@ -160,13 +166,13 @@ describe('test EvaluationRoundEditor', () => {
     expect(roundStartInput).not.toBeDisabled()
   })
 
-  it('test save: no id in props => create new EvaluationRound', () => {
+  it('test save: no id in props => create new EvaluationRound', async () => {
     // remove the id
     delete props.evaluationRoundInput.id
 
     render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     const expectedConvertedEvaulationRound: EvaluationRound = {
       etag: undefined,
@@ -189,7 +195,7 @@ describe('test EvaluationRoundEditor', () => {
     within(screen.getByRole('alert')).getByText('Successfully saved.')
   })
 
-  it('test save: existing id in props => update EvaluationRound', () => {
+  it('test save: existing id in props => update EvaluationRound', async () => {
     const id = '1234'
     const etag = 'eeeeeeeee'
     props.evaluationRoundInput.id = id
@@ -197,7 +203,7 @@ describe('test EvaluationRoundEditor', () => {
 
     render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     const expectedConvertedEvaulationRound: EvaluationRound = {
       etag: etag,
@@ -220,7 +226,7 @@ describe('test EvaluationRoundEditor', () => {
     within(screen.getByRole('alert')).getByText('Successfully saved.')
   })
 
-  it('test save: Error occur', () => {
+  it('test save: Error occur', async () => {
     //make the SynapseClient call throw an error
     mockUpdateEvaluationRound.mockImplementation(
       () =>
@@ -236,7 +242,7 @@ describe('test EvaluationRoundEditor', () => {
 
     render(<EvaluationRoundEditor {...props} />, { wrapper: createWrapper() })
 
-    userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     const expectedConvertedEvaulationRound: EvaluationRound = {
       etag: etag,
@@ -258,35 +264,35 @@ describe('test EvaluationRoundEditor', () => {
     within(screen.getByRole('alert')).getByText('oops! you got a fake error')
   })
 
-  function simulateDeleteClick() {
+  async function simulateDeleteClick() {
     // Open the dropdown menu
-    userEvent.click(screen.getByRole('button', { name: 'Round Options' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Round Options' }))
 
     // Click the delete button in the dropdown menu
-    userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
 
     // Click delete on the button inside the warning modal
     const dialog = screen.getByRole('dialog')
     const confirmDeleteButton = within(dialog).getByRole('button', {
       name: 'Delete',
     })
-    userEvent.click(confirmDeleteButton)
+    await userEvent.click(confirmDeleteButton)
   }
 
-  it('test delete: no id', () => {
+  it('test delete: no id', async () => {
     delete props.evaluationRoundInput.id
     delete props.evaluationRoundInput.etag
 
     render(<EvaluationRoundEditor {...props} />, {
       wrapper: createWrapper(),
     })
-    simulateDeleteClick()
+    await simulateDeleteClick()
 
     expect(mockOnDelete).toBeCalledWith()
     expect(mockDeleteEvaluationRound).not.toBeCalled()
   })
 
-  it('test delete: has id and successful', () => {
+  it('test delete: has id and successful', async () => {
     const id = '1234'
     const etag = 'eeeeeeeee'
     props.evaluationRoundInput.id = id
@@ -297,7 +303,7 @@ describe('test EvaluationRoundEditor', () => {
     })
 
     //Simulate a deletion
-    simulateDeleteClick()
+    await simulateDeleteClick()
 
     expect(mockOnDelete).toBeCalledWith()
     expect(mockDeleteEvaluationRound).toBeCalledWith(
@@ -307,7 +313,7 @@ describe('test EvaluationRoundEditor', () => {
     )
   })
 
-  it('test delete: has id and Error occur', () => {
+  it('test delete: has id and Error occur', async () => {
     const id = '1234'
     const etag = 'eeeeeeeee'
     props.evaluationRoundInput.id = id
@@ -325,7 +331,7 @@ describe('test EvaluationRoundEditor', () => {
     })
 
     //Simulate a deletion
-    simulateDeleteClick()
+    await simulateDeleteClick()
 
     expect(mockDeleteEvaluationRound).toBeCalledWith(
       props.evaluationRoundInput.evaluationId,

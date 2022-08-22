@@ -31,19 +31,19 @@ describe('DownloadLoginModal tests', () => {
     jest.clearAllMocks()
   })
 
-  it('Has cancel button', () => {
+  it('Has cancel button', async () => {
     renderComponent()
     const cancelButton = screen.getByRole('button', { name: 'CANCEL' })
 
-    userEvent.click(cancelButton)
+    await userEvent.click(cancelButton)
 
     expect(mockCallback).toHaveBeenCalledTimes(1)
   })
-  it('Has sign in button', () => {
+  it('Has sign in button', async () => {
     renderComponent()
     const signInButton = screen.getByRole('button', { name: 'Sign in' })
     expect(signInButton.classList.contains(SRC_SIGN_IN_CLASS)).toBe(true)
-    userEvent.click(signInButton)
+    await userEvent.click(signInButton)
 
     expect(mockCallback).toHaveBeenCalledTimes(1)
   })

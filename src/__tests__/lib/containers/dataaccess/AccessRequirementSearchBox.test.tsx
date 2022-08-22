@@ -86,7 +86,7 @@ describe('Access Requirement Search Box tests', () => {
 
     const input = screen.getByRole('textbox')
 
-    userEvent.click(input)
+    await userEvent.click(input)
 
     // Should have sent a request with a blank input to populate the options
     await waitFor(() =>
@@ -103,7 +103,7 @@ describe('Access Requirement Search Box tests', () => {
 
     const input = screen.getByRole('textbox')
     const inputQuery = 'test query'
-    userEvent.type(input, inputQuery)
+    await userEvent.type(input, inputQuery)
 
     // Should have sent a new request with the input string
     await waitFor(() =>
@@ -120,7 +120,7 @@ describe('Access Requirement Search Box tests', () => {
 
     const input = screen.getByRole('textbox')
 
-    userEvent.click(input)
+    await userEvent.click(input)
 
     // We haven't made a selection yet, so verify that we never called the passed prop
     expect(mockOnChange).not.toHaveBeenCalled()
@@ -151,8 +151,10 @@ describe('Access Requirement Search Box tests', () => {
 
     const input = await screen.findByRole<HTMLInputElement>('textbox')
 
-    userEvent.type(input, mockAccessRequirement.id.toString())
-
+    await userEvent.type(input, mockAccessRequirement.id.toString())
+    await screen.findByText(
+      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+    )
     // If the AR specified by ID is fetched, then it should be selectable
     await selectEvent.select(
       input,

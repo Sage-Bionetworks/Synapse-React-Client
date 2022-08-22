@@ -69,7 +69,7 @@ describe('ReviewerDashboard tests', () => {
         name: 'Access Requirements',
       })
 
-      userEvent.click(arTab)
+      await userEvent.click(arTab)
 
       await screen.findByTestId(AR_DASHBOARD_TEST_ID)
     })
@@ -81,7 +81,7 @@ describe('ReviewerDashboard tests', () => {
         name: 'Submissions',
       })
 
-      userEvent.click(submissionsTab)
+      await userEvent.click(submissionsTab)
 
       await screen.findByTestId(SUBMISSION_DASHBOARD_TEST_ID)
     })

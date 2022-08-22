@@ -392,7 +392,7 @@ describe('EntityFinder tests', () => {
       // Don't show the search box before the button is clicked
       expect(() => screen.getByRole('textbox')).toThrowError()
 
-      userEvent.click(screen.getByText('Search all of Synapse'))
+      await userEvent.click(screen.getByText('Search all of Synapse'))
       await waitFor(() => screen.getByRole('textbox'))
 
       // The tree should be hidden when searching. The table of search results should be visible
@@ -400,7 +400,7 @@ describe('EntityFinder tests', () => {
       expect(() => screen.getByRole('table')).not.toThrowError()
 
       // Close the search
-      userEvent.click(screen.getByText('Back to Browse'))
+      await userEvent.click(screen.getByText('Back to Browse'))
 
       // Tree should come back, table should be gone
       await waitFor(() => screen.getByRole('tree'))
@@ -415,10 +415,10 @@ describe('EntityFinder tests', () => {
 
       const query = 'my search terms '
       const queryTerms = ['my', 'search', 'terms']
-      userEvent.click(screen.getByText('Search for Files'))
+      await userEvent.click(screen.getByText('Search for Files'))
       await waitFor(() => screen.getByRole('textbox'))
-      userEvent.type(screen.getByRole('textbox'), query)
-      userEvent.type(screen.getByRole('textbox'), '{enter}')
+      await userEvent.type(screen.getByRole('textbox'), query)
+      await userEvent.type(screen.getByRole('textbox'), '{enter}')
 
       await waitFor(() =>
         expect(mockDetailsList).toBeCalledWith(
@@ -488,10 +488,10 @@ describe('EntityFinder tests', () => {
         )
         .mockResolvedValue(entityHeaderResultWithVersion)
 
-      userEvent.click(screen.getByText('Search all of Synapse'))
+      await userEvent.click(screen.getByText('Search all of Synapse'))
       await waitFor(() => screen.getByRole('textbox'))
-      userEvent.type(screen.getByRole('textbox'), entityId)
-      userEvent.type(screen.getByRole('textbox'), '{enter}')
+      await userEvent.type(screen.getByRole('textbox'), entityId)
+      await userEvent.type(screen.getByRole('textbox'), '{enter}')
 
       await waitFor(() =>
         expect(mockDetailsList).toBeCalledWith(
@@ -507,9 +507,12 @@ describe('EntityFinder tests', () => {
       expect(mockGetEntityHeaders).toBeCalledTimes(1)
 
       // Search with a version number
-      userEvent.clear(screen.getByRole('textbox'))
-      userEvent.type(screen.getByRole('textbox'), `${entityId}.${version}`)
-      userEvent.type(screen.getByRole('textbox'), '{enter}')
+      await userEvent.clear(screen.getByRole('textbox'))
+      await userEvent.type(
+        screen.getByRole('textbox'),
+        `${entityId}.${version}`,
+      )
+      await userEvent.type(screen.getByRole('textbox'), '{enter}')
       await waitFor(() =>
         expect(mockDetailsList).toBeCalledWith(
           expect.objectContaining({

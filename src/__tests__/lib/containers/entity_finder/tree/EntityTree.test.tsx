@@ -279,7 +279,7 @@ describe('EntityTree tests', () => {
         projectId: undefined,
       })
 
-      userEvent.click(screen.getByRole('button'))
+      await userEvent.click(screen.getByRole('button'))
       await waitFor(() =>
         expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
       )
@@ -293,7 +293,7 @@ describe('EntityTree tests', () => {
         projectId: 'syn123',
       })
 
-      userEvent.click(screen.getByRole('button'))
+      await userEvent.click(screen.getByRole('button'))
       await waitFor(() =>
         expect(screen.getAllByRole('menuitem').length).toBeGreaterThan(0),
       )
@@ -307,8 +307,8 @@ describe('EntityTree tests', () => {
         initialContainer: defaultProps.initialContainer,
       })
 
-      userEvent.click(screen.getByRole('button'))
-      userEvent.click(screen.getByText('My Favorites'))
+      await userEvent.click(screen.getByRole('button'))
+      await userEvent.click(screen.getByText('My Favorites'))
 
       await waitFor(() => expect(mockGetUserFavorites).toBeCalled())
       // SWC-5593 - When switching to favorites, the container should be 'root'
@@ -364,14 +364,17 @@ describe('EntityTree tests', () => {
         initialScope: FinderScope.CURRENT_PROJECT,
       })
 
-      await waitFor(() => expect(mockGetEntityHeader).toBeCalled())
-      expect(mockGetEntityPath).not.toBeCalled()
+      await waitFor(() => {
+        expect(mockGetEntityHeader).toBeCalled()
 
-      const currentProject = entityPath.path[1]
+        expect(mockGetEntityPath).not.toBeCalled()
 
-      expect(mockSetDetailsViewConfiguration).toHaveBeenLastCalledWith({
-        type: EntityDetailsListDataConfigurationType.HEADER_LIST,
-        headerList: [currentProject],
+        const currentProject = entityPath.path[1]
+
+        expect(mockSetDetailsViewConfiguration).toHaveBeenLastCalledWith({
+          type: EntityDetailsListDataConfigurationType.HEADER_LIST,
+          headerList: [currentProject],
+        })
       })
     })
 
@@ -410,25 +413,26 @@ describe('EntityTree tests', () => {
   it('passes down props to children', async () => {
     renderComponent()
 
-    await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
+    await waitFor(() => {
+      expect(mockSetDetailsViewConfiguration).toBeCalled()
 
-    expect(mockTreePresenter).toHaveBeenLastCalledWith(
-      expect.objectContaining<VirtualizedTreeProps>({
-        rootNodeConfiguration: {
-          nodeText: 'Projects',
-          children: [entityPath.path[1]],
-          fetchNextPage: expect.any(Function),
-          hasNextPage: false,
-          show: true,
-        },
-        autoExpand: expect.any(Function),
-        selected: [],
-        setSelectedId: expect.any(Function),
-        visibleTypes: defaultProps.visibleTypes,
-      }),
-      {},
-    )
-
+      expect(mockTreePresenter).toHaveBeenLastCalledWith(
+        expect.objectContaining<VirtualizedTreeProps>({
+          rootNodeConfiguration: {
+            nodeText: 'Projects',
+            children: [entityPath.path[1]],
+            fetchNextPage: expect.any(Function),
+            hasNextPage: false,
+            show: true,
+          },
+          autoExpand: expect.any(Function),
+          selected: [],
+          setSelectedId: expect.any(Function),
+          visibleTypes: defaultProps.visibleTypes,
+        }),
+        {},
+      )
+    })
     // Select an entity using callback prop in child component
     const newSelectedId = 'syn99999'
     act(() => {
@@ -440,24 +444,26 @@ describe('EntityTree tests', () => {
     // The wrapping component that controls the selection should be updated via callback, changing the prop
     renderComponent({ selectedEntities: [{ targetId: newSelectedId }] })
 
-    await waitFor(() => expect(mockSetDetailsViewConfiguration).toBeCalled())
+    await waitFor(() => {
+      expect(mockSetDetailsViewConfiguration).toBeCalled()
 
-    expect(mockTreePresenter).toHaveBeenLastCalledWith(
-      expect.objectContaining<VirtualizedTreeProps>({
-        rootNodeConfiguration: {
-          nodeText: 'Projects',
-          children: [entityPath.path[1]],
-          fetchNextPage: expect.any(Function),
-          hasNextPage: false,
-          show: true,
-        },
-        autoExpand: expect.any(Function),
-        selectableTypes: defaultProps.selectableTypes,
-        selected: [{ targetId: newSelectedId }],
-        setSelectedId: expect.any(Function),
-        visibleTypes: defaultProps.visibleTypes,
-      }),
-      {},
-    )
+      expect(mockTreePresenter).toHaveBeenLastCalledWith(
+        expect.objectContaining<VirtualizedTreeProps>({
+          rootNodeConfiguration: {
+            nodeText: 'Projects',
+            children: [entityPath.path[1]],
+            fetchNextPage: expect.any(Function),
+            hasNextPage: false,
+            show: true,
+          },
+          autoExpand: expect.any(Function),
+          selectableTypes: defaultProps.selectableTypes,
+          selected: [{ targetId: newSelectedId }],
+          setSelectedId: expect.any(Function),
+          visibleTypes: defaultProps.visibleTypes,
+        }),
+        {},
+      )
+    })
   })
 })
