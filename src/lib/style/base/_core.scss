@@ -143,6 +143,12 @@ svg.SRC-hoverBox {
       }
     }
   }
+  .SRC-primary-background-color {
+    svg,
+    path {
+      fill: #fff;
+    }
+  }
 }
 
 .SRC-grey-background-hover {
