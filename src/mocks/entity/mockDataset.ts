@@ -1,4 +1,10 @@
-import { Dataset, EntityBundle, EntityPath } from '../../lib/utils/synapseTypes'
+import {
+  Dataset,
+  EntityBundle,
+  EntityHeader,
+  EntityPath,
+  EntityType,
+} from '../../lib/utils/synapseTypes'
 import { VersionInfo } from '../../lib/utils/synapseTypes/VersionInfo'
 import { MOCK_USER_ID } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
@@ -21,6 +27,21 @@ export const mockDatasetEntity: Dataset = {
   etag: '00000000-0000-0000-0000-000000000000',
   items: [],
   columnIds: [],
+  isSearchEnabled: false,
+}
+
+const mockHeader: EntityHeader = {
+  id: MOCK_DATASET_ENTITY_ID,
+  type: 'org.sagebionetworks.repo.model.table.Dataset',
+  name: MOCK_DATASET_NAME,
+  benefactorId: parseInt(mockProjectEntityData.id),
+  createdOn: '2020-01-01T00:00:00.000Z',
+  modifiedOn: '2020-02-01T00:00:00.000Z',
+  createdBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
+  versionNumber: 3,
+  versionLabel: 'in progress',
+  isLatestVersion: true,
 }
 
 const path: EntityPath = {
@@ -85,6 +106,7 @@ const versionInfo: VersionInfo[] = [
 
 const bundle: EntityBundle = {
   entity: mockDatasetEntity,
+  entityType: EntityType.DATASET,
   path: path,
 }
 
@@ -92,6 +114,7 @@ const mockDatasetData: MockEntityData<Dataset> = {
   id: MOCK_DATASET_ENTITY_ID,
   name: MOCK_DATASET_NAME,
   entity: mockDatasetEntity,
+  entityHeader: mockHeader,
   path: path,
   bundle: bundle,
   versions: versions,

@@ -15,4 +15,5 @@ export type TABLE_CONCRETE_TYPE = typeof TABLE_CONCRETE_TYPE_VALUES[number]
 export interface Table extends VersionableEntity {
   columnIds: string[]
   concreteType: TABLE_CONCRETE_TYPE
+  isSearchEnabled: boolean
 }

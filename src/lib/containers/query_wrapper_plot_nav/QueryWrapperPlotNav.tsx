@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { SynapseConstants } from '../../utils/'
-import { isTableEntity } from '../../utils/functions/EntityTypeUtils'
+import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
   insertConditionsFromSearchParams,
   parseEntityIdFromSqlStatement,
@@ -121,7 +121,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
   const entityId = parseEntityIdFromSqlStatement(query.sql)
   const { data: entity } = useGetEntity(entityId)
   const isFullTextSearchEnabled =
-    entity && isTableEntity(entity) && entity.isSearchEnabled
+    entity && isTable(entity) && entity.isSearchEnabled
   const initQueryRequest: QueryBundleRequest = {
     entityId,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
