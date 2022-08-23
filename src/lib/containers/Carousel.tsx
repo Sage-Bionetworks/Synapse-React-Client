@@ -78,6 +78,7 @@ export const Carousel: React.FunctionComponent<CarouselProps> = ({
     >
       <SizeMe refreshMode="debounce" noPlaceholder={true}>
         {({ size }) => (
+          // @ts-ignore - the BrainhubCarousel component doesn't properly specify `children`
           <BrainhubCarousel
             {...(showDesktop ? DesktopProps : MobileProps)}
             key={size.width!}

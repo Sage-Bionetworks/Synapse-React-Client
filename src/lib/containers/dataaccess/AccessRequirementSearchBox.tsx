@@ -1,8 +1,7 @@
 import { Skeleton } from '@material-ui/lab'
 import React from 'react'
-import { components } from 'react-select'
+import { components, GroupBase, SelectComponentsConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
-import { SelectComponents } from 'react-select/src/components'
 import { SynapseClient } from '../../utils'
 import useGetAccessRequirement from '../../utils/hooks/SynapseAPI/dataaccess/useGetAccessRequirement'
 import { useSynapseContext } from '../../utils/SynapseContext'
@@ -24,13 +23,18 @@ export function getOptionLabel(id: string | number, name: string) {
 }
 
 const customSelectComponents: Partial<
-  SelectComponents<
+  SelectComponentsConfig<
     {
       id: string | number
       value: string | number
       label: string
     },
-    false
+    false,
+    GroupBase<{
+      id: string | number
+      value: string | number
+      label: string
+    }>
   >
 > = {
   Control: props => {

@@ -32,7 +32,7 @@ type ElementWithTooltipProps = React.PropsWithChildren<{
   tooltipText: string
   callbackFn?: () => void
   className?: string
-  tooltipVisualProps?: TooltipVisualProps
+  tooltipVisualProps?: Partial<TooltipVisualProps>
   darkTheme?: boolean
   size?: string
   icon?: string

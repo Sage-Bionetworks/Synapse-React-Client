@@ -4,7 +4,7 @@ type ChipContainerProps = {
   chips: any[]
 }
 
-const ChipContainer: React.SFC<ChipContainerProps> = ({ chips }) => {
+const ChipContainer = ({ chips }: ChipContainerProps) => {
   const chipsFormatted = chips.map((el, index) => {
     if (!el) {
       return false

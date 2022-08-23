@@ -2,7 +2,7 @@
  * This component has the option to provide an outOfView renderer, which might be useful in the future.
  */
 import * as React from 'react'
-import Observer from 'react-intersection-observer'
+import { InView } from 'react-intersection-observer'
 
 export interface BaseComponentProps {
   /**
@@ -82,25 +82,29 @@ export default class VisibilityObserver extends React.Component<
     const { rootMargin, tag } = this.props
 
     return (
-      <Observer
+      <InView
         as={(tag as any) || 'div'}
         rootMargin={rootMargin}
         onChange={this.onVisibilityChange}
       >
         {this.getObserverChildren}
-      </Observer>
+      </InView>
     )
   }
 
-  private getObserverChildren = (isVisible: boolean) => {
+  private getObserverChildren = (renderProps: {
+    inView: boolean
+    entry: IntersectionObserverEntry | undefined
+    ref: React.RefObject<any> | ((node?: Element | null) => void)
+  }) => {
     const { renderInView, renderOutOfView } = this.props
-    const shouldRenderAsInView = isVisible || this.state.hasBeenInView
+    const shouldRenderAsInView = renderProps.inView || this.state.hasBeenInView
 
     if (shouldRenderAsInView && renderInView) {
       return renderInView()
     }
 
-    if (!isVisible && renderOutOfView) {
+    if (!renderProps.inView && renderOutOfView) {
       return renderOutOfView()
     }
 

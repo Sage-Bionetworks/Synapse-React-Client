@@ -86,6 +86,8 @@ export default class MarkdownSynapse extends React.Component<
 > {
   public markupRef: React.RefObject<HTMLInputElement>
   static contextType = SynapseContext
+  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
+
   /**
    * Creates an instance of Markdown.
    * @param {*} props

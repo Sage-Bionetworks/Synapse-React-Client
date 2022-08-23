@@ -1,14 +1,7 @@
 import * as React from 'react'
 import _ from 'lodash-es'
 import { Engine, EngineResult } from 'json-rules-engine'
-import {
-  default as Form,
-  UiSchema,
-  AjvError,
-  ErrorListProps,
-  ISubmitEvent,
-} from '@rjsf/core'
-
+import { default as Form, UiSchema, AjvError, ErrorListProps } from '@rjsf/core'
 import {
   Step,
   StepStateEnum,

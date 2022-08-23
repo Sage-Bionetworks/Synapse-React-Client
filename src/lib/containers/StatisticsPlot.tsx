@@ -45,6 +45,7 @@ class StatisticsPlot extends React.Component<
   StatisticsPlotState
 > {
   static contextType = SynapseContext
+  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
   constructor(props: StatisticsPlotProps) {
     super(props)
     this.state = {
