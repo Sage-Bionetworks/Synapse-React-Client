@@ -39,6 +39,8 @@ export default class EntityForm extends React.Component<
   EntityFormState
 > {
   static contextType = SynapseContext
+  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
+
   formRef: any
 
   constructor(props: EntityFormProps) {

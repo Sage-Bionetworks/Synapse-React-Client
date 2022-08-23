@@ -34,6 +34,7 @@ class SynapsePlot extends React.Component<SynapsePlotProps, SynapsePlotState> {
   }
 
   static contextType = SynapseContext
+  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
 
   public componentDidMount() {
     this.fetchPlotlyData()

@@ -21,7 +21,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@popperjs/core": "^2.10.2",
-    "@rjsf/core": "^4.0.1",
+    "@rjsf/core": "^4.2.3",
     "@sage-bionetworks/react-base-table": "^1.13.2",
     "@sage-bionetworks/rjsf-core": "^3.1.4",
     "@types/ua-parser-js": "^0.7.36",
@@ -74,7 +74,7 @@
     "react-select": "^4.3.1",
     "react-sizeme": "^2.6.12",
     "react-switch": "^5.0.1",
-    "react-test-renderer": "^17.0.2",
+    "react-test-renderer": "^18.2.0",
     "react-transition-group": "4.4.2",
     "react-virtualized-auto-sizer": "^1.0.6",
     "react-vtree": "3.0.0-beta.3",
@@ -93,8 +93,8 @@
     "vite-plugin-svgr": "^2.2.0"
   },
   "peerDependencies": {
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",
@@ -122,7 +122,7 @@
     "@storybook/testing-library": "^0.0.13",
     "@testing-library/dom": "^8.17.1",
     "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^12.1.5",
+    "@testing-library/react": "^13.3.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.3",
     "@types/brainhubeu__react-carousel": "1.15.0",
@@ -189,10 +189,10 @@
     "postcss-normalize": "^10.0.1",
     "prettier": "^2.6.2",
     "process": "^0.11.10",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-select-event": "^5.3.0",
-    "react-test-renderer": "^17.0.2",
+    "react-test-renderer": "^18.2.0",
     "sinon": "^7.2.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
@@ -232,7 +232,7 @@
   "resolutions": {
     "js-yaml": "3.13.1",
     "minimatch": "3.0.4",
-    "@types/react": "^17.0.39",
+    "@types/react": "^18.0.17",
     "@types/webpack": "^5.28.0"
   },
   "browser": {
