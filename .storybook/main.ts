@@ -30,9 +30,11 @@ module.exports = {
         'process.browser': 'true',
       },
       plugins: [
-        nodePolyfills({
-          include: 'node_modules/@apidevtools/json-schema-ref-parser/**/*.js',
-        }),
+        // TODO: The following will fix SynapseFormWrapper in development mode but will break the storybook static build
+        // Need to figure out why the polyfill breaks the build
+        // nodePolyfills({
+        //   include: 'node_modules/@apidevtools/json-schema-ref-parser/**/*.js',
+        // }),
         svgr(),
         viteExternalsPlugin({
           react: 'React',
@@ -44,6 +46,7 @@ module.exports = {
         alias: {
           stream: 'stream-browserify',
           buffer: 'buffer/',
+          timers: 'timers-browserify',
         },
       },
       optimizeDeps: {
@@ -60,6 +63,9 @@ module.exports = {
           '@storybook/addon-interactions/preview.js',
           'buffer/',
         ],
+      },
+      build: {
+        sourcemap: false,
       },
     })
 
