@@ -311,13 +311,13 @@ describe('Dataset Items Editor tests', () => {
 
     // Verify that items were added to the dataset passed to the update API
     const expectedDatasetItems = [mockFileReference].map(referenceToDatasetItem)
-    await waitFor(() =>
+    await waitFor(() => {
       expect(updatedEntityCaptor).toBeCalledWith(
         expect.objectContaining({ items: expectedDatasetItems }),
-      ),
-    )
+      )
 
-    await waitFor(() => expect(mockOnSaveFn).toBeCalled())
+      expect(mockOnSaveFn).toBeCalled()
+    })
     expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
   })
 

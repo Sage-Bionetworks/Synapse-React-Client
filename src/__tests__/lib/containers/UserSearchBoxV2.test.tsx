@@ -26,7 +26,7 @@ describe('UserSearchBoxV2 tests', () => {
 
   it('test onChange by making a selection and clearing it', async () => {
     renderComponent()
-    const input = screen.getByRole('textbox')
+    const input = screen.getByRole('combobox')
     // User typically enters the beginning of a name to populate the selections
     await userEvent.type(input, MOCK_USER_NAME.substring(0, 3))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))

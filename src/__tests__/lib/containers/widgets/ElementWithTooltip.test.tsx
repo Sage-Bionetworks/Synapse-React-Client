@@ -36,6 +36,9 @@ function init(overrides?: ElementWithTooltipProps) {
 
 describe('ElementWithTooltip', () => {
   beforeEach(() => init())
+  afterEach(() => {
+    jest.useRealTimers()
+  })
   it('should render with correct tooltip properties', async () => {
     jest.useFakeTimers()
     const user = userEvent.setup({ advanceTimers: jest.runAllTimers })

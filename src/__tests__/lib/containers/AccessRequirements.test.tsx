@@ -29,8 +29,7 @@ import {
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
 import { mockUserProfileData } from '../../../mocks/user/mock_user_profile'
-
-const SynapseClient = require('../../../lib/utils/SynapseClient')
+import { SynapseClient } from '../../../lib/utils'
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 
@@ -248,8 +247,8 @@ describe('Accepted Requirements works as expect', () => {
   it('Render AccessRequirements correctly when user click accept button', async () => {
     const { container } = init(props)
 
-    SynapseClient.postAccessApproval = jest
-      .fn()
+    jest
+      .spyOn(SynapseClient, 'postAccessApproval')
       .mockResolvedValue(accessApprovalMock)
 
     await userEvent.click(

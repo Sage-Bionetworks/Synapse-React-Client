@@ -101,13 +101,13 @@ describe('AccessHistoryDashboard tests', () => {
   it('Renders only the user/team name input when there is no input', async () => {
     renderComponent()
 
-    expect(await screen.findAllByRole('textbox')).toHaveLength(1)
+    expect(await screen.findAllByRole('combobox')).toHaveLength(1)
   })
 
   it('Renders table components and filter input for AR Name', async () => {
     renderComponent()
 
-    const userInput = await screen.findByRole('textbox')
+    const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
@@ -139,7 +139,7 @@ describe('AccessHistoryDashboard tests', () => {
   it('Updates the passed props and URLSearchParams when updating user/team name', async () => {
     const { history } = renderComponent()
 
-    const userInput = await screen.findByRole('textbox')
+    const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
@@ -171,7 +171,7 @@ describe('AccessHistoryDashboard tests', () => {
 
   it('Filters the passed props and URLSearchParams when updating the AR Name', async () => {
     const { history } = renderComponent()
-    const userInput = await screen.findByRole('textbox')
+    const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))

@@ -60,7 +60,8 @@ describe('AccessRequirementDashboard tests', () => {
     const mockOnCreateNewAR = jest.fn()
     renderComponent({ onCreateNewAccessRequirementClicked: mockOnCreateNewAR })
 
-    expect(await screen.findAllByRole('textbox')).toHaveLength(3)
+    expect(await screen.findAllByRole('combobox')).toHaveLength(1)
+    expect(await screen.findAllByRole('textbox')).toHaveLength(2)
     await screen.findByTestId(AR_TABLE_TEST_ID)
     expect(mockAccessRequirementTable).toHaveBeenCalledWith(
       expect.objectContaining({
