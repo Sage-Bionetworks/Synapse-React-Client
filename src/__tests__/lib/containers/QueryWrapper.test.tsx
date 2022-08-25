@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
-import { act } from 'react-dom/test-utils'
+import { act } from '@testing-library/react'
 import {
   QueryContextType,
   useQueryContext,

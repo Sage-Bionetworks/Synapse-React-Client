@@ -9,19 +9,3 @@
     stroke: white !important;
   }
 }
-
-button {
-  &:hover {
-    @extend %column-theme-dark;
-    .SRC-column-light-theme {
-      .SRC-light-column {
-        fill: SRC.$primary-action-color !important;
-        stroke: white !important;
-      }
-    }
-  }
-}
-
-.show button svg {
-  @extend %column-theme-dark;
-}

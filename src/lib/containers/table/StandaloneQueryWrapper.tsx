@@ -21,7 +21,7 @@ import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
 } from '../QueryVisualizationWrapper'
-import { isTableEntity } from '../../utils/functions/EntityTypeUtils'
+import { isTable } from '../../utils/functions/EntityTypeUtils'
 import LastUpdatedOn from '../query_wrapper_plot_nav/LastUpdatedOn'
 
 type SearchParams = {
@@ -154,9 +154,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                           hideVisualizationsControl={true}
                         />
                       )}
-                      {entity &&
-                      isTableEntity(entity) &&
-                      entity.isSearchEnabled ? (
+                      {entity && isTable(entity) && entity.isSearchEnabled ? (
                         <FullTextSearch
                           helpUrl={searchConfiguration?.fullTextSearchHelpURL}
                         />
@@ -169,7 +167,7 @@ const StandaloneQueryWrapper: React.FunctionComponent<
                       )}
                       <SqlEditor />
                       {showTopLevelControls && (
-                        <TotalQueryResults frontText={''} showNotch={false} />
+                        <TotalQueryResults frontText={''} />
                       )}
                       <SynapseTable
                         synapseContext={synapseContext}

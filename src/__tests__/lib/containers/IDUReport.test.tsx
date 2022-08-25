@@ -17,6 +17,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
+import { act } from '@testing-library/react'
 
 const page1: SubmissionInfoPage = {
   results: [
@@ -74,8 +75,9 @@ describe('IDUReport tests', () => {
     const submissionInfo1 = await screen.findAllByText('Prof. Farnsworth')
     expect(submissionInfo1).toHaveLength(1)
 
-    mockAllIsIntersecting(true)
-
+    act(() => {
+      mockAllIsIntersecting(true)
+    })
     const submissionInfo2 = await screen.findAllByText('Wong')
     expect(submissionInfo2).toHaveLength(1)
   })

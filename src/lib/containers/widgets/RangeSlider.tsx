@@ -103,7 +103,7 @@ export type RangeSliderProps = {
   step: number
   doUpdateOnApply?: boolean
   maxTickCount?: number
-  onChange: Function
+  onChange: (values: RangeValues) => void
 }
 
 export type RangeSliderState = {
@@ -133,7 +133,7 @@ export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({
 
   const handleSliderChange = (
     values: readonly number[],
-    callbackFn?: Function,
+    callbackFn?: (values: RangeValues) => void,
   ) => {
     setValues([...values])
     if (callbackFn) {
