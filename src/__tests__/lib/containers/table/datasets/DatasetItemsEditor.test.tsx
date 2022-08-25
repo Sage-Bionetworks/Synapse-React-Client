@@ -317,8 +317,8 @@ describe('Dataset Items Editor tests', () => {
       )
 
       expect(mockOnSaveFn).toBeCalled()
+      expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
     })
-    expect(mockOnUnsavedChangesFn).toHaveBeenLastCalledWith(false)
   })
 
   describe('Select All', () => {
