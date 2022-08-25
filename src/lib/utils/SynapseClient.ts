@@ -234,6 +234,11 @@ import {
   FavoriteSortBy,
   FavoriteSortDirection,
 } from './synapseTypes/FavoriteSortBy'
+import {
+  PassingRecord,
+  Quiz,
+  QuizResponse,
+} from './synapseTypes/CertificationQuiz/Quiz'
 
 const cookies = new UniversalCookies()
 
@@ -3714,6 +3719,34 @@ export function purgeFromTrashCan(
   return doPut<void>(
     TRASHCAN_PURGE(entityId),
     undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the test to become a Certified User
+ * https://rest-docs.synapse.org/rest/GET/certifiedUserTest.html
+ */
+export function getCertifyQuiz(accessToken: string | undefined) {
+  return doGet<Quiz>(
+    '/repo/v1/certifiedUserTest',
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Submit a response to the Certified User test.
+ * https://rest-docs.synapse.org/rest/POST/certifiedUserTestResponse.html
+ */
+export function postCertifiedUserTestResponse(
+  accessToken: string | undefined,
+  quizResponse: QuizResponse,
+) {
+  return doPost<PassingRecord>(
+    '/repo/v1/certifiedUserTestResponse',
+    quizResponse,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
