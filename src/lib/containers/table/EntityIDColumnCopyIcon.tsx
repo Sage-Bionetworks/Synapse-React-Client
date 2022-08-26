@@ -62,7 +62,7 @@ const EntityIDColumnCopyIcon = () => {
   }, [idData])
 
   return isLoading ? (
-    <SynapseSpinner size={20} />
+    <SynapseSpinner size={25} />
   ) : (
     <InteractiveCopyIdsIcon
       onCopy={() => {
