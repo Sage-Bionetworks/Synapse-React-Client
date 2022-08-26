@@ -55,8 +55,7 @@ import {
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
 import NoContentAvailable from './NoContentAvailable'
-import { InteractiveCopyIdsIcon } from '../InteractiveCopyIdsIcon'
-import { displayToast } from '../ToastMessage'
+import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -134,7 +133,6 @@ export default class SynapseTable extends React.Component<
     this.disableResize = this.disableResize.bind(this)
     this.isEntityViewOrDataset = this.isEntityViewOrDataset.bind(this)
     this.allRowsHaveId = this.allRowsHaveId.bind(this)
-    this.handleCopyIdsToClipboard = this.handleCopyIdsToClipboard.bind(this)
 
     // store the offset and sorted selection that is currently held
     this.state = {
@@ -434,25 +432,6 @@ export default class SynapseTable extends React.Component<
         {!isExpanded && content}
       </React.Fragment>
     )
-  }
-
-  /**
-   * handle copy IDs to clipboard
-   */
-  public handleCopyIdsToClipboard = (columnIndex: number) => {
-    const {
-      queryContext: { data },
-    } = this.props
-    const { rows } = data!.queryResult!.queryResults
-    const synIDs = rows
-      .map((row: Row) => {
-        return `${row.values[columnIndex]}`
-      })
-      .join('\n')
-    // https://caniuse.com/mdn-api_clipboard_writetext
-    navigator.clipboard.writeText(synIDs).then(() => {
-      displayToast('Successfully copied to clipboard')
-    })
   }
 
   /**
@@ -868,13 +847,7 @@ export default class SynapseTable extends React.Component<
                       ></Icon>
                     </span>
                   )}
-                  {isEntityIDColumn && (
-                    <InteractiveCopyIdsIcon
-                      onCopy={() => {
-                        this.handleCopyIdsToClipboard(index)
-                      }}
-                    />
-                  )}
+                  {isEntityIDColumn && <EntityIDColumnCopyIcon />}
                 </div>
               </div>
             </th>
