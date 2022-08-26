@@ -387,9 +387,13 @@ export const DetailsViewVersionRenderer = ({
     versions,
   ])
 
+  if (!isSelected || !isVersionableEntity) {
+    return <></>
+  }
+
   return (
     <div>
-      {isSelected && versions && versions.length > 0 && (
+      {versions && versions.length > 0 ? (
         <Form.Control
           role="listbox"
           size="sm"
@@ -419,6 +423,8 @@ export const DetailsViewVersionRenderer = ({
             )
           })}
         </Form.Control>
+      ) : (
+        latestVersionText
       )}
     </div>
   )
