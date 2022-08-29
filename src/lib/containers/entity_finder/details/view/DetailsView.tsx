@@ -18,7 +18,6 @@ import {
   EntityType,
   SortBy,
 } from '../../../../utils/synapseTypes'
-import { HelpPopover } from '../../../HelpPopover'
 import { BlockingLoader } from '../../../LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
@@ -38,6 +37,7 @@ import {
   ModifiedOnRenderer,
   TypeIconRenderer,
 } from './DetailsViewTableRenderers'
+import { VersionColumnHeader } from './VersionColumnHeader'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -494,27 +494,9 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                     {...props}
                   />
                 )}
-                headerRenderer={() => {
-                  return (
-                    <>
-                      Version
-                      <HelpPopover
-                        className="SRC-margin-left-5"
-                        markdownText={
-                          versionSelection === VersionSelectionType.UNTRACKED
-                            ? 'Choose which version of this item you would like to perform this action on.'
-                            : `Choose which version of this item you would like to reference.${
-                                versionSelection ===
-                                VersionSelectionType.TRACKED
-                                  ? ' If you would like the selected reference to update as new versions are created, choose "Always Latest Version".'
-                                  : ''
-                              }`
-                        }
-                        placement="right"
-                      />
-                    </>
-                  )
-                }}
+                headerRenderer={
+                  <VersionColumnHeader versionSelection={versionSelection} />
+                }
               />
             )}
             <Column<EntityFinderTableViewRowData>
