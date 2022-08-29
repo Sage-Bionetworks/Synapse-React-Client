@@ -501,10 +501,14 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                       <HelpPopover
                         className="SRC-margin-left-5"
                         markdownText={
-                          'Allows you to choose which version of this item you would like to perform this action on.' +
-                          (versionSelection === VersionSelectionType.TRACKED
-                            ? `If you would like the selected reference to update as new versions are created, choose the "Always Latest" option.`
-                            : '')
+                          versionSelection === VersionSelectionType.UNTRACKED
+                            ? 'Choose which version of this item you would like to perform this action on.'
+                            : `Choose which version of this item you would like to reference.${
+                                versionSelection ===
+                                VersionSelectionType.TRACKED
+                                  ? ' If you would like the selected reference to update as new versions are created, choose "Always Latest Version".'
+                                  : ''
+                              }`
                         }
                         placement="right"
                       />
