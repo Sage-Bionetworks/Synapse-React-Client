@@ -353,19 +353,37 @@ function getLatestVersionText(
   versionSelection: VersionSelectionType,
   entityType: EntityType,
 ) {
-  // TODO: Consider adding help for Tables if VersionSelectionType.REQUIRED, saying something like "The Current/Draft version will be referenced until the first Snapshot/Stable Version is created"
   let versionDisplay = 'Latest'
+  let snapshotDisplay = ''
   if (isTableType(entityType)) {
     if (entityType === EntityType.DATASET) {
       versionDisplay = 'Draft'
+      snapshotDisplay = 'Stable Version'
     } else {
       versionDisplay = 'Current'
+      snapshotDisplay = 'Snapshot'
     }
   }
 
   if (versionSelection === VersionSelectionType.TRACKED) {
     return `Always ${versionDisplay} Version`
+  } else if (versionSelection === VersionSelectionType.REQUIRED) {
+    return (
+      <>
+        {versionDisplay}
+
+        <IconSvg
+          options={{
+            icon: 'helpOutlineTwoTone',
+            size: '12px',
+            padding: 'left',
+            label: `No ${snapshotDisplay} exists. The ${versionDisplay} version will be referenced until a new ${snapshotDisplay} is created.`,
+          }}
+        />
+      </>
+    )
   }
+
   return `${versionDisplay} Version`
 }
 

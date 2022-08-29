@@ -11,7 +11,14 @@ export default {
   title: 'Synapse/EntityFinder',
   component: EntityFinder,
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
-  argTypes: {},
+  argTypes: {
+    versionSelection: {
+      options: ['REQUIRED', 'DISABLED', 'TRACKED', 'UNTRACKED'],
+      control: {
+        type: 'select',
+      },
+    },
+  },
 } as ComponentMeta<typeof EntityFinder>
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
