@@ -26,7 +26,6 @@ const CertificationQuiz: React.FunctionComponent = () => {
     [],
   )
   const [passingRecord, setPassingRecord] = useState<PassingRecord>()
-  const [isChecked, setIsChecked] = useState<boolean>()
 
   const GETTING_STARTED_URL =
     'https://help.synapse.org/docs/Getting-Started.2055471150.html'
@@ -52,7 +51,6 @@ const CertificationQuiz: React.FunctionComponent = () => {
         concreteType: MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
       },
     ]
-    setIsChecked(true)
     setQuestionResponse(newState)
   }
 
