@@ -5,15 +5,11 @@ import React from 'react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIDColumnCopyIcon from '../../../../lib/containers/table/EntityIDColumnCopyIcon'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
-import {
-  SynapseContextType,
-  SynapseContextProvider,
-} from '../../../../lib/utils/SynapseContext'
+import { SynapseContextType } from '../../../../lib/utils/SynapseContext'
 import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '../../../../lib/utils/synapseTypes'
-import { MOCK_CONTEXT_VALUE } from '../../../../mocks/MockSynapseContext'
 import {
   QueryContextProvider,
   QueryContextType,
@@ -46,9 +42,9 @@ const queryContext: Partial<QueryContextType> = {
 
 function renderComponent(wrapperProps?: SynapseContextType) {
   return render(
-  <QueryContextProvider queryContext={queryContext}>
-    <EntityIDColumnCopyIcon />
-  </QueryContextProvider>
+    <QueryContextProvider queryContext={queryContext}>
+      <EntityIDColumnCopyIcon />
+    </QueryContextProvider>,
     {
       wrapper: createWrapper(wrapperProps),
     },
