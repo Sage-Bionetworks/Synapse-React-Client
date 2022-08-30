@@ -47,6 +47,9 @@ export function useDeleteOAuthClient(
           await options.onSuccess(updatedClient, clientId, ctx)
         }
       },
+      onError: (err: any) => {
+        displayToast(err.reason as string, 'danger')
+      },
     },
   )
 }
