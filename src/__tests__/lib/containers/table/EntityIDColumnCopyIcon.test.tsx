@@ -46,11 +46,9 @@ const queryContext: Partial<QueryContextType> = {
 
 function renderComponent(wrapperProps?: SynapseContextType) {
   return render(
-    <SynapseContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-      <QueryContextProvider queryContext={queryContext}>
-        <EntityIDColumnCopyIcon />
-      </QueryContextProvider>
-    </SynapseContextProvider>,
+  <QueryContextProvider queryContext={queryContext}>
+    <EntityIDColumnCopyIcon />
+  </QueryContextProvider>
     {
       wrapper: createWrapper(wrapperProps),
     },
