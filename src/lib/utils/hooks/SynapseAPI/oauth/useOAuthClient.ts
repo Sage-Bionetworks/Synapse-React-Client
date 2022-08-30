@@ -6,6 +6,7 @@ import {
   useQueryClient,
 } from 'react-query'
 import { SynapseClient } from '../../..'
+import { displayToast } from '../../../../containers/ToastMessage'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { OAuthClient, OAuthClientList } from '../../../synapseTypes/OAuthClient'
@@ -77,6 +78,9 @@ export function useMutateOAuthClient(
       if (options?.onSuccess) {
         await options.onSuccess(updatedClient, variables.client, ctx)
       }
+    },
+    onError: (err: any) => {
+      displayToast(err.reason as string, 'danger')
     },
   })
 }
