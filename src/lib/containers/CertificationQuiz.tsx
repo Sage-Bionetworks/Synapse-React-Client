@@ -16,36 +16,31 @@ import { Button } from 'react-bootstrap'
 import { MarkdownPopover } from './MarkdownPopover'
 import { HelpOutlineTwoTone } from '@material-ui/icons'
 import Typography from '../utils/typography/Typography'
+import { useErrorHandler } from 'react-error-boundary'
 
 const CertificationQuiz: React.FunctionComponent = () => {
   const { accessToken } = useSynapseContext()
+  const handleError = useErrorHandler()
   const [quiz, setQuiz] = useState<Quiz | undefined>()
   const [questionResponse, setQuestionResponse] = useState<QuestionResponse[]>(
     [],
   )
   const [passingRecord, setPassingRecord] = useState<PassingRecord>()
+  const [isChecked, setIsChecked] = useState<boolean>()
 
-  const gettingStartedUrl =
+  const GETTING_STARTED_URL =
     'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 
   const getQuiz = async () => {
     try {
       setQuiz(await SynapseClient.getCertifyQuiz(accessToken))
     } catch (err: any) {
-      console.log(err)
+      handleError(err)
     }
   }
 
   useEffect(() => {
-    if (accessToken) {
-      getQuiz()
-    }
-  }, [accessToken])
-
-  useEffect(() => {
-    if (!accessToken) {
-      new Error('Please sign in to take certification quiz')
-    }
+    getQuiz()
   }, [accessToken])
 
   const onUpdateAnswer = (questionIndex: number, answer: number) => {
@@ -57,11 +52,14 @@ const CertificationQuiz: React.FunctionComponent = () => {
         concreteType: MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
       },
     ]
+    setIsChecked(true)
     setQuestionResponse(newState)
   }
 
   const handleRetakeQuiz = () => {
-    window.location.reload()
+    getQuiz()
+    setQuestionResponse([])
+    setPassingRecord(undefined)
   }
 
   const handleSubmit = async () => {
@@ -106,11 +104,12 @@ const CertificationQuiz: React.FunctionComponent = () => {
             <div className="failBanner">Quiz Failed</div>
           )}
           <Typography variant="hintText">
-            Score: {passingRecord.score} / 15
+            Score: {passingRecord.score} / {quiz?.questions.length}
           </Typography>
           {passingRecord.passed ? (
             displayToast(
               `You passed the Synapse Certification Quiz on ${passingRecord.passedOn}`,
+              'success',
             )
           ) : (
             <Typography variant="body1">
@@ -125,7 +124,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
       )}
       <div className="CertificationQuiz__container">
         <Button
-          onClick={() => window.open(gettingStartedUrl, '_blank')}
+          onClick={() => window.open(GETTING_STARTED_URL, '_blank')}
           className="help-button"
           variant="light-secondary"
         >

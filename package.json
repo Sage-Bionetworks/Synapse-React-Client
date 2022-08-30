@@ -33,7 +33,6 @@
     "dagre": "^0.8.5",
     "downshift": "^6.1.2",
     "gh-pages": "^3.2.3",
-    "html-react-parser": "^3.0.4",
     "immutable": "4.1.0",
     "json-rules-engine": "^4.0.0",
     "katex": "0.11.1",

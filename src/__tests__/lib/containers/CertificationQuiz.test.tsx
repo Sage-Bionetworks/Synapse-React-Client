@@ -8,8 +8,11 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../lib/utils/functions/getEndpoint'
-import { Quiz } from '../../../lib/utils/synapseTypes/CertificationQuiz/Quiz'
 import { rest, server } from '../../../mocks/msw/server'
+import {
+  mockQuiz,
+  mockPassingRecord,
+} from '../../../mocks/mockCertificationQuiz'
 
 window.open = jest.fn()
 jest.mock('../../../lib/containers/ToastMessage', () => {
@@ -25,12 +28,26 @@ const getQuizHandler = rest.get(
     BackendDestinationEnum.REPO_ENDPOINT,
   )}/repo/v1/certifiedUserTest`,
   async (req, res, ctx) => {
-    const response: Quiz = {
-      id: 123,
-      header: 'Mock Certification Quiz',
-      questions: [],
-    }
-    return res(ctx.status(200), ctx.json(response))
+    return res(ctx.status(200), ctx.json(mockQuiz))
+  },
+)
+
+const failedQuizHandler = rest.post(
+  `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}
+    /repo/v1/certifiedUserTestResponse`,
+  async (req, res, ctx) => {
+    return res(ctx.status(201), ctx.json({ mockPassingRecord }))
+  },
+)
+
+const passedQuizHandler = rest.post(
+  `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}
+    /repo/v1/certifiedUserTestResponse`,
+  async (req, res, ctx) => {
+    return res(
+      ctx.status(201),
+      ctx.json({ ...mockPassingRecord, passed: true }),
+    )
   },
 )
 
@@ -48,27 +65,48 @@ describe('CertificationQuiz tests', () => {
   it('Shows loads the certification quiz', async () => {
     server.use(getQuizHandler)
     renderComponent()
-    await screen.findByText('Mock Certification Quiz')
+    await screen.queryByText('Mock Certification Quiz')
+    await waitFor(() =>
+      expect(
+        screen.queryAllByText('Need help answering this question?'),
+      ).toHaveLength(mockQuiz.questions.length),
+    )
   })
 
   it('Open new tab when clicking help button', async () => {
     renderComponent()
-    const helpButton = screen.queryByRole('button', { name: 'Help' })
+    const helpButton = await screen.findByRole('button', { name: 'Help' })
     userEvent.click(helpButton!)
-
     expect(window.open).toHaveBeenCalledWith(gettingStartedUrl, '_blank')
   })
 
-  it('Open new tab when clicking help button', async () => {
+  it('Submit quiz when not all questions are answered', async () => {
     renderComponent()
-    const submitButton = screen.queryByRole('button', { name: 'Submit' })
-    userEvent.click(submitButton!)
+    const submitButton = await screen.findByRole('button', { name: 'Submit' })
+    userEvent.click(submitButton)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith(
         'Please answer all of the questions and try again.',
         'warning',
       ),
+    )
+  })
+
+  it('Submit quiz that did not pass', async () => {
+    server.use(failedQuizHandler)
+    renderComponent()
+    const submitButton = await screen.findByRole('button', { name: 'Submit' })
+    userEvent.click(submitButton)
+
+    await screen.queryByText('Quiz Failed')
+  })
+
+  it('Submit quiz that did pass', async () => {
+    server.use(passedQuizHandler)
+    renderComponent()
+    await screen.queryByText(
+      `${mockQuiz.questions.length} / ${mockQuiz.questions.length}`,
     )
   })
 })
