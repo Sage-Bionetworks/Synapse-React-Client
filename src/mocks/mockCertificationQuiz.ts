@@ -22,12 +22,12 @@ export const mockQuiz: Quiz = {
       answers: [
         {
           answerIndex: 0,
-          prompt: 'mockAnswerIndex 0',
+          prompt: 'mockQuestion1AnswerIndex 0',
           isCorrect: true,
         },
         {
           answerIndex: 1,
-          prompt: 'mockAnswerIndex 1',
+          prompt: 'mockQuestion1AnswerIndex 1',
           isCorrect: false,
         },
       ],
@@ -46,12 +46,12 @@ export const mockQuiz: Quiz = {
       answers: [
         {
           answerIndex: 0,
-          prompt: 'mockAnswerIndex 0',
+          prompt: 'mockQuestion2AnswerIndex 0',
           isCorrect: true,
         },
         {
           answerIndex: 1,
-          prompt: 'mockAnswerIndex 1',
+          prompt: 'mockQuestion2AnswerIndex 1',
           isCorrect: false,
         },
       ],

@@ -138,8 +138,11 @@ const CertificationQuiz: React.FunctionComponent = () => {
         )}
         <form onSubmit={e => e.preventDefault()}>
           <ol>
-            {quiz?.questions.map((question, index) => (
-              <li key={question.questionIndex}>
+            {quiz?.questions.map(question => (
+              <li
+                key={question.questionIndex}
+                role={question.exclusive ? 'radiogroup' : undefined}
+              >
                 <Typography
                   variant="body1"
                   color={

@@ -59,19 +59,20 @@ function renderComponent() {
 
 describe('CertificationQuiz tests', () => {
   beforeAll(() => server.listen())
+  beforeEach(() => server.use(getQuizHandler))
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
   it('Shows loads the certification quiz', async () => {
-    server.use(getQuizHandler)
     renderComponent()
-    await screen.queryByText('Mock Certification Quiz')
+    await screen.findByText('Mock Certification Quiz')
+    expect(await screen.findAllByRole('radiogroup')).toHaveLength(2)
   })
 
   it('Open new tab when clicking help button', async () => {
     renderComponent()
     const helpButton = await screen.findByRole('button', { name: 'Help' })
-    userEvent.click(helpButton!)
+    userEvent.click(helpButton)
     expect(window.open).toHaveBeenCalledWith(gettingStartedUrl, '_blank')
   })
 
@@ -91,17 +92,57 @@ describe('CertificationQuiz tests', () => {
   it('Submit quiz that did not pass', async () => {
     server.use(failedQuizHandler)
     renderComponent()
+    const radio1 = await screen.findByLabelText(
+      mockQuiz.questions[0].answers[0].prompt,
+    )
+    const radio2 = await screen.findByLabelText(
+      mockQuiz.questions[1].answers[0].prompt,
+    )
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
+
+    expect(radio1).toBeInTheDocument()
+    expect(radio2).toBeInTheDocument()
+
+    expect(radio1).not.toBeChecked()
+    expect(radio2).not.toBeChecked()
+
+    userEvent.click(radio1)
+    userEvent.click(radio2)
+
+    expect(radio1).toBeChecked()
+    expect(radio2).toBeChecked()
+
     userEvent.click(submitButton)
 
-    await screen.queryByText('Quiz Failed')
+    await screen.findByText('Quiz Failed')
   })
 
   it('Submit quiz that did pass', async () => {
     server.use(passedQuizHandler)
     renderComponent()
-    await screen.queryByText(
-      `${mockQuiz.questions.length} / ${mockQuiz.questions.length}`,
+
+    const radio1 = await screen.findByLabelText(
+      mockQuiz.questions[0].answers[0].prompt,
+    )
+    const radio2 = await screen.findByLabelText(
+      mockQuiz.questions[1].answers[0].prompt,
+    )
+
+    const submitButton = await screen.findByRole('button', { name: 'Submit' })
+
+    userEvent.click(radio1)
+    userEvent.click(radio2)
+
+    expect(radio1).toBeChecked()
+    expect(radio2).toBeChecked()
+
+    userEvent.click(submitButton)
+
+    await waitFor(() =>
+      expect(mockToastFn).toBeCalledWith(
+        `You passed the Synapse Certification Quiz on ${mockPassingRecord.passedOn}`,
+        'success',
+      ),
     )
   })
 })
