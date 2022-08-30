@@ -10,7 +10,6 @@ import {
   MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
   QuestionResponse,
 } from '../utils/synapseTypes/CertificationQuiz/Questions'
-import parse from 'html-react-parser'
 import { displayToast } from './ToastMessage'
 import { Button } from 'react-bootstrap'
 import { MarkdownPopover } from './MarkdownPopover'
