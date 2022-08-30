@@ -131,7 +131,11 @@ const CertificationQuiz: React.FunctionComponent = () => {
           />
           Help
         </Button>
-        {quiz ? parse(quiz.header) : ''}
+        {quiz ? (
+          <div dangerouslySetInnerHTML={{ __html: quiz.header }}></div>
+        ) : (
+          ''
+        )}
         <form onSubmit={e => e.preventDefault()}>
           <ol>
             {quiz?.questions.map((question, index) => (
@@ -148,7 +152,9 @@ const CertificationQuiz: React.FunctionComponent = () => {
                       : 'error')
                   }
                 >
-                  {parse(question.prompt)}
+                  <div
+                    dangerouslySetInnerHTML={{ __html: question.prompt }}
+                  ></div>
                 </Typography>
                 {question.answers.map(choice => (
                   <div key={`${question.questionIndex}-${choice.answerIndex}`}>

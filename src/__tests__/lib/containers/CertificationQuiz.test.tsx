@@ -66,11 +66,6 @@ describe('CertificationQuiz tests', () => {
     server.use(getQuizHandler)
     renderComponent()
     await screen.queryByText('Mock Certification Quiz')
-    await waitFor(() =>
-      expect(
-        screen.queryAllByText('Need help answering this question?'),
-      ).toHaveLength(mockQuiz.questions.length),
-    )
   })
 
   it('Open new tab when clicking help button', async () => {
