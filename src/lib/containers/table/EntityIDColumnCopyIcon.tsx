@@ -32,12 +32,12 @@ const EntityIDColumnCopyIcon = () => {
     queryRequestClone.query = {
       sql: `select id from ${entityId}${versionNumberString}`,
     }
-
     getFullQueryTableResults(queryRequestClone, synapseContext.accessToken)
       .then((data: QueryResultBundle) => {
         setIdData(data)
       })
       .catch((err: any) => {
+        console.error(err)
         displayToast('Unable to query for all IDs', 'danger')
       })
       .finally(() => {
