@@ -131,7 +131,7 @@ export const CreateOAuthModal: React.FunctionComponent<
         }
       }
     } catch (err) {
-      console.log(err.reason)
+      displayToast(err.reason as string, 'danger')
     }
   }
 
