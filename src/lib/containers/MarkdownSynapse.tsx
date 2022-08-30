@@ -11,7 +11,7 @@ import { SynapseClientError } from '../utils/SynapseClientError'
 import { Button } from 'react-bootstrap'
 import { SynapseContext } from '../utils/SynapseContext'
 import IDUReport from './IDUReport'
-import SanitizeHtml from 'sanitize-html'
+import sanitizeHtml from 'sanitize-html'
 import MarkdownIt from 'markdown-it'
 
 const TOC_CLASS = {
@@ -38,7 +38,6 @@ declare const markdownitBr: any
 declare const markdownitMath: any
 
 declare const markdownit: typeof MarkdownIt
-declare const sanitizeHtml: typeof SanitizeHtml
 
 type WidgetParams = {
   reactKey?: string
