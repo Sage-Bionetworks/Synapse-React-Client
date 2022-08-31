@@ -18,11 +18,11 @@ import {
   EntityType,
   SortBy,
 } from '../../../../utils/synapseTypes'
-import { HelpPopover } from '../../../HelpPopover'
 import { BlockingLoader } from '../../../LoadingScreen'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
+import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityDetailsListSharedProps } from '../EntityDetailsList'
 import {
   BadgeIconsRenderer,
@@ -37,6 +37,7 @@ import {
   ModifiedOnRenderer,
   TypeIconRenderer,
 } from './DetailsViewTableRenderers'
+import { VersionColumnHeader } from './VersionColumnHeader'
 
 const MIN_TABLE_WIDTH = 1200
 const ROW_HEIGHT = 46
@@ -54,8 +55,6 @@ export type DetailsViewProps = EntityDetailsListSharedProps & {
   noResultsPlaceholder?: React.ReactElement
   /** We defer to the configuration component to determine this */
   selectAllIsChecked?: boolean
-  /** The text to show for selecting the latest version, if it can be selected. Default is "Always Latest Version" */
-  latestVersionText?: string
   /** This request object is only used to tell react-query to cancel fetching all children at once. */
   getChildrenInfiniteRequestObject?: EntityChildrenRequest
   /** The total number of entities that can be retrieved */
@@ -90,8 +89,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   hasNextPage,
   fetchNextPage,
   isFetchingNextPage,
-  showVersionSelection,
-  mustSelectVersionNumber,
+  versionSelection,
   selectColumnType,
   selected,
   visibleTypes,
@@ -102,7 +100,6 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
   noResultsPlaceholder,
   enableSelectAll,
   selectAllIsChecked = false,
-  latestVersionText = 'Always Latest Version',
   getChildrenInfiniteRequestObject,
   totalEntities,
   setCurrentContainer,
@@ -190,10 +187,10 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                   .map(async e => {
                     let latestVersion: number | undefined
                     if (
-                      mustSelectVersionNumber &&
+                      versionSelection === VersionSelectionType.REQUIRED &&
                       isVersionableEntityType(getEntityTypeFromHeader(e))
                     ) {
-                      // If `mustSelectVersionNumber` is true, then we need to supply a version with the entity.
+                      // If VersionSelectionType.REQUIRED, then we need to supply a version with the entity.
                       // We may already have the version from the header:
                       if (
                         Object.prototype.hasOwnProperty.call(e, 'versionNumber')
@@ -236,7 +233,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
     entities,
     fetchNextPage,
     hasNextPage,
-    mustSelectVersionNumber,
+    versionSelection,
     queryClient,
     isFetchingNextPage,
     selectAllIsChecked,
@@ -400,7 +397,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 if (!isDisabled) {
                   if (
                     isVersionableEntity &&
-                    mustSelectVersionNumber &&
+                    versionSelection === VersionSelectionType.REQUIRED &&
                     currentSelectedVersion == null &&
                     Object.prototype.hasOwnProperty.call(
                       rowData,
@@ -484,7 +481,7 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
               title="ID"
               minWidth={130}
             />
-            {showVersionSelection && (
+            {versionSelection !== VersionSelectionType.DISALLOWED && (
               <Column<EntityFinderTableViewRowData>
                 key="version"
                 minWidth={150}
@@ -492,29 +489,14 @@ export const DetailsView: React.FunctionComponent<DetailsViewProps> = ({
                 title="Version"
                 cellRenderer={props => (
                   <DetailsViewVersionRenderer
-                    mustSelectVersionNumber={mustSelectVersionNumber}
+                    versionSelection={versionSelection}
                     toggleSelection={toggleSelection}
-                    latestVersionText={latestVersionText}
                     {...props}
                   />
                 )}
-                headerRenderer={() => {
-                  return (
-                    <>
-                      Version
-                      <HelpPopover
-                        className="SRC-margin-left-5"
-                        markdownText={
-                          'Allows you to choose which version of this item you would like to perform this action on.' +
-                          (mustSelectVersionNumber
-                            ? ''
-                            : `If you would like the selected reference to update as new versions are created, choose "${latestVersionText}"`)
-                        }
-                        placement="right"
-                      />
-                    </>
-                  )
-                }}
+                headerRenderer={
+                  <VersionColumnHeader versionSelection={versionSelection} />
+                }
               />
             )}
             <Column<EntityFinderTableViewRowData>

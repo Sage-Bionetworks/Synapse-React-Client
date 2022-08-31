@@ -66,6 +66,26 @@ export function isContainerType(type: EntityType): boolean {
   }
 }
 
+export function isTableType(type: EntityType): boolean {
+  switch (type) {
+    case EntityType.PROJECT:
+    case EntityType.FOLDER:
+    case EntityType.LINK:
+    case EntityType.DOCKER_REPO:
+    case EntityType.FILE:
+      return false
+    case EntityType.TABLE:
+    case EntityType.SUBMISSION_VIEW:
+    case EntityType.ENTITY_VIEW:
+    case EntityType.DATASET:
+    case EntityType.DATASET_COLLECTION:
+    case EntityType.MATERIALIZED_VIEW:
+      return true
+    default:
+      throw new Error(`Unknown entity type: ${type}`)
+  }
+}
+
 export function entityTypeToFriendlyName(entityType: EntityType): string {
   switch (entityType) {
     case EntityType.PROJECT:
