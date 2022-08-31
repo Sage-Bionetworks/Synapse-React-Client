@@ -61,6 +61,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           <tr>
             <th>Created</th>
             <th>Modified</th>
+            <th>ID</th>
             <th>Client</th>
             <th>Verified</th>
             <th>App Secret</th>
@@ -73,6 +74,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
               <tr key={item.client_id}>
                 <td>{formatDate(moment(item.createdOn))}</td>
                 <td>{formatDate(moment(item.modifiedOn))}</td>
+                <td>{item.client_id}</td>
                 <td>{item.client_name}</td>
                 <td>
                   {item.verified ? (
@@ -143,12 +145,11 @@ export const OAuthManagement: React.FunctionComponent = () => {
         show={isShowingVerification}
         animation={false}
         backdrop="static"
+        className="bootstrap-4-backport"
         onHide={() => setIsShowingVerification(false)}
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            <Typography variant="headline1">Submit Verification</Typography>
-          </Modal.Title>
+          <Modal.Title>Submit Verification</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
@@ -178,6 +179,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
 
       <WarningModal
         show={isShowingSecretWarning}
+        className="bootstrap-4-backport"
         title={warningHeader}
         modalBody={warningBody}
         onCancel={() => {
