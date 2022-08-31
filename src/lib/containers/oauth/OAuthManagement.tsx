@@ -41,7 +41,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
       setSelectedClient(undefined)
       setIsShowingSecret(true)
       setSecret(secret.client_secret)
-    } catch (err) {
+    } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
   }
