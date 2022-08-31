@@ -14,7 +14,20 @@ const EntityIDColumnCopyIcon = () => {
   const queryContext = useQueryContext()
   const [isLoading, setIsLoading] = React.useState(false)
   const [idData, setIdData] = React.useState<QueryResultBundle>()
+  const [abortController, setAbortController] =
+    React.useState<AbortController>()
 
+  React.useEffect(() => {
+    if (!abortController) {
+      setAbortController(new AbortController())
+    }
+    return () => {
+      // clean up
+      if (abortController) {
+        abortController.abort()
+      }
+    }
+  }, [abortController])
   /**
    * handle copy IDs to clipboard
    */
@@ -32,13 +45,17 @@ const EntityIDColumnCopyIcon = () => {
     queryRequestClone.query = {
       sql: `select id from ${entityId}${versionNumberString}`,
     }
-    getFullQueryTableResults(queryRequestClone, synapseContext.accessToken)
+    getFullQueryTableResults(
+      queryRequestClone,
+      synapseContext.accessToken,
+      abortController?.signal,
+    )
       .then((data: QueryResultBundle) => {
         setIdData(data)
       })
       .catch((err: any) => {
         console.error(err)
-        displayToast('Unable to query for all IDs', 'danger')
+        displayToast('Unable to query for all Synapse IDs to copy', 'danger')
       })
       .finally(() => {
         setIsLoading(false)
