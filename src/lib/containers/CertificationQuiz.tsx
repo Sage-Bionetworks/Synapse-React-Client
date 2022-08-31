@@ -25,6 +25,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
     [],
   )
   const [passingRecord, setPassingRecord] = useState<PassingRecord>()
+  const formRef = React.useRef<HTMLFormElement>(null)
 
   const GETTING_STARTED_URL =
     'https://help.synapse.org/docs/Getting-Started.2055471150.html'
@@ -54,9 +55,10 @@ const CertificationQuiz: React.FunctionComponent = () => {
   }
 
   const handleRetakeQuiz = () => {
-    getQuiz()
+    formRef.current?.reset()
     setQuestionResponse([])
     setPassingRecord(undefined)
+    getQuiz()
   }
 
   const handleSubmit = async () => {
@@ -97,7 +99,7 @@ const CertificationQuiz: React.FunctionComponent = () => {
     <div className="bootstrap-4-backport CertificationQuiz">
       {passingRecord && (
         <div>
-          {passingRecord.passed == false && (
+          {!passingRecord.passed && (
             <div className="failBanner">Quiz Failed</div>
           )}
           <Typography variant="hintText">
@@ -136,29 +138,25 @@ const CertificationQuiz: React.FunctionComponent = () => {
         ) : (
           ''
         )}
-        <form onSubmit={e => e.preventDefault()}>
+        <form ref={formRef} onSubmit={e => e.preventDefault()}>
           <ol>
             {quiz?.questions.map(question => (
               <li
                 key={question.questionIndex}
                 role={question.exclusive ? 'radiogroup' : undefined}
               >
-                <Typography
-                  variant="body1"
-                  color={
+                <div
+                  dangerouslySetInnerHTML={{ __html: question.prompt }}
+                  className={
                     passingRecord &&
-                    (passingRecord.corrections.find(
+                    (passingRecord.corrections?.find(
                       quest =>
                         quest.question.questionIndex === question.questionIndex,
                     )?.isCorrect
-                      ? 'inherit'
-                      : 'error')
+                      ? ''
+                      : 'incorrectQuestion')
                   }
-                >
-                  <div
-                    dangerouslySetInnerHTML={{ __html: question.prompt }}
-                  ></div>
-                </Typography>
+                ></div>
                 {question.answers.map(choice => (
                   <div key={`${question.questionIndex}-${choice.answerIndex}`}>
                     <input
@@ -166,10 +164,10 @@ const CertificationQuiz: React.FunctionComponent = () => {
                       name={`${question.questionIndex}`}
                       type={question.exclusive ? 'radio' : 'checkbox'}
                       value={choice.answerIndex}
-                      onChange={e =>
+                      onClick={e =>
                         onUpdateAnswer(
                           question.questionIndex,
-                          Number(e.target.value),
+                          Number(e.currentTarget.value),
                         )
                       }
                       disabled={!!passingRecord}

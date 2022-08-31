@@ -33,16 +33,14 @@ const getQuizHandler = rest.get(
 )
 
 const failedQuizHandler = rest.post(
-  `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}
-    /repo/v1/certifiedUserTestResponse`,
+  'https://repo-prod.prod.sagebase.org/repo/v1/certifiedUserTestResponse',
   async (req, res, ctx) => {
     return res(ctx.status(201), ctx.json({ mockPassingRecord }))
   },
 )
 
 const passedQuizHandler = rest.post(
-  `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}
-    /repo/v1/certifiedUserTestResponse`,
+  'https://repo-prod.prod.sagebase.org/repo/v1/certifiedUserTestResponse',
   async (req, res, ctx) => {
     return res(
       ctx.status(201),
@@ -60,7 +58,10 @@ function renderComponent() {
 describe('CertificationQuiz tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => server.use(getQuizHandler))
-  afterEach(() => server.resetHandlers())
+  afterEach(() => {
+    server.resetHandlers()
+    jest.clearAllMocks()
+  })
   afterAll(() => server.close())
 
   it('Shows loads the certification quiz', async () => {
@@ -114,6 +115,7 @@ describe('CertificationQuiz tests', () => {
 
     userEvent.click(submitButton)
 
+    expect(mockToastFn).not.toBeCalled()
     await screen.findByText('Quiz Failed')
   })
 

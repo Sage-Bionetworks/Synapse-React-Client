@@ -31,5 +31,5 @@ export interface PassingRecord {
   score: number // The score the user received on the test
   passed: boolean // Whether the user passed the given test
   passedOn: string // Date/time when the user passed the test (omitted if the user has not passed)
-  corrections: ResponseCorrectness[] // For each response, whether it was correct
+  corrections?: ResponseCorrectness[] // For each response, whether it was correct
 }
