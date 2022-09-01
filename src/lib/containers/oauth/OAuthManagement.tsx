@@ -167,7 +167,6 @@ export const OAuthManagement: React.FunctionComponent = () => {
             <li>Your name</li>
             <li>
               The ID of the client to be verified <br />
-              <i>(You can find this within Actions)</i>
             </li>
             <li>A description of your application</li>
           </ul>
