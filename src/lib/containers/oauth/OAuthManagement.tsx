@@ -8,7 +8,6 @@ import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import Typography from '../../utils/typography/Typography'
 import CopyToClipboardInput from '../CopyToClipboardInput'
 import { displayToast } from '../ToastMessage'
 
@@ -53,6 +52,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           setIsShowingCreateClientModal(true)
           setIsEdit(false)
         }}
+        style={{ float: 'right' }}
       >
         Create New Client
       </Button>
@@ -175,6 +175,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
             Verification can take up to X weeks and we will notify you via X.
           </p> */}
         </Modal.Body>
+        <Modal.Footer></Modal.Footer>
       </Modal>
 
       <WarningModal
@@ -195,15 +196,14 @@ export const OAuthManagement: React.FunctionComponent = () => {
           show={isShowingSecret}
           animation={false}
           backdrop="static"
+          className="bootstrap-4-backport"
           onHide={() => {
             setIsShowingSecret(false)
             setSecret(undefined)
           }}
         >
           <Modal.Header closeButton>
-            <Modal.Title>
-              <Typography variant="headline1">App Secret</Typography>
-            </Modal.Title>
+            <Modal.Title>App Secret</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <p>
