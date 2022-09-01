@@ -4,7 +4,7 @@ import { ComponentStory, ComponentMeta } from '@storybook/react'
 import CertificationQuiz from './CertificationQuiz'
 
 export default {
-  title: 'CertifcationQuiz',
+  title: 'Synapse/CertifcationQuiz',
   component: CertificationQuiz,
   argTypes: {},
 } as ComponentMeta<typeof CertificationQuiz>

@@ -113,7 +113,13 @@ const CertificationQuiz: React.FunctionComponent = () => {
           ) : (
             <Typography variant="body1">
               Please review the items shown in red below, and{' '}
-              <a style={{ color: '#407ba0' }} onClick={handleRetakeQuiz}>
+              <a
+                href="#"
+                onClick={e => {
+                  e.preventDefault()
+                  handleRetakeQuiz()
+                }}
+              >
                 try again
               </a>
               .

@@ -115,8 +115,20 @@ describe('CertificationQuiz tests', () => {
 
     userEvent.click(submitButton)
 
-    expect(mockToastFn).not.toBeCalled()
     await screen.findByText('Quiz Failed')
+
+    expect(mockToastFn).not.toBeCalled()
+
+    // Test retaking test
+    const retakeLink = await screen.findByRole('link', { name: 'try again' })
+    userEvent.click(retakeLink)
+
+    expect(radio1).not.toBeChecked()
+    expect(radio2).not.toBeChecked()
+    expect(screen.queryByText('Quiz Failed')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'try again' }),
+    ).not.toBeInTheDocument()
   })
 
   it('Submit quiz that did pass', async () => {

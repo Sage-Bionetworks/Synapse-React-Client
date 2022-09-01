@@ -24,7 +24,7 @@ export interface QuestionResponse {
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/quiz/MultichoiceResponse.html
 export interface MultichoiceResponse extends QuestionResponse {
   answerIndex: Set<number>
-  // concreteType:  MULTICHOICE_RESPONSE_CONCRETE_TYPE
+  concreteType: MULTICHOICE_RESPONSE_CONCRETE_TYPE
 }
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/quiz/MultichoiceQuestion.html
