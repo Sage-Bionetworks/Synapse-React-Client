@@ -12,11 +12,13 @@
 
 .FullWidthAlert[role='alert'] {
   &.global {
-    width: 100%;
+    bottom: 2%;
+    left: 2%;
     position: fixed;
-    bottom: 0px;
-    left: 0px;
+    width: 96%;
     z-index: 2500;
+    filter: drop-shadow(3px 4px 9px #9e9e9e);
+    @include border-radius(2px);
   }
   padding: 14px;
   z-index: 500;
@@ -73,6 +75,9 @@
       grid-row: 1 / span 1;
       min-width: 50px;
       margin-right: 10px;
+      svg {
+        width: 26px;
+      }
     }
     .mainContent {
       grid-row: 1 / span 1;
@@ -91,6 +96,7 @@
       button {
         white-space: nowrap;
         margin-right: 15px;
+        padding: 10px 15px;
       }
     }
     .messageArea {
