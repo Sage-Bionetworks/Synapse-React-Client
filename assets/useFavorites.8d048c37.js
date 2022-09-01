@@ -1,0 +1,2 @@
+import{b0 as I,w as r,bp as u,T as f}from"./index.c9f9ae1d.js";function v(e="FAVORITED_ON",s="DESC",t){const{accessToken:a}=r();return I(["favorites",e,s],()=>u(a,void 0,void 0,e,s),t)}function T(e="FAVORITED_ON",s="DESC",t){const{accessToken:i}=r();return f(["favorites","infinite",e,s],async n=>u(i,n.pageParam,10,e,s),{...t,getNextPageParam:(n,o)=>{if(n.results.length>0)return o.length*10}})}export{v as a,T as u};
+//# sourceMappingURL=useFavorites.8d048c37.js.map
