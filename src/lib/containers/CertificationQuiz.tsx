@@ -204,13 +204,15 @@ const CertificationQuiz: React.FunctionComponent = () => {
             ))}
           </ol>
         </form>
-        <Button
-          className="help-button"
-          variant="primary"
-          onClick={() => handleSubmit()}
-        >
-          Submit
-        </Button>
+        {!passingRecord && (
+          <Button
+            className="help-button"
+            variant="primary"
+            onClick={() => handleSubmit()}
+          >
+            Submit
+          </Button>
+        )}
       </div>
     </div>
   )

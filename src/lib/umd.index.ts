@@ -42,6 +42,7 @@ import { TrashCanList } from './containers/trash/TrashCanList'
 import { OAuthManagement } from './containers/oauth/OAuthManagement'
 import UserCard from './containers/UserCard'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
+import CertificationQuiz from './containers/CertificationQuiz'
 import { ProvenanceGraph } from './containers/provenance/ProvenanceGraph'
 import './style/main.scss'
 import { SynapseClient, SynapseConstants } from './utils'
@@ -103,6 +104,7 @@ const SynapseComponents = {
   ProvenanceGraph,
   TrashCanList,
   OAuthManagement,
+  CertificationQuiz,
 }
 
 // Include the version in the build
