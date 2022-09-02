@@ -260,7 +260,7 @@ a.SRC-whiteText {
 }
 
 .SRC-no-underline-on-hover:hover {
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 .SRC-underline-on-hover:hover {
