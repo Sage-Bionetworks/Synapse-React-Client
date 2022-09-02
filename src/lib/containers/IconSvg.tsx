@@ -29,6 +29,7 @@ import {
   GetAppTwoTone,
   Group,
   HelpOutlined,
+  HelpOutlineTwoTone,
   HistoryTwoTone,
   InfoOutlined,
   InsertDriveFileTwoTone,
@@ -123,6 +124,7 @@ export const IconStrings = [
   'time',
   'login',
   'helpOutlined',
+  'helpOutlineTwoTone',
   'expandLess',
   'expandMore',
   'rat',
@@ -307,6 +309,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <WatchLater style={muiSvgStyle}></WatchLater>
     case 'login':
       return <Login fill={color} style={customSvgStyle}></Login>
+    case 'helpOutlineTwoTone':
+      return <HelpOutlineTwoTone style={muiSvgStyle}></HelpOutlineTwoTone>
     case 'helpOutlined':
       return <HelpOutlined style={muiSvgStyle}></HelpOutlined>
     case 'close':

@@ -11,6 +11,7 @@ import {
 } from '../../../../../lib/containers/entity_finder/details/view/DetailsView'
 import { NO_VERSION_NUMBER } from '../../../../../lib/containers/entity_finder/EntityFinder'
 import { EntityFinderHeader } from '../../../../../lib/containers/entity_finder/EntityFinderHeader'
+import { VersionSelectionType } from '../../../../../lib/containers/entity_finder/VersionSelectionType'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import { ENTITY_ID_VERSIONS } from '../../../../../lib/utils/APIConstants'
 import {
@@ -103,7 +104,7 @@ const PROJECT_INDEX = 1
 const mockSetCurrentContainer = jest.fn()
 
 const defaultProps: DetailsViewProps = {
-  showVersionSelection: true,
+  versionSelection: VersionSelectionType.TRACKED,
   selectColumnType: 'none',
   visibleTypes: Object.values(EntityType),
   selected: Map(),
@@ -117,7 +118,6 @@ const defaultProps: DetailsViewProps = {
   sort: undefined,
   setSort: mockSetSort,
   noResultsPlaceholder: <></>,
-  mustSelectVersionNumber: false,
   enableSelectAll: true,
   setCurrentContainer: mockSetCurrentContainer,
 }
@@ -259,7 +259,7 @@ describe('DetailsView tests', () => {
     it('shows both the selected and version columns', () => {
       renderComponent({
         selectColumnType: 'checkbox',
-        showVersionSelection: true,
+        versionSelection: VersionSelectionType.REQUIRED,
       })
 
       expect(screen.getAllByRole('columnheader').length).toBe(9)
@@ -267,7 +267,7 @@ describe('DetailsView tests', () => {
     it('hides the selected column', () => {
       renderComponent({
         selectColumnType: 'none',
-        showVersionSelection: true,
+        versionSelection: VersionSelectionType.REQUIRED,
       })
 
       expect(screen.getAllByRole('columnheader').length).toBe(8)
@@ -275,7 +275,7 @@ describe('DetailsView tests', () => {
     it('hides the version column', () => {
       renderComponent({
         selectColumnType: 'checkbox',
-        showVersionSelection: false,
+        versionSelection: VersionSelectionType.DISALLOWED,
       })
 
       expect(screen.getAllByRole('columnheader').length).toBe(8)
@@ -371,12 +371,12 @@ describe('DetailsView tests', () => {
       )
     })
 
-    it('Clicking select all toggles selection with version when mustSelectVersionNumber is true', async () => {
+    it('Clicking select all toggles selection with version when versionSelection is REQUIRED', async () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
         hasNextPage: false,
-        mustSelectVersionNumber: true,
+        versionSelection: VersionSelectionType.REQUIRED,
         selectColumnType: 'checkbox',
       })
 
@@ -498,9 +498,9 @@ describe('DetailsView tests', () => {
       })
     })
 
-    it('toggles selection with version when mustSelectVersionNumber is true', async () => {
+    it('toggles selection with version when versionSelection is REQUIRED', async () => {
       renderComponent({
-        mustSelectVersionNumber: true,
+        versionSelection: VersionSelectionType.REQUIRED,
       })
 
       await userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
@@ -511,9 +511,9 @@ describe('DetailsView tests', () => {
       })
     })
 
-    it('mustSelectVersionNumber does not affect toggle for non-versionable entities', async () => {
+    it('versionSelection is REQUIRED does not affect toggle for non-versionable entities', async () => {
       renderComponent({
-        mustSelectVersionNumber: true,
+        versionSelection: VersionSelectionType.REQUIRED,
       })
 
       // Click the project--projects don't have versions
@@ -608,27 +608,42 @@ describe('DetailsView tests', () => {
         expect(screen.getAllByRole('option').length).toBe(3)
       })
 
-      it('Always Latest Version copy is configurable', async () => {
+      it('Always Latest Version text appears when versionSelection is TRACKED', async () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
           selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
-          latestVersionText: 'The Most Recent Version',
+          versionSelection: VersionSelectionType.TRACKED,
         })
 
-        await screen.findByText('The Most Recent Version')
+        await screen.findByText('Always Latest Version')
       })
 
-      it('does not display Always Latest Version if mustSelectVersionNumber is true', async () => {
+      it('Always Latest Version text does not appear when versionSelection is UNTRACKED', async () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
           selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
-          mustSelectVersionNumber: true,
+          versionSelection: VersionSelectionType.UNTRACKED,
+        })
+
+        expect(
+          await screen.queryByText('Always Latest Version'),
+        ).not.toBeInTheDocument()
+      })
+
+      it('does not display Always Latest Version if versionSelection is REQUIRED', async () => {
+        mockAllIsIntersecting(true)
+
+        renderComponent({
+          selectableTypes: [EntityType.FILE],
+          visibleTypes: [EntityType.FILE],
+          selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
+          versionSelection: VersionSelectionType.REQUIRED,
         })
 
         await screen.findByRole('listbox')
@@ -729,7 +744,7 @@ describe('DetailsView tests', () => {
           selectableTypes: [EntityType.FILE],
           visibleTypes: [EntityType.FILE],
           selected: Map([[entityHeaders[0].id, NO_VERSION_NUMBER]]),
-          mustSelectVersionNumber: true,
+          versionSelection: VersionSelectionType.REQUIRED,
         })
         expect(await screen.findByRole('listbox')).toBeDefined()
 

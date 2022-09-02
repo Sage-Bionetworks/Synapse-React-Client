@@ -33,6 +33,7 @@ window.URL.createObjectURL = jest
   .fn()
   .mockReturnValue('blob:mockBlobUrlConfiguredInTestSetup')
 window.URL.revokeObjectURL = jest.fn()
+window.scrollTo = jest.fn()
 
 // crypto.getRandomValues polyfill for JSDOM
 Object.defineProperty(global.self, 'crypto', {

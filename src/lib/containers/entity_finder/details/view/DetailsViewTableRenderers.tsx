@@ -9,6 +9,7 @@ import React, { SyntheticEvent, useEffect } from 'react'
 import { Form } from 'react-bootstrap'
 import SortIcon from '../../../../assets/icons/Sort'
 import { formatDate } from '../../../../utils/functions/DateFormatter'
+import { isTableType } from '../../../../utils/functions/EntityTypeUtils'
 import {
   useGetEntity,
   useGetVersionsInfinite,
@@ -30,6 +31,7 @@ import { DatasetItemsEditorTableData } from '../../../table/datasets/DatasetItem
 import UserCard from '../../../UserCard'
 import { Checkbox } from '../../../widgets/Checkbox'
 import { NO_VERSION_NUMBER } from '../../EntityFinder'
+import { VersionSelectionType } from '../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from './DetailsView'
 
 // TODO: Consider sharing logic with SynapseTableCell.tsx
@@ -347,18 +349,59 @@ export const DatasetEditorVersionRenderer = ({
   )
 }
 
+function getLatestVersionText(
+  versionSelection: VersionSelectionType,
+  entityType: EntityType,
+) {
+  let versionDisplay = 'Latest'
+  let snapshotDisplay = ''
+  if (isTableType(entityType)) {
+    if (entityType === EntityType.DATASET) {
+      versionDisplay = 'Draft'
+      snapshotDisplay = 'Stable Version'
+    } else {
+      versionDisplay = 'Current'
+      snapshotDisplay = 'Snapshot'
+    }
+  }
+
+  if (versionSelection === VersionSelectionType.TRACKED) {
+    return `Always ${versionDisplay} Version`
+  } else if (versionSelection === VersionSelectionType.REQUIRED) {
+    return (
+      <>
+        {versionDisplay}
+
+        <IconSvg
+          options={{
+            icon: 'helpOutlineTwoTone',
+            size: '12px',
+            padding: 'left',
+            label: `No ${snapshotDisplay} exists. The ${versionDisplay} version will be referenced until a new ${snapshotDisplay} is created.`,
+          }}
+        />
+      </>
+    )
+  }
+
+  return `${versionDisplay} Version`
+}
+
 export const DetailsViewVersionRenderer = ({
   rowData,
-  mustSelectVersionNumber,
-  latestVersionText,
+  versionSelection,
   toggleSelection,
 }: EntityFinderTableCellRendererProps & {
-  mustSelectVersionNumber: boolean
-  latestVersionText: string
+  versionSelection: VersionSelectionType
   toggleSelection: (entity: Reference | Reference[]) => void
 }) => {
-  const { id, isVersionableEntity, isSelected, currentSelectedVersion } =
-    rowData
+  const {
+    id,
+    entityType,
+    isVersionableEntity,
+    isSelected,
+    currentSelectedVersion,
+  } = rowData
   const { data: versionData } = useGetVersionsInfinite(id, {
     enabled: isVersionableEntity,
     staleTime: 60 * 1000, // 60 seconds
@@ -366,10 +409,10 @@ export const DetailsViewVersionRenderer = ({
   const versions = versionData?.pages.flatMap(page => page.results) ?? []
 
   useEffect(() => {
-    // If 'mustSelectVersionNumber' is true and the user has selected this entity and hasn't selected a version, then we force a version selection
+    // If VersionSelectionType.REQUIRED, and the user has selected this entity and hasn't selected a version, then we force a version selection
     if (
       isSelected &&
-      mustSelectVersionNumber &&
+      versionSelection == VersionSelectionType.REQUIRED &&
       currentSelectedVersion === NO_VERSION_NUMBER &&
       versions.length > 0
     ) {
@@ -382,14 +425,25 @@ export const DetailsViewVersionRenderer = ({
     currentSelectedVersion,
     id,
     isSelected,
-    mustSelectVersionNumber,
+    versionSelection,
     toggleSelection,
     versions,
   ])
 
+  const showLatestVersion =
+    versionSelection === VersionSelectionType.TRACKED ||
+    (versionSelection === VersionSelectionType.UNTRACKED &&
+      isTableType(entityType))
+
+  const latestVersionText = getLatestVersionText(versionSelection, entityType)
+
+  if (!isSelected || !isVersionableEntity) {
+    return <></>
+  }
+
   return (
     <div>
-      {isSelected && versions && versions.length > 0 && (
+      {versions && versions.length > 0 ? (
         <Form.Control
           role="listbox"
           size="sm"
@@ -408,7 +462,7 @@ export const DetailsViewVersionRenderer = ({
             })
           }}
         >
-          {!mustSelectVersionNumber && (
+          {showLatestVersion && (
             <option value={NO_VERSION_NUMBER}>{latestVersionText}</option>
           )}
           {versions.map(version => {
@@ -419,6 +473,8 @@ export const DetailsViewVersionRenderer = ({
             )
           })}
         </Form.Control>
+      ) : (
+        latestVersionText
       )}
     </div>
   )

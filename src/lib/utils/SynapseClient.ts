@@ -234,6 +234,11 @@ import {
   FavoriteSortBy,
   FavoriteSortDirection,
 } from './synapseTypes/FavoriteSortBy'
+import {
+  PassingRecord,
+  Quiz,
+  QuizResponse,
+} from './synapseTypes/CertificationQuiz/Quiz'
 
 const cookies = new UniversalCookies()
 
@@ -634,12 +639,14 @@ export const getQueryTableAsyncJobResults = async (
 export const getQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
   accessToken?: string,
+  signal?: AbortSignal,
 ): Promise<QueryResultBundle> => {
   const asyncJobId = await doPost<AsyncJobId>(
     `/repo/v1/entity/${queryBundleRequest.entityId}/table/query/async/start`,
     queryBundleRequest,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
+    { signal },
   )
   return getAsyncResultBodyFromJobId(
     asyncJobId.token,
@@ -667,6 +674,7 @@ export const getQueryTableResults = async (
 export const getFullQueryTableResults = async (
   queryBundleRequest: QueryBundleRequest,
   accessToken: string | undefined = undefined,
+  signal?: AbortSignal,
 ): Promise<QueryResultBundle> => {
   let data: QueryResultBundle
   // get first page
@@ -679,7 +687,7 @@ export const getFullQueryTableResults = async (
       queryBundleRequest.partMask |
       SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
   }
-  const response = await getQueryTableResults(queryRequest, accessToken)
+  const response = await getQueryTableResults(queryRequest, accessToken, signal)
   data = response
   // we are done if we return less than a max pagesize that the backend is willing to return.
   let isDone =
@@ -691,7 +699,11 @@ export const getFullQueryTableResults = async (
     queryRequest.query.offset = offset
     // update the maxPageSize to the largest possible value after the first page is complete.  This is a no-op after the second page.
 
-    const response = await getQueryTableResults(queryRequest, accessToken)
+    const response = await getQueryTableResults(
+      queryRequest,
+      accessToken,
+      signal,
+    )
     data.queryResult!.queryResults.rows.push(
       ...response.queryResult!.queryResults.rows, // ... spread operator to push all elements on
     )
@@ -3714,6 +3726,34 @@ export function purgeFromTrashCan(
   return doPut<void>(
     TRASHCAN_PURGE(entityId),
     undefined,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Get the test to become a Certified User
+ * https://rest-docs.synapse.org/rest/GET/certifiedUserTest.html
+ */
+export function getCertifyQuiz(accessToken: string | undefined) {
+  return doGet<Quiz>(
+    '/repo/v1/certifiedUserTest',
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Submit a response to the Certified User test.
+ * https://rest-docs.synapse.org/rest/POST/certifiedUserTestResponse.html
+ */
+export function postCertifiedUserTestResponse(
+  accessToken: string | undefined,
+  quizResponse: QuizResponse,
+) {
+  return doPost<PassingRecord>(
+    '/repo/v1/certifiedUserTestResponse',
+    quizResponse,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
