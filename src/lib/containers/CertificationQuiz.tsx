@@ -103,11 +103,9 @@ const CertificationQuiz: React.FunctionComponent = () => {
             {!passingRecord.passed && (
               <div className="failBanner">Quiz Failed</div>
             )}
-          </>
-          <Typography variant="hintText">
-            Score: {passingRecord.score} / {quiz?.questions.length}
-          </Typography>
-          <>
+            <Typography variant="hintText">
+              Score: {passingRecord.score} / {quiz?.questions.length}
+            </Typography>
             {passingRecord.passed ? (
               displayToast(
                 `You passed the Synapse Certification Quiz on ${passingRecord.passedOn}`,
