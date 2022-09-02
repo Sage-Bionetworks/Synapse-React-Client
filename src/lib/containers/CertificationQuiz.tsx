@@ -99,32 +99,34 @@ const CertificationQuiz: React.FunctionComponent = () => {
     <div className="bootstrap-4-backport CertificationQuiz">
       {passingRecord && (
         <div>
-          {!passingRecord.passed && (
-            <div className="failBanner">Quiz Failed</div>
-          )}
-          <Typography variant="hintText">
-            Score: {passingRecord.score} / {quiz?.questions.length}
-          </Typography>
-          {passingRecord.passed ? (
-            displayToast(
-              `You passed the Synapse Certification Quiz on ${passingRecord.passedOn}`,
-              'success',
-            )
-          ) : (
-            <Typography variant="body1">
-              Please review the items shown in red below, and{' '}
-              <a
-                href="#"
-                onClick={e => {
-                  e.preventDefault()
-                  handleRetakeQuiz()
-                }}
-              >
-                try again
-              </a>
-              .
+          <>
+            {!passingRecord.passed && (
+              <div className="failBanner">Quiz Failed</div>
+            )}
+            <Typography variant="hintText">
+              Score: {passingRecord.score} / {quiz?.questions.length}
             </Typography>
-          )}
+            {passingRecord.passed ? (
+              displayToast(
+                `You passed the Synapse Certification Quiz on ${passingRecord.passedOn}`,
+                'success',
+              )
+            ) : (
+              <Typography variant="body1">
+                Please review the items shown in red below, and{' '}
+                <a
+                  href="#"
+                  onClick={e => {
+                    e.preventDefault()
+                    handleRetakeQuiz()
+                  }}
+                >
+                  try again
+                </a>
+                .
+              </Typography>
+            )}
+          </>
         </div>
       )}
       <div className="CertificationQuiz__container">
@@ -204,13 +206,15 @@ const CertificationQuiz: React.FunctionComponent = () => {
             ))}
           </ol>
         </form>
-        <Button
-          className="help-button"
-          variant="primary"
-          onClick={() => handleSubmit()}
-        >
-          Submit
-        </Button>
+        {!passingRecord && (
+          <Button
+            className="help-button"
+            variant="primary"
+            onClick={() => handleSubmit()}
+          >
+            Submit
+          </Button>
+        )}
       </div>
     </div>
   )
