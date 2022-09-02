@@ -74,7 +74,7 @@ describe('EntityIDColumnCopyIcon tests', () => {
 
       renderComponent()
 
-      userEvent.click(await screen.findByRole('button'))
+      await userEvent.click(await screen.findByRole('button'))
 
       await waitFor(() =>
         expect(SynapseClient.getFullQueryTableResults).toBeCalled(),

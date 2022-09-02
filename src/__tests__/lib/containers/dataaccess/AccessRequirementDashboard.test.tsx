@@ -76,7 +76,9 @@ describe('AccessRequirementDashboard tests', () => {
 
   it('Updates the passed props and URLSearchParams when updating nameContains', async () => {
     const { history } = renderComponent()
-    const nameContainsInput = (await screen.findAllByRole('textbox'))[0]
+    const nameContainsInput = await screen.findByLabelText(
+      'Filter by Access Requirement Name',
+    )
     await userEvent.type(nameContainsInput, NAME_CONTAINS_PREFIX)
 
     await waitFor(() =>
@@ -96,7 +98,9 @@ describe('AccessRequirementDashboard tests', () => {
 
   it('Updates the URL search parameters when updating relatedProjectId', async () => {
     const { history } = renderComponent()
-    const relatedProjectInput = (await screen.findAllByRole('textbox'))[1]
+    const relatedProjectInput = await screen.findByLabelText(
+      'Filter by Project',
+    )
     await userEvent.type(relatedProjectInput, RELATED_PROJECT_ID)
 
     await waitFor(() =>
@@ -114,9 +118,10 @@ describe('AccessRequirementDashboard tests', () => {
     )
   })
 
-  it.skip('Updates the URL search parameters when updating reviewerId', async () => {
+  it('Updates the URL search parameters when updating reviewerId', async () => {
     const { history } = renderComponent()
-    const reviewerInput = (await screen.findAllByRole('textbox'))[2]
+    const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
+    await userEvent.click(reviewerInput)
     await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
