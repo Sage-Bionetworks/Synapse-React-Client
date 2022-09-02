@@ -1,11 +1,11 @@
-import { render, screen } from '@testing-library/react'
-import * as UpSetJsModule from '@upsetjs/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import UpsetPlot, { UpsetPlotProps } from '../../../lib/containers/UpsetPlot'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseClient } from '../../../lib/utils'
 import { QueryResultBundle } from '../../../lib/utils/synapseTypes/'
 import syn16787123Json from '../../../mocks/query/syn16787123'
+import * as UpSetJsModule from '@upsetjs/react'
 
 const data = syn16787123Json as QueryResultBundle
 
@@ -34,7 +34,12 @@ describe('UpsetPlot', () => {
 
   it('displays plot', async () => {
     renderComponent(props)
-    await screen.findByRole('figure')
-    expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalled()
+    await waitFor(
+      () => {
+        screen.getByRole('figure')
+        expect(SynapseClient.getFullQueryTableResults).toHaveBeenCalled()
+      },
+      { timeout: 10000 },
+    )
   })
 })

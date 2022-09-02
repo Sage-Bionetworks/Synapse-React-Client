@@ -97,14 +97,14 @@ export const Tick: React.FunctionComponent<ITickProps> = ({
 
 /*************  RANGE SLIDER COMPONENT ****************/
 
-export type RangeSliderProps = {
+export type RangeSliderProps = React.PropsWithChildren<{
   domain: string[]
   initialValues: RangeValues
   step: number
   doUpdateOnApply?: boolean
   maxTickCount?: number
   onChange: (values: RangeValues) => void
-}
+}>
 
 export type RangeSliderState = {
   values: readonly number[]
@@ -118,10 +118,10 @@ function getInitialValues(initialValues: RangeValues, domain: string[]) {
   return result
 }
 
-export const RangeSlider: React.FunctionComponent<RangeSliderProps> = ({
+export const RangeSlider = ({
   doUpdateOnApply = true,
   ...props
-}) => {
+}: RangeSliderProps) => {
   const stringArrToNumArr = (inputArr: string[]) =>
     inputArr.map(value => Number(value))
 

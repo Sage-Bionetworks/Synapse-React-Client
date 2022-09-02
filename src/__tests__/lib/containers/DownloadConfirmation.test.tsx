@@ -5,15 +5,6 @@ import {
   DownloadConfirmation,
   DownloadConfirmationProps,
 } from '../../../lib/containers/download_list/DownloadConfirmation'
-import {
-  QueryVisualizationContextProvider,
-  QueryVisualizationContextType,
-} from '../../../lib/containers/QueryVisualizationWrapper'
-import {
-  QueryWrapper,
-  QueryContextProvider,
-  QueryContextType,
-} from '../../../lib/containers/QueryWrapper'
 import { displayToast } from '../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '../../../lib/utils/SynapseContext'
@@ -22,11 +13,9 @@ import { AddToDownloadListRequest } from '../../../lib/utils/synapseTypes/Downlo
 import { AddToDownloadListResponse } from '../../../lib/utils/synapseTypes/DownloadListV2/AddToDownloadListResponse'
 import { FilesStatisticsResponse } from '../../../lib/utils/synapseTypes/DownloadListV2/QueryResponseDetails'
 import { MOCK_CONTEXT_VALUE } from '../../../mocks/MockSynapseContext'
+import { SynapseClient } from '../../../lib/utils'
+import * as TestDownloadSpeed from '../../../lib/utils/functions/testDownloadSpeed'
 
-let getDownloadListStatisticsResultsFn: jest.Mock
-let addFilesToDownloadRequestFn: jest.Mock
-const SynapseClient = require('../../../lib/utils/SynapseClient')
-const TestDownloadSpeed = require('../../../lib/utils/functions/testDownloadSpeed')
 const mockClose = jest.fn()
 jest.mock('../../../lib/containers/ToastMessage', () => {
   return { displayToast: jest.fn() }
@@ -93,19 +82,6 @@ function renderComponent(
 }
 
 describe('DownloadConfirmation', () => {
-  addFilesToDownloadRequestFn = SynapseClient.addFilesToDownloadListV2 = jest
-    .fn()
-    .mockResolvedValue(addFilesToDownloadListResponse)
-
-  TestDownloadSpeed.testDownloadSpeed = jest.fn().mockResolvedValue(55)
-
-  getDownloadListStatisticsResultsFn = SynapseClient.getDownloadListStatistics =
-    jest.fn().mockResolvedValue(filesStatisticsResponse)
-
-  SynapseClient.getQueryTableResults = jest
-    .fn()
-    .mockResolvedValue(queryBundleResponse)
-
   const props: DownloadConfirmationProps = {
     fnClose: mockClose,
     topLevelControlsState: {
@@ -116,6 +92,20 @@ describe('DownloadConfirmation', () => {
   }
 
   beforeEach(() => {
+    jest
+      .spyOn(SynapseClient, 'addFilesToDownloadListV2')
+      .mockResolvedValue(addFilesToDownloadListResponse)
+
+    jest.spyOn(TestDownloadSpeed, 'testDownloadSpeed').mockResolvedValue(55)
+
+    jest
+      .spyOn(SynapseClient, 'getDownloadListStatistics')
+      .mockResolvedValue(filesStatisticsResponse)
+
+    jest
+      .spyOn(SynapseClient, 'getQueryTableResults')
+      .mockResolvedValue(queryBundleResponse)
+
     jest.clearAllMocks()
   })
 
@@ -125,9 +115,9 @@ describe('DownloadConfirmation', () => {
     screen.getByRole('button', { name: 'Cancel' })
   })
 
-  it("should call the 'close' function on cancel", () => {
+  it("should call the 'close' function on cancel", async () => {
     renderComponent(props)
-    userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(props.fnClose).toHaveBeenCalled()
   })
 
@@ -139,22 +129,29 @@ describe('DownloadConfirmation', () => {
   })
 
   it('should call addFilesToDownload with correct params and show correct text while processing with no buttons', async () => {
+    // Mock the function with a promise that never resolves.
+    jest
+      .spyOn(SynapseClient, 'addFilesToDownloadListV2')
+      .mockReturnValue(new Promise(() => {}))
+
     renderComponent(props)
     const addButton = await screen.findByRole('button', { name: 'Add' })
     //click to add
-    userEvent.click(addButton)
+    await userEvent.click(addButton)
+    await screen.findByText('Adding Files To List')
+    await waitFor(() => {
+      expect(SynapseClient.addFilesToDownloadListV2).toHaveBeenCalledWith(
+        addFilesToDownloadListRequest,
+        MOCK_CONTEXT_VALUE.accessToken,
+      )
+    })
 
-    expect(addFilesToDownloadRequestFn).toHaveBeenCalledWith(
-      addFilesToDownloadListRequest,
-      MOCK_CONTEXT_VALUE.accessToken,
-    )
-    screen.getByText('Adding Files To List')
     expect(screen.queryAllByRole('button')).toHaveLength(0)
   })
 
   it("should show the correct 'view downloads' link when done adding", async () => {
     renderComponent(props)
-    userEvent.click(await screen.findByRole('button', { name: 'Add' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith(
@@ -170,7 +167,7 @@ describe('DownloadConfirmation', () => {
   })
 
   it('displays a warning when files are already in the download cart', async () => {
-    getDownloadListStatisticsResultsFn.mockResolvedValue({
+    jest.spyOn(SynapseClient, 'getDownloadListStatistics').mockResolvedValue({
       ...filesStatisticsResponse,
       totalNumberOfFiles: 1,
     })

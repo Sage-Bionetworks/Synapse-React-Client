@@ -68,13 +68,13 @@ describe('FullTextSearch tests', () => {
     component.container.querySelector('.MuiCollapse-hidden')
   })
 
-  it('adds the appropriate QueryFilter when searching', () => {
+  it('adds the appropriate QueryFilter when searching', async () => {
     renderComponent(queryContext, queryVisualizationContext)
 
     const searchBox = screen.getByRole('textbox')
 
     const searchQuery = 'NF1'
-    userEvent.type(searchBox, searchQuery + '{enter}')
+    await userEvent.type(searchBox, searchQuery + '{enter}')
 
     expect(mockExecuteQueryRequest).toBeCalledWith(
       expect.objectContaining({
@@ -91,13 +91,13 @@ describe('FullTextSearch tests', () => {
     )
   })
 
-  it('enforces a minimum character requirement', () => {
+  it('enforces a minimum character requirement', async () => {
     renderComponent(queryContext, queryVisualizationContext)
 
     const searchBox = screen.getByRole('textbox')
 
     const searchQuery = 'NF'
-    userEvent.type(searchBox, searchQuery + '{enter}')
+    await userEvent.type(searchBox, searchQuery + '{enter}')
 
     expect(mockExecuteQueryRequest).not.toBeCalled()
   })

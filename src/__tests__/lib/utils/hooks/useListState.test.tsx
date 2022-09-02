@@ -47,7 +47,7 @@ describe('test useListState()', () => {
       initialList.length,
     )
 
-    userEvent.click(screen.getByText('add value'))
+    await userEvent.click(screen.getByText('add value'))
 
     expect(await screen.findAllByRole('listitem')).toHaveLength(
       initialList.length + 1,
@@ -63,7 +63,7 @@ describe('test useListState()', () => {
       initialList.length,
     )
 
-    userEvent.click(screen.getByText('remove + asdf'))
+    await userEvent.click(screen.getByText('remove + asdf'))
 
     expect(await screen.findAllByRole('listitem')).toHaveLength(
       initialList.length - 1,
@@ -83,14 +83,15 @@ describe('test useListState()', () => {
 
     const getInput = () => screen.getAllByRole<HTMLInputElement>('textbox')[1]
 
-    userEvent.clear(getInput())
+    await userEvent.clear(getInput())
 
     expect(await screen.findAllByRole('listitem')).toHaveLength(
       initialList.length,
     )
     await waitFor(() => expect(getInput().value).toBe(''))
 
-    userEvent.paste(getInput(), 'changed value')
+    await userEvent.click(getInput())
+    await userEvent.paste('changed value')
 
     expect(await screen.findAllByRole('listitem')).toHaveLength(
       initialList.length,

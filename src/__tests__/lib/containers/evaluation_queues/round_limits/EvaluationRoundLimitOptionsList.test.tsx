@@ -93,7 +93,7 @@ describe('test EvaluationRoundLimitOptionsList', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('test "remove" Button click', () => {
+  it('test "remove" Button click', async () => {
     const { container } = renderComponent(limitInputs)
     const gridDiv = container.querySelector('.advanced-limits-grid')!
 
@@ -105,13 +105,13 @@ describe('test EvaluationRoundLimitOptionsList', () => {
     const removeButtons = screen.getAllByRole('button', { name: 'Remove' })
 
     expect(removeButtons).toHaveLength(2)
-    userEvent.click(removeButtons[0])
+    await userEvent.click(removeButtons[0])
 
     expect(mockHandleDeleteLimit).toBeCalledWith(0)
     expect(mockGeneratedFunction).toBeCalled()
   })
 
-  it('test "add" Button click', () => {
+  it('test "add" Button click', async () => {
     const { container } = renderComponent(limitInputs)
     const gridDiv = container.querySelector('.advanced-limits-grid')!
 
@@ -120,7 +120,7 @@ describe('test EvaluationRoundLimitOptionsList', () => {
     // and a single "add" button for the last element
     expect(gridDiv.children).toHaveLength(5)
 
-    userEvent.click(screen.getByRole('button', { name: 'Add' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }))
 
     //a unused limit type was chosen and added
     expect(mockOnAddNewLimit).toBeCalledWith({
@@ -131,7 +131,7 @@ describe('test EvaluationRoundLimitOptionsList', () => {
     expect(mockGeneratedFunction).not.toBeCalled()
   })
 
-  it('test EvaluationRoundLimitOptions change', () => {
+  it('test EvaluationRoundLimitOptions change', async () => {
     const { container } = renderComponent(limitInputs)
     const gridDiv = container.querySelector('.advanced-limits-grid')!
 
@@ -148,7 +148,8 @@ describe('test EvaluationRoundLimitOptionsList', () => {
     expect(roundLimitOptions).toHaveLength(2)
 
     const input = screen.getAllByRole('textbox')[1]
-    userEvent.paste(input, JSON.stringify(changedLimit))
+    await userEvent.click(input)
+    await userEvent.paste(JSON.stringify(changedLimit))
 
     //a unused limit type was chosen and added
     expect(mockHandleChange).toBeCalledWith(1)

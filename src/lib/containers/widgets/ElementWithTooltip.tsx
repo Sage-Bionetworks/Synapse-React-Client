@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react'
+import React from 'react'
 import { TOOLTIP_DELAY_SHOW } from '../table/SynapseTableConstants'
 import { Dropdown } from 'react-bootstrap'
 import { Icon } from '../row_renderers/utils'
@@ -25,18 +25,18 @@ export type TooltipVisualProps = {
  *  If there are no children and callback Fn is not supplied it is assumed to be a a dropdown trigger
  */
 
-type ElementWithTooltipProps = {
+type ElementWithTooltipProps = React.PropsWithChildren<{
   image?: IconSvgOptions | CustomImageProps
   imageColor?: string
   idForToolTip: string
   tooltipText: string
   callbackFn?: () => void
   className?: string
-  tooltipVisualProps?: TooltipVisualProps
+  tooltipVisualProps?: Partial<TooltipVisualProps>
   darkTheme?: boolean
   size?: string
   icon?: string
-}
+}>
 
 function getTooltipTriggerContents(
   image: IconSvgOptions | CustomImageProps,
@@ -50,7 +50,7 @@ function getTooltipTriggerContents(
   }
 }
 
-export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
+export const ElementWithTooltip = ({
   image,
   idForToolTip,
   callbackFn,
@@ -62,7 +62,7 @@ export const ElementWithTooltip: FunctionComponent<ElementWithTooltipProps> = ({
   darkTheme,
   size,
   icon,
-}) => {
+}: ElementWithTooltipProps) => {
   const { place } = tooltipVisualProps
   const iconComponent = icon ? <Icon type={icon}></Icon> : undefined
   const tooltipTriggerContents = iconComponent

@@ -43,6 +43,7 @@ class SynapseImage extends React.Component<
   }
 
   static contextType = SynapseContext
+  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
 
   public getEntity() {
     const { synapseId } = this.props

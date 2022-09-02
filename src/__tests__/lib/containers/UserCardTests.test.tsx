@@ -198,6 +198,7 @@ describe('it creates the correct UI for the small card', () => {
 
   it('shows a medium user card when mouse enters', async () => {
     jest.useFakeTimers()
+    const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
 
     renderSmallUserCard(props)
 
@@ -213,7 +214,7 @@ describe('it creates the correct UI for the small card', () => {
     ).not.toBeInTheDocument()
 
     // Hover over the username
-    userEvent.hover(smallUserCard)
+    await user.hover(smallUserCard)
     jest.advanceTimersByTime(1000)
 
     // The card should appear, which would let us see first/last name
@@ -222,7 +223,7 @@ describe('it creates the correct UI for the small card', () => {
     )
 
     // Unhover and confirm that the card disappears (we will no longer see a full name anywhere)
-    userEvent.unhover(smallUserCard)
+    await user.unhover(smallUserCard)
     jest.advanceTimersByTime(1000)
 
     await waitFor(() =>
@@ -302,7 +303,7 @@ describe('it creates the correct UI for the medium card', () => {
     ] as MenuAction[]
     renderMediumUserCard({ ...props, menuActions })
     await waitFor(() => screen.getByText('ORCID', { exact: false }))
-    userEvent.click(screen.getByRole('menu'))
+    await userEvent.click(screen.getByRole('menu'))
     expect(screen.getAllByRole('menuitem')).toHaveLength(1)
   })
 })

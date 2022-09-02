@@ -35,12 +35,12 @@ describe('MarkdownPopover tests', () => {
     ).not.toBeInTheDocument()
 
     // Click to show
-    userEvent.click(showPopoverButton)
+    await userEvent.click(showPopoverButton)
 
     await screen.findByText(markdownText)
 
     // Click to hide
-    userEvent.click(showPopoverButton)
+    await userEvent.click(showPopoverButton)
 
     // We hide using SCSS that @testing-library doesn't know about.
     // Get the DOM node and check for the class that applies "display: none"

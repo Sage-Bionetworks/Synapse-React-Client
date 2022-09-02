@@ -73,14 +73,14 @@ describe('NavButtons tests', () => {
       ).toHaveLength(0)
     })
 
-    it('should callback with correct params', () => {
+    it('should callback with correct params', async () => {
       const spy = jest.spyOn(mock, 'onNavActionFn')
       renderNavButtonsComponent(props)
       const buttons = screen.getAllByRole('button')
       const prevButton = buttons.find(button =>
         button.classList.contains('prev'),
       )
-      userEvent.click(prevButton!)
+      await userEvent.click(prevButton!)
       expect(spy).toHaveBeenCalledWith(NavActionEnum.PREVIOUS)
     })
   })
@@ -106,17 +106,17 @@ describe('NavButtons tests', () => {
       screen.getByRole('button', { name: 'SAVE' })
     })
 
-    test('should callback with correct params', () => {
+    test('should callback with correct params', async () => {
       const spy = jest.spyOn(mock, 'onNavActionFn')
       renderNavButtonsComponent(props)
       const buttons = screen.getAllByRole('button')
       const nextButton = buttons.find(button =>
         button.classList.contains('next'),
       )
-      userEvent.click(nextButton!)
+      await userEvent.click(nextButton!)
       expect(spy).toHaveBeenCalledWith(NavActionEnum.NEXT)
       const saveButton = screen.getByRole('button', { name: 'SAVE' })
-      userEvent.click(saveButton)
+      await userEvent.click(saveButton)
       expect(spy).toHaveBeenCalledWith(NavActionEnum.SAVE)
     })
   })
@@ -135,12 +135,12 @@ describe('NextLink tests', () => {
     within(navLink).getByText('Acute Dosing')
   })
 
-  test('should call calback function with appropriate params', () => {
+  test('should call calback function with appropriate params', async () => {
     const spy = jest.spyOn(mock, 'onNavActionFn')
     const { container } = renderNextStepLinkComponent(props)
     const link = container.querySelector('span.nav-link a')!
 
-    userEvent.click(link)
+    await userEvent.click(link)
     expect(spy).toHaveBeenCalledWith(stepsArray[2])
   })
 })

@@ -49,13 +49,13 @@ describe('StepsSideNav', () => {
     expect(icons[3].getAttribute('data-svg')).toEqual('block')
   })
 
-  test('should call callback function with appropriate params', () => {
+  test('should call callback function with appropriate params', async () => {
     const spy = jest.spyOn(mock, 'onStepChangeFn')
     renderComponent(props)
     //steps in progress will not have links so link#2 corresponds to step#3
     const button = screen.getAllByRole('button')[2]
     within(button).getByText(stepsArray[3].title)
-    userEvent.click(button)
+    await userEvent.click(button)
     expect(spy).toHaveBeenCalledWith(stepsArray[3])
   })
 

@@ -18,18 +18,7 @@
 />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://unpkg.com/sql-parser@0.5.0/browser/sql-parser.js"></script>
-<script src="https://unpkg.com/@sage-bionetworks/rjsf-core@3.1.4/dist/react-jsonschema-form.js"></script>
-<script defer>
-  // The RJSF UMD global should be a function that returns a React component, but it's an object that React refuses to render.
-  // The function is actually stored in the .default property, so replace the global with the function.
-  // Additionally, apply the rest of the properties of the global to the function
-  JSONSchemaFormReactComponent = JSONSchemaForm.default
-  delete JSONSchemaForm.default
-  window.JSONSchemaForm = Object.assign(
-    JSONSchemaFormReactComponent,
-    JSONSchemaForm,
-  )
-</script>
+
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
   integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
@@ -74,13 +63,6 @@
 <script
   crossorigin
   src="https://unpkg.com/react-plotly.js@1.0.2/dist/create-plotly-component.js"
-></script>
-
-<!-- include twitter widgets if using TwitterFeed component -->
-<script
-  async
-  src="https://platform.twitter.com/widgets.js"
-  charset="utf-8"
 ></script>
 
 <script>

@@ -1,12 +1,7 @@
 import { Widget, WidgetProps } from '@sage-bionetworks/rjsf-core'
 import React from 'react'
 import Creatable from 'react-select/creatable'
-import {
-  components,
-  ControlProps,
-  OptionTypeBase,
-  GroupTypeBase,
-} from 'react-select'
+import { components, ControlProps, GroupBase } from 'react-select'
 
 // Some types for rjsf and react-select don't seem to be accurate or useful, so we cast to this object when we're dealing with enumeration options
 type EnumOption = { value: string; label: string }
@@ -17,7 +12,7 @@ type EnumOption = { value: string; label: string }
 const Control = ({
   children,
   ...rest
-}: ControlProps<OptionTypeBase, boolean, GroupTypeBase<OptionTypeBase>>) => {
+}: ControlProps<any, boolean, GroupBase<any>>) => {
   return (
     <components.Control {...rest} className="form-control">
       {children}
@@ -74,10 +69,10 @@ export const CustomSelectWidget: Widget = (props: WidgetProps) => {
     <Creatable
       className="react-select-container"
       inputId={id}
-      multiple={multiple}
+      isMulti={multiple}
       placeholder={placeholder}
       value={findValueOption(value, enumOptions)}
-      required={required}
+      aria-required={required}
       isDisabled={disabled || readonly}
       autoFocus={autofocus}
       onBlur={onBlur && (() => onBlur(id, value?.value))}

@@ -73,14 +73,14 @@ describe('CertificationQuiz tests', () => {
   it('Open new tab when clicking help button', async () => {
     renderComponent()
     const helpButton = await screen.findByRole('button', { name: 'Help' })
-    userEvent.click(helpButton)
+    await userEvent.click(helpButton)
     expect(window.open).toHaveBeenCalledWith(gettingStartedUrl, '_blank')
   })
 
   it('Submit quiz when not all questions are answered', async () => {
     renderComponent()
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
-    userEvent.click(submitButton)
+    await userEvent.click(submitButton)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith(
@@ -107,13 +107,13 @@ describe('CertificationQuiz tests', () => {
     expect(radio1).not.toBeChecked()
     expect(radio2).not.toBeChecked()
 
-    userEvent.click(radio1)
-    userEvent.click(radio2)
+    await userEvent.click(radio1)
+    await userEvent.click(radio2)
 
     expect(radio1).toBeChecked()
     expect(radio2).toBeChecked()
 
-    userEvent.click(submitButton)
+    await userEvent.click(submitButton)
 
     await screen.findByText('Quiz Failed')
 
@@ -121,7 +121,7 @@ describe('CertificationQuiz tests', () => {
 
     // Test retaking test
     const retakeLink = await screen.findByRole('link', { name: 'try again' })
-    userEvent.click(retakeLink)
+    await userEvent.click(retakeLink)
 
     expect(radio1).not.toBeChecked()
     expect(radio2).not.toBeChecked()
@@ -144,13 +144,13 @@ describe('CertificationQuiz tests', () => {
 
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
 
-    userEvent.click(radio1)
-    userEvent.click(radio2)
+    await userEvent.click(radio1)
+    await userEvent.click(radio2)
 
     expect(radio1).toBeChecked()
     expect(radio2).toBeChecked()
 
-    userEvent.click(submitButton)
+    await userEvent.click(submitButton)
 
     await waitFor(() =>
       expect(mockToastFn).toBeCalledWith(

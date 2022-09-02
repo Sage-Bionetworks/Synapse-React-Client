@@ -26,16 +26,17 @@ export const QueryVisualizationContext = createContext<
   QueryVisualizationContextType | undefined
 >(undefined)
 
-export type QueryVisualizationContextProviderProps = {
+export type QueryVisualizationContextProviderProps = React.PropsWithChildren<{
   queryVisualizationContext: QueryVisualizationContextType
-}
+}>
 
 /**
  * Provides fields and functions related to visualizing a Synapse table query. For actual query data, see QueryContextProvider.
  */
-export const QueryVisualizationContextProvider: React.FunctionComponent<
-  QueryVisualizationContextProviderProps
-> = ({ children, queryVisualizationContext }) => {
+export const QueryVisualizationContextProvider = ({
+  children,
+  queryVisualizationContext,
+}: QueryVisualizationContextProviderProps) => {
   return (
     <QueryVisualizationContext.Provider value={queryVisualizationContext}>
       {children}

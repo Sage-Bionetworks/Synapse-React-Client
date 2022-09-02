@@ -42,6 +42,7 @@ export default class ModalDownload extends React.Component<
   ModalDownloadState
 > {
   static contextType = SynapseContext
+  declare context: NonNullable<React.ContextType<typeof SynapseContext>>
 
   constructor(props: ModalDownloadProps) {
     super(props)

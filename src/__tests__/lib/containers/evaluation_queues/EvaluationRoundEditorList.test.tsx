@@ -114,7 +114,7 @@ describe('test EvaluationRoundEditorList', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
-  it('add round button', () => {
+  it('add round button', async () => {
     render(<EvaluationRoundEditorList evaluationId={evaluationId} />, {
       wrapper: createWrapper(),
     })
@@ -122,7 +122,7 @@ describe('test EvaluationRoundEditorList', () => {
     expect(screen.getAllByRole('form')).toHaveLength(3)
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
-    userEvent.click(screen.getByRole('button', { name: 'Add Round' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add Round' }))
 
     expect(screen.getAllByRole('form')).toHaveLength(4)
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()

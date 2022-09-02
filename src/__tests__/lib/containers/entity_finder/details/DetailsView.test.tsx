@@ -283,42 +283,42 @@ describe('DetailsView tests', () => {
   })
 
   describe('Sort functionality', () => {
-    it('requests to sort descending on new SortBy', () => {
+    it('requests to sort descending on new SortBy', async () => {
       renderComponent({
         sort: { sortBy: SortBy.CREATED_ON, sortDirection: Direction.ASC },
         setSort: mockSetSort,
       })
 
-      userEvent.click(screen.getAllByRole('button')[0])
+      await userEvent.click(screen.getAllByRole('button')[0])
 
       expect(mockSetSort).toBeCalledWith(SortBy.NAME, Direction.ASC)
     })
 
-    it('toggles from descending to ascending on same SortBy', () => {
+    it('toggles from descending to ascending on same SortBy', async () => {
       renderComponent({
         sort: { sortBy: SortBy.CREATED_ON, sortDirection: Direction.ASC },
         setSort: mockSetSort,
       })
 
-      userEvent.click(screen.getAllByRole('button')[2])
+      await userEvent.click(screen.getAllByRole('button')[2])
 
       expect(mockSetSort).toBeCalledWith(SortBy.CREATED_ON, Direction.DESC)
     })
 
-    it('toggles from ascending to descending on same SortBy', () => {
+    it('toggles from ascending to descending on same SortBy', async () => {
       renderComponent({
         sort: { sortBy: SortBy.MODIFIED_ON, sortDirection: Direction.DESC },
         setSort: mockSetSort,
       })
 
-      userEvent.click(screen.getAllByRole('button')[3])
+      await userEvent.click(screen.getAllByRole('button')[3])
 
       expect(mockSetSort).toBeCalledWith(SortBy.MODIFIED_ON, Direction.ASC)
     })
   })
 
   describe('select all tests', () => {
-    it('Select All checkbox will render checked', async () => {
+    it('Select All checkbox will render checked', () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: true,
@@ -328,7 +328,7 @@ describe('DetailsView tests', () => {
       })
       screen.getByRole('checkbox', { checked: true })
     })
-    it('Select All checkbox will render unchecked', async () => {
+    it('Select All checkbox will render unchecked', () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
@@ -341,7 +341,7 @@ describe('DetailsView tests', () => {
       )
     })
 
-    it('Select All checkbox will render disabled if there are no selectable entities', async () => {
+    it('Select All checkbox will render disabled if there are no selectable entities', () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
@@ -362,7 +362,7 @@ describe('DetailsView tests', () => {
       })
 
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(screen.getByTestId('Select All'))
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
           { targetId: entityHeaders[0].id, targetVersionNumber: undefined },
@@ -381,7 +381,7 @@ describe('DetailsView tests', () => {
       })
 
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(screen.getByTestId('Select All'))
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
           {
@@ -404,7 +404,7 @@ describe('DetailsView tests', () => {
       })
 
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(screen.getByTestId('Select All'))
       // Only the project is toggled because the file is already selected
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -426,7 +426,7 @@ describe('DetailsView tests', () => {
       })
 
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(screen.getByTestId('Select All'))
       // Both items are unselected and should be deselected, so they are both toggled
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -451,7 +451,7 @@ describe('DetailsView tests', () => {
       })
 
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(screen.getByTestId('Select All'))
       // Only the file is toggled because the project is unselectable
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -473,7 +473,7 @@ describe('DetailsView tests', () => {
       })
 
       expect(mockToggleSelection).not.toHaveBeenCalled()
-      userEvent.click(screen.getByTestId('Select All'))
+      await userEvent.click(screen.getByTestId('Select All'))
       // Only the file is toggled because the project is hidden
       await waitFor(() =>
         expect(mockToggleSelection).toHaveBeenCalledWith([
@@ -487,10 +487,10 @@ describe('DetailsView tests', () => {
   })
 
   describe('row level tests', () => {
-    it('toggles selection on click', () => {
+    it('toggles selection on click', async () => {
       renderComponent()
 
-      userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
+      await userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[0].id,
@@ -498,12 +498,12 @@ describe('DetailsView tests', () => {
       })
     })
 
-    it('toggles selection with version when versionSelection is REQUIRED', () => {
+    it('toggles selection with version when versionSelection is REQUIRED', async () => {
       renderComponent({
         versionSelection: VersionSelectionType.REQUIRED,
       })
 
-      userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
+      await userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[0].id,
@@ -511,13 +511,13 @@ describe('DetailsView tests', () => {
       })
     })
 
-    it('versionSelection is REQUIRED does not affect toggle for non-versionable entities', () => {
+    it('versionSelection is REQUIRED does not affect toggle for non-versionable entities', async () => {
       renderComponent({
         versionSelection: VersionSelectionType.REQUIRED,
       })
 
       // Click the project--projects don't have versions
-      userEvent.click(screen.getAllByRole('row')[PROJECT_INDEX])
+      await userEvent.click(screen.getAllByRole('row')[PROJECT_INDEX])
 
       expect(mockToggleSelection).toBeCalledWith({
         targetId: entityHeaders[1].id,
@@ -525,19 +525,19 @@ describe('DetailsView tests', () => {
       })
     })
 
-    it('does not toggle when clicked if disabled', () => {
+    it('does not toggle when clicked if disabled', async () => {
       renderComponent({
         selectableTypes: [EntityType.PROJECT],
         visibleTypes: [EntityType.PROJECT, EntityType.FILE],
       })
 
       // Per props, File is a disabled type
-      userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
+      await userEvent.click(screen.getAllByRole('row')[FILE_INDEX])
 
       expect(mockToggleSelection).not.toBeCalled()
     })
 
-    it('renders a link to update the currentContainer for container entities', () => {
+    it('renders a link to update the currentContainer for container entities', async () => {
       renderComponent({
         selectableTypes: [EntityType.PROJECT, EntityType.FILE],
         visibleTypes: [EntityType.PROJECT, EntityType.FILE],
@@ -545,7 +545,7 @@ describe('DetailsView tests', () => {
 
       // One link to navigate to the project should be visible (you can't navigate inside of a folder)
       expect(screen.queryAllByRole('link')).toHaveLength(1)
-      userEvent.click(
+      await userEvent.click(
         screen.getByRole('link', { name: entityHeaders[PROJECT_INDEX].name }),
       )
 
@@ -666,14 +666,14 @@ describe('DetailsView tests', () => {
         expect(screen.getAllByRole('option').length).toBe(3)
 
         // Select 'always latest'
-        userEvent.selectOptions(screen.getByRole('listbox'), '-1')
+        await userEvent.selectOptions(screen.getByRole('listbox'), '-1')
         expect(mockToggleSelection).toBeCalledWith({
           targetId: entityHeaders[0].id,
           targetVersionNumber: undefined,
         })
 
         // Select v1
-        userEvent.selectOptions(
+        await userEvent.selectOptions(
           screen.getByRole('listbox'),
           versionResult.results[0].versionNumber.toString(),
         )
@@ -683,7 +683,7 @@ describe('DetailsView tests', () => {
         })
 
         // Select v2
-        userEvent.selectOptions(
+        await userEvent.selectOptions(
           screen.getByRole('listbox'),
           versionResult.results[1].versionNumber.toString(),
         )

@@ -89,7 +89,7 @@ describe('oAuthManagement tests', () => {
       screen.getByRole('button', { name: 'Load more' }),
     ).toBeInTheDocument()
 
-    userEvent.click(loadButton!)
+    await userEvent.click(loadButton!)
 
     await waitFor(() =>
       expect(screen.getAllByRole('row')).toHaveLength(

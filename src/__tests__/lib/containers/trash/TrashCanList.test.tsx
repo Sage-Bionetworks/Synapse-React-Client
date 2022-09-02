@@ -127,7 +127,7 @@ describe('TrashCanList', () => {
     // Click the Load More button
     const loadMoreButton = screen.getByRole('button', { name: 'Load More' })
     expect(loadMoreButton).toBeEnabled()
-    userEvent.click(loadMoreButton)
+    await userEvent.click(loadMoreButton)
 
     // The table body should contain all results (two rows, 1 per page)
     await waitFor(() => {
@@ -148,7 +148,7 @@ describe('TrashCanList', () => {
     let rows = []
     // Click the Load More button
     const loadMoreButton = screen.getByRole('button', { name: 'Load More' })
-    userEvent.click(loadMoreButton)
+    await userEvent.click(loadMoreButton)
 
     // Wait for all results to be loaded
     await waitFor(() => {
@@ -165,7 +165,7 @@ describe('TrashCanList', () => {
     const selectAllCheckbox = screen.getByRole('checkbox', {
       name: 'Select All',
     })
-    userEvent.click(selectAllCheckbox)
+    await userEvent.click(selectAllCheckbox)
 
     // All checkboxes should now be checked
     checkboxes.forEach(checkbox => {
@@ -180,7 +180,7 @@ describe('TrashCanList', () => {
       name: 'Restore',
     })
 
-    userEvent.click(restoreButton)
+    await userEvent.click(restoreButton)
 
     await waitFor(() =>
       expect(onServerReceivedRestore).toHaveBeenCalledWith(
@@ -196,7 +196,7 @@ describe('TrashCanList', () => {
     let rows = []
     // Click the Load More button
     const loadMoreButton = screen.getByRole('button', { name: 'Load More' })
-    userEvent.click(loadMoreButton)
+    await userEvent.click(loadMoreButton)
 
     // Wait for all results to be loaded
     await waitFor(() => {
@@ -208,13 +208,13 @@ describe('TrashCanList', () => {
     const selectAllCheckbox = screen.getByRole('checkbox', {
       name: 'Select All',
     })
-    userEvent.click(selectAllCheckbox)
+    await userEvent.click(selectAllCheckbox)
 
     // Click "Restore Selected"
     const restoreButton = screen.getByRole('button', {
       name: 'Restore Selected',
     })
-    userEvent.click(restoreButton)
+    await userEvent.click(restoreButton)
 
     // Restore should have been called for each item
     await waitFor(() => {
@@ -257,7 +257,7 @@ describe('TrashCanList', () => {
     let rows = []
     // Click the Load More button
     const loadMoreButton = screen.getByRole('button', { name: 'Load More' })
-    userEvent.click(loadMoreButton)
+    await userEvent.click(loadMoreButton)
 
     // Wait for all results to be loaded
     await waitFor(() => {
@@ -269,13 +269,13 @@ describe('TrashCanList', () => {
     const selectAllCheckbox = screen.getByRole('checkbox', {
       name: 'Select All',
     })
-    userEvent.click(selectAllCheckbox)
+    await userEvent.click(selectAllCheckbox)
 
     // Click "Restore Selected"
     const restoreButton = screen.getByRole('button', {
       name: 'Restore Selected',
     })
-    userEvent.click(restoreButton)
+    await userEvent.click(restoreButton)
 
     // Restore should have been called for each item
     await waitFor(() => {
@@ -299,7 +299,7 @@ describe('TrashCanList', () => {
     let rows = []
     // Click the Load More button
     const loadMoreButton = screen.getByRole('button', { name: 'Load More' })
-    userEvent.click(loadMoreButton)
+    await userEvent.click(loadMoreButton)
 
     // Wait for all results to be loaded
     await waitFor(() => {
@@ -311,20 +311,20 @@ describe('TrashCanList', () => {
     const selectAllCheckbox = screen.getByRole('checkbox', {
       name: 'Select All',
     })
-    userEvent.click(selectAllCheckbox)
+    await userEvent.click(selectAllCheckbox)
 
     // Click "Delete Selected"
     const restoreButton = screen.getByRole('button', {
       name: 'Delete Selected',
     })
-    userEvent.click(restoreButton)
+    await userEvent.click(restoreButton)
 
     // Confirmation modal appears
     const confirmationModal = screen.getByRole('dialog')
     const confirmDelete = within(confirmationModal).getByRole('button', {
       name: 'Delete',
     })
-    userEvent.click(confirmDelete)
+    await userEvent.click(confirmDelete)
 
     // Purge should have been called for each item
     await waitFor(() => {

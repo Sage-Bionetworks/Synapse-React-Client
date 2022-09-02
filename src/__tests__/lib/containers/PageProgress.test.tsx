@@ -56,21 +56,21 @@ describe('Page Progress: basic functionality', () => {
     ).toBe(true)
   })
 
-  it('should call back button callback when clicked', () => {
+  it('should call back button callback when clicked', async () => {
     render(<PageProgress {...props} />)
-    userEvent.click(screen.getByRole('button', { name: 'Go back' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Go back' }))
     expect(onBackButtonClicked).toHaveBeenCalledTimes(1)
   })
 
-  it('should not call forward button callback when it is not active', () => {
+  it('should not call forward button callback when it is not active', async () => {
     render(<PageProgress {...props} />)
-    userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
     expect(onNextButtonClicked).toHaveBeenCalledTimes(0)
   })
 
-  it('should call forward button callback when it is active', () => {
+  it('should call forward button callback when it is active', async () => {
     render(<PageProgress {...canGoNextProps} />)
-    userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Go forward' }))
     expect(onNextButtonClicked).toHaveBeenCalledTimes(1)
   })
 })

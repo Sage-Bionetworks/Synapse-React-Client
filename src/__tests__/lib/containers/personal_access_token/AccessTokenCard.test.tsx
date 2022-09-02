@@ -71,7 +71,7 @@ describe('AccessTokenCard', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     // Click delete button to open modal
-    userEvent.click(screen.getByRole('button'))
+    await userEvent.click(screen.getByRole('button'))
 
     const dialog = screen.getByRole('dialog')
 
@@ -79,7 +79,7 @@ describe('AccessTokenCard', () => {
     const deleteConfirmButton = within(dialog).getByRole('button', {
       name: 'Delete Token',
     })
-    userEvent.click(deleteConfirmButton)
+    await userEvent.click(deleteConfirmButton)
 
     expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled()
     await waitFor(() => {
@@ -87,11 +87,11 @@ describe('AccessTokenCard', () => {
     })
   })
 
-  it('does not delete when modal is canceled', () => {
+  it('does not delete when modal is canceled', async () => {
     renderComponent(activeTokenProps)
 
     // Click delete button to open modal
-    userEvent.click(screen.getByRole('button'))
+    await userEvent.click(screen.getByRole('button'))
 
     const dialog = screen.getByRole('dialog')
 
@@ -99,7 +99,7 @@ describe('AccessTokenCard', () => {
     const cancelButton = within(dialog).getByRole('button', {
       name: 'Cancel',
     })
-    userEvent.click(cancelButton)
+    await userEvent.click(cancelButton)
 
     expect(SynapseClient.deletePersonalAccessToken).not.toHaveBeenCalled()
     expect(mockOnDelete).not.toHaveBeenCalled()
@@ -109,7 +109,7 @@ describe('AccessTokenCard', () => {
     renderComponent(expiredTokenProps)
 
     // Click delete button -- no modal should open, because the token has expired.
-    userEvent.click(screen.getByRole('button'))
+    await userEvent.click(screen.getByRole('button'))
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(SynapseClient.deletePersonalAccessToken).toHaveBeenCalled()

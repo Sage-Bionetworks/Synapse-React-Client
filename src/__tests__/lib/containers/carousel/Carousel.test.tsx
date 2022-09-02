@@ -59,7 +59,7 @@ describe('basic functionality', () => {
     const rightButton = container.querySelector(
       'div.BrainhubCarousel__custom-arrowRight',
     )!
-    userEvent.click(rightButton)
+    await userEvent.click(rightButton)
 
     // Cards that map to the second child should have the 'Selected' class
     child0 = container.querySelectorAll('div.child0')

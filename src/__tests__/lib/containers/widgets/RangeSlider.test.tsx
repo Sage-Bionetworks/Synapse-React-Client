@@ -51,7 +51,7 @@ describe('RangeSlider', () => {
     it('should not call the callbackFn on change when doUpdateOnApply is true', async () => {
       init({ doUpdateOnApply: true })
       const sliders = screen.getAllByRole('slider')
-      userEvent.click(sliders[0])
+      await userEvent.click(sliders[0])
       expect(mockCallback).not.toHaveBeenCalled()
     })
 
@@ -64,10 +64,10 @@ describe('RangeSlider', () => {
       'should call the callbackFn on change when doUpdateOnApply is false',
     )
 
-    it('should always call callbackFn on Apply', () => {
+    it('should always call callbackFn on Apply', async () => {
       init({ doUpdateOnApply: true })
       const button = screen.getByRole('button', { name: 'Apply' })
-      userEvent.click(button)
+      await userEvent.click(button)
       expect(mockCallback).toHaveBeenCalledWith({ min: 1, max: 20 })
     })
   })

@@ -59,7 +59,7 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 // Handles saving when there is no schema or the data is valid under the schema
 async function clickSave() {
   const saveButton = await screen.findByRole('button', { name: 'Save' })
-  userEvent.click(saveButton)
+  await userEvent.click(saveButton)
   return waitFor(() => expect(mockOnSuccessFn).toHaveBeenCalled())
 }
 
@@ -67,14 +67,14 @@ async function clickSave() {
 // Clicks "Save" twice and then clicks "Save" in the confirmation modal
 async function clickSaveAndConfirm() {
   const saveButton = await screen.findByRole('button', { name: 'Save' })
-  userEvent.click(saveButton)
-  userEvent.click(saveButton)
+  await userEvent.click(saveButton)
+  await userEvent.click(saveButton)
 
   await screen.findByText('Are you sure you want to save them?')
   const confirmSaveButton = await screen.findByRole('button', {
     name: 'Save',
   })
-  userEvent.click(confirmSaveButton)
+  await userEvent.click(confirmSaveButton)
 
   return waitFor(() => expect(mockOnSuccessFn).toHaveBeenCalled())
 }
@@ -307,7 +307,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     })
 
     // Remove the last element
-    userEvent.click(await screen.findByLabelText('Remove country[0]'))
+    await userEvent.click(await screen.findByLabelText('Remove country[0]'))
 
     expect(
       screen.queryByRole('textbox', {
@@ -347,8 +347,8 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     await waitFor(() => expect(stateField.value).toBe('Washington'))
 
     await selectEvent.select(countryField, 'USA')
-    userEvent.clear(stateField)
-    userEvent.type(stateField, 'Ohio{enter}') // For some reason, keying "enter" here makes the test stable
+    await userEvent.clear(stateField)
+    await userEvent.type(stateField, 'Ohio{enter}') // For some reason, keying "enter" here makes the test stable
 
     await clickSave()
 
@@ -375,7 +375,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     renderComponent()
 
     const saveButton = await screen.findByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
+    await userEvent.click(saveButton)
 
     await screen.findByText(
       'Annotations could not be updated: Object was updated since last fetched',
@@ -450,7 +450,7 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     expect(showStringArrayField.value).toBe('true')
 
     // This will remove the data from the schema.
-    userEvent.selectOptions(showStringArrayField, 'false')
+    await userEvent.selectOptions(showStringArrayField, 'false')
     await clickSaveAndConfirm()
 
     expect(mockToastFn).toBeCalledWith(
@@ -487,10 +487,10 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     expect(showStringArrayField.value).toBe('true')
 
     // This will remove the data from the schema.
-    userEvent.selectOptions(showStringArrayField, 'false')
+    await userEvent.selectOptions(showStringArrayField, 'false')
 
     // Add it back to the schema.
-    userEvent.selectOptions(showStringArrayField, 'true')
+    await userEvent.selectOptions(showStringArrayField, 'true')
 
     await clickSaveAndConfirm()
 
@@ -510,15 +510,15 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
       name: 'Add Custom Field',
     })
 
-    userEvent.click(addAnnotationButton)
+    await userEvent.click(addAnnotationButton)
 
     const keyField = await screen.findByLabelText('Key')
 
-    userEvent.clear(keyField)
-    userEvent.type(keyField, 'id{enter}')
+    await userEvent.clear(keyField)
+    await userEvent.type(keyField, 'id{enter}')
 
     const saveButton = await screen.findByRole('button', { name: 'Save' })
-    userEvent.click(saveButton)
+    await userEvent.click(saveButton)
 
     await screen.findByText(
       '"id" is a reserved internal key and cannot be used',
@@ -537,14 +537,14 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     })[0]
 
     // Call under test -- show the description table
-    userEvent.click(moreInfoButton)
+    await userEvent.click(moreInfoButton)
 
     expect(
       screen.getByText('Test description for country property'),
     ).toBeVisible()
 
     // Now hide the description table
-    userEvent.click(moreInfoButton)
+    await userEvent.click(moreInfoButton)
 
     await waitFor(() =>
       expect(

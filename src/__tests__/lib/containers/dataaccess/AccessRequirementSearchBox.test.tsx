@@ -84,9 +84,9 @@ describe('Access Requirement Search Box tests', () => {
   it('Queries the service with the initial blank query', async () => {
     renderComponent()
 
-    const input = screen.getByRole('textbox')
+    const input = screen.getByRole('combobox')
 
-    userEvent.click(input)
+    await userEvent.click(input)
 
     // Should have sent a request with a blank input to populate the options
     await waitFor(() =>
@@ -101,9 +101,9 @@ describe('Access Requirement Search Box tests', () => {
   it('Sends a new query upon typing an input string', async () => {
     renderComponent()
 
-    const input = screen.getByRole('textbox')
+    const input = screen.getByRole('combobox')
     const inputQuery = 'test query'
-    userEvent.type(input, inputQuery)
+    await userEvent.type(input, inputQuery)
 
     // Should have sent a new request with the input string
     await waitFor(() =>
@@ -118,9 +118,9 @@ describe('Access Requirement Search Box tests', () => {
   it('Calls the passed prop upon making a selection', async () => {
     renderComponent()
 
-    const input = screen.getByRole('textbox')
+    const input = screen.getByRole('combobox')
 
-    userEvent.click(input)
+    await userEvent.click(input)
 
     // We haven't made a selection yet, so verify that we never called the passed prop
     expect(mockOnChange).not.toHaveBeenCalled()
@@ -139,7 +139,7 @@ describe('Access Requirement Search Box tests', () => {
   it('Renders an initial AR specified by ID', async () => {
     renderComponent(mockAccessRequirement.id)
 
-    const input = await screen.findByRole<HTMLInputElement>('textbox')
+    const input = await screen.findByRole<HTMLInputElement>('combobox')
 
     await waitFor(() =>
       expect(input.value).toContain(mockAccessRequirement.name),
@@ -149,10 +149,12 @@ describe('Access Requirement Search Box tests', () => {
   it('Supports pasting/typing an AR ID', async () => {
     renderComponent()
 
-    const input = await screen.findByRole<HTMLInputElement>('textbox')
+    const input = await screen.findByRole<HTMLInputElement>('combobox')
 
-    userEvent.type(input, mockAccessRequirement.id.toString())
-
+    await userEvent.type(input, mockAccessRequirement.id.toString())
+    await screen.findByText(
+      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+    )
     // If the AR specified by ID is fetched, then it should be selectable
     await selectEvent.select(
       input,

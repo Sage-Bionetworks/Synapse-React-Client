@@ -116,14 +116,14 @@ describe('basic functionality', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     // Click 'Create new token' button
-    userEvent.click(
+    await userEvent.click(
       await screen.findByRole('button', { name: 'Create New Token' }),
     )
 
     await screen.findByRole('dialog')
 
     // close the modal
-    userEvent.click(
+    await userEvent.click(
       await screen.findByRole('button', { name: 'Invoke onClose' }),
     )
 
@@ -156,13 +156,13 @@ describe('basic functionality', () => {
     const openModalButton = await screen.findByRole('button', {
       name: 'Create New Token',
     })
-    userEvent.click(openModalButton)
+    await userEvent.click(openModalButton)
 
     // Simulate creation
     const createTokenButton = await screen.findByRole('button', {
       name: 'Invoke onCreate',
     })
-    userEvent.click(createTokenButton)
+    await userEvent.click(createTokenButton)
 
     await waitFor(() =>
       expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(
@@ -182,7 +182,7 @@ describe('basic functionality', () => {
 
     // Trigger onDelete on a card.
     const deleteButton = await screen.findByText('Invoke onDelete')
-    userEvent.click(deleteButton)
+    await userEvent.click(deleteButton)
 
     await waitFor(() =>
       expect(SynapseClient.getPersonalAccessTokenRecords).toHaveBeenCalledTimes(
@@ -211,7 +211,7 @@ describe('basic functionality', () => {
     })
 
     // Click the button
-    userEvent.click(loadMoreButton)
+    await userEvent.click(loadMoreButton)
 
     // Both cards are visible
     await screen.findByText(mockResultsFirstPage.results[0].name)

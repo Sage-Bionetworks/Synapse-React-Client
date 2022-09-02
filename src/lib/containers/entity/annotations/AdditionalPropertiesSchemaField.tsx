@@ -228,7 +228,7 @@ export function AdditionalPropertiesSchemaField<T>(
           aria-label={`${name}-${index}`}
           schema={schema}
           value={item}
-          onChange={value => {
+          onChange={(value: any) => {
             handleListChange(index)(value)
           }}
           uiSchema={uiSchema}
@@ -240,7 +240,7 @@ export function AdditionalPropertiesSchemaField<T>(
           options={{}}
           formContext={props.formContext as T}
           onFocus={props.onFocus}
-          onBlur={(id, value) => {
+          onBlur={(id: string, value: any) => {
             setList(transformDataFromPropertyType(list, propertyType))
             props.onBlur(id, value)
           }}

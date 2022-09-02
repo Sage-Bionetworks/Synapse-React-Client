@@ -50,6 +50,8 @@ export default function FavoritesPage() {
   useEffect(() => {
     if (!accessToken) {
       setError(new Error('Please sign in to access your favorites.'))
+    } else {
+      setError(undefined)
     }
   }, [accessToken])
 

@@ -48,7 +48,7 @@ describe('Download Options tests', () => {
       name: 'Download Options',
     })
 
-    userEvent.click(downloadOptionsButton)
+    await userEvent.click(downloadOptionsButton)
 
     await screen.findByRole('button', { name: 'Export Table' })
     const programmaticOptionsMenuItem = await screen.findByRole('button', {
@@ -77,7 +77,7 @@ describe('Download Options tests', () => {
       name: 'Download Options',
     })
 
-    userEvent.click(downloadOptionsButton)
+    await userEvent.click(downloadOptionsButton)
 
     await screen.findByRole('button', { name: 'Export Table' })
     const downloadFilesMenuItem = await screen.findByRole('button', {
@@ -101,7 +101,7 @@ describe('Download Options tests', () => {
       name: 'Download Options',
     })
 
-    userEvent.click(downloadOptionsButton)
+    await userEvent.click(downloadOptionsButton)
 
     await screen.findByRole('button', { name: 'Export Table' })
     const programmaticOptionsMenuItem = await screen.findByRole('button', {
@@ -135,7 +135,7 @@ describe('Download Options tests', () => {
       name: 'Download Options',
     })
 
-    userEvent.click(downloadOptionsButton)
+    await userEvent.click(downloadOptionsButton)
 
     await screen.findByRole('button', { name: 'Export Table' })
     const downloadFilesMenuItem = await screen.findByRole('button', {
@@ -168,7 +168,7 @@ describe('Download Options tests', () => {
       name: 'Download Options',
     })
 
-    userEvent.click(downloadOptionsButton)
+    await userEvent.click(downloadOptionsButton)
 
     await screen.findByRole('button', { name: 'Export Table' })
     const downloadFilesMenuItem = await screen.findByRole('button', {

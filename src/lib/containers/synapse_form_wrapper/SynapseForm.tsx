@@ -2,7 +2,6 @@ import * as React from 'react'
 import _ from 'lodash-es'
 import { Engine, EngineResult } from 'json-rules-engine'
 import { default as Form, UiSchema, AjvError, ErrorListProps } from '@rjsf/core'
-
 import {
   Step,
   StepStateEnum,
@@ -80,7 +79,8 @@ export default class SynapseForm extends React.Component<
   )
   excludeWarningHeader = 'Skip This Step?'
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
-  formRef: any //ref to form for submission
+  formRef: React.RefObject<Form<IFormData>> //ref to form for submission
+  submitButtonRef: React.RefObject<HTMLButtonElement>
   formDivRef: any // ref to the div containing form (for scrolling on validation failure)
   navAction: NavActionEnum = NavActionEnum.NONE
   uiSchema: {}
@@ -123,6 +123,7 @@ export default class SynapseForm extends React.Component<
 
     this.formRef = React.createRef()
     this.formDivRef = React.createRef()
+    this.submitButtonRef = React.createRef()
     const currentStep = this.getFirstStep(steps, props.formData)
     this.state = {
       currentStep,
@@ -268,7 +269,9 @@ export default class SynapseForm extends React.Component<
     const currentStep = this.state.currentStep
     let currentStepState: StepStateEnum
     //we don't wnat to display errors on the page - this will be done explicitly in validation
-    this.formRef.current.setState({ errorSchema: {} })
+    if (this.formRef?.current) {
+      this.formRef.current.setState({ errorSchema: {} })
+    }
     //in wizard mode we can only move forwards (don't know next step yet) or backwards (do know next step)
     const isMoveForwardInWizardMode = this.props.isWizardMode && !nextStepId
 
@@ -375,8 +378,8 @@ export default class SynapseForm extends React.Component<
         this.state.currentStep,
         this.state.steps,
       )
-      if (this.formRef.current) {
-        this.formRef.current.submit()
+      if (this.submitButtonRef.current) {
+        this.submitButtonRef.current.click()
       }
     }
   }
@@ -511,7 +514,7 @@ export default class SynapseForm extends React.Component<
 
   //we need to route things through submit - otherwise validation does not kick in
   // it triggers internal library validation and calls the performAction with the params for action
-  onSubmit = (): any => {
+  onSubmit: () => any = () => {
     this.performAction(
       this.navAction,
       this.state.currentStep.state === StepStateEnum.ERROR,
@@ -893,6 +896,7 @@ export default class SynapseForm extends React.Component<
                   } `}
                 >
                   <Form
+                    noHtml5Validate
                     className={
                       this.state.doShowHelp
                         ? 'submissionInputForm'
@@ -921,7 +925,7 @@ export default class SynapseForm extends React.Component<
                     }
                   >
                     <div style={{ display: 'none' }}>
-                      <button type="submit"></button>
+                      <button type="submit" ref={this.submitButtonRef}></button>
                     </div>
                   </Form>
                   {this.renderTextForStaticScreen()}

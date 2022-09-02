@@ -1,8 +1,7 @@
 import { Skeleton } from '@material-ui/lab'
 import * as React from 'react'
-import { components, GroupTypeBase } from 'react-select'
+import { components, GroupBase, SelectComponentsConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
-import { SelectComponents } from 'react-select/src/components'
 import { SynapseClient } from '../utils'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import { UserGroupHeader } from '../utils/synapseTypes'
@@ -24,7 +23,7 @@ export type UserSearchBoxProps = {
 }
 
 const customSelectComponents: Partial<
-  SelectComponents<
+  SelectComponentsConfig<
     {
       id: string
       value: string
@@ -32,7 +31,7 @@ const customSelectComponents: Partial<
       header: UserGroupHeader
     },
     false,
-    GroupTypeBase<{
+    GroupBase<{
       id: string
       value: string
       label: string

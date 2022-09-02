@@ -22,7 +22,7 @@ describe('Functionality of Login Component', () => {
   it('Makes a login request and invokes the callback when clicking Sign In', async () => {
     render(<Login sessionCallback={callback} />)
 
-    userEvent.click(screen.getByRole('button', { name: 'Log in' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Log in' }))
 
     await waitFor(() => expect(SynapseClient.login).toHaveBeenCalled())
     await waitFor(() => expect(callback).toHaveBeenCalled())
