@@ -30,7 +30,6 @@ const globals = {
   markdownitInlineComments: 'markdownitInlineComments',
   markdownitBr: 'markdownitBr',
   markdownitMath: 'markdownitMath',
-  'sanitize-html': 'sanitizeHtml',
   'prop-types': 'PropTypes',
   'universal-cookie': 'UniversalCookie',
 }
@@ -57,7 +56,6 @@ const esBuildOptions = {
   external: [
     'react',
     'react-dom',
-    'sanitize-html',
     'prop-types',
     'react-router',
     'react-router-dom',
