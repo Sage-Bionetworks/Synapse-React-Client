@@ -45,9 +45,9 @@ describe('it performs the expected functionality', () => {
     renderComponent(props)
     // step 1 - select csv option
     const csvOptionElement = screen.getByLabelText(csvOption)
-    userEvent.click(csvOptionElement)
+    await userEvent.click(csvOptionElement)
 
-    userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     // step 2 - verify UI has download button showing
     const downloadButton = await screen.findByRole('button', {
@@ -62,7 +62,7 @@ describe('it performs the expected functionality', () => {
       MOCK_CONTEXT_VALUE.accessToken,
     )
 
-    userEvent.click(downloadButton)
+    await userEvent.click(downloadButton)
     await waitFor(() => expect(mockGetFile).toHaveBeenCalled())
     await waitFor(() => expect(mockClose).toHaveBeenCalled())
   })
@@ -72,15 +72,15 @@ describe('it performs the expected functionality', () => {
 
     // step 1 - select tsv option
     const tsvOptionElement = screen.getByLabelText(tsvOption)
-    userEvent.click(tsvOptionElement)
+    await userEvent.click(tsvOptionElement)
 
     // step 2 - de-select write header option
     const writeHeaderOptionElement =
       screen.getByLabelText<HTMLInputElement>(writeHeaderOption)
     expect(writeHeaderOptionElement.checked).toBe(true)
-    userEvent.click(writeHeaderOptionElement)
+    await userEvent.click(writeHeaderOptionElement)
     expect(writeHeaderOptionElement.checked).toBe(false)
-    userEvent.click(screen.getByRole('button', { name: 'Next' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     // step 3 - verify UI has download button showing
     const downloadButton = await screen.findByRole('button', {
@@ -94,7 +94,7 @@ describe('it performs the expected functionality', () => {
       }),
       MOCK_CONTEXT_VALUE.accessToken,
     )
-    userEvent.click(downloadButton)
+    await userEvent.click(downloadButton)
     await waitFor(() => expect(mockGetFile).toHaveBeenCalled())
     await waitFor(() => expect(mockClose).toHaveBeenCalled())
   })

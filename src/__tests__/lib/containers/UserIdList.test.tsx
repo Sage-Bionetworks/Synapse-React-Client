@@ -12,12 +12,10 @@ import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
 } from '../../../mocks/user/mock_user_profile'
-import { getUserProfiles } from '../../../lib/utils/SynapseClient'
+import { SynapseClient } from '../../../lib/utils'
 
-const SynapseClient = require('../../../lib/utils/SynapseClient')
-
-SynapseClient.getUserProfiles = jest
-  .fn()
+jest
+  .spyOn(SynapseClient, 'getUserProfiles')
   .mockResolvedValue({ list: [mockUserProfileData] })
 
 describe('UserIdList: basic functionality', () => {
@@ -33,11 +31,11 @@ describe('UserIdList: basic functionality', () => {
       mockAllIsIntersecting(true)
     })
     await waitFor(() =>
-      expect(getUserProfiles).toBeCalledWith(
+      expect(SynapseClient.getUserProfiles).toBeCalledWith(
         props.userIds,
         MOCK_CONTEXT_VALUE.accessToken,
       ),
     )
-    screen.getByText(`@${MOCK_USER_NAME}`)
+    await screen.findByText(`@${MOCK_USER_NAME}`)
   })
 })

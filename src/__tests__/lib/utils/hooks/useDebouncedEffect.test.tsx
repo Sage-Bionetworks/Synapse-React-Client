@@ -25,16 +25,19 @@ function TestComponent() {
   )
 }
 
+// Specify no delay on userEvent actions so we can advance timers at will
+const user = userEvent.setup({ delay: null })
+
 describe('useDebouncedEffect tests', () => {
   beforeEach(() => {
     jest.useFakeTimers()
     jest.resetAllMocks()
   })
 
-  it('Groups multiple clicks', () => {
+  it('Groups multiple clicks', async () => {
     render(<TestComponent />)
     const button = screen.getByRole('button')
-    userEvent.click(button)
+    await user.click(button)
 
     jest.advanceTimersByTime(DEBOUNCE_TIME)
     expect(onEffect).toHaveBeenCalledTimes(1)
@@ -42,7 +45,7 @@ describe('useDebouncedEffect tests', () => {
 
     // Click the button 5 more times
     for (let i = 0; i < 5; i++) {
-      userEvent.click(button)
+      await user.click(button)
     }
 
     jest.advanceTimersByTime(DEBOUNCE_TIME)
@@ -52,15 +55,15 @@ describe('useDebouncedEffect tests', () => {
     expect(onEffect).toHaveBeenLastCalledWith(6)
   })
 
-  it('Resets the delay each time a dependency changes', () => {
+  it('Resets the delay each time a dependency changes', async () => {
     render(<TestComponent />)
     const button = screen.getByRole('button')
 
-    userEvent.click(button)
+    await user.click(button)
     jest.advanceTimersByTime(DEBOUNCE_TIME / 2)
 
     // Clicking again should restart the timer
-    userEvent.click(button)
+    await user.click(button)
     jest.advanceTimersByTime(DEBOUNCE_TIME / 2)
 
     expect(onEffect).toHaveBeenCalledTimes(0)

@@ -60,7 +60,8 @@ describe('AccessRequirementDashboard tests', () => {
     const mockOnCreateNewAR = jest.fn()
     renderComponent({ onCreateNewAccessRequirementClicked: mockOnCreateNewAR })
 
-    expect(await screen.findAllByRole('textbox')).toHaveLength(3)
+    expect(await screen.findAllByRole('combobox')).toHaveLength(1)
+    expect(await screen.findAllByRole('textbox')).toHaveLength(2)
     await screen.findByTestId(AR_TABLE_TEST_ID)
     expect(mockAccessRequirementTable).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -75,8 +76,10 @@ describe('AccessRequirementDashboard tests', () => {
 
   it('Updates the passed props and URLSearchParams when updating nameContains', async () => {
     const { history } = renderComponent()
-    const nameContainsInput = (await screen.findAllByRole('textbox'))[0]
-    userEvent.type(nameContainsInput, NAME_CONTAINS_PREFIX)
+    const nameContainsInput = await screen.findByLabelText(
+      'Filter by Access Requirement Name',
+    )
+    await userEvent.type(nameContainsInput, NAME_CONTAINS_PREFIX)
 
     await waitFor(() =>
       expect(
@@ -95,8 +98,10 @@ describe('AccessRequirementDashboard tests', () => {
 
   it('Updates the URL search parameters when updating relatedProjectId', async () => {
     const { history } = renderComponent()
-    const relatedProjectInput = (await screen.findAllByRole('textbox'))[1]
-    userEvent.type(relatedProjectInput, RELATED_PROJECT_ID)
+    const relatedProjectInput = await screen.findByLabelText(
+      'Filter by Project',
+    )
+    await userEvent.type(relatedProjectInput, RELATED_PROJECT_ID)
 
     await waitFor(() =>
       expect(
@@ -113,10 +118,12 @@ describe('AccessRequirementDashboard tests', () => {
     )
   })
 
-  it.skip('Updates the URL search parameters when updating reviewerId', async () => {
+  it('Updates the URL search parameters when updating reviewerId', async () => {
     const { history } = renderComponent()
-    const reviewerInput = (await screen.findAllByRole('textbox'))[2]
-    userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
+    const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
+    await userEvent.click(reviewerInput)
+    await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
+    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
 
     await waitFor(() =>

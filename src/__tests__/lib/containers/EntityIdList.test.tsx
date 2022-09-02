@@ -11,11 +11,10 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import mockFileEntity from '../../../mocks/entity/mockFileEntity'
 import { getEntityHeadersByIds } from '../../../lib/utils/SynapseClient'
+import { SynapseClient } from '../../../lib/utils'
 
-const SynapseClient = require('../../../lib/utils/SynapseClient')
-
-SynapseClient.getEntityHeadersByIds = jest
-  .fn()
+jest
+  .spyOn(SynapseClient, 'getEntityHeadersByIds')
   .mockResolvedValue({ results: [mockFileEntity.entityHeader] })
 
 describe('EntityIdList: basic functionality', () => {
@@ -36,6 +35,6 @@ describe('EntityIdList: basic functionality', () => {
         MOCK_CONTEXT_VALUE.accessToken,
       ),
     )
-    screen.getByText(mockFileEntity.entityHeader.name)
+    await screen.findByText(mockFileEntity.entityHeader.name)
   })
 })

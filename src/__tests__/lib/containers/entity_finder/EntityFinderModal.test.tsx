@@ -69,7 +69,7 @@ describe('EntityFinderModal', () => {
     const cancelButton = within(entityFinderModal).getByRole('button', {
       name: 'Cancel',
     })
-    userEvent.click(cancelButton)
+    await userEvent.click(cancelButton)
 
     // The onCancel prop should be called
     expect(defaultProps.onCancel).toHaveBeenCalledTimes(1)
@@ -94,7 +94,7 @@ describe('EntityFinderModal', () => {
     let cancelButton = within(entityFinderModal).getByRole('button', {
       name: 'Cancel',
     })
-    userEvent.click(cancelButton)
+    await userEvent.click(cancelButton)
 
     // Unsaved Changes modal appears
     let unsavedChangedModal = await screen.findByRole('dialog')
@@ -104,7 +104,7 @@ describe('EntityFinderModal', () => {
     const cancelWarning = within(unsavedChangedModal).getByRole('button', {
       name: 'Cancel',
     })
-    userEvent.click(cancelWarning)
+    await userEvent.click(cancelWarning)
 
     // The Entity Finder modal appears once more
     entityFinderModal = await screen.findByRole('dialog')
@@ -114,7 +114,7 @@ describe('EntityFinderModal', () => {
     cancelButton = within(entityFinderModal).getByRole('button', {
       name: 'Cancel',
     })
-    userEvent.click(cancelButton)
+    await userEvent.click(cancelButton)
     unsavedChangedModal = await screen.findByRole('dialog')
     within(unsavedChangedModal).findByText(UNSAVED_CHANGES)
 
@@ -122,7 +122,7 @@ describe('EntityFinderModal', () => {
     const confirmWarning = within(unsavedChangedModal).getByRole('button', {
       name: 'Close Finder',
     })
-    userEvent.click(confirmWarning)
+    await userEvent.click(confirmWarning)
 
     expect(unsavedChangedModal).not.toBeVisible()
     expect(defaultProps.onCancel).toHaveBeenCalledTimes(1)

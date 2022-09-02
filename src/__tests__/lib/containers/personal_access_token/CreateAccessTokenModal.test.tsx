@@ -43,12 +43,12 @@ describe('CreateAccessTokenModal tests', () => {
     renderComponent(props)
 
     // Fill out the form
-    userEvent.type(screen.getByRole('textbox'), tokenName)
-    userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
-    userEvent.click(screen.getByRole('checkbox', { name: 'Modify' }))
-    userEvent.click(screen.getByRole('checkbox', { name: 'Download' }))
+    await userEvent.type(screen.getByRole('textbox'), tokenName)
+    await userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Modify' }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Download' }))
 
-    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
 
     await waitFor(() => expect(mockOnCreate).toHaveBeenCalled())
     expect(SynapseClient.createPersonalAccessToken).toHaveBeenCalled()
@@ -58,8 +58,10 @@ describe('CreateAccessTokenModal tests', () => {
     )
 
     // Close the modal using the 'Close' button
-    userEvent.click(
-      (await screen.findAllByRole('button', { name: 'Close' }))[1],
+    await userEvent.click(
+      (
+        await screen.findAllByRole('button', { name: 'Close' })
+      )[1],
     )
 
     await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
@@ -70,26 +72,26 @@ describe('CreateAccessTokenModal tests', () => {
     expect(screen.queryByTestId('ErrorBanner')).not.toBeInTheDocument()
 
     // Try to create with no name or permissions
-    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
-    userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
 
     await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
 
     // Add a name
-    userEvent.type(screen.getByRole('textbox'), 'some name')
-    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await userEvent.type(screen.getByRole('textbox'), 'some name')
+    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
     await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
 
     // Remove name, add a permission
-    userEvent.clear(screen.getByRole('textbox'))
-    userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
+    await userEvent.clear(screen.getByRole('textbox'))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'View' }))
 
     // Submit and verify that an error is shown
-    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
     await screen.findByTestId('ErrorBanner')
     expect(mockOnCreate).not.toHaveBeenCalled()
     expect(SynapseClient.createPersonalAccessToken).not.toHaveBeenCalled()
@@ -105,8 +107,8 @@ describe('CreateAccessTokenModal tests', () => {
     })
 
     // Fill out the form and send the request
-    userEvent.type(screen.getByRole('textbox'), 'some name')
-    userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
+    await userEvent.type(screen.getByRole('textbox'), 'some name')
+    await userEvent.click(screen.getByRole('button', { name: 'Create Token' }))
 
     await screen.findByTestId('ErrorBanner')
     screen.getByText(errorReason)
@@ -116,7 +118,7 @@ describe('CreateAccessTokenModal tests', () => {
     renderComponent(props)
 
     // Close the modal using the prop
-    userEvent.click(
+    await userEvent.click(
       await screen.findByRole('button', { name: 'Close', exact: false }),
     )
 
@@ -130,7 +132,7 @@ describe('CreateAccessTokenModal tests', () => {
     renderComponent(props)
 
     // Close the modal using the prop
-    userEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
+    await userEvent.click(await screen.findByRole('button', { name: 'Cancel' }))
 
     expect(mockOnClose).toHaveBeenCalled()
 

@@ -131,7 +131,7 @@ export const CreateOAuthModal: React.FunctionComponent<
         }
       }
     } catch (err) {
-      console.log(err.reason)
+      displayToast(err.reason as string, 'danger')
     }
   }
 
@@ -166,13 +166,11 @@ export const CreateOAuthModal: React.FunctionComponent<
         backdrop="static"
         onHide={hide}
         size="lg"
-        className="OAuthDialog"
+        className="OAuthDialog bootstrap-4-backport"
       >
         <Modal.Header closeButton>
           <Modal.Title>
-            <Typography variant="headline1">
-              {isEdit ? 'Client Details' : 'Create New OAuth Client'}
-            </Typography>
+            {isEdit ? 'Client Details' : 'Create New OAuth Client'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

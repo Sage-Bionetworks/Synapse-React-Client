@@ -43,6 +43,7 @@ import {
 } from '../../entity_finder/details/view/DetailsViewTableRenderers'
 import { EntityFinderModal } from '../../entity_finder/EntityFinderModal'
 import { FinderScope } from '../../entity_finder/tree/EntityTree'
+import { VersionSelectionType } from '../../entity_finder/VersionSelectionType'
 import IconSvg from '../../IconSvg'
 import { BlockingLoader } from '../../LoadingScreen'
 import WarningModal from '../../synapse_form_wrapper/WarningModal'
@@ -270,7 +271,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     oldDataSet: EntityRef[],
     changedItems: EntityRef[],
   ) {
-    let unchangedItems = oldDataSet.filter(
+    const unchangedItems = oldDataSet.filter(
       oldItem =>
         !changedItems.find(newItem => newItem.entityId === oldItem.entityId),
     )
@@ -540,7 +541,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     )
   }
 
-  const selectableTypes = useMemo(() => {
+  const selectableTypes: EntityType[] | undefined = useMemo(() => {
     if (fetchedDataset) {
       return getSelectableTypes(fetchedDataset)
     } else {
@@ -557,7 +558,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
           initialScope: FinderScope.CURRENT_PROJECT,
           initialContainer: projectId ?? null,
           selectableTypes: selectableTypes,
-          mustSelectVersionNumber: true,
+          versionSelection: VersionSelectionType.REQUIRED,
         }}
         titlePopoverProps={{
           markdownText: ENTITY_FINDER_POPOVER,

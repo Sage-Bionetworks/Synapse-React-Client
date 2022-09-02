@@ -45,12 +45,12 @@ describe('basic function', () => {
     expect(radioOptions[2]).not.toBeChecked()
   })
 
-  it('should invoke callback when the user clicks an input', () => {
+  it('should invoke callback when the user clicks an input', async () => {
     init()
 
     const radioOptions = screen.getAllByRole<HTMLInputElement>('radio')
 
-    userEvent.click(radioOptions[2])
+    await userEvent.click(radioOptions[2])
 
     expect(mockCallback).toHaveBeenCalledTimes(1)
     expect(mockCallback).toHaveBeenCalledWith(props.options[2].value)

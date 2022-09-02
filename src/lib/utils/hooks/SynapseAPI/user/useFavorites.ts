@@ -24,7 +24,7 @@ export function useGetFavorites(
 ) {
   const { accessToken } = useSynapseContext()
   return useQuery<PaginatedResults<EntityHeader>, SynapseClientError>(
-    ['favorites', sort, sortDirection],
+    ['favorites', sort, sortDirection, accessToken],
     () =>
       SynapseClient.getUserFavorites(
         accessToken,

@@ -78,7 +78,7 @@ describe('test evaluation round limit option', () => {
     expect(options.find(option => option.value === 'WEEKLY')).toBeDisabled()
   })
 
-  it('onChange limit type', () => {
+  it('onChange limit type', async () => {
     const emptySelectedTypes = new Set<EvaluationRoundLimitType>([
       'MONTHLY',
       'WEEKLY',
@@ -89,7 +89,7 @@ describe('test evaluation round limit option', () => {
     })
 
     const select = screen.getByRole('combobox')
-    userEvent.selectOptions(select, 'DAILY')
+    await userEvent.selectOptions(select, 'DAILY')
 
     expect(onChangeSpy).toBeCalledWith({
       type: 'DAILY',
@@ -110,8 +110,8 @@ describe('test evaluation round limit option', () => {
     const textInput = screen.getByRole<HTMLInputElement>('textbox')
     expect(textInput.value).toBe('34')
 
-    userEvent.clear(textInput)
-    userEvent.type(textInput, '999')
+    await userEvent.clear(textInput)
+    await userEvent.type(textInput, '999')
 
     await waitFor(() =>
       expect(onChangeSpy).toBeCalledWith({

@@ -271,8 +271,10 @@ describe('SynapseTable tests', () => {
         name: sortedColumn,
       }
 
-      userEvent.click(
-        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      await userEvent.click(
+        (
+          await screen.findAllByRole('button', { name: 'sort' })
+        )[0],
       )
       const descendingColumnObject = {
         column: sortedColumn,
@@ -292,8 +294,10 @@ describe('SynapseTable tests', () => {
       // simulate second button click
       // simulate having clicked the sort button on the first column
       // projectStatus -- this should set it to descend
-      userEvent.click(
-        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      await userEvent.click(
+        (
+          await screen.findAllByRole('button', { name: 'sort' })
+        )[0],
       )
       const ascendingColumnObject = {
         column: sortedColumn,
@@ -311,8 +315,10 @@ describe('SynapseTable tests', () => {
       // simulate having clicked the sort button on the first column
       // projectStatus -- this should set it to descend
       // it shouldn't be in the api call at all
-      userEvent.click(
-        (await screen.findAllByRole('button', { name: 'sort' }))[0],
+      await userEvent.click(
+        (
+          await screen.findAllByRole('button', { name: 'sort' })
+        )[0],
       )
       // below we match only the part of the object that we expect to have changed
       expect(executeQueryRequest).toHaveBeenCalledWith(
@@ -323,42 +329,6 @@ describe('SynapseTable tests', () => {
         }),
       )
     })
-  })
-
-  it('should call clipboard.writeText with the expected Synapse IDs', async () => {
-    const mockWriteText = jest.fn()
-    mockWriteText.mockResolvedValue('copied')
-    const mockClipboard = {
-      writeText: mockWriteText,
-    }
-    Object.assign(navigator, {
-      clipboard: mockClipboard,
-    })
-
-    const testQueryContext = cloneDeep(queryContext)
-    testQueryContext.data = fileViewQueryResultBundle
-
-    const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
-      columnsToShowInTable: ['id'],
-      topLevelControlsState: {
-        showColumnFilter: false,
-        showFacetFilter: false,
-        showFacetVisualization: false,
-        showSearchBar: false,
-        showDownloadConfirmation: false,
-        showColumnSelectDropdown: false,
-        showSqlEditor: false,
-      },
-    }
-    renderTable({ ...props, queryVisualizationContext }, testQueryContext)
-
-    const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
-    userEvent.click(copySynIDsButton)
-
-    expect(mockWriteText).toHaveBeenCalled()
-    expect(mockWriteText).toHaveBeenCalledWith(
-      'syn20336604\nsyn20336605\nsyn20803101\nsyn20833959\nsyn20834046\nsyn20834059\nsyn21262174\nsyn22273980\nsyn22275054\nsyn24988882\nsyn25127078\nsyn25281516\nsyn26010239\nsyn26433712',
-    )
   })
 
   it('Shows add to download cart column for an Entity View that contains files', async () => {

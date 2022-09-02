@@ -98,11 +98,11 @@ describe('CardContainer tests', () => {
     screen.getByText(title)
   })
 
-  it('handleViewMore works', () => {
+  it('handleViewMore works', async () => {
     renderComponent(props, queryContext)
     // go through calling handle view more
     const viewMoreButton = screen.getByRole('button', { name: 'View More' })
-    userEvent.click(viewMoreButton)
+    await userEvent.click(viewMoreButton)
     expect(getLastQueryRequest).toHaveBeenCalled()
     expect(getNextPageOfData).toHaveBeenCalled()
   })

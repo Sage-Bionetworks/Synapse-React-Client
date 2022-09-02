@@ -8,7 +8,6 @@ import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
 import WarningModal from '../synapse_form_wrapper/WarningModal'
 import { SynapseClient } from '../../utils'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import Typography from '../../utils/typography/Typography'
 import CopyToClipboardInput from '../CopyToClipboardInput'
 import { displayToast } from '../ToastMessage'
 
@@ -41,7 +40,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
       setSelectedClient(undefined)
       setIsShowingSecret(true)
       setSecret(secret.client_secret)
-    } catch (err) {
+    } catch (err: any) {
       displayToast(err.reason as string, 'danger')
     }
   }
@@ -53,6 +52,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           setIsShowingCreateClientModal(true)
           setIsEdit(false)
         }}
+        style={{ float: 'right' }}
       >
         Create New Client
       </Button>
@@ -61,6 +61,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           <tr>
             <th>Created</th>
             <th>Modified</th>
+            <th>ID</th>
             <th>Client</th>
             <th>Verified</th>
             <th>App Secret</th>
@@ -73,6 +74,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
               <tr key={item.client_id}>
                 <td>{formatDate(moment(item.createdOn))}</td>
                 <td>{formatDate(moment(item.modifiedOn))}</td>
+                <td>{item.client_id}</td>
                 <td>{item.client_name}</td>
                 <td>
                   {item.verified ? (
@@ -143,12 +145,11 @@ export const OAuthManagement: React.FunctionComponent = () => {
         show={isShowingVerification}
         animation={false}
         backdrop="static"
+        className="bootstrap-4-backport"
         onHide={() => setIsShowingVerification(false)}
       >
         <Modal.Header closeButton>
-          <Modal.Title>
-            <Typography variant="headline1">Submit Verification</Typography>
-          </Modal.Title>
+          <Modal.Title>Submit Verification</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>
@@ -166,7 +167,6 @@ export const OAuthManagement: React.FunctionComponent = () => {
             <li>Your name</li>
             <li>
               The ID of the client to be verified <br />
-              <i>(You can find this within Actions)</i>
             </li>
             <li>A description of your application</li>
           </ul>
@@ -174,10 +174,12 @@ export const OAuthManagement: React.FunctionComponent = () => {
             Verification can take up to X weeks and we will notify you via X.
           </p> */}
         </Modal.Body>
+        <Modal.Footer></Modal.Footer>
       </Modal>
 
       <WarningModal
         show={isShowingSecretWarning}
+        className="bootstrap-4-backport"
         title={warningHeader}
         modalBody={warningBody}
         onCancel={() => {
@@ -193,15 +195,14 @@ export const OAuthManagement: React.FunctionComponent = () => {
           show={isShowingSecret}
           animation={false}
           backdrop="static"
+          className="bootstrap-4-backport"
           onHide={() => {
             setIsShowingSecret(false)
             setSecret(undefined)
           }}
         >
           <Modal.Header closeButton>
-            <Modal.Title>
-              <Typography variant="headline1">App Secret</Typography>
-            </Modal.Title>
+            <Modal.Title>App Secret</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <p>

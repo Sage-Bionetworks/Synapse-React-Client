@@ -8,6 +8,7 @@ import { SearchQuery } from '../../../utils/synapseTypes/Search'
 import { SynapseErrorBoundary } from '../../ErrorBanner'
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntityTreeContainer } from '../tree/EntityTree'
+import { VersionSelectionType } from '../VersionSelectionType'
 import { EntityChildrenDetails } from './configurations/EntityChildrenDetails'
 import { FavoritesDetails } from './configurations/FavoritesDetails'
 import { ProjectListDetails } from './configurations/ProjectListDetails'
@@ -40,8 +41,7 @@ export type EntityDetailsListDataConfiguration = {
  * We collect them into this type to simplify passing them through to the view.
  */
 export type EntityDetailsListSharedProps = {
-  showVersionSelection: boolean
-  mustSelectVersionNumber: boolean
+  versionSelection: VersionSelectionType
   selectColumnType: 'checkbox' | 'none'
   enableSelectAll: boolean
   visibleTypes: EntityType[]
@@ -50,7 +50,6 @@ export type EntityDetailsListSharedProps = {
   isIdSelected: (header: EntityFinderHeader) => boolean
   isSelectable: (header: EntityFinderHeader) => boolean
   toggleSelection: (entity: Reference | Reference[]) => void
-  latestVersionText?: string
   setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
 }
 

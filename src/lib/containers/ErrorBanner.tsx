@@ -121,8 +121,8 @@ export const TableRowFallbackComponent: React.FunctionComponent<
  * @param props
  * @returns
  */
-export const SynapseErrorBoundary: React.FC<
-  Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
-> = (props: Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>) => (
-  <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />
-)
+export const SynapseErrorBoundary = (
+  props: React.PropsWithChildren<
+    Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
+  >,
+) => <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />

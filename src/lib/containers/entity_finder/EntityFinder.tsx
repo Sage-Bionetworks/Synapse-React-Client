@@ -29,6 +29,7 @@ import { SelectionPane } from './SelectionPane'
 import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { useEntitySelection } from './useEntitySelection'
+import { VersionSelectionType } from './VersionSelectionType'
 
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
@@ -63,10 +64,8 @@ export type EntityFinderProps = {
   projectId?: string
   /** The SynID of the entity that should open by default. If this is a Syn ID, then it must be in the project specified in `projectId` */
   initialContainer: string | 'root' | null
-  /** Whether or not versions may be specified when selecting applicable entities */
-  showVersionSelection?: boolean
-  /** For versionable entities, require the user to select a numbered version of an entity. This disallows selecting 'Always Latest Version'. Note that the latest version may still be mutable. Default true. */
-  mustSelectVersionNumber?: boolean
+  /** Determines if versions are selectable, and if so, how they should be shown. Default is "TRACKED" */
+  versionSelection?: VersionSelectionType
   /** The entity types to show in the details view (right pane). Any types specified in `selectableTypes` will automatically be included. */
   visibleTypesInList?: EntityType[]
   /** The entity types that may be selected. Types in `visibleTypesInList` that are not in `selectableTypes` will appear as disabled options. Only the types in `selectableTypes` will appear in search */
@@ -77,8 +76,6 @@ export type EntityFinderProps = {
   selectedCopy?: string | ((count: number) => string)
   /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
-  /** Text shown for the latest version, if selectable by the user. Defaults to "Always Latest Version" */
-  latestVersionText?: string
 }
 
 export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
@@ -87,14 +84,12 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
   initialContainer = null,
   selectMultiple,
   onSelectedChange,
-  showVersionSelection = true,
-  mustSelectVersionNumber = false,
+  versionSelection = VersionSelectionType.TRACKED,
   selectableTypes = DEFAULT_SELECTABLE_TYPES,
   visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   selectedCopy = selectMultiple ? count => `Selected (${count})` : 'Selected',
   treeOnly = false,
-  latestVersionText,
 }: EntityFinderProps) => {
   const { accessToken } = useSynapseContext()
 
@@ -307,8 +302,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                       },
                     }
               }
-              showVersionSelection={showVersionSelection}
-              mustSelectVersionNumber={mustSelectVersionNumber}
+              versionSelection={versionSelection}
               selectColumnType={selectMultiple ? 'checkbox' : 'none'}
               selected={selectedEntities}
               isIdSelected={isIdSelected}
@@ -317,7 +311,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
               enableSelectAll={selectMultiple}
-              latestVersionText={latestVersionText}
               // Intentionally do not pass "setCurrentContainer" -- search does not use the tree so it has nothing to update
               setCurrentContainer={undefined}
             />
@@ -373,8 +366,7 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                         <ReflexElement className="DetailsViewReflexElement">
                           <EntityDetailsList
                             configuration={configFromTreeView}
-                            mustSelectVersionNumber={mustSelectVersionNumber}
-                            showVersionSelection={showVersionSelection}
+                            versionSelection={versionSelection}
                             selected={selectedEntities}
                             isIdSelected={isIdSelected}
                             isSelectable={isSelectable}
@@ -385,7 +377,6 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
                             }
                             toggleSelection={toggleSelection}
                             enableSelectAll={selectMultiple}
-                            latestVersionText={latestVersionText}
                             setCurrentContainer={setCurrentContainer}
                           />
                           <Breadcrumbs {...breadcrumbsProps} />

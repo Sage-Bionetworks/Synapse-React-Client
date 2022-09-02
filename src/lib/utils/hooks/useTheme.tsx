@@ -43,19 +43,19 @@ export type SynapseTheme = {
 export const ThemeContext =
   React.createContext<SynapseTheme>(defaultSynapseTheme)
 
-export type ThemeProviderProps = {
+export type ThemeProviderProps = React.PropsWithChildren<{
   theme?: DeepPartial<SynapseTheme>
-}
+}>
 
 export function mergeTheme(theme: DeepPartial<SynapseTheme>): SynapseTheme {
   // TODO: Handle merging color palettes where an entire palette can be generated from a single base color.
   return merge({}, defaultSynapseTheme, theme)
 }
 
-export const ThemeProvider: React.FunctionComponent<ThemeProviderProps> = ({
+export const ThemeProvider = ({
   theme = defaultSynapseTheme,
   children,
-}) => {
+}: ThemeProviderProps) => {
   const mergedTheme = useMemo(() => mergeTheme(theme), [theme])
   const muiTheme = createTheme({
     palette: {

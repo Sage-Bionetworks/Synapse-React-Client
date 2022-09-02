@@ -110,7 +110,7 @@ describe('facets display hide/show', () => {
       name: 'View All Charts',
     })
 
-    userEvent.click(showMoreButton)
+    await userEvent.click(showMoreButton)
 
     const expectedLength = defaultQueryContext.data?.facets?.filter(
       facet => facet.facetType === 'enumeration',
@@ -150,7 +150,7 @@ describe('facets display hide/show', () => {
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(2)
 
     const closeFacetPlotButton = getButtonOnFacet('Hide graph', 0)!
-    userEvent.click(closeFacetPlotButton)
+    await userEvent.click(closeFacetPlotButton)
     expect(await screen.findAllByRole('graphics-document')).toHaveLength(1)
   })
 
@@ -160,12 +160,12 @@ describe('facets display hide/show', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
 
     const expandButton = getButtonOnFacet('expand', 1)!
-    userEvent.click(expandButton)
+    await userEvent.click(expandButton)
     const dialog = await screen.findByRole('dialog')
     await within(dialog).findByRole('graphics-document')
 
     // Close the modal
-    userEvent.click(screen.getByRole('button', { name: 'Close' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Close' }))
     await waitFor(() =>
       expect(screen.getAllByRole('graphics-document')).toHaveLength(2),
     )

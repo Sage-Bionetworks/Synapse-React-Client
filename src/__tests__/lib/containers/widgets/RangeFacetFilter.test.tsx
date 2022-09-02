@@ -111,7 +111,7 @@ describe('RangeFacetFilter tests', () => {
   })
 
   describe('collapsible', () => {
-    it('should hide content when toggled', () => {
+    it('should hide content when toggled', async () => {
       init({ ...props, collapsed: false })
 
       expect(MockCollapse).toHaveBeenLastCalledWith(
@@ -122,7 +122,9 @@ describe('RangeFacetFilter tests', () => {
       )
 
       // toggle collapse via button
-      userEvent.click(screen.getByRole('button', { name: 'Collapse Menu' }))
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Collapse Menu' }),
+      )
 
       expect(MockCollapse).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -132,7 +134,7 @@ describe('RangeFacetFilter tests', () => {
       )
     })
 
-    it('should start collapsed when specified via prop', () => {
+    it('should start collapsed when specified via prop', async () => {
       init({ ...props, collapsed: true })
       expect(MockCollapse).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -142,7 +144,7 @@ describe('RangeFacetFilter tests', () => {
       )
 
       // toggle collapse via button
-      userEvent.click(screen.getByRole('button', { name: 'Expand Menu' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Expand Menu' }))
 
       expect(MockCollapse).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -211,7 +213,7 @@ describe('RangeFacetFilter tests', () => {
       // Click "Not Assigned"
       const notAssignedOption =
         screen.getByLabelText<HTMLInputElement>('Not Assigned')
-      userEvent.click(notAssignedOption)
+      await userEvent.click(notAssignedOption)
       expect(mockCallback).toHaveBeenCalledWith([VALUE_NOT_SET, VALUE_NOT_SET])
       expect(mockCallback).toBeCalledTimes(1)
 
@@ -222,7 +224,7 @@ describe('RangeFacetFilter tests', () => {
 
       // Click "Range"
       const rangeOption = screen.getByLabelText<HTMLInputElement>('Range')
-      userEvent.click(rangeOption)
+      await userEvent.click(rangeOption)
       expect(mockCallback).not.toHaveBeenCalled()
       screen.getByTestId('RangeSlider')
 
@@ -233,7 +235,7 @@ describe('RangeFacetFilter tests', () => {
       expect(rangeOption.checked).toBe(true)
 
       // Click "Any"
-      userEvent.click(anyOption)
+      await userEvent.click(anyOption)
       expect(mockCallback).toHaveBeenCalledWith(['', ''])
       expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
       expect(anyOption.checked).toBe(true)

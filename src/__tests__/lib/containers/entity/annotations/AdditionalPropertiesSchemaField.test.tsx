@@ -142,7 +142,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       expect(typeInput.value).toBe('String')
 
       // Convert type from String -> Integer (destructive operation)
-      userEvent.selectOptions(typeInput, 'Integer')
+      await userEvent.selectOptions(typeInput, 'Integer')
 
       // Alert should be shown
       await screen.findByRole('alert')
@@ -177,7 +177,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       expect(typeInput.value).toBe('Datetime')
 
       // Convert type from Datetime -> String (non-destructive operation)
-      userEvent.selectOptions(typeInput, 'String')
+      await userEvent.selectOptions(typeInput, 'String')
 
       // Alert should still not be shown, operation was not destructive
       expect(screen.queryByRole('alert')).not.toBeInTheDocument()
@@ -186,7 +186,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ).not.toBeInTheDocument()
 
       // Converting back to Datetime is still non-destructive since all values are still valid Datetime values
-      userEvent.selectOptions(typeInput, 'Datetime')
+      await userEvent.selectOptions(typeInput, 'Datetime')
 
       // Alert should still not be shown, operation was not destructive
       expect(screen.queryByRole('alert')).not.toBeInTheDocument()
@@ -225,7 +225,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       expect(typeInput.value).toBe('String')
 
       // Convert type from String -> Datetime (destructive operation because not all values are valid datetimes)
-      userEvent.selectOptions(typeInput, 'Datetime')
+      await userEvent.selectOptions(typeInput, 'Datetime')
 
       // Alert should be shown
       await screen.findByRole('alert')

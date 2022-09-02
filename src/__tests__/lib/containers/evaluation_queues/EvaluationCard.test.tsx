@@ -1,5 +1,5 @@
 import { render, screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 import JestMockPromise from 'jest-mock-promise'
 import React from 'react'
 import { SynapseClient } from '../../../../lib/utils'
@@ -11,6 +11,7 @@ import {
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { UserEvaluationPermissions } from '../../../../lib/utils/synapseTypes/Evaluation/UserEvaluationPermissions'
 import { server } from '../../../../mocks/msw/server'
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup'
 
 describe('test Evaluation Card', () => {
   let permissions: UserEvaluationPermissions
@@ -24,7 +25,14 @@ describe('test Evaluation Card', () => {
   let mockOnModifyAccess: jest.Mock
   let mockOnSubmit: jest.Mock
   let mockOnDeleteSuccess: jest.Mock
-  beforeAll(() => server.listen())
+
+  let user: UserEvent
+  beforeAll(() => {
+    server.listen()
+    user = userEvent.setup({
+      pointerEventsCheck: PointerEventsCheckLevel.Never,
+    })
+  })
   beforeEach(() => {
     evaluation = {
       id: '1234',
@@ -141,7 +149,7 @@ describe('test Evaluation Card', () => {
     ).not.toBeInTheDocument()
   })
 
-  test('no permissions for edit dropdown option - hide option', () => {
+  test('no permissions for edit dropdown option - hide option', async () => {
     permissions.canEdit = false
 
     render(<EvaluationCard {...props} />, {
@@ -150,7 +158,7 @@ describe('test Evaluation Card', () => {
 
     // Open the dropdown menu
     const dropdown = screen.getByRole('menu', { name: 'Options' })
-    userEvent.click(dropdown)
+    await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
     expect(dropdownItems).toHaveLength(2)
@@ -158,24 +166,24 @@ describe('test Evaluation Card', () => {
     // Click "Modify Access"
     const modifyAccessOption = dropdownItems[0]
     within(modifyAccessOption).getByText('Modify Access')
-    userEvent.click(modifyAccessOption)
+    await user.click(modifyAccessOption)
     expect(mockOnModifyAccess).toBeCalled()
 
     // Click "Delete"
     const deleteOption = dropdownItems[1]
     within(deleteOption).getByText('Delete')
-    userEvent.click(deleteOption)
+    await user.click(deleteOption)
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
-    userEvent.click(deleteButton)
+    await userEvent.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
   })
 
-  test('no permissions for modify access dropdown option - hide option', () => {
+  test('no permissions for modify access dropdown option - hide option', async () => {
     permissions.canChangePermissions = false
 
     render(<EvaluationCard {...props} />, {
@@ -184,7 +192,7 @@ describe('test Evaluation Card', () => {
 
     // Open the dropdown menu
     const dropdown = screen.getByRole('menu', { name: 'Options' })
-    userEvent.click(dropdown)
+    await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
     expect(dropdownItems).toHaveLength(2)
@@ -192,24 +200,24 @@ describe('test Evaluation Card', () => {
     // Click "Edit"
     const editOption = dropdownItems[0]
     within(editOption).getByText('Edit')
-    userEvent.click(editOption)
+    await user.click(editOption)
     expect(mockOnEdit).toBeCalled()
 
     // Click "Delete"
     const deleteOption = dropdownItems[1]
     within(deleteOption).getByText('Delete')
-    userEvent.click(deleteOption)
+    await user.click(deleteOption)
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
-    userEvent.click(deleteButton)
+    await user.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
   })
 
-  test('no permissions for delete dropdown option - hide option', () => {
+  test('no permissions for delete dropdown option - hide option', async () => {
     permissions.canDelete = false
 
     render(<EvaluationCard {...props} />, {
@@ -218,7 +226,7 @@ describe('test Evaluation Card', () => {
 
     // Open the dropdown menu
     const dropdown = screen.getByRole('menu', { name: 'Options' })
-    userEvent.click(dropdown)
+    await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
     expect(dropdownItems).toHaveLength(2)
@@ -226,24 +234,24 @@ describe('test Evaluation Card', () => {
     // Click "Edit"
     const editOption = dropdownItems[0]
     within(editOption).getByText('Edit')
-    userEvent.click(editOption)
+    await user.click(editOption)
     expect(mockOnEdit).toBeCalled()
 
     // Click "Modify Access"
     const modifyAccessOption = dropdownItems[1]
     within(modifyAccessOption).getByText('Modify Access')
-    userEvent.click(modifyAccessOption)
+    await user.click(modifyAccessOption)
     expect(mockOnModifyAccess).toBeCalled()
   })
 
-  test('permissions for all dropdown options', () => {
+  test('permissions for all dropdown options', async () => {
     render(<EvaluationCard {...props} />, {
       wrapper: createWrapper(),
     })
 
     // Open the dropdown menu
     const dropdown = screen.getByRole('menu', { name: 'Options' })
-    userEvent.click(dropdown)
+    await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
     expect(dropdownItems).toHaveLength(3)
@@ -251,30 +259,30 @@ describe('test Evaluation Card', () => {
     // Click "Edit"
     const editOption = dropdownItems[0]
     within(editOption).getByText('Edit')
-    userEvent.click(editOption)
+    await user.click(editOption)
     expect(mockOnEdit).toBeCalled()
 
     // Click "Modify Access"
     const modifyAccessOption = dropdownItems[1]
     within(modifyAccessOption).getByText('Modify Access')
-    userEvent.click(modifyAccessOption)
+    await user.click(modifyAccessOption)
     expect(mockOnModifyAccess).toBeCalled()
 
     // Click "Delete"
     const deleteOption = dropdownItems[2]
     within(deleteOption).getByText('Delete')
-    userEvent.click(deleteOption)
+    await user.click(deleteOption)
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
-    userEvent.click(deleteButton)
+    await user.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).toBeCalled()
   })
 
-  test('Delete options API call failure - onDeleteSuccess callback not called', () => {
+  test('Delete options API call failure - onDeleteSuccess callback not called', async () => {
     mockDeleteEvaluation.mockImplementation(() => {
       return new JestMockPromise((resolve, reject) => {
         reject(new Error("OOPS! It's a error Deleting"))
@@ -287,7 +295,7 @@ describe('test Evaluation Card', () => {
 
     // Open the dropdown menu
     const dropdown = screen.getByRole('menu', { name: 'Options' })
-    userEvent.click(dropdown)
+    await user.click(dropdown)
 
     const dropdownItems = screen.getAllByRole('menuitem')
     expect(dropdownItems).toHaveLength(3)
@@ -295,12 +303,12 @@ describe('test Evaluation Card', () => {
     // Click "Delete"
     const deleteOption = dropdownItems[2]
     within(deleteOption).getByText('Delete')
-    userEvent.click(deleteOption)
+    await user.click(deleteOption)
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
-    userEvent.click(deleteButton)
+    await user.click(deleteButton)
 
     expect(mockDeleteEvaluation).toBeCalled()
     expect(mockOnDeleteSuccess).not.toBeCalled()

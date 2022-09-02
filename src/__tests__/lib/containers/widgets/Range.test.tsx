@@ -22,16 +22,16 @@ function getInput(label: string) {
   return screen.getByLabelText<HTMLInputElement>(label)
 }
 
-function updateValue(min: number | string, max: number | string) {
+async function updateValue(min: number | string, max: number | string) {
   const minInput = getInput('min')
-  userEvent.clear(minInput)
-  userEvent.type(minInput, min.toString())
+  await userEvent.clear(minInput)
+  await userEvent.type(minInput, min.toString())
 
   const maxInput = getInput('max')
-  userEvent.clear(maxInput)
-  userEvent.type(maxInput, max.toString())
+  await userEvent.clear(maxInput)
+  await userEvent.type(maxInput, max.toString())
 
-  userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+  await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
 }
 
 describe('Range input test', () => {
@@ -53,15 +53,15 @@ describe('Range input test', () => {
     expect(maxInput.value).toBe('')
   })
 
-  it('should call callbackFn correctly', () => {
+  it('should call callbackFn correctly', async () => {
     renderComponent()
-    updateValue(2, 4.9)
+    await updateValue(2, 4.9)
     expect(mockCallback).toHaveBeenCalledWith({ min: '2', max: '4.9' })
   })
 
-  it('should not trigger callback for min > max and should show error', () => {
+  it('should not trigger callback for min > max and should show error', async () => {
     renderComponent()
-    updateValue(4.9, 2)
+    await updateValue(4.9, 2)
     expect(mockCallback).not.toHaveBeenCalled()
     const errorMessage = screen.getByText(
       'Min value should be less then max value',
@@ -94,16 +94,16 @@ describe('Range input test', () => {
 
     it('should call callbackFn correctly', async () => {
       renderComponent({ type: 'date' })
-      updateValue(updatedValues.min, updatedValues.max)
+      await updateValue(updatedValues.min, updatedValues.max)
       await waitFor(() =>
         expect(mockCallback).toHaveBeenCalledWith(updatedValues),
       )
     })
 
-    it('should not trigger callback for min > max and should show error', () => {
+    it('should not trigger callback for min > max and should show error', async () => {
       renderComponent({ type: 'date' })
 
-      updateValue(updatedValues.max, updatedValues.min)
+      await updateValue(updatedValues.max, updatedValues.min)
       expect(mockCallback).not.toHaveBeenCalled()
       const errorMessage = screen.getByText(
         'Min value should be less then max value',

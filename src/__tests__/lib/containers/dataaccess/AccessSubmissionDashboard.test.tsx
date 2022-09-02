@@ -90,7 +90,7 @@ describe('AccessSubmissionDashboard tests', () => {
   it('Renders inputFields and the table component', async () => {
     renderComponent()
 
-    expect(await screen.findAllByRole('textbox')).toHaveLength(3)
+    expect(await screen.findAllByRole('combobox')).toHaveLength(3)
     await screen.findByTestId(SUBMISSION_TABLE_TEST_ID)
     expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -104,8 +104,11 @@ describe('AccessSubmissionDashboard tests', () => {
 
   it('Updates the passed props and URLSearchParams when updating arName', async () => {
     const { history } = renderComponent()
-    const arNameInput = (await screen.findAllByRole('textbox'))[0]
-    userEvent.type(arNameInput, mockAccessRequirement.name)
+    const arNameInput = (await screen.findAllByRole('combobox'))[0]
+    await userEvent.type(arNameInput, mockAccessRequirement.name)
+    await screen.findByText(
+      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+    )
     await selectEvent.select(
       arNameInput,
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
@@ -131,8 +134,9 @@ describe('AccessSubmissionDashboard tests', () => {
 
   it('Updates the passed props and URLSearchParams when updating requesterId', async () => {
     const { history } = renderComponent()
-    const requesterInput = (await screen.findAllByRole('textbox'))[1]
-    userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
+    const requesterInput = (await screen.findAllByRole('combobox'))[1]
+    await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
+    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(requesterInput, new RegExp('@' + MOCK_USER_NAME))
 
     await waitFor(() =>
@@ -152,8 +156,9 @@ describe('AccessSubmissionDashboard tests', () => {
 
   it('Updates the passed props and URLSearchParams when updating reviewerId', async () => {
     const { history } = renderComponent()
-    const reviewerInput = (await screen.findAllByRole('textbox'))[2]
-    userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
+    const reviewerInput = (await screen.findAllByRole('combobox'))[2]
+    await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
+    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
     await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
 
     await waitFor(() =>

@@ -101,7 +101,7 @@ describe('AccessApprovalsTable tests', () => {
     expect(
       screen.queryByRole('button', { name: 'Show More' }),
     ).toBeInTheDocument()
-    userEvent.click(moreButton!)
+    await userEvent.click(moreButton!)
     const item2 = await screen.findAllByText('Access Requirement2')
     expect(item2).toHaveLength(1)
   })

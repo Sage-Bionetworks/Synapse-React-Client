@@ -171,7 +171,7 @@ describe('Access Requirement Table tests', () => {
       name: 'New Access Requirement',
     })
 
-    userEvent.click(button)
+    await userEvent.click(button)
 
     expect(mockOnCreateNewAR).toHaveBeenCalled()
   })
@@ -191,7 +191,7 @@ describe('Access Requirement Table tests', () => {
     })
 
     // Clicking the button should make a request for the next page
-    userEvent.click(showMoreButton)
+    await userEvent.click(showMoreButton)
     await waitFor(() =>
       expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
         expect.objectContaining({ nextPageToken: nextPageToken }),
@@ -232,7 +232,7 @@ describe('Access Requirement Table tests', () => {
 
     // clicking the current sort should reverse the direction
     const createdOnSortButton = screen.getByLabelText('Sort by Created On')
-    userEvent.click(createdOnSortButton)
+    await userEvent.click(createdOnSortButton)
 
     // desc -> asc
     await waitFor(() =>
@@ -246,7 +246,7 @@ describe('Access Requirement Table tests', () => {
     // asc -> desc
     // Clear the query client to verify the requested data changes (otherwise we get a cache hit)
     queryClient.clear()
-    userEvent.click(createdOnSortButton)
+    await userEvent.click(createdOnSortButton)
     await waitFor(() =>
       expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
         expect.objectContaining({
@@ -257,7 +257,7 @@ describe('Access Requirement Table tests', () => {
 
     // clicking a different column (name) should sort by that column, descending
     const nameSortButton = screen.getByLabelText('Sort by Name')
-    userEvent.click(nameSortButton)
+    await userEvent.click(nameSortButton)
     await waitFor(() =>
       expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
         expect.objectContaining({

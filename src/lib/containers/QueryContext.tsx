@@ -80,17 +80,17 @@ export const QueryContext = createContext<QueryContextType | undefined>(
   undefined,
 )
 
-export type QueryContextProviderProps = {
+export type QueryContextProviderProps = React.PropsWithChildren<{
   queryContext: QueryContextType
-}
+}>
 
 /**
  * Provides data related to a Synapse table query, and functions for iterating through pages of the data.
  */
-export const QueryContextProvider: React.FC<QueryContextProviderProps> = ({
+export const QueryContextProvider = ({
   children,
   queryContext,
-}) => {
+}: QueryContextProviderProps) => {
   return (
     <QueryContext.Provider value={queryContext}>
       {children}

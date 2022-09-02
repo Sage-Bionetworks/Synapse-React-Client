@@ -68,7 +68,7 @@ describe.skip('EntityModal tests', () => {
     const annotationsTab = (await screen.findAllByRole('tab')).filter(
       tab => tab.innerHTML === 'ANNOTATIONS',
     )[0]
-    userEvent.click(annotationsTab)
+    await userEvent.click(annotationsTab)
 
     await screen.findByText('Mock Annotations Table')
   })
@@ -151,7 +151,7 @@ describe.skip('EntityModal tests', () => {
     renderComponent({ initialTab: EntityModalTabs.ANNOTATIONS })
 
     const editButton = await screen.findByRole('button', { name: 'Edit' })
-    userEvent.click(editButton)
+    await userEvent.click(editButton)
 
     // Text that appears in the editor component if there's a schema
     await screen.findByText('Mock Annotation Editor', { exact: false })

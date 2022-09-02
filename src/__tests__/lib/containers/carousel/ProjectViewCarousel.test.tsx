@@ -53,7 +53,7 @@ describe('basic functionality', () => {
 
     screen.getByRole('marquee')
 
-    expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0)
+    expect((await screen.findAllByRole('listitem')).length).toBeGreaterThan(0)
 
     // Check that the currently selected card (card 0) contains an image element with the correct src
     expect(screen.getAllByRole('img')[0].getAttribute('src')).toEqual(

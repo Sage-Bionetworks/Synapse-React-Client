@@ -1,7 +1,9 @@
 import React, { useCallback } from 'react'
 import {
   BrowserRouter,
+  BrowserRouterProps,
   MemoryRouter,
+  MemoryRouterProps,
   NavLink,
   Route,
   Switch,
@@ -59,7 +61,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
     userBundle?.isACTMember || userBundle?.isARReviewer
 
   const Router = useCallback(
-    props => {
+    (props: MemoryRouterProps | BrowserRouterProps) => {
       if (useMemoryRouter) {
         return <MemoryRouter {...props} />
       } else {

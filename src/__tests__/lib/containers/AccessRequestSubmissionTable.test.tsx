@@ -41,8 +41,8 @@ function renderComponent(props: AccessRequestSubmissionTableProps) {
   )
 }
 
-const onServiceRecievedRequest = jest.fn()
-const onServiceRecievedRequestForNextPage = jest.fn()
+const onServiceReceivedRequest = jest.fn()
+const onServiceReceivedRequestForNextPage = jest.fn()
 
 const nextPageToken = 'mock-npt'
 
@@ -80,13 +80,13 @@ describe('Access Request Submission Table tests', () => {
         )}${ACCESS_REQUEST_SUBMISSION_SEARCH}`,
 
         async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
+          onServiceReceivedRequest(req.body)
           let response
           if (
             (req.body as SubmissionSearchRequest).nextPageToken ===
             nextPageToken
           ) {
-            onServiceRecievedRequestForNextPage()
+            onServiceReceivedRequestForNextPage()
             response = mockSubmissionSearchResponsePage2
           } else {
             response = {
@@ -127,7 +127,7 @@ describe('Access Request Submission Table tests', () => {
 
     renderComponent(props)
 
-    await waitFor(() => expect(onServiceRecievedRequest).toHaveBeenCalled())
+    await waitFor(() => expect(onServiceReceivedRequest).toHaveBeenCalled())
   })
 
   it('Renders all headers and a row of data', async () => {
@@ -191,13 +191,13 @@ describe('Access Request Submission Table tests', () => {
     })
 
     // Clicking the button should make a request for the next page
-    userEvent.click(showMoreButton)
+    await userEvent.click(showMoreButton)
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
+      expect(onServiceReceivedRequest).toHaveBeenLastCalledWith(
         expect.objectContaining({ nextPageToken: nextPageToken }),
       ),
     )
-    expect(onServiceRecievedRequestForNextPage).toHaveBeenCalled()
+    expect(onServiceReceivedRequestForNextPage).toHaveBeenCalled()
 
     // Second page of data should be shown
 
@@ -224,11 +224,11 @@ describe('Access Request Submission Table tests', () => {
       showRequesters: true,
     })
 
-    await waitFor(() => expect(onServiceRecievedRequest).toHaveBeenCalled())
+    await waitFor(() => expect(onServiceReceivedRequest).toHaveBeenCalled())
 
     // By default, should sort by created on, descending
     const defaultSort = [{ field: 'CREATED_ON', direction: 'DESC' }]
-    expect(onServiceRecievedRequest).toHaveBeenCalledWith(
+    expect(onServiceReceivedRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         sort: defaultSort,
       }),
@@ -236,11 +236,11 @@ describe('Access Request Submission Table tests', () => {
 
     // clicking the current sort should reverse the direction
     const createdOnSortButton = screen.getByLabelText('Sort by Created On')
-    userEvent.click(createdOnSortButton)
+    await userEvent.click(createdOnSortButton)
 
     // desc -> asc
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenLastCalledWith(
+      expect(onServiceReceivedRequest).toHaveBeenLastCalledWith(
         expect.objectContaining({
           sort: [{ field: 'CREATED_ON', direction: 'ASC' }],
         }),

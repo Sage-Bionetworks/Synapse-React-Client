@@ -36,11 +36,11 @@ describe('WarningModal', () => {
     screen.getByRole('button', { name: props.confirmButtonText })
   })
 
-  test('should call callback fn with correct arguments', () => {
+  test('should call callback fn with correct arguments', async () => {
     const spy = jest.spyOn(mock, 'confirmFn')
     renderComponent(props)
     const btn = screen.getByRole('button', { name: props.confirmButtonText })
-    userEvent.click(btn)
+    await userEvent.click(btn)
     expect(spy).toHaveBeenCalledWith('one', 'two')
   })
 })

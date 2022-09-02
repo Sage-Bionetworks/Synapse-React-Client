@@ -69,11 +69,11 @@ describe('SqlEditor tests', () => {
     component.container.querySelector('.MuiCollapse-hidden')
   })
 
-  it('edits the sql', () => {
+  it('edits the sql', async () => {
     renderComponent(defaultQueryContext, defaultQueryVisualizationContext)
     const box = screen.getByRole('textbox')
     const newSql = 'select study from syn456'
-    userEvent.type(box, newSql + '{enter}')
+    await userEvent.type(box, newSql + '{enter}')
     expect(mockExecuteQueryRequest).toBeCalledWith(
       expect.objectContaining({
         query: expect.objectContaining({
