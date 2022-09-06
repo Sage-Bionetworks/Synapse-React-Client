@@ -2,7 +2,7 @@ import * as React from 'react'
 import { SynapseConstants } from '../../utils/'
 import { isTable } from '../../utils/functions/EntityTypeUtils'
 import {
-  insertConditionsFromSearchParams,
+  generateQueryFilterFromSearchParams,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../../utils/functions/sqlFunctions'
@@ -104,8 +104,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     initQueryJson,
     showLastUpdatedOn,
   } = props
-  const sqlUsed = insertConditionsFromSearchParams(
-    sql,
+
+  const additionalFilters = generateQueryFilterFromSearchParams(
     searchParams,
     sqlOperator,
   )
@@ -114,7 +114,8 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
   const query: Query = initQueryJson
     ? (JSON.parse(initQueryJson) as Query)
     : {
-        sql: sqlUsed,
+        sql: sql,
+        additionalFilters: additionalFilters ?? undefined,
         limit: limit,
         offset: 0,
       }

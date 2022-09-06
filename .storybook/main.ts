@@ -40,7 +40,6 @@ module.exports = {
         viteExternalsPlugin({
           react: 'React',
           'react-dom': 'ReactDOM',
-          'sql-parser': 'SQLParser',
         }),
       ],
       resolve: {

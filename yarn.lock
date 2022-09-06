@@ -15932,11 +15932,6 @@ sprintf-js@~1.0.2:
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
 
-sql-parser@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/sql-parser/-/sql-parser-0.5.0.tgz#a79b6e66452f3d615b211989f006f34033bc436a"
-  integrity sha512-0Lw6wAUF4MGJ5pRKY6W8emkhWB7WmQ/5bioEzVVk0oI7kIvACJxJCdHD/K8EKQb+kniRPOuxhSnmd/kU+gn/9Q==
-
 sshpk@^1.7.0:
   version "1.17.0"
   resolved "https://registry.yarnpkg.com/sshpk/-/sshpk-1.17.0.tgz#578082d92d4fe612b13007496e543fa0fbcbe4c5"

@@ -1,11 +1,15 @@
 import {
   parseEntityIdFromSqlStatement,
-  insertConditionsFromSearchParams,
   SQLOperator,
-  formatSQLFromParser,
   parseEntityIdAndVersionFromSqlStatement,
+  generateQueryFilterFromSearchParams,
 } from '../../../../lib/utils/functions/sqlFunctions'
-import { lexer } from 'sql-parser'
+import {
+  ColumnMultiValueFunction,
+  ColumnMultiValueFunctionQueryFilter,
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+} from '../../../../lib/utils/synapseTypes/Table/QueryFilter'
 
 describe('parseEntityIdFromSqlStatement', () => {
   it('should get entityId correctly', () => {
@@ -53,72 +57,162 @@ describe('parseEntityIdAndVersionFromSqlStatement', () => {
   })
 })
 
-describe('insertConditionsFromSearchParams', () => {
-  it('should parse correctly', () => {
-    let sql =
-      'SELECT id AS "File ID", assay, dataType, diagnosis, tumorType,  species, individualID, fileFormat, dataSubtype, nf1Genotype as "NF1 Genotype", nf2Genotype as "NF2 Genotype", studyName, fundingAgency, consortium, name AS "File Name", accessType, accessTeam FROM syn16858331 WHERE resourceType = \'experimentalData\''
-    let searchParams = {
+describe('generateQueryFilterFromSearchParams', () => {
+  it('Handles no search params', () => {
+    const searchParams = {
       QueryWrapper0:
         '{"sql":"SELECT id AS "File ID", assay, dataType, diagnosis, tumorType,  species, individualID,  fileFormat, dataSubtype, nf1Genotype as \\"NF1 Genotype\\", nf2Genotype as \\"NF2 Genotype\\", studyName, fundingAgency, consortium, name AS \\"File Name\\", accessType, accessTeam  FROM syn16858331 WHERE resourceType = \'experimentalData\'","limit":25,"offset":0,"selectedFacets":[{"concreteType":"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest","columnName":"assay","facetValues":["exomeSeq"]}]}',
     }
-    let operator: SQLOperator = 'LIKE'
-    // if no search params are there, then it should return the input sql
-    expect(insertConditionsFromSearchParams(sql, undefined, operator)).toBe(sql)
-    expect(insertConditionsFromSearchParams(sql, {}, operator)).toBe(sql)
+    const operator: SQLOperator = 'LIKE'
+    // if no search params are there, then it should return null
+    expect(generateQueryFilterFromSearchParams(undefined, operator)).toBe(null)
+    expect(generateQueryFilterFromSearchParams({}, operator)).toBe(null)
     // if the only search params set are from the QueryWrapper, then it should return the input sql
-    expect(insertConditionsFromSearchParams(sql, searchParams, operator)).toBe(
-      sql,
+    expect(generateQueryFilterFromSearchParams(searchParams, operator)).toBe(
+      null,
     )
   })
-  it('should insert correctly in versioned query', () => {
-    let sql = 'SELECT * FROM syn21783965.1'
-    let searchParams = {
-      study: 'syn21754060',
-    }
-    let operator: SQLOperator = '='
-    // if no search params are there, then it should return the input sql
-    const result = insertConditionsFromSearchParams(sql, searchParams, operator)
-    const expectedResult =
-      "SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = 'syn21754060')"
-    expect(result).toBe(expectedResult)
-  })
-  it('should insert correctly in versioned query with group by', () => {
-    let sql = 'SELECT * FROM syn21783965.1 GROUP BY x'
-    let searchParams = {
-      study: 'syn21754060',
-    }
-    let operator: SQLOperator = '='
-    // if no search params are there, then it should return the input sql
-    const result = insertConditionsFromSearchParams(sql, searchParams, operator)
-    const expectedResult =
-      "SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = 'syn21754060')\n  GROUP BY `x`"
-    expect(result).toBe(expectedResult)
-  })
-  it('should insert correctly in versioned query with ORDER BY', () => {
-    let sql = 'SELECT * FROM syn21783965.1 ORDER BY study'
-    let searchParams = {
-      study: 'syn21754060',
-    }
-    let operator: SQLOperator = '='
-    // if no search params are there, then it should return the input sql
-    const result = insertConditionsFromSearchParams(sql, searchParams, operator)
-    const expectedResult =
-      "SELECT *\n  FROM syn21783965.1\n  WHERE (`study` = 'syn21754060')\n  ORDER BY `study` ASC"
-    expect(result).toBe(expectedResult)
-  })
-})
 
-describe('formatSQLFromParser tests', () => {
-  it('double strings should be escaped as literals', () => {
-    const doubleSqlStr = 'select * from syn123 where col="hello"'
-    const tokens = lexer.tokenize(doubleSqlStr)
-    const sql = formatSQLFromParser(tokens)
-    expect(sql.indexOf('"')).toEqual(-1)
+  it("Omits params beginning with 'QueryWrapper' when other searchParams are present", () => {
+    let searchParams = {
+      QueryWrapper0:
+        '{"sql":"SELECT id AS "File ID", assay, dataType, diagnosis, tumorType,  species, individualID,  fileFormat, dataSubtype, nf1Genotype as \\"NF1 Genotype\\", nf2Genotype as \\"NF2 Genotype\\", studyName, fundingAgency, consortium, name AS \\"File Name\\", accessType, accessTeam  FROM syn16858331 WHERE resourceType = \'experimentalData\'","limit":25,"offset":0,"selectedFacets":[{"concreteType":"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest","columnName":"assay","facetValues":["exomeSeq"]}]}',
+      study: 'syn21754060',
+    }
+    let operator: SQLOperator = '='
+    // if no search params are there, then it should return the input sql
+    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const expectedResult: ColumnSingleValueQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'study',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['syn21754060'],
+      },
+    ]
+    expect(result).toStrictEqual(expectedResult)
   })
-  it('versioned tables should not break the parser', () => {
-    const versionTableSql = 'select * from syn123.12'
-    const tokens = lexer.tokenize(versionTableSql)
-    const sql = formatSQLFromParser(tokens)
-    expect(sql).toEqual('SELECT *\n  FROM syn123.12')
+
+  it('Generates a queryFilter for EQUALS', () => {
+    let searchParams = {
+      study: 'syn21754060',
+    }
+    let operator: SQLOperator = '='
+    // if no search params are there, then it should return the input sql
+    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const expectedResult: ColumnSingleValueQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'study',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['syn21754060'],
+      },
+    ]
+    expect(result).toStrictEqual(expectedResult)
+  })
+
+  it('Generates a queryFilter for LIKE', () => {
+    let searchParams = {
+      study: 'someValue',
+    }
+    let operator: SQLOperator = 'LIKE'
+    // if no search params are there, then it should return the input sql
+    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const expectedResult: ColumnSingleValueQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'study',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['%someValue%'],
+      },
+    ]
+    expect(result).toStrictEqual(expectedResult)
+  })
+
+  it('Omits the syn prefix when querying a SynID with LIKE', () => {
+    let searchParams = {
+      study: 'syn21754060',
+    }
+    let operator: SQLOperator = 'LIKE'
+    // if no search params are there, then it should return the input sql
+    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    const expectedResult: ColumnSingleValueQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'study',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['%21754060%'],
+      },
+    ]
+    expect(result).toStrictEqual(expectedResult)
+  })
+
+  it('Generates a queryFilter for HAS', () => {
+    let searchParams = {
+      study: 'syn21754060',
+    }
+    let operator: SQLOperator = 'HAS'
+    // if no search params are there, then it should return the input sql
+    const actual = generateQueryFilterFromSearchParams(searchParams, operator)
+    const expectedResult: ColumnMultiValueFunctionQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+        columnName: 'study',
+        function: ColumnMultiValueFunction.HAS,
+        values: ['syn21754060'],
+      },
+    ]
+    expect(actual).toStrictEqual(expectedResult)
+  })
+
+  it('works with multiple searchParams and a WHERE clause already present', () => {
+    const searchParams = {
+      grant: 'GRANT',
+      grantTwo: 'VALUE TWO',
+    }
+    const expectedResults: ColumnSingleValueQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'grant',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['%GRANT%'],
+      },
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'grantTwo',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['%VALUE TWO%'],
+      },
+    ]
+
+    const actual = generateQueryFilterFromSearchParams(searchParams)
+    expect(actual).toStrictEqual(expectedResults)
+  })
+
+  it('works with multiple conditions in the HAS clause', () => {
+    const operator = 'HAS'
+    const searchParams = {
+      APPLE: 'SMITH,FUJI',
+    }
+
+    const expectedResults: ColumnMultiValueFunctionQueryFilter[] = [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+        columnName: 'APPLE',
+        function: ColumnMultiValueFunction.HAS,
+        values: ['SMITH', 'FUJI'],
+      },
+    ]
+
+    const result = generateQueryFilterFromSearchParams(searchParams, operator)
+    expect(result).toStrictEqual(expectedResults)
   })
 })

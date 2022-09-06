@@ -51,7 +51,6 @@ import { ReactComponent as personSvg } from '../../../assets/icons/person.svg'
 import { ReactComponent as mouseSvg } from '../../../assets/icons/mouse.svg'
 import { ReactComponent as chart2Svg } from '../../../assets/icons/chart2.svg'
 import { ReactComponent as fileSvg } from '../../../assets/icons/file.svg'
-
 import {
   Project,
   Publication,
@@ -77,13 +76,11 @@ import {
   ExternalLink,
   SqlEditorIcon,
 } from '../../../assets/themed_icons'
-
-import { KeyValue } from '../../../utils/functions/sqlFunctions'
 import IconSvg from '../../IconSvg'
 
 type IconProps = {
   type: string
-  iconOptions?: KeyValue
+  iconOptions?: Record<string, string>
   value?: string
   isHeader?: boolean
   cssClass?: string

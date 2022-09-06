@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
-  insertConditionsFromSearchParams,
-  KeyValue,
+  generateQueryFilterFromSearchParams,
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
@@ -26,7 +25,7 @@ export type SubsectionRowRendererProps = {
   sql: string
   isMarkdown?: boolean
   sqlOperator?: SQLOperator
-  searchParams?: KeyValue
+  searchParams?: Record<string, string>
   columnLink?: ColumnSpecifiedLink
   friendlyValuesMap?: FriendlyValuesMap
   columnNameIsSectionTitle?: boolean
@@ -60,8 +59,7 @@ const SubsectionRowRenderer: React.FunctionComponent<
   useDeepCompareEffectNoCheck(() => {
     const fetchData = async function () {
       setIsLoading(true)
-      const sqlUsed = insertConditionsFromSearchParams(
-        sql,
+      const additionalFilters = generateQueryFilterFromSearchParams(
         searchParams,
         sqlOperator,
       )
@@ -72,8 +70,9 @@ const SubsectionRowRenderer: React.FunctionComponent<
         concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
         entityId,
         query: {
-          sql: sqlUsed,
+          sql: sql,
           limit,
+          additionalFilters: additionalFilters ?? undefined,
         },
       }
 
