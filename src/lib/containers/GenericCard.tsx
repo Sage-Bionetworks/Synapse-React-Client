@@ -281,7 +281,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       // its a synId
       return (
         <a
-          target="_blank"
+          target={TargetEnum.NEW_WINDOW}
           rel="noopener noreferrer"
           href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${str}`}
           className={newClassName}
@@ -468,7 +468,11 @@ export function getLinkParams(
     defaultTarget = TargetEnum.NEW_WINDOW
   } else if (cardLinkConfig) {
     href = getCardLinkHref(cardLinkConfig, data, schema) ?? ''
+    if (href.includes('/DetailsPage')) {
+      defaultTarget = TargetEnum.NEW_WINDOW
+    }
   }
+
   const target = cardLinkConfig?.target ?? defaultTarget
   return { href, target }
 }
