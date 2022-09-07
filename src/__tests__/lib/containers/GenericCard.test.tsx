@@ -4,6 +4,7 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   CardLink,
   LabelLinkConfig,
+  TargetEnum,
 } from '../../../lib/containers/CardContainerLogic'
 import GenericCard, {
   CARD_SHORT_DESCRIPTION_CSS,
@@ -361,9 +362,6 @@ describe('GenericCard tests', () => {
   })
 
   describe('it makes the correct URL for the title', () => {
-    const SELF = '_self'
-    const BLANK = '_blank'
-
     test('creates a link to synapse', () => {
       const synId = 'syn12345678'
       const synLink = `https://www.synapse.org/#!Synapse:${synId}`
@@ -374,7 +372,7 @@ describe('GenericCard tests', () => {
         undefined,
       )
       expect(href).toEqual(synLink)
-      expect(target).toEqual(SELF)
+      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
     })
 
     test('creates a DOI link', () => {
@@ -387,7 +385,7 @@ describe('GenericCard tests', () => {
         undefined,
       )
       expect(href).toEqual(doiLink)
-      expect(target).toEqual(BLANK)
+      expect(target).toEqual(TargetEnum.NEW_WINDOW)
     })
 
     test('creates a DOI link PORTALS-1801', () => {
@@ -400,7 +398,7 @@ describe('GenericCard tests', () => {
         undefined,
       )
       expect(href).toEqual(doiLink)
-      expect(target).toEqual(BLANK)
+      expect(target).toEqual(TargetEnum.NEW_WINDOW)
     })
 
     test('creates an internal parameterized link', () => {
@@ -420,7 +418,27 @@ describe('GenericCard tests', () => {
       const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
       const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
       expect(href).toEqual(expectedLink)
-      expect(target).toEqual(SELF)
+      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
+    })
+
+    test('creates an internal details page link', () => {
+      const value = '1234'
+      const data = [value]
+      const URLColumnName = 'Grant Number'
+      const matchColumnName = 'Funder'
+      const schema = {
+        [matchColumnName]: 0,
+      }
+      const titleLinkConfig: CardLink = {
+        isMarkdown: false,
+        baseURL: 'Explore/Programs/DetailsPage',
+        matchColumnName,
+        URLColumnName,
+      }
+      const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
+      const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
+      expect(href).toEqual(expectedLink)
+      expect(target).toEqual(TargetEnum.NEW_WINDOW)
     })
   })
   describe('it makes the correct URL for the secondary labels', () => {
