@@ -197,7 +197,7 @@ export const VersionLabel: React.FC<{
     <span>
       {version}&nbsp;&nbsp;
       <a
-        target="_blank"
+        target={TargetEnum.NEW_WINDOW}
         rel="noopener noreferrer"
         href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synapseId}.${version}`}
       >

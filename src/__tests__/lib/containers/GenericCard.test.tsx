@@ -436,9 +436,26 @@ describe('GenericCard tests', () => {
         URLColumnName,
       }
       const expectedLink = `/${titleLinkConfig.baseURL}?${URLColumnName}=${value}`
-      const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
-      expect(href).toEqual(expectedLink)
-      expect(target).toEqual(TargetEnum.NEW_WINDOW)
+      const { href: href1, target: target1 } = getLinkParams(
+        '',
+        titleLinkConfig,
+        data,
+        schema,
+      )
+      expect(href1).toEqual(expectedLink)
+      // PORTALS-2254: Open DetailsPage links in a new window by default
+      expect(target1).toEqual(TargetEnum.NEW_WINDOW)
+
+      titleLinkConfig.target = TargetEnum.FULL_WINDOW_BODY
+      const { href: href2, target: target2 } = getLinkParams(
+        '',
+        titleLinkConfig,
+        data,
+        schema,
+      )
+      expect(href2).toEqual(expectedLink)
+      // PORTALS-2254: Verify we can override the target via the parameter in the CardLink config
+      expect(target2).toEqual(TargetEnum.FULL_WINDOW_BODY)
     })
   })
   describe('it makes the correct URL for the secondary labels', () => {
