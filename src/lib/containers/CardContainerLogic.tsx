@@ -10,9 +10,13 @@ import CardContainer from './CardContainer'
 import { ErrorBanner } from './ErrorBanner'
 import { GenericCardSchema, IconOptions } from './GenericCard'
 import { IconSvgOptions } from './IconSvg'
-import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
+import {
+  QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
+} from './QueryVisualizationWrapper'
 import { QueryContextConsumer } from './QueryContext'
 import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
+import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -94,15 +98,16 @@ export type CardConfiguration = {
 export type CardContainerLogicProps = {
   limit?: number
   title?: string
-  unitDescription?: string
   sqlOperator?: SQLOperator
   searchParams?: Record<string, string>
-  facetAliases?: Record<string, string>
-  rgbIndex?: number
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   sql: string
-} & CardConfiguration
+} & CardConfiguration &
+  Pick<
+    QueryVisualizationWrapperProps,
+    'rgbIndex' | 'unitDescription' | 'facetAliases' | 'noContentPlaceholderType'
+  >
 
 /**
  * Class wraps around CardContainer and serves as a standalone logic container for rendering cards.
@@ -138,6 +143,9 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
         rgbIndex={props.rgbIndex}
         unitDescription={props.unitDescription}
         facetAliases={props.facetAliases}
+        noContentPlaceholderType={
+          props.noContentPlaceholderType ?? NoContentPlaceholderType.STATIC
+        }
       >
         <CardContainer {...props} />
         <QueryContextConsumer>

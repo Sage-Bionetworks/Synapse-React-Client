@@ -8,18 +8,17 @@ import {
   MEDIUM_USER_CARD,
   OBSERVATION_CARD,
 } from '../utils/SynapseConstants'
-import { EntityHeader, Row, ColumnType } from '../utils/synapseTypes/'
+import { ColumnType, EntityHeader, Row } from '../utils/synapseTypes/'
 import { CardConfiguration } from './CardContainerLogic'
 import GenericCard from './GenericCard'
 import loadingScreen from './LoadingScreen'
 import { useInfiniteQueryContext } from './QueryContext'
+import { useQueryVisualizationContext } from './QueryVisualizationWrapper'
 import { Dataset, Funder } from './row_renderers'
 import {
   LoadingObservationCard,
   ObservationCard,
 } from './row_renderers/ObservationCard'
-import NoContentAvailable from './table/NoContentAvailable'
-import SearchResultsNotFound from './table/SearchResultsNotFound'
 import TotalQueryResults from './TotalQueryResults'
 import UserCardList from './UserCardList'
 
@@ -43,10 +42,9 @@ export const CardContainer = (props: CardContainerProps) => {
     ...rest
   } = props
   const infiniteQueryContext = useInfiniteQueryContext()
-  const { data, getLastQueryRequest, appendNextPageToResults, hasNextPage } =
-    infiniteQueryContext
+  const { noContentPlaceholder } = useQueryVisualizationContext()
+  const { data, appendNextPageToResults, hasNextPage } = infiniteQueryContext
 
-  const queryRequest = getLastQueryRequest()
   const renderCard = (props: any, type: string) => {
     switch (type) {
       case DATASET:
@@ -78,12 +76,8 @@ export const CardContainer = (props: CardContainerProps) => {
       </div>
     )
   } else if (data && data.queryResult!.queryResults.rows.length === 0) {
-    // data was retrieved from the backend but there is none to show.
-    if (queryRequest.query.additionalFilters) {
-      return <SearchResultsNotFound />
-    }
-    // else show "no results" UI (see PORTALS-1497)
-    return <NoContentAvailable />
+    // Show "no results" UI (see PORTALS-1497)
+    return <>{noContentPlaceholder}</>
   }
   const schema = {}
   data.queryResult!.queryResults.headers.forEach((element, index) => {

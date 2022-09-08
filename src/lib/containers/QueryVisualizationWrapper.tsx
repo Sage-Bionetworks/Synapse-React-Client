@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from './QueryContext'
+import NoContentAvailable from './table/NoContentAvailable'
+import { NoContentPlaceholderType } from './table/NoContentPlaceholderType'
+import SearchResultsNotFound from './table/SearchResultsNotFound'
+import ThisTableIsEmpty from './table/TableIsEmpty'
 
 export type QueryVisualizationContextType = {
   topLevelControlsState: TopLevelControlsState
@@ -17,6 +21,8 @@ export type QueryVisualizationContextType = {
   unitDescription?: string
   /** Whether to show when the table or view was last updated. */
   showLastUpdatedOn?: boolean
+  /** React node to display in place of cards/table when there are no results. */
+  noContentPlaceholder: React.ReactNode
 }
 
 /**
@@ -67,6 +73,8 @@ export type QueryVisualizationWrapperProps = {
   defaultShowFacetVisualization?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
+  /** Default is INTERACTIVE */
+  noContentPlaceholderType?: NoContentPlaceholderType
 }
 
 export type TopLevelControlsState = {
@@ -86,8 +94,16 @@ export type TopLevelControlsState = {
 export function QueryVisualizationWrapper(
   props: QueryVisualizationWrapperProps,
 ) {
-  const { data, getLastQueryRequest, isFacetsAvailable, isLoadingNewBundle } =
-    useQueryContext()
+  const { noContentPlaceholderType = NoContentPlaceholderType.INTERACTIVE } =
+    props
+
+  const {
+    data,
+    getLastQueryRequest,
+    isFacetsAvailable,
+    isLoadingNewBundle,
+    isFiltered,
+  } = useQueryContext()
 
   const [topLevelControlsState, setTopLevelControlsState] =
     useState<TopLevelControlsState>({
@@ -133,6 +149,20 @@ export function QueryVisualizationWrapper(
     )
   }, [selectColumns, lastQueryRequest.query.sql, props.visibleColumnCount])
 
+  let noContentPlaceholder
+  if (noContentPlaceholderType === NoContentPlaceholderType.INTERACTIVE) {
+    if (isFiltered) {
+      // If the query has filters, show a message that the user should update their filter
+      noContentPlaceholder = <SearchResultsNotFound />
+    } else {
+      // Else tell the user that the table is empty
+      noContentPlaceholder = <ThisTableIsEmpty />
+    }
+  } else {
+    // The user cannot modify the query, so show a message that there is no content available
+    noContentPlaceholder = <NoContentAvailable />
+  }
+
   const context: QueryVisualizationContextType = {
     topLevelControlsState,
     setTopLevelControlsState,
@@ -145,6 +175,7 @@ export function QueryVisualizationWrapper(
     rgbIndex: props.rgbIndex,
     unitDescription: props.unitDescription,
     showLastUpdatedOn: props.showLastUpdatedOn,
+    noContentPlaceholder: noContentPlaceholder,
   }
   /**
    * Render the children without any formatting

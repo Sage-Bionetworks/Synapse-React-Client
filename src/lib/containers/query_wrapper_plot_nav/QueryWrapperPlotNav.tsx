@@ -16,6 +16,7 @@ import ModalDownload from '../ModalDownload'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper as PaginatedQueryWrapper } from '../QueryWrapper'
 import { InfiniteQueryWrapper } from '../InfiniteQueryWrapper'
@@ -30,6 +31,7 @@ import TopLevelControls, {
 import FacetNav, { FacetNavProps } from '../widgets/facet-nav/FacetNav'
 import { QueryFilter } from '../widgets/query-filter/QueryFilter'
 import FilterAndView from './FilterAndView'
+import { NoContentPlaceholderType } from '../table/NoContentPlaceholderType'
 
 const QUERY_FILTERS_EXPANDED_CSS = 'isShowingFacetFilters'
 const QUERY_FILTERS_COLLAPSED_CSS = 'isHidingFacetFilters'
@@ -53,20 +55,25 @@ type OwnProps = {
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
-  rgbIndex?: number
   facetsToPlot?: string[]
   facetsToFilter?: string[]
   visibleColumnCount?: number
-  facetAliases?: Record<string, string>
   hideDownload?: boolean
   hideQueryCount?: boolean
   hideSqlEditorControl?: boolean
   defaultColumn?: string
-  defaultShowFacetVisualization?: boolean
   defaultShowSearchBox?: boolean
   downloadCartPageUrl?: string
-  showLastUpdatedOn?: boolean
-} & Omit<TopLevelControlsProps, 'entityId'>
+} & Omit<TopLevelControlsProps, 'entityId'> &
+  Pick<
+    QueryVisualizationWrapperProps,
+    | 'defaultShowFacetVisualization'
+    | 'visibleColumnCount'
+    | 'facetAliases'
+    | 'rgbIndex'
+    | 'showLastUpdatedOn'
+    | 'noContentPlaceholderType'
+  >
 
 type SearchParams = {
   searchParams?: {
@@ -154,6 +161,7 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
             props.defaultShowSearchBox || isFullTextSearchEnabled
           }
           showLastUpdatedOn={showLastUpdatedOn}
+          noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
         >
           <QueryContextConsumer>
             {queryContext => {

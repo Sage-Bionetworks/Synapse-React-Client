@@ -69,7 +69,12 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     executeQueryRequest,
     getInitQueryRequest,
     error,
+    lockedFilter,
   } = useQueryContext()
+
+  const lastQueryRequest = getLastQueryRequest()
+
+  console.log(lastQueryRequest)
 
   const { topLevelControlsState, unitDescription } =
     useQueryVisualizationContext()
@@ -80,7 +85,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
   >([])
 
   const applyChanges = (facets: FacetColumnRequest[]) => {
-    const queryRequest: QueryBundleRequest = cloneDeep(getLastQueryRequest())
+    const queryRequest: QueryBundleRequest = lastQueryRequest
     queryRequest.query.selectedFacets = facets
     queryRequest.query.offset = 0
     executeQueryRequest(queryRequest)
@@ -198,14 +203,14 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     const { facet, selectedValue } = facetWithSelection
     if (facet.facetType === 'enumeration') {
       applyChangesToValuesColumn(
-        getLastQueryRequest(),
+        lastQueryRequest,
         facet,
         applyChanges,
         selectedValue?.value,
         false,
       )
     } else {
-      applyChangesToRangeColumn(getLastQueryRequest(), facet, applyChanges, [
+      applyChangesToRangeColumn(lastQueryRequest, facet, applyChanges, [
         RadioValuesEnum.ANY,
         RadioValuesEnum.ANY,
       ])
@@ -216,12 +221,11 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     columnName: string,
     value: string,
   ) => {
-    const cloneLastQueryRequest = cloneDeep(getLastQueryRequest())
-    if (!cloneLastQueryRequest.query.additionalFilters) {
+    if (!lastQueryRequest.query.additionalFilters) {
       return
     }
-    cloneLastQueryRequest.query.additionalFilters =
-      cloneLastQueryRequest.query.additionalFilters?.reduce(function (
+    lastQueryRequest.query.additionalFilters =
+      lastQueryRequest.query.additionalFilters?.reduce(function (
         filtered: QueryFilter[],
         el: QueryFilter,
       ) {
@@ -257,27 +261,29 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       },
       [])
 
-    executeQueryRequest(cloneLastQueryRequest)
+    executeQueryRequest(lastQueryRequest)
   }
 
   const removeTextMatchesQueryFilter = (
     queryFilter: TextMatchesQueryFilter,
   ) => {
-    const cloneLastQueryRequest = cloneDeep(getLastQueryRequest())
-    if (!cloneLastQueryRequest.query.additionalFilters) {
+    if (!lastQueryRequest.query.additionalFilters) {
       return
     }
-    cloneLastQueryRequest.query.additionalFilters =
-      cloneLastQueryRequest.query.additionalFilters.filter(
+    lastQueryRequest.query.additionalFilters =
+      lastQueryRequest.query.additionalFilters.filter(
         el =>
           !(
             isTextMatchesQueryFilter(el) &&
             el.searchExpression === queryFilter.searchExpression
           ),
       )
-    executeQueryRequest(cloneLastQueryRequest)
+    executeQueryRequest(lastQueryRequest)
   }
 
+  /**
+   * TODO: This will unintentionally clear an additionalFilter applied to a locked column.
+   */
   const clearAll = () => {
     const initQueryRequest = cloneDeep(getInitQueryRequest())
     initQueryRequest.query.additionalFilters = []
@@ -288,44 +294,57 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
     | (SelectionCriteriaPillProps & {
         key: string
       })[]
-    | undefined = getLastQueryRequest().query.additionalFilters?.reduce(
-    (
-      pillProps: (SelectionCriteriaPillProps & {
-        key: string
-      })[],
-      el: QueryFilter,
-    ) => {
-      if (isTextMatchesQueryFilter(el)) {
-        pillProps.push({
-          key: `fulltextsearch-${el.searchExpression}`,
-          filter: {
-            value: el.searchExpression,
-          },
-          onRemove: () => removeTextMatchesQueryFilter(el),
-        })
-      } else if (
-        isColumnSingleValueQueryFilter(el) ||
-        isColumnMultiValueFunctionQueryFilter(el)
+    | undefined = lastQueryRequest.query.additionalFilters
+    ?.filter((queryFilter: QueryFilter) => {
+      if (
+        isColumnMultiValueFunctionQueryFilter(queryFilter) ||
+        isColumnSingleValueQueryFilter(queryFilter)
       ) {
-        const { columnName } = el
-        el.values.forEach(value => {
-          pillProps.push({
-            key: `columnsearch-${value}`,
-            filter: {
-              columnName,
-              value,
-            },
-            onRemove: () =>
-              removeColumnSearchQuerySelection(el.columnName, value),
-          })
-        })
-      } else {
-        console.warn('Encountered unexpected QueryFilter: ', el)
+        return (
+          queryFilter.columnName.toLowerCase() ===
+          lockedFilter?.columnName?.toLowerCase()
+        )
       }
-      return pillProps
-    },
-    [],
-  )
+      return true
+    })
+    ?.reduce(
+      (
+        pillProps: (SelectionCriteriaPillProps & {
+          key: string
+        })[],
+        el: QueryFilter,
+      ) => {
+        if (isTextMatchesQueryFilter(el)) {
+          pillProps.push({
+            key: `fulltextsearch-${el.searchExpression}`,
+            filter: {
+              value: el.searchExpression,
+            },
+            onRemove: () => removeTextMatchesQueryFilter(el),
+          })
+        } else if (
+          isColumnSingleValueQueryFilter(el) ||
+          isColumnMultiValueFunctionQueryFilter(el)
+        ) {
+          const { columnName } = el
+          el.values.forEach(value => {
+            pillProps.push({
+              key: `columnsearch-${value}`,
+              filter: {
+                columnName,
+                value,
+              },
+              onRemove: () =>
+                removeColumnSearchQuerySelection(el.columnName, value),
+            })
+          })
+        } else {
+          console.warn('Encountered unexpected QueryFilter: ', el)
+        }
+        return pillProps
+      },
+      [],
+    )
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   const hasFilters =
     facetsWithSelection.length > 0 ||

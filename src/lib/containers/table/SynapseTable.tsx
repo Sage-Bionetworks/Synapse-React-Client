@@ -2,7 +2,6 @@ import ColumnResizer from 'column-resizer'
 import { cloneDeep, eq } from 'lodash-es'
 import * as React from 'react'
 import { Modal } from 'react-bootstrap'
-import NoData from '../../assets/icons/NoData'
 import { SynapseClient } from '../../utils'
 import {
   hasFilesInView,
@@ -45,14 +44,12 @@ import {
   applyMultipleChangesToValuesColumn,
 } from '../widgets/query-filter/QueryFilter'
 import { unCamelCase } from './../../utils/functions/unCamelCase'
-import SearchResultsNotFound from './SearchResultsNotFound'
 import { ICON_STATE } from './SynapseTableConstants'
 import {
   getColumnIndiciesWithType,
   getUniqueEntities,
 } from './SynapseTableUtils'
 import { TablePagination } from './TablePagination'
-import NoContentAvailable from './NoContentAvailable'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 
 export const EMPTY_HEADER: EntityHeader = {
@@ -104,7 +101,6 @@ export type SynapseTableProps = {
   columnLinks?: LabelLinkConfig
   hideDownload?: boolean
   isRowSelectionVisible?: boolean
-  showNoContentAvailableWhenEmpty?: boolean
 }
 
 export default class SynapseTable extends React.Component<
@@ -352,7 +348,7 @@ export default class SynapseTable extends React.Component<
     // unpack all the data
     const {
       queryContext: { data },
-      showNoContentAvailableWhenEmpty,
+      queryVisualizationContext: { noContentPlaceholder },
     } = this.props
     const { queryResult, columnModels = [] } = data
     const { facets = [] } = data
@@ -362,22 +358,7 @@ export default class SynapseTable extends React.Component<
     const hasResults = (data.queryResult?.queryResults.rows.length ?? 0) > 0
     // Show the No Results UI if the current page has no rows, and this is the first page of data (offset === 0).
     if (!hasResults && queryRequest.query.offset === 0) {
-      if (queryRequest.query.additionalFilters) {
-        return <SearchResultsNotFound />
-      } else {
-        if (showNoContentAvailableWhenEmpty) {
-          return <NoContentAvailable />
-        } else {
-          return (
-            <div className="text-center SRCBorderedPanel SRCBorderedPanel--padded2x">
-              {NoData}
-              <div style={{ marginTop: '20px', fontStyle: 'italic' }}>
-                This table is currently empty
-              </div>
-            </div>
-          )
-        }
-      }
+      return noContentPlaceholder
     }
 
     const { rows, headers } = queryResult!.queryResults
@@ -729,7 +710,7 @@ export default class SynapseTable extends React.Component<
     const { sortedColumnSelection, columnIconSortState } = this.state
     const {
       queryVisualizationContext: { facetAliases = {}, columnsToShowInTable },
-      queryContext: { lockedFacet },
+      queryContext: { lockedFilter },
     } = this.props
     const tableColumnHeaderElements: JSX.Element[] = headers.map(
       (column: SelectColumn, index: number) => {
@@ -765,8 +746,9 @@ export default class SynapseTable extends React.Component<
             facetAliases,
           )
           const columnModel = columnModels.find(el => el.name === column.name)!
-          const isLockedFacetColumn =
-            column.name.toLowerCase() === lockedFacet?.facet?.toLowerCase() // used in details page to disable filter the column
+          const isLockedFilterColumn =
+            column.name.toLowerCase() ===
+            lockedFilter?.columnName?.toLowerCase() // used in details page to disable filter the column
           const isEntityIDColumn =
             columnModel &&
             columnModel.name == 'id' &&
@@ -779,7 +761,7 @@ export default class SynapseTable extends React.Component<
                 </span>
                 <div className="SRC-centerContent">
                   {isFacetSelection &&
-                    !isLockedFacetColumn &&
+                    !isLockedFilterColumn &&
                     this.configureFacetDropdown(
                       facet,
                       columnModel,

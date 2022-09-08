@@ -14,7 +14,7 @@ type ProgrammaticOptionsProps = {
   onHide: () => void
 }
 
-function ProgrammaticOptions({
+function ProgrammaticTableDownload({
   queryBundleRequest,
   queryResultBundle,
   onHide,
@@ -23,7 +23,7 @@ function ProgrammaticOptions({
   useDeepCompareEffect(() => {
     const getData = async () => {
       const { query } = queryBundleRequest
-      const { sql, selectedFacets = [] } = query
+      const { sql, selectedFacets = [], additionalFilters = [] } = query
       const { columnModels } = queryResultBundle
       if (!columnModels) {
         console.error(
@@ -35,6 +35,7 @@ function ProgrammaticOptions({
           'org.sagebionetworks.repo.model.table.TransformSqlWithFacetsRequest',
         sqlToTransform: sql,
         selectedFacets,
+        additionalFilters,
         schema: columnModels!,
       }
 
@@ -113,4 +114,4 @@ function ProgrammaticOptions({
   )
 }
 
-export default ProgrammaticOptions
+export default ProgrammaticTableDownload

@@ -1,94 +1,10 @@
 import {
   getColumnIndiciesWithType,
-  getCountFunctionColumnIndices,
-  getSqlUnderlyingDataForRow,
   getUniqueEntities,
 } from '../../../lib/containers/table/SynapseTableUtils'
-import {
-  ColumnType,
-  QueryResultBundle,
-  Row,
-} from '../../../lib/utils/synapseTypes'
-import queryResultBundleJson from '../../../mocks/query/syn16787123.json'
-
-const queryResultBundle: QueryResultBundle =
-  queryResultBundleJson as QueryResultBundle
+import { ColumnType, QueryResultBundle } from '../../../lib/utils/synapseTypes'
 
 describe('Synapse Table Utilities tests', () => {
-  describe('PORTALS-527: get count function column indexes', () => {
-    it('not group by', () => {
-      const originalSql: string =
-        'SELECT bar, baz' +
-        'FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq'"
-      const columnIndexes: number[] = getCountFunctionColumnIndices(originalSql)
-      expect(columnIndexes).toHaveLength(0)
-    })
-    it('group by with count function', () => {
-      const originalSql: string =
-        'SELECT bar, baz, count(distinct id) as files, concat(biz)' +
-        'FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq' group by 1, 2"
-      const columnIndexes: number[] = getCountFunctionColumnIndices(originalSql)
-      expect(columnIndexes).toEqual([2])
-    })
-    it('group by without count function', () => {
-      const originalSql: string =
-        'SELECT bar, baz, concat(distinct id) as files, concat(biz)' +
-        'FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq' group by 1, 2"
-      const columnIndexes: number[] = getCountFunctionColumnIndices(originalSql)
-      expect(columnIndexes).toHaveLength(0)
-    })
-  })
-
-  describe('PORTALS-527: aggregate query support (show underlying data)', () => {
-    it('sql parsing test', () => {
-      const originalSql: string =
-        'SELECT bar, baz, count(distinct file_id)' +
-        'AS biz FROM syn987654321 ' +
-        "WHERE species='Human' " +
-        "AND assay='rnaSeq' group by 1,2 order by 3 asc"
-      const testRow: Row = {
-        rowId: 123,
-        values: ['bar1', 'baz1', '10'],
-        versionNumber: 8,
-      }
-      const sql = getSqlUnderlyingDataForRow(
-        testRow,
-        originalSql,
-        queryResultBundle,
-      )
-      expect(sql.synId).toEqual('syn987654321')
-      expect(sql.newSql).toEqual(
-        "SELECT *\n  FROM syn987654321\n  WHERE ((((`species` = 'Human') AND (`assay` = 'rnaSeq')) AND (`bar` = 'bar1')) AND (`baz` = 'baz1'))",
-      )
-    })
-    it('sql parsing test without WHERE clause', () => {
-      const originalSql: string =
-        'SELECT bar, baz, count(distinct file_id)' +
-        'AS biz FROM syn987654321 ' +
-        'Group By 1,2 order by 3 asc'
-      const testRow: Row = {
-        rowId: 123,
-        values: ['bar1', 'baz1', '10'],
-        versionNumber: 8,
-      }
-      const sql = getSqlUnderlyingDataForRow(
-        testRow,
-        originalSql,
-        queryResultBundle,
-      )
-      expect(sql.synId).toEqual('syn987654321')
-      expect(sql.newSql).toEqual(
-        "SELECT *\n  FROM syn987654321\n  WHERE ((`bar` = 'bar1') AND (`baz` = 'baz1'))",
-      )
-    })
-  })
-
   describe('Table cell renderer utilities', () => {
     const ENTITYID_INDEX = 0
     const USERID_INDEX = 1
