@@ -6,7 +6,7 @@ import {
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '../utils/functions/sqlFunctions'
-import { QueryBundleRequest } from '../utils/synapseTypes/'
+import { QueryBundleRequest, SortDirection } from '../utils/synapseTypes/'
 import CardContainer from './CardContainer'
 import { ErrorBanner } from './ErrorBanner'
 import { GenericCardSchema, IconOptions } from './GenericCard'
@@ -14,6 +14,7 @@ import { IconSvgOptions } from './IconSvg'
 import { QueryVisualizationWrapper } from './QueryVisualizationWrapper'
 import { QueryContextConsumer } from './QueryContext'
 import { InfiniteQueryWrapper } from './InfiniteQueryWrapper'
+import QuerySortSelector from './QuerySortSelector'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -51,6 +52,15 @@ export type MarkdownLink = {
   matchColumnName: string
   // If set, also show a tooltip
   tooltipText?: string
+}
+
+export type SortConfiguration = {
+  // the column that the query should be sorted on by default
+  defaultColumn: string
+  // the direction that the defaultColumn should be sorted on by default
+  defaultDirection: SortDirection
+  // the columns that the UI should surface as sortable
+  sortableColumns: string[]
 }
 
 export type CTACardLink = {
@@ -103,6 +113,7 @@ export type CardContainerLogicProps = {
   isHeader?: boolean
   isAlignToLeftNav?: boolean
   sql: string
+  sortConfig?: SortConfiguration
 } & CardConfiguration
 
 /**
@@ -114,12 +125,22 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
     props.searchParams,
     props.sqlOperator,
   )
+  const { sortConfig, facetAliases } = props
+  const defaultSortItems = sortConfig
+    ? [
+        {
+          column: sortConfig.defaultColumn,
+          direction: sortConfig.defaultDirection,
+        },
+      ]
+    : undefined
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: parseEntityIdFromSqlStatement(sql),
     query: {
       sql: sql,
       limit: props.limit,
+      sort: defaultSortItems,
     },
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
@@ -139,6 +160,12 @@ export const CardContainerLogic = (props: CardContainerLogicProps) => {
         unitDescription={props.unitDescription}
         facetAliases={props.facetAliases}
       >
+        {sortConfig && (
+          <QuerySortSelector
+            sortConfig={sortConfig}
+            facetAliases={facetAliases}
+          />
+        )}
         <CardContainer {...props} />
         <QueryContextConsumer>
           {queryContext => <ErrorBanner error={queryContext?.error} />}
