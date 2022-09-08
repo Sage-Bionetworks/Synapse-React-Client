@@ -4,6 +4,12 @@ import { useInfiniteQueryContext } from './QueryContext'
 import { SortDirection, SortItem } from '../utils/synapseTypes'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import Typography from '../utils/typography/Typography'
+import Creatable from 'react-select/creatable'
+import {
+  EnumOption,
+  findValueOption,
+  Control,
+} from './entity/annotations/CustomSelectWidget'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration
@@ -17,9 +23,19 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
   const infiniteQueryContext = useInfiniteQueryContext()
   const { getLastQueryRequest, executeQueryRequest } = infiniteQueryContext
-  const [sortColumn, setSortColumn] = useState(defaultColumn)
+  const [sortColumn, setSortColumn] = useState<string | undefined>(
+    defaultColumn,
+  )
   const [sortDirection, setSortDirection] = useState(defaultDirection)
-  const handleColumnSortChange = (value: string) => {
+
+  const enumOptions: EnumOption[] = sortableColumns.map(sortableColumn => {
+    return {
+      value: sortableColumn,
+      label: unCamelCase(sortableColumn, facetAliases)!,
+    }
+  })
+
+  const onChange = (value?: string) => {
     const lastQueryRequestDeepClone = getLastQueryRequest()
     let newSortDirection: SortDirection = 'ASC'
     if (value === sortColumn) {
@@ -27,43 +43,38 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
       newSortDirection = sortDirection === 'ASC' ? 'DESC' : 'ASC'
     }
 
-    const newSortItems: SortItem[] = [
-      {
-        column: value,
-        direction: newSortDirection,
-      },
-    ]
+    const newSortItems: SortItem[] | undefined = value
+      ? [
+          {
+            column: value,
+            direction: newSortDirection,
+          },
+        ]
+      : undefined
     lastQueryRequestDeepClone.query.sort = newSortItems
     executeQueryRequest(lastQueryRequestDeepClone)
     setSortColumn(value)
     setSortDirection(newSortDirection)
   }
-  const handleSelectionChange = (
-    event: React.ChangeEvent<{ value: string }>,
-  ) => {
-    handleColumnSortChange(event.target.value)
-  }
 
   return (
     <div className="QuerySortSelector bootstrap-4-backport">
-      <Typography variant="label" className="SRC-inlineBlock">
+      <Typography variant="label" className="sort-by-label SRC-inlineBlock">
         Sort by
       </Typography>
-      <select
-        name="sortable columns"
-        onChange={handleSelectionChange}
-        style={{ padding: '4px', marginLeft: '4px' }}
-        value={sortColumn}
-      >
-        {sortableColumns.map(sortableColumn => {
-          // if the current sort column is selected again, then flip the sort
-          return (
-            <option key={sortableColumn} value={sortableColumn}>
-              {unCamelCase(sortableColumn, facetAliases)}
-            </option>
-          )
-        })}
-      </select>
+      <Creatable
+        className="react-select-container SRC-inlineBlock"
+        value={findValueOption(sortColumn, enumOptions)}
+        options={enumOptions}
+        onChange={option => onChange((option as EnumOption | null)?.value)}
+        components={{ Control }}
+        styles={{
+          control: provided => ({
+            ...provided,
+            marginLeft: '15px',
+          }),
+        }}
+      />
     </div>
   )
 }
