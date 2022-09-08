@@ -5,7 +5,10 @@ import useDeepCompareEffect, {
   useDeepCompareEffectNoCheck,
 } from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
-import { isFacetAvailable } from '../utils/functions/queryUtils'
+import {
+  isFacetAvailable,
+  removeLockedColumnFromFacetData,
+} from '../utils/functions/queryUtils'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import { useGetQueryResultBundleWithAsyncStatus } from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
@@ -17,7 +20,7 @@ import {
   Table,
 } from '../utils/synapseTypes'
 import {
-  LockedFacet,
+  LockedColumn,
   PaginatedQueryContextType,
   QueryContextProvider,
 } from './QueryContext'
@@ -32,7 +35,7 @@ export type QueryWrapperProps = {
   shouldDeepLink?: boolean
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
-  lockedFacet?: LockedFacet
+  lockedColumn?: LockedColumn
 }
 
 export type SearchQuery = {
@@ -188,24 +191,12 @@ export function QueryWrapper(props: QueryWrapperProps) {
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  const dataWithLockedFacetRemoved = useMemo(() => {
-    const lockedFacet = props.lockedFacet?.facet
-    if (lockedFacet && data) {
-      // for details page, return data without the "locked" facet
-      const dataCopy: QueryResultBundle = cloneDeep(data)
-      const facets = dataCopy.facets?.filter(
-        item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase(),
-      )
-      dataCopy.facets = facets
-      return dataCopy
-    } else {
-      // for other pages, just return the data
-      return data
-    }
-  }, [data, props.lockedFacet?.facet])
+  const dataWithLockedColumnFacetRemoved = useMemo(() => {
+    return removeLockedColumnFromFacetData(data, lockedColumn)
+  }, [data, lockedColumn])
 
   const context: PaginatedQueryContextType = {
-    data: dataWithLockedFacetRemoved,
+    data: dataWithLockedColumnFacetRemoved,
     currentPage,
     pageSize,
     setPageSize,
@@ -218,6 +209,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isFacetsAvailable,
     asyncJobStatus: currentAsyncStatus,
     goToPage,
+    isFiltered,
   }
   /**
    * Render the children without any formatting

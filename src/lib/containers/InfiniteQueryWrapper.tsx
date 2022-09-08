@@ -3,7 +3,10 @@ import * as React from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
-import { isFacetAvailable } from '../utils/functions/queryUtils'
+import {
+  isFacetAvailable,
+  removeLockedColumnFromFacetData,
+} from '../utils/functions/queryUtils'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import { useInfiniteQueryResultBundle } from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
@@ -15,7 +18,7 @@ import {
 } from '../utils/synapseTypes'
 import {
   InfiniteQueryContextType,
-  LockedFacet,
+  LockedColumn,
   QueryContextProvider,
 } from './QueryContext'
 
@@ -29,7 +32,7 @@ export type InfiniteQueryWrapperProps = {
   shouldDeepLink?: boolean
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
-  lockedFacet?: LockedFacet
+  lockedColumn?: LockedColumn
 }
 
 export type SearchQuery = {
@@ -236,24 +239,12 @@ export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  const dataWithLockedFacetRemoved = useMemo(() => {
-    const lockedFacet = props.lockedFacet?.facet
-    if (lockedFacet && data) {
-      // for details page, return data without the "locked" facet
-      const dataCopy: QueryResultBundle = cloneDeep(data)
-      const facets = dataCopy.facets?.filter(
-        item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase(),
-      )
-      dataCopy.facets = facets
-      return dataCopy
-    } else {
-      // for other pages, just return the data
-      return data
-    }
-  }, [data, props.lockedFacet?.facet])
+  const dataWithLockedColumnFacetRemoved = useMemo(() => {
+    return removeLockedColumnFromFacetData(data, lockedColumn)
+  }, [data, lockedColumn])
 
   const context: InfiniteQueryContextType = {
-    data: dataWithLockedFacetRemoved,
+    data: dataWithLockedColumnFacetRemoved,
     isLoadingNewPage: isFetchingNextPage,
     hasNextPage: !!hasNextPage,
     hasPreviousPage: !!hasPreviousPage,
