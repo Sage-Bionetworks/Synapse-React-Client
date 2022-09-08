@@ -45,7 +45,12 @@ export type SearchQuery = {
  * either `useQueryContext` or `QueryContextConsumer`.
  */
 export function InfiniteQueryWrapper(props: InfiniteQueryWrapperProps) {
-  const { initQueryRequest, onQueryChange, onQueryResultBundleChange } = props
+  const {
+    initQueryRequest,
+    onQueryChange,
+    onQueryResultBundleChange,
+    lockedColumn,
+  } = props
   const [lastQueryRequest, setLastQueryRequest] =
     useState<QueryBundleRequest>(initQueryRequest)
   const [currentAsyncStatus, setCurrentAsyncStatus] = useState<

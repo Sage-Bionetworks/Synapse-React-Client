@@ -48,7 +48,12 @@ export type SearchQuery = {
  * either `useQueryContext` or `QueryContextConsumer`.
  */
 export function QueryWrapper(props: QueryWrapperProps) {
-  const { initQueryRequest, onQueryChange, onQueryResultBundleChange } = props
+  const {
+    initQueryRequest,
+    onQueryChange,
+    onQueryResultBundleChange,
+    lockedColumn,
+  } = props
   const [lastQueryRequest, setLastQueryRequest] =
     useState<QueryBundleRequest>(initQueryRequest)
   const [currentAsyncStatus, setCurrentAsyncStatus] = useState<
@@ -209,7 +214,6 @@ export function QueryWrapper(props: QueryWrapperProps) {
     isFacetsAvailable,
     asyncJobStatus: currentAsyncStatus,
     goToPage,
-    isFiltered,
   }
   /**
    * Render the children without any formatting
