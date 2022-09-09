@@ -20,7 +20,6 @@ global.markdownitContainer = require('markdown-it-container')
 global.markdownitEmphasisAlt = require('markdown-it-emphasis-alt')
 global.markdownitInlineComments = require('markdown-it-inline-comments')
 global.markdownitBr = require('markdown-it-br')
-global.sanitizeHtml = require('sanitize-html')
 global.markdownitMath = require('markdown-it-synapse-math')
 global.ResizeObserver = ResizeObserver
 

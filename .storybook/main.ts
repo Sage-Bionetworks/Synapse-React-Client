@@ -28,6 +28,7 @@ module.exports = {
       base,
       define: {
         'process.browser': 'true',
+        'process.env.NODE_DEBUG': undefined,
       },
       plugins: [
         // TODO: The following will fix SynapseFormWrapper in development mode but will break the storybook static build
@@ -47,6 +48,9 @@ module.exports = {
           stream: 'stream-browserify',
           buffer: 'buffer/',
           timers: 'timers-browserify',
+          path: 'path-browserify',
+          fs: 'browserify-fs',
+          util: 'util/',
         },
       },
       optimizeDeps: {

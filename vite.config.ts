@@ -47,6 +47,7 @@ export default defineConfig({
       stream: 'stream-browserify',
       http: 'stream-http',
       buffer: 'buffer/',
+      util: 'util',
     },
   },
 })

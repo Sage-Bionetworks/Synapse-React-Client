@@ -38,6 +38,7 @@ Cards.args = {
       URLColumnName: 'resourceId',
       matchColumnName: 'resourceId',
       overrideLinkURLColumnName: 'biobankURL',
+      // target: TargetEnum.NEW_WINDOW
     },
     secondaryLabelLimit: 4,
     genericCardSchema: {

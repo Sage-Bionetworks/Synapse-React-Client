@@ -40,7 +40,7 @@ export const DownloadLoginModal: React.FunctionComponent<
           </a>
           <span> and </span>
           <a
-            href="https://help.synapse.org/docs/Governance-Overview.2009597114.html"
+            href="https://help.synapse.org/docs/Synapse-Governance.2004255211.html"
             rel="noopener noreferrer"
             target="_blank"
           >

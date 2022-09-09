@@ -168,7 +168,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
           {!hideFacetFilterControl && (
             <a
               onClick={() => setControlState('showFacetFilter')}
-              className="TopLevelControls__querycount__facetFilterLink"
+              className="TopLevelControls__querycount__facetFilterLink SRC-no-underline-on-hover"
             >
               <Icon
                 type={
@@ -176,8 +176,8 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                 }
               ></Icon>
               <span className="TopLevelControls__querycount__facetFilterLink__text">
-                {topLevelControlsState.showFacetFilter ? 'Hide' : 'Show'} Facet
-                Menu
+                {topLevelControlsState.showFacetFilter ? 'Hide' : 'Show'}{' '}
+                filters
               </span>
             </a>
           )}
