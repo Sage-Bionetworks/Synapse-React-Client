@@ -1,7 +1,6 @@
 import { mergeConfig, defineConfig } from 'vite'
 import svgr from 'vite-plugin-svgr'
 import { viteExternalsPlugin } from 'vite-plugin-externals'
-import nodePolyfills from 'rollup-plugin-polyfill-node'
 
 module.exports = {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -27,11 +26,6 @@ module.exports = {
     const customStorybookConfig = defineConfig({
       base,
       plugins: [
-        // TODO: The following will fix SynapseFormWrapper in development mode but will break the storybook static build
-        // Need to figure out why the polyfill breaks the build
-        // nodePolyfills({
-        //   include: 'node_modules/@apidevtools/json-schema-ref-parser/**/*.js',
-        // }),
         svgr(),
         viteExternalsPlugin({
           react: 'React',
