@@ -19,6 +19,7 @@ import {
 import { useQueryContext } from '../../QueryContext'
 import { EnumFacetFilter } from './EnumFacetFilter'
 import { RangeFacetFilter } from './RangeFacetFilter'
+import { FacetChip } from './FacetChip'
 
 export type QueryFilterProps = {
   facetsToFilter?: string[]
@@ -138,22 +139,34 @@ export const applyChangesToRangeColumn = (
 export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   facetsToFilter,
 }): JSX.Element => {
+  const [facets, setFacets] = React.useState<FacetColumnResult[]>([])
+  const [facetFilter, setFacetFilter] = React.useState(facetsToFilter ?? [])
+  const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
+  const { showFacetFilter } = topLevelControlsState
   const { data, isLoadingNewBundle, getLastQueryRequest, executeQueryRequest } =
     useQueryContext()
 
-  const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
+  React.useEffect(() => {
+    if (data) {
+      setFacets(data.facets as FacetColumnResult[])
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (data) {
+      const facets = data.facets as FacetColumnResult[]
+      let newArr = facets.filter(facet => {
+        return facetFilter.includes(facet.columnName)
+      })
+      setFacets(newArr)
+    }
+  }, [facetFilter])
 
   if (!data) {
     return <></>
   }
-  const { showFacetFilter } = topLevelControlsState
+  const originalFacets = data.facets as FacetColumnResult[]
   const columnModels = data.selectColumns
-  let facets = data.facets as FacetColumnResult[]
-  if (facetsToFilter) {
-    facets = facets.filter(facet => {
-      return facetsToFilter.includes(facet.columnName)
-    })
-  }
   const lastRequest = getLastQueryRequest()
 
   const applyChanges = (facets: FacetColumnRequest[]) => {
@@ -222,6 +235,20 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
             </div>
           )
         })}
+      <div>
+        <div className="AvailableFacet">
+          <label className="AvailableFacet__label">Available Facets</label>
+        </div>
+        {originalFacets.map(facet => {
+          return (
+            <FacetChip
+              facet={facet}
+              facetFilter={facetFilter}
+              setFacetFilter={setFacetFilter}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }
