@@ -26,10 +26,6 @@ module.exports = {
 
     const customStorybookConfig = defineConfig({
       base,
-      define: {
-        'process.browser': 'true',
-        'process.env.NODE_DEBUG': undefined,
-      },
       plugins: [
         // TODO: The following will fix SynapseFormWrapper in development mode but will break the storybook static build
         // Need to figure out why the polyfill breaks the build
