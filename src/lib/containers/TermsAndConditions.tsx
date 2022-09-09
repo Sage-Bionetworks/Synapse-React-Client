@@ -32,7 +32,7 @@ const tcList: tcItem[] = [
     <li>Respects other viewpoints and ideas</li>
     <li>Shows empathy and kindness when interacting with others</li>
     </ul>
-Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/Governance-Overview.2009597114.html#GovernanceOverview-SynapseCodeofConduct">Synapse Code of Conduct</a>.`,
+Please refer to our full <a target="_blank" href="https://help.synapse.org/docs/Synapse-Governance.2004255211.html#SynapseGovernance-SynapseCodeofConduct">Synapse Code of Conduct</a>.`,
   },
   {
     icon: <LockIcon />,
