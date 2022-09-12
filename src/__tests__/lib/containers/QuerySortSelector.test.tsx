@@ -17,6 +17,7 @@ import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
 import {
   QueryBundleRequest,
   QueryResultBundle,
+  SortItem,
 } from '../../../lib/utils/synapseTypes'
 import syn16787123Json from '../../../mocks/query/syn16787123'
 
@@ -78,18 +79,42 @@ describe('QuerySortSelector tests', () => {
     executeQueryRequest: executeQueryRequest,
   }
 
-  it('Executes query request on sort', async () => {
-    renderComponent(props, queryContext)
+  const sortByOpenAccessJournals = async () => {
     const input = screen.getByRole('combobox')
-    // User typically enters the beginning of a column name to populate the selections
     await userEvent.type(input, 'journal')
     await screen.findAllByText(new RegExp('Open Access Journals'))
-    // Make a selection
-    act(() => {
-      userEvent.keyboard('{Enter}')
-    })
-    await waitFor(() => expect(executeQueryRequest).toHaveBeenCalled(), {
-      timeout: 15000,
-    })
+    await userEvent.keyboard('{Enter}')
+  }
+
+  const verifyExpectedSortItem = async (expectedSortItem: SortItem) => {
+    await waitFor(
+      () =>
+        expect(executeQueryRequest).toHaveBeenCalledWith(
+          expect.objectContaining({
+            query: expect.objectContaining({
+              sort: expect.arrayContaining([expectedSortItem]),
+            }),
+          }),
+        ),
+      {
+        timeout: 15000,
+      },
+    )
+  }
+
+  it('Executes query request on sort', async () => {
+    renderComponent(props, queryContext)
+    sortByOpenAccessJournals()
+
+    const expectedSortItem: SortItem = {
+      column: 'journal',
+      direction: 'ASC',
+    }
+    verifyExpectedSortItem(expectedSortItem)
+
+    // Selecting the item again should flip the sort direction
+    sortByOpenAccessJournals()
+    expectedSortItem.direction = 'DESC'
+    verifyExpectedSortItem(expectedSortItem)
   })
 })
