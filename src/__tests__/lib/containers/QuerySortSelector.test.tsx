@@ -78,11 +78,6 @@ describe('QuerySortSelector tests', () => {
     executeQueryRequest: executeQueryRequest,
   }
 
-  it('renders without crashing', () => {
-    const tree = renderComponent(props, queryContext)
-    expect(tree).toBeDefined()
-  })
-
   it('Executes query request on sort', async () => {
     renderComponent(props, queryContext)
     const input = screen.getByRole('combobox')
@@ -91,7 +86,7 @@ describe('QuerySortSelector tests', () => {
     await screen.findAllByText(new RegExp('Open Access Journals'))
     // Make a selection
     act(() => {
-      fireEvent.keyDown(input, { key: 'Enter' })
+      userEvent.keyboard('{Enter}')
     })
     await waitFor(() => expect(executeQueryRequest).toHaveBeenCalled(), {
       timeout: 15000,

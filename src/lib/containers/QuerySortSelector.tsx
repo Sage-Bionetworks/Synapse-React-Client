@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { SortConfiguration } from './CardContainerLogic'
-import { useInfiniteQueryContext } from './QueryContext'
+import { useQueryContext } from './QueryContext'
 import { SortDirection, SortItem } from '../utils/synapseTypes'
 import { unCamelCase } from '../utils/functions/unCamelCase'
 import Typography from '../utils/typography/Typography'
-import Creatable from 'react-select/creatable'
+import Select from 'react-select'
 import {
   EnumOption,
   findValueOption,
@@ -21,8 +21,8 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
   facetAliases,
 }) => {
   const { defaultColumn, defaultDirection, sortableColumns } = sortConfig
-  const infiniteQueryContext = useInfiniteQueryContext()
-  const { getLastQueryRequest, executeQueryRequest } = infiniteQueryContext
+  const queryContext = useQueryContext()
+  const { getLastQueryRequest, executeQueryRequest } = queryContext
   const [sortColumn, setSortColumn] = useState<string | undefined>(
     defaultColumn,
   )
@@ -62,7 +62,7 @@ const QuerySortSelector: React.FunctionComponent<QuerySortSelectorProps> = ({
       <Typography variant="label" className="sort-by-label SRC-inlineBlock">
         Sort by
       </Typography>
-      <Creatable
+      <Select
         className="react-select-container SRC-inlineBlock"
         value={findValueOption(sortColumn, enumOptions)}
         options={enumOptions}
