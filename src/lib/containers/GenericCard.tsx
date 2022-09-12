@@ -26,6 +26,7 @@ import {
   CommonCardProps,
   DescriptionConfig,
   MarkdownLink,
+  TargetEnum,
 } from './CardContainerLogic'
 import HeaderCard from './HeaderCard'
 import IconList from './IconList'
@@ -196,7 +197,7 @@ export const VersionLabel: React.FC<{
     <span>
       {version}&nbsp;&nbsp;
       <a
-        target="_blank"
+        target={TargetEnum.NEW_WINDOW}
         rel="noopener noreferrer"
         href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${synapseId}.${version}`}
       >
@@ -280,7 +281,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
       // its a synId
       return (
         <a
-          target="_blank"
+          target={TargetEnum.NEW_WINDOW}
           rel="noopener noreferrer"
           href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${str}`}
           className={newClassName}
@@ -315,6 +316,10 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     }
   } else {
     const split = strList ? strList : str.split(',')
+    let linkTarget: TargetEnum | undefined = undefined
+    if ('target' in labelLink) {
+      linkTarget = labelLink.target!
+    }
     if ('linkColumnName' in labelLink) {
       const linkIndex = getColumnIndex(
         labelLink.linkColumnName,
@@ -339,7 +344,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
                   <React.Fragment key={el}>
                     <a
                       href={href ?? undefined}
-                      target="_blank"
+                      target={linkTarget ?? TargetEnum.NEW_WINDOW}
                       rel="noopener noreferrer"
                       key={el}
                       className={newClassName}
@@ -367,7 +372,13 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
 
             return (
               <React.Fragment key={el}>
-                <a href={href} key={el} className={newClassName} style={style}>
+                <a
+                  href={href}
+                  key={el}
+                  className={newClassName}
+                  style={style}
+                  target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
+                >
                   {el}
                 </a>
                 {index < split.length - 1 && (
@@ -446,18 +457,23 @@ export function getLinkParams(
 ) {
   link = link.trim()
   let href = link
-  let target = '_self'
+  let defaultTarget = TargetEnum.CURRENT_WINDOW
   if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // its a synId
     href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${link}`
   } else if (link.match(DOI_REGEX)) {
-    target = '_blank'
+    defaultTarget = TargetEnum.NEW_WINDOW
     href = `https://dx.doi.org/${link}`
   } else if (!cardLinkConfig) {
-    target = '_blank'
+    defaultTarget = TargetEnum.NEW_WINDOW
   } else if (cardLinkConfig) {
     href = getCardLinkHref(cardLinkConfig, data, schema) ?? ''
+    if (href.includes('/DetailsPage')) {
+      defaultTarget = TargetEnum.NEW_WINDOW
+    }
   }
+
+  const target = cardLinkConfig?.target ?? defaultTarget
   return { href, target }
 }
 

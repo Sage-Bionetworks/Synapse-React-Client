@@ -17,7 +17,7 @@ import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from './QueryWrapper'
-import { LockedFacet, QueryContextType } from './QueryContext'
+import { LockedColumn, QueryContextType } from './QueryContext'
 import IconSvg from './IconSvg'
 
 type SearchState = {
@@ -41,7 +41,7 @@ export type SearchV2Props = {
   isQueryWrapperMenuChild?: boolean
   defaultColumn?: string
   searchable?: SearchableColumnsV2
-  lockedFacet?: LockedFacet
+  lockedColumn?: LockedColumn
   fullTextSearchHelpURL?: string
 }
 
@@ -111,19 +111,19 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
     event.preventDefault()
     const { searchText } = this.state
     let { columnName } = this.state
-    const { searchable, lockedFacet } = this.props
+    const { searchable, lockedColumn } = this.props
     if (columnName === '') {
       if (searchable) {
         // If searchable column names are defined in the config, grab the first one (that is not locked)
         columnName = searchable.filter(
-          colName => colName !== lockedFacet?.facet,
+          colName => colName !== lockedColumn?.columnName,
         )[0]
       } else {
         // Otherwise, get the first column model that can be searched.
-        // And for study details page: if lockedFacet is defined, remove it from the search
+        // And for study details page: if lockedColumn is defined, remove it from the search
         const searchableColumnModels =
           this.props.queryContext?.data?.columnModels
-            ?.filter(el => el.name !== lockedFacet?.facet)
+            ?.filter(el => el.name !== lockedColumn?.columnName)
             .filter(el => this.isSupportedColumn(el))
         columnName = searchableColumnModels?.[0].name ?? ''
       }
@@ -216,7 +216,7 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
   render() {
     const {
       searchable,
-      lockedFacet,
+      lockedColumn,
       queryContext: { data },
       queryVisualizationContext: { topLevelControlsState, facetAliases },
     } = this.props
@@ -235,9 +235,11 @@ class Search extends React.Component<InternalSearchProps, SearchState> {
         .map(el => el.name)
     }
 
-    // For study details page: if lockedFacet is defined, remove it from the radio dropdown
-    if (searchColumns.length && lockedFacet?.facet) {
-      searchColumns = searchColumns.filter(el => el !== lockedFacet?.facet)
+    // For study details page: if lockedColumn is defined, remove it from the radio dropdown
+    if (searchColumns.length && lockedColumn?.columnName) {
+      searchColumns = searchColumns.filter(
+        el => el !== lockedColumn?.columnName,
+      )
     }
     const showFacetFilter = topLevelControlsState?.showFacetFilter
     return (

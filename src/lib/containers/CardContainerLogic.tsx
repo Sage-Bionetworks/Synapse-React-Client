@@ -30,6 +30,13 @@ export interface ColumnSpecifiedLink {
   tooltipText?: string
 }
 
+export enum TargetEnum {
+  CURRENT_WINDOW = '_self',
+  NEW_WINDOW = '_blank',
+  PARENT_FRAME = '_parent',
+  FULL_WINDOW_BODY = '_top',
+}
+
 export interface CardLink {
   baseURL: string
   // the key that will go into the url
@@ -44,6 +51,8 @@ export interface CardLink {
   overrideLinkURLColumnName?: string
   // If set, also show a tooltip
   tooltipText?: string
+  // If set, will specify where to open the link
+  target?: TargetEnum
 }
 
 export type MarkdownLink = {
