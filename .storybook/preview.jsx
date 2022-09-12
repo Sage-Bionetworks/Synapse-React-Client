@@ -4,6 +4,13 @@ import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 
 globalThis.Buffer = Buffer
+globalThis.process = {
+  browser: true,
+  env: {
+    NODE_ENV: 'development',
+    NODE_DEBUG: undefined,
+  },
+}
 
 if (process.env.NODE_ENV === 'development') {
   // whyDidYouRender is a dev/debugging tool that logs to the console with information about why a component rendered
