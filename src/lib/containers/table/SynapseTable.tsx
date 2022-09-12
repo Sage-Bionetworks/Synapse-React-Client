@@ -750,6 +750,12 @@ export default class SynapseTable extends React.Component<
       case ColumnType.USERID:
       case ColumnType.ENTITYID:
       case ColumnType.FILEHANDLEID:
+      case ColumnType.STRING_LIST:
+      case ColumnType.INTEGER_LIST:
+      case ColumnType.BOOLEAN_LIST:
+      case ColumnType.DATE_LIST:
+      case ColumnType.USERID_LIST:
+      case ColumnType.ENTITYID_LIST:
         return false
       default:
         return true
