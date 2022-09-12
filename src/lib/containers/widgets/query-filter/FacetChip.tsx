@@ -4,7 +4,7 @@ import { FacetColumnResult } from '../../../utils/synapseTypes'
 import IconSvg from '../../IconSvg'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 
-type FacetChipProps = {
+export type FacetChipProps = {
   facet: FacetColumnResult
   facetFilter: string[]
   setFacetFilter: Dispatch<SetStateAction<string[]>>
@@ -18,7 +18,7 @@ export const FacetChip: React.FC<FacetChipProps> = ({
   const [isChecked, setIsChecked] = useState<boolean>()
   const { facetAliases } = useQueryVisualizationContext()
   useEffect(() => {
-    if (facetFilter?.includes(facet.columnName)) {
+    if (facetFilter?.includes(facet.columnName) || facetFilter.length == 0) {
       setIsChecked(true)
     }
   }, [])
@@ -35,7 +35,7 @@ export const FacetChip: React.FC<FacetChipProps> = ({
   return (
     <button
       className={`Chip ${isChecked ? 'Checked' : ''}`}
-      onClick={e => handleClick()}
+      onClick={handleClick}
     >
       {unCamelCase(facet.columnName, facetAliases)}
       <IconSvg options={{ icon: isChecked ? 'check' : 'add' }}></IconSvg>
