@@ -3,7 +3,7 @@ import Parser from 'rss-parser'
 import moment from 'moment'
 import { ReactComponent as SubscribePlus } from '../assets/icons/subscribe_plus.svg'
 import MailchimpSubscribe from 'react-mailchimp-subscribe'
-import { LockedFacet } from './QueryContext'
+import { LockedColumn } from './QueryContext'
 import NoData from '../assets/icons/NoData'
 import { Button } from 'react-bootstrap'
 
@@ -18,7 +18,7 @@ type RssState = {
 
 export type RssFeedCardsProps = {
   url: string
-  lockedFacet?: LockedFacet // optional tag to filter by, typically set by using this component on a DetailsPage
+  lockedColumn?: LockedColumn // optional tag to filter by, typically set by using this component on a DetailsPage
   itemsToShow: number
   allowCategories?: string[]
   mailChimpListName?: string
@@ -44,10 +44,10 @@ export default class RssFeedCards extends React.Component<
 
   componentDidMount() {
     this._isMounted = true
-    const { url, lockedFacet } = this.props
-    const lockedFacetValue = lockedFacet?.value
-    const tagPath = lockedFacetValue
-      ? `/tag/${lockedFacetValue.replace(' ', '-')}`
+    const { url, lockedColumn } = this.props
+    const lockedColumnValue = lockedColumn?.value
+    const tagPath = lockedColumnValue
+      ? `/tag/${lockedColumnValue.replace(' ', '-')}`
       : ''
     const allItems = `${url}${tagPath}`
     const feedUrl = `${allItems}/feed/`

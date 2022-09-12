@@ -1,11 +1,13 @@
+import { cloneDeep } from 'lodash-es'
+import { SynapseClient, SynapseConstants } from '..'
+import { LockedColumn } from '../../containers/QueryContext'
 import {
-  QueryBundleRequest,
   FacetColumnResult,
+  FacetColumnResultValues,
+  QueryBundleRequest,
+  QueryResultBundle,
   SelectColumn,
 } from '../synapseTypes/'
-import { SynapseClient, SynapseConstants } from '..'
-import { QueryResultBundle, FacetColumnResultValues } from '../synapseTypes/'
-import { cloneDeep } from 'lodash-es'
 
 type PartialStateObject = {
   hasMoreData: boolean
@@ -97,4 +99,23 @@ export const isSingleNotSetValue = (facet: FacetColumnResult): boolean => {
     (facet as FacetColumnResultValues).facetValues[0].value ==
       SynapseConstants.VALUE_NOT_SET
   )
+}
+
+export function removeLockedColumnFromFacetData(
+  data?: QueryResultBundle,
+  lockedColumn?: LockedColumn,
+) {
+  const lockedColumnName = lockedColumn?.columnName
+  if (lockedColumnName && data) {
+    // for details page, return data without the "locked" facet
+    const dataCopy: QueryResultBundle = cloneDeep(data)
+    const facets = dataCopy.facets?.filter(
+      item => item.columnName.toLowerCase() !== lockedColumnName.toLowerCase(),
+    )
+    dataCopy.facets = facets
+    return dataCopy
+  } else {
+    // for other pages, just return the data
+    return data
+  }
 }
