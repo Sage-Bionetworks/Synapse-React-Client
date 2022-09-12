@@ -157,7 +157,9 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
       const facets = data.facets as FacetColumnResult[]
       if (facetFilter.length > 0) {
         let newArr = facets.filter(facet => {
-          return !facetFilter.includes(facet.columnName)
+          return facetsToFilter
+            ? facetFilter.includes(facet.columnName)
+            : !facetFilter.includes(facet.columnName)
         })
         setFacets(newArr)
       } else {
