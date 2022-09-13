@@ -83,10 +83,9 @@ describe('FacetChip tests', () => {
     await screen.findByRole('button', { name: 'Make' })
   })
 
-  it('should change color when clicked', async () => {
+  it('calls onClick when clicking chip', async () => {
     renderComponent(props)
     const chip = await screen.findByRole('button', { name: 'Make' })
-    expect(chip.className).toEqual('Chip Checked')
     fireEvent.click(chip)
     expect(mockOnClick).toBeCalled()
   })

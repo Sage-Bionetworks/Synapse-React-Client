@@ -137,32 +137,13 @@ function init(overrides?: QueryFilterProps) {
 }
 
 describe('QueryFilter tests', () => {
-  it('should initiate selected items correctly', () => {
-    init()
-    const enumFacets = mockQueryResponseData.facets.filter(
-      facet => facet.facetType === 'enumeration',
-    )
-    const rangeFacets = mockQueryResponseData.facets.filter(
-      facet => facet.facetType === 'range',
-    )
-    expect(screen.getAllByTestId('EnumFacetFilter')).toHaveLength(
-      enumFacets.length,
-    )
-    expect(screen.getAllByTestId('RangeFacetFilter')).toHaveLength(
-      rangeFacets.length,
-    )
-  })
-
-  it('should only expand the first three collapsible facets', () => {
+  it('should only show three facets and be expanded', () => {
     init()
     const facetFilters = screen.getAllByTestId(/(Enum|Range)FacetFilter/)
-    expect(facetFilters).toHaveLength(mockQueryResponseData.facets.length)
-    facetFilters.forEach((facet, index) => {
-      if (index < 3) {
-        expect(facet.getAttribute('data-collapsed')).toBe('false')
-      } else {
-        expect(facet.getAttribute('data-collapsed')).toBe('true')
-      }
+    expect(facetFilters).toHaveLength(3)
+
+    facetFilters.forEach(facet => {
+      expect(facet.getAttribute('data-collapsed')).toBe('false')
     })
   })
 
@@ -251,6 +232,23 @@ describe('QueryFilter tests', () => {
       const expected = _.cloneDeep(lastQueryRequestResult)
       expected.query = { ...expected.query, selectedFacets: expectedResult }
       expect(mockExecuteQueryRequest).toHaveBeenCalledWith(expected)
+    })
+
+    it('renders all available facet chips', async () => {
+      init()
+      expect(await screen.findAllByRole('button')).toHaveLength(
+        mockQueryResponseData.facets.length,
+      )
+    })
+
+    it('facet chip changes color onClick', async () => {
+      init()
+      const facetChip = await screen.findByRole('button', {
+        name: mockQueryResponseData.facets[0].columnName,
+      })
+      expect(facetChip.className).toEqual('Chip Checked')
+      await userEvent.click(facetChip)
+      expect(facetChip.className).toEqual('Chip ')
     })
   })
 })

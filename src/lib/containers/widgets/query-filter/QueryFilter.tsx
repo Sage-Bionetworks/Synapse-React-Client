@@ -201,7 +201,6 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
             const columnModel = columnModels!.find(
               model => model.name === facet.columnName,
             )
-            const shouldStartCollapsed = index > 2
             if (isSingleNotSetValue(facet)) {
               return
             }
@@ -210,7 +209,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
                 {facet.facetType === 'enumeration' && columnModel && (
                   <EnumFacetFilter
                     containerAs="Collapsible"
-                    collapsed={shouldStartCollapsed}
+                    collapsed={false}
                     facetValues={facet.facetValues}
                     columnModel={columnModel}
                     facetAliases={facetAliases}
@@ -236,7 +235,7 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
                     facetResult={facet}
                     columnModel={columnModel}
                     facetAliases={facetAliases}
-                    collapsed={shouldStartCollapsed}
+                    collapsed={false}
                     onChange={(values: string[]) =>
                       applyChangesToRangeColumn(
                         lastRequest,
