@@ -104,17 +104,17 @@ describe('QuerySortSelector tests', () => {
 
   it('Executes query request on sort', async () => {
     renderComponent(props, queryContext)
-    sortByOpenAccessJournals()
+    await sortByOpenAccessJournals()
 
     const expectedSortItem: SortItem = {
       column: 'journal',
       direction: 'ASC',
     }
-    verifyExpectedSortItem(expectedSortItem)
+    await verifyExpectedSortItem(expectedSortItem)
 
     // Selecting the item again should flip the sort direction
-    sortByOpenAccessJournals()
+    await sortByOpenAccessJournals()
     expectedSortItem.direction = 'DESC'
-    verifyExpectedSortItem(expectedSortItem)
+    await verifyExpectedSortItem(expectedSortItem)
   })
 })
