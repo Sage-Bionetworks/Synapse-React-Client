@@ -140,7 +140,9 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   facetsToFilter,
 }): JSX.Element => {
   const [facets, setFacets] = React.useState<FacetColumnResult[]>([])
-  const [facetFilter, setFacetFilter] = React.useState(facetsToFilter ?? [])
+  const [facetFiltersShown, setFacetFiltersShown] = React.useState<string[]>(
+    facetsToFilter ?? [],
+  )
   const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
   const { showFacetFilter } = topLevelControlsState
   const { data, isLoadingNewBundle, getLastQueryRequest, executeQueryRequest } =
@@ -148,25 +150,19 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
 
   React.useEffect(() => {
     if (data) {
-      setFacets(data.facets as FacetColumnResult[])
-    }
-  }, [])
-
-  React.useEffect(() => {
-    if (data) {
       const facets = data.facets as FacetColumnResult[]
-      if (facetFilter.length > 0) {
+      if (facetFiltersShown.length > 0) {
         let newArr = facets.filter(facet => {
           return facetsToFilter
-            ? facetFilter.includes(facet.columnName)
-            : !facetFilter.includes(facet.columnName)
+            ? facetFiltersShown.includes(facet.columnName)
+            : !facetFiltersShown.includes(facet.columnName)
         })
         setFacets(newArr)
       } else {
         setFacets(facets)
       }
     }
-  }, [facetFilter])
+  }, [facetFiltersShown])
 
   if (!data) {
     return <></>
@@ -180,6 +176,16 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
     queryRequest.query.selectedFacets = facets
     queryRequest.query.offset = 0
     executeQueryRequest(queryRequest)
+  }
+
+  const onClick = (facet: FacetColumnResult) => {
+    let newFacetFilterShown = [...(facetFiltersShown ?? ['']), facet.columnName]
+    if (facetFiltersShown.includes(facet.columnName)) {
+      newFacetFilterShown = newFacetFilterShown.filter(
+        col => col != facet.columnName,
+      )
+    }
+    setFacetFiltersShown(newFacetFilterShown)
   }
 
   return (
@@ -249,8 +255,12 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
           return (
             <FacetChip
               facet={facet}
-              facetFilter={facetFilter}
-              setFacetFilter={setFacetFilter}
+              onClick={() => onClick(facet)}
+              isChecked={
+                facetsToFilter
+                  ? facetFiltersShown.includes(facet.columnName)
+                  : !facetFiltersShown.includes(facet.columnName)
+              }
             />
           )
         })}

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import {
   QueryContextProvider,
@@ -27,10 +27,12 @@ const mockFacetColumn: FacetColumnResult = {
   facetValues: [],
 }
 
+const mockOnClick = jest.fn()
+
 let props: FacetChipProps = {
   facet: mockFacetColumn,
-  facetFilter: [],
-  setFacetFilter: jest.fn(),
+  isChecked: true,
+  onClick: mockOnClick,
 }
 
 const mockExecuteQueryRequest = jest.fn()
@@ -80,11 +82,12 @@ describe('FacetChip tests', () => {
     renderComponent(props)
     await screen.findByRole('button', { name: 'Make' })
   })
+
   it('should change color when clicked', async () => {
     renderComponent(props)
     const chip = await screen.findByRole('button', { name: 'Make' })
     expect(chip.className).toEqual('Chip Checked')
     fireEvent.click(chip)
-    expect(chip.className).toEqual('Chip ')
+    expect(mockOnClick).toBeCalled()
   })
 })
