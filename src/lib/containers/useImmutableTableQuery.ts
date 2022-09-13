@@ -5,7 +5,7 @@ import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
 import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
 
-type ImmutableTableQueryResult = {
+export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */
   entityId: string
   /** The version number of the table parsed from the SQL query */
@@ -34,7 +34,7 @@ type ImmutableTableQueryResult = {
    */
 }
 
-type UseImmutableTableQueryOptions = {
+export type UseImmutableTableQueryOptions = {
   /** The initial table query request object */
   initQueryRequest: QueryBundleRequest
   /** Whether the URL should update when the query is modified. */
@@ -64,7 +64,7 @@ export default function useImmutableTableQuery(
     useState<QueryBundleRequest>(initQueryRequest)
 
   /**
-   * Inspect the URL to see if we have a particular query request that we must show.
+   * Inspect the URL on mount to see if we have a particular query request that we must show.
    */
   useEffect(() => {
     const query = DeepLinkingUtils.getQueryRequestFromLink(
@@ -74,7 +74,7 @@ export default function useImmutableTableQuery(
     if (query) {
       setLastQueryRequest(query)
     }
-  }, [])
+  }, [componentIndex])
 
   /**
    * Pass down a deep clone (so no side effects on the child's part) of the
@@ -115,8 +115,8 @@ export default function useImmutableTableQuery(
       newQueryRequest = queryRequest
     }
 
+    // Clone the query request before storing it in state, in case the original is mutated
     const clonedQueryRequest = cloneDeep(newQueryRequest)
-
     setLastQueryRequest(clonedQueryRequest)
 
     if (clonedQueryRequest.query) {
