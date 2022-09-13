@@ -104,7 +104,7 @@ export const isSingleNotSetValue = (facet: FacetColumnResult): boolean => {
 export function removeLockedColumnFromFacetData(
   data?: QueryResultBundle,
   lockedColumn?: LockedColumn,
-) {
+): QueryResultBundle | undefined {
   const lockedColumnName = lockedColumn?.columnName
   if (lockedColumnName && data) {
     // for details page, return data without the "locked" facet
