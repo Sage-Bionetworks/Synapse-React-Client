@@ -2,9 +2,11 @@
 @use 'sass:map';
 
 .QueryWrapperPlotNav {
+  .SRC-wrapper {
+    display: grid;
+  }
   @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
     .SRC-wrapper {
-      display: grid;
       grid-template-columns: 25% 75%;
 
       // by default, children take up the full row
@@ -19,45 +21,11 @@
       }
     }
     .SRC-wrapper {
-      // row
-      .QueryFilter {
-        grid-row: 3 / span 100;
-      }
-      .TopLevelControls {
-        grid-row: 1 / span 1;
-      }
-      .TotalQueryResults {
-        grid-row: 2 / span 1;
-      }
-      .download-confirmation {
-        grid-row: 3 / span 1;
-      }
-      .QueryWrapperSearchInput {
-        grid-row: 4 / span 1;
-        .MuiCollapse-entered {
-          margin: 5px 0px;
-        }
-      }
-      .QueryWrapperSqlEditorInput {
-        grid-row: 5 / span 1;
-        .MuiCollapse-entered {
-          margin: 5px 0px;
-        }
-      }
-      .ErrorBannerWrapper {
-        grid-row: 6 / span 1;
-      }
-      .FacetNav {
-        grid-row: 7 / span 1;
-      }
-      .FilterAndView {
-        grid-row: 8 / span 1;
-      }
-
       // column (depends on if we are showing facet filters)
       .isShowingFacetFilters {
         &.QueryFilter {
           grid-column: 1 / span 1;
+          grid-row: 3 / span 100;
         }
         &.download-confirmation,
         &.FacetNav,
@@ -73,17 +41,57 @@
           grid-column: 1 / span 2;
         }
       }
-      .isHidingFacetFilters {
-        &.QueryFilter {
-          grid-column: 1 / span 1;
-          > * {
-            display: none;
-          }
-        }
-        &.FilterAndView {
-          margin-top: 10px;
-        }
+    }
+  }
+
+  // row
+  .SRC-wrapper {
+    .TopLevelControls {
+      grid-row: 1 / span 1;
+    }
+    .TotalQueryResults {
+      grid-row: 2 / span 1;
+    }
+    .download-confirmation {
+      grid-row: 3 / span 1;
+    }
+    .QueryWrapperSearchInput {
+      grid-row: 4 / span 1;
+      .MuiCollapse-entered {
+        margin: 5px 0px;
       }
+    }
+    .QueryWrapperSqlEditorInput {
+      grid-row: 5 / span 1;
+      .MuiCollapse-entered {
+        margin: 5px 0px;
+      }
+    }
+    .ErrorBannerWrapper {
+      grid-row: 6 / span 1;
+    }
+    // This is the placement for mobile.  See above for desktop position
+    // (when showing these facet filters we render a 2 column layout)
+    .QueryFilter {
+      grid-row: 7 / span 1;
+    }
+    .FacetNav {
+      grid-row: 8 / span 1;
+    }
+    .FilterAndView {
+      grid-row: 9 / span 1;
+    }
+  }
+
+  .SRC-wrapper .isHidingFacetFilters {
+    &.QueryFilter {
+      grid-column: 1 / span 1;
+      > * {
+        display: none;
+      }
+    }
+    &.FilterAndView {
+      margin-top: 10px;
     }
   }
 
