@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { isSingleNotSetValue } from '../../../utils/functions/queryUtils'
 import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import {
@@ -11,15 +12,15 @@ import {
   FacetColumnResultRange,
   FacetColumnResultValues,
 } from '../../../utils/synapseTypes/Table/FacetColumnResult'
+import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   QUERY_FILTERS_COLLAPSED_CSS,
   QUERY_FILTERS_EXPANDED_CSS,
 } from '../../QueryWrapper'
-import { useQueryContext } from '../../QueryContext'
 import { EnumFacetFilter } from './EnumFacetFilter'
-import { RangeFacetFilter } from './RangeFacetFilter'
 import { FacetChip } from './FacetChip'
+import { RangeFacetFilter } from './RangeFacetFilter'
 
 export type QueryFilterProps = {
   facetsToFilter?: string[]
@@ -139,35 +140,31 @@ export const applyChangesToRangeColumn = (
 export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
   facetsToFilter,
 }): JSX.Element => {
-  const [facets, setFacets] = React.useState<FacetColumnResult[]>([])
-  const [facetFiltersShown, setFacetFiltersShown] = React.useState<string[]>(
-    facetsToFilter ?? [],
-  )
-  const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
-  const { showFacetFilter } = topLevelControlsState
   const { data, isLoadingNewBundle, getLastQueryRequest, executeQueryRequest } =
     useQueryContext()
 
-  React.useEffect(() => {
-    if (data) {
-      const facets = data.facets as FacetColumnResult[]
-      if (facetFiltersShown.length > 0) {
-        let newArr = facets.filter(facet => {
-          return facetsToFilter
-            ? facetFiltersShown.includes(facet.columnName)
-            : !facetFiltersShown.includes(facet.columnName)
-        })
-        setFacets(newArr)
-      } else {
-        setFacets(facets)
-      }
-    }
-  }, [facetFiltersShown])
+  const facets = data?.facets
+
+  let shownChips: string[]
+  if (facetsToFilter == null) {
+    shownChips = facets?.map(facet => facet.columnName) ?? []
+  } else {
+    shownChips = facetsToFilter
+  }
+  const [facetFiltersShown, setFacetFiltersShown] = React.useState<string[]>([])
+  const { facetAliases, topLevelControlsState } = useQueryVisualizationContext()
+  const { showFacetFilter } = topLevelControlsState
+
+  /**
+   * When the data facets change, reset the initially-selected chips
+   */
+  useDeepCompareEffectNoCheck(() => {
+    setFacetFiltersShown(shownChips.slice(0, 3))
+  }, [data?.facets])
 
   if (!data) {
     return <></>
   }
-  const originalFacets = data.facets as FacetColumnResult[]
   const columnModels = data.selectColumns
   const lastRequest = getLastQueryRequest()
 
@@ -198,72 +195,77 @@ export const QueryFilter: React.FunctionComponent<QueryFilterProps> = ({
     >
       {isLoadingNewBundle && <div>Loading...</div>}
       {!isLoadingNewBundle &&
-        facets.map((facet, index) => {
-          const columnModel = columnModels!.find(
-            model => model.name === facet.columnName,
-          )
-          const shouldStartCollapsed = index > 2
-          if (isSingleNotSetValue(facet)) {
-            return
-          }
-          return (
-            <div className="QueryFilter__facet" key={facet.columnName}>
-              {facet.facetType === 'enumeration' && columnModel && (
-                <EnumFacetFilter
-                  containerAs="Collapsible"
-                  collapsed={shouldStartCollapsed}
-                  facetValues={facet.facetValues}
-                  columnModel={columnModel}
-                  facetAliases={facetAliases}
-                  onChange={(facetNamesMap: Record<string, string>) =>
-                    applyMultipleChangesToValuesColumn(
-                      lastRequest,
-                      facet,
-                      applyChanges,
-                      facetNamesMap,
-                    )
-                  }
-                  onClear={() =>
-                    applyChangesToValuesColumn(lastRequest, facet, applyChanges)
-                  }
-                ></EnumFacetFilter>
-              )}
-              {facet.facetType === 'range' && columnModel && (
-                <RangeFacetFilter
-                  facetResult={facet}
-                  columnModel={columnModel}
-                  facetAliases={facetAliases}
-                  collapsed={shouldStartCollapsed}
-                  onChange={(values: string[]) =>
-                    applyChangesToRangeColumn(
-                      lastRequest,
-                      facet,
-                      applyChanges,
-                      values,
-                    )
-                  }
-                ></RangeFacetFilter>
-              )}
-            </div>
-          )
-        })}
+        (facets ?? [])
+          .filter(facet => facetFiltersShown.includes(facet.columnName))
+          .map((facet, index) => {
+            const columnModel = columnModels!.find(
+              model => model.name === facet.columnName,
+            )
+            const shouldStartCollapsed = index > 2
+            if (isSingleNotSetValue(facet)) {
+              return
+            }
+            return (
+              <div className="QueryFilter__facet" key={facet.columnName}>
+                {facet.facetType === 'enumeration' && columnModel && (
+                  <EnumFacetFilter
+                    containerAs="Collapsible"
+                    collapsed={shouldStartCollapsed}
+                    facetValues={facet.facetValues}
+                    columnModel={columnModel}
+                    facetAliases={facetAliases}
+                    onChange={(facetNamesMap: Record<string, string>) =>
+                      applyMultipleChangesToValuesColumn(
+                        lastRequest,
+                        facet,
+                        applyChanges,
+                        facetNamesMap,
+                      )
+                    }
+                    onClear={() =>
+                      applyChangesToValuesColumn(
+                        lastRequest,
+                        facet,
+                        applyChanges,
+                      )
+                    }
+                  ></EnumFacetFilter>
+                )}
+                {facet.facetType === 'range' && columnModel && (
+                  <RangeFacetFilter
+                    facetResult={facet}
+                    columnModel={columnModel}
+                    facetAliases={facetAliases}
+                    collapsed={shouldStartCollapsed}
+                    onChange={(values: string[]) =>
+                      applyChangesToRangeColumn(
+                        lastRequest,
+                        facet,
+                        applyChanges,
+                        values,
+                      )
+                    }
+                  ></RangeFacetFilter>
+                )}
+              </div>
+            )
+          })}
       <div>
         <div className="AvailableFacet">
           <label className="AvailableFacet__label">Available Facets</label>
         </div>
-        {originalFacets.map(facet => {
-          return (
-            <FacetChip
-              facet={facet}
-              onClick={() => onClick(facet)}
-              isChecked={
-                facetsToFilter
-                  ? facetFiltersShown.includes(facet.columnName)
-                  : !facetFiltersShown.includes(facet.columnName)
-              }
-            />
-          )
-        })}
+        {(facets ?? [])
+          .filter(facet => shownChips.includes(facet.columnName))
+          .map(facet => {
+            return (
+              <FacetChip
+                key={facet.columnName}
+                facet={facet}
+                onClick={() => onClick(facet)}
+                isChecked={facetFiltersShown.includes(facet.columnName)}
+              />
+            )
+          })}
       </div>
     </div>
   )
