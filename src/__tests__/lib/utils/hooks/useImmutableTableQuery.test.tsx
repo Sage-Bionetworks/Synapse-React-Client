@@ -41,7 +41,6 @@ describe('useImmutableTableQuery tests', () => {
       result.current.setQuery(newQuery)
     })
     expect(result.current.getLastQueryRequest()).toEqual(newQuery)
-    expect(result.current.getLastQueryRequest()).not.toBe(newQuery)
   })
 
   it('Updates the query using a transformer function', () => {
