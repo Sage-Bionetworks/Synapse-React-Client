@@ -33,6 +33,11 @@ GenericCard.args = {
     subTitle: 'authors',
     secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI'],
   },
+  sortConfig: {
+    defaultColumn: 'authors',
+    defaultDirection: 'ASC',
+    sortableColumns: ['authors', 'title', 'createdOn', 'journal'],
+  },
 }
 
 export const EmptyResults = Template.bind({})

@@ -4,12 +4,12 @@ import Creatable from 'react-select/creatable'
 import { components, ControlProps, GroupBase } from 'react-select'
 
 // Some types for rjsf and react-select don't seem to be accurate or useful, so we cast to this object when we're dealing with enumeration options
-type EnumOption = { value: string; label: string }
+export type EnumOption = { value: string; label: string }
 
 /**
  * We want to apply the 'form-control' bootstrap class to react-select's Control component, and the easiest way to do that is to make a custom version
  */
-const Control = ({
+export const Control = ({
   children,
   ...rest
 }: ControlProps<any, boolean, GroupBase<any>>) => {
@@ -28,7 +28,7 @@ const Control = ({
  * If value is nullish, this fn returns undefined. If there is no corresponding option, then a new object is returned
  * where the label and value are set to the provided value.
  */
-function findValueOption(
+export function findValueOption(
   value: string | null | undefined,
   options: EnumOption[],
 ): EnumOption | undefined {
