@@ -206,7 +206,6 @@
     "yarn": "^1.22.17"
   },
   "scripts": {
-    "prepublishOnly": "yarn install && yarn run build && yarn run test:ci",
     "build-gh": "yarn run build:docs",
     "deploy": "yarn install && yarn build:storybook && gh-pages -t -d storybook-static -o upstream",
     "deploy:origin": "yarn install && yarn build:storybook && gh-pages -t -d storybook-static -o origin",
@@ -227,7 +226,7 @@
     "build:storybook": "build-storybook && touch storybook-static/.nojekyll",
     "link-src": "yarn link && cd ./node_modules/react && yarn link && cd ../react-router && yarn link && cd ../react-router-dom && yarn link && cd ../../",
     "unlink-src": "yarn unlink && cd ./node_modules/react && yarn unlink && cd ../react-router && yarn unlink && cd ../react-router-dom && yarn unlink && cd ../../",
-    "prepare": "husky install",
+    "postinstall": "husky install",
     "storybook": "start-storybook -p 6060"
   },
   "resolutions": {
