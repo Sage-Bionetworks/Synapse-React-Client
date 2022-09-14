@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { findByRole, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import _ from 'lodash-es'
 import * as React from 'react'
@@ -147,11 +147,16 @@ describe('QueryFilter tests', () => {
     })
   })
 
-  it('should respect facetsToFilter', () => {
+  it('should respect facetsToFilter', async () => {
     // set facetsToFilter to make the component only show a filter for Year (a range type facet) and not Make (a values/enum type)
     init({ facetsToFilter: ['Year'] })
     expect(screen.queryByTestId('EnumFacetFilter')).not.toBeInTheDocument()
     expect(screen.queryByTestId('RangeFacetFilter')).toBeInTheDocument()
+    // expects the facet chips to only show facets within facetToFilter
+    expect(
+      await screen.findByRole('button', { name: 'Year' }),
+    ).toBeInTheDocument()
+    expect(await screen.findAllByRole('button')).toHaveLength(1)
   })
 
   describe('handling child component callbacks', () => {
