@@ -224,8 +224,6 @@
     "serve:docs": "yarn storybook",
     "build:docs": "yarn build:storybook",
     "build:storybook": "build-storybook && touch storybook-static/.nojekyll",
-    "link-src": "yarn link && cd ./node_modules/react && yarn link && cd ../react-router && yarn link && cd ../react-router-dom && yarn link && cd ../../",
-    "unlink-src": "yarn unlink && cd ./node_modules/react && yarn unlink && cd ../react-router && yarn unlink && cd ../react-router-dom && yarn unlink && cd ../../",
     "postinstall": "husky install",
     "storybook": "start-storybook -p 6060"
   },
