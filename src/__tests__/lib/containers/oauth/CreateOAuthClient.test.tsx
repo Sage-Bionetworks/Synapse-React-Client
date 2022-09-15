@@ -92,7 +92,7 @@ describe('Create OAuth Client', () => {
     await userEvent.click(saveButton!)
 
     await waitFor(() =>
-      expect(mockToastFn).toBeCalledWith('Successfully saved', 'success'),
+      expect(mockToastFn).toBeCalledWith('Successfully created', 'success'),
     )
   })
 
