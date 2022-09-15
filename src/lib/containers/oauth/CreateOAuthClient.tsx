@@ -17,7 +17,6 @@ export type CreateOAuthModalProps = {
   isShowingModal: boolean
   isEdit: boolean
   onClose: () => void
-  setSelectedClient: (client: OAuthClient | undefined) => void
   setIsShowingConfirmModal: (a: boolean) => void
   isShowingConfirmModal: boolean
   client?: OAuthClient
@@ -30,7 +29,6 @@ export const CreateOAuthModal: React.FunctionComponent<
   isEdit,
   onClose,
   client,
-  setSelectedClient,
   setIsShowingConfirmModal,
   isShowingConfirmModal,
 }) => {
@@ -85,7 +83,6 @@ export const CreateOAuthModal: React.FunctionComponent<
   const hideConfirmModal = () => {
     setIsShowingConfirmModal(false)
     setIsDelete(false)
-    setSelectedClient(undefined)
   }
 
   const { mutate } = useMutateOAuthClient({
@@ -121,7 +118,6 @@ export const CreateOAuthModal: React.FunctionComponent<
         setUpdatedClient(oAuthClient)
         if (warnTrigger === true) {
           setIsShowingConfirmModal(true)
-          hide()
         } else {
           if (isEdit) {
             mutate({ action: 'UPDATE', client: oAuthClient })

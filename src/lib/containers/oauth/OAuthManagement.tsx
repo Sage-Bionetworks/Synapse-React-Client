@@ -135,7 +135,6 @@ export const OAuthManagement: React.FunctionComponent = () => {
           isShowingModal={isShowingCreateClientModal}
           client={isEdit ? selectedClient : undefined}
           isEdit={isEdit}
-          setSelectedClient={setSelectedClient}
           setIsShowingConfirmModal={setIsShowingConfirmModal}
           isShowingConfirmModal={isShowingConfirmModal}
         />
