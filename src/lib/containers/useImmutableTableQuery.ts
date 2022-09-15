@@ -120,17 +120,17 @@ export default function useImmutableTableQuery(
     setLastQueryRequest(clonedQueryRequest)
 
     if (clonedQueryRequest.query) {
+      const clonedQueryJson = JSON.stringify(clonedQueryRequest.query)
       if (shouldDeepLink) {
-        const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
-        const stringifiedQuery = encodeURIComponent(clonedQueryRequestJson)
+        const encodedQuery = encodeURIComponent(clonedQueryJson)
         DeepLinkingUtils.updateUrlWithNewSearchParam(
           'QueryWrapper',
           componentIndex,
-          stringifiedQuery,
+          encodedQuery,
         )
       }
       if (onQueryChange) {
-        onQueryChange(JSON.stringify(clonedQueryRequest))
+        onQueryChange(clonedQueryJson)
       }
     }
   }
