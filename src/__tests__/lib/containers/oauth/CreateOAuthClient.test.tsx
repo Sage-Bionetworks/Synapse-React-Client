@@ -36,7 +36,7 @@ const defaultProps: CreateOAuthModalProps = {
   isShowingModal: true,
   onClose: jest.fn(),
   isEdit: false,
-  setSelectedClient: jest.fn(),
+  setIsShowingModal: jest.fn(),
   isShowingConfirmModal: false,
   setIsShowingConfirmModal: jest.fn(),
 }
