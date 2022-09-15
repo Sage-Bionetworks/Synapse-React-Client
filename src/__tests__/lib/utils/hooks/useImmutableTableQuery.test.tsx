@@ -127,7 +127,7 @@ describe('useImmutableTableQuery tests', () => {
     act(() => {
       result.current.setQuery(newQuery)
     })
-    expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery))
+    expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
   })
 
   it('Updates the URL if shouldDeepLink is true', () => {
