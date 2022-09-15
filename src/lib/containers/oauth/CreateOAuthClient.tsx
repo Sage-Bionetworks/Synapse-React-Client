@@ -5,8 +5,9 @@ import { displayToast } from '../ToastMessage'
 import Typography from '../../utils/typography/Typography'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
 import {
+  useCreateOAuthClient,
   useDeleteOAuthClient,
-  useMutateOAuthClient,
+  useUpdateOAuthClient,
 } from '../../utils/hooks/SynapseAPI'
 import IconSvg from '../IconSvg'
 import { WarningModal } from '../synapse_form_wrapper/WarningModal'
@@ -20,6 +21,7 @@ export type CreateOAuthModalProps = {
   setIsShowingConfirmModal: (a: boolean) => void
   isShowingConfirmModal: boolean
   client?: OAuthClient
+  setIsShowingModal: (a: boolean) => void
 }
 
 export const CreateOAuthModal: React.FunctionComponent<
@@ -31,6 +33,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   client,
   setIsShowingConfirmModal,
   isShowingConfirmModal,
+  setIsShowingModal,
 }) => {
   const { accessToken } = useSynapseContext()
   const [clientName, setClientName] = useState('')
@@ -85,13 +88,22 @@ export const CreateOAuthModal: React.FunctionComponent<
     setIsDelete(false)
   }
 
-  const { mutate } = useMutateOAuthClient({
+  const { mutate: createClient } = useCreateOAuthClient({
     onSuccess: () => {
-      displayToast(`Successfully saved`, 'success')
-      hide()
+      displayToast('Successfully created', 'success')
     },
-    onError: (err: any) => {
-      displayToast(err.reason as string, 'danger')
+    onError: error => {
+      displayToast(error.reason as string, 'danger')
+    },
+  })
+
+  const { mutate: updateClient } = useUpdateOAuthClient({
+    onSuccess: () => {
+      displayToast('Successfully saved', 'success')
+    },
+    onError: error => {
+      displayToast(error.reason as string, 'danger')
+      setIsShowingModal(true)
     },
   })
 
@@ -99,6 +111,9 @@ export const CreateOAuthModal: React.FunctionComponent<
     onSuccess: () => {
       displayToast('Successfully deleted', 'success')
       onClose()
+    },
+    onError: error => {
+      displayToast(error.reason as string, 'danger')
     },
   })
 
@@ -120,12 +135,13 @@ export const CreateOAuthModal: React.FunctionComponent<
           setIsShowingConfirmModal(true)
         } else {
           if (isEdit) {
-            mutate({ action: 'UPDATE', client: oAuthClient })
+            updateClient(oAuthClient)
           } else {
-            mutate({ action: 'CREATE', client: oAuthClient })
+            createClient(oAuthClient)
           }
         }
       }
+      hide()
     } catch (err) {
       displayToast(err.reason as string, 'danger')
     }
@@ -377,7 +393,7 @@ export const CreateOAuthModal: React.FunctionComponent<
         onConfirm={() => {
           isDelete
             ? deleteClient(client?.client_id!)
-            : mutate({ action: 'UPDATE', client: updatedClient! })
+            : updateClient(updatedClient!)
           hideConfirmModal()
         }}
         confirmButtonVariant="danger"

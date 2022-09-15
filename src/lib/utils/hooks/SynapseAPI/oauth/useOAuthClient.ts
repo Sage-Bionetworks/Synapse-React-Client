@@ -6,7 +6,6 @@ import {
   useQueryClient,
 } from 'react-query'
 import { SynapseClient } from '../../..'
-import { displayToast } from '../../../../containers/ToastMessage'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
 import { OAuthClient, OAuthClientList } from '../../../synapseTypes/OAuthClient'
@@ -47,43 +46,48 @@ export function useDeleteOAuthClient(
           await options.onSuccess(updatedClient, clientId, ctx)
         }
       },
-      onError: (err: any) => {
-        displayToast(err.reason as string, 'danger')
-      },
     },
   )
 }
 
-export function useMutateOAuthClient(
+export function useUpdateOAuthClient(
   options?: UseMutationOptions<OAuthClient, SynapseClientError, OAuthClient>,
 ) {
   const queryClient = useQueryClient()
   const { accessToken } = useSynapseContext()
 
-  const update = (props: {
-    client: OAuthClient
-    action: 'UPDATE' | 'CREATE'
-  }): Promise<OAuthClient> => {
-    const { client, action } = props
-    switch (action) {
-      case 'UPDATE':
-        return SynapseClient.updateOAuthClient(client, accessToken!)
-      case 'CREATE':
-        return SynapseClient.createOAuthClient(client, accessToken!)
-      default:
-        throw Error('Unknown action')
-    }
-  }
+  return useMutation<OAuthClient, SynapseClientError, OAuthClient>(
+    (client: OAuthClient) =>
+      SynapseClient.updateOAuthClient(client, accessToken!),
+    {
+      ...options,
+      onSuccess: async (updatedClient, client, ctx) => {
+        await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedClient, client, ctx)
+        }
+      },
+    },
+  )
+}
 
-  return useMutation(update, {
-    onSuccess: async (updatedClient, variables, ctx) => {
-      await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
-      if (options?.onSuccess) {
-        await options.onSuccess(updatedClient, variables.client, ctx)
-      }
+export function useCreateOAuthClient(
+  options?: UseMutationOptions<OAuthClient, SynapseClientError, OAuthClient>,
+) {
+  const queryClient = useQueryClient()
+  const { accessToken } = useSynapseContext()
+
+  return useMutation<OAuthClient, SynapseClientError, OAuthClient>(
+    (client: OAuthClient) =>
+      SynapseClient.createOAuthClient(client, accessToken!),
+    {
+      ...options,
+      onSuccess: async (updatedClient, client, ctx) => {
+        await queryClient.invalidateQueries(oAuthQueryKeys.all(accessToken!))
+        if (options?.onSuccess) {
+          await options.onSuccess(updatedClient, client, ctx)
+        }
+      },
     },
-    onError: (err: any) => {
-      displayToast(err.reason as string, 'danger')
-    },
-  })
+  )
 }

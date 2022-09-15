@@ -137,6 +137,7 @@ export const OAuthManagement: React.FunctionComponent = () => {
           isEdit={isEdit}
           setIsShowingConfirmModal={setIsShowingConfirmModal}
           isShowingConfirmModal={isShowingConfirmModal}
+          setIsShowingModal={setIsShowingCreateClientModal}
         />
       )}
 
