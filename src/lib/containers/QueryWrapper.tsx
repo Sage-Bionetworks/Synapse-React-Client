@@ -1,15 +1,12 @@
-import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
-import { useEffect, useMemo, useState } from 'react'
-import useDeepCompareEffect, {
-  useDeepCompareEffectNoCheck,
-} from 'use-deep-compare-effect'
-import * as DeepLinkingUtils from '../utils/functions/deepLinkingUtils'
-import { isFacetAvailable } from '../utils/functions/queryUtils'
-import { parseEntityIdAndVersionFromSqlStatement } from '../utils/functions/sqlFunctions'
+import { useMemo, useState } from 'react'
+import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import {
+  isFacetAvailable,
+  removeLockedColumnFromFacetData,
+} from '../utils/functions/queryUtils'
 import { useGetEntity } from '../utils/hooks/SynapseAPI/entity/useEntity'
 import { useGetQueryResultBundleWithAsyncStatus } from '../utils/hooks/SynapseAPI/entity/useGetQueryResultBundle'
-import { DEFAULT_PAGE_SIZE } from '../utils/SynapseConstants'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,
@@ -17,10 +14,11 @@ import {
   Table,
 } from '../utils/synapseTypes'
 import {
-  LockedFacet,
+  LockedColumn,
   PaginatedQueryContextType,
   QueryContextProvider,
 } from './QueryContext'
+import useImmutableTableQuery from './useImmutableTableQuery'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -32,7 +30,7 @@ export type QueryWrapperProps = {
   shouldDeepLink?: boolean
   onQueryChange?: (newQueryJson: string) => void
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
-  lockedFacet?: LockedFacet
+  lockedColumn?: LockedColumn
 }
 
 export type SearchQuery = {
@@ -45,18 +43,45 @@ export type SearchQuery = {
  * either `useQueryContext` or `QueryContextConsumer`.
  */
 export function QueryWrapper(props: QueryWrapperProps) {
-  const { initQueryRequest, onQueryChange, onQueryResultBundleChange } = props
-  const [lastQueryRequest, setLastQueryRequest] =
-    useState<QueryBundleRequest>(initQueryRequest)
+  const {
+    initQueryRequest,
+    onQueryChange,
+    onQueryResultBundleChange,
+    lockedColumn,
+    componentIndex,
+    shouldDeepLink,
+  } = props
+
   const [currentAsyncStatus, setCurrentAsyncStatus] = useState<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle> | undefined
   >(undefined)
+
+  const {
+    entityId,
+    versionNumber,
+    getInitQueryRequest,
+    getLastQueryRequest,
+    setQuery,
+    currentPage,
+    pageSize,
+    goToPage,
+    setPageSize,
+  } = useImmutableTableQuery({
+    initQueryRequest,
+    shouldDeepLink,
+    componentIndex,
+    onQueryChange,
+  })
+
+  const lastQueryRequest = useMemo(() => {
+    return getLastQueryRequest()
+  }, [getLastQueryRequest])
+
   const {
     data: asyncJobStatus,
     isLoading: queryIsLoading,
     error,
     isPreviousData: newQueryIsFetching,
-    remove,
   } = useGetQueryResultBundleWithAsyncStatus(
     lastQueryRequest,
     {
@@ -71,141 +96,30 @@ export function QueryWrapper(props: QueryWrapperProps) {
   // Indicate if we're fetching data for the first time (queryIsLoading) or if we're fetching data for a brand new query (newQueryIsFetching)
   const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
 
-  const { entityId, versionNumber } = parseEntityIdAndVersionFromSqlStatement(
-    lastQueryRequest.query.sql,
-  )!
-
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
 
-  const pageSize = lastQueryRequest.query.limit ?? DEFAULT_PAGE_SIZE
-  const currentPage = Math.ceil(
-    ((lastQueryRequest.query.offset ?? 0) + Number(pageSize)) / pageSize,
-  )
-
-  const setPageSize = (pageSize: number) => {
-    const lastQueryRequestDeepClone = getLastQueryRequest()
-    lastQueryRequestDeepClone.query.limit = pageSize
-    executeQueryRequest(lastQueryRequestDeepClone)
-  }
-
-  const goToPage = (pageNum: number) => {
-    const lastQueryRequestDeepClone = getLastQueryRequest()
-    lastQueryRequestDeepClone.query.offset = (pageNum - 1) * pageSize
-    executeQueryRequest(lastQueryRequestDeepClone)
-  }
-
-  useDeepCompareEffect(() => {
-    if (onQueryChange) {
-      onQueryChange(JSON.stringify(lastQueryRequest.query))
-    }
-  }, [onQueryChange, lastQueryRequest.query])
-
-  // data is sometimes undefined, which useDeepCompareEffect doesn't like
+  // data is sometimes undefined, which useDeepCompareEffect doesn't like, so use useDeepCompareEffectNoCheck instead
   useDeepCompareEffectNoCheck(() => {
     if (data && onQueryResultBundleChange) {
       onQueryResultBundleChange(JSON.stringify(data))
     }
   }, [data, onQueryResultBundleChange])
 
-  const componentIndex = props.componentIndex ?? 0
-
   const isFacetsAvailable = data
     ? isFacetAvailable(data.facets, data.selectColumns)
     : true
-
-  /**
-   * Inspect the URL to see if we have a particular query request that we must show.
-   */
-  useEffect(() => {
-    const query = DeepLinkingUtils.getQueryRequestFromLink(
-      'QueryWrapper',
-      componentIndex,
-    )
-    if (query) {
-      setLastQueryRequest(query)
-    }
-  }, [])
-
-  /**
-   * Pass down a deep clone (so no side affects on the child's part) of the
-   * last query request made
-   *
-   * @returns
-   * @memberof QueryWrapper
-   */
-  const getLastQueryRequest = React.useCallback(() => {
-    return cloneDeep(lastQueryRequest)
-  }, [lastQueryRequest])
-
-  /**
-   * Pass down a deep clone (so no side affects on the child's part) of the
-   * first query request made
-   *
-   * @returns
-   * @memberof QueryWrapper
-   */
-  function getInitQueryRequest(): QueryBundleRequest {
-    return cloneDeep(props.initQueryRequest)
-  }
-
-  /**
-   * Execute the given query request, updating all of the data in the QueryContext to match the new query
-   * @param {*} queryRequest Query request as specified by
-   *                         https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/Query.html
-   */
-  function executeQueryRequest(queryRequest: QueryBundleRequest) {
-    const clonedQueryRequest = cloneDeep(queryRequest)
-
-    setLastQueryRequest(clonedQueryRequest)
-
-    if (clonedQueryRequest.query) {
-      const clonedQueryRequestJson = JSON.stringify(clonedQueryRequest.query)
-      const stringifiedQuery = encodeURIComponent(clonedQueryRequestJson)
-      if (props.shouldDeepLink) {
-        if (props.onQueryChange) {
-          props.onQueryChange(clonedQueryRequestJson)
-        } else {
-          DeepLinkingUtils.updateUrlWithNewSearchParam(
-            'QueryWrapper',
-            componentIndex,
-            stringifiedQuery,
-          )
-        }
-      }
-    }
-    /**
-     * TODO: We remove the cached data because it can interfere with user controls, such as the QueryFilter.
-     * For example, if you filter on a facet with value ["a"], then value ["a", "b"], then value ["a"] again,
-     * we'll have a cache hit on the last query, so we won't get a loading state, but the controls haven't been updated
-     * to handle cache hits. Forcing a cache miss here fixes this, but ideally the controls should handle this case.
-     */
-    remove()
-    // end TODO
-  }
 
   /**
    * remove a particular facet name (e.g. study) and its all possible values based on the parameter specified in the url
    * this is to remove the facet from the charts, search and filter.
    * @return data: QueryResultBundle
    */
-  const dataWithLockedFacetRemoved = useMemo(() => {
-    const lockedFacet = props.lockedFacet?.facet
-    if (lockedFacet && data) {
-      // for details page, return data without the "locked" facet
-      const dataCopy: QueryResultBundle = cloneDeep(data)
-      const facets = dataCopy.facets?.filter(
-        item => item.columnName.toLowerCase() !== lockedFacet.toLowerCase(),
-      )
-      dataCopy.facets = facets
-      return dataCopy
-    } else {
-      // for other pages, just return the data
-      return data
-    }
-  }, [data, props.lockedFacet?.facet])
+  const dataWithLockedColumnFacetRemoved = useMemo(() => {
+    return removeLockedColumnFromFacetData(data, lockedColumn)
+  }, [data, lockedColumn])
 
   const context: PaginatedQueryContextType = {
-    data: dataWithLockedFacetRemoved,
+    data: dataWithLockedColumnFacetRemoved,
     currentPage,
     pageSize,
     setPageSize,
@@ -214,7 +128,7 @@ export function QueryWrapper(props: QueryWrapperProps) {
     getInitQueryRequest,
     error: error,
     entity,
-    executeQueryRequest,
+    executeQueryRequest: setQuery,
     isFacetsAvailable,
     asyncJobStatus: currentAsyncStatus,
     goToPage,

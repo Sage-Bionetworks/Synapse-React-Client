@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash-es'
 import * as React from 'react'
 import { act } from '@testing-library/react'
 import {
+  LockedColumn,
   QueryContextType,
   useQueryContext,
 } from '../../../lib/containers/QueryContext'
@@ -205,16 +206,16 @@ describe('deep linking', () => {
 })
 
 describe('locked facet', () => {
-  const lockedFacet = {
-    facet: 'tumorType',
+  const lockedColumn: LockedColumn = {
+    columnName: 'tumorType',
     value: 'Cutaneous Neurofibroma',
   }
-  const noLockedFacet = {}
+  const noLockedColumn: LockedColumn = {}
 
-  it('removeLockedFacetData should remove locked facet data', async () => {
+  it('removeLockedColumnData should remove locked facet data', async () => {
     renderComponent({
       initQueryRequest: initialQueryRequest,
-      lockedFacet: lockedFacet,
+      lockedColumn: lockedColumn,
     })
 
     await waitFor(() => expect(providedContext).toBeDefined())
@@ -231,10 +232,10 @@ describe('locked facet', () => {
     ).not.toBeDefined()
   })
 
-  it('removeLockedFacetData should not remove any data if locked facet value is not set', async () => {
+  it('removeLockedColumnData should not remove any data if locked facet value is not set', async () => {
     renderComponent({
       initQueryRequest: initialQueryRequest,
-      lockedFacet: noLockedFacet,
+      lockedColumn: noLockedColumn,
     })
     await waitFor(() => expect(providedContext).toBeDefined())
 

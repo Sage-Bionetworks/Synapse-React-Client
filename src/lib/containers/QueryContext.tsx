@@ -12,13 +12,12 @@ export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
 
 /*
-  For details page: to lock a facet name (e.g. study, grant) so that the facet name
-  and its all possible values will not appear on the details page. The facet name is
-  given by the url's search param. The type is defined here so that other child components
-  in SRC won't generate type errors.
+  For details page: to lock a column (e.g. study, grant) so that the facet values and active filters
+  will not appear on the details page. The facet name is given by the url's search param. 
+  The type is defined here so that other child components in SRC won't generate type errors.
  */
-export type LockedFacet = {
-  facet?: string
+export type LockedColumn = {
+  columnName?: string
   value?: string
 }
 
@@ -42,10 +41,11 @@ export type QueryContextType = {
   /** Whether or not facets are available to be filtered upon based on the current data */
   isFacetsAvailable: boolean
   /**
-   * A facet may be "locked" so that it is not modifiable by the user, for example when showing only data relevant to a particular facet value on a Details Page.
-   * The value of a locked facet will result in a client-side modification of the result bundle data.
+   * A column name may be "locked" so that it is both (1) not shown to the user that the filter is active, and (2) not modifiable by the user.
+   * For example, we may show only the data matching a particular facet value on a Details Page without implying that the shown data is part of a larger table.
+   * The presence of a locked filter will result in a client-side modification of the active query and result bundle data.
    */
-  lockedFacet?: LockedFacet
+  lockedColumn?: LockedColumn
 }
 
 export type PaginatedQueryContextType = QueryContextType & {
