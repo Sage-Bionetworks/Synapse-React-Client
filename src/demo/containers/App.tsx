@@ -14,8 +14,8 @@ import {
   mockNavSchema as formNavSchema,
   mockUiSchema as formUiSchema,
 } from '../../mocks/mock_drug_tool_data'
-import '../style/App.css'
-import '../style/DemoStyle.css'
+import '../style/App.scss'
+import '../style/DemoStyle.scss'
 import Demo from './Demo'
 import Playground from './playground/Playground'
 /**
