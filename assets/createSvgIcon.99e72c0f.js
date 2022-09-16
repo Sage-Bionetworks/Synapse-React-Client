@@ -1,0 +1,1 @@
+import{j as a}from"./jsx-runtime.00d70968.js";import{S as e}from"./SvgIcon.e37b9412.js";const n=window.React;function s(r,c){var o=function(m,t){return a(e,{ref:t,...m,children:r})};return o.muiName=e.muiName,n.memo(n.forwardRef(o))}export{s as c};
