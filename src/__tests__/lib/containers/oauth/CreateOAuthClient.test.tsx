@@ -36,7 +36,7 @@ const defaultProps: CreateOAuthModalProps = {
   isShowingModal: true,
   onClose: jest.fn(),
   isEdit: false,
-  setSelectedClient: jest.fn(),
+  setIsShowingModal: jest.fn(),
   isShowingConfirmModal: false,
   setIsShowingConfirmModal: jest.fn(),
 }
@@ -92,7 +92,7 @@ describe('Create OAuth Client', () => {
     await userEvent.click(saveButton!)
 
     await waitFor(() =>
-      expect(mockToastFn).toBeCalledWith('Successfully saved', 'success'),
+      expect(mockToastFn).toBeCalledWith('Successfully created', 'success'),
     )
   })
 

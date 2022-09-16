@@ -5,7 +5,12 @@ import React from 'react'
 import { OAuthManagement } from '../../../../lib/containers/oauth/OAuthManagement'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { formatDate } from '../../../../lib/utils/functions/DateFormatter'
-import { useGetOAuthClientInfinite } from '../../../../lib/utils/hooks/SynapseAPI'
+import {
+  useCreateOAuthClient,
+  useDeleteOAuthClient,
+  useGetOAuthClientInfinite,
+  useUpdateOAuthClient,
+} from '../../../../lib/utils/hooks/SynapseAPI'
 import { server } from '../../../../mocks/msw/server'
 import {
   mockClientList1,
@@ -15,16 +20,28 @@ import {
 jest.mock('../../../../lib/utils/hooks/SynapseAPI/oauth/useOAuthClient', () => {
   return {
     useGetOAuthClientInfinite: jest.fn(),
+    useCreateOAuthClient: jest.fn(),
+    useUpdateOAuthClient: jest.fn(),
+    useDeleteOAuthClient: jest.fn(),
   }
 })
 
 const mockFetchNextPage = jest.fn()
 const mockGetOAuthClientInfinite = useGetOAuthClientInfinite as jest.Mock
+const mockUseCreateOAuthClient = useCreateOAuthClient as jest.Mock
+const mockUseUpdateOAuthClient = useUpdateOAuthClient as jest.Mock
+const mockUseDeleteOAuthClient = useDeleteOAuthClient as jest.Mock
 
 const renderComponent = () => {
   render(<OAuthManagement />, {
     wrapper: createWrapper(),
   })
+}
+
+const mockReturnHooks = {
+  data: {
+    pages: [mockClientList1[0]],
+  },
 }
 
 describe('oAuthManagement tests', () => {
@@ -49,6 +66,9 @@ describe('oAuthManagement tests', () => {
       isLoading: false,
       isSuccess: true,
     })
+    mockUseCreateOAuthClient.mockReturnValue({ mockReturnHooks })
+    mockUseUpdateOAuthClient.mockReturnValue({ mockReturnHooks })
+    mockUseDeleteOAuthClient.mockReturnValue({ mockReturnHooks })
   })
   afterEach(() => {
     server.restoreHandlers()
