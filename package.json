@@ -33,6 +33,7 @@
     "dagre": "^0.8.5",
     "downshift": "^6.1.2",
     "gh-pages": "^3.2.3",
+    "history": "^5.3.0",
     "immutable": "4.1.0",
     "json-rules-engine": "^4.0.0",
     "katex": "0.11.1",
@@ -162,7 +163,7 @@
     "browserify-fs": "^1.0.0",
     "buffer": "^6.0.3",
     "core-js": "^3.1.4",
-    "esbuild": "^0.14.2",
+    "esbuild": "^0.15.7",
     "esbuild-plugin-globals": "^0.1.1",
     "esbuild-plugin-node-polyfills": "^1.0.2",
     "esbuild-sass-plugin": "^1.8.0",
@@ -204,6 +205,7 @@
     "vite-plugin-externals": "^0.5.1",
     "vite-plugin-svgr": "^2.2.1",
     "weak-napi": "^2.0.2",
+    "whatwg-fetch": "^3.6.2",
     "yarn": "^1.22.17"
   },
   "scripts": {

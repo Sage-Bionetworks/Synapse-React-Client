@@ -10,7 +10,6 @@ import {
 import { SynapseClient } from '../utils/'
 import { OpenInNewTwoTone } from '@material-ui/icons'
 import { useSynapseContext } from '../utils/SynapseContext'
-import { AssertionError } from 'assert'
 
 export type ExternalFileHandleLinkProps = {
   synId: string
@@ -32,9 +31,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
           synId,
         )
         if (!isFileEntity(fileEntity)) {
-          throw new AssertionError({
-            message: `File Entity expected but found ${fileEntity}`,
-          })
+          throw new Error(`File Entity expected but found ${fileEntity}`)
         }
         const batchFileRequest: BatchFileRequest = {
           requestedFiles: [
@@ -50,11 +47,14 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
         }
         const file = await SynapseClient.getFiles(batchFileRequest, accessToken)
         const externalFileHandle = file.requestedFiles[0].fileHandle
-        assertIsExternalFileHandle(externalFileHandle)
-        setData({
-          externalFileHandle,
-          fileEntity,
-        })
+        if (assertIsExternalFileHandle(externalFileHandle)) {
+          setData({
+            externalFileHandle,
+            fileEntity,
+          })
+        } else {
+          throw new Error('Not an external file handle', externalFileHandle)
+        }
       } catch (e) {
         console.error('Error on getting external file handle = ', e)
       }
