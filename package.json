@@ -163,7 +163,7 @@
     "browserify-fs": "^1.0.0",
     "buffer": "^6.0.3",
     "core-js": "^3.1.4",
-    "esbuild": "^0.15.7",
+    "esbuild": "^0.14.2",
     "esbuild-plugin-globals": "^0.1.1",
     "esbuild-plugin-node-polyfills": "^1.0.2",
     "esbuild-sass-plugin": "^1.8.0",
