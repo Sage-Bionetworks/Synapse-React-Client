@@ -50,30 +50,25 @@ const customSelectComponents: Partial<
   SingleValue: props => {
     const { data } = props
     return (
-      <div {...props}>
+      <components.SingleValue {...props} key={data.id}>
         <UserOrTeamBadge
           userGroupHeader={data.header}
           disableHref={true}
           showFullName={true}
         />
-      </div>
+      </components.SingleValue>
     )
   },
   Option: props => {
-    const { data, selectOption } = props
+    const { data } = props
     return (
-      <div
-        {...props}
-        key={data.id}
-        onClick={() => selectOption(data)}
-        style={{ padding: '5px 10px' }}
-      >
+      <components.Option {...props} key={data.id}>
         <UserOrTeamBadge
           userGroupHeader={data.header}
           disableHref={true}
           showFullName={true}
         />
-      </div>
+      </components.Option>
     )
   },
 }

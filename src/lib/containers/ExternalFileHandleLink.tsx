@@ -53,7 +53,9 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
             fileEntity,
           })
         } else {
-          throw new Error('Not an external file handle', externalFileHandle)
+          throw new Error(
+            'Not an external file handle: ' + externalFileHandle?.id,
+          )
         }
       } catch (e) {
         console.error('Error on getting external file handle = ', e)
