@@ -93,6 +93,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   const { mutate: createClient } = useCreateOAuthClient({
     onSuccess: () => {
       displayToast('Successfully created', 'success')
+      setError(undefined)
     },
     onError: err => {
       setError(err)
@@ -102,6 +103,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   const { mutate: updateClient } = useUpdateOAuthClient({
     onSuccess: () => {
       displayToast('Successfully saved', 'success')
+      setError(undefined)
     },
     onError: err => {
       setError(err)
