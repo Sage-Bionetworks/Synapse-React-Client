@@ -184,6 +184,8 @@ describe('AccessHistoryDashboard tests', () => {
     await userEvent.type(arNameInput, mockAccessRequirement.name)
     await screen.findByText(
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+      undefined,
+      { timeout: 15000 },
     )
     await selectEvent.select(
       arNameInput,
