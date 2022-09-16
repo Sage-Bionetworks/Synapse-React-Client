@@ -1,8 +1,11 @@
-import svgrPlugin from '@sage-bionetworks/esbuild-plugin-svgr'
-import { sassPlugin } from 'esbuild-sass-plugin'
-import ESBuildNodePolyfillsPlugin from 'esbuild-plugin-node-polyfills'
 import esbuild from 'esbuild'
+import alias from 'esbuild-plugin-alias'
 import GlobalsPlugin from 'esbuild-plugin-globals'
+import svgrPlugin from 'esbuild-plugin-svgr'
+import { sassPlugin } from 'esbuild-sass-plugin'
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
 
 const globals = {
   react: 'React',
@@ -50,7 +53,11 @@ const esBuildOptions = {
       namedExport: 'ReactComponent',
       exportType: 'named',
     }),
-    ESBuildNodePolyfillsPlugin,
+    alias({
+      path: require.resolve('path-browserify'),
+      fs: require.resolve('browserify-fs'),
+      stream: require.resolve('stream-browserify'),
+    }),
     GlobalsPlugin(globals),
   ],
   external: [
