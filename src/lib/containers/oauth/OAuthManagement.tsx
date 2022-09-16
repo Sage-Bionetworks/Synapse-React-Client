@@ -127,19 +127,17 @@ export const OAuthManagement: React.FunctionComponent = () => {
         </div>
       )}
 
-      {(isShowingCreateClientModal || isShowingConfirmModal) && (
-        <CreateOAuthModal
-          onClose={() => {
-            setIsShowingCreateClientModal(false)
-          }}
-          isShowingModal={isShowingCreateClientModal}
-          client={isEdit ? selectedClient : undefined}
-          isEdit={isEdit}
-          setIsShowingConfirmModal={setIsShowingConfirmModal}
-          isShowingConfirmModal={isShowingConfirmModal}
-          setIsShowingModal={setIsShowingCreateClientModal}
-        />
-      )}
+      <CreateOAuthModal
+        onClose={() => {
+          setIsShowingCreateClientModal(false)
+        }}
+        isShowingModal={isShowingCreateClientModal}
+        client={isEdit ? selectedClient : undefined}
+        isEdit={isEdit}
+        setIsShowingConfirmModal={setIsShowingConfirmModal}
+        isShowingConfirmModal={isShowingConfirmModal}
+        setIsShowingModal={setIsShowingCreateClientModal}
+      />
 
       <Modal
         show={isShowingVerification}

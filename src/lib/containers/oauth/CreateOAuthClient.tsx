@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSynapseContext } from '../../utils/SynapseContext'
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap'
+import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap'
 import { displayToast } from '../ToastMessage'
 import Typography from '../../utils/typography/Typography'
 import { OAuthClient } from '../../utils/synapseTypes/OAuthClient'
@@ -13,6 +13,7 @@ import IconSvg from '../IconSvg'
 import { WarningModal } from '../synapse_form_wrapper/WarningModal'
 import { HelpOutlineTwoTone } from '@material-ui/icons'
 import Tooltip from '../../utils/tooltip/Tooltip'
+import { SynapseClientError } from '../../utils/SynapseClientError'
 
 export type CreateOAuthModalProps = {
   isShowingModal: boolean
@@ -45,6 +46,7 @@ export const CreateOAuthModal: React.FunctionComponent<
   const [warnTrigger, setWarnTrigger] = useState(false)
   const [isDelete, setIsDelete] = useState<boolean>(false)
   const [updatedClient, setUpdatedClient] = useState<OAuthClient>()
+  const [error, setError] = useState<SynapseClientError>()
 
   const warningHeader = 'Are you absolutely sure?'
   const warningBody =
@@ -92,8 +94,8 @@ export const CreateOAuthModal: React.FunctionComponent<
     onSuccess: () => {
       displayToast('Successfully created', 'success')
     },
-    onError: error => {
-      displayToast(error.reason as string, 'danger')
+    onError: err => {
+      setError(err)
     },
   })
 
@@ -101,8 +103,8 @@ export const CreateOAuthModal: React.FunctionComponent<
     onSuccess: () => {
       displayToast('Successfully saved', 'success')
     },
-    onError: error => {
-      displayToast(error.reason as string, 'danger')
+    onError: err => {
+      setError(err)
       setIsShowingModal(true)
     },
   })
@@ -117,7 +119,7 @@ export const CreateOAuthModal: React.FunctionComponent<
     },
   })
 
-  const onCreateClient = () => {
+  const onCreateClient = async () => {
     try {
       if (accessToken) {
         const oAuthClient: OAuthClient = {
@@ -135,9 +137,9 @@ export const CreateOAuthModal: React.FunctionComponent<
           setIsShowingConfirmModal(true)
         } else {
           if (isEdit) {
-            updateClient(oAuthClient)
+            await updateClient(oAuthClient)
           } else {
-            createClient(oAuthClient)
+            await createClient(oAuthClient)
           }
         }
       }
@@ -176,7 +178,10 @@ export const CreateOAuthModal: React.FunctionComponent<
         show={isShowingModal}
         animation={false}
         backdrop="static"
-        onHide={hide}
+        onHide={() => {
+          hide()
+          setError(undefined)
+        }}
         size="lg"
         className="OAuthDialog bootstrap-4-backport"
       >
@@ -376,8 +381,15 @@ export const CreateOAuthModal: React.FunctionComponent<
             </div>
           )}
         </Modal.Body>
+        {error && <Alert variant="danger">{error?.reason as string}</Alert>}
         <Modal.Footer>
-          <Button variant="default" onClick={hide}>
+          <Button
+            variant="default"
+            onClick={() => {
+              hide()
+              setError(undefined)
+            }}
+          >
             CANCEL
           </Button>
           <Button variant="primary" onClick={onCreateClient}>
