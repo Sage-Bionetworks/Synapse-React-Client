@@ -44,13 +44,15 @@ import UserCard from './containers/UserCard'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import CertificationQuiz from './containers/CertificationQuiz'
 import { ProvenanceGraph } from './containers/provenance/ProvenanceGraph'
-import './style/main.scss'
 import { SynapseClient, SynapseConstants } from './utils'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
   useSynapseContext,
 } from './utils/SynapseContext'
+
+// Also include scss in the bundle
+import './style/main.scss'
 
 const SynapseContext = {
   SynapseContextProvider,
