@@ -187,7 +187,10 @@ describe('AccessHistoryDashboard tests', () => {
       'Filter by Access Requirement Name',
     )
 
-    await userEvent.type(arNameInput, mockAccessRequirement.name)
+    await userEvent.type(
+      arNameInput,
+      mockAccessRequirement.name.substring(0, 3),
+    )
     await screen.findByText(
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
       undefined,
