@@ -22,7 +22,7 @@ export type SynapseWikiContextProviderProps = {
 }
 
 /**
- * Provides context necessary for most components in SRC
+ * Provides context related to Synapse Wikis
  * @param param0
  * @returns
  */
