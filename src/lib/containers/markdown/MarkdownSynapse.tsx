@@ -445,7 +445,7 @@ export default class MarkdownSynapse extends React.Component<
       if (element.childNodes.length === 0) {
         // case 2
         // e.g. self closing tag like <br/> or <img>
-        return React.createElement(Tag, props)
+        return <Tag {...props} />
       }
       // case 3
       // recursively render children
