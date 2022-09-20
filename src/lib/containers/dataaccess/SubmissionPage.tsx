@@ -20,7 +20,7 @@ import {
 } from '../../utils/synapseTypes'
 import Typography from '../../utils/typography/Typography'
 import { SynapseErrorBoundary } from '../ErrorBanner'
-import MarkdownSynapse from '../MarkdownSynapse'
+import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import WarningModal, {
   WarningModalProps,
 } from '../synapse_form_wrapper/WarningModal'

@@ -31,7 +31,7 @@ import {
 import HeaderCard from './HeaderCard'
 import IconList from './IconList'
 import IconSvg, { type2SvgIconName } from './IconSvg'
-import MarkdownSynapse from './MarkdownSynapse'
+import MarkdownSynapse from './markdown/MarkdownSynapse'
 import { QueryContextType } from './QueryContext'
 import { CardFooter, Icon } from './row_renderers/utils'
 import UserCard from './UserCard'
