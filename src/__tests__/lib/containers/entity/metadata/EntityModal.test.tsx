@@ -52,7 +52,7 @@ function renderComponent(
   })
 }
 
-describe.skip('EntityModal tests', () => {
+describe('EntityModal tests', () => {
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
