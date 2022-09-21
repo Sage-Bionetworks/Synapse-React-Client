@@ -40,6 +40,10 @@
         &.TotalQueryResults {
           grid-column: 1 / span 2;
         }
+
+        &.TotalQueryResults {
+          margin-left: 0;
+        }
       }
     }
   }
@@ -115,6 +119,8 @@
 
   .TotalQueryResults {
     margin-top: 5px;
+    background-color: map.get(SRC.$colors, 'gray-100');
+    padding-left: 15px;
   }
   .FacetNav {
     margin-top: 5px;
