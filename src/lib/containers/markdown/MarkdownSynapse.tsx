@@ -510,7 +510,7 @@ export default class MarkdownSynapse extends React.Component<
       return (
         <MarkdownWidget
           key={JSON.stringify(decodedWidgetParams)}
-          widgetType={decodedWidgetParams}
+          widgetType={decodedWidgetParams as any}
           widgetParamsMapped={{}}
           originalMarkup={originalMarkup}
         />
@@ -530,7 +530,7 @@ export default class MarkdownSynapse extends React.Component<
     return (
       <MarkdownWidget
         key={JSON.stringify(decodedWidgetParams)}
-        widgetType={widgetType}
+        widgetType={widgetType as any}
         widgetParamsMapped={widgetParamsMapped}
         originalMarkup={originalMarkup}
       />
