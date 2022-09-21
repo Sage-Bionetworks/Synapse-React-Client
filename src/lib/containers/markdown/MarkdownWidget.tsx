@@ -73,32 +73,28 @@ export type MarkdownWidgetProps = MarkdownWidgetDefinition & {
 }
 
 export default function MarkdownWidget(props: MarkdownWidgetProps) {
-  const {
-    widgetType: name,
-    widgetParamsMapped: descriptor,
-    originalMarkup,
-  } = props
-  switch (name) {
+  const { widgetType, widgetParamsMapped, originalMarkup } = props
+  switch (widgetType) {
     case 'buttonlink':
-      return <MarkdownButton {...descriptor} />
+      return <MarkdownButton {...widgetParamsMapped} />
     case 'image':
-      return <MarkdownSynapseImage {...descriptor} />
+      return <MarkdownSynapseImage {...widgetParamsMapped} />
     case 'plot':
-      return <MarkdownSynapsePlot {...descriptor} />
+      return <MarkdownSynapsePlot {...widgetParamsMapped} />
     case 'toc':
       return <MarkdownTableOfContents originalMarkup={originalMarkup} />
     case 'badge':
-      return <MarkdownUserBadge {...descriptor} />
+      return <MarkdownUserBadge {...widgetParamsMapped} />
     case 'iduReport':
-      return <MarkdownIDUReport {...descriptor} />
+      return <MarkdownIDUReport {...widgetParamsMapped} />
     case 'video':
     case 'vimeo':
     case 'youtube':
-      return <MarkdownVideo {...descriptor} />
+      return <MarkdownVideo {...widgetParamsMapped} />
     case 'synapsetable':
-      return <MarkdownSynapseTable {...descriptor} />
+      return <MarkdownSynapseTable {...widgetParamsMapped} />
     default:
-      console.warn(`Unsupported widget: ${name}.`)
+      console.warn(`Unsupported widget: ${widgetType}.`)
       return <></>
   }
 }
