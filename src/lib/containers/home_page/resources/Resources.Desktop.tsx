@@ -1,6 +1,6 @@
 import { Data } from './Resources'
 import React, { useState } from 'react'
-import MarkdownSynapse from '../../MarkdownSynapse'
+import MarkdownSynapse from '../../markdown/MarkdownSynapse'
 
 export type ResourcesDesktopProps = {
   data: Data

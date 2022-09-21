@@ -1,27 +1,21 @@
-import * as React from 'react'
-import { SynapseClient, SynapseConstants } from '../utils'
-import { FileHandleResults, ObjectType, WikiPage } from '../utils/synapseTypes/'
-import UserCard from './UserCard'
-import Bookmarks from './widgets/Bookmarks'
-import SynapseImage, { SynapseImageProps } from './widgets/SynapseImage'
-import SynapsePlot, { SynapsePlotProps } from './widgets/SynapsePlot'
-import SynapseVideo from './widgets/SynapseVideo'
-import { ErrorBanner } from './ErrorBanner'
-import { SynapseClientError } from '../utils/SynapseClientError'
-import { Button } from 'react-bootstrap'
-import { SynapseContext } from '../utils/SynapseContext'
-import IDUReport from './IDUReport'
-import sanitizeHtml from 'sanitize-html'
 import MarkdownIt from 'markdown-it'
-
-const TOC_CLASS = {
-  1: 'toc-indent1',
-  2: 'toc-indent2',
-  3: 'toc-indent3',
-  4: 'toc-indent4',
-  5: 'toc-indent5',
-  6: 'toc-indent6',
-}
+import * as React from 'react'
+import sanitizeHtml from 'sanitize-html'
+import { SynapseClient } from '../../utils'
+import { SynapseClientError } from '../../utils/SynapseClientError'
+import { SynapseContext } from '../../utils/SynapseContext'
+import {
+  FileHandleResults,
+  ObjectType,
+  WikiPage,
+} from '../../utils/synapseTypes/'
+import { ErrorBanner } from '../ErrorBanner'
+import MarkdownWidget from './MarkdownWidget'
+import {
+  SynapseWikiContextProvider,
+  SynapseWikiContextType,
+} from './SynapseWikiContext'
+import Bookmarks from './widget/Bookmarks'
 
 declare const katex: any
 declare const markdownitSynapse: any
@@ -38,23 +32,6 @@ declare const markdownitBr: any
 declare const markdownitMath: any
 
 declare const markdownit: typeof MarkdownIt
-
-type WidgetParams = {
-  reactKey?: string
-}
-
-type ButtonLinkWidgetParams = WidgetParams & {
-  align?: string
-  highlight?: string
-  url?: string
-  text?: string
-}
-
-type ImageWidgetParams = WidgetParams &
-  Omit<SynapseImageProps, 'params'> &
-  SynapseImageProps['params']
-
-type PlotWidgetParams = WidgetParams & SynapsePlotProps['widgetparamsMapped']
 
 export type MarkdownSynapseProps = {
   ownerId?: string
@@ -134,13 +111,6 @@ export default class MarkdownSynapse extends React.Component<
     // handle init calls to get wiki related items
     this.getWikiAttachments = this.getWikiAttachments.bind(this)
     this.getWikiPageMarkdown = this.getWikiPageMarkdown.bind(this)
-    // handle rendering widgets
-    this.renderWidget = this.renderWidget.bind(this)
-    this.renderSynapseButton = this.renderSynapseButton.bind(this)
-    this.renderSynapseImage = this.renderSynapseImage.bind(this)
-    this.renderVideo = this.renderVideo.bind(this)
-    this.renderSynapsePlot = this.renderSynapsePlot.bind(this)
-    this.renderSynapseTOC = this.renderSynapseTOC.bind(this)
     this.createHTML = this.createHTML.bind(this)
     this.addBookmarks = this.addBookmarks.bind(this)
     this.addIdsToReferenceWidgets = this.addIdsToReferenceWidgets.bind(this)
@@ -445,10 +415,10 @@ export default class MarkdownSynapse extends React.Component<
       element.nodeType === Node.ELEMENT_NODE &&
       element instanceof HTMLElement
     ) {
-      const tagName =
+      const Tag: keyof JSX.IntrinsicElements =
         element.tagName.toLowerCase() === 'body'
           ? 'span'
-          : element.tagName.toLowerCase()
+          : (element.tagName.toLowerCase() as keyof JSX.IntrinsicElements)
       const widgetParams = element.getAttribute('data-widgetparams')
       if (widgetParams) {
         // case 2
@@ -475,7 +445,7 @@ export default class MarkdownSynapse extends React.Component<
       if (element.childNodes.length === 0) {
         // case 2
         // e.g. self closing tag like <br/> or <img>
-        return React.createElement(tagName, props)
+        return <Tag {...props} />
       }
       // case 3
       // recursively render children
@@ -487,12 +457,12 @@ export default class MarkdownSynapse extends React.Component<
         )
       })
       // Render tagName as parent element of the children below
-      return React.createElement(tagName, props, <>{children}</>)
+      return <Tag {...props}>{children}</Tag>
     }
   }
 
   /**
-   *  When the markdown string is transfered over the network certain characters get transformed,
+   *  When the markdown string is transferred over the network certain characters get transformed,
    * this does a simple transformation back to the original user's string.
    *
    * @param {string} xml
@@ -537,7 +507,14 @@ export default class MarkdownSynapse extends React.Component<
     const questionIndex = decodedWidgetParams.indexOf('?')
     if (questionIndex === -1) {
       // e.g. toc is passed, there are no params
-      return this.renderWidget(decodedWidgetParams, {}, originalMarkup)
+      return (
+        <MarkdownWidget
+          key={JSON.stringify(decodedWidgetParams)}
+          widgetType={decodedWidgetParams}
+          widgetParamsMapped={{}}
+          originalMarkup={originalMarkup}
+        />
+      )
     }
     const widgetType = decodedWidgetParams.substring(0, questionIndex)
     const widgetParamsMapped = {}
@@ -550,174 +527,12 @@ export default class MarkdownSynapse extends React.Component<
         value = decodeURIComponent(value)
         widgetParamsMapped[key] = value
       })
-    return this.renderWidget(widgetType, widgetParamsMapped, originalMarkup)
-  }
-
-  /**
-   *  Given widgetType renders the apppropriate widget
-   *
-   * @param {string} widgetType The type of synapse widget. (e.g. 'image', 'plot')
-   * @param {*} widgetParamsMapped The parameters for this widget
-   * @param {string} originalMarkup The original markup.
-   * @returns
-   * @memberof MarkdownSynapse
-   */
-  public renderWidget(
-    widgetType: string,
-    widgetParamsMapped: WidgetParams,
-    originalMarkup: string,
-  ) {
-    // we make keys out of the widget params
-    const key = JSON.stringify(widgetParamsMapped)
-    widgetParamsMapped.reactKey = key
-
-    switch (widgetType) {
-      case 'buttonlink':
-        return this.renderSynapseButton(widgetParamsMapped)
-      case 'image':
-        return this.renderSynapseImage(widgetParamsMapped as ImageWidgetParams)
-      case 'plot':
-        return this.renderSynapsePlot(widgetParamsMapped)
-      case 'toc':
-        return this.renderSynapseTOC(originalMarkup)
-      case 'badge':
-        return this.renderUserBadge(widgetParamsMapped)
-      case 'iduReport':
-        return this.renderIntendedDataUseReport(widgetParamsMapped)
-      case 'video':
-      case 'vimeo':
-      case 'youtube':
-        return this.renderVideo(widgetParamsMapped)
-      default:
-        return
-    }
-  }
-
-  public renderSynapseButton(widgetParamsMapped: ButtonLinkWidgetParams) {
-    let buttonClasses = 'pill-xl '
-    const { align = '', highlight = '' } = widgetParamsMapped
-    const alignLowerCase = align.toLowerCase()
-    if (alignLowerCase === 'left') {
-      buttonClasses += 'floatLeft '
-    }
-    if (alignLowerCase === 'right') {
-      buttonClasses += 'floatright '
-    }
-    const buttonVariant = highlight === 'true' ? 'secondary' : 'light-secondary'
-    if (alignLowerCase === 'center') {
-      return (
-        <div
-          key={widgetParamsMapped.reactKey}
-          className="bootstrap-4-backport"
-          style={{ textAlign: 'center' }}
-        >
-          <Button
-            href={widgetParamsMapped.url}
-            className={buttonClasses}
-            variant={buttonVariant}
-          >
-            {widgetParamsMapped.text}
-          </Button>
-        </div>
-      )
-    }
     return (
-      <span className="bootstrap-4-backport">
-        <Button
-          href={widgetParamsMapped.url}
-          className={buttonClasses}
-          variant={buttonVariant}
-        >
-          {widgetParamsMapped.text}
-        </Button>
-      </span>
-    )
-  }
-  public renderSynapsePlot(widgetParamsMapped: PlotWidgetParams) {
-    return (
-      <SynapsePlot
-        key={widgetParamsMapped.reactKey}
-        ownerId={this.props.ownerId}
-        wikiId={this.props.wikiId || this.state.data.id}
-        widgetparamsMapped={widgetParamsMapped}
-      />
-    )
-  }
-
-  public renderVideo(widgetParamsMapped: any) {
-    return <SynapseVideo params={widgetParamsMapped} />
-  }
-
-  public renderSynapseImage(widgetParamsMapped: ImageWidgetParams) {
-    const { reactKey } = widgetParamsMapped
-    if (widgetParamsMapped.fileName) {
-      if (!this.state.fileHandles) {
-        // ensure files are loaded
-        return
-      }
-      // if file name is attached then the fileHandle ID is located
-      // in this wiki's file attachment list
-      return (
-        <SynapseImage
-          params={widgetParamsMapped}
-          key={reactKey}
-          fileName={widgetParamsMapped.fileName}
-          wikiId={this.props.wikiId || this.state.data.id}
-          fileResults={this.state.fileHandles.list}
-        />
-      )
-    }
-    if (widgetParamsMapped.synapseId) {
-      // otherwise this image's fileHandle ID is not located
-      // in the file attachment list and will be loaded first
-      return (
-        <SynapseImage
-          params={widgetParamsMapped}
-          key={reactKey}
-          synapseId={widgetParamsMapped.synapseId}
-        />
-      )
-    }
-    return
-  }
-  public renderSynapseTOC(originalMarkup: string) {
-    const elements: any[] = []
-    const TOC_HEADER_REGEX_WITH_ID =
-      /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
-    let text = ''
-    originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, (p1, p2, p3, p4) => {
-      text += p4
-      elements.push(
-        <div key={p4}>
-          <a
-            role="link"
-            className={`link ${TOC_CLASS[Number(p2)]}`}
-            data-anchor={p3}
-          >
-            {p4}
-          </a>
-        </div>,
-      )
-      return ''
-    })
-    return <div key={text}>{elements}</div>
-  }
-
-  public renderUserBadge(widgetparamsMapped: any) {
-    return (
-      <UserCard
-        key={JSON.stringify(widgetparamsMapped)}
-        size={SynapseConstants.SMALL_USER_CARD}
-        alias={widgetparamsMapped.alias}
-      />
-    )
-  }
-
-  public renderIntendedDataUseReport(widgetParamsMapped: any) {
-    return (
-      <IDUReport
-        key={JSON.stringify(widgetParamsMapped)}
-        accessRequirementId={widgetParamsMapped.accessRestrictionId}
+      <MarkdownWidget
+        key={JSON.stringify(decodedWidgetParams)}
+        widgetType={widgetType}
+        widgetParamsMapped={widgetParamsMapped}
+        originalMarkup={originalMarkup}
       />
     )
   }
@@ -761,16 +576,23 @@ export default class MarkdownSynapse extends React.Component<
     const { renderInline } = this.props
     const { isLoading, error } = this.state
 
+    const wikiContext: SynapseWikiContextType = {
+      ownerId: this.props.ownerId,
+      wikiId: this.props.wikiId,
+      wikiPage: this.state.data,
+      fileHandles: this.state.fileHandles,
+    }
+
     if (error) {
       return <ErrorBanner error={error} />
     }
     const bookmarks = this.addBookmarks()
     const content = (
-      <>
+      <SynapseWikiContextProvider wikiContext={wikiContext}>
         {isLoading && <span className="spinner" />}
         {this.renderMarkdown()}
         {bookmarks && <div>{this.addBookmarks()}</div>}
-      </>
+      </SynapseWikiContextProvider>
     )
     if (renderInline) {
       return (

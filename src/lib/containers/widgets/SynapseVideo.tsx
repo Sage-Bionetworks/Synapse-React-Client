@@ -11,7 +11,7 @@ import {
 import { SynapseConstants } from '../../utils/'
 import { useSynapseContext } from '../../utils/SynapseContext'
 
-export type Props = {
+export type SynapseVideoProps = {
   params: {
     width?: string
     height?: string
@@ -23,7 +23,7 @@ export type Props = {
   }
 }
 
-export default function SynapseVideo({ params }: Props) {
+export default function SynapseVideo({ params }: SynapseVideoProps) {
   const { accessToken } = useSynapseContext()
   const [externalVideoUrl, setExternalVideoUrl] = useState<string>()
   const [synapseVideoPresignedUrl, setSynapseVideoPresignedUrl] =

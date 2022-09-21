@@ -4,7 +4,7 @@
 
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import MarkdownSynapse from '../../MarkdownSynapse'
+import MarkdownSynapse from '../../markdown/MarkdownSynapse'
 import {
   AccessApproval,
   AccessRequirement,

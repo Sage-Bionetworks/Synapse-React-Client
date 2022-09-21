@@ -6,7 +6,7 @@ import {
   RowSet,
   SelectColumn,
 } from '../utils/synapseTypes/'
-import MarkdownSynapse from './MarkdownSynapse'
+import MarkdownSynapse from './markdown/MarkdownSynapse'
 import loadingScreen from './LoadingScreen'
 import { Button } from 'react-bootstrap'
 import { useSynapseContext } from '../utils/SynapseContext'

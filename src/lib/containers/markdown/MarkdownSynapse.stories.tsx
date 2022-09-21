@@ -31,3 +31,32 @@ export const ImageDemo = Template.bind({})
 ImageDemo.args = {
   ownerId: 'syn18142975',
 }
+
+export const ButtonLink = Template.bind({})
+ButtonLink.args = {
+  markdown: `Button link demo \n
+
+\${buttonlink?text=Align%20Left&align=left} \n
+
+\${buttonlink?text=Align%20Right&align=right} \n
+
+\${buttonlink?text=Align%20Center&align=center} \n
+
+\${buttonlink?text=Highlight&highlight=true} \n
+
+Links to synapse: \n
+\${buttonlink?text=This%20Button%20Links%20to%20Synapse&url=https://synapse.org/}
+  `,
+}
+
+export const ImageBySynID = Template.bind({})
+ImageBySynID.args = {
+  markdown:
+    'Note: you must be signed in to see this image\n${image?synapseId=syn36695878}',
+}
+
+export const Plot = Template.bind({})
+Plot.args = {
+  markdown:
+    '${plot?query=select "id"%2C "createdOn" from syn23567477&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
+}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Data } from './Resources'
-import MarkdownSynapse from '../../../containers/MarkdownSynapse'
+import MarkdownSynapse from '../../../containers/markdown/MarkdownSynapse'
 import ExpandableContent from '../ExpandableContent'
 
 export type ResourcesMobileProps = {
