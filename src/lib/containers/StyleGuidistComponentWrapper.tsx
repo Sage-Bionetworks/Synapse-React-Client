@@ -39,6 +39,7 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
         isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
         utcTime: SynapseClient.getUseUtcTimeFromCookie(),
         withErrorBoundary: true,
+        downloadCartPageUrl: '/?path=/story/download-downloadcartpage--demo',
       }}
     >
       <MemoryRouter>

@@ -135,7 +135,6 @@ FileView.args = {
   name: 'Data',
   sqlOperator: '=',
   sql: 'SELECT * FROM syn11346063.28',
-  downloadCartPageUrl: '#/Other%20Components?id=downloadcartpage',
   hideSqlEditorControl: false,
 }
 
@@ -149,7 +148,6 @@ Dataset.args = {
   },
   name: 'Dataset Demo',
   sqlOperator: '=',
-  downloadCartPageUrl: '#/Other%20Components?id=downloadcartpage',
   hideSqlEditorControl: false,
   shouldDeepLink: false,
 }
@@ -163,7 +161,6 @@ DatasetCollection.args = {
   },
   name: 'Dataset Collection Demo',
   sqlOperator: '=',
-  downloadCartPageUrl: '#/Other%20Components?id=downloadcartpage',
   hideSqlEditorControl: false,
   shouldDeepLink: false,
 }

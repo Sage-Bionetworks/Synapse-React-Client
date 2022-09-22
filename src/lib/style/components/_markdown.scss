@@ -76,6 +76,9 @@
 .markdown ul {
   list-style-type: square;
   padding-left: 17px;
+  &.MuiPagination-ul li::marker {
+    content: none;
+  }
 }
 .markdown ul li {
   padding-top: 5px;
