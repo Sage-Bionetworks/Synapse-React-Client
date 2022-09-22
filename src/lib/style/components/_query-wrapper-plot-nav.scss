@@ -103,7 +103,6 @@
     > .QueryFilter,
     > .download-confirmation,
     > .FacetNav,
-    > .TotalQueryResults,
     > .QueryWrapperSearchInput,
     > .QueryWrapperSqlEditorInput,
     > .ErrorBannerWrapper,
@@ -118,8 +117,9 @@
   }
 
   .TotalQueryResults {
-    margin-top: 5px;
     background-color: map.get(SRC.$colors, 'gray-100');
+    border-top: 1px solid map.get(SRC.$colors, 'gray-300');
+    border-bottom: 1px solid map.get(SRC.$colors, 'gray-300');
     padding-left: 15px;
   }
   .FacetNav {
