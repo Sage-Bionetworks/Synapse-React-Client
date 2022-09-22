@@ -34,13 +34,13 @@
   display: inline-flex;
   justify-content: center;
   border-radius: 20px;
-  margin-left: 1rem;
   line-height: 100%;
   cursor: pointer;
   background-color: color.change(SRC.$secondary-action-color, $alpha: 0.1);
   color: SRC.$text-color-dark;
   font-weight: normal;
   margin: 10px;
+  margin-left: 0;
   span {
     margin: auto;
   }
