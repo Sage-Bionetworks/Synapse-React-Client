@@ -64,7 +64,6 @@ type OwnProps = {
   defaultColumn?: string
   defaultShowFacetVisualization?: boolean
   defaultShowSearchBox?: boolean
-  downloadCartPageUrl?: string
   showLastUpdatedOn?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'>
 
@@ -100,7 +99,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
     hideSqlEditorControl,
     searchConfiguration,
     limit = DEFAULT_PAGE_SIZE,
-    downloadCartPageUrl,
     initQueryJson,
     showLastUpdatedOn,
   } = props
@@ -212,7 +210,6 @@ const QueryWrapperPlotNav: React.FunctionComponent<QueryWrapperPlotNavProps> = (
                           setTopLevelControlsState={
                             queryVisualizationContext.setTopLevelControlsState
                           }
-                          downloadCartPageUrl={downloadCartPageUrl}
                         />
                         <TopLevelControls
                           showColumnSelection={tableConfiguration !== undefined}

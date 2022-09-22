@@ -60,3 +60,9 @@ Plot.args = {
   markdown:
     '${plot?query=select "id"%2C "createdOn" from syn23567477&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
 }
+
+export const SynapseTable = Template.bind({})
+SynapseTable.args = {
+  markdown:
+    '# Synapse Table\nModify the markdown control to change the parameters\n${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}',
+}

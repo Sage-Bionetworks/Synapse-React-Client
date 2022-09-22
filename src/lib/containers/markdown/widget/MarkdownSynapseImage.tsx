@@ -2,7 +2,10 @@ import React from 'react'
 import SynapseImage, { SynapseImageProps } from '../../widgets/SynapseImage'
 import { useWikiContext } from '../SynapseWikiContext'
 
-export type ImageWidgetParams = Omit<SynapseImageProps, 'params'> &
+export type ImageWidgetParams = Omit<
+  SynapseImageProps,
+  'params' | 'fileResults'
+> &
   SynapseImageProps['params']
 
 export default function MarkdownSynapseImage(
