@@ -34,7 +34,6 @@ export type DownloadConfirmationProps = {
   setTopLevelControlsState?: React.Dispatch<
     React.SetStateAction<TopLevelControlsState>
   >
-  downloadCartPageUrl?: string
 }
 
 // add files to download list
@@ -171,9 +170,8 @@ export const DownloadConfirmation: React.FunctionComponent<
   fnClose,
   setTopLevelControlsState,
   topLevelControlsState,
-  downloadCartPageUrl = '/DownloadCart',
 }) => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, downloadCartPageUrl } = useSynapseContext()
   const { showDownloadConfirmation = true } = topLevelControlsState ?? {}
   const [status, setStatus] = useState<StatusEnum>(
     accessToken ? StatusEnum.LOADING_INFO : StatusEnum.SIGNED_OUT,
@@ -292,11 +290,7 @@ export const DownloadConfirmation: React.FunctionComponent<
 
   if (showDownloadList) {
     // go to the Download Cart Page
-    if (downloadCartPageUrl) window.location.href = downloadCartPageUrl
-    else
-      console.error(
-        'Missing the Download Cart Page URL in the component configuration.',
-      )
+    window.location.href = downloadCartPageUrl
   }
   const showFacetFilter = topLevelControlsState?.showFacetFilter
   return (

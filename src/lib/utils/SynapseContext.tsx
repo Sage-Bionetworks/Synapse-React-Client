@@ -27,6 +27,8 @@ export type SynapseContextType = {
   utcTime: boolean
   /** Whether to wrap all children of this context in an error boundary. Useful if this context wraps just one component. */
   withErrorBoundary?: boolean
+  /** The URL of the download cart page in the current app. Used to properly link components */
+  downloadCartPageUrl: string
 }
 
 /**
@@ -37,7 +39,7 @@ export const SynapseContext = React.createContext<
 >(undefined)
 
 export type SynapseContextProviderProps = {
-  synapseContext?: SynapseContextType
+  synapseContext: SynapseContextType
   queryClient?: QueryClient
   theme?: SynapseTheme
   children?: React.ReactNode
@@ -51,6 +53,8 @@ export type SynapseContextProviderProps = {
 export const SynapseContextProvider: React.FunctionComponent<
   SynapseContextProviderProps
 > = ({ children, synapseContext, queryClient, theme }) => {
+  synapseContext.downloadCartPageUrl ??= '/DownloadCart'
+
   return (
     <SynapseContext.Provider value={synapseContext}>
       <QueryClientProvider client={queryClient ?? defaultQueryClient}>

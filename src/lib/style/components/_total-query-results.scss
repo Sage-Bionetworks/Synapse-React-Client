@@ -1,12 +1,12 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:color';
+@use 'sass:map';
 
 .TotalQueryResults {
   color: SRC.$text-color-dark;
   background: unset;
   /* Divider */
   padding: 1px 0px;
-  display: flex;
   align-items: baseline;
 
   &__selections {
@@ -35,13 +35,13 @@
   display: inline-flex;
   justify-content: center;
   border-radius: 20px;
-  margin-left: 1rem;
   line-height: 100%;
   cursor: default;
   background-color: color.change(SRC.$secondary-action-color, $alpha: 0.1);
   color: SRC.$text-color-dark;
   font-weight: normal;
-  margin: 10px;
+  margin: 5px;
+  margin-left: 0;
   &:hover {
     background-color: color.change(SRC.$secondary-action-color, $alpha: 0.2);
   }
@@ -53,7 +53,7 @@
   }
 
   &__btnRemove {
-    color: SRC.$secondary-action-color;
+    color: map.get(SRC.$colors, 'gray-900');
     border-radius: 100%;
     padding: 3px;
     margin-left: 1px;

@@ -109,12 +109,6 @@ describe('DownloadConfirmation', () => {
     jest.clearAllMocks()
   })
 
-  it('should render without crashing with just a cancel button', () => {
-    renderComponent(props)
-    screen.getByRole('alert')
-    screen.getByRole('button', { name: 'Cancel' })
-  })
-
   it("should call the 'close' function on cancel", async () => {
     renderComponent(props)
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
