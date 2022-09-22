@@ -1,8 +1,12 @@
 import { Skeleton } from '@material-ui/lab'
-import * as React from 'react'
-import { components, GroupBase, SelectComponentsConfig } from 'react-select'
-import AsyncSelect from 'react-select/async'
-import { SynapseClient } from '../utils'
+import React, { useMemo, useState } from 'react'
+import Select, {
+  components,
+  GroupBase,
+  SelectComponentsConfig,
+} from 'react-select'
+import { useSearchUserGroupHeaders } from '../utils/hooks/SynapseAPI'
+import { useDebouncedEffect } from '../utils/hooks/useDebouncedEffect'
 import useGetInfoFromIds from '../utils/hooks/useGetInfoFromIds'
 import { UserGroupHeader } from '../utils/synapseTypes'
 import { TYPE_FILTER } from '../utils/synapseTypes/UserGroupHeader'
@@ -52,6 +56,7 @@ const customSelectComponents: Partial<
     return (
       <components.SingleValue {...props} key={data.id}>
         <UserOrTeamBadge
+          key={data.header.ownerId}
           userGroupHeader={data.header}
           disableHref={true}
           showFullName={true}
@@ -82,6 +87,15 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
     typeFilter,
     placeholder,
   } = props
+  const [inputValue, setInputValue] = useState('')
+  const [debouncedInput, setDebouncedInput] = useState('')
+  useDebouncedEffect(
+    () => {
+      setDebouncedInput(inputValue)
+    },
+    [inputValue],
+    500,
+  )
 
   const [defaultUserGroupHeader = undefined] =
     useGetInfoFromIds<UserGroupHeader>({
@@ -89,36 +103,40 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
       type: 'USER_PROFILE',
     })
 
-  async function loadOptions(inputValue: string) {
-    let data: Array<UserGroupHeader> | undefined = undefined
-    // If the input wasn't an integer, or didn't match an existing AR ID, then search ARs
-    if (!data) {
-      data = (await SynapseClient.getUserGroupHeaders(inputValue, typeFilter))
-        ?.children
-    }
+  const { data, isLoading } = useSearchUserGroupHeaders(
+    debouncedInput,
+    typeFilter,
+  )
 
-    if (filterPredicate) {
-      data = data.filter(filterPredicate)
-    }
+  const noOptionsMessage = useMemo(
+    () =>
+      isLoading || inputValue !== debouncedInput ? () => 'Loading…' : undefined,
+    [isLoading, debouncedInput, inputValue],
+  )
 
+  const options = (data ?? [])
+    .filter(filterPredicate ?? (() => true))
     // Map the AR(s) to options for the select input component
-    return (
-      data?.map(item => ({
-        id: item.ownerId.toString(),
-        value: item.ownerId.toString(),
-        label: item.userName,
-        header: item,
-      })) ?? []
-    )
-  }
+    .map(item => ({
+      id: item.ownerId.toString(),
+      value: item.ownerId.toString(),
+      label: item.userName,
+      header: item,
+    }))
 
   if (defaultValue && defaultUserGroupHeader == null) {
     return <Skeleton width="100%" />
   }
 
   return (
-    <AsyncSelect
-      className="bootstrap-4-backport"
+    <Select
+      className="bootstrap-4-backport UserSearchBoxV2"
+      inputValue={inputValue}
+      onInputChange={setInputValue}
+      filterOption={() => true}
+      isLoading={isLoading}
+      options={(!isLoading && options) || []}
+      noOptionsMessage={noOptionsMessage}
       defaultValue={
         defaultValue
           ? {
@@ -127,29 +145,15 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
               label: defaultUserGroupHeader!.userName,
               header: defaultUserGroupHeader!,
             }
-          : undefined
-      }
-      defaultOptions={
-        defaultValue
-          ? [
-              {
-                id: defaultValue,
-                value: defaultValue,
-                label: defaultUserGroupHeader!.userName,
-                header: defaultUserGroupHeader!,
-              },
-            ]
-          : true
+          : null
       }
       inputId={inputId}
-      cacheOptions
       isClearable
       styles={{
         // Bootstrap's form-control class overrides the display value, manually set to flex (the default without Bootstrap)
         control: styles => ({ ...styles, display: 'flex !important' }),
       }}
       components={customSelectComponents}
-      loadOptions={loadOptions}
       onChange={option => {
         if (onChange) {
           onChange(option?.id ?? null, option?.header ?? null)
