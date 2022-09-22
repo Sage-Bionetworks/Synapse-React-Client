@@ -77,7 +77,7 @@ const SelectionCriteriaPill: FunctionComponent<
       tooltipText={tooltipText}
       callbackFn={() => {}}
     >
-      <label
+      <div
         className="SelectionCriteriaPill"
         key={`SelectionCriteriaPill ${key}`}
       >
@@ -89,7 +89,7 @@ const SelectionCriteriaPill: FunctionComponent<
         >
           <Close />
         </button>
-      </label>
+      </div>
     </ElementWithTooltip>
   )
 }
