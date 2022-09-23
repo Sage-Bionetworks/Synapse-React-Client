@@ -238,8 +238,8 @@ export const DownloadCartPage: React.FunctionComponent<
                           native storage
                         </li>
                         <li>
-                          Packages include a CSV Manifest containing Metadata
-                          for each file
+                          Packages include a CSV manifest that contains file
+                          annotations and other information for each file
                         </li>
                       </ul>
                     </Typography>
