@@ -4,7 +4,7 @@
 .Chip {
   border-radius: 3px;
   padding: 4px 6px;
-  margin: 4px;
+  margin: 4px 4px 4px 0;
   &:hover {
     background-color: map.get(SRC.$secondary-color-palette, 100);
   }
