@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Link, Route, Switch } from 'react-router-dom'
+import { Link, Route, Switch, useRouteMatch } from 'react-router-dom'
 import CardContainerLogicDemo from './CardContainerLogicDemo'
 import ModalDownloadDemo from './ModalDownloadDemo'
 import FormServicesIntegrationDemo from './FormServicesIntegrationDemo'
@@ -10,7 +10,6 @@ import Resources from '../../../lib/containers/home_page/resources/Resources'
 import { SynapsePlotDemo } from './SynapsePlotDemo'
 import { ExternalFileHandleLink } from '../../../lib/containers/ExternalFileHandleLink'
 import ColorPaletteInspector from './ColorPaletteInspector'
-import { useRouteMatch } from 'react-router'
 
 /**
  * Demo of features that can be used from src/demo/utils/SynapseClient

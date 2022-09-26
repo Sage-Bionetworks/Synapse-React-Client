@@ -131,13 +131,15 @@ describe('AccessRequirementDashboard tests', () => {
         new URLSearchParams(history.location.search).get('reviewerId'),
       ).toEqual(MOCK_USER_ID.toString()),
     )
-    expect(mockAccessRequirementTable).toHaveBeenCalledWith(
-      expect.objectContaining({
-        nameContains: '',
-        relatedProjectId: undefined,
-        reviewerId: MOCK_USER_ID.toString(),
-      }),
-      expect.anything(),
+    await waitFor(() =>
+      expect(mockAccessRequirementTable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          nameContains: '',
+          relatedProjectId: undefined,
+          reviewerId: MOCK_USER_ID.toString(),
+        }),
+        expect.anything(),
+      ),
     )
   })
 
