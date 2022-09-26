@@ -19,9 +19,7 @@ export type ExternalObjectStoreFileHandle = ExternalFileHandleInterface & {
   readonly bucket: string
 }
 
-export function assertIsExternalFileHandle(
-  x?: FileHandle,
-): x is ExternalFileHandle {
+export function isExternalFileHandle(x?: FileHandle): x is ExternalFileHandle {
   return (
     x?.concreteType === ExternalFileHandleConcreteTypeEnum.ExternalFileHandle
   )

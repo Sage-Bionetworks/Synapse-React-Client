@@ -145,7 +145,7 @@ const UserSearchBoxV2: React.FC<UserSearchBoxProps> = props => {
               label: defaultUserGroupHeader!.userName,
               header: defaultUserGroupHeader!,
             }
-          : null
+          : undefined
       }
       inputId={inputId}
       isClearable
