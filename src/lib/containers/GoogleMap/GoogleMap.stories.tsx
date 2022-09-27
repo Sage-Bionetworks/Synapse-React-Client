@@ -6,7 +6,9 @@ import GoogleMap from './GoogleMap'
 export default {
   title: 'Synapse/GoogleMap',
   component: GoogleMap,
-  argTypes: {},
+  argTypes: {
+    apiKeyOverride: { type: 'string' },
+  },
 } as ComponentMeta<typeof GoogleMap>
 
 const Template: ComponentStory<typeof GoogleMap> = args => (
@@ -16,6 +18,7 @@ const Template: ComponentStory<typeof GoogleMap> = args => (
       domains. You may have to create a new API key and provide it to test this
       component.
     </div>
+    <hr />
     <div style={{ width: 'auto', height: '500px' }}>
       <GoogleMap {...args} />
     </div>
@@ -23,9 +26,13 @@ const Template: ComponentStory<typeof GoogleMap> = args => (
 )
 
 export const GoogleMapDemo = Template.bind({})
-GoogleMapDemo.args = {}
+GoogleMapDemo.args = {
+  teamId: undefined,
+  apiKeyOverride: undefined,
+}
 
 export const SingleTeamMap = Template.bind({})
 SingleTeamMap.args = {
   teamId: '273957',
+  apiKeyOverride: undefined,
 }

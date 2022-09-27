@@ -16,6 +16,8 @@ import { SynapseUserMarker } from './SynapseUserMarker'
 export type MapProps = {
   /** If selected, then the map will only show locations for users in a particular team. */
   teamId?: string
+  /** Override the Google Maps API key used by the component. Useful for Storybook. */
+  apiKeyOverride?: string
 }
 
 /**
@@ -25,7 +27,7 @@ export type MapProps = {
  * @returns
  */
 function Map(props: MapProps) {
-  const { teamId } = props
+  const { teamId, apiKeyOverride } = props
 
   const { data: apiKey } = useQuery('googleMapsApiKey', getGoogleMapsApiKey, {
     useErrorBoundary: true,
@@ -73,12 +75,15 @@ function Map(props: MapProps) {
     }),
     [],
   )
-  if (!apiKey || isLoadingGeoData) {
+  if (!(apiKeyOverride || apiKey) || isLoadingGeoData) {
     return <SynapseSpinner />
   }
 
   return (
-    <LoadScript googleMapsApiKey={apiKey} loadingElement={<SynapseSpinner />}>
+    <LoadScript
+      googleMapsApiKey={(apiKeyOverride || apiKey)!}
+      loadingElement={<SynapseSpinner />}
+    >
       <GoogleMap
         mapContainerStyle={{ height: '100%', width: '100%' }}
         onLoad={onLoad}
