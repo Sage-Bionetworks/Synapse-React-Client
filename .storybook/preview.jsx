@@ -31,13 +31,13 @@ export const parameters = {
   },
 }
 
-import { StyleGuidistComponentWrapper as DemoWrapper } from '../src/lib/containers/StyleGuidistComponentWrapper'
+import { StorybookComponentWrapper } from '../src/lib/containers/StorybookComponentWrapper'
 
 export const decorators = [
   Story => (
-    <DemoWrapper>
+    <StorybookComponentWrapper>
       <Story />
-    </DemoWrapper>
+    </StorybookComponentWrapper>
   ),
 ]
 
