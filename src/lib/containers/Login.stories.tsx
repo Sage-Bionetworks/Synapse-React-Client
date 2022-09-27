@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 import Login from './Login'
-import { sessionChangeHandler } from './StyleGuidistComponentWrapper'
+import { sessionChangeHandler } from './StorybookComponentWrapper'
 import { displayToast } from './ToastMessage'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

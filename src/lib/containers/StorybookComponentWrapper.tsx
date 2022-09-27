@@ -10,12 +10,23 @@ import {
   getAccessTokenFromCookie,
   getUserProfile,
   getAuthenticatedOn,
+  signOut,
 } from '../utils/SynapseClient'
+import { SynapseClientError } from '../utils/SynapseClientError'
 
 export async function sessionChangeHandler() {
   detectSSOCode()
-  const accessToken = await getAccessTokenFromCookie()
-  const profile = await getUserProfile(accessToken)
+  let accessToken: string | undefined = await getAccessTokenFromCookie()
+  let profile
+  try {
+    profile = await getUserProfile(accessToken)
+  } catch (err) {
+    if (err instanceof SynapseClientError && err.status === 401) {
+      await signOut(() => {})
+      accessToken = undefined
+    }
+    console.error('Encountered error fetching profile: ', err, 'Signing out...')
+  }
   let date
   if (accessToken) {
     getAuthenticatedOn(accessToken).then(authenticatedOn => {
@@ -25,8 +36,15 @@ export async function sessionChangeHandler() {
   return { accessToken, profile, authenticatedOn: date }
 }
 
-export const StyleGuidistComponentWrapper: React.FC = props => {
-  const [accessToken, setAccessToken] = React.useState(undefined)
+/**
+ * Wraps storybook story components to ensure that all components receive required context.
+ * @param props
+ * @returns
+ */
+export const StorybookComponentWrapper = props => {
+  const [accessToken, setAccessToken] = React.useState<string | undefined>(
+    undefined,
+  )
   useEffect(() => {
     sessionChangeHandler().then(data => {
       setAccessToken(data.accessToken)
@@ -51,4 +69,4 @@ export const StyleGuidistComponentWrapper: React.FC = props => {
   )
 }
 
-export default StyleGuidistComponentWrapper
+export default StorybookComponentWrapper
