@@ -1,1 +1,0 @@
-import{u as r,S as o}from"./Select-54ac8379.esm.edd779c2.js";import{j as n}from"./jsx-runtime.00d70968.js";const s=window.React.forwardRef;window.React.Component;var c=s(function(e,t){var a=r(e);return n(o,{ref:t,...a})});const w=c;export{w as S};
