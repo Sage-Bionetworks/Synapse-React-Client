@@ -17,6 +17,13 @@ import Typography from '../../utils/typography/Typography'
 import { HelpPopover } from '../HelpPopover'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import { Button } from 'react-bootstrap'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal'
+
+const pythonDownloadCode = `import synapseclient
+syn = synapseclient.login()
+dl_list_file_entities = syn.get_download_list()`
+
+const cliDownloadCode = `synapse get-download-list`
 
 /**
  * Show the Download Cart page.
@@ -28,6 +35,7 @@ export const DownloadCartPage: React.FunctionComponent<
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
     useState<boolean>(false)
+  const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] =
     useState(false)
   const [error, setError] = useState<Error>()
@@ -171,8 +179,8 @@ export const DownloadCartPage: React.FunctionComponent<
                           native storage
                         </li>
                         <li>
-                          Packages include a CSV Manifest containing Metadata
-                          for each file
+                          Packages include a CSV manifest that contains file
+                          annotations and other information for each file
                         </li>
                       </ul>
                     </Typography>
@@ -198,7 +206,7 @@ export const DownloadCartPage: React.FunctionComponent<
                         >
                           <Button variant="sds-primary" disabled>
                             <IconSvg options={{ icon: 'download' }} />
-                            Download As .Zip Packages
+                            &nbsp;Download As .Zip Packages
                           </Button>
                         </Tooltip>
                       )}
@@ -230,26 +238,21 @@ export const DownloadCartPage: React.FunctionComponent<
                           native storage
                         </li>
                         <li>
-                          Packages include a CSV Manifest containing Metadata
-                          for each file
+                          Packages include a CSV manifest that contains file
+                          annotations and other information for each file
                         </li>
                       </ul>
                     </Typography>
                     <span>
-                      <Tooltip
-                        title="This feature is coming soon. Click here to learn how to download programmatically using other methods"
-                        enterNextDelay={300}
-                        placement="top"
+                      <Button
+                        variant="sds-primary"
+                        onClick={() => {
+                          setIsShowingModal(true)
+                        }}
                       >
-                        <a
-                          className="highlight-link"
-                          rel="noreferrer"
-                          target="_blank"
-                          href="https://help.synapse.org/docs/API-Clients.1985446128.html"
-                        >
-                          Create Programmatic Package (Coming soon)
-                        </a>
-                      </Tooltip>
+                        <IconSvg options={{ icon: 'code' }} />
+                        &nbsp;Create Programmatic Package
+                      </Button>
                     </span>
                   </div>
                 </div>
@@ -297,6 +300,16 @@ export const DownloadCartPage: React.FunctionComponent<
           setIsShowingDownloadSuccessAlert(false)
         }}
       />
+      {isShowingModal && (
+        <ProgrammaticInstructionsModal
+          show={true}
+          onClose={() => setIsShowingModal(false)}
+          title="Download Programmatically"
+          pythonCode={pythonDownloadCode}
+          cliCode={cliDownloadCode}
+          // rCode={rDownloadCode}
+        />
+      )}
     </div>
   )
 }

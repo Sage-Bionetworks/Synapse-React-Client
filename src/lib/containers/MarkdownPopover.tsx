@@ -5,7 +5,9 @@ import { Placement } from 'react-bootstrap/esm/Overlay'
 import { ButtonVariant } from 'react-bootstrap/esm/types'
 import { usePopper } from 'react-popper'
 import { CSSTransition } from 'react-transition-group'
-import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
+import MarkdownSynapse, {
+  MarkdownSynapseProps,
+} from './markdown/MarkdownSynapse'
 import Typography from '../utils/typography/Typography'
 
 export type MarkdownPopoverProps = {

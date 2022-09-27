@@ -57,7 +57,7 @@ jest.mock('../../../../lib/containers/widgets/FileHandleLink', () => ({
 }))
 
 // Mock the access requirement wiki
-jest.mock('../../../../lib/containers/MarkdownSynapse', () => ({
+jest.mock('../../../../lib/containers/markdown/MarkdownSynapse', () => ({
   __esModule: true,
   default: () => <div>Wiki Contents...</div>,
 }))

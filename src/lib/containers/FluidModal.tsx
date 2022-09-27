@@ -60,7 +60,7 @@ export const FluidModal = (props: FluidModalProps) => {
     >
       <Modal.Header closeButton>
         <Modal.Title>
-          <Typography variant={'headline1'}>
+          <Typography variant={'headline1'} component="span">
             {props.title}
             {props.titlePopoverProps && (
               <HelpPopover

@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import MarkdownSynapse from '../../../../lib/containers/MarkdownSynapse'
+import MarkdownSynapse from '../../../../lib/containers/markdown/MarkdownSynapse'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '../../../../lib/utils/synapseTypes'
 import { getHandlersForTableQuery } from '../../../../mocks/msw/handlers/tableQueryHandlers'

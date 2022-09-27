@@ -1,6 +1,6 @@
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
-import MarkdownSynapse from './MarkdownSynapse'
+import MarkdownSynapse from './markdown/MarkdownSynapse'
 import React, { useState, useEffect } from 'react'
 
 export type IconOptions = {

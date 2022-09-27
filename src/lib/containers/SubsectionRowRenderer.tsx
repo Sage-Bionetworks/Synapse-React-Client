@@ -12,7 +12,7 @@ import {
   RowSet,
 } from '../utils/synapseTypes/Table'
 import { useSynapseContext } from '../utils/SynapseContext'
-import MarkdownSynapse from './MarkdownSynapse'
+import MarkdownSynapse from './markdown/MarkdownSynapse'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { ColumnSpecifiedLink } from './CardContainerLogic'
 import Typography from '../utils/typography/Typography'

@@ -68,7 +68,7 @@ export const mockUserBundle2: UserBundle = {
 }
 
 export const mockUserGroupHeader2: UserGroupHeader = {
-  ownerId: `MOCK_USER_ID_2.toString()`,
+  ownerId: MOCK_USER_ID_2.toString(),
   firstName: mockUserProfileData2.firstName,
   lastName: mockUserProfileData2.lastName,
   userName: MOCK_USER_NAME_2,
@@ -114,3 +114,5 @@ export const mockUserData: MockUserOrTeamData[] = [
   mockUserData2,
   mockActData,
 ]
+
+export const MOCK_TEAM_ID = 987654

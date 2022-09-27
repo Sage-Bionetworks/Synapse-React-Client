@@ -239,6 +239,7 @@ import {
   Quiz,
   QuizResponse,
 } from './synapseTypes/CertificationQuiz/Quiz'
+import { GeoData } from '../containers/GoogleMap/GeoData'
 
 const cookies = new UniversalCookies()
 
@@ -3757,4 +3758,37 @@ export function postCertifiedUserTestResponse(
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+const S3_GEODATA_ENDPOINT = 'https://s3.amazonaws.com/geoloc.sagebase.org/'
+const GEO_DATA_URL = S3_GEODATA_ENDPOINT + 'allPoints.json'
+const API_KEY_URL = S3_GEODATA_ENDPOINT + 'googlemap.txt'
+
+/**
+ * Fetches the API key for Google Maps used by Synapse, which can be used to fetch the API script.
+ *
+ * Note: the production API key is not a secret. It is secure because the key is configured to only
+ *  allow Maps API requests from particular referrers (e.g. synapse.org)
+ */
+export async function getGoogleMapsApiKey(): Promise<string> {
+  const response = await fetch(API_KEY_URL)
+  return await response.text()
+}
+
+/**
+ * Fetch Geolocation data for all Synapse users.
+ */
+export async function getAllSynapseUserGeoData(): Promise<GeoData[]> {
+  const response = await fetch(GEO_DATA_URL)
+  return await response.json()
+}
+
+/**
+ * Fetch Geolocation data for a particular Synapse team.
+ */
+export async function getSynapseTeamGeoData(
+  teamId: string,
+): Promise<GeoData[]> {
+  const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
+  return await response.json()
 }

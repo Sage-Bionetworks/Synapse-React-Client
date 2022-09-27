@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useState, useEffect } from 'react'
-import MarkdownSynapse from '../MarkdownSynapse'
+import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import {
   WikiPageKey,
   AccessRequirementStatus,

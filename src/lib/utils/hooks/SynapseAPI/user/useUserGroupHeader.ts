@@ -2,7 +2,7 @@ import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
 import { useSynapseContext } from '../../../SynapseContext'
-import { UserGroupHeader } from '../../../synapseTypes'
+import { TYPE_FILTER, UserGroupHeader } from '../../../synapseTypes'
 
 export function useGetUserGroupHeader(
   principalId: string,
@@ -24,6 +24,26 @@ export function useGetUserGroupHeader(
         )
       }
       return responsePage.children[0]
+    },
+    options,
+  )
+}
+
+export function useSearchUserGroupHeaders(
+  prefix: string,
+  filter?: TYPE_FILTER,
+  options?: UseQueryOptions<UserGroupHeader[], SynapseClientError>,
+) {
+  const queryKey = ['userGroupHeader', 'search', prefix, filter]
+
+  return useQuery<UserGroupHeader[], SynapseClientError>(
+    queryKey,
+    async () => {
+      const responsePage = await SynapseClient.getUserGroupHeaders(
+        prefix,
+        filter,
+      )
+      return responsePage.children
     },
     options,
   )

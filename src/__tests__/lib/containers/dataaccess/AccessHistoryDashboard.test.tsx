@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { UserHistoryDashboard } from '../../../../lib/containers/dataaccess/AccessHistoryDashboard'
 import { createMemoryHistory, MemoryHistory } from 'history'
 import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
@@ -110,7 +110,9 @@ describe('AccessHistoryDashboard tests', () => {
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
+    await act(async () => {
+      await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
+    })
 
     await screen.findByLabelText('Select a user to view their access history')
     await screen.findByLabelText('Filter by Access Requirement Name')
@@ -142,7 +144,9 @@ describe('AccessHistoryDashboard tests', () => {
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
+    await act(async () => {
+      await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
+    })
 
     await waitFor(() =>
       expect(
@@ -174,21 +178,30 @@ describe('AccessHistoryDashboard tests', () => {
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
     await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
+    await act(async () => {
+      await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
+    })
 
     await screen.findByLabelText('Select a user to view their access history')
     const arNameInput = await screen.findByLabelText(
       'Filter by Access Requirement Name',
     )
 
-    await userEvent.type(arNameInput, mockAccessRequirement.name)
+    await userEvent.type(
+      arNameInput,
+      mockAccessRequirement.name.substring(0, 3),
+    )
     await screen.findByText(
       getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+      undefined,
+      { timeout: 15000 },
     )
-    await selectEvent.select(
-      arNameInput,
-      getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
-    )
+    await act(async () => {
+      await selectEvent.select(
+        arNameInput,
+        getOptionLabel(mockAccessRequirement.id, mockAccessRequirement.name),
+      )
+    })
 
     await waitFor(() =>
       expect(

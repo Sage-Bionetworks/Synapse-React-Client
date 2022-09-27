@@ -1,19 +1,21 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import * as React from 'react'
+import * as MarkdownSynapseImageModule from '../../../../lib/containers/markdown/widget/MarkdownSynapseImage'
+import * as MarkdownPlotModule from '../../../../lib/containers/markdown/widget/MarkdownSynapsePlot'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
-} from '../../../lib/containers/MarkdownSynapse'
-import { createWrapper } from '../../../lib/testutils/TestingLibraryUtils'
-import { SynapseClient } from '../../../lib/utils'
+} from '../../../../lib/containers/markdown/MarkdownSynapse'
+import { createWrapper } from '../../../../lib/testutils/TestingLibraryUtils'
+import { SynapseClient } from '../../../../lib/utils'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../lib/utils/functions/getEndpoint'
-import { SynapseContextType } from '../../../lib/utils/SynapseContext'
-import { WikiPage } from '../../../lib/utils/synapseTypes'
-import { rest, server } from '../../../mocks/msw/server'
+} from '../../../../lib/utils/functions/getEndpoint'
+import { SynapseContextType } from '../../../../lib/utils/SynapseContext'
+import { WikiPage } from '../../../../lib/utils/synapseTypes'
+import { rest, server } from '../../../../mocks/msw/server'
 
-jest.mock('../../../lib/containers/widgets/SynapsePlot', () => {
+jest.mock('../../../../lib/containers/widgets/SynapsePlot', () => {
   return {
     __esModule: true,
     default: function MockSynapsePlot() {
@@ -22,7 +24,7 @@ jest.mock('../../../lib/containers/widgets/SynapsePlot', () => {
   }
 })
 
-jest.mock('../../../lib/containers/widgets/SynapseImage', () => {
+jest.mock('../../../../lib/containers/widgets/SynapseImage', () => {
   return {
     __esModule: true,
     default: function MockSynapseImage() {
@@ -186,10 +188,7 @@ describe('MarkdownSynapse tests', () => {
         '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}',
       )
 
-      const spyOnRenderImage = jest.spyOn(
-        MarkdownSynapse.prototype,
-        'renderSynapseImage',
-      )
+      const spyOnRenderImage = jest.spyOn(MarkdownSynapseImageModule, 'default')
       const props: MarkdownSynapseProps = {
         ownerId: '_',
         wikiId: '_',
@@ -205,10 +204,7 @@ describe('MarkdownSynapse tests', () => {
       '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
     )
 
-    const spyOnRenderPlot = jest.spyOn(
-      MarkdownSynapse.prototype,
-      'renderSynapsePlot',
-    )
+    const spyOnRenderPlot = jest.spyOn(MarkdownPlotModule, 'default')
     const props: MarkdownSynapseProps = {
       ownerId: '_',
       wikiId: '_',

@@ -3,7 +3,9 @@ import { Collapse, SafeAnchor } from 'react-bootstrap'
 import IconMinus from '../assets/icons/IconMinus'
 import IconPlus from '../assets/icons/IconPlus'
 import IconCopy from '../assets/icons/IconCopy'
-import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
+import MarkdownSynapse, {
+  MarkdownSynapseProps,
+} from './markdown/MarkdownSynapse'
 import { displayToast } from './ToastMessage'
 
 export type MarkdownCollapseProps = {

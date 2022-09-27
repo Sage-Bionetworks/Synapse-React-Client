@@ -28,8 +28,6 @@ module.exports = {
       plugins: [
         svgr(),
         viteExternalsPlugin({
-          react: 'React',
-          'react-dom': 'ReactDOM',
           'sql-parser': 'SQLParser',
         }),
       ],

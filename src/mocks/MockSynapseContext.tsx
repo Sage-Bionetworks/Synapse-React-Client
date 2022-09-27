@@ -10,6 +10,7 @@ export const MOCK_CONTEXT_VALUE: SynapseContextType = {
   accessToken: MOCK_ACCESS_TOKEN,
   utcTime: false,
   isInExperimentalMode: false,
+  downloadCartPageUrl: '/DownloadCart',
 }
 
 export const MOCK_CONTEXT = React.createContext(MOCK_CONTEXT_VALUE)
