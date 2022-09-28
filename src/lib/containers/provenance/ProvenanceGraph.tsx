@@ -45,7 +45,7 @@ import {
 export type ProvenanceProps = {
   // what entity nodes should we start with?
   entityRefs: ReferenceList
-  containerHeight: string
+  containerHeight?: string
   initialNodes?: Node[]
   initialEdges?: Edge[]
   onNodesChangedListener?: (nodes: Node[]) => void
