@@ -397,7 +397,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   )
 }
 
-export const ProvenanceGraph = (props: ProvenanceProps) => {
+const ProvenanceGraph = (props: ProvenanceProps) => {
   return (
     <SynapseErrorBoundary>
       <ReactFlowProvider>
@@ -406,3 +406,5 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     </SynapseErrorBoundary>
   )
 }
+
+export default ProvenanceGraph

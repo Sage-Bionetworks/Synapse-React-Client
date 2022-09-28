@@ -14,6 +14,7 @@ import {
 import { SynapseContextType } from '../../../../lib/utils/SynapseContext'
 import { WikiPage } from '../../../../lib/utils/synapseTypes'
 import { rest, server } from '../../../../mocks/msw/server'
+import * as MarkdownProvenanceModule from '../../../../lib/containers/markdown/widget/MarkdownProvenanceGraph'
 
 jest.mock('../../../../lib/containers/widgets/SynapsePlot', () => {
   return {
@@ -29,6 +30,15 @@ jest.mock('../../../../lib/containers/widgets/SynapseImage', () => {
     __esModule: true,
     default: function MockSynapseImage() {
       return <div role="img"></div>
+    },
+  }
+})
+
+jest.mock('../../../../lib/containers/provenance/ProvenanceGraph', () => {
+  return {
+    __esModule: true,
+    default: function MockSynapseProvenanceGraph() {
+      return <div data-testid="mockProvenanceGraph"></div>
     },
   }
 })
@@ -212,6 +222,21 @@ describe('MarkdownSynapse tests', () => {
     renderComponent(props)
     await screen.findByRole('figure')
     expect(spyOnRenderPlot).toHaveBeenCalled()
+  })
+
+  it('renders the ProvenanceGraph component', async () => {
+    mockGetEntityWiki(
+      '${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}',
+    )
+
+    const spyOnRender = jest.spyOn(MarkdownProvenanceModule, 'default')
+    const props: MarkdownSynapseProps = {
+      ownerId: '_',
+      wikiId: '_',
+    }
+    renderComponent(props)
+    await screen.findByTestId('mockProvenanceGraph')
+    expect(spyOnRender).toHaveBeenCalled()
   })
 
   it('renders a synapse reference', async () => {

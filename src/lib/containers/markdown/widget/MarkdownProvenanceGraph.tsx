@@ -1,6 +1,6 @@
 import React from 'react'
 import { Reference } from '../../../utils/synapseTypes'
-import { ProvenanceGraph } from '../../provenance/ProvenanceGraph'
+import ProvenanceGraph from '../../provenance/ProvenanceGraph'
 
 export type MarkdownProvenanceGraphProps = {
   entityList: string // comma delimited entity references of the form <synapse_ID>/version/<version_number>.  The /version/<version_number> is optional
