@@ -240,7 +240,7 @@ describe('MarkdownSynapse tests', () => {
   })
   it('renders the ProvenanceGraph component when pointing to a specific entity version', async () => {
     mockGetEntityWiki(
-      '{provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
+      '${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
     )
 
     const spyOnRender = jest.spyOn(MarkdownProvenanceModule, 'default')
