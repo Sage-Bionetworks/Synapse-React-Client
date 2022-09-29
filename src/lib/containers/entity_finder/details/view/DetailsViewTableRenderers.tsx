@@ -120,7 +120,6 @@ export function DateRenderer({ cellData }: { cellData?: string }) {
 export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
-    undefined,
     props.rowData.versionNumber,
   )
 
@@ -128,7 +127,7 @@ export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
     return <Skeleton width={200} />
   }
 
-  return <DateRenderer {...props} cellData={bundle?.entity?.modifiedOn} />
+  return <DateRenderer {...props} cellData={bundle?.entity.modifiedOn} />
 }
 
 /**
@@ -139,7 +138,6 @@ export function ModifiedOnRenderer(props: EntityIdAndVersionRendererProps) {
 export function CreatedOnRenderer(props: EntityIdAndVersionRendererProps) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
-    undefined,
     props.rowData.versionNumber,
   )
 
@@ -153,7 +151,6 @@ export function CreatedOnRenderer(props: EntityIdAndVersionRendererProps) {
 export function EntityNameRenderer(props: EntityIdAndVersionRendererProps) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
-    undefined,
     props.rowData.versionNumber,
   )
   if (isLoading) {
@@ -163,7 +160,7 @@ export function EntityNameRenderer(props: EntityIdAndVersionRendererProps) {
   return bundle ? (
     <EntityLink
       className="EntityNameWithIconRenderer"
-      entity={bundle.entity!}
+      entity={bundle.entity}
       link={false}
     />
   ) : (
@@ -174,11 +171,10 @@ export function EntityNameRenderer(props: EntityIdAndVersionRendererProps) {
 export function ProjectRenderer(props: EntityIdAndVersionRendererProps) {
   const { data: entityBundle, isLoading: isLoadingBundle } = useGetEntityBundle(
     props.rowData.entityId,
-    undefined,
     props.rowData.versionNumber,
   )
   const { data: project, isLoading: isLoadingProjectEntity } = useGetEntity(
-    entityBundle?.path!.path[1].id ?? '',
+    entityBundle?.path.path[1].id ?? '',
     undefined,
     { enabled: !!entityBundle },
   )
@@ -208,7 +204,6 @@ export function UserCardRenderer({ cellData }: { cellData?: string }) {
 export function ModifiedByRenderer(props: EntityIdAndVersionRendererProps) {
   const { data: bundle, isLoading } = useGetEntityBundle(
     props.rowData.entityId,
-    undefined,
     props.rowData.versionNumber,
   )
 
@@ -216,7 +211,7 @@ export function ModifiedByRenderer(props: EntityIdAndVersionRendererProps) {
     return <Skeleton width={200} />
   }
 
-  return <UserCardRenderer {...props} cellData={bundle?.entity?.modifiedBy} />
+  return <UserCardRenderer {...props} cellData={bundle?.entity.modifiedBy} />
 }
 
 export function LoadingRenderer() {

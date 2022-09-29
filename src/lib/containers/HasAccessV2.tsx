@@ -111,11 +111,11 @@ export function useGetFileHandleDownloadType(
   const { accessToken } = useSynapseContext()
   const { data: entityBundle, error: entityFetchError } = useGetEntityBundle(
     entityId,
+    parseInt(entityVersionNumber ?? ''),
     {
       includeEntity: true,
       includePermissions: true,
     },
-    parseInt(entityVersionNumber ?? ''),
   )
 
   const restrictionInformationRequest: RestrictionInformationRequest =

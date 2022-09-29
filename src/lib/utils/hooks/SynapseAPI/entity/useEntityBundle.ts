@@ -1,38 +1,24 @@
 import { useQuery, UseQueryOptions } from 'react-query'
 import { SynapseClient } from '../../..'
 import { SynapseClientError } from '../../../SynapseClientError'
+import { ALL_ENTITY_BUNDLE_FIELDS } from '../../../SynapseConstants'
 import { useSynapseContext } from '../../../SynapseContext'
 import { EntityBundle, EntityBundleRequest } from '../../../synapseTypes'
 import { entityQueryKeys } from './queryKeys'
 
-const ALL_FIELDS: EntityBundleRequest = {
-  includeEntity: true,
-  includeEntityPath: true,
-  includeAnnotations: true,
-  includePermissions: true,
-  includeHasChildren: true,
-  includeAccessControlList: true,
-  includeFileHandles: true,
-  includeTableBundle: true,
-  includeRootWikiId: true,
-  includeBenefactorACL: true,
-  includeDOIAssociation: true,
-  includeFileName: true,
-  includeThreadCount: true,
-  includeRestrictionInformation: true,
-}
-
-export default function useGetEntityBundle(
+export function useGetEntityBundle<
+  T extends EntityBundleRequest = typeof ALL_ENTITY_BUNDLE_FIELDS,
+>(
   entityId: string,
-  bundleRequest: EntityBundleRequest = ALL_FIELDS,
   version?: number,
-  options?: UseQueryOptions<EntityBundle, SynapseClientError, EntityBundle>,
+  bundleRequest: T = ALL_ENTITY_BUNDLE_FIELDS as T,
+  options?: UseQueryOptions<EntityBundle<T>, SynapseClientError>,
 ) {
   const { accessToken } = useSynapseContext()
-  return useQuery<EntityBundle, SynapseClientError>(
+  return useQuery<EntityBundle<T>, SynapseClientError>(
     entityQueryKeys.bundle(entityId, version, bundleRequest),
     () =>
-      SynapseClient.getEntityBundleV2(
+      SynapseClient.getEntityBundleV2<T>(
         entityId,
         bundleRequest,
         version,
@@ -41,3 +27,5 @@ export default function useGetEntityBundle(
     options,
   )
 }
+
+export default useGetEntityBundle

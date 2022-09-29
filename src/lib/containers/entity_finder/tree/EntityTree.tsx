@@ -14,6 +14,7 @@ import { convertToEntityType } from '../../../utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '../../../utils/functions/RegularExpressions'
 import useGetEntityBundle from '../../../utils/hooks/SynapseAPI/entity/useEntityBundle'
 import { useGetProjectsInfinite } from '../../../utils/hooks/SynapseAPI/user/useProjects'
+import { ALL_ENTITY_BUNDLE_FIELDS } from '../../../utils/SynapseConstants'
 import { useSynapseContext } from '../../../utils/SynapseContext'
 import { EntityPath, EntityType, Reference } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
@@ -176,7 +177,7 @@ export function EntityTree(props: EntityTreeProps) {
   )
 
   const { data: currentContainerBundle, isSuccess: isSuccessBundle } =
-    useGetEntityBundle(currentContainer!, undefined, undefined, {
+    useGetEntityBundle(currentContainer!, undefined, ALL_ENTITY_BUNDLE_FIELDS, {
       enabled: !!currentContainer && currentContainer !== 'root',
     })
 
@@ -322,8 +323,8 @@ export function EntityTree(props: EntityTreeProps) {
                 setCurrentContainer('root')
               },
             },
-            ...currentContainerBundle!
-              .path!.path.slice(1) // Remove the root entity, syn4489
+            ...currentContainerBundle.path.path
+              .slice(1) // Remove the root entity, syn4489
               .map(entity => {
                 return {
                   name: entity.name,
