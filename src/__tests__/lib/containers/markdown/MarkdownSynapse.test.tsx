@@ -238,6 +238,20 @@ describe('MarkdownSynapse tests', () => {
     await screen.findByTestId('mockProvenanceGraph')
     expect(spyOnRender).toHaveBeenCalled()
   })
+  it('renders the ProvenanceGraph component when pointing to a specific entity version', async () => {
+    mockGetEntityWiki(
+      '{provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
+    )
+
+    const spyOnRender = jest.spyOn(MarkdownProvenanceModule, 'default')
+    const props: MarkdownSynapseProps = {
+      ownerId: '_',
+      wikiId: '_',
+    }
+    renderComponent(props)
+    await screen.findByTestId('mockProvenanceGraph')
+    expect(spyOnRender).toHaveBeenCalled()
+  })
 
   it('renders a synapse reference', async () => {
     // note- a reference is the anchor tag inside the text that links to the bookmark down below,
