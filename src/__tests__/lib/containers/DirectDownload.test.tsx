@@ -13,7 +13,6 @@ import {
   BatchFileResult,
   FileHandleAssociateType,
 } from '../../../lib/utils/synapseTypes'
-import { CloudProviderFileHandleConcreteTypeEnum } from '../../../lib/utils/synapseTypes/CloudProviderFileHandle'
 import mockFileEntityData from '../../../mocks/entity/mockFileEntity'
 import { rest, server } from '../../../mocks/msw/server'
 import { MOCK_USER_ID } from '../../../mocks/user/mock_user_profile'
@@ -42,7 +41,7 @@ describe('DirectDownload: basic functionality', () => {
           createdBy: MOCK_USER_ID.toString(),
           createdOn: '2020-11-30T15:57:57.000Z',
           modifiedOn: '2020-11-30T15:57:57.000Z',
-          concreteType: CloudProviderFileHandleConcreteTypeEnum.S3FileHandle,
+          concreteType: 'org.sagebionetworks.repo.model.file.S3FileHandle',
           contentType: 'image/png',
           contentMd5: 'fa4b066053ce2d5d23ae3f3774925dfd',
           fileName: 'test-file-handle.png',

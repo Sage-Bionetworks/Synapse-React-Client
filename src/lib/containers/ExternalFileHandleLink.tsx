@@ -47,7 +47,7 @@ export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
         }
         const file = await SynapseClient.getFiles(batchFileRequest, accessToken)
         const externalFileHandle = file.requestedFiles[0].fileHandle
-        if (isExternalFileHandle(externalFileHandle)) {
+        if (externalFileHandle && isExternalFileHandle(externalFileHandle)) {
           setData({
             externalFileHandle,
             fileEntity,

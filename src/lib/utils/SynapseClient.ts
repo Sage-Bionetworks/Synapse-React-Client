@@ -240,6 +240,7 @@ import {
   QuizResponse,
 } from './synapseTypes/CertificationQuiz/Quiz'
 import { GeoData } from '../containers/GoogleMap/GeoData'
+import { TeamMember } from './synapseTypes/TeamMember'
 
 const cookies = new UniversalCookies()
 
@@ -1208,7 +1209,7 @@ export const getUserTeamList = (
 }
 
 /**
- * Get the user's list of teams they are on
+ * Get a list of members for a team
  *
  * @param {*} id ownerID of the synapse user see -https://rest-docs.synapse.org/rest/GET/teamMembers/id.html
  * @param {*} fragment (optional) a prefix of the user's first or last name or email address (optional)
@@ -1216,14 +1217,14 @@ export const getUserTeamList = (
  * @param {*} offset   (optional) the starting index of the returned results (default 0)
  *
  */
-export const getTeamList = (
+export const getTeamMembers = (
   accessToken: string | undefined,
-  id: string | number,
+  teamId: string | number,
   fragment: string = '',
   limit: number = 10,
   offset: number = 0,
-) => {
-  const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
+): Promise<PaginatedResults<TeamMember>> => {
+  const url = `/repo/v1/teamMembers/${teamId}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
