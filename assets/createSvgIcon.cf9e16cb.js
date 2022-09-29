@@ -1,0 +1,1 @@
+import{R as o,j as t}from"./jsx-runtime.697357f5.js";import{S as r}from"./SvgIcon.3010e2d4.js";function p(a,c){var e=function(m,n){return t(r,{ref:n,...m,children:a})};return e.muiName=r.muiName,o.memo(o.forwardRef(e))}export{p as c};
