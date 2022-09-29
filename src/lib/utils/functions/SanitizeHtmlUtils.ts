@@ -91,6 +91,7 @@ export const xssOptions: IFilterXSSOptions = {
       // do not filter doctype
       return html
     }
+    return undefined
   },
   safeAttrValue: function (tag, name, value) {
     if (tag === 'img' && name === 'src') {
