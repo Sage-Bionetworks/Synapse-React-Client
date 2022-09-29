@@ -1,0 +1,187 @@
+import moment from 'moment'
+import React, { useState } from 'react'
+import { Button, Table } from 'react-bootstrap'
+import SortIcon from '../../assets/icons/Sort'
+import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
+import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
+import { Direction } from '../../utils/synapseTypes'
+import {
+  DiscussionFilter,
+  DiscussionThreadOrder,
+} from '../../utils/synapseTypes/DiscussionBundle'
+import IconSvg from '../IconSvg'
+import UserCard from '../UserCard'
+
+export type ForumTableProps = {
+  forumId: string
+  limit: number
+  filter?: DiscussionFilter
+}
+
+export const ForumTable: React.FC<ForumTableProps> = ({
+  forumId,
+  limit,
+  filter,
+}) => {
+  const [sort, setSort] = useState<DiscussionThreadOrder>(
+    DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
+  )
+  const [isAscending, setIsAscending] = useState(false)
+
+  const { data, hasNextPage, fetchNextPage } = useGetForumInfinite(
+    forumId,
+    limit,
+    sort,
+    isAscending,
+    filter,
+  )
+
+  const threads = data?.pages.flatMap(page => page.results) ?? []
+
+  const getUrl = (threadId: string, projectId: string) => {
+    return `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${projectId}/discussion/threadId=${threadId}`
+  }
+
+  const onSort = (field: DiscussionThreadOrder) => {
+    if (sort == field) {
+      setSort(field)
+      setIsAscending(!isAscending)
+    } else {
+      setSort(field)
+      setIsAscending(false)
+    }
+  }
+
+  return (
+    <div className="ForumTable bootstrap-4-backport">
+      <Table>
+        <thead>
+          <tr>
+            <th>
+              <span className="SRC-split">
+                <span>Topic</span>
+                <SortIcon
+                  role="button"
+                  active={sort === DiscussionThreadOrder.THREAD_TITLE}
+                  direction={
+                    sort === 'THREAD_TITLE'
+                      ? isAscending === false
+                        ? Direction.DESC
+                        : Direction.ASC
+                      : Direction.DESC
+                  }
+                  onClick={() => onSort(DiscussionThreadOrder.THREAD_TITLE)}
+                />
+              </span>
+            </th>
+            <th>Author</th>
+            <th>Active Users</th>
+            <th>
+              <span className="SRC-split">
+                <span>Replies</span>
+                <SortIcon
+                  role="button"
+                  active={sort === DiscussionThreadOrder.NUMBER_OF_REPLIES}
+                  direction={
+                    sort === 'NUMBER_OF_REPLIES'
+                      ? isAscending === false
+                        ? Direction.DESC
+                        : Direction.ASC
+                      : Direction.DESC
+                  }
+                  onClick={() =>
+                    onSort(DiscussionThreadOrder.NUMBER_OF_REPLIES)
+                  }
+                />
+              </span>
+            </th>
+            <th>
+              <span className="SRC-split">
+                <span>View</span>
+                <SortIcon
+                  role="button"
+                  active={sort === DiscussionThreadOrder.NUMBER_OF_VIEWS}
+                  direction={
+                    sort === 'NUMBER_OF_VIEWS'
+                      ? isAscending === false
+                        ? Direction.DESC
+                        : Direction.ASC
+                      : Direction.DESC
+                  }
+                  onClick={() => onSort(DiscussionThreadOrder.NUMBER_OF_VIEWS)}
+                />
+              </span>
+            </th>
+            <th>
+              <span className="SRC-split">
+                <span>Activity</span>
+                <SortIcon
+                  role="button"
+                  active={
+                    sort === DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY
+                  }
+                  direction={
+                    sort === 'PINNED_AND_LAST_ACTIVITY'
+                      ? isAscending === false
+                        ? Direction.DESC
+                        : Direction.ASC
+                      : Direction.DESC
+                  }
+                  onClick={() =>
+                    onSort(DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY)
+                  }
+                />
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {threads.map(item => {
+            return (
+              <tr key={item.id}>
+                <td>
+                  <a href={getUrl(item.id, item.projectId)}>
+                    {item.isPinned ? (
+                      <IconSvg options={{ icon: 'pushpin' }} />
+                    ) : (
+                      <></>
+                    )}
+                    {item.title}
+                  </a>
+                </td>
+                <td>
+                  <UserCard size={SMALL_USER_CARD} ownerId={item.createdBy} />
+                </td>
+                <td>
+                  {item.activeAuthors.map(user => (
+                    <div className="avatarContainer">
+                      <UserCard
+                        key={user}
+                        showCardOnHover={true}
+                        className="ActiveUsers"
+                        size={AVATAR}
+                        avatarSize={'MEDIUM'}
+                        ownerId={user}
+                      />
+                    </div>
+                  ))}
+                </td>
+                <td>{item.numberOfReplies}</td>
+                <td>{item.numberOfViews}</td>
+                <td>{moment(item.lastActivity).format('L')}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+        {hasNextPage ? (
+          <Button variant="outline-primary" onClick={() => fetchNextPage()}>
+            Show more results
+          </Button>
+        ) : (
+          <></>
+        )}
+      </Table>
+    </div>
+  )
+}
