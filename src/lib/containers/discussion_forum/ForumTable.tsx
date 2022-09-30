@@ -177,14 +177,14 @@ export const ForumTable: React.FC<ForumTableProps> = ({
             )
           })}
         </tbody>
-        {hasNextPage ? (
-          <Button variant="outline-primary" onClick={() => fetchNextPage()}>
-            Show more results
-          </Button>
-        ) : (
-          <></>
-        )}
       </Table>
+      {hasNextPage ? (
+        <Button variant="outline-primary" onClick={() => fetchNextPage()}>
+          Show more results
+        </Button>
+      ) : (
+        <></>
+      )}
     </div>
   )
 }
