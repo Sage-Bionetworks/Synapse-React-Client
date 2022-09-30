@@ -87,6 +87,7 @@ import Other from '../assets/mui_components/Other'
 import PackagableFile from '../assets/mui_components/PackagableFile'
 import Proteomics from '../assets/mui_components/Proteomics'
 import Rat from '../assets/mui_components/Rat'
+import PushPin from '../assets/mui_components/PushPin'
 import { EntityType } from '../utils/synapseTypes/EntityType'
 import Tooltip from '../utils/tooltip/Tooltip'
 
@@ -179,6 +180,7 @@ export const IconStrings = [
   'checkCircle',
   'errorOutlined',
   'phone',
+  'pushpin',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -419,6 +421,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <ChevronRight style={muiSvgStyle} />
     case 'chevronLeft':
       return <ChevronLeft style={muiSvgStyle} />
+    case 'pushpin':
+      return <PushPin fill={color} style={customSvgStyle}></PushPin>
     default:
       return <></>
   }
