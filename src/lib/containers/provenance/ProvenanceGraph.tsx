@@ -45,7 +45,7 @@ import {
 export type ProvenanceProps = {
   // what entity nodes should we start with?
   entityRefs: ReferenceList
-  containerHeight: string
+  containerHeight?: string
   initialNodes?: Node[]
   initialEdges?: Edge[]
   onNodesChangedListener?: (nodes: Node[]) => void
@@ -397,7 +397,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   )
 }
 
-export const ProvenanceGraph = (props: ProvenanceProps) => {
+const ProvenanceGraph = (props: ProvenanceProps) => {
   return (
     <SynapseErrorBoundary>
       <ReactFlowProvider>
@@ -406,3 +406,5 @@ export const ProvenanceGraph = (props: ProvenanceProps) => {
     </SynapseErrorBoundary>
   )
 }
+
+export default ProvenanceGraph

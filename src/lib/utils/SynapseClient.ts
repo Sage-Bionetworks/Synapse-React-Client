@@ -242,6 +242,8 @@ import {
   Quiz,
   QuizResponse,
 } from './synapseTypes/CertificationQuiz/Quiz'
+import { GeoData } from '../containers/GoogleMap/GeoData'
+import { TeamMember } from './synapseTypes/TeamMember'
 
 const cookies = new UniversalCookies()
 
@@ -1210,7 +1212,7 @@ export const getUserTeamList = (
 }
 
 /**
- * Get the user's list of teams they are on
+ * Get a list of members for a team
  *
  * @param {*} id ownerID of the synapse user see -https://rest-docs.synapse.org/rest/GET/teamMembers/id.html
  * @param {*} fragment (optional) a prefix of the user's first or last name or email address (optional)
@@ -1218,14 +1220,14 @@ export const getUserTeamList = (
  * @param {*} offset   (optional) the starting index of the returned results (default 0)
  *
  */
-export const getTeamList = (
+export const getTeamMembers = (
   accessToken: string | undefined,
-  id: string | number,
+  teamId: string | number,
   fragment: string = '',
   limit: number = 10,
   offset: number = 0,
-) => {
-  const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
+): Promise<PaginatedResults<TeamMember>> => {
+  const url = `/repo/v1/teamMembers/${teamId}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
@@ -3790,4 +3792,37 @@ export function postCertifiedUserTestResponse(
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
+}
+
+const S3_GEODATA_ENDPOINT = 'https://s3.amazonaws.com/geoloc.sagebase.org/'
+const GEO_DATA_URL = S3_GEODATA_ENDPOINT + 'allPoints.json'
+const API_KEY_URL = S3_GEODATA_ENDPOINT + 'googlemap.txt'
+
+/**
+ * Fetches the API key for Google Maps used by Synapse, which can be used to fetch the API script.
+ *
+ * Note: the production API key is not a secret. It is secure because the key is configured to only
+ *  allow Maps API requests from particular referrers (e.g. synapse.org)
+ */
+export async function getGoogleMapsApiKey(): Promise<string> {
+  const response = await fetch(API_KEY_URL)
+  return await response.text()
+}
+
+/**
+ * Fetch Geolocation data for all Synapse users.
+ */
+export async function getAllSynapseUserGeoData(): Promise<GeoData[]> {
+  const response = await fetch(GEO_DATA_URL)
+  return await response.json()
+}
+
+/**
+ * Fetch Geolocation data for a particular Synapse team.
+ */
+export async function getSynapseTeamGeoData(
+  teamId: string,
+): Promise<GeoData[]> {
+  const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
+  return await response.json()
 }

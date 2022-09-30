@@ -1,6 +1,7 @@
 import { AttachmentData } from '../AttachmentData'
 import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/Table'
 import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
+import { LINK_CONCRETE_TYPE } from './Link'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -36,9 +37,6 @@ export interface Entity {
   /** @deprecated This field is deprecated and will be removed in future versions of Synapse */
   uri?: string
 }
-
-export const LINK_CONCRETE_TYPE_VALUE = 'org.sagebionetworks.repo.model.Link'
-export type LINK_CONCRETE_TYPE = typeof LINK_CONCRETE_TYPE_VALUE
 
 export const DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.docker.DockerRepository'

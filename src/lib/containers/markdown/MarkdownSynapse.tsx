@@ -1,7 +1,8 @@
+import React from 'react'
 import MarkdownIt from 'markdown-it'
-import * as React from 'react'
-import sanitizeHtml from 'sanitize-html'
+import xss from 'xss'
 import { SynapseClient } from '../../utils'
+import { xssOptions } from '../../utils/functions/SanitizeHtmlUtils'
 import { SynapseClientError } from '../../utils/SynapseClientError'
 import { SynapseContext } from '../../utils/SynapseContext'
 import {
@@ -179,63 +180,7 @@ export default class MarkdownSynapse extends React.Component<
     const initText = this.props.renderInline
       ? this.state.md.renderInline(markdown)
       : this.state.md.render(markdown)
-    const cleanText = sanitizeHtml(initText, {
-      allowedAttributes: {
-        a: ['href', 'target'],
-        button: ['class'],
-        div: ['class'], // PORTALS-1450: including 'style' in the allow-list will cause string values to come through, which crashes the app when used (because it uses jsx).
-        h1: ['toc'],
-        h2: ['toc'],
-        h3: ['toc'],
-        h4: ['toc'],
-        h5: ['toc'],
-        h6: ['toc'],
-        li: ['class'],
-        ol: ['class'],
-        span: ['*'],
-        table: ['class'],
-        th: ['colspan'],
-        thead: ['class'],
-        ul: ['class'],
-        img: ['src', 'alt'],
-      },
-      allowedTags: [
-        'span',
-        'code',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'p',
-        'b',
-        'i',
-        'em',
-        'strong',
-        'a',
-        'id',
-        'table',
-        'tr',
-        'td',
-        'tbody',
-        'th',
-        'thead',
-        'button',
-        'div',
-        'img',
-        'image',
-        'ol',
-        'ul',
-        'li',
-        'svg',
-        'g',
-        'br',
-        'hr',
-        'summary',
-        'details',
-        'strong',
-      ],
-    })
+    const cleanText = xss(initText, xssOptions)
     return { __html: cleanText }
   }
 
