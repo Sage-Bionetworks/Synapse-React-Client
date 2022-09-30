@@ -26,6 +26,7 @@ import {
   EVALUATION,
   EVALUATION_BY_ID,
   FAVORITES,
+  FORUM_THREAD,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
   REGISTERED_SCHEMA_ID,
@@ -3633,7 +3634,7 @@ export const getForumThread = (
   params.set('ascending', ascending.toString())
   params.set('filter', filter)
 
-  const url = `/repo/v1/forum/${forumId}/threads?${params.toString()}`
+  const url = `${FORUM_THREAD(forumId)}?${params.toString()}`
   return doGet<PaginatedResults<DiscussionThreadBundle>>(
     url,
     accessToken,

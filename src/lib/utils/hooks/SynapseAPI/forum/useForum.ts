@@ -25,7 +25,7 @@ export function useGetForumInfinite(
     PaginatedResults<DiscussionThreadBundle>,
     SynapseClientError
   >(
-    ['forumthread', 'infinite', sort, ascending],
+    ['forumthread', 'infinite', forumId, limit, filter, sort, ascending],
     async context => {
       return SynapseClient.getForumThread(
         accessToken,

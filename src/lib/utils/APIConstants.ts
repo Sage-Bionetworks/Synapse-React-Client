@@ -124,3 +124,6 @@ export const TRASHCAN = `${REPO}/trashcan`
 export const TRASHCAN_VIEW = `${TRASHCAN}/view`
 export const TRASHCAN_RESTORE = (id: string) => `${TRASHCAN}/restore/${id}`
 export const TRASHCAN_PURGE = (id: string) => `${TRASHCAN}/purge/${id}`
+
+export const FORUM = `${REPO}/forum`
+export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`

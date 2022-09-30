@@ -63,6 +63,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                 <span>Topic</span>
                 <SortIcon
                   role="button"
+                  aria-label="Sort by Topic"
                   active={sort === DiscussionThreadOrder.THREAD_TITLE}
                   direction={
                     sort === 'THREAD_TITLE'
@@ -82,6 +83,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                 <span>Replies</span>
                 <SortIcon
                   role="button"
+                  aria-label="Sort by Replies"
                   active={sort === DiscussionThreadOrder.NUMBER_OF_REPLIES}
                   direction={
                     sort === 'NUMBER_OF_REPLIES'
@@ -98,9 +100,10 @@ export const ForumTable: React.FC<ForumTableProps> = ({
             </th>
             <th>
               <span className="SRC-split">
-                <span>View</span>
+                <span>Views</span>
                 <SortIcon
                   role="button"
+                  aria-label="Sort by Views"
                   active={sort === DiscussionThreadOrder.NUMBER_OF_VIEWS}
                   direction={
                     sort === 'NUMBER_OF_VIEWS'
@@ -118,6 +121,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                 <span>Activity</span>
                 <SortIcon
                   role="button"
+                  aria-label="Sort by Last Activity"
                   active={
                     sort === DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY
                   }
@@ -155,9 +159,8 @@ export const ForumTable: React.FC<ForumTableProps> = ({
                 </td>
                 <td>
                   {item.activeAuthors.map(user => (
-                    <div className="avatarContainer">
+                    <div key={user} className="avatarContainer">
                       <UserCard
-                        key={user}
                         showCardOnHover={true}
                         className="ActiveUsers"
                         size={AVATAR}
