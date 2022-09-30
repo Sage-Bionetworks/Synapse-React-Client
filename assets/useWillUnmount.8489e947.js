@@ -1,0 +1,1 @@
+import{r as n}from"./jsx-runtime.05444945.js";function t(r){var e=n.exports.useRef(r);return e.current=r,e}function o(r){var e=t(r);n.exports.useEffect(function(){return function(){return e.current()}},[])}export{o as u};
