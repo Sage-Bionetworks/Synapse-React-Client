@@ -127,3 +127,6 @@ export const TRASHCAN_PURGE = (id: string) => `${TRASHCAN}/purge/${id}`
 
 export const TEAM_MEMBERS = (teamId: string | number) =>
   `${REPO}/teamMembers/${teamId}`
+  
+export const FORUM = `${REPO}/forum`
+export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`

@@ -42,7 +42,7 @@ import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWra
 import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
 import SynapseTable from './containers/table/SynapseTable'
 import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
-import { ProvenanceGraph } from './containers/provenance/ProvenanceGraph'
+import ProvenanceGraph from './containers/provenance/ProvenanceGraph'
 import TableFeedCards from './containers/TableFeedCards'
 import TermsAndConditions from './containers/TermsAndConditions'
 import { displayToast, SynapseToastContainer } from './containers/ToastMessage'

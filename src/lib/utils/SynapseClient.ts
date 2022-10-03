@@ -26,6 +26,7 @@ import {
   EVALUATION,
   EVALUATION_BY_ID,
   FAVORITES,
+  FORUM_THREAD,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
   REGISTERED_SCHEMA_ID,
@@ -151,8 +152,10 @@ import {
   ChangePasswordWithToken,
 } from './synapseTypes/ChangePasswordRequests'
 import {
+  DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionThreadBundle,
+  DiscussionThreadOrder,
 } from './synapseTypes/DiscussionBundle'
 import {
   DiscussionSearchRequest,
@@ -3610,6 +3613,36 @@ export const forumSearch = (
   return doPost<DiscussionSearchResponse>(
     `/repo/v1/forum/${forumId}/search`,
     discussionSearchRequest,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to get N number of threads for a given forum ID.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/GET/forum/forumId/threads.html
+ */
+
+export const getForumThread = (
+  accessToken: string | undefined,
+  forumId: string,
+  offset: number = 0,
+  limit: number = 20,
+  sort: DiscussionThreadOrder = DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
+  ascending: boolean = true,
+  filter: DiscussionFilter = DiscussionFilter.EXCLUDE_DELETED,
+) => {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit?.toString())
+  params.set('sort', sort)
+  params.set('ascending', ascending.toString())
+  params.set('filter', filter)
+
+  const url = `${FORUM_THREAD(forumId)}?${params.toString()}`
+  return doGet<PaginatedResults<DiscussionThreadBundle>>(
+    url,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

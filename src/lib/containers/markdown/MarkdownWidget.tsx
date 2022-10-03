@@ -3,6 +3,9 @@ import MarkdownButton, { ButtonLinkWidgetParams } from './widget/MarkdownButton'
 import MarkdownIDUReport, {
   MarkdownIDUReportProps,
 } from './widget/MarkdownIDUReport'
+import MarkdownProvenanceGraph, {
+  MarkdownProvenanceGraphProps,
+} from './widget/MarkdownProvenanceGraph'
 import MarkdownSynapseImage, {
   ImageWidgetParams,
 } from './widget/MarkdownSynapseImage'
@@ -58,6 +61,11 @@ type SynapseTable = {
   widgetParamsMapped: MarkdownSynapseTableProps
 }
 
+type ProvenanceGraph = {
+  widgetType: 'provenance'
+  widgetParamsMapped: MarkdownProvenanceGraphProps
+}
+
 type MarkdownWidgetDefinition =
   | ButtonLink
   | Image
@@ -67,6 +75,7 @@ type MarkdownWidgetDefinition =
   | IDUReport
   | Video
   | SynapseTable
+  | ProvenanceGraph
 
 export type MarkdownWidgetProps = MarkdownWidgetDefinition & {
   originalMarkup: string
@@ -93,6 +102,8 @@ export default function MarkdownWidget(props: MarkdownWidgetProps) {
       return <MarkdownVideo {...widgetParamsMapped} />
     case 'synapsetable':
       return <MarkdownSynapseTable {...widgetParamsMapped} />
+    case 'provenance':
+      return <MarkdownProvenanceGraph {...widgetParamsMapped} />
     default:
       console.warn(`Unsupported widget: ${widgetType}.`)
       return <></>

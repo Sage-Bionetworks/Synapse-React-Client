@@ -66,3 +66,9 @@ SynapseTable.args = {
   markdown:
     '# Synapse Table\nModify the markdown control to change the parameters\n${synapsetable?query=SELECT %2A FROM syn26302617&showquery=false&tableonly=false}',
 }
+
+export const MarkdownProvenanceGraph = Template.bind({})
+MarkdownProvenanceGraph.args = {
+  markdown:
+    '# Provenance Graphs\nMultiple start nodes\n${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}\nSpecify the entity version\n${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
+}
