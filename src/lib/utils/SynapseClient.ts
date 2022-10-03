@@ -36,6 +36,7 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TEAM_MEMBERS,
   TRASHCAN_PURGE,
   TRASHCAN_RESTORE,
   TRASHCAN_VIEW,
@@ -1224,7 +1225,7 @@ export const getTeamMembers = (
   limit: number = 10,
   offset: number = 0,
 ): Promise<PaginatedResults<TeamMember>> => {
-  const url = `/repo/v1/teamMembers/${teamId}?limit=${limit}&offset=${offset}${
+  const url = `${TEAM_MEMBERS(teamId)}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
@@ -1776,11 +1777,14 @@ export const getFileHandleContentFromID = (
 export const getFileHandleContent = (
   fileHandle: FileHandle,
   presignedUrl: string,
+  maxFileSizeBytes?: number,
 ): Promise<string> => {
   // get the presigned URL, download the data, and send that back (via resolve())
   return new Promise((resolve, reject) => {
-    // sanity check!  must be less than 5MB
-    if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
+    // sanity check!  must be less than 5MB (unless overridden)
+    if (
+      fileHandle.contentSize < (maxFileSizeBytes ?? MAX_JS_FILE_DOWNLOAD_SIZE)
+    ) {
       fetch(presignedUrl, {
         method: 'GET',
         mode: 'cors',
