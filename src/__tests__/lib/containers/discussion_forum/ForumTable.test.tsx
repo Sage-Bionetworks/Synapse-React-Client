@@ -11,11 +11,13 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../lib/utils/functions/getEndpoint'
-import { PaginatedResults } from '../../../../lib/utils/synapseTypes'
+import { Direction, PaginatedResults } from '../../../../lib/utils/synapseTypes'
 import { DiscussionThreadBundle } from '../../../../lib/utils/synapseTypes/DiscussionBundle'
 import {
   SubscriptionObjectType,
+  SubscriptionRequest,
   Topic,
+  SortByType,
 } from '../../../../lib/utils/synapseTypes/Subscription'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
@@ -94,6 +96,13 @@ const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
   },
 ]
 
+const mockSubscriptionRequest: SubscriptionRequest = {
+  objectType: SubscriptionObjectType.FORUM,
+  idList: [MOCK_FORUM_ID],
+  sortByType: SortByType.OBJECT_ID,
+  sortDirection: Direction.ASC,
+}
+
 function renderComponent() {
   render(<ForumTable {...defaultProps} />, {
     wrapper: createWrapper(),
@@ -113,6 +122,14 @@ describe('Forum Table test', () => {
         async (req, res, ctx) => {
           const offset = req.url.searchParams.get('offset') ?? '0'
           return res(ctx.status(200), ctx.json(forumThread[parseInt(offset)]))
+        },
+      ),
+      rest.post(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/subscription/list`,
+        async (req, res, ctx) => {
+          return res(ctx.status(200), ctx.json({ mockSubscriptionRequest }))
         },
       ),
     )
