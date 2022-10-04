@@ -244,6 +244,7 @@ import {
 } from './synapseTypes/CertificationQuiz/Quiz'
 import { GeoData } from '../containers/GoogleMap/GeoData'
 import { TeamMember } from './synapseTypes/TeamMember'
+import { Subscription, Topic } from './synapseTypes/Subscription'
 
 const cookies = new UniversalCookies()
 
@@ -3825,4 +3826,36 @@ export async function getSynapseTeamGeoData(
 ): Promise<GeoData[]> {
   const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
   return await response.json()
+}
+
+/**
+ * This API is used to subscribe to a topic.
+ * Target users: anyone who has READ permission on the object.
+ * https://rest-docs.synapse.org/rest/POST/subscription.html
+ */
+export function postSubscription(
+  accessToken: string | undefined,
+  topic: Topic,
+) {
+  return doPost<Subscription>(
+    '/repo/v1/subscription',
+    topic,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to unsubscribe to a topic.
+ * Target users: Synapse user who created this subscription.
+ */
+export function deleteSubscription(
+  accessToken: string | undefined,
+  subscriptionId: string,
+) {
+  return doDelete(
+    `/repo/v1/subscription/${subscriptionId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }

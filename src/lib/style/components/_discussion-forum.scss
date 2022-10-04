@@ -2,6 +2,11 @@
 @use 'sass:map';
 
 .ForumTable {
+  &__top-level-control {
+    float: right;
+    margin-bottom: 16px;
+  }
+
   thead {
     background-color: map.get(SRC.$colors, 'gray-200');
     th {
