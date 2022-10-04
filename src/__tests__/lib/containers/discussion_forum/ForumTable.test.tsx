@@ -1,6 +1,5 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { createMemoryHistory } from 'history'
 import React from 'react'
 import {
   ForumTable,
@@ -14,6 +13,11 @@ import {
 } from '../../../../lib/utils/functions/getEndpoint'
 import { PaginatedResults } from '../../../../lib/utils/synapseTypes'
 import { DiscussionThreadBundle } from '../../../../lib/utils/synapseTypes/DiscussionBundle'
+import {
+  SubscriptionObjectType,
+  Topic,
+} from '../../../../lib/utils/synapseTypes/Subscription'
+import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
 import {
   mockUserProfileData,
@@ -26,6 +30,14 @@ const defaultProps: ForumTableProps = {
   forumId: MOCK_FORUM_ID,
   limit: 1,
 }
+
+const followRequest: Topic = {
+  objectId: MOCK_FORUM_ID,
+  objectType: 'FORUM' as SubscriptionObjectType,
+}
+
+const SynapseClient = require('../../../../lib/utils/SynapseClient')
+SynapseClient.postSubscription = jest.fn()
 
 const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
   {
@@ -83,11 +95,9 @@ const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
 ]
 
 function renderComponent() {
-  const history = createMemoryHistory()
-  const renderResult = render(<ForumTable {...defaultProps} />, {
+  render(<ForumTable {...defaultProps} />, {
     wrapper: createWrapper(),
   })
-  return { ...renderResult, history }
 }
 
 describe('Forum Table test', () => {
@@ -126,6 +136,17 @@ describe('Forum Table test', () => {
     await screen.findByRole('columnheader', { name: 'Active Users' })
     await screen.findByRole('columnheader', { name: 'Views' })
     await screen.findByRole('columnheader', { name: 'Activity' })
+  })
+
+  it('Has a follow button', async () => {
+    renderComponent()
+
+    const followButton = await screen.findByRole('button', { name: 'Follow' })
+    await userEvent.click(followButton)
+    expect(SynapseClient.postSubscription).toBeCalledWith(
+      MOCK_ACCESS_TOKEN,
+      followRequest,
+    )
   })
 
   it('Loads more when there is more data', async () => {
