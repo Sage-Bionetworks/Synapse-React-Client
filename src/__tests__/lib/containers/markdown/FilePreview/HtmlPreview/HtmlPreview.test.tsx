@@ -10,21 +10,21 @@ import React from 'react'
 import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
   HtmlPreviewProps,
-} from '../../../../../lib/containers/FilePreview/HtmlPreview/HtmlPreview'
-import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
-import { TEAM_ID_MEMBER_ID } from '../../../../../lib/utils/APIConstants'
+} from '../../../../../../lib/containers/FilePreview/HtmlPreview/HtmlPreview'
+import { createWrapper } from '../../../../../../lib/testutils/TestingLibraryUtils'
+import { TEAM_ID_MEMBER_ID } from '../../../../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../../../lib/utils/functions/getEndpoint'
-import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../../../lib/utils/SynapseConstants'
-import { TeamMember } from '../../../../../lib/utils/synapseTypes/TeamMember'
-import { rest, server } from '../../../../../mocks/msw/server'
+} from '../../../../../../lib/utils/functions/getEndpoint'
+import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../../../../lib/utils/SynapseConstants'
+import { TeamMember } from '../../../../../../lib/utils/synapseTypes/TeamMember'
+import { rest, server } from '../../../../../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   MOCK_USER_NAME,
-} from '../../../../../mocks/user/mock_user_profile'
+} from '../../../../../../mocks/user/mock_user_profile'
 
 function renderComponent(props: HtmlPreviewProps) {
   return render(<HtmlPreview {...props} />, { wrapper: createWrapper() })
