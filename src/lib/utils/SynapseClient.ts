@@ -244,7 +244,12 @@ import {
 } from './synapseTypes/CertificationQuiz/Quiz'
 import { GeoData } from '../containers/GoogleMap/GeoData'
 import { TeamMember } from './synapseTypes/TeamMember'
-import { Subscription, Topic } from './synapseTypes/Subscription'
+import {
+  Subscription,
+  SubscriptionPagedResults,
+  SubscriptionRequest,
+  Topic,
+} from './synapseTypes/Subscription'
 
 const cookies = new UniversalCookies()
 
@@ -3829,6 +3834,20 @@ export async function getSynapseTeamGeoData(
 }
 
 /**
+ * This API is used to retrieve a subscription given its ID
+ * Target users: Synapse user who created this subscription.
+ */
+export function getSubscription(
+  accessToken: string | undefined,
+  subscriptionId: string,
+) {
+  return doGet<Subscription>(
+    `/repo/v1/subscription/${subscriptionId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+/**
  * This API is used to subscribe to a topic.
  * Target users: anyone who has READ permission on the object.
  * https://rest-docs.synapse.org/rest/POST/subscription.html
@@ -3855,6 +3874,23 @@ export function deleteSubscription(
 ) {
   return doDelete(
     `/repo/v1/subscription/${subscriptionId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to retrieve subscriptions one has based on a list of provided topics.
+ * These topics must have the same objectType.
+ * Target users: all Synapse users.
+ */
+export function postSubscriptionList(
+  accessToken: string | undefined,
+  request: SubscriptionRequest,
+) {
+  return doPost<SubscriptionPagedResults>(
+    '/repo/v1/subscription/list',
+    request,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

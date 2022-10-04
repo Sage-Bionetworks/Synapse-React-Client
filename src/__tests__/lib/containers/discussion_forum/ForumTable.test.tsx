@@ -33,7 +33,7 @@ const defaultProps: ForumTableProps = {
 
 const followRequest: Topic = {
   objectId: MOCK_FORUM_ID,
-  objectType: 'FORUM' as SubscriptionObjectType,
+  objectType: SubscriptionObjectType.FORUM,
 }
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')

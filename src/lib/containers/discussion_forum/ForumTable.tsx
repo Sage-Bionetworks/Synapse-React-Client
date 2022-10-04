@@ -1,5 +1,5 @@
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
 import { SynapseClient } from '../../utils'
@@ -13,8 +13,10 @@ import {
   DiscussionThreadOrder,
 } from '../../utils/synapseTypes/DiscussionBundle'
 import {
+  SortByType,
   Subscription,
   SubscriptionObjectType,
+  SubscriptionRequest,
   Topic,
 } from '../../utils/synapseTypes/Subscription'
 import IconSvg from '../IconSvg'
@@ -38,6 +40,26 @@ export const ForumTable: React.FC<ForumTableProps> = ({
   )
   const [subscribed, setSubscribed] = useState<Subscription>()
   const [isAscending, setIsAscending] = useState(false)
+
+  async function getSubscribe() {
+    let subscriptionRequest: SubscriptionRequest = {
+      objectType: SubscriptionObjectType.FORUM,
+      idList: [forumId],
+      sortByType: SortByType.OBJECT_ID,
+      sortDirection: Direction.ASC,
+    }
+    let subscriptionList = await SynapseClient.postSubscriptionList(
+      accessToken,
+      subscriptionRequest,
+    )
+    if (subscriptionList.totalNumberOfResults > 0) {
+      let currentSubscription = subscriptionList.results[0]
+      setSubscribed(currentSubscription)
+    }
+  }
+  useEffect(() => {
+    getSubscribe()
+  }, [accessToken])
 
   const { data, hasNextPage, fetchNextPage } = useGetForumInfinite(
     forumId,
@@ -64,7 +86,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
       } else {
         const topic: Topic = {
           objectId: forumId,
-          objectType: 'FORUM' as SubscriptionObjectType,
+          objectType: SubscriptionObjectType.FORUM,
         }
         const follow = await SynapseClient.postSubscription(accessToken, topic)
         setSubscribed(follow)

@@ -1,3 +1,5 @@
+import { SortDirection } from './AccessApproval'
+
 export interface Topic {
   objectId: string
   objectType: SubscriptionObjectType
@@ -16,4 +18,24 @@ export interface Subscription {
   objectId: string
   objectType: SubscriptionObjectType
   createdOn: string
+}
+
+export interface SubscriptionRequest {
+  objectType: SubscriptionObjectType
+  idList: string[]
+  sortByType: SortByType
+  sortDirection: SortDirection
+}
+
+export enum SortByType {
+  SUBSCRIPTION_ID = 'SUBSCRIPTION_ID',
+  SUBSCRIBER_ID = 'SUBSCRIBER_ID',
+  OBJECT_ID = 'OBJECT_ID',
+  OBJECT_TYPE = 'OBJECT_TYPE',
+  CREATED_ON = 'CREATED_ON',
+}
+
+export interface SubscriptionPagedResults {
+  results: Subscription[]
+  totalNumberOfResults: number
 }
