@@ -37,6 +37,7 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TEAM_ID_MEMBER_ID,
   TEAM_MEMBERS,
   TRASHCAN_PURGE,
   TRASHCAN_RESTORE,
@@ -349,7 +350,11 @@ const fetchWithExponentialTimeout = async <TResponse>(
 
   if (response.ok) {
     return responseObject as TResponse
-  } else if (typeof responseObject === 'object' && 'reason' in responseObject) {
+  } else if (
+    responseObject !== null &&
+    typeof responseObject === 'object' &&
+    'reason' in responseObject
+  ) {
     throw new SynapseClientError(
       response.status,
       responseObject.reason,
@@ -1232,6 +1237,22 @@ export const getTeamMembers = (
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Checks if a user is a member of a specific team.
+ *
+ * @returns a TeamMember if the user is a member of the team, or null if the user is not.
+ */
+export const getIsUserMemberOfTeam = (
+  teamId: string,
+  userId: string,
+  accessToken?: string,
+): Promise<TeamMember | null> => {
+  const url = TEAM_ID_MEMBER_ID(teamId, userId)
+  return allowNotFoundError(() =>
+    doGet<TeamMember>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
 }
 
 /**

@@ -12,8 +12,22 @@ export function useGetTeamMembers(
   const { accessToken } = useSynapseContext()
 
   return useQuery<PaginatedResults<TeamMember>, SynapseClientError>(
-    ['teamMembers', teamId],
+    ['team', teamId, 'membersList'],
     () => SynapseClient.getTeamMembers(accessToken, teamId, '', 50, 0),
+    options,
+  )
+}
+
+export function useGetIsUserMemberOfTeam(
+  teamId: string,
+  userId: string,
+  options?: UseQueryOptions<TeamMember | null, SynapseClientError>,
+) {
+  const { accessToken } = useSynapseContext()
+
+  return useQuery<TeamMember | null, SynapseClientError>(
+    ['team', teamId, 'member', userId],
+    () => SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
     options,
   )
 }

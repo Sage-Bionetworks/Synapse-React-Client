@@ -1,31 +1,30 @@
-import React from 'react'
 import {
   render,
-  screen,
   renderHook,
+  screen,
   waitFor,
   within,
 } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import React from 'react'
 import HtmlPreview, {
-  HtmlPreviewProps,
   EXPORTED_FOR_UNIT_TESTING,
+  HtmlPreviewProps,
 } from '../../../../../lib/containers/FilePreview/HtmlPreview/HtmlPreview'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
-import { rest, server } from '../../../../../mocks/msw/server'
+import { TEAM_ID_MEMBER_ID } from '../../../../../lib/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
-import { TEAM_MEMBERS } from '../../../../../lib/utils/APIConstants'
-import { PaginatedResults } from '../../../../../lib/utils/synapseTypes'
+import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../../../lib/utils/SynapseConstants'
 import { TeamMember } from '../../../../../lib/utils/synapseTypes/TeamMember'
+import { rest, server } from '../../../../../mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
   MOCK_USER_NAME,
 } from '../../../../../mocks/user/mock_user_profile'
-import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../../../lib/utils/SynapseConstants'
-import userEvent from '@testing-library/user-event'
 
 function renderComponent(props: HtmlPreviewProps) {
   return render(<HtmlPreview {...props} />, { wrapper: createWrapper() })
@@ -37,28 +36,29 @@ describe('HTML Preview tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     // Configure the team members request to indicate that MOCK_USER_ID is on the trusted users team
-    const results: TeamMember[] = [
-      {
-        teamId: TRUSTED_HTML_USERS_TEAM_ID.toString(),
-        member: {
-          userName: MOCK_USER_NAME,
-          ownerId: MOCK_USER_ID.toString(),
-          isIndividual: true,
-        },
-        isAdmin: false,
+    const htmlTeamMembership: TeamMember = {
+      teamId: TRUSTED_HTML_USERS_TEAM_ID.toString(),
+      member: {
+        userName: MOCK_USER_NAME,
+        ownerId: MOCK_USER_ID.toString(),
+        isIndividual: true,
       },
-    ]
+      isAdmin: false,
+    }
 
     server.use(
       rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TEAM_MEMBERS(
-          TRUSTED_HTML_USERS_TEAM_ID,
-        )}`,
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${TEAM_ID_MEMBER_ID(TRUSTED_HTML_USERS_TEAM_ID, ':userId')}`,
         (req, res, ctx) => {
-          const result: PaginatedResults<TeamMember> = {
-            results: results,
+          let status = 404
+          let result: TeamMember | null = null
+          if (req.params.userId === MOCK_USER_ID.toString()) {
+            status = 200
+            result = htmlTeamMembership
           }
-          return res(ctx.status(200), ctx.json(result))
+          return res(ctx.status(status), ctx.json(result))
         },
       ),
     )
@@ -106,12 +106,9 @@ describe('HTML Preview tests', () => {
   it('Renders the raw HTML if the creator is on the trusted team', async () => {
     const idOfUserOnTrustedTeam = MOCK_USER_ID.toString()
     const rawHtml = "<script>alert('hello')</script>"
-    const fileHandle = {
-      createdBy: idOfUserOnTrustedTeam,
-    }
     const { container } = renderComponent({
       rawHtml,
-      fileHandle,
+      createdByUserId: idOfUserOnTrustedTeam,
     })
 
     let frame: HTMLIFrameElement | null = null
@@ -128,12 +125,9 @@ describe('HTML Preview tests', () => {
     // Use a user ID NOT on the trusted team
     const idOfUserNotOnTrustedTeam = MOCK_USER_ID_2.toString()
     const rawHtml = "<script>alert('hello')</script>"
-    const fileHandle = {
-      createdBy: idOfUserNotOnTrustedTeam,
-    }
     const { container } = renderComponent({
       rawHtml,
-      fileHandle,
+      createdByUserId: idOfUserNotOnTrustedTeam,
     })
 
     let frame: HTMLIFrameElement | null = null
@@ -175,12 +169,9 @@ describe('HTML Preview tests', () => {
     // Use a user ID NOT on the trusted team
     const idOfUserNotOnTrustedTeam = MOCK_USER_ID_2.toString()
     const rawHtml = '<span>no restricted content here</span>'
-    const fileHandle = {
-      createdBy: idOfUserNotOnTrustedTeam,
-    }
     const { container } = renderComponent({
       rawHtml,
-      fileHandle,
+      createdByUserId: idOfUserNotOnTrustedTeam,
     })
 
     let frame: HTMLIFrameElement | null = null

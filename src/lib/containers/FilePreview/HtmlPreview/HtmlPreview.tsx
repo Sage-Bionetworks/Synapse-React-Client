@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react'
 import xss from 'xss'
 import { xssOptions } from '../../../utils/functions/SanitizeHtmlUtils'
-import { useGetTeamMembers } from '../../../utils/hooks/SynapseAPI/team/useTeamMembers'
+import { useGetIsUserMemberOfTeam } from '../../../utils/hooks/SynapseAPI/team/useTeamMembers'
 import { TRUSTED_HTML_USERS_TEAM_ID } from '../../../utils/SynapseConstants'
-import { FileHandle } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
 import { SanitizedWarning } from './SanitizedWarning'
 
@@ -30,7 +29,7 @@ function useCleanHtml(options: {
 }
 
 export type HtmlPreviewProps = {
-  fileHandle: FileHandle
+  createdByUserId: string
   rawHtml: string
 }
 
@@ -40,18 +39,14 @@ export type HtmlPreviewProps = {
  * @returns
  */
 export default function HtmlPreview(props: HtmlPreviewProps) {
-  const { fileHandle, rawHtml } = props
-  const { data: trustedHtmlUsersData, isLoading } = useGetTeamMembers(
+  const { createdByUserId, rawHtml } = props
+
+  const { data: teamMembership, isLoading } = useGetIsUserMemberOfTeam(
     TRUSTED_HTML_USERS_TEAM_ID,
+    createdByUserId,
   )
 
-  const trustedHtmlUserIds = (trustedHtmlUsersData?.results ?? []).map(
-    member => member.member.ownerId,
-  )
-
-  const htmlIsCreatedByTrustedUser = trustedHtmlUserIds.includes(
-    fileHandle.createdBy,
-  )
+  const htmlIsCreatedByTrustedUser = !!teamMembership
 
   const cleanHtml = useCleanHtml({
     rawHtml,
