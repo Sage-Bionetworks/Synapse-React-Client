@@ -25,6 +25,7 @@ export const WikiPage = Template.bind({})
 WikiPage.args = {
   ownerId: 'syn12666371',
   wikiId: '585317',
+  loadingSkeletonRowCount: 20,
 }
 
 export const ImageDemo = Template.bind({})

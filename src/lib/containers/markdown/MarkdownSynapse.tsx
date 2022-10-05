@@ -17,6 +17,7 @@ import {
   SynapseWikiContextType,
 } from './SynapseWikiContext'
 import Bookmarks from './widget/Bookmarks'
+import { SkeletonTable } from '../../assets/skeletons/SkeletonTable'
 
 declare const katex: any
 declare const markdownitSynapse: any
@@ -40,6 +41,7 @@ export type MarkdownSynapseProps = {
   markdown?: string
   renderInline?: boolean
   objectType?: ObjectType
+  loadingSkeletonRowCount?: number
   onMarkdownProcessingDone?: (ref: HTMLInputElement | null) => void
 }
 const md = markdownit({ html: true })
@@ -518,7 +520,7 @@ export default class MarkdownSynapse extends React.Component<
   }
 
   public render() {
-    const { renderInline } = this.props
+    const { renderInline, loadingSkeletonRowCount } = this.props
     const { isLoading, error } = this.state
 
     const wikiContext: SynapseWikiContextType = {
@@ -534,7 +536,15 @@ export default class MarkdownSynapse extends React.Component<
     const bookmarks = this.addBookmarks()
     const content = (
       <SynapseWikiContextProvider wikiContext={wikiContext}>
-        {isLoading && <span className="spinner" />}
+        {isLoading && (
+          <>
+            {loadingSkeletonRowCount ? (
+              <SkeletonTable numCols={1} numRows={loadingSkeletonRowCount} />
+            ) : (
+              <span className="spinner" />
+            )}
+          </>
+        )}
         {this.renderMarkdown()}
         {bookmarks && <div>{this.addBookmarks()}</div>}
       </SynapseWikiContextProvider>
