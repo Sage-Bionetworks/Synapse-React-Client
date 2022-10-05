@@ -125,5 +125,13 @@ export const TRASHCAN_VIEW = `${TRASHCAN}/view`
 export const TRASHCAN_RESTORE = (id: string) => `${TRASHCAN}/restore/${id}`
 export const TRASHCAN_PURGE = (id: string) => `${TRASHCAN}/purge/${id}`
 
+export const TEAM = (teamId: string | number) => `${REPO}/team/${teamId}`
+export const TEAM_ID_MEMBER_ID = (
+  teamId: string | number,
+  memberId: string | number,
+) => TEAM(teamId) + `/member/${memberId}`
+export const TEAM_MEMBERS = (teamId: string | number) =>
+  `${REPO}/teamMembers/${teamId}`
+
 export const FORUM = `${REPO}/forum`
 export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`

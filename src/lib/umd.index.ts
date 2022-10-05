@@ -53,6 +53,7 @@ import {
 
 // Also include scss in the bundle
 import './style/main.scss'
+import HtmlPreview from './containers/FilePreview/HtmlPreview/HtmlPreview'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -107,6 +108,7 @@ const SynapseComponents = {
   TrashCanList,
   OAuthManagement,
   CertificationQuiz,
+  HtmlPreview,
 }
 
 // Include the version in the build
