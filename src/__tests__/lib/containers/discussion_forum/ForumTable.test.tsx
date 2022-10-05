@@ -11,13 +11,12 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../../lib/utils/functions/getEndpoint'
-import { Direction, PaginatedResults } from '../../../../lib/utils/synapseTypes'
+import { PaginatedResults } from '../../../../lib/utils/synapseTypes'
 import { DiscussionThreadBundle } from '../../../../lib/utils/synapseTypes/DiscussionBundle'
 import {
   SubscriptionObjectType,
-  SubscriptionRequest,
   Topic,
-  SortByType,
+  SubscriptionPagedResults,
 } from '../../../../lib/utils/synapseTypes/Subscription'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
@@ -27,6 +26,7 @@ import {
 } from '../../../../mocks/user/mock_user_profile'
 
 const MOCK_FORUM_ID = 'syn123'
+const MOCK_SUBSCRIPTION_ID = '123'
 
 const defaultProps: ForumTableProps = {
   forumId: MOCK_FORUM_ID,
@@ -40,7 +40,7 @@ const followRequest: Topic = {
 
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 SynapseClient.postSubscription = jest.fn()
-
+SynapseClient.deleteSubscription = jest.fn()
 const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
   {
     totalNumberOfResults: 2,
@@ -96,11 +96,17 @@ const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
   },
 ]
 
-const mockSubscriptionRequest: SubscriptionRequest = {
-  objectType: SubscriptionObjectType.FORUM,
-  idList: [MOCK_FORUM_ID],
-  sortByType: SortByType.OBJECT_ID,
-  sortDirection: Direction.ASC,
+const mockSubscriptionPagedResult: SubscriptionPagedResults = {
+  results: [
+    {
+      subscriptionId: MOCK_SUBSCRIPTION_ID,
+      subscriberId: 'syn123',
+      objectId: MOCK_FORUM_ID,
+      objectType: SubscriptionObjectType.FORUM,
+      createdOn: '2022-09-29',
+    },
+  ],
+  totalNumberOfResults: 1,
 }
 
 function renderComponent() {
@@ -129,7 +135,7 @@ describe('Forum Table test', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/subscription/list`,
         async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json({ mockSubscriptionRequest }))
+          return res(ctx.status(200), ctx.json(mockSubscriptionPagedResult))
         },
       ),
     )
@@ -158,12 +164,26 @@ describe('Forum Table test', () => {
   it('Has a follow button', async () => {
     renderComponent()
 
+    // Find follow button
     const followButton = await screen.findByRole('button', { name: 'Follow' })
     await userEvent.click(followButton)
+
     expect(SynapseClient.postSubscription).toBeCalledWith(
       MOCK_ACCESS_TOKEN,
       followRequest,
     )
+
+    // When following the follow button should show Unfollow
+    const unFollowButton = await screen.findByRole('button', {
+      name: 'Unfollow',
+    })
+    await userEvent.click(unFollowButton)
+
+    expect(SynapseClient.deleteSubscription).toBeCalledWith(
+      MOCK_ACCESS_TOKEN,
+      MOCK_SUBSCRIPTION_ID,
+    )
+    await screen.findByRole('button', { name: 'Follow' })
   })
 
   it('Loads more when there is more data', async () => {
