@@ -92,6 +92,14 @@ FileView.args = {
         URLColumnName: 'Study_Name',
         wrapValueWithParens: true,
       },
+      {
+        matchColumnName: 'name',
+        isMarkdown: false,
+        baseURL: 'Explore/Files/DetailsPage',
+        URLColumnName: 'FileId',
+        overrideValueWithRowID: true,
+        wrapValueWithParens: false,
+      },
     ],
   },
   searchConfiguration: {
