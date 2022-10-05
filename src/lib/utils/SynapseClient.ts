@@ -1780,14 +1780,11 @@ export const getFileHandleContentFromID = (
 export const getFileHandleContent = (
   fileHandle: FileHandle,
   presignedUrl: string,
-  maxFileSizeBytes?: number,
 ): Promise<string> => {
   // get the presigned URL, download the data, and send that back (via resolve())
   return new Promise((resolve, reject) => {
-    // sanity check!  must be less than 5MB (unless overridden)
-    if (
-      fileHandle.contentSize < (maxFileSizeBytes ?? MAX_JS_FILE_DOWNLOAD_SIZE)
-    ) {
+    // sanity check!  must be less than 5MB
+    if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
       fetch(presignedUrl, {
         method: 'GET',
         mode: 'cors',
