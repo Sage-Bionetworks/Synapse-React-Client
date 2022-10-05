@@ -108,6 +108,26 @@ const bundle: EntityBundle = {
   entity: mockDatasetEntity,
   entityType: EntityType.DATASET,
   path: path,
+  permissions: {
+    canView: true,
+    canEdit: true,
+    canMove: true,
+    canAddChild: true,
+    canCertifiedUserEdit: true,
+    canCertifiedUserAddChild: true,
+    isCertifiedUser: true,
+    canChangePermissions: true,
+    canChangeSettings: true,
+    canDelete: true,
+    canDownload: true,
+    canUpload: true,
+    canEnableInheritance: true,
+    ownerPrincipalId: 3350396,
+    canPublicRead: true,
+    canModerate: true,
+    isCertificationRequired: true,
+    isEntityOpenData: false,
+  },
 }
 
 const mockDatasetData: MockEntityData<Dataset> = {

@@ -1105,13 +1105,13 @@ export const deleteEntity = (
   )
 }
 
-export const getEntityBundleV2 = (
+export const getEntityBundleV2 = <T extends EntityBundleRequest>(
   entityId: string | number,
-  requestObject: EntityBundleRequest,
+  requestObject: T,
   version?: number,
   accessToken?: string,
-): Promise<EntityBundle> => {
-  return doPost<EntityBundle>(
+): Promise<EntityBundle<T>> => {
+  return doPost<EntityBundle<T>>(
     ENTITY_BUNDLE_V2(entityId, version),
     requestObject,
     accessToken,

@@ -51,16 +51,11 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   const [isInEditMode, setIsInEditMode] = useState(false)
   const [hasClickedCancel, setHasClickedCancel] = useState(false)
 
-  const { data: entityBundle } = useGetEntityBundle(
-    entityId,
-    undefined,
-    versionNumber,
-  )
-
-  const canEdit = entityBundle && entityBundle.permissions?.canEdit
+  const { data: entityBundle } = useGetEntityBundle(entityId, versionNumber)
+  const canEdit = entityBundle && entityBundle.permissions.canEdit
 
   const isVersionable =
-    entityBundle && isVersionableEntityType(entityBundle.entityType!)
+    entityBundle && isVersionableEntityType(entityBundle.entityType)
 
   const isLatestVersion =
     isVersionable && (entityBundle.entity as VersionableEntity).isLatestVersion!
@@ -75,7 +70,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
     if (!window.location.href.includes(entityId)) {
       primaryAction = {
         skeleton: false,
-        copy: `Open ${entityTypeToFriendlyName(entityBundle.entityType!)}`,
+        copy: `Open ${entityTypeToFriendlyName(entityBundle.entityType)}`,
         onClick: () =>
           window.open(
             `${getEndpoint(
@@ -140,7 +135,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         className={`EntityMetadata ${isInEditMode ? 'isInEditMode' : ''}`}
         title={
           entityBundle ? (
-            <Modal.Title>{entityBundle.entity!.name}</Modal.Title>
+            <Modal.Title>{entityBundle.entity.name}</Modal.Title>
           ) : (
             <Skeleton width={'40%'} />
           )

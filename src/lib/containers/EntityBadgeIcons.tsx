@@ -20,6 +20,7 @@ import {
   ANONYMOUS_PRINCIPAL_ID,
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
+  ALL_ENTITY_BUNDLE_FIELDS,
 } from '../utils/SynapseConstants'
 import { useSynapseContext } from '../utils/SynapseContext'
 import { EntityBundle, EntityType } from '../utils/synapseTypes'
@@ -27,8 +28,8 @@ import { EntityModal, EntityModalTabs } from './entity/metadata/EntityModal'
 import WarningModal from './synapse_form_wrapper/WarningModal'
 import Tooltip from '../utils/tooltip/Tooltip'
 
-const isPublic = (bundle: EntityBundle): boolean => {
-  return bundle.benefactorAcl!.resourceAccess.some(ra => {
+function isPublic(bundle: EntityBundle): boolean {
+  return bundle.benefactorAcl.resourceAccess.some(ra => {
     return (
       ra.principalId === AUTHENTICATED_PRINCIPAL_ID ||
       ra.principalId === PUBLIC_PRINCIPAL_ID ||
@@ -109,8 +110,8 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
 
   const { data: bundle } = useGetEntityBundle(
     entityId,
-    undefined,
     versionNumber,
+    ALL_ENTITY_BUNDLE_FIELDS,
     {
       enabled: inView,
       staleTime: 60 * 1000, // 60 seconds
@@ -268,7 +269,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
           ) : null}
           {showHasLocalSharingSettings &&
           bundle.benefactorAcl &&
-          entityId === bundle.benefactorAcl!.id ? (
+          entityId === bundle.benefactorAcl.id ? (
             <Tooltip
               title="Sharing Settings have been set"
               enterNextDelay={100}
