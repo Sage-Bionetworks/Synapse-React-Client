@@ -29,6 +29,23 @@ export type ForumTableProps = {
   filter?: DiscussionFilter
 }
 
+async function getSubscribe(accessToken: string | undefined, objectId: string) {
+  const subscriptionRequest: SubscriptionRequest = {
+    objectType: SubscriptionObjectType.FORUM,
+    idList: [objectId],
+    sortByType: SortByType.OBJECT_ID,
+    sortDirection: Direction.ASC,
+  }
+  const subscriptionList = await SynapseClient.postSubscriptionList(
+    accessToken,
+    subscriptionRequest,
+  )
+  if (subscriptionList.totalNumberOfResults > 0) {
+    return subscriptionList.results[0]
+  }
+  return
+}
+
 export const ForumTable: React.FC<ForumTableProps> = ({
   forumId,
   limit,
@@ -40,26 +57,11 @@ export const ForumTable: React.FC<ForumTableProps> = ({
   )
   const [subscribed, setSubscribed] = useState<Subscription>()
   const [isAscending, setIsAscending] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  async function getSubscribe() {
-    let subscriptionRequest: SubscriptionRequest = {
-      objectType: SubscriptionObjectType.FORUM,
-      idList: [forumId],
-      sortByType: SortByType.OBJECT_ID,
-      sortDirection: Direction.ASC,
-    }
-    let subscriptionList = await SynapseClient.postSubscriptionList(
-      accessToken,
-      subscriptionRequest,
-    )
-    if (subscriptionList.totalNumberOfResults > 0) {
-      let currentSubscription = subscriptionList.results[0]
-      setSubscribed(currentSubscription)
-    }
-  }
   useEffect(() => {
-    getSubscribe()
-  }, [accessToken])
+    getSubscribe(accessToken, forumId).then(result => setSubscribed(result))
+  }, [accessToken, forumId])
 
   const { data, hasNextPage, fetchNextPage } = useGetForumInfinite(
     forumId,
@@ -77,6 +79,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
 
   const handleFollowBtn = async () => {
     try {
+      setIsLoading(true)
       if (subscribed) {
         await SynapseClient.deleteSubscription(
           accessToken,
@@ -93,6 +96,8 @@ export const ForumTable: React.FC<ForumTableProps> = ({
       }
     } catch (err: any) {
       displayToast(err.reason as string, 'danger')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -112,6 +117,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
         <Button
           variant={subscribed ? 'outline-primary' : 'primary'}
           onClick={() => handleFollowBtn()}
+          disabled={isLoading}
         >
           {subscribed ? 'Unfollow' : 'Follow'}
         </Button>
