@@ -86,6 +86,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
         isHeader={false}
         labelLink={columnLinkConfig}
         rowData={rowData}
+        rowId={rowId}
       />
     )
   }
