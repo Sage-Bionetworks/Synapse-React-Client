@@ -1,15 +1,16 @@
 import {
   ExternalFileHandle,
-  ExternalFileHandleConcreteTypeEnum,
   ExternalObjectStoreFileHandle,
   FileHandle,
   ProxyFileHandle,
-} from '../synapseTypes'
-import {
-  CloudProviderFileHandleConcreteTypeEnum,
   GoogleCloudFileHandle,
   S3FileHandle,
-} from '../synapseTypes/CloudProviderFileHandle'
+  PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+} from '../synapseTypes'
 
 /**
  * Gets the friendly name of a bucket/storage location using the file handle.
@@ -19,19 +20,19 @@ import {
  */
 export function getLocationName(fileHandle: FileHandle) {
   switch (fileHandle.concreteType) {
-    case ExternalFileHandleConcreteTypeEnum.ProxyFileHandle:
+    case PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ProxyFileHandle).filePath
-    case ExternalFileHandleConcreteTypeEnum.ExternalObjectStoreFileHandle:
+    case EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ExternalObjectStoreFileHandle).bucket
-    case ExternalFileHandleConcreteTypeEnum.ExternalFileHandle:
+    case EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return (fileHandle as ExternalFileHandle).externalURL
-    case CloudProviderFileHandleConcreteTypeEnum.S3FileHandle:
+    case S3_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       if ((fileHandle as S3FileHandle).storageLocationId === 1) {
         return 'Synapse Storage'
       } else {
         return `s3://${(fileHandle as S3FileHandle).bucketName}`
       }
-    case CloudProviderFileHandleConcreteTypeEnum.GoogleCloudFileHandle:
+    case GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE:
       return `gs://${(fileHandle as GoogleCloudFileHandle).bucketName}`
     default:
       throw new Error(

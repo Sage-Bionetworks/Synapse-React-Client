@@ -2,6 +2,7 @@
 export type UserEntityPermissions = {
   canView: boolean
   canEdit: boolean
+  canMove: boolean
   canAddChild: boolean
   canCertifiedUserEdit: boolean
   canCertifiedUserAddChild: boolean
@@ -16,4 +17,5 @@ export type UserEntityPermissions = {
   canPublicRead: boolean
   canModerate: boolean
   isCertificationRequired: boolean
+  isEntityOpenData: boolean
 }

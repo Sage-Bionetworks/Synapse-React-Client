@@ -43,7 +43,7 @@ import { OAuthManagement } from './containers/oauth/OAuthManagement'
 import UserCard from './containers/UserCard'
 import UserProfileLinks from './containers/user_profile_links/UserProfileLinks'
 import CertificationQuiz from './containers/CertificationQuiz'
-import { ProvenanceGraph } from './containers/provenance/ProvenanceGraph'
+import ProvenanceGraph from './containers/provenance/ProvenanceGraph'
 import { SynapseClient, SynapseConstants } from './utils'
 import {
   SynapseContextConsumer,
@@ -53,6 +53,7 @@ import {
 
 // Also include scss in the bundle
 import './style/main.scss'
+import HtmlPreview from './containers/FilePreview/HtmlPreview/HtmlPreview'
 
 const SynapseContext = {
   SynapseContextProvider,
@@ -107,6 +108,7 @@ const SynapseComponents = {
   TrashCanList,
   OAuthManagement,
   CertificationQuiz,
+  HtmlPreview,
 }
 
 // Include the version in the build

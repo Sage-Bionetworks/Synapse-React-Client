@@ -1,8 +1,9 @@
-// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileHandle.html
+import { CLOUD_PROVIDER_FILE_HANDLE_INTERFACE_CONCRETE_TYPE } from './CloudProviderFileHandle'
+import { EXTERNAL_FILE_HANDLE_INTERFACE_CONCRETE_TYPE } from './ExternalFileHandleInterface'
 
-import { CloudProviderFileHandleConcreteTypeEnum } from './CloudProviderFileHandle'
-import { ExternalFileHandleConcreteTypeEnum } from './ExternalFileHandleInterface'
-
+/**
+ * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/FileHandle.html
+ */
 export interface FileHandle {
   /** The ID of this FileHandle. All references to this FileHandle will use this ID. Synapse will generate this ID when the FileHandle is created. */
   id: string
@@ -14,8 +15,8 @@ export interface FileHandle {
   createdOn: string
   /** This is used to indicate the implementation of this interface. For example, an S3FileHandle should be set to: org.sagebionetworks.repo.model.file.S3FileHandle */
   readonly concreteType:
-    | ExternalFileHandleConcreteTypeEnum
-    | CloudProviderFileHandleConcreteTypeEnum
+    | EXTERNAL_FILE_HANDLE_INTERFACE_CONCRETE_TYPE
+    | CLOUD_PROVIDER_FILE_HANDLE_INTERFACE_CONCRETE_TYPE
   /** Must be: http://en.wikipedia.org/wiki/Internet_media_type */
   contentType: string
   /** The file's content MD5. */

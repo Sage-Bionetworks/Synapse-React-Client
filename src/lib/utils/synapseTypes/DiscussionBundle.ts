@@ -31,3 +31,16 @@ export type DiscussionThreadBundle = {
   isDeleted: boolean
   isPinned: boolean
 }
+
+export enum DiscussionThreadOrder {
+  NUMBER_OF_REPLIES = 'NUMBER_OF_REPLIES',
+  NUMBER_OF_VIEWS = 'NUMBER_OF_VIEWS',
+  PINNED_AND_LAST_ACTIVITY = 'PINNED_AND_LAST_ACTIVITY',
+  THREAD_TITLE = 'THREAD_TITLE',
+}
+
+export enum DiscussionFilter {
+  NO_FILTER = 'NO_FILTER',
+  DELETED_ONLY = 'DELETED_ONLY',
+  EXCLUDE_DELETED = 'EXCLUDE_DELETED',
+}

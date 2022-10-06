@@ -31,20 +31,17 @@ export const ClientError = (props: { error: SynapseClientError }) => {
     issuePriority: '3',
   })
 
-  return (
-    <>
-      {loginError && (
-        <>
-          Please <SignInButton /> to view this resource.
-        </>
-      )}
-      {accessDenied && <>You are not authorized to access this resource.</>}
-      {
-        // if we don't have a friendly error message then show the error
-        !accessDenied && !loginError && <>{error.reason}</>
-      }
-    </>
-  )
+  if (loginError) {
+    return (
+      <>
+        Please <SignInButton /> to view this resource.
+      </>
+    )
+  } else if (accessDenied) {
+    return <>You are not authorized to access this resource.</>
+  } else {
+    return <>{error.reason}</>
+  }
 }
 
 export const ErrorBanner = (props: ErrorBannerProps) => {
@@ -92,7 +89,7 @@ export const ErrorFallbackComponent: React.FunctionComponent<FallbackProps> = ({
   resetErrorBoundary,
 }) => {
   return (
-    <div role="alert" className="bootstrap-4-backport SRC-marginBottomTop">
+    <div className="bootstrap-4-backport SRC-marginBottomTop">
       <ErrorBanner
         error={error}
         reloadButtonFn={resetErrorBoundary}

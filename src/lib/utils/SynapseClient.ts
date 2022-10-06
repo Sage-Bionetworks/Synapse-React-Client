@@ -26,6 +26,7 @@ import {
   EVALUATION,
   EVALUATION_BY_ID,
   FAVORITES,
+  FORUM_THREAD,
   NOTIFICATION_EMAIL,
   PROFILE_IMAGE_PREVIEW,
   REGISTERED_SCHEMA_ID,
@@ -36,6 +37,8 @@ import {
   SIGN_TERMS_OF_USE,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  TEAM_ID_MEMBER_ID,
+  TEAM_MEMBERS,
   TRASHCAN_PURGE,
   TRASHCAN_RESTORE,
   TRASHCAN_VIEW,
@@ -150,8 +153,10 @@ import {
   ChangePasswordWithToken,
 } from './synapseTypes/ChangePasswordRequests'
 import {
+  DiscussionFilter,
   DiscussionReplyBundle,
   DiscussionThreadBundle,
+  DiscussionThreadOrder,
 } from './synapseTypes/DiscussionBundle'
 import {
   DiscussionSearchRequest,
@@ -240,6 +245,14 @@ import {
   QuizResponse,
 } from './synapseTypes/CertificationQuiz/Quiz'
 import { GeoData } from '../containers/GoogleMap/GeoData'
+import { TeamMember } from './synapseTypes/TeamMember'
+import {
+  Subscription,
+  SubscriptionPagedResults,
+  SubscriptionRequest,
+  Topic,
+} from './synapseTypes/Subscription'
+import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
 
 const cookies = new UniversalCookies()
 
@@ -344,7 +357,11 @@ const fetchWithExponentialTimeout = async <TResponse>(
 
   if (response.ok) {
     return responseObject as TResponse
-  } else if (typeof responseObject === 'object' && 'reason' in responseObject) {
+  } else if (
+    responseObject !== null &&
+    typeof responseObject === 'object' &&
+    'reason' in responseObject
+  ) {
     throw new SynapseClientError(
       response.status,
       responseObject.reason,
@@ -1013,7 +1030,7 @@ export const getBulkFiles = async (
 export const getEntity = <T extends Entity>(
   accessToken: string | undefined = undefined,
   entityId: string,
-  versionNumber?: string,
+  versionNumber?: string | number,
 ) => {
   if (entityId.indexOf('.') > -1) {
     // PORTALS-1943: we were given an entity Id with a version!
@@ -1101,13 +1118,13 @@ export const deleteEntity = (
   )
 }
 
-export const getEntityBundleV2 = (
+export const getEntityBundleV2 = <T extends EntityBundleRequest>(
   entityId: string | number,
-  requestObject: EntityBundleRequest,
+  requestObject: T,
   version?: number,
   accessToken?: string,
-): Promise<EntityBundle> => {
-  return doPost<EntityBundle>(
+): Promise<EntityBundle<T>> => {
+  return doPost<EntityBundle<T>>(
     ENTITY_BUNDLE_V2(entityId, version),
     requestObject,
     accessToken,
@@ -1208,7 +1225,7 @@ export const getUserTeamList = (
 }
 
 /**
- * Get the user's list of teams they are on
+ * Get a list of members for a team
  *
  * @param {*} id ownerID of the synapse user see -https://rest-docs.synapse.org/rest/GET/teamMembers/id.html
  * @param {*} fragment (optional) a prefix of the user's first or last name or email address (optional)
@@ -1216,17 +1233,33 @@ export const getUserTeamList = (
  * @param {*} offset   (optional) the starting index of the returned results (default 0)
  *
  */
-export const getTeamList = (
+export const getTeamMembers = (
   accessToken: string | undefined,
-  id: string | number,
+  teamId: string | number,
   fragment: string = '',
   limit: number = 10,
   offset: number = 0,
-) => {
-  const url = `/repo/v1/teamMembers/${id}?limit=${limit}&offset=${offset}${
+): Promise<PaginatedResults<TeamMember>> => {
+  const url = `${TEAM_MEMBERS(teamId)}?limit=${limit}&offset=${offset}${
     fragment ? `&fragment=${fragment}` : ''
   }`
   return doGet(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT)
+}
+
+/**
+ * Checks if a user is a member of a specific team.
+ *
+ * @returns a TeamMember if the user is a member of the team, or null if the user is not.
+ */
+export const getIsUserMemberOfTeam = (
+  teamId: string,
+  userId: string,
+  accessToken?: string,
+): Promise<TeamMember | null> => {
+  const url = TEAM_ID_MEMBER_ID(teamId, userId)
+  return allowNotFoundError(() =>
+    doGet<TeamMember>(url, accessToken, BackendDestinationEnum.REPO_ENDPOINT),
+  )
 }
 
 /**
@@ -1775,11 +1808,12 @@ export const getFileHandleContentFromID = (
 export const getFileHandleContent = (
   fileHandle: FileHandle,
   presignedUrl: string,
+  maxFileSizeBytes: number = MAX_JS_FILE_DOWNLOAD_SIZE,
 ): Promise<string> => {
   // get the presigned URL, download the data, and send that back (via resolve())
   return new Promise((resolve, reject) => {
-    // sanity check!  must be less than 5MB
-    if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
+    // sanity check!  must be less than 5MB (unless overridden)
+    if (fileHandle.contentSize < maxFileSizeBytes) {
       fetch(presignedUrl, {
         method: 'GET',
         mode: 'cors',
@@ -1794,7 +1828,13 @@ export const getFileHandleContent = (
         })
       })
     } else {
-      reject('File size exceeds max (5MB)')
+      reject(
+        `File size (${calculateFriendlyFileSize(
+          fileHandle.contentSize,
+        )}) exceeds the maximum size that can be downloaded (${calculateFriendlyFileSize(
+          maxFileSizeBytes,
+        )})`,
+      )
     }
   })
 }
@@ -3611,6 +3651,36 @@ export const forumSearch = (
 }
 
 /**
+ * This API is used to get N number of threads for a given forum ID.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/GET/forum/forumId/threads.html
+ */
+
+export const getForumThread = (
+  accessToken: string | undefined,
+  forumId: string,
+  offset: number = 0,
+  limit: number = 20,
+  sort: DiscussionThreadOrder = DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
+  ascending: boolean = true,
+  filter: DiscussionFilter = DiscussionFilter.EXCLUDE_DELETED,
+) => {
+  const params = new URLSearchParams()
+  params.set('offset', offset.toString())
+  params.set('limit', limit?.toString())
+  params.set('sort', sort)
+  params.set('ascending', ascending.toString())
+  params.set('filter', filter)
+
+  const url = `${FORUM_THREAD(forumId)}?${params.toString()}`
+  return doGet<PaginatedResults<DiscussionThreadBundle>>(
+    url,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
  * Search through the history of access approvals filtering by accessor/submitter
  * and optional by access requirement id. The caller must be a member of the ACT.
  * https://rest-docs.synapse.org/rest/POST/accessApproval/search.html
@@ -3791,4 +3861,67 @@ export async function getSynapseTeamGeoData(
 ): Promise<GeoData[]> {
   const response = await fetch(`${S3_GEODATA_ENDPOINT}${teamId}.json`)
   return await response.json()
+}
+
+/**
+ * This API is used to retrieve a subscription given its ID
+ * Target users: Synapse user who created this subscription.
+ */
+export function getSubscription(
+  accessToken: string | undefined,
+  subscriptionId: string,
+) {
+  return doGet<Subscription>(
+    `/repo/v1/subscription/${subscriptionId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+/**
+ * This API is used to subscribe to a topic.
+ * Target users: anyone who has READ permission on the object.
+ * https://rest-docs.synapse.org/rest/POST/subscription.html
+ */
+export function postSubscription(
+  accessToken: string | undefined,
+  topic: Topic,
+) {
+  return doPost<Subscription>(
+    '/repo/v1/subscription',
+    topic,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to unsubscribe to a topic.
+ * Target users: Synapse user who created this subscription.
+ */
+export function deleteSubscription(
+  accessToken: string | undefined,
+  subscriptionId: string,
+) {
+  return doDelete(
+    `/repo/v1/subscription/${subscriptionId}`,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * This API is used to retrieve subscriptions one has based on a list of provided topics.
+ * These topics must have the same objectType.
+ * Target users: all Synapse users.
+ */
+export function postSubscriptionList(
+  accessToken: string | undefined,
+  request: SubscriptionRequest,
+) {
+  return doPost<SubscriptionPagedResults>(
+    '/repo/v1/subscription/list',
+    request,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
 }

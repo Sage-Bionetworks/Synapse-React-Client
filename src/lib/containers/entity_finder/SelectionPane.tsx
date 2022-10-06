@@ -66,7 +66,6 @@ const EntityPathDisplay: React.FunctionComponent<{
 }> = ({ entity, toggleSelection }) => {
   const { data: bundle } = useGetEntityBundle(
     entity.targetId,
-    undefined,
     entity.targetVersionNumber,
   )
 
@@ -99,7 +98,7 @@ const EntityPathDisplay: React.FunctionComponent<{
   return (
     <div className="EntityFinderSelectionPane__Row">
       {bundle && (
-        <EntityTypeIcon className="EntityIcon" type={bundle.entityType!} />
+        <EntityTypeIcon className="EntityIcon" type={bundle.entityType} />
       )}
       <Tooltip
         title={`${fullPath}/${entityName}`}

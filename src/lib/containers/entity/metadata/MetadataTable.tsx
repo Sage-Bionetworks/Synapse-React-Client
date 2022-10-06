@@ -20,20 +20,15 @@ export const MetadataTable = ({
   entityId,
   versionNumber,
 }: MetadataTableProps) => {
-  const { data: entityBundle } = useGetEntityBundle(
-    entityId,
-    undefined,
-    versionNumber,
-  )
+  const { data: entityBundle } = useGetEntityBundle(entityId, versionNumber)
 
-  const isVersionable =
-    entityBundle && isVersionableEntity(entityBundle.entity!)
+  const isVersionable = entityBundle && isVersionableEntity(entityBundle.entity)
 
   const [fileLocationName, setFileLocationName] = useState<string>()
 
   useEffect(() => {
     if (entityBundle?.entityType === EntityType.FILE) {
-      const dataFileHandle = entityBundle.fileHandles?.filter(
+      const dataFileHandle = entityBundle.fileHandles.filter(
         fh => fh.id === (entityBundle.entity as FileEntity).dataFileHandleId,
       )[0]
 
@@ -55,7 +50,7 @@ export const MetadataTable = ({
         <tr className="MetadataTable__Row">
           <td className="MetadataTable__Row__Key">Type</td>
           <td className="MetadataTable__Row__Value">
-            {entityTypeToFriendlyName(entityBundle.entityType!)}
+            {entityTypeToFriendlyName(entityBundle.entityType)}
           </td>
         </tr>
         <tr className="MetadataTable__Row">
@@ -68,7 +63,7 @@ export const MetadataTable = ({
           <tr className="MetadataTable__Row">
             <td className="MetadataTable__Row__Key">Version</td>
             <td className="MetadataTable__Row__Value">
-              {getVersionDisplay(entityBundle.entity!)}
+              {getVersionDisplay(entityBundle.entity)}
             </td>
           </tr>
         )}

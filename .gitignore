@@ -30,7 +30,7 @@ jsconfig.json
 
 # webstorm specific
 .idea
-.iml
+*.iml
 
 #rollup
 .rpt2_cache

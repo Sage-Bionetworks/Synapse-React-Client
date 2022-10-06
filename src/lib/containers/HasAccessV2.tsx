@@ -109,13 +109,14 @@ export function useGetFileHandleDownloadType(
     React.useState<FileHandleDownloadTypeEnum>()
 
   const { accessToken } = useSynapseContext()
+  const parsedVersionNumber = parseInt(entityVersionNumber ?? '')
   const { data: entityBundle, error: entityFetchError } = useGetEntityBundle(
     entityId,
+    Number.isNaN(parsedVersionNumber) ? undefined : parsedVersionNumber,
     {
       includeEntity: true,
       includePermissions: true,
     },
-    parseInt(entityVersionNumber ?? ''),
   )
 
   const restrictionInformationRequest: RestrictionInformationRequest =

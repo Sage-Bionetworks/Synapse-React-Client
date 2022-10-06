@@ -77,6 +77,7 @@ export type GenericCardProps = {
   schema: Record<string, number>
   // Row values
   data: string[]
+  rowId?: number
   tableId: string | undefined
   columnIconOptions?: {}
   queryContext: QueryContextType
@@ -216,6 +217,7 @@ type SynapseCardLabelProps = {
   isHeader: boolean
   className?: string
   rowData: Row['values']
+  rowId?: number
 }
 
 export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
@@ -228,6 +230,7 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
     isHeader,
     className,
     rowData,
+    rowId,
   } = props
   if (!value) {
     return <>{value}</>
@@ -367,7 +370,10 @@ export const SynapseCardLabel: React.FC<SynapseCardLabelProps> = props => {
         <>
           {split.map((el, index) => {
             const { baseURL, URLColumnName, wrapValueWithParens } = labelLink
-            const value = wrapValueWithParens ? `(${el})` : el
+            const elOrRowId = labelLink.overrideValueWithRowID
+              ? `syn${rowId}`
+              : el
+            const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
             const href = `/${baseURL}?${URLColumnName}=${value}`
 
             return (
@@ -414,13 +420,18 @@ export function getCardLinkHref(
   cardLink: CardLink | undefined,
   data: string[] | undefined,
   schema: Record<string, number> | undefined,
+  rowId?: number,
 ): string | undefined {
   if (cardLink) {
     if (!data || !schema) {
       throw Error('Must specify CardLink and data for linking to work')
     }
-    const { matchColumnName, URLColumnName, overrideLinkURLColumnName } =
-      cardLink
+    const {
+      matchColumnName,
+      URLColumnName,
+      overrideLinkURLColumnName,
+      overrideValueWithRowID,
+    } = cardLink
 
     // PORTALS-2088:  Return the link, unless...
     // an overrideLinkURLColumnName has been set and it's value is defined.
@@ -439,7 +450,7 @@ export function getCardLinkHref(
         `Could not find match for data: ${data} with columnName ${matchColumnName}`,
       )
     } else {
-      const value = data[indexInData]
+      const value = overrideValueWithRowID ? `syn${rowId}` : data[indexInData]
       if (value) {
         // value is defined!
         return `/${cardLink.baseURL}?${URLColumnName}=${value}`
@@ -454,6 +465,7 @@ export function getLinkParams(
   cardLinkConfig: CardLink | undefined,
   data: string[] | undefined,
   schema: any | undefined,
+  rowId?: number,
 ) {
   link = link.trim()
   let href = link
@@ -467,7 +479,7 @@ export function getLinkParams(
   } else if (!cardLinkConfig) {
     defaultTarget = TargetEnum.NEW_WINDOW
   } else if (cardLinkConfig) {
-    href = getCardLinkHref(cardLinkConfig, data, schema) ?? ''
+    href = getCardLinkHref(cardLinkConfig, data, schema, rowId) ?? ''
     if (href.includes('/DetailsPage')) {
       defaultTarget = TargetEnum.NEW_WINDOW
     }
@@ -615,6 +627,7 @@ export default class GenericCard extends React.Component<
     const {
       schema,
       data,
+      rowId,
       genericCardSchema,
       secondaryLabelLimit,
       selectColumns,
@@ -666,6 +679,7 @@ export default class GenericCard extends React.Component<
       titleLinkConfig,
       data,
       schema,
+      rowId,
     )
     const values: string[][] = []
     const { secondaryLabels = [] } = genericCardSchemaDefined
@@ -794,6 +808,7 @@ export default class GenericCard extends React.Component<
         undefined, //card link config
         data,
         schema,
+        rowId,
       )
       ctaHref = newCtaHref
       ctaTarget = newCtaTarget

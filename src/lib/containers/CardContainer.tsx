@@ -131,6 +131,7 @@ export const CardContainer = (props: CardContainerProps) => {
           schema,
           isHeader,
           secondaryLabelLimit,
+          rowId: rowData.rowId,
           data: rowData.values,
           selectColumns: data.selectColumns,
           columnModels: data.columnModels,
