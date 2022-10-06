@@ -41,7 +41,7 @@ export interface CardLink {
   baseURL: string
   // the key that will go into the url
   URLColumnName: string
-  // the column name who's value will be used as the display text
+  // the column name whose value will be used as the display text
   matchColumnName: string
   // If set, use the rowID as the column value.  Otherwise, use the value in the matchColumnName column
   overrideValueWithRowID?: boolean
