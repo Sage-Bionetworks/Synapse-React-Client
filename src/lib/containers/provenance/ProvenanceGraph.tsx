@@ -8,6 +8,8 @@ import ReactFlow, {
   getConnectedEdges,
   ReactFlowProvider,
   useReactFlow,
+  Background,
+  BackgroundVariant,
 } from 'react-flow-renderer'
 import {
   getLayoutedElements,
@@ -390,7 +392,15 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         onEdgesChange={onEdgesChange}
         attributionPosition="bottom-right"
         onConnect={undefined}
+        // this prevents scroll in the graph, but doesn't bubble up (to maintain the parent document scroll behavior)
+        // zoomOnScroll={false}
       >
+        <Background
+          variant={BackgroundVariant.Lines}
+          gap={20}
+          size={1}
+          color={'#f9f9f9'}
+        />
         <Controls />
       </ReactFlow>
     </div>
