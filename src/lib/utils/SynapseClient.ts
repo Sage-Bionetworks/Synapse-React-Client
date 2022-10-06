@@ -252,6 +252,7 @@ import {
   SubscriptionRequest,
   Topic,
 } from './synapseTypes/Subscription'
+import { calculateFriendlyFileSize } from './functions/calculateFriendlyFileSize'
 
 const cookies = new UniversalCookies()
 
@@ -1029,7 +1030,7 @@ export const getBulkFiles = async (
 export const getEntity = <T extends Entity>(
   accessToken: string | undefined = undefined,
   entityId: string,
-  versionNumber?: string,
+  versionNumber?: string | number,
 ) => {
   if (entityId.indexOf('.') > -1) {
     // PORTALS-1943: we were given an entity Id with a version!
@@ -1807,11 +1808,12 @@ export const getFileHandleContentFromID = (
 export const getFileHandleContent = (
   fileHandle: FileHandle,
   presignedUrl: string,
+  maxFileSizeBytes: number = MAX_JS_FILE_DOWNLOAD_SIZE,
 ): Promise<string> => {
   // get the presigned URL, download the data, and send that back (via resolve())
   return new Promise((resolve, reject) => {
-    // sanity check!  must be less than 5MB
-    if (fileHandle.contentSize < MAX_JS_FILE_DOWNLOAD_SIZE) {
+    // sanity check!  must be less than 5MB (unless overridden)
+    if (fileHandle.contentSize < maxFileSizeBytes) {
       fetch(presignedUrl, {
         method: 'GET',
         mode: 'cors',
@@ -1826,7 +1828,13 @@ export const getFileHandleContent = (
         })
       })
     } else {
-      reject('File size exceeds max (5MB)')
+      reject(
+        `File size (${calculateFriendlyFileSize(
+          fileHandle.contentSize,
+        )}) exceeds the maximum size that can be downloaded (${calculateFriendlyFileSize(
+          maxFileSizeBytes,
+        )})`,
+      )
     }
   })
 }
