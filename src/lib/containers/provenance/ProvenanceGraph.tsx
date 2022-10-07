@@ -8,8 +8,6 @@ import ReactFlow, {
   getConnectedEdges,
   ReactFlowProvider,
   useReactFlow,
-  Background,
-  BackgroundVariant,
 } from 'react-flow-renderer'
 import {
   getLayoutedElements,
@@ -404,12 +402,6 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         zoomOnScroll={false}
         onPaneScroll={onPaneScrollFunction}
       >
-        <Background
-          variant={BackgroundVariant.Lines}
-          gap={20}
-          size={1}
-          color={'#f9f9f9'}
-        />
         <Controls />
       </ReactFlow>
     </div>
