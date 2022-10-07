@@ -16,6 +16,14 @@ type ErrorBannerProps = {
   reloadButtonFn?: () => void
 }
 
+export const SignInPrompt = () => {
+  return (
+    <>
+      Please <SignInButton /> to view this resource.
+    </>
+  )
+}
+
 export const ClientError = (props: { error: SynapseClientError }) => {
   const { accessToken } = useSynapseContext()
   const { error } = props
@@ -32,11 +40,7 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   })
 
   if (loginError) {
-    return (
-      <>
-        Please <SignInButton /> to view this resource.
-      </>
-    )
+    return <SignInPrompt />
   } else if (accessDenied) {
     return <>You are not authorized to access this resource.</>
   } else {
