@@ -101,15 +101,5 @@ export default function FileEntityPreview(props: FileEntityPreviewProps) {
     }
   }
 
-  // We can't render the file. so show an alert.
-  return (
-    <Alert
-      dismissible={false}
-      show={true}
-      variant={'danger'}
-      transition={false}
-    >
-      Could not render a preview for entity: {bundle.entity.id!}
-    </Alert>
-  )
-}
+  // We can't render the file, so throw an Error so the ErrorBoundary will show an alert.
+  throw new Error(`Could not render a preview for entity: ${bundle.entity.id!}`)
