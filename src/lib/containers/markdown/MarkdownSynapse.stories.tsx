@@ -73,3 +73,9 @@ MarkdownProvenanceGraph.args = {
   markdown:
     '# Provenance Graphs\nMultiple start nodes\n${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}\nSpecify the entity version\n${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
 }
+
+export const HtmlRenderingTest = Template.bind({})
+HtmlRenderingTest.args = {
+  ownerId: 'syn5585645',
+  wikiId: '493662',
+}

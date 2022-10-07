@@ -1,3 +1,5 @@
+import { Reference } from '../synapseTypes'
+
 // doi regex here - https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 // note - had to add an escape character for the second and third forward slash in the regex above
 export const DOI_REGEX = /^10.\d{4,9}\/[-._;()\/:a-z0-9]+$/i
@@ -16,3 +18,21 @@ export const DOI_REGEX = /^10.\d{4,9}\/[-._;()\/:a-z0-9]+$/i
  * '9'
  */
 export const SYNAPSE_ENTITY_ID_REGEX = /^(syn\d+)(?:\.(\d+))?$/
+
+/**
+ * Given a Synapse Entity ID of the form `syn123` or `syn123.4`, returns the
+ * Reference object containing the entity ID and optional version number.
+ * If the ID is not a valid Synapse Entity ID, returns null.
+ * @param synId
+ */
+export function parseSynId(synId: string): Reference | null {
+  const synIdMatch = SYNAPSE_ENTITY_ID_REGEX.exec(synId)
+  if (synIdMatch) {
+    return {
+      targetId: synIdMatch[1],
+      targetVersionNumber: synIdMatch[2] ? parseInt(synIdMatch[2]) : undefined,
+    }
+  } else {
+    return synIdMatch
+  }
+}
