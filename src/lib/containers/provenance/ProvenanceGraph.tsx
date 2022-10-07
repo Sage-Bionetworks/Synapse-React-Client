@@ -377,6 +377,15 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     onEdgesChangedListener,
   ])
 
+  const onPaneScrollFunction: (event?: React.WheelEvent) => void = useCallback(
+    event => {
+      if (event && event.deltaY && rootEntityRefs.length > 0) {
+        window.scrollTo(window.scrollX, window.scrollY + event?.deltaY)
+      }
+    },
+    [rootEntityRefs],
+  )
+
   return (
     <div
       className="bootstrap-4-backport ProvenanceWidget"
@@ -392,8 +401,8 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         onEdgesChange={onEdgesChange}
         attributionPosition="bottom-right"
         onConnect={undefined}
-        // this prevents scroll in the graph, but doesn't bubble up (to maintain the parent document scroll behavior)
-        // zoomOnScroll={false}
+        zoomOnScroll={false}
+        onPaneScroll={onPaneScrollFunction}
       >
         <Background
           variant={BackgroundVariant.Lines}
