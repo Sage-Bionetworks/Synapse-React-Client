@@ -1,4 +1,7 @@
-import { FileHandle, isS3FileHandle } from '../../utils/synapseTypes'
+import {
+  FileHandle,
+  implementsCloudProviderFileHandleInterface,
+} from '../../utils/synapseTypes'
 import { PreviewRendererType } from './PreviewRendererType'
 
 export const IMAGE_CONTENT_TYPES = [
@@ -86,8 +89,7 @@ function getFileExtension(fileName: string): string | null {
 export function getOriginalFileHandleRenderer(
   dataFileHandle: FileHandle,
 ): PreviewRendererType {
-  // TODO: Could this be changed to CloudProviderFileHandle?
-  if (!isS3FileHandle(dataFileHandle)) {
+  if (!implementsCloudProviderFileHandleInterface(dataFileHandle)) {
     return PreviewRendererType.NONE
   }
 
@@ -141,7 +143,7 @@ export function getPreviewFileHandleRenderer(
   originalFileHandle: FileHandle,
 ): PreviewRendererType {
   const contentType = previewFileHandle.contentType
-  if (!isS3FileHandle(previewFileHandle)) {
+  if (!implementsCloudProviderFileHandleInterface(previewFileHandle)) {
     return PreviewRendererType.NONE
   }
   if (IMAGE_CONTENT_TYPES.includes(previewFileHandle.contentType)) {

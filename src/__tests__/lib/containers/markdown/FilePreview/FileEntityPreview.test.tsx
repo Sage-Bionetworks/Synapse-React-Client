@@ -49,7 +49,7 @@ const PRESIGNED_URL = 'https://fake-presigned-url.not-real.gov/file'
 
 const MOCK_PREVIEW_FILE_HANDLE_ID = '1234'
 
-const fileHandle: S3FileHandle = {
+const htmlFileHandle: S3FileHandle = {
   id: MOCK_FILE_HANDLE_ID,
   fileName: 'test.html',
   contentSize: 100,
@@ -94,7 +94,7 @@ const entityBundle: EntityBundle = {
     ...mockFileEntityData.entity,
     dataFileHandleId: MOCK_FILE_HANDLE_ID,
   },
-  fileHandles: [fileHandle, previewFileHandle],
+  fileHandles: [htmlFileHandle, previewFileHandle],
 }
 
 describe('FileHandleContentRenderer tests', () => {
@@ -129,7 +129,7 @@ describe('FileHandleContentRenderer tests', () => {
 
   it('Will render the original file handle HTML content', async () => {
     const fileHandleAssociation: FileHandleAssociation = {
-      fileHandleId: fileHandle.id,
+      fileHandleId: htmlFileHandle.id,
       associateObjectId: mockFileEntityData.id,
       associateObjectType: FileHandleAssociateType.FileEntity,
     }
