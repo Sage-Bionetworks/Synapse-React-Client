@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import React from 'react'
 import FileEntityPreview, {
   FileEntityPreviewProps,
@@ -159,19 +159,16 @@ describe('FileHandleContentRenderer tests', () => {
   })
 
   it('Will render nothing if the entity cannot be previewed', async () => {
-    jest.spyOn(console, 'warn').mockImplementation(() => {})
-
     renderComponent(
       {
         bundle: { ...entityBundle, fileHandles: [] },
       },
       { ...defaultWrapperProps },
     )
-    await waitFor(() => {
-      expect(console.warn).toHaveBeenCalledWith(
-        'Could not render a preview for entity: ' + mockFileEntityData.id + '.',
-      )
-    })
+    const alert = await screen.findByRole('alert')
+    within(alert).getByText(
+      'Could not render a preview for entity: ' + mockFileEntityData.id,
+    )
   })
 
   it('Will render the preview file handle for ZIP content', async () => {

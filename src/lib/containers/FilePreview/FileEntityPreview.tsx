@@ -101,7 +101,15 @@ export default function FileEntityPreview(props: FileEntityPreviewProps) {
     }
   }
 
-  // If we can't find or render the data file handle or a preview file handle, log a warning to the console and render nothing.
-  console.warn(`Could not render a preview for entity: ${bundle.entity.id!}.`)
-  return <></>
+  // We can't render the file. so show an alert.
+  return (
+    <Alert
+      dismissible={false}
+      show={true}
+      variant={'danger'}
+      transition={false}
+    >
+      Could not render a preview for entity: {bundle.entity.id!}
+    </Alert>
+  )
 }
