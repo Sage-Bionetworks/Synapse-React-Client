@@ -22,6 +22,7 @@ import {
   Code,
   DashboardTwoTone,
   DeleteTwoTone,
+  DeleteSweepTwoTone,
   ErrorOutlined,
   ExpandLess,
   ExpandMore,
@@ -107,6 +108,7 @@ export const IconStrings = [
   'openInNewWindow',
   'dashboard',
   'delete',
+  'deleteSweep',
   'addToCart',
   'addCircleOutline',
   'addCircleTwoTone',
@@ -257,6 +259,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <DashboardTwoTone style={muiSvgStyle}></DashboardTwoTone>
     case 'delete':
       return <DeleteTwoTone style={muiSvgStyle} />
+    case 'deleteSweep':
+      return <DeleteSweepTwoTone style={muiSvgStyle} />
     case 'openInNewWindow':
       return <OpenInNewTwoTone style={muiSvgStyle} />
     case 'phone':
