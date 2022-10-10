@@ -163,10 +163,11 @@
       display: flex;
       flex-wrap: nowrap;
       justify-content: flex-start;
-      align-items: stretch;
+      align-items: center;
       margin-left: 15px;
       font-weight: 400 !important;
       &__text {
+        font-size: 14px;
         margin-top: 4px;
       }
       svg {
