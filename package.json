@@ -22,6 +22,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@popperjs/core": "^2.10.2",
     "@react-google-maps/api": "^2.13.1",
+    "@react-hook/resize-observer": "^1.2.6",
     "@rjsf/core": "^4.2.3",
     "@sage-bionetworks/react-base-table": "^1.13.2",
     "@sage-bionetworks/rjsf-core": "^3.1.4",
