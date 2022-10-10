@@ -15,10 +15,12 @@
     flex-wrap: wrap;
   }
   &__topbar {
-    padding: 7px 0px;
+    padding-top: 12px;
+    padding-bottom: 12px;
     &__clearall {
       float: right;
       font-weight: 400 !important;
+      margin-right: 15px;
       svg {
         margin: -3px 4px 0px 0px;
       }

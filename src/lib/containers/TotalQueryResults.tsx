@@ -340,7 +340,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
+      } ${hasFilters ? 'hasFilters' : ''}`}
       style={style}
     >
       {isLoadingNewBundle ? (
