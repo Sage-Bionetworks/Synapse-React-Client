@@ -49,7 +49,9 @@ export default function FileHandleContentRenderer(
     return <SynapseSpinner />
   }
   if (previewType === PreviewRendererType.HTML) {
-    return <HtmlPreview fileHandle={fileHandle} rawHtml={content!} />
+    return (
+      <HtmlPreview rawHtml={content!} createdByUserId={fileHandle.createdBy} />
+    )
   } else {
     if (previewType !== PreviewRendererType.NONE) {
       console.warn(
