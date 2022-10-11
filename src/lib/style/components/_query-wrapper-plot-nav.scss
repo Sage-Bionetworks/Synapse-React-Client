@@ -116,11 +116,12 @@
     z-index: 600;
   }
 
-  .TotalQueryResults {
+  .TotalQueryResults.hasFilters {
     background-color: map.get(SRC.$colors, 'gray-100');
     border-top: 1px solid map.get(SRC.$colors, 'gray-300');
     border-bottom: 1px solid map.get(SRC.$colors, 'gray-300');
     padding-left: 15px;
+    padding-bottom: 13px;
   }
   .FacetNav {
     margin-top: 5px;
@@ -163,10 +164,11 @@
       display: flex;
       flex-wrap: nowrap;
       justify-content: flex-start;
-      align-items: stretch;
+      align-items: center;
       margin-left: 15px;
       font-weight: 400 !important;
       &__text {
+        font-size: 14px;
         margin-top: 4px;
       }
       svg {
