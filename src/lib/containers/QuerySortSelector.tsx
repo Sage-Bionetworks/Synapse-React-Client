@@ -9,7 +9,7 @@ import {
   EnumOption,
   findValueOption,
   Control,
-} from './entity/annotations/CustomSelectWidget'
+} from './entity/SchemaDrivenAnnotationEditor/widget/SelectWidget'
 
 export type QuerySortSelectorProps = {
   sortConfig: SortConfiguration

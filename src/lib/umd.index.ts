@@ -7,7 +7,7 @@ import { DownloadConfirmation } from './containers/download_list/DownloadConfirm
 import DirectProgrammaticDownload from './containers/download_list_v2/DirectProgrammaticDownload'
 import { DownloadCartPage } from './containers/download_list_v2/DownloadCartPage'
 import ShowDownloadV2 from './containers/download_list_v2/ShowDownloadV2'
-import { SchemaDrivenAnnotationEditor } from './containers/entity/annotations/SchemaDrivenAnnotationEditor'
+import { SchemaDrivenAnnotationEditor } from './containers/entity/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
 import { EntityModal } from './containers/entity/metadata/EntityModal'
 import { EntityBadgeIcons } from './containers/EntityBadgeIcons'
 import EntityForm from './containers/EntityForm'

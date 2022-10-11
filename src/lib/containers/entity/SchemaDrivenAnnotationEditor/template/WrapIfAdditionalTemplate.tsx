@@ -1,42 +1,39 @@
-import { FieldTemplateProps } from '@sage-bionetworks/rjsf-core'
+import {
+  WrapIfAdditionalTemplateProps,
+  ADDITIONAL_PROPERTY_FLAG,
+} from '@rjsf/utils'
 import React from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 
-/**
- * FieldTemplate override for "additionalProperties" fields to customize the form appearance.
+/** The `WrapIfAdditional` component is used by the `FieldTemplate` to rename, or remove properties that are
+ * part of an `additionalProperties` part of a schema.
  *
- * Adapted from 'WrapIfAdditional' in @rsjf/core.
- * @param props
- * @returns
+ * @param props - The `WrapIfAdditionalProps` for this component
  */
-export const CustomAdditionalPropertiesFieldTemplate = (
-  props: FieldTemplateProps & {
-    onKeyChange: (newKey: string) => void
-  },
-) => {
+export default function WrapIfAdditionalTemplate<T = any, F = any>(
+  props: WrapIfAdditionalTemplateProps<T, F>,
+) {
   const {
     id,
-    label,
-    children,
-    errors,
-    help,
-    description,
-    hidden,
-    required,
-    displayLabel,
     classNames,
     disabled,
+    label,
     onKeyChange,
     readonly,
+    required,
+    schema,
+    children,
   } = props
+  const keyLabel = `Key`
+  const additional = ADDITIONAL_PROPERTY_FLAG in schema
 
-  const keyLabel = `Key` // i18n ?
-  if (hidden) {
-    return <div className="hidden">{children}</div>
+  if (!additional) {
+    return <div className={classNames}>{children}</div>
   }
+
   return (
-    <div className={`${classNames ?? ''} container-fluid`}>
-      <div className="row form-additional">
+    <div className={classNames}>
+      <div className="row">
         <div className="col-xs-3">
           <FormGroup>
             <FormLabel id={`${id}-key-label`} htmlFor={`${id}-key`}>
@@ -59,11 +56,9 @@ export const CustomAdditionalPropertiesFieldTemplate = (
             />
           </FormGroup>
         </div>
-        {displayLabel && <FormLabel id={id}>{label}</FormLabel>}
-        {displayLabel && description ? description : null}
         {children}
-        {errors}
-        {help}
+        {/* All additional properties are treated as arrays, so we don't show a remove button here. */}
+        {/* To drop the property, drop the last array item. */}
       </div>
     </div>
   )

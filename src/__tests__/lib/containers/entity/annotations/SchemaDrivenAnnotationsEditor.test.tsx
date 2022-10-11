@@ -1,4 +1,5 @@
 import {
+  act,
   queryByAttribute,
   render,
   screen,
@@ -10,10 +11,11 @@ import selectEvent from 'react-select-event'
 import {
   SchemaDrivenAnnotationEditor,
   SchemaDrivenAnnotationEditorProps,
-} from '../../../../../lib/containers/entity/annotations/SchemaDrivenAnnotationEditor'
+} from '../../../../../lib/containers/entity/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
 import { displayToast } from '../../../../../lib/containers/ToastMessage'
 import { createWrapper } from '../../../../../lib/testutils/TestingLibraryUtils'
 import {
+  ASYNCHRONOUS_JOB_TOKEN,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
   SCHEMA_VALIDATION_GET,
@@ -24,6 +26,7 @@ import {
   getEndpoint,
 } from '../../../../../lib/utils/functions/getEndpoint'
 import { SynapseContextType } from '../../../../../lib/utils/SynapseContext'
+import { AsynchronousJobStatus } from '../../../../../lib/utils/synapseTypes'
 import mockFileEntity from '../../../../../mocks/entity/mockFileEntity'
 import {
   mockSchemaBinding,
@@ -81,7 +84,7 @@ async function clickSaveAndConfirm() {
 
 // These tests are unstable, so we'll skip them until we can fix them
 // The component is in experimental mode only, so not a big deal for now
-describe.skip('SchemaDrivenAnnotationEditor tests', () => {
+describe('SchemaDrivenAnnotationEditor tests', () => {
   // Handle the msw lifecycle:
   beforeAll(() => server.listen())
   afterEach(() => {
@@ -194,6 +197,17 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     rest.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
+      )}${ASYNCHRONOUS_JOB_TOKEN(mockAsyncTokenId)}`,
+      async (req, res, ctx) => {
+        const response: AsynchronousJobStatus = {
+          responseBody: { validationSchema: mockValidationSchema },
+        }
+        return res(ctx.status(200), ctx.json(response))
+      },
+    ),
+    rest.get(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
       )}${SCHEMA_VALIDATION_GET(mockAsyncTokenId)}`,
       async (req, res, ctx) => {
         return res(
@@ -256,7 +270,10 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     expect(screen.queryByLabelText('state*')).not.toBeInTheDocument()
 
     // Behavior under test: select "USA" and "state" field appears
-    await selectEvent.select(countryField, 'USA')
+    await userEvent.click(countryField)
+    await act(async () => {
+      await selectEvent.select(countryField, 'USA')
+    })
     await screen.findByLabelText('state*')
   })
 
@@ -432,9 +449,8 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
-  // Skipped due to unstable execution on TravisCI.
   // Next two tests are the same as the previous two tests, but with an array.
-  it.skip('Converts data in a schema-defined array to an additionalProperty array when removed from the schema', async () => {
+  it('Converts data in a schema-defined array to an additionalProperty array when removed from the schema', async () => {
     // Converting an array of strings to an additional property array shouldn't change the data, because they are both arrays.
     server.use(
       stringArrayAnnotationsHandler,
@@ -568,9 +584,11 @@ describe.skip('SchemaDrivenAnnotationEditor tests', () => {
     expect(showStringArrayField.value).toBe('true')
 
     // Verify that the field for the first value in the array is visible
-    expect(
-      queryByAttribute('id', component.container, 'root_stringArray_0'),
-    ).not.toBeNull()
+    await waitFor(() => {
+      expect(
+        queryByAttribute('id', component.container, 'root_stringArray_0'),
+      ).not.toBeNull()
+    })
 
     // Save the form
     await clickSaveAndConfirm()

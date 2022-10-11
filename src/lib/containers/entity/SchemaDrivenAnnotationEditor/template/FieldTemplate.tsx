@@ -1,29 +1,32 @@
 import React, { useEffect, useState } from 'react'
 import { FormLabel } from 'react-bootstrap'
-import { FieldTemplateProps } from '@sage-bionetworks/rjsf-core'
+import { FieldTemplateProps, getTemplate, getUiOptions } from '@rjsf/utils'
 import { HelpOutline } from '@material-ui/icons'
-import FieldDescriptionTable from './FieldDescriptionTable'
+import { Collapse } from '@material-ui/core'
 
-export function CustomDefaultTemplate<T>(
-  props: FieldTemplateProps<T> & {
-    onChange: (newValue: unknown) => void
-  },
-) {
+export function FieldTemplate<T>(props: FieldTemplateProps<T>) {
   const {
     id,
     label,
     children,
     errors,
     help,
+    description,
     hidden,
     required,
     displayLabel,
+    registry,
+    uiSchema,
     formData,
-    onChange,
     schema,
+    onChange,
   } = props
-
-  let description = props.description ?? props.schema.description
+  const uiOptions = getUiOptions(uiSchema)
+  const WrapIfAdditionalTemplate = getTemplate<'WrapIfAdditionalTemplate'>(
+    'WrapIfAdditionalTemplate',
+    registry,
+    uiOptions,
+  )
   const [showDetails, setShowDetails] = useState(false)
 
   // The formData that we get may be an array (for example, if it was an additionalProperty, but then the key was added to the schema)
@@ -41,11 +44,10 @@ export function CustomDefaultTemplate<T>(
   if (hidden) {
     return <div className="hidden">{children}</div>
   }
-
   return (
-    <>
+    <WrapIfAdditionalTemplate {...props}>
       {/* RJSF hides labels for boolean checkboxes, but since we replaced checkboxes with a custom component, we want to show them */}
-      {label && (displayLabel || schema.type === 'boolean') && (
+      {(displayLabel || schema.type === 'boolean') && (
         <div className="LabelContainer">
           <FormLabel htmlFor={id}>
             {label}
@@ -64,14 +66,11 @@ export function CustomDefaultTemplate<T>(
         </div>
       )}
       {children}
-      <FieldDescriptionTable
-        required={required}
-        type={schema.type as string}
-        description={description}
-        show={showDetails}
-      />
+      <Collapse className="field-description" in={showDetails}>
+        {description}
+      </Collapse>
       {errors}
       {help}
-    </>
+    </WrapIfAdditionalTemplate>
   )
 }

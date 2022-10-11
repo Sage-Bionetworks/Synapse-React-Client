@@ -1,4 +1,4 @@
-import { AjvError } from '@sage-bionetworks/rjsf-core'
+import { RJSFValidationError } from '@rjsf/utils'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
 import { entityJsonKeys } from '../../../utils/synapseTypes'
 
@@ -31,18 +31,20 @@ export function dropNullishArrayValues(
  * @param error
  * @returns
  */
-export function getFriendlyPropertyName(error: AjvError) {
-  if (error.property.startsWith('[')) {
+export function getFriendlyPropertyName(error: RJSFValidationError) {
+  if (error.property?.startsWith('[')) {
     // Additional properties are surrounded by brackets and quotations, so let's remove them
     return error.property.substring(2, error.property.length - 2)
-  } else if (error.property.startsWith('.')) {
+  } else if (error.property?.startsWith('.')) {
     return error.property.substring(1)
   } else {
     return error.property
   }
 }
 
-export function transformErrors(errors: AjvError[]): AjvError[] {
+export function transformErrors(
+  errors: RJSFValidationError[],
+): RJSFValidationError[] {
   // Transform the errors in the following ways:
   // - Simplify the set of errors when failing to select an enumeration defined with an anyOf (SWC-5724)
   // - Show a custom error message when using a property that collides with an internal entity property (SWC-5678)
@@ -86,7 +88,7 @@ export function transformErrors(errors: AjvError[]): AjvError[] {
   // Custom error message if the custom annotation key collides with an internal entity property
   errors = errors.map(error => {
     const propertyName = getFriendlyPropertyName(error)
-    if (entityJsonKeys.includes(propertyName)) {
+    if (propertyName && entityJsonKeys.includes(propertyName)) {
       error.message = `"${propertyName}" is a reserved internal key and cannot be used.`
     }
     return error

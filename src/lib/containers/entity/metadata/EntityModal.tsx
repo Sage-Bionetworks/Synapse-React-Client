@@ -15,7 +15,7 @@ import { VersionableEntity } from '../../../utils/synapseTypes'
 import { SynapseErrorBoundary } from '../../ErrorBanner'
 import { FluidModal } from '../../FluidModal'
 import { displayToast } from '../../ToastMessage'
-import { SchemaDrivenAnnotationEditor } from '../annotations/SchemaDrivenAnnotationEditor'
+import { SchemaDrivenAnnotationEditor } from '../SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
 import { AnnotationsTable } from './AnnotationsTable'
 import { MetadataTable } from './MetadataTable'
 
@@ -88,14 +88,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       primaryAction = {
         copy: `Save Annotations`,
         onClick: () => {
-          // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/2104#issuecomment-847924986
-          // Should be fixed if we upgrade to RJSF v5
-          ;(annotationEditorFormRef.current as any).formElement.dispatchEvent(
-            new CustomEvent('submit', {
-              cancelable: true,
-              bubbles: true,
-            }),
-          )
+          annotationEditorFormRef.current?.submit()
         },
       }
       secondaryActions = [

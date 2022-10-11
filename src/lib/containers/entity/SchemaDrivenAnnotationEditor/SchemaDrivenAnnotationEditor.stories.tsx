@@ -18,6 +18,11 @@ const Template: ComponentStory<typeof SchemaDrivenAnnotationEditor> = args => (
   </div>
 )
 
+export const NoSchema = Template.bind({})
+NoSchema.args = {
+  entityId: 'syn28579706',
+}
+
 export const ComplexSchema = Template.bind({})
 ComplexSchema.args = {
   schemaId: 'nkauer-ad.main',

@@ -1,4 +1,6 @@
-import Form, { AjvError } from '@sage-bionetworks/rjsf-core'
+import Form from '@rjsf/core'
+import { RJSFValidationError } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv6'
 import { JSONSchema7 } from 'json-schema'
 import isEmpty from 'lodash-es/isEmpty'
 import React, { useEffect, useRef } from 'react'
@@ -8,29 +10,31 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '../../../utils/functions/getEndpoint'
-import {
-  useGetJson,
-  useUpdateViaJson,
-} from '../../../utils/hooks/SynapseAPI/entity/useEntity'
-import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI/entity/useEntityBoundSchema'
-import { useGetSchema } from '../../../utils/hooks/SynapseAPI/entity/useSchema'
+import { useGetJson, useUpdateViaJson } from '../../../utils/hooks/SynapseAPI'
+import { useGetSchemaBinding } from '../../../utils/hooks/SynapseAPI'
+import { useGetSchema } from '../../../utils/hooks/SynapseAPI'
 import { SynapseClientError } from '../../../utils/SynapseClientError'
 import { EntityJson, entityJsonKeys } from '../../../utils/synapseTypes'
 import { SynapseSpinner } from '../../LoadingScreen'
-import { AdditionalPropertiesSchemaField } from './AdditionalPropertiesSchemaField'
+import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import {
   dropNullishArrayValues,
   getFriendlyPropertyName,
   transformErrors,
 } from './AnnotationEditorUtils'
-import { CustomAdditionalPropertiesFieldTemplate } from './CustomAdditionalPropertiesFieldTemplate'
-import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
-import { CustomBooleanWidget } from './CustomBooleanWidget'
-import { CustomDateTimeWidget } from './CustomDateTimeWidget'
-import { CustomDefaultTemplate } from './CustomDefaultTemplate'
-import { CustomObjectFieldTemplate } from './CustomObjectFieldTemplate'
-import { CustomSelectWidget } from './CustomSelectWidget'
-import CustomTextWidget from './CustomTextWidget'
+import ArrayFieldTemplate from './template/ArrayFieldTemplate'
+import CustomArrayFieldItemTemplate from './template/ArrayFieldItemTemplate'
+import ArrayFieldTitleTemplate from './template/ArrayFieldTitleTemplate'
+import { BooleanWidget } from './widget/BooleanWidget'
+import { DateTimeWidget } from './widget/DateTimeWidget'
+import { FieldTemplate } from './template/FieldTemplate'
+import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
+import { SelectWidget } from './widget/SelectWidget'
+import TextWidget from './widget/TextWidget'
+import CustomWrapIfAdditionalTemplate from './template/WrapIfAdditionalTemplate'
+import ButtonTemplate from './template/ButtonTemplate'
+import DescriptionFieldTemplate from './template/DescriptionFieldTemplate'
+import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTemplate'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -80,7 +84,7 @@ export const SchemaDrivenAnnotationEditor = (
 
   // Client-side validation errors
   const [validationError, setValidationError] = React.useState<
-    AjvError[] | undefined
+    RJSFValidationError[] | undefined
   >(undefined)
 
   // Errors from the backend response
@@ -98,7 +102,7 @@ export const SchemaDrivenAnnotationEditor = (
 
   useEffect(() => {
     if (annotations) {
-      // Put the annotations into a state variable so it can be modified by the form.
+      // Put the annotations into a state variable, so it can be modified by the form.
       setFormData(annotations)
     }
   }, [annotations])
@@ -189,17 +193,26 @@ export const SchemaDrivenAnnotationEditor = (
               <AddToList /> button to annotate.
             </Alert>
           )}
-          <Form
+          <Form<Record<string, unknown>>
+            validator={validator}
             className="AnnotationEditorForm"
             liveValidate={liveValidate}
             noHtml5Validate={true}
-            ArrayFieldTemplate={CustomArrayFieldTemplate}
-            ObjectFieldTemplate={CustomObjectFieldTemplate}
-            FieldTemplate={CustomDefaultTemplate}
+            templates={{
+              ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
+              ArrayFieldItemTemplate: CustomArrayFieldItemTemplate,
+              ArrayFieldTemplate: ArrayFieldTemplate,
+              ArrayFieldTitleTemplate: ArrayFieldTitleTemplate,
+              ObjectFieldTemplate: ObjectFieldTemplate,
+              FieldTemplate: FieldTemplate,
+              WrapIfAdditionalTemplate: CustomWrapIfAdditionalTemplate,
+              ButtonTemplates: ButtonTemplate,
+              DescriptionFieldTemplate: DescriptionFieldTemplate,
+              /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
+              ErrorListTemplate: () => null,
+            }}
             ref={formRefFromParent ?? formRef}
             disabled={mutation.isLoading}
-            /* Errors are displayed by an Alert component below, so we don't show the builtin ErrorList */
-            ErrorList={() => null}
             schema={
               {
                 ...(validationSchema ?? {}),
@@ -212,10 +225,9 @@ export const SchemaDrivenAnnotationEditor = (
               } as JSONSchema7
             }
             uiSchema={{
-              'ui:DuplicateKeySuffixSeparator': '_',
+              'ui:duplicateKeySuffixSeparator': '_',
               additionalProperties: {
                 'ui:field': AdditionalPropertiesSchemaField,
-                'ui:FieldTemplate': CustomAdditionalPropertiesFieldTemplate,
               },
             }}
             transformErrors={transformErrors}
@@ -232,7 +244,7 @@ export const SchemaDrivenAnnotationEditor = (
               setFormData(formData)
               submitChangedEntity()
             }}
-            onError={(errors: AjvError[]) => {
+            onError={(errors: RJSFValidationError[]) => {
               // invoked when submit is clicked and there are client-side validation errors
               setValidationError(errors)
               if (validationError && entityId) {
@@ -240,10 +252,10 @@ export const SchemaDrivenAnnotationEditor = (
               }
             }}
             widgets={{
-              TextWidget: CustomTextWidget,
-              DateTimeWidget: CustomDateTimeWidget,
-              SelectWidget: CustomSelectWidget,
-              CheckboxWidget: CustomBooleanWidget,
+              TextWidget: TextWidget,
+              DateTimeWidget: DateTimeWidget,
+              SelectWidget: SelectWidget,
+              CheckboxWidget: BooleanWidget,
             }}
           >
             {validationError && (
@@ -256,14 +268,16 @@ export const SchemaDrivenAnnotationEditor = (
               >
                 <b>Validation errors found:</b>
                 <ul>
-                  {validationError.map((e: AjvError, index: number) => {
-                    return (
-                      <li key={index}>
-                        <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
-                        {`${e.message}`}
-                      </li>
-                    )
-                  })}
+                  {validationError.map(
+                    (e: RJSFValidationError, index: number) => {
+                      return (
+                        <li key={index}>
+                          <b>{`${getFriendlyPropertyName(e)}: `}</b>{' '}
+                          {`${e.message}`}
+                        </li>
+                      )
+                    },
+                  )}
                 </ul>
               </Alert>
             )}
@@ -325,7 +339,7 @@ type ConfirmationModalProps = {
   show: boolean
   onCancel: () => void
   onSave: () => void
-  errors: AjvError[] | undefined
+  errors: RJSFValidationError[] | undefined
 }
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   show,
@@ -342,7 +356,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <div>The following errors exist with the annotations you entered:</div>
         <div>
           <ul>
-            {(errors ?? []).map((e: AjvError, index: number) => (
+            {(errors ?? []).map((e: RJSFValidationError, index: number) => (
               <li key={index}>
                 <b>{`${getFriendlyPropertyName(e)}: `}</b> {`${e.message}`}
               </li>

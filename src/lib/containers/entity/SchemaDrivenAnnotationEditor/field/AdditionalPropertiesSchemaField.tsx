@@ -1,10 +1,10 @@
-import { FieldProps, utils as rjsfUtils } from '@sage-bionetworks/rjsf-core'
+import { FieldProps, getWidget } from '@rjsf/utils'
 import { isEqual } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 import { FormControl, FormGroup, FormLabel } from 'react-bootstrap'
-import { useListState } from '../../../utils/hooks/useListState'
-import FullWidthAlert from '../../FullWidthAlert'
-import { CustomArrayFieldTemplate } from './CustomArrayFieldTemplate'
+import { useListState } from '../../../../utils/hooks/useListState'
+import FullWidthAlert from '../../../FullWidthAlert'
+import { ArrayFieldTemplate } from '../template/ArrayFieldTemplate'
 
 // Matches ####-##-##T##:##:##.###Z, e.g. 1970-01-01T12:00:000Z
 const ISO_TIMESTAMP_REGEX = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
@@ -26,7 +26,10 @@ export enum AdditionalPropertyWidget {
 }
 
 export function guessPropertyType(list: Array<any>): PropertyType {
-  if (
+  if (list.length === 0) {
+    // The field was just added, so default to string
+    return PropertyType.STRING
+  } else if (
     list.every(
       item => typeof item === 'number' || item === 'NaN', // "NaN" is technically a float value
     )
@@ -60,7 +63,7 @@ export function transformDataFromPropertyType(
 
     case PropertyType.FLOAT:
       return list.map(item => {
-        const asFloat = parseFloat(item)
+        const asFloat = parseFloat(item as string)
         if (Number.isNaN(asFloat)) {
           return 'NaN'
         } else if (Number.isInteger(asFloat)) {
@@ -211,10 +214,10 @@ export function AdditionalPropertiesSchemaField<T>(
   }, [propertyType])
 
   useEffect(() => {
-    onChange(list)
+    onChange(list as unknown as T)
   }, [onChange, list])
 
-  const Widget = rjsfUtils.getWidget(
+  const Widget = getWidget(
     schema,
     AdditionalPropertyWidget[widget],
     registry.widgets,
@@ -222,6 +225,7 @@ export function AdditionalPropertiesSchemaField<T>(
 
   const items = list.map((item: unknown, index: number) => {
     return {
+      registry: registry,
       children: (
         <Widget
           id={`${name}-${index}`}
@@ -306,16 +310,14 @@ export function AdditionalPropertiesSchemaField<T>(
           ))}
         </FormControl>
       </FormGroup>
-      <CustomArrayFieldTemplate
+      <ArrayFieldTemplate
         className="col-xs-6"
         onAddClick={() => appendToList(null)}
         canAdd={true}
         title={name}
         schema={schema}
-        items={items}
         registry={registry}
-        DescriptionField={() => null}
-        TitleField={() => null}
+        items={items}
         disabled={props.disabled}
         idSchema={props.idSchema}
         readonly={props.readonly}

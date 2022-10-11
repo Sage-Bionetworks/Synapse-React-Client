@@ -23,6 +23,7 @@
 
       .alert {
         grid-row-start: 3;
+        width: 100%;
         margin-top: 5px;
         margin-bottom: 5px;
       }
@@ -60,7 +61,9 @@
       }
 
       .AddButton,
-      .RemoveButton {
+      .RemoveButton,
+      .MoveUpButton,
+      .MoveDownButton {
         border-radius: 0px;
         height: 25px;
         width: 25px;
@@ -76,8 +79,13 @@
 
       .array-item {
         display: grid;
-        grid-template-columns: [input] auto [remove] 30px [add] 30px;
+
         grid-template-rows: [widget] auto [description] auto [errors] auto;
+        grid-template-columns: [input] auto [remove] 30px [add] 30px;
+
+        &.hasToolbar {
+          grid-template-columns: [input] auto [moveup] 30px [movedown] 30px [remove] 30px [add] 30px;
+        }
 
         .field-description {
           grid-row-start: description;
@@ -88,6 +96,7 @@
         }
 
         .form-control,
+        .form-group,
         .react-select-container,
         .calendar-with-icon-form-group {
           grid-row-start: widget;
@@ -95,6 +104,16 @@
 
         div {
           grid-row-start: errors;
+        }
+
+        .MoveUpButton {
+          grid-row-start: widget;
+          grid-column-start: moveup;
+        }
+
+        .MoveDownButton {
+          grid-row-start: widget;
+          grid-column-start: movedown;
         }
 
         .AddButton {
@@ -123,7 +142,7 @@
         background-color: SRC.$gray-light;
       }
 
-      .field-array > .array-item > label.form-label {
+      .array-item > .field > .LabelContainer {
         display: none;
       }
 
