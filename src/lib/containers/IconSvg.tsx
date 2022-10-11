@@ -58,6 +58,8 @@ import {
   SyncTwoTone,
   TableChartTwoTone,
   ViewAgendaTwoTone,
+  VisibilityTwoTone,
+  VisibilityOffTwoTone,
   VpnKeyTwoTone,
   WarningTwoTone,
   WatchLater,
@@ -181,6 +183,8 @@ export const IconStrings = [
   'errorOutlined',
   'phone',
   'pushpin',
+  'visibility',
+  'visibilityOff',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -423,6 +427,10 @@ const getIcon = (options: IconSvgOptions) => {
       return <ChevronLeft style={muiSvgStyle} />
     case 'pushpin':
       return <PushPin fill={color} style={customSvgStyle}></PushPin>
+    case 'visibility':
+      return <VisibilityTwoTone style={muiSvgStyle} />
+    case 'visibilityOff':
+      return <VisibilityOffTwoTone style={muiSvgStyle} />
     default:
       return <></>
   }

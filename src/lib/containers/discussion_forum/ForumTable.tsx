@@ -29,9 +29,13 @@ export type ForumTableProps = {
   filter?: DiscussionFilter
 }
 
-async function getSubscribe(accessToken: string | undefined, objectId: string) {
+export async function getSubscribe(
+  accessToken: string | undefined,
+  objectId: string,
+  objectType: SubscriptionObjectType,
+) {
   const subscriptionRequest: SubscriptionRequest = {
-    objectType: SubscriptionObjectType.FORUM,
+    objectType: objectType,
     idList: [objectId],
     sortByType: SortByType.OBJECT_ID,
     sortDirection: Direction.ASC,
@@ -45,7 +49,6 @@ async function getSubscribe(accessToken: string | undefined, objectId: string) {
   }
   return
 }
-
 export const ForumTable: React.FC<ForumTableProps> = ({
   forumId,
   limit,
@@ -60,7 +63,9 @@ export const ForumTable: React.FC<ForumTableProps> = ({
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    getSubscribe(accessToken, forumId).then(result => setSubscribed(result))
+    getSubscribe(accessToken, forumId, SubscriptionObjectType.FORUM).then(
+      result => setSubscribed(result),
+    )
   }, [accessToken, forumId])
 
   const { data, hasNextPage, fetchNextPage } = useGetForumInfinite(
