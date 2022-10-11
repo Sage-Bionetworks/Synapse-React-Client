@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Alert, Button } from 'react-bootstrap'
 import {
   ErrorBoundary,
@@ -10,6 +10,7 @@ import { useSynapseContext } from '../utils/SynapseContext'
 import { Optional } from '../utils/types/Optional'
 import { useJiraIssueCollector } from './JiraIssueCollector'
 import SignInButton from './SignInButton'
+import { Collapse } from '@material-ui/core'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
@@ -25,6 +26,7 @@ export const SignInPrompt = () => {
 }
 
 export const ClientError = (props: { error: SynapseClientError }) => {
+  const [showDetailedError, setShowDetailedError] = useState(false)
   const { accessToken } = useSynapseContext()
   const { error } = props
   const loginError =
@@ -42,7 +44,23 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   if (loginError) {
     return <SignInPrompt />
   } else if (accessDenied) {
-    return <>You are not authorized to access this resource.</>
+    return (
+      <>
+        <div>You are not authorized to access this resource.</div>
+        <Button
+          variant={'tertiary'}
+          style={{ fontSize: '12px' }}
+          onClick={() => setShowDetailedError(show => !show)}
+        >
+          {showDetailedError ? 'Hide' : 'Show'} details
+        </Button>
+        <div>
+          <Collapse in={showDetailedError}>
+            <code>{error.reason}</code>
+          </Collapse>
+        </div>
+      </>
+    )
   } else {
     return <>{error.reason}</>
   }
