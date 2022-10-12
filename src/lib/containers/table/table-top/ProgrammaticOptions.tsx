@@ -46,12 +46,6 @@ function ProgrammaticOptions({
     }
   }, [combinedSql, isLoadingNewBundle])
 
-  useEffect(() => {
-    if (error && !isLoadingNewBundle) {
-      throw error
-    }
-  }, [error, isLoadingNewBundle])
-
   // Replace quotation marks with escaped quotations. For CLI, also escape backticks.
   const commandLineSql = useMemo(
     () => generatedSql.replace(/(["`])/g, '\\$1'),
