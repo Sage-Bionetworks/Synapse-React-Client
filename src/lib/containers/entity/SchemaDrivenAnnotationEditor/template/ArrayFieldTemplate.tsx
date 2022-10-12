@@ -12,7 +12,7 @@ import { HelpOutline } from '@material-ui/icons'
  *
  * @param props - The `ArrayFieldTemplateItemType` props for the component
  */
-export function ArrayFieldTemplate<T = any, F = any>(
+function ArrayFieldTemplate<T = any, F = any>(
   props: ArrayFieldTemplateProps<T, F>,
 ) {
   const { idSchema, uiSchema, items, registry, schema } = props
@@ -88,7 +88,9 @@ export function ArrayFieldTemplate<T = any, F = any>(
                   <RemoveButton
                     aria-label={`Remove ${props.title}[${index}]`}
                     disabled={props.disabled}
-                    onClick={itemProps.onDropIndexClick(index)}
+                    onClick={event => {
+                      itemProps.onDropIndexClick(index)(event)
+                    }}
                   />
                 )}
                 {props.canAdd && index === props.items.length - 1 && (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FormLabel } from 'react-bootstrap'
 import { FieldTemplateProps, getTemplate, getUiOptions } from '@rjsf/utils'
 import { HelpOutline } from '@material-ui/icons'
@@ -17,9 +17,7 @@ export function FieldTemplate<T>(props: FieldTemplateProps<T>) {
     displayLabel,
     registry,
     uiSchema,
-    formData,
     schema,
-    onChange,
   } = props
   const uiOptions = getUiOptions(uiSchema)
   const WrapIfAdditionalTemplate = getTemplate<'WrapIfAdditionalTemplate'>(
@@ -28,18 +26,6 @@ export function FieldTemplate<T>(props: FieldTemplateProps<T>) {
     uiOptions,
   )
   const [showDetails, setShowDetails] = useState(false)
-
-  // The formData that we get may be an array (for example, if it was an additionalProperty, but then the key was added to the schema)
-  // If the object passes through this template, then it should no longer be an array, so we coerce it to a string.
-  useEffect(() => {
-    if (schema.type !== 'array' && Array.isArray(formData)) {
-      const newValue = formData.map(v => `${v}`).join(', ')
-      // TODO: This only works when we have a short delay
-      setTimeout(() => {
-        onChange(newValue)
-      }, 50)
-    }
-  }, [])
 
   if (hidden) {
     return <div className="hidden">{children}</div>

@@ -35,6 +35,7 @@ import CustomWrapIfAdditionalTemplate from './template/WrapIfAdditionalTemplate'
 import ButtonTemplate from './template/ButtonTemplate'
 import DescriptionFieldTemplate from './template/DescriptionFieldTemplate'
 import ArrayFieldDescriptionTemplate from './template/ArrayFieldDescriptionTemplate'
+import ObjectField from './field/ObjectField'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -198,6 +199,9 @@ export const SchemaDrivenAnnotationEditor = (
             className="AnnotationEditorForm"
             liveValidate={liveValidate}
             noHtml5Validate={true}
+            fields={{
+              ObjectField,
+            }}
             templates={{
               ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
               ArrayFieldItemTemplate: CustomArrayFieldItemTemplate,
@@ -363,7 +367,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             ))}
           </ul>
         </div>
-        <div>Are you sure you want to save them?</div>
+        <div>Are you sure you want to save the invalid annotations?</div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="default" onClick={onCancel}>

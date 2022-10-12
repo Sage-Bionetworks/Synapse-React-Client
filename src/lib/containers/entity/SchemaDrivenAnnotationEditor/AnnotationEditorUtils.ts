@@ -1,4 +1,10 @@
-import { RJSFValidationError } from '@rjsf/utils'
+import {
+  ADDITIONAL_PROPERTY_FLAG,
+  PROPERTIES_KEY,
+  deepEquals,
+  FieldProps,
+  RJSFValidationError,
+} from '@rjsf/utils'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
 import { entityJsonKeys } from '../../../utils/synapseTypes'
 
@@ -96,4 +102,66 @@ export function transformErrors(
 
   // Return the transformed errors.
   return errors
+}
+
+/**
+ * Custom annotations in Synapse are always arrays. This function converts initial data to be an array type.
+ * If the initial data is an array, return the data itself.
+ * If the initial data is a string, returns an array of substrings separated by commas.
+ * Otherwise, wrap the data in an array.
+ */
+export function convertToArray<T>(value: T): Array<any> {
+  if (Array.isArray(value)) {
+    return value
+  } else if (typeof value === 'string') {
+    return value.split(',').map(s => s.trim()) // split a string of comma-separated values, then trim whitespace
+  } else {
+    return [value]
+  }
+}
+
+/**
+ * `componentDidUpdate` function for RJSF ObjectField.
+ *
+ * For an object, this will
+ * - convert additionalProperties formData to arrays
+ * - convert schema-defined formData from an array to a non-array if the schema type is not an array
+ * @param props
+ */
+export function objectFieldComponentDidUpdate(props: FieldProps) {
+  const { schema, formData, onChange } = props
+  const newFormData = { ...formData }
+  if (schema[PROPERTIES_KEY]) {
+    Object.entries(schema[PROPERTIES_KEY]).forEach(([key, propertySchema]) => {
+      const data = newFormData[key]
+      if (propertySchema[ADDITIONAL_PROPERTY_FLAG]) {
+        /**
+         * All additional properties should be converted to arrays.
+         *
+         * We need to convert it right away because the order of items is not stable, and seems to depend on if the item is an array or not
+         */
+        if (!Array.isArray(data)) {
+          newFormData[key] = convertToArray(data)
+        }
+      } else {
+        /**
+         * If the schema does not call for an array, but the formData is an array, then this will coerce it to a string.
+         *
+         * This can occur when a formData value is an additionalProperty, which we always treat as an array, then the key
+         * is added to the schema (e.g. conditionally).
+         */
+        if (
+          typeof propertySchema === 'object' &&
+          'type' in propertySchema &&
+          propertySchema.type !== 'array' &&
+          Array.isArray(data)
+        ) {
+          newFormData[key] = data.map(v => `${v}`).join(', ')
+        }
+      }
+    })
+    if (!deepEquals(formData, newFormData)) {
+      onChange(newFormData)
+    }
+  }
 }
