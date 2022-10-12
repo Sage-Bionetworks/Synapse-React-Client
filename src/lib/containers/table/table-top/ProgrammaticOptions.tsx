@@ -18,7 +18,6 @@ function ProgrammaticOptions({
   const {
     data: asyncJobStatus,
     isLoading: queryIsLoading,
-    error,
     isPreviousData: newQueryIsFetching,
   } = useGetQueryResultBundleWithAsyncStatus(
     {
