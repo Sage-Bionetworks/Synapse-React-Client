@@ -30,7 +30,7 @@ const defaultProps: EntityModalProps = {
 }
 
 jest.mock(
-  '../../../../../lib/containers/entity/annotations/SchemaDrivenAnnotationEditor',
+  '../../../../../lib/containers/entity/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor',
   () => ({
     SchemaDrivenAnnotationEditor: jest.fn(() => <p>Mock Annotation Editor</p>),
   }),
