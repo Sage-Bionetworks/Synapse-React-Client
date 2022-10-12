@@ -41,7 +41,7 @@ import SynapseFormSubmissionsGrid from './containers/synapse_form_wrapper/Synaps
 import SynapseFormWrapper from './containers/synapse_form_wrapper/SynapseFormWrapper'
 import StandaloneQueryWrapper from './containers/table/StandaloneQueryWrapper'
 import SynapseTable from './containers/table/SynapseTable'
-import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticTableDownload'
+import ProgrammaticTableDownload from './containers/table/table-top/ProgrammaticOptions'
 import ProvenanceGraph from './containers/provenance/ProvenanceGraph'
 import TableFeedCards from './containers/TableFeedCards'
 import TermsAndConditions from './containers/TermsAndConditions'

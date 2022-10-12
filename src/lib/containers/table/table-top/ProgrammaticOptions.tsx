@@ -1,16 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '../../../utils/synapseTypes'
+import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ProgrammaticInstructionsModal } from '../../ProgrammaticInstructionsModal'
 import { useGetQueryResultBundleWithAsyncStatus } from '../../../utils/hooks/SynapseAPI'
 import { SynapseConstants } from '../../../utils'
-import { displayToast } from '../../ToastMessage'
 
-type ProgrammaticOptionsProps = {
+export type ProgrammaticOptionsProps = {
   queryBundleRequest: QueryBundleRequest
-  queryResultBundle: QueryResultBundle
   onHide: () => void
 }
 
@@ -52,7 +47,7 @@ function ProgrammaticOptions({
 
   useEffect(() => {
     if (error && !isLoadingNewBundle) {
-      displayToast(error.message, 'danger')
+      throw error
     }
   }, [error, isLoadingNewBundle])
 
