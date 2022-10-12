@@ -27,6 +27,7 @@ function ProgrammaticOptions({
     },
     {
       keepPreviousData: true,
+      useErrorBoundary: true,
     },
   )
 
