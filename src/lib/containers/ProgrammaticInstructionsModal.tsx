@@ -160,3 +160,5 @@ export const ProgrammaticInstructionsModal = ({
     </Modal>
   )
 }
+
+export default ProgrammaticInstructionsModal

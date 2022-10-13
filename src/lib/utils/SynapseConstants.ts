@@ -21,6 +21,7 @@ export const BUNDLE_MASK_QUERY_COLUMN_MODELS: number = 16
 export const BUNDLE_MASK_QUERY_FACETS: number = 32
 export const BUNDLE_MASK_SUM_FILES_SIZE_BYTES: number = 64
 export const BUNDLE_MASK_LAST_UPDATED_ON = 0x80
+export const BUNDLE_MASK_COMBINED_SQL = 0x100
 
 /** Request object to return all Entity Bundle fields */
 export const ALL_ENTITY_BUNDLE_FIELDS = {

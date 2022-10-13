@@ -15,4 +15,5 @@ export interface QueryResultBundle {
   facets?: FacetColumnResult[] // The list of facets for the search results
   sumFileSizes?: SumFileSizes
   lastUpdatedOn?: string
+  combinedSql?: string //The SQL that is combination of a the input SQL, FacetRequests, AdditionalFilters, Sorting, and Pagination. Use mask = 0x100 to include in the bundle.
 }

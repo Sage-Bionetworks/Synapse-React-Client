@@ -11,7 +11,7 @@ import Tooltip from '../../../utils/tooltip/Tooltip'
 import { useQueryContext } from '../../QueryContext'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { DownloadLoginModal } from './DownloadLoginModal'
-import ProgrammaticTableDownload from './ProgrammaticTableDownload'
+import ProgrammaticOptions from './ProgrammaticOptions'
 
 export const DOWNLOAD_OPTIONS_CONTAINER_CLASS = 'SRC-download-options-container'
 
@@ -121,11 +121,10 @@ export const DownloadOptions: React.FunctionComponent<
         )
       }
       {showProgrammaticOptions && queryResultBundle && (
-        <ProgrammaticTableDownload
+        <ProgrammaticOptions
           onHide={() => setShowProgrammaticOptions(false)}
           queryBundleRequest={queryBundleRequest}
-          queryResultBundle={queryResultBundle}
-        ></ProgrammaticTableDownload>
+        ></ProgrammaticOptions>
       )}
     </React.Fragment>
   )
