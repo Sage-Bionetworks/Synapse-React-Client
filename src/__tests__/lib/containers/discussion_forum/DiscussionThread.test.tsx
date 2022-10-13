@@ -209,7 +209,9 @@ describe('Discussion Thread test', () => {
     await waitFor(() => {
       expect(
         screen.getAllByText(`@${mockUserProfileData2.userName}`),
-      ).toHaveLength(2)
+      ).toHaveLength(
+        mockThread[0].results.length + mockThread[1].results.length,
+      )
     })
   })
 })
