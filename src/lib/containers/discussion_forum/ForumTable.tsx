@@ -26,6 +26,7 @@ import UserCard from '../UserCard'
 export type ForumTableProps = {
   forumId: string
   limit: number
+  onClickLink: () => void
   filter?: DiscussionFilter
 }
 
@@ -53,6 +54,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
   forumId,
   limit,
   filter,
+  onClickLink,
 }) => {
   const { accessToken } = useSynapseContext()
   const [sort, setSort] = useState<DiscussionThreadOrder>(
@@ -217,7 +219,7 @@ export const ForumTable: React.FC<ForumTableProps> = ({
             return (
               <tr key={item.id}>
                 <td>
-                  <a href={getUrl(item.id, item.projectId)}>
+                  <a onClick={() => onClickLink()}>
                     {item.isPinned ? (
                       <IconSvg options={{ icon: 'pushpin' }} />
                     ) : (

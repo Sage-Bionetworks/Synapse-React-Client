@@ -57,7 +57,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
   useEffect(() => {
-    const getMess = async () => {
+    const getMessageBody = async () => {
       if (threadData) {
         const messageUrl = await SynapseClient.getThreadMessageUrl(
           threadData.messageKey,
@@ -67,7 +67,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         setMessage(body)
       }
     }
-    getMess()
+    getMessageBody()
   }, [threadData, accessToken, threadId])
 
   const handleFollowBtn = async () => {
@@ -138,6 +138,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       <Tooltip title={subscribed ? FOLLOWING_TEXT : UNFOLLOWING_TEXT}>
         <button
           className="follow-button"
+          aria-label={subscribed ? 'follow-button' : 'unfollow-button'}
           disabled={isLoading}
           onClick={() => handleFollowBtn()}
         >

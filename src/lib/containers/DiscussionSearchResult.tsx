@@ -22,7 +22,7 @@ import { Skeleton } from '@material-ui/lab'
 import { SkeletonTable } from '../assets/skeletons/SkeletonTable'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../utils/functions/getEndpoint'
 
-export const getMessage = async (url: string): Promise<any> => {
+export const getMessage = async (url: string): Promise<string> => {
   const response = await fetch(url, {
     method: 'GET',
     headers: {

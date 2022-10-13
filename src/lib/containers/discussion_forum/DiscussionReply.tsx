@@ -9,12 +9,17 @@ import { getMessage } from '../DiscussionSearchResult'
 import UserCard from '../UserCard'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
+import IconSvg from '../IconSvg'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
+  onClickLink?: () => void
 }
 
-export const DiscussionReply: React.FC<DiscussionReplyProps> = ({ reply }) => {
+export const DiscussionReply: React.FC<DiscussionReplyProps> = ({
+  reply,
+  onClickLink = () => alert('This functionality has not been implemented yet'),
+}) => {
   const { accessToken } = useSynapseContext()
   const [message, setMessage] = useState<string>()
 
@@ -43,8 +48,13 @@ export const DiscussionReply: React.FC<DiscussionReplyProps> = ({ reply }) => {
           />
           <div className="message-body">
             <MarkdownSynapse markdown={message} objectType={ObjectType.REPLY} />
+            <span>
+              posted {formatDate(moment(reply.createdOn), 'M/D/YYYY')}
+            </span>
+            <button onClick={() => onClickLink()} style={{ float: 'right' }}>
+              <IconSvg options={{ icon: 'link' }} />
+            </button>
           </div>
-          <span>posted {formatDate(moment(reply.createdOn), 'M/D/YYYY')}</span>
         </div>
       )}
     </div>

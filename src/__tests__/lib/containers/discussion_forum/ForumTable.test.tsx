@@ -18,12 +18,12 @@ import {
   Topic,
   SubscriptionPagedResults,
 } from '../../../../lib/utils/synapseTypes/Subscription'
+import {
+  mockDiscussionThreadBundle,
+  mockDiscussionThreadBundle2,
+} from '../../../../mocks/discussion/mock_discussion'
 import { MOCK_ACCESS_TOKEN } from '../../../../mocks/MockSynapseContext'
 import { rest, server } from '../../../../mocks/msw/server'
-import {
-  mockUserProfileData,
-  mockUserProfileData2,
-} from '../../../../mocks/user/mock_user_profile'
 
 const MOCK_FORUM_ID = 'syn123'
 const MOCK_SUBSCRIPTION_ID = '123'
@@ -41,58 +41,15 @@ const followRequest: Topic = {
 const SynapseClient = require('../../../../lib/utils/SynapseClient')
 SynapseClient.postSubscription = jest.fn()
 SynapseClient.deleteSubscription = jest.fn()
+
 const forumThread: PaginatedResults<DiscussionThreadBundle>[] = [
   {
     totalNumberOfResults: 2,
-    results: [
-      {
-        id: '999',
-        forumId: MOCK_FORUM_ID,
-        projectId: '123',
-        title: 'mockTitle1',
-        createdOn: '2022-09-28',
-        createdBy: mockUserProfileData.ownerId,
-        modifiedOn: '2022-09-28',
-        etag: 'xxx',
-        messageKey: 'xxx',
-        numberOfViews: 2,
-        numberOfReplies: 3,
-        lastActivity: '2022-09-28',
-        activeAuthors: [
-          mockUserProfileData.ownerId,
-          mockUserProfileData2.ownerId,
-        ],
-        isEdited: false,
-        isDeleted: false,
-        isPinned: false,
-      },
-    ],
+    results: [mockDiscussionThreadBundle],
   },
   {
     totalNumberOfResults: 2,
-    results: [
-      {
-        id: '888',
-        forumId: MOCK_FORUM_ID,
-        projectId: '12',
-        title: 'mockTitle2',
-        createdOn: '2022-09-28',
-        createdBy: mockUserProfileData2.ownerId,
-        modifiedOn: '2022-09-28',
-        etag: 'xxx',
-        messageKey: 'xxx',
-        numberOfViews: 14,
-        numberOfReplies: 3,
-        lastActivity: '2022-09-28',
-        activeAuthors: [
-          mockUserProfileData.ownerId,
-          mockUserProfileData2.ownerId,
-        ],
-        isEdited: false,
-        isDeleted: false,
-        isPinned: false,
-      },
-    ],
+    results: [mockDiscussionThreadBundle2],
   },
 ]
 
