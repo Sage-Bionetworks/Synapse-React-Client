@@ -1,60 +1,49 @@
-import React, { useMemo, useState } from 'react'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-} from '../../../utils/synapseTypes'
-import { TransformSqlWithFacetsRequest } from '../../../utils/synapseTypes/Table/TransformSqlWithFacetsRequest'
-import useDeepCompareEffect from 'use-deep-compare-effect'
-import { getTransformSqlWithFacetsRequest } from '../../../utils/SynapseClient'
+import React, { useEffect, useMemo, useState } from 'react'
+import { QueryBundleRequest } from '../../../utils/synapseTypes'
 import { ProgrammaticInstructionsModal } from '../../ProgrammaticInstructionsModal'
+import { useGetQueryResultBundleWithAsyncStatus } from '../../../utils/hooks/SynapseAPI'
+import { SynapseConstants } from '../../../utils'
 
-type ProgrammaticOptionsProps = {
+export type ProgrammaticOptionsProps = {
   queryBundleRequest: QueryBundleRequest
-  queryResultBundle: QueryResultBundle
   onHide: () => void
 }
 
 function ProgrammaticOptions({
   queryBundleRequest,
-  queryResultBundle,
   onHide,
 }: ProgrammaticOptionsProps) {
-  const [generatedSql, setGeneratedSql] = useState('')
-  useDeepCompareEffect(() => {
-    const getData = async () => {
-      const { query } = queryBundleRequest
-      const { sql, selectedFacets = [] } = query
-      const { columnModels } = queryResultBundle
-      if (!columnModels) {
-        console.error(
-          'Column Models must be included to complete transform sql request',
-        )
-      }
-      const transformSqlWithFacetsRequest: TransformSqlWithFacetsRequest = {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.TransformSqlWithFacetsRequest',
-        sqlToTransform: sql,
-        selectedFacets,
-        schema: columnModels!,
-      }
+  const [generatedSql, setGeneratedSql] = useState('...')
 
-      try {
-        const res = await getTransformSqlWithFacetsRequest(
-          transformSqlWithFacetsRequest,
-        )
-        // SWC-5686: The ID column is required by the client, and this column may not have been selected!
-        // Change the SQL to "SELECT * ..."
-        const indexOfFrom = res.transformedSql.toUpperCase().indexOf('FROM SYN')
-        const selectStarTransformedSql = `SELECT * ${res.transformedSql.substring(
-          indexOfFrom,
-        )}`
-        setGeneratedSql(selectStarTransformedSql)
-      } catch (e) {
-        console.error('Error on getTransformSqlWithFacetsRequest ', e)
-      }
+  const {
+    data: asyncJobStatus,
+    isLoading: queryIsLoading,
+    isPreviousData: newQueryIsFetching,
+  } = useGetQueryResultBundleWithAsyncStatus(
+    {
+      ...queryBundleRequest,
+      partMask: SynapseConstants.BUNDLE_MASK_COMBINED_SQL,
+    },
+    {
+      keepPreviousData: true,
+      useErrorBoundary: true,
+    },
+  )
+
+  const combinedSql = asyncJobStatus?.responseBody?.combinedSql
+  const isLoadingNewBundle = queryIsLoading || newQueryIsFetching
+
+  useEffect(() => {
+    if (combinedSql && !isLoadingNewBundle) {
+      // SWC-5686: The ID column is required by the client, and this column may not have been selected!
+      // Change the SQL to "SELECT * ..."
+      const indexOfFrom = combinedSql.toUpperCase().indexOf('FROM SYN')
+      const selectStarTransformedSql = `SELECT * ${combinedSql.substring(
+        indexOfFrom,
+      )}`
+      setGeneratedSql(selectStarTransformedSql)
     }
-    getData()
-  }, [queryBundleRequest, queryResultBundle])
+  }, [combinedSql, isLoadingNewBundle])
 
   // Replace quotation marks with escaped quotations. For CLI, also escape backticks.
   const commandLineSql = useMemo(

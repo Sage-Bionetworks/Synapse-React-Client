@@ -375,6 +375,18 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
     onEdgesChangedListener,
   ])
 
+  const onPaneScrollFunction: (event?: React.WheelEvent) => void = useCallback(
+    event => {
+      if (event && event.deltaX && event.deltaY) {
+        window.scrollTo(
+          window.scrollX + event.deltaX,
+          window.scrollY + event.deltaY,
+        )
+      }
+    },
+    [],
+  )
+
   return (
     <div
       className="bootstrap-4-backport ProvenanceWidget"
@@ -390,6 +402,8 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
         onEdgesChange={onEdgesChange}
         attributionPosition="bottom-right"
         onConnect={undefined}
+        zoomOnScroll={false}
+        onPaneScroll={onPaneScrollFunction}
       >
         <Controls />
       </ReactFlow>

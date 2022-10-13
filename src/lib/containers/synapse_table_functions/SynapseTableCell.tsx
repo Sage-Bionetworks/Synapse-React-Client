@@ -1,22 +1,21 @@
-import { noop } from 'lodash-es'
 import React from 'react'
 import {
-  isEntityView,
   isDataset,
   isDatasetCollection,
+  isEntityView,
 } from '../../utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
 import { AUTHENTICATED_USERS } from '../../utils/SynapseConstants'
 import {
   ColumnModel,
   ColumnType,
+  EntityHeader,
   FileHandleAssociateType,
   Row,
   SelectColumn,
   UserGroupHeader,
   UserProfile,
 } from '../../utils/synapseTypes'
-import { EntityHeader } from '../../utils/synapseTypes/EntityHeader'
 import {
   CardLink,
   ColumnSpecifiedLink,
@@ -32,7 +31,6 @@ import { useQueryContext } from '../QueryContext'
 import { NOT_SET_DISPLAY_VALUE } from '../table/SynapseTableConstants'
 import UserCard from '../UserCard'
 import UserIdList from '../UserIdList'
-import { ElementWithTooltip } from '../widgets/ElementWithTooltip'
 
 export type SynapseTableCellProps = {
   columnType: ColumnType
@@ -41,7 +39,6 @@ export type SynapseTableCellProps = {
   columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink
   mapEntityIdToHeader: Record<string, EntityHeader>
   mapUserIdToHeader: Partial<UserGroupHeader & UserProfile>
-  rowIndex?: number
   columnName: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]
@@ -57,7 +54,6 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
   mapEntityIdToHeader,
   mapUserIdToHeader,
   columnLinkConfig,
-  rowIndex,
   columnName,
   selectColumns,
   columnModels,
@@ -67,9 +63,6 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
 }) => {
   const { entity } = useQueryContext()
 
-  const isShortString = (s: string, maxCharCount = 20): boolean => {
-    return !s || s.length <= maxCharCount
-  }
   if (!columnValue) {
     return (
       <p className="SRC-center-text SRC-inactive"> {NOT_SET_DISPLAY_VALUE}</p>
@@ -262,22 +255,7 @@ export const SynapseTableCell: React.FC<SynapseTableCellProps> = ({
     case ColumnType.INTEGER:
     case ColumnType.BOOLEAN:
     case ColumnType.LARGETEXT: {
-      const isShort = isShortString(columnValue)
-      if (isShort) {
-        return <p className={isBold}> {columnValue}</p>
-      } else {
-        return (
-          <div className={isBold}>
-            <ElementWithTooltip
-              tooltipText={columnValue}
-              callbackFn={noop}
-              idForToolTip={`${columnName}_${rowIndex}`}
-            >
-              <p className={isBold}> {columnValue}</p>
-            </ElementWithTooltip>
-          </div>
-        )
-      }
+      return <p className={isBold}>{columnValue}</p>
     }
     default:
       console.warn(

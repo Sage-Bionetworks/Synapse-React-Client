@@ -56,6 +56,7 @@ import {
 import { TablePagination } from './TablePagination'
 import NoContentAvailable from './NoContentAvailable'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
+import ExpandableTableDataCell from './ExpandableTableDataCell'
 
 export const EMPTY_HEADER: EntityHeader = {
   id: '',
@@ -632,8 +633,8 @@ export default class SynapseTable extends React.Component<
           const isBold = index === -1 ? '' : 'SRC-boldText'
           if (isColumnActive) {
             return (
-              <td
-                className="SRC_noBorderTop SRC-synapseTableTd"
+              <ExpandableTableDataCell
+                className="SRC_noBorderTop"
                 key={`(${rowIndex}${columnValue}${colIndex})`}
               >
                 {linkToDisaggregatedQuery ? (
@@ -651,7 +652,6 @@ export default class SynapseTable extends React.Component<
                     isBold={isBold}
                     mapEntityIdToHeader={mapEntityIdToHeader}
                     mapUserIdToHeader={mapUserIdToHeader}
-                    rowIndex={rowIndex}
                     columnLinkConfig={columnLinkConfig}
                     columnName={columnName}
                     rowData={row.values}
@@ -661,7 +661,7 @@ export default class SynapseTable extends React.Component<
                     rowVersionNumber={row.versionNumber}
                   />
                 )}
-              </td>
+              </ExpandableTableDataCell>
             )
           }
           return <td className="SRC-hidden" key={`(${rowIndex},${colIndex})`} />

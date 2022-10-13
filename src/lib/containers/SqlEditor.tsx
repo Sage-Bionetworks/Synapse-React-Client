@@ -18,7 +18,7 @@ export type SqlEditorProps = {
 const helpMessageCopy =
   'The data within tables and views can be retrieved by using a SQL-like query language either from the web interface or from the programmatic clients.'
 const helpLink =
-  'https://help.synapse.org/docs/Searching-Tables-and-Views.2009596168.html#SearchingTablesandViews-UsingAdvancedSearchQueries'
+  'https://help.synapse.org/docs/Querying-Tables,-Views,-and-Datasets.2667642897.html#QueryingTables,Views,andDatasets-UsingAdvancedSearchQueries'
 
 export const SqlEditor: React.FunctionComponent<SqlEditorProps> = ({
   helpMessage = helpMessageCopy,

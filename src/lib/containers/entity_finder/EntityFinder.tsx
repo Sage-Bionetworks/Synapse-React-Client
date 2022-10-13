@@ -11,7 +11,7 @@ import {
   entityTypeToFriendlyName,
   getEntityTypeFromHeader,
 } from '../../utils/functions/EntityTypeUtils'
-import { SYNAPSE_ENTITY_ID_REGEX } from '../../utils/functions/RegularExpressions'
+import { parseSynId } from '../../utils/functions/RegularExpressions'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { Reference } from '../../utils/synapseTypes'
 import { EntityType } from '../../utils/synapseTypes/EntityType'
@@ -168,19 +168,9 @@ export const EntityFinder: React.FunctionComponent<EntityFinderProps> = ({
 
   useEffect(() => {
     if (searchTerms?.length === 1) {
-      const synIdMatch = SYNAPSE_ENTITY_ID_REGEX.exec(searchTerms[0])
-      if (synIdMatch) {
-        SynapseClient.getEntityHeaders(
-          [
-            {
-              targetId: synIdMatch[1],
-              targetVersionNumber: synIdMatch[2]
-                ? parseInt(synIdMatch[2])
-                : undefined,
-            },
-          ],
-          accessToken,
-        )
+      const searchTermReference = parseSynId(searchTerms[0])
+      if (searchTermReference) {
+        SynapseClient.getEntityHeaders([searchTermReference], accessToken)
           .then(response => {
             setSearchByIdResults(response.results)
           })

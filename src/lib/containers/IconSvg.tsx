@@ -22,6 +22,7 @@ import {
   Code,
   DashboardTwoTone,
   DeleteTwoTone,
+  DeleteSweepTwoTone,
   ErrorOutlined,
   ExpandLess,
   ExpandMore,
@@ -63,6 +64,8 @@ import {
   WatchLater,
   GitHub,
   InsertDriveFileOutlined,
+  AddBoxOutlined,
+  IndeterminateCheckBoxOutlined,
 } from '@material-ui/icons'
 import React, { useEffect } from 'react'
 import AccessManagement from '../assets/mui_components/AccessManagement'
@@ -107,6 +110,7 @@ export const IconStrings = [
   'openInNewWindow',
   'dashboard',
   'delete',
+  'deleteSweep',
   'addToCart',
   'addCircleOutline',
   'addCircleTwoTone',
@@ -181,6 +185,8 @@ export const IconStrings = [
   'errorOutlined',
   'phone',
   'pushpin',
+  'addBoxOutline',
+  'minusBoxOutline',
 ] as const
 
 export type Icon = typeof IconStrings[number]
@@ -257,6 +263,8 @@ const getIcon = (options: IconSvgOptions) => {
       return <DashboardTwoTone style={muiSvgStyle}></DashboardTwoTone>
     case 'delete':
       return <DeleteTwoTone style={muiSvgStyle} />
+    case 'deleteSweep':
+      return <DeleteSweepTwoTone style={muiSvgStyle} />
     case 'openInNewWindow':
       return <OpenInNewTwoTone style={muiSvgStyle} />
     case 'phone':
@@ -423,6 +431,10 @@ const getIcon = (options: IconSvgOptions) => {
       return <ChevronLeft style={muiSvgStyle} />
     case 'pushpin':
       return <PushPin fill={color} style={customSvgStyle}></PushPin>
+    case 'addBoxOutline':
+      return <AddBoxOutlined style={muiSvgStyle} />
+    case 'minusBoxOutline':
+      return <IndeterminateCheckBoxOutlined style={muiSvgStyle} />
     default:
       return <></>
   }

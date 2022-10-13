@@ -5,7 +5,6 @@ import React, {
   useEffect,
   useState,
 } from 'react'
-import { Button } from 'react-bootstrap'
 import { SkeletonInlineBlock } from '../assets/skeletons/SkeletonInlineBlock'
 import {
   getStoredEntityHeaders,
@@ -44,6 +43,7 @@ import {
   applyChangesToValuesColumn,
 } from './widgets/query-filter/QueryFilter'
 import { RadioValuesEnum } from './widgets/query-filter/RangeFacetFilter'
+import IconSvg from './IconSvg'
 
 export type TotalQueryResultsProps = {
   style?: React.CSSProperties
@@ -340,7 +340,7 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
         showFacetFilter
           ? QUERY_FILTERS_EXPANDED_CSS
           : QUERY_FILTERS_COLLAPSED_CSS
-      }`}
+      } ${hasFilters ? 'hasFilters' : ''}`}
       style={style}
     >
       {isLoadingNewBundle ? (
@@ -348,9 +348,23 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
       ) : (
         <>
           {(hasFilters || !hideIfUnfiltered) && (
-            <span className="SRC-boldText SRC-centerContent">
-              {frontText} {total?.toLocaleString()} {unitDescription} {endText}
-            </span>
+            <div className="TotalQueryResults__topbar">
+              <span className="SRC-boldText">
+                {frontText} {total?.toLocaleString()} {unitDescription}{' '}
+                {endText}
+              </span>
+              {(facetsWithSelection.length > 0 ||
+                (searchSelectionCriteriaPillProps &&
+                  searchSelectionCriteriaPillProps.length > 2)) && (
+                <a
+                  onClick={clearAll}
+                  className="TotalQueryResults__topbar__clearall"
+                >
+                  <IconSvg options={{ icon: 'deleteSweep' }} />
+                  Clear all filters
+                </a>
+              )}
+            </div>
           )}
           <div className="TotalQueryResults__selections">
             {searchSelectionCriteriaPillProps &&
@@ -368,17 +382,6 @@ const TotalQueryResults: FunctionComponent<TotalQueryResultsProps> = ({
                 onRemove={() => removeFacetSelection(selectedFacet)}
               />
             ))}
-            {(facetsWithSelection.length > 2 ||
-              (searchSelectionCriteriaPillProps &&
-                searchSelectionCriteriaPillProps.length > 2)) && (
-              <Button
-                onClick={clearAll}
-                variant="light"
-                className="TotalQueryResults__clearall"
-              >
-                Clear All
-              </Button>
-            )}
           </div>
         </>
       )}

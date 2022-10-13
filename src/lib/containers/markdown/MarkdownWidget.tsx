@@ -1,5 +1,9 @@
 import React from 'react'
+import { SynapseErrorBoundary } from '../ErrorBanner'
 import MarkdownButton, { ButtonLinkWidgetParams } from './widget/MarkdownButton'
+import MarkdownEntityPreview, {
+  MarkdownEntityPreviewProps,
+} from './widget/MarkdownEntityPreview'
 import MarkdownIDUReport, {
   MarkdownIDUReportProps,
 } from './widget/MarkdownIDUReport'
@@ -66,6 +70,11 @@ type ProvenanceGraph = {
   widgetParamsMapped: MarkdownProvenanceGraphProps
 }
 
+type Preview = {
+  widgetType: 'preview'
+  widgetParamsMapped: MarkdownEntityPreviewProps
+}
+
 type MarkdownWidgetDefinition =
   | ButtonLink
   | Image
@@ -76,12 +85,13 @@ type MarkdownWidgetDefinition =
   | Video
   | SynapseTable
   | ProvenanceGraph
+  | Preview
 
 export type MarkdownWidgetProps = MarkdownWidgetDefinition & {
   originalMarkup: string
 }
 
-export default function MarkdownWidget(props: MarkdownWidgetProps) {
+function MarkdownWidget(props: MarkdownWidgetProps) {
   const { widgetType, widgetParamsMapped, originalMarkup } = props
   switch (widgetType) {
     case 'buttonlink':
@@ -104,8 +114,19 @@ export default function MarkdownWidget(props: MarkdownWidgetProps) {
       return <MarkdownSynapseTable {...widgetParamsMapped} />
     case 'provenance':
       return <MarkdownProvenanceGraph {...widgetParamsMapped} />
+    case 'preview':
+      return <MarkdownEntityPreview {...widgetParamsMapped} />
     default:
       console.warn(`Unsupported widget: ${widgetType}.`)
       return <></>
   }
+}
+
+export default function MarkdownWidgetWithWrapper(props: MarkdownWidgetProps) {
+  // Wrap the widget in an error boundary.
+  return (
+    <SynapseErrorBoundary>
+      <MarkdownWidget {...props} />
+    </SynapseErrorBoundary>
+  )
 }
