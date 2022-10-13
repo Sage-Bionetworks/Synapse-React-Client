@@ -56,7 +56,7 @@ export const ClientError = (props: { error: SynapseClientError }) => {
         </Button>
         <div>
           <Collapse in={showDetailedError}>
-            <code>{error.reason}</code>
+            <pre>{error.reason}</pre>
           </Collapse>
         </div>
       </>
