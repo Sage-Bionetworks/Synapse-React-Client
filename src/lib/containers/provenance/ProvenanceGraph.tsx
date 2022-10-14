@@ -377,6 +377,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
 
   const onPaneScrollFunction: (event?: React.WheelEvent) => void = useCallback(
     event => {
+      // Cannot simply check the truthy value of event.deltaX (or Y) because the value might be 0 (or -0), which is falsy
       if (
         event &&
         typeof event.deltaX !== 'undefined' &&
