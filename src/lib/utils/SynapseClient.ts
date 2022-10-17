@@ -315,6 +315,7 @@ export async function allowNotFoundError<T>(
   504 - Gateway Timeout
 */
 const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
+const MAX_RETRY_STATUS_CODES = [502, 503]
 const MAX_RETRY = 3
 /**
  * Fetches data, retrying if the HTTP status code indicates that it could be retried. Contains custom logic for
@@ -333,9 +334,11 @@ const fetchWithExponentialTimeout = async <TResponse>(
     // Exponential backoff if we re-fetch
     delayMs = delayMs * 2
     response = await fetch(url, options)
-    numOfTry++
-    if (numOfTry == MAX_RETRY) {
-      break
+    if (MAX_RETRY_STATUS_CODES.includes(response.status)) {
+      numOfTry++
+      if (numOfTry == MAX_RETRY) {
+        break
+      }
     }
   }
 
