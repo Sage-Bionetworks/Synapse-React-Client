@@ -2,9 +2,13 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { Button, Table } from 'react-bootstrap'
 import SortIcon from '../../assets/icons/Sort'
-import { SynapseClient } from '../../utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '../../utils/functions/getEndpoint'
+import { getSubscription } from '../../utils/functions/getSubscription'
 import { useGetForumInfinite } from '../../utils/hooks/SynapseAPI/forum/useForum'
+import {
+  useDeleteSubscription,
+  usePostSubscription,
+} from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 import { AVATAR, SMALL_USER_CARD } from '../../utils/SynapseConstants'
 import { useSynapseContext } from '../../utils/SynapseContext'
 import { Direction } from '../../utils/synapseTypes'
@@ -13,10 +17,8 @@ import {
   DiscussionThreadOrder,
 } from '../../utils/synapseTypes/DiscussionBundle'
 import {
-  SortByType,
   Subscription,
   SubscriptionObjectType,
-  SubscriptionRequest,
   Topic,
 } from '../../utils/synapseTypes/Subscription'
 import IconSvg from '../IconSvg'
@@ -30,26 +32,6 @@ export type ForumTableProps = {
   filter?: DiscussionFilter
 }
 
-export async function getSubscribe(
-  accessToken: string | undefined,
-  objectId: string,
-  objectType: SubscriptionObjectType,
-) {
-  const subscriptionRequest: SubscriptionRequest = {
-    objectType: objectType,
-    idList: [objectId],
-    sortByType: SortByType.OBJECT_ID,
-    sortDirection: Direction.ASC,
-  }
-  const subscriptionList = await SynapseClient.postSubscriptionList(
-    accessToken,
-    subscriptionRequest,
-  )
-  if (subscriptionList.totalNumberOfResults > 0) {
-    return subscriptionList.results[0]
-  }
-  return
-}
 export const ForumTable: React.FC<ForumTableProps> = ({
   forumId,
   limit,
@@ -60,15 +42,36 @@ export const ForumTable: React.FC<ForumTableProps> = ({
   const [sort, setSort] = useState<DiscussionThreadOrder>(
     DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY,
   )
-  const [subscribed, setSubscribed] = useState<Subscription>()
   const [isAscending, setIsAscending] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [subscribed, setSubscribed] = useState<Subscription>()
+  const { mutate: deleteSubscription } = useDeleteSubscription()
+  const { mutate: updateSubscription } = usePostSubscription()
 
   useEffect(() => {
-    getSubscribe(accessToken, forumId, SubscriptionObjectType.FORUM).then(
+    getSubscription(accessToken, forumId, SubscriptionObjectType.FORUM).then(
       result => setSubscribed(result),
     )
-  }, [accessToken, forumId])
+  }, [accessToken, forumId, handleFollowBtn])
+
+  function handleFollowBtn() {
+    try {
+      setIsLoading(true)
+      if (subscribed) {
+        deleteSubscription(subscribed.subscriptionId)
+      } else {
+        const topic: Topic = {
+          objectId: forumId,
+          objectType: SubscriptionObjectType.FORUM,
+        }
+        updateSubscription(topic)
+      }
+    } catch (err: any) {
+      displayToast(err.reason as string, 'danger')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const { data, hasNextPage, fetchNextPage } = useGetForumInfinite(
     forumId,
@@ -82,30 +85,6 @@ export const ForumTable: React.FC<ForumTableProps> = ({
 
   const getUrl = (threadId: string, projectId: string) => {
     return `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}#!Synapse:${projectId}/discussion/threadId=${threadId}`
-  }
-
-  const handleFollowBtn = async () => {
-    try {
-      setIsLoading(true)
-      if (subscribed) {
-        await SynapseClient.deleteSubscription(
-          accessToken,
-          subscribed.subscriptionId,
-        )
-        setSubscribed(undefined)
-      } else {
-        const topic: Topic = {
-          objectId: forumId,
-          objectType: SubscriptionObjectType.FORUM,
-        }
-        const follow = await SynapseClient.postSubscription(accessToken, topic)
-        setSubscribed(follow)
-      }
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
-    }
   }
 
   const onSort = (field: DiscussionThreadOrder) => {

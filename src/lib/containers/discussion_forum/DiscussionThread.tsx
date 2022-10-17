@@ -16,7 +16,6 @@ import {
 import Typography from '../../utils/typography/Typography'
 import { getMessage } from '../DiscussionSearchResult'
 import UserCard from '../UserCard'
-import { getSubscribe } from './ForumTable'
 import { displayToast } from '../ToastMessage'
 import { DiscussionReply } from './DiscussionReply'
 import { Button, FormControl } from 'react-bootstrap'
@@ -24,6 +23,11 @@ import IconSvg from '../IconSvg'
 import Tooltip from '../../utils/tooltip/Tooltip'
 import MarkdownSynapse from '../markdown/MarkdownSynapse'
 import { ObjectType } from '../../utils/synapseTypes'
+import { getSubscription } from '../../utils/functions/getSubscription'
+import {
+  useDeleteSubscription,
+  usePostSubscription,
+} from '../../utils/hooks/SynapseAPI/subscription/useSubscription'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -37,23 +41,45 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const { threadId, limit } = props
 
   const { accessToken } = useSynapseContext()
-  const [datePosted, setDatePosted] = useState(true)
+  const [orderByDatePosted, setOrderByDatePosted] = useState(true)
   const [message, setMessage] = useState<string>()
   const [subscribed, setSubscribed] = useState<Subscription>()
   const [isLoading, setIsLoading] = useState(false)
 
+  const { data: threadData } = useGetThread(threadId)
+  const { mutate: updateSubscription } = usePostSubscription()
+  const { mutate: deleteSubscription } = useDeleteSubscription()
+
   useEffect(() => {
-    getSubscribe(accessToken, threadId, SubscriptionObjectType.THREAD).then(
+    getSubscription(accessToken, threadId, SubscriptionObjectType.THREAD).then(
       result => setSubscribed(result),
     )
-  }, [accessToken, threadId])
+  }, [accessToken, threadId, handleFollowBtn])
 
-  const { data: threadData } = useGetThread(threadId)
+  function handleFollowBtn() {
+    try {
+      setIsLoading(true)
+      if (subscribed) {
+        deleteSubscription(subscribed.subscriptionId)
+      } else {
+        const topic: Topic = {
+          objectId: threadId,
+          objectType: SubscriptionObjectType.THREAD,
+        }
+        updateSubscription(topic)
+      }
+    } catch (err: any) {
+      displayToast(err.reason as string, 'danger')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const {
     data: replyData,
     hasNextPage,
     fetchNextPage,
-  } = useGetRepliesInfinite(threadId, datePosted, limit)
+  } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
   const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
   useEffect(() => {
@@ -70,44 +96,20 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     getMessageBody()
   }, [threadData, accessToken, threadId])
 
-  const handleFollowBtn = async () => {
-    try {
-      setIsLoading(true)
-      if (subscribed) {
-        await SynapseClient.deleteSubscription(
-          accessToken,
-          subscribed.subscriptionId,
-        )
-        setSubscribed(undefined)
-      } else {
-        const topic: Topic = {
-          objectId: threadId,
-          objectType: SubscriptionObjectType.THREAD,
-        }
-        const follow = await SynapseClient.postSubscription(accessToken, topic)
-        setSubscribed(follow)
-      }
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <div className="bootstrap-4-backport DiscussionThread">
       {threadData && message ? (
         <>
           <div style={{ textAlign: 'center' }}>
             <Button
-              variant={datePosted ? 'primary' : 'outline-primary'}
-              onClick={() => setDatePosted(true)}
+              variant={orderByDatePosted ? 'primary' : 'outline-primary'}
+              onClick={() => setOrderByDatePosted(true)}
             >
               Date Posted
             </Button>
             <Button
-              variant={datePosted ? 'outline-primary' : 'primary'}
-              onClick={() => setDatePosted(false)}
+              variant={orderByDatePosted ? 'outline-primary' : 'primary'}
+              onClick={() => setOrderByDatePosted(false)}
             >
               Most Recent
             </Button>
