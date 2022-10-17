@@ -315,7 +315,7 @@ export async function allowNotFoundError<T>(
   504 - Gateway Timeout
 */
 const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
-
+const MAX_RETRY = 3
 /**
  * Fetches data, retrying if the HTTP status code indicates that it could be retried. Contains custom logic for
  * handling errors returned by the Synapse backend.
@@ -327,11 +327,16 @@ const fetchWithExponentialTimeout = async <TResponse>(
   delayMs = 1000,
 ): Promise<TResponse> => {
   let response = await fetch(url, options)
+  let numOfTry = 1
   while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
     await delay(delayMs)
     // Exponential backoff if we re-fetch
     delayMs = delayMs * 2
     response = await fetch(url, options)
+    numOfTry++
+    if (numOfTry == MAX_RETRY) {
+      break
+    }
   }
 
   const contentType = response.headers.get('Content-Type')
