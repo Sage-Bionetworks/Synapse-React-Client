@@ -39,10 +39,7 @@ export function useGetSubscription(
   return useQuery<Subscription, SynapseClientError>(
     ['subscription', objectId, objectType],
     queryFn,
-    {
-      staleTime: Infinity,
-      ...options,
-    },
+    options,
   )
 }
 
