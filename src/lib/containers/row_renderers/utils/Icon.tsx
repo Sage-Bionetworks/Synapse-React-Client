@@ -14,6 +14,7 @@ import {
   COMPUTATIONAL_TOOL,
   CLINICAL,
   PROJECT,
+  PROGRAM,
   GRANT,
   ORGANIZATION,
   PERSON,
@@ -53,6 +54,7 @@ import { ReactComponent as chart2Svg } from '../../../assets/icons/chart2.svg'
 import { ReactComponent as fileSvg } from '../../../assets/icons/file.svg'
 
 import {
+  Program,
   Project,
   Publication,
   Study,
@@ -107,6 +109,7 @@ const defaultIcons = {
   [COMPUTATIONAL]: ToolComputational,
   [COMPUTATIONAL_TOOL]: ToolComputational,
   [CLINICAL]: ToolClinical,
+  [PROGRAM]: Program,
   [PROJECT]: Project,
   [GRANT]: Project,
   [ORGANIZATION]: organizationsSvg,
